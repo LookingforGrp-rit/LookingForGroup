@@ -99,6 +99,7 @@ const NewProfile = () => {
     fun_fact: ``,
     bio: '',
     skills: [],
+    interests: [],
   };
 
   const navigate = useNavigate(); // Hook for navigation
@@ -422,7 +423,7 @@ const NewProfile = () => {
           </div>
           <div id="profile-info-interest">
             <ProfileInterests user={{ interests: displayedProfile.interests || [] }}
-              isUsersProfile={true} />
+              isUsersProfile={isUsersProfile} />
           </div>
 
           <div id="profile-info-skills">

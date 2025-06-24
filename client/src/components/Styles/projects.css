@@ -843,10 +843,6 @@ Project Creator and Editor style rules
   font-weight: 600;
 }
 
-#profile-editor-skills {
-  overflow-y: auto;
-}
-
 /* Project Editor/Creator Team Tab */
 .project-editor-team-tab {
   padding: 0;
@@ -862,9 +858,12 @@ Project Creator and Editor style rules
   font-weight: 600;
 }
 
+
+
 #project-editor-team {
   height: 100%;
 }
+
 
 #project-editor-team-content {
   display: flex;
@@ -1664,6 +1663,7 @@ includes 'enter virtual space' and 'make post' buttons*/
 
 #interested-button:hover {
   background-color: #d0d0d0;
+  color: black;
 }
 
 /*rules for the editing roles popup*/
@@ -3695,6 +3695,8 @@ My projects page style rules
     font-style: italic;
   }
 }
+
+
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\

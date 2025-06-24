@@ -1207,20 +1207,26 @@ New Profile page style rules
   flex-wrap: wrap;
   gap: 8px;
   margin-bottom: 20px;
+  padding: 10px;
+  background-color: var(--bg-secondary);
+  border-radius: 5px;
+  max-height: 200px;
+  overflow-y: auto;
 }
 
 .interest-tag {
-  padding: 6px 12px;
+  font-size: medium;
+  padding: 6px 15px;
   border-radius: 20px;
-  background-color: var(--bg-secondary);
-  color: var(--text-color);
+  background-color: var(--primary-color);
+  color: var(--invert-text);
   border: 3px solid var(--border-color);
   cursor: pointer;
 }
 
 .interest-tag:hover {
   background-color: var(--primary-color);
-  color: var(--invert-text);
+  color: var(--text-color);
 }
 
 .interest-tag.selected {
@@ -1281,6 +1287,30 @@ New Profile page style rules
 .interest-count {
   font-size: 0.9rem;
   color: var(--text-secondary);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.tab-content {
+  width: 100%;
+}
+
+/* Fix overlap issues */
+#profile-editor-content {
+  position: relative;
+}
+
+#profile-editor-content > div {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+}
+
+#profile-editor-content > div:not(.hidden) {
+  position: relative;
 }
 
 /* #profile-discover-column {
@@ -1598,4 +1628,73 @@ New Profile page style rules
   justify-content: start;
   grid-gap: 20px;
   text-align: left;
+}
+
+#profile-editor-skills {
+  overflow-y: auto;
+}
+
+#profile-editor-interests{
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fix width alignment for selected tags and search containers */
+#profile-editor-interests #project-editor-selected-tags,
+#profile-editor-interests #project-editor-tag-search {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#profile-editor-interests .interest-tag.selected {
+  background-color: white;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+#profile-editor-interests .interest-tag.selected:hover {
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+}
+
+#profile-editor-interests .interest-tag .fa-plus {
+  color: var(--invert-text);
+}
+
+#profile-editor-interests .interest-tag .fa-remove {
+  color: var(--primary-color);
+}
+
+#profile-editor-interests .interest-tag:hover .fa-plus {
+  color: var(--primary-color);
+}
+
+#profile-editor-interests .interest-tag.selected:hover .fa-remove {
+  color: var(--invert-text);
+}
+
+.interest-tag-button-blue-selected {
+  background-color: var(--tag-blue-selected);
+  color: black;
+  max-width: 100%;
+}
+
+[data-theme="dark"] .interest-tag-button-blue-selected .fa {
+  color: black !important;
+}
+
+.interest-tag-button-blue-selected:hover{
+  color: var(--main-text);
+}
+
+.interest-tag-button-blue-selected:hover .fa {
+   color: var(--main-text);
+}
+
+[data-theme="dark"] .interest-tag-button-blue-selected:hover .fa {
+  color: white !important;
 }
