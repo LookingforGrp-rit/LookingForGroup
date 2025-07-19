@@ -59,5 +59,5 @@ Reach out to a @LookingforGrp-rit/DevOps team member if you need any assistance.
 [1]: https://www.docker.com/
 [2]: https://www.docker.com/products/docker-desktop/
 [3]: https://www.docker.com/products/ide/
-[4]: ../../
-[5]: ../../.env
+[4]: ../
+[5]: ../.env
