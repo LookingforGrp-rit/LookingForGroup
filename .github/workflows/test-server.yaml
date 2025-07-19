@@ -10,7 +10,7 @@ on:
       - ".github/workflows/test-server.yaml"
 
 jobs:
-  test:
+  test-server:
     runs-on: ubuntu-latest
     environment: Testing
     env:

@@ -10,7 +10,7 @@ on:
       - ".github/workflows/build-client.yml"
 
 jobs:
-  test:
+  test-client:
     runs-on: ubuntu-latest
     environment: Testing
     env:

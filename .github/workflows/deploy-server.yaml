@@ -31,5 +31,5 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/lookingforgrp-rit/lfg-server:latest
-  push-server:
+  deploy-server:
     runs-on: ubuntu-latest

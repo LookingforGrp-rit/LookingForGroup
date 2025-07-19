@@ -9,7 +9,7 @@ on:
       - ".github/workflows/deploy-client.yaml"
 
 jobs:
-  build:
+  build-client:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
