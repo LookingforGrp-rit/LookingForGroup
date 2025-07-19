@@ -1,1 +1,17 @@
+[Unit]
+Description=LFG backend server
+
 [Container]
+ContainerName=systemd-lfg-backend
+
+Image=ghcr.io/lookingforgrp-rit/lfg-server:latest
+
+# Publish the server port, and MySQL port
+PublishPort=127.0.0.1:3000:3000
+PublishPort=127.0.0.1:3306:3306
+
+[Service]
+Restart=always
+
+[Install]
+WantedBy=default.target
