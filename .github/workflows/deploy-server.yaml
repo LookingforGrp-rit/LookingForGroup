@@ -31,5 +31,6 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/lookingforgrp-rit/lfg-server:latest
-  deploy-server:
+  deploy-server-image:
+    needs: build-server-image
     runs-on: ubuntu-latest
