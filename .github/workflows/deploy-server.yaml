@@ -10,7 +10,7 @@ on:
       - ".github/workflows/deploy-server.yaml"
 
 jobs:
-  build:
+  build-server-image:
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -31,3 +31,5 @@ jobs:
           context: .
           push: true
           tags: ghcr.io/lookingforgrp-rit/lfg-server:latest
+  push-server:
+    runs-on: ubuntu-latest
