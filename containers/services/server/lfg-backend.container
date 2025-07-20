@@ -7,11 +7,12 @@ ContainerName=systemd-lfg-backend
 Image=ghcr.io/lookingforgrp-rit/lfg-server:latest
 
 # Publish the server port, and MySQL port
-PublishPort=127.0.0.1:3000:3000
+PublishPort=127.0.0.1:8080:3000
 PublishPort=127.0.0.1:3306:3306
 
 [Service]
 Restart=always
 
 [Install]
+# Start on server boot
 WantedBy=default.target
