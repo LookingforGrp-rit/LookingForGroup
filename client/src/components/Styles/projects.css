@@ -1259,7 +1259,7 @@ Project Creator and Editor style rules
     flex-direction: column;
   }
 
-  .positions-popup-list {
+  #project-team-open-positions-popup .positions-popup-list {
     max-height: 20%;
     overflow-y: auto;
   }
@@ -2785,8 +2785,8 @@ Project Carousel style rules
   border-radius: 10px;
   font-style: normal;
   display: grid;
-  height: calc(90vh - 90px);
-  width: 90vw;
+  height: 100%;
+  width: 40vw;
   max-width: 1000px;
   gap: 30px;
   padding: 70px;
@@ -2797,6 +2797,14 @@ Project Carousel style rules
     'list info' auto
     'close close' 50px /
     300px auto;
+}
+
+.positions-popup-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-left: 50%;
 }
 
 #positions-popup-header {
@@ -2909,6 +2917,20 @@ Project Carousel style rules
   border-radius: 10px;
   padding: 20px;
   width: 100%;
+}
+
+@media only screen and (max-width: 1000px) {
+  .positions-popup-content {
+    flex-direction: column;
+    margin-left: 10px;
+    width: 30vw;
+  }
+
+  #project-open-positions-popup {
+    overflow-y: auto;
+    width: 70vw;
+    height: 80vh;
+  }
 }
 
 .positions-popup-info select {

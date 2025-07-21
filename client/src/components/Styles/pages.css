@@ -43,5 +43,6 @@
     bottom: 0px;
     width: 100%;
     height: calc(100% - 50px);
+    padding-bottom: 60px;
   }
 }
