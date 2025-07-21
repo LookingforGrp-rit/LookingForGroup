@@ -21,8 +21,8 @@ import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
 
-import { GET } from '../api/index';
-import { getUsersById, getAccountInformation } from '../api/users';
+//user utils
+import { getCurrentUsername } from '../api/users.ts';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -57,23 +57,25 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
   useEffect(() => {
     const fetchUsername = async () => {
       try {
-        const response2 = await GET('/api/auth');
+        const res = await getCurrentUsername();
 
-        if (response2.status != 401) {
+        if (res.status == 200 && res.data?.username) {
           loggedIn = true;
-
-          //gets user information to display on header profile dropdown
-          const response = await getAccountInformation(response2.data.data);
-          const profileImgResponse = await getUsersById(response2.data.data);
-
-          setUsername(response.data[0].username);
-          setEmail(response.data[0].primary_email);
-          setProfileImg(profileImgResponse.data[0].profile_image);
+          setUsername(res.data.username);
+          setEmail(res.data.email ?? null);
+          setProfileImg(res.data.profile_image ?? '');
         } else {
+          loggedIn == false;
           setUsername('Guest');
+          setEmail(null);
+          setProfileImg('');
         }
       } catch (err) {
         console.log('Error fetching username: ' + err);
+        loggedIn == false;
+        setUsername('Guest');
+        setEmail(null);
+        setProfileImg('');
       }
     };
 
@@ -88,9 +90,9 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
 
   const handleProfileAccess = async () => {
     // navigate to Profile, attach userID
-    const response = await GET('/api/auth');
-    const { data } = await response.data;
-    navigate(`${paths.routes.NEWPROFILE}?userID=${data}`);
+    const res = await getCurrentUsername();
+    const username = res.data.username;
+    navigate(`${paths.routes.NEWPROFILE}?userID=${username}`);
 
     // Collapse the dropwdown if coming from another user's page
     if (window.location.href.includes("profile")) {

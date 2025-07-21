@@ -1,0 +1,9 @@
+name: LFG Dev
+services:
+  database:
+    container_name: Database
+    image: ghcr.io/lookingforgrp-rit/lookingforgroup-dev-db:latest
+    ports:
+      - "${DB_HOST}:${DB_PORT}:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=${DB_PASS}

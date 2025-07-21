@@ -4,6 +4,10 @@ import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { getProjectFollowing, addProjectFollowing, deleteProjectFollowing } from '../api/users'
 
+//import shares types
+import { Project, ProjectFollowers, ProjectGenres, ProjectTag } from '../../../shared/types.ts'; // wherever your types live
+
+
 //Component that will contain info about a project, used in the discovery page
 //Smaller and more concise than ProjectCard.tsx
 
@@ -13,41 +17,22 @@ import { getProjectFollowing, addProjectFollowing, deleteProjectFollowing } from
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
 
-interface ProjectType {
-  id: number;
-  project_type: string;
-}
-
-interface ProjectTag {
-  id: number;
-  tag: string;
-  type: string;
-}
-
-interface ProjectData {
-  project_id: number;
-  title: string;
-  hook: string;
-  thumbnail: string | null;
-  followers: {
-    count: number;
-    isFollowing: boolean;
-  };
-  project_types: ProjectType[];
-  tags: ProjectTag[];
-}
-
 interface ProjectPanelProps {
-  project: ProjectData;
+  project: Project & {
+    followers: ProjectFollowers;
+    projectType: ProjectGenres[];
+    projectTags: ProjectTag[]
+  };
   userId: number;
 }
 
 export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
   const navigate = useNavigate();
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.project_id}`;
+  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectId}`;
 
   const [followCount, setFollowCount] = useState(project.followers.count);
-  const [isFollowing, setFollowing] = useState(project.followers.isFollowing);
+  //const [isFollowing, setFollowing] = useState(project.followers.isFollowing);
+  const [isFollowing, setFollowing] = useState(false);
 
   // Formats follow-count based on Figma design. Returns a string
   const formatFollowCount = (followers: number): string => {
@@ -107,11 +92,11 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
                   getProjectFollowing(userId);
 
                   if (!isFollowing) {
-                    addProjectFollowing(userId, project.project_id);
+                    addProjectFollowing(userId, project.projectId);
                     setFollowing(true);
                     setFollowCount(followCount + 1);
                   } else {
-                    deleteProjectFollowing(userId, project.project_id);
+                    deleteProjectFollowing(userId, project.projectId);
                     setFollowing(false);
                     setFollowCount(followCount - 1);
                   }
@@ -123,38 +108,39 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
           </div>
         </div>
         <div id="project-panel-tags">
-          {project.project_types.map((projectType: ProjectType) => (
-            <div className='skill-tag-label label-blue' key={projectType.id}>
-              {projectType.project_type}
+          {project.projectType.map((genre) => (
+            <div className='skill-tag-label label-blue' key={genre.typeId}>
+              {genre.label}
             </div>
           ))}
-          {project.tags.map((tag: ProjectTag, index: number) => {
-            let category: string;
-            switch (tag.type) {
-              case 'Design':
-                category = 'red';
-                break;
-              case 'Developer':
-                category = 'yellow';
-                break;
-              case 'Soft':
-                category = 'purple';
-                break;
-              case 'Creative':
-              case 'Games':
-                category = 'green';
-                break;
-              default:
-                category = 'grey';
-            }
-            if (index < 3) {
-              return (
-                <div className={`skill-tag-label label-${category}`} key={tag.id}>
-                  {tag.tag}
-                </div>
-              );
-            }
-          })}
+          {project.projectTags.sort((a, b) => a.position - b.position)
+            .slice(0, 3).map((tag: ProjectTag, index: number) => {
+              let category: string;
+              switch (tag.type) {
+                case 'Designer':
+                  category = 'red';
+                  break;
+                case 'Developer':
+                  category = 'yellow';
+                  break;
+                case 'Soft':
+                  category = 'purple';
+                  break;
+                case 'Creative':
+                case 'Games':
+                  category = 'green';
+                  break;
+                default:
+                  category = 'grey';
+              }
+              if (index < 3) {
+                return (
+                  <div className={`skill-tag-label label-${category}`} key={tag.tagId}>
+                    {tag.label}
+                  </div>
+                );
+              }
+            })}
         </div>
         <div id="quote">{project.hook}</div>
       </div>

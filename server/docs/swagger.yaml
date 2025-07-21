@@ -1,0 +1,2076 @@
+openapi: 3.0.3
+info:
+  title: Looking For Group API
+  version: 1.0.0
+  description: |
+    LFG API Documentation. This will showcase all the endpoints available and how to use them.
+    Note: When accessed directly from the express app, the endpoints will have an additional "/api" prefix.
+    Because of this, please use the vite proxy when reviewing the docs.
+
+paths:
+  # DATASETS
+  /api/datasets/job-titles:
+    get:
+      summary: Returns a list of all job titles
+      tags:
+        - Datasets
+      responses:
+        '200':
+          description: List of all the job titles available
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/JobTitle'
+                  memetype:
+                    type: string
+                    example: application/json
+                examples:
+                  default:
+                    summary: Example job titles list
+                    value:
+                      status: 200
+                      error: null
+                      data:
+                        - titleId: 1
+                          label: Full-Stack Developer
+                        - titleId: 2
+                          label: Front-End Developer
+                        - titleId: 3
+                          label: Back-End Developer
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/datasets/socials:
+    get:
+      summary: Receives list of all socials
+      tags:
+        - Datasets
+      responses:
+        '200':
+          description: A list of social platforms
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Social'
+                  memetype:
+                    type: string
+                    example: application/json
+              examples:
+                default:
+                  summary: Example socials list
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      - websiteId: 1
+                        label: Instagram
+                      - websiteId: 2
+                        label: Twitter
+                      - websiteId: 3
+                        label: Facebook
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/datasets/skills:
+    get:
+      summary: Receives list of all skills
+      tags:
+        - Datasets
+      responses:
+        '200':
+          description: A list of skills
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Skill'
+                  memetype:
+                    type: string
+                    example: application/json
+              examples:
+                default:
+                  summary: Example skill list
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      - skill_id: 1
+                        label: C++
+                        type: Developer
+                      - skill_id: 2
+                        label: CSS
+                        type: Developer
+                      - skill_id: 3
+                        label: C#
+                        type: Developer
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/datasets/project-types:
+    get:
+      summary: Receives list of all project types
+      tags:
+        - Datasets
+      responses:
+        '200':
+          description: A list of project types
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectGenre'
+                  memetype:
+                    type: string
+                    example: application/json
+              examples:
+                default:
+                  summary: Example project types list
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      - typeId: 1
+                        label: Video Game
+                      - typeId: 2
+                        label: Analog Game
+                      - typeId: 3
+                        label: Mobile Application
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/datasets/majors:
+    get:
+      summary: Receives list of all majors
+      tags:
+        - Datasets
+      responses:
+        '200':
+          description: A list of majors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Major'
+                  memetype:
+                    type: string
+                    example: application/json
+              examples:
+                default:
+                  summary: Examples majors list
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      - majorId: 1
+                        label: Animation
+                      - majorId: 2
+                        label: Computer Engineering
+                      - majorId: 3
+                        label: Computing Engineering Technology
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/datasets/tags:
+    get:
+      summary: Receives list of all tags
+      tags:
+        - Datasets
+      responses:
+        '200':
+          description: A list of tags
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+                  memetype:
+                    type: string
+                    example: application/json
+              examples:
+                default:
+                  summary: Example tags list
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      - tagId: 1
+                        label: Indie
+                        type: Creative
+                      - tagId: 2
+                        label: Abstract
+                        type: Creative
+                      - tagId: 3
+                        label: Horror
+                        type: Creative
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # USERS
+  /api/users/get-username:
+    get:
+      summary: Get username through Shibboleth headers
+      tags:
+        - Users
+      security:
+        - shibbolethAuth: []
+      description: |
+        Retrieves the username of a user authenticated via Shibboleth. Needs the uid header
+      parameters:
+        - in: header
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: University ID from the Shibboleth authentication headers
+      responses:
+        '200':
+          description: Username successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      userId:
+                        type: integer
+                  memetype:
+                    type: string
+                    example: application/json
+              examples:
+                default:
+                  summary: Example response
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      username: mistahbones
+                      userId: 18
+                    memetype: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users:
+    get:
+      summary: Get all users
+      tags:
+        - Users
+      responses:
+        '200':
+          description: A list of users
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserDetails'
+                  memetype:
+                    type: string
+                    example: application/json
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}:
+    get:
+      summary: Get a user by ID
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The user ID
+      responses:
+        '200':
+          description: A single user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserDetails'
+                  memetype:
+                    type: string
+                    example: application/json
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Updates user profile information
+      tags:
+        - Users
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The user ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                headline:
+                  type: string
+                pronouns:
+                  type: string
+                jobTitleId:
+                  type: integer
+                MajorId:
+                  type: integer
+                academic_year:
+                  type: string
+                  enum: [Freshman, Sophmore, Junior, Senior, Graduate]
+                location:
+                  type: string
+                funFact:
+                  type: string
+                bio:
+                  type: string
+              example:
+                firstName: Mistah
+                lastName: Bones
+                headline: Sigh..
+                pronouns: they/them
+                jobTitleId: 1
+                majorId: 2
+                academic_year: Senior
+                location: Grave Yard
+                funFact: Bones
+                bio: AHHHHHHHH
+
+      responses:
+        '200':
+          description: Update a single user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserDetails'
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/search-username/{username}:
+    get:
+      summary: Get user by username
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: username
+          required: true
+          schema:
+            type: string
+          description: The username of the user to retrieve
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserPreview'
+                  memetype:
+                    type: string
+                    example: application/json
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/search-email/{email}:
+    get:
+      summary: Get user by email
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: email
+          required: true
+          schema:
+            type: string
+          description: The RIT email of the user to retrieve
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserPreview'
+                  memetype:
+                    type: string
+                    example: application/json
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/account:
+    get:
+      summary: Get user account (requires authentication)
+      tags:
+        - Users
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The ID of the user
+      responses:
+        '200':
+          description: User account info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/User'
+                  memetype:
+                    type: string
+                    example: application/json
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/username:
+    put:
+      summary: Update a user's username (requires authentication)
+      tags:
+        - Users
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - username
+              properties:
+                username:
+                  type: string
+                  description: New username
+      responses:
+        '200':
+          description: Username successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                        example: newUsername
+                    required:
+                      - username
+                  memetype:
+                    type: string
+                    example: application/json
+              examples:
+                default:
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      username: newUsername
+                    memetype: application/json
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/visibility:
+    put:
+      summary: Update a user's visibility (requires authentication)
+      tags:
+        - Users
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: User ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - visibility
+              properties:
+                visibility:
+                  type: integer
+                  enum: [0, 1]
+                  description: visibility (0=private, 1=public)
+      responses:
+        '200':
+          description: Username successfully updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      visibility:
+                        type: integer
+                        enum: [0, 1]
+                        example: 1
+                  memetype:
+                    type: string
+                    example: application/json
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/projects:
+    get:
+      summary: Get current user's own projects
+      description: Returns the list of projects owned by the user identified by userID.
+      tags:
+        - Users
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: User ID to get projects for
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of projects owned by the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectWithFollowers'
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/projects/profile:
+    get:
+      summary: Get another user's projects
+      description: Retrieve projects of a user (not current user)
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: A list of projects for the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectWithFollowers'
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/followings/projects:
+    get:
+      summary: Get projects a user is following
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          description: User ID to get followed projects for
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of projects the user is following
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectWithFollowers'
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/followings/projects/{followId}:
+    post:
+      summary: Follow a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user who is following the project
+          schema:
+            type: integer
+        - name: followId
+          in: path
+          required: true
+          description: ID of the project to follow
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: Project followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectFollowingsResponse'
+              example:
+                status: 201
+                error: null
+                data:
+                  userId: 1
+                  projectId: 2
+                  followedAt: '2025-07-16T12:34:56Z'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Unfollow a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user who is unfollowing the project
+          schema:
+            type: integer
+        - name: followId
+          in: path
+          required: true
+          description: ID of the project to unfollow
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Project unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectFollowingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/followings/people:
+    get:
+      tags:
+        - Users
+      summary: Get list of users that the specified user is following
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of users the current user is following
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId:
+                          type: integer
+                          example: 1
+                        followingId:
+                          type: integer
+                          example: 2
+                        followedAt:
+                          type: string
+                          format: date-time
+                          example: 2025-05-01T10:00:00Z
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}/followings/people/{followId}:
+    post:
+      summary: Follow another user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user initiating the follow
+          schema:
+            type: integer
+        - name: followId
+          in: path
+          required: true
+          description: ID of the user to be followed
+          schema:
+            type: integer
+      responses:
+        '201':
+          description: User followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFollowingsResponse'
+              example:
+                status: 201
+                error: null
+                data:
+                  userId: 1
+                  followingId: 2
+                  followedAt: '2025-07-16T12:34:56Z'
+                memetype: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Unfollow a user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Users
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user who wants to unfollow another user
+          schema:
+            type: integer
+        - name: followId
+          in: path
+          required: true
+          description: ID of the user to be unfollowed
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: User unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFollowingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # PROJECTS
+  /api/projects:
+    get:
+      summary: Get all projects
+      tags:
+        - Projects
+      description: Retrieves a list of all projects.
+      responses:
+        '200':
+          description: A list of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectWithFollowers'
+                  memetype:
+                    type: string
+                    example: application/json
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Create a new project
+      description: Creates a new project using the request body
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProjectsCreateInput'
+      responses:
+        '200':
+          description: Project created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/ProjectWithFollowers'
+                  memetype:
+                    type: string
+                    example: application/json
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}:
+    get:
+      summary: Get project by ID
+      tags:
+        - Projects
+      description: Gets information about a single project by its project ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Project ID
+      responses:
+        '200':
+          description: Project found and returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/ProjectWithFollowers'
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Updates project information
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The project ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                hook:
+                  type: string
+                description:
+                  type: string
+                audience:
+                  type: string
+              example:
+                title: Mistah Bones Awesome Game
+                hook: Mistah Bones Awesomest GAME! PLAY NOW!
+                description: Mistah Bones Game is about Mistah Bones. Explore over three levels.
+                audience: YOU.
+
+      responses:
+        '200':
+          description: Update a single project
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/ProjectDetails'
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete a project by ID
+      description: Deletes a project by its ID.
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: The ID of the project to delete
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Project deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                  memetype:
+                    type: string
+                    example: application/json
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /projects/{id}/thumbnail:
+    put:
+      summary: Update the thumbnail image of a project
+      description: Updates the thumbnail URL of a project by its ID. Only the thumbnail can be updated.
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the project to update
+          required: true
+          schema:
+            type: integer
+            example: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                thumbnail:
+                  type: string
+                  format: uri
+                  example: https://example.com/new-thumbnail.jpg
+              required:
+                - thumbnail
+      responses:
+        '200':
+          description: Thumbnail updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  projectId:
+                    type: integer
+                    example: 42
+                  thumbnail:
+                    type: string
+                    format: uri
+                    example: https://example.com/new-thumbnail.jpg
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/pictures:
+    get:
+      summary: Get project pictures by ID
+      tags:
+        - Projects
+      description: |
+        Gets all images that are with a specific project by the project ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Project ID
+      responses:
+        '200':
+          description: A list of images with the project
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectImage'
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Add a new picture to a project
+      description: Creates a new picture entry associated with a specific project.
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the project to add a picture to
+          required: true
+          schema:
+            type: integer
+            example: 42
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - projectId
+                - image
+              properties:
+                projectId:
+                  type: integer
+                  description: ID of the project
+                  example: 42
+                image:
+                  type: string
+                  format: uri
+                  description: URL of the picture
+                  example: https://example.com/image.jpg
+                altText:
+                  type: string
+                  description: Alternate text for the image
+                  example: Screenshot of the project UI
+      responses:
+        '200':
+          description: Picture added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      imageId:
+                        type: integer
+                        example: 12
+                      projectId:
+                        type: integer
+                        example: 1
+                      image:
+                        type: string
+                        format: uri
+                        example: https://example.com/image.jpg
+                      altText:
+                        type: string
+                        example: Screenshot of the project UI
+                  memetype:
+                    type: string
+                    example: application/json
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Update a picture for a project
+      description: Updates fields of an existing project picture by image ID.
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the picture to update
+          required: true
+          schema:
+            type: integer
+            example: 12
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  description: URL of the updated image
+                  example: https://example.com/new-image.jpg
+                description:
+                  type: string
+                  description: Description or alt text for the image
+                  example: Updated project screenshot
+                isThumbnail:
+                  type: boolean
+                  description: Whether this image should be set as the project thumbnail
+                  example: false
+              additionalProperties: false
+      responses:
+        '200':
+          description: Image updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                    example: true
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+# COMPONANTS
+components:
+  schemas:
+    JobTitle:
+      type: object
+      properties:
+        titleId:
+          type: integer
+        label:
+          type: string
+      example:
+        titleId: 1
+        label: Full-Stack Developer
+
+    Social:
+      type: object
+      properties:
+        websiteId:
+          type: integer
+        label:
+          type: string
+
+    Skill:
+      type: object
+      properties:
+        skill_id:
+          type: integer
+        label:
+          type: string
+        type:
+          type: string
+
+    ProjectGenre:
+      type: object
+      properties:
+        typeId:
+          type: integer
+        label:
+          type: string
+
+    Major:
+      type: object
+      properties:
+        majorId:
+          type: integer
+        label:
+          type: string
+
+    Tag:
+      type: object
+      properties:
+        tagId:
+          type: integer
+        label:
+          type: string
+        type:
+          type: string
+
+    User:
+      type: object
+      properties:
+        userId:
+          type: integer
+        username:
+          type: string
+        ritEmail:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        profileImage:
+          type: string
+          nullable: true
+        headline:
+          type: string
+          nullable: true
+        pronouns:
+          type: string
+          nullable: true
+        jobTitleId:
+          type: integer
+          nullable: true
+        majorId:
+          type: integer
+          nullable: true
+        academic_year:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        funFact:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        visibility:
+          type: integer
+        skills:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              skill:
+                type: string
+              type:
+                type: string
+              position:
+                type: integer
+        socials:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              websiteId:
+                type: integer
+              label:
+                type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        phoneNumber:
+          type: string
+          nullable: true
+        universityId:
+          type: string
+          nullable: true
+
+    UserDetails:
+      type: object
+      properties:
+        userId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        profileImage:
+          type: string
+          nullable: true
+        headline:
+          type: string
+          nullable: true
+        pronouns:
+          type: string
+          nullable: true
+        jobTitle:
+          type: string
+          nullable: true
+        major:
+          type: string
+          nullable: true
+        academic_year:
+          type: string
+          nullable: true
+        location:
+          type: string
+          nullable: true
+        funFact:
+          type: string
+          nullable: true
+        bio:
+          type: string
+          nullable: true
+        skills:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              id:
+                type: integer
+              skill:
+                type: string
+              type:
+                type: string
+              position:
+                type: integer
+        socials:
+          type: array
+          nullable: true
+          items:
+            type: object
+            properties:
+              websiteId:
+                type: integer
+              label:
+                type: string
+
+    UserPreview:
+      type: object
+      properties:
+        userId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        profileImage:
+          type: string
+          nullable: true
+
+    ProjectWithFollowers:
+      type: object
+      properties:
+        projectId:
+          type: integer
+        title:
+          type: string
+        hook:
+          type: string
+        description:
+          type: string
+        thumbnail:
+          type: string
+          nullable: true
+        purpose:
+          type: string
+          nullable: true
+        status:
+          type: string
+        audience:
+          type: string
+          nullable: true
+        userId:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        _count:
+          type: object
+          properties:
+            projectFollowings:
+              type: integer
+        projectGenres:
+          type: array
+          items:
+            type: object
+            properties:
+              projectId:
+                type: integer
+              typeId:
+                type: integer
+              genres:
+                type: object
+                properties:
+                  typeId:
+                    type: integer
+                  label:
+                    type: string
+        projectTags:
+          type: array
+          items:
+            type: object
+            properties:
+              projectId:
+                type: integer
+              tagId:
+                type: integer
+              position:
+                type: integer
+              type:
+                type: string
+              label:
+                type: string
+        projectImages:
+          type: array
+          items:
+            type: object
+            properties:
+              imageId:
+                type: integer
+              image:
+                type: string
+              altText:
+                type: string
+        projectSocials:
+          type: array
+          items:
+            type: object
+            additionalProperties: true
+        jobs:
+          type: array
+          items:
+            type: object
+            properties:
+              projectId:
+                type: integer
+              titleId:
+                type: integer
+              availability:
+                type: string
+              duration:
+                type: string
+              location:
+                type: string
+              compensation:
+                type: string
+              description:
+                type: string
+              createdAt:
+                type: string
+                format: date-time
+              updatedAt:
+                type: string
+                format: date-time
+        members:
+          type: array
+          items:
+            type: object
+            properties:
+              projectId:
+                type: integer
+              userId:
+                type: integer
+              titleId:
+                type: integer
+              permission:
+                type: integer
+        users:
+          type: object
+          nullable: true
+          properties:
+            userId:
+              type: integer
+            username:
+              type: string
+            ritEmail:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            profileImage:
+              type: string
+            headline:
+              type: string
+            pronouns:
+              type: string
+            jobTitleId:
+              type: integer
+            majorId:
+              type: integer
+            academicYear:
+              type: string
+            location:
+              type: string
+            funFact:
+              type: string
+              nullable: true
+            bio:
+              type: string
+            visibility:
+              type: integer
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+            phoneNumber:
+              type: string
+              nullable: true
+            universityId:
+              type: integer
+              nullable: true
+        ProjectGenre:
+          type: array
+          items:
+            type: object
+            properties:
+              typeId:
+                type: integer
+              label:
+                type: string
+        followers:
+          type: object
+          properties:
+            count:
+              type: integer
+
+    ProjectsCreateInput:
+      type: object
+      required:
+        - title
+        - hook
+        - description
+        - status
+      properties:
+        title:
+          type: string
+          maxLength: 150
+        hook:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 2000
+        thumbnail:
+          type: string
+          format: uri
+          nullable: true
+        purpose:
+          type: string
+          enum: [Personal, PortfolioPiece, Academic, CoOp]
+        status:
+          type: string
+          enum: [Planning, Development, PostProduction, Complete]
+        audience:
+          type: string
+          maxLength: 300
+          nullable: true
+        userId:
+          type: integer
+          nullable: true
+
+    ProjectImage:
+      type: object
+      properties:
+        imageId:
+          type: integer
+        url:
+          type: string
+        altText:
+          type: string
+      example:
+        imageId: 2
+        url: http://LGF.com/images/project-101.png
+        altText: Picture
+
+    ProjectFollowingsResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        error:
+          type: string
+          nullable: true
+          example: null
+        data:
+          type: object
+          properties:
+            userId:
+              type: integer
+              example: 1
+            projectId:
+              type: integer
+              example: 42
+            followedAt:
+              type: string
+              format: date-time
+              example: 2025-07-16T12:34:56Z
+        memetype:
+          type: string
+          example: application/json
+
+    UserFollowingsResponse:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        error:
+          type: string
+          nullable: true
+          example: null
+        data:
+          type: object
+          properties:
+            userId:
+              type: integer
+              example: 1
+            followingId:
+              type: integer
+              example: 2
+            followedAt:
+              type: string
+              format: date-time
+              example: 2025-07-16T12:34:56Z
+        memetype:
+          type: string
+          example: application/json
+
+    ErrorMessage:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 500
+        error:
+          type: string
+          example: Internal Server Error
+        data:
+          type: 'null'
+          nullable: true
+          example: null
+        memetype:
+          type: string
+          example: application/json
+      required:
+        - status
+        - error
+        - data
+        - memetype
+
+  responses:
+    InternalServerError:
+      description: An internal server error occurred
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            default:
+              value:
+                status: 500
+                error: Internal Server Error
+                data: null
+                memetype: application/json
+    BadRequest:
+      description: The request was invalid (e.g., malformed parameters)
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            default:
+              value:
+                status: 400
+                error: Invalid parameter(s)
+                data: null
+                memetype: application/json
+    NotFound:
+      description: The requested resource was not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            default:
+              value:
+                status: 404
+                error: Not found
+                data: null
+                memetype: application/json
+    Unauthorized:
+      description: Authentication is required and has failed or has not been provided
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            default:
+              value:
+                status: 401
+                error: Unauthorized
+                data: null
+                memetype: application/json
+    Conflict:
+      description: Conflict to show resource already exists
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            default:
+              value:
+                status: 409
+                error: Resource already exists
+                data: null
+                memetype: application/json

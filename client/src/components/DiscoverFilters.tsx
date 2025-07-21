@@ -9,7 +9,7 @@ import { GET } from '../api/index';
 let activeTagFilters: string[] = [];
 let displayFiltersText = false; // toggles "Applied Filters:" div when necessary
 
-export const DiscoverFilters = ({ category, updateItemList }: { category: String, updateItemList: Function }) => {
+export const DiscoverFilters = ({ category, updateItemList }: { category: string, updateItemList: Function }) => {
   // --------------------
   // Interfaces
   // --------------------
@@ -96,9 +96,9 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
       }
 
       // Construct the finalized version of the data to be moved into filterPopupTabs
-      let tabs = JSON.parse(JSON.stringify((category === 'projects') ? projectTabs : peopleTabs));
+      const tabs = JSON.parse(JSON.stringify((category === 'projects') ? projectTabs : peopleTabs));
       data.forEach((tag: Skill) => {
-        let filterTag = { label: tag.label, type: tag.type };
+        const filterTag = { label: tag.label, type: tag.type };
         let type = tag.type;
 
         if (tag.tag_id) {
@@ -548,7 +548,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
                   console.log('clicked!');
 
                   // Remove tag from list of enabled filters, re-rendering component
-                  let tempList = appliedFiltersDisplay.toSpliced(index, 1);
+                  const tempList = appliedFiltersDisplay.toSpliced(index, 1);
                   activeTagFilters = tempList.map((filter) => filter.tag);
                   setAppliedFiltersDisplay(tempList);
                   updateItemList(activeTagFilters);

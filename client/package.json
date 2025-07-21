@@ -1,18 +1,17 @@
 {
-  "name": "client",
+  "name": "@looking-for-group/client",
   "private": true,
   "version": "0.1.0",
   "type": "module",
   "scripts": {
-    "start": "vite",
+    "dev": "vite",
+    "test": "vitest run",
     "build": "vite build",
-    "build:watch": "vite build --watch",
-    "serve": "vite preview",
-    "lint": "eslint --fix ."
+    "lint": "eslint --fix .",
+    "lint:types": "tsc --project tsconfig.app.json --noEmit"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
-    "client": "file:",
     "password-validator": "^5.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
@@ -21,20 +20,17 @@
     "use-local-storage": "^3.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.20.0",
+    "@looking-for-group/server": "^1.0.0",
+    "@looking-for-group/shared": "^1.0.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.24.1",
     "@typescript-eslint/parser": "^8.24.1",
     "@vitejs/plugin-react-swc": "^3.8.0",
     "esbuild": "^0.25.0",
-    "eslint": "^9.20.1",
-    "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-react-hooks": "^5.1.0",
     "eslint-plugin-react-refresh": "^0.4.19",
-    "typescript": "^5.7.3",
-    "typescript-eslint": "^8.24.1",
-    "vite": "^6.1.0",
+    "jsdom": "^26.1.0",
+    "vite": "^7.0.0",
     "vite-plugin-eslint": "^1.8.1"
   }
 }

@@ -108,7 +108,7 @@ const NewProfile = () => {
   const navigate = useNavigate(); // Hook for navigation
 
   // Get URL parameters to tell what user we're looking for and store it
-  let urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(window.location.search);
   let profileID = urlParams.get('userID');
 
   let displayedProfile: Profile;
