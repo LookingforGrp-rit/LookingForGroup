@@ -5,8 +5,8 @@ import { getByID } from '../../../api/projects';
 import { getUsersById } from '../../../api/users';
 
 interface LinkData {
-  id: Number;
-  url: String;
+  id: number;
+  url: string;
 }
 
 let links = [] as LinkData[];
@@ -96,7 +96,7 @@ export const LinksTab = (props) => {
   // Components ----------------------
 
   const LinkInput = (props) => {
-    let [text, setText] = useState('');
+    const [text, setText] = useState('');
 
     useEffect(() => {
       console.log(props.data);

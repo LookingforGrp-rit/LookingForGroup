@@ -1,25 +1,11 @@
-import util from './index.ts';
-import { User, Skill, Social, ApiResponse } from './types';
-
-const root = '/api'
-
+import { GET, POST, PUT, DELETE } from "./index";
+import type {
+  ApiResponse,
+  User,
+  CreateUserData,
+} from "@looking-for-group/shared";
 
 /* USER CRUD */
-
-
-export interface CreateUserData {
-    firstName: string;
-    lastName: string;
-    headline: string;
-    pronouns: string;
-    jobTitleId: number;
-    majorId: number;
-    academicYear: number;
-    location: string;
-    funFact: string;
-    skills: Skill[];
-    socials: Social[];
-}
 
 //This probably with change with shibbolth???
 /**
@@ -31,62 +17,75 @@ export interface CreateUserData {
  * @returns status - 200 if valid, 400 if not
  */
 export const createNewUser = async (
-    token: string,
-    email: string,
-    userData: CreateUserData
+  token: string,
+  email: string,
+  userData: CreateUserData
 ): Promise<ApiResponse> => {
-    //check if token is valid
-    const apiURL = `${root}/signup/${token}`;
+  //check if token is valid
+  const apiURL = `/signup/${token}`;
 
-    //token validation
-    const tokenRes = await util.GET(apiURL);
-    if (tokenRes.status === 400) {
-        console.log('Token does not exist.');
-        return { status: 400, error: 'Token does not exist.' };
-    }
+  //token validation
+  const tokenRes = await GET(apiURL);
+  if (tokenRes.status === 400) {
+    console.log("Token does not exist.");
+    return { status: 400, error: "Token does not exist." };
+  }
 
-    const userExist = await userInDatabase(email);
-    if (userExist) {
-        return {
-            status: 400,
-            error: 'User is already in database.'
-        }
-    }
+  const userExist = await userInDatabase(email);
+  if (userExist) {
+    return {
+      status: 400,
+      error: "User is already in database.",
+    };
+  }
 
-    const response = await util.POST(apiURL, userData);
-    if (response.status === 400) {
-        console.log('Error creating a new user.');
-        return { status: 400, error: 'Error creating a new user.' };
-    }
-    console.log(`User ${email} created.`);
-    console.log(response);
+  const response = await POST(apiURL, userData);
+  if (response.status === 400) {
+    console.log("Error creating a new user.");
+    return { status: 400, error: "Error creating a new user." };
+  }
+  console.log(`User ${email} created.`);
+  console.log(response);
+  return response;
+};
+
+/**
+ * Checks if the user is logged in (shibboleth) and returns username if they are
+ * @returns ApiResponse with username is logged in, 404 if guest
+ */
+export const getCurrentUsername = async (): Promise<ApiResponse> => {
+  const apiURL = `/users/get-username`;
+
+  try {
+    //can maybe add custom headers here for dev mode
+    const response = await GET(apiURL);
     return response;
-}
+  } catch (e) {
+    console.log("Error fetching username by Shibboleth:", e);
+    return { status: 500, error: "Internal error" };
+  }
+};
 
 /**
  * Gets all data on all public users. Does not return private ones
  * @returns result - JSONified data of all users, else if error, '400'.
  */
-export const getUsers = async (): Promise<ApiResponse<unknown>> => {
-    const apiURL = `${root}/users`;
-    const response = await util.GET(apiURL);
-    //console.log(response);
-    return {
-        status: response.status,
-        data: response.data.data,
-        error: response.error
-    };
-}
+export const getUsers = async (): Promise<ApiResponse> => {
+  const apiURL = `/users`;
+  const response = await GET(apiURL);
+  return response;
+};
 
 /**
  * Gets all data on one specific user, specified by URL.
  * @param id - user_id for user
  * @returns result - JSONified data of specified user.
  */
-export const getUsersById = async (id: number): Promise<unknown> => {
-    const apiURL = `${root}/users/${id}`;
-    return (await util.GET(apiURL)).data;
-}
+export const getUsersById = async (id: number): Promise<ApiResponse> => {
+  const apiURL = `/users/${id}`;
+  const response = await GET(apiURL);
+  return response;
+};
 
 /**
  * Edit information for one user, specified by URL.
@@ -94,11 +93,14 @@ export const getUsersById = async (id: number): Promise<unknown> => {
  * @param data - mapped(eg {data1:'value1', data2:'value2'}) data to change for user
  * @returns response data
  */
-export const editUser = async (id: number, data: Partial<User>): Promise<ApiResponse> => {
-    const apiURL = `${root}/api/users/${id}`;
-    const response = await util.PUT(apiURL, data);
-    return response;
-}
+export const editUser = async (
+  id: number,
+  data: Partial<User>
+): Promise<ApiResponse> => {
+  const apiURL = `/users/${id}`;
+  const response = await PUT(apiURL, data);
+  return response;
+};
 
 /**
  * Removes a user specified by URL.
@@ -106,11 +108,9 @@ export const editUser = async (id: number, data: Partial<User>): Promise<ApiResp
  * @returns response data
  */
 export const deleteUser = async (id: number): Promise<ApiResponse> => {
-    const apiURL = `${root}/users/${id}`;
-    return await util.DELETE(apiURL);
-}
-
-
+  const apiURL = `/users/${id}`;
+  return await DELETE(apiURL);
+};
 
 /* USER VERIFICATION */
 
@@ -120,22 +120,21 @@ export const deleteUser = async (id: number): Promise<ApiResponse> => {
  * @returns result - boolean, true if they exist within database, false if not.
  */
 export const userInDatabase = async (email: string): Promise<boolean> => {
-    const apiURL = `${root}/users/search-email/${email}`;
-    const response = await util.GET(apiURL);
+  const apiURL = `/users/search-email/${email}`;
+  const response = await GET(apiURL);
 
-    if (response.status === 400) {
-        console.log('Error fetching email.');
-        return false;
-    } else {
-        //console.log(response.data.data);
-        if (response.data.data.length === 0) {
-            console.log('No user found with email', email);
-            return false;
-        }
-        console.log('User found with email', email);
-        return true;
+  if (response.status === 400) {
+    console.log("Error fetching email.");
+    return false;
+  } else {
+    if (!response.data) {
+      console.log(response.data);
+      return false;
     }
-}
+    console.log("User found with email", email);
+    return true;
+  }
+};
 
 //NEED TO DO//
 
@@ -147,18 +146,21 @@ export const userInDatabase = async (email: string): Promise<boolean> => {
  * @param image - file, the picture to put into the user's profile
  * @return status, 200 if successful, 400 if not, and data. data=array[object] with the profile_image, string, name of the file
  */
-export const updateProfilePicture = async (id: number, image: File): Promise<ApiResponse> => {
-    const apiURL = `${root}/users/${id}/profile-picture`;
+export const updateProfilePicture = async (
+  id: number,
+  image: File
+): Promise<ApiResponse> => {
+  const apiURL = `/users/${id}/profile-picture`;
 
-    const data = { image: image };
-    const response = await util.PUT(apiURL, data);
-    if (response.status === 400) {
-        console.log('error updating profile picture.');
-        return { status: 400, error: 'Error updating profile picture.' };
-    }
-    console.log('Updated Profile Picture for user.');
-    return response;
-}
+  const data = { image: image };
+  const response = await PUT(apiURL, data);
+  if (response.status === 400) {
+    console.log("error updating profile picture.");
+    return { status: 400, error: "Error updating profile picture." };
+  }
+  console.log("Updated Profile Picture for user.");
+  return response;
+};
 
 /**
  * Update email for a user
@@ -168,28 +170,32 @@ export const updateProfilePicture = async (id: number, image: File): Promise<Api
  * @param _password - the user's current password.
  * @returns response, 200 if valid, 400 if not, 401 if emails do not match.
  */
-export const updateEmail = async (id: number, _email: string, _confirm_email: string, _password: string): Promise<unknown> => {
+export const updateEmail = async (
+  id: number,
+  _email: string,
+  _confirm_email: string,
+  _password: string
+): Promise<ApiResponse> => {
+  if (_email != _confirm_email) {
+    console.log("Not the same email, try again.");
+    return { status: 401, error: "Emails do not match" };
+  }
+  const apiURL = `/users/${id}/email`;
+  const data = {
+    email: _email,
+    confirm: _confirm_email,
+    password: _password,
+  };
 
-    if (_email != _confirm_email) {
-        console.log('Not the same email, try again.');
-        return { status: 401, error: 'Emails do not match' };
-    }
-    const apiURL = `${root}/users/${id}/email`;
-    const data = {
-        email: _email,
-        confirm: _confirm_email,
-        password: _password,
-    };
+  const response = await PUT(apiURL, data);
+  if (response.status === 400) {
+    console.log("error updating email.");
+    return { status: 400, error: "Error updating email." };
+  }
+  console.log("Updated primary email for user.");
 
-    const response = await util.PUT(apiURL, data);
-    if (response.status == 400 || response.status == 401) {
-        console.log('error updating email.');
-        return { status: 400, error: 'Error updating email.' };
-    }
-    console.log('Updated primary email for user.');
-
-    return response.data;
-}
+  return response;
+};
 
 /**
  * Update username through id.
@@ -199,26 +205,31 @@ export const updateEmail = async (id: number, _email: string, _confirm_email: st
  * @param _password - the user's current password.
  * @returns response, 200 if valid, 400 if not, 401 if users do not match.
  */
-export const updateUsername = async (id: number, _username: string, _confirm_user: string, _password: string): Promise<ApiResponse> => {
-    if (_username != _confirm_user) {
-        console.log('Usernames are not the same.');
-        return { status: 401, error: 'Usernames are not the same.' };
-    }
-    const apiURL = `${root}/users/${id}/username`;
-    const data = {
-        username: _username,
-        confirm_user: _confirm_user,
-        password: _password,
-    };
+export const updateUsername = async (
+  id: number,
+  _username: string,
+  _confirm_user: string,
+  _password: string
+): Promise<ApiResponse> => {
+  if (_username != _confirm_user) {
+    console.log("Usernames are not the same.");
+    return { status: 401, error: "Usernames are not the same." };
+  }
+  const apiURL = `/users/${id}/username`;
+  const data = {
+    username: _username,
+    confirm_user: _confirm_user,
+    password: _password,
+  };
 
-    const response = await util.PUT(apiURL, data);
-    if (response.status === 400 || response.status === 401) {
-        console.log('error updating username.');
-        return { status: 400, error: 'Error updating username.' };
-    }
-    console.log('Updated primary username for user.');
-    return { status: 400, data: response.data };
-}
+  const response = await PUT(apiURL, data);
+  if (response.status === 400) {
+    console.log("error updating username.");
+    return { status: 400, error: "Error updating username." };
+  }
+  console.log("Updated primary username for user.");
+  return { status: 400, data: response.data };
+};
 
 /**
  * NEEDS TO CHNAGE FOR SHIBBOLETH
@@ -239,8 +250,6 @@ export const updateUsername = async (id: number, _username: string, _confirm_use
 //         return { status: 400, error: 'Password and confirmation are not the same.' };
 //     }
 //     console.log('Token accepted, email verified.');
-
-
 
 //     //get email if token is valid
 //     let url = `${root}/resets/password/${_token}`;
@@ -271,45 +280,46 @@ export const updateUsername = async (id: number, _username: string, _confirm_use
  * @param id - user_id for the user
  * @returns 400 if error, 200 if valid
  */
-export const updateUserVisibility = async (id: number): Promise<ApiResponse> => {
-    const url = `${root}/users/${id}`;
-    const userResponse = await util.GET(url);
-    if (userResponse.status !== 200) {
-        return {
-            status: 400,
-            error: 'Unable to fetch user data'
-        };
-    }
-
-    const vis = userResponse.data.visibility;
-    let data: { visibility: number };
-
-    if (vis == 1) {
-        data = {
-            visibility: 0,
-        };
-    } else if (vis == 0) {
-        data = {
-            visibility: 1,
-        };
-    } else {
-        return {
-            status: 400,
-            error: 'Invalid visibility error.'
-        };
-    }
-    const result = await editUser(id, data);
-    if (result.status === 400) {
-        console.log('Error editing user.');
-        return { status: 400, error: 'Error editing user.' };
-    }
+export const updateUserVisibility = async (
+  id: number
+): Promise<ApiResponse> => {
+  const url = `/users/${id}`;
+  const userResponse = await GET(url);
+  if (userResponse.status !== 200) {
     return {
-        status: 200,
-        error: null,
-        data: result.data
+      status: 400,
+      error: "Unable to fetch user data",
     };
-}
+  }
 
+  const vis = userResponse.data.visibility;
+  let data: { visibility: number };
+
+  if (vis == 1) {
+    data = {
+      visibility: 0,
+    };
+  } else if (vis == 0) {
+    data = {
+      visibility: 1,
+    };
+  } else {
+    return {
+      status: 400,
+      error: "Invalid visibility error.",
+    };
+  }
+  const result = await editUser(id, data);
+  if (result.status === 400) {
+    console.log("Error editing user.");
+    return { status: 400, error: "Error editing user." };
+  }
+  return {
+    status: 200,
+    error: null,
+    data: result.data,
+  };
+};
 
 /* ACCOUNT INFO/ PASSWORD RESET*/
 
@@ -320,20 +330,19 @@ export const updateUserVisibility = async (id: number): Promise<ApiResponse> => 
  * @returns data - JSONified data from account information. 400 if not valid.
  */
 export const getAccountInformation = async (user_id: number) => {
-    const apiURL = `${root}/users/${user_id}/account`;
-    const response = await util.GET(apiURL);
-    if (response.status === 401 || response.status === 400) {
-        console.log(response.error);
-        return response;
-    }
+  const apiURL = `/users/${user_id}/account`;
+  const response = await GET(apiURL);
+  console.log(response);
+  if (response.status === 401) {
+    console.log(response.error);
+    return response;
+  }
 
-    console.log('User account information recieved');
-    return response.data;
-}
+  console.log("User account information recieved");
+  return response;
+};
 
 //requestPasswordReset
-
-
 
 /* LOOKUP USER */
 
@@ -343,23 +352,23 @@ export const getAccountInformation = async (user_id: number) => {
  * @return data, list of 1 user, or 400 if not successful
  */
 export const getUserByUsername = async (username: string) => {
-    const url = `${root}/users/search-username/${username}`;
-    const response = await util.GET(url);
+  const url = `/users/search-username/${username}`;
+  const response = await GET(url);
 
-    if (response.status === 400) {
-        console.log('Error getting user.');
-        return { status: 400, error: response.error };
-    }
+  if (response.status === 400) {
+    console.log("Error getting user.");
+    return { status: 400, error: response.error };
+  }
 
-    //check if array is not empty
-    if (!response.data) {
-        console.log('No user found');
-        return { status: 404, error: response.error };
-    }
+  //check if array is not empty
+  if (!response.data) {
+    console.log("No user found");
+    return { status: 404, error: response.error };
+  }
 
-    console.log('Data recieved.');
-    return response.data;
-}
+  console.log("Data recieved.");
+  return response;
+};
 
 /**
  * Get User by email
@@ -367,25 +376,23 @@ export const getUserByUsername = async (username: string) => {
  * @return data, list of 1 user, or 400 if not successful
  */
 export const getUserByEmail = async (email: string) => {
-    const url = `${root}/users/search-email/${email}`;
-    const response = await util.GET(url);
+  const url = `/users/search-email/${email}`;
+  const response = await GET(url);
 
-    if (response.status === 400) {
-        console.log('Error getting user.');
-        return { status: 400, error: response.error };
-    }
+  if (response.status === 400) {
+    console.log("Error getting user.");
+    return { status: 400, error: response.error };
+  }
 
-    //check if array is not empty
-    if (!response.data) {
-        console.log('No user found');
-        return { status: 404, error: 'No user found.' };
-    }
+  //check if array is not empty
+  if (!response.data) {
+    console.log("No user found");
+    return { status: 404, error: "No user found." };
+  }
 
-    console.log('Data recieved.');
-    return response.data;
-}
-
-
+  console.log("Data recieved.");
+  return response;
+};
 
 /* USER FOLLOWINGS */
 
@@ -395,15 +402,15 @@ export const getUserByEmail = async (email: string) => {
  * @returns array of users following, or 400 if unsuccessful.
  */
 export const getUserFollowing = async (id: number) => {
-    const url = `${root}/users/${id}/followings/people`;
-    const response = await util.GET(url);
-    if (response.status === 400) {
-        console.log('Error getting users.');
-        return { status: 400, error: response.error };
-    }
-    console.log('Data recieved.');
-    return response.data;
-}
+  const url = `/users/${id}/followings/people`;
+  const response = await GET(url);
+  if (response.status === 400) {
+    console.log("Error getting users.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Data recieved.");
+  return response;
+};
 
 /**
  * Follow a person for a user.
@@ -412,18 +419,18 @@ export const getUserFollowing = async (id: number) => {
  * @returns 201 if successful, 400 if not
  */
 export const addUserFollowing = async (id: number, followID: number) => {
-    const url = `${root}/users/${id}/followings/people`;
-    const data = {
-        userId: followID,
-    };
-    const response = await util.POST(url, data);
-    if (response.status != 201) {
-        console.log('Error creating user following.');
-        return { status: 400, error: response.error };
-    }
-    console.log('Created user following.');
-    return { status: 201, data: response.data };
-}
+  const url = `/users/${id}/followings/people`;
+  const data = {
+    userId: followID,
+  };
+  const response = await POST(url, data);
+  if (response.status === 400) {
+    console.log("Error creating user following.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Created user following.");
+  return { status: 201, data: response.data };
+};
 
 /**
  * Unfollow person for a user. Unauthorized until shibboleth.
@@ -431,21 +438,19 @@ export const addUserFollowing = async (id: number, followID: number) => {
  * @param {number} unfollowID - user id to be unfollowed.
  */
 export const deleteUserFollowing = async (id: number, unfollowID: number) => {
-    const url = `${root}/users/${id}/followings/people`;
-    const data = {
-        userId: unfollowID,
-    };
-    const response = await util.DELETE(url);
+  const url = `/users/${id}/followings/people`;
+  const data = {
+    userId: unfollowID,
+  };
+  const response = await DELETE(url, data);
 
-    if (response.status !=201) {
-        console.log('Error deleting user following.');
-        return { status: 400, error: response.error };
-    }
-    console.log('Deleted user following.');
-    return { status: 201, data: response.data };
-}
-
-
+  if (response.status === 400) {
+    console.log("Error deleting user following.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Deleted user following.");
+  return { status: 201, data: response.data };
+};
 
 /* PROJECT FOLLOWINGS/VISIBILITY */
 
@@ -455,15 +460,15 @@ export const deleteUserFollowing = async (id: number, unfollowID: number) => {
  * @return - array of projects, or 400 if unsuccessful.
  */
 export const getVisibleProjects = async (id: number) => {
-    const url = `${root}/users/${id}/projects/profile`;
-    const response = await util.GET(url);
-    if (response.status === 400) {
-        console.log('Error getting projects.');
-        return { status: 400, error: response.error };
-    }
-    console.log('Data recieved.');
-    return response.data;
-}
+  const url = `/users/${id}/projects/profile`;
+  const response = await GET(url);
+  if (response.status === 400) {
+    console.log("Error getting projects.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Data recieved.");
+  return response;
+};
 
 /**
  * Update the project visibility for a project a user is a member of. Invalid until shibboleth
@@ -472,21 +477,25 @@ export const getVisibleProjects = async (id: number) => {
  * @param _visibility - either "public" or "private", set visibility
  * @return 201 if successful, 400 if not
  */
-export const updateProjectVisibility = async (userID: number, projectID: number, _visibility: string) => {
-    const url = `${root}/users/${userID}/projects/visibility`;
-    const data = {
-        projectId: projectID,
-        visibility: _visibility,
-    };
+export const updateProjectVisibility = async (
+  userID: number,
+  projectID: number,
+  _visibility: string
+) => {
+  const url = `/users/${userID}/projects/visibility`;
+  const data = {
+    projectId: projectID,
+    visibility: _visibility,
+  };
 
-    const response = await util.PUT(url, data);
-    if (response.status != 201) {
-        console.log('Error editing projects.');
-        return { status: 400, error: response.error };
-    }
-    console.log('Data edited.');
-    return { status: 201, data: response.data };
-}
+  const response = await PUT(url, data);
+  if (response.status === 400) {
+    console.log("Error editing projects.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Data edited.");
+  return { status: 201, data: response.data };
+};
 
 /**
  * Get projects the user is following.
@@ -494,15 +503,15 @@ export const updateProjectVisibility = async (userID: number, projectID: number,
  * @returns array of projects, or 400 if error.
  */
 export const getProjectFollowing = async (id: number) => {
-    const url = `${root}/users/${id}/followings/projects`;
-    const response = await util.GET(url);
-    if (response.status === 400) {
-        console.log('Error getting projects.');
-        return { status: 400, error: response.error };
-    }
-    console.log('Data recieved.');
-    return response.data;
-}
+  const url = `/users/${id}/followings/projects`;
+  const response = await GET(url);
+  if (response.status === 400) {
+    console.log("Error getting projects.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Data recieved.");
+  return response;
+};
 
 /**
  * Follow a project for a user.
@@ -511,19 +520,18 @@ export const getProjectFollowing = async (id: number) => {
  * @returns 201 if successful, 400 if not.
  */
 export const addProjectFollowing = async (id: number, projectID: number) => {
-    const url = `${root}/users/${id}/followings/projects`;
-    const data = {
-        projectId: projectID,
-    };
-    const response = await util.POST(url, data);
-    console.log(response);
-    if (response.status != 200) {
-        console.log('Error creating project following, unauthorized.');
-        return { status: response.status, error: response.error };
-    }
-    console.log('Created project following.');
-    return { status: 200, data: id };
-}
+  const url = `/users/${id}/followings/projects`;
+  const data = {
+    projectId: projectID,
+  };
+  const response = await POST(url, data);
+  if (response.status === 400) {
+    console.log("Error creating project following, unauthorized.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Created project following.");
+  return { status: 200, data: id };
+};
 
 /**
  * Unfollow a project for a user.
@@ -532,15 +540,15 @@ export const addProjectFollowing = async (id: number, projectID: number) => {
  * @returns 201 if successful, 400 if not.
  */
 export const deleteProjectFollowing = async (id: number, projID: number) => {
-    const url = `${root}/users/${id}/followings/projects/${projID}`;
-    const response = await util.DELETE(url);
-    if (response.status != 201) {
-        console.log('Error deleting project following.');
-        return { status: 400, error: response.error };
-    }
-    console.log('Deleted project following.');
-    return { status: 201, data: response.data };
-}
+  const url = `/users/${id}/followings/projects/${projID}`;
+  const response = await DELETE(url);
+  if (response.status === 400) {
+    console.log("Error deleting project following.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Deleted project following.");
+  return { status: 201, data: response.data };
+};
 
 //getVisibleProjects
 //updateProjectVisibility
@@ -548,32 +556,28 @@ export const deleteProjectFollowing = async (id: number, projID: number) => {
 //addProjectFollowing
 //deleteProjectFollowing
 
-
-
 export default {
-    createNewUser,
-    getUsers,
-    getUsersById,
-    editUser,
-    deleteUser,
-    userInDatabase,
-    updateProfilePicture,
-    getAccountInformation,
-    updateEmail,
-    updateUsername,
-    //updatePassword,
-    updateUserVisibility,
-    // requestPasswordReset,
-    getUserByUsername,
-    getUserByEmail,
-    getUserFollowing,
-    addUserFollowing,
-    deleteUserFollowing,
-    getVisibleProjects,
-    updateProjectVisibility,
-    getProjectFollowing,
-    addProjectFollowing,
-    deleteProjectFollowing,
-
+  createNewUser,
+  getUsers,
+  getUsersById,
+  editUser,
+  deleteUser,
+  userInDatabase,
+  updateProfilePicture,
+  getAccountInformation,
+  updateEmail,
+  updateUsername,
+  //updatePassword,
+  updateUserVisibility,
+  // requestPasswordReset,
+  getUserByUsername,
+  getUserByEmail,
+  getUserFollowing,
+  addUserFollowing,
+  deleteUserFollowing,
+  getVisibleProjects,
+  updateProjectVisibility,
+  getProjectFollowing,
+  addProjectFollowing,
+  deleteProjectFollowing,
 };
-
