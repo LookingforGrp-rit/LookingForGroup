@@ -31,8 +31,8 @@ const ProfileContactTab = (userID: number) => {
             setFirstName(user.data.first_name)
             setLastName(user.data.last_name)
             setSocials(user.socials)
-            setEmail(user[0].data.email); // Not Yet Exists
-            setPhone(user[0].data.phone); // Not Yet Exists
+            setEmail(user.data.email); // Not Yet Exists
+            setPhone(user.data.phone); // Not Yet Exists
             console.log("success!")
           }
 
