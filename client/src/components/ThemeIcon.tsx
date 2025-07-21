@@ -136,15 +136,35 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(
        
 
        // Handle CSS color names or CSS variables
-      if (color.startsWith('var(') || color.includes('-')) {
+      if (color.startsWith('var(')) {
         // For CSS variables, we can't convert to filter, so return a basic inversion
-        return 'brightness(0) saturate(100%) invert(50%)';
+        return getVariableFilter(color);
       }
 
       // Fallback
       return 'none'; 
     };
 
+    const getVariableFilter = (cssVariable: string): string => {
+    // Map common CSS variables to appropriate filters
+      const variableFilters: { [key: string]: string } = {
+        'var(--primary-color)': 'invert(24%) sepia(91%) saturate(6408%) hue-rotate(2deg) brightness(98%) contrast(119%)',
+        'var(--secondary-color)': 'invert(48%) sepia(79%) saturate(2476%) hue-rotate(86deg) brightness(118%) contrast(119%)',
+        'var(--accent-color)': 'invert(12%) sepia(89%) saturate(3493%) hue-rotate(231deg) brightness(97%) contrast(86%)',
+        'var(--text-color)': theme === 'light' ? 'invert(100%)' : 'invert(0%)',
+        'var(--background-color)': theme === 'light' ? 'invert(0%)' : 'invert(100%)',
+        'var(--border-color)': 'invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(100%) contrast(100%)',
+      };
+
+      if (variableFilters[cssVariable]) {
+       return variableFilters[cssVariable];
+      }
+
+  // Fallback for unknown CSS variables
+  return theme === 'light' 
+    ? 'brightness(0) saturate(100%) invert(0%) sepia(50%) saturate(200%) hue-rotate(0deg) brightness(80%) contrast(120%)'
+    : 'brightness(0) saturate(100%) invert(100%) sepia(50%) saturate(200%) hue-rotate(0deg) brightness(80%) contrast(120%)';
+};
     // Function to get the current color based on the theme
     const getCurrentColor = (): string => {
       // Don't apply color if no custom colors are provided

@@ -153,7 +153,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                 className={activePage === 'My Profile' ? 'active' : ''}
                 onClick={() => handleTextChange('My Profile', paths.routes.NEWPROFILE)}
               >
-                <ThemeIcon src={'assets/white/profile.png'} darkSrc={'assets/white/profile.png'} lightModeColor={'black'} alt={'my profile'} />
+                <ThemeIcon src={'assets/white/profile.png'} lightModeColor={'black'} alt={'my profile'} />
               </button>
             </div>
           </div>
