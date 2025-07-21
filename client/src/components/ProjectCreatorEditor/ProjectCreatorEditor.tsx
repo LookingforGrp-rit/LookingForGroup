@@ -194,7 +194,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     }
     //pops up error text if required fields in general haven't been filled out
     if (!modifiedProject.title || !modifiedProject.description || !modifiedProject.status || !modifiedProject.hook) {
-      let errorText = document.getElementById('invalid-input-error');
+      const errorText = document.getElementById('invalid-input-error');
       setMessage('*Fill out all required info under General before saving!*');
 
       if (errorText) {
@@ -205,7 +205,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
     //pops up error text if no tags have been chosen
     if (modifiedProject.tags.length == 0 || modifiedProject.project_types.length == 0) {
-      let errorText = document.getElementById('invalid-input-error');
+      const errorText = document.getElementById('invalid-input-error');
       setMessage('*Choose a project type and tag under Tags before saving!*');
 
       if (errorText) {

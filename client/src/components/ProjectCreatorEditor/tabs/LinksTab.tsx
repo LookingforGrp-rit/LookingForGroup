@@ -57,9 +57,9 @@ const defaultProject: ProjectData = {
 export const LinksTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, setErrorLinks }) => {
 
   // Icon failure to load by default fix
-  let iconCheck = document.getElementsByClassName("project-link-select");
-  for (let i of iconCheck) {
-    let val = i.getElementsByClassName("value")[0];
+  const iconCheck = document.getElementsByClassName("project-link-select");
+  for (const i of iconCheck) {
+    const val = i.getElementsByClassName("value")[0];
     if (!val.querySelector("i")) {
       // Handling sites with uniquely named icons
       if (val.innerText === "Other") { // Other

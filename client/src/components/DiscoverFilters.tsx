@@ -8,7 +8,7 @@ import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
 let activeTagFilters: string[] = [];
 let displayFiltersText = false; // toggles "Applied Filters:" div when necessary
 
-export const DiscoverFilters = ({ category, updateItemList }: { category: String, updateItemList: Function }) => {
+export const DiscoverFilters = ({ category, updateItemList }: { category: string, updateItemList: Function }) => {
   // --------------------
   // Interfaces
   // --------------------
@@ -68,7 +68,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
     try {
       let response = await fetch(url);
       const result = await response.json();
-      let data = result.data;
+      const data = result.data;
 
       // Need to also pull from majors and job_titles tables
       if (category === 'profiles') {
@@ -88,16 +88,16 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
       } else if (category === 'projects') {
         // Pull Project Types and append it to full data
         response = await fetch(`/api/datasets/project-types`);
-        let extraData = await response.json();
+        const extraData = await response.json();
         if (extraData.data !== undefined) {
           extraData.data.forEach((projectType: Skill) => data.push({ label: projectType.label, type: 'Project Type' }));
         }
       }
 
       // Construct the finalized version of the data to be moved into filterPopupTabs
-      let tabs = JSON.parse(JSON.stringify((category === 'projects') ? projectTabs : peopleTabs));
+      const tabs = JSON.parse(JSON.stringify((category === 'projects') ? projectTabs : peopleTabs));
       data.forEach((tag: Skill) => {
-        let filterTag = { label: tag.label, type: tag.type };
+        const filterTag = { label: tag.label, type: tag.type };
         let type = tag.type;
 
         if (tag.tag_id) {
@@ -547,7 +547,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
                   console.log('clicked!');
 
                   // Remove tag from list of enabled filters, re-rendering component
-                  let tempList = appliedFiltersDisplay.toSpliced(index, 1);
+                  const tempList = appliedFiltersDisplay.toSpliced(index, 1);
                   activeTagFilters = tempList.map((filter) => filter.tag);
                   setAppliedFiltersDisplay(tempList);
                   updateItemList(activeTagFilters);

@@ -94,3 +94,6 @@ server/images/
 
 # SQL files
 *.sql
+
+# Generated files
+**/generated/**

@@ -1,0 +1,34 @@
+name: Deploy Client
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "client/**"
+      - ".github/workflows/deploy-client.yaml"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4.4.0
+        with:
+          node-version: ">=v23.6.0"
+
+      - name: Install Dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Build Client
+        run: npm run build:client
+
+      - name: Upload a Build Artifact
+        uses: actions/upload-artifact@v4.6.2
+        with:
+          name: lfg-client
+          path: client/build
+          retention-days: 3
