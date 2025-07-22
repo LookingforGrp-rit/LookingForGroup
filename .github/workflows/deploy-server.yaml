@@ -7,7 +7,7 @@ on:
     paths:
       - "server/**"
       - "Dockerfile"
-      - "containers/services/server/lfg-backend.container"
+      - "containers/lfg-backend.container"
       - ".github/workflows/deploy-server.yaml"
 
 jobs:
@@ -45,7 +45,7 @@ jobs:
         uses: actions/checkout@v4.2.2
         with:
           sparse-checkout: |
-            containers/services/server/lfg-backend.container
+            containers/lfg-backend.container
 
       - name: Upload New Quadlet File
         uses: appleboy/scp-action@v1.0.0
