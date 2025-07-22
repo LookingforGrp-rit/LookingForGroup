@@ -1432,8 +1432,9 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/pictures/{picId}:
     put:
-      summary: Update a picture for a project
+      summary: Update a pictures for a project
       description: Updates fields of an existing project picture by image ID.
       tags:
         - Projects
@@ -1442,11 +1443,18 @@ paths:
       parameters:
         - name: id
           in: path
-          description: The ID of the picture to update
+          description: The ID of the project
           required: true
           schema:
             type: integer
-            example: 12
+            example: 1
+        - name: picId
+          in: path
+          description: ID of the picture to update
+          required: true
+          schema:
+            type: integer
+            example: 1
       requestBody:
         required: true
         content:
@@ -1499,6 +1507,12 @@ paths:
           schema:
             type: integer
           description: Project ID
+        - name: picId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Picture ID to remove
       responses:
         '501':
           description: NOT DONE
@@ -1590,6 +1604,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/members/{userId}:
     put:
       summary: Update a member in a project
       security:
@@ -1604,6 +1619,12 @@ paths:
           schema:
             type: integer
           description: Project ID
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the member to update
       requestBody:
         required: true
         content:
@@ -1611,13 +1632,8 @@ paths:
             schema:
               type: object
               required:
-                - userId
                 - role
               properties:
-                userId:
-                  type: integer
-                  description: The ID of the user to update
-                  example: 1
                 role:
                   type: string
                   description: Updated role for the user
