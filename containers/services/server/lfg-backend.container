@@ -7,12 +7,12 @@ ContainerName=systemd-lfg-backend
 Image=ghcr.io/lookingforgrp-rit/lfg-server:latest
 Pull=never
 
-# Publish the server port
 PublishPort=127.0.0.1:8081:3000
+
+EnvironmentFile=/home/woot/env/backend.env
 
 [Service]
 Restart=always
-EnvironmentFile=/home/woot/env/backend.env
 
 [Install]
 # Start on server boot
