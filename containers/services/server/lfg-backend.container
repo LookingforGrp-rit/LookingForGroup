@@ -11,6 +11,8 @@ PublishPort=127.0.0.1:8081:3000
 
 EnvironmentFile=/home/woot/env/backend.env
 
+LogDriver=journald
+
 [Service]
 Restart=always
 
