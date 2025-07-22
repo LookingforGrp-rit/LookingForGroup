@@ -21,6 +21,9 @@ import { ThemeIcon } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { devSkills, desSkills } from '../../constants/tags';
 
+//import api utils
+import { getCurrentUsername } from '../../api/users.ts'
+
 type DiscoverAndMeetProps = {
   category: 'projects' | 'profiles';
 };
@@ -130,7 +133,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [itemSearchData, setItemSearchData] = useState([]);
 
   // Stores userId for ability to follow users/projects
-  const [userId, setUserId] = useState(0);
+    const [userId, setUserId] = useState<string>('guest');
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const dataSet = useMemo(() => {
@@ -144,12 +147,15 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
   // Helper functions
   // --------------------
-  const getAuth = async () => {
-    const res = await fetch(`/api/auth`);
-    const data = await res.json();
 
-    if (data.data) {
-      setUserId(data.data);
+    const getAuth = async () => {
+    const res = await getCurrentUsername();
+
+
+    if (res.status === 200 && res.data?.username) {
+      setUserId(res.data.username)
+    } else {
+      setUserId('guest');
     }
   }
 

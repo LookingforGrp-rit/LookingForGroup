@@ -1,0 +1,26 @@
+{
+  "compilerOptions": {
+    "noEmit": true,
+    "target": "esnext",
+    "module": "nodenext",
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true,
+    "verbatimModuleSyntax": true,
+    "allowJs": true,
+    "checkJs": true,
+    "strict": true,
+    "allowUnreachableCode": false,
+    "baseUrl": "./",
+    "typeRoots": ["**/generated/**"],
+    "paths": {
+      "#app.ts": ["./src/app.ts"],
+      "#prisma-models/*": ["./src/models/generated/prisma/*"],
+      "#config/*.ts": ["./src/config/*.ts"],
+      "#services/*.ts": ["./src/services/*.ts"],
+      "#controllers/*.ts": ["./src/api/controllers/*.ts"],
+      "#routes/*.ts": ["./src/api/routes/*.ts"]
+    }
+  },
+  "include": ["src", "tests"],
+  "exclude": ["**/generated/**"]
+}
