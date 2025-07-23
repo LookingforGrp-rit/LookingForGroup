@@ -2,7 +2,7 @@ import { afterAll, beforeAll, expect, test } from "vitest";
 import util from "../src/api/projects.ts";
 import { startTestServer, stopTestServer } from "./server-management.ts";
 
-//
+// file at ./client/src/api/projects.ts
 
 beforeAll(startTestServer);
 
