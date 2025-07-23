@@ -49,7 +49,7 @@ DB_NAME=lfg
 
 ### Setting up the database
 
-To set up the database, you can follow the steps in the User Guide, or take a look at the [containerized services setup](./containers/dev/README.md).
+To set up the database, you can follow the steps in the User Guide, or take a look at the [containerized services setup](./containers/README.md).
 
 ## Development
 

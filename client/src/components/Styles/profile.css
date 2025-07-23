@@ -149,7 +149,7 @@ Profile page style rules
 }
 
 /*make the sections of the profile page the right height*/
-#profile-page > * {
+#profile-page>* {
   height: fit-content;
 }
 
@@ -169,10 +169,10 @@ Profile page style rules
   /*flex-direction: row;*/
   align-items: center;
   /*justify-content: space-between;*/
-  
+
 }
 
-.profile-name-button h4{
+.profile-name-button h4 {
   margin: 0;
   color: var(--primary-color);
 }
@@ -184,7 +184,7 @@ Profile page style rules
   border: none;
 }
 
-#edit-interests-icon{
+#edit-interests-icon {
   width: 25px;
   height: 25px;
   margin: 0;
@@ -235,8 +235,8 @@ Profile page style rules
 }
 
 /*make the skills fit into 2 columns */
-#profile-skill-list > .tag,
-#profile-interests-list > .tag {
+#profile-skill-list>.tag,
+#profile-interests-list>.tag {
   width: 35%;
   margin: 1%;
 }
@@ -255,7 +255,7 @@ Profile page style rules
   justify-content: flex-end;
 }
 
-#profile-project-role > b {
+#profile-project-role>b {
   color: var(--orange);
 }
 
@@ -269,6 +269,7 @@ Profile page style rules
 
 /*css for profile responsiveness---------------------------*/
 @media only screen and (max-width: 800px) {
+
   /*get rid of the grid*/
   #profile-page {
     display: inline;
@@ -280,8 +281,8 @@ Profile page style rules
     margin-left: 5%;
   }
 
-  #profile-skill-list > .tag,
-  #profile-preferences-list > .tag {
+  #profile-skill-list>.tag,
+  #profile-preferences-list>.tag {
     width: 80%;
     margin: 1%;
   }
@@ -1030,7 +1031,7 @@ New Profile page style rules
 @media only screen and (max-width: 1250px) {
   #profile-information-grid {
     display: grid;
-    grid-template: 
+    grid-template:
       'image' auto
       'name' auto
       'buttons' auto
@@ -1043,7 +1044,14 @@ New Profile page style rules
     justify-items: center;
     width: 100%;
     max-width: 90%;
-    }
+  }
+}
+
+@media only screen and (max-width: 500px) {
+
+  #profile-page-content {
+    margin: 0 20px;
+  }
 }
 
 #profile-page-content h2 {
@@ -1056,7 +1064,7 @@ New Profile page style rules
   grid-area: image;
   object-fit: cover;
   border-radius: 10px;
-  border: 2px solid white;
+  border: 2px solid var(--primary-color);
 }
 
 #profile-bio {
@@ -1093,15 +1101,19 @@ New Profile page style rules
   background-color: var(--primary-color);
   border: 0px;
   border-radius: 55px;
-  width: fit-content;
+  width: fit-content !important;
   color: var(--invert-text);
-  padding: 12px 17px;
+  /* padding: 12px 17px; */
   text-align: center;
-  font-size: 24px;
+  /* font-size: 24px; */
   font-weight: bold;
-  line-height: 28px;
+  /* line-height: 28px; */
   letter-spacing: 0%;
-  width: 145px;
+  /* width: 145px; */
+
+  top: -10% !important;
+  padding: 12px 17px !important;
+  font-size: 20px !important;
 }
 
 @media only screen and (max-width: 1250px) {
@@ -1160,7 +1172,7 @@ New Profile page style rules
   gap: 10px;
 }
 
-.profile-extra > img {
+.profile-extra>img {
   height: 24px;
   object-fit: contain;
 }
@@ -1244,9 +1256,9 @@ New Profile page style rules
   color: var(--invert-text);
 }
 
-.selected-interest-tag{
-  
-  border: 3px solid var(--primary-color); 
+.selected-interest-tag {
+
+  border: 3px solid var(--primary-color);
 }
 
 .interest-tag:disabled {
@@ -1259,11 +1271,11 @@ New Profile page style rules
   justify-content: center;
   gap: 16px;
   margin-top: 20px;
-  
+
 }
 
-.save-btn{
-   width: 110px;
+.save-btn {
+  width: 110px;
   height: 40px;
   /* margin: 20px auto 0px auto; */
   padding: 5px 16px;
@@ -1275,8 +1287,8 @@ New Profile page style rules
   font-weight: 700;
 }
 
-.cancel-btn{
-   width: 110px;
+.cancel-btn {
+  width: 110px;
   height: 40px;
   /* margin: 20px auto 0px auto; */
   padding: 5px 16px;
@@ -1289,7 +1301,7 @@ New Profile page style rules
 }
 
 .save-btn:hover,
-.cancel-btn:hover { 
+.cancel-btn:hover {
   transform: scale(1.1);
   transition: 0.2s;
 }
@@ -1312,14 +1324,14 @@ New Profile page style rules
   position: relative;
 }
 
-#profile-editor-content > div {
+#profile-editor-content>div {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
 }
 
-#profile-editor-content > div:not(.hidden) {
+#profile-editor-content>div:not(.hidden) {
   position: relative;
 }
 
@@ -1417,7 +1429,7 @@ New Profile page style rules
 #about-me-buttons {
   grid-area: buttons;
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   /*height:calc(100% - 40px);*/
   height: 100%;
   /* padding:20px 0; */
@@ -1430,22 +1442,25 @@ New Profile page style rules
 
 @media only screen and (max-width: 1200px) {
   .about-me-buttons-minimal {
-  justify-content: flex-start;
-}
+    justify-content: flex-start;
+  }
 }
 
-#about-me-buttons > button {
+#about-me-buttons>button {
   border: none;
   border-radius: 30px;
   background-color: rgba(0, 0, 0, 0);
   height: 100%;
   font-weight: bold;
   font-size: 1.8ch;
-  padding-top: 0;
-  padding-bottom: 0;
+
+  img {
+    /* vertical-align:bottom actually vertically centers these icons within their buttons! */
+    vertical-align: bottom;
+  }
 }
 
-#about-me-buttons > .dropdown-container > button {
+#about-me-buttons>.dropdown-container>button {
   border: none;
   border-radius: 30px;
   background-color: rgba(0, 0, 0, 0);
@@ -1465,7 +1480,7 @@ New Profile page style rules
   background-color: var(--bg-color);
 }
 
-#about-me-buttons > div {
+#about-me-buttons>div {
   height: 100%;
 }
 
@@ -1484,7 +1499,6 @@ New Profile page style rules
 } */
 
 #about-me-buttons img {
-  width: 32px;
   height: 32px;
 }
 
@@ -1576,7 +1590,8 @@ New Profile page style rules
   padding: 5px 15px;
   font-size: medium;
   flex-shrink: 0;
-  height: fit-content; /* Fixes weird issue where height is way taller than text for some reason */
+  height: fit-content;
+  /* Fixes weird issue where height is way taller than text for some reason */
 
   color: var(--tag-text-selected);
 }
@@ -1645,11 +1660,10 @@ New Profile page style rules
   overflow-y: auto;
 }
 
-#profile-editor-interests{
+#profile-editor-interests {
   overflow-y: auto;
   display: flex;
   flex-direction: column;
-  gap: 20px;
   width: 100%;
   height: 100%;
 }
@@ -1698,12 +1712,12 @@ New Profile page style rules
   color: black !important;
 }
 
-.interest-tag-button-blue-selected:hover{
+.interest-tag-button-blue-selected:hover {
   color: var(--main-text);
 }
 
 .interest-tag-button-blue-selected:hover .fa {
-   color: var(--main-text);
+  color: var(--main-text);
 }
 
 [data-theme="dark"] .interest-tag-button-blue-selected:hover .fa {

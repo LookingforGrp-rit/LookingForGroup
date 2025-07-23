@@ -21,7 +21,12 @@
   border-radius: 30px;
   font-size: 1.8ch;
   font-weight: 700;
-  height: 2ch;
+  padding: 0.5ch 1.8ch;
+  white-space: normal;
+  word-break: normal;
+}
+
+.editor-input-item {
 }
 
 #profile-editor-add-link:hover {

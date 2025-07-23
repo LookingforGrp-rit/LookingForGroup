@@ -82,58 +82,78 @@ const Settings = ({ }) => {
   // --------------------
 
   // Confirmation for changed settings
-  const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }) => {
-    return (
-      <div className="small-popup">
-        <h3>Confirm {type}{type === 'Phone' ? ' Number' : ''} Change</h3>
-        <p className="confirm-msg">
-          Are you sure you want to change your {type.toLowerCase()}{type === 'Phone' ? (<span> number</span>) : (<></>)}
-          {prev !== '' ? (
-            <span>
-              &#32;{' '}from{' '}
-              <span className="confirm-change-item">{type === 'Username' ? `@${prev}` : prev}</span>
-            </span>
-          ) : (
-            <></>
-          )}
-          {cur !== '' ? (
-            <span>
-              &#32;{' '}to{' '}
-              <span className="confirm-change-item">{type === 'Username' ? `@${cur}` : cur}</span>
-            </span>
-          ) : (
-            <></>
-          )}
-          ?
-        </p>
-        <div className="confirm-deny-btns">
-          <PopupButton
-            className="confirm-btn"
-            callback={async () => {
-              // Displays success message on parent popup
-              const onSuccess = (status) => {
-                // Feedback popup
-                setSuccess(`Your ${type.toLowerCase()} has been updated!`);
-              };
+const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }) => {
+  const [password, setPassword] = useState('');
 
-              const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
-              const url = `/api/users/${userInfo.user_id}/${typeToChange}`;
-              const response = await sendPut(url, apiParams, onSuccess);
+  return (
+    <div className="small-popup">
+      <h3>Confirm {type}{type === 'Phone' ? ' Number' : ''} Change</h3>
+      <p className="confirm-msg">
+        Are you sure you want to change your {type.toLowerCase()}
+        {type === 'Phone' ? (<span> number</span>) : (<></>)}
+        {prev !== '' ? (
+          <span>
+            &#32;{' '}from{' '}
+            <span className="confirm-change-item">{type === 'Username' ? `@${prev}` : prev}</span>
+          </span>
+        ) : (<></>)}
+        {cur !== '' ? (
+          <span>
+            &#32;{' '}to{' '}
+            <span className="confirm-change-item">{type === 'Username' ? `@${cur}` : cur}</span>
+          </span>
+        ) : (<></>)}
+        ?
+      </p>
 
-              // If it returns back with an error, display it on parent popup
-              if (response !== undefined && response.error) {
-                setError(response.error);
-              }
-            }}
-          >
-            Submit
-          </PopupButton>
-          <PopupButton className="deny-btn">Cancel</PopupButton>
-        </div>
+      {/* Password confirmation input */}
+      <div className="input-group">
+        <label htmlFor="password">Enter your password to confirm:</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="confirm-password-input"
+          placeholder="Password"
+        />
       </div>
-    );
-  };
 
+      <div className="confirm-deny-btns">
+        <PopupButton
+          className="confirm-btn"
+          callback={async () => {
+            // If password is empty, show error and abort submission
+            if (!password.trim()) {
+              setError('Password is required to confirm this change.');
+              return;
+            }
+
+            const onSuccess = (status) => {
+              // setSuccess(`Your ${type.toLowerCase()} has been updated!`);
+              location.reload();
+            };
+
+            const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
+            const url = `/api/users/${userInfo.user_id}/${typeToChange}`;
+
+            // Include password in apiParams when sending request
+            const response = await sendPut(url, { ...apiParams, password }, onSuccess);
+
+            // If it returns back with an error, display it on parent popup
+            if (response !== undefined && response.error) {
+              setError(response.error);
+            }
+          }}
+        >
+          Submit
+        </PopupButton>
+
+        <PopupButton className="deny-btn">Cancel</PopupButton>
+      </div>
+    </div>
+  );
+};
   // User form for changing username/password/email
   const ChangeForm = ({ type }) => {
     // Variables
