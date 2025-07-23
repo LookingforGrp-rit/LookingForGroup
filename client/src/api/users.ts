@@ -78,10 +78,10 @@ export const getUsers = async (): Promise<ApiResponse> => {
 
 /**
  * Gets all data on one specific user, specified by URL.
- * @param id - user_id for user
+ * @param id - university id for user
  * @returns result - JSONified data of specified user.
  */
-export const getUsersById = async (id: number): Promise<ApiResponse> => {
+export const getUsersById = async (id: string): Promise<ApiResponse> => {
   const apiURL = `/users/${id}`;
   const response = await GET(apiURL);
   return response;
@@ -332,13 +332,13 @@ export const updateUserVisibility = async (
 export const getAccountInformation = async (user_id: number) => {
   const apiURL = `/users/${user_id}/account`;
   const response = await GET(apiURL);
-  console.log(response);
+  //console.log(response);
   if (response.status === 401) {
-    console.log(response.error);
+    //console.log(response.error);
     return response;
   }
 
-  console.log("User account information recieved");
+  //console.log("User account information recieved");
   return response;
 };
 
@@ -350,11 +350,12 @@ export const getAccountInformation = async (user_id: number) => {
  * Get User by Username
  * @param username - Username of user to be recieved
  * @return data, list of 1 user, or 400 if not successful
+ * DOES NOT NEED USERNAME, requires UID!
  */
 export const getUserByUsername = async (username: string) => {
   const url = `/users/search-username/${username}`;
   const response = await GET(url);
-
+  console.log(response);
   if (response.status === 400) {
     console.log("Error getting user.");
     return { status: 400, error: response.error };
