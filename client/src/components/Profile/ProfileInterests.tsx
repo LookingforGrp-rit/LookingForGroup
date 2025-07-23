@@ -110,7 +110,6 @@ export const ProfileInterests = ({ user, isUsersProfile }) => {
           </small>
         )}
       </div>
-
       <div id="profile-interests-list" className="profile-list">
         {interestsList.length > 0 ? ( interestsList ) : ( <p 
         style={{ 

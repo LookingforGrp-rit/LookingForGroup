@@ -153,7 +153,6 @@ export const InterestTab = (props: { profile: ProfileData}) => {
 
         </div>
       </div>
-
       <div id="project-editor-tag-search">
           <SearchBar dataSets={[{ data: interests.map(interest => ({name: interest})) }]} 
           onSearch={Search} 

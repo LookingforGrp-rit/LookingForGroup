@@ -761,6 +761,12 @@ Sidebar Nav style rules
   }
 }
 
+@media only screen and (max-width: 500px) {
+  .containerButtonSideBar {
+    gap: 10px;
+  }
+}
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -820,6 +826,11 @@ Page popup style rules
     width: 64vw; */
     /* height: 95vw; */
   }
+
+  /* Smaller popups within another popup should scale */
+  .popup .popup {
+    max-width: 50vw;
+  }  
 }
 
 .popup-container {
@@ -898,6 +909,10 @@ Page popup style rules
 .popup-close:hover {
   /* background-color: var(--lightGray) !important; */
   cursor: pointer;
+}
+
+.popup-close:disabled {
+  cursor: default;
 }
 
 #popup-close img {
@@ -1236,6 +1251,12 @@ Header style rules
   background-color: var(--header-color);
 }
 
+@media only screen and (max-width: 400px) {
+  #header {
+    width: 85%;
+  }
+}
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1461,9 +1482,13 @@ Scrollbar style rules
 
 /* Track */
 ::-webkit-scrollbar-track {
-  border: 2px solid var(--header-color);
-  border-radius: 10px;
+  /* border: 2px solid var(--header-color);
+  border-radius: 10px; */
 }
+
+/* ::-webkit-scrollbar-button {
+  display: none;
+} */
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
@@ -1556,6 +1581,8 @@ Image Carousel style rules
   background: none;
   border: none;
   border-radius: 50px;
+
+  animation: fadeIn 0.15s ease-in-out;
 
   img {
     width: 20px;
