@@ -1,6 +1,6 @@
 # LFG Containerized Development Services
 
-This is the home of all of the Docker based services for the development of Looking for Group.
+This is the home of all of the container based services used by the Looking for Group project.
 
 ## Developers
 
