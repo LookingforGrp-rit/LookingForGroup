@@ -2,6 +2,8 @@ import { afterAll, beforeAll, expect, test } from "vitest";
 import util from "../src/api/index.js";
 import { startTestServer, stopTestServer } from "./server-management";
 
+// file found in ./client/src/api/index.ts
+
 beforeAll(startTestServer);
 
 afterAll(stopTestServer);
@@ -25,3 +27,6 @@ test("local: Test gets projects", async () => {
   const result = await util.GET("/projects");
   expect(result.status).toBe(200);
 });
+
+
+// write and check tests for put, post, and delete. This is the main thing we are leaving to fall 2025 group. You'll need to write the basic functions leveraging shibboleth headers and authentication.
