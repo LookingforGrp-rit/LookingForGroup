@@ -9,7 +9,7 @@ on:
       - ".github/workflows/deploy-client.yaml"
 
 jobs:
-  build:
+  build-client:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -31,4 +31,23 @@ jobs:
         with:
           name: lfg-client
           path: client/build
-          retention-days: 3
+          retention-days: 2
+
+  deploy-client:
+    runs-on: ubuntu-latest
+    environment: Deployment
+    steps:
+      - name: Download a Build Artifact
+        uses: actions/download-artifact@v4.3.0
+        with:
+          name: lfg-client
+          path: lfg-client
+
+      - name: Deploy Client Build
+        uses: appleboy/scp-action@v1.0.0
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          password: ${{ secrets.SERVER_PASS }}
+          source: ./lfg-client/*
+          target: ~/lfg.gccis.rit.edu

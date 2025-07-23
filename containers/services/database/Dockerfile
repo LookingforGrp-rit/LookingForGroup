@@ -1,4 +1,4 @@
-FROM mysql:8.0.42
+FROM mysql:8.4.5
 
 ENV MYSQL_DATABASE=lfg
 

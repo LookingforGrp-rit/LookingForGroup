@@ -10,15 +10,15 @@ on:
       - ".github/workflows/build-client.yml"
 
 jobs:
-  test:
+  test-client:
     runs-on: ubuntu-latest
     environment: Testing
     env:
-      DB_USER: ${{secrets.DB_USER}}
-      DB_PASS: ${{secrets.DB_PASS}}
-      DB_HOST: ${{secrets.DB_HOST}}
-      DB_PORT: ${{secrets.DB_PORT}}
-      DB_NAME: ${{secrets.DB_NAME}}
+      DB_USER: ${{ secrets.DB_USER }}
+      DB_PASS: ${{ secrets.DB_PASS }}
+      DB_HOST: ${{ secrets.DB_HOST }}
+      DB_PORT: ${{ secrets.DB_PORT }}
+      DB_NAME: ${{ secrets.DB_NAME }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4.2.2
@@ -43,8 +43,8 @@ jobs:
       - name: Start Docker Compose Services
         run: npm run compose:up
 
-      - name: Give MySQL time to start
-        run: sleep 10
+      - name: Give MySQL Time to Start
+        run: sleep 5
 
       - name: Run Tests
         run: npm run test:client
