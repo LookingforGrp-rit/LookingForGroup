@@ -249,62 +249,44 @@ const NewProfile = () => {
   // --------------------
   // Components
   // --------------------
-  const aboutMeButtons = isUsersProfile ? (
-    <>
-      {
+
+  // Nothing in aboutMeButtons has functionality coded
+  // There are a few options for which icons/buttons to end up including, and the order to include them in
+  // The code features two different types of "follow" buttons, one as an icon, and one as a button (the icon is currently in use.)
+
+  // Each profile currently displays a hardcoded "example" link to Instagram and LinkedIn
+  const aboutMeButtons =
+    <div id="about-me-buttons">
+
+      <button onClick={() => { window.open('https://www.linkedin.com/', '_blank'); }}>
+        <ThemeIcon
+          light={'/assets/black/linkedIn_black.png'}
+          dark={'/assets/white/linkedIn_white.png'}
+          alt={'LinkedIn'}
+        />
+      </button>
+
+      <button onClick={() => { window.open('https://www.instagram.com/', '_blank'); }}>
+        <ThemeIcon
+          light={'/assets/black/instagram_black.png'}
+          dark={'/assets/white/instagram_white.png'}
+          alt={'Instagram'}
+        />
+      </button>
+
+      {/*  Is it the user's page? If so - show 'Edit' profile button. If not, show follow button and dropdown. */}
+      {isUsersProfile ? (
+        <ProfileEditPopup />
+      ) : (
         <div id="about-me-buttons">
-          <button
-            onClick={() => {
-              window.open('https://www.linkedin.com/', '_blank');
-            }}
-          >
-            <ThemeIcon
-              light={'/assets/black/linkedIn_black.png'}
-              dark={'/assets/white/linkedIn_white.png'}
-              alt={'LinkedIn'}
-            />
-          </button>
-          <button
-            onClick={() => {
-              window.open('https://www.instagram.com/', '_blank');
-            }}
-          >
-            <ThemeIcon
-              light={'/assets/black/instagram_black.png'}
-              dark={'/assets/white/instagram_white.png'}
-              alt={'Instagram'}
-            />
-          </button>
-          <ProfileEditPopup />
-        </div>
-      }
-    </>
-  ) : (
-    <>
-      {
-        <div id="about-me-buttons" className="about-me-buttons-minimal">
-          <button>
-            <ThemeIcon
-              light={'/assets/linkedIn_logo_light.png'}
-              dark={'/assets/linkedIn_logo_dark.png'}
-              alt={'LinkedIn'}
-            />
-          </button>
-          <button>
-            <ThemeIcon
-              light={'/assets/instagram_logo_light.png'}
-              dark={'/assets/instagram_logo_dark.png'}
-              alt={'Instagram'}
-            />
-          </button>
           <button>
             <ThemeIcon
               light={'/assets/follow_user_light.png'}
               dark={'/assets/follow_user_dark.png'}
-              alt={'Like/Follow'}
+              alt={'Follow'}
             />
           </button>
-          {/* TO-DO: Implement Share, Block, and Report functionality */}
+
           <Dropdown>
             <DropdownButton>
               <ThemeIcon
@@ -331,10 +313,11 @@ const NewProfile = () => {
               </div>
             </DropdownContent>
           </Dropdown>
+          {/* Alternate follow button (unused): */}
+          {/* <button id="profile-follow-button" onClick={followUser}>Follow</button> */}
         </div>
-      }
-    </>
-  );
+      )}
+    </div>
 
   // --------------------
   // Final component
@@ -409,14 +392,6 @@ const NewProfile = () => {
           </div>
 
           <div id="profile-info-description">{displayedProfile.bio}</div>
-          {/*Only loads follow button if not on own page*/}
-          {isUsersProfile ? (
-            <></>
-          ) : (
-            <button id="profile-follow-button" onClick={followUser}>
-              Follow
-            </button>
-          )}
 
           <div id="profile-info-funfact">
             <span id="fun-fact-start">

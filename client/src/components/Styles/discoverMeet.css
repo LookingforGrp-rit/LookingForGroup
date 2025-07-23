@@ -548,6 +548,7 @@ Discover and Meet page style rules
   background-color: var(--tag-red-unselected);
   border: 2px solid var(--tag-red-unselected-border);
   color: var(--tag-text-unselected-red);
+  max-width: 100%;
 
   .fa {
     color: var(--tag-text-unselected-red) !important;
@@ -588,6 +589,7 @@ Discover and Meet page style rules
   background-color: var(--tag-yellow-unselected);
   border: 2px solid var(--tag-yellow-unselected-border);
   color: var(--tag-text-unselected-yellow);
+  max-width: 100%;
 
   .fa {
     color: var(--tag-text-unselected-yellow) !important;
@@ -628,6 +630,7 @@ Discover and Meet page style rules
   background-color: var(--tag-blue-unselected);
   border: 2px solid var(--tag-blue-unselected-border);
   color: var(--tag-text-unselected-blue);
+  max-width: 100%;
 
   .fa {
     color: var(--tag-text-unselected-blue) !important;
@@ -648,6 +651,7 @@ Discover and Meet page style rules
   background-color: var(--tag-purple-unselected);
   border: 2px solid var(--tag-purple-unselected-border);
   color: var(--tag-text-unselected-purple);
+  max-width: 100%;
 
   .fa {
     color: var(--tag-text-unselected-purple) !important;
