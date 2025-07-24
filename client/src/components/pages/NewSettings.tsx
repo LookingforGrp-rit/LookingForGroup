@@ -85,7 +85,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
 
               const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
               const url = `/api/users/${userInfo.userId}/${typeToChange}`;
-              const response = await sendPut(url, apiParams, onSuccess);            // possible break
+              const response =  sendPut(url, apiParams, onSuccess);            // possible break
 
 
   // git merge 07/24/2025: Yevhenii Shyshko
