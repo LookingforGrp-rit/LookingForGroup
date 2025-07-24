@@ -32,10 +32,10 @@ interface ProjectData {
   description: string;
   hook: string;
   images: Image[];
-  jobs: { title_id: number; job_title: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { first_name: string, last_name: string, job_title: string, profile_image: string, user_id: number }[];
-  project_id?: number;
-  project_types: { id: number, project_type: string }[];
+  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
+  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number }[];
+  projectId?: number;
+  projectTypes: { id: number, projectType: string }[];
   purpose: string;
   socials: { id: number, url: string }[];
   status: string;
@@ -46,11 +46,11 @@ interface ProjectData {
 }
 
 interface User {
-  first_name: string,
-  last_name: string,
+  firstName: string,
+  lastName: string,
   username: string,
-  primary_email: string,
-  user_id: number
+  primaryEmail: string,
+  userId: number
 }
 
 interface Props {
@@ -68,7 +68,7 @@ const emptyProject: ProjectData = {
   images: [],
   jobs: [],
   members: [],
-  project_types: [],
+  projectTypes: [],
   purpose: '',
   socials: [],
   status: '',
@@ -125,7 +125,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
             return;
           }
 
-          projectData.userId = user?.user_id;
+          projectData.userId = user?.userId;
 
           // save project data
           setProjectData(projectData);
@@ -146,22 +146,22 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       const makeDefaultProjectData = async () => {
         // adjust default and set as project data
         const projectData = emptyProject;
-        projectData.userId = user?.user_id;
+        projectData.userId = user?.userId;
 
         // Get user profile image
         try {
-          const response = await fetch(`/api/users/${user?.user_id}`);
+          const response = await fetch(`/api/users/${user?.userId}`);
           const userResponse = await response.json();
           const data = userResponse.data[0];
 
           // Add creator as Project Lead
           const member = {
-            first_name: user?.first_name || '',
-            last_name: user?.last_name || '',
-            job_title: 'Project Lead',
-            title_id: 73,
-            profile_image: data?.profile_image || '',
-            user_id: user?.user_id || 0
+            firstName: user?.firstName || '',
+            lastName: user?.lastName || '',
+            jobTitle: 'Project Lead',
+            titleId: 73,
+            profileImage: data?.profileImage || '',
+            userId: user?.userId || 0
           };
 
           projectData.members = [member];
@@ -204,7 +204,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     }
 
     //pops up error text if no tags have been chosen
-    if (modifiedProject.tags.length == 0 || modifiedProject.project_types.length == 0) {
+    if (modifiedProject.tags.length == 0 || modifiedProject.projectTypes.length == 0) {
       const errorText = document.getElementById('invalid-input-error');
       setMessage('*Choose a project type and tag under Tags before saving!*');
 
