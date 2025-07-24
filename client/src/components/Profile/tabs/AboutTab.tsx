@@ -2,7 +2,10 @@ import { useState, useEffect } from 'react';
 import { ProfileData } from '../ProfileEditPopup';
 import { RoleSelector } from '../../RoleSelector';
 import { MajorSelector } from '../../MajorSelector';
-import { ImageUploader, uploadImage } from '../../ImageUploader';
+import { ImageUploader } from '../../ImageUploader';
+
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
 
 // Methods
 const setUpInputs = async (profileData: ProfileData) => {
@@ -42,7 +45,7 @@ const setUpInputs = async (profileData: ProfileData) => {
   pairInputToData('funFact', profileData.fun_fact);
   pairInputToData('bio', profileData.bio);
   // Load in the profile picture
-  uploadImage(`/images/profiles/${profileData.profile_image}`);
+  <ImageUploader initialImageUrl={`${API_BASE}/images/profiles/${profileData.profile_image}`} />
 };
 
 // Components
@@ -75,20 +78,45 @@ const TextArea = (props: {
 };
 
 // Main Component
-export const AboutTab = (props: { profile: ProfileData }) => {
+export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
+  profile: ProfileData; 
+  selectedImageFile: File | null;
+  setSelectedImageFile: (file: File) => void;
+}) => {
+
+  // Preview URL for profile image
+  const [previewUrl, setPreviewUrl] = useState<string>(`${API_BASE}/images/profiles/${profile.profile_image}`);
+
   // Effects
+  // Set up profile input on first load
   useEffect(() => {
     const setUp = async () => {
-      await setUpInputs(props.profile);
+      await setUpInputs(profile);
     };
     setUp();
   }, []);
+
+  // Update preview image when selected image changes
+  useEffect(() => {
+  if (selectedImageFile) {
+    const imgLink = URL.createObjectURL(selectedImageFile);
+    setPreviewUrl(imgLink);
+    return () => URL.revokeObjectURL(imgLink);
+  } else {
+    setPreviewUrl(`${API_BASE}/images/profiles/${profile.profile_image}`);
+  }
+}, [selectedImageFile, profile.profile_image]);
+
+  // Set new image when one is picked from uploader
+  const handleFileSelected = (file: File) => {
+  setSelectedImageFile(file);
+};
 
   return (
     <div id="profile-editor-about" className="edit-profile-body about">
       <div className="edit-profile-section-1">
         <div id="profile-editor-add-image" className="edit-profile-image">
-          <ImageUploader />
+          <ImageUploader initialImageUrl={previewUrl} onFileSelected={handleFileSelected} />
         </div>
 
         <div className="about-row row-1">
@@ -136,7 +164,7 @@ export const AboutTab = (props: { profile: ProfileData }) => {
         <TextArea
           title={'Personal Quote'}
           description={'Write a fun and catchy phrase that captures your unique personality!'}
-          count={props.profile.headline ? props.profile.headline.length : 0}
+          count={profile.headline ? profile.headline.length : 0}
           maxLength={100}
           id={'headline'}
         />
@@ -144,7 +172,7 @@ export const AboutTab = (props: { profile: ProfileData }) => {
         <TextArea
           title={'Fun Fact'}
           description={'Share a fun fact about yourself that will surprise others!'}
-          count={props.profile.fun_fact ? props.profile.fun_fact.length : 0}
+          count={profile.fun_fact ? profile.fun_fact.length : 0}
           maxLength={100}
           id={'funFact'}
         />
@@ -156,7 +184,7 @@ export const AboutTab = (props: { profile: ProfileData }) => {
           description={
             'Share a brief overview of who you are, your interests, and what drives you!'
           }
-          count={props.profile.bio ? props.profile.bio.length : 0}
+          count={profile.bio ? profile.bio.length : 0}
           maxLength={600}
           id={'bio'}
         />

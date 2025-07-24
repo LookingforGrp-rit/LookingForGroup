@@ -5,6 +5,9 @@ import image2 from '../images/banner.png';
 import image3 from '../images/tall_img.png';
 import { ThemeIcon } from './ThemeIcon';
 
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 //To-do:
 //Finish Discover page version of this component
 
@@ -101,7 +104,7 @@ export const ImageCarousel = ({
               onMouseLeave={() => handleHover(false)}
             >
               {dataList.map((image, index) => {
-                const imageLink = runningServer ? `/images/projects/${image}` : image;
+                const imageLink = runningServer ? `${API_BASE}/images/projects/${image}` : image;
                 return (
                   <div
                     className="project-image-carousel-item"

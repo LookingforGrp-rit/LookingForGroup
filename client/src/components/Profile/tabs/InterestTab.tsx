@@ -18,6 +18,7 @@ export const InterestTab = (props: { profile: ProfileData}) => {
   const [showPopup, setShowPopup] = useState(false);
   const [filteredInterests, setFilteredInterests] = useState<string[]>(interests);
   const user = useMemo(() => props.profile, [props.profile]);
+  const [noResults, setNoResults] = useState(false);
 
   useEffect(() => {
   // Force hidden state on initial render unless this is the active tab
@@ -71,11 +72,13 @@ export const InterestTab = (props: { profile: ProfileData}) => {
     if (!results || results.length === 0) {
       //setTimeout to avoid crashing error
       // If no search results, show all interests  
+      setNoResults(false); 
       setTimeout(() => setFilteredInterests(interests), 0);
       return;
     }
     // Filter interests based on search results
     const matchedInterests = results[0].map(result => result.name || result);
+    matchedInterests.length === 0 ? setNoResults(true) : setNoResults(false);
     // setTimeout to avoid crashing error
     setTimeout(() => setFilteredInterests(matchedInterests), 0);
   };
@@ -150,19 +153,19 @@ export const InterestTab = (props: { profile: ProfileData}) => {
 
         </div>
       </div>
-
       <div id="project-editor-tag-search">
           <SearchBar dataSets={[{ data: interests.map(interest => ({name: interest})) }]} 
           onSearch={Search} 
           />
 
           <h3>Available Interests:</h3>
+          {noResults && <div className="no-results-message">No results found!</div>}
           <div id="profile-available-interests" className="interests-selection">
             {filteredInterests.map((interest) => (
               <button
                 key={interest}
                 type="button"
-                className={`interest-tag ${selectedInterests.includes(interest) ? 'selected' : ''}`}
+                className={`tag-button tag-button-blue-${selectedInterests.includes(interest) ? 'selected' : 'unselected'}`}
                 onClick={(e) => { 
                     e.preventDefault(); // Prevent any default behavior
                     toggleInterest(interest)

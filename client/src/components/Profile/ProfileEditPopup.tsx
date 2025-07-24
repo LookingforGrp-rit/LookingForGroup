@@ -49,11 +49,29 @@ export interface ProfileData {
 let profile: ProfileData;
 const pageTabs = ['About', 'Projects', 'Skills', 'Interests', 'Links'];
 
-// Functions
+export const ProfileEditPopup = () => {
+  // Keeps track of what tab we are in
+  let currentTab = 0;
+  // Holds new profile image if one is selected
+  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+
+  // Send selected image to server for save
+  const saveImage = async (userID) => {
+  if (!selectedImageFile) return;
+  // saves the profile pic if there has been a change
+  const formData = new FormData();
+  formData.append('image', selectedImageFile);
+
+  await fetch(`/api/users/${userID}/profile-picture`, {
+    method: 'PUT',
+    body: formData,
+  });
+};
+
 const onSaveClicked = async (e : Event) => {
   e.preventDefault(); // prevents any default calls
   // Receive all inputted values
-  const getInputValue = (input : string) => {
+  const getInputValue = (input: string) => {
     const element = document.getElementById(`profile-editor-${input}`) as HTMLInputElement;
     return element?.value?.trim() || ''; // null
   };
@@ -65,9 +83,9 @@ const onSaveClicked = async (e : Event) => {
 
   // pop up error text if fields invalid
   if (!firstName || !lastName || !bio) {
-    let errorText = document.getElementById('invalid-input-error');
+    const errorText = document.getElementById('invalid-input-error');
     if (errorText) {
-    errorText.style.display = 'block';
+      errorText.style.display = 'block';
     }
     return;
   }
@@ -98,76 +116,66 @@ const onSaveClicked = async (e : Event) => {
   window.location.reload(); // reload page
 };
 
-const saveImage = async (userID) => {
-  // saves the profile pic if there has been a change
-  const formElement = document.getElementById('profile-creator-editor') as HTMLFormElement;
-  await sendFile(`/api/users/${userID}/profile-picture`, formElement);
-};
-
-export const ProfileEditPopup = () => {
-  // Keeps track of what tab we are in
-  let currentTab = 0;
-
   // In your ProfileEditPopup.tsx file
 
-// useEffect to initialize the tabs
-useEffect(() => {
+  // useEffect to initialize the tabs
+  useEffect(() => {
 
-  setTimeout(() => {
-  // Initialize all tabs to be hidden except the first one
-  pageTabs.forEach((tab, idx) => {
-    const tabElement = document.querySelector(`#profile-editor-${tab.toLowerCase()}`);
-    if (tabElement) {
-      if (idx === 0) {
-        tabElement.classList.remove('hidden');
-      } else {
-        tabElement.classList.add('hidden');
-      }
+    setTimeout(() => {
+      // Initialize all tabs to be hidden except the first one
+      pageTabs.forEach((tab, idx) => {
+        const tabElement = document.querySelector(`#profile-editor-${tab.toLowerCase()}`);
+        if (tabElement) {
+          if (idx === 0) {
+            tabElement.classList.remove('hidden');
+          } else {
+            tabElement.classList.add('hidden');
+          }
+        }
+      },);
+
+
+    }, []);
+
+    // Highlight the first tab button
+    const firstTab = document.querySelector(`#profile-tab-${pageTabs[0]}`);
+    if (firstTab) {
+      firstTab.classList.add('project-editor-tab-active');
     }
-  },);
+  }, []);
 
-  
-},[]);
+  // Fix the switchTab function
+  const switchTab = (tabIndex: number) => {
+    if (currentTab === tabIndex) return;
 
-  // Highlight the first tab button
-  const firstTab = document.querySelector(`#profile-tab-${pageTabs[0]}`);
-  if (firstTab) {
-    firstTab.classList.add('project-editor-tab-active');
-  }
-}, []);
+    // Hide all tabs and deactivate all buttons
+    pageTabs.forEach((tab, idx) => {
+      const tabId = tab.toLowerCase();
+      const tabElement = document.getElementById(`profile-editor-${tabId}`);
+      const tabButton = document.getElementById(`profile-tab-${tab}`);
 
-// Fix the switchTab function
-const switchTab = (tabIndex: number) => {
-   if (currentTab === tabIndex) return;
-  
-  // Hide all tabs and deactivate all buttons
-  pageTabs.forEach((tab, idx) => {
-    const tabId = tab.toLowerCase();
-    const tabElement = document.getElementById(`profile-editor-${tabId}`);
-    const tabButton = document.getElementById(`profile-tab-${tab}`);
-    
-    if (tabElement) tabElement.classList.add('hidden');
-    if (tabButton) tabButton.classList.remove('project-editor-tab-active');
-  });
+      if (tabElement) tabElement.classList.add('hidden');
+      if (tabButton) tabButton.classList.remove('project-editor-tab-active');
+    });
 
-  // Update Current Tab
-  currentTab = tabIndex;
+    // Update Current Tab
+    currentTab = tabIndex;
 
-  // Show the new tab
-  const currentTabId = pageTabs[currentTab].toLowerCase();
-  const currElement = document.querySelector(`#profile-editor-${currentTabId}`);
-  const currTab = document.querySelector(`#profile-tab-${pageTabs[currentTab]}`);
-  
-  if (currElement) {
-    currElement.classList.remove('hidden');
-  }
-  
-  if (currTab) {
-    currTab.classList.add('project-editor-tab-active');
-  }
-  
-  console.log(`Switched to tab ${pageTabs[currentTab]}`); // Debug
-};
+    // Show the new tab
+    const currentTabId = pageTabs[currentTab].toLowerCase();
+    const currElement = document.querySelector(`#profile-editor-${currentTabId}`);
+    const currTab = document.querySelector(`#profile-tab-${pageTabs[currentTab]}`);
+
+    if (currElement) {
+      currElement.classList.remove('hidden');
+    }
+
+    if (currTab) {
+      currTab.classList.add('project-editor-tab-active');
+    }
+
+    console.log(`Switched to tab ${pageTabs[currentTab]}`); // Debug
+  };
 
   // Profile should be set up on intialization
   useEffect(() => {
@@ -181,22 +189,22 @@ const switchTab = (tabIndex: number) => {
       console.log('ProfileEditPopup - Raw API response:', data);
       console.log('ProfileEditPopup - User profile data:', data[0]);
       console.log('ProfileEditPopup - User interests from API:', data[0]?.interests);
-    
-      
+
+
       profile = await data[0];
     };
     setUpProfileData();
   }, []);
 
   // Component to organize the main tab content
-  let TabContent = () => {
+  const TabContent = () => {
     return (
       <div id="profile-editor-content">
-        <AboutTab profile={profile}/>
+        <AboutTab profile={profile} selectedImageFile={selectedImageFile} setSelectedImageFile={setSelectedImageFile}/>
         <ProjectsTab profile={profile} />
         <SkillsTab profile={profile} />
         <InterestTab profile={profile} />
-        <LinksTab profile={profile} type={'profile'}/>
+        <LinksTab profile={profile} type={'profile'} />
       </div>
     );
   };
@@ -250,12 +258,13 @@ const switchTab = (tabIndex: number) => {
     }
   };*/
 
-  
+
 
   // Maps the pageTabs into interactable page tabs, to switch between the Tab Content
-  let editorTabs = pageTabs.map((tag, i) => {
+  const editorTabs = pageTabs.map((tag, i) => {
     return (
       <button
+        key={tag}
         onClick={(e) => {
           e.preventDefault();
           switchTab(i);
@@ -271,25 +280,26 @@ const switchTab = (tabIndex: number) => {
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit</PopupButton>
-      <PopupContent 
-  callback={() => {
-    // Reset to the first tab and ensure proper hiding
-    currentTab = 0;
-    setTimeout(() => {
-      pageTabs.forEach((tab, idx) => {
-        const tabId = tab.toLowerCase();
-        const tabElement = document.getElementById(`profile-editor-${tabId}`);
-        if (tabElement) {
-          if (idx === 0) {
-            tabElement.classList.remove('hidden');
-          } else {
-            tabElement.classList.add('hidden');
-          }
-        }
-      });
-    }, 0);
-  }}
->
+      <PopupContent
+      profilePopup={true}
+        callback={() => {
+          // Reset to the first tab and ensure proper hiding
+          currentTab = 0;
+          setTimeout(() => {
+            pageTabs.forEach((tab, idx) => {
+              const tabId = tab.toLowerCase();
+              const tabElement = document.getElementById(`profile-editor-${tabId}`);
+              if (tabElement) {
+                if (idx === 0) {
+                  tabElement.classList.remove('hidden');
+                } else {
+                  tabElement.classList.add('hidden');
+                }
+              }
+            });
+          }, 0);
+        }}
+      >
         <form id="profile-creator-editor" encType="multipart/form-data">
           <div id="profile-editor-tabs">{editorTabs}</div>
           <TabContent />
@@ -299,7 +309,7 @@ const switchTab = (tabIndex: number) => {
             onClick={onSaveClicked}
             value={'Save Changes'}
           />
-         <div id="invalid-input-error" className="error-message">
+          <div id="invalid-input-error" className="error-message">
             <p>*Fill out all required fields before saving!*</p>
           </div>
         </form>

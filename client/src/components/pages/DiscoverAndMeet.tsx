@@ -11,7 +11,7 @@ import '../Styles/projects.css';
 import '../Styles/settings.css';
 import '../Styles/pages.css';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -20,6 +20,9 @@ import { PanelBox } from '../PanelBox';
 import { ThemeIcon } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { devSkills, desSkills } from '../../constants/tags';
+
+//import api utils
+import { getCurrentUsername } from '../../api/users.ts'
 
 type DiscoverAndMeetProps = {
   category: 'projects' | 'profiles';
@@ -70,8 +73,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           <div id="profile-hero">
             <div id="profile-hero-blurb-1" className="profile-hero-blurb">
               <ThemeIcon
-                light={'assets/bannerImages/people1_light.png'}
-                dark={'assets/bannerImages/people1_dark.png'}
+                light={'/assets/bannerImages/people1_light.png'}
+                dark={'/assets/bannerImages/people1_dark.png'}
                 id={'profile-hero-img-1'}
                 alt={'banner image'}
               />
@@ -81,10 +84,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             </div>
 
             <div id="profile-hero-blurb-2" className="profile-hero-blurb">
-              <h2>Look for people to work with!</h2>
+              {/* <h2>Look for people to work with!</h2> */}
               <ThemeIcon
-                light={'assets/bannerImages/people2_light.png'}
-                dark={'assets/bannerImages/people2_dark.png'}
+                light={'/assets/bannerImages/people2_light.png'}
+                dark={'/assets/bannerImages/people2_dark.png'}
                 id={'profile-hero-img-2'}
                 alt={'banner image'}
               />
@@ -97,8 +100,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
             <div id="profile-hero-blurb-3" className="profile-hero-blurb">
               <ThemeIcon
-                light={'assets/bannerImages/people3_light.png'}
-                dark={'assets/bannerImages/people3_dark.png'}
+                light={'/assets/bannerImages/people3_light.png'}
+                dark={'/assets/bannerImages/people3_dark.png'}
                 id={'profile-hero-img-3'}
                 alt={'banner image'}
               />
@@ -130,7 +133,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [itemSearchData, setItemSearchData] = useState([]);
 
   // Stores userId for ability to follow users/projects
-  const [userId, setUserId] = useState(0);
+    const [userId, setUserId] = useState<string>('guest');
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const dataSet = useMemo(() => {
@@ -144,14 +147,22 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
   // Helper functions
   // --------------------
-  const getAuth = async () => {
-    const res = await fetch(`/api/auth`);
-    const data = await res.json();
 
-    if (data.data) {
-      setUserId(data.data);
+    const getAuth = async () => {
+    const res = await getCurrentUsername();
+
+
+    if (res.status === 200 && res.data?.username) {
+      setUserId(res.data.username)
+    } else {
+      setUserId('guest');
     }
   }
+
+  // Limits React state update warning
+  useEffect(() => {
+    getAuth();
+  }, []);
 
   /*
     Fetches data from the server to populate the discover page.
@@ -283,6 +294,19 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             }
             else {
               // No skills: exclude from results
+              tagFilterCheck = false;
+              break;
+            }
+          }
+          // Check for specific skills
+          else if (tag.type === 'Developer Skill' || tag.type === 'Designer Skill' || tag.type === 'Soft Skill') {
+            const userSkills = item.skills?.map((s) => s?.skill?.toLowerCase())
+            .filter((s) => typeof s === 'string');
+
+            const matched = userSkills?.includes(tag.label.toLowerCase());
+
+            if (!matched) {
+              // No match: exclude from results
               tagFilterCheck = false;
               break;
             }

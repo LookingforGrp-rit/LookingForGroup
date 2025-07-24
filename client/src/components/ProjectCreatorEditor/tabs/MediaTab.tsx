@@ -1,6 +1,9 @@
 // --- Imports ---
 import { useCallback, useEffect, useState } from "react";
 
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 // --- Interfaces ---
 interface Image {
   id: number;
@@ -138,10 +141,10 @@ export const MediaTab = ({ isNewProject = false, projectData = defaultProject, s
             }
             else {
               // image is uploaded, can find in directorys
-              src = `images/projects/${image.image}`;
+              src = `${API_BASE}/images/projects/${image.image}`;
             }
             return (
-              <div className='project-editor-image-container'>
+              <div className='project-editor-image-container' key={image.image}>
                 <img src={src} alt="project images" />
                 {
                   modifiedProject.thumbnail === image.image &&
@@ -167,7 +170,7 @@ export const MediaTab = ({ isNewProject = false, projectData = defaultProject, s
           <label htmlFor="image-uploader" id="drop-area">
             <input type="file" name="image" id="image-uploader" accept="image/png, image/jpg" onChange={handleImageUpload} hidden />
             <div id="img-view">
-              <img src="assets/white/upload_image.png" />
+              <img src="/assets/white/upload_image.png" />
               <p className="project-editor-extra-info">Drop your image here, or browse</p>
               <span className="project-editor-extra-info">Supports: JPEG, PNG</span>
             </div>

@@ -33,7 +33,7 @@ interface PopupContextType {
 //Create context to be used throughout component on popup's visibility state
 const PopupContext = createContext<PopupContextType>({
   open: false,
-  setOpen: () => {}, 
+  setOpen: () => { },
 });
 
 //Button component that will open/close the popup
@@ -41,7 +41,7 @@ export const PopupButton = ({
   children,
   buttonId = '',
   className = '',
-  callback = () => {},
+  callback = () => { },
   doNotClose = () => false,
 }: {
   children: ReactNode;
@@ -76,11 +76,13 @@ export const PopupButton = ({
 export const PopupContent = ({
   children,
   useClose = true,
-  callback = () => {},
+  callback = () => { },
+  profilePopup = false,
 }: {
   children: ReactNode;
   useClose?: boolean;
   callback?: () => void;
+  profilePopup?: false | true;
 }) => {
   const { open, setOpen } = useContext(PopupContext);
   const popupRef = useRef(null);
@@ -103,23 +105,42 @@ export const PopupContent = ({
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const refNode = popupRef.current as Node | null;
-      if (refNode && e.target instanceof Node && !refNode.contains(e.target)) {
+      if (refNode && e.target instanceof Node && !refNode.contains(e.target) && e.button !== 2) {
         closePopup();
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    document.addEventListener('mouseup', handleClickOutside);
+    return () => document.removeEventListener('mouseup', handleClickOutside);
   }, []);
+
+  // Close on browser button click
+  useEffect(() => {
+    if (open) {
+      // Push new browser history if no popup state yet
+      if (!history.state.popup) {
+        history.pushState({ popup: true }, '', '');
+      }
+    };
+    const handlePopState = (event: PopStateEvent) => {
+      // Close popup 
+      if (open && !event.state.popup) {
+        closePopup();
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [open]);
 
   if (!open) return null;
 
   if (open && useClose) {
     return (
       <>
+        {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}
         <div className="popup-cover" />
         <div className="popup-container">
-          <div className="popup">
-            <button className="popup-close" onClick={closePopup}>
+          <div className="popup" ref={popupRef}>
+            <button className={`popup-close ${profilePopup === true ? 'popup-close-edit' : ''}`} onClick={closePopup}>
               <img src={close} alt="close" />
             </button>
             {children}
@@ -130,6 +151,7 @@ export const PopupContent = ({
   } else if (open) {
     return (
       <>
+        {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}
         <div className="popup-cover" />
         <div className="popup-container">
           <div className="popup" ref={popupRef}>{children}</div>

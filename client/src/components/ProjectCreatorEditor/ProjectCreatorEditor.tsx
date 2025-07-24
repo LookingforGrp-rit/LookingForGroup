@@ -16,6 +16,10 @@ import { TagsTab } from './tabs/TagsTab';
 import { ThemeIcon } from '../ThemeIcon';
 import { showPopup } from '../Sidebar';
 import { loggedIn } from '../Header';
+
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 interface Image {
   id: number;
   image: string;
@@ -108,7 +112,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // Get project data on projectID change
   useEffect(() => {
-    if (!newProject) {
+    if (!newProject && projectID) {
       const getProjectData = async () => {
         const url = `/api/projects/${projectID}`;
         try {
@@ -190,7 +194,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     }
     //pops up error text if required fields in general haven't been filled out
     if (!modifiedProject.title || !modifiedProject.description || !modifiedProject.status || !modifiedProject.hook) {
-      let errorText = document.getElementById('invalid-input-error');
+      const errorText = document.getElementById('invalid-input-error');
       setMessage('*Fill out all required info under General before saving!*');
 
       if (errorText) {
@@ -201,7 +205,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
     //pops up error text if no tags have been chosen
     if (modifiedProject.tags.length == 0 || modifiedProject.project_types.length == 0) {
-      let errorText = document.getElementById('invalid-input-error');
+      const errorText = document.getElementById('invalid-input-error');
       setMessage('*Choose a project type and tag under Tags before saving!*');
 
       if (errorText) {
@@ -290,7 +294,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         // Compare thumbnail
         if (modifiedProject.thumbnail !== projectData.thumbnail) {
           // get thumbnail
-          const thumbnailResponse = await fetch(`/images/projects/${modifiedProject.thumbnail}`);
+          const thumbnailResponse = await fetch(`${API_BASE}/images/projects/${modifiedProject.thumbnail}`);
 
           // create file
           const thumbnailBlob = await thumbnailResponse.blob();
@@ -358,7 +362,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         // Update thumbnail if a thumbnail is set
         if (modifiedProject.thumbnail !== '') {
           // get thumbnail
-          const thumbnailResponse = await fetch(`/images/projects/${modifiedProject.thumbnail}`);
+          const thumbnailResponse = await fetch(`${API_BASE}/images/projects/${modifiedProject.thumbnail}`);
 
           // create file
           const thumbnailBlob = await thumbnailResponse.blob();
@@ -433,7 +437,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     <Popup>
       {
         newProject ? (
-          <PopupButton callback={buttonCallback} buttonId='project-info-create' > <ThemeIcon light={'assets/create_light.png'} dark={'assets/create_dark.png'} /> Create </PopupButton>
+          <PopupButton callback={buttonCallback} buttonId='project-info-create' > <ThemeIcon light={'/assets/create_light.png'} dark={'/assets/create_dark.png'} /> Create </PopupButton>
         ) : (
           <PopupButton callback={buttonCallback} buttonId="project-info-edit">Edit Project</PopupButton>
         )
@@ -492,7 +496,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
               <div id="project-editor-content">
                 {
-                  currentTab === 0 ? <GeneralTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} /> :
+                  currentTab === 0 ? <GeneralTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
                     currentTab === 1 ? <MediaTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} /> :
                       currentTab === 2 ? <TagsTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} /> :
                         currentTab === 3 ? <TeamTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorMember={setErrorAddMember} setErrorPosition={setErrorAddPosition} permissions={permissions} /> :
@@ -500,13 +504,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                             <></>
                 }
               </div>
-
-              <div id="invalid-input-error" className="save-error-msg">
+              {/* Responsiveness fix: General Tab has its own button/error text for layout change */}
+              {currentTab !== 0 ? <div id="invalid-input-error" className={"save-error-msg"}>
                 <p>{message}</p>
-              </div>
+              </div> : <></>}
+              {currentTab !== 0 ? 
               <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
                 Save Changes
-              </PopupButton>
+              </PopupButton> : <></>}
             </div>
           </PopupContent>
         ) : (

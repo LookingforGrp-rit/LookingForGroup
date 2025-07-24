@@ -43,9 +43,9 @@ const [options, setOptions] = useState<JSX.Element[] | null>(null);
           console.log('Social Website:');
           console.log(social.label.toLowerCase());
           
-          return <option value={social.id} selected><i className={`fa-brands fa-${social.label.toLowerCase()}`}></i>{social.label}</option>;
+          return <option value={social.id} key={`${social.id}-${social.label}`} selected>{/*<i className={`fa-brands fa-${social.label.toLowerCase()}`}></i>*/}{social.label}</option>;
         }
-        return <option value={social.id}><i className={`fa-brands fa-${social.label.toLowerCase()}`}></i>{social.label}</option>;
+        return <option value={social.id} key={`${social.id}-${social.label}`}>{/*<i className={`fa-brands fa-${social.label.toLowerCase()}`}></i>*/}{social.label}</option>;
       });
       setOptions(selectorOptions);
     };

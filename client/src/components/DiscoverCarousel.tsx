@@ -2,11 +2,14 @@ import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./Image
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 export const DiscoverCarousel = ({ dataList = [] }) => {
     // Creates HTML elements from data, passed into the carousel
     const carouselContents = dataList.map((project) => {
         const projectImg = (project.thumbnail !== null) 
-            ? `images/thumbnails/${project.thumbnail}`
+            ? `${API_BASE}/images/thumbnails/${project.thumbnail}`
             : placeholderThumbnail;
 
         return (

@@ -28,6 +28,10 @@ import Project from './Project';
 import { ThemeIcon } from '../ThemeIcon';
 import { sendPost, sendDelete } from '../../functions/fetch';
 
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
+
 //To-do
 //Have team member listings link to their respective profiles
 //Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
@@ -341,11 +345,12 @@ const NewProject = () => {
           }
 
           //FIXME: get profile image from API call
-          const imgSrc = (user.profile_image) ? `images/profiles/${user.profile_image}` : profilePicture;
+          const imgSrc = (user.profile_image) ? `${API_BASE}/images/profiles/${user.profile_image}` : profilePicture;
           //const imgSrc = profilePicture; // temporary
 
           return (
             <div
+              key={user.user_id}
               className="project-contributor"
               onClick={() => navigate(`${paths.routes.NEWPROFILE}?userID=${user.user_id}`)}
             >
@@ -371,7 +376,7 @@ const NewProject = () => {
       projectContributors.length > 0 ? (
         <>
           {projectContributors.map((user) => {
-            const imgSrc = (user.profile_image) ? `images/profiles/${user.profile_image}` : profilePicture;
+            const imgSrc = (user.profile_image) ? `${API_BASE}/images/profiles/${user.profile_image}` : profilePicture;
 
             return (
               <div
@@ -453,6 +458,7 @@ const NewProject = () => {
                   <div id="project-open-positions-popup">
                     <div id="positions-popup-header">Join The Team</div>
 
+                   <div className="positions-popup-content">
                     <div className="positions-popup-list">
                       <div id="positions-popup-list-header">Open Positions</div>
                       <div id="positions-popup-list-buttons">
@@ -500,7 +506,7 @@ const NewProject = () => {
                         If interested, please contact:{' '}
                         <span
                           onClick={() =>
-                            navigate(`${paths.routes.PROFILE}?userID=${projectLead?.user_id}`)
+                            navigate(`${paths.routes.NEWPROFILE}?userID=${projectLead?.user_id}`)
                           }
                           id="position-contact-link"
                         >
@@ -513,6 +519,7 @@ const NewProject = () => {
                         </span>
                       </div>
                     </div>
+                  </div>
 
                     <PopupButton buttonId="positions-popup-close">Close</PopupButton>
                   </div>

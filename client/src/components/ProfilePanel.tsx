@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
 
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 interface ProfileData {
   user_id: string;
   profile_image?: string;
@@ -27,7 +30,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   return (
     <div className={'profile-panel'}>
       <img
-        src={profileData.profile_image ? `images/profiles/${profileData.profile_image}` : profilePicture}
+        src={profileData.profile_image ? `${API_BASE}/images/profiles/${profileData.profile_image}` : profilePicture}
         alt='profile image'
         // default profile picture if profile image doesn't load
         onError={(e) => {
@@ -42,19 +45,19 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
       <div id="quote">"{profileData.headline}"</div>
       <div className={'profile-panel-hover'} onClick={() => navigate(profileURL)}>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon light={'assets/white/role.png'} dark={'assets/black/role.png'} />
+          <ThemeIcon light={'/assets/white/role.png'} dark={'/assets/black/role.png'} />
           <p>{profileData.job_title}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon light={'assets/white/location.png'} dark={'assets/black/location.png'} />
+          <ThemeIcon light={'/assets/white/location.png'} dark={'/assets/black/location.png'} />
           <p>{profileData.location}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon light={'assets/white/pronouns.png'} dark={'assets/black/pronouns.png'} />
+          <ThemeIcon light={'/assets/white/pronouns.png'} dark={'/assets/black/pronouns.png'} />
           <p>{profileData.pronouns}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon light={'assets/white/funfact.png'} dark={'assets/black/funfact.png'} />
+          <ThemeIcon light={'/assets/white/funfact.png'} dark={'/assets/black/funfact.png'} />
           <p>{profileData.fun_fact}</p>
         </div>
       </div>

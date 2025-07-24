@@ -78,8 +78,8 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
                 <span className='placeholder'>{placeholder}</span>
             )}
             <ThemeIcon
-                light={'assets/dropdown_light.png'}
-                dark={'assets/dropdown_dark.png'}
+                light={'/assets/dropdown_light.png'}
+                dark={'/assets/dropdown_dark.png'}
                 addClass={`select-button-arrow ${(open) ? 'opened' : ''}`}
             />
         </button>

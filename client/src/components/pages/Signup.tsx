@@ -202,8 +202,8 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     <div className="background-cover">
       <div className="login-signup-container" onKeyDown={handleKeyPress}>
         <ThemeIcon //Back button to return to the previous page
-          light={'assets/back_light.png'}
-          dark={'assets/back_dark.png'}
+          light={'/assets/back_light.png'}
+          dark={'/assets/back_dark.png'}
           alt="Back Button"
           id="backPage-arrow"
           onClick={() => navigate(-1)}
@@ -241,7 +241,7 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
               className="signup-input"
               autoComplete="off"
               type="text"
-              placeholder="School e-mail"
+              placeholder="School email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
@@ -276,14 +276,14 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
                 {showPassword ? (
                   <ThemeIcon
                     id='eye-icon'
-                    light={'assets/black/password_shown.png'}
-                    dark={'assets/white/password_shown.png'}
+                    light={'/assets/black/password_shown.png'}
+                    dark={'/assets/white/password_shown.png'}
                   />) :
                   (
                     <ThemeIcon
                       id='eye-icon'
-                      light={'assets/black/password_hidden.png'}
-                      dark={'assets/white/password_hidden.png'}
+                      light={'/assets/black/password_hidden.png'}
+                      dark={'/assets/white/password_hidden.png'}
                     />
                   )}
               </button>
@@ -424,8 +424,8 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
           {/* <h1>Welcome!</h1>
                     <p>Already have an account?</p> */}
           <ThemeIcon
-            light={'assets/bannerImages/signup_light.png'}
-            dark={'assets/bannerImages/signup_dark.png'}
+            light={'/assets/bannerImages/signup_light.png'}
+            dark={'/assets/bannerImages/signup_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.LOGIN)}>Log In</button>
         </div>

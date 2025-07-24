@@ -81,7 +81,7 @@ if (response && response.error) {
             <input
               className="login-input"
               type="text"
-              placeholder="Enter your e-mail"
+              placeholder="Enter your email"
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
             />

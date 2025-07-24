@@ -1,4 +1,4 @@
-import { act, useState } from 'react';
+import React, { act, useState, Fragment } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
@@ -8,7 +8,7 @@ import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
 let activeTagFilters: string[] = [];
 let displayFiltersText = false; // toggles "Applied Filters:" div when necessary
 
-export const DiscoverFilters = ({ category, updateItemList }: { category: String, updateItemList: Function }) => {
+export const DiscoverFilters = ({ category, updateItemList }: { category: string, updateItemList: Function }) => {
   // --------------------
   // Interfaces
   // --------------------
@@ -68,7 +68,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
     try {
       let response = await fetch(url);
       const result = await response.json();
-      let data = result.data;
+      const data = result.data;
 
       // Need to also pull from majors and job_titles tables
       if (category === 'profiles') {
@@ -88,16 +88,16 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
       } else if (category === 'projects') {
         // Pull Project Types and append it to full data
         response = await fetch(`/api/datasets/project-types`);
-        let extraData = await response.json();
+        const extraData = await response.json();
         if (extraData.data !== undefined) {
           extraData.data.forEach((projectType: Skill) => data.push({ label: projectType.label, type: 'Project Type' }));
         }
       }
 
       // Construct the finalized version of the data to be moved into filterPopupTabs
-      let tabs = JSON.parse(JSON.stringify((category === 'projects') ? projectTabs : peopleTabs));
+      const tabs = JSON.parse(JSON.stringify((category === 'projects') ? projectTabs : peopleTabs));
       data.forEach((tag: Skill) => {
-        let filterTag = { label: tag.label, type: tag.type };
+        const filterTag = { label: tag.label, type: tag.type };
         let type = tag.type;
 
         if (tag.tag_id) {
@@ -317,7 +317,8 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
                 ? 'Major' : 'Role';
 
             return (
-              <button className="discover-tag-filter"
+              <button key={tag}
+                className="discover-tag-filter"
                 data-type={type}
                 onClick={(e) => toggleTag(e, label, type)}>
                 {tag}
@@ -329,7 +330,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
             {/* Additional filters popup */}
             <Popup>
               <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
-                <ThemeIcon light={'assets/filters_light.png'} dark={'assets/filters_dark.png'} />
+                <ThemeIcon light={'/assets/filters_light.png'} dark={'/assets/filters_dark.png'} />
               </PopupButton>
               {/* 
                             When page loads, get all necessary tag lists based on page category.
@@ -344,8 +345,8 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
                 {/* Back button */}
                 <PopupButton className="popup-back">
                   <ThemeIcon
-                    light={'assets/back_light.png'}
-                    dark={'assets/back_dark.png'}
+                    light={'/assets/back_light.png'}
+                    dark={'/assets/back_dark.png'}
                     id="dropdown-arrow"
                   />
                 </PopupButton>
@@ -361,6 +362,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
                     <div id="filter-tabs">
                       {filterPopupTabs.map((tab, index) => (
                         <a
+                          key={`${tab.categoryName}-${index}`}
                           className={`filter-tab ${index === 0 ? 'selected' : ''}`}
                           onClick={(e) => {
                             const element = e.target as HTMLElement;
@@ -387,6 +389,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
                       ) : (
                         searchedTags.tags.map((tag) => (
                           <button
+                            // add key once duplicate tags are removed:  --->  key={`${tag.label}-${tag.type}`}
                             // className={`tag-button tag-button-${searchedTags.color}-unselected`}
                             className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
                             onClick={(e) => {
@@ -454,6 +457,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
                     <div id="selected-filters">
                       {enabledFilters.map((tag) => (
                         <button
+                          key={tag.tag.label}
                           className={`tag-button tag-button-${tag.color}-selected`}
                           onClick={(e) => {
                             // Remove tag from list of enabled filters, re-rendering component
@@ -532,17 +536,18 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: String
           <p>Applied Filters:</p>
           {appliedFiltersDisplay.map((filter, index) => {
             if (filter.tag.type === 'Project Type') {
-              return <></>;
+              return <Fragment key={`${filter.tag.type}`} />;
             }
 
             return (
               <button
+                key={filter.tag.label}
                 className={`tag-button tag-button-${filter.color}-selected`}
                 onClick={(e) => {
                   console.log('clicked!');
 
                   // Remove tag from list of enabled filters, re-rendering component
-                  let tempList = appliedFiltersDisplay.toSpliced(index, 1);
+                  const tempList = appliedFiltersDisplay.toSpliced(index, 1);
                   activeTagFilters = tempList.map((filter) => filter.tag);
                   setAppliedFiltersDisplay(tempList);
                   updateItemList(activeTagFilters);

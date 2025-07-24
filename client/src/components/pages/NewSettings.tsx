@@ -1,7 +1,7 @@
 import '../Styles/pages.css';
 
 import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
-import { sendPost, fetchUserID, sendDelete } from '../../functions/fetch';
+import { sendPost, fetchUserID, sendDelete, sendPut } from '../../functions/fetch';
 import { Popup, PopupButton, PopupContent } from '../Popup';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { ThemeIcon } from '../ThemeIcon';
@@ -43,6 +43,10 @@ const Settings = ({ }) => {
   // --------------------
   // Helper functions
   // --------------------
+
+  // Function needed to check password!
+  // Function needed to check field validity (e.g. is this actually an email?)
+
   // Checks if user is logged in and pulls all relevant data
   const getUserData = async () => {
     const authResponse = await fetch('/api/auth');
@@ -70,7 +74,7 @@ const Settings = ({ }) => {
 
   // If user is not logged in, redirect to login page
   if (userInfo === undefined) {
-     navigate(paths.routes.LOGIN, { state: { from: location.pathname } })
+    navigate(paths.routes.LOGIN, { state: { from: location.pathname } })
   }
 
   // --------------------
@@ -78,63 +82,78 @@ const Settings = ({ }) => {
   // --------------------
 
   // Confirmation for changed settings
-  const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }) => {
-    return (
-      <div className="small-popup">
-        <h3>Edit {type}</h3>
-        <p className="confirm-msg">
-          Are you sure you want to change your {type.toLowerCase()}
-          {type.toLowerCase() === 'phone' ? (
-            <span> number</span>
-          ) : (
-            <></>
-          )}
-          {prev !== '' ? (
-            <span>
-              &#32;from{' '}
-              <span className="confirm-change-item">{type === 'Username' ? `@${prev}` : prev}</span>
-            </span>
-          ) : (
-            <></>
-          )}
-          {cur !== '' ? (
-            <span>
-              &#32;to{' '}
-              <span className="confirm-change-item">{type === 'Username' ? `@${cur}` : cur}</span>
-            </span>
-          ) : (
-            <></>
-          )}
-          ?
-        </p>
-        <div className="confirm-deny-btns">
-          <PopupButton
-            className="confirm-btn"
-            callback={async () => {
-              // Displays success message on parent popup
-              const onSuccess = (status) => {
-                // Feedback popup
-                setSuccess(`Your ${type.toLowerCase()} has been updated!`);
-              };
+const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }) => {
+  const [password, setPassword] = useState('');
 
-              const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
-              const url = `/api/users/${userInfo.user_id}/${typeToChange}`;
-              const response = await sendPut(url, apiParams, onSuccess);
+  return (
+    <div className="small-popup">
+      <h3>Confirm {type}{type === 'Phone' ? ' Number' : ''} Change</h3>
+      <p className="confirm-msg">
+        Are you sure you want to change your {type.toLowerCase()}
+        {type === 'Phone' ? (<span> number</span>) : (<></>)}
+        {prev !== '' ? (
+          <span>
+            &#32;{' '}from{' '}
+            <span className="confirm-change-item">{type === 'Username' ? `@${prev}` : prev}</span>
+          </span>
+        ) : (<></>)}
+        {cur !== '' ? (
+          <span>
+            &#32;{' '}to{' '}
+            <span className="confirm-change-item">{type === 'Username' ? `@${cur}` : cur}</span>
+          </span>
+        ) : (<></>)}
+        ?
+      </p>
 
-              // If it returns back with an error, display it on parent popup
-              if (response !== undefined && response.error) {
-                setError(response.error);
-              }
-            }}
-          >
-            Submit
-          </PopupButton>
-          <PopupButton className="deny-btn">Cancel</PopupButton>
-        </div>
+      {/* Password confirmation input */}
+      <div className="input-group">
+        <label htmlFor="password">Enter your password to confirm:</label>
+        <input
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          className="confirm-password-input"
+          placeholder="Password"
+        />
       </div>
-    );
-  };
 
+      <div className="confirm-deny-btns">
+        <PopupButton
+          className="confirm-btn"
+          callback={async () => {
+            // If password is empty, show error and abort submission
+            if (!password.trim()) {
+              setError('Password is required to confirm this change.');
+              return;
+            }
+
+            const onSuccess = (status) => {
+              // setSuccess(`Your ${type.toLowerCase()} has been updated!`);
+              location.reload();
+            };
+
+            const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
+            const url = `/api/users/${userInfo.user_id}/${typeToChange}`;
+
+            // Include password in apiParams when sending request
+            const response = await sendPut(url, { ...apiParams, password }, onSuccess);
+
+            // If it returns back with an error, display it on parent popup
+            if (response !== undefined && response.error) {
+              setError(response.error);
+            }
+          }}
+        >
+          Submit
+        </PopupButton>
+
+        <PopupButton className="deny-btn">Cancel</PopupButton>
+      </div>
+    </div>
+  );
+};
   // User form for changing username/password/email
   const ChangeForm = ({ type }) => {
     // Variables
@@ -154,22 +173,22 @@ const Settings = ({ }) => {
       const schema = new PasswordValidator();
       schema
         .is()
-        .min(8, 'Be 8 or more characters')
+        .min(8, '8 or more characters')
         .is()
-        .max(20, 'Be 20 or less characters')
+        .max(20, 'Must be 20 characters or fewer')
         .has()
-        .uppercase(1, 'Have an uppercase letter')
+        .uppercase(1, 'An uppercase letter')
         .has()
-        .lowercase(1, 'Have a lowercase letter')
+        .lowercase(1, 'A lowercase letter')
         .has()
-        .digits(1, 'Have a number')
+        .digits(1, 'A number')
         .has()
-        .symbols(1, 'Have a symbol')
+        .symbols(1, 'A symbol')
         .has()
         .not()
-        .spaces(1, 'Have no spaces')
+        .spaces(1, 'May not contain any spaces')
         .has()
-        .not('[^\x00-\x7F]+', 'Have no non-ASCII characters');
+        .not('[^\x00-\x7F]+', 'May only use ASCII characters');
 
       useLayoutEffect(() => {
         const output = schema.validate(pass, { details: true });
@@ -224,7 +243,7 @@ const Settings = ({ }) => {
           }
         }}
       >
-        <h3>Edit {type}</h3>
+        <h3>Edit {type}{type === 'Phone' ? ' Number' : ''}</h3>
         {type === 'Password' ? <PasswordChecker pass={firstParam} /> : <></>}
         <div className="error">{errorMsg}</div>
         {errorMsg === '' && successMsg !== '' ? <div className="success">{successMsg}</div> : <></>}
@@ -234,13 +253,73 @@ const Settings = ({ }) => {
             {/* autoComplete to prevent browser autofill */}
             <form autoComplete="off">
               <input
-                placeholder={`Enter new ${type.toLowerCase()}${type.toLowerCase() === 'phone' ? ' number' : ''}`}
+                placeholder={`Enter new ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
                 type={type !== 'Password' ? 'text' : 'password'}
-                onChange={(e) => setFirstParam(e.target.value)}
+                onChange={(e) => {
+                  const value = e.target.value;
+                  setFirstParam(value);
+
+                  // Checks if input matches other box, returns error if not
+                  if (value !== confirm) {
+                    setError(`*${type}s must match.`);
+                    return;
+                  }
+
+                  // Email format validation
+                  if (type === 'Primary Email') {
+                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    if (!emailRegex.test(value)) {
+                      setError('*Please enter a valid email address.');
+                      return;
+                    }
+                  }
+
+                  // Username format validation
+                  if (type === 'Username') {
+                    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+                    if (!usernameRegex.test(value)) {
+                      setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
+                      return;
+                    }
+                  }
+
+                  // Phone number format validation
+                  if (type === 'Phone') {
+                    const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+                    if (!phoneRegex.test(value)) {
+                      setError('*Please enter a valid phone number.');
+                      return;
+                    }
+                  }
+
+                  setError('');
+                }}
                 onBlur={async () => {
                   // TO-DO: Check if already in use if username
                   // or primary email address. Excludes password
                   if (type !== 'Password') {
+                    if (type === 'Primary Email') {
+                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                      if (!emailRegex.test(firstParam)) {
+                        setError('*Please enter a valid email address.');
+                        return;
+                      }
+                    }
+                    if (type === 'Username') {
+                      const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+                      if (!usernameRegex.test(firstParam)) {
+                        setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
+                        return;
+                      }
+                    }
+                    if (type === 'Phone') {
+                      const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+                      if (!phoneRegex.test(firstParam)) {
+                        setError('*Please enter a valid phone number.');
+                        return;
+                      }
+                    }
+
                     const url = `/api/users/search-${type === 'Username' ? 'username' : 'email'}/${firstParam}`;
                     const response = await fetch(url);
                     const data = await response.json();
@@ -257,12 +336,14 @@ const Settings = ({ }) => {
             {/* autoComplete to prevent browser autofill */}
             <form autoComplete="off">
               <input
-                placeholder={`Confirm new ${type.toLowerCase()}${type.toLowerCase() === 'phone' ? ' number' : ''}`}
+                className="input-container-confirm"
+                placeholder={`Confirm new ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
                 type={type !== 'Password' ? 'text' : 'password'}
                 onChange={(e) => {
                   setConfirm(e.target.value);
 
-                  if (firstParam !== e.target.value) {
+                  // Checks if input matches other box, returns error if not
+                  if (e.target.value !== firstParam) {
                     setError(`*${type}s must match.`);
                   } else {
                     setError('');
@@ -283,24 +364,55 @@ const Settings = ({ }) => {
           </div>
         </div>
         <div className="confirm-deny-btns">
-          <Popup>
-            <PopupButton className="confirm-btn">Submit</PopupButton>
-            <PopupContent>
-              <ConfirmChange
-                type={type}
-                prev={type === 'Username' ? userInfo.username : ''}
-                cur={type !== 'Password' ? firstParam : ''}
-                apiParams={apiParams}
-                setError={setError}
-                setSuccess={setSuccess}
-              />
-            </PopupContent>
-          </Popup>
+          {/*Enabling the confirmation button:*/}
+          {/*No errors (fields match), no missing reqs for changing password, input exists */}
+
+          {/*Needs to confirm the password!*/}
+          {/*Needs validation for fields! Make sure emails are emails! Etc*/}
+          {/*Both of these will need valid feedback! "Please enter a valid email", "Incorrect password", etc! (Let bugfixing do this)*/}
+          {(() => {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+            const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+
+            if (errorMsg !== '') return false;
+            if (document.getElementsByClassName("pass-reqs")[0] != null) return false;
+            if (firstParam === '') return false;
+
+            if (type === 'Primary Email' && !emailRegex.test(firstParam)) {
+              return false;
+            }
+
+            if (type === 'Username' && !usernameRegex.test(firstParam)) {
+              return false;
+            }
+
+            if (type === 'Phone' && !phoneRegex.test(firstParam)) {
+              return false;
+            }
+
+            return true;
+          })() ?
+            <Popup>
+              <PopupButton className="confirm-btn">Submit</PopupButton>
+              <PopupContent>
+                <ConfirmChange
+                  type={type}
+                  prev={type === 'Username' ? userInfo.username : ''}
+                  cur={type !== 'Password' ? firstParam : ''}
+                  apiParams={apiParams}
+                  setError={setError}
+                  setSuccess={setSuccess}
+                />
+              </PopupContent>
+            </Popup> :
+            <Popup><PopupButton doNotClose={() => true} className="confirm-btn confirm-btn-disabled">Submit</PopupButton></Popup>}
           <PopupButton className="deny-btn">Cancel</PopupButton>
         </div>
       </div>
     );
   };
+
 
   // Makes request to API to update user's visibility
   // Visibility num corresponds to private vs public
@@ -454,8 +566,8 @@ const Settings = ({ }) => {
                       <div className="input-container">
                         <input id="option-theme" placeholder={themeOption} type="text" disabled />
                         <ThemeIcon
-                          light={'assets/dropdown_light.png'}
-                          dark={'assets/dropdown_dark.png'}
+                          light={'/assets/dropdown_light.png'}
+                          dark={'/assets/dropdown_dark.png'}
                           alt={'Current Theme'}
                           addClass={'options-dropdown-parent-btn'}
                         />
@@ -526,8 +638,8 @@ const Settings = ({ }) => {
                           disabled
                         />
                         <ThemeIcon
-                          light={'assets/dropdown_light.png'}
-                          dark={'assets/dropdown_dark.png'}
+                          light={'/assets/dropdown_light.png'}
+                          dark={'/assets/dropdown_dark.png'}
                           alt={'Visibility'}
                           addClass={'options-dropdown-parent-btn'}
                         />

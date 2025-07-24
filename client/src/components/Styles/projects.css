@@ -321,13 +321,8 @@ Project Creator and Editor style rules
 #project-editor-tabs {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
   margin-top: 38px;
-}
-
-@media (max-width: 600px) {
-  #project-editor-tabs {
-    overflow-x: auto;
-  }
 }
 
 .project-editor-tab {
@@ -350,6 +345,7 @@ Project Creator and Editor style rules
 }
 
 #project-editor-save,
+#project-editor-save-general,
 #team-add-member-add-button,
 #team-edit-member-save-button {
   border: none;
@@ -363,13 +359,12 @@ Project Creator and Editor style rules
   font-weight: 700;
 }
 
-
-.save-error-msg {
-  display:none;
+.save-error-msg, .save-error-msg-general {
+  display: none;
   margin: auto;
 }
 
-.save-error-msg p {
+.save-error-msg p, .save-error-msg-general p {
   margin: 0 0 1.5% 0;
   font-size: 18px;
   color: red;
@@ -429,6 +424,7 @@ Project Creator and Editor style rules
   color: var(--main-text);
   font-size: 1.6ch;
   outline: none;
+  min-height: 40px;
 }
 
 /* Project Editor/Creator General Tab */
@@ -504,10 +500,34 @@ Project Creator and Editor style rules
     'title title about' 1fr
     'status purpose about' 1fr
     'audience audience about' 2fr
-    'desc desc about' 3fr /
-    1fr 1fr 2.5fr;
+    'desc desc about' 3fr
+    'save save save' auto / 1fr 1fr 2.5fr;
   gap: 15px 15px;
-  overflow-y: auto;
+}
+
+#general-save-info {
+  grid-area: save;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+@media only screen and (max-width: 799px) {
+  #project-editor-general {
+    display: flex;
+    flex-direction: column;
+  }
+
+.save-error-msg-general {
+  display:none;
+  margin: auto;
+}
+
+.save-error-msg-general p {
+  margin: 50 0 1.5% 0;
+  font-size: 18px;
+  color: red;
+}
 }
 
 .project-editor-input-item {
@@ -645,7 +665,7 @@ Project Creator and Editor style rules
 #tag-search-divider,
 #selected-tag-divider {
   height: 4px;
-  width: 100%;
+  width: 80%;
   border: none;
   border-radius: 3px;
   background-color: var(--header-color);
@@ -773,6 +793,13 @@ Project Creator and Editor style rules
   height: 100%;
 }
 
+@media only screen and (max-width: 650px) {
+  #project-editor-tags {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 #project-editor-type-tags {
   grid-area: type;
   min-height: 80px;
@@ -803,6 +830,7 @@ Project Creator and Editor style rules
 
 #project-editor-tag-search {
   grid-area: search;
+  min-width: 150px;
 }
 
 #project-editor-type-tags,
@@ -830,6 +858,22 @@ Project Creator and Editor style rules
   justify-content: space-between;
 }
 
+#project-editor-tag-search-tabs {
+  overflow-x: auto;
+}
+
+@media only screen and (max-width: 799px) {
+  #project-editor-tag-search-tabs {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 420px) {
+    #project-editor-team-tabs {
+    flex-direction: column;
+  }
+}
+
 #project-editor-team-tabs {
   gap: 50px;
   justify-content: center;
@@ -841,6 +885,8 @@ Project Creator and Editor style rules
   color: var(--neutral-gray);
   font-size: 1.6ch;
   font-weight: 600;
+  word-break: normal;
+  max-width: 100%;
 }
 
 /* Project Editor/Creator Team Tab */
@@ -1062,6 +1108,12 @@ Project Creator and Editor style rules
   grid-area: permissions;
 }
 
+@media only screen and (max-width: 500px) {
+#project-team-add-member-permissions {
+  flex-wrap: wrap;
+}
+}
+
 #user-search-dropdown-button {
   background: none;
   border: none;
@@ -1200,6 +1252,32 @@ Project Creator and Editor style rules
   gap: 25px;
   margin-top: 15px;
   width: 100%;
+}
+
+@media only screen and (max-width: 1000px) {
+  #project-team-open-positions-popup {
+    flex-direction: column;
+  }
+
+  #project-team-open-positions-popup .positions-popup-list {
+    max-height: 20%;
+    overflow-y: auto;
+  }
+
+  #positions-popup-list-edit {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #positions-popup-list-edit #edit-position-details {
+     flex-direction: column;
+     flex-wrap: nowrap;
+     align-items: center;
+  }
+
+  #edit-position-role {
+    flex-direction: column;
+  }
 }
 
 #team-positions-popup-list-header {
@@ -1440,6 +1518,18 @@ select.edit-position-compensation {
   border-radius: 50%;
   transition: .15s;
   align-self: anchor-center;
+}
+
+@media only screen and (max-width: 700px) {
+  .remove-link-button {
+    right: 20px;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .project-editor-link-item {
+    flex-direction: column;
+  }
 }
 
 .remove-link-button>.fa-minus {
@@ -2649,8 +2739,19 @@ Project Carousel style rules
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
   padding: 5px 20px;
-  width: 100px;
+  width: 150px;
   font-weight: 700;
+}
+
+#project-info-edit:hover {
+  color: var(--create-text) !important;
+  background-color: var(--create-bg) !important;
+  filter: drop-shadow(0px 5px 3px var(--shadow-color));
+  transition: 0.25s;
+}
+
+#project-info-edit:focus-visible{
+  outline: none !important;
 }
 
 #project-hook,
@@ -2684,8 +2785,8 @@ Project Carousel style rules
   border-radius: 10px;
   font-style: normal;
   display: grid;
-  height: calc(90vh - 90px);
-  width: 90vw;
+  height: 100%;
+  width: 40vw;
   max-width: 1000px;
   gap: 30px;
   padding: 70px;
@@ -2696,6 +2797,14 @@ Project Carousel style rules
     'list info' auto
     'close close' 50px /
     300px auto;
+}
+
+.positions-popup-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-left: 50%;
 }
 
 #positions-popup-header {
@@ -2808,6 +2917,20 @@ Project Carousel style rules
   border-radius: 10px;
   padding: 20px;
   width: 100%;
+}
+
+@media only screen and (max-width: 1000px) {
+  .positions-popup-content {
+    flex-direction: column;
+    margin-left: 10px;
+    width: 30vw;
+  }
+
+  #project-open-positions-popup {
+    overflow-y: auto;
+    width: 70vw;
+    height: 80vh;
+  }
 }
 
 .positions-popup-info select {
@@ -3062,8 +3185,16 @@ My projects page style rules
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 
-@media only screen and (max-width: 800px) {
-  /* responsiveness goes here*/
+@media only screen and (min-width: 800px) {
+  .my-projects-banner {
+    min-height: 220px;
+  }
+}
+
+@media only screen and (max-width: 799px) {
+  .my-projects-banner {
+    min-height: 200px;
+  }
 }
 
 .page#my-projects {
@@ -3082,12 +3213,21 @@ My projects page style rules
 }
 
 .my-projects-banner {
-  box-sizing: border-box;
   width: 100%;
-  height: auto;
-  margin: 0 0 16px;
-  padding-left: 60px;
-  padding-right: 64px;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.projects-banner-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.projects-banner-outer {
+  box-sizing: border-box;
+  padding: 0 60px;
+  margin-bottom: 30px;
 }
 
 /* .my-projects-profile {
@@ -3640,6 +3780,7 @@ My projects page style rules
   .confirm-deny-btns {
     display: flex;
     flex-direction: row;
+
     button {
       margin: 5px;
     }

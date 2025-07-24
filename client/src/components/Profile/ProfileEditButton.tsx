@@ -2,10 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { PagePopup, openClosePopup } from '../PagePopup';
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
 
+
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 /*
 TO DO: 
  - Convert currentPFPLink to a useEffect instead of a useState 
 */
+
+
 
 // On click, this button should open the Profile Edit modal
 const EditButton = ({ userData }) => {
@@ -52,7 +58,7 @@ const EditButton = ({ userData }) => {
 
   // const [currentPFPLink, setCurrentPFPLink] = useState(require(`../../../../server/images/profiles/${userData.profile_image}`));
   const [currentPFPLink, setCurrentPFPLink] = useState(
-    `/images/profiles/${userData.profile_image}`
+    `${API_BASE}/images/profiles/${userData.profile_image}`
   );
   const [currentFirstName, setCurrentFirstName] = useState(userData.first_name);
   const [currentLastName, setCurrentLastName] = useState(userData.last_name);
@@ -85,7 +91,7 @@ const EditButton = ({ userData }) => {
   }
 
   const getImage = async (theImageName: string) => {
-    const url = `/images/profiles/${theImageName}`;
+    const url = `${API_BASE}/images/profiles/${theImageName}`;
     setCurrentPFPLink(url);
   };
 
@@ -442,7 +448,7 @@ const EditButton = ({ userData }) => {
                     </div>
                   );
                 } else {
-                  const projectURL = `/images/thumbnails/${project.thumbnail}`;
+                  const projectURL = `${API_BASE}/images/thumbnails/${project.thumbnail}`;
                   return (
                     <div className="list-project">
                       <div className="inner-list-project">

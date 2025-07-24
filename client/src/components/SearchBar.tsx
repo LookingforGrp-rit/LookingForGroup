@@ -74,10 +74,10 @@ const handleSearch = (searchQuery: string) => {
   return (
     <div className="search-wrapper">
       {/* Prevent form submission from refreshing the page */}
-      <form className="search-bar" onSubmit={(e) => e.preventDefault()}>
-        <button type="submit" className="search-button" aria-label="Search" onClick={(e) => e.preventDefault()}>
+      <div className="search-bar">
+        <div role="button" className="search-button" aria-label="Search" tabIndex={1}>
           <i className="fa fa-search" aria-hidden="true"></i>
-        </button>
+        </div>
         {/* Input field for search query */}
         <input
           className="search-input"
@@ -85,8 +85,15 @@ const handleSearch = (searchQuery: string) => {
           placeholder="Search"
           value={query}
           onChange={handleChange}
+          onKeyDown={(e) => {
+            {/* Prevent odd popup behavior on enter click */}
+            if (e.key === 'Enter') {
+              e.preventDefault();
+            }
+          }}
+          autoComplete="searchbar-off"
         />
-      </form>
+      </div>
     </div>
   );
 });

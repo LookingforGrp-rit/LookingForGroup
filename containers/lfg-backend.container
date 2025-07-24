@@ -1,0 +1,21 @@
+[Unit]
+Description=LFG backend server
+
+[Container]
+ContainerName=systemd-lfg-backend
+
+Image=ghcr.io/lookingforgrp-rit/lfg-server:latest
+Pull=never
+
+PublishPort=127.0.0.1:8081:3000
+
+EnvironmentFile=/home/woot/env/backend.env
+
+LogDriver=journald
+
+[Service]
+Restart=always
+
+[Install]
+# Start on server boot
+WantedBy=default.target

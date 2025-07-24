@@ -47,21 +47,97 @@ Discover and Meet page style rules
   border-radius: 10px;
 }
 
+@media only screen and (max-width: 799px) {
+  #discover-hero {
+    height: 25vw;
+  }
+}
+
+@media only screen and (max-width: 610px) {
+  #discover-hero {
+    height: auto;
+  }
+}
+
 #profile-hero,
 #project-hero {
   display: grid;
   border-radius: 10px;
   font-size: 1vw;
-  height: calc(20vw - 20px);
-  padding-bottom: 20px;
+  grid-template-columns: repeat(3, 1fr);
   grid-template-areas: 'blurb1 blurb2 blurb3';
 }
 
 .profile-hero-blurb,
 .project-hero-blurb {
   display: flex;
+  position: relative;
   justify-content: center;
   align-items: flex-end;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
+}
+
+.profile-hero-blurb img,
+.project-hero-blurb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+@media only screen and (max-width: 1090px) {
+  #profile-hero,
+  #project-hero {
+    display: flex;
+    height: 53vw;
+    width: 100%;
+  }
+
+  #profile-hero-blurb-3 {
+    display: none;
+  }
+}
+
+@media only screen and (max-width: 799px) and (min-width: 610px) {
+  .profile-hero-blurb img,
+  .project-hero-blurb img {
+    transform: translateY(40px);
+  }
+
+  .profile-hero-blurb,
+  .project-hero-blurb {
+    padding-bottom: 50px;
+  }
+}
+
+@media only screen and (max-width: 610px) {
+  #profile-hero,
+  #project-hero {
+    display: flex;
+    height: 49vw;
+    width: 100%;
+  }
+
+  .profile-hero-blurb, 
+  .project-hero-blurb {
+    width: 100%;
+  }
+
+  .profile-hero-blurb img,
+  .project-hero-blurb img {
+    width: 100%;
+  }
+
+  #profile-hero-blurb-1 {
+    height: auto !important;
+  }
+
+  #profile-hero-blurb-2,
+  #profile-hero-blurb-3 {
+    display: none;
+  }
+
 }
 
 #profile-hero-blurb-1,
@@ -80,7 +156,7 @@ Discover and Meet page style rules
   }
 
   img {
-    height: 20vw;
+    height: auto;
   }
 }
 
@@ -115,7 +191,7 @@ Discover and Meet page style rules
   }
 
   img {
-    height: 20vw;
+    height: auto;
   }
 }
 
@@ -136,7 +212,7 @@ Discover and Meet page style rules
   }
 
   img {
-    height: 20vw;
+    height: auto;
   }
 }
 
@@ -472,6 +548,7 @@ Discover and Meet page style rules
   background-color: var(--tag-red-unselected);
   border: 2px solid var(--tag-red-unselected-border);
   color: var(--tag-text-unselected-red);
+  max-width: 100%;
 
   .fa {
     color: var(--tag-text-unselected-red) !important;
@@ -512,6 +589,7 @@ Discover and Meet page style rules
   background-color: var(--tag-yellow-unselected);
   border: 2px solid var(--tag-yellow-unselected-border);
   color: var(--tag-text-unselected-yellow);
+  max-width: 100%;
 
   .fa {
     color: var(--tag-text-unselected-yellow) !important;
@@ -552,6 +630,7 @@ Discover and Meet page style rules
   background-color: var(--tag-blue-unselected);
   border: 2px solid var(--tag-blue-unselected-border);
   color: var(--tag-text-unselected-blue);
+  max-width: 100%;
 
   .fa {
     color: var(--tag-text-unselected-blue) !important;
@@ -572,6 +651,7 @@ Discover and Meet page style rules
   background-color: var(--tag-purple-unselected);
   border: 2px solid var(--tag-purple-unselected-border);
   color: var(--tag-text-unselected-purple);
+  max-width: 100%;
 
   .fa {
     color: var(--tag-text-unselected-purple) !important;

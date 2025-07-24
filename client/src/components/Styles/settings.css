@@ -406,11 +406,22 @@ input:checked+.slider:before {
   }
 
   .small-popup {
+    hr {
+      color: var(--header-color);
+      border: 1px solid var(--header-color);
+      margin: 0;
+      margin-bottom: 10px;
+    }
+
+    .error {
+      margin-bottom: min(1.73vh, 17px);
+    }
+
     h3 {
       font-size: 20px;
       font-weight: 700;
       color: var(--primary-color);
-      margin: 0 0 15px;
+      margin: 0;
     }
 
     .success {
@@ -432,12 +443,12 @@ input:checked+.slider:before {
         color: var(--neutral-gray);
         font-style: italic;
         font-size: 16px;
-        margin: 0 0 15px 0;
+        margin: 0 0 10px 0;
       }
 
       ul {
         width: inherit;
-        margin: 0 0 15px 0;
+        margin: 0;
       }
 
       li {
@@ -459,6 +470,7 @@ input:checked+.slider:before {
     .confirm-deny-btns {
       display: flex;
       flex-direction: row;
+
       button {
         margin: 5px;
       }
@@ -478,8 +490,15 @@ input:checked+.slider:before {
       width: fit-content;
     }
 
+    .confirm-btn-disabled {
+      background-color: var(--header-color);
+      cursor: default;
+      /* cursor: not-allowed; */
+      box-shadow: none !important;
+    }
+
     .confirm-btn:hover {
-      box-shadow: 0px 0px 10px 0px var(--shadow-color);
+      box-shadow: 0px 0px 10px 3px var(--shadow-color);
     }
 
     .deny-btn {
@@ -501,7 +520,7 @@ input:checked+.slider:before {
     }
 
     .confirm-msg {
-      margin: 0 0 15px 0;
+      margin: 5px 0 15px 0;
       color: var(--neutral-gray);
       font-style: italic;
 

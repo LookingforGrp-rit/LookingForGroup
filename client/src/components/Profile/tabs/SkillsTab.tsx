@@ -113,23 +113,25 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
     e.preventDefault();
 
     // trim whitespace to get tag name
-    const tag: string = e.target.innerText.trim();
+    // take closest button to allow click on icon
+    const button = e.target.closest('button');
+    const tag: string = button.innerText.trim();
 
     // if tag is unselected
-    if (e.target.className.includes('unselected')) {
+    if (button.className.includes('unselected')) {
       // get tag id and type according to type of tag
       let id: number = -1;
       let type: string = '';
 
-      if (e.target.className.includes('yellow')) { // developer skills
+      if (button.className.includes('yellow')) { // developer skills
         id = allSkills.find((s) => s.type === 'Developer Skill' && s.label === tag)?.tag_id ?? -1;
         type = 'Developer Skill';
       }
-      else if (e.target.className.includes('red')) { // designer skills
+      else if (button.className.includes('red')) { // designer skills
         id = allSkills.find((s) => s.type === 'Designer Skill' && s.label === tag)?.tag_id ?? -1;
         type = 'Designer Skill';
       }
-      else if (e.target.className.includes('purple')) { // soft skills
+      else if (button.className.includes('purple')) { // soft skills
         id = allSkills.find((s) => s.type === 'Soft Skill' && s.label === tag)?.tag_id ?? -1;
         type = 'Soft Skill';
       }
@@ -173,7 +175,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
 
     return modifiedProfile.skills
       .map((s) => (
-        <button className={`tag-button tag-button-${getTagColor(s.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
+        <button key={s.skill} className={`tag-button tag-button-${getTagColor(s.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
           <i className="fa fa-close"></i>
           &nbsp;{s.skill}
         </button>
@@ -196,6 +198,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
 
           return (
             <button
+              key={id}
               className={`tag-button tag-button-${'type' in t ? getTagColor(t.type) : 'blue'}-${isTagSelected(
                 id,
                 t.label,
@@ -225,6 +228,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
         .filter((s) => s.type === 'Developer Skill')
         .map((s) => (
           <button
+            key={s.tag_id}
             className={`tag-button tag-button-yellow-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
             onClick={(e) => handleTagSelect(e)}
           >
@@ -243,6 +247,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
         .filter((s) => s.type === 'Designer Skill')
         .map((s) => (
           <button
+            key={s.tag_id}
             className={`tag-button tag-button-red-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
             onClick={(e) => handleTagSelect(e)}
           >
@@ -262,6 +267,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
         .filter((s) => s.type === 'Soft Skill')
         .map((s) => (
           <button
+            key={s.tag_id}
             className={`tag-button tag-button-purple-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
             onClick={(e) => handleTagSelect(e)}
           >
@@ -294,9 +300,10 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
 
   // Components
   const TagSearchTabs = () => {
-    let tabs = tagTabs.map((tag, i) => {
+    const tabs = tagTabs.map((tag, i) => {
       return (
         <button
+          key={tag}
           type="button"
           onClick={() => setCurrentTagsTab(i)}
           className={`button-reset project-editor-tag-search-tab ${currentTagsTab === i ? 'tag-search-tab-active' : ''}`}

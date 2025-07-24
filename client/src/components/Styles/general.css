@@ -761,6 +761,12 @@ Sidebar Nav style rules
   }
 }
 
+@media only screen and (max-width: 500px) {
+  .containerButtonSideBar {
+    gap: 10px;
+  }
+}
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -820,6 +826,11 @@ Page popup style rules
     width: 64vw; */
     /* height: 95vw; */
   }
+
+  /* Smaller popups within another popup should scale */
+  .popup .popup {
+    max-width: 50vw;
+  }  
 }
 
 .popup-container {
@@ -869,32 +880,39 @@ Page popup style rules
   border-radius: 4px !important;
   border: none !important;
   top: 0px;
-  right: -1.1%;
+  right: 0%;
   width: 40px !important;
   height: 40px !important;
   background: none !important;
   margin: 0 !important;
   z-index: 4;
-  /* Prevent it from being covered by small-popup */
+  padding: 8px 18px 0px 0px;
+}
+
+.popup-close.popup-close-edit {
+  right: -4%;
 }
 
 @media screen and (max-width: 1180px) {
-  .popup-close {
+  .popup-close, .popup-close.popup-close-edit {
     margin: 0 8px 0 0 !important;
     right: 1%;
   }
 }
 
 .popup-close img {
-  width: 100%;
+  width: 32px;
   height: 32px;
-  margin-top: 3px;
   filter: var(--image-filter);
 }
 
 .popup-close:hover {
   /* background-color: var(--lightGray) !important; */
   cursor: pointer;
+}
+
+.popup-close:disabled {
+  cursor: default;
 }
 
 #popup-close img {
@@ -1233,6 +1251,12 @@ Header style rules
   background-color: var(--header-color);
 }
 
+@media only screen and (max-width: 400px) {
+  #header {
+    width: 85%;
+  }
+}
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1273,6 +1297,7 @@ Search style rules
   text-align: left;
   display: flex;
   flex-direction: row;
+  gap: 5px;
   /* float: right; */
   /* align-content: center; */
   /* margin: auto; */
@@ -1296,6 +1321,7 @@ Search style rules
   background: none;
   border: none;
   /* padding: 4px; */
+  padding-top: 2px;
   font: inherit;
   cursor: pointer;
   outline: inherit;
@@ -1456,9 +1482,13 @@ Scrollbar style rules
 
 /* Track */
 ::-webkit-scrollbar-track {
-  border: 2px solid var(--header-color);
-  border-radius: 10px;
+  /* border: 2px solid var(--header-color);
+  border-radius: 10px; */
 }
+
+/* ::-webkit-scrollbar-button {
+  display: none;
+} */
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
@@ -1551,6 +1581,8 @@ Image Carousel style rules
   background: none;
   border: none;
   border-radius: 50px;
+
+  animation: fadeIn 0.15s ease-in-out;
 
   img {
     width: 20px;

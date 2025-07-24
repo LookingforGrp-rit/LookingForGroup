@@ -23,6 +23,9 @@ import { fetchUserID } from '../../functions/fetch';
 import { ProfileInterests } from '../Profile/ProfileInterests';
 import profilePicture from '../../images/blue_frog.png';
 
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 // --------------------
 // Interfaces
 // --------------------
@@ -105,7 +108,7 @@ const NewProfile = () => {
   const navigate = useNavigate(); // Hook for navigation
 
   // Get URL parameters to tell what user we're looking for and store it
-  let urlParams = new URLSearchParams(window.location.search);
+  const urlParams = new URLSearchParams(window.location.search);
   let profileID = urlParams.get('userID');
 
   let displayedProfile: Profile;
@@ -246,67 +249,49 @@ const NewProfile = () => {
   // --------------------
   // Components
   // --------------------
-  const aboutMeButtons = isUsersProfile ? (
-    <>
-      {
+
+  // Nothing in aboutMeButtons has functionality coded
+  // There are a few options for which icons/buttons to end up including, and the order to include them in
+  // The code features two different types of "follow" buttons, one as an icon, and one as a button (the icon is currently in use.)
+
+  // Each profile currently displays a hardcoded "example" link to Instagram and LinkedIn
+  const aboutMeButtons =
+    <div id="about-me-buttons">
+
+      <button onClick={() => { window.open('https://www.linkedin.com/', '_blank'); }}>
+        <ThemeIcon
+          light={'/assets/black/linkedIn_black.png'}
+          dark={'/assets/white/linkedIn_white.png'}
+          alt={'LinkedIn'}
+        />
+      </button>
+
+      <button onClick={() => { window.open('https://www.instagram.com/', '_blank'); }}>
+        <ThemeIcon
+          light={'/assets/black/instagram_black.png'}
+          dark={'/assets/white/instagram_white.png'}
+          alt={'Instagram'}
+        />
+      </button>
+
+      {/*  Is it the user's page? If so - show 'Edit' profile button. If not, show follow button and dropdown. */}
+      {isUsersProfile ? (
+        <ProfileEditPopup />
+      ) : (
         <div id="about-me-buttons">
-          <button
-            onClick={() => {
-              window.open('https://www.linkedin.com/', '_blank');
-            }}
-          >
-            <ThemeIcon
-              light={'assets/black/linkedIn_black.png'}
-              dark={'assets/white/linkedIn_white.png'}
-              alt={'LinkedIn'}
-            />
-          </button>
-          <button
-            onClick={() => {
-              window.open('https://www.instagram.com/', '_blank');
-            }}
-          >
-            <ThemeIcon
-              light={'assets/black/instagram_black.png'}
-              dark={'assets/white/instagram_white.png'}
-              alt={'Instagram'}
-            />
-          </button>
-          <ProfileEditPopup />
-        </div>
-      }
-    </>
-  ) : (
-    <>
-      {
-        <div id="about-me-buttons" className="about-me-buttons-minimal">
           <button>
             <ThemeIcon
-              light={'assets/linkedIn_logo_light.png'}
-              dark={'assets/linkedIn_logo_dark.png'}
-              alt={'LinkedIn'}
+              light={'/assets/follow_user_light.png'}
+              dark={'/assets/follow_user_dark.png'}
+              alt={'Follow'}
             />
           </button>
-          <button>
-            <ThemeIcon
-              light={'assets/instagram_logo_light.png'}
-              dark={'assets/instagram_logo_dark.png'}
-              alt={'Instagram'}
-            />
-          </button>
-          <button>
-            <ThemeIcon
-              light={'assets/follow_user_light.png'}
-              dark={'assets/follow_user_dark.png'}
-              alt={'Like/Follow'}
-            />
-          </button>
-          {/* TO-DO: Implement Share, Block, and Report functionality */}
+
           <Dropdown>
             <DropdownButton>
               <ThemeIcon
-                light={'assets/menu_light.png'}
-                dark={'assets/menu_dark.png'}
+                light={'/assets/menu_light.png'}
+                dark={'/assets/menu_dark.png'}
                 alt={'More options'}
                 addClass={'dropdown-menu'}
               />
@@ -328,10 +313,11 @@ const NewProfile = () => {
               </div>
             </DropdownContent>
           </Dropdown>
+          {/* Alternate follow button (unused): */}
+          {/* <button id="profile-follow-button" onClick={followUser}>Follow</button> */}
         </div>
-      }
-    </>
-  );
+      )}
+    </div>
 
   // --------------------
   // Final component
@@ -348,7 +334,7 @@ const NewProfile = () => {
           <img
             src={
               displayedProfile.profile_image
-                ? `/images/profiles/${displayedProfile.profile_image}`
+                ? `${API_BASE}/images/profiles/${displayedProfile.profile_image}`
                 : profilePicture
             }
             id="profile-image"
@@ -373,32 +359,32 @@ const NewProfile = () => {
           <div id="profile-info-extras">
             <div className="profile-extra">
               <ThemeIcon
-                light={'assets/black/role.png'}
-                dark={'assets/white/role.png'}
+                light={'/assets/black/role.png'}
+                dark={'/assets/white/role.png'}
                 alt={'Profession'}
               />
               {displayedProfile.job_title}
             </div>
             <div className="profile-extra">
               <ThemeIcon
-                light={'assets/black/major.png'}
-                dark={'assets/white/major.png'}
+                light={'/assets/black/major.png'}
+                dark={'/assets/white/major.png'}
                 alt={'Major'}
               />
               {displayedProfile.major} {displayedProfile.academic_year}
             </div>
             <div className="profile-extra">
               <ThemeIcon
-                light={'assets/black/location.png'}
-                dark={'assets/white/location.png'}
+                light={'/assets/black/location.png'}
+                dark={'/assets/white/location.png'}
                 alt={'Location'}
               />
               {displayedProfile.location}
             </div>
             <div className="profile-extra">
               <ThemeIcon
-                light={'assets/black/pronouns.png'}
-                dark={'assets/white/pronouns.png'}
+                light={'/assets/black/pronouns.png'}
+                dark={'/assets/white/pronouns.png'}
                 alt={'Pronouns'}
               />
               {displayedProfile.pronouns}
@@ -406,14 +392,6 @@ const NewProfile = () => {
           </div>
 
           <div id="profile-info-description">{displayedProfile.bio}</div>
-          {/*Only loads follow button if not on own page*/}
-          {isUsersProfile ? (
-            <></>
-          ) : (
-            <button id="profile-follow-button" onClick={followUser}>
-              Follow
-            </button>
-          )}
 
           <div id="profile-info-funfact">
             <span id="fun-fact-start">
@@ -446,7 +424,7 @@ const NewProfile = () => {
                     category = 'grey';
                 }
 
-                return <div className={`skill-tag-label label-${category}`}>{tag.skill}</div>;
+                return <div key={`${tag.skill}`} className={`skill-tag-label label-${category}`}>{tag.skill}</div>;
               })
             ) : (
               <></>
