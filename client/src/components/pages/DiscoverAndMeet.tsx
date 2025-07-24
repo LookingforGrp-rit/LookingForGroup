@@ -268,11 +268,11 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           }
 
           // Tag check can be done by ID
-          if (tag.tag_id) {
+          if (tag.tagId) {
             if (item.tags) {
               const tagIDs = item.tags.map((tag) => tag.id);
 
-              if (!tagIDs.includes(tag.tag_id)) {
+              if (!tagIDs.includes(tag.tagId)) {
                 tagFilterCheck = false;
                 break;
               }
