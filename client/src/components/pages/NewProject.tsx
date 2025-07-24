@@ -458,6 +458,7 @@ const NewProject = () => {
                   <div id="project-open-positions-popup">
                     <div id="positions-popup-header">Join The Team</div>
 
+                   <div className="positions-popup-content">
                     <div className="positions-popup-list">
                       <div id="positions-popup-list-header">Open Positions</div>
                       <div id="positions-popup-list-buttons">
@@ -518,6 +519,7 @@ const NewProject = () => {
                         </span>
                       </div>
                     </div>
+                  </div>
 
                     <PopupButton buttonId="positions-popup-close">Close</PopupButton>
                   </div>

@@ -32,6 +32,7 @@
   .edit-profile-body.about .edit-profile-section-3 {
     /* box-sizing: border-box; */
     height: 100%;
+    width: 100%;
   }
   
   .about-row {
@@ -63,8 +64,129 @@
   
     border: 2px dashed #424242;
     gap: 10px;
+    width: 100%;
+    height: auto;
   }
 
   #profile-editor-about {
     overflow-y: auto;
+    overflow-x: hidden;
   }
+
+  textarea, input, select {
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1rem;
+}
+
+  /* Layout on medium screens */  
+  @media only screen and (max-width: 1171px) and (min-width: 700px) {
+    .edit-profile-body.about {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 0 5px;
+  }
+
+  .edit-profile-section-1 {
+    display: flex !important;
+    flex-direction: column;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+  }
+
+  #profile-editor-funFact, #profile-editor-bio, #profile-editor-headline {
+    height: 100px;
+  }
+
+  #profile-editor-add-image {
+    max-width: 250px;
+  }
+
+  #profile-editor-add-image #img-view {
+    width: 100%;
+  }
+
+  .about-row.row-1, .about-row.row-2, .about-row.row-3 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    width: 90%;
+  }
+
+  .editor-input-item {
+    flex: 1 1 250px;
+    min-width: 100px;
+    width: 100%;
+  }
+
+  .edit-profile-section-2 {
+    display: flex !important;
+    flex-direction: row;
+    gap: 20px;
+    align-items: center;
+    width: 100%;
+  }
+  }
+
+  /* Layout on small screens */
+  @media only screen and (max-width: 700px) {
+  .edit-profile-body.about {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 0 10px;
+    overflow-x: hidden;
+  }
+
+  #profile-editor-about {
+    overflow-x: auto;
+  }
+
+  .edit-profile-section-1 {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: baseline;
+    gap: 20px;
+    width: 100%;
+    max-width: 100%;
+    padding-left: 20%;
+  }
+
+  #profile-editor-bio {
+    height: 100px;
+  }
+
+  #profile-editor-funFact, #profile-editor-headline {
+    height: 70px;
+  }
+
+  #profile-editor-add-image {
+    max-width: 200px;
+    margin-right: 15vw;
+  }
+
+  #profile-editor-add-image #img-view {
+    width: 100%;
+  }
+
+  .editor-input-item input, .editor-input-item select {
+   max-width: 80%;
+}
+
+  .about-row.row-1, .about-row.row-2, .about-row.row-3 {
+    display: flex;
+    flex-direction: column;
+    width: 220px;
+    gap: 10px;
+  }
+  
+ .edit-profile-section-2 {
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+  }
+}

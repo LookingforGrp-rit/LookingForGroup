@@ -38,8 +38,7 @@ textarea {
 
 #profile-editor-tabs {
   display: flex;
-  flex-wrap: nowrap;
-  overflow-x: auto;
+  flex-wrap: wrap;
   justify-content: space-around;
   margin: 0 20px;
 }
@@ -55,6 +54,13 @@ textarea {
   margin: 35px 48px 40px;
   overflow: hidden;
   flex: 1;
+}
+
+@media (max-width: 600px) {
+  #profile-editor-content {
+    margin-right: 5px;
+    margin-left: 5px;
+  }
 }
 
 #profile-editor-save {
@@ -93,6 +99,17 @@ textarea {
 .editor-input-item {
   display: flex;
   flex-direction: column;
+}
+
+@media only screen and (max-width: 700px) {
+  .editor-input-item button {
+   right: 60px;
+  }
+
+  .link-input {
+    display: flex;
+    flex-direction: column;
+  }
 }
 
 .editor-input-item input,

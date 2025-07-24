@@ -496,7 +496,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
               <div id="project-editor-content">
                 {
-                  currentTab === 0 ? <GeneralTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} /> :
+                  currentTab === 0 ? <GeneralTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
                     currentTab === 1 ? <MediaTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} /> :
                       currentTab === 2 ? <TagsTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} /> :
                         currentTab === 3 ? <TeamTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorMember={setErrorAddMember} setErrorPosition={setErrorAddPosition} permissions={permissions} /> :
@@ -504,13 +504,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                             <></>
                 }
               </div>
-
-              <div id="invalid-input-error" className="save-error-msg">
+              {/* Responsiveness fix: General Tab has its own button/error text for layout change */}
+              {currentTab !== 0 ? <div id="invalid-input-error" className={"save-error-msg"}>
                 <p>{message}</p>
-              </div>
+              </div> : <></>}
+              {currentTab !== 0 ? 
               <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
                 Save Changes
-              </PopupButton>
+              </PopupButton> : <></>}
             </div>
           </PopupContent>
         ) : (

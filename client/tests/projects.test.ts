@@ -2,6 +2,8 @@ import { afterAll, beforeAll, expect, test } from "vitest";
 import util from "../src/api/projects.ts";
 import { startTestServer, stopTestServer } from "./server-management.ts";
 
+// file at ./client/src/api/projects.ts
+
 beforeAll(startTestServer);
 
 afterAll(stopTestServer);
@@ -39,6 +41,8 @@ test("Test getPics, local. 1: Test status. 2: Test data.", async () => {
   expect(result.status).toBe(200);
   expect(result.data).toBeDefined();
 });
+
+// // These tests do not pass, all of them incorperate 'Expected JSON, recieved HTML', probably broken endpoint. Check utils and the routes. Making sure the urls is correct in the general user and project utils should be important.
 
 //\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\//\\
 // POSTs

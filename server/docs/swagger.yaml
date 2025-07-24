@@ -1432,8 +1432,9 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/pictures/{picId}:
     put:
-      summary: Update a picture for a project
+      summary: Update a pictures for a project
       description: Updates fields of an existing project picture by image ID.
       tags:
         - Projects
@@ -1442,11 +1443,18 @@ paths:
       parameters:
         - name: id
           in: path
-          description: The ID of the picture to update
+          description: The ID of the project
           required: true
           schema:
             type: integer
-            example: 12
+            example: 1
+        - name: picId
+          in: path
+          description: ID of the picture to update
+          required: true
+          schema:
+            type: integer
+            example: 1
       requestBody:
         required: true
         content:
@@ -1482,7 +1490,231 @@ paths:
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Remove a picture from a project (NOT FINISHED)
+      tags:
+        - Projects
+      description: This endpoint is intended to remove a picture from a project by picture ID,
+        but is not implemented yet.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Project ID
+        - name: picId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: Picture ID to remove
+      responses:
+        '501':
+          description: NOT DONE
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 501
+                  error:
+                    type: string
+                    example: NOT DONE
+                  data:
+                    type: string
+                    nullable: true
+                    example: null
+                  memetype:
+                    type: string
+                    example: application/json
+
+  /api/projects/{id}/members:
+    post:
+      summary: Add a member to a project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      description: Adds a new member to a project using the project ID.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Project ID to add the member to
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - userId
+                - role
+              properties:
+                userId:
+                  type: integer
+                  description: The ID of the user to add
+                  example: 1
+                role:
+                  type: string
+                  description: Role of the user in the project (e.g., "admin", "member")
+                  example: member
+      responses:
+        '200':
+          description: Member added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      id:
+                        type: integer
+                        example: 5
+                      userId:
+                        type: integer
+                        example: 1
+                      projectId:
+                        type: integer
+                        example: 1
+                      role:
+                        type: string
+                        example: member
+                  memetype:
+                    type: string
+                    example: application/json
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/members/{userId}:
+    put:
+      summary: Update a member in a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      description: Updates the role or other properties of a member in a project.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Project ID
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the member to update
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - role
+              properties:
+                role:
+                  type: string
+                  description: Updated role for the user
+                  example: Artist
+      responses:
+        '200':
+          description: Member updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      userId:
+                        type: integer
+                        example: 1
+                      role:
+                        type: string
+                        example: Artist
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
           $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Remove a member from a project
+      tags:
+        - Projects
+      description: Deletes a member from a project by specifying the user ID in the query parameters.
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Project ID
+        - in: query
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the user to remove
+      responses:
+        '200':
+          description: Member removed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: Member removed
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 

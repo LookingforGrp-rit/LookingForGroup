@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
+import { PopupButton } from '../../Popup';
 
 
 // --- Interfaces ---
@@ -63,7 +64,7 @@ const keyboardDebounce = (func: any, delay: any) => {
 };
 
 // --- Component ---
-export const GeneralTab = ({ isNewProject = false, projectData = defaultProject, setProjectData }) => {
+export const GeneralTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, saveProject, failCheck }) => {
 
   // --- Hooks ---
   // tracking project modifications
@@ -247,6 +248,15 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
           }}
         />
       </div>
+      
+    <div id="general-save-info">
+      <div id="invalid-input-error" className={"save-error-msg-general"}>
+         <p>*Fill out all required info before saving!*</p>
+      </div>
+        <PopupButton buttonId="project-editor-save-general" callback={saveProject} doNotClose={() => !failCheck}>
+          Save Changes
+        </PopupButton>
     </div>
+  </div>
   );
 };
