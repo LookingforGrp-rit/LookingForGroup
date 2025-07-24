@@ -359,12 +359,12 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
               tagFilterCheck = false;
               break;
             }
-          } else if (tag.tag_id) {
+          } else if (tag.tagId) {
             // Skill check can be done by ID
             if (item.skills) {
               const skillIDs = item.skills.map((skill) => skill.id);
 
-              if (!skillIDs.includes(tag.tag_id)) {
+              if (!skillIDs.includes(tag.tagId)) {
                 tagFilterCheck = false;
                 break;
               }
