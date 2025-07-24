@@ -198,7 +198,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
               return { name: item.title, description: item.hook };
             } else {
               return {
-                name: `${item.first_name} ${item.last_name}`,
+                name: `${item.firstName} ${item.lastName}`,
                 username: item.username,
                 bio: item.bio,
               };

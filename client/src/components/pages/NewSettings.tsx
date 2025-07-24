@@ -115,7 +115,7 @@ const Settings = ({ }) => {
               };
 
               const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
-              const url = `/api/users/${userInfo.user_id}/${typeToChange}`;
+              const url = `/api/users/${userInfo.userId}/${typeToChange}`;
               const response = await sendPut(url, apiParams, onSuccess);
 
               // If it returns back with an error, display it on parent popup
@@ -400,7 +400,7 @@ const Settings = ({ }) => {
   const updateVisibility = async (visibilityNum) => {
     // Don't run if the value hasn't changed
     if (visibilityNum !== userInfo.visibility) {
-      const url = `/api/users/${userInfo.user_id}/visibility`;
+      const url = `/api/users/${userInfo.userId}/visibility`;
       const response = await sendPut(url, { newVisibility: visibilityNum });
 
       if (response !== undefined && response.error) {
@@ -485,7 +485,7 @@ const Settings = ({ }) => {
                   <div className="input-container">
                     <input
                       id="option-primary-email"
-                      placeholder={userInfo.primary_email}
+                      placeholder={userInfo.primary_email}     // FIX Primary email no longer exists; possible break
                       type="text"
                       disabled
                     />
@@ -502,7 +502,7 @@ const Settings = ({ }) => {
                   <div className="input-container disabled">
                     <input
                       id="option-rit-email"
-                      placeholder={userInfo.rit_email}
+                      placeholder={userInfo.ritEmail}
                       type="text"
                       disabled
                     />
