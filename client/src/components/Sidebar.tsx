@@ -9,10 +9,10 @@ import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEdito
 import { getCurrentUsername } from "../api/users.ts";
 
 export interface User {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   username: string;
-  primary_email: string;
+  primaryEmail: string;
   userId: number;
 }
 
@@ -134,15 +134,15 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
         // Authenticated
         setCreateError(false);
 
-        const _userData = {
-          first_name: res.data.first_name,
-          last_name: res.data.last_name,
+        const userInfo = {
+          firstName: res.data.firstName,
+          lastName: res.data.lastName,
           username: res.data.username,
-          primary_email: res.data.primary_email,
+          primaryEmail: res.data.primaryEmail,
           userId: res.data.userId,
         };
 
-        setUserData(_userData);
+        setUserData(userInfo);
       } else {
         // If there is any issue authenticating the user's account,
         // immediatly send the user to the login screen
