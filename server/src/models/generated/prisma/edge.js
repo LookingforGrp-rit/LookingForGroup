@@ -382,7 +382,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "C:\\Users\\evgen\\GitHub\\LookingForGroup\\server\\src\\models\\generated\\prisma",
+      "value": "C:\\Users\\picep\\LookingForGroup\\server\\src\\models\\generated\\prisma",
       "fromEnvVar": null
     },
     "config": {
@@ -396,7 +396,7 @@ const config = {
       }
     ],
     "previewFeatures": [],
-    "sourceFilePath": "C:\\Users\\evgen\\GitHub\\LookingForGroup\\server\\prisma\\schema.prisma",
+    "sourceFilePath": "C:\\Users\\picep\\LookingForGroup\\server\\prisma\\schema.prisma",
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
