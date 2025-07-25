@@ -3,10 +3,19 @@
 minio server /data --console-address ":9001" &
 MINIO_PID=$!
 
+# Graceful shutdown
+terminate() {
+  kill -TERM "$MINIO_PID"
+  wait "$MINIO_PID"
+  exit 0
+}
+
+# Trap termination signals and forward to MinIO
+trap terminate TERM INT
+
 SETUP_MARKER="/data/.minio-init-complete"
 
 if [ ! -f "$SETUP_MARKER" ]; then
-  # Wait until MinIO is ready
   until curl -sSf http://localhost:9000/minio/health/ready > /dev/null; do
     sleep 1
   done
@@ -36,5 +45,5 @@ if [ ! -f "$SETUP_MARKER" ]; then
   touch "$SETUP_MARKER"
 fi
 
-# Keep the MinIO server running
-wait $MINIO_PID
+# Wait for MinIO to exit (after trap handles signal)
+wait "$MINIO_PID"
