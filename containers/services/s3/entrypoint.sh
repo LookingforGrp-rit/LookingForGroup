@@ -32,7 +32,7 @@ if [ ! -f "$SETUP_MARKER" ]; then
   mc mb "local/$S3_BUCKET"
 
   # Upload init files if any
-  mc cp --recursive /init-images "local/$S3_BUCKET/"
+  mc cp --recursive /init-images/ "local/$S3_BUCKET/"
 
   # Create user if not exists
   mc admin user add local "$S3_USER" "$S3_PASS"
