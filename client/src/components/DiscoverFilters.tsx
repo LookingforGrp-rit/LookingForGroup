@@ -330,7 +330,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: string
             {/* Additional filters popup */}
             <Popup>
               <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
-                <ThemeIcon light={'/assets/filters_light.png'} dark={'/assets/filters_dark.png'} />
+                <ThemeIcon light={'assets/filters_light.png'} dark={'assets/filters_dark.png'} />
               </PopupButton>
               {/* 
                             When page loads, get all necessary tag lists based on page category.
@@ -345,8 +345,8 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: string
                 {/* Back button */}
                 <PopupButton className="popup-back">
                   <ThemeIcon
-                    light={'/assets/back_light.png'}
-                    dark={'/assets/back_dark.png'}
+                    light={'assets/back_light.png'}
+                    dark={'assets/back_dark.png'}
                     id="dropdown-arrow"
                   />
                 </PopupButton>

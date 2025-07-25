@@ -30,8 +30,8 @@ export const ProfileHeader = ({ user }) => {
             <h2 id="profile-name">{user.name}</h2>
             <button className="icon-button" onClick={toggleUserOptions}>
               <ThemeIcon
-                light={'assets/menu_light.png'}
-                dark={'assets/menu_dark.png'}
+                src={'assets/menu_light.svg'}
+                darkSrc={'assets/menu_dark.svg'}
                 alt={'More Options'}
               />
             </button>

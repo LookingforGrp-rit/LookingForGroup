@@ -103,8 +103,8 @@ if (response && response.error) {
           {/* <h1>Welcome!</h1>
                     <p>Don't have an account?</p> */}
           <ThemeIcon
-            light={'assets/bannerImages/login_light.png'}
-            dark={'assets/bannerImages/login_dark.png'}
+            src={'assets/bannerImages/login_light.png'}
+            darkSrc={'assets/bannerImages/login_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>
         </div>

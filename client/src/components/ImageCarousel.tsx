@@ -124,8 +124,8 @@ export const ImageCarousel = ({
                 id="project-image-carousel-left"
               >
                 <ThemeIcon
-                  light={'assets/arrow_light.png'}
-                  dark={'assets/arrow_dark.png'}
+                  src={'assets/arrow_light.svg'}
+                  darkSrc={'assets/arrow_dark.svg'}
                   alt={'left'}
                 />
               </button>
@@ -149,8 +149,8 @@ export const ImageCarousel = ({
                 id="project-image-carousel-right"
               >
                 <ThemeIcon
-                  light={'assets/arrow_light.png'}
-                  dark={'assets/arrow_dark.png'}
+                  src={'assets/arrow_light.svg'}
+                  darkSrc={'assets/arrow_dark.svg'}
                   alt={'right'}
                 />
               </button>
@@ -173,8 +173,8 @@ export const ImageCarousel = ({
                 id="discover-carousel-left"
               >
                 <ThemeIcon
-                  light={'assets/arrow_light.png'}
-                  dark={'assets/arrow_dark.png'}
+                  src={'assets/arrow_light.svg'}
+                  darkSrc={'assets/arrow_dark.svg'}
                   alt={'left'}
                 />
               </button>
@@ -206,8 +206,8 @@ export const ImageCarousel = ({
               <button className="discover-carousel-link">
                 Learn More
                 <ThemeIcon
-                  light={'assets/arrow_light.png'}
-                  dark={'assets/arrow_dark.png'}
+                  src={'assets/arrow_light.svg'}
+                  darkSrc={'assets/arrow_dark.svg'}
                   alt={'right'}
                 />
               </button>
@@ -217,8 +217,8 @@ export const ImageCarousel = ({
                 id="discover-carousel-right"
               >
                 <ThemeIcon
-                  light={'assets/arrow_light.png'}
-                  dark={'assets/arrow_dark.png'}
+                  src={'assets/arrow_light.svg'}
+                  darkSrc={'assets/arrow_dark.svg'}
                   alt={'right'}
                 />
               </button>

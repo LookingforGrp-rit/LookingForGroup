@@ -73,8 +73,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           <div id="profile-hero">
             <div id="profile-hero-blurb-1" className="profile-hero-blurb">
               <ThemeIcon
-                light={'/assets/bannerImages/people1_light.png'}
-                dark={'/assets/bannerImages/people1_dark.png'}
+                src={'assets/bannerImages/people1_light.png'}
+                darkSrc={'assets/bannerImages/people1_dark.png'}
                 id={'profile-hero-img-1'}
                 alt={'banner image'}
               />
@@ -86,8 +86,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             <div id="profile-hero-blurb-2" className="profile-hero-blurb">
               {/* <h2>Look for people to work with!</h2> */}
               <ThemeIcon
-                light={'/assets/bannerImages/people2_light.png'}
-                dark={'/assets/bannerImages/people2_dark.png'}
+                light={'assets/bannerImages/people2_light.png'}
+                dark={'assets/bannerImages/people2_dark.png'}
                 id={'profile-hero-img-2'}
                 alt={'banner image'}
               />
@@ -100,8 +100,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
             <div id="profile-hero-blurb-3" className="profile-hero-blurb">
               <ThemeIcon
-                light={'/assets/bannerImages/people3_light.png'}
-                dark={'/assets/bannerImages/people3_dark.png'}
+                light={'assets/bannerImages/people3_light.png'}
+                dark={'assets/bannerImages/people3_dark.png'}
                 id={'profile-hero-img-3'}
                 alt={'banner image'}
               />

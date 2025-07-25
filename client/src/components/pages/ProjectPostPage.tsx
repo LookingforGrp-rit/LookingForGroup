@@ -187,7 +187,7 @@ const ProjectPostPage = () => {
         <h2 id="post-project-name">{projects[projectId].name}</h2>
         <button className="orange-button">Follow</button>
         <button className="icon-button">
-          <ThemeIcon light={'/assets/menu_light.png'} dark={'/assets/menu_dark.png'} alt={'More Options'} />
+          <ThemeIcon src={'/assets/menu_light.svg'} darkSrc={'/assets/menu_dark.svg'} alt={'More Options'} />
         </button>
       </div>
 
@@ -198,8 +198,8 @@ const ProjectPostPage = () => {
           <h3 id="post-name">{postData.title}</h3>
           <button id="post-options" className="icon-button">
             <ThemeIcon
-              light={'/assets/menu_light.png'}
-              dark={'/assets/menu_dark.png'}
+              src={'/assets/menu_light.svg'}
+              darkSrc={'/assets/menu_dark.svg'}
               alt={'menu'}
             />
           </button>

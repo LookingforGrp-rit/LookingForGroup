@@ -249,49 +249,67 @@ const NewProfile = () => {
   // --------------------
   // Components
   // --------------------
-
-  // Nothing in aboutMeButtons has functionality coded
-  // There are a few options for which icons/buttons to end up including, and the order to include them in
-  // The code features two different types of "follow" buttons, one as an icon, and one as a button (the icon is currently in use.)
-
-  // Each profile currently displays a hardcoded "example" link to Instagram and LinkedIn
-  const aboutMeButtons =
-    <div id="about-me-buttons">
-
-      <button onClick={() => { window.open('https://www.linkedin.com/', '_blank'); }}>
-        <ThemeIcon
-          light={'/assets/black/linkedIn_black.png'}
-          dark={'/assets/white/linkedIn_white.png'}
-          alt={'LinkedIn'}
-        />
-      </button>
-
-      <button onClick={() => { window.open('https://www.instagram.com/', '_blank'); }}>
-        <ThemeIcon
-          light={'/assets/black/instagram_black.png'}
-          dark={'/assets/white/instagram_white.png'}
-          alt={'Instagram'}
-        />
-      </button>
-
-      {/*  Is it the user's page? If so - show 'Edit' profile button. If not, show follow button and dropdown. */}
-      {isUsersProfile ? (
-        <ProfileEditPopup />
-      ) : (
+  const aboutMeButtons = isUsersProfile ? (
+    <>
+      {
         <div id="about-me-buttons">
-          <button>
+          <button
+            onClick={() => {
+               window.open('https://www.linkedin.com/', '_blank');
+            }}
+          >
             <ThemeIcon
-              light={'/assets/follow_user_light.png'}
-              dark={'/assets/follow_user_dark.png'}
-              alt={'Follow'}
+              src={'assets/white/linkedIn_white.svg'}
+              lightModeColor={'black'}
+              alt={'LinkedIn'}
             />
           </button>
-
+          <button
+            onClick={() => {
+              window.open('https://www.instagram.com/', '_blank');
+            }}
+          >
+            <ThemeIcon
+              src={'assets/white/instagram_white.svg'}
+              lightModeColor={'black'}
+              alt={'Instagram'}
+            />
+          </button>
+          <ProfileEditPopup />
+        </div>
+      }
+    </>
+  ) : (
+    <>
+      {
+        <div id="about-me-buttons" className="about-me-buttons-minimal">
+          <button>
+            <ThemeIcon
+              src={'assets/linkedIn_logo_light.svg'}
+              darkSrc={'assets/linkedIn_logo_dark.svg'}
+              alt={'LinkedIn'}
+            />
+          </button>
+          <button>
+            <ThemeIcon
+              src={'assets/instagram_logo_light.svg'}
+              darkSrc={'assets/instagram_logo_dark.svg'}
+              alt={'Instagram'}
+            />
+          </button>
+          <button>
+            <ThemeIcon
+              src={'assets/follow_user_light.svg'}
+              darkSrc={'assets/follow_user_dark.svg'}
+              alt={'Like/Follow'}
+            />
+          </button>
+          {/* TO-DO: Implement Share, Block, and Report functionality */}
           <Dropdown>
             <DropdownButton>
               <ThemeIcon
-                light={'/assets/menu_light.png'}
-                dark={'/assets/menu_dark.png'}
+                src={'assets/menu_light.svg'}
+                darkSrc={'assets/menu_dark.svg'}
                 alt={'More options'}
                 addClass={'dropdown-menu'}
               />
@@ -359,32 +377,32 @@ const NewProfile = () => {
           <div id="profile-info-extras">
             <div className="profile-extra">
               <ThemeIcon
-                light={'/assets/black/role.png'}
-                dark={'/assets/white/role.png'}
+                src={'assets/white/role.svg'}
+                lightModeColor={'black'}
                 alt={'Profession'}
               />
               {displayedProfile.job_title}
             </div>
             <div className="profile-extra">
               <ThemeIcon
-                light={'/assets/black/major.png'}
-                dark={'/assets/white/major.png'}
+                src={'assets/white/major.svg'}
+                lightModeColor={'black'}
                 alt={'Major'}
               />
               {displayedProfile.major} {displayedProfile.academic_year}
             </div>
             <div className="profile-extra">
               <ThemeIcon
-                light={'/assets/black/location.png'}
-                dark={'/assets/white/location.png'}
+                src={'assets/white/location.svg'}
+                lightModeColor={'black'}
                 alt={'Location'}
               />
               {displayedProfile.location}
             </div>
             <div className="profile-extra">
               <ThemeIcon
-                light={'/assets/black/pronouns.png'}
-                dark={'/assets/white/pronouns.png'}
+                src={'assets/white/pronouns.svg'}
+                lightModeColor={'black'}
                 alt={'Pronouns'}
               />
               {displayedProfile.pronouns}
