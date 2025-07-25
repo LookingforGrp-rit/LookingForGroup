@@ -101,10 +101,11 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: string
         let type = tag.type;
 
         // possible break; switch to "tagId"?
-        if (tag.tag) {
+        if (tag.tagId) {
           filterTag['tag_id'] = tag.tagId;
         }
 
+        
         //TODO: clean this up. data should all be of type 'Genre' now
         // All these tags should be under Genre
         if (
