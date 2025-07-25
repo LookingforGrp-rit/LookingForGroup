@@ -63,7 +63,7 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
           loggedIn = true;
           setUsername(res.data.username);
           setEmail(res.data.email ?? null);
-          setProfileImg(res.data.profile_image ?? '');
+          setProfileImg(res.data.profileImage ?? '');
         } else {
           loggedIn == false;
           setUsername('Guest');

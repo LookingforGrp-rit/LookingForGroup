@@ -35,7 +35,7 @@ export const PanelBox = ({ category, itemList, itemAddInterval, userId = 0 }) =>
       <div className="project-panel-box" onScroll={addItems}>
         {displayedItems.length > 0 ? (
           displayedItems.map((project) => (
-            <ProjectPanel project={project} key={project.project_id} userId={userId} />
+            <ProjectPanel project={project} key={project.projectId} userId={userId} />
           ))
         ) : (
           <>Sorry, no projects here</>
@@ -50,7 +50,7 @@ export const PanelBox = ({ category, itemList, itemAddInterval, userId = 0 }) =>
       <div className="profile-panel-box" onScroll={addItems}>
         {displayedItems.length > 0 ? (
           displayedItems.map((profile) => (
-            <ProfilePanel profileData={profile} key={profile.user_id} />
+            <ProfilePanel profileData={profile} key={profile.userId} />
           ))
         ) : (
           <>Sorry, no people here</>

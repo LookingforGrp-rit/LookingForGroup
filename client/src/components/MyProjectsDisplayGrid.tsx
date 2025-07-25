@@ -25,7 +25,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
   const [resultObj, setResultObj] = useState({ status: 400, error: 'Not initialized' });
 
   const getStatus = async () => {
-    const url = `/api/projects/${projectData.project_id}`;
+    const url = `/api/projects/${projectData.projectId}`;
     try {
       const response = await fetch(url);
 
@@ -54,7 +54,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
   };
 
   //Constructs url linking to relevant project page
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.project_id}`;
+  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
 
   return (
     <div className="my-project-grid-card">

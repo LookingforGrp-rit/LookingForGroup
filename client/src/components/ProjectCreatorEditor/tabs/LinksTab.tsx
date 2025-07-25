@@ -16,10 +16,10 @@ interface ProjectData {
   description: string;
   hook: string;
   images: Image[];
-  jobs: { title_id: number; job_title: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { first_name: string, last_name: string, job_title: string, profile_image: string, user_id: number }[];
-  project_id?: number;
-  project_types: { id: number, project_type: string }[];
+  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
+  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number }[];
+  projectId?: number;
+  projectTypes: { id: number, projectType: string }[];
   purpose: string;
   socials: { id: number, url: string }[];
   status: string;
@@ -30,7 +30,7 @@ interface ProjectData {
 }
 
 interface Social {
-  website_id: number;
+  websiteId: number;
   label: string;
 }
 
@@ -43,8 +43,8 @@ const defaultProject: ProjectData = {
   images: [],
   jobs: [],
   members: [],
-  project_id: -1,
-  project_types: [],
+  projectId: -1,
+  projectTypes: [],
   purpose: '',
   socials: [],
   status: '',
@@ -149,7 +149,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
         const option = document.createElement('option');
         option.value = s.label;
         option.text = s.label;
-        option.dataset.id = s.website_id.toString();
+        option.dataset.id = s.websiteId.toString();
         dropdown.appendChild(option);
       }
 
@@ -213,7 +213,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                           // Find the correct id and assign it
                           for (let i = 0; i < allSocials.length; i++) {
                             if (e.target.value === allSocials[i].label) {
-                              tempSocials[index].id = allSocials[i].website_id;
+                              tempSocials[index].id = allSocials[i].websiteId;
                               break;
                             }
                           }

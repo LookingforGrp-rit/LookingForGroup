@@ -25,7 +25,7 @@ const MyProjectsDisplayList = ({ projectData }) => {
   const [resultObj, setResultObj] = useState({ status: 400, error: 'Not initialized' });
 
   const getStatus = async () => {
-    const url = `/api/projects/${projectData.project_id}`;
+    const url = `/api/projects/${projectData.projectId}`;
     try {
       const response = await fetch(url);
 
@@ -41,7 +41,7 @@ const MyProjectsDisplayList = ({ projectData }) => {
   }
 
   const deleteProject = async () => {
-    const url = `/api/projects/${projectData.project_id}`;
+    const url = `/api/projects/${projectData.projectId}`;
     try {
       // send a DELETE request to the API
       const response = await fetch(url, {
@@ -79,7 +79,7 @@ const MyProjectsDisplayList = ({ projectData }) => {
   };
 
   //Constructs url linking to relevant project page
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.project_id}`;
+  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
 
   return (
     <div className="my-project-list-card">
@@ -107,11 +107,11 @@ const MyProjectsDisplayList = ({ projectData }) => {
 
       {/* Data Created */}
       <div className="list-card-date">
-        {projectData.created_at === null ||
-          projectData.created_at === undefined ||
-          projectData.created_at === ''
+        {projectData.createdAt === null ||
+          projectData.createdAt === undefined ||
+          projectData.createdAt === ''
           ? 'No data'
-          : createDate(projectData.created_at)}
+          : createDate(projectData.createdAt)}
       </div>
 
       {/* Options */}
