@@ -20,7 +20,8 @@
     "use-local-storage": "^3.0.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.20.0",
+    "@looking-for-group/server": "^1.0.0",
+    "@looking-for-group/shared": "^1.0.0",
     "@types/react": "^19.0.8",
     "@types/react-dom": "^19.0.3",
     "@typescript-eslint/parser": "^8.24.1",
