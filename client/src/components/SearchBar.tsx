@@ -50,8 +50,8 @@ const handleSearch = (searchQuery: string) => {
         (item.name && item.name.toLowerCase().includes(searchQuery)) ||
         (item.role && item.role.toLowerCase().includes(searchQuery)) ||
         (item.label && item.label.toLowerCase().includes(searchQuery)) || 
-        (item.first_name && item.first_name.toLowerCase().includes(searchQuery)) ||
-        (item.last_name && item.last_name.toLowerCase().includes(searchQuery))
+        (item.firstName && item.firstName.toLowerCase().includes(searchQuery)) ||
+        (item.lastName && item.lastName.toLowerCase().includes(searchQuery))
        )
      }
      else {
