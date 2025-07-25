@@ -1,27 +1,27 @@
 //Styles
-import '../Styles/credits.css';
-import '../Styles/discoverMeet.css';
-import '../Styles/emailConfirmation.css';
-import '../Styles/general.css';
-import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
-import '../Styles/profile.css';
-import '../Styles/projects.css';
-import '../Styles/settings.css';
-import '../Styles/pages.css';
+import "../Styles/credits.css";
+import "../Styles/discoverMeet.css";
+import "../Styles/emailConfirmation.css";
+import "../Styles/general.css";
+import "../Styles/loginSignup.css";
+import "../Styles/messages.css";
+import "../Styles/notification.css";
+import "../Styles/profile.css";
+import "../Styles/projects.css";
+import "../Styles/settings.css";
+import "../Styles/pages.css";
 
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as paths from '../../constants/routes';
-import { Header, loggedIn } from '../Header';
-import { PanelBox } from '../PanelBox';
-import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
-import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
-import { ThemeIcon } from '../ThemeIcon';
-import { fetchUserID } from '../../functions/fetch';
-import { ProfileInterests } from '../Profile/ProfileInterests';
-import profilePicture from '../../images/blue_frog.png';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import * as paths from "../../constants/routes";
+import { Header, loggedIn } from "../Header";
+import { PanelBox } from "../PanelBox";
+import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
+import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
+import { ThemeIcon } from "../ThemeIcon";
+import { fetchUserID } from "../../functions/fetch";
+import { ProfileInterests } from "../Profile/ProfileInterests";
+import profilePicture from "../../images/blue_frog.png";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -69,9 +69,15 @@ const NewProfile = () => {
   // Global variables
   // --------------------
   // Just to prevent typescript errors
-  const skillsStr = ['Figma', 'JavaScript', 'Visual Studio Code', 'Flexibility', 'Krita'];
+  const skillsStr = [
+    "Figma",
+    "JavaScript",
+    "Visual Studio Code",
+    "Flexibility",
+    "Krita",
+  ];
   const skills: Tag[] = skillsStr.map((skillStr) => {
-    return { type: 'Soft', skill: skillStr };
+    return { type: "Soft", skill: skillStr };
   });
   // const defaultProfile: Profile = {
   //   first_name: 'User',
@@ -89,18 +95,18 @@ const NewProfile = () => {
   //   skills: skills,
   // };
   const defaultProfile: Profile = {
-    first_name: 'Private',
-    last_name: 'User',
-    username: 'privateuser',
+    first_name: "Private",
+    last_name: "User",
+    username: "privateuser",
     profile_image: `private.webp`,
     headline: `This user is private`,
-    pronouns: 'NA/NA',
-    job_title: 'NA',
-    major: 'NA',
-    academic_year: 'NA',
-    location: 'NA, NA',
+    pronouns: "NA/NA",
+    job_title: "NA",
+    major: "NA",
+    academic_year: "NA",
+    location: "NA, NA",
     fun_fact: ``,
-    bio: '',
+    bio: "",
     skills: [],
     interests: [],
   };
@@ -109,7 +115,7 @@ const NewProfile = () => {
 
   // Get URL parameters to tell what user we're looking for and store it
   const urlParams = new URLSearchParams(window.location.search);
-  let profileID = urlParams.get('userID');
+  let profileID = urlParams.get("userID");
 
   let displayedProfile: Profile;
   let setDisplayedProfile: Function;
@@ -122,9 +128,11 @@ const NewProfile = () => {
   [fullProjectList, setFullProjectList] = useState([]);
   [displayedProjects, setDisplayedProjects] = useState([]);
 
-  const projectSearchData = fullProjectList.map((project: { title: string; hook: string }) => {
-    return { name: project.title, description: project.hook };
-  });
+  const projectSearchData = fullProjectList.map(
+    (project: { title: string; hook: string }) => {
+      return { name: project.title, description: project.hook };
+    }
+  );
 
   // --------------------
   // Helper functions
@@ -132,24 +140,24 @@ const NewProfile = () => {
 
   // 'Follow' button
   const followUser = () => {
-    const followButton = document.getElementById('profile-follow-button') as HTMLButtonElement;
+    const followButton = document.getElementById(
+      "profile-follow-button"
+    ) as HTMLButtonElement;
     toggleFollow = !toggleFollow;
 
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
-    }
-    else {
-
+    } else {
       // (Follow behavior would be implemented here)
 
       if (toggleFollow) {
-        followButton.innerText = 'Following';
-        followButton.style.backgroundColor = 'Orange';
-        followButton.style.width = '185px';
+        followButton.innerText = "Following";
+        followButton.style.backgroundColor = "Orange";
+        followButton.style.width = "185px";
       } else {
-        followButton.innerText = 'Follow';
-        followButton.style.backgroundColor = 'var(--primary-color)';
-        followButton.style.width = '145px';
+        followButton.innerText = "Follow";
+        followButton.style.backgroundColor = "var(--primary-color)";
+        followButton.style.width = "145px";
       }
     }
   };
@@ -170,7 +178,7 @@ const NewProfile = () => {
     // If no projects were found
     if (tempProjList.length === 0) {
       setDisplayedProjects([]); // Clear the displayed list
-      console.log('No matching projects found.');
+      console.log("No matching projects found.");
     } else {
       setDisplayedProjects(tempProjList);
     }
@@ -181,7 +189,7 @@ const NewProfile = () => {
 
     // Only get visible projects when not the user's profile
     if (!isUsersProfile) {
-      url += '/profile';
+      url += "/profile";
     }
 
     try {
@@ -255,24 +263,24 @@ const NewProfile = () => {
         <div id="about-me-buttons">
           <button
             onClick={() => {
-               window.open('https://www.linkedin.com/', '_blank');
+              window.open("https://www.linkedin.com/", "_blank");
             }}
           >
             <ThemeIcon
-              src={'assets/white/linkedIn_white.svg'}
-              lightModeColor={'black'}
-              alt={'LinkedIn'}
+              src={"assets/white/linkedIn_white.svg"}
+              lightModeColor={"black"}
+              alt={"LinkedIn"}
             />
           </button>
           <button
             onClick={() => {
-              window.open('https://www.instagram.com/', '_blank');
+              window.open("https://www.instagram.com/", "_blank");
             }}
           >
             <ThemeIcon
-              src={'assets/white/instagram_white.svg'}
-              lightModeColor={'black'}
-              alt={'Instagram'}
+              src={"assets/white/instagram_white.svg"}
+              lightModeColor={"black"}
+              alt={"Instagram"}
             />
           </button>
           <ProfileEditPopup />
@@ -285,33 +293,33 @@ const NewProfile = () => {
         <div id="about-me-buttons" className="about-me-buttons-minimal">
           <button>
             <ThemeIcon
-              src={'assets/linkedIn_logo_light.svg'}
-              darkSrc={'assets/linkedIn_logo_dark.svg'}
-              alt={'LinkedIn'}
+              src={"assets/linkedIn_logo_light.svg"}
+              darkSrc={"assets/linkedIn_logo_dark.svg"}
+              alt={"LinkedIn"}
             />
           </button>
           <button>
             <ThemeIcon
-              src={'assets/instagram_logo_light.svg'}
-              darkSrc={'assets/instagram_logo_dark.svg'}
-              alt={'Instagram'}
+              src={"assets/instagram_logo_light.svg"}
+              darkSrc={"assets/instagram_logo_dark.svg"}
+              alt={"Instagram"}
             />
           </button>
           <button>
             <ThemeIcon
-              src={'assets/follow_user_light.svg'}
-              darkSrc={'assets/follow_user_dark.svg'}
-              alt={'Like/Follow'}
+              src={"assets/follow_user_light.svg"}
+              darkSrc={"assets/follow_user_dark.svg"}
+              alt={"Like/Follow"}
             />
           </button>
           {/* TO-DO: Implement Share, Block, and Report functionality */}
           <Dropdown>
             <DropdownButton>
               <ThemeIcon
-                src={'assets/menu_light.svg'}
-                darkSrc={'assets/menu_dark.svg'}
-                alt={'More options'}
-                addClass={'dropdown-menu'}
+                src={"assets/menu_light.svg"}
+                darkSrc={"assets/menu_dark.svg"}
+                alt={"More options"}
+                addClass={"dropdown-menu"}
               />
             </DropdownButton>
             <DropdownContent rightAlign={true}>
@@ -324,7 +332,10 @@ const NewProfile = () => {
                   <i className="fa-solid fa-shield"></i>
                   Block
                 </button>
-                <button className="profile-menu-dropdown-button" id="profile-menu-report">
+                <button
+                  className="profile-menu-dropdown-button"
+                  id="profile-menu-report"
+                >
                   <i className="fa-solid fa-flag"></i>
                   Report
                 </button>
@@ -334,8 +345,9 @@ const NewProfile = () => {
           {/* Alternate follow button (unused): */}
           {/* <button id="profile-follow-button" onClick={followUser}>Follow</button> */}
         </div>
-      )}
-    </div>
+      }
+    </>
+  );
 
   // --------------------
   // Final component
@@ -343,7 +355,11 @@ const NewProfile = () => {
   return (
     <div className="page">
       {/* Should probably use the search bar for projects I guess? */}
-      <Header dataSets={{ data: fullProjectList }} onSearch={searchProjects} hideSearchBar={true} />
+      <Header
+        dataSets={{ data: fullProjectList }}
+        onSearch={searchProjects}
+        hideSearchBar={true}
+      />
 
       {/* Checks if we have profile data to use, then determines what to render */}
       <div id="profile-page-content">
@@ -377,33 +393,33 @@ const NewProfile = () => {
           <div id="profile-info-extras">
             <div className="profile-extra">
               <ThemeIcon
-                src={'assets/white/role.svg'}
-                lightModeColor={'black'}
-                alt={'Profession'}
+                src={"assets/white/role.svg"}
+                lightModeColor={"black"}
+                alt={"Profession"}
               />
               {displayedProfile.job_title}
             </div>
             <div className="profile-extra">
               <ThemeIcon
-                src={'assets/white/major.svg'}
-                lightModeColor={'black'}
-                alt={'Major'}
+                src={"assets/white/major.svg"}
+                lightModeColor={"black"}
+                alt={"Major"}
               />
               {displayedProfile.major} {displayedProfile.academic_year}
             </div>
             <div className="profile-extra">
               <ThemeIcon
-                src={'assets/white/location.svg'}
-                lightModeColor={'black'}
-                alt={'Location'}
+                src={"assets/white/location.svg"}
+                lightModeColor={"black"}
+                alt={"Location"}
               />
               {displayedProfile.location}
             </div>
             <div className="profile-extra">
               <ThemeIcon
-                src={'assets/white/pronouns.svg'}
-                lightModeColor={'black'}
-                alt={'Pronouns'}
+                src={"assets/white/pronouns.svg"}
+                lightModeColor={"black"}
+                alt={"Pronouns"}
               />
               {displayedProfile.pronouns}
             </div>
@@ -413,13 +429,15 @@ const NewProfile = () => {
 
           <div id="profile-info-funfact">
             <span id="fun-fact-start">
-              {displayedProfile.fun_fact ? 'Fun Fact!' : 'No Fun Fact (Yet)!'}
+              {displayedProfile.fun_fact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
             </span>
             {displayedProfile.fun_fact}
           </div>
           <div id="profile-info-interest">
-            <ProfileInterests user={{ interests: displayedProfile.interests || [] }}
-              isUsersProfile={isUsersProfile} />
+            <ProfileInterests
+              user={{ interests: displayedProfile.interests || [] }}
+              isUsersProfile={isUsersProfile}
+            />
           </div>
 
           <div id="profile-info-skills">
@@ -429,20 +447,27 @@ const NewProfile = () => {
               displayedProfile.skills.map((tag) => {
                 let category: string;
                 switch (tag.type) {
-                  case 'Design':
-                    category = 'red';
+                  case "Design":
+                    category = "red";
                     break;
-                  case 'Developer':
-                    category = 'yellow';
+                  case "Developer":
+                    category = "yellow";
                     break;
-                  case 'Soft':
-                    category = 'purple';
+                  case "Soft":
+                    category = "purple";
                     break;
                   default:
-                    category = 'grey';
+                    category = "grey";
                 }
 
-                return <div key={`${tag.skill}`} className={`skill-tag-label label-${category}`}>{tag.skill}</div>;
+                return (
+                  <div
+                    key={`${tag.skill}`}
+                    className={`skill-tag-label label-${category}`}
+                  >
+                    {tag.skill}
+                  </div>
+                );
               })
             ) : (
               <></>
@@ -454,7 +479,7 @@ const NewProfile = () => {
           <h2>Projects</h2>
           {/* Probably fine to use 25 for itemAddInterval */}
           <PanelBox
-            category={'projects'}
+            category={"projects"}
             itemList={displayedProjects}
             itemAddInterval={25}
             userId={userID}
