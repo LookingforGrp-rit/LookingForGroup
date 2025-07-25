@@ -22,6 +22,8 @@ import { ThemeIcon } from '../ThemeIcon';
 import { fetchUserID } from '../../functions/fetch';
 import { ProfileInterests } from '../Profile/ProfileInterests';
 import profilePicture from '../../images/blue_frog.png';
+import { getByID } from '../../api/projects';
+import { getAccountInformation, getUsersById } from '../../api/users';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -185,8 +187,10 @@ const NewProfile = () => {
     }
 
     try {
-      const response = await fetch(url);
+      const response = await fetch(url);          // IMPLEMENT PROJECT GETTING
       const { data } = await response.json();
+      
+      console.log(data);
 
       // Only update if there's data
       if (data !== undefined) {
@@ -220,11 +224,9 @@ const NewProfile = () => {
       };
 
       setUpProfileID();
-      const url = `/api/users/${profileID}`;
 
       try {
-        const response = await fetch(url);
-        const { data } = await response.json();
+        const { data } = await getUsersById(profileID);
 
         // Only run this if profile data exists for user
         if (data[0] !== undefined) {
