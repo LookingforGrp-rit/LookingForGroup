@@ -23,11 +23,11 @@
     "default": "./src/app.ts"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.850.0",
     "@prisma/client": "^6.10.1",
     "express": "5.1.0",
     "morgan": "^1.10.0",
-    "multer": "^2.0.2",
-    "sharp": "0.34.2"
+    "multer": "^2.0.2"
   },
   "devDependencies": {
     "@looking-for-group/shared": "^1.0.0",
