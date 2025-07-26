@@ -96,7 +96,7 @@ S3_BUCKET=lfgrp
 - `S3_PASS` is the password of the s3 account the app uses, must be 8+ characters
 - `S3_HOST` is the ip that hosts the s3 server, `127.0.0.1` for development
 - `S3_PORT` is the port the s3 server is available on, `9000` is minio's default
-- `S3_CONSOLE_PORT` is the port for the s3 dev console, which is optional, and defaults to `9001`
+- `S3_CONSOLE_PORT` is the port for the s3 dev console, `9001` is the default
 - `S3_BUCKET` is the name of the s3 bucket, this should be `lfgrp` to match the [policy](./containers/services/s3/policies/app-crud-perms.json)
 
 > [!CAUTION]
