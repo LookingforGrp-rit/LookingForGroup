@@ -12,7 +12,7 @@ services:
     image: ghcr.io/lookingforgrp-rit/lookingforgroup-dev-s3:latest
     ports:
       - "${S3_HOST}:${S3_PORT}:9000"
-      - "${S3_CONSOLE_PORT:-}:9001"
+      - "${S3_HOST}:${S3_CONSOLE_PORT:-9001}:9001"
     environment:
       - S3_BUCKET=${S3_BUCKET}
       - S3_USER=${S3_USER}
