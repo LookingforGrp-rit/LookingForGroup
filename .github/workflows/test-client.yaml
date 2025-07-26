@@ -43,7 +43,7 @@ jobs:
       - name: Start Docker Compose Services
         run: npm run compose:up
 
-      - name: Give MySQL Time to Start
+      - name: Give Compose Services Time to Start
         run: sleep 10
 
       - name: Run Tests
