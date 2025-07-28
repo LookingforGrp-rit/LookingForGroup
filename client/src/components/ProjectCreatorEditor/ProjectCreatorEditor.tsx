@@ -14,8 +14,8 @@ import { LinksTab } from './tabs/LinksTab';
 import { TeamTab } from './tabs/TeamTab';
 import { TagsTab } from './tabs/TagsTab';
 import { ThemeIcon } from '../ThemeIcon';
-import { showPopup } from '../Sidebar';
 import { loggedIn } from '../Header';
+// import { showPopup } from '../Sidebar';  // No longer exists?
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -153,6 +153,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           const response = await fetch(`/api/users/${user?.userId}`);
           const userResponse = await response.json();
           const data = userResponse.data[0];
+          
 
           // Add creator as Project Lead
           const member = {
