@@ -12,7 +12,7 @@ export const deleteUserService = async (userId: number): Promise<string> => {
 
     return '';
   } catch (e) {
-    console.error(`Error in getUserFollowing: ${JSON.stringify(e)}`);
+    console.error(`Error in deleteUserService: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';
   }
 };

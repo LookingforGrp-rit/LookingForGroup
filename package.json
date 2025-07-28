@@ -28,16 +28,11 @@
     "format:server": "npm run format --workspace=server"
   },
   "devDependencies": {
-    "@eslint/js": "^9.30.0",
     "concurrently": "^9.2.0",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
-    "eslint": "^9.30.0",
-    "eslint-config-prettier": "^10.1.5",
     "husky": "^9.1.7",
-    "typescript": "^5.8.3",
-    "typescript-eslint": "^8.35.1",
-    "vitest": "^3.2.4"
+    "lint-staged": "^16.1.2"
   },
   "engines": {
     "node": ">=v23.6.0"
