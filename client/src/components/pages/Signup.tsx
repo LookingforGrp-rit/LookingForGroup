@@ -276,14 +276,14 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
                 {showPassword ? (
                   <ThemeIcon
                     id='eye-icon'
-                    light={'/assets/black/password_shown.png'}
-                    dark={'/assets/white/password_shown.png'}
+                    src={'/assets/black/password_shown.svg'}
+                    darkSrc={'/assets/white/password_shown.svg'}
                   />) :
                   (
                     <ThemeIcon
                       id='eye-icon'
-                      light={'/assets/black/password_hidden.png'}
-                      dark={'/assets/white/password_hidden.png'}
+                      src={'/assets/black/password_hidden.svg'}
+                      darkSrc={'/assets/white/password_hidden.svg'}
                     />
                   )}
               </button>
