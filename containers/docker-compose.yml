@@ -7,3 +7,13 @@ services:
       - "${DB_HOST}:${DB_PORT}:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_PASS}
+  minio:
+    container_name: Minio
+    image: ghcr.io/lookingforgrp-rit/lookingforgroup-dev-s3:latest
+    ports:
+      - "${S3_HOST}:${S3_PORT}:9000"
+      - "${S3_HOST}:${S3_CONSOLE_PORT}:9001"
+    environment:
+      - S3_BUCKET=${S3_BUCKET}
+      - S3_USER=${S3_USER}
+      - S3_PASS=${S3_PASS}

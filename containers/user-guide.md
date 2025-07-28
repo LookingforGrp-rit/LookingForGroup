@@ -15,7 +15,7 @@ This is the user guide for setting up services powered by [Containers][1].
 
 ### How does LFG use containers during development?
 
-Currently, LFG only uses containers for our MySQL Database, however, we may use them for other tools such as Redis, or mocking using cloud image storage. Using containers for these pieces of software allow us to easily create an environment that is similar to the production environment, but on your local machine.
+Currently, LFG uses containers for our MySQL Database and Minio. Using containers for these pieces of software allow us to easily create an environment that is similar to the production environment, but on your local machine. They also allow for us to provide data for devs to use, without any extra configuration.
 
 ## Usage
 
