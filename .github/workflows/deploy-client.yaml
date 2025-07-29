@@ -51,3 +51,5 @@ jobs:
           password: ${{ secrets.SERVER_PASS }}
           source: ./lfg-client/*
           target: ~/lfg.gccis.rit.edu
+          strip_components: 2
+          overwrite: true

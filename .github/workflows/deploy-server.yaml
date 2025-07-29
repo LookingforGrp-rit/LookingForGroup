@@ -53,7 +53,7 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASS }}
           source: ./containers/lfg-backend.container
-          target: /home/${{ secrets.SERVER_USER }}/.config/containers/systemd
+          target: ~/.config/containers/systemd
           strip_components: 2
           overwrite: true
 
