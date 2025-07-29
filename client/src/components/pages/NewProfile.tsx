@@ -23,32 +23,6 @@ import { fetchUserID } from "../../functions/fetch";
 import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
 
-import '../Styles/credits.css';
-import '../Styles/discoverMeet.css';
-import '../Styles/emailConfirmation.css';
-import '../Styles/general.css';
-import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
-import '../Styles/profile.css';
-import '../Styles/projects.css';
-import '../Styles/settings.css';
-import '../Styles/pages.css';
-
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import * as paths from '../../constants/routes';
-import { Header, loggedIn } from '../Header';
-import { PanelBox } from '../PanelBox';
-import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
-import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
-import { ThemeIcon } from '../ThemeIcon';
-import { fetchUserID } from '../../functions/fetch';
-import { ProfileInterests } from '../Profile/ProfileInterests';
-import profilePicture from '../../images/blue_frog.png';
-import { getByID } from '../../api/projects';
-import { getAccountInformation, getUsersById } from '../../api/users';
-
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
 
