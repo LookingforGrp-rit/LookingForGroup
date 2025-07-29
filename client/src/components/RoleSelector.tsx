@@ -16,7 +16,7 @@ import type { JSX } from 'react';
 
 
 interface JobTitle {
-  title_id: string;
+  titleId: string;
   label: string;
 }
 
@@ -36,7 +36,7 @@ export const RoleSelector = () => {
     const setUpRoleSelector = async () => {
       const jobTitles = await getRoles();
       const selectorOptions = jobTitles.map((job: JobTitle) => (
-        <option key={job.title_id} value={job.title_id}>
+        <option key={job.titleId} value={job.titleId}>
           {job.label}
         </option>
       ));

@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { sendPost } from '../../functions/fetch.js';
 import { ThemeIcon } from '../ThemeIcon';
+import { getUserByEmail } from '../../api/users.js';
 
 type LoginResponse = {
   error?: string;
@@ -33,8 +34,7 @@ const Login: React.FC = () => {
     // search input as email
     if (loginInput.includes('@') && loginInput.includes('.')) {
       try {
-        const response = await fetch(`/api/users/search-email/${loginInput}`);
-        const data = await response.json();
+        const data = await getUserByEmail(loginInput);
         if (data) {
           // try login
           try {

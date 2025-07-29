@@ -27,6 +27,8 @@ import * as paths from '../../constants/routes';
 import Project from './Project';
 import { ThemeIcon } from '../ThemeIcon';
 import { sendPost, sendDelete } from '../../functions/fetch';
+import { getByID } from '../../api/projects';
+import { getAccountInformation } from '../../api/users';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -118,8 +120,7 @@ const NewProject = () => {
     const url = `/api/projects/${projectID}`;
 
     try {
-      const response = await fetch(url);
-      const projectData = await response.json();
+      const projectData = await getByID(projectID);
 
       if (projectData.data[0] === undefined) {
         setFailCheck(true);
@@ -131,8 +132,7 @@ const NewProject = () => {
       const authData = await authRes.json();
 
       if (authData.data) {
-        const userRes = await fetch(`/api/users/${authData.data}`);
-        const userData = await userRes.json();
+        const userData = await getAccountInformation(authData.data);
 
         console.log('user')
         console.log(userData.data);
@@ -223,7 +223,7 @@ const NewProject = () => {
     <>
       {
         <>
-          {(user && user.user_id !== 0) ? (
+          {(user && user.userId !== 0) ? (
             <>
               { /* Heart icon, with number indicating follows */}
               <div className='project-info-followers'>
@@ -233,7 +233,7 @@ const NewProject = () => {
                 <button
                   className={`follow-icon ${isFollowing ? 'following' : ''}`}
                   onClick={() => {
-                    let url = `/api/users/${user.user_id}/followings/projects`;
+                    let url = `/api/users/${user.userId}/followings/projects`;
 
                     if (!isFollowing) {
                       sendPost(url, { projectId: projectID }, () => {
@@ -291,7 +291,7 @@ const NewProject = () => {
                               <PopupButton
                                 className='confirm-btn'
                                 callback={async () => {
-                                  const url = `/api/projects/${projectID}/members/${user.user_id}`;
+                                  const url = `/api/projects/${projectID}/members/${user.userId}`;
 
                                   // For now, just reload the page. Ideally, there'd be something more
                                   sendDelete(url, () => {
@@ -338,28 +338,28 @@ const NewProject = () => {
       <>
         {projectMembers?.map((user) => {
           // Don't show users that chose to hide themselves as a member of this project
-          if (user.profile_visibility !== 'public') {
+          if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
             return (
               <></>
             );
           }
 
           //FIXME: get profile image from API call
-          const imgSrc = (user.profile_image) ? `${API_BASE}/images/profiles/${user.profile_image}` : profilePicture;
+          const imgSrc = (user.profileImage) ? `${API_BASE}/images/profiles/${user.profileImage}` : profilePicture;
           //const imgSrc = profilePicture; // temporary
 
           return (
             <div
-              key={user.user_id}
+              key={user.userId}
               className="project-contributor"
-              onClick={() => navigate(`${paths.routes.NEWPROFILE}?userID=${user.user_id}`)}
+              onClick={() => navigate(`${paths.routes.NEWPROFILE}?userID=${user.userId}`)}
             >
               <img className="project-contributor-profile" src={imgSrc} alt="contributor profile" />
               <div className="project-contributor-info">
                 <div className="team-member-name">
-                  {user.first_name} {user.last_name}
+                  {user.firstName} {user.lastName}
                 </div>
-                <div className="team-member-role">{user.job_title}</div>
+                <div className="team-member-role">{user.jobTitle}</div>
               </div>
             </div>
           );
@@ -376,19 +376,19 @@ const NewProject = () => {
       projectContributors.length > 0 ? (
         <>
           {projectContributors.map((user) => {
-            const imgSrc = (user.profile_image) ? `${API_BASE}/images/profiles/${user.profile_image}` : profilePicture;
+            const imgSrc = (user.profileImage) ? `${API_BASE}/images/profiles/${user.profileImage}` : profilePicture;
 
             return (
               <div
                 className="project-contributor"
-                onClick={() => navigate(`${paths.routes.NEWPROFILE}?userID=${user.user_id}`)}
+                onClick={() => navigate(`${paths.routes.NEWPROFILE}?userID=${user.userId}`)}
               >
                 <img className="project-contributor-profile" src={imgSrc} alt="contributor profile" />
                 <div className="project-contributor-info">
                   <div>
-                    {user.first_name} {user.last_name}
+                    {user.firstName} {user.lastName}
                   </div>
-                  <div>{user.job_title}</div>
+                  <div>{user.jobTitle}</div>
                 </div>
               </div>
             );

@@ -64,7 +64,7 @@ const MyProjects = () => {
 
 
       // User is logged in, pull their data
-      if (res.status === 200 && res.data?.username && res.data.userId) {
+      if (res.status === 200 && res.data?.username && res.data.user_id) {
         setLoggedIn(res.data.userId);
         const projectsURL = `/api/users/${res.data.userId}/projects`;
         const projectsRes = await fetch(projectsURL);
@@ -228,13 +228,13 @@ const MyProjects = () => {
         <div className='my-projects-grid'>
           {userProjects.map(project => {
             // Check if user is the owner of this project
-            const isOwner = (project.user_id === loggedIn);
+            const isOwner = (project.userId === loggedIn);
 
             return (
               <LeaveDeleteContext.Provider
                 value={{
                   isOwner,
-                  projId: project.project_id,
+                  projId: project.projectId,
                   userId: loggedIn,
                   reloadProjects: getUserProjects,
                 }}
@@ -265,13 +265,13 @@ const MyProjects = () => {
         <div className='my-projects-list'>
           {userProjects.map(project => {
             // Check if user is the owner of this project
-            const isOwner = (project.user_id === loggedIn);
+            const isOwner = (project.userId === loggedIn);
 
             return (
               <LeaveDeleteContext.Provider
                 value={{
                   isOwner,
-                  projId: project.project_id,
+                  projId: project.projectId,
                   userId: loggedIn,
                   reloadProjects: getUserProjects,
                 }}

@@ -7,16 +7,16 @@ import * as paths from '../constants/routes';
 const API_BASE = `http://localhost:8081`;
 
 interface ProfileData {
-  user_id: string;
-  profile_image?: string;
-  first_name: string;
-  last_name: string;
+  userId: string;
+  profileImage?: string;
+  firstName: string;
+  lastName: string;
   major: string;
   headline: string;
-  job_title: string;
+  jobTitle: string;
   location: string;
   pronouns: string;
-  fun_fact: string;
+  funFact: string;
 }
 
 interface ProfilePanelProps {
@@ -25,12 +25,12 @@ interface ProfilePanelProps {
 
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   const navigate = useNavigate();
-  const profileURL = `${paths.routes.NEWPROFILE}?userID=${profileData.user_id}`;
+  const profileURL = `${paths.routes.NEWPROFILE}?userID=${profileData.userId}`;
 
   return (
     <div className={'profile-panel'}>
       <img
-        src={profileData.profile_image ? `${API_BASE}/images/profiles/${profileData.profile_image}` : profilePicture}
+        src={profileData.profileImage ? `${API_BASE}/images/profiles/${profileData.profileImage}` : profilePicture}
         alt='profile image'
         // default profile picture if profile image doesn't load
         onError={(e) => {
@@ -39,7 +39,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
         }}
       />
       <h2>
-        {profileData.first_name} {profileData.last_name}
+        {profileData.firstName} {profileData.lastName}
       </h2>
       <h3>{profileData.major}</h3>
       <div id="quote">"{profileData.headline}"</div>

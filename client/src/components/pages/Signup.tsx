@@ -11,6 +11,7 @@ import GetStarted from '../SignupProcess/GetStarted';
 import { sendPost } from '../../functions/fetch';
 import { ThemeIcon } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
+import { getUserByEmail, getUserByUsername } from '../../api/users';
 
 const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation
@@ -75,8 +76,7 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
 
     // check if username in use
     try {
-      const response = await fetch(`/api/users/search-username/${username}`);
-      const data = await response.json();
+      const data = await getUserByUsername(username);
       // if there is a result, a match is found
       if (data.data.length > 0) {
         setMessage('Username already in use');
@@ -101,8 +101,8 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
 
     // check if the email is in use
     try {
-      const response = await fetch(`/api/users/search-email/${email}`);
-      const data = await response.json();
+      const data = getUserByEmail(email);
+      
       // if there is a result, a match is found
       if (data.data.length > 0) {
         setMessage('Email already in use');

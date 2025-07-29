@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { sendPut, fetchUserID } from '../../../functions/fetch';
+import { getByID } from '../../../api/projects';
 
 // let userProjects : [];
 
@@ -18,8 +19,7 @@ export const ProjectsTab = (props: {profile: {}}) => {
         // Load in userProfile and then the projects
         const setUpProjects = async () => {
             const userID = await fetchUserID();
-            const response = await fetch(`/api/users/${userID}/projects`);
-            const data = await response.json();
+            const data = await getByID(userID);
             setUserProjects(data.data);
             // userProjects = data.data;
             // console.log('Projects finished loading');

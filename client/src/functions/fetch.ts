@@ -169,7 +169,7 @@ const GET = async (url: string): Promise<ServerResponse | undefined> => {
 };
 
 const fetchUserID = async (): Promise<unknown> => {
-  const response = await fetch('/api/auth');
+  const response = await fetch('/api/users/get-username');
   const json: ServerResponse = await response.json();
   return json.data;
 };

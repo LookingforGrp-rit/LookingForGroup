@@ -20,6 +20,8 @@ import { PanelBox } from '../PanelBox';
 import { ThemeIcon } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { devSkills, desSkills } from '../../constants/tags';
+import { getProjects } from '../../api/projects';
+import { getUsers } from '../../api/users';
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'
@@ -174,13 +176,17 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     // Get user profile
     await getAuth();
 
-    const url = `/api/${category === 'projects' ? 'projects' : 'users'}`;
-
     try {
-      const response = await fetch(url);
-      const data = await response.json();
+      var response;
+      
+      if (category == 'projects'){response = await getProjects();}
+      else {response = await getUsers();}
+
+      const data = await response;
+      console.log(data.data);
 
       // Don't assign if there's no array returned
+      console.log(data.data == undefined);
       if (data.data !== undefined) {
         setFullItemList(data.data);
         setFilteredItemList(data.data);
@@ -192,7 +198,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
               return { name: item.title, description: item.hook };
             } else {
               return {
-                name: `${item.first_name} ${item.last_name}`,
+                name: `${item.firstName} ${item.lastName}`,
                 username: item.username,
                 bio: item.bio,
               };
@@ -262,11 +268,11 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           }
 
           // Tag check can be done by ID
-          if (tag.tag_id) {
+          if (tag.tagId) {
             if (item.tags) {
               const tagIDs = item.tags.map((tag) => tag.id);
 
-              if (!tagIDs.includes(tag.tag_id)) {
+              if (!tagIDs.includes(tag.tagId)) {
                 tagFilterCheck = false;
                 break;
               }
@@ -353,12 +359,12 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
               tagFilterCheck = false;
               break;
             }
-          } else if (tag.tag_id) {
+          } else if (tag.tagId) {
             // Skill check can be done by ID
             if (item.skills) {
               const skillIDs = item.skills.map((skill) => skill.id);
 
-              if (!skillIDs.includes(tag.tag_id)) {
+              if (!skillIDs.includes(tag.tagId)) {
                 tagFilterCheck = false;
                 break;
               }

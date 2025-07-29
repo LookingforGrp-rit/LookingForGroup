@@ -25,7 +25,7 @@ export const DiscoverCarousel = ({ dataList = [] }) => {
                     <p>{project.hook}</p>
                     <a 
                         className='learn-more'
-                        href={`${paths.routes.NEWPROJECT}?projectID=${project.project_id}`}
+                        href={`${paths.routes.NEWPROJECT}?projectID=${project.projectId}`}
                     >Learn more -&gt;</a>
                 </div>
             </>
