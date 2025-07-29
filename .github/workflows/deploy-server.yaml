@@ -26,7 +26,6 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v6.18.0
         with:
-          context: .
           push: true
           tags: |
             ghcr.io/lookingforgrp-rit/lfg-server:latest
@@ -53,8 +52,10 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASS }}
-          source: ./lfg-backend.container
-          target: ~/.config/containers/systemd/lfg-backend.container
+          source: ./containers/lfg-backend.container
+          target: /home/${{ secrets.SERVER_USER }}/.config/containers/systemd
+          strip_components: 2
+          overwrite: true
 
       - name: Pull Image and Restart Container
         uses: appleboy/ssh-action@v1.2.2
