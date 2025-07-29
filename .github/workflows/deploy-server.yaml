@@ -54,6 +54,7 @@ jobs:
           password: ${{ secrets.SERVER_PASS }}
           source: ./containers/lfg-backend.container
           target: /home/${{ secrets.SERVER_USER }}/.config/containers/systemd
+          strip_components: true
           overwrite: true
 
       - name: Pull Image and Restart Container
