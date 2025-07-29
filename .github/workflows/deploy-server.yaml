@@ -26,7 +26,6 @@ jobs:
       - name: Build and push Docker images
         uses: docker/build-push-action@v6.18.0
         with:
-          context: .
           push: true
           tags: |
             ghcr.io/lookingforgrp-rit/lfg-server:latest
