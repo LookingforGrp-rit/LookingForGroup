@@ -21,6 +21,7 @@ import { ProfileProjects } from '../Profile/ProfileProjects';
 import { useEffect, useState } from 'react';
 import ToTopButton from '../ToTopButton';
 import EditButton from '../Profile/ProfileEditButton';
+import { getUsers } from '../../api/users';
 
 // Get user ID from API
 const fetchUserID = async () => {
@@ -32,7 +33,7 @@ const fetchUserID = async () => {
 };
 
 // Get list of users on site from API
-const getProfiles = async () => {
+const getProfiles = async () => {  
   const response = await fetch('/api/users');
   const {
     data: { users },

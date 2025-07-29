@@ -18,10 +18,10 @@ interface ProjectData {
   description: string;
   hook: string;
   images: Image[];
-  jobs: { title_id: number; job_title: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { first_name: string, last_name: string, job_title: string, profile_image: string, user_id: number}[];
-  project_id?: number;
-  project_types: { id: number, project_type: string}[];
+  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
+  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number}[];
+  projectId?: number;
+  projectTypes: { id: number, projectType: string}[];
   purpose: string;
   socials: { id: number, url: string }[];
   status: string;
@@ -40,8 +40,8 @@ const defaultProject: ProjectData = {
   images: [],
   jobs: [],
   members: [],
-  project_id: -1,
-  project_types: [],
+  projectId: -1,
+  projectTypes: [],
   purpose: '',
   socials: [],
   status: '',

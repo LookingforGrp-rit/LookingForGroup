@@ -84,6 +84,7 @@ yarn-error.log*
 
 # profile picture and project images
 server/images/
+database/dump.sql
 
 # Ignore .idea for Jetbrains developing tools
 .idea
@@ -94,6 +95,7 @@ server/images/
 
 # SQL files
 *.sql
-
+*.prisma
 # Generated files
 **/generated/**
+

@@ -12,6 +12,7 @@ import CreditsFooter from '../CreditsFooter';
 import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
+import { getUserByEmail, getUserByUsername, getAccountInformation } from '../../api/users';
 
 // Take the user ID and delete it
 const deleteAccountPressed = async () => {
@@ -54,10 +55,7 @@ const Settings = ({ }) => {
 
     // User is logged in, pull their data
     if (authData.status === 200) {
-      const infoURL = `/api/users/${authData.data}/account`;
-      const infoResponse = await fetch(infoURL);
-      const data = await infoResponse.json();
-
+      const data = await getAccountInformation(authData.data);
       if (data.status === 200 && data.data[0] !== undefined) {
         setUserInfo(data.data[0]);
       }
@@ -85,6 +83,13 @@ const Settings = ({ }) => {
 const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }) => {
   const [password, setPassword] = useState('');
 
+              const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
+              const url = `/api/users/${userInfo.userId}/${typeToChange}`;
+              const response =  sendPut(url, apiParams, onSuccess);            // possible break
+
+
+  // git merge 07/24/2025: Yevhenii Shyshko
+  // possible last three lines need to be deleted
   return (
     <div className="small-popup">
       <h3>Confirm {type}{type === 'Phone' ? ' Number' : ''} Change</h3>
@@ -297,7 +302,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                 onBlur={async () => {
                   // TO-DO: Check if already in use if username
                   // or primary email address. Excludes password
-                  if (type !== 'Password') {
+                  
                     if (type === 'Primary Email') {
                       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
                       if (!emailRegex.test(firstParam)) {
@@ -320,11 +325,12 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                       }
                     }
 
-                    const url = `/api/users/search-${type === 'Username' ? 'username' : 'email'}/${firstParam}`;
-                    const response = await fetch(url);
-                    const data = await response.json();
+                    if (type !== 'Password') {
+                    let data;
+                    if (type ==='Username')   data = await getUserByUsername(firstParam);
+                    else                      data = await getUserByEmail(firstParam);
 
-                    if (data.data.length > 0) {
+                    if (data.length > 0) {
                       setError(`*${type} is already in use.`);
                     }
                   }
@@ -421,7 +427,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
   const updateVisibility = async (visibilityNum) => {
     // Don't run if the value hasn't changed
     if (visibilityNum !== userInfo.visibility) {
-      const url = `/api/users/${userInfo.user_id}/visibility`;
+      const url = `/api/users/${userInfo.userId}/visibility`;
       const response = await sendPut(url, { newVisibility: visibilityNum });
 
       if (response !== undefined && response.error) {
@@ -502,28 +508,11 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
               <div className="settings-column">
                 <h2 className="settings-header">Emails</h2>
                 <div className="subsection">
-                  <label htmlFor="option-primary-email">Primary Email</label>
-                  <div className="input-container">
-                    <input
-                      id="option-primary-email"
-                      placeholder={userInfo.primary_email}
-                      type="text"
-                      disabled
-                    />
-                    <Popup>
-                      <PopupButton className="interact-option">Edit</PopupButton>
-                      <PopupContent>
-                        <ChangeForm type={'Primary Email'} />
-                      </PopupContent>
-                    </Popup>
-                  </div>
-                </div>
-                <div className="subsection">
                   <label htmlFor="option-rit-email">RIT Email</label>
                   <div className="input-container disabled">
                     <input
                       id="option-rit-email"
-                      placeholder={userInfo.rit_email}
+                      placeholder={userInfo.ritEmail}
                       type="text"
                       disabled
                     />

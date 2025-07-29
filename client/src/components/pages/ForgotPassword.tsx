@@ -4,6 +4,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { ThemeIcon } from '../ThemeIcon';
 import { sendPost } from '../../functions/fetch.js';
+import { getUserByEmail } from '../../api/users.js';
 
 const ForgotPassword: React.FC = () => {
   const navigate = useNavigate(); // Hook for navigation
@@ -29,8 +30,7 @@ const ForgotPassword: React.FC = () => {
 
     try {
       // if the email is not associated with an account
-      const response = await fetch(`/api/users/search-email/${emailInput}`);
-      const data = await response.json();
+      const data = await getUserByEmail(emailInput);
 
       if (!data) {
         setError('If that account exists, an email has been sent.');
