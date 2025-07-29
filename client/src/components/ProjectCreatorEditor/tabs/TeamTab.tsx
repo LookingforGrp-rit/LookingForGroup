@@ -525,8 +525,8 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         }}
       >
         <ThemeIcon
-          light={'/assets/white/pencil.png'}
-          dark={'/assets/black/pencil.png'}
+          src={'assets/white/pencil.svg'}
+          darkModeColor={"black"}
           alt={"edit"}
           addClass={"edit-project-member-icon"}
         />
@@ -933,9 +933,9 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                   alt=""
                 /> */}
                   <ThemeIcon
-                    light={'/assets/white/pencil.png'}
-                    dark={'/assets/black/pencil.png'}
+                    src={'assets/white/pencil.svg'}
                     alt={"edit"}
+                    darkModeColor={"black"}
                     addClass={"edit-project-member-icon"}
                   />
                 </PopupButton>
@@ -1069,9 +1069,9 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         <PopupButton buttonId="project-editor-add-member">
           {/* <img id="project-team-add-member-image" src={profileImage} alt="" /> */}
           <ThemeIcon
-            light={'/assets/white/profile.png'}
-            dark={'/assets/black/profile.png'}
+            src={'/assets/white/add_member.svg'}
             id={'project-team-add-member-image'}
+            darkModeColor={"black"}
             alt={'add member'}
           />
           <div id="project-team-add-member-text">Add Member</div>

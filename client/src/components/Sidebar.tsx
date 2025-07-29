@@ -181,11 +181,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                 }
                 onClick={() => handleTextChange("Discover", paths.routes.HOME)}
               >
-                <ThemeIcon
-                  light={"/assets/black/compass.png"}
-                  dark={"/assets/white/compass.png"}
-                  alt={"discover"}
-                />
+                <ThemeIcon src={'assets/white/compass.svg'}  lightModeColor={'black'} alt={'discover'} />
               </button>
               <button
                 id={"meet-sidebar-btn"}
@@ -194,11 +190,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                 }
                 onClick={() => handleTextChange("Meet", paths.routes.MEET)}
               >
-                <ThemeIcon
-                  light={"/assets/black/meet.png"}
-                  dark={"/assets/white/meet.png"}
-                  alt={"meet users"}
-                />
+                <ThemeIcon src={'assets/white/meet.svg'} lightModeColor={'black'} alt={'meet users'} />
               </button>
               <button
                 id={"my-projects-sidebar-btn"}
@@ -211,11 +203,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                   handleTextChange("My Projects", paths.routes.MYPROJECTS)
                 }
               >
-                <ThemeIcon
-                  light={"/assets/black/folder.png"}
-                  dark={"/assets/white/folder.png"}
-                  alt={"my projects"}
-                />
+                <ThemeIcon src={'assets/white/folder.svg'} lightModeColor={'black'} alt={'my projects'} />
               </button>
               <button
                 id={"my-profile-sidebar-btn"}
@@ -228,11 +216,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                   handleTextChange("My Profile", paths.routes.NEWPROFILE)
                 }
               >
-                <ThemeIcon
-                  light={"/assets/black/profile.png"}
-                  dark={"/assets/white/profile.png"}
-                  alt={"my profile"}
-                />
+                <ThemeIcon src={'assets/white/profile.png'} lightModeColor={'black'} alt={'my profile'} />
               </button>
             </div>
           </div>
@@ -264,11 +248,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
             }
             onClick={() => handleTextChange("Discover", paths.routes.HOME)}
           >
-            <ThemeIcon
-              light={"/assets/black/compass.png"}
-              dark={"/assets/white/compass.png"}
-              alt={"discover"}
-            />
+            <ThemeIcon src={'assets/white/compass.svg'} lightModeColor={'black'} alt={'discover'}/>
             Discover
           </button>
           <button
@@ -278,12 +258,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
             }
             onClick={() => handleTextChange("Meet", paths.routes.MEET)}
           >
-            <ThemeIcon
-              light={"/assets/black/meet.png"}
-              dark={"/assets/white/meet.png"}
-              alt={"meet users"}
-            />{" "}
-            Meet
+            <ThemeIcon src={'assets/white/meet.svg'}  lightModeColor={'black'} alt={'meet users'} /> Meet
           </button>
           <button
             id={"my-projects-sidebar-btn"}
@@ -296,18 +271,14 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
               handleTextChange("My Projects", paths.routes.MYPROJECTS)
             }
           >
-            <ThemeIcon
-              light={"/assets/black/folder.png"}
-              dark={"/assets/white/folder.png"}
-              alt={"my projects"}
-            />{" "}
-            My Projects
+            <ThemeIcon src={'assets/white/folder.svg'} lightModeColor={'black'} alt={'my projects'} /> My
+            Projects
           </button>
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             <img
               className='theme-icon'
-              src="assets/black/following.png"
-              src-light="assets/black/following.png"
+              src="assets/white/following.png"
+              src-light="assets/white/following.png"
               src-dark="assets/white/following.png"
               alt="" /> Following
           </button> */}

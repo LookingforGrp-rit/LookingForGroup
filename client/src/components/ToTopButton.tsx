@@ -37,7 +37,7 @@ const ToTopButton = () => {
         onClick={() => scrollToTop(document.querySelector('.page') as HTMLElement | null)}
         style={{ display: visible ? 'inline' : 'none' }}
       >
-        <ThemeIcon light={'/assets/dropdown_light.png'} dark={'/assets/dropdown_dark.png'} />
+        <ThemeIcon src={'assets/dropdown_light.svg'} darkSrc={'assets/dropdown_dark.svg'} />
       </button>
     </div>
   );

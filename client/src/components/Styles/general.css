@@ -1648,3 +1648,42 @@ Spinning loader style rules
     transform: rotate(360deg);
   }
 }
+
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+------------------------------------------------------------------------------------------------
+Theme Icons style rules
+------------------------------------------------------------------------------------------------
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
+
+/* CSS-based color control for single white SVGs */
+.svg-color-icon {
+  /* Default: keep white SVG white (for dark mode) */
+  filter: none;
+}
+
+/* Light mode: convert white SVG to black */
+[data-theme="light"] .svg-color-icon,
+.theme-light .svg-color-icon {
+  filter: invert(1); /* Converts white to black */
+}
+
+/* Dark mode: keep white SVG white */
+[data-theme="dark"] .svg-color-icon,
+.theme-dark .svg-color-icon {
+  filter: none; /* Keep original white */
+}
+
+/* Fallback using CSS media queries */
+@media (prefers-color-scheme: light) {
+  .svg-color-icon {
+    filter: invert(1);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .svg-color-icon {
+    filter: none;
+  }
+}

@@ -139,14 +139,14 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
               />
             ) : (
               <ThemeIcon
-                light={'/assets/profile_light.png'}
-                dark={'/assets/profile_dark.png'}
+                src={'assets/profile_light.svg'}
+                darkSrc={'assets/profile_dark.svg'}
                 id={'profile-img-icon'}
               />
             )}
             <ThemeIcon
-              light={'/assets/dropdown_light.png'}
-              dark={'/assets/dropdown_dark.png'}
+              src={'assets/dropdown_light.svg'}
+              darkSrc={'assets/dropdown_dark.svg'}
               id="dropdown-arrow"
             />
           </DropdownButton>
@@ -159,8 +159,8 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 {/* (Blank) Profile Icon */}
                 <button id="header-profile-user">
                   <ThemeIcon
-                    light={'/assets/profile_light.png'}
-                    dark={'/assets/profile_dark.png'}
+                    src={'assets/profile_light.svg'}
+                    darkSrc={'assets/profile_dark.svg'}
                     alt={'profile'}
                   />
                   <div>
@@ -175,8 +175,8 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
                   <ThemeIcon
-                    light={'/assets/black/mode.png'}
-                    dark={'/assets/white/mode.png'}
+                    src={'assets/white/mode.svg'}
+                    lightModeColor={'black'}
                     alt={'current mode'}
                   />
                   {modeToggle}
@@ -185,8 +185,8 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 {/* LOG IN Button */}
                 <button onClick={() => navigate(paths.routes.LOGIN, { state: { from: location.pathname } })}>
                   <ThemeIcon
-                    light={'/assets/black/logout.png'}
-                    dark={'/assets/white/logout.png'}
+                    src={'assets/white/logout.svg'}
+                    lightModeColor={'black'}
                     alt={'log in'}
                   />
                   Log In
@@ -206,8 +206,8 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                     />
                   ) : (
                     <ThemeIcon
-                      light={'/assets/profile_light.png'}
-                      dark={'/assets/profile_dark.png'}
+                      src={'assets/profile_light.svg'}
+                      darkSrc={'assets/profile_dark.svg'}
                       alt={'profile'}
                     />
                   )}
@@ -223,8 +223,8 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
                   <ThemeIcon
-                    light={'/assets/black/mode.png'}
-                    dark={'/assets/white/mode.png'}
+                    src={'assets/white/mode.svg'}
+                    lightModeColor={'black'}
                     alt={'current mode'}
                   />
                   {modeToggle}
@@ -233,8 +233,8 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 {/* Settings Link */}
                 <button onClick={() => handlePageChange(paths.routes.SETTINGS)}>
                   <ThemeIcon
-                    light={'/assets/black/settings.png'}
-                    dark={'/assets/white/settings.png'}
+                    src={'assets/white/settings.svg'}
+                    lightModeColor={'black'}
                     alt={'settings'}
                   />
                   Settings
@@ -243,8 +243,8 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 {/* LOG OUT Button */}
                 <button onClick={() => sendPost('/api/logout')}>
                   <ThemeIcon
-                    light={'/assets/black/logout.png'}
-                    dark={'/assets/white/logout.png'}
+                    src={'assets/white/logout.svg'}
+                    lightModeColor={'black'}
                     alt={'log out'}
                   />
                   Log Out

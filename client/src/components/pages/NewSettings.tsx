@@ -555,8 +555,8 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                       <div className="input-container">
                         <input id="option-theme" placeholder={themeOption} type="text" disabled />
                         <ThemeIcon
-                          light={'/assets/dropdown_light.png'}
-                          dark={'/assets/dropdown_dark.png'}
+                          src={'assets/dropdown_light.svg'}
+                          darkSrc={'assets/dropdown_dark.svg'}
                           alt={'Current Theme'}
                           addClass={'options-dropdown-parent-btn'}
                         />
@@ -627,8 +627,8 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                           disabled
                         />
                         <ThemeIcon
-                          light={'/assets/dropdown_light.png'}
-                          dark={'/assets/dropdown_dark.png'}
+                          src={'assets/dropdown_light.svg'}
+                          darkSrc={'assets/dropdown_dark.svg'}
                           alt={'Visibility'}
                           addClass={'options-dropdown-parent-btn'}
                         />

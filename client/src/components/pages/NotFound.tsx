@@ -18,8 +18,8 @@ const NotFoundPage = () => {
             <Header dataSets={[{ projectsList }]} onSearch={setCurrentSearch} />
             <div className = "error-box">
                 <ThemeIcon
-                            light={'/assets/bannerImages/404_light.png'}
-                            dark={'/assets/bannerImages/404_dark.png'}
+                            src={'assets/bannerImages/404_light.png'}
+                            darkSrc={'assets/bannerImages/404_dark.png'}
                             alt={'404 Not Found'}
                             id={'error-image'}
                           />
@@ -29,7 +29,7 @@ const NotFoundPage = () => {
                         This is the Home button, because it will return users home once the Home page is up. It currently returns to Discover page
                     */}
                     <button className = "" onClick={ (event: any) => navigate(paths.routes.HOME)}>
-                        <ThemeIcon light={'/assets/black/compass.png'} dark={'/assets/white/compass.png'} alt={'discover'} /> {/*Home Button Icon*/}
+                        <ThemeIcon src={'assets/white/compass.svg'} lightModeColor={'white'} darkModeColor={'black'} alt={'discover'} /> {/*Home Button Icon*/}
                         {/*}<img className = 'theme-icon'></img>{*/}
                         Home
                         </button>

@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.5.1",
+    "hex-to-css-filter": "^6.0.0",
     "password-validator": "^5.3.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
