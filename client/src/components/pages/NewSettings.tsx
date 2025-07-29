@@ -508,23 +508,6 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
               <div className="settings-column">
                 <h2 className="settings-header">Emails</h2>
                 <div className="subsection">
-                  <label htmlFor="option-primary-email">Primary Email</label>
-                  <div className="input-container">
-                    <input
-                      id="option-primary-email"
-                      placeholder={userInfo.primary_email}     // FIX Primary email no longer exists; possible break
-                      type="text"
-                      disabled
-                    />
-                    <Popup>
-                      <PopupButton className="interact-option">Edit</PopupButton>
-                      <PopupContent>
-                        <ChangeForm type={'Primary Email'} />
-                      </PopupContent>
-                    </Popup>
-                  </div>
-                </div>
-                <div className="subsection">
                   <label htmlFor="option-rit-email">RIT Email</label>
                   <div className="input-container disabled">
                     <input
