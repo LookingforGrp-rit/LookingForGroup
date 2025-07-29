@@ -52,7 +52,7 @@ jobs:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           password: ${{ secrets.SERVER_PASS }}
-          source: ./lfg-backend.container
+          source: ./containers/lfg-backend.container
           target: ~/.config/containers/systemd/lfg-backend.container
 
       - name: Pull Image and Restart Container
