@@ -81,5 +81,15 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# profile picture and project images
-server/images/
+# Ignore .idea for Jetbrains developing tools
+.idea
+
+# Ignore vs & vscode config files
+.vs
+.vscode
+
+# SQL files
+*.sql
+
+# Generated files
+**/generated/**

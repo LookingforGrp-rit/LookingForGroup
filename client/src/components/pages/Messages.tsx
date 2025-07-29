@@ -4,7 +4,7 @@ import { profiles } from '../../constants/fakeData'; // FIXME: use user data in 
 import { useState } from 'react';
 
 //list of all the messages available to a user
-const Messages = (props) => {
+const Messages = () => {
   const [uID, setUID] = useState(profiles[0]._id);
 
   return (

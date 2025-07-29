@@ -24,7 +24,7 @@ export const ProjectPost = (props) => {
 
   return (
     <div className="project-post" onClick={() => navigate(paths.routes.PROJECTPOST + pathQuery)}>
-      <img src={postImagePlaceholder} alt="" />
+      <img src={postImagePlaceholder} alt="post image" />
       <div className="post-content">
         <div className="post-info">
           <h3 className="post-title">{thisPost.title}</h3>

@@ -7,6 +7,9 @@ import { Popup, PopupButton, PopupContent } from './Popup';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { PagePopup } from './PagePopup';
 
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 const MyProjectsDisplayGrid = ({ projectData }) => {
   //Navigation hook
   const navigate = useNavigate();
@@ -22,7 +25,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
   const [resultObj, setResultObj] = useState({ status: 400, error: 'Not initialized' });
 
   const getStatus = async () => {
-    const url = `/api/projects/${projectData.project_id}`;
+    const url = `/api/projects/${projectData.projectId}`;
     try {
       const response = await fetch(url);
 
@@ -51,7 +54,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
   };
 
   //Constructs url linking to relevant project page
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.project_id}`;
+  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
 
   return (
     <div className="my-project-grid-card">
@@ -59,7 +62,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
       <img
         className="grid-card-image"
         src={(projectData.thumbnail)
-          ? `/images/thumbnails/${projectData.thumbnail}`
+          ? `${API_BASE}/images/thumbnails/${projectData.thumbnail}`
           : `/assets/project_temp-DoyePTay.png`
         }
         alt={`${projectData.title} Thumbnail`}
@@ -134,7 +137,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
                           // Attempt to remove user from project.
                           // Display PagePopup.tsx on success or failure
                           // And display error message inside said popup
-                          let url = `/api/projects/${projId}`;
+                          const url = `/api/projects/${projId}`;
 
                           sendDelete(url, (result) => {
                             setRequestType('delete');

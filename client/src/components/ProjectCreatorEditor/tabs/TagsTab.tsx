@@ -16,10 +16,10 @@ interface ProjectData {
   description: string;
   hook: string;
   images: Image[];
-  jobs: { title_id: number; job_title: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { first_name: string, last_name: string, job_title: string, profile_image: string, user_id: number}[];
-  project_id?: number;
-  project_types: { id: number, project_type: string}[];
+  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
+  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number}[];
+  projectId?: number;
+  projectTypes: { id: number, projectType: string}[];
   purpose: string;
   socials: { id: number, url: string }[];
   status: string;
@@ -30,13 +30,13 @@ interface ProjectData {
 }
 
 interface Tag {
-  tag_id: number;
+  tagId: number;
   label: string;
   type: string;
 }
 
 interface ProjectType {
-  type_id: number;
+  typeId: number;
   label: string;
 }
 
@@ -49,8 +49,8 @@ const defaultProject: ProjectData = {
   images: [],
   jobs: [],
   members: [],
-  project_id: -1,
-  project_types: [],
+  projectId: -1,
+  projectTypes: [],
   purpose: '',
   socials: [],
   status: '',
@@ -204,12 +204,18 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
     }
   }, [currentTagsTab, allProjectTypes, allTags, allSkills]);
 
+  // Reset tag list on tab change to default list
+  useEffect(() => {
+  const defaultTags = currentDataSet[0]?.data ?? [];
+  setSearchedTags(defaultTags);
+  }, [currentTagsTab, currentDataSet])
+
   // Find if a tag is present on the project
   const isTagSelected = useCallback((id: number, label: string, tab: number = -1) => {
     // if no tab, iterate through all categories
     if (tab === -1) {
       // search project types
-      if (modifiedProject.project_types.some(t => t.id === id && t.project_type === label)) {
+      if (modifiedProject.projectTypes.some(t => t.id === id && t.projectType === label)) {
         return 'selected';
       }
 
@@ -223,7 +229,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
 
     // Project Type
     if (tab === 0) {
-      return modifiedProject.project_types.some(t => t.id === id && t.project_type === label) ?
+      return modifiedProject.projectTypes.some(t => t.id === id && t.projectType === label) ?
         'selected' : 'unselected';
     }
     // Genre
@@ -253,37 +259,34 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
   // Handle tag selection
   const handleTagSelect = useCallback((e) => {    
     // trim whitespace to get tag name
-    const tag: string = e.target.innerText.trim();
+    // take closest button to allow click on icon
+    const button = e.target.closest('button');
+    const tag: string = button.innerText.trim();
     
     // if tag is unselected
-    if (e.target.className.includes('unselected')) {
-      // change tag class
-      e.target.className = e.target.className.replace('unselected', 'selected');
-      
-      // change icon class
-      e.target.querySelector('i').className = 'fa fa-close';
-
+    if (button.className.includes('unselected')) {
       // get tag id and type according to type of tag
       let id: number = -1;
       let type: string = '';
-      if (e.target.className.includes('blue')) { // project type
-        id = allProjectTypes.find((t) => t.label === tag)?.type_id ?? -1;
+
+      if (button.className.includes('blue')) { // project type
+        id = allProjectTypes.find((t) => t.label === tag)?.typeId ?? -1;
         type = 'Project Type';
       }
-      else if (e.target.className.includes('green')) { // genre
-        id = allTags.find((t) => t.label === tag)?.tag_id ?? -1;
+      else if (button.className.includes('green')) { // genre
+        id = allTags.find((t) => t.label === tag)?.tagId ?? -1;
         type = 'Genre';
       }
-      else if (e.target.className.includes('yellow')) { // developer skills
-        id = allSkills.find((s) => s.type === 'Developer Skill' && s.label === tag)?.tag_id ?? -1;
+      else if (button.className.includes('yellow')) { // developer skills
+        id = allSkills.find((s) => s.type === 'Developer Skill' && s.label === tag)?.tagId ?? -1;
         type = 'Developer Skill';
       }
-      else if (e.target.className.includes('red')) { // designer skills
-        id = allSkills.find((s) => s.type === 'Designer Skill' && s.label === tag)?.tag_id ?? -1;
+      else if (button.className.includes('red')) { // designer skills
+        id = allSkills.find((s) => s.type === 'Designer Skill' && s.label === tag)?.tagId ?? -1;
         type = 'Designer Skill';
       }
-      else if (e.target.className.includes('purple')) { // soft skills
-        id = allSkills.find((s) => s.type === 'Soft Skill' && s.label === tag)?.tag_id ?? -1;
+      else if (button.className.includes('purple')) { // soft skills
+        id = allSkills.find((s) => s.type === 'Soft Skill' && s.label === tag)?.tagId ?? -1;
         type = 'Soft Skill';
       }
 
@@ -294,7 +297,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
       
       // add tag to project
       if (type === 'Project Type') {
-        setModifiedProject({ ...modifiedProject, project_types: [...modifiedProject.project_types, { id: id, project_type: tag }] });
+        setModifiedProject({ ...modifiedProject, projectTypes: [...modifiedProject.projectTypes, { id: id, projectType: tag }] });
       } else {
         setModifiedProject({ ...modifiedProject, tags: [...modifiedProject.tags, {
           id: id,
@@ -308,15 +311,9 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
     else {
       // remove tag from project
       setModifiedProject({ ...modifiedProject,
-        project_types: modifiedProject.project_types.filter((t) => t.project_type !== tag),
+        projectTypes: modifiedProject.projectTypes.filter((t) => t.projectType !== tag),
         tags: modifiedProject.tags.filter((t) => t.tag !== tag)
       });
-      
-      // deselect tag
-      e.target.className = e.target.className.replace('selected', 'unselected');
-
-      // change icon class
-      e.target.querySelector('i').className = 'fa fa-plus';
     }
   }, [allProjectTypes, allSkills, allTags, modifiedProject]);
 
@@ -324,7 +321,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
   const loadProjectTags = useMemo(() => {
     return modifiedProject.tags
       .map((t) => (
-          <button className={`tag-button tag-button-${getTagColor(t.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
+          <button key={t.tag} className={`tag-button tag-button-${getTagColor(t.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
             <i className="fa fa-close"></i>
             &nbsp;{t.tag}
           </button>
@@ -339,14 +336,15 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
         searchedTags.map(t => {
           // get id according to type of tag
           let id: number = -1; // bad default value
-          if ('tag_id' in t) {
-            id = t.tag_id;
-          } else if ('type_id' in t) {
-            id = t.type_id;
+          if ('tagId' in t) {
+            id = t.tagId;
+          } else if ('typeId' in t) {
+            id = t.typeId;
           }
 
           return (
             <button
+              key={id}
               className={`tag-button tag-button-${'type' in t ? getTagColor(t.type) : 'blue'}-${isTagSelected(
                 id,
                 t.label,
@@ -367,16 +365,20 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
         })
       )
     }
+    else if (searchedTags && searchedTags.length === 0) {
+     return <div className="no-results-message">No results found!</div>;
+    }
     // project type
     if (currentTagsTab === 0) {
       return allProjectTypes.map((t) => (
         <button
-          className={`tag-button tag-button-blue-${isTagSelected(t.type_id, t.label, currentTagsTab)}`}
+          key={t.typeId}
+          className={`tag-button tag-button-blue-${isTagSelected(t.typeId, t.label, currentTagsTab)}`}
           onClick={(e) => handleTagSelect(e)}
         >
           <i
             className={
-              isTagSelected(t.type_id, t.label, currentTagsTab) === 'selected'
+              isTagSelected(t.typeId, t.label, currentTagsTab) === 'selected'
                 ? 'fa fa-close'
                 : 'fa fa-plus'
             }
@@ -389,12 +391,13 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
         .filter((t) => t.type === 'Genre')
         .map((t) => (
           <button
-            className={`tag-button tag-button-green-${isTagSelected(t.tag_id, t.label, currentTagsTab)}`}
+            key={t.tagId}
+            className={`tag-button tag-button-green-${isTagSelected(t.tagId, t.label, currentTagsTab)}`}
             onClick={(e) => handleTagSelect(e)}
           >
             <i
               className={
-                isTagSelected(t.tag_id, t.label, currentTagsTab) === 'selected'
+                isTagSelected(t.tagId, t.label, currentTagsTab) === 'selected'
                   ? 'fa fa-close'
                   : 'fa fa-plus'
               }
@@ -407,12 +410,13 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
         .filter((s) => s.type === 'Developer Skill')
         .map((s) => (
           <button
-            className={`tag-button tag-button-yellow-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
+            key={s.tagId}
+            className={`tag-button tag-button-yellow-${isTagSelected(s.tagId, s.label, currentTagsTab)}`}
             onClick={(e) => handleTagSelect(e)}
           >
             <i
               className={
-                isTagSelected(s.tag_id, s.label, currentTagsTab) === 'selected'
+                isTagSelected(s.tagId, s.label, currentTagsTab) === 'selected'
                   ? 'fa fa-close'
                   : 'fa fa-plus'
               }
@@ -425,12 +429,13 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
         .filter((s) => s.type === 'Designer Skill')
         .map((s) => (
           <button
-            className={`tag-button tag-button-red-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
+            key={s.tagId}
+            className={`tag-button tag-button-red-${isTagSelected(s.tagId, s.label, currentTagsTab)}`}
             onClick={(e) => handleTagSelect(e)}
           >
             <i
               className={
-                isTagSelected(s.tag_id, s.label, currentTagsTab) === 'selected'
+                isTagSelected(s.tagId, s.label, currentTagsTab) === 'selected'
                   ? 'fa fa-close'
                   : 'fa fa-plus'
               }
@@ -443,12 +448,13 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
       .filter((s) => s.type === 'Soft Skill')
       .map((s) => (
         <button
-          className={`tag-button tag-button-purple-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
+          key={s.tagId}
+          className={`tag-button tag-button-purple-${isTagSelected(s.tagId, s.label, currentTagsTab)}`}
           onClick={(e) => handleTagSelect(e)}
         >
           <i
             className={
-              isTagSelected(s.tag_id, s.label, currentTagsTab) === 'selected'
+              isTagSelected(s.tagId, s.label, currentTagsTab) === 'selected'
                 ? 'fa fa-close'
                 : 'fa fa-plus'
             }
@@ -459,29 +465,28 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
   }, [searchedTags, currentTagsTab, allSkills, isTagSelected, handleTagSelect, allProjectTypes, allTags]);
 
   // Update shown tags according to search results
-  // FIXME: results do not update when switching tabs with no query
   const handleSearch = useCallback((results: (Tag | ProjectType)[][]) => {
     // setSearchResults(results);
     if (results.length === 0 && currentDataSet.length !== 0) {
       // no results or current data set
-      setSearchedTags(currentDataSet[0].data);
+      setSearchedTags([]);
     }
     else {
       setSearchedTags(results[0]);
     }
-  }, [currentDataSet]);
+  }, []);
 
   // --- Complete component ---
   return (
     <div id="project-editor-tags">
       <div id="project-editor-type-tags">
         <div className="project-editor-section-header">Project Type</div>
-        {modifiedProject.project_types.length === 0 ? <div className="error">*At least 1 type is required</div> : <></> }
+        {modifiedProject.projectTypes.length === 0 ? <div className="error">*At least 1 type is required</div> : <></> }
         <div id="project-editor-type-tags-container">
-          {modifiedProject.project_types.map((t) => (
-            <button className={`tag-button tag-button-blue-selected`}>
+          {modifiedProject.projectTypes.map((t) => (
+            <button key={t.projectType} className={`tag-button tag-button-blue-selected`} onClick={(e) => handleTagSelect(e)}>
               <i className="fa fa-close"></i>
-              &nbsp;{t.project_type}
+              &nbsp;{t.projectType}
             </button>
           ))}
         </div>
@@ -502,7 +507,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
       </div>
 
       <div id="project-editor-tag-search">
-        <SearchBar dataSets={currentDataSet} onSearch={(results) => handleSearch(results)} />
+        <SearchBar key={currentTagsTab} dataSets={currentDataSet} onSearch={(results) => handleSearch(results)} />
         <div id="project-editor-tag-wrapper">
           <div id="project-editor-tag-search-tabs">
             <button

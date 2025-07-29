@@ -16,10 +16,10 @@ interface ProjectData {
   description: string;
   hook: string;
   images: Image[];
-  jobs: { title_id: number; job_title: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { first_name: string, last_name: string, job_title: string, profile_image: string, user_id: number }[];
-  project_id?: number;
-  project_types: { id: number, project_type: string }[];
+  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
+  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number }[];
+  projectId?: number;
+  projectTypes: { id: number, projectType: string }[];
   purpose: string;
   socials: { id: number, url: string }[];
   status: string;
@@ -30,7 +30,7 @@ interface ProjectData {
 }
 
 interface Social {
-  website_id: number;
+  websiteId: number;
   label: string;
 }
 
@@ -43,8 +43,8 @@ const defaultProject: ProjectData = {
   images: [],
   jobs: [],
   members: [],
-  project_id: -1,
-  project_types: [],
+  projectId: -1,
+  projectTypes: [],
   purpose: '',
   socials: [],
   status: '',
@@ -55,6 +55,27 @@ const defaultProject: ProjectData = {
 
 // --- Component ---
 export const LinksTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, setErrorLinks }) => {
+
+  // Icon failure to load by default fix
+  const iconCheck = document.getElementsByClassName("project-link-select");
+  for (const i of iconCheck) {
+    const val = i.getElementsByClassName("value")[0];
+    if (!val.querySelector("i")) {
+      // Handling sites with uniquely named icons
+      if (val.innerText === "Other") { // Other
+        val.innerHTML = '<i class="fa-solid fa-link"></i>' + val.innerHTML;
+      }
+      else if (val.innerText === "X") { // Twitter
+        val.innerHTML = '<i class="fa-brands fa-x-twitter"></i>' + val.innerHTML;
+      }
+      else if (val.innerText === "Itch") { // Itch
+        val.innerHTML = '<i class="fa-brands fa-itch-io"></i>' + val.innerHTML;
+      }
+      else { // All ordinarily named site icons
+        val.innerHTML = `<i class="fa-brands fa-${val.innerText.toLowerCase()}"></i>` + val.innerHTML;
+      }
+    }
+  }
 
   // --- Hooks ---
   // tracking project modifications
@@ -128,7 +149,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
         const option = document.createElement('option');
         option.value = s.label;
         option.text = s.label;
-        option.dataset.id = s.website_id.toString();
+        option.dataset.id = s.websiteId.toString();
         dropdown.appendChild(option);
       }
 
@@ -166,7 +187,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
     <div id="project-editor-links">
       <label>Social Links</label>
       <div className="project-editor-extra-info">
-        Provide the links to pages you wish to include on your page.
+        Provide any links you wish to include on your project's page.
       </div>
       <div className='error'>{error}</div>
 
@@ -192,7 +213,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                           // Find the correct id and assign it
                           for (let i = 0; i < allSocials.length; i++) {
                             if (e.target.value === allSocials[i].label) {
-                              tempSocials[index].id = allSocials[i].website_id;
+                              tempSocials[index].id = allSocials[i].websiteId;
                               break;
                             }
                           }
@@ -206,7 +227,8 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                             {website.label === 'Other' ? (
                               <i className='fa-solid fa-link'></i>
                             ) : (
-                              <i className={`fa-brands ${(website.label === 'Itch.io' ? 'fa-itch-io' : (website.label === 'X') ? 'fa-x-twitter' : `fa-${website.label.toLowerCase()}`)}`}></i>
+                              // Itch and Twitter have uniquely named FA icons that cannot be handled the same as the others
+                              <i className={`fa-brands ${(website.label === 'Itch' ? 'fa-itch-io' : (website.label === 'X') ? 'fa-x-twitter' : `fa-${website.label.toLowerCase()}`)}`}></i>
                             )}
                             {website.label}
                           </>,
@@ -220,6 +242,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                 <div className='project-link-input-wrapper'>
                   {/* FIXME: handle onChange to allow for editing input */}
                   <input
+                    style={{ height: "60%" }}
                     type="text"
                     placeholder="URL"
                     value={social.url}
@@ -231,6 +254,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                       const tempSocials = modifiedProject.socials;
                       tempSocials[index].url = e.target.value;
                       setModifiedProject({ ...modifiedProject, socials: tempSocials });
+                      console.log(tempSocials);
                     }}
                   />
                   <button className='remove-link-button' onClick={
@@ -241,8 +265,10 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                       // }
 
                       // Remove element from modified socials array
+                      console.log(index);
                       const tempSocials = modifiedProject.socials.toSpliced(index, 1);
                       setModifiedProject({ ...modifiedProject, socials: tempSocials });
+                      console.log(tempSocials);
                     }}>
                     <i className="fa-solid fa-minus"></i>
                   </button>
@@ -251,8 +277,8 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
             );
           }) : ''
         }
-        <div className="add-item-button">
-          <button onClick={() => {
+        <div id="add-link-container">
+          <button id="profile-editor-add-link" onClick={() => {
             //addLinkInput();
             let tempSocials = modifiedProject.socials;
 
@@ -269,8 +295,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
 
             setModifiedProject({ ...modifiedProject, socials: tempSocials });
           }}>
-            <img src={'/images/icons/cancel.png'} alt="+" />
-            <span className="project-editor-extra-info">Add social profile</span>
+            + Add project link
           </button>
         </div>
       </div>

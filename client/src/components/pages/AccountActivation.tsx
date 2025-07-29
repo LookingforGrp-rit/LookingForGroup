@@ -16,13 +16,31 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 //import * as fetch from "../../functions/fetch";
 
-const EmailConfirmation = (props: any) => {
+// Interface for the response data from the server
+interface ResponseData {
+  status?: number; // HTTP status code
+  error?: string; // Error message
+}
+
+// Interface for the props passed to the EmailConfirmation component
+interface EmailConfirmationProps {
+  responseData?: ResponseData;
+  reloadResponseData?: number | string | boolean;
+}
+
+/*
+This component handles the email confirmation process for user account activation.
+It extracts a token from the URL, sends it to the server for verification,
+displays the appropriate confirmation message, and automatically redirects
+the user to the home page after 5 seconds.
+*/
+const EmailConfirmation = (props: EmailConfirmationProps) => {
   // THINGS TO DO:
   // Add Page Components (info box stating email is confirmed) x
   // Style page to match Figma (both light and dark modes)
   // Auto redirect to discover page (as well as link to discover page if redirect doesn't work) x
   // Include token in link as (react search parameter or query parameter) and work with database to verify users email (grab token and fetch to /api/signup/[insert token here]) x
-  const [responseData, setResponseData] = useState(props.responseData);
+  const [responseData, setResponseData] = useState<ResponseData | undefined>(props.responseData);
   const [counter, setCounter] = useState(5);
 
   //Gets current location
@@ -52,12 +70,20 @@ const EmailConfirmation = (props: any) => {
         }
     }*/
 
+  /*
+    useEffect to fetch the account activation status from the server.
+    - Extracts the token from the URL path.
+    - Sends a GET request to the backend endpoint with the token.
+    - Updates responseData state with the server's response.
+    - Runs on mount and whenever reloadResponseData prop changes.
+  */
   useEffect(() => {
     const getUserCreationStatus = async () => {
+      // Construct the URL to fetch the user creation status
       const url = `/api/signup/${path.substring(path.lastIndexOf('/') + 1, path.length)}`;
       try {
         const response = await fetch(url);
-        const data = await response.json();
+        const data: ResponseData = await response.json();
         console.log(`Status: ${data.status}`);
         if (data.error) {
           console.log(`Error: ${data.error}`);
@@ -78,6 +104,7 @@ const EmailConfirmation = (props: any) => {
   // Sets default h1Text and redirect destination
   let h1Text = 'Error Fetching';
 
+  // Update the message based on the response data
   if (responseData != undefined) {
     // Changes h1Text and redirect destination dependent on the status code returned by server
     switch (responseData.status) {
@@ -85,7 +112,7 @@ const EmailConfirmation = (props: any) => {
         h1Text = 'Your LFG account is now activated!';
         break;
       case 400:
-        h1Text = responseData.error;
+        h1Text = responseData.error || 'Bad Request';
         break;
     }
   }
@@ -109,8 +136,9 @@ const EmailConfirmation = (props: any) => {
       clearInterval(interval);
       clearTimeout(timeout);
     };
-  });
+  }, []);
 
+  // Render the component
   return (
     <div id="email-confirmation-page" className="background-cover">
       <div className="confirmation-container">

@@ -21,8 +21,9 @@ import { ProfileProjects } from '../Profile/ProfileProjects';
 import { useEffect, useState } from 'react';
 import ToTopButton from '../ToTopButton';
 import EditButton from '../Profile/ProfileEditButton';
-import { sendGet } from '../../functions/fetch';
+import { getUsers } from '../../api/users';
 
+// Get user ID from API
 const fetchUserID = async () => {
   const response = await fetch('/api/auth');
   const {
@@ -31,7 +32,8 @@ const fetchUserID = async () => {
   return userID;
 };
 
-const getProfiles = async () => {
+// Get list of users on site from API
+const getProfiles = async () => {  
   const response = await fetch('/api/users');
   const {
     data: { users },
@@ -39,6 +41,7 @@ const getProfiles = async () => {
   return users;
 };
 
+// Main Profile component
 const Profile = (props) => {
   const [profileID, setProfileID] = useState<string | null>(null);
   const [profiles, setProfiles] = useState<{ _id: number; username: string }[]>([]);
@@ -76,8 +79,10 @@ const Profile = (props) => {
 
   window.scrollTo(0, 0);
 
+  
   const [userData, setUserData] = useState();
 
+  //Get user data from API
   const getUserData = async (userID: number) => {
     const url = `http://localhost:8081/api/users/${userID}`;
     try {

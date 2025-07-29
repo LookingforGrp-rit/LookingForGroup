@@ -93,7 +93,6 @@ export const proficiencies = [
   'PHP',
   'C',
   'Kotlin',
-  'Ruby',
   'Unity',
   'Sketch',
   'Figma',

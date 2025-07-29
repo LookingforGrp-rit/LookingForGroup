@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext, useContext, useRef } from 'react';
+import { useEffect, useState, createContext, useContext, useRef, Dispatch,ReactNode, SetStateAction } from 'react';
 
 //This component is meant to be reusable in any area of the site, acting as an element that can be
 //  opened or closed after performing certain actions.
@@ -37,9 +37,23 @@ import { useEffect, useState, createContext, useContext, useRef } from 'react';
 //Must be able to call within the page itself for the user to access the popup
 
 //state & setState - useState variable & its set function holding a boolean controlling the visibility of the popup
-export const openClosePopup = (state, setState) => {
+export const openClosePopup = (
+  state: boolean,
+  setState: Dispatch<SetStateAction<boolean>>
+) => {
   setState(!state);
 };
+
+interface PagePopupProps {
+  children: ReactNode;
+  width: string | number;
+  height: string | number;
+  popupId: number | string;
+  zIndex: number;
+  show: boolean;
+  setShow: Dispatch<SetStateAction<boolean>>;
+  onClose?: () => void;
+}
 
 //Main component of PagePopup, which is exported from this file
 //Passes in 8 values: children, width, height, popupId, zIndex, show, setShow
@@ -56,23 +70,31 @@ export const openClosePopup = (state, setState) => {
 //  If multiple popups are being used on a page, use this to differentiate their layers
 //show - the useState variable determining whether the popup is visible or not
 //setShow - the function that sets the previously mentioned useState variable
-export const PagePopup = ({ children, width, height, popupId, zIndex, show, setShow, onClose = () => {} }) => {
-  if (!show) {
-    return null;
-  }
+export const PagePopup = ({
+  children,
+  width,
+  height,
+  popupId,
+  zIndex,
+  show,
+  setShow,
+  onClose = () => {},
+}: PagePopupProps) => {
+  if (!show) return null;
+
   return (
     <>
-      <div id={`popup-cover-${popupId}`} className="popup-cover" style={{ zIndex: zIndex }} />
-      <div id={`popup-container-${popupId}`} className='popup-container'>
+      <div id={`popup-cover-${popupId}`} className="popup-cover" style={{ zIndex }} />
+      <div id={`popup-container-${popupId}`} className="popup-container">
         <div
           id={`popup-${popupId}`}
           className="popup"
           style={{
-            width: width,
-            height: height,
-            top: `clamp(2.5vh, calc((100% - ${height})/2), 100%)`,
-            left: `clamp(2.5vw, calc((100% - ${width})/2), 100%)`,
-            zIndex: zIndex,
+            width,
+            height,
+            top: `clamp(2.5vh, calc((100% - ${height}) / 2), 100%)`,
+            left: `clamp(2.5vw, calc((100% - ${width}) / 2), 100%)`,
+            zIndex,
           }}
         >
           <button
@@ -82,7 +104,7 @@ export const PagePopup = ({ children, width, height, popupId, zIndex, show, setS
               openClosePopup(show, setShow);
             }}
           >
-            <img src="images/icons/cancel.png" alt="X" />
+            <img src="images/icons/cancel.png" alt="cancel" />
           </button>
           {children}
         </div>

@@ -1,41 +1,69 @@
 import { memo, FC, ChangeEvent, useState, useLayoutEffect } from 'react';
 // import { ProjectCard } from './ProjectCard';
 
-interface DataSet {
-  data: (string | Record<string, any>)[];
+interface Person {
+  name: string;
+  age: number;
+  email?: string;
 }
+
+interface DataSet {
+  data: (string | Person)[];
+}
+
 
 interface SearchBarProps {
   dataSets: DataSet[];
-  onSearch: (results: (string | Record<string, any>)[][]) => void;
+  onSearch: (results: (string | Person)[][]) => void;
+  // Optional value & onChange for different searchbar behaviors (adding team member names)
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
 // Search bar component for filtering data in Discover and Meet pages
 // Component is memoized to prevent unnecessary re-renders
 //FIXME: create way to update results if a new dataset is provided: discover page filter and project editor tag filters do not save search state
-export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch }) => {
-  const [query, setQuery] = useState('');
+export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange }) => {
+  const [internalQuery, setInternalQuery] = useState('');
+  const query = value ?? internalQuery;
 
   // Filter the data based on the query
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     // Convert the query to lowercase
     const newQuery = event.target.value.toLowerCase();
-    setQuery(newQuery);
+
+    // If onChange is passed in, call it
+     if (onChange) {
+      onChange(event); 
+    } else {
+      setInternalQuery(newQuery);
+    }
     handleSearch(newQuery);
   };
 
-  const handleSearch = (searchQuery) => {
-    // Filter the data based on the query
-    const filteredResults = dataSets.map((dataSet) =>
-      dataSet.data.filter((item) =>
-        typeof item === 'object'
-          ? Object.values(item).some((value) => String(value).toLowerCase().includes(searchQuery))
-          : String(item).toLowerCase().includes(searchQuery)
-      )
-    );
+const handleSearch = (searchQuery: string) => {
+  const filteredResults = dataSets.map((dataSet) =>
+    dataSet.data.filter((item) => {
+     if (typeof item === 'object') {
+      // ONLY return fields we want to match, this avoids unintended searchbar behavior
+       return (
+        (item.name && item.name.toLowerCase().includes(searchQuery)) ||
+        (item.role && item.role.toLowerCase().includes(searchQuery)) ||
+        (item.label && item.label.toLowerCase().includes(searchQuery)) || 
+        (item.firstName && item.firstName.toLowerCase().includes(searchQuery)) ||
+        (item.lastName && item.lastName.toLowerCase().includes(searchQuery))
+       )
+     }
+     else {
+        String(item).toLowerCase().includes(searchQuery)
+     }
+    }
+    )
+  );
 
-    onSearch(filteredResults);
-  };
+  onSearch(filteredResults);
+};
+
 
   useLayoutEffect(() => {
     if (query !== '') {
@@ -46,10 +74,10 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch }) => {
   return (
     <div className="search-wrapper">
       {/* Prevent form submission from refreshing the page */}
-      <form className="search-bar" onSubmit={(e) => e.preventDefault()}>
-        <button type="submit" className="search-button" aria-label="Search">
+      <div className="search-bar">
+        <div role="button" className="search-button" aria-label="Search" tabIndex={1}>
           <i className="fa fa-search" aria-hidden="true"></i>
-        </button>
+        </div>
         {/* Input field for search query */}
         <input
           className="search-input"
@@ -57,8 +85,15 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch }) => {
           placeholder="Search"
           value={query}
           onChange={handleChange}
+          onKeyDown={(e) => {
+            {/* Prevent odd popup behavior on enter click */}
+            if (e.key === 'Enter') {
+              e.preventDefault();
+            }
+          }}
+          autoComplete="searchbar-off"
         />
-      </form>
+      </div>
     </div>
   );
 });

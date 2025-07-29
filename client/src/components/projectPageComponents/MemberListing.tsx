@@ -81,7 +81,7 @@ export const MemberListing = (props) => {
         done
       </button>
       <button className="member-settings-more" onClick={() => moreSettingsToggle(props.idNum)}>
-        <ThemeIcon light={'assets/menu_light.png'} dark={'assets/menu_dark.png'} alt={'...'} />
+        <ThemeIcon src={'assets/menu_light.svg'} darkSrc={'assets/menu_dark.svg'} alt={'more settings'} />
       </button>
       <div id={'member-settings-dropdown-' + props.idNum} className="settings-hide">
         <button className="white-button" onClick={() => props.updateMemberSettings(1, props.idNum)}>

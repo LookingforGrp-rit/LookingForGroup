@@ -1,0 +1,75 @@
+/*default color scheme*/
+:root {
+  --bg-color: #0e0e0e;
+}
+
+/*light mode color scheme*/
+[data-theme='light'] {
+  --bg-color: #ffffff;
+  --primary-color: #271d66;
+  --text-color: #271D66;
+}
+
+/*dark mode color scheme*/
+[data-theme='dark'] {
+  --bg-color: #0e0e0e;
+  --primary-color: #fead81;
+  --text-color: #FFCF8B;
+}
+
+ /*Additional edits to the .page container; centers elements on the page*/
+.error-box{
+    display: flex;
+    flex-direction: column;
+    flex-align: center;
+    text-align: center;
+    padding-top: 200px;
+}
+
+#error-image {
+  max-width: 100vh;
+  width: 500px;
+  width: auto;
+  align-self: center;
+}
+
+
+
+.error-button-container button:hover {
+  transition-duration: 0.25s;
+  background-color: var(--text-color);
+}
+
+.error-button-container {
+  display: flex;
+  justify-content: center;
+}
+
+.error-button-container button {
+  background-color: var(--primary-color);
+  transition: 0.25s;
+  font-weight: bold;
+  font-size: 20px;
+  color: var(--invert-text);
+  border: none;
+  border-radius: 30px;
+  padding: 10px 15px;
+  display: flex;
+  gap: 10px;
+
+  img {
+    filter: invert(1);
+    max-width: 25px;
+  }
+}
+
+.errorFrog{max-width: 25vh; width: auto; align-self: center;}
+
+.error-header{color: var(--text-color); font-size: 30px;}
+
+@media only screen and (max-width: 799px) {
+  .error-box > * {font-size: 50px; margin: 50px;}
+  .error-button-container{padding-bottom: 100px;}
+  .error-button-container button {padding: 20px 30px; font-size: 35px;}
+}
+

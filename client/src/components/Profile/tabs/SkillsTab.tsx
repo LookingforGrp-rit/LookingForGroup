@@ -35,7 +35,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
   const [currentTagsTab, setCurrentTagsTab] = useState(0);
   // filtered results from tag search bar
   const [searchedTags, setSearchedTags] = useState<(Tag | ProfileData)[]>([]);
-  
+
   // Update data when data is changed
   useEffect(() => {
     setModifiedProfile(props.profile);
@@ -80,51 +80,58 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
     }
   }, [currentTagsTab, allSkills]);
 
+  // Reset tag list on tab change to default list
+  useEffect(() => {
+    const defaultTags = currentDataSet[0]?.data ?? [];
+    setSearchedTags(defaultTags);
+  }, [currentTagsTab, currentDataSet])
+
   // Find if a tag is present on the project
   const isTagSelected = useCallback((id: number, label: string, tab: number = -1) => {
+    const skills = modifiedProfile?.skills ?? [];
+
     // Developer Skills
     if (tab === 0) {
-      return modifiedProfile.skills.some(t => t.id === id && t.tag === label) ?
+      return skills.some(t => t.id === id && t.tag === label) ?
         'selected' : 'unselected';
     }
     // Designer Skills
     if (tab === 1) {
-      return modifiedProfile.skills.some(t => t.id === id && t.tag === label) ?
+      return skills.some(t => t.id === id && t.tag === label) ?
         'selected' : 'unselected';
     }
     // Soft Skills
     if (tab === 2) {
-      return modifiedProfile.skills.some(t => t.id === id && t.tag === label) ?
+      return skills.some(t => t.id === id && t.tag === label) ?
         'selected' : 'unselected';
     }
     return 'unselected';
   }, [modifiedProfile]);
 
   const handleTagSelect = useCallback((e: any) => {
+    // prevent page from immediately re-rendering
+    e.preventDefault();
+
     // trim whitespace to get tag name
-    const tag: string = e.target.innerText.trim();
+    // take closest button to allow click on icon
+    const button = e.target.closest('button');
+    const tag: string = button.innerText.trim();
 
     // if tag is unselected
-    if (e.target.className.includes('unselected')) {
-      // change tag class
-      e.target.className = e.target.className.replace('unselected', 'selected');
-
-      // change icon class
-      e.target.querySelector('i').className = 'fa fa-close';
-
+    if (button.className.includes('unselected')) {
       // get tag id and type according to type of tag
       let id: number = -1;
       let type: string = '';
 
-      if (e.target.className.includes('yellow')) { // developer skills
+      if (button.className.includes('yellow')) { // developer skills
         id = allSkills.find((s) => s.type === 'Developer Skill' && s.label === tag)?.tag_id ?? -1;
         type = 'Developer Skill';
       }
-      else if (e.target.className.includes('red')) { // designer skills
+      else if (button.className.includes('red')) { // designer skills
         id = allSkills.find((s) => s.type === 'Designer Skill' && s.label === tag)?.tag_id ?? -1;
         type = 'Designer Skill';
       }
-      else if (e.target.className.includes('purple')) { // soft skills
+      else if (button.className.includes('purple')) { // soft skills
         id = allSkills.find((s) => s.type === 'Soft Skill' && s.label === tag)?.tag_id ?? -1;
         type = 'Soft Skill';
       }
@@ -133,29 +140,42 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
       if (id === -1) {
         return;
       }
+
+      // Update selected tags with new ones
+      setModifiedProfile((prev) => ({
+        ...prev,
+        skills: [
+          ...(prev.skills ?? []),
+          {
+            id: id,
+            position: prev.skills?.length ?? 0,
+            tag: tag,
+            skill: tag,
+            type: type
+          }
+        ]
+      }));
+
     }
     // if tag is selected
     else {
-      // remove tag from project
-      setModifiedProject({
-        ...modifiedProject,
-        project_types: modifiedProject.project_types.filter((t) => t.project_type !== tag),
-        tags: modifiedProject.tags.filter((t) => t.tag !== tag)
+      // remove skill from project
+      setModifiedProfile({
+        ...modifiedProfile,
+        skills: (modifiedProfile.skills ?? []).filter((s) => s.skill !== tag),
+        project_types: (modifiedProfile.project_types ?? []).filter((t) => t.project_type !== tag),
+        tags: (modifiedProfile.tags ?? []).filter((t) => t.tag !== tag)
       });
-
-      // deselect tag
-      e.target.className = e.target.className.replace('selected', 'unselected');
-
-      // change icon class
-      e.target.querySelector('i').className = 'fa fa-plus';
     }
   }, [allSkills, modifiedProfile]);
 
   // Load projects
-  const loadProjectTags = useMemo(() => {
+  const loadProfileTags = useMemo(() => {
+    if (!modifiedProfile?.skills) return [];
+
     return modifiedProfile.skills
       .map((s) => (
-        <button className={`tag-button tag-button-${getTagColor(s.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
+        <button key={s.skill} className={`tag-button tag-button-${getTagColor(s.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
           <i className="fa fa-close"></i>
           &nbsp;{s.skill}
         </button>
@@ -178,6 +198,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
 
           return (
             <button
+              key={id}
               className={`tag-button tag-button-${'type' in t ? getTagColor(t.type) : 'blue'}-${isTagSelected(
                 id,
                 t.label,
@@ -198,12 +219,16 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
         })
       )
     }
+    else if (searchedTags && searchedTags.length === 0) {
+      return <div className="no-results-message">No results found!</div>;
+    }
     // Developer Skill
     if (currentTagsTab === 0) {
       return allSkills
         .filter((s) => s.type === 'Developer Skill')
         .map((s) => (
           <button
+            key={s.tag_id}
             className={`tag-button tag-button-yellow-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
             onClick={(e) => handleTagSelect(e)}
           >
@@ -222,6 +247,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
         .filter((s) => s.type === 'Designer Skill')
         .map((s) => (
           <button
+            key={s.tag_id}
             className={`tag-button tag-button-red-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
             onClick={(e) => handleTagSelect(e)}
           >
@@ -241,6 +267,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
         .filter((s) => s.type === 'Soft Skill')
         .map((s) => (
           <button
+            key={s.tag_id}
             className={`tag-button tag-button-purple-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
             onClick={(e) => handleTagSelect(e)}
           >
@@ -261,21 +288,24 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
     // setSearchResults(results);
     console.log('handling search');
     console.log('results', results);
-    if (results.length === 0 && currentDataSet.length !== 0) {
+    // show no results
+    if (!results || results.length === 0 || results[0].length === 0) {
       console.log('no results or current data set');
-      setSearchedTags(currentDataSet[0].data);
+      setSearchedTags([]);
     }
     else {
       setSearchedTags(results[0]);
     }
-  }, [currentDataSet]);
+  }, []);
 
   // Components
   const TagSearchTabs = () => {
-    let tabs = tagTabs.map((tag, i) => {
+    const tabs = tagTabs.map((tag, i) => {
       return (
         <button
-          onClick={() => { setCurrentTagsTab(i); }}
+          key={tag}
+          type="button"
+          onClick={() => setCurrentTagsTab(i)}
           className={`button-reset project-editor-tag-search-tab ${currentTagsTab === i ? 'tag-search-tab-active' : ''}`}
         >
           {tag}
@@ -296,17 +326,15 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
         <div className="project-editor-extra-info">
           Drag and drop to reorder
         </div>
-        {/* Error tag */}
-        {modifiedProfile.skills.length === 0 ? <div className="error">*At least 1 tag is required</div> : <></>}
         <div id="project-editor-selected-tags-container">
-          <hr id="selected-tag-divider" />
           {/* TODO: Separate top 2 tags from others with hr element */}
-          {loadProjectTags}
+          <hr id="selected-tag-divider" />
+          {loadProfileTags}
         </div>
       </div>
 
       <div id="project-editor-tag-search">
-        <SearchBar dataSets={currentDataSet} onSearch={(results) => handleSearch(results)} />
+        <SearchBar key={currentTagsTab} dataSets={currentDataSet} onSearch={(results) => handleSearch(results)} />
         <div id="project-editor-tag-wrapper">
           <TagSearchTabs />
           <hr id="tag-search-divider" />

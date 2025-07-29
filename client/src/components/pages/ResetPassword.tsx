@@ -53,8 +53,8 @@ const ResetPassword = ({}) => {
     }
   };
 
-  const validatePassword = (pass) => {
     // Don't check password if there's nothing there
+  const validatePassword = (pass) => {
     if (pass === '') {
       return '';
     }
@@ -96,10 +96,10 @@ const ResetPassword = ({}) => {
   };
 
   // Function to handle the forgot pass button click
-  const handleBackToLogin = () => {
+  /*const handleBackToLogin = () => {
     // Navigate to the Forgot Password Page
-    navigate(paths.routes.LOGIN);
-  };
+    navigate(-1);
+  };*/
 
   // render the login page
   return (
@@ -128,7 +128,7 @@ const ResetPassword = ({}) => {
             value={confirmInput}
             onChange={(e) => setConfirmInput(e.target.value)}
           />
-          <button id="forgot-password" onClick={handleBackToLogin}>
+          <button id="forgot-password" onClick={() => navigate(-1)}>
             Back to Login
           </button>
         </div>

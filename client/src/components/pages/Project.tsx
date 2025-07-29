@@ -11,8 +11,8 @@ import '../Styles/projects.css';
 import '../Styles/settings.css';
 import '../Styles/pages.css';
 
-import { useState, useEffect } from 'react';
-import { ProjectInfo } from '../projectPageComponents/ProjectInfo';
+import { useState } from 'react';
+// import { ProjectInfo } from '../projectPageComponents/ProjectInfo';
 import { ProjectInfoMember } from '../projectPageComponents/ProjectInfoMember';
 import { ProjectPost } from '../projectPageComponents/ProjectPost';
 import { ProjectMember } from '../projectPageComponents/ProjectMember';
@@ -46,13 +46,11 @@ import { projects, posts, profiles } from '../../constants/fakeData'; // FIXME: 
 // No data is passed in through props
 
 // The 'select' element is for testing different projects with this layout, it should not be included in the final product
-const Project = (props) => {
+const Project = () => {
   window.scrollTo(0, 0);
 
   //current project's id number
-  let projectId;
-  //username of project creator
-  let projectOwner: string;
+  let projectId: string | null;
 
   // dummy project data, used when re-rendering the page after saving settings
   const dummyProject = {
@@ -81,7 +79,7 @@ const Project = (props) => {
   const keys = [0, 0, 0, 0]; //keys are not required for functionality, but react will give an error without it when using .map functions later
 
   //useState for members popup
-  const [showPopup, setShowPopup] = useState(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
 
   //*** Pulls project ID number from search query (should be stored as 'p') ***
   //(ex. [site path]/project?p=x , where x = the project ID number)
@@ -101,9 +99,13 @@ const Project = (props) => {
   const [projectData, setProjectData] = useState(currentProject);
 
   //Store project owner's username
-  projectOwner = profiles.find(
-    (p) => p._id === projectData.members.find((p) => p.owner === true).userID
-  ).username;
+  const ownerMember = projectData.members.find((p) => p.owner === true);
+  const projectOwner = ownerMember
+    ? profiles.find((p) => p._id === ownerMember.userID)?.username
+    : undefined;
+
+  // Optional use of projectOwner to prevent lint error (can be replaced with UI use later)
+  if (projectOwner) console.log(`Project owner: ${projectOwner}`);
 
   //Workaround function to update data on a project save
   //Necessary due to how setting useState variables works
@@ -124,8 +126,11 @@ const Project = (props) => {
   return (
     <div id="project-page" className="page">
       <select
-        onChange={(e) => {
-          setProjectData(projects[e.target.value]);
+        onChange={(e: React.ChangeEvent<HTMLSelectElement>) => {
+          const selectedProject = projects.find((proj) => proj._id === Number(e.target.value));
+          if (selectedProject) {
+            setProjectData(selectedProject);
+          }
         }}
       >
         {projects.map((project) => {
@@ -145,7 +150,7 @@ const Project = (props) => {
 
       <ProjectInfoMember
         callback={resetProjectData}
-        callback2={() => openClosePopup(showPopup, setShowPopup, [showPopup])}
+        callback2={() => openClosePopup(showPopup, setShowPopup)}
         projectData={projectData}
       />
 
@@ -170,7 +175,7 @@ const Project = (props) => {
       <hr />
 
       <div id="project-posts">
-        {projectData.posts.map((postNum) => {
+        {projectData.posts.map((postNum: number) => {
           return <ProjectPost postID={posts[postNum]._id} key={keys[2]++} />;
         })}
       </div>

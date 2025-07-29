@@ -21,6 +21,8 @@
   position: absolute;
   width: calc(100% - 220px);
   height: 100%;
+  /* set min height to avoid bottom white gap on short pages */
+  min-height: 100vh;
   top: 0px;
   left: 220px;
   background-color: var(--bg-color);
@@ -41,5 +43,6 @@
     bottom: 0px;
     width: 100%;
     height: calc(100% - 50px);
+    padding-bottom: 60px;
   }
 }

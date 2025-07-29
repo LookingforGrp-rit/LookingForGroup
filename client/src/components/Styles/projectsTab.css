@@ -13,3 +13,12 @@
     aspect-ratio: 1 / 1;
     border: solid 2px white;
 }
+
+#profile-editor-projects {
+    overflow-y: auto;
+}
+
+.no-projects-text {
+  word-break: normal;
+  min-width: 100px;
+}

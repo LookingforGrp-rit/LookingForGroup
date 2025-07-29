@@ -33,8 +33,20 @@ This component is not necessarily the final version and doesn't match the visual
 
 */
 
+interface NeededRole {
+  Role: string;
+  amount: number;
+}
+
+interface ProjectData {
+  _id: string;
+  name: string;
+  description: string;
+  tags: string[];
+  neededRoles: NeededRole[];
+}
 // This is used by the Discover Page to display Project information
-export const ProjectCard = ({ project }) => {
+export const ProjectCard = ({ project }: { project: ProjectData }) => {
   // Updates the url to point toward the project being clicked
   const navigate = useNavigate();
   const pathQuery = `?projID=${project._id}`;

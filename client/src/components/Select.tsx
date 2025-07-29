@@ -6,16 +6,16 @@ import { ThemeIcon } from "./ThemeIcon";
 // --------------------
 type SelectContextProps = {
     open: boolean;
-    value: ReactElement;
-    setOpen: Function;
-    setValue: Function;
+    value: ReactElement | null;
+    setOpen: (open: boolean) => void;
+    setValue: (value: ReactElement) => void;
 }
 
 type SelectButtonProps = {
     placeholder: string;
-    initialVal: string;
+    initialVal: any;
     buttonId?: string;
-    callback?: Function;
+    callback?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     className?: string;
 }
 
@@ -29,7 +29,7 @@ type SelectOptionsProps = {
     options: Array<SelectOptions>;
     className?: string;
     rightAlign?: boolean;
-    callback?: Function;
+    callback?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 type SelectProps = {
@@ -41,9 +41,9 @@ type SelectProps = {
 // --------------------
 export const SelectContext = createContext<SelectContextProps>({
     open: false,
-    value: <></>,
-    setOpen: () => {},
-    setValue: () => {},
+    value: null,
+    setOpen: () => { },
+    setValue: () => { },
 });
 
 // --------------------
@@ -55,7 +55,7 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
     initialVal = '',
     buttonId = '',
     className = '',
-    callback = (e) => {}
+    callback = () => { }
 }) => {
     const { open, value, setOpen } = useContext(SelectContext);
 
@@ -67,7 +67,7 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
         <button
             id={buttonId}
             className={`${className} select-button`}
-            onClick={(e) => {
+            onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 callback(e);
                 toggleOpen();
             }}
@@ -78,30 +78,30 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
                 <span className='placeholder'>{placeholder}</span>
             )}
             <ThemeIcon 
-                light={'assets/dropdown_light.png'}
-                dark={'assets/dropdown_dark.png'}
+                src={'assets/dropdown_light.svg'}
+                darkSrc={'assets/dropdown_dark.svg'}
                 addClass={`select-button-arrow ${(open) ? 'opened' : ''}`}
             />
         </button>
     );
 };
 
-export const SelectOptions: React.FC<SelectOptionsProps> = ({ 
-    options, 
+export const SelectOptions: React.FC<SelectOptionsProps> = ({
+    options,
     className = '',
     rightAlign = false,
-    callback = () => {} 
+    callback = () => { }
 }) => {
     const { open, setOpen, setValue } = useContext(SelectContext);
-    
+
     if (open) {
         return (
-            <div 
+            <div
                 className='select'
                 style={rightAlign ? { right: 0 } : {}}
             >
                 {/* Using index as key is usually bad, but order is not changing here */}
-                {options.map((option, index) => 
+                {options.map((option, index) =>
                     <button
                         key={`${index}-${option.value}`}
                         value={option.value}
@@ -111,7 +111,7 @@ export const SelectOptions: React.FC<SelectOptionsProps> = ({
                             select-option 
                             ${(index === 0) ? 'top' : (index === (options.length - 1)) ? 'bottom' : ''}`
                         }
-                        onClick={(e) => {
+                        onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                             setValue(option.markup);
                             callback(e);
                             setOpen(false);
@@ -127,9 +127,8 @@ export const SelectOptions: React.FC<SelectOptionsProps> = ({
 
 export const Select: React.FC<SelectProps> = ({ children }) => {
     const [open, setOpen] = useState<boolean>(false);
-    const [value, setValue] = useState<ReactElement>(null);
+    const [value, setValue] = useState<ReactElement | null>(null);
     const selectRef = useRef<HTMLDivElement>(null);
-
 
     useEffect(() => {
         const close = (e: MouseEvent) => {

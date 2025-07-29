@@ -8,16 +8,37 @@ Credits link footer style rules
 
 .FooterContainer {
   text-align: center;
+  align-content: center;
   height: 100px;
   width: 100%;
   z-index: 1;
-  background-color: var(--primary-blue);
+  background-color: var(--header-color);
 }
 
 .FooterContainer button {
-  margin-top: 50px;
   border: 0px;
   background: 0px;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.FooterContainer button:hover {
+  opacity: 0.7;
+}
+
+@media only screen and (max-width: 799px) {
+  .FooterContainer {
+    align-content: start;
+    background-color: var(--bg-color);
+  }
+
+  .FooterContainer button {
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+    padding: 15px;
+    border-radius: 10px;
+
+  }
 }
 
 /*
@@ -37,33 +58,38 @@ Credits style rules
 }
 
 #credit-members-container {
-  display: flex;
-  align-items: flex-start;
-  align-content: flex-start;
-  /* gap: 10px; */
-  align-self: stretch;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(294px, 1vw));
+  gap: 30px;
+
   margin: 20px 50px;
+}
 
-  .lfg-contributor {
-    width: 255px;
-    background-color: var(--header-color);
+.lfg-contributor {
+  width: 245px;
+  justify-content: center;
+  background-color: var(--header-color);
+  display: flex;
+  align-items: center;
+  padding: 12px 15px;
+  border-radius: 10px;
+  margin: 5px 10px;
+  text-align: center;
+  scale: 1.1;
+}
+
+/* switches from grid to flexbox for mobile display */
+@media only screen and (max-width: 799px) {
+  #credit-members-container {
     display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    border-radius: 10px;
-    margin: 15px 35px;
-
-    scale: 1.2;
+    align-items: flex-start;
+    align-content: flex-start;
+    flex-wrap: wrap;
+    margin-right: 30px;
   }
 
-  .og-lfg-contributor {
-    width: 200px;
-    background-color: var(--header-color);
-    display: flex;
-    align-items: center;
-    padding: 12px 15px;
-    border-radius: 10px;
-    margin: 10px 0 0 10px;
+  .lfg-contributor {
+    flex-grow: 1;
+    margin: 5px 25px;
   }
 }

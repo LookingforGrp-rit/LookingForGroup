@@ -1,12 +1,15 @@
 import '../Styles/pages.css';
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { ThemeIcon } from '../ThemeIcon';
-import { handleError, sendPost, sendGet, hideError } from '../../functions/fetch.js';
+import { sendPost } from '../../functions/fetch.js';
+import { getUserByEmail } from '../../api/users.js';
 
-const ForgotPassword = ({}) => {
+const ForgotPassword: React.FC = () => {
   const navigate = useNavigate(); // Hook for navigation
+  const location = useLocation();
+  const from = location.state?.from;
 
   // State variables
   const [emailInput, setEmailInput] = useState('');
@@ -27,24 +30,22 @@ const ForgotPassword = ({}) => {
 
     try {
       // if the email is not associated with an account
-      const response = await fetch(`/api/users/search-email/${emailInput}`);
-      const data = await response.json();
+      const data = await getUserByEmail(emailInput);
 
       if (!data) {
-        setError('Email not associated with an account');
+        setError('If that account exists, an email has been sent.');
         return;
       } else {
         // Success message
         setError('Sending email...');
 
         // All checks passed, issue a password change request
-        const response = await sendPost('/api/resets/password', { email: emailInput });
-        if (response && response.error) {
-          setError(response.error);
-        } else {
-          // Success message
-          setError('Email sent');
-        }
+  const response = await sendPost('/api/resets/password', { email: emailInput }) as unknown as { error?: string; message?: string };
+if (response && response.error) {
+  setError(response.error);
+} else {
+  setError('Email sent');
+}
 
         // Navigate back to LOGIN
         navigate(paths.routes.LOGIN);
@@ -59,7 +60,7 @@ const ForgotPassword = ({}) => {
   // Function to handle the forgot pass button click
   const handleBackToLogin = () => {
     // Navigate to the Forgot Password Page
-    navigate(paths.routes.LOGIN);
+    navigate(paths.routes.LOGIN, { state: { from } });
   };
 
   // render the login page
@@ -80,7 +81,7 @@ const ForgotPassword = ({}) => {
             <input
               className="login-input"
               type="text"
-              placeholder="Enter your e-mail"
+              placeholder="Enter your email"
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
             />
@@ -102,8 +103,8 @@ const ForgotPassword = ({}) => {
           {/* <h1>Welcome!</h1>
                     <p>Don't have an account?</p> */}
           <ThemeIcon
-            light={'assets/bannerImages/login_light.png'}
-            dark={'assets/bannerImages/login_dark.png'}
+            src={'assets/bannerImages/login_light.png'}
+            darkSrc={'assets/bannerImages/login_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>
         </div>

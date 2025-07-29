@@ -91,7 +91,7 @@ General style rules
   --tag-purple-unselected-border: #d7bed3;
   --tag-grey-unselected-border: #d0d0d0;
 
-  --tag-text-selected: black;
+  --tag-text-selected: white;
 
   --tag-text-unselected-red: #ffa0b0;
   --tag-text-unselected-orange: #ffa381;
@@ -207,7 +207,7 @@ used for the more options dropdown menu and notifications
   padding: 10px 20px;
   font-size: 2ch;
   font-weight: 700;
-  
+
   width: max-content;
   margin: auto;
 }
@@ -697,14 +697,16 @@ Sidebar Nav style rules
   }
 }
 
-/* .Create > button:hover {
-    background-color: var(--primary-color);
-    color: white;
+.Create>button:hover {
+  background-color: var(--create-text);
+  color: var(--create-bg);
+  filter: drop-shadow(0px 5px 3px var(--shadow-color));
+  transition: 0.25s;
 
-    img {
-        filter: invert(1) saturate(0) brightness(2);
-    }
-} */
+  img {
+    filter: invert(1) saturate(0) brightness(2);
+  }
+}
 
 /*responsive stuff for sidebar*/
 @media only screen and (max-width: 799px) {
@@ -756,6 +758,12 @@ Sidebar Nav style rules
     img {
       filter: invert(1);
     }
+  }
+}
+
+@media only screen and (max-width: 500px) {
+  .containerButtonSideBar {
+    gap: 10px;
   }
 }
 
@@ -818,6 +826,11 @@ Page popup style rules
     width: 64vw; */
     /* height: 95vw; */
   }
+
+  /* Smaller popups within another popup should scale */
+  .popup .popup {
+    max-width: 50vw;
+  }  
 }
 
 .popup-container {
@@ -867,25 +880,39 @@ Page popup style rules
   border-radius: 4px !important;
   border: none !important;
   top: 0px;
-  right: 0px;
+  right: 0%;
   width: 40px !important;
   height: 40px !important;
   background: none !important;
-  margin: 4px 4px 0 0 !important;
+  margin: 0 !important;
   z-index: 4;
-  /* Prevent it from being covered by small-popup */
+  padding: 8px 18px 0px 0px;
+}
+
+.popup-close.popup-close-edit {
+  right: -4%;
+}
+
+@media screen and (max-width: 1180px) {
+  .popup-close, .popup-close.popup-close-edit {
+    margin: 0 8px 0 0 !important;
+    right: 1%;
+  }
 }
 
 .popup-close img {
-  width: 100%;
+  width: 32px;
   height: 32px;
-  margin-top: 3px;
   filter: var(--image-filter);
 }
 
 .popup-close:hover {
   /* background-color: var(--lightGray) !important; */
   cursor: pointer;
+}
+
+.popup-close:disabled {
+  cursor: default;
 }
 
 #popup-close img {
@@ -917,6 +944,11 @@ Page popup style rules
     font-weight: 700;
     margin-top: min(3.67vh, 36px);
     margin-bottom: min(2.65vh, 26px);
+  }
+
+  #primary-btn:hover {
+    transform: scale(1.1);
+    transition: 0.2s;
   }
 
   h2 {
@@ -980,6 +1012,12 @@ Page popup style rules
     cursor: pointer;
     transition: 0.2s;
     /* margin: 14px 38px; */
+  }
+
+  .filter-tab:hover {
+    color: var(--primary-color);
+    font-weight: 600;
+    transition: none;
   }
 
   .filter-tab.selected {
@@ -1084,7 +1122,7 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 1;
 }
 
 #header-searchbar {
@@ -1140,6 +1178,7 @@ Header style rules
 
   #profile-img-icon {
     width: 32px;
+    height: 32px;
   }
 
   #profile-img-icon.rounded {
@@ -1212,6 +1251,12 @@ Header style rules
   background-color: var(--header-color);
 }
 
+@media only screen and (max-width: 400px) {
+  #header {
+    width: 85%;
+  }
+}
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1252,6 +1297,7 @@ Search style rules
   text-align: left;
   display: flex;
   flex-direction: row;
+  gap: 5px;
   /* float: right; */
   /* align-content: center; */
   /* margin: auto; */
@@ -1275,6 +1321,7 @@ Search style rules
   background: none;
   border: none;
   /* padding: 4px; */
+  padding-top: 2px;
   font: inherit;
   cursor: pointer;
   outline: inherit;
@@ -1402,7 +1449,10 @@ Select style rules
   background-color: var(--primary-color);
   color: var(--invert-text);
 
-  .fa, .fa-solid, .fa-regular, .fa-brands {
+  .fa,
+  .fa-solid,
+  .fa-regular,
+  .fa-brands {
     color: var(--invert-text) !important;
   }
 }
@@ -1432,9 +1482,13 @@ Scrollbar style rules
 
 /* Track */
 ::-webkit-scrollbar-track {
-  border: 2px solid var(--header-color);
-  border-radius: 10px;
+  /* border: 2px solid var(--header-color);
+  border-radius: 10px; */
 }
+
+/* ::-webkit-scrollbar-button {
+  display: none;
+} */
 
 /* Handle */
 ::-webkit-scrollbar-thumb {
@@ -1528,6 +1582,8 @@ Image Carousel style rules
   border: none;
   border-radius: 50px;
 
+  animation: fadeIn 0.15s ease-in-out;
+
   img {
     width: 20px;
     rotate: 180deg;
@@ -1546,6 +1602,12 @@ Image Carousel style rules
   position: absolute;
   bottom: 1rem;
   right: 1rem;
+}
+
+.top-left {
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
 }
 
 /*
@@ -1584,5 +1646,44 @@ Spinning loader style rules
 
   100% {
     transform: rotate(360deg);
+  }
+}
+
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+------------------------------------------------------------------------------------------------
+Theme Icons style rules
+------------------------------------------------------------------------------------------------
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
+
+/* CSS-based color control for single white SVGs */
+.svg-color-icon {
+  /* Default: keep white SVG white (for dark mode) */
+  filter: none;
+}
+
+/* Light mode: convert white SVG to black */
+[data-theme="light"] .svg-color-icon,
+.theme-light .svg-color-icon {
+  filter: invert(1); /* Converts white to black */
+}
+
+/* Dark mode: keep white SVG white */
+[data-theme="dark"] .svg-color-icon,
+.theme-dark .svg-color-icon {
+  filter: none; /* Keep original white */
+}
+
+/* Fallback using CSS media queries */
+@media (prefers-color-scheme: light) {
+  .svg-color-icon {
+    filter: invert(1);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  .svg-color-icon {
+    filter: none;
   }
 }

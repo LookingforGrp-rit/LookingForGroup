@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { sendPut, sendFile, fetchUserID } from '../../../functions/fetch';
 import { SocialSelector } from '../../SocialSelector';
+import { getByID } from '../../../api/projects';
+import { getUsersById } from '../../../api/users';
 
 interface LinkData {
-  id: Number;
-  url: String;
+  id: number;
+  url: string;
 }
 
 let links = [] as LinkData[];
@@ -18,6 +20,19 @@ export const LinksTab = (props) => {
     const loadSocials = async () => {
       // Pick which socials to use based on type
       const userID = await fetchUserID();
+      
+     // var { data } = [];
+     // switch(type){
+     //   case 'project':
+     //     data = await getByID(userID);
+     //     break;
+     //   default:
+     //     data = await getUsersById(userID);
+     //     break;
+     // }
+     // console.log("Break")
+     // console.log(data);
+
       let url;
       switch (type) {
         case 'project':
@@ -81,7 +96,7 @@ export const LinksTab = (props) => {
   // Components ----------------------
 
   const LinkInput = (props) => {
-    let [text, setText] = useState('');
+    const [text, setText] = useState('');
 
     useEffect(() => {
       console.log(props.data);
@@ -102,18 +117,18 @@ export const LinksTab = (props) => {
             }} />
         <div className='link-input-wrapper'>
           <div className='editor-input-item'>
-            <input type="text" name="url" id="link-url-input" value={text}
+            <input type="text" name="url" id="link-url-input" placeholder="URL" value={text}
               onChange={
                 (e) => {
                   setText(e.target.value);
                   updateURL(props.index, e.target.value);
                 }
               } />
+            <button className='remove-link-button' onClick={
+              (e) => {
+                onRemoveLinkClicked(e, props.index);
+              }}><i className="fa-solid fa-minus"></i></button>
           </div>
-          <button className='close-btn' onClick={
-            (e) => {
-              onRemoveLinkClicked(e, props.index);
-            }}><i className="fa fa-close"></i></button>
         </div>
       </div>
     );
@@ -131,7 +146,7 @@ export const LinksTab = (props) => {
     }
     else if (links.length > 0) {
       render = links.map((ld, i) => {
-        return <LinkInput data={ld} index={i} />;
+        return <LinkInput key={i} data={ld} index={i} />;
       });
     }
     else {
@@ -148,9 +163,9 @@ export const LinksTab = (props) => {
 
   return (
     <div id="profile-editor-links" className="hidden">
-      <label>Social Links</label>
+      <div className="project-editor-section-header">Social Links</div>
       <div className="project-editor-extra-info">
-        Provide the links to pages you wish to include on your page.
+        Provide any links you wish to include on your page.
       </div>
       <div id="project-editor-link-list">
         <LinkContainer />

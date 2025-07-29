@@ -30,6 +30,7 @@ Login and Signup page style rules
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border-radius: 10px;
+  position: relative;
 }
 
 .login-form,
@@ -155,6 +156,12 @@ Login and Signup page style rules
   font-weight: 700;
 }
 
+#main-loginsignup-btn:hover,
+.directory button:hover {
+  transform: scale(1.1);
+  transition: 0.2s;
+}
+
 .login-form-inputs {
   /* border: 1px solid black; */
   /* height: 300px; */
@@ -173,6 +180,37 @@ Login and Signup page style rules
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+
+#password-wrapper {
+  position: relative;
+  display: inline-block;
+  margin: 0px;
+}
+
+#password-wrapper input {
+  padding-right: 60px;
+  width: 280px;
+}
+
+#show-password {
+  position: absolute;
+  top: 55%;
+  right: 22px;
+  transform: translateY(-50%);
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+#eye-icon {
+  width: 20px;
+  height: 20px;
+}
+
+/* gets rid of microsoft edge's built-in password reveal control */
+::-ms-reveal {
+  display: none;
 }
 
 #forgot-password {
@@ -640,6 +678,14 @@ Signup process modal style rules
   img {
     filter: invert(0);
   }
+}
+
+#backPage-arrow {
+  position: absolute;
+  height: 20px;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
 }
 
 @media screen and (max-width: 1020px) {

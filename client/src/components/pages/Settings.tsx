@@ -11,10 +11,9 @@ import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
-const Settings = ({ avatarImage, setAvatarImage, profileImage, setProfileImage }) => {
+const Settings = () => {
   // state variables
   const [activeTab, setActiveTab] = useState('general');
-  const [showAvatarModal, setShowAvatarModal] = useState(false);
   const navigate = useNavigate(); // Hook for navigation
 
   // Pull the theme and setTheme function from useState() via a context
@@ -143,7 +142,7 @@ const Settings = ({ avatarImage, setAvatarImage, profileImage, setProfileImage }
                 <input
                   type="checkbox"
                   checked={theme === 'dark'}
-                  onChange={(e) => setTheme(theme === 'dark' ? 'light' : 'dark')}
+                  onChange={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                 />
                 <span className="slider round"></span>
               </label>

@@ -328,7 +328,7 @@ export const ProjectInfoMember = (props) => {
   // html can also utilize useState and useEffect later to better represent data updates
   return (
     <div id="project-info-member">
-      <img id="project-picture" src={profilePlaceholder} alt="" />
+      <img id="project-picture" src={profilePlaceholder} alt="project picture" />
 
       <div id="project-header">
         <h1 id="project-title">{props.projectData.name}</h1>
@@ -340,9 +340,9 @@ export const ProjectInfoMember = (props) => {
               onClick={projectPageHelper.toggleOptionDisplay}
             >
               <ThemeIcon
-                light={'assets/menu_light.png'}
-                dark={'assets/menu_dark.png'}
-                alt={'...'}
+                src={'assets/menu_light.svg'}
+                darkSrc={'assets/menu_dark.svg'}
+                alt={'more options'}
               />
             </button>
             <div id="more-options-popup" className="hide">

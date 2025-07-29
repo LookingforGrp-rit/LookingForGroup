@@ -11,137 +11,66 @@ import '../Styles/projects.css';
 import '../Styles/settings.css';
 import '../Styles/pages.css';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Header } from '../Header';
+import { members } from '../../constants/lfgmembers';
 
 const Credits = () => {
-  // THINGS TO DO:
-  // ADD A LIST OF ALL OF US
-  // MAKE PAGE MOBILE FRIENDLY
-  // MAKE ACCESS TO PAGE MOBILE FRIENDLY
-  // MIGHT WANT TO RETOOL HOW THE TOGGLING OF THE CREDITS PAGE WORKS (MAYBE, IDK)
-  // MORE (PROBABLY)
+  //SEARCHBAR FUNCTIONALITY
 
-  // list of og members and their roles
-  const ogMembers = {
-    'Abraham Furlan': 'Web Developer',
-    'Aeris Peng': 'UI/UX Designer',
-    'Alexander Bok': 'UI/UX Designer',
-    'Andrew Lang': 'Web Developer',
-    'Ben Gomez': 'Web Developer',
-    'Charlie Mendes': 'Web Developer',
-    'Chinmay Gaikwad': 'Web Developer',
-    'Diya Iyer': 'Project Lead',
-    'Elise Hayek': 'UI/UX Designer',
-    'Eloise (Weez) Oyzon': 'Supervisor',
-    'Gerrit Wissink': 'Web Developer',
-    'Halen Ruch': 'UI/UX Designer',
-    'Jennifer Pichardo': 'Web Developer',
-    'Joey Patrum': 'Web Developer',
-    'Joseph Davidson': 'Web Developer',
-    'Joeseph Dunne': 'Web Developer',
-    'Judith (Judy) Derrick': 'Web Developer',
-    'Kaelynn Amodia': 'Web Developer',
-    'Kashaf Ahmed': 'Web Developer',
-    'Matt Ivansek': 'Web Developer',
-    'Samera Vilinskis': 'Web Developer',
-    'Sebastian Arroyo (Bas)': 'UI/UX Designer',
-    'Storm Rivera': 'Web Developer',
-    'Thomas Martinez': 'UI/UX Designer',
-    'Trevor Dunn': 'Web Developer',
-    'Will Steele': 'Producer/Project Lead',
-    'Wilson Xia': 'Web Developer',
-    'Zane London': 'UI/UX Designer',
+  // displayed data based on filter/search query
+  const [filteredMembersList, setFilteredMembersList] = useState(members);
+
+  // Need this for searching
+  let tempMembersList = members;
+
+  // List that holds trimmed data for searching. Empty before fullItemList is initialized
+  const [membersSearchData, setMembersSearchData] = useState(members);
+
+  // Format data for use with SearchBar, which requires it to be: [{ data: }]
+  const dataSet = useMemo(() => {
+    return [{ data: membersSearchData }];
+  }, [membersSearchData]);
+
+  // Updates filtered members list with new search info
+  const searchMembers = (searchResults) => {
+    // Clear list before handling search
+    tempMembersList = [];
+
+    //runs through each member to see if any match the search term
+    for (const result of searchResults[0]) {
+      for (const member of membersSearchData) {
+        if (result === member) {
+          //if match is found, pushes that member to the temp member list
+          tempMembersList.push(members[membersSearchData.indexOf(member)]);
+          continue;
+        }
+      }
+    }
+
+    // If no items were found, 
+    if (tempMembersList.length === 0) {
+      setFilteredMembersList([]); // Clear the displayed list
+      console.log('No matching items found.');
+    } else {
+      setFilteredMembersList(tempMembersList);
+    }
   };
 
   return (
     <div className="page" id="my-projects">
-      <Header dataSets={[]} onSearch={[]} />
+      <Header dataSets={dataSet} onSearch={searchMembers} />
 
       <h1 id="credits-title">Meet The LFG Team</h1>
 
+      {/*runs through an array of all the members and creates a "card" for each one */}
       <div id="credit-members-container">
-        <div className="lfg-contributor">
-          <img className="project-contributor-profile" src="assets/creditProfiles/Weez.png" />
-          <div className="project-contributor-info">
-            <h2 className="team-member-name">Weez</h2>
-            <p className="team-member-role">Supervisor/Project Lead</p>
-          </div>
-        </div>
-
-        <div className="lfg-contributor">
-          <img className="project-contributor-profile" src="assets/creditProfiles/BG.png" />
-          <div className="project-contributor-info">
-            <h2 className="team-member-name">Ben Gomez</h2>
-            <p className="team-member-role">Front-End Developer</p>
-          </div>
-        </div>
-
-        <div className="lfg-contributor">
-          <img className="project-contributor-profile" src="assets/creditProfiles/CB.png" />
-          <div className="project-contributor-info">
-            <h2 className="team-member-name">Corie Beale</h2>
-            <p className="team-member-role">Full Stack Developer</p>
-          </div>
-        </div>
-
-        <div className="lfg-contributor">
-          <img className="project-contributor-profile" src="assets/creditProfiles/CM.png" />
-          <div className="project-contributor-info">
-            <h2 className="team-member-name">Charlie Mendes</h2>
-            <p className="team-member-role">Back-End Developer</p>
-          </div>
-        </div>
-
-        <div className="lfg-contributor">
-          <img className="project-contributor-profile" src="assets/creditProfiles/JF.png" />
-          <div className="project-contributor-info">
-            <h2 className="team-member-name">James Feng</h2>
-            <p className="team-member-role">Back-End Developer</p>
-          </div>
-        </div>
-
-        <div className="lfg-contributor">
-          <img className="project-contributor-profile" src="assets/creditProfiles/JoD.png" />
-          <div className="project-contributor-info">
-            <h2 className="team-member-name">Joseph Dunne</h2>
-            <p className="team-member-role">Front-End Developer</p>
-          </div>
-        </div>
-
-        <div className="lfg-contributor">
-          <img className="project-contributor-profile" src="assets/creditProfiles/JuD.png" />
-          <div className="project-contributor-info">
-            <h2 className="team-member-name">Judy Derrick</h2>
-            <p className="team-member-role">UI/UX Designer</p>
-          </div>
-        </div>
-
-        <div className="lfg-contributor">
-          <img className="project-contributor-profile" src="assets/creditProfiles/KA.png" />
-          <div className="project-contributor-info">
-            <h2 className="team-member-name">Kaelynn Amodia</h2>
-            <p className="team-member-role">UI/UX Designer</p>
-          </div>
-        </div>
-
-        <div className="lfg-contributor">
-          <img className="project-contributor-profile" src="assets/creditProfiles/TD.png" />
-          <div className="project-contributor-info">
-            <h2 className="team-member-name">Trevor Dunn</h2>
-            <p className="team-member-role">UI/UX Designer</p>
-          </div>
-        </div>
-      </div>
-
-      <h1 id="credits-title">Meet The OGs</h1>
-
-      <div id="credit-members-container">
-        {Object.keys(ogMembers).map((name) => (
-          <div className="og-lfg-contributor">
+        {filteredMembersList.map(member => (
+          <div className="lfg-contributor" key={member.name}>
+            <img className="project-contributor-profile" src={member.photo} />
             <div className="project-contributor-info">
-              <h2 className="team-member-name">{name}</h2>
-              <p className="team-member-role">{ogMembers[name]}</p>
+              <h2 className="team-member-name">{member.name}</h2>
+              <p className="team-member-role">{member.role}</p>
             </div>
           </div>
         ))}

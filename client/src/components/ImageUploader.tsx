@@ -1,54 +1,67 @@
 import './Styles/general.css';
 import './Styles/imageUploader.css';
-import { useState, useEffect } from 'react';
-import { sendPost } from '../functions/fetch';
+import { useEffect, useRef } from 'react';
+import { sendPost } from '../functions/fetch'; //Not fixing, is this something to be implemented later?
 
-let dropArea: HTMLElement
-let imageView: HTMLElement;
-let imageUploader: HTMLInputElement;
-
-const uploadImageFile = (keepImage: boolean) => {
-  // real-time update to view selected picture
-  // Not for backend uploading
-  const imgLink = URL.createObjectURL(imageUploader.files[0]);
-  if (keepImage) {
-    uploadImage(imgLink);
-  }
-};
-
-export const uploadImage = (url: string) => {
-  imageView.style.backgroundImage = `url(${url})`;
-  imageView.textContent = '';
-  imageView.innerHTML = `<img class="bottom-right" src="assets/white/upload_image.png" />`;
-  imageView.style.border = '';
+interface ImageUploaderProps {
+  initialImageUrl?: string;
+  keepImage?: boolean;
+  onFileSelected?: (file: File) => void;
 }
 
-const init = (keepImage: boolean) => {
-  // get all components
-  dropArea = document.getElementById('drop-area') as HTMLElement;
-  imageUploader = document.getElementById('image-uploader') as HTMLInputElement;
-  imageView = document.getElementById('img-view') as HTMLElement;
-  imageUploader.addEventListener('change', uploadImageFile);
+export const ImageUploader = ({
+  initialImageUrl = '',
+  keepImage = true,
+  onFileSelected = () => {},
+}: ImageUploaderProps) => {
+  // Ref for reading selected files
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
-  dropArea.addEventListener('dragover', (e) => e.preventDefault());
-  dropArea.addEventListener('drop', (e) => {
-    e.preventDefault();
-    imageUploader.files = e.dataTransfer.files;
-    uploadImageFile(keepImage);
-  });
-};
+  // Validate file type and handle image input change
+  const handleImgChange = () => {
+    const file = inputRef.current?.files?.[0];
+    if (!file) return;
 
-export const ImageUploader = ({ keepImage = true, callback = () => { } }) => {
+    if (keepImage && (file.type === "image/png" || file.type === "image/jpeg")) {
+      onFileSelected(file);
+    } else {
+      alert("File type not supported: Please use .PNG or .JPG");
+    }
+  };
+
+  // On file input change, handle image selection 
   useEffect(() => {
-    init(keepImage);
-  }, []);
+    const input = inputRef.current;
+    if (!input) return;
+
+    input.addEventListener('change', handleImgChange);
+    return () => input.removeEventListener('change', handleImgChange);
+  }, [keepImage, onFileSelected]);
+
   return (
     <label htmlFor="image-uploader" id="drop-area">
-      <input type="file" name="image" id="image-uploader" accept="image/png, image/jpg" onChange={callback} hidden />
+      <input
+        type="file"
+        name="image"
+        id="image-uploader"
+        multiple accept=".png, .jpg"
+        ref={inputRef}
+        hidden
+      />
       <div id="img-view">
+        {initialImageUrl ? (
+          <>
+          <img src={initialImageUrl}
+          style={{width: '100%', height: '100%', objectFit: 'cover'}}/>
+          <img src="assets/white/upload_image.png" className="bottom-right"/>
+          </>
+        ) : (
+        <>
         <img src="assets/white/upload_image.png" />
         <p className="project-editor-extra-info">Drop your image here, or browse</p>
         <span className="project-editor-extra-info">Supports: JPEG, PNG</span>
+        </>
+        )}
       </div>
     </label>
   );

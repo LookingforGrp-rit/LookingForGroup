@@ -395,7 +395,7 @@ const MakeAvatarModal = ({ show, onClose, setAvatarImage, mode, onNext, onBack }
                       <div id="avatar-hat-container">
                         <img
                           src={currentHats[key]}
-                          alt=""
+                          alt="hat"
                           className={getHatClass(key)}
                           id={`currentHat-${key}`}
                         />
@@ -411,7 +411,7 @@ const MakeAvatarModal = ({ show, onClose, setAvatarImage, mode, onNext, onBack }
                       <div id="avatar-outfit-container">
                         <img
                           src={currentClothes[key]}
-                          alt=""
+                          alt="clothes"
                           className="avatar-clothes"
                           id={`currentClothes-${key}`}
                         />
@@ -420,7 +420,7 @@ const MakeAvatarModal = ({ show, onClose, setAvatarImage, mode, onNext, onBack }
                       <div id="avatar-accessory-container">
                         <img
                           src={currentAccessories[key]}
-                          alt=""
+                          alt="accessory"
                           className="avatar-accessories"
                           id={`currentAccessory-${key}`}
                         />

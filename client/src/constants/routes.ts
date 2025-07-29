@@ -18,6 +18,6 @@ export const routes = {
   DISCOVERANDMEET: '/discoverAndMeet',
   SETTINGS: '/settings',
   CREDITS: '/credits',
-  NOTFOUND: '/notFound',
   ACCOUNTACTIVATE: '/activation/:token',
+  NOTFOUND: '/*',
 };

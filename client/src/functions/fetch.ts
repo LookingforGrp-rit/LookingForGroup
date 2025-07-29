@@ -2,17 +2,35 @@
    displays it to the user. Will be hidden by other events that could
    end in an error.
 */
-const handleError = (message: string) => {
+const handleError = (message: string): void => {
   console.log('Error: ', message);
   // const errorElement = document.querySelector('.error');
   // errorElement.textContent = message;
   // errorElement.classList.remove('hidden');
 };
 
+/* Generic response type used for result-handling across requests */
+interface ServerResponse {
+  redirect?: string;
+  error?: string;
+  data?: unknown;
+  [key: string]: unknown;
+}
+
+/* Type for standard JSON-safe request data */
+type JsonData = Record<string, unknown>;
+
+/* Type for result-handling callbacks */
+type ResultHandler = (result: ServerResponse) => void;
+
 /* Sends post requests to the server using fetch. Will look for various
     entries in the response JSON object, and will handle them appropriately.
 */
-const sendPost = async (url: string, data?: {}, handler?: Function): Promise<void> => {
+const sendPost = async (
+  url: string,
+  data: JsonData = {},
+  handler?: ResultHandler
+): Promise<void> => {
   const response = await fetch(url, {
     method: 'POST',
     headers: {
@@ -27,8 +45,11 @@ const sendPost = async (url: string, data?: {}, handler?: Function): Promise<voi
     making it suitable for file data transfer.
     MUST BE CONTAINED in a <form> element, using the encType="multipart/form-data"
 */
-
-const sendFile = async (url: string, data: {}, handler?: Function) => {
+const sendFile = async (
+  url: string,
+  data: HTMLFormElement,
+  handler?: ResultHandler
+): Promise<void> => {
   const response = await fetch(url, {
     method: 'PUT',
     body: new FormData(data),
@@ -39,7 +60,11 @@ const sendFile = async (url: string, data: {}, handler?: Function) => {
 /* Sends put requests to the server using fetch. Will look for various
     entries in the response JSON object, and will handle them appropriately.
 */
-const sendPut = async (url: string, data?: FormData, handler?: Function): Promise<void> => {
+const sendPut = async (
+  url: string,
+  data: JsonData = {},
+  handler?: ResultHandler
+): Promise<void> => {
   const response = await fetch(url, {
     method: 'PUT',
     headers: {
@@ -50,7 +75,10 @@ const sendPut = async (url: string, data?: FormData, handler?: Function): Promis
   await responseHandler(response, handler);
 };
 
-const sendDelete = async (url: string, handler?: Function) => {
+const sendDelete = async (
+  url: string,
+  handler?: ResultHandler
+): Promise<void> => {
   const response = await fetch(url, {
     method: 'DELETE',
     headers: {
@@ -58,29 +86,28 @@ const sendDelete = async (url: string, handler?: Function) => {
     }
   });
   await responseHandler(response, handler);
-}
+};
 
 const responseHandler = async (
   response: Response,
-  handler?: Function
-): Promise<string | void> => {
-  const result = await response.json();
-  //document.getElementById('errorMessage').classList.add('hidden');
-  if (result.redirect) {
-    window.location = result.redirect;
-  }
+  handler?: ResultHandler
+): Promise<void> => {
+  const result: ServerResponse = await response.json();
 
-  if (result.error) {
-    handleError(result.error);
-    return result.error;
+  if (result.redirect) {
+    window.location.href = result.redirect;
+    return;
   }
 
   if (handler) {
-    handler(result);
+    handler(result); // Pass full result, including error if present
   }
 };
 
-const sendGet = async (url: string, handler?: Function): Promise<void> => {
+const sendGet = async (
+  url: string,
+  handler?: ResultHandler
+): Promise<void> => {
   console.log(`URL: ${url}`);
 
   const response = await fetch(url, {
@@ -90,12 +117,12 @@ const sendGet = async (url: string, handler?: Function): Promise<void> => {
     },
   });
 
-  const result = await response.json();
-  document.querySelector('error')?.classList.add('hidden');
+  const result: ServerResponse = await response.json();
+  document.querySelector('.error')?.classList.add('hidden');
   console.log(result);
 
   if (result.redirect) {
-    window.location = result.redirect;
+    window.location.href = result.redirect;
   }
 
   if (result.error) {
@@ -108,54 +135,53 @@ const sendGet = async (url: string, handler?: Function): Promise<void> => {
 };
 
 // removed errorMessage element from login and signup pages
-const hideError = () => {
+const hideError = (): void => {
   document.getElementById('errorMessage')?.classList.add('hidden');
 };
 
-const POST = async (url: string, data: FetchData): Promise<any> => {
+const POST = async (
+  url: string,
+  data: JsonData
+): Promise<ServerResponse | undefined> => {
   try {
-    return await fetch(url, {
+    const response = await fetch(url, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ ...data }),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        return data;
-      });
+      body: JSON.stringify(data),
+    });
+    return await response.json();
   } catch (err) {
     console.log(err);
+    return undefined;
   }
 };
 
-const GET = async (url: string): Promise<any> => {
+const GET = async (url: string): Promise<ServerResponse | undefined> => {
   try {
-    return await fetch(url)
-      .then((response) => response.json())
-      .then((data) => {
-        return data;
-      });
+    const response = await fetch(url);
+    return await response.json();
   } catch (err) {
     console.log(err);
+    return undefined;
   }
 };
 
-const fetchUserID = async (): Promise<any> => {
-  const response = await fetch('/api/auth');
-  const { data } = await response.json();
-  return data;
+const fetchUserID = async (): Promise<unknown> => {
+  const response = await fetch('/api/users/get-username');
+  const json: ServerResponse = await response.json();
+  return json.data;
 };
 
-export { 
-  POST, GET, 
-  handleError, 
-  sendGet, 
-  sendPost, 
-  sendPut, 
-  sendFile, 
+export {
+  POST, GET,
+  handleError,
+  sendGet,
+  sendPost,
+  sendPut,
+  sendFile,
   sendDelete,
-  hideError, 
-  fetchUserID, 
+  hideError,
+  fetchUserID,
 };

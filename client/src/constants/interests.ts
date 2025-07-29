@@ -11,7 +11,7 @@ export const interests = [
   'Database',
   'Social Media',
   'AI',
-  'Machine Learnine',
+  'Machine Learning',
   'Cybersecurity',
   'Virtual Reality',
   'Augmented Reality',

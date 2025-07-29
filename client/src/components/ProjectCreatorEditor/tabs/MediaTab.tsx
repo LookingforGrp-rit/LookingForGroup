@@ -1,6 +1,9 @@
 // --- Imports ---
 import { useCallback, useEffect, useState } from "react";
 
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 // --- Interfaces ---
 interface Image {
   id: number;
@@ -13,10 +16,10 @@ interface ProjectData {
   description: string;
   hook: string;
   images: Image[];
-  jobs: { title_id: number; job_title: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { first_name: string, last_name: string, job_title: string, profile_image: string, user_id: number}[];
-  project_id?: number;
-  project_types: { id: number, project_type: string}[];
+  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
+  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number}[];
+  projectId?: number;
+  projectTypes: { id: number, projectType: string}[];
   purpose: string;
   socials: { id: number, url: string }[];
   status: string;
@@ -35,8 +38,8 @@ const defaultProject: ProjectData = {
   images: [],
   jobs: [],
   members: [],
-  project_id: -1,
-  project_types: [],
+  projectId: -1,
+  projectTypes: [],
   purpose: '',
   socials: [],
   status: '',
@@ -85,6 +88,9 @@ export const MediaTab = ({ isNewProject = false, projectData = defaultProject, s
           { id: modifiedProject.images.length + 1, image: imgLink, position: modifiedProject.images.length + 1 },
         ],
       });
+
+      // reset, allowing same file to be selected multiple times in a row
+      imageUploader.value = '';
     }
   }, [modifiedProject]);
 
@@ -135,11 +141,11 @@ export const MediaTab = ({ isNewProject = false, projectData = defaultProject, s
             }
             else {
               // image is uploaded, can find in directorys
-              src = `images/projects/${image.image}`;
+              src = `${API_BASE}/images/projects/${image.image}`;
             }
             return (
-              <div className='project-editor-image-container'>
-                <img src={src} alt="" />
+              <div className='project-editor-image-container' key={image.image}>
+                <img src={src} alt="project images" />
                 {
                   modifiedProject.thumbnail === image.image &&
                   <img src="/images/icons/star-filled.svg" alt="star" className="star-filled"></img>
@@ -164,7 +170,7 @@ export const MediaTab = ({ isNewProject = false, projectData = defaultProject, s
           <label htmlFor="image-uploader" id="drop-area">
             <input type="file" name="image" id="image-uploader" accept="image/png, image/jpg" onChange={handleImageUpload} hidden />
             <div id="img-view">
-              <img src="assets/white/upload_image.png" />
+              <img src="/assets/white/upload_image.png" />
               <p className="project-editor-extra-info">Drop your image here, or browse</p>
               <span className="project-editor-extra-info">Supports: JPEG, PNG</span>
             </div>

@@ -2,9 +2,15 @@ import React from 'react';
 import { profiles } from '../constants/fakeData'; // FIXME: use data in db
 import profilePicture from '../images/blue_frog.png';
 
+interface Message {
+  senderID: number;
+  messageContent: string;
+  sentDate: string;
+}
+
 //used on the Messages page to show the user's individual dms
-export const MessageCard = ({ msg }) => {
-  if (!msg) return;
+export const MessageCard = ({ msg }: { msg: Message }) => {
+  if (!msg) return null;
 
   // Grab profile object from sender ID
   const getS = () => {

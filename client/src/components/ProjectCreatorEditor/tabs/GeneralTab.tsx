@@ -1,8 +1,9 @@
 // --- Imports ---
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
+import { PopupButton } from '../../Popup';
 
 
 // --- Interfaces ---
@@ -17,10 +18,10 @@ interface ProjectData {
   description: string;
   hook: string;
   images: Image[];
-  jobs: { title_id: number; job_title: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { first_name: string, last_name: string, job_title: string, profile_image: string, user_id: number}[];
-  project_id?: number;
-  project_types: { id: number, project_type: string}[];
+  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
+  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number}[];
+  projectId?: number;
+  projectTypes: { id: number, projectType: string}[];
   purpose: string;
   socials: { id: number, url: string }[];
   status: string;
@@ -39,8 +40,8 @@ const defaultProject: ProjectData = {
   images: [],
   jobs: [],
   members: [],
-  project_id: -1,
-  project_types: [],
+  projectId: -1,
+  projectTypes: [],
   purpose: '',
   socials: [],
   status: '',
@@ -53,12 +54,26 @@ const defaultProject: ProjectData = {
 const purposeOptions = ['Personal', 'Portfolio Piece', 'Academic', 'Co-op'];
 const statusOptions = ['Planning', 'Development', 'Post-Production', 'Complete'];
 
+// Delay function until user stops typing to prevent rapid text input bugs
+const keyboardDebounce = (func: any, delay: any) => {
+  let timeout: any;
+  return (...args: any) => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => func(...args), delay);
+  };
+};
+
 // --- Component ---
-export const GeneralTab = ({ isNewProject = false, projectData = defaultProject, setProjectData }) => {
+export const GeneralTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, saveProject, failCheck }) => {
 
   // --- Hooks ---
   // tracking project modifications
   const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
+
+  // Textbox input callback: useRef to avoid unintended reset bugs
+  const debounce = useRef(keyboardDebounce((updatedProject) => {
+    setProjectData(updatedProject);
+  }, 300)).current;
 
   // Update data when data is changed
   useEffect(() => {
@@ -67,7 +82,8 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
 
   // Update parent state when data is changed
   useEffect(() => {
-    setProjectData(modifiedProject);
+    // delay with setTimeout() used to fix input glitch bug
+    debounce(modifiedProject)
   }, [modifiedProject, setProjectData]);
 
   // --- Complete component ---
@@ -91,8 +107,8 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
           <DropdownButton buttonId="status-btn">
             {modifiedProject.status || 'Select'}
             <ThemeIcon
-              light={'assets/dropdown_light.png'}
-              dark={'assets/dropdown_dark.png'}
+              src={'assets/dropdown_light.svg'}
+              darkSrc={'assets/dropdown_dark.svg'}
               id="dropdown-arrow"
             />
           </DropdownButton>
@@ -232,6 +248,15 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
           }}
         />
       </div>
+      
+    <div id="general-save-info">
+      <div id="invalid-input-error" className={"save-error-msg-general"}>
+         <p>*Fill out all required info before saving!*</p>
+      </div>
+        <PopupButton buttonId="project-editor-save-general" callback={saveProject} doNotClose={() => !failCheck}>
+          Save Changes
+        </PopupButton>
     </div>
+  </div>
   );
 };

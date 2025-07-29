@@ -1,4 +1,4 @@
-import { Tags } from '../Tags';
+
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 
@@ -9,7 +9,12 @@ import { profiles } from '../../constants/fakeData'; // FIXME: use user data in 
 //used in the profile page under the "projects" section
 //displays the project name and the person's role
 
-export const ProfileProjectCard = ({ projectID, userID }) => {
+interface ProfileProjectCardProps {
+  projectID: number;
+  userID: number;
+}
+
+export const ProfileProjectCard = ({ projectID, userID }: ProfileProjectCardProps) => {
   const project = projects[projectID];
   const navigate = useNavigate();
   const pathQuery = `?projID=${project._id}`;

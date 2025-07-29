@@ -1,39 +1,63 @@
 import profilePicture from '../images/blue_frog.png';
-import profileImage from '../icons/profile-user.png';
 import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
-//Component that will contain info about a profile, used in the discovery page (for now)
-//Smaller and more concise than ProfileCard.tsx
 
-//Takes in a 'profile' value which contains info on the profile it will display
-export const ProfilePanel = ({ profileData }) => {
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
+interface ProfileData {
+  userId: string;
+  profileImage?: string;
+  firstName: string;
+  lastName: string;
+  major: string;
+  headline: string;
+  jobTitle: string;
+  location: string;
+  pronouns: string;
+  funFact: string;
+}
+
+interface ProfilePanelProps {
+  profileData: ProfileData;
+}
+
+export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   const navigate = useNavigate();
-  const profileURL = `${paths.routes.NEWPROFILE}?userID=${profileData.user_id}`;
+  const profileURL = `${paths.routes.NEWPROFILE}?userID=${profileData.userId}`;
 
   return (
     <div className={'profile-panel'}>
-      <img src={`images/profiles/${profileData.profile_image}`} alt={'profile image'} />
+      <img
+        src={profileData.profileImage ? `${API_BASE}/images/profiles/${profileData.profileImage}` : profilePicture}
+        alt='profile image'
+        // default profile picture if profile image doesn't load
+        onError={(e) => {
+          const profileImg = e.target as HTMLImageElement;
+          profileImg.src = profilePicture;
+        }}
+      />
       <h2>
-        {profileData.first_name} {profileData.last_name}
+        {profileData.firstName} {profileData.lastName}
       </h2>
       <h3>{profileData.major}</h3>
       <div id="quote">"{profileData.headline}"</div>
       <div className={'profile-panel-hover'} onClick={() => navigate(profileURL)}>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon light={'assets/white/role.png'} dark={'assets/black/role.png'} />
+          <ThemeIcon src={'assets/white/role.svg'}  lightModeColor={'white'} darkModeColor={'black'} />
           <p>{profileData.job_title}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon light={'assets/white/location.png'} dark={'assets/black/location.png'} />
+          <ThemeIcon src={'assets/white/location.svg'} lightModeColor={'white'} darkModeColor={'black'} />
           <p>{profileData.location}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon light={'assets/white/pronouns.png'} dark={'assets/black/pronouns.png'} />
+          <ThemeIcon src={'assets/white/pronouns.svg'} lightModeColor={'white'} darkModeColor={'black'} />
           <p>{profileData.pronouns}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon light={'assets/white/funfact.png'} dark={'assets/black/funfact.png'} />
+          <ThemeIcon src={'assets/white/funfact.svg'} lightModeColor={'white'} darkModeColor={'black'} />
           <p>{profileData.fun_fact}</p>
         </div>
       </div>

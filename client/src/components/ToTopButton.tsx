@@ -4,36 +4,40 @@ import { ThemeIcon } from './ThemeIcon';
 const ToTopButton = () => {
   const [visible, setVisible] = useState(false);
 
-  const toggleVisible = (scrollPage) => {
+  const toggleVisible = (scrollPage: HTMLElement) => {
     if (scrollPage.scrollTop > 300) {
       setVisible(true);
-    } else if (scrollPage.scrollTop <= 300) {
+    } else {
       setVisible(false);
     }
   };
 
-  const scrollToTop = (scrollPage) => {
-    scrollPage.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+  const scrollToTop = (scrollPage: HTMLElement | null) => {
+    if (scrollPage) {
+      scrollPage.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      });
+    }
   };
 
   useEffect(() => {
-    const pageElement = document.querySelector('.page');
+    const pageElement = document.querySelector('.page') as HTMLElement | null;
     if (pageElement) {
-      pageElement.addEventListener('scroll', () => toggleVisible(pageElement));
+      const handler = () => toggleVisible(pageElement);
+      pageElement.addEventListener('scroll', handler);
+      return () => pageElement.removeEventListener('scroll', handler);
     }
-  });
+  }, []);
 
   return (
     <div className="ToTopContainer">
       <button
-        className={'to-top-button'}
-        onClick={() => scrollToTop(document.querySelector('.page'))}
+        className="to-top-button"
+        onClick={() => scrollToTop(document.querySelector('.page') as HTMLElement | null)}
         style={{ display: visible ? 'inline' : 'none' }}
       >
-        <ThemeIcon light={'assets/dropdown_light.png'} dark={'assets/dropdown_dark.png'} />
+        <ThemeIcon src={'assets/dropdown_light.svg'} darkSrc={'assets/dropdown_dark.svg'} />
       </button>
     </div>
   );

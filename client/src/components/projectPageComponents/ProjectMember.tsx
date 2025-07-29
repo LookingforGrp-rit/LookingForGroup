@@ -23,7 +23,7 @@ export const ProjectMember = (props) => {
 
   return (
     <div className="project-member" onClick={() => navigate(paths.routes.NEWPROFILE + pathQuery)}>
-      <img src={profilePlaceholder} alt="" />
+      <img src={profilePlaceholder} alt="profile" />
       <h2 className="member-name" onClick={() => (window.location.href = 'profile')}>
         {profile.name}
       </h2>

@@ -8,6 +8,9 @@ import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { current } from "@reduxjs/toolkit";
 
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
 // --- Interfaces ---
 interface Image {
   id: number;
@@ -20,32 +23,32 @@ interface ProjectData {
   description: string;
   hook: string;
   images: Image[];
-  jobs: { title_id: number; job_title: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { first_name: string, last_name: string, job_title: string, profile_image: string, user_id: number, permissions: number }[];
-  project_id?: number;
-  project_types: { id: number, project_type: string }[];
+  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
+  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number, permissions: number }[];
+  projectId?: number;
+  projectTypes: { id: number, projectType: string }[];
   purpose: string;
   socials: { id: number, url: string }[];
   status: string;
   tags: { id: number, position: number, tag: string, type: string }[];
   thumbnail: string;
   title: string;
-  user_id?: number;
+  userId?: number;
 }
 
 interface SearchableUser {
   username: string;
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
 }
 
 // only includes properties relevant to this component
 interface User {
-  user_id: number;
+  userId: number;
   username: string;
-  first_name: string;
-  last_name: string;
-  profile_image: string;
+  firstName: string;
+  lastName: string;
+  profileImage: string;
   permissions: number;
 }
 
@@ -58,8 +61,8 @@ const defaultProject: ProjectData = {
   images: [],
   jobs: [],
   members: [],
-  project_id: -1,
-  project_types: [],
+  projectId: -1,
+  projectTypes: [],
   purpose: '',
   socials: [],
   status: '',
@@ -69,17 +72,17 @@ const defaultProject: ProjectData = {
 };
 
 const emptyMember = {
-  first_name: '',
-  last_name: '',
-  job_title: '',
-  profile_image: '',
-  user_id: -1,
+  firstName: '',
+  lastName: '',
+  jobTitle: '',
+  profileImage: '',
+  userId: -1,
   permissions: -1,
 };
 
 const emptyJob = {
-  title_id: 0,
-  job_title: '',
+  titleId: 0,
+  jobTitle: '',
   description: '',
   availability: '',
   location: '',
@@ -102,7 +105,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
   const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
 
   // for complete list of...
-  const [allJobs, setAllJobs] = useState<{ title_id: number, label: string }[]>([]);
+  const [allJobs, setAllJobs] = useState<{ titleId: number, label: string }[]>([]);
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [searchableUsers, setSearchableUsers] = useState<{ data: SearchableUser[] }>({ data: [] });
 
@@ -113,7 +116,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
   // tracking which team tab is currently being viewed: 0 - current team, 1 - open positions
   const [currentTeamTab, setCurrentTeamTab] = useState(0);
 
-  // tracking which role is being viewed out of all open positions: value is project title_id (or job_title title_id)
+  // tracking which role is being viewed out of all open positions: value is project titleId (or jobTitle titleId)
   const [currentRole, setCurrentRole] = useState(0);
 
   // tracking edits for...
@@ -135,9 +138,15 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
   // store search results
   const [searchResults, setSearchResults] = useState<{ data: User[] }>({ data: [] });
 
-  // errors
+  // errors/successful messages
   const [errorAddMember, setErrorAddMember] = useState('');
   const [errorAddPosition, setErrorAddPosition] = useState('');
+  const [successAddMember, setSuccessAddMember] = useState(false);
+
+  // tracking search input & dropdown selections
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchBarKey, setSearchBarKey] = useState(0);
+  const [selectKey, setSelectKey] = useState(0);
 
   // Initial load
   // useEffect(() => {
@@ -201,14 +210,14 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         // list of users to search. users searchable by first name, last name, or username
         const searchableUsers = await Promise.all(users.data.map(async (user: User) => {
           // get username
-          const usernameResponse = await fetch(`/api/users/${user.user_id}`);
+          const usernameResponse = await fetch(`/api/users/${user.userId}`);
           const usernameJson = await usernameResponse.json();
 
           // get make searchable user
           const filteredUser = {
             "username": usernameJson.data[0].username,
-            "first_name": user.first_name,
-            "last_name": user.last_name,
+            "firstName": user.firstName,
+            "lastName": user.lastName,
           };
           return filteredUser;
         }));
@@ -256,7 +265,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
   // --- Data retrieval ---
   // Get project job info
   const getProjectJob = useCallback((id: number) => {
-    return modifiedProject.jobs.find((job: { title_id: number }) => job.title_id === id);
+    return modifiedProject.jobs.find((job: { titleId: number }) => job.titleId === id);
   }, [modifiedProject.jobs]);
 
 
@@ -264,58 +273,76 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
   // --- Member handlers ---
   // Error checks for adding a new member
   const handleNewMember = useCallback(() => {
-    //do not close as default
     setClosePopup(false);
 
     const member = newMember;
 
+    // reset searchbar and dropdowns
+    const resetFields = () => {
+    setSearchQuery('');
+    setSelectKey(prev => prev + 1);
+  };
+    
+    // notify user of error, reset fields
+    const errorWarning = (message: string) => {
+    setSuccessAddMember(false);
+    setErrorAddMember(message);
+    resetFields();
+    return false;
+  };
+
     // check if member is already in project
-    const isMember = modifiedProject.members.find((m) => m.user_id === member.user_id);
+    const isMember = modifiedProject.members.find((m) => m.userId === member.userId);
     if (isMember) {
-      setErrorAddMember('User is already on the team');
-      setClosePopup(false);
-      return;
+      return errorWarning(`${member.firstName} ${member.lastName} is already on the team`);
     }
 
     // get name
-    if (!newMember.first_name || !newMember.last_name) {
-      setErrorAddMember('Can\'t find user');
-      setClosePopup(false);
-      return;
+    if (!newMember.firstName || !newMember.lastName) {
+      return errorWarning("Can\'t find user");
     }
 
     // get job title
-    if (!newMember.job_title) {
+    if (!newMember.jobTitle) {
       // try to get job title from role selection
       const role = document.querySelector<HTMLSelectElement>('#project-team-add-member-role-select');
       if (role && role.value !== 'Select') {
-        newMember.job_title = role.value;
+        newMember.jobTitle = role.value;
       }
       else {
-        setErrorAddMember('Select a role');
-        setClosePopup(false);
-        return;
+      setSuccessAddMember(false);
+      setErrorAddMember('Select a role');
+      setSelectKey(prev => prev + 1);
+      return false;
       }
     }
 
     // Match this user with all users to get profile image
-    const matchedUser = allUsers.find((u) => u.user_id === member.user_id);
-    member.profile_image = matchedUser ? matchedUser.profile_image : '';
+    const matchedUser = allUsers.find((u) => u.userId === member.userId);
+    member.profileImage = matchedUser ? matchedUser.profileImage : '';
 
     // check if member has name
-    if (!member.first_name || !member.last_name) {
+    if (!member.firstName || !member.lastName) {
+      setSuccessAddMember(false);
       setErrorAddMember('Member needs a first and last name');
-      setClosePopup(false);
-      return;
+      return false;
     } else {
-      // clear error
-      setErrorAddMember('');
+      // prompt user of successfully added member
+      setSuccessAddMember(true);
+      setErrorAddMember(`${member.firstName} ${member.lastName} added to team!`);
+
+      // reset prompt to clear
+      setTimeout(() => {
+        setErrorAddMember('');
+        setSuccessAddMember(false);
+      }, 2000)
+
       // close popup
       setClosePopup(true);
-      // reset member
-      setNewMember(emptyMember);
       // add member
       modifiedProject.members.push(member);
+      resetFields();
+      return true;
     }
   }, [allUsers, modifiedProject.members, newMember]);
 
@@ -339,10 +366,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
     setErrorAddMember('');
 
     // set text input
-    const input = document.querySelector<HTMLInputElement>('#user-search-container .search-input');
-    if (input) {
-      input.value = `${user.first_name} ${user.last_name} (${user.username})`;
-    }
+    setSearchQuery(`${user.firstName} ${user.lastName} (${user.username})`);
 
     // get user id of this user to compare
     let userId = -1;
@@ -350,7 +374,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
       try {
         const response = await fetch(`/api/users/search-username/${user.username}`);
         const userJson = await response.json();
-        userId = userJson.data[0].user_id;
+        userId = userJson.data[0].userId;
       } catch (error) {
         console.error(error.message);
       }
@@ -358,18 +382,18 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
     await Promise.all([getUserId()]);
 
     // get matching user data from user id
-    const matchedUser = allUsers.find((u) => u.user_id === userId);
+    const matchedUser = allUsers.find((u) => u.userId === userId);
     if (!matchedUser) {
       setErrorAddMember('User not found');
       return;
     }
 
     const mem = {
-      first_name: matchedUser.first_name,
-      last_name: matchedUser.last_name,
-      profile_image: matchedUser.profile_image,
-      job_title: '', // Placeholder value
-      user_id: matchedUser.user_id,
+      firstName: matchedUser.firstName,
+      lastName: matchedUser.lastName,
+      profileImage: matchedUser.profileImage,
+      jobTitle: '', // Placeholder value
+      userId: matchedUser.userId,
     }
 
     // set new member
@@ -379,7 +403,13 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
     setSearchResults({ data: [] });
   }, [allUsers]);
 
-
+  // Resets Add Member name field, role/permission dropdowns
+  const handlePopupReset = () => {
+    setSearchQuery('');
+    setSearchBarKey(prev => prev + 1);
+    setSelectKey(prev => prev + 1);
+    setClosePopup(false);
+  }
 
   // --- Position handlers ---
   // update position edit window for creating a new position
@@ -422,7 +452,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
   // Remove position listing
   const deletePosition = useCallback(() => {
     // filter out position
-    const updatedJobs = modifiedProject.jobs.filter((j) => j.title_id !== currentRole);
+    const updatedJobs = modifiedProject.jobs.filter((j) => j.titleId !== currentRole);
 
     // update jobs
     setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
@@ -440,8 +470,8 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
   const savePosition = useCallback(() => {
     // check if all values present
     if (
-      currentJob.title_id === 0 ||
-      currentJob.job_title === '' ||
+      currentJob.titleId === 0 ||
+      currentJob.jobTitle === '' ||
       currentJob.description === '' ||
       currentJob.availability === '' ||
       currentJob.location === '' ||
@@ -455,7 +485,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
 
     // check if same position is present
     const existingJob = modifiedProject.jobs.find(
-      (j) => j.title_id === currentJob.title_id && j !== currentJob
+      (j) => j.titleId === currentJob.titleId && j !== currentJob
     );
     if (existingJob) {
       setErrorAddPosition('Job already exists');
@@ -468,7 +498,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
     } else {
       // find matching position
       const updatedJobs = modifiedProject.jobs.map((j) =>
-        j.title_id === currentJob.title_id ? { ...j, ...currentJob } : j
+        j.titleId === currentJob.titleId ? { ...j, ...currentJob } : j
       );
       setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
     }
@@ -478,7 +508,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
     setEditMode(false);
 
     // set current position to saved position
-    setCurrentRole(currentJob.title_id);
+    setCurrentRole(currentJob.titleId);
   }, [currentJob, modifiedProject, newPosition]);
 
 
@@ -495,13 +525,13 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         }}
       >
         <ThemeIcon
-          light={'assets/white/pencil.png'}
-          dark={'assets/black/pencil.png'}
+          src={'assets/white/pencil.svg'}
+          darkModeColor={"black"}
           alt={"edit"}
           addClass={"edit-project-member-icon"}
         />
       </button>
-      <div className="positions-popup-info-title">{getProjectJob(currentRole)?.job_title}</div>
+      <div className="positions-popup-info-title">{getProjectJob(currentRole)?.jobTitle}</div>
       <div className="positions-popup-info-description">
         <div id="position-description-content">{getProjectJob(currentRole)?.description}</div>
       </div>
@@ -519,7 +549,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
             <span className="position-detail-indicator">Contact: </span>
             {/* <span
               // onClick={() =>
-              //   navigate(`${paths.routes.PROFILE}?userID=${projectLead.user_id}`)
+              //   navigate(`${paths.routes.PROFILE}?userID=${projectLead.userId}`)
               // }
               id="position-contact-link"
             >
@@ -527,22 +557,25 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
               Lily Carter
             </span> */}
             {modifiedProject.members.map((m) => {
-                if (m.user_id === modifiedProject.user_id) {
+                if (m.userId === modifiedProject.userId) {
                   return (
-                    <>
-                      <span id="position-contact-link">
+                      <span key={m.userId} id="position-contact-link">
                         <img 
                           className='project-member-image'
-                          src={(m.profile_image) ? `/images/profiles/${m.profile_image}` : profileImage}
+                          src={(m.profileImage) ? `${API_BASE}/images/profiles/${m.profileImage}` : profileImage}
                           alt="profile"
+                          // default profile picture if user image doesn't load
+                        onError={(e) => {
+                          const profileImg = e.target as HTMLImageElement;
+                          profileImg.src = profileImage;
+                        }}
                         />
-                        {m.first_name} {m.last_name}
+                        {m.firstName} {m.lastName}
                       </span>
-                    </>
                   );
                 }
 
-                return <></>;
+                return null;
               })}
           </div>
         </div>
@@ -566,7 +599,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
           <div id="project-team-delete-member-text" className="project-editor-extra-info">
             Are you sure you want to delete{' '}
             <span className="project-info-highlight">
-              {getProjectJob(currentRole)?.job_title}
+              {getProjectJob(currentRole)?.jobTitle}
             </span>{' '}
             from the project? This action cannot be undone.
           </div>
@@ -581,6 +614,12 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
       </Popup>
     </>
   );
+
+  // Find selected members 
+  const selectedMember = modifiedProject.members.find(
+  (m) => m.userId === modifiedProject.userId
+);
+
   // Edit open position or creating new position
   const positionEditWindow = (
     <>
@@ -593,21 +632,21 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
             if (selectedTitle)
               setCurrentJob({
                 ...currentJob,
-                title_id: selectedTitle.title_id,
-                job_title: selectedTitle.label,
+                titleId: selectedTitle.titleId,
+                jobTitle: selectedTitle.label,
               });
           }}
         >
           <option disabled selected={newPosition}>
             Select
           </option>
-          {allJobs.map((job: { title_id: number; label: string }) => (
+          {allJobs.map((job: { titleId: number; label: string }) => (
             <option
-              key={job.title_id}
-              selected={newPosition ? false : job.title_id === currentRole}
+              key={job.titleId}
+              selected={newPosition ? false : job.titleId === currentRole}
               onClick={() => {
                 const updatedJobs = modifiedProject.jobs.map((j) =>
-                  j.title_id === job.title_id ? { ...j, job_title: job.label } : j
+                  j.titleId === job.titleId ? { ...j, jobTitle: job.label } : j
                 );
                 setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
               }}
@@ -619,7 +658,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         <Select>
           <SelectButton 
             placeholder={(newPosition) ? 'Select' : ''}
-            initialVal={(newPosition) ? '' : (allJobs.length > 0 && currentRole) ? allJobs.find((j) => j.title_id === currentRole)!.label : ''}
+            initialVal={(newPosition) ? '' : (allJobs.length > 0 && currentRole) ? allJobs.find((j) => j.titleId === currentRole)!.label : ''}
           />
           <SelectOptions 
             callback={(e) => {
@@ -628,8 +667,8 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
               if (selectedTitle) {
                 setCurrentJob({
                   ...currentJob,
-                  title_id: selectedTitle.title_id,
-                  job_title: selectedTitle.label,
+                  titleId: selectedTitle.titleId,
+                  jobTitle: selectedTitle.label,
                 });
               }
             }}
@@ -664,6 +703,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
       <div id="edit-position-description">
         <label>Role Description*</label>
         <textarea
+          value={currentJob.description ?? ''}
           onChange={(e) => setCurrentJob({ ...currentJob, description: e.target.value })}
         >
           {newPosition ? '' : getProjectJob(currentRole)?.description}
@@ -692,7 +732,8 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
           <Select>
             <SelectButton 
               placeholder='Select'
-              initialVal={(newPosition) ? '' : (currentRole) ? getProjectJob(currentRole)!.availability : ''}
+              
+              initialVal={(newPosition) ? '' : (currentRole) ? getProjectJob(currentRole)?.availability : ''}
             />
             <SelectOptions 
               callback={(e) => setCurrentJob({ ...currentJob, availability: e.target.value })}
@@ -724,7 +765,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
           <Select>
             <SelectButton 
               placeholder='Select'
-              initialVal={(newPosition) ? '' : (currentRole) ? getProjectJob(currentRole)!.location : ''}
+              initialVal={(newPosition) ? '' : (currentRole) ? getProjectJob(currentRole)?.location : ''}
             />
             <SelectOptions 
               callback={(e) => setCurrentJob({ ...currentJob, location: e.target.value })}
@@ -739,28 +780,42 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
           </Select>
           <label className="edit-position-contact">Main Contact</label>
           {/* <select className="edit-position-contact"></select> */}
-          <button className='edit-position-contact' disabled>
-            {modifiedProject.members.map((m) => {
-              if (m.user_id === modifiedProject.user_id) {
-                return (
+          <Select>
+            <SelectButton 
+              className="edit-position-contact"
+              placeholder="Select"
+              initialVal={selectedMember ? `${selectedMember.firstName} ${selectedMember.lastName}` : ''}
+            />
+            <SelectOptions
+              className="edit-position-contact"
+              callback={(e) => {
+                const selectedId = parseInt(e.target.value);
+                setModifiedProject(prev => ({ ...prev, userId: selectedId }));
+              }}       
+              options={modifiedProject.members.map((m) => ({
+                markup: (
                   <>
-                    <img 
-                      className='project-member-image'
-                      src={(m.profile_image) ? `/images/profiles/${m.profile_image}` : profileImage}
+                    <img className='project-member-image' 
+                      src={m.profileImage ? `${API_BASE}/images/profiles/${m.profileImage}` : profileImage}
                       alt="profile"
+                      // default profile picture if user image doesn't load
+                      onError={(e) => {
+                        const profileImg = e.target as HTMLImageElement;
+                        profileImg.src = profileImage;
+                      }}
                     />
                     <div className="project-editor-project-member-info">
                       <div className="project-editor-project-member-name">
-                        {m.first_name} {m.last_name}
+                        {m.firstName} {m.lastName}
                       </div>
                     </div>
                   </>
-                );
-              }
-
-              return <></>;
-            })}
-          </button>
+                ),
+                value: m.userId.toString(),
+                disabled: false,
+              }))}
+            />
+          </Select>
         </div>
         <div id="edit-position-details-right">
           <label className="edit-position-duration">Duration</label>
@@ -782,7 +837,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
           <Select>
             <SelectButton 
               placeholder='Select'
-              initialVal={(newPosition) ? '' : (currentRole) ? getProjectJob(currentRole)!.duration : ''}
+              initialVal={(newPosition) ? '' : (currentRole) ? getProjectJob(currentRole)?.duration : ''}
             />
             <SelectOptions 
               callback={(e) => setCurrentJob({ ...currentJob, duration: e.target.value })}
@@ -814,7 +869,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
           <Select>
             <SelectButton 
               placeholder='Select'
-              initialVal={(newPosition) ? '' : (currentRole) ? getProjectJob(currentRole)!.compensation : ''}
+              initialVal={(newPosition) ? '' : (currentRole) ? getProjectJob(currentRole)?.compensation : ''}
             />
             <SelectOptions 
               callback={(e) => setCurrentJob({ ...currentJob, compensation: e.target.value })}
@@ -843,21 +898,33 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         const activeMember = m;
 
         return (
-          <div className="project-editor-project-member">
+          <div key={m.userId} className="project-editor-project-member">
             <img
               className="project-member-image"
-              src={(m.profile_image) ? `/images/profiles/${m.profile_image}` : profileImage}
-              alt=""
+              src={(m.profileImage) ? `${API_BASE}/images/profiles/${m.profileImage}` : profileImage}
+              alt="profile image"
+              // default profile picture if user image doesn't load
+              onError={(e) => {
+                const profileImg = e.target as HTMLImageElement;
+                profileImg.src = profileImage;
+              }}
             />
             <div className="project-editor-project-member-info">
               <div className="project-editor-project-member-name">
-                {m.first_name} {m.last_name}
+                {/* {m.firstName} {m.lastName} */}
+                {m.firstName && m.lastName 
+                ? `${m.firstName} ${m.lastName}` 
+                : m.userId === 0  
+                ? 'You'
+                : ''
+                }
               </div>
               <div className="project-editor-project-member-role project-editor-extra-info">
-                {m.job_title}
+                {m.jobTitle}
               </div>
             </div>
-            {((m.permissions < permissions) || (modifiedProject.user_id === m.user_id)) ? (
+            {/* ALWAYS SHOW EDIT BUTTON */}
+            { /*((m.permissions < permissions) || (modifiedProject.userId === m.userId)) ? (*/
               <Popup>
                 <PopupButton className="edit-project-member-button">
                   {/* <img
@@ -866,9 +933,9 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                   alt=""
                 /> */}
                   <ThemeIcon
-                    light={'assets/white/pencil.png'}
-                    dark={'assets/black/pencil.png'}
+                    src={'assets/white/pencil.svg'}
                     alt={"edit"}
+                    darkModeColor={"black"}
                     addClass={"edit-project-member-icon"}
                   />
                 </PopupButton>
@@ -881,11 +948,21 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                   >
                     <img
                       className="project-member-image"
-                      src={`/images/profiles/${m.profile_image}`}
-                      alt=""
+                      src={`${API_BASE}/images/profiles/${m.profileImage}`}
+                      alt="profile image"
+                      // default profile picture if user image doesn't load
+                      onError={(e) => {
+                        const profileImg = e.target as HTMLImageElement;
+                        profileImg.src = profileImage;
+                      }}
                     />
                     <div className="project-editor-project-member-name">
-                      {m.first_name} {m.last_name}
+                      {m.firstName && m.lastName 
+                      ? `${m.firstName} ${m.lastName}` 
+                      : m.userId === 0  
+                      ? 'You'
+                      : ''
+                }
                     </div>
                   </div>
                   <div id="project-team-add-member-role">
@@ -893,14 +970,14 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                     <Select>
                       <SelectButton
                         placeholder=''
-                        initialVal={m.job_title}
+                        initialVal={m.jobTitle}
                         className=''
                       />
                       <SelectOptions
                         callback={(e) => {
-                          activeMember.job_title = e.target.value;
+                          activeMember.jobTitle = e.target.value;
                         }}
-                        options={allJobs.map((job: { title_id: number; label: string }) => {
+                        options={allJobs.map((job: { titleId: number; label: string }) => {
                           return {
                             markup: <>{job.label}</>,
                             value: job.label,
@@ -939,7 +1016,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                       callback={() => {
                         // update members
                         const members = modifiedProject.members.map((m) =>
-                          m.user_id === activeMember.user_id ? activeMember : m
+                          m.userId === activeMember.userId ? activeMember : m
                         );
 
                         setModifiedProject({ ...modifiedProject, members });
@@ -957,7 +1034,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                         >
                           Are you sure you want to delete{' '}
                           <span className="project-info-highlight">
-                            {m.first_name} {m.last_name}
+                            {m.firstName} {m.lastName}
                           </span>{' '}
                           from the project? This action cannot be undone.
                         </div>
@@ -981,9 +1058,9 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                   </PopupButton>
                 </PopupContent>
               </Popup>
-            ) : (
+           /* ) : (
               <></>
-            )}
+            )*/}
           </div>
         );
       })}
@@ -992,16 +1069,16 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         <PopupButton buttonId="project-editor-add-member">
           {/* <img id="project-team-add-member-image" src={profileImage} alt="" /> */}
           <ThemeIcon
-            light={'/assets/white/profile.png'}
-            dark={'/assets/black/profile.png'}
+            src={'/assets/white/add_member.svg'}
             id={'project-team-add-member-image'}
+            darkModeColor={"black"}
             alt={'add member'}
           />
           <div id="project-team-add-member-text">Add Member</div>
         </PopupButton>
-        <PopupContent useClose={closePopup}>
+        <PopupContent useClose={true}>
           <div id="project-team-add-member-title">Add Member</div>
-          <div className="error" id="error-add-member">
+          <div className={successAddMember ? "success" : "error"} id="error-add-member">
             {errorAddMember}
           </div>
           <div id="project-team-add-member-info">
@@ -1009,13 +1086,14 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
             <div id='user-search-container'>
               <Dropdown>
                 <DropdownButton buttonId='user-search-dropdown-button'>
-                  <SearchBar dataSets={[searchableUsers]} onSearch={(results) => handleSearch(results)}></SearchBar>
+                  <SearchBar key={searchBarKey} value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} dataSets={[searchableUsers]} onSearch={(results) => handleSearch(results)}></SearchBar>
                 </DropdownButton>
                 <DropdownContent>
                   <div id='user-search-results'>
                     {
                       searchResults.data.map((user, index) => (
                         <DropdownButton
+                          key={user.userId ?? index}
                           className={
                             `user-search-item 
                             ${(index === 0) ? 'top' : ''}
@@ -1023,7 +1101,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                           }
                           callback={() => handleUserSelect(user)}
                         >
-                          <p className='user-search-name'>{user.first_name} {user.last_name}</p>
+                          <p className='user-search-name'>{user.firstName} {user.lastName}</p>
                           <p className='user-search-username'>{user.username}</p>
                         </DropdownButton>
                       ))
@@ -1033,7 +1111,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
               </Dropdown>
             </div>
             <label id="project-team-add-member-role">Role</label>
-            <Select>
+            <Select key={selectKey}>
               <SelectButton
                 placeholder='Select'
                 initialVal=''
@@ -1041,9 +1119,9 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
               />
               <SelectOptions
                 callback={(e) => {
-                  setNewMember({ ...newMember, job_title: e.target.value });
+                  setNewMember({ ...newMember, jobTitle: e.target.value });
                 }}
-                options={allJobs.map((job: { title_id: number; label: string }) => {
+                options={allJobs.map((job: { titleId: number; label: string }) => {
                   return {
                     markup: <>{job.label}</>,
                     value: job.label,
@@ -1054,7 +1132,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
             </Select>
             <div id="project-team-add-member-permissions">
               <label>Permissions</label>
-              <Select>
+              <Select key={selectKey}>
                 <SelectButton
                   placeholder='Select'
                   initialVal=''
@@ -1080,13 +1158,20 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
             <PopupButton
               buttonId="team-add-member-add-button"
               callback={() => {
-                handleNewMember();
+                const memberAdded = handleNewMember();
+                return memberAdded;
               }}
-              doNotClose={() => closePopup}
+             doNotClose={(prev) => !prev}
             >
               Add
             </PopupButton>
-            <PopupButton buttonId="team-add-member-cancel-button" className="button-reset">
+            <PopupButton buttonId="team-add-member-cancel-button"
+             callback={() => {
+              setNewMember(emptyMember);
+              setErrorAddMember('');
+              handlePopupReset();
+            }} 
+            className="button-reset">
               Cancel
             </PopupButton>
           </div>
@@ -1099,16 +1184,16 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
       <div className="positions-popup-list">
         <div id="team-positions-popup-list-header">Open Positions</div>
         <div id="team-positions-popup-list-buttons">
-          {modifiedProject.jobs?.map((job: { job_title: string; title_id: number }) => (
-            <div className="team-positions-button">
-              <img src="/images/icons/drag.png" alt="" />
+          {modifiedProject.jobs?.map((job: { jobTitle: string; titleId: number }) => (
+            <div key={job.titleId} className="team-positions-button">
+              <img src="/images/icons/drag.png" alt="positions" />
               <button
                 className="positions-popup-list-item"
                 id=""
-                data-id={job.title_id}
-                onClick={() => (!editMode ? setCurrentRole(job.title_id) : {})}
+                data-id={job.titleId}
+                onClick={() => (!editMode ? setCurrentRole(job.titleId) : {})}
               >
-                {job.job_title}
+                {job.jobTitle}
               </button>
             </div>
           ))}
@@ -1121,7 +1206,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                 }
               }}
             >
-              <img src={'/images/icons/cancel.png'} alt="+" />
+              <img src={'/images/icons/cancel.png'} alt="add" />
               <span className="project-editor-extra-info">Add position</span>
             </button>
           </div>
@@ -1181,7 +1266,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
 //     >
 //       <img className="edit-project-member-icon" src="/images/icons/pencil.png" alt="" />
 //     </button>
-//     <div className="positions-popup-info-title">{getProjectJob(currentRole).job_title}</div>
+//     <div className="positions-popup-info-title">{getProjectJob(currentRole).jobTitle}</div>
 //     <div className="positions-popup-info-description">
 //       <div id="position-description-content">{getProjectJob(currentRole).description}</div>
 //     </div>
@@ -1199,12 +1284,12 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
 //           <span className="position-detail-indicator">Contact: </span>
 //           <span
 //             // onClick={() =>
-//             //   navigate(`${paths.routes.PROFILE}?userID=${projectLead.user_id}`)
+//             //   navigate(`${paths.routes.PROFILE}?userID=${projectLead.userId}`)
 //             // }
 //             id="position-contact-link"
 //           >
 //             <img src="/assets/creditProfiles/JF.png" alt="" />
-//             {/* {projectLead.first_name} {projectLead.last_name} */}
+//             {/* {projectLead.firstName} {projectLead.lastName} */}
 //             Lily Carter
 //           </span>
 //         </div>
@@ -1229,7 +1314,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
 //         <div id="project-team-delete-member-text" className="project-editor-extra-info">
 //           Are you sure you want to delete{' '}
 //           <span className="project-info-highlight">
-//             {getProjectJob(currentRole).job_title}
+//             {getProjectJob(currentRole).jobTitle}
 //           </span>{' '}
 //           from the project? This action cannot be undone.
 //         </div>
@@ -1256,21 +1341,21 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
 //           if (selectedTitle)
 //             setCurrentJob({
 //               ...currentJob,
-//               title_id: selectedTitle.title_id,
-//               job_title: selectedTitle.label,
+//               titleId: selectedTitle.titleId,
+//               jobTitle: selectedTitle.label,
 //             });
 //         }}
 //       >
 //         <option disabled selected={newPosition}>
 //           Select
 //         </option>
-//         {allJobs.map((job: { title_id: number; label: string }) => (
+//         {allJobs.map((job: { titleId: number; label: string }) => (
 //           <option
-//             key={job.title_id}
-//             selected={newPosition ? false : job.title_id === currentRole}
+//             key={job.titleId}
+//             selected={newPosition ? false : job.titleId === currentRole}
 //             onClick={() => {
 //               const updatedJobs = modifiedProject.jobs.map((j) =>
-//                 j.title_id === job.title_id ? { ...j, job_title: job.label } : j
+//                 j.titleId === job.titleId ? { ...j, jobTitle: job.label } : j
 //               );
 //               setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
 //             }}

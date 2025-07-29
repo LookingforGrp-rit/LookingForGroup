@@ -11,6 +11,8 @@ Project Panel component style rules
   justify-content: space-between;
   gap: 20px;
   width: 100%;
+  /* keep panels below searchbar */
+  z-index: 0;
   /* margin: 0 50px 50px 50px; */
 }
 
@@ -40,8 +42,10 @@ Project Panel component style rules
   }
 
   .project-panel-hover {
-    z-index: -1;
-    /* transition: 0.2s; */
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.2s;
+    z-index: 1;
   }
 }
 
@@ -49,27 +53,39 @@ Project Panel component style rules
   transition: 0.2s;
 
   .project-panel-hover {
+    visibility: visible;
     opacity: 1;
-    z-index: 1;
     cursor: pointer;
-    /* transition: 0.2s; */
+  }
+}
+
+/* IPAD/TABLET Hover support for touch-screen devices that specifically are not computers */
+@media only screen and (any-hover: none) {
+  .project-panel {
+    height: 400px;
+
+    .project-panel-hover {
+      visibility: visible;
+      opacity: 1;
+      box-shadow: none;
+      position: absolute;
+      top: 0;
+    }
   }
 }
 
 .project-panel-hover {
-  transition: 0.2s;
   border-radius: 10px;
   background-color: var(--bg-color);
-  box-shadow: 0px 0px 10px 0px var(--shadow-color);
-  z-index: 1;
+  box-shadow: 2px 2px 10px 2px var(--shadow-color);
   color: var(--main-text);
-  opacity: 0;
   position: absolute;
   height: 400px;
   /* min-width: 420px; */
   width: 100%;
-  transition: opacity 0.2s;
   top: -100px;
+  visibility: visible;
+  transition: visibility 0.2s;
 
   /* bottom: 0; */
   /* left: 0; */
@@ -113,11 +129,11 @@ Project Panel component style rules
         height: fit-content;
         transition: 0.2s;
       }
-    
+
       .follow-amt.following {
-        color: #F14F76;
+        color: #f14f76;
       }
-    
+
       .follow-icon {
         border: none;
         background: none;
@@ -127,15 +143,15 @@ Project Panel component style rules
         font-size: 25px;
         padding: 0;
       }
-    
+
       .follow-icon.following {
         color: #F14F76;
-    
+
         .fa-heart {
-          color: #F14F76 !important;
+          color: #f14f76 !important;
         }
       }
-    
+
       .follow-icon:hover {
         transform: scale(1.2);
       }
@@ -184,22 +200,6 @@ Project Panel component style rules
 
 .project-contributor:hover {
   cursor: pointer;
-}
-
-@media only screen and (any-pointer: coarse) {
-  .project-panel {
-    height: 400px;
-  
-    .project-panel-hover {
-      z-index: 1;
-      opacity: 1;
-      box-shadow: 0;
-  
-      /* Position directly on top of standard project-panel element */
-      position: absolute;
-      top: 0;
-    }
-  }
 }
 
 /*
@@ -304,11 +304,12 @@ Project Creator and Editor style rules
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 1120px;
+  max-width: 90vw;
   height: calc(90vh - 100px);
   border: none;
   border-radius: 10px;
   color: var(--main-text);
+  overflow-y: auto;
 }
 
 @media (min-width: 1172px) {
@@ -320,6 +321,7 @@ Project Creator and Editor style rules
 #project-editor-tabs {
   display: flex;
   justify-content: space-around;
+  flex-wrap: wrap;
   margin-top: 38px;
 }
 
@@ -343,6 +345,7 @@ Project Creator and Editor style rules
 }
 
 #project-editor-save,
+#project-editor-save-general,
 #team-add-member-add-button,
 #team-edit-member-save-button {
   border: none;
@@ -354,6 +357,17 @@ Project Creator and Editor style rules
   width: max-content;
   margin: auto;
   font-weight: 700;
+}
+
+.save-error-msg, .save-error-msg-general {
+  display: none;
+  margin: auto;
+}
+
+.save-error-msg p, .save-error-msg-general p {
+  margin: 0 0 1.5% 0;
+  font-size: 18px;
+  color: red;
 }
 
 #project-editor-content {
@@ -391,6 +405,7 @@ Project Creator and Editor style rules
 .project-link-select-wrapper .project-link-select {
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
+  padding: .5rem !important;
 }
 
 .project-link-input-wrapper {
@@ -403,12 +418,13 @@ Project Creator and Editor style rules
 .project-link-input-wrapper input {
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 15px;
+  padding: .5rem;
   flex-grow: 1;
   background-color: var(--bg-color);
   color: var(--main-text);
   font-size: 1.6ch;
   outline: none;
+  min-height: 40px;
 }
 
 /* Project Editor/Creator General Tab */
@@ -425,6 +441,7 @@ Project Creator and Editor style rules
   font-size: 1.6ch;
   outline: none;
 }
+
 #project-editor-content select {
   appearance: none;
   position: relative;
@@ -441,7 +458,7 @@ Project Creator and Editor style rules
 }
 
 #project-editor-content select::after {
-  content: url('../../../build/assets/dropdown_dark.png');
+  content: url('../../../build/assets/dropdown_dark.svg');
   position: absolute;
   top: 50%;
   right: 1rem;
@@ -450,7 +467,7 @@ Project Creator and Editor style rules
 
 /* #project-editor-content select {
   appearance: none;
-  background-image: url('../../../build/assets/dropdown_dark.png');
+  background-image: url('../../../build/assets/dropdown_dark.svg');
   background-repeat: no-repeat;
   background-size: 20px;
   background-position-x: 150px;
@@ -471,21 +488,46 @@ Project Creator and Editor style rules
   color: var(--neutral-gray);
 }
 
-.project-editor-extra-info > input[type='file'] {
+.project-editor-extra-info>input[type='file'] {
   display: none;
   color: var(--orange);
 }
 
 #project-editor-general {
   display: grid;
-  height: 100%;
+  height: 50vh;
   grid-template:
     'title title about' 1fr
     'status purpose about' 1fr
     'audience audience about' 2fr
-    'desc desc about' 3fr /
-    1fr 1fr 2.5fr;
+    'desc desc about' 3fr
+    'save save save' auto / 1fr 1fr 2.5fr;
   gap: 15px 15px;
+}
+
+#general-save-info {
+  grid-area: save;
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+}
+
+@media only screen and (max-width: 799px) {
+  #project-editor-general {
+    display: flex;
+    flex-direction: column;
+  }
+
+.save-error-msg-general {
+  display:none;
+  margin: auto;
+}
+
+.save-error-msg-general p {
+  margin: 50 0 1.5% 0;
+  font-size: 18px;
+  color: red;
+}
 }
 
 .project-editor-input-item {
@@ -510,30 +552,35 @@ Project Creator and Editor style rules
   }
 }
 
-.project-editor-input-item > .project-editor-extra-info,
-#project-editor-media > .project-editor-extra-info,
-#project-editor-selected-tags > .project-editor-extra-info {
+.project-editor-input-item>.project-editor-extra-info,
+#project-editor-media>.project-editor-extra-info,
+#project-editor-selected-tags>.project-editor-extra-info {
   margin-top: 2px;
 }
 
-.project-editor-input-item > select * {
+.project-editor-input-item>select * {
   margin: 10px 0;
   padding: 15px;
 }
 
-.project-editor-input-item > select > option:first-child {
+.project-editor-input-item>select>option:first-child {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
 
-.project-editor-input-item > select > option:last-child {
+.project-editor-input-item>select>option:last-child {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
 
-.project-editor-input-item > select > option:hover {
+.project-editor-input-item>select>option:hover {
   background-color: var(--orange);
   color: var(--bg-color);
+}
+
+/* To fix unnecessary horizontal scrollbar */
+.select {
+  overflow-x: hidden;
 }
 
 .character-count {
@@ -565,6 +612,20 @@ Project Creator and Editor style rules
 
 #project-editor-description-input {
   grid-area: desc;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  min-height: 150px;
+  flex: 1 1 auto;
+  overflow-y: auto;
+}
+
+#project-editor-description-input textarea {
+  min-height: 150px;
+  max-height: 250px;
+  resize: vertical;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 #project-editor-type-tags,
@@ -601,20 +662,20 @@ Project Creator and Editor style rules
   flex-direction: column;
 }
 
-/* FIXME: line to be proper color */
 #tag-search-divider,
 #selected-tag-divider {
-  /* color: var(--header-color); */
-  height: 1px;
+  height: 4px;
+  width: 80%;
+  border: none;
+  border-radius: 3px;
   background-color: var(--header-color);
-  /* color: var(--neutral-gray, #1A1921); */
-  width: 100%;
 }
+
 #selected-tag-divider {
   margin: 15px 0;
 }
 
-.search-wrapper > .search-bar > .search-input {
+.search-wrapper>.search-bar>.search-input {
   background-color: none;
   border: none;
   margin: 0;
@@ -669,7 +730,10 @@ Project Creator and Editor style rules
   bottom: 0;
 }
 
-#selected-thumbnail, .star, .star-filled, .delete-image {
+#selected-thumbnail,
+.star,
+.star-filled,
+.delete-image {
   position: absolute;
   border: none;
   background: transparent;
@@ -677,7 +741,11 @@ Project Creator and Editor style rules
   width: 22px;
   height: 22px;
 }
-#selected-thumbnail > img, .star > img, .star-filled > img, .delete-image > img {
+
+#selected-thumbnail>img,
+.star>img,
+.star-filled>img,
+.delete-image>img {
   width: 22px;
   height: 22px;
 }
@@ -696,7 +764,8 @@ Project Creator and Editor style rules
   filter: var(--image-filter);
 }
 
-.star, .star-filled {
+.star,
+.star-filled {
   top: 9px;
 }
 
@@ -724,6 +793,13 @@ Project Creator and Editor style rules
   height: 100%;
 }
 
+@media only screen and (max-width: 650px) {
+  #project-editor-tags {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
 #project-editor-type-tags {
   grid-area: type;
   min-height: 80px;
@@ -738,13 +814,23 @@ Project Creator and Editor style rules
 
 #project-editor-selected-tags-container {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+#project-editor-type-tags-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: 8px;
 }
 
 #project-editor-tag-search {
   grid-area: search;
+  min-width: 150px;
 }
 
 #project-editor-type-tags,
@@ -755,21 +841,37 @@ Project Creator and Editor style rules
   border-radius: 8px;
 }
 
-#project-editor-selected-tags > .error,
-#project-editor-type-tags > .error {
+#project-editor-selected-tags>.error,
+#project-editor-type-tags>.error {
   margin-top: 15px;
 }
 
 .project-editor-section-header {
   color: var(--primary-color);
   font-size: 2ch;
-  font-weight: 600;
+  font-weight: 700;
 }
 
 #project-editor-tag-search-tabs,
 #project-editor-team-tabs {
   display: flex;
   justify-content: space-between;
+}
+
+#project-editor-tag-search-tabs {
+  overflow-x: auto;
+}
+
+@media only screen and (max-width: 799px) {
+  #project-editor-tag-search-tabs {
+    flex-direction: column;
+  }
+}
+
+@media only screen and (max-width: 420px) {
+    #project-editor-team-tabs {
+    flex-direction: column;
+  }
 }
 
 #project-editor-team-tabs {
@@ -782,6 +884,9 @@ Project Creator and Editor style rules
   padding: 0;
   color: var(--neutral-gray);
   font-size: 1.6ch;
+  font-weight: 600;
+  word-break: normal;
+  max-width: 100%;
 }
 
 /* Project Editor/Creator Team Tab */
@@ -797,12 +902,14 @@ Project Creator and Editor style rules
 .team-tab-active {
   color: var(--primary-color);
   font-weight: 600;
-  transition: none;
 }
+
+
 
 #project-editor-team {
   height: 100%;
 }
+
 
 #project-editor-team-content {
   display: flex;
@@ -847,6 +954,8 @@ Project Creator and Editor style rules
 .project-editor-project-member-name {
   color: var(--primary-color);
   font-weight: 700;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .project-editor-project-member-info {
@@ -857,7 +966,7 @@ Project Creator and Editor style rules
   flex: 1;
 }
 
-.project-editor-project-member-info > * {
+.project-editor-project-member-info>* {
   align-self: stretch;
 }
 
@@ -880,7 +989,7 @@ Project Creator and Editor style rules
   justify-items: center;
 }
 
-.project-editor-project-member > .edit-project-member-button {
+.project-editor-project-member>.edit-project-member-button {
   top: 6px;
   right: 6px;
   display: flex;
@@ -925,6 +1034,7 @@ Project Creator and Editor style rules
   flex-direction: column;
   width: 100%;
 }
+
 #user-search-dropdown-button {
   background: none;
   border: none;
@@ -933,10 +1043,13 @@ Project Creator and Editor style rules
   margin: 0;
   width: 100%;
 }
+
 #user-search-container .dropdown {
   width: 100%;
 }
-#user-search-container .search-bar { /* Override for default SearchBar component */
+
+#user-search-container .search-bar {
+  /* Override for default SearchBar component */
   display: flex;
   align-items: center;
   background-color: var(--header-color);
@@ -947,7 +1060,9 @@ Project Creator and Editor style rules
   height: fit-content;
   /* border: 1px solid var(--border-color); */
 }
-#user-search-container .search-input { /* Override for default SearchBar component */
+
+#user-search-container .search-input {
+  /* Override for default SearchBar component */
   border: none;
   background-color: transparent;
 }
@@ -956,29 +1071,47 @@ Project Creator and Editor style rules
 #project-team-add-member-info {
   display: grid;
   grid-template-areas:
-    "name-label name-search"
-    "role-label role-select"
-    "permissions permissions";
+    'name-label name-search'
+    'role-label role-select'
+    'permissions permissions';
 
   grid-template-columns: 1fr 4fr;
   grid-template-rows: 1fr 1fr 1fr;
   column-gap: 8px;
   row-gap: 15px;
 }
+
+.success {
+  color: green;
+  font-weight: 500;
+  font-size: 14px;
+  font-style: italic;
+}
+
 #project-team-add-member-name {
   grid-area: name-label;
 }
+
 #user-search-container {
   grid-area: name-search;
 }
+
 #project-team-add-member-role {
   grid-area: role-label;
 }
-#project-team-add-member-info > .select-container {
+
+#project-team-add-member-info>.select-container {
   grid-area: role-select;
 }
+
 #project-team-add-member-permissions {
   grid-area: permissions;
+}
+
+@media only screen and (max-width: 500px) {
+#project-team-add-member-permissions {
+  flex-wrap: wrap;
+}
 }
 
 #user-search-dropdown-button {
@@ -1001,42 +1134,49 @@ Project Creator and Editor style rules
   margin-top: 5px;
   box-shadow: 0 0 10px 0 var(--shadow-color);
 }
+
 .user-search-item {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  padding: 15px; /* or 13 15? */
+  padding: 15px;
+  /* or 13 15? */
   width: 100%;
   min-height: 45px;
   background-color: var(--dropdown-color);
   border: none;
 }
+
 .user-search-item.top {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
+
 .user-search-item.bottom {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
+
 .user-search-item:hover {
   background-color: var(--primary-color);
   color: var(--invert-text);
 }
+
 .user-search-name {
   color: var(--main--text);
   margin: 0;
 }
+
 .user-search-username {
   color: var(--neutral-gray);
   font-style: italic;
   margin: 0;
 }
 
-#project-editor-project-members > .popup-container > .popup,
-.project-editor-project-member > .popup-container > .popup,
-.project-editor-button-pair > .popup-container > .popup,
-.positions-popup-info > .popup-container > .popup {
+#project-editor-project-members>.popup-container>.popup,
+.project-editor-project-member>.popup-container>.popup,
+.project-editor-button-pair>.popup-container>.popup,
+.positions-popup-info>.popup-container>.popup {
   display: flex;
   flex-direction: column;
   width: 439px;
@@ -1114,6 +1254,32 @@ Project Creator and Editor style rules
   width: 100%;
 }
 
+@media only screen and (max-width: 1000px) {
+  #project-team-open-positions-popup {
+    flex-direction: column;
+  }
+
+  #project-team-open-positions-popup .positions-popup-list {
+    max-height: 20%;
+    overflow-y: auto;
+  }
+
+  #positions-popup-list-edit {
+    display: flex;
+    flex-direction: column;
+  }
+
+  #positions-popup-list-edit #edit-position-details {
+     flex-direction: column;
+     flex-wrap: nowrap;
+     align-items: center;
+  }
+
+  #edit-position-role {
+    flex-direction: column;
+  }
+}
+
 #team-positions-popup-list-header {
   text-align: left;
   font-size: 20px;
@@ -1129,6 +1295,7 @@ Project Creator and Editor style rules
   justify-content: center;
   align-items: center;
 }
+
 .delete-position-button {
   position: absolute;
   bottom: 20px;
@@ -1224,24 +1391,31 @@ Project Creator and Editor style rules
   gap: 8px;
   align-items: center;
 }
+
 label.edit-position-availability {
   grid-area: availability-label;
 }
+
 select.edit-position-availability {
   grid-area: availability-input;
 }
+
 .edit-position-details-left .select-container {
   grid-area: availability-input;
 }
+
 label.edit-position-location {
   grid-area: location-label;
 }
+
 select.edit-position-location {
   grid-area: location-input;
 }
+
 label.edit-position-contact {
   grid-area: contact-label;
 }
+
 button.edit-position-contact {
   grid-area: contact-input;
   display: flex;
@@ -1250,12 +1424,12 @@ button.edit-position-contact {
   border-radius: 10px;
   padding: 3px;
   cursor: default;
+}
 
-  img {
-    width: 48px;
-    height: 48px;
-    border: 1px solid var(--border-color);
-  }
+button.edit-position-contact .project-member-image {
+  width: 48px;
+  height: 48px;
+  border: 1px solid var(--border-color);
 }
 
 #edit-position-details-right {
@@ -1268,15 +1442,19 @@ button.edit-position-contact {
   gap: 8px;
   align-items: center;
 }
+
 label.edit-position-duration {
   grid-area: duration-label;
 }
+
 select.edit-position-duration {
   grid-area: duration-input;
 }
+
 label.edit-position-compensation {
   grid-area: compensation-label;
 }
+
 select.edit-position-compensation {
   grid-area: compensation-input;
 }
@@ -1307,7 +1485,7 @@ select.edit-position-compensation {
 }
 
 /* Project Editor/Creator Links Tab */
-#project-editor-links > .project-editor-extra-info {
+#project-editor-links>.project-editor-extra-info {
   margin-bottom: 15px;
 }
 
@@ -1321,7 +1499,7 @@ select.edit-position-compensation {
   display: flex;
   gap: 8px;
   justify-items: center;
-  align-items: flex-start;
+  /* align-items: flex-start; */
   align-self: stretch;
 }
 
@@ -1338,10 +1516,28 @@ select.edit-position-compensation {
   background-color: var(--primary-color);
   border: none;
   border-radius: 50%;
+  transition: .15s;
+  align-self: anchor-center;
 }
 
-.remove-link-button > .fa-minus {
+@media only screen and (max-width: 700px) {
+  .remove-link-button {
+    right: 20px;
+  }
+}
+
+@media only screen and (max-width: 450px) {
+  .project-editor-link-item {
+    flex-direction: column;
+  }
+}
+
+.remove-link-button>.fa-minus {
   color: var(--invert-text);
+}
+
+.remove-link-button:hover {
+  background-color: var(--error-delete-color) !important;
 }
 
 /*
@@ -1557,6 +1753,7 @@ includes 'enter virtual space' and 'make post' buttons*/
 
 #interested-button:hover {
   background-color: #d0d0d0;
+  color: black;
 }
 
 /*rules for the editing roles popup*/
@@ -1845,7 +2042,8 @@ used to help wrap the lines around the word 'Members'*/
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
-  line-height: 28px; /* 140% */
+  line-height: 28px;
+  /* 140% */
 }
 
 .project-delete-cancel {
@@ -2317,12 +2515,12 @@ New Project Page style rules
 
 @media screen and (max-width: 1199px) {
   #project-page-content {
-    grid-template: 
-    'info' auto
-    'carousel' auto
-    'overview' auto
-    'people' auto
-    'positions' auto;
+    grid-template:
+      'info' auto
+      'carousel' auto
+      'overview' auto
+      'people' auto
+      'positions' auto;
   }
 }
 
@@ -2366,7 +2564,7 @@ Project Carousel style rules
 
   .project-carousel-btn:hover {
     transition-duration: 0.2s;
-    
+
     /* Transition TBD */
   }
 
@@ -2424,7 +2622,8 @@ Project Carousel style rules
   height: 28px;
   margin-left: auto;
   align-items: center;
-  margin-bottom: 10px; /* For alignment with Project Title */
+  margin-bottom: 10px;
+  /* For alignment with Project Title */
   gap: 7px;
 
   button {
@@ -2447,7 +2646,7 @@ Project Carousel style rules
   }
 
   .follow-amt.following {
-    color: #F14F76;
+    color: #f14f76;
   }
 
   .follow-icon {
@@ -2461,10 +2660,10 @@ Project Carousel style rules
   }
 
   .follow-icon.following {
-    color: #F14F76;
+    color: #f14f76;
 
     .fa-heart {
-      color: #F14F76 !important;
+      color: #f14f76 !important;
     }
   }
 
@@ -2540,7 +2739,19 @@ Project Carousel style rules
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
   padding: 5px 20px;
+  width: 150px;
   font-weight: 700;
+}
+
+#project-info-edit:hover {
+  color: var(--create-text) !important;
+  background-color: var(--create-bg) !important;
+  filter: drop-shadow(0px 5px 3px var(--shadow-color));
+  transition: 0.25s;
+}
+
+#project-info-edit:focus-visible{
+  outline: none !important;
 }
 
 #project-hook,
@@ -2574,8 +2785,8 @@ Project Carousel style rules
   border-radius: 10px;
   font-style: normal;
   display: grid;
-  height: calc(90vh - 90px);
-  width: 90vw;
+  height: 100%;
+  width: 40vw;
   max-width: 1000px;
   gap: 30px;
   padding: 70px;
@@ -2586,6 +2797,14 @@ Project Carousel style rules
     'list info' auto
     'close close' 50px /
     300px auto;
+}
+
+.positions-popup-content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: 30px;
+  margin-left: 50%;
 }
 
 #positions-popup-header {
@@ -2615,7 +2834,7 @@ Project Carousel style rules
   box-shadow: none;
 }
 
-#project-team-open-positions-popup > .positions-popup-list {
+#project-team-open-positions-popup>.positions-popup-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -2643,10 +2862,10 @@ Project Carousel style rules
   height: 28px;
 }
 
-.add-item-button > button {
+.add-item-button>button {
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: end;
   gap: 10px;
   padding: 0 10px;
   background: transparent;
@@ -2674,7 +2893,7 @@ Project Carousel style rules
   font-weight: 400;
 }
 
-#team-positions-popup-list-header > .positions-popup-list-item {
+#team-positions-popup-list-header>.positions-popup-list-item {
   display: flex;
   gap: 8px;
 }
@@ -2698,6 +2917,20 @@ Project Carousel style rules
   border-radius: 10px;
   padding: 20px;
   width: 100%;
+}
+
+@media only screen and (max-width: 1000px) {
+  .positions-popup-content {
+    flex-direction: column;
+    margin-left: 10px;
+    width: 30vw;
+  }
+
+  #project-open-positions-popup {
+    overflow-y: auto;
+    width: 70vw;
+    height: 80vh;
+  }
 }
 
 .positions-popup-info select {
@@ -2872,7 +3105,8 @@ Project Carousel style rules
   border-radius: 50%;
   border: 2px solid white;
   object-fit: cover;
-  margin-right: 10px; /* Should prevent things from looking cramped */
+  margin-right: 10px;
+  /* Should prevent things from looking cramped */
 }
 
 .project-contributor-info {
@@ -2951,17 +3185,16 @@ My projects page style rules
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 
-/* #create-proj-btn {
-  padding: 10px 50px;
-  font-weight: bold;
-  font-size: larger;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-} */
+@media only screen and (min-width: 800px) {
+  .my-projects-banner {
+    min-height: 220px;
+  }
+}
 
-@media only screen and (max-width: 800px) {
-  /* responsiveness goes here*/
+@media only screen and (max-width: 799px) {
+  .my-projects-banner {
+    min-height: 200px;
+  }
 }
 
 .page#my-projects {
@@ -2979,36 +3212,22 @@ My projects page style rules
   gap: 10px;
 }
 
-/* .my-projects-search {
-  box-sizing: border-box;
-  background-color: #ececf7;
-  border: 0px;
-  border-radius: 40px;
-  padding: 11px 16px;
-  text-align: left;
-  color: var(--primary-color);
-  font-size: 13px;
-} */
-
-/* .my-projects-searchbar {
-  box-sizing: border-box;
-  background-color: #ececf7;
-  border: 0px;
-  border-radius: 0px;
-  width: 97%;
-  padding-left: 13px;
-  color: #271d66;
-  font-size: 14px;
-  line-height: normal;
-} */
-
 .my-projects-banner {
-  box-sizing: border-box;
   width: 100%;
-  height: auto;
-  margin: 0 0 16px;
-  padding-left: 60px;
-  padding-right: 64px;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.projects-banner-wrapper {
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.projects-banner-outer {
+  box-sizing: border-box;
+  padding: 0 60px;
+  margin-bottom: 30px;
 }
 
 /* .my-projects-profile {
@@ -3069,21 +3288,6 @@ My projects page style rules
     grid-template-columns: auto max-content max-content max-content;
     margin-bottom: 0%;
   }
-}
-
-.my-projects-all-projects-button {
-  box-sizing: border-box;
-  background-color: var(--primary-color);
-  border: 0px;
-  border-radius: 55px;
-  width: fit-content;
-  color: var(--invert-text);
-  padding: 6px 17px;
-  text-align: center;
-  font-size: 18px;
-  font-weight: bold;
-  line-height: 28px;
-  letter-spacing: 0%;
 }
 
 .my-projects-sort-list {
@@ -3156,12 +3360,17 @@ My projects page style rules
   }
 }
 
+#my-projects-sort-btn:hover {
+  background-color: var(--invert-text);
+  box-shadow: 0 0 5px 0 var(--primary-color);
+}
+
 .my-projects-display-switch {
   box-sizing: border-box;
   background-color: var(--header-color);
   border: 0px;
   border-radius: 100px;
-  padding: 0px;
+  padding: 4px;
   cursor: pointer;
 
   display: flex;
@@ -3182,6 +3391,11 @@ My projects page style rules
   align-items: center;
 }
 
+.my-projects-display-switch .display-switch-option:hover {
+  transition-duration: 0.25s;
+  background-color: var(--invert-text);
+}
+
 .my-projects-display-switch .display-switch-option#selected {
   background-color: var(--primary-color);
   color: var(--main-text);
@@ -3191,20 +3405,42 @@ My projects page style rules
   color: var(--invert-text);
 }
 
-.my-projects-new-project-button {
+.my-projects-all-projects-button,
+.my-projects-new-project-button,
+.my-projects-create-btn>button {
   box-sizing: border-box;
+  width: fit-content;
   background-color: var(--primary-color);
   border: 0px;
   border-radius: 55px;
-  width: fit-content;
-  color: var(--invert-text);
   padding: 6px 17px;
+  color: var(--invert-text);
   text-align: center;
   font-size: 18px;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
+}
+
+.my-projects-create-btn>button {
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 25px;
+    margin-right: 10px;
+    filter: invert(1) saturate(0) brightness(2);
+  }
+}
+
+.my-projects-all-projects-button:hover,
+.my-projects-new-project-button:hover,
+.my-projects-create-btn>button:hover {
+  transform: scale(1.1);
+  transition: 0.2s;
 }
 
 .page#my-projects hr {
@@ -3544,6 +3780,10 @@ My projects page style rules
   .confirm-deny-btns {
     display: flex;
     flex-direction: row;
+
+    button {
+      margin: 5px;
+    }
   }
 
   .confirm-btn {
@@ -3596,6 +3836,8 @@ My projects page style rules
     font-style: italic;
   }
 }
+
+
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\

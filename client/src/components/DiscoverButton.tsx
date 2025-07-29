@@ -6,6 +6,7 @@ export const DiscoverButton = ({ children, isActive, onClick }) => {
     isActive ? 'discover-button-active' : 'discover-button-inactive'
   );
 
+  // useEffect to update button class name based on isActive prop
   useEffect(() => {
     if (isActive) {
       setButtonClassName('discover-button-active');

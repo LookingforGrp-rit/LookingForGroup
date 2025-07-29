@@ -2,6 +2,7 @@
   display: flex;
   flex-direction: column;
   row-gap: 0.5rem;
+  overflow-y: auto;
 }
 
 .link-input {
@@ -15,32 +16,41 @@
 }
 
 #profile-editor-add-link {
-    background-color: #0000;
-    border: none;
-    border-radius: 30px;
-    font-size: 1.8ch;
-    font-weight: 700;
-    height: 2ch;
+  background-color: #0000;
+  border: none;
+  border-radius: 30px;
+  font-size: 1.8ch;
+  font-weight: 700;
+  padding: 0.5ch 1.8ch;
+  white-space: normal;
+  word-break: normal;
+}
+
+.editor-input-item {
+}
+
+#profile-editor-add-link:hover {
+  background-color: var(--bg-color);
 }
 
 .link-input-wrapper {
-    position: relative;
-    max-width: 100%;
-    width: 400px;
+  position: relative;
+  max-width: 100%;
+  width: 100%;
 }
 
 .close-btn {
-    background-color: var(--primary-color);
-    border-radius: 50%;
-    height: 50%;
-    aspect-ratio: 1;
-
-    position: absolute;
-    right: 0;
-    top: 0;
-    transform: translateX(-10%) translateY(50%);
+  background-color: var(--primary-color);
+  border-radius: 50%;
+  width: 25px;
+  height: 27px;
+  aspect-ratio: 1;
+  position: absolute;
+  right: 12px;
+  top: 0;
+  transform: translateX(-10%) translateY(90%);
 }
 
-.close-btn .fa {
-    color: var(--invert-text);
+.close-btn>.fa-minus {
+  color: var(--invert-text);
 }

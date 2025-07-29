@@ -42,7 +42,7 @@ import { ThemeIcon } from '../ThemeIcon';
 //Both content boxes should be scrollable if there is an overflow of content
 
 //No values are passed in through props
-const ProjectPostPage = (props) => {
+const ProjectPostPage = () => {
   //Contains the ids of the post and the project it belongs to, used throughout this file
   //Current data structure has posts belonging to multiple projects, so projectId is set to a constant for now
   let postId;
@@ -64,9 +64,17 @@ const ProjectPostPage = (props) => {
       setReplyingToPost(true);
       //Reset displays to default
       const replyPrompt = document.getElementById('reply-prompt-display');
-      replyPrompt ? (replyPrompt.innerHTML = 'Replying to Post') : console.log('element not found');
+      if (replyPrompt) {
+        replyPrompt.innerHTML = 'Replying to Post';
+      } else {
+        console.log('element not found');
+      }
       const promptButton = document.getElementById('reply-prompt-reset');
-      promptButton ? promptButton.classList.toggle('show') : console.log('element not found');
+      if (promptButton) {
+        promptButton.classList.toggle('show');
+      } else {
+        console.log('element not found');
+      }
     }
   };
 
@@ -94,13 +102,19 @@ const ProjectPostPage = (props) => {
   const sendReply = () => {
     //get user's reply input
     //May require some encoding to prevent code injection
-    const replyInput = document.getElementById('reply-input');
+    const replyInput = document.getElementById('reply-input') as HTMLTextAreaElement | null;
     let replyContent;
-    replyInput ? (replyContent = replyInput.value) : console.log('error finding input container');
+    if (replyInput) {
+      replyContent = replyInput.value;
+    } else {
+      console.log('error finding input container');
+      return;
+    }
     if (replyContent === '') {
       console.log('no input given');
       return;
     }
+
     //create a randomized comment id for the new reply
     //May be a temporary solution, id generation may require different method
     let newId = Math.trunc(Math.random() * 100000000);
@@ -108,6 +122,7 @@ const ProjectPostPage = (props) => {
       newId = Math.trunc(Math.random() * 100000000);
     }
     const date = new Date();
+
     //construct new reply
     const newReplyObject = {
       _id: newId,
@@ -116,18 +131,29 @@ const ProjectPostPage = (props) => {
       createdDate: date.toString(), //change date value later, likely should only include date & time, not timezone
       content: replyContent,
     };
+
     //write reply to data
     /// Note: all data is reset when page is left or reloaded, will require recoding when full database is integrated
     comments.push(newReplyObject);
+
     //If replying to post, adds id to that post's comments array
     //If replying to another comment, adds id to that comment's replies array
     if (replyingToPost) {
       const currentPost = posts.find((p) => p._id === Number(postId));
-      currentPost ? currentPost.comments.push(newId) : console.log('error finding post');
+      if (currentPost) {
+        currentPost.comments.push(newId);
+      } else {
+        console.log('error finding post');
+      }
     } else {
       const commentTarget = comments.find((p) => p._id === replyTarget);
-      commentTarget ? commentTarget.replies.push(newId) : console.log('error finding comment');
+      if (commentTarget) {
+        commentTarget.replies.push(newId);
+      } else {
+        console.log('error finding comment');
+      }
     }
+
     //update display to feature new reply
     const newPostData = posts.find((p) => p._id === Number(postId)) || posts[0];
     setCommentComponent(
@@ -161,7 +187,7 @@ const ProjectPostPage = (props) => {
         <h2 id="post-project-name">{projects[projectId].name}</h2>
         <button className="orange-button">Follow</button>
         <button className="icon-button">
-          <ThemeIcon light={'/assets/menu_light.png'} dark={'/assets/menu_dark.png'} alt={'...'} />
+          <ThemeIcon src={'/assets/menu_light.svg'} darkSrc={'/assets/menu_dark.svg'} alt={'More Options'} />
         </button>
       </div>
 
@@ -172,9 +198,9 @@ const ProjectPostPage = (props) => {
           <h3 id="post-name">{postData.title}</h3>
           <button id="post-options" className="icon-button">
             <ThemeIcon
-              light={'/assets/menu_light.png'}
-              dark={'/assets/menu_dark.png'}
-              alt={'...'}
+              src={'/assets/menu_light.svg'}
+              darkSrc={'/assets/menu_dark.svg'}
+              alt={'menu'}
             />
           </button>
 

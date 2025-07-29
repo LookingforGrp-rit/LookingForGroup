@@ -3,33 +3,50 @@ import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { sendDelete, sendPost } from '../functions/fetch';
+
+//import shares types
+import { Project, ProjectFollowers, ProjectGenres, ProjectTag } from '../../../shared/types.ts'; // wherever your types live
+
+
 //Component that will contain info about a project, used in the discovery page
 //Smaller and more concise than ProjectCard.tsx
 
 //Takes in a 'project' value which contains info on the project it will display
 //Also takes in width (the width of this panel), and rightAlign, which determines which side the hover panel aligns with
-export const ProjectPanel = ({ project, userId }) => {
+
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
+
+interface ProjectPanelProps {
+  project: Project & {
+    followers: ProjectFollowers;
+    projectType: ProjectGenres[];
+    projectTags: ProjectTag[]
+  };
+  userId: number;
+}
+
+export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
   const navigate = useNavigate();
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.project_id}`;
-  
+  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectId}`;
+
   const [followCount, setFollowCount] = useState(project.followers.count);
-  const [isFollowing, setFollowing] = useState(project.followers.isFollowing);
+  //const [isFollowing, setFollowing] = useState(project.followers.isFollowing);
+  const [isFollowing, setFollowing] = useState(false);
 
   // Formats follow-count based on Figma design. Returns a string
-  const formatFollowCount = (followers) => {
-    let followerNum = followers;
+  const formatFollowCount = (followers: number): string => {
+    const followerNum = followers;
 
-    // Start displaying in X.X+ format if >= 1000
     if (followerNum >= 1000) {
       const multOfHundred = (followerNum % 100) === 0;
-
-      followerNum /= 1000.0;
-      followerNum = followerNum.toFixed(1);
-      followerNum = `${followerNum}K ${multOfHundred ? '+' : ''}`;
+      const formattedNum = (followerNum / 1000).toFixed(1);
+      return `${formattedNum}K ${multOfHundred ? '+' : ''}`;
     }
 
     return `${followerNum}`;
   };
+
 
   return (
     // <div className={'project-panel'} style={{ width: width }}>
@@ -37,7 +54,7 @@ export const ProjectPanel = ({ project, userId }) => {
       <img
         src={
           project.thumbnail != null
-            ? `images/thumbnails/${project.thumbnail}`
+            ? `${API_BASE}/images/thumbnails/${project.thumbnail}`
             : placeholderThumbnail
         }
         alt={'project image'}
@@ -50,7 +67,7 @@ export const ProjectPanel = ({ project, userId }) => {
         <img
           src={
             project.thumbnail != null
-              ? `images/thumbnails/${project.thumbnail}`
+              ? `${API_BASE}/images/thumbnails/${project.thumbnail}`
               : placeholderThumbnail
           }
           alt={'project image'}
@@ -75,12 +92,12 @@ export const ProjectPanel = ({ project, userId }) => {
                   let url = `/api/users/${userId}/followings/projects`;
 
                   if (!isFollowing) {
-                    sendPost(url, { projectId: project.project_id }, () => {
+                    sendPost(url, { projectId: project.projectId }, () => {
                       setFollowing(true);
                       setFollowCount(followCount + 1);
                     });
                   } else {
-                    url += `/${project.project_id}`;
+                    url += `/${project.projectId}`;
                     sendDelete(url, () => {
                       setFollowing(false);
                       setFollowCount(followCount - 1);
@@ -94,38 +111,39 @@ export const ProjectPanel = ({ project, userId }) => {
           </div>
         </div>
         <div id="project-panel-tags">
-          {project.project_types.map((projectType) => (
-            <div className='skill-tag-label label-blue' key={projectType.id}>
-              {projectType.project_type}
+          {project.projectType.map((genre) => (
+            <div className='skill-tag-label label-blue' key={genre.typeId}>
+              {genre.label}
             </div>
           ))}
-          {project.tags.map((tag, index) => {
-            let category: string;
-            switch (tag.type) {
-              case 'Design':
-                category = 'red';
-                break;
-              case 'Developer':
-                category = 'yellow';
-                break;
-              case 'Soft':
-                category = 'purple';
-                break;
-              case 'Creative':
-              case 'Games':
-                category = 'green';
-                break;
-              default:
-                category = 'grey';
-            }
-            if (index < 3) {
-              return (
-                <div className={`skill-tag-label label-${category}`} key={tag.id}>
-                  {tag.tag}
-                </div>
-              );
-            }
-          })}
+          {project.projectTags.sort((a, b) => a.position - b.position)
+            .slice(0, 3).map((tag: ProjectTag, index: number) => {
+              let category: string;
+              switch (tag.type) {
+                case 'Designer':
+                  category = 'red';
+                  break;
+                case 'Developer':
+                  category = 'yellow';
+                  break;
+                case 'Soft':
+                  category = 'purple';
+                  break;
+                case 'Creative':
+                case 'Games':
+                  category = 'green';
+                  break;
+                default:
+                  category = 'grey';
+              }
+              if (index < 3) {
+                return (
+                  <div className={`skill-tag-label label-${category}`} key={tag.tagId}>
+                    {tag.label}
+                  </div>
+                );
+              }
+            })}
         </div>
         <div id="quote">{project.hook}</div>
       </div>

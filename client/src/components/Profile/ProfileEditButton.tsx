@@ -1,11 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { PagePopup, openClosePopup } from '../PagePopup';
+import { getByID } from '../../api/projects';
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
+
+
+//backend base url for getting images
+const API_BASE = `http://localhost:8081`;
 
 /*
 TO DO: 
  - Convert currentPFPLink to a useEffect instead of a useState 
 */
+
+
 
 // On click, this button should open the Profile Edit modal
 const EditButton = ({ userData }) => {
@@ -52,17 +59,17 @@ const EditButton = ({ userData }) => {
 
   // const [currentPFPLink, setCurrentPFPLink] = useState(require(`../../../../server/images/profiles/${userData.profile_image}`));
   const [currentPFPLink, setCurrentPFPLink] = useState(
-    `/images/profiles/${userData.profile_image}`
+    `${API_BASE}/images/profiles/${userData.profileImage}`
   );
-  const [currentFirstName, setCurrentFirstName] = useState(userData.first_name);
-  const [currentLastName, setCurrentLastName] = useState(userData.last_name);
+  const [currentFirstName, setCurrentFirstName] = useState(userData.firstName);
+  const [currentLastName, setCurrentLastName] = useState(userData.lastName);
   const [currentPronouns, setCurrentPronouns] = useState(userData.pronouns);
-  const [currentRole, setCurrentRole] = useState(userData.job_title);
+  const [currentRole, setCurrentRole] = useState(userData.jobTitle);
   const [currentMajor, setCurrentMajor] = useState(userData.major);
-  const [currentYear, setCurrentYear] = useState(userData.academic_year);
+  const [currentYear, setCurrentYear] = useState(userData.academicYear);
   const [currentLocation, setCurrentLocation] = useState(userData.location);
   const [currentQuote, setCurrentQuote] = useState(userData.headline);
-  const [currentFunFact, setCurrentFunFact] = useState(userData.fun_fact);
+  const [currentFunFact, setCurrentFunFact] = useState(userData.funFact);
   const [currentAbout, setCurrentAbout] = useState(userData.bio);
 
   const getOrdinal = (index: number) => {
@@ -85,7 +92,7 @@ const EditButton = ({ userData }) => {
   }
 
   const getImage = async (theImageName: string) => {
-    const url = `/images/profiles/${theImageName}`;
+    const url = `${API_BASE}/images/profiles/${theImageName}`;
     setCurrentPFPLink(url);
   };
 
@@ -104,7 +111,7 @@ const EditButton = ({ userData }) => {
     ) {
       const fileForm = new FormData(form);
 
-      const url = `/api/users/${userData.user_id}/profile-picture`;
+      const url = `/api/users/${userData.userId}/profile-picture`;
       try {
         const response = await fetch(url, {
           method: 'PUT',
@@ -115,7 +122,7 @@ const EditButton = ({ userData }) => {
 
         const rawData = await response.json();
         console.log(rawData);
-        getImage(rawData.data[0].profile_image);
+        getImage(rawData.data[0].profileImage);
 
         // const file = theInput.files[0];
         // const reader = new FileReader();
@@ -343,22 +350,25 @@ const EditButton = ({ userData }) => {
   const [shownProjects, setShownProjects] = useState();
 
   const getUsersProjects = async () => {
-    const url = `/api/users/${userData.user_id}/projects`;
+    const url = `/api/users/${userData.userId}/projects`;
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
+     // const response = await fetch(url, {
+     //   method: 'GET',
+     //   headers: { 'Content-Type': 'application/json' },
+     // });
+     // const rawData = await response.json();
 
-      const rawData = await response.json();
-      setUserProjects(rawData.data);
+      const data = getByID(userData.userId);
+      console.log("Sepukku. Called in Profile Edit Button.");
+      setUserProjects(data.data);     // IF DOESN'T Work, replace data.data with rawData.data
+      
     } catch (error) {
       console.log(error);
     }
   };
 
   const getVisibleProjects = async () => {
-    const url = `/api/users/${userData.user_id}/projects/profile`;
+    const url = `/api/users/${userData.userId}/projects/profile`;
     try {
       const response = await fetch(url);
 
@@ -379,7 +389,7 @@ const EditButton = ({ userData }) => {
   const checkIfProjectIsShown = (projectID: number) => {
     if (shownProjects !== undefined) {
       for (let i = 0; i < shownProjects.length; i++) {
-        if (shownProjects[i].project_id === projectID) {
+        if (shownProjects[i].projectId === projectID) {
           return true;
         }
       }
@@ -393,7 +403,7 @@ const EditButton = ({ userData }) => {
       if (checkIfProjectIsShown(project.project_id)) {
         const tempList = new Array(0);
         for (let i = 0; i < shownProjects.length; i++) {
-          if (shownProjects[i].project_id !== project.project_id) {
+          if (shownProjects[i].projectId !== project.project_id) {
             tempList.push(shownProjects[i]);
           }
         }
@@ -432,7 +442,7 @@ const EditButton = ({ userData }) => {
                             updateHiddenProjects(project);
                           }}
                         >
-                          {checkIfProjectIsShown(project.project_id) ? (
+                          {checkIfProjectIsShown(project.projectId) ? (
                             <i className="fa-solid fa-eye"></i>
                           ) : (
                             <i className="fa-solid fa-eye-slash"></i>
@@ -442,7 +452,7 @@ const EditButton = ({ userData }) => {
                     </div>
                   );
                 } else {
-                  const projectURL = `/images/thumbnails/${project.thumbnail}`;
+                  const projectURL = `${API_BASE}/images/thumbnails/${project.thumbnail}`;
                   return (
                     <div className="list-project">
                       <div className="inner-list-project">
@@ -459,7 +469,7 @@ const EditButton = ({ userData }) => {
                             updateHiddenProjects(project);
                           }}
                         >
-                          {checkIfProjectIsShown(project.project_id) ? (
+                          {checkIfProjectIsShown(project.projectId) ? (
                             <i className="fa-solid fa-eye"></i>
                           ) : (
                             <i className="fa-solid fa-eye-slash"></i>
@@ -979,7 +989,7 @@ const EditButton = ({ userData }) => {
     if (socialLinks !== undefined) {
       for (let i = 0; i < socialLinks.length; i++) {
         if (socialLinks[i].label == theSite) {
-          return socialLinks[i].website_id;
+          return socialLinks[i].websiteId;
         }
       }
       return 0;
@@ -1150,7 +1160,7 @@ const EditButton = ({ userData }) => {
     if (rolesList !== undefined) {
       for (let i = 0; i < rolesList.length; i++) {
         if (rolesList[i].label == roleName) {
-          return rolesList[i].title_id;
+          return rolesList[i].titleId;
         }
       }
       return -1;
@@ -1161,7 +1171,7 @@ const EditButton = ({ userData }) => {
     if (majorsList !== undefined) {
       for (let i = 0; i < majorsList.length; i++) {
         if (majorsList[i].label == majorName) {
-          return majorsList[i].major_id;
+          return majorsList[i].majorId;
         }
       }
       return -1;
@@ -1186,12 +1196,12 @@ const EditButton = ({ userData }) => {
     return tempList;
   };
 
-  const saveData = () => {
+  const saveData = async () => {
     // User
-    saveUserData();
+    await saveUserData();
 
     // Projects
-    saveProjectsPage();
+    await saveProjectsPage();
 
     openClosePopup(showPopup, setShowPopup);
 
@@ -1200,7 +1210,7 @@ const EditButton = ({ userData }) => {
 
   const saveUserData = async () => {
     console.log("I'M BEING RAN HAHAHAAHAHAHAHAHAHH");
-    const url = `/api/users/${userData.user_id}`;
+    const url = `/api/users/${userData.userId}`;
     try {
       const response = await fetch(url, {
         method: 'PUT',
@@ -1232,7 +1242,7 @@ const EditButton = ({ userData }) => {
   const saveProjectsPage = async () => {
     if (userProjects !== undefined) {
       for (let i = 0; i < userProjects.length; i++) {
-        const url = `/api/users/${userData.user_id}/projects/visibility`;
+        const url = `/api/users/${userData.userId}/projects/visibility`;
         try {
           const response = await fetch(url, {
             method: 'PUT',
@@ -1240,8 +1250,8 @@ const EditButton = ({ userData }) => {
               'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-              projectId: userProjects[i].project_id,
-              visibility: checkIfProjectIsShown(userProjects[i].project_id) ? 'public' : 'private',
+              projectId: userProjects[i].projectId,
+              visibility: checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private',
             }),
           });
 

@@ -4,14 +4,19 @@
 import React, { useState } from 'react';
 import { hardSkills } from '../constants/skills';
 
-export const ItemMaker = ({ type, grabber }) => {
+interface ItemMakerProps {
+  type: 'role' | 'tag';
+  grabber: (items: string[]) => void;
+}
+
+export const ItemMaker = ({ type, grabber }: ItemMakerProps) => {
   const [item, setItem] = useState('Full-stack Development');
-  const [arr, setArr] = useState(['']);
-  const [listObj, setObj] = useState(<div></div>);
+  const [arr, setArr] = useState<string[]>([]);
+ const [listObj, setObj] = useState<React.ReactElement>(<div></div>);
 
   // Determined by "type" to provide either text or dropdown
-  const createInput = () => {
-    if (type == 'role') {
+   const createInput = () => {
+    if (type === 'role') {
       return (
         <select
           onChange={(e) => {
@@ -19,9 +24,11 @@ export const ItemMaker = ({ type, grabber }) => {
           }}
           id="e-maker-select"
         >
-          {hardSkills.map((s) => {
-            return <option value={s}>{s}</option>;
-          })}
+          {hardSkills.map((s) => (
+            <option key={s} value={s}>
+              {s}
+            </option>
+          ))}
         </select>
       );
     } else {
@@ -39,32 +46,36 @@ export const ItemMaker = ({ type, grabber }) => {
 
   // Deletes the item from the array, and then sets the object with the new array
   // Does not work properly, deletes multiple items at once
-  const deleteItem = (item) => {
-    arr.splice(arr.indexOf(item, 1));
+   const deleteItem = (targetItem: string) => {
+    const filtered = arr.filter((i) => i !== targetItem);
+    setArr(filtered);
     setObj(
       <div>
-        {arr.map((i) => {
-          return <p onClick={() => deleteItem(i)}>{i}</p>;
-        })}
+        {filtered.map((i) => (
+          <p key={i} onClick={() => deleteItem(i)}>
+            {i}
+          </p>
+        ))}
       </div>
     );
   };
 
-  return (
+ return (
     <div>
       <div>{listObj}</div>
       {createInput()}
       <button
         onClick={() => {
-          // Add current input to the array
-          arr.push(item);
-          grabber(arr);
+          const updated = [...arr, item];
+          setArr(updated);
+          grabber(updated);
           setObj(
             <div>
-              {arr.map((i) => {
-                // Makes the item into a page element, onClick runs deleteItem on the item
-                return <p onClick={() => deleteItem(i)}>{i}</p>;
-              })}
+              {updated.map((i) => (
+                <p key={i} onClick={() => deleteItem(i)}>
+                  {i}
+                </p>
+              ))}
             </div>
           );
         }}
@@ -73,13 +84,10 @@ export const ItemMaker = ({ type, grabber }) => {
         Add
       </button>
       <button
-        onClick={
-          // Clear array and list
-          () => {
-            setArr([]);
-            setObj(<div></div>);
-          }
-        }
+        onClick={() => {
+          setArr([]);
+          setObj(<div></div>);
+        }}
         className="white-button"
       >
         Clear
