@@ -34,6 +34,7 @@ jobs:
           retention-days: 2
 
   deploy-client:
+    needs: build-client
     runs-on: ubuntu-latest
     environment: Deployment
     steps:
@@ -51,3 +52,5 @@ jobs:
           password: ${{ secrets.SERVER_PASS }}
           source: ./lfg-client/*
           target: ~/lfg.gccis.rit.edu
+          strip_components: 1
+          overwrite: true
