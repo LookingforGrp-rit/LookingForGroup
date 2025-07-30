@@ -34,6 +34,7 @@ jobs:
           retention-days: 2
 
   deploy-client:
+    needs: build-client
     runs-on: ubuntu-latest
     environment: Deployment
     steps:
