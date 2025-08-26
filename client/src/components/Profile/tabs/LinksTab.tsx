@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { sendPut, sendFile, fetchUserID } from '../../../functions/fetch';
+import { sendPut, sendFile } from '../../../functions/fetch';
 import { SocialSelector } from '../../SocialSelector';
 import { getByID } from '../../../api/projects';
-import { getUsersById } from '../../../api/users';
+import { getCurrentUsername, getUsersById } from '../../../api/users';
 
 interface LinkData {
   id: number;
@@ -19,8 +19,8 @@ export const LinksTab = (props) => {
   useEffect(() => {
     const loadSocials = async () => {
       // Pick which socials to use based on type
-      const userID = await fetchUserID();
-      
+      const userID = await getCurrentUsername();
+
      // var { data } = [];
      // switch(type){
      //   case 'project':

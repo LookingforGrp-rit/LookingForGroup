@@ -24,6 +24,7 @@ import EditButton from '../Profile/ProfileEditButton';
 import { getUsers } from '../../api/users';
 
 // Get user ID from API
+// NOTE: name used to match same api call as getCurrentUsername(). Not to be confused.
 const fetchUserID = async () => {
   const response = await fetch('/api/auth');
   const {

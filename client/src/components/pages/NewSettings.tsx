@@ -1,7 +1,7 @@
 import '../Styles/pages.css';
 
 import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
-import { sendPost, fetchUserID, sendDelete, sendPut } from '../../functions/fetch';
+import { sendPost, sendDelete, sendPut } from '../../functions/fetch';
 import { Popup, PopupButton, PopupContent } from '../Popup';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { ThemeIcon } from '../ThemeIcon';
@@ -12,12 +12,12 @@ import CreditsFooter from '../CreditsFooter';
 import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
-import { getUserByEmail, getUserByUsername, getAccountInformation } from '../../api/users';
+import { getUserByEmail, getUserByUsername, getAccountInformation, getCurrentUsername } from '../../api/users';
 
 // Take the user ID and delete it
 const deleteAccountPressed = async () => {
   // console.log('Delete Pressed!');
-  const userID = await fetchUserID();
+  const userID = await getCurrentUsername();
   await sendDelete(`/api/users/${userID}`, async () => {
     await sendPost('/api/logout');
   });
@@ -80,12 +80,12 @@ const Settings = ({ }) => {
   // --------------------
 
   // Confirmation for changed settings
-const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }) => {
+  const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }) => {
   const [password, setPassword] = useState('');
 
-              const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
-              const url = `/api/users/${userInfo.userId}/${typeToChange}`;
-              const response =  sendPut(url, apiParams, onSuccess);            // possible break
+  const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
+  const url = `/api/users/${userInfo.userId}/${typeToChange}`;
+  const response =  sendPut(url, apiParams, onSuccess);            // FIXME: possible break
 
 
   // git merge 07/24/2025: Yevhenii Shyshko
