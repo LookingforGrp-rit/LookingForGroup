@@ -247,7 +247,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                     placeholder="URL"
                     value={social.url}
                     onChange={(e) => {
-                      // TO-DO: Implement some sort of security check for URLs.
+                      // TODO: Implement some sort of security check for URLs.
                       // Could be as simple as checking the URL matches the social media
                       // But since 'Other' is an option, might be good to just find some
                       // external list of suspicious sites and make sure it's not one of those.

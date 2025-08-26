@@ -299,7 +299,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
 
     // get name
     if (!newMember.firstName || !newMember.lastName) {
-      return errorWarning("Can\'t find user");
+      return errorWarning("Can't find user");
     }
 
     // get job title

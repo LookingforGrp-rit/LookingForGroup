@@ -116,22 +116,18 @@ const NewProfile = () => {
 
   // Get URL parameters to tell what user we're looking for and store it
   const urlParams = new URLSearchParams(window.location.search);
-  let profileID = urlParams.get("userID");
+  const profileID = urlParams.get("userID");
 
-  let displayedProfile: Profile;
-  let setDisplayedProfile: Function;
-  [displayedProfile, setDisplayedProfile] = useState(defaultProfile);
+  const [displayedProfile, setDisplayedProfile] = useState(defaultProfile);
 
-  // Project variables
-  let fullProjectList, displayedProjects: Project[];
-  let setFullProjectList, setDisplayedProjects: Function;
-  // Former stores all projects, latter only stores ones to be displayed so you can do searches
-  [fullProjectList, setFullProjectList] = useState([]);
-  [displayedProjects, setDisplayedProjects] = useState([]);
+  // Stores all projects
+  const [fullProjectList, setFullProjectList] = useState<Project[]>([]);
+  // Projects displayed for searches
+  const [displayedProjects, setDisplayedProjects] = useState<Project[]>([]);
 
   const projectSearchData = fullProjectList.map(
-    (project: { title: string; hook: string }) => {
-      return { name: project.title, description: project.hook };
+    (project: Project) => {
+      return { name: project.name, description: project.hook };
     }
   );
 
@@ -164,7 +160,7 @@ const NewProfile = () => {
   };
 
   // Search bar doesn't really have a use, so might as well use it for projects
-  const searchProjects = (searchResults) => {
+  const searchProjects = (searchResults: string[]) => {
     const tempProjList: Project[] = [];
 
     for (const result of searchResults[0]) {
@@ -233,7 +229,7 @@ const NewProfile = () => {
       setUpProfileID();
 
       try {
-        const { data } = await getUsersById(profileID);
+        const { data } = await getUsersById(profileID ?? "");
 
         // Only run this if profile data exists for user
         if (data[0] !== undefined) {

@@ -177,13 +177,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     await getAuth();
 
     try {
-      var response;
-      
-      if (category == 'projects'){response = await getProjects();}
-      else {response = await getUsers();}
+      const response = (category == 'projects') ? await getProjects() : await getUsers();
 
       const data = await response;
-      console.log(data.data);
+      console.log('data.data', data.data);
 
       // Don't assign if there's no array returned
       console.log(data.data == undefined);

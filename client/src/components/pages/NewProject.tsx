@@ -102,7 +102,7 @@ const NewProject = () => {
 
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
-  const projectID = urlParams.get('projectID');
+  const projectID: number = Number(urlParams.get('projectID'));
 
   //state variable used to check whether or not data was successfully obtained from database
   const [failCheck, setFailCheck] = useState(false);
@@ -117,9 +117,12 @@ const NewProject = () => {
 
   //Function used to get project data
   const getProjectData = async () => {
-    const url = `/api/projects/${projectID}`;
-
     try {
+      if (!projectID) {
+        setFailCheck(true);
+        return;
+      }
+
       const projectData = await getByID(projectID);
 
       if (projectData.data[0] === undefined) {
