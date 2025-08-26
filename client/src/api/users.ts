@@ -7,7 +7,7 @@ import type {
 
 /* USER CRUD */
 
-//This probably with change with shibbolth???
+//This probably will change with shibbolth???
 /**
  * Creates a new user, and adds them to the signups table. All data params default to null.
  * NOT GOING TO NEED THIS WITH SHIBBOLETH
@@ -551,6 +551,38 @@ export const deleteProjectFollowing = async (id: number, projID: number) => {
   return { status: 201, data: response.data };
 };
 
+/**
+ * Retrieves majors from API.
+ */
+export const getMajors = async (): Promise<ApiResponse> => {
+   const apiURL = `/datasets/majors`;
+
+   try {
+   const response = await GET(apiURL);
+   return response;
+   }
+   catch (e) {
+    console.log("Error fetching majors", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
+
+/**
+ * Retrieves job titles from API.
+ */
+export const getJobTitles = async (): Promise<ApiResponse> => {
+  const apiURL = `/datasets/job-titles`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching job titles", e);
+    return { status: 500, error: "Internal error" };
+  }
+};
+
 //getVisibleProjects
 //updateProjectVisibility
 //getProjectFollowing
@@ -581,4 +613,6 @@ export default {
   getProjectFollowing,
   addProjectFollowing,
   deleteProjectFollowing,
+  getMajors,
+  getJobTitles
 };
