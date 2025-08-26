@@ -91,5 +91,8 @@ yarn-error.log*
 # SQL files
 *.sql
 
+# QodoGen files
+.qodo
+
 # Generated files
 **/generated/**
