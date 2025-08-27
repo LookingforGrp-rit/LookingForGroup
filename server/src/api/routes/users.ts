@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { createUser } from '#controllers/users/create-user.ts';
 import { getAllUsers } from '#controllers/users/get-all.ts';
 import { getUserByEmail } from '#controllers/users/get-by-email.ts';
 import { getUsernameById } from '#controllers/users/get-by-id.ts';
@@ -38,5 +39,7 @@ router.get('/:id/followings/projects', requiresLogin, getProjectsFollowing);
 
 //Gets users user is following
 router.get('/:id/followings/people', requiresLogin, getUserFollowing);
+
+router.post('/', requiresLogin, createUser);
 
 export default router;
