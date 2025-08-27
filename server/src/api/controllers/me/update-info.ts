@@ -8,12 +8,15 @@ interface UpdateUserInfo {
   lastName?: string;
   headline?: string;
   pronouns?: string;
-  tile?: string;
+  title?: string;
   majorId?: number;
   academic_year?: UsersAcademicYear | null;
   location?: string;
   funFact?: string;
   bio?: string;
+  visibility?: number;
+  username?: string;
+  phoneNumber?: number;
 }
 
 export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserInfo> = async (
@@ -53,12 +56,15 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     'lastName',
     'headline',
     'pronouns',
-    'role',
+    'title',
     'majorId',
     'academicYear',
     'location',
     'funFact',
     'bio',
+    'visibility',
+    'username',
+    'phoneNumber',
   ];
 
   //validate update fields

@@ -35,7 +35,7 @@ export const addProjectFollowing = async (req: Request, res: Response): Promise<
   if (result === 'CONFLICT') {
     const resBody: ApiResponse = {
       status: 409,
-      error: 'Alredy following project',
+      error: 'Already following project',
       data: null,
       memetype: 'application/json',
     };
