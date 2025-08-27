@@ -12,12 +12,15 @@ type UpdatebleUserFields = Partial<
     | 'lastName'
     | 'headline'
     | 'pronouns'
-    | 'jobTitleId'
-    | 'majorId'
+    | 'title'
+    | 'major'
     | 'academicYear'
     | 'location'
     | 'funFact'
     | 'bio'
+    | 'visibility'
+    | 'username'
+    | 'phoneNumber'
   >
 >;
 
@@ -30,16 +33,19 @@ export const updateUserInfoService = async (
       where: { userId },
       data: { ...updates },
       select: {
+        username: true,
         firstName: true,
         lastName: true,
         headline: true,
         pronouns: true,
-        jobTitleId: true,
-        majorId: true,
+        title: true,
+        major: true,
         academicYear: true,
         location: true,
         funFact: true,
         bio: true,
+        visibility: true,
+        phoneNumber: true,
       },
     });
 

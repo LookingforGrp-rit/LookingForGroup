@@ -1,30 +1,15 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { RequestHandler } from 'express';
-import type { UsersAcademicYear } from '#prisma-models/index.js';
-import { updateUserInfoService } from '#services/me/update-info.ts';
+import { getUserByUsernameService } from '#services/users/get-by-username.ts';
+import { updateUserUsernameService } from '#services/users/update-username.ts';
 
-interface UpdateUserInfo {
-  firstName?: string;
-  lastName?: string;
-  headline?: string;
-  pronouns?: string;
-  title?: string;
-  major?: string;
-  academic_year?: UsersAcademicYear | null;
-  location?: string;
-  funFact?: string;
-  bio?: string;
-  visibility?: number;
-  username?: string;
-  phoneNumber?: number;
-}
-
-export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserInfo> = async (
-  req,
-  res,
-) => {
+export const updateUsername: RequestHandler<
+  { id: string },
+  unknown,
+  { username?: string }
+> = async (req, res) => {
   const { id } = req.params;
-  const updates = req.body;
+  const { username: newUsername } = req.body;
 
   //validate ID
   const userId = parseInt(id);
@@ -39,30 +24,11 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     return;
   }
 
-  //fields that can be updated
-  const updateFields = [
-    'firstName',
-    'lastName',
-    'headline',
-    'pronouns',
-    'title',
-    'major',
-    'academicYear',
-    'location',
-    'funFact',
-    'bio',
-    'visibility',
-    'username',
-    'phoneNumber',
-  ];
-
-  //validate update fields
-  const invalid = Object.keys(updates).filter((field) => !updateFields.includes(field));
-
-  if (invalid.length > 0) {
+  //validate new username
+  if (!newUsername || newUsername.trim() === '') {
     const resBody: ApiResponse = {
       status: 400,
-      error: `Invalid fields: ${JSON.stringify(invalid)}`,
+      error: 'New username not found',
       data: null,
       memetype: 'application/json',
     };
@@ -70,7 +36,21 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     return;
   }
 
-  const result = await updateUserInfoService(userId, updates);
+  //check if username exists
+  const userExist = await getUserByUsernameService(newUsername);
+  if (userExist !== 'NOT_FOUND' && userExist !== 'INTERNAL_ERROR' && userExist.userId !== userId) {
+    const resBody: ApiResponse = {
+      status: 409,
+      error: 'Username already taken',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(409).json(resBody);
+    return;
+  }
+
+  //update username
+  const result = await updateUserUsernameService(userId, newUsername);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
