@@ -36,19 +36,19 @@ paths:
                   memetype:
                     type: string
                     example: application/json
-                examples:
-                  default:
-                    summary: Example job titles list
-                    value:
-                      status: 200
-                      error: null
-                      data:
-                        - titleId: 1
-                          label: Full-Stack Developer
-                        - titleId: 2
-                          label: Front-End Developer
-                        - titleId: 3
-                          label: Back-End Developer
+              examples:
+                default:
+                  summary: Example job titles list
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      - titleId: 1
+                        label: Full-Stack Developer
+                      - titleId: 2
+                        label: Front-End Developer
+                      - titleId: 3
+                        label: Back-End Developer
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -400,7 +400,7 @@ paths:
     put:
       summary: Updates user profile information
       tags:
-        - Users
+        - Me
       security:
         - shibbolethAuth: []
       parameters:
@@ -479,7 +479,7 @@ paths:
     delete:
       summary: Delete a user by ID
       tags:
-        - Users
+        - Me
       security:
         - shibbolethAuth: []
       parameters:
@@ -632,130 +632,6 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/users/{id}/username:
-    put:
-      summary: Update a user's username (requires authentication)
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: User ID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - username
-              properties:
-                username:
-                  type: string
-                  description: New username
-      responses:
-        '200':
-          description: Username successfully updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: object
-                    properties:
-                      username:
-                        type: string
-                        example: newUsername
-                    required:
-                      - username
-                  memetype:
-                    type: string
-                    example: application/json
-              examples:
-                default:
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      username: newUsername
-                    memetype: application/json
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/users/{id}/visibility:
-    put:
-      summary: Update a user's visibility (requires authentication)
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: User ID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - visibility
-              properties:
-                visibility:
-                  type: integer
-                  enum: [0, 1]
-                  description: visibility (0=private, 1=public)
-      responses:
-        '200':
-          description: Username successfully updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: object
-                    properties:
-                      visibility:
-                        type: integer
-                        enum: [0, 1]
-                        example: 1
-                  memetype:
-                    type: string
-                    example: application/json
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
   /api/users/{id}/projects:
     get:
       summary: Get current user's own projects
@@ -891,7 +767,7 @@ paths:
       security:
         - shibbolethAuth: []
       tags:
-        - Users
+        - Me
       parameters:
         - name: id
           in: path
@@ -933,7 +809,7 @@ paths:
       security:
         - shibbolethAuth: []
       tags:
-        - Users
+        - Me
       parameters:
         - name: id
           in: path
@@ -1019,7 +895,7 @@ paths:
       security:
         - shibbolethAuth: []
       tags:
-        - Users
+        - Me
       parameters:
         - name: id
           in: path
@@ -1062,7 +938,7 @@ paths:
       security:
         - shibbolethAuth: []
       tags:
-        - Users
+        - Me
       parameters:
         - name: id
           in: path
@@ -1202,7 +1078,7 @@ paths:
     put:
       summary: Updates project information
       tags:
-        - Projects
+        - Me
       security:
         - shibbolethAuth: []
       parameters:
@@ -1264,7 +1140,7 @@ paths:
       summary: Delete a project by ID
       description: Deletes a project by its ID.
       tags:
-        - Projects
+        - Me
       security:
         - shibbolethAuth: []
       parameters:
@@ -1302,7 +1178,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /projects/{id}/thumbnail:
+  /api/projects/{id}/thumbnail:
     put:
       summary: Update the thumbnail image of a project
       description: Updates the thumbnail URL of a project by its ID. Only the thumbnail can be updated.
@@ -1722,7 +1598,7 @@ paths:
           schema:
             type: integer
           description: Project ID
-        - in: query
+        - in: path
           name: userId
           required: true
           schema:
@@ -1758,6 +1634,11 @@ paths:
 
 # COMPONANTS
 components:
+  securitySchemes:
+    shibbolethAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
     JobTitle:
       type: object
@@ -1787,6 +1668,9 @@ components:
           type: string
         type:
           type: string
+
+    ProjectDetails:
+      type: string
 
     ProjectGenre:
       type: object
@@ -2266,7 +2150,7 @@ components:
           type: string
           example: Internal Server Error
         data:
-          type: 'null'
+          type: string
           nullable: true
           example: null
         memetype:

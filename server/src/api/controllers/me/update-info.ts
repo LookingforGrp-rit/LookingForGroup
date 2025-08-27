@@ -44,7 +44,7 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     'pronouns',
     'jobTitleId',
     'majorId',
-    'academic_year',
+    'academicYear',
     'location',
     'funFact',
     'bio',
