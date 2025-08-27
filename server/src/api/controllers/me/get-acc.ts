@@ -3,7 +3,19 @@ import type { Request, Response } from 'express';
 import { getUserAccountService } from '#services/users/get-user-acc.ts';
 
 export const getAccount = async (req: Request, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id);
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  //current user ID
+  const userId = parseInt(req.currentUser);
 
   if (isNaN(userId)) {
     const resBody: ApiResponse = {
