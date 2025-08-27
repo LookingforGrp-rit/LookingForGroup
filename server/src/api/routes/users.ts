@@ -1,5 +1,4 @@
 import { Router } from 'express';
-import { getAccount } from '#controllers/users/get-acc.ts';
 import { getAllUsers } from '#controllers/users/get-all.ts';
 import { getUserByEmail } from '#controllers/users/get-by-email.ts';
 import { getUsernameById } from '#controllers/users/get-by-id.ts';
@@ -30,9 +29,6 @@ router.get('/search-email/:email', getUserByEmail);
 
 //Updates users profile images
 //router.put('/:id/profile-picture', requiresLogin, checkImageFile, updateProfilePicture);
-
-//Gets user's account
-router.get('/:id/account', requiresLogin, getAccount);
 
 //Gets another user's projects
 router.get('/:id/projects/profile', getOtherUserProjects);
