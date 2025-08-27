@@ -4,7 +4,18 @@ import { addProjectFollowingService } from '#services/me/add-follow-proj.ts';
 
 //add project to follow list
 export const addProjectFollowing = async (req: Request, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id); //shibboleth cookie would give us this but where would i get it from
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const userId = parseInt(req.currentUser);
   const projectId = parseInt(req.params.followId);
 
   //validate input
