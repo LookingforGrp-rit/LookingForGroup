@@ -12,7 +12,7 @@ type UpdatebleUserFields = Partial<
     | 'lastName'
     | 'headline'
     | 'pronouns'
-    | 'jobTitleId'
+    | 'role'
     | 'majorId'
     | 'academicYear'
     | 'location'
@@ -34,7 +34,7 @@ export const updateUserInfoService = async (
         lastName: true,
         headline: true,
         pronouns: true,
-        jobTitleId: true,
+        role: true,
         majorId: true,
         academicYear: true,
         location: true,

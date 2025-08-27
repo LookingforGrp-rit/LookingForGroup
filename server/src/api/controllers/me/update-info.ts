@@ -8,7 +8,7 @@ interface UpdateUserInfo {
   lastName?: string;
   headline?: string;
   pronouns?: string;
-  jobTitleId?: number;
+  tile?: string;
   majorId?: number;
   academic_year?: UsersAcademicYear | null;
   location?: string;
@@ -53,7 +53,7 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     'lastName',
     'headline',
     'pronouns',
-    'jobTitleId',
+    'role',
     'majorId',
     'academicYear',
     'location',
