@@ -2,6 +2,7 @@ import express, { type Request, type Response } from 'express';
 import morgan from 'morgan';
 import envConfig from '#config/env.ts';
 import datasetsRouter from '#routes/datasets.ts';
+import meRouter from '#routes/me.ts';
 import projectsRouter from '#routes/projects.ts';
 import usersRouter from '#routes/users.ts';
 
@@ -25,6 +26,7 @@ if (envConfig.env === 'development') {
 app.use('/datasets', datasetsRouter);
 app.use('/users', usersRouter);
 app.use('/projects', projectsRouter);
+app.use('/me', meRouter);
 
 app.get('', (_req: Request, res: Response) => {
   res.json({ message: 'You Reached The Looking For Group API' });
