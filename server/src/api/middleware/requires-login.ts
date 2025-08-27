@@ -1,4 +1,4 @@
-import { ApiResponse } from '@looking-for-group/shared';
+import type { ApiResponse } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import { isLoggedInHeaderKey, uidHeaderKey } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
