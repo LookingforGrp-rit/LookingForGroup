@@ -1,3 +1,4 @@
+import { ApiResponse } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import { isLoggedInHeaderKey, uidHeaderKey } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
@@ -16,7 +17,13 @@ const requiresLogin = (request: Request, response: Response, next: NextFunction)
     return;
   }
 
-  response.json({ message: 'You must log in to access this resource' });
+  const resBody: ApiResponse = {
+    status: 401,
+    error: 'User not logged in',
+    data: null,
+    memetype: 'application/json',
+  };
+  response.status(401).json(resBody);
   return;
 };
 
