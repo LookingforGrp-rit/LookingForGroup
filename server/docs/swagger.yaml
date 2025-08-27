@@ -364,16 +364,18 @@ paths:
 
   /api/me:
     get:
-      summary: Get a user by ID
+      summary: Gets the current user by ID
       tags:
-        - Users
+        - Me
+      security:
+        - shibbolethAuth: []
       parameters:
-        - in: path
-          name: id
+        - in: query
+          name: devId
           schema:
             type: integer
-          required: true
-          description: The user ID
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: A single user
@@ -404,12 +406,12 @@ paths:
       security:
         - shibbolethAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
+        - in: query
+          name: devId
           schema:
             type: integer
-          description: The user ID
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -483,12 +485,12 @@ paths:
       security:
         - shibbolethAuth: []
       parameters:
-        - in: path
-          name: id
-          required: true
+        - in: query
+          name: devId
           schema:
             type: integer
-          description: The user ID
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: User successfully deleted
@@ -632,21 +634,21 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/users/{id}/projects:
+  /api/me/projects:
     get:
       summary: Get current user's own projects
       description: Returns the list of projects owned by the user identified by userID.
       tags:
-        - Users
+        - Me
       security:
         - shibbolethAuth: []
       parameters:
-        - name: id
-          in: path
-          description: User ID to get projects for
-          required: true
+        - in: query
+          name: devId
           schema:
             type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: List of projects owned by the user
@@ -720,18 +722,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/followings/projects:
+  /api/users/{id}followings/projects:
     get:
       summary: Get projects a user is following
       tags:
         - Users
-      parameters:
-        - name: id
-          in: path
-          description: User ID to get followed projects for
-          required: true
-          schema:
-            type: integer
       responses:
         '200':
           description: List of projects the user is following
@@ -761,7 +756,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/followings/projects/{followId}:
+  /api/me/followings/projects/{id}:
     post:
       summary: Follow a project
       security:
@@ -772,15 +767,15 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the user who is following the project
-          schema:
-            type: integer
-        - name: followId
-          in: path
-          required: true
           description: ID of the project to follow
           schema:
             type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '201':
           description: Project followed successfully
@@ -814,15 +809,15 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the user who is unfollowing the project
-          schema:
-            type: integer
-        - name: followId
-          in: path
-          required: true
           description: ID of the project to unfollow
           schema:
             type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: Project unfollowed successfully
@@ -837,18 +832,11 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/followings/people:
+  /api/users/{id}/followings/people:
     get:
       tags:
         - Users
       summary: Get list of users that the specified user is following
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID of the user
-          schema:
-            type: integer
       responses:
         '200':
           description: List of users the current user is following
@@ -889,7 +877,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/followings/people/{followId}:
+  /api/me/followings/people/{id}:
     post:
       summary: Follow another user
       security:
@@ -900,15 +888,15 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the user initiating the follow
-          schema:
-            type: integer
-        - name: followId
-          in: path
-          required: true
           description: ID of the user to be followed
           schema:
             type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '201':
           description: User followed successfully
@@ -943,15 +931,15 @@ paths:
         - name: id
           in: path
           required: true
-          description: ID of the user who wants to unfollow another user
-          schema:
-            type: integer
-        - name: followId
-          in: path
-          required: true
           description: ID of the user to be unfollowed
           schema:
             type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: User unfollowed successfully
@@ -1004,6 +992,13 @@ paths:
         - Projects
       security:
         - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -1046,6 +1041,12 @@ paths:
           schema:
             type: integer
           description: Project ID
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: Project found and returned
@@ -1088,6 +1089,12 @@ paths:
           schema:
             type: integer
           description: The project ID
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -1150,6 +1157,12 @@ paths:
           description: The ID of the project to delete
           schema:
             type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: Project deleted successfully
@@ -1194,6 +1207,12 @@ paths:
           schema:
             type: integer
             example: 1
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -1286,6 +1305,12 @@ paths:
           schema:
             type: integer
             example: 42
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -1369,6 +1394,12 @@ paths:
           schema:
             type: integer
             example: 1
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -1414,6 +1445,8 @@ paths:
         - Projects
       description: This endpoint is intended to remove a picture from a project by picture ID,
         but is not implemented yet.
+      security:
+        - shibbolethAuth: []
       parameters:
         - in: path
           name: id
@@ -1427,6 +1460,12 @@ paths:
           schema:
             type: integer
           description: Picture ID to remove
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '501':
           description: NOT DONE
@@ -1464,6 +1503,12 @@ paths:
           schema:
             type: integer
           description: Project ID to add the member to
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -1539,6 +1584,12 @@ paths:
           schema:
             type: integer
           description: The ID of the member to update
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -1636,6 +1687,7 @@ paths:
 components:
   securitySchemes:
     shibbolethAuth:
+      #Filler values need to be changed
       type: http
       scheme: bearer
       bearerFormat: JWT
