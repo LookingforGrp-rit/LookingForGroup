@@ -7,6 +7,7 @@ type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT'>;
 
 const createUserService = async (
   uid: number,
+  username: string,
   firstName: string,
   lastName: string,
   email: string,
@@ -15,7 +16,7 @@ const createUserService = async (
     return await prisma.users.create({
       data: {
         universityId: uid.toString(),
-        username: firstName,
+        username: username,
         firstName,
         lastName,
         ritEmail: email,
