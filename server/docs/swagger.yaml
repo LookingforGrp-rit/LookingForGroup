@@ -1001,7 +1001,7 @@ paths:
       summary: Create a new project
       description: Creates a new project using the request body
       tags:
-        - Projects
+        - Me
       security:
         - shibbolethAuth: []
       requestBody:
@@ -1183,7 +1183,7 @@ paths:
       summary: Update the thumbnail image of a project
       description: Updates the thumbnail URL of a project by its ID. Only the thumbnail can be updated.
       tags:
-        - Projects
+        - Me
       security:
         - shibbolethAuth: []
       parameters:
@@ -1275,7 +1275,7 @@ paths:
       summary: Add a new picture to a project
       description: Creates a new picture entry associated with a specific project.
       tags:
-        - Projects
+        - Me
       security:
         - shibbolethAuth: []
       parameters:
@@ -1351,7 +1351,7 @@ paths:
       summary: Update a pictures for a project
       description: Updates fields of an existing project picture by image ID.
       tags:
-        - Projects
+        - Me
       security:
         - shibbolethAuth: []
       parameters:
@@ -1411,7 +1411,7 @@ paths:
     delete:
       summary: Remove a picture from a project (NOT FINISHED)
       tags:
-        - Projects
+        - Me
       description: This endpoint is intended to remove a picture from a project by picture ID,
         but is not implemented yet.
       parameters:
@@ -1453,7 +1453,7 @@ paths:
     post:
       summary: Add a member to a project
       tags:
-        - Projects
+        - Me
       security:
         - shibbolethAuth: []
       description: Adds a new member to a project using the project ID.
@@ -1524,7 +1524,7 @@ paths:
       security:
         - shibbolethAuth: []
       tags:
-        - Projects
+        - Me
       description: Updates the role or other properties of a member in a project.
       parameters:
         - in: path
@@ -1587,7 +1587,7 @@ paths:
     delete:
       summary: Remove a member from a project
       tags:
-        - Projects
+        - Me
       description: Deletes a member from a project by specifying the user ID in the query parameters.
       security:
         - shibbolethAuth: []
