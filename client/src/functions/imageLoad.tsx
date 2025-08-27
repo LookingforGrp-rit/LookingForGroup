@@ -17,7 +17,7 @@ const usePreloadedImage = (expectedSrc: string, placeholder: string) => {
     img.onerror = () => setImgSrc(placeholder);
 
     // Starts loading process
-    img.src = expectedSrc;
+    img.src = expectedSrc ?? placeholder;
   }, [expectedSrc, placeholder]);
 
   return imgSrc;
