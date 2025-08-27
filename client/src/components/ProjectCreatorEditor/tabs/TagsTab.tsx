@@ -1,6 +1,7 @@
 // --- Imports ---
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SearchBar } from "../../SearchBar";
+import { getProjectTypes, getTags, getSkills } from "../../../api/users";
 
 
 // --- Interfaces ---
@@ -118,71 +119,41 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
 
   // Get full lists of project types, tags, and skills
   useEffect(() => {
-    const getProjectTypes = async () => {
-      const url = `/api/datasets/project-types`;
-
-      try {
-        const response = await fetch(url);
-
-        const projectTypes = await response.json();
-        const projectTypeData = projectTypes.data;
-
-        if (projectTypeData === undefined) {
+    const fetchProjectTypes = async () => {
+        const response = await getProjectTypes();
+        if (!response.data) {
           return;
         }
-        setAllProjectTypes(projectTypeData);
-      } catch (error) {
-        console.error(error);
-      }
+        setAllProjectTypes(response.data);
     };
     if (allProjectTypes.length === 0) {
-      getProjectTypes();
+      fetchProjectTypes();
     }
   }, [allProjectTypes]);
+
   useEffect(() => {
-    const getTags = async () => {
-      const url = `/api/datasets/tags`;
-
-      try {
-        const response = await fetch(url);
-
-        const tags = await response.json();
-        const tagsData = tags.data;
-
-        if (tagsData === undefined) {
+    const getAllTags = async () => {
+        const response = await getTags();
+        if (response.data === undefined) {
           return;
         }
-        setAllTags(tagsData);
-
-      } catch (error) {
-        console.error(error);
-      }
+        setAllTags(response.data);
     };
     if (allTags.length === 0) {
-      getTags();
+      getAllTags();
     }
   }, [allTags]);
+
   useEffect(() => {
-    const getSkills = async () => {
-      const url = `/api/datasets/skills`;
-
-      try {
-        const response = await fetch(url);
-
-        const skills = await response.json();
-        const skillData = skills.data;
-
-        if (skillData === undefined) {
+    const getSkill = async () => {
+        const response = await getSkills();
+        if (response.data === undefined) {
           return;
         }
-        setAllSkills(skillData);
-
-      } catch (error) {
-        console.error(error);
+        setAllSkills(response.data);
       }
-    };
     if (allSkills.length === 0) {
-      getSkills();
+      getSkill();
     }
   }, [allSkills]);
 

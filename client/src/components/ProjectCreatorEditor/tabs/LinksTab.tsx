@@ -1,6 +1,7 @@
 // --- Imports ---
 import { useEffect, useState } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
+import { getSocials as fetchSocials } from "../../../api/users";
 
 
 // --- Interfaces ---
@@ -103,22 +104,12 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
   // Get socials if allSocials is empty
   useEffect(() => {
     const getSocials = async () => {
-      const url = `/api/datasets/socials`;
+        const response = await fetchSocials(); 
 
-      try {
-        const response = await fetch(url);
-
-        const socials = await response.json();
-        const socialsData = socials.data;
-
-        if (socialsData === undefined) {
+        if (response.data === undefined) {
           return;
         }
-        setAllSocials(socialsData);
-
-      } catch (error) {
-        console.error(error.message);
-      }
+        setAllSocials(response.data);
     };
     if (allSocials.length === 0) {
       getSocials();

@@ -7,6 +7,7 @@ import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { current } from "@reduxjs/toolkit";
+import { getJobTitles, getUsers } from "../../../api/users";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -174,21 +175,10 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
   // Get job list if allJobs is empty
   useEffect(() => {
     const getJobsList = async () => {
-      const url = `/api/datasets/job-titles`;
-
-      try {
-        const response = await fetch(url);
-
-        const jobTitles = await response.json();
-        const jobTitleData = jobTitles.data;
-
-        if (jobTitleData === undefined) {
-          return;
+        const response = await getJobTitles();
+        if (response.data) {
+          setAllJobs(response.data);
         }
-        setAllJobs(jobTitleData);
-      } catch (error) {
-        console.error(error.message);
-      }
     };
     if (allJobs.length === 0) {
       getJobsList();
@@ -198,17 +188,13 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
   // Get user list if allUsers is empty
   useEffect(() => {
     const getUsersList = async () => {
-      const url = `/api/users`;
-
       try {
-        const response = await fetch(url);
+        const response = await getUsers();
 
-        const users = await response.json();
-
-        setAllUsers(users.data);
+        setAllUsers(response.data);
 
         // list of users to search. users searchable by first name, last name, or username
-        const searchableUsers = await Promise.all(users.data.map(async (user: User) => {
+        const searchableUsers = await Promise.all(response.data.map(async (user: User) => {
           // get username
           const usernameResponse = await fetch(`/api/users/${user.userId}`);
           const usernameJson = await usernameResponse.json();
@@ -227,7 +213,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         }
         setSearchableUsers({ data: searchableUsers });
       } catch (error) {
-        console.error(error.message);
+        console.error(error);
       }
     };
     if (!allUsers || allUsers.length === 0) {

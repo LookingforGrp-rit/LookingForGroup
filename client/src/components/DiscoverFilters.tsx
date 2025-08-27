@@ -3,6 +3,7 @@ import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
 import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
+import { getMajors, getJobTitles, getProjectTypes } from '../api/users';
 
 // Has to be outside component to avoid getting reset on re-render
 let activeTagFilters: string[] = [];
@@ -73,25 +74,17 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: string
       // Need to also pull from majors and job_titles tables
       if (category === 'profiles') {
         // Get job titles and append it to full data
-        response = await fetch(`/api/datasets/job-titles`);
-        let extraData = await response.json();
-        if (extraData.data !== undefined) {
-          extraData.data.forEach((jobTitle: Skill) => data.push({ label: jobTitle.label, type: 'Role' }));
-        }
+        const jobTitles = await getJobTitles();
+        jobTitles.data.forEach((jobTitle: Skill) => data.push({ label: jobTitle.label, type: 'Role' }));
 
         // Get majors and append it to full data
-        response = await fetch(`/api/datasets/majors`);
-        extraData = await response.json();
-        if (extraData.data !== undefined) {
-          extraData.data.forEach((major: Skill) => data.push({ label: major.label, type: 'Major' }));
-        }
+        const majors = await getMajors();
+        majors.data.forEach((major: Skill) => data.push({ label: major.label, type: 'Major' }));
+
       } else if (category === 'projects') {
         // Pull Project Types and append it to full data
-        response = await fetch(`/api/datasets/project-types`);
-        const extraData = await response.json();
-        if (extraData.data !== undefined) {
-          extraData.data.forEach((projectType: Skill) => data.push({ label: projectType.label, type: 'Project Type' }));
-        }
+        const projectTypes = await getProjectTypes();
+        projectTypes.data.forEach((projectType: Skill) => data.push({ label: projectType.label, type: 'Project Type' }));
       }
 
       // Construct the finalized version of the data to be moved into filterPopupTabs

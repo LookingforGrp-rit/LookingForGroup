@@ -116,10 +116,8 @@ export const InterestTab = (props: { profile: ProfileData}) => {
   // load interests from API
   /*useEffect(() => {
     const getInterests = async () => {
-      const url = `/api/datasets/skills`;
-
       try {
-        const response = await fetch(url);
+        const response = await getSkills();   <--- import getSkills from api/users.ts
 
         const interests = await response.json();
         const interestData = interests.data;

@@ -14,6 +14,7 @@ import '../../public/FontAwesome/css/brands.css';
 
 import { useState, useEffect } from 'react';
 import { JSX } from 'react';
+import { getSocials as fetchSocials } from '../api/users'; 
 
 interface Social {
   id: string | number;
@@ -26,10 +27,8 @@ interface SocialSelectorProps {
 }
 
 const getSocials = async (): Promise<Social[]> => {
-  // TODO: create error handling, try catch block
-  const response = await fetch('/api/datasets/socials');
-  const { data } = await response.json();
-  return data;
+  const response = await fetchSocials();
+  return response.data ?? [];
 };
 
 export const SocialSelector: React.FC<SocialSelectorProps> = (props) => {

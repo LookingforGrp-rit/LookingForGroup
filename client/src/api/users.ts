@@ -551,8 +551,10 @@ export const deleteProjectFollowing = async (id: number, projID: number) => {
   return { status: 201, data: response.data };
 };
 
+/* DATASETS */
+
 /**
- * Retrieves majors from API.
+ * Retrieves list of majors.
  */
 export const getMajors = async (): Promise<ApiResponse> => {
    const apiURL = `/datasets/majors`;
@@ -568,7 +570,7 @@ export const getMajors = async (): Promise<ApiResponse> => {
 }
 
 /**
- * Retrieves job titles from API.
+ * Gets list of job titles.
  */
 export const getJobTitles = async (): Promise<ApiResponse> => {
   const apiURL = `/datasets/job-titles`
@@ -582,6 +584,70 @@ export const getJobTitles = async (): Promise<ApiResponse> => {
     return { status: 500, error: "Internal error" };
   }
 };
+
+/**
+ * Retrieves list of project types.
+ */
+export const getProjectTypes = async (): Promise<ApiResponse> => {
+    const apiURL = `/datasets/project-types`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching project types", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
+
+/**
+ * Gets list of skills.
+ */
+export const getSkills = async (): Promise<ApiResponse> => {
+    const apiURL = `/datasets/skills`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching skills", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
+
+/**
+ * Retrieves list of tags.
+ */
+export const getTags = async (): Promise<ApiResponse> => {
+    const apiURL = `/datasets/tags`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching tags", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
+
+/**
+ * Gets list of socials links.
+ */
+export const getSocials = async (): Promise<ApiResponse> => {
+    const apiURL = `/datasets/socials`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching socials", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
 
 //getVisibleProjects
 //updateProjectVisibility
@@ -614,5 +680,8 @@ export default {
   addProjectFollowing,
   deleteProjectFollowing,
   getMajors,
-  getJobTitles
+  getJobTitles,
+  getProjectTypes,
+  getSkills,
+  getTags
 };

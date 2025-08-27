@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { PagePopup, openClosePopup } from '../PagePopup';
 import { getByID } from '../../api/projects';
+import { getJobTitles, getMajors, getSkills, getSocials as fetchSocials } from '../../api/users';
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
 
 
@@ -24,37 +25,25 @@ const EditButton = ({ userData }) => {
   const [rolesList, setRolesList] = useState();
   const [majorsList, setMajorsList] = useState();
 
-  const getJobTitles = async () => {
-    const url = '/api/datasets/job-titles';
-
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setRolesList(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
+  const getJobTitlesData = async () => {
+      const response = await getJobTitles();
+      if (response.data) {
+       setRolesList(response.data);
+      }
   };
 
-  const getMajors = async () => {
-    const url = '/api/datasets/majors';
-
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setMajorsList(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
+  const getMajorsData = async () => {
+      const response = await getMajors();
+      if (response.data) {
+        setMajorsList(response.data);
+      }
   };
 
   if (rolesList === undefined) {
-    getJobTitles();
+    getJobTitlesData();
   }
   if (majorsList === undefined) {
-    getMajors();
+    getMajorsData();
   }
 
   // const [currentPFPLink, setCurrentPFPLink] = useState(require(`../../../../server/images/profiles/${userData.profile_image}`));
@@ -705,15 +694,10 @@ const EditButton = ({ userData }) => {
         console.log(error);
       }
     } else {
-      const url = `/api/datasets/skills`;
-      try {
-        const response = await fetch(url);
-
-        const rawData = await response.json();
-        setSkillsList(rawData.data);
-      } catch (error) {
-        console.log(error);
-      }
+        const response = await getSkills();
+        if (response.data) {
+          setSkillsList(response.data);
+        }
     }
   };
 
@@ -897,15 +881,8 @@ const EditButton = ({ userData }) => {
   const [socialLinks, setSocialLinks] = useState();
 
   const getSocials = async () => {
-    const url = `/api/datasets/socials`;
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setSocialLinks(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
+      const response = await fetchSocials();
+      setSocialLinks(response.data);
   };
 
   if (socialLinks === undefined) {
