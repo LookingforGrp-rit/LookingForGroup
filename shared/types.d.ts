@@ -22,6 +22,16 @@ export type AcademicYear =
 export type Visibility = 0 | 1;
 
 
+//API REQUEST
+
+declare global{
+    namespace Express {
+        interface Request {
+            currentUser?: string
+        }
+    }
+}
+
 //API RESPONSE
 
 export interface ApiResponse<_data = any> {

@@ -4,7 +4,18 @@ import { deleteUserFollowService } from '#services/me/delete-follow-user.ts';
 
 // delete a user from follow list
 export const deleteUserFollowing = async (req: Request, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id);
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const userId = parseInt(req.currentUser);
   const followingId = parseInt(req.params.followId);
 
   //validate input

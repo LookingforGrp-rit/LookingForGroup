@@ -4,8 +4,19 @@ import { getMyProjectsService } from '#services/me/get-my-proj.ts';
 
 // gets the current users projects
 export const getMyProjects = async (req: Request, res: Response): Promise<void> => {
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
   //current user ID
-  const UserId = parseInt(req.params.id);
+  const UserId = parseInt(req.currentUser);
 
   //check if ID is number
   if (isNaN(UserId)) {

@@ -1,11 +1,10 @@
 import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { uidHeaderKey } from '#config/constants.ts';
 import { getUserByShibService } from '#services/users/get-user-shib.ts';
 
-//get username by shibbolth
-export const getUsernameByShib = async (req: Request, res: Response): Promise<void> => {
-  const universityId = req.headers[uidHeaderKey] as string | undefined;
+const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
+  const universityId = request.headers[uidHeaderKey] as string | undefined;
 
   //if no university id found
   if (!universityId) {
@@ -15,7 +14,7 @@ export const getUsernameByShib = async (req: Request, res: Response): Promise<vo
       data: null,
       memetype: 'application/json',
     };
-    res.status(400).json(resBody);
+    response.status(400).json(resBody);
     return;
   }
 
@@ -28,7 +27,7 @@ export const getUsernameByShib = async (req: Request, res: Response): Promise<vo
       data: null,
       memetype: 'application/json',
     };
-    res.status(500).json(resBody);
+    response.status(500).json(resBody);
     return;
   }
 
@@ -39,15 +38,13 @@ export const getUsernameByShib = async (req: Request, res: Response): Promise<vo
       data: null,
       memetype: 'application/json',
     };
-    res.status(404).json(resBody);
+    response.status(404).json(resBody);
     return;
   }
 
-  const resBody: ApiResponse<typeof result> = {
-    status: 200,
-    error: null,
-    data: result,
-    memetype: 'application/json',
-  };
-  res.status(200).json(resBody);
+  const userID = result.userId;
+  request.currentUser = `${userID}`;
+  next();
 };
+
+export default injectCurrentUser;

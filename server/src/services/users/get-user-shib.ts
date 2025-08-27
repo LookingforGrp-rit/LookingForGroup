@@ -4,7 +4,7 @@ import type { ServiceErrorSubset } from '#services/service-error.ts';
 type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 //get username by shibboleth id
-export const getUserByhibService = async (
+export const getUserByShibService = async (
   universityId: string,
 ): Promise<{ username: string; userId: number } | GetUserServiceError> => {
   try {
@@ -21,7 +21,7 @@ export const getUserByhibService = async (
 
     return user;
   } catch (e) {
-    console.error(`Error in getUserByhibService: ${JSON.stringify(e)}`);
+    console.error(`Error in getUserByShibService: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';
   }
 };
