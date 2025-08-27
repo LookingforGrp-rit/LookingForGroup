@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getUserAccountService } from '#services/users/get-user-acc.ts';
+import { getUserAccountService } from '#services/me/get-user-acc.ts';
 
 export const getAccount = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {

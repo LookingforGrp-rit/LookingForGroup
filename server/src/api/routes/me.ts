@@ -4,9 +4,9 @@ import { addUserFollowing } from '#controllers/me/add-follow-user.ts';
 import { deleteProjectFollowing } from '#controllers/me/delete-follow-proj.ts';
 import { deleteUserFollowing } from '#controllers/me/delete-follow-user.ts';
 import { deleteUser } from '#controllers/me/delete-user.ts';
+import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
-import { getAccount } from '#controllers/users/get-acc.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
 
