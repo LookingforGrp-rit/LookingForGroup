@@ -1,14 +1,11 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteUserFollowService } from '#services/users/delete-follow-user.ts';
+import { deleteUserService } from '#services/me/delete-user.ts';
 
-// delete a user from follow list
-export const deleteUserFollowing = async (req: Request, res: Response): Promise<void> => {
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   const userId = parseInt(req.params.id);
-  const followingId = parseInt(req.params.followId);
 
-  //validate input
-  if (isNaN(userId) || isNaN(followingId)) {
+  if (isNaN(userId)) {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Invalid user IDs',
@@ -19,8 +16,7 @@ export const deleteUserFollowing = async (req: Request, res: Response): Promise<
     return;
   }
 
-  //call service
-  const result = await deleteUserFollowService(userId, followingId);
+  const result = await deleteUserService(userId);
 
   //internal error
   if (result === 'INTERNAL_ERROR') {

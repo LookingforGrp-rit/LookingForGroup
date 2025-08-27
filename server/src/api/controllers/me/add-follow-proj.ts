@@ -1,17 +1,17 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { addUserFollowingService } from '#services/users/add-follow-user.ts';
+import { addProjectFollowingService } from '#services/me/add-follow-proj.ts';
 
-//add user to follow list
-export const addUserFollowing = async (req: Request, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id);
-  const followingId = parseInt(req.params.followId);
+//add project to follow list
+export const addProjectFollowing = async (req: Request, res: Response): Promise<void> => {
+  const userId = parseInt(req.params.id); //shibboleth cookie would give us this but where would i get it from
+  const projectId = parseInt(req.params.followId);
 
   //validate input
-  if (isNaN(userId) || isNaN(followingId)) {
+  if (isNaN(userId) || isNaN(projectId)) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Invalid user IDs',
+      error: 'Invalid user ID or project ID',
       data: null,
       memetype: 'application/json',
     };
@@ -19,12 +19,12 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
     return;
   }
 
-  const result = await addUserFollowingService(userId, followingId);
+  const result = await addProjectFollowingService(userId, projectId);
 
   if (result === 'CONFLICT') {
     const resBody: ApiResponse = {
       status: 409,
-      error: 'Alredy following user',
+      error: 'Alredy following project',
       data: null,
       memetype: 'application/json',
     };
@@ -46,7 +46,7 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'User not found/ cannot follow self',
+      error: 'User not found',
       data: null,
       memetype: 'application/json',
     };

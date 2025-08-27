@@ -1,17 +1,17 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getMyProjectsService } from '#services/users/get-my-proj.ts';
+import { deleteUserFollowService } from '#services/me/delete-follow-user.ts';
 
-// gets the current users projects
-export const getMyProjects = async (req: Request, res: Response): Promise<void> => {
-  //current user ID
-  const UserId = parseInt(req.params.id);
+// delete a user from follow list
+export const deleteUserFollowing = async (req: Request, res: Response): Promise<void> => {
+  const userId = parseInt(req.params.id);
+  const followingId = parseInt(req.params.followId);
 
-  //check if ID is number
-  if (isNaN(UserId)) {
+  //validate input
+  if (isNaN(userId) || isNaN(followingId)) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Invalid user ID',
+      error: 'Invalid user IDs',
       data: null,
       memetype: 'application/json',
     };
@@ -19,8 +19,10 @@ export const getMyProjects = async (req: Request, res: Response): Promise<void> 
     return;
   }
 
-  const result = await getMyProjectsService(UserId);
+  //call service
+  const result = await deleteUserFollowService(userId, followingId);
 
+  //internal error
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 500,
@@ -32,17 +34,7 @@ export const getMyProjects = async (req: Request, res: Response): Promise<void> 
     return;
   }
 
-  if (result === 'NOT_FOUND') {
-    const resBody: ApiResponse = {
-      status: 404,
-      error: 'No Projects for user found',
-      data: null,
-      memetype: 'application/json',
-    };
-    res.status(404).json(resBody);
-    return;
-  }
-
+  //passed
   const resBody: ApiResponse<typeof result> = {
     status: 200,
     error: null,
