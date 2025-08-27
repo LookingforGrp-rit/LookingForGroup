@@ -23,7 +23,18 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
   req,
   res,
 ) => {
-  const { id } = req.params;
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const id = req.currentUser;
   const updates = req.body;
 
   //validate ID

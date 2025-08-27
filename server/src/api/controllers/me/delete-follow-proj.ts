@@ -4,7 +4,18 @@ import { deleteProjectFollowService } from '#services/me/delete-follow-proj.ts';
 
 // delete a project from follow list
 export const deleteProjectFollowing = async (req: Request, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id);
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const userId = parseInt(req.currentUser);
   const projectId = parseInt(req.params.followId);
 
   //validate input

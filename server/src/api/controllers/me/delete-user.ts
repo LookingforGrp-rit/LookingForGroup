@@ -3,7 +3,18 @@ import type { Request, Response } from 'express';
 import { deleteUserService } from '#services/me/delete-user.ts';
 
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id);
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const userId = parseInt(req.currentUser);
 
   if (isNaN(userId)) {
     const resBody: ApiResponse = {
