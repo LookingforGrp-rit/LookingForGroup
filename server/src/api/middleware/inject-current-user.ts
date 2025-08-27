@@ -1,9 +1,21 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import { uidHeaderKey } from '#config/constants.ts';
+import envConfig from '#config/env.ts';
 import { getUserByShibService } from '#services/users/get-user-shib.ts';
 
 const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
+  if (envConfig.env === 'development' || envConfig.env === 'test') {
+    /// Add currentUser for development
+    const devId = request.query.devId as string | undefined;
+
+    if (devId) {
+      request.currentUser = devId;
+      next();
+      return;
+    }
+  }
+
   const universityId = request.headers[uidHeaderKey] as string | undefined;
 
   //if no university id found
