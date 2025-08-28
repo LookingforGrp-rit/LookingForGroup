@@ -24,7 +24,18 @@ export const ProjectCarousel = ({ project }: { project: ProjectData }) => {
             console.log(imageData);
     
             return (
-                <img src={`${API_BASE}/images/projects/${imageData.image}`} />
+                <img
+                    src={`${API_BASE}/images/projects/${imageData.image}`}
+                    // Cannot use usePreloadedImage function because this is in a callback
+                    onLoad={(e) => {
+                        const projectImg = e.target as HTMLImageElement;
+                        projectImg.src = `${API_BASE}/images/projects/${imageData.image}`;
+                    }}
+                    onError={(e) => {
+                        const projectImg = e.target as HTMLImageElement;
+                        projectImg.src = placeholderThumbnail;
+                    }}
+                />
             );
         });
     }

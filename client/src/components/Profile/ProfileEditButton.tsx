@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { PagePopup, openClosePopup } from '../PagePopup';
 import { getByID } from '../../api/projects';
+import usePreloadedImage from '../../functions/imageLoad';
+import profilePicture from '../../images/blue_frog.png';
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
 
 
@@ -59,7 +61,7 @@ const EditButton = ({ userData }) => {
 
   // const [currentPFPLink, setCurrentPFPLink] = useState(require(`../../../../server/images/profiles/${userData.profile_image}`));
   const [currentPFPLink, setCurrentPFPLink] = useState(
-    `${API_BASE}/images/profiles/${userData.profileImage}`
+    usePreloadedImage(`${API_BASE}/images/profiles/${userData.profileImage}`, profilePicture)
   );
   const [currentFirstName, setCurrentFirstName] = useState(userData.firstName);
   const [currentLastName, setCurrentLastName] = useState(userData.lastName);

@@ -104,14 +104,26 @@ export const ImageCarousel = ({
               onMouseLeave={() => handleHover(false)}
             >
               {dataList.map((image, index) => {
-                const imageLink = runningServer ? `${API_BASE}/images/projects/${image}` : image;
                 return (
                   <div
                     className="project-image-carousel-item"
                     key={index}
                     style={{ transform: `translate(-${currentIndex * 100}%)` }}
                   >
-                    <img className="project-image-carousel-image" src={imageLink} />
+                    <img
+                      className="project-image-carousel-image"
+                      src={`${API_BASE}/images/projects/${image}`}
+                      alt={'project image'}
+                      // Cannot use usePreloadedImage function because this is in a callback
+                      onLoad={(e) => {
+                        const projectImg = e.target as HTMLImageElement;
+                        projectImg.src = `${API_BASE}/images/projects/${image}`;
+                      }}
+                      onError={(e) => {
+                        const projectImg = e.target as HTMLImageElement;
+                        projectImg.src = image;
+                      }}
+                    />
                   </div>
                 );
               })}

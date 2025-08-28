@@ -29,6 +29,7 @@ import { ThemeIcon } from '../ThemeIcon';
 import { sendPost, sendDelete } from '../../functions/fetch';
 import { getByID } from '../../api/projects';
 import { getAccountInformation } from '../../api/users';
+import usePreloadedImage from '../../functions/imageLoad';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -94,6 +95,10 @@ const defaultProject = runningServer
       { id: 3, image: heart, position: 3 },
     ],
   };
+
+function useProfileImage(user) {
+  return usePreloadedImage(`${API_BASE}/images/profiles/${user.profileImage}`, profilePicture);
+}
 
 //Main component for the project page
 const NewProject = () => {
@@ -344,17 +349,26 @@ const NewProject = () => {
             );
           }
 
-          //FIXME: get profile image from API call
-          const imgSrc = (user.profileImage) ? `${API_BASE}/images/profiles/${user.profileImage}` : profilePicture;
-          //const imgSrc = profilePicture; // temporary
-
           return (
             <div
               key={user.userId}
               className="project-contributor"
               onClick={() => navigate(`${paths.routes.NEWPROFILE}?userID=${user.userId}`)}
             >
-              <img className="project-contributor-profile" src={imgSrc} alt="contributor profile" />
+              <img
+                className="project-contributor-profile"
+                src={`${API_BASE}/images/profiles/${user.profileImage}`}
+                alt="contributor profile"
+                // Cannot use usePreloadedImage function because this is in a callback
+                onLoad={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = `${API_BASE}/images/profiles/${user.profileImage}`;
+                }}
+                onError={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = profileImage;
+                }}
+              />
               <div className="project-contributor-info">
                 <div className="team-member-name">
                   {user.firstName} {user.lastName}
@@ -376,7 +390,7 @@ const NewProject = () => {
       projectContributors.length > 0 ? (
         <>
           {projectContributors.map((user) => {
-            const imgSrc = (user.profileImage) ? `${API_BASE}/images/profiles/${user.profileImage}` : profilePicture;
+            const imgSrc = useProfileImage(user);
 
             return (
               <div

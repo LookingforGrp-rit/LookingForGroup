@@ -7,6 +7,7 @@ import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { current } from "@reduxjs/toolkit";
+import usePreloadedImage from "../../../functions/imageLoad";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -562,13 +563,18 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                       <span key={m.userId} id="position-contact-link">
                         <img 
                           className='project-member-image'
-                          src={(m.profileImage) ? `${API_BASE}/images/profiles/${m.profileImage}` : profileImage}
+                          src={`${API_BASE}/images/profiles/${m.profileImage}`}
                           alt="profile"
                           // default profile picture if user image doesn't load
-                        onError={(e) => {
-                          const profileImg = e.target as HTMLImageElement;
-                          profileImg.src = profileImage;
-                        }}
+                          // Cannot use usePreloadedImage function because this is in a callback
+                          onLoad={() => {
+                            const profileImg = document.getElementById(`profile-image-${m.userId}`) as HTMLImageElement;
+                            profileImg.src = `${API_BASE}/images/profiles/${m.profileImage}`;
+                          }}
+                          onError={(e) => {
+                            const profileImg = e.target as HTMLImageElement;
+                            profileImg.src = profileImage;
+                          }}
                         />
                         {m.firstName} {m.lastName}
                       </span>
@@ -796,9 +802,14 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                 markup: (
                   <>
                     <img className='project-member-image' 
-                      src={m.profileImage ? `${API_BASE}/images/profiles/${m.profileImage}` : profileImage}
+                      src={`${API_BASE}/images/profiles/${m.profileImage}`}
                       alt="profile"
-                      // default profile picture if user image doesn't load
+                      title={'Profile picture'}
+                      // Cannot use usePreloadedImage function because this is in a callback
+                      onLoad={(e) => {
+                        const profileImg = e.target as HTMLImageElement;
+                        profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                      }}
                       onError={(e) => {
                         const profileImg = e.target as HTMLImageElement;
                         profileImg.src = profileImage;
@@ -901,13 +912,18 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
           <div key={m.userId} className="project-editor-project-member">
             <img
               className="project-member-image"
-              src={(m.profileImage) ? `${API_BASE}/images/profiles/${m.profileImage}` : profileImage}
+              src={`${API_BASE}/images/profiles/${m.profileImage}`}
               alt="profile image"
-              // default profile picture if user image doesn't load
-              onError={(e) => {
-                const profileImg = e.target as HTMLImageElement;
-                profileImg.src = profileImage;
-              }}
+              title={'Profile picture'}
+                // Cannot use usePreloadedImage function because this is in a callback
+                onLoad={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                }}
+                onError={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = profileImage;
+                }}
             />
             <div className="project-editor-project-member-info">
               <div className="project-editor-project-member-name">

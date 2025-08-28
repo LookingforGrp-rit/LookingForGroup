@@ -20,6 +20,7 @@ import { sendPost } from '../functions/fetch';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
+import profilePicture from '../../images/blue_frog.png';
 
 //user utils
 import { getCurrentUsername } from '../api/users.ts';
@@ -136,6 +137,16 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 src={`${API_BASE}/images/profiles/${profileImg}`}
                 id={'profile-img-icon'}
                 className={'rounded'}
+                title={'Profile picture'}
+                // Cannot use usePreloadedImage function because this is in a callback
+                onLoad={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                }}
+                onError={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = profilePicture;
+                }}
               />
             ) : (
               <ThemeIcon
@@ -203,6 +214,15 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                       src={`${API_BASE}/images/profiles/${profileImg}`}
                       className={'rounded'}
                       alt={'profile'}
+                      // Cannot use usePreloadedImage function because this is in a callback
+                      onLoad={(e) => {
+                        const profileImg = e.target as HTMLImageElement;
+                        profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                      }}
+                      onError={(e) => {
+                        const profileImg = e.target as HTMLImageElement;
+                        profileImg.src = profilePicture;
+                      }}
                     />
                   ) : (
                     <ThemeIcon

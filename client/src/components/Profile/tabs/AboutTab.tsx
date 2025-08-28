@@ -3,6 +3,8 @@ import { ProfileData } from '../ProfileEditPopup';
 import { RoleSelector } from '../../RoleSelector';
 import { MajorSelector } from '../../MajorSelector';
 import { ImageUploader } from '../../ImageUploader';
+import profilePicture from '../../images/blue_frog.png';
+import usePreloadedImage from '../../../functions/imageLoad';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -85,7 +87,7 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
 }) => {
 
   // Preview URL for profile image
-  const [previewUrl, setPreviewUrl] = useState<string>(`${API_BASE}/images/profiles/${profile.profile_image}`);
+  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`${API_BASE}/images/profiles/${profile.profile_image}`, profilePicture));
 
   // Effects
   // Set up profile input on first load
@@ -103,9 +105,10 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
     setPreviewUrl(imgLink);
     return () => URL.revokeObjectURL(imgLink);
   } else {
-    setPreviewUrl(`${API_BASE}/images/profiles/${profile.profile_image}`);
+    // Maintain original preview URL
+    setPreviewUrl(previewUrl);
   }
-}, [selectedImageFile, profile.profile_image]);
+}, [selectedImageFile, profile.profile_image, previewUrl]);
 
   // Set new image when one is picked from uploader
   const handleFileSelected = (file: File) => {
