@@ -6,7 +6,6 @@ info:
     LFG API Documentation. This will showcase all the endpoints available and how to use them.
     Note: When accessed directly from the express app, the endpoints will have an additional "/api" prefix.
     Because of this, please use the vite proxy when reviewing the docs.
-
 paths:
   # DATASETS
   /api/datasets/job-titles:
@@ -361,100 +360,15 @@ paths:
                     example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
-
-  /api/me:
-    get:
-      summary: Gets the current user by ID
-      tags:
-        - Me
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: query
-          name: devId
-          schema:
-            type: integer
-          required: false
-          description: The user ID to be used as the current user
-      responses:
-        '200':
-          description: A single user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    $ref: '#/components/schemas/UserDetails'
-                  memetype:
-                    type: string
-                    example: application/json
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
     put:
-      summary: Updates user profile information
+      summary: Create a user
       tags:
-        - Me
+        - Users
       security:
-        - shibbolethAuth: []
-      parameters:
-        - in: query
-          name: devId
-          schema:
-            type: integer
-          required: false
-          description: The user ID to be used as the current user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                headline:
-                  type: string
-                pronouns:
-                  type: string
-                jobTitleId:
-                  type: integer
-                MajorId:
-                  type: integer
-                academic_year:
-                  type: string
-                  enum: [Freshman, Sophmore, Junior, Senior, Graduate]
-                location:
-                  type: string
-                funFact:
-                  type: string
-                bio:
-                  type: string
-              example:
-                firstName: Mistah
-                lastName: Bones
-                headline: Sigh..
-                pronouns: they/them
-                jobTitleId: 1
-                majorId: 2
-                academic_year: Senior
-                location: Grave Yard
-                funFact: Bones
-                bio: AHHHHHHHH
-
+        shibbolethAuth: []
       responses:
-        '200':
-          description: Update a single user
+        '201':
+          description: User Created
           content:
             application/json:
               schema:
@@ -462,58 +376,20 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserDetails'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserDetails'
                   memetype:
                     type: string
                     example: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-    delete:
-      summary: Delete a user by ID
-      tags:
-        - Me
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: query
-          name: devId
-          schema:
-            type: integer
-          required: false
-          description: The user ID to be used as the current user
-      responses:
-        '200':
-          description: User successfully deleted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: string
-                    example: User deleted successfully
-                  memetype:
-                    type: string
-                    example: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -951,6 +827,164 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # ME
+  /api/me:
+    get:
+      summary: Gets the current user by ID
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: A single user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserDetails'
+                  memetype:
+                    type: string
+                    example: application/json
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: Updates user profile information
+      tags:
+        - Me
+      x-middleware:
+        - injectCurrentUser
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                firstName:
+                  type: string
+                lastName:
+                  type: string
+                headline:
+                  type: string
+                pronouns:
+                  type: string
+                jobTitleId:
+                  type: integer
+                MajorId:
+                  type: integer
+                academic_year:
+                  type: string
+                  enum: [Freshman, Sophmore, Junior, Senior, Graduate]
+                location:
+                  type: string
+                funFact:
+                  type: string
+                bio:
+                  type: string
+              example:
+                firstName: Mistah
+                lastName: Bones
+                headline: Sigh..
+                pronouns: they/them
+                jobTitleId: 1
+                majorId: 2
+                academic_year: Senior
+                location: Grave Yard
+                funFact: Bones
+                bio: AHHHHHHHH
+
+      responses:
+        '200':
+          description: Update a single user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserDetails'
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete a user by ID
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: User successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: User deleted successfully
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1849,13 +1883,13 @@ components:
         pronouns:
           type: string
           nullable: true
-        jobTitle:
+        title:
           type: string
           nullable: true
         major:
           type: string
           nullable: true
-        academic_year:
+        academicYear:
           type: string
           nullable: true
         location:

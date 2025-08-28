@@ -6,14 +6,34 @@ import {
   lastNameHeaderKey,
   emailHeaderKey,
 } from '#config/constants.ts';
+import envConfig from '#config/env.ts';
 import createUserService from '#services/users/create-user.ts';
 import { getUserByUsernameService } from '#services/users/get-by-username.ts';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   const uid = parseInt(req.headers[uidHeaderKey] as string);
-  const firstName = req.headers[firstNameHeaderKey] as string | undefined;
-  const lastName = req.headers[lastNameHeaderKey] as string;
-  const email = req.headers[emailHeaderKey] as string;
+  let firstName = req.headers[firstNameHeaderKey] as string | undefined;
+  let lastName = req.headers[lastNameHeaderKey] as string;
+  let email = req.headers[emailHeaderKey] as string;
+
+  if (envConfig.env === 'development' || envConfig.env === 'test') {
+    // Fudge values for development
+    const devFirstName = req.query.devFirstName as string | undefined;
+    const devLastName = req.query.devLastName as string | undefined;
+    const devEmail = req.query.devEmail as string | undefined;
+
+    if (devFirstName) {
+      firstName = devFirstName;
+    }
+
+    if (devLastName) {
+      lastName = devLastName;
+    }
+
+    if (devEmail) {
+      email = devEmail;
+    }
+  }
 
   if (!uid || !firstName || !lastName || !email) {
     const resBody: ApiResponse = {
