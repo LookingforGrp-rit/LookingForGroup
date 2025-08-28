@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { RequestHandler } from 'express';
 import type { UsersAcademicYear } from '#prisma-models/index.js';
 import { updateUserInfoService } from '#services/me/update-info.ts';
+import { getUserByUsernameService } from '#services/users/get-by-username.ts';
 
 interface UpdateUserInfo {
   firstName?: string;
@@ -79,6 +80,26 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     };
     res.status(400).json(resBody);
     return;
+  }
+
+  //check if username was updated, and only do this whole check if it was
+  if (updates['username']) {
+    const newUsername = updates['username'];
+    const userExist = await getUserByUsernameService(newUsername);
+    if (
+      userExist !== 'NOT_FOUND' &&
+      userExist !== 'INTERNAL_ERROR' &&
+      userExist.userId !== userId
+    ) {
+      const resBody: ApiResponse = {
+        status: 409,
+        error: 'Username already taken',
+        data: null,
+        memetype: 'application/json',
+      };
+      res.status(409).json(resBody);
+      return;
+    }
   }
 
   const result = await updateUserInfoService(userId, updates);
