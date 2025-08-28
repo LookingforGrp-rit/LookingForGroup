@@ -20,7 +20,7 @@ import { sendPost } from '../functions/fetch';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
-import profilePicture from '../../images/blue_frog.png';
+import profilePicture from '../images/blue_frog.png';
 
 //user utils
 import { getCurrentUsername } from '../api/users.ts';

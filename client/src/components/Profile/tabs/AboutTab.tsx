@@ -3,7 +3,7 @@ import { ProfileData } from '../ProfileEditPopup';
 import { RoleSelector } from '../../RoleSelector';
 import { MajorSelector } from '../../MajorSelector';
 import { ImageUploader } from '../../ImageUploader';
-import profilePicture from '../../images/blue_frog.png';
+import profilePicture from '../../../images/blue_frog.png';
 import usePreloadedImage from '../../../functions/imageLoad';
 
 //backend base url for getting images
