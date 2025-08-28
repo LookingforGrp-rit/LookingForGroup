@@ -219,7 +219,7 @@ model Users {
   profileImage                                   String?             @map("profile_image") @db.VarChar(100)
   headline                                       String?             @db.VarChar(100)
   pronouns                                       String?             @db.Text
-  title                                     	   String?        	   @db.VarChar(50)
+  title                                          String?             @db.VarChar(50)
   majorId                                        Int?                @map("major_id")
   academicYear                                   UsersAcademicYear?  @map("academic_year")
   location                                       String?             @db.VarChar(150)

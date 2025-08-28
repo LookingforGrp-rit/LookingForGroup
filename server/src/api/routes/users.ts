@@ -32,7 +32,7 @@ router.get('/search-email/:email', getUserByEmail);
 //router.put('/:id/profile-picture', requiresLogin, checkImageFile, updateProfilePicture);
 
 //Gets another user's projects
-router.get('/:id/projects/profile', getOtherUserProjects);
+router.get('/:id/projects/', getOtherUserProjects);
 
 //Gets projects user is following
 router.get('/:id/followings/projects', requiresLogin, getProjectsFollowing);
