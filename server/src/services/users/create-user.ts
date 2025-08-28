@@ -6,7 +6,7 @@ import type { ServiceErrorSubset } from '#services/service-error.ts';
 type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT'>;
 
 const createUserService = async (
-  uid: number,
+  uid: string,
   username: string,
   firstName: string,
   lastName: string,

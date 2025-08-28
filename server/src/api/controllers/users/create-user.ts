@@ -11,7 +11,7 @@ import createUserService from '#services/users/create-user.ts';
 import { getUserByUsernameService } from '#services/users/get-by-username.ts';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-  let uid = parseInt(req.headers[uidHeaderKey] as string);
+  let uid = req.headers[uidHeaderKey] as string;
   let firstName = req.headers[firstNameHeaderKey] as string | undefined;
   let lastName = req.headers[lastNameHeaderKey] as string;
   let email = req.headers[emailHeaderKey] as string;
@@ -21,7 +21,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     const devFirstName = req.query.devFirstName as string | undefined;
     const devLastName = req.query.devLastName as string | undefined;
     const devEmail = req.query.devEmail as string | undefined;
-    const devUID = parseInt(req.query.devUID as string);
+    const devUID = req.query.devUID as string | undefined;
 
     if (devFirstName) {
       firstName = devFirstName;
@@ -35,7 +35,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       email = devEmail;
     }
 
-    if (devUID && !isNaN(devUID)) {
+    if (devUID) {
       uid = devUID;
     }
   }
@@ -55,7 +55,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   const username = data.username;
 
   const userExist = await getUserByUsernameService(username);
-  if (userExist !== 'NOT_FOUND' && userExist !== 'INTERNAL_ERROR' && userExist.userId !== uid) {
+  if (userExist !== 'NOT_FOUND' && userExist !== 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 409,
       error: 'Username already taken',
