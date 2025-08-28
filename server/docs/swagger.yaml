@@ -388,7 +388,7 @@ paths:
             type: string
           description: The last name to be used as the current last name
         - in: query
-          name: string
+          name: devEmail
           required: false
           schema:
             type: string
@@ -397,7 +397,7 @@ paths:
           name: devUID
           required: false
           schema:
-            type: integer
+            type: string
           description: The UID to be used as the current UID
       security:
         shibbolethAuth: []
