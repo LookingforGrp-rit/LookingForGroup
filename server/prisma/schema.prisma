@@ -17,17 +17,17 @@ model Genres {
 }
 
 model Roles {
-  roleId  Int       @id @default(autoincrement()) @map("title_id")
+  roleId  Int       @id @default(autoincrement()) @map("role_id")
   label   String    @db.VarChar(50)
   jobs    Jobs[]
   members Members[]
 
-  @@map("job_titles")
+  @@map("roles")
 }
 
 model Jobs {
   projectId    Int              @map("project_id")
-  roleId       Int              @map("title_id")
+  roleId       Int              @map("role_id")
   availability JobsAvailability
   duration     JobsDuration
   location     JobsLocation
@@ -36,11 +36,11 @@ model Jobs {
   createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime         @default(now()) @map("updated_at") @db.Timestamp(0)
   projects     Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
-  roles        Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
+  roles        Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_roles")
 
   @@id([projectId, roleId])
   @@index([projectId], map: "FK2_project_id")
-  @@index([roleId], map: "FK_jobs_job_titles")
+  @@index([roleId], map: "FK_jobs_roles")
   @@map("jobs")
 }
 
@@ -55,15 +55,15 @@ model Majors {
 model Members {
   projectId         Int                      @map("project_id")
   userId            Int                      @map("user_id")
-  roleId            Int                      @map("title_id")
+  roleId            Int                      @map("role_id")
   profileVisibility MembersProfileVisibility @default(public) @map("profile_visibility")
   createdAt         DateTime                 @default(now()) @map("created_at") @db.Timestamp(0)
-  roles             Roles                    @relation(fields: [roleId], references: [roleId], map: "FK_members_job_titles")
+  roles             Roles                    @relation(fields: [roleId], references: [roleId], map: "FK_members_roles")
   projects          Projects                 @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_members_projects")
   users             Users                    @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_members_users")
 
   @@id([projectId, userId])
-  @@index([roleId], map: "FK_members_job_titles")
+  @@index([roleId], map: "FK_members_roles")
   @@index([userId], map: "FK_members_users")
   @@map("members")
 }
