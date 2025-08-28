@@ -20,7 +20,7 @@ export const getUserAccountService = async (
         profileImage: true,
         headline: true,
         pronouns: true,
-        jobTitleId: true,
+        title: true,
         majorId: true,
         academicYear: true,
         location: true,
