@@ -43,8 +43,8 @@ export interface ApiResponse<_data = any> {
 
 // DATASETS
 
-export interface JobTitle {
-    titleId: number;
+export interface Role {
+    roleId: number;
     label: string;
 }
 
@@ -198,7 +198,7 @@ export interface ProjectTag {
 export interface Member {
     projectId: number;
     userId: number;
-    titleId: number;
+    roleId: number;
     //permission: number;
 }
 
@@ -241,7 +241,7 @@ export interface ProjectWithFollowers extends Project {
 //Jobs for projects
 export interface Job {
     projectId: number;
-    titleId: number;
+    roleId: number;
     availability: string;
     duration: string;
     location: string;
