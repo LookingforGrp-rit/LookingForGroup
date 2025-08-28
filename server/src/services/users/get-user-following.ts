@@ -6,14 +6,14 @@ type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 //get the user by the username
 export const getUserFollowingService = async (
-  userId: number,
+  senderId: number,
 ): Promise<UserFollowings[] | GetUserServiceError> => {
   try {
     const following = await prisma.userFollowings.findMany({
-      where: { userId },
+      where: { senderId },
       select: {
-        userId: true,
-        followingId: true,
+        senderId: true,
+        receiverId: true,
         followedAt: true,
       },
     });
