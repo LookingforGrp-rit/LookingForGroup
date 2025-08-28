@@ -360,19 +360,21 @@ paths:
                     example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
-
-  /api/users/{username}:
     post:
       summary: Create a user
       tags:
         - Users
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+                  example: User01
       parameters:
-        - in: path
-          name: Username
-          required: true
-          schema:
-            type: string
-          description: Username
         - in: query
           name: devFirstName
           required: false
@@ -397,7 +399,6 @@ paths:
           schema:
             type: integer
           description: The UID to be used as the current UID
-
       security:
         shibbolethAuth: []
       responses:
