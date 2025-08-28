@@ -32,6 +32,17 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
 
   const result = await addUserFollowingService(userId, followingId);
 
+  if (result === 'FORBIDDEN') {
+    const resBody: ApiResponse = {
+      status: 403,
+      error: 'Cannot follow self',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(403).json(resBody);
+    return;
+  }
+
   if (result === 'CONFLICT') {
     const resBody: ApiResponse = {
       status: 409,
