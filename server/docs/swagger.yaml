@@ -2193,9 +2193,6 @@ components:
           type: string
           maxLength: 300
           nullable: true
-        userId:
-          type: integer
-          nullable: true
 
     ProjectImage:
       type: object

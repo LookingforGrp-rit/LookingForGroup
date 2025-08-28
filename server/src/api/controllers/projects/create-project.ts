@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
-import getService from '#services/projects/create-proj.ts';
+import createProjectService from '#services/projects/create-proj.ts';
 
 const createProjectController = async (_req: Request, res: Response) => {
+  const curUserId = _req.currentUser;
+  _req.body['userId'] = parseInt(curUserId as string);
   const data: Prisma.ProjectsCreateInput = _req.body as Prisma.ProjectsCreateInput;
 
-  const result = await getService(data);
+  const result = await createProjectService(data);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

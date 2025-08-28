@@ -9,6 +9,7 @@ const createProjectService = async (
 ): Promise<Prisma.ProjectsCreateInput | CreateProjectServiceError> => {
   try {
     const project = await prisma.projects.create({ data });
+
     return project;
   } catch (e) {
     console.error('Error in updateProjectService:', e);
