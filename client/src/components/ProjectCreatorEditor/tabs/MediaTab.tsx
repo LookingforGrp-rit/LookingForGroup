@@ -1,5 +1,6 @@
 // --- Imports ---
 import { useCallback, useEffect, useState } from "react";
+import { addPic, updateThumbnail, deletePic } from "../../../api/projects";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -66,61 +67,60 @@ export const MediaTab = ({ isNewProject = false, projectData = defaultProject, s
   }, [modifiedProject, setProjectData]);
 
   // Handle image upload
-  const handleImageUpload = useCallback(() => {
+  const handleImageUpload = useCallback( async () => {
 
     // Get image in input element
     const imageUploader = document.getElementById('image-uploader') as HTMLInputElement;
-    if (imageUploader && imageUploader.files && imageUploader.files.length > 0) {
-      // Check for valid image type
-      if (!(imageUploader.files[0].type === 'image/jpeg' || imageUploader.files[0].type === 'image/png')) {
-        // Do not keep file, invalid
-        // This checks against "All Files" in file search, since "accepts" attribute is not perfect
-        return;
+    if (!imageUploader?.files?.length) return;
+
+    const file = imageUploader.files[0];
+    if(!['image/jpeg', 'image/png'].includes(file.type)) return;
+
+    if (!modifiedProject.projectId) return;
+
+    // Uploading image to backend
+    try {
+      const response = await addPic(modifiedProject.projectId, file, modifiedProject.images.length + 1);
+      if(response.status === 200) {
+        const imgLink = URL.createObjectURL(file);
+        setModifiedProject({
+          ...modifiedProject,
+          images: [
+            ...modifiedProject.images, 
+            { 
+              id: modifiedProject.images.length + 1, 
+              image: imgLink, position: modifiedProject.images.length + 1 
+            }
+          ],
+        });
       }
+    } catch (err) { console.error(err); }
 
-      const imgLink = URL.createObjectURL(imageUploader.files[0]);
-
-      // Add the new image to the project
-      setModifiedProject({
-        ...modifiedProject,
-        images: [
-          ...modifiedProject.images,
-          { id: modifiedProject.images.length + 1, image: imgLink, position: modifiedProject.images.length + 1 },
-        ],
-      });
-
-      // reset, allowing same file to be selected multiple times in a row
-      imageUploader.value = '';
-    }
+    imageUploader.value = '';
   }, [modifiedProject]);
 
   // Handle new thumbnail
-  const handleThumbnailChange = useCallback((image: string) => {
-    // Remove thumbnail
-    if (modifiedProject.thumbnail === image) {
-      // Clear thumbnail entry
-      setModifiedProject({
-        ...modifiedProject,
-        thumbnail: '',
-      });
-      return;
-    }
-
-    // Add thumbnail
-    setModifiedProject({
-      ...modifiedProject,
-      thumbnail: image,
-    });
-
+  const handleThumbnailChange = useCallback(async (image: string) => {
+    if (!modifiedProject.projectId) return;
+    const newThumbnail = modifiedProject.thumbnail === image ? '' : image;
+    try {
+      await updateThumbnail(modifiedProject.projectId, newThumbnail as any);
+      setModifiedProject({ ...modifiedProject, thumbnail: newThumbnail });
+    } catch (err) { console.error(err); }
   }, [modifiedProject]);
 
   // Handle image deletion
-  const handleImageDelete = useCallback((image: Image) => {
-    //Remove from project
-    setModifiedProject({
-      ...modifiedProject,
-      images: modifiedProject.images.filter((i) => i !== image)
-    });
+  const handleImageDelete = useCallback(async (image: Image) => {
+    if (!modifiedProject.projectId) return;
+
+    try {
+      await deletePic(modifiedProject.projectId, image.image);
+      setModifiedProject({
+        ...modifiedProject,
+        images: modifiedProject.images.filter((i) => i !== image),
+        thumbnail: modifiedProject.thumbnail === image.image ? '' : modifiedProject.thumbnail,
+      });
+    } catch (err) { console.error(err); }
   }, [modifiedProject]);
 
   // --- Complete component ---
@@ -134,15 +134,7 @@ export const MediaTab = ({ isNewProject = false, projectData = defaultProject, s
       <div id="project-editor-image-ui">
         {
           modifiedProject.images?.map((image) => {
-            let src; // get image source
-            if (image.image.startsWith('blob')){
-              // temporary image, not uploaded
-              src = image.image;
-            }
-            else {
-              // image is uploaded, can find in directorys
-              src = `${API_BASE}/images/projects/${image.image}`;
-            }
+            const src = image.image.startsWith('blob') ? image.image : `${API_BASE}/images/projects/${image.image}`;
             return (
               <div className='project-editor-image-container' key={image.image}>
                 <img src={src} alt="project images" />

@@ -4,6 +4,12 @@ import { getByID } from '../../api/projects';
 import { getJobTitles, getMajors, getSkills, getSocials as fetchSocials } from '../../api/users';
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
 
+interface ProjectType {
+  projectId: number;
+  title: string;
+  thumbnail?: string | null;
+}
+
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -335,79 +341,47 @@ const EditButton = ({ userData }) => {
   );
 
   // "Projects"
-  const [userProjects, setUserProjects] = useState();
-  const [shownProjects, setShownProjects] = useState();
+  const [userProjects, setUserProjects] = useState<ProjectType[] | undefined>();
+  const [shownProjects, setShownProjects] = useState<ProjectType[] | undefined>();
 
-  const getUsersProjects = async () => {
-    const url = `/api/users/${userData.userId}/projects`;
-    try {
-     // const response = await fetch(url, {
-     //   method: 'GET',
-     //   headers: { 'Content-Type': 'application/json' },
-     // });
-     // const rawData = await response.json();
+  // Fetches projects that are current on that profile
+  useEffect(() => {
+    const fetchUserProjects = async () => {
+      try {
+        const data = await getByID(userData.userId);
+        setUserProjects(data.data);
+      } catch (err) {
+        console.error("Failed to fetch user projects:", err);
+      }
+    };
+    fetchUserProjects();
+  }, [userData.userId]);
 
-      const data = getByID(userData.userId);
-      console.log("Sepukku. Called in Profile Edit Button.");
-      setUserProjects(data.data);     // IF DOESN'T Work, replace data.data with rawData.data
-      
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getVisibleProjects = async () => {
-    const url = `/api/users/${userData.userId}/projects/profile`;
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setShownProjects(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  if (userProjects === undefined) {
-    getUsersProjects();
-  }
-  if (shownProjects === undefined) {
-    getVisibleProjects();
-  }
+  // Fetches projects taht are currently shown on profile
+  useEffect(() => {
+    const fetchVisibleProjects = async () => {
+      try {
+        const response = await fetch(`/api/users/${userData.userId}/projects/profile`);
+        const rawData = await response.json();
+        setShownProjects(rawData.data);
+      } catch (err) {
+        console.log("Failed to fetch visible projects:", err);
+      }
+    };
+    fetchVisibleProjects();
+  }, [userData.userId]);
 
   const checkIfProjectIsShown = (projectID: number) => {
-    if (shownProjects !== undefined) {
-      for (let i = 0; i < shownProjects.length; i++) {
-        if (shownProjects[i].projectId === projectID) {
-          return true;
-        }
-      }
-      return false;
-    }
-    return false;
+    return shownProjects?.some((p) => p.projectId === projectID) ?? false;
   };
 
-  const updateHiddenProjects = (project) => {
-    if (shownProjects !== undefined) {
-      if (checkIfProjectIsShown(project.project_id)) {
-        const tempList = new Array(0);
-        for (let i = 0; i < shownProjects.length; i++) {
-          if (shownProjects[i].projectId !== project.project_id) {
-            tempList.push(shownProjects[i]);
-          }
-        }
+  const toggleProjectVisibility = (project: ProjectType) => {
+    if (!shownProjects) return;
 
-        setShownProjects(tempList);
-      } else {
-        const tempList = new Array(0);
-        for (let i = 0; i < shownProjects.length; i++) {
-          tempList.push(shownProjects[i]);
-        }
-        tempList.push(project);
-
-        setShownProjects(tempList);
-      }
-    }
+    const isShown = checkIfProjectIsShown(project.projectId);
+    setShownProjects(
+      isShown ? shownProjects.filter((p) => p.projectId !== project. projectId) : [...shownProjects, project]
+    );
   };
 
   const page2 = (
@@ -1217,26 +1191,22 @@ const EditButton = ({ userData }) => {
   };
 
   const saveProjectsPage = async () => {
-    if (userProjects !== undefined) {
-      for (let i = 0; i < userProjects.length; i++) {
-        const url = `/api/users/${userData.userId}/projects/visibility`;
-        try {
-          const response = await fetch(url, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              projectId: userProjects[i].projectId,
-              visibility: checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private',
-            }),
-          });
+    if (!userProjects) return;
 
-          console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
-        } catch (error) {
-          console.log(error);
-        }
-      }
+    try {
+      await Promise.all(
+        userProjects.map((project) =>
+        fetch(`/api/users/${userData.userId}/projects/visibility`, {
+          method: 'PUT',
+          headers: {'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            projectId: project.projectId,
+            visibility: checkIfProjectIsShown(project.projectId) ? 'public' : 'private',
+          }),
+        }))
+      );
+    } catch (err) {
+      console.error("Failed to save project visibility:", err);
     }
   };
 

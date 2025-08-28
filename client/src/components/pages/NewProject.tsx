@@ -11,7 +11,7 @@ import '../Styles/projects.css';
 import '../Styles/settings.css';
 import '../Styles/pages.css';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Header } from '../Header';
 import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
@@ -27,8 +27,9 @@ import * as paths from '../../constants/routes';
 import Project from './Project';
 import { ThemeIcon } from '../ThemeIcon';
 import { sendPost, sendDelete } from '../../functions/fetch';
-import { getByID } from '../../api/projects';
+import { getByID, deleteProject, deleteMember } from '../../api/projects';
 import { getAccountInformation } from '../../api/users';
+import { leaveProject } from '../projectPageComponents/ProjectPageHelper';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -114,6 +115,44 @@ const NewProject = () => {
 
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
+
+  // API FUNCTIONS (/PROJECTS/)
+
+  const fetchprojectByID = async (id: number) => {
+    try {
+      const response = await getByID(id);
+      return response.data?.[0] ?? null;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+
+  const removeMember = async(userId: number) => {
+    try {
+      await deleteMember(projectID, userId);
+      location.reload();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // FETCHING PROJECTS DATA
+
+  useEffect(() => {
+    const init = async () => {
+      if (!projectID) {
+        setFailCheck(true);
+        return;
+      }
+      const project = await fetchProjectByID(projectID);
+      if (!project) {
+        setFailCheck(true);
+        return;
+      }
+    };
+    init();
+  }, [projectID]);
 
   //Function used to get project data
   const getProjectData = async () => {
@@ -293,14 +332,7 @@ const NewProject = () => {
                             <div className='confirm-deny-btns'>
                               <PopupButton
                                 className='confirm-btn'
-                                callback={async () => {
-                                  const url = `/api/projects/${projectID}/members/${user.userId}`;
-
-                                  // For now, just reload the page. Ideally, there'd be something more
-                                  sendDelete(url, () => {
-                                    location.reload();
-                                  });
-                                }}
+                                callback={leaveProject}
                               >Confirm</PopupButton>
                               <PopupButton className='deny-btn'>Cancel</PopupButton>
                             </div>
