@@ -21,9 +21,7 @@ export const getAllUsersService = async (): Promise<UserDetail[] | GetUserServic
         academicYear: true,
         location: true,
         funFact: true,
-        jobTitles: {
-          select: { label: true },
-        },
+        title: true,
         majors: {
           select: { label: true },
         },

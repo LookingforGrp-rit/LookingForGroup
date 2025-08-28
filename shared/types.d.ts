@@ -117,7 +117,7 @@ export type UserDetail = {
     profileImage?: string | null;
     headline: string | null;
     pronouns: string | null;
-    jobTitle: string | null;
+    title: string | null;
     major: string | null;
     academicYear: string | null;
     location: string | null;
@@ -138,7 +138,7 @@ export interface User {
     profileImage?: string | null;
     headline: string | null;
     pronouns: string | null;
-    jobTitleId: number | null;
+    title: string | null;
     majorId: number | null;
     academicYear: string | null;
     location: string | null;
@@ -157,15 +157,15 @@ export interface User {
 export interface CreateUserData {
     firstName: string;
     lastName: string;
-    headline: string;
-    pronouns: string;
-    jobTitleId: number;
-    majorId: number;
-    academicYear: number;
-    location: string;
-    funFact: string;
-    skills: UserSkill[];
-    socials: Social[];
+    headline?: string;
+    pronouns?: string;
+    title?: string;
+    majorId?: number;
+    academicYear?: number;
+    location?: string;
+    funFact?: string;
+    skills?: UserSkill[];
+    socials?: Social[];
 }
 
 

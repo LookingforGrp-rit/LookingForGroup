@@ -24,9 +24,7 @@ export const getUserByIdService = async (
         location: true,
         funFact: true,
         bio: true,
-        jobTitles: {
-          select: { label: true },
-        },
+        title: true,
         majors: {
           select: { label: true },
         },
