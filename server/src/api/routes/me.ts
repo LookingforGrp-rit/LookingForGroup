@@ -7,6 +7,7 @@ import { deleteUser } from '#controllers/me/delete-user.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
+import { getUsernameByShib } from '#controllers/projects/get-username-shib.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
 
@@ -14,6 +15,9 @@ const router = Router();
 
 //All routes use requiresLogin and injectCurrentUser
 router.use(requiresLogin, injectCurrentUser);
+
+//Gets username by shib ID
+router.get('/get-username', requiresLogin, getUsernameByShib);
 
 //Gets user's account
 router.get('/', getAccount);
