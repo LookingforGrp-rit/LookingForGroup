@@ -139,7 +139,7 @@ model Projects {
   purpose           ProjectsPurpose?
   status            ProjectsStatus
   audience          String?             @db.VarChar(300)
-  userId            Int?                @map("user_id")
+  userId            Int                @map("user_id")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamp(0)
   jobs              Jobs[]
@@ -149,7 +149,7 @@ model Projects {
   projectImages     ProjectImages[]
   projectSocials    ProjectSocials[]
   projectTags       ProjectTags[]
-  users             Users?              @relation(fields: [userId], references: [userId], map: "FK_user_id")
+  users             Users              @relation(fields: [userId], references: [userId], map: "FK_user_id")
 
   @@index([userId], map: "FK_user_id")
   @@map("projects")
