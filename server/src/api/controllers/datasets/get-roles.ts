@@ -2,7 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getJobTitlesService from '#services/datasets/get-roles.ts';
 
-const getJobTitlesController = async (_request: Request, response: Response): Promise<void> => {
+const getRolesController = async (_request: Request, response: Response): Promise<void> => {
   const result = await getJobTitlesService();
 
   if (result === 'INTERNAL_ERROR') {
@@ -25,4 +25,4 @@ const getJobTitlesController = async (_request: Request, response: Response): Pr
   response.status(200).json(resBody);
 };
 
-export default getJobTitlesController;
+export default getRolesController;
