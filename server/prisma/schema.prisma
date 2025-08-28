@@ -238,10 +238,8 @@ model Users {
   userFollowingsUserFollowingsUserIdTousers      UserFollowings[]    @relation("user_followings_user_idTousers")
   userSkills                                     UserSkills[]
   userSocials                                    UserSocials[]
-  jobTitles                                      JobTitles?          @relation(fields: [jobTitleId], references: [titleId], onDelete: Restrict, map: "FK_users_job_titles")
   majors                                         Majors?             @relation(fields: [majorId], references: [majorId], onDelete: Restrict, map: "FK_users_majors")
 
-  @@index([jobTitleId], map: "FK_users_job_titles")
   @@index([majorId], map: "FK_users_majors")
   @@map("users")
 }
