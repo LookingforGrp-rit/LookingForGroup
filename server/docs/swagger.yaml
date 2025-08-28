@@ -367,20 +367,26 @@ paths:
       tags:
         - Users
       parameters:
+        - in: path
+          name: Username
+          required: true
+          schema:
+            type: string
+          description: Username
         - in: query
           name: devFirstName
           required: false
           schema:
-            type: integer
+            type: string
           description: The first name to be used as the current first name
         - in: query
           name: devLastName
           required: false
           schema:
-            type: integer
+            type: string
           description: The last name to be used as the current last name
         - in: query
-          name: devEmail
+          name: string
           required: false
           schema:
             type: integer
