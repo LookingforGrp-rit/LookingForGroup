@@ -2,6 +2,7 @@ import { Router } from 'express';
 import PROJECT from '#controllers/projects/index.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
+import requiresProjectOwner from '../middleware/requires-project-owner.ts';
 
 const router = Router();
 
@@ -15,33 +16,75 @@ router.post('/', requiresLogin, injectCurrentUser, PROJECT.createProject);
 router.get('/:id', PROJECT.getProjectByID);
 
 //Edits a project through a specific id
-router.put('/:id', requiresLogin, injectCurrentUser, PROJECT.updateProject);
+router.put('/:id', requiresLogin, injectCurrentUser, requiresProjectOwner, PROJECT.updateProject);
 
 //Deletes project through a specific id
-router.delete('/:id', requiresLogin, injectCurrentUser, PROJECT.deleteProject);
+router.delete(
+  '/:id',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.deleteProject,
+);
 
 //Edits a project thumbnail through a specific id
-router.put('/:id/thumbnail', requiresLogin, injectCurrentUser, PROJECT.updateThumbnail);
+router.put(
+  '/:id/thumbnail',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.updateThumbnail,
+);
 
 //Receives pictures from project through id
 router.get('/:id/pictures', PROJECT.getProjectPics);
 
 //Creates a new picture for a project
-router.post('/:id/pictures', requiresLogin, injectCurrentUser, PROJECT.addImage);
+router.post(
+  '/:id/pictures',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.addImage,
+);
 
 //Changes a picture for a project
-router.put('/:id/pictures/:picId', requiresLogin, injectCurrentUser, PROJECT.updateImage);
+router.put(
+  '/:id/pictures/:picId',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.updateImage,
+);
 
 //Removes picture from a project
 // router.delete('/:id/pictures/:picId' /* deletePicture */);
 
 //Adds member to a specific project through id
-router.post('/:id/members', requiresLogin, injectCurrentUser, PROJECT.addMember);
+router.post(
+  '/:id/members',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.addMember,
+);
 
 //Edits a member of a specific project through id
-router.put('/:id/members/:userId', requiresLogin, injectCurrentUser, PROJECT.updateMember);
+router.put(
+  '/:id/members/:userId',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.updateMember,
+);
 
 //Removes a member from a specific project through project and user ID
-router.delete('/:id/members/:userId', requiresLogin, injectCurrentUser, PROJECT.deleteMember);
+router.delete(
+  '/:id/members/:userId',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.deleteMember,
+);
 
 export default router;
