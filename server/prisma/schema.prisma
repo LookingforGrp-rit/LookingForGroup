@@ -21,7 +21,6 @@ model JobTitles {
   label   String    @db.VarChar(50)
   jobs    Jobs[]
   members Members[]
-  users   Users[]
 
   @@map("job_titles")
 }
