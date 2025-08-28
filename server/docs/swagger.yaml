@@ -6,7 +6,6 @@ info:
     LFG API Documentation. This will showcase all the endpoints available and how to use them.
     Note: When accessed directly from the express app, the endpoints will have an additional "/api" prefix.
     Because of this, please use the vite proxy when reviewing the docs.
-
 paths:
   # DATASETS
   /api/datasets/job-titles:
@@ -403,6 +402,8 @@ paths:
       summary: Updates user profile information
       tags:
         - Me
+      x-middleware:
+        - injectCurrentUser
       security:
         - shibbolethAuth: []
       parameters:
