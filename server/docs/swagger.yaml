@@ -360,10 +360,38 @@ paths:
                     example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
-    put:
+
+  /api/users/{username}:
+    post:
       summary: Create a user
       tags:
         - Users
+      parameters:
+        - in: query
+          name: devFirstName
+          required: false
+          schema:
+            type: integer
+          description: The first name to be used as the current first name
+        - in: query
+          name: devLastName
+          required: false
+          schema:
+            type: integer
+          description: The last name to be used as the current last name
+        - in: query
+          name: devEmail
+          required: false
+          schema:
+            type: integer
+          description: The email to be used as the current email
+        - in: query
+          name: devUID
+          required: false
+          schema:
+            type: integer
+          description: The UID to be used as the current UID
+
       security:
         shibbolethAuth: []
       responses:
@@ -510,52 +538,6 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/projects:
-    get:
-      summary: Get current user's own projects
-      description: Returns the list of projects owned by the user identified by userID.
-      tags:
-        - Me
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: query
-          name: devId
-          schema:
-            type: integer
-          required: false
-          description: The user ID to be used as the current user
-      responses:
-        '200':
-          description: List of projects owned by the user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
   /api/users/{id}/projects/profile:
     get:
       summary: Get another user's projects
@@ -632,82 +614,6 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/followings/projects/{id}:
-    post:
-      summary: Follow a project
-      security:
-        - shibbolethAuth: []
-      tags:
-        - Me
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID of the project to follow
-          schema:
-            type: integer
-        - in: query
-          name: devId
-          schema:
-            type: integer
-          required: false
-          description: The user ID to be used as the current user
-      responses:
-        '201':
-          description: Project followed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProjectFollowingsResponse'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  projectId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
-
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-    delete:
-      summary: Unfollow a project
-      security:
-        - shibbolethAuth: []
-      tags:
-        - Me
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID of the project to unfollow
-          schema:
-            type: integer
-        - in: query
-          name: devId
-          schema:
-            type: integer
-          required: false
-          description: The user ID to be used as the current user
-      responses:
-        '200':
-          description: Project unfollowed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProjectFollowingsResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
   /api/users/{id}/followings/people:
     get:
       tags:
@@ -746,83 +652,6 @@ paths:
                   memetype:
                     type: string
                     example: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/me/followings/people/{id}:
-    post:
-      summary: Follow another user
-      security:
-        - shibbolethAuth: []
-      tags:
-        - Me
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID of the user to be followed
-          schema:
-            type: integer
-        - in: query
-          name: devId
-          schema:
-            type: integer
-          required: false
-          description: The user ID to be used as the current user
-      responses:
-        '201':
-          description: User followed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserFollowingsResponse'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  followingId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
-                memetype: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    delete:
-      summary: Unfollow a user
-      security:
-        - shibbolethAuth: []
-      tags:
-        - Me
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID of the user to be unfollowed
-          schema:
-            type: integer
-        - in: query
-          name: devId
-          schema:
-            type: integer
-          required: false
-          description: The user ID to be used as the current user
-      responses:
-        '200':
-          description: User unfollowed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UserFollowingsResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -985,6 +814,205 @@ paths:
                     example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/projects:
+    get:
+      summary: Get current user's own projects
+      description: Returns the list of projects owned by the user identified by userID.
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: List of projects owned by the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectWithFollowers'
+                  memetype:
+                    type: string
+                    example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/followings/projects/{id}:
+    post:
+      summary: Follow a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the project to follow
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '201':
+          description: Project followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectFollowingsResponse'
+              example:
+                status: 201
+                error: null
+                data:
+                  userId: 1
+                  projectId: 2
+                  followedAt: '2025-07-16T12:34:56Z'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Unfollow a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the project to unfollow
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Project unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectFollowingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/followings/people/{id}:
+    post:
+      summary: Follow another user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to be followed
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '201':
+          description: User followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFollowingsResponse'
+              example:
+                status: 201
+                error: null
+                data:
+                  userId: 1
+                  followingId: 2
+                  followedAt: '2025-07-16T12:34:56Z'
+                memetype: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Unfollow a user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to be unfollowed
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: User unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserFollowingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
