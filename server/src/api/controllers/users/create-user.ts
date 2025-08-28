@@ -11,16 +11,17 @@ import createUserService from '#services/users/create-user.ts';
 import { getUserByUsernameService } from '#services/users/get-by-username.ts';
 
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-  const uid = parseInt(req.headers[uidHeaderKey] as string);
+  let uid = parseInt(req.headers[uidHeaderKey] as string);
   let firstName = req.headers[firstNameHeaderKey] as string | undefined;
   let lastName = req.headers[lastNameHeaderKey] as string;
   let email = req.headers[emailHeaderKey] as string;
 
   if (envConfig.env === 'development' || envConfig.env === 'test') {
-    // Fudge values for development
+    /// Fudge for development
     const devFirstName = req.query.devFirstName as string | undefined;
     const devLastName = req.query.devLastName as string | undefined;
     const devEmail = req.query.devEmail as string | undefined;
+    const devUID = parseInt(req.query.devUID as string);
 
     if (devFirstName) {
       firstName = devFirstName;
@@ -32,6 +33,10 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 
     if (devEmail) {
       email = devEmail;
+    }
+
+    if (devUID && !isNaN(devUID)) {
+      uid = devUID;
     }
   }
 
