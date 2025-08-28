@@ -15,7 +15,7 @@ const sampleUsers = prisma.users.findMany({
     academicYear: true,
     location: true,
     funFact: true,
-    jobTitles: { select: { label: true } },
+    title: true,
     majors: { select: { label: true } },
     userSkills: {
       select: {
@@ -46,7 +46,7 @@ export const transformUser = (user: UsersGetPayload): UserDetail => {
     academicYear: user.academicYear,
     location: user.location,
     funFact: user.funFact,
-    jobTitle: user.jobTitles?.label ?? null,
+    title: user.title,
     major: user.majors?.label ?? null,
     skills:
       user.userSkills.length > 0
