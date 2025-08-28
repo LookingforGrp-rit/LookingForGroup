@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getJobTitlesService from '#services/datasets/get-job-titles.ts';
+import getJobTitlesService from '#services/datasets/get-roles.ts';
 
 const getJobTitlesController = async (_request: Request, response: Response): Promise<void> => {
   const result = await getJobTitlesService();

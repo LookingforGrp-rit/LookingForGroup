@@ -43,8 +43,8 @@ export interface ApiResponse<_data = any> {
 
 // DATASETS
 
-export interface JobTitle {
-    titleId: number;
+export interface Role {
+    roleId: number;
     label: string;
 }
 
