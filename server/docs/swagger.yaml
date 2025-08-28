@@ -8,14 +8,14 @@ info:
     Because of this, please use the vite proxy when reviewing the docs.
 paths:
   # DATASETS
-  /api/datasets/job-titles:
+  /api/datasets/roles:
     get:
-      summary: Returns a list of all job titles
+      summary: Returns a list of all roles
       tags:
         - Datasets
       responses:
         '200':
-          description: List of all the job titles available
+          description: List of all the roles available
           content:
             application/json:
               schema:
@@ -31,7 +31,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/JobTitle'
+                      $ref: '#/components/schemas/Role'
                   memetype:
                     type: string
                     example: application/json
@@ -738,8 +738,8 @@ paths:
                   type: string
                 pronouns:
                   type: string
-                jobTitleId:
-                  type: integer
+                title:
+                  type: string
                 MajorId:
                   type: integer
                 academic_year:
@@ -756,7 +756,7 @@ paths:
                 lastName: Bones
                 headline: Sigh..
                 pronouns: they/them
-                jobTitleId: 1
+                title: 'Student'
                 majorId: 2
                 academic_year: Senior
                 location: Grave Yard
@@ -1765,15 +1765,15 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    JobTitle:
+    Role:
       type: object
       properties:
-        titleId:
+        roleId:
           type: integer
         label:
           type: string
       example:
-        titleId: 1
+        roleId: 1
         label: Full-Stack Developer
 
     Social:
@@ -1845,8 +1845,8 @@ components:
         pronouns:
           type: string
           nullable: true
-        jobTitleId:
-          type: integer
+        title:
+          type: string
           nullable: true
         majorId:
           type: integer
@@ -2120,8 +2120,8 @@ components:
               type: string
             pronouns:
               type: string
-            jobTitleId:
-              type: integer
+            title:
+              type: string
             majorId:
               type: integer
             academicYear:
