@@ -4,7 +4,28 @@ import type { Prisma } from '#prisma-models/index.js';
 import getService from '#services/projects/add-member.ts';
 
 const addMemberController = async (_req: Request, res: Response) => {
-  const data: Prisma.MembersCreateInput = _req.body as Prisma.MembersCreateInput;
+  const projectId = parseInt(_req.params.id);
+
+  if (isNaN(projectId)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid project ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const { userId } = _req.body as { userId: number };
+
+  //currently just creating a new JobTitle record,
+  //should be changed to avoid duplicate records
+  const data: Prisma.MembersCreateInput = {
+    projects: { connect: { projectId } },
+    users: { connect: { userId } },
+    jobTitles: { create: { label: 'Member' } },
+  };
 
   const result = await getService(data);
 

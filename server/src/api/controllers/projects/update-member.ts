@@ -4,9 +4,9 @@ import type { Prisma } from '#prisma-models/index.js';
 import getService from '#services/projects/update-member.ts';
 
 const updateMemberController = async (_req: Request, res: Response) => {
-  const { userId, projectId } = _req.params;
+  const { userId, id } = _req.params;
   const userIdReal = parseInt(userId);
-  const projectIdReal = parseInt(projectId);
+  const projectIdReal = parseInt(id);
 
   if (isNaN(userIdReal) || isNaN(projectIdReal)) {
     const resBody: ApiResponse = {
