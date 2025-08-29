@@ -29,7 +29,7 @@ export const transformProject = (project: ProjectsGetPayload): ProjectWithFollow
     purpose: project.purpose,
     status: project.status,
     audience: project.audience,
-    userId: project.userId ?? 0,
+    userId: project.userId,
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
     projectType: project.projectGenres.map((pg) => ({
@@ -59,7 +59,7 @@ export const transformProject = (project: ProjectsGetPayload): ProjectWithFollow
     members: project.members.map((member) => ({
       projectId: member.projectId,
       userId: member.userId,
-      titleId: member.titleId,
+      roleId: member.roleId,
       permission: 0,
     })),
     followers: {
