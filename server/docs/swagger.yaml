@@ -506,50 +506,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/users/{id}/account:
-    get:
-      summary: Get user account (requires authentication)
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: The ID of the user
-      responses:
-        '200':
-          description: User account info
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    $ref: '#/components/schemas/User'
-                  memetype:
-                    type: string
-                    example: application/json
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/users/{id}/projects/profile:
+  /api/users/{id}/projects:
     get:
       summary: Get another user's projects
       description: Retrieve projects of a user (not current user)
@@ -591,11 +548,18 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/users/{id}followings/projects:
+  /api/users/{id}/followings/projects:
     get:
       summary: Get projects a user is following
       tags:
         - Users
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           description: List of projects the user is following
@@ -630,6 +594,13 @@ paths:
       tags:
         - Users
       summary: Get list of users that the specified user is following
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
       responses:
         '200':
           description: List of users the current user is following

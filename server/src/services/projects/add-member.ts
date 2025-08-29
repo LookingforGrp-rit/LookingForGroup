@@ -6,7 +6,7 @@ type AddMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 const addMemberService = async (
   data: Prisma.MembersCreateInput,
-): Promise<Prisma.MembersCreateManyJobTitlesInput | AddMemberServiceError> => {
+): Promise<Prisma.MembersCreateManyRolesInput | AddMemberServiceError> => {
   try {
     const result = await prisma.members.create({ data });
     return result;

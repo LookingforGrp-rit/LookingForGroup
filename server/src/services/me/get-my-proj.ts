@@ -11,11 +11,7 @@ export const getMyProjectsService = async (
   try {
     const projects = await prisma.projects.findMany({
       where: {
-        projectFollowings: {
-          some: {
-            userId,
-          },
-        },
+        userId: userId,
       },
       include: {
         _count: { select: { projectFollowings: true } },

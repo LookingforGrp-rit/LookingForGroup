@@ -24,7 +24,7 @@ const addMemberController = async (_req: Request, res: Response) => {
   const data: Prisma.MembersCreateInput = {
     projects: { connect: { projectId } },
     users: { connect: { userId } },
-    jobTitles: { create: { label: 'Member' } },
+    roles: { create: { label: 'Member' } },
   };
 
   const result = await getService(data);

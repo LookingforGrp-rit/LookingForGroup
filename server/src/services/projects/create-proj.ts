@@ -6,7 +6,7 @@ type CreateProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUN
 
 const createProjectService = async (
   data: Prisma.ProjectsCreateInput,
-): Promise<Prisma.ProjectsCreateInput | CreateProjectServiceError> => {
+): Promise<ReturnType<typeof prisma.projects.create> | CreateProjectServiceError> => {
   try {
     const project = await prisma.projects.create({ data });
 
