@@ -187,7 +187,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
     <div id="project-editor-links">
       <label>Social Links</label>
       <div className="project-editor-extra-info">
-        Provide any links you wish to include on your project's page.
+        Provide the links to pages you wish to include on your page.
       </div>
       <div className='error'>{error}</div>
 
@@ -198,6 +198,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
               <div className="project-editor-link-item" key={`social.id-${index}`}>
                 <div className='project-link-select-wrapper'>
                   <Select>
+                    {/* FIXME: does not default to "Select" value */}
                     <SelectButton
                       placeholder='Select'
                       initialVal={social.website}
@@ -242,7 +243,6 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                 <div className='project-link-input-wrapper'>
                   {/* FIXME: handle onChange to allow for editing input */}
                   <input
-                    style={{ height: "60%" }}
                     type="text"
                     placeholder="URL"
                     value={social.url}
@@ -278,24 +278,27 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
           }) : ''
         }
         <div id="add-link-container">
-          <button id="profile-editor-add-link" onClick={() => {
-            //addLinkInput();
-            let tempSocials = modifiedProject.socials;
+          <button id="profile-editor-add-link"
+            onClick={() => {
+              //addLinkInput();
+              let tempSocials = modifiedProject.socials;
 
-            // Create the socials array if it doesn't exist already
-            if (!tempSocials) {
-              tempSocials = [];
-            }
+              // Create the socials array if it doesn't exist already
+              if (!tempSocials) {
+                tempSocials = [];
+              }
 
-            tempSocials.push({
-              id: 1,
-              website: 'Instagram',
-              url: '',
-            });
+              tempSocials.push({
+                id: 1,
+                website: 'Instagram',
+                url: '',
+              });
 
-            setModifiedProject({ ...modifiedProject, socials: tempSocials });
-          }}>
-            + Add project link
+              setModifiedProject({ ...modifiedProject, socials: tempSocials });
+            }}>
+            {/* Figma wants + to be its own vector. Styles here assume it is a <p> */}
+            <p>+</p>
+            <p>Add social profile</p>
           </button>
         </div>
       </div>

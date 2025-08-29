@@ -405,7 +405,6 @@ Project Creator and Editor style rules
 .project-link-select-wrapper .project-link-select {
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
-  padding: .5rem !important;
 }
 
 .project-link-input-wrapper {
@@ -414,17 +413,20 @@ Project Creator and Editor style rules
   display: flex;
   align-items: center;
 }
-
 .project-link-input-wrapper input {
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: .5rem;
+  padding: 15px;
   flex-grow: 1;
   background-color: var(--bg-color);
   color: var(--main-text);
   font-size: 1.6ch;
   outline: none;
   min-height: 40px;
+}
+.project-link-input-wrapper input::placeholder {
+  color: var(--neutral-gray);
+  font-style: italic;
 }
 
 /* Project Editor/Creator General Tab */
@@ -1485,6 +1487,10 @@ select.edit-position-compensation {
 }
 
 /* Project Editor/Creator Links Tab */
+#project-editor-links > label {
+  margin-bottom: 3px;
+}
+
 #project-editor-links>.project-editor-extra-info {
   margin-bottom: 15px;
 }
