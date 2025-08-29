@@ -17,8 +17,8 @@ model Genres {
 }
 
 model Roles {
-  roleId  Int       @id @default(autoincrement()) @map("title_id")
-  label   String    @db.VarChar(50)
+  roleId  Int       @id     @default(autoincrement()) @map("title_id")
+  label   String    @unique @db.VarChar(50)
   jobs    Jobs[]
   members Members[]
 
@@ -45,8 +45,8 @@ model Jobs {
 }
 
 model Majors {
-  majorId Int     @id @default(autoincrement()) @map("major_id")
-  label   String  @db.VarChar(100)
+  majorId Int     @id     @default(autoincrement()) @map("major_id")
+  label   String  @unique @db.VarChar(100)
   users   Users[]
 
   @@map("majors")
@@ -155,8 +155,8 @@ model Projects {
 }
 
 model Socials {
-  websiteId      Int              @id @default(autoincrement()) @map("website_id")
-  label          String           @db.VarChar(50)
+  websiteId      Int              @id     @default(autoincrement()) @map("website_id")
+  label          String           @unique @db.VarChar(50)
   projectSocials ProjectSocials[]
   userSocials    UserSocials[]
 
@@ -169,6 +169,7 @@ model Tags {
   type        String        @db.VarChar(50)
   projectTags ProjectTags[]
 
+  @@unique([label, type])
   @@map("tags")
 }
 
@@ -212,8 +213,8 @@ model UserSocials {
 
 model Users {
   userId            Int                 @id @default(autoincrement()) @map("user_id")
-  username          String              @db.Text
-  ritEmail          String              @map("rit_email") @db.VarChar(50)
+  username          String              @unique @db.VarChar(50)
+  ritEmail          String              @unique @map("rit_email") @db.VarChar(50)
   firstName         String              @map("first_name") @db.Text
   lastName          String              @map("last_name") @db.Text
   profileImage      String?             @map("profile_image") @db.VarChar(100)
@@ -228,7 +229,7 @@ model Users {
   visibility        Int                 @default(1) @db.TinyInt
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamp(0)
-  phoneNumber       Int?                @map("phone_number")
+  phoneNumber       Int?                @unique @map("phone_number")
   universityId      String              @unique(map: "university_id_UNIQUE") @map("university_id") @db.VarChar(9)
   members           Members[]
   projectFollowings ProjectFollowings[]
@@ -249,6 +250,7 @@ model Skills {
   type       String       @db.VarChar(50)
   userSkills UserSkills[]
 
+  @@unique([label, type])
   @@map("skills")
 }
 
