@@ -15,11 +15,11 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
     return;
   }
 
-  const userId = parseInt(req.currentUser);
-  const followingId = parseInt(req.params.followId);
+  const senderId = parseInt(req.currentUser);
+  const receiverId = parseInt(req.params.id);
 
   //validate input
-  if (isNaN(userId) || isNaN(followingId)) {
+  if (isNaN(senderId) || isNaN(receiverId)) {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Invalid user ID',
@@ -30,7 +30,7 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
     return;
   }
 
-  const result = await addUserFollowingService(userId, followingId);
+  const result = await addUserFollowingService(senderId, receiverId);
 
   if (result === 'FORBIDDEN') {
     const resBody: ApiResponse = {
