@@ -6,16 +6,16 @@ type DeleteFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND
 
 //delete a user following
 export const deleteUserFollowService = async (
-  userId: number,
-  followingId: number,
+  senderId: number,
+  receiverId: number,
 ): Promise<UserFollowings | DeleteFollowServiceError> => {
   try {
     //delete the user being followed
     const deleteFollow = await prisma.userFollowings.delete({
       where: {
-        userId_followingId: {
-          userId,
-          followingId,
+        senderId_receiverId: {
+          senderId,
+          receiverId,
         },
       },
     });
@@ -23,6 +23,13 @@ export const deleteUserFollowService = async (
     return deleteFollow;
   } catch (error) {
     console.error('Error in deleteUserFollowService:', error);
+
+    if (error instanceof Object && 'code' in error) {
+      if (error.code === 'P2025') {
+        return 'NOT_FOUND';
+      }
+    }
+
     return 'INTERNAL_ERROR';
   }
 };
