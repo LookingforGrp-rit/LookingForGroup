@@ -16,7 +16,7 @@ export const addProjectFollowing = async (req: Request, res: Response): Promise<
   }
 
   const userId = parseInt(req.currentUser);
-  const projectId = parseInt(req.params.followId);
+  const projectId = parseInt(req.params.id);
 
   //validate input
   if (isNaN(userId) || isNaN(projectId)) {

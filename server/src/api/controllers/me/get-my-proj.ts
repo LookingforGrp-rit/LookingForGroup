@@ -2,7 +2,9 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { getMyProjectsService } from '#services/me/get-my-proj.ts';
 
-// gets the current users projects
+// this should get the projects that the user is a member of
+// but members don't work currently so we aren/t fixing this until those work
+// right now it only gets the projects they own
 export const getMyProjects = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {

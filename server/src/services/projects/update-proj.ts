@@ -7,26 +7,14 @@ type UpdateProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUN
 const updateProjectService = async (
   projectId: number,
   updates: Prisma.ProjectsUpdateInput,
-): Promise<boolean | UpdateProjectServiceError> => {
+): Promise<ReturnType<typeof prisma.projects.update> | UpdateProjectServiceError> => {
   try {
-    await prisma.projects.update({
+    const project = await prisma.projects.update({
       where: { projectId },
       data: updates,
-      select: {
-        title: true,
-        hook: true,
-        description: true,
-        purpose: true,
-        status: true,
-        audience: true,
-        projectTags: true,
-        jobs: true,
-        members: true,
-        projectSocials: true,
-      },
     });
 
-    return true;
+    return project;
   } catch (e) {
     console.error('Error in updateProjectService:', e);
     return 'INTERNAL_ERROR';
