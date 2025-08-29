@@ -17,7 +17,7 @@ model Genres {
 }
 
 model Roles {
-  roleId  Int       @id @default(autoincrement()) @map("role_id")
+  roleId  Int       @id @default(autoincrement()) @map("title_id")
   label   String    @db.VarChar(50)
   jobs    Jobs[]
   members Members[]
@@ -27,7 +27,7 @@ model Roles {
 
 model Jobs {
   projectId    Int              @map("project_id")
-  roleId       Int              @map("role_id")
+  roleId       Int              @map("title_id")
   availability JobsAvailability
   duration     JobsDuration
   location     JobsLocation
@@ -36,11 +36,11 @@ model Jobs {
   createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime         @default(now()) @map("updated_at") @db.Timestamp(0)
   projects     Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
-  roles        Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_roles")
+  roles        Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
 
   @@id([projectId, roleId])
   @@index([projectId], map: "FK2_project_id")
-  @@index([roleId], map: "FK_jobs_roles")
+  @@index([roleId], map: "FK_jobs_job_titles")
   @@map("jobs")
 }
 
@@ -55,15 +55,15 @@ model Majors {
 model Members {
   projectId         Int                      @map("project_id")
   userId            Int                      @map("user_id")
-  roleId            Int                      @map("role_id")
+  roleId            Int                      @map("title_id")
   profileVisibility MembersProfileVisibility @default(public) @map("profile_visibility")
   createdAt         DateTime                 @default(now()) @map("created_at") @db.Timestamp(0)
-  roles             Roles                    @relation(fields: [roleId], references: [roleId], map: "FK_members_roles")
+  roles             Roles                    @relation(fields: [roleId], references: [roleId], map: "FK_members_job_titles")
   projects          Projects                 @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_members_projects")
   users             Users                    @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_members_users")
 
   @@id([projectId, userId])
-  @@index([roleId], map: "FK_members_roles")
+  @@index([roleId], map: "FK_members_job_titles")
   @@index([userId], map: "FK_members_users")
   @@map("members")
 }
@@ -138,7 +138,7 @@ model Projects {
   purpose           ProjectsPurpose?
   status            ProjectsStatus
   audience          String?             @db.VarChar(300)
-  userId            Int                @map("user_id")
+  userId            Int                 @map("user_id")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamp(0)
   jobs              Jobs[]
@@ -173,15 +173,15 @@ model Tags {
 }
 
 model UserFollowings {
-  userId                                Int      @map("user_id")
-  followingId                           Int      @map("following_id")
-  followedAt                            DateTime @default(now()) @map("followed_at") @db.Timestamp(0)
-  usersUserFollowingsFollowingIdTousers Users    @relation("user_followings_following_idTousers", fields: [followingId], references: [userId], onDelete: Cascade, map: "FK_user_followings_following_user")
-  usersUserFollowingsUserIdTousers      Users    @relation("user_followings_user_idTousers", fields: [userId], references: [userId], onDelete: Cascade, map: "FK_user_followings_users")
+  senderId     Int      @map("sender_id")
+  receiverId   Int      @map("receiver_id")
+  followedAt   DateTime @default(now()) @map("followed_at") @db.Timestamp(0)
+  senderUser   Users    @relation("sender_user", fields: [senderId], references: [userId], onDelete: Cascade, map: "FK_user_followings_sender")
+  receiverUser Users    @relation("receiver_user", fields: [receiverId], references: [userId], onDelete: Cascade, map: "FK_user_followings_receiver")
 
-  @@id([userId, followingId])
-  @@index([followingId], map: "FK_user_followings_following_user")
-  @@index([userId], map: "FK_user_followings_users")
+  @@id([senderId, receiverId])
+  @@index([senderId], map: "FK_user_followings_sender")
+  @@index([receiverId], map: "FK_user_followings_receiver")
   @@map("user_followings")
 }
 
@@ -211,33 +211,33 @@ model UserSocials {
 }
 
 model Users {
-  userId                                         Int                 @id @default(autoincrement()) @map("user_id")
-  username                                       String              @db.Text
-  ritEmail                                       String              @map("rit_email") @db.VarChar(50)
-  firstName                                      String              @map("first_name") @db.Text
-  lastName                                       String              @map("last_name") @db.Text
-  profileImage                                   String?             @map("profile_image") @db.VarChar(100)
-  headline                                       String?             @db.VarChar(100)
-  pronouns                                       String?             @db.Text
-  title                                          String?             @db.VarChar(50)
-  majorId                                        Int?                @map("major_id")
-  academicYear                                   UsersAcademicYear?  @map("academic_year")
-  location                                       String?             @db.VarChar(150)
-  funFact                                        String?             @map("fun_fact") @db.VarChar(100)
-  bio                                            String?             @db.VarChar(600)
-  visibility                                     Int                 @default(1) @db.TinyInt
-  createdAt                                      DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt                                      DateTime            @default(now()) @map("updated_at") @db.Timestamp(0)
-  phoneNumber                                    Int?                @map("phone_number")
-  universityId                                   String              @unique(map: "university_id_UNIQUE") @map("university_id") @db.VarChar(9)
-  members                                        Members[]
-  projectFollowings                              ProjectFollowings[]
-  projects                                       Projects[]
-  userFollowingsUserFollowingsFollowingIdTousers UserFollowings[]    @relation("user_followings_following_idTousers")
-  userFollowingsUserFollowingsUserIdTousers      UserFollowings[]    @relation("user_followings_user_idTousers")
-  userSkills                                     UserSkills[]
-  userSocials                                    UserSocials[]
-  majors                                         Majors?             @relation(fields: [majorId], references: [majorId], onDelete: Restrict, map: "FK_users_majors")
+  userId            Int                 @id @default(autoincrement()) @map("user_id")
+  username          String              @db.Text
+  ritEmail          String              @map("rit_email") @db.VarChar(50)
+  firstName         String              @map("first_name") @db.Text
+  lastName          String              @map("last_name") @db.Text
+  profileImage      String?             @map("profile_image") @db.VarChar(100)
+  headline          String?             @db.VarChar(100)
+  pronouns          String?             @db.Text
+  title             String?             @db.VarChar(50)
+  majorId           Int?                @map("major_id")
+  academicYear      UsersAcademicYear?  @map("academic_year")
+  location          String?             @db.VarChar(150)
+  funFact           String?             @map("fun_fact") @db.VarChar(100)
+  bio               String?             @db.VarChar(600)
+  visibility        Int                 @default(1) @db.TinyInt
+  createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamp(0)
+  phoneNumber       Int?                @map("phone_number")
+  universityId      String              @unique(map: "university_id_UNIQUE") @map("university_id") @db.VarChar(9)
+  members           Members[]
+  projectFollowings ProjectFollowings[]
+  projects          Projects[]
+  followers         UserFollowings[]    @relation("receiver_user")
+  following         UserFollowings[]    @relation("sender_user")
+  userSkills        UserSkills[]
+  userSocials       UserSocials[]
+  majors            Majors?             @relation(fields: [majorId], references: [majorId], onDelete: Restrict, map: "FK_users_majors")
 
   @@index([majorId], map: "FK_users_majors")
   @@map("users")

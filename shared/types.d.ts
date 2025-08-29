@@ -91,8 +91,8 @@ export interface UserSocial {
 
 
 export type UserFollowings = {
-    userId: number;
-    followingId: number;
+    senderId: number;
+    receiverId: number;
     followedAt: Date;
 };
 
