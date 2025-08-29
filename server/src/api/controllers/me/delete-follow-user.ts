@@ -16,7 +16,7 @@ export const deleteUserFollowing = async (req: Request, res: Response): Promise<
   }
 
   const userId = parseInt(req.currentUser);
-  const followingId = parseInt(req.params.followId);
+  const followingId = parseInt(req.params.id);
 
   //validate input
   if (isNaN(userId) || isNaN(followingId)) {
@@ -32,6 +32,18 @@ export const deleteUserFollowing = async (req: Request, res: Response): Promise<
 
   //call service
   const result = await deleteUserFollowService(userId, followingId);
+
+  //internal error
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'User is not already followed',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(404).json(resBody);
+    return;
+  }
 
   //internal error
   if (result === 'INTERNAL_ERROR') {
