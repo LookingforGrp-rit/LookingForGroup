@@ -55,6 +55,17 @@ const addMemberController = async (req: Request, res: Response) => {
     return;
   }
 
+  if (result === 'CONFLICT') {
+    const resBody: ApiResponse = {
+      status: 409,
+      error: 'User already a member of project',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(409).json(resBody);
+    return;
+  }
+
   const resBody: ApiResponse = {
     status: 200,
     error: null,

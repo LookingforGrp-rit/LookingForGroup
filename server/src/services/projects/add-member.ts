@@ -2,7 +2,7 @@ import prisma from '#config/prisma.ts';
 import type { Prisma } from '#prisma-models/index.js';
 import type { ServiceErrorSubset } from '#services/service-error.ts';
 
-type AddMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type AddMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
 const addMemberService = async (
   data: Prisma.MembersCreateInput,
@@ -14,6 +14,10 @@ const addMemberService = async (
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {
         return 'NOT_FOUND';
+      }
+
+      if (e.code === 'P2002') {
+        return 'CONFLICT';
       }
     }
 
