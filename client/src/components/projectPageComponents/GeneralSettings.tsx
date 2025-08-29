@@ -17,6 +17,7 @@ import profilePlaceholder from '../../icons/profile-user.png';
 export const GeneralSettings = (props) => {
   return (
     <div id="general-settings">
+      {/* Get image of profile and use preloader function in functions/imageLoad.tsx */}
       <img id="picture-edit" src={profilePlaceholder} alt="project" />
       <button id="edit-button" className="white-button">
         Edit Picture

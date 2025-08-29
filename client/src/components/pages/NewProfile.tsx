@@ -22,6 +22,7 @@ import { ThemeIcon } from "../ThemeIcon";
 import { fetchUserID } from "../../functions/fetch";
 import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
+import usePreloadedImage from "../../functions/imageLoad";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -366,11 +367,7 @@ const NewProfile = () => {
         {/* New profile display using css grid, will contain all info except for projects */}
         <div id="profile-information-grid">
           <img
-            src={
-              displayedProfile.profile_image
-                ? `${API_BASE}/images/profiles/${displayedProfile.profile_image}`
-                : profilePicture
-            }
+            src={usePreloadedImage(`${API_BASE}/images/profiles/${displayedProfile.profile_image}`, profilePicture)}
             id="profile-image"
             alt="profile image"
             onError={(e) => {

@@ -1,16 +1,36 @@
 /* IMAGE UPLOADER */
 #img-view {
-    position: relative;
-    height: 256px;
-    width: 256px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     text-align: center;
-
     background-position: center;
     background-size: cover;
+}
+
+.project-uploader {
+    width: 323px;
+    height: 182px;
+    gap: 10px;
+
+    svg {
+        margin: 6px;
+    }
+
+    * {
+        margin: 0px;
+    }
+}
+
+#uploaded-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+#browse-link {
+    color: var(--primary-color);
 }
 
 #drop-area {

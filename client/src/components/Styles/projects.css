@@ -309,7 +309,6 @@ Project Creator and Editor style rules
   border: none;
   border-radius: 10px;
   color: var(--main-text);
-  overflow-y: auto;
 }
 
 @media (min-width: 1172px) {
@@ -405,7 +404,6 @@ Project Creator and Editor style rules
 .project-link-select-wrapper .project-link-select {
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
-  padding: .5rem !important;
 }
 
 .project-link-input-wrapper {
@@ -414,17 +412,20 @@ Project Creator and Editor style rules
   display: flex;
   align-items: center;
 }
-
 .project-link-input-wrapper input {
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: .5rem;
+  padding: 15px;
   flex-grow: 1;
   background-color: var(--bg-color);
   color: var(--main-text);
   font-size: 1.6ch;
   outline: none;
   min-height: 40px;
+}
+.project-link-input-wrapper input::placeholder {
+  color: var(--neutral-gray);
+  font-style: italic;
 }
 
 /* Project Editor/Creator General Tab */
@@ -495,7 +496,7 @@ Project Creator and Editor style rules
 
 #project-editor-general {
   display: grid;
-  height: 50vh;
+  height: 100%;
   grid-template:
     'title title about' 1fr
     'status purpose about' 1fr
@@ -536,15 +537,21 @@ Project Creator and Editor style rules
   position: relative;
 
   input {
+    margin-top: 10px;
     background-color: var(--bg-color);
   }
 
   textarea {
+    margin-top: 10px;
     background-color: var(--bg-color);
   }
 
   select {
     background-color: var(--bg-color);
+  }
+
+  .select-container {
+    margin-top: 10px;
   }
 
   .select-button {
@@ -587,10 +594,10 @@ Project Creator and Editor style rules
   font-style: italic;
   font-size: 1.6ch;
   position: absolute;
-  margin: 10px 0;
   bottom: 7px;
   right: 14px;
   color: var(--neutral-gray);
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -623,7 +630,6 @@ Project Creator and Editor style rules
 #project-editor-description-input textarea {
   min-height: 150px;
   max-height: 250px;
-  resize: vertical;
   width: 100%;
   box-sizing: border-box;
 }
@@ -697,6 +703,7 @@ Project Creator and Editor style rules
 .project-editor-image-container {
   position: relative;
   max-height: 182px;
+  width: 323px;
   border: 2px solid white;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
@@ -708,6 +715,7 @@ Project Creator and Editor style rules
 
 .project-editor-image-container img {
   object-fit: cover;
+  object-position: center;
   max-height: inherit;
   border-radius: 10px;
 }
@@ -779,7 +787,12 @@ Project Creator and Editor style rules
   align-items: center;
   justify-content: center;
   border: 2px dashed #424242;
+  border-radius: 10px;
   gap: 10px;
+
+  position: relative;
+  max-height: 182px;
+  width: 323px;
 }
 
 /* Project Editor/Creator Tags Tab */
@@ -1485,6 +1498,10 @@ select.edit-position-compensation {
 }
 
 /* Project Editor/Creator Links Tab */
+#project-editor-links > label {
+  margin-bottom: 3px;
+}
+
 #project-editor-links>.project-editor-extra-info {
   margin-bottom: 15px;
 }

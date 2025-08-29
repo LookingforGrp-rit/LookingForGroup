@@ -2,6 +2,7 @@ import profilePicture from '../images/blue_frog.png';
 import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
+import usePreloadedImage from '../functions/imageLoad';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -30,7 +31,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   return (
     <div className={'profile-panel'}>
       <img
-        src={profileData.profileImage ? `${API_BASE}/images/profiles/${profileData.profileImage}` : profilePicture}
+        src={usePreloadedImage(`${API_BASE}/images/profiles/${profileData.profileImage}`, profilePicture)}
         alt='profile image'
         // default profile picture if profile image doesn't load
         onError={(e) => {

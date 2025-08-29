@@ -70,6 +70,7 @@ export const MemberListing = (props) => {
         Member Removed. Saving changes will finalize this.
         <button onClick={undoRemoveMember}>undo</button>
       </div>
+      {/* Get image of profile and use preloader function in functions/imageLoad.tsx */}
       <img className="member-settings-profile" src={profilePlaceholder} alt="profilePlaceholder" />
       <span className="member-settings-name">{props.name}</span>
       <span className="member-settings-role">{props.role}</span>
