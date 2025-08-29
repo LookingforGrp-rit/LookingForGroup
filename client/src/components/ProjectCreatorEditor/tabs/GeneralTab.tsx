@@ -84,7 +84,7 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
   useEffect(() => {
     // delay with setTimeout() used to fix input glitch bug
     debounce(modifiedProject)
-  }, [modifiedProject, setProjectData]);
+  }, [debounce, modifiedProject, setProjectData]);
 
   // --- Complete component ---
   return (
@@ -103,27 +103,6 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
 
       <div id="project-editor-status-input" className="project-editor-input-item">
         <label>Status*</label>
-        {/* <Dropdown> TODO: implement dropdown and styling
-          <DropdownButton buttonId="status-btn">
-            {modifiedProject.status || 'Select'}
-            <ThemeIcon
-              src={'assets/dropdown_light.svg'}
-              darkSrc={'assets/dropdown_dark.svg'}
-              id="dropdown-arrow"
-            />
-          </DropdownButton>
-          <DropdownContent>
-            {statusOptions.map((o) => (
-              <button
-                onClick={() => {
-                  setModifiedProject({ ...modifiedProject, status: o });
-                }}
-              >
-                {o}
-              </button>
-            ))}
-          </DropdownContent>
-        </Dropdown> */}
         <Select>
           <SelectButton 
             placeholder='Select'
@@ -143,36 +122,10 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
             })}
           />
         </Select>
-        {/* <select
-          value={modifiedProject.status || 'Select'}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, status: e.target.value });
-          }}
-        >
-          <option disabled selected={isNewProject}>
-            Select
-          </option>
-          {statusOptions.map((o) => (
-            <option selected={isNewProject ? false : modifiedProject.status === o}>{o}</option>
-          ))}
-        </select> */}
       </div>
 
       <div id="project-editor-purpose-input" className="project-editor-input-item">
         <label>Purpose</label>
-        {/* <select
-          value={modifiedProject.purpose || 'Select'}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, purpose: e.target.value });
-          }}
-        >
-          <option disabled selected={isNewProject}>
-            Select
-          </option>
-          {purposeOptions.map((o) => (
-            <option selected={isNewProject ? false : modifiedProject.purpose === o}>{o}</option>
-          ))}
-        </select> */}
         <Select>
           <SelectButton 
             placeholder='Select'
@@ -248,15 +201,15 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
           }}
         />
       </div>
-      
-    <div id="general-save-info">
+    
+      <div id="general-save-info">
       <div id="invalid-input-error" className={"save-error-msg-general"}>
          <p>*Fill out all required info before saving!*</p>
       </div>
         <PopupButton buttonId="project-editor-save-general" callback={saveProject} doNotClose={() => !failCheck}>
           Save Changes
-        </PopupButton>
+          </PopupButton>
+      </div>
     </div>
-  </div>
   );
 };

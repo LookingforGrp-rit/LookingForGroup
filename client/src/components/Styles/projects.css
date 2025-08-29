@@ -309,7 +309,6 @@ Project Creator and Editor style rules
   border: none;
   border-radius: 10px;
   color: var(--main-text);
-  overflow-y: auto;
 }
 
 @media (min-width: 1172px) {
@@ -497,7 +496,7 @@ Project Creator and Editor style rules
 
 #project-editor-general {
   display: grid;
-  height: 50vh;
+  height: 100%;
   grid-template:
     'title title about' 1fr
     'status purpose about' 1fr
@@ -538,15 +537,21 @@ Project Creator and Editor style rules
   position: relative;
 
   input {
+    margin-top: 10px;
     background-color: var(--bg-color);
   }
 
   textarea {
+    margin-top: 10px;
     background-color: var(--bg-color);
   }
 
   select {
     background-color: var(--bg-color);
+  }
+
+  .select-container {
+    margin-top: 10px;
   }
 
   .select-button {
@@ -589,10 +594,10 @@ Project Creator and Editor style rules
   font-style: italic;
   font-size: 1.6ch;
   position: absolute;
-  margin: 10px 0;
   bottom: 7px;
   right: 14px;
   color: var(--neutral-gray);
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -625,7 +630,6 @@ Project Creator and Editor style rules
 #project-editor-description-input textarea {
   min-height: 150px;
   max-height: 250px;
-  resize: vertical;
   width: 100%;
   box-sizing: border-box;
 }
