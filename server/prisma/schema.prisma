@@ -22,7 +22,7 @@ model Roles {
   jobs    Jobs[]
   members Members[]
 
-  @@map("job_titles")
+  @@map("roles")
 }
 
 model Jobs {
