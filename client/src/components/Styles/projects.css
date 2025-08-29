@@ -703,6 +703,7 @@ Project Creator and Editor style rules
 .project-editor-image-container {
   position: relative;
   max-height: 182px;
+  width: 323px;
   border: 2px solid white;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
@@ -714,6 +715,7 @@ Project Creator and Editor style rules
 
 .project-editor-image-container img {
   object-fit: cover;
+  object-position: center;
   max-height: inherit;
   border-radius: 10px;
 }
@@ -785,7 +787,12 @@ Project Creator and Editor style rules
   align-items: center;
   justify-content: center;
   border: 2px dashed #424242;
+  border-radius: 10px;
   gap: 10px;
+
+  position: relative;
+  max-height: 182px;
+  width: 323px;
 }
 
 /* Project Editor/Creator Tags Tab */

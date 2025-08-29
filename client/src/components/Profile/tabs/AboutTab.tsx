@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ProfileData } from '../ProfileEditPopup';
 import { RoleSelector } from '../../RoleSelector';
 import { MajorSelector } from '../../MajorSelector';
-import { ImageUploader } from '../../ImageUploader';
+import { ProfileImageUploader } from '../../ImageUploader';
 import profilePicture from '../../../images/blue_frog.png';
 import usePreloadedImage from '../../../functions/imageLoad';
 
@@ -47,7 +47,7 @@ const setUpInputs = async (profileData: ProfileData) => {
   pairInputToData('funFact', profileData.fun_fact);
   pairInputToData('bio', profileData.bio);
   // Load in the profile picture
-  <ImageUploader initialImageUrl={`${API_BASE}/images/profiles/${profileData.profile_image}`} />
+  <ProfileImageUploader initialImageUrl={`${API_BASE}/images/profiles/${profileData.profile_image}`} />
 };
 
 // Components
@@ -119,7 +119,7 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
     <div id="profile-editor-about" className="edit-profile-body about">
       <div className="edit-profile-section-1">
         <div id="profile-editor-add-image" className="edit-profile-image">
-          <ImageUploader initialImageUrl={previewUrl} onFileSelected={handleFileSelected} />
+          <ProfileImageUploader initialImageUrl={previewUrl} onFileSelected={handleFileSelected} />
         </div>
 
         <div className="about-row row-1">
