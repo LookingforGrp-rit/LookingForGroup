@@ -3,8 +3,8 @@ import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
 import getService from '#services/projects/add-member.ts';
 
-const addMemberController = async (_req: Request, res: Response) => {
-  const projectId = parseInt(_req.params.id);
+const addMemberController = async (req: Request, res: Response) => {
+  const projectId = parseInt(req.params.id);
 
   if (isNaN(projectId)) {
     const resBody: ApiResponse = {
@@ -17,14 +17,18 @@ const addMemberController = async (_req: Request, res: Response) => {
     return;
   }
 
-  const { userId } = _req.body as { userId: number };
+  const { userId, roleId } = req.body as { userId: number; roleId?: number };
+  const rolesWhereId: Prisma.RolesWhereUniqueInput = { roleId };
+  const rolesWhereLabel: Prisma.RolesWhereUniqueInput = { label: 'Member' };
+
+  const rolesWhere = roleId !== undefined ? rolesWhereId : rolesWhereLabel;
 
   //currently just creating a new JobTitle record,
   //should be changed to avoid duplicate records
   const data: Prisma.MembersCreateInput = {
     projects: { connect: { projectId } },
     users: { connect: { userId } },
-    roles: { create: { label: 'Member' } },
+    roles: { connect: rolesWhere },
   };
 
   const result = await getService(data);
@@ -37,6 +41,17 @@ const addMemberController = async (_req: Request, res: Response) => {
       memetype: 'application/json',
     };
     res.status(500).json(resBody);
+    return;
+  }
+
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'User or Role not found',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(404).json(resBody);
     return;
   }
 
