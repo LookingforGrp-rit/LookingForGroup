@@ -1189,6 +1189,12 @@ paths:
           description: The ID of the project to delete
           schema:
             type: integer
+        - name: devId
+          in: query
+          required: false
+          description: The ID to be used as the current user
+          schema:
+            type: integer
       responses:
         '200':
           description: Project deleted successfully

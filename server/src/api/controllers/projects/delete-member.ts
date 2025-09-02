@@ -3,13 +3,6 @@ import type { Request, Response } from 'express';
 import { deleteMemberService } from '#services/projects/delete-member.ts';
 
 const deleteMemberController = async (req: Request, res: Response) => {
-  // res.status(501).json({
-  //   status: 501,
-  //   error: 'NOT IMPLEMENTED',
-  //   data: null,
-  //   memetype: 'application/json',
-  // } as ApiResponse);
-
   const { id } = req.params;
   const { userId } = req.params;
   const projectId = parseInt(id);

@@ -4,13 +4,12 @@ import type { ServiceErrorSubset } from '#services/service-error.ts';
 
 type DeleteFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
-//delete a user following
+//delete a member
 export const deleteMemberService = async (
   projectId: number,
   memberId: number,
 ): Promise<Member | DeleteFollowServiceError> => {
   try {
-    //delete the user being followed
     const deleteMember = await prisma.members.delete({
       where: {
         projectId_userId: {
