@@ -455,6 +455,17 @@ export const deleteUserFollowing = async (id: number, unfollowID: number) => {
 
 /* PROJECT FOLLOWINGS/VISIBILITY */
 
+export const getProjectsByUser = async (id: number) => {
+  const url = `/users/${id}/projects`;
+  const response = await GET(url);
+  if (response.status === 400) {
+    console.log("Error getting projects.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Data received.");
+  return response;
+};
+
 /**
  * Get all projects the user is a member of and has set to be public for the profile page
  * @param id - user to search
@@ -617,6 +628,19 @@ export const getSkills = async (): Promise<ApiResponse> => {
   }
 }
 
+export const getSkillsByType = async (type: string): Promise<ApiResponse> => {
+  const apiURL = `/datasets/skills?type=${type.toLowerCase()}`;
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  }
+  catch (e) {
+    console.error("Error fetching skills", e);
+    return { status: 500, error: "Internal error" };
+  }
+} 
+
 /**
  * Retrieves list of tags.
  */
@@ -674,6 +698,7 @@ export default {
   getUserFollowing,
   addUserFollowing,
   deleteUserFollowing,
+  getProjectsByUser,
   getVisibleProjects,
   updateProjectVisibility,
   getProjectFollowing,
@@ -683,5 +708,7 @@ export default {
   getJobTitles,
   getProjectTypes,
   getSkills,
-  getTags
+  getSkillsByType,
+  getTags,
+  getSocials,
 };

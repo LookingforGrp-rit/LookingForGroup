@@ -21,7 +21,7 @@ import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ThemeIcon } from "../ThemeIcon";
 import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
-import { getCurrentUsername } from "../../api/users";
+import { getCurrentUsername, getVisibleProjects, getProjectsByUser } from "../../api/users";
 import { getUsersById } from "../../api/users";
 
 //backend base url for getting images
@@ -182,16 +182,9 @@ const NewProfile = () => {
   };
 
   const getProfileProjectData = async () => {
-    let url = `/api/users/${profileID}/projects`;
-
-    // Only get visible projects when not the user's profile
-    if (!isUsersProfile) {
-      url += "/profile";
-    }
-
     try {
-      const response = await fetch(url);          // IMPLEMENT PROJECT GETTING
-      const { data } = await response.json();
+      const response = isUsersProfile ? await getProjectsByUser(Number(profileID)) : await getVisibleProjects(Number(profileID));          // IMPLEMENT PROJECT GETTING
+      const data = response.data;
       
       console.log(data);
 

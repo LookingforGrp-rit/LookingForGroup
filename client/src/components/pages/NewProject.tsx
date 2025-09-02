@@ -28,7 +28,7 @@ import Project from './Project';
 import { ThemeIcon } from '../ThemeIcon';
 import { sendPost, sendDelete } from '../../functions/fetch';
 import { getByID, deleteProject, deleteMember } from '../../api/projects';
-import { getAccountInformation } from '../../api/users';
+import { getAccountInformation, deleteProjectFollowing, addProjectFollowing } from '../../api/users';
 import { leaveProject } from '../projectPageComponents/ProjectPageHelper';
 
 //backend base url for getting images
@@ -145,7 +145,7 @@ const NewProject = () => {
         setFailCheck(true);
         return;
       }
-      const project = await fetchProjectByID(projectID);
+      const project = await getByID(projectID);
       if (!project) {
         setFailCheck(true);
         return;
@@ -275,19 +275,20 @@ const NewProject = () => {
                 <button
                   className={`follow-icon ${isFollowing ? 'following' : ''}`}
                   onClick={() => {
-                    let url = `/api/users/${user.userId}/followings/projects`;
-
                     if (!isFollowing) {
-                      sendPost(url, { projectId: projectID }, () => {
-                        setFollowing(true);
-                        setFollowCount(followCount + 1);
-                      });
+                      addProjectFollowing(user.userId, projectID).then(res => {
+                        if (res.status === 200) {
+                          setFollowing(true);
+                          setFollowCount(followCount + 1);
+                        }
+                      })
                     } else {
-                      url += `/${projectID}`;
-                      sendDelete(url, () => {
-                        setFollowing(false);
-                        setFollowCount(followCount - 1);
-                      });
+                      deleteProjectFollowing(user.userId, projectID).then(res => {
+                        if (res.status === 200) {
+                          setFollowing(false);
+                          setFollowCount(followCount - 1);
+                        }
+                      })
                     }
                   }}
                 >

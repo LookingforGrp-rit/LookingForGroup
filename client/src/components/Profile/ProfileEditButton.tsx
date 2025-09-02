@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { PagePopup, openClosePopup } from '../PagePopup';
 import { getByID } from '../../api/projects';
-import { getJobTitles, getMajors, getSkills, getSocials as fetchSocials } from '../../api/users';
+import { getJobTitles, getMajors, getSkills, getSocials as fetchSocials, editUser, updateProjectVisibility, getVisibleProjects as fetchProjects, 
+  updateProfilePicture, getVisibleProjects, getSkillsByType } from '../../api/users';
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
 
 interface ProjectType {
@@ -95,7 +96,7 @@ const EditButton = ({ userData }) => {
         getImage(userData.profile_image);
     }*/
 
-  const uploadNewImage = async (theInput) => {
+  const uploadNewImage = async (theInput: HTMLInputElement) => {
     const form = document.querySelector('.edit-region-button-wrapper.photo');
     if (
       form !== undefined &&
@@ -104,18 +105,14 @@ const EditButton = ({ userData }) => {
       theInput.files !== null &&
       theInput.files.length > 0
     ) {
-      const fileForm = new FormData(form);
+      const file = theInput.files[0];
 
-      const url = `/api/users/${userData.userId}/profile-picture`;
       try {
-        const response = await fetch(url, {
-          method: 'PUT',
-          body: fileForm,
-        });
+        const response = await updateProfilePicture(userData.userId, file);
 
         console.log(`User data: Response status: ${response.status}`);
 
-        const rawData = await response.json();
+        const rawData = response;
         console.log(rawData);
         getImage(rawData.data[0].profileImage);
 
@@ -357,13 +354,12 @@ const EditButton = ({ userData }) => {
     fetchUserProjects();
   }, [userData.userId]);
 
-  // Fetches projects taht are currently shown on profile
+ // Fetches projects that are currently shown on profile
   useEffect(() => {
     const fetchVisibleProjects = async () => {
       try {
-        const response = await fetch(`/api/users/${userData.userId}/projects/profile`);
-        const rawData = await response.json();
-        setShownProjects(rawData.data);
+        const response = await getVisibleProjects(userData.userId);
+        setShownProjects(response.data);
       } catch (err) {
         console.log("Failed to fetch visible projects:", err);
       }
@@ -648,13 +644,9 @@ const EditButton = ({ userData }) => {
       type.toLowerCase() === 'designer' ||
       type.toLowerCase() === 'soft'
     ) {
-      const url = `/api/datasets/skills?type=${type.toLowerCase()}`;
-      try {
-        const response = await fetch(url);
-
-        const rawData = await response.json();
+        const response = await getSkillsByType(type);
         setSkillsList(
-          rawData.data.toSorted((a, b) => {
+          response.data.toSorted((a, b) => {
             if (a.label.toLowerCase() < b.label.toLowerCase()) {
               return -1;
             }
@@ -664,9 +656,6 @@ const EditButton = ({ userData }) => {
             return 0;
           })
         );
-      } catch (error) {
-        console.log(error);
-      }
     } else {
         const response = await getSkills();
         if (response.data) {
@@ -1161,14 +1150,8 @@ const EditButton = ({ userData }) => {
 
   const saveUserData = async () => {
     console.log("I'M BEING RAN HAHAHAAHAHAHAHAHAHH");
-    const url = `/api/users/${userData.userId}`;
     try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await editUser(userData.userId, {
           firstName: currentFirstName,
           lastName: currentLastName,
           headline: currentQuote,
@@ -1181,9 +1164,7 @@ const EditButton = ({ userData }) => {
           bio: currentAbout,
           skills: createSkillsList(),
           socials: createLinksList(),
-        }),
-      });
-
+        });
       console.log(`User data: Response status: ${response.status}`);
     } catch (error) {
       console.log(error);
@@ -1191,22 +1172,17 @@ const EditButton = ({ userData }) => {
   };
 
   const saveProjectsPage = async () => {
-    if (!userProjects) return;
+    if (userProjects !== undefined) {
+      for (let i = 0; i < userProjects.length; i++) {
+        try {
+          const response = await updateProjectVisibility(userData.userId, userProjects[i].projectId,
+             checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private');
 
-    try {
-      await Promise.all(
-        userProjects.map((project) =>
-        fetch(`/api/users/${userData.userId}/projects/visibility`, {
-          method: 'PUT',
-          headers: {'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            projectId: project.projectId,
-            visibility: checkIfProjectIsShown(project.projectId) ? 'public' : 'private',
-          }),
-        }))
-      );
-    } catch (err) {
-      console.error("Failed to save project visibility:", err);
+          console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
+        } catch (error) {
+          console.log(error);
+        }
+      }
     }
   };
 

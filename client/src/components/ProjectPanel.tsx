@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { sendDelete, sendPost } from '../functions/fetch';
+import { addProjectFollowing, deleteProjectFollowing } from '../api/users.ts';
 
 //import shares types
 import { Project, ProjectFollowers, ProjectGenres, ProjectTag } from '../../../shared/types.ts'; // wherever your types live
@@ -89,19 +90,20 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
                 if (!userId || userId === 0) {
                   navigate(`${paths.routes.LOGIN}`);
                 } else {
-                  let url = `/api/users/${userId}/followings/projects`;
-
                   if (!isFollowing) {
-                    sendPost(url, { projectId: project.projectId }, () => {
-                      setFollowing(true);
-                      setFollowCount(followCount + 1);
-                    });
+                    addProjectFollowing(userId, project.projectId).then((res) => {
+                      if (res.status === 200) {
+                        setFollowing(true);
+                        setFollowCount(followCount + 1);
+                      }
+                    })
                   } else {
-                    url += `/${project.projectId}`;
-                    sendDelete(url, () => {
-                      setFollowing(false);
-                      setFollowCount(followCount - 1);
-                    });
+                    deleteProjectFollowing(userId, project.projectId).then((res) => {
+                      if (res.status === 200) {
+                        setFollowing(false);
+                        setFollowCount(followCount - 1);
+                      }
+                    })
                   }
                 }
               }}

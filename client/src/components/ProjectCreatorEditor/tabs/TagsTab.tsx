@@ -290,7 +290,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
 
   // Create elements for selected tags in sidebar
   const loadProjectTags = useMemo(() => {
-    return modifiedProject.tags
+    return (modifiedProject.tags ?? [])
       .map((t) => (
           <button key={t.tag} className={`tag-button tag-button-${getTagColor(t.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
             <i className="fa fa-close"></i>
@@ -452,9 +452,9 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
     <div id="project-editor-tags">
       <div id="project-editor-type-tags">
         <div className="project-editor-section-header">Project Type</div>
-        {modifiedProject.projectTypes.length === 0 ? <div className="error">*At least 1 type is required</div> : <></> }
+        {modifiedProject.projectTypes?.length === 0 ? <div className="error">*At least 1 type is required</div> : <></> }
         <div id="project-editor-type-tags-container">
-          {modifiedProject.projectTypes.map((t) => (
+          {(modifiedProject.projectTypes ?? []).map((t) => (
             <button key={t.projectType} className={`tag-button tag-button-blue-selected`} onClick={(e) => handleTagSelect(e)}>
               <i className="fa fa-close"></i>
               &nbsp;{t.projectType}
@@ -469,7 +469,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
           Drag and drop to reorder. The first 2 tags will be displayed on your project's
           discover card.
         </div>
-        {modifiedProject.tags.length === 0 ? <div className="error">*At least 1 tag is required</div> : <></> }
+        {modifiedProject.tags?.length === 0 ? <div className="error">*At least 1 tag is required</div> : <></> }
         <div id="project-editor-selected-tags-container">
           <hr id="selected-tag-divider" />
           {/* TODO: Separate top 2 tags from others with hr element */}

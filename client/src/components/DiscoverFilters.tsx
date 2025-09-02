@@ -3,7 +3,7 @@ import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
 import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
-import { getMajors, getJobTitles, getProjectTypes } from '../api/users';
+import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
 
 // Has to be outside component to avoid getting reset on re-render
 let activeTagFilters: string[] = [];
@@ -64,12 +64,9 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: string
   // Helper functions
   // --------------------
   const getData = async () => {
-    const url = `/api/datasets/${category === 'projects' ? 'tags' : 'skills'}`;
-
     try {
-      let response = await fetch(url);
-      const result = await response.json();
-      const data = result.data;
+      let response = await (category === 'projects' ? getTags() : getSkills());
+      const data = response.data;
 
       // Need to also pull from majors and job_titles tables
       if (category === 'profiles') {

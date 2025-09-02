@@ -16,6 +16,7 @@ import { TagsTab } from './tabs/TagsTab';
 import { ThemeIcon } from '../ThemeIcon';
 import { loggedIn } from '../Header';
 import { createNewProject, getByID, updateProject, getPics, addPic, updatePicPositions, deletePic, updateThumbnail } from '../../api/projects';
+import { getUsersById } from '../../api/users';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
 //backend base url for getting images
@@ -138,14 +139,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       const initProject = async() => {
         const project: ProjectData = { ...emptyProject, userId: user.userId };
         try {
-          const response = await fetch(`/api/users/${user.userId}`);
-          const data = await response.json();
+          const response = await getUsersById(user.userId.toString());
           // Add creator as Project Lead
           const member = {
             firstName: user?.firstName || '',
             lastName: user?.lastName || '',
             jobTitle: 'Project Lead',
-            profileImage: data?.profileImage || '',
+            profileImage: response.data?.profileImage || '',
             userId: user?.userId || 0
           };
           projectData.members = [member];

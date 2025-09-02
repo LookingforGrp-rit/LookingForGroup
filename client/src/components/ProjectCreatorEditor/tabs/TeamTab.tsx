@@ -7,7 +7,7 @@ import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { current } from "@reduxjs/toolkit";
-import { getJobTitles, getUsers } from "../../../api/users";
+import { getJobTitles, getUsers, getUsersById, getUserByUsername } from "../../../api/users";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -196,12 +196,11 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         // list of users to search. users searchable by first name, last name, or username
         const searchableUsers = await Promise.all(response.data.map(async (user: User) => {
           // get username
-          const usernameResponse = await fetch(`/api/users/${user.userId}`);
-          const usernameJson = await usernameResponse.json();
+          const userResponse = await getUsersById(user.userId.toString());
 
           // get make searchable user
           const filteredUser = {
-            "username": usernameJson.data[0].username,
+            "username": userResponse.data.username,
             "firstName": user.firstName,
             "lastName": user.lastName,
           };
@@ -358,11 +357,10 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
     let userId = -1;
     const getUserId = async () => {
       try {
-        const response = await fetch(`/api/users/search-username/${user.username}`);
-        const userJson = await response.json();
-        userId = userJson.data[0].userId;
+        const response = await getUserByUsername(user.username);
+        userId = response.data.userId;
       } catch (error) {
-        console.error(error.message);
+        console.error(error);
       }
     }
     await Promise.all([getUserId()]);
