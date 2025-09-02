@@ -21,6 +21,7 @@ type UpdatebleUserFields = Partial<
     | 'visibility'
     | 'username'
     | 'phoneNumber'
+    | 'profileImage'
   >
 >;
 
@@ -46,6 +47,7 @@ export const updateUserInfoService = async (
         bio: true,
         visibility: true,
         phoneNumber: true,
+        profileImage: true,
       },
     });
 

@@ -27,15 +27,6 @@ router.delete(
   PROJECT.deleteProject,
 );
 
-//Edits a project thumbnail through a specific id
-router.put(
-  '/:id/thumbnail',
-  requiresLogin,
-  injectCurrentUser,
-  requiresProjectOwner,
-  PROJECT.updateThumbnail,
-);
-
 //Receives pictures from project through id
 router.get('/:id/pictures', PROJECT.getProjectPics);
 

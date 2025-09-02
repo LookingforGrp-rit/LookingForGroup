@@ -12,6 +12,7 @@ interface UpdateProjectInfo {
   jobs?: object;
   members?: object;
   projectSocials?: object;
+  thumbnail?: string;
 }
 
 const updateProjectsController: RequestHandler<{ id: string }, unknown, UpdateProjectInfo> = async (
@@ -39,6 +40,7 @@ const updateProjectsController: RequestHandler<{ id: string }, unknown, UpdatePr
     'jobs',
     'members',
     'projectSocials',
+    'thumbnail',
   ];
 
   //validate update fields

@@ -14,7 +14,7 @@ export const deleteMemberService = async (
     const deleteMember = await prisma.members.delete({
       where: {
         projectId_userId: {
-          projectId,
+          projectId: projectId,
           userId: memberId,
         },
       },

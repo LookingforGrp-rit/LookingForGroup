@@ -9,7 +9,6 @@ import getProjects from './get-projects.ts';
 import updateImage from './update-image.ts';
 import updateMember from './update-member.ts';
 import updateProject from './update-project.ts';
-import updateThumbnail from './update-thumbnail.ts';
 
 export default {
   getProjects,
@@ -19,7 +18,6 @@ export default {
   addImage,
   addMember,
   updateProject,
-  updateThumbnail,
   updateMember,
   deleteProject,
   updateImage,
