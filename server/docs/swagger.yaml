@@ -1715,23 +1715,6 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  #Images
-  /api/images/{filename}:
-    get:
-      summary: Get image by filename
-      tags:
-        - Images
-      description: |
-        Gets an image at the given filename
-      parameters:
-        - in: path
-          name: filename
-          required: true
-          schema:
-            type: string
-          description: Filename
-      responses:
-
 # COMPONANTS
 components:
   securitySchemes:
