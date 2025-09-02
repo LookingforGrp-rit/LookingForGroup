@@ -344,7 +344,6 @@ Project Creator and Editor style rules
 }
 
 #project-editor-save,
-#project-editor-save-general,
 #team-add-member-add-button,
 #team-edit-member-save-button {
   border: none;
@@ -634,6 +633,20 @@ Project Creator and Editor style rules
   box-sizing: border-box;
 }
 
+/* Project Editor/Creator Media Tab */
+#project-editor-media {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  height: 100%;
+}
+
+#project-editor-media #general-save-info {
+  margin-top: auto;
+  align-self: center;
+}
+
+/* Project Editor/Creator Tags Tab */
 #project-editor-type-tags,
 #project-editor-selected-tags {
   background-color: var(--bg-color);

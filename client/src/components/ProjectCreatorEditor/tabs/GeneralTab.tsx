@@ -206,9 +206,9 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
       <div id="invalid-input-error" className={"save-error-msg-general"}>
          <p>*Fill out all required info before saving!*</p>
       </div>
-        <PopupButton buttonId="project-editor-save-general" callback={saveProject} doNotClose={() => !failCheck}>
+        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
           Save Changes
-          </PopupButton>
+        </PopupButton>
       </div>
     </div>
   );
