@@ -1241,29 +1241,29 @@ const EditButton = ({ userData }) => {
     }
   };
 
-  const saveProjectsPage = async () => {
-    if (userProjects !== undefined) {
-      for (let i = 0; i < userProjects.length; i++) {
-        const url = `/api/users/${userData.userId}/projects/visibility`;
-        try {
-          const response = await fetch(url, {
-            method: 'PUT',
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              projectId: userProjects[i].projectId,
-              visibility: checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private',
-            }),
-          });
+  // const saveProjectsPage = async () => {
+  //   if (userProjects !== undefined) {
+  //     for (let i = 0; i < userProjects.length; i++) {
+  //       const url = `/api/users/${userData.userId}/projects/visibility`;
+  //       try {
+  //         const response = await fetch(url, {
+  //           method: 'PUT',
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //           },
+  //           body: JSON.stringify({
+  //             projectId: userProjects[i].projectId,
+  //             visibility: checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private',
+  //           }),
+  //         });
 
-          console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    }
-  };
+  //         console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     }
+  //   }
+  // };
 
   return (
     <div id="profile-edit-button-section">
