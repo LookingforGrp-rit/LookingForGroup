@@ -238,7 +238,7 @@ const NewProfile = () => {
         // Only run this if profile data exists for user
         if (data[0] !== undefined) {
           // If profile is private, and isn't the user's, don't display it
-          if (isUsersProfile || data[0].visibility == 1) {
+          if (isUsersProfile /*|| data[0].visibility == 1*/) {
             setDisplayedProfile(data[0]);
             await getProfileProjectData();
           }

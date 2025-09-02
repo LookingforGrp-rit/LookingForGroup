@@ -39,7 +39,7 @@ const Settings = ({ }) => {
 
   // Stateful variables responsible for displaying settings
   const [themeOption, setThemeOption] = useState(theme === 'dark' ? 'Dark Mode' : 'Light Mode');
-  const [visibilityOption, setVisibilityOption] = useState('Public Account');
+  // const [visibilityOption, setVisibilityOption] = useState('Public Account');
 
   // --------------------
   // Helper functions
@@ -424,22 +424,22 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
   // Visibility num corresponds to private vs public
   // 0 - private
   // 1 - public
-  const updateVisibility = async (visibilityNum) => {
-    // Don't run if the value hasn't changed
-    if (visibilityNum !== userInfo.visibility) {
-      const url = `/api/users/${userInfo.userId}/visibility`;
-      const response = await sendPut(url, { newVisibility: visibilityNum });
+  // const updateVisibility = async (visibilityNum) => {
+  //   // Don't run if the value hasn't changed
+  //   if (visibilityNum !== userInfo.visibility) {
+  //     const url = `/api/users/${userInfo.userId}/visibility`;
+  //     const response = await sendPut(url, { newVisibility: visibilityNum });
 
-      if (response !== undefined && response.error) {
-        console.log(response.error);
-      } else {
-        // Update userInfo with newly updated visibility value
-        const tempInfo = { ...userInfo };
-        tempInfo.visibility = visibilityNum;
-        setUserInfo(tempInfo);
-      }
-    }
-  };
+  //     if (response !== undefined && response.error) {
+  //       console.log(response.error);
+  //     } else {
+  //       // Update userInfo with newly updated visibility value
+  //       const tempInfo = { ...userInfo };
+  //       tempInfo.visibility = visibilityNum;
+  //       setUserInfo(tempInfo);
+  //     }
+  //   }
+  // };
 
   return (
     <div className="page" style={{ position: 'relative' }}>
@@ -612,7 +612,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
               </div>
               {/* Account Visibility */}
               <div className="settings-column">
-                <h2 className="settings-header">Account Visibility</h2>
+                {/* <h2 className="settings-header">Account Visibility</h2>
                 <div className="subsection">
                   <label htmlFor="option-theme">Who can view you</label>
                   <Dropdown>
@@ -657,7 +657,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                       </div>
                     </DropdownContent>
                   </Dropdown>
-                </div>
+                </div> */}
                 {/* Account Deletion */}
                 <div className="subsection">
                   <Popup>

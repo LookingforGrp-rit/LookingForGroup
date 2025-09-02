@@ -343,11 +343,11 @@ const NewProject = () => {
       <>
         {projectMembers?.map((user) => {
           // Don't show users that chose to hide themselves as a member of this project
-          if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
-            return (
-              <></>
-            );
-          }
+          // if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
+          //   return (
+          //     <></>
+          //   );
+          // }
 
           return (
             <div
