@@ -24,7 +24,6 @@ interface Image {
   id: number;
   image: string;
   position: number;
-  file: File
 }
 
 interface ProjectData {
@@ -498,7 +497,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <div id="project-editor-content">
                 {
                   currentTab === 0 ? <GeneralTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
-                    currentTab === 1 ? <MediaTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
+                    currentTab === 1 ? <MediaTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
                       currentTab === 2 ? <TagsTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} /> :
                         currentTab === 3 ? <TeamTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorMember={setErrorAddMember} setErrorPosition={setErrorAddPosition} permissions={permissions} /> :
                           currentTab === 4 ? <LinksTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorLinks={setErrorLinks} /> :
