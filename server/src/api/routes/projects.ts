@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
@@ -10,13 +11,26 @@ const router = Router();
 router.get('/', PROJECT.getProjects);
 
 //Create a new project
-router.post('/', requiresLogin, injectCurrentUser, PROJECT.createProject);
+router.post(
+  '/',
+  requiresLogin,
+  injectCurrentUser,
+  upload.single('thumbnail'),
+  PROJECT.createProject,
+);
 
 //Get a specific project
 router.get('/:id', PROJECT.getProjectByID);
 
 //Edits a project through a specific id
-router.put('/:id', requiresLogin, injectCurrentUser, requiresProjectOwner, PROJECT.updateProject);
+router.put(
+  '/:id',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  upload.single('thumbnail'),
+  PROJECT.updateProject,
+);
 
 //Deletes project through a specific id
 router.delete(
@@ -36,6 +50,7 @@ router.post(
   requiresLogin,
   injectCurrentUser,
   requiresProjectOwner,
+  upload.single('image'),
   PROJECT.addImage,
 );
 
@@ -45,6 +60,7 @@ router.put(
   requiresLogin,
   injectCurrentUser,
   requiresProjectOwner,
+  upload.single('image'),
   PROJECT.updateImage,
 );
 

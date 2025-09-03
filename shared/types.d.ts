@@ -249,3 +249,9 @@ export interface Job {
     createdAt: Date;
     updatedAt: Date;
 }
+
+// IMAGES
+
+export type ImageUploadResult = {
+    location: string;
+}
