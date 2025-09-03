@@ -321,9 +321,9 @@ Project Creator and Editor style rules
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  margin-top: 38px;
+  margin-top: 28px;
 }
-
+ 
 .project-editor-tab {
   border: none;
   border-radius: 30px;
@@ -333,7 +333,7 @@ Project Creator and Editor style rules
   font-size: 2ch;
   font-weight: 500;
 }
-
+ 
 .project-editor-tab:hover,
 .project-editor-tab-active,
 #team-add-member-add-button,
@@ -370,7 +370,7 @@ Project Creator and Editor style rules
 
 #project-editor-content {
   flex-grow: 1;
-  margin: 35px 56px 40px 55px;
+  margin: 35px 56px 26px 55px;
 }
 
 #project-editor-content label,
@@ -933,16 +933,22 @@ Project Creator and Editor style rules
   font-weight: 700;
 }
 
-
-
 #project-editor-team {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
-
 
 #project-editor-team-content {
   display: flex;
   height: 100%;
+  margin-bottom: 40px;
+}
+
+#team-save-info {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
 }
 
 #project-editor-project-members {
@@ -1338,8 +1344,7 @@ Project Creator and Editor style rules
   align-items: start;
 }
 
-#team-positions-popup-list-buttons img,
-.add-item-button img {
+#team-positions-popup-list-buttons img {
   width: 21px;
   height: 21px;
 }
@@ -2898,7 +2903,7 @@ Project Carousel style rules
 .add-item-button>button {
   display: flex;
   flex-direction: row;
-  align-items: end;
+  align-items: center;
   gap: 10px;
   padding: 0 10px;
   background: transparent;
@@ -2908,11 +2913,6 @@ Project Carousel style rules
 .add-item-button * {
   font-size: 16px;
   color: var(--neutral-gray);
-}
-
-.add-item-button img {
-  transform: rotate(45deg);
-  filter: var(--image-filter);
 }
 
 .positions-popup-list-item {

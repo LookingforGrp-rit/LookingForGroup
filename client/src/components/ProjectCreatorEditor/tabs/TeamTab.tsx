@@ -98,8 +98,18 @@ const locationOptions = ['On-site', 'Remote', 'Hybrid'];
 const compensationOptions = ['Unpaid', 'Paid'];
 const permissionOptions = ['Project Member', 'Project Manager', 'Project Owner'];
 
+type TeamTabProps = {
+  projectData: ProjectData;
+  setProjectData: (data: ProjectData) => void;
+  setErrorMember: (error: string) => void;
+  setErrorPosition: (error: string) => void;
+  permissions: number;
+  saveProject: () => void;
+  failCheck: boolean;
+};
+
 // --- Component ---
-export const TeamTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, setErrorMember, setErrorPosition, permissions }) => {
+export const TeamTab = ({ projectData = defaultProject, setProjectData, setErrorMember, setErrorPosition, permissions, saveProject, failCheck }: TeamTabProps) => {
 
   // --- Hooks ---
   // tracking project modifications
@@ -188,7 +198,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         }
         setAllJobs(jobTitleData);
       } catch (error) {
-        console.error(error.message);
+        console.error((error as Error).message);
       }
     };
     if (allJobs.length === 0) {
@@ -228,7 +238,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         }
         setSearchableUsers({ data: searchableUsers });
       } catch (error) {
-        console.error(error.message);
+        console.error((error as Error).message);
       }
     };
     if (!allUsers || allUsers.length === 0) {
@@ -377,7 +387,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         const userJson = await response.json();
         userId = userJson.data[0].userId;
       } catch (error) {
-        console.error(error.message);
+        console.error((error as Error).message);
       }
     }
     await Promise.all([getUserId()]);
@@ -1194,7 +1204,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         </PopupContent>
       </Popup>
     </div>
-  ), [allJobs, closePopup, currentMember, currentRole, errorAddMember, handleNewMember, handleSearch, handleUserSelect, modifiedProject, searchResults.data, searchableUsers]);
+  ), [allJobs, errorAddMember, handleNewMember, handleSearch, handleUserSelect, modifiedProject, newMember, permissions, searchBarKey, searchQuery, searchResults.data, searchableUsers, selectKey, successAddMember]);
   const openPositionsContent: JSX.Element = useMemo(() => (
     <div id="project-team-open-positions-popup">
       <div className="positions-popup-list">
@@ -1222,7 +1232,9 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                 }
               }}
             >
-              <img src={'/images/icons/cancel.png'} alt="add" />
+              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="10" viewBox="0 0 11 10" fill="none">
+                <path d="M6.28571 0.714286C6.28571 0.524845 6.20293 0.343164 6.05558 0.20921C5.90823 0.075255 5.70838 0 5.5 0C5.29162 0 5.09177 0.075255 4.94442 0.20921C4.79707 0.343164 4.71429 0.524845 4.71429 0.714286V4.28571H0.785714C0.57733 4.28571 0.377481 4.36097 0.230131 4.49492C0.0827805 4.62888 0 4.81056 0 5C0 5.18944 0.0827805 5.37112 0.230131 5.50508C0.377481 5.63903 0.57733 5.71429 0.785714 5.71429H4.71429V9.28571C4.71429 9.47515 4.79707 9.65684 4.94442 9.79079C5.09177 9.92475 5.29162 10 5.5 10C5.70838 10 5.90823 9.92475 6.05558 9.79079C6.20293 9.65684 6.28571 9.47515 6.28571 9.28571V5.71429H10.2143C10.4227 5.71429 10.6225 5.63903 10.7699 5.50508C10.9172 5.37112 11 5.18944 11 5C11 4.81056 10.9172 4.62888 10.7699 4.49492C10.6225 4.36097 10.4227 4.28571 10.2143 4.28571H6.28571V0.714286Z" fill="var(--neutral-gray)"/>
+              </svg>
               <span className="project-editor-extra-info">Add position</span>
             </button>
           </div>
@@ -1262,13 +1274,20 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
       </div>
 
       <div id="project-editor-team-content">{teamTabContent}</div>
+
+      <div id="team-save-info">
+        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
+          Save Changes
+        </PopupButton>
+      </div>
     </div>
-  );
+  ); 
 };
 
 // Because of hooks depending on each other, this is not implemented.
 // Relevant references are commented out above.
 // positionWindowContent is one of these
+
 // Open position display
 // const positionViewWindow = useMemo(() => (
 //   <>
