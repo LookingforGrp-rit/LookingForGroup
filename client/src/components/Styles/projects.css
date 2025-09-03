@@ -664,6 +664,8 @@ Project Creator and Editor style rules
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: 10px;
+  grid-area: search;
+  min-width: 150px;
 }
 
 #project-editor-tag-search-container {
@@ -679,14 +681,14 @@ Project Creator and Editor style rules
 #project-editor-tag-wrapper {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 #tag-search-divider,
 #selected-tag-divider {
-  height: 4px;
-  width: 80%;
-  border: none;
-  border-radius: 3px;
+  height: 2px;
+  width: 100%;
+  border: none; 
   background-color: var(--header-color);
 }
 
@@ -813,10 +815,18 @@ Project Creator and Editor style rules
   display: grid;
   grid-template:
     'type search' auto
-    'select search' 1fr /
+    'select search' 1fr
+    'save save' auto /
     1fr 2fr;
   gap: 20px;
   height: 100%;
+}
+
+#tags-save-info {
+  grid-area: save;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @media only screen and (max-width: 650px) {
@@ -828,14 +838,17 @@ Project Creator and Editor style rules
 
 #project-editor-type-tags {
   grid-area: type;
-  min-height: 80px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; 
   gap: 15px;
 }
 
 #project-editor-selected-tags {
   grid-area: select;
+  
+  .error {
+    margin-top: 15px;
+  }
 }
 
 #project-editor-selected-tags-container {
@@ -854,22 +867,12 @@ Project Creator and Editor style rules
   gap: 8px;
 }
 
-#project-editor-tag-search {
-  grid-area: search;
-  min-width: 150px;
-}
-
 #project-editor-type-tags,
 #project-editor-selected-tags,
 #project-editor-tag-search {
   background-color: var(--bg-color);
   /* box-shadow: 0 0 3px var(--gray); */
   border-radius: 8px;
-}
-
-#project-editor-selected-tags>.error,
-#project-editor-type-tags>.error {
-  margin-top: 15px;
 }
 
 .project-editor-section-header {
@@ -909,8 +912,8 @@ Project Creator and Editor style rules
   margin-bottom: 10px;
   padding: 0;
   color: var(--neutral-gray);
-  font-size: 1.6ch;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 400;
   word-break: normal;
   max-width: 100%;
 }
@@ -927,7 +930,7 @@ Project Creator and Editor style rules
 .project-editor-team-tab:hover,
 .team-tab-active {
   color: var(--primary-color);
-  font-weight: 600;
+  font-weight: 700;
 }
 
 
@@ -1074,7 +1077,7 @@ Project Creator and Editor style rules
   width: 100%;
 }
 
-#user-search-container .search-bar {
+#user-search-container .search-bar  {
   /* Override for default SearchBar component */
   display: flex;
   align-items: center;

@@ -458,92 +458,73 @@ Discover and Meet page style rules
 
 /*tag rules may be used for buttons elsewhere, but will stay here for the time being*/
 .tag-button {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+
   border-radius: 30px;
   border: none;
-  padding: 5px 15px;
+  height: 28px;
+  padding: 0 17px; 
   font-size: medium;
   /* margin: 0 4px; */
   flex-shrink: 0;
 }
 
 /* selected tags */
-
-.tag-button-red-selected {
-  background-color: var(--tag-red-selected);
-  border: 2px solid var(--tag-red-selected);
+.tag-button-red-selected,
+.tag-button-orange-selected,
+.tag-button-yellow-selected,
+.tag-button-green-selected,
+.tag-button-blue-selected,
+.tag-button-purple-selected,
+.tag-button-grey-selected
+{
   color: var(--tag-text-selected);
   max-width: 100%;
 
   .fa {
     color: var(--tag-text-selected) !important;
   }
+}
+
+.tag-button-red-selected {
+  background-color: var(--tag-red-selected);
+  border: 2px solid var(--tag-red-selected);
 }
 
 .tag-button-orange-selected {
   background-color: var(--tag-orange-selected);
   border: 2px solid var(--tag-orange-selected);
-  color: var(--tag-text-selected);
-
-  .fa {
-    color: var(--tag-text-selected) !important;
-  }
 }
 
 .tag-button-yellow-selected {
   background-color: var(--tag-yellow-selected);
   border: 2px solid var(--tag-yellow-selected);
-  color: var(--tag-text-selected);
-  max-width: 100%;
-
-  .fa {
-    color: var(--tag-text-selected) !important;
-  }
 }
 
 .tag-button-green-selected {
   background-color: var(--tag-green-selected);
   border: 2px solid var(--tag-green-selected);
-  color: var(--tag-text-selected);
-
-  .fa {
-    color: var(--tag-text-selected) !important;
-  }
 }
 
 .tag-button-blue-selected {
   background-color: var(--tag-blue-selected);
   border: 2px solid var(--tag-blue-selected);
-  color: var(--tag-text-selected);
-  max-width: 100%;
-
-  .fa {
-    color: var(--tag-text-selected) !important;
-  }
 }
 
 .tag-button-purple-selected {
   background-color: var(--tag-purple-selected);
   border: 2px solid var(--tag-purple-selected);
-  color: var(--tag-text-selected);
-  max-width: 100%;
-
-  .fa {
-    color: var(--tag-text-selected) !important;
-  }
 }
 
 .tag-button-grey-selected {
   background-color: var(--tag-grey-selected);
   border: 2px solid var(--tag-grey-selected);
-  color: var(--tag-text-selected);
-
-  .fa {
-    color: var(--tag-text-selected) !important;
-  }
 }
 
 /* unselected tags */
-
 .tag-button-red-unselected {
   background-color: var(--tag-red-unselected);
   border: 2px solid var(--tag-red-unselected-border);
@@ -560,7 +541,7 @@ Discover and Meet page style rules
   border: 2px solid var(--tag-red-selected);
   color: var(--tag-text-selected);
 
-  .fa {
+  .fa { 
     color: var(--tag-text-selected) !important;
   }
 }

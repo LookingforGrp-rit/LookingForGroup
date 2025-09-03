@@ -91,7 +91,7 @@ General style rules
   --tag-purple-unselected-border: #d7bed3;
   --tag-grey-unselected-border: #d0d0d0;
 
-  --tag-text-selected: white;
+  --tag-text-selected: black;
 
   --tag-text-unselected-red: #ffa0b0;
   --tag-text-unselected-orange: #ffa381;
@@ -204,12 +204,8 @@ used for the more options dropdown menu and notifications
 .button-reset {
   background-color: transparent;
   border: none;
-  padding: 10px 20px;
-  font-size: 2ch;
-  font-weight: 700;
-
   width: max-content;
-  margin: auto;
+  margin: 0;
 }
 
 button {
@@ -1131,6 +1127,7 @@ Header style rules
 
 #header-searchbar>.search-wrapper>.search-bar {
   margin: 0;
+  gap: 15px;
 }
 
 #header-buttons {
@@ -1297,7 +1294,7 @@ Search style rules
   text-align: left;
   display: flex;
   flex-direction: row;
-  gap: 5px;
+  gap: 10px;
   /* float: right; */
   /* align-content: center; */
   /* margin: auto; */
@@ -1320,11 +1317,14 @@ Search style rules
 .search-button {
   background: none;
   border: none;
-  /* padding: 4px; */
-  padding-top: 2px;
   font: inherit;
   cursor: pointer;
   outline: inherit;
+  align-content: center;
+
+  i {
+    color: var(--primary-color);
+  }
 }
 
 .navIcon {
