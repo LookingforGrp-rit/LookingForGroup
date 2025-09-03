@@ -63,7 +63,6 @@ const keyboardDebounce = (func: any, delay: any) => {
 };
 
 type GeneralTabProps = {
-  isNewProject: boolean;
   projectData?: ProjectData;
   setProjectData?: (data: ProjectData) => void;
   saveProject?: () => void;
@@ -72,10 +71,9 @@ type GeneralTabProps = {
 
 // --- Component ---
 export const GeneralTab = ({
-  isNewProject = false,
   projectData = defaultProject,
-  setProjectData,
-  saveProject,
+  setProjectData = () => {},
+  saveProject = () => {},
   failCheck
 }: GeneralTabProps) => {
 
@@ -103,8 +101,9 @@ export const GeneralTab = ({
   return (
     <div id="project-editor-general">
       <div id="project-editor-title-input" className="project-editor-input-item">
-        <label>Title*</label>
+        <label htmlFor="title">Title*</label>
         <input
+          id="title"
           type="text"
           className="title-input"
           value={modifiedProject.title}
@@ -115,7 +114,7 @@ export const GeneralTab = ({
       </div>
 
       <div id="project-editor-status-input" className="project-editor-input-item">
-        <label>Status*</label>
+        <label htmlFor="status">Status*</label>
         <Select>
           <SelectButton 
             placeholder='Select'
@@ -138,7 +137,7 @@ export const GeneralTab = ({
       </div>
 
       <div id="project-editor-purpose-input" className="project-editor-input-item">
-        <label>Purpose</label>
+        <label htmlFor="purpose">Purpose</label>
         <Select>
           <SelectButton 
             placeholder='Select'
@@ -161,7 +160,7 @@ export const GeneralTab = ({
       </div>
 
       <div id="project-editor-audience-input" className="project-editor-input-item">
-        <label>Target Audience</label>
+        <label htmlFor="audience">Target Audience</label>
         <div className="project-editor-extra-info">
           Define who this project is intended for--consider age group, interest, industry, or
           specific user needs.
@@ -170,6 +169,7 @@ export const GeneralTab = ({
           {modifiedProject.audience ? modifiedProject.audience.length : '0'}/100
         </span>{' '}
         <textarea
+          id="audience"
           maxLength={100}
           value={modifiedProject.audience}
           onChange={(e) => {
@@ -179,7 +179,7 @@ export const GeneralTab = ({
       </div>
 
       <div id="project-editor-description-input" className="project-editor-input-item">
-        <label>Short Description*</label>
+        <label htmlFor="short-description">Short Description*</label>
         <div className="project-editor-extra-info">
           Share a brief summary of your project. This will be displayed in your project's
           discover card.
@@ -188,6 +188,7 @@ export const GeneralTab = ({
           {modifiedProject.hook ? modifiedProject.hook.length : '0'}/300
         </span>{' '}
         <textarea
+          id="short-description"
           maxLength={300}
           value={modifiedProject.hook}
           onChange={(e) => {
@@ -197,7 +198,7 @@ export const GeneralTab = ({
       </div>
 
       <div id="project-editor-long-description-input" className="project-editor-input-item">
-        <label>About This Project*</label>
+        <label htmlFor="long-description">About This Project*</label>
         <div className="project-editor-extra-info">
           Use this space to go into detail about your project! Feel free to share it's
           inspirations and goals, outline key features, and describe this impact you hope it
@@ -207,6 +208,7 @@ export const GeneralTab = ({
           {modifiedProject.description ? modifiedProject.description.length : '0'}/2000
         </span>{' '}
         <textarea
+          id="long-description"
           maxLength={2000}
           value={modifiedProject.description}
           onChange={(e) => {
