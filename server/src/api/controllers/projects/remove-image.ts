@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteImageService } from '#services/projects/delete-image.ts';
+import { deleteImageService } from '#services/projects/remove-image.ts';
 
 const deleteImageController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);

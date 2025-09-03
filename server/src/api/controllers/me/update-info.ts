@@ -68,6 +68,7 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     'visibility',
     'username',
     'phoneNumber',
+    'profileImage',
   ];
 
   //validate update fields
@@ -85,8 +86,8 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
   }
 
   //check if username was updated, and only do this whole check if it was
-  if (updates['username']) {
-    const newUsername = updates['username'];
+  const newUsername = updates['username'];
+  if (newUsername) {
     const userExist = await getUserByUsernameService(newUsername);
     if (
       userExist !== 'NOT_FOUND' &&

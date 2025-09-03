@@ -4,12 +4,12 @@ import getService from '#services/projects/update-image.ts';
 interface UpdateImageInfo {
   url?: string;
   description?: string;
-  isThumbnail?: boolean;
+  position?: number;
 }
 
 const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImageInfo> = async (
   req,
-  res
+  res,
 ): Promise<void> => {
   const { id } = req.params;
   const updates: object = req.body;
@@ -20,7 +20,7 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
     return;
   }
 
-  const allowedFields = ['url', 'description', 'isThumbnail'];
+  const allowedFields = ['url', 'description', 'position'];
   const invalidFields = Object.keys(updates).filter((field) => !allowedFields.includes(field));
 
   if (invalidFields.length > 0) {
