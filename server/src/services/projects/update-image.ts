@@ -1,6 +1,8 @@
 import prisma from '#config/prisma.ts';
 import type { Prisma } from '#prisma-models/index.js';
 import type { ServiceErrorSubset } from '#services/service-error.ts';
+//import uploadImageService from '#services/upload-image.ts'
+//import deleteImageService from '#services/delete-image.ts'
 
 type UpdateImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

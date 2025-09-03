@@ -177,12 +177,11 @@ export interface ProjectFollowings {
     followedAt: Date;
 }
 
-
-//there is no alt text in database yet
+//images for projects
 export interface ProjectImage {
     imageId: number;
     image: string;
-    //altText: '';
+    altText: '';
 }
 
 //tags for projects

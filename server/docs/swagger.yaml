@@ -1309,6 +1309,10 @@ paths:
                   type: string
                   description: Alternate text for the image
                   example: Screenshot of the project UI
+                position:
+                  type: integer
+                  description: Index of the project image
+                  example: 0
       responses:
         '200':
           description: Picture added successfully
@@ -1415,11 +1419,10 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
     delete:
-      summary: Remove a picture from a project (NOT FINISHED)
+      summary: Remove a picture from a project
       tags:
         - Projects
-      description: This endpoint is intended to remove a picture from a project by picture ID,
-        but is not implemented yet.
+      description: Removes a picture from a project by picture ID
       security:
         - shibbolethAuth: []
       parameters:
@@ -1442,8 +1445,8 @@ paths:
           required: false
           description: The user ID to be used as the current user
       responses:
-        '501':
-          description: NOT DONE
+        '200':
+          description: Picture removed successfully
           content:
             application/json:
               schema:

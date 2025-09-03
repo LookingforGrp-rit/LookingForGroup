@@ -3,6 +3,7 @@ import type { RequestHandler } from 'express';
 import type { UsersAcademicYear } from '#prisma-models/index.js';
 import { updateUserInfoService } from '#services/me/update-info.ts';
 import { getUserByUsernameService } from '#services/users/get-by-username.ts';
+//import { uploadImageService } from '#services/images/upload-image.ts'
 
 interface UpdateUserInfo {
   firstName?: string;
@@ -18,6 +19,7 @@ interface UpdateUserInfo {
   visibility?: number;
   username?: string;
   phoneNumber?: number;
+  profileImage?: string;
 }
 
 export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserInfo> = async (

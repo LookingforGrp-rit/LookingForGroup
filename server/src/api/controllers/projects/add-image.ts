@@ -3,8 +3,14 @@ import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
 import getService from '#services/projects/add-image.ts';
 
-const addImageController = async (_req: Request, res: Response) => {
-  const data: Prisma.ProjectImagesCreateInput = _req.body as Prisma.ProjectImagesCreateInput;
+const addImageController = async (req: Request, res: Response) => {
+  const data: Prisma.ProjectImagesCreateInput = req.body as Prisma.ProjectImagesCreateInput;
+
+  data.projects = {
+    connect: {
+      projectId: parseInt(req.params.id),
+    },
+  };
 
   const result = await getService(data);
 

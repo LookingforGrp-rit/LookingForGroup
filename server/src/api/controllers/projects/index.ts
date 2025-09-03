@@ -1,6 +1,7 @@
 import addImage from './add-image.ts';
 import addMember from './add-member.ts';
 import createProject from './create-project.ts';
+import deleteImage from './delete-image.ts';
 import deleteMember from './delete-member.ts';
 import deleteProject from './delete-project.ts';
 import getProjectPics from './get-proj-pictures.ts';
@@ -22,4 +23,5 @@ export default {
   deleteProject,
   updateImage,
   deleteMember,
+  deleteImage,
 };

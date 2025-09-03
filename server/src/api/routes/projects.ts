@@ -49,7 +49,13 @@ router.put(
 );
 
 //Removes picture from a project
-// router.delete('/:id/pictures/:picId' /* deletePicture */);
+router.delete(
+  '/:id/pictures/:picId',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.deleteImage,
+);
 
 //Adds member to a specific project through id
 router.post(

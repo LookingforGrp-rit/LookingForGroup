@@ -96,6 +96,7 @@ model ProjectGenres {
 model ProjectImages {
   imageId   Int      @id @default(autoincrement()) @map("image_id")
   image     String   @db.VarChar(100)
+  altText   String   @db.VarChar(150)
   position  Int
   projectId Int      @map("project_id")
   projects  Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_images_projects")
