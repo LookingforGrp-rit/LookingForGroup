@@ -50,6 +50,47 @@ export const createNewUser = async (
 };
 
 /**
+ * Signup with token only, unneeded with shibboleth
+ * @param token - from url, security token
+ */
+export const signupWithToken = async (
+  token: string
+): Promise<ApiResponse> => {
+  // check if token is valid
+  const apiURL = `/signup/${token}`;
+
+  const response = await GET(apiURL);
+
+  if (response.status === 400) {
+    console.log("Invalid signup token.");
+    return { status: 400, error: "Invalid signup token." };
+  }
+
+  return response;
+};
+
+/**
+ * Signup with no token (unneeded with shibboleth?)
+ * @param data - Object sent with user info 
+ */
+export const signUp = async (
+  data: object
+): Promise<ApiResponse> => {
+  const apiURL = `/signup`;
+  
+  const response = await POST(apiURL, data);
+
+  if (response.status === 400) {
+    console.log("Error creating a new user.");
+    return { status: 400, error: "Error creating a new user." };
+  }
+  console.log(`User created.`);
+
+  return response;
+}
+
+
+/**
  * Checks if the user is logged in (shibboleth) and returns username if they are
  * @returns ApiResponse with username is logged in, 404 if guest
  */

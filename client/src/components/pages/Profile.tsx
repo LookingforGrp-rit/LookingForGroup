@@ -26,6 +26,7 @@ import { getUsers, getUsersById } from '../../api/users';
 // Get user ID from API
 // NOTE: name used to match same api call as getCurrentUsername(). Not to be confused.
 const fetchUserID = async () => {
+  // Auth: replaced with shibboleth
   const response = await fetch('/api/auth');
   const {
     data: { userID },

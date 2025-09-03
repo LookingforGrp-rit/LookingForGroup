@@ -170,6 +170,7 @@ const NewProject = () => {
       }
 
       // Get user data and check if user is part of the project
+      // Auth: replaced with shibboleth
       const authRes = await fetch(`/api/auth`);
       const authData = await authRes.json();
 

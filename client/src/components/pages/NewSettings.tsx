@@ -50,6 +50,7 @@ const Settings = ({ }) => {
 
   // Checks if user is logged in and pulls all relevant data
   const getUserData = async () => {
+    // Auth: replaced with shibboleth
     const authResponse = await fetch('/api/auth');
     const authData = await authResponse.json();
 

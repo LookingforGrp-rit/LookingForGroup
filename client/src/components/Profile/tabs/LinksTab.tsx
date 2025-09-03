@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { sendPut, sendFile } from '../../../functions/fetch';
 import { SocialSelector } from '../../SocialSelector';
 import { getByID } from '../../../api/projects';
-import { getCurrentUsername, getUsersById } from '../../../api/users';
+import { getCurrentUsername, getUsers, getUsersById } from '../../../api/users';
 
 interface LinkData {
   id: number;
@@ -33,20 +33,18 @@ export const LinksTab = (props) => {
      // console.log("Break")
      // console.log(data);
 
-      let url;
+      let response;
       switch (type) {
         case 'project':
-          url = `api/users/${userID}`; // Replace with project url
+          response = await getUsersById(userID.toString()); // Replace with project url
           break;
         default:
-          url = `api/users/${userID}`;
+          response = await getUsersById(userID.toString());
           break;
 
       }
       // fetch for profile on ID
-      const response = await fetch(url);
-      const { data } = await response.json(); // use data[0]
-      socials = data[0].socials;
+      const socials = response.data[0].socials;
       // Setup links
       if (socials) {
         links = socials.map(s => {
