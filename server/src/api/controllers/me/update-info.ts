@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { RequestHandler } from 'express';
 import type { UsersAcademicYear } from '#prisma-models/index.js';
+import { uploadImageService } from '#services/images/upload-image.ts';
 import { updateUserInfoService } from '#services/me/update-info.ts';
 import { getUserByUsernameService } from '#services/users/get-by-username.ts';
-//import { uploadImageService } from '#services/images/upload-image.ts'
 
 interface UpdateUserInfo {
   firstName?: string;
@@ -103,6 +103,39 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
       res.status(409).json(resBody);
       return;
     }
+  }
+
+  //check if they sent over a new pfp, and upload it to the db
+  if (req.file) {
+    const dbImage = await uploadImageService(
+      req.file.buffer,
+      req.file.originalname,
+      req.file.mimetype,
+    );
+
+    if (dbImage === 'CONTENT_TOO_LARGE') {
+      const resBody: ApiResponse = {
+        status: 413,
+        error: 'Image too large',
+        data: null,
+        memetype: 'application/json',
+      };
+      res.status(413).json(resBody);
+      return;
+    }
+
+    if (dbImage === 'INTERNAL_ERROR') {
+      const resBody: ApiResponse = {
+        status: 500,
+        error: 'Internal Server Error',
+        data: null,
+        memetype: 'application/json',
+      };
+      res.status(500).json(resBody);
+      return;
+    }
+
+    updates['profileImage'] = dbImage.location;
   }
 
   const result = await updateUserInfoService(userId, updates);

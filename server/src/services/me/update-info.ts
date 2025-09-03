@@ -1,5 +1,6 @@
 import prisma from '#config/prisma.ts';
 import type { Users } from '#prisma-models/index.js';
+import { deleteImageService } from '#services/images/delete-image.ts';
 import type { ServiceErrorSubset } from '#services/service-error.ts';
 
 type UpdateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
@@ -30,6 +31,17 @@ export const updateUserInfoService = async (
   updates: UpdatebleUserFields,
 ): Promise<UpdatebleUserFields | UpdateUserServiceError> => {
   try {
+    const curUser = await prisma.users.findFirst({
+      where: {
+        userId: userId,
+      },
+    });
+
+    if (curUser && curUser.profileImage !== null) {
+      const currentPfp = curUser.profileImage;
+      await deleteImageService(currentPfp);
+    }
+
     const user = await prisma.users.update({
       where: { userId },
       data: { ...updates },
