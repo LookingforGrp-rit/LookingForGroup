@@ -31,13 +31,6 @@ interface ProjectData {
   userId?: number;
 }
 
-type MediaTabProps = {
-  projectData?: ProjectData;
-  setProjectData?: (data: ProjectData) => void;
-  saveProject?: () => void;
-  failCheck: boolean;
-}
-
 // --- Variables ---
 // Default project value
 const defaultProject: ProjectData = {
@@ -56,6 +49,13 @@ const defaultProject: ProjectData = {
   thumbnail: '',
   title: '',
 };
+
+type MediaTabProps = {
+  projectData?: ProjectData;
+  setProjectData?: (data: ProjectData) => void;
+  saveProject?: () => void;
+  failCheck: boolean;
+}
 
 // --- Component ---
 export const MediaTab = ({

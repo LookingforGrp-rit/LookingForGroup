@@ -1,6 +1,5 @@
 // --- Imports ---
 import { useEffect, useState, useRef } from "react";
-import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton } from '../../Popup';
@@ -63,8 +62,22 @@ const keyboardDebounce = (func: any, delay: any) => {
   };
 };
 
+type GeneralTabProps = {
+  isNewProject: boolean;
+  projectData?: ProjectData;
+  setProjectData?: (data: ProjectData) => void;
+  saveProject?: () => void;
+  failCheck: boolean;
+}
+
 // --- Component ---
-export const GeneralTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, saveProject, failCheck }) => {
+export const GeneralTab = ({
+  isNewProject = false,
+  projectData = defaultProject,
+  setProjectData,
+  saveProject,
+  failCheck
+}: GeneralTabProps) => {
 
   // --- Hooks ---
   // tracking project modifications
