@@ -1454,17 +1454,37 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 501
+                    example: 200
                   error:
                     type: string
-                    example: NOT DONE
-                  data:
-                    type: string
-                    nullable: true
                     example: null
+                  data:
+                    type: object
+                    properties:
+                      imageId:
+                        type: integer
+                        example: 1
+                      image:
+                        type: string
+                        example: string
+                      altText:
+                        type: string
+                        example: string
+                      position:
+                        type: integer
+                        position: integer
+                      projectId:
+                        type: integer
+                        position: integer
                   memetype:
                     type: string
                     example: application/json
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /api/projects/{id}/members:
     post:
