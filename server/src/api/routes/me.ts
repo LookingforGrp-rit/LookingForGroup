@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { upload } from '#config/multer.ts';
 import { addProjectFollowing } from '#controllers/me/add-follow-proj.ts';
 import { addUserFollowing } from '#controllers/me/add-follow-user.ts';
 import { deleteProjectFollowing } from '#controllers/me/delete-follow-proj.ts';
@@ -23,7 +24,7 @@ router.get('/get-username', requiresLogin, getUsernameByShib);
 router.get('/', getAccount);
 
 //Updates users information
-router.put('/', updateUserInfo);
+router.put('/', upload.single('profile-pic'), updateUserInfo);
 
 //Delete user
 router.delete('/', deleteUser);
