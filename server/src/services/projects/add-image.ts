@@ -1,15 +1,15 @@
 import prisma from '#config/prisma.ts';
 import type { Prisma } from '#prisma-models/index.js';
 import type { ServiceErrorSubset } from '#services/service-error.ts';
-//import { uploadImageService } from '#services/upload-image.ts'
 
 type AddImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 const addImageService = async (
   data: Prisma.ProjectImagesCreateInput,
-): Promise<Prisma.ProjectImagesCreateWithoutProjectsInput | AddImageServiceError> => {
+): Promise<ReturnType<typeof prisma.projectImages.create> | AddImageServiceError> => {
   try {
     const result = await prisma.projectImages.create({ data });
+
     return result;
   } catch (e) {
     console.error('Error in addImageService:', e);

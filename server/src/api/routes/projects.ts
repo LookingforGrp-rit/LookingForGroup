@@ -70,7 +70,7 @@ router.delete(
   requiresLogin,
   injectCurrentUser,
   requiresProjectOwner,
-  PROJECT.deleteImage,
+  PROJECT.removeImage,
 );
 
 //Adds member to a specific project through id

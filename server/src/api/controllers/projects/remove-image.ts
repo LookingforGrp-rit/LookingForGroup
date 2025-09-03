@@ -1,12 +1,12 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteImageService } from '#services/projects/remove-image.ts';
+import { removeImageService } from '#services/projects/remove-image.ts';
 
-const deleteImageController = async (req: Request, res: Response) => {
+const removeImageController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
   const imageId = parseInt(req.params.picId);
 
-  const result = await deleteImageService(projectId, imageId);
+  const result = await removeImageService(projectId, imageId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -38,4 +38,4 @@ const deleteImageController = async (req: Request, res: Response) => {
   res.status(200).json(resBody);
 };
 
-export default deleteImageController;
+export default removeImageController;
