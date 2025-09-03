@@ -1,6 +1,7 @@
 // --- Imports ---
 import { useEffect, useState } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
+import { PopupButton } from "../../Popup";
 
 
 // --- Interfaces ---
@@ -53,8 +54,22 @@ const defaultProject: ProjectData = {
   title: '',
 };
 
+type LinksTabProps = {
+  projectData?: ProjectData;
+  setProjectData?: (data: ProjectData) => void;
+  setErrorLinks?: (error: string) => void;
+  saveProject?: () => void;
+  failCheck: boolean;
+}
+
 // --- Component ---
-export const LinksTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, setErrorLinks }) => {
+export const LinksTab = ({
+  projectData = defaultProject,
+  setProjectData = () => {},
+  setErrorLinks = () => {},
+  saveProject = () => {},
+  failCheck
+}: LinksTabProps) => {
 
   // Icon failure to load by default fix
   const iconCheck = document.getElementsByClassName("project-link-select");
@@ -77,7 +92,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
     }
   }
 
-  // --- Hooks ---
+  // --- Hooks --- 
   // tracking project modifications
   const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
   // complete list of socials
@@ -117,7 +132,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
         setAllSocials(socialsData);
 
       } catch (error) {
-        console.error(error.message);
+        console.error((error as Error).message);
       }
     };
     if (allSocials.length === 0) {
@@ -207,6 +222,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                     <SelectOptions
                       callback={(e) => {
                         if (allSocials) {
+                          // FIXME: implement website name (id?) in project socials type
                           // Create a copy of the current social, and change it
                           const tempSocials = modifiedProject.socials;
                           tempSocials[index].website = e.target.value;
@@ -257,19 +273,20 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                       console.log(tempSocials);
                     }}
                   />
-                  <button className='remove-link-button' onClick={
-                    (e) => {
-                      // const wrapper = e.currentTarget.closest('.project-editor-link-item');
-                      // if (wrapper) {
-                      //   wrapper.remove();
-                      // }
-
+                  <button
+                    className='remove-link-button'
+                    onClick={ () => {
                       // Remove element from modified socials array
                       console.log(index);
-                      const tempSocials = modifiedProject.socials.toSpliced(index, 1);
+                      const tempSocials = [
+                        ...modifiedProject.socials.slice(0, index),
+                        ...modifiedProject.socials.slice(index + 1)
+                      ];
                       setModifiedProject({ ...modifiedProject, socials: tempSocials });
                       console.log(tempSocials);
-                    }}>
+                    }}
+                    title="Remove link"
+                  >
                     <i className="fa-solid fa-minus"></i>
                   </button>
                 </div>
@@ -288,6 +305,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                 tempSocials = [];
               }
 
+              //FIXME: implement website name (id?) in project socials type
               tempSocials.push({
                 id: 1,
                 website: 'Instagram',
@@ -297,10 +315,17 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
               setModifiedProject({ ...modifiedProject, socials: tempSocials });
             }}>
             {/* Figma wants + to be its own vector. Styles here assume it is a <p> */}
-            <p>+</p>
+            <svg xmlns="http://www.w3.org/2000/svg" width="11" height="10" viewBox="0 0 11 10" fill="none">
+              <path d="M6.28571 0.714286C6.28571 0.524845 6.20293 0.343164 6.05558 0.20921C5.90823 0.075255 5.70838 0 5.5 0C5.29162 0 5.09177 0.075255 4.94442 0.20921C4.79707 0.343164 4.71429 0.524845 4.71429 0.714286V4.28571H0.785714C0.57733 4.28571 0.377481 4.36097 0.230131 4.49492C0.0827805 4.62888 0 4.81056 0 5C0 5.18944 0.0827805 5.37112 0.230131 5.50508C0.377481 5.63903 0.57733 5.71429 0.785714 5.71429H4.71429V9.28571C4.71429 9.47515 4.79707 9.65684 4.94442 9.79079C5.09177 9.92475 5.29162 10 5.5 10C5.70838 10 5.90823 9.92475 6.05558 9.79079C6.20293 9.65684 6.28571 9.47515 6.28571 9.28571V5.71429H10.2143C10.4227 5.71429 10.6225 5.63903 10.7699 5.50508C10.9172 5.37112 11 5.18944 11 5C11 4.81056 10.9172 4.62888 10.7699 4.49492C10.6225 4.36097 10.4227 4.28571 10.2143 4.28571H6.28571V0.714286Z" fill="var(--neutral-gray)"/>
+            </svg>
             <p>Add social profile</p>
           </button>
         </div>
+      </div>
+      <div id="link-save-info">
+        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
+          Save Changes
+        </PopupButton>
       </div>
     </div>
   );

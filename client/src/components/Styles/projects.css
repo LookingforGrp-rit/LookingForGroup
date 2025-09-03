@@ -1519,6 +1519,12 @@ select.edit-position-compensation {
 }
 
 /* Project Editor/Creator Links Tab */
+#project-editor-links {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 #project-editor-links > label {
   margin-bottom: 3px;
 }
@@ -1555,7 +1561,12 @@ select.edit-position-compensation {
   border: none;
   border-radius: 50%;
   transition: .15s;
-  align-self: anchor-center;
+}
+
+#link-save-info {
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
 }
 
 @media only screen and (max-width: 700px) {
