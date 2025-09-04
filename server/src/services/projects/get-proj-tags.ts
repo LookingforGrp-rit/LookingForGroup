@@ -20,7 +20,7 @@ const getProjectTagsService = async (
 
     return project.tags;
   } catch (e) {
-    console.error(`Error in getProjectPicturesService: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectTagsService: ${JSON.stringify(e)}`);
 
     return 'INTERNAL_ERROR';
   }

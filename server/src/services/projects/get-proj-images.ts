@@ -20,7 +20,7 @@ const getProjectImagesService = async (
 
     return project.projectImages;
   } catch (e) {
-    console.error(`Error in getProjectPicturesService: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectImagesService: ${JSON.stringify(e)}`);
 
     return 'INTERNAL_ERROR';
   }

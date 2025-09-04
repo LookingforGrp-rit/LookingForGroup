@@ -1,5 +1,6 @@
 import addImage from './add-image.ts';
 import addMember from './add-member.ts';
+import addTags from './add-tags.ts';
 import createProject from './create-project.ts';
 import deleteMember from './delete-member.ts';
 import deleteProject from './delete-project.ts';
@@ -19,6 +20,7 @@ export default {
   createProject,
   addImage,
   addMember,
+  addTags,
   updateProject,
   updateMember,
   deleteProject,

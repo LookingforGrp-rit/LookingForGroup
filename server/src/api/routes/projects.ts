@@ -42,7 +42,7 @@ router.delete(
 );
 
 //Receives pictures from project through id
-router.get('/:id/images', PROJECT.getProjectPics);
+router.get('/:id/images', PROJECT.getProjectImages);
 
 router.put(
   '/:id/images/reorder',
@@ -71,6 +71,8 @@ router.put(
   upload.single('image'),
   PROJECT.updateImage,
 );
+
+router.put('/:id/tags', requiresLogin, injectCurrentUser, requiresProjectOwner, PROJECT.addTags);
 
 //Removes picture from a project
 router.delete(

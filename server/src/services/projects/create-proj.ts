@@ -12,7 +12,7 @@ const createProjectService = async (
 
     return project;
   } catch (e) {
-    console.error('Error in updateProjectService:', e);
+    console.error('Error in createProjectService:', e);
     return 'INTERNAL_ERROR';
   }
 };

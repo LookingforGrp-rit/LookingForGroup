@@ -14,16 +14,8 @@ const getProjectsService = async (): Promise<ProjectWithFollowers[] | GetService
             projectFollowings: true,
           },
         },
-        projectGenres: {
-          include: {
-            genres: true,
-          },
-        },
-        projectTags: {
-          include: {
-            tags: true,
-          },
-        },
+        mediums: true,
+        tags: true,
         projectImages: true,
         projectSocials: {
           include: {
