@@ -13,7 +13,7 @@ model Mediums {
   label           String     @unique @db.VarChar(50)
   projects        Projects[]
   
-  @@map("medium")
+  @@map("mediums")
 }
 
 model Roles {
