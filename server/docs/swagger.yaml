@@ -128,13 +128,13 @@ paths:
                     status: 200
                     error: null
                     data:
-                      - skill_id: 1
+                      - skillId: 1
                         label: C++
                         type: Developer
-                      - skill_id: 2
+                      - skillId: 2
                         label: CSS
                         type: Developer
-                      - skill_id: 3
+                      - skillId: 3
                         label: C#
                         type: Developer
         '500':
@@ -745,7 +745,7 @@ paths:
                   type: string
                 MajorId:
                   type: integer
-                academic_year:
+                academicYear:
                   type: string
                   enum: [Freshman, Sophmore, Junior, Senior, Graduate]
                 location:
@@ -761,7 +761,7 @@ paths:
                 pronouns: they/them
                 title: 'Student'
                 majorId: 2
-                academic_year: Senior
+                academicYear: Senior
                 location: Grave Yard
                 funFact: Bones
                 bio: AHHHHHHHH
@@ -1750,7 +1750,7 @@ components:
     Skill:
       type: object
       properties:
-        skill_id:
+        skillId:
           type: integer
         label:
           type: string
@@ -1814,7 +1814,7 @@ components:
         majorId:
           type: integer
           nullable: true
-        academic_year:
+        academicYear:
           type: string
           nullable: true
         location:
