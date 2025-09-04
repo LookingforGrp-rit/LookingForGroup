@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import getMajorsController from '#controllers/datasets/get-majors.ts';
-import getProjectTypesController from '#controllers/datasets/get-project-genres.ts';
+import getProjectTypesController from '#controllers/datasets/get-mediums.ts';
 import getRolesController from '#controllers/datasets/get-roles.ts';
 import getSkillsController from '#controllers/datasets/get-skills.ts';
 import getSocialsController from '#controllers/datasets/get-socials.ts';
