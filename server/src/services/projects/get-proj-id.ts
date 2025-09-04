@@ -17,16 +17,8 @@ const getProjectByIdService = async (
             projectFollowings: true,
           },
         },
-        projectGenres: {
-          include: {
-            genres: true,
-          },
-        },
-        projectTags: {
-          include: {
-            tags: true,
-          },
-        },
+        mediums: true,
+        tags: true,
         projectImages: true,
         projectSocials: {
           include: {

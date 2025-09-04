@@ -70,8 +70,8 @@ export interface Skill {
     type: SkillType;
 }
 
-export interface Genre {
-    typeId: number;
+export interface Medium {
+    mediumId: number;
     label: string;
 }
 
@@ -222,7 +222,7 @@ export interface Project {
     createdAt: Date;
     updatedAt: Date;
     //might need to add projectGenre
-    projectType: Genre[];
+    medium: Medium[];
     projectTags: ProjectTag[];
     projectImages: ProjectImage[];
     //might need to add projectSocial

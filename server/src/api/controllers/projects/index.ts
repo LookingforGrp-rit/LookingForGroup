@@ -7,6 +7,7 @@ import getProjectPics from './get-proj-pictures.ts';
 import getProjectByID from './get-project-id.ts';
 import getProjects from './get-projects.ts';
 import removeImage from './remove-image.ts';
+import reorderImages from './reorder-images.ts';
 import updateImage from './update-image.ts';
 import updateMember from './update-member.ts';
 import updateProject from './update-project.ts';
@@ -24,4 +25,5 @@ export default {
   updateImage,
   deleteMember,
   removeImage,
+  reorderImages,
 };

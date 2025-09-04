@@ -1,14 +1,14 @@
+import type { Medium } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-error.ts';
-import type { Genre } from '../../../../shared/types.ts';
 
 type GetGenresServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
-const getGenreService = async (): Promise<Genre[] | GetGenresServiceError> => {
+const getGenreService = async (): Promise<Medium[] | GetGenresServiceError> => {
   try {
-    return await prisma.genres.findMany({
+    return await prisma.mediums.findMany({
       select: {
-        typeId: true,
+        mediumId: true,
         label: true,
       },
     });
