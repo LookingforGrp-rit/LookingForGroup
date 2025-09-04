@@ -195,7 +195,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
         {
           modifiedProject.socials ? modifiedProject.socials.map((social, index) => {
             return (
-              <div className="project-editor-link-item" key={`social.id-${index}`}>
+              <div className="project-editor-link-item" key={`${social.id}-${index}`}>
                 <div className='project-link-select-wrapper'>
                   <Select>
                     <SelectButton
