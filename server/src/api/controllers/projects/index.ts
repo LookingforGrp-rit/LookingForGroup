@@ -3,7 +3,7 @@ import addMember from './add-member.ts';
 import createProject from './create-project.ts';
 import deleteMember from './delete-member.ts';
 import deleteProject from './delete-project.ts';
-import getProjectPics from './get-proj-pictures.ts';
+import getProjectImages from './get-proj-images.ts';
 import getProjectByID from './get-project-id.ts';
 import getProjects from './get-projects.ts';
 import removeImage from './remove-image.ts';
@@ -15,7 +15,7 @@ import updateProject from './update-project.ts';
 export default {
   getProjects,
   getProjectByID,
-  getProjectPics,
+  getProjectImages,
   createProject,
   addImage,
   addMember,

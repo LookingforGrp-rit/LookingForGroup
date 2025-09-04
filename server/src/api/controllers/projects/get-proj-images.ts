@@ -1,8 +1,8 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getService from '#services/projects/get-proj-pics.ts';
+import getProjectImagesService from '#services/projects/get-proj-images.ts';
 
-const getProjectPicturesController = async (_req: Request, res: Response): Promise<void> => {
+const getProjectImagesController = async (_req: Request, res: Response): Promise<void> => {
   const projID = parseInt(_req.params.id);
 
   if (isNaN(projID)) {
@@ -16,7 +16,7 @@ const getProjectPicturesController = async (_req: Request, res: Response): Promi
     return;
   }
 
-  const result = await getService(projID);
+  const result = await getProjectImagesService(projID);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -49,4 +49,4 @@ const getProjectPicturesController = async (_req: Request, res: Response): Promi
   res.status(200).json(resBody);
 };
 
-export default getProjectPicturesController;
+export default getProjectImagesController;

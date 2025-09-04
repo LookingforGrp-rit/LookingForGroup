@@ -3,7 +3,7 @@ import type { ServiceErrorSubset } from '#services/service-error.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
-const getProjectPicturesService = async (
+const getProjectImagesService = async (
   projectId: number,
 ): Promise<Array<object> | null | GetServiceError> => {
   try {
@@ -26,4 +26,4 @@ const getProjectPicturesService = async (
   }
 };
 
-export default getProjectPicturesService;
+export default getProjectImagesService;
