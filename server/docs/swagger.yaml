@@ -32,9 +32,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Role'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Example job titles list
@@ -75,9 +72,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Social'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Example socials list
@@ -118,9 +112,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Skill'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Example skill list
@@ -164,9 +155,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectGenre'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Example project types list
@@ -207,9 +195,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Major'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Examples majors list
@@ -311,9 +296,6 @@ paths:
                         type: string
                       userId:
                         type: integer
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Example response
@@ -355,9 +337,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/UserDetails'
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
@@ -424,13 +403,11 @@ paths:
                         username:
                           type: string
                           example: User01
-                  memetype:
-                    type: string
-                    example: application/json
         '409':
           $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
   /api/users/{id}:
     get:
       summary: Get a user by their ID
@@ -460,9 +437,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/UserPreview'
-                  memetype:
-                    type: string
-                    example: application/json
 
   /api/users/search-username/{username}:
     get:
@@ -493,9 +467,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/UserPreview'
-                  memetype:
-                    type: string
-                    example: application/json
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -530,9 +501,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/UserPreview'
-                  memetype:
-                    type: string
-                    example: application/json
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -570,9 +538,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -611,9 +576,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -663,9 +625,6 @@ paths:
                           type: string
                           format: date-time
                           example: 2025-05-01T10:00:00Z
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -705,9 +664,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/UserDetails'
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -783,9 +739,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/UserDetails'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -823,9 +776,6 @@ paths:
                   data:
                     type: string
                     example: User deleted successfully
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -865,9 +815,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -987,7 +934,6 @@ paths:
                   userId: 1
                   followingId: 2
                   followedAt: '2025-07-16T12:34:56Z'
-                memetype: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1056,9 +1002,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
@@ -1098,9 +1041,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1134,9 +1074,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
 
@@ -1197,9 +1134,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/ProjectDetails'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1247,9 +1181,6 @@ paths:
                     properties:
                       id:
                         type: string
-                  memetype:
-                    type: string
-                    example: application/json
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -1288,9 +1219,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectImage'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1321,30 +1249,15 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
-              required:
-                - projectId
-                - image
               properties:
-                projectId:
-                  type: integer
-                  description: ID of the project
-                  example: 42
                 image:
                   type: string
-                  format: uri
-                  description: URL of the picture
-                  example: https://example.com/image.jpg
+                  format: binary
                 altText:
                   type: string
-                  description: Alternate text for the image
-                  example: Screenshot of the project UI
-                position:
-                  type: integer
-                  description: Index of the project image
-                  example: 0
       responses:
         '200':
           description: Picture added successfully
@@ -1376,9 +1289,6 @@ paths:
                       altText:
                         type: string
                         example: Screenshot of the project UI
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1508,9 +1418,6 @@ paths:
                       projectId:
                         type: integer
                         position: integer
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1587,9 +1494,6 @@ paths:
                       roleId:
                         type: integer
                         example: 76
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1657,9 +1561,6 @@ paths:
                       roleId:
                         type: integer
                         example: 76
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -1709,9 +1610,6 @@ paths:
                   data:
                     type: string
                     example: Member removed
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2260,7 +2158,6 @@ components:
                 status: 500
                 error: Internal Server Error
                 data: null
-                memetype: application/json
     BadRequest:
       description: The request was invalid (e.g., malformed parameters)
       content:
@@ -2273,7 +2170,6 @@ components:
                 status: 400
                 error: Invalid parameter(s)
                 data: null
-                memetype: application/json
     NotFound:
       description: The requested resource was not found
       content:
@@ -2286,7 +2182,6 @@ components:
                 status: 404
                 error: Not found
                 data: null
-                memetype: application/json
     Unauthorized:
       description: Authentication is required and has failed or has not been provided
       content:
@@ -2299,7 +2194,6 @@ components:
                 status: 401
                 error: Unauthorized
                 data: null
-                memetype: application/json
     Conflict:
       description: Conflict to show resource already exists
       content:
@@ -2312,4 +2206,3 @@ components:
                 status: 409
                 error: Resource already exists
                 data: null
-                memetype: application/json
