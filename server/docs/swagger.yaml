@@ -1186,7 +1186,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/projects/{id}/pictures:
+  /api/projects/{id}/images:
     get:
       summary: Get project pictures by ID
       tags:
@@ -1292,7 +1292,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/projects/{id}/pictures/{picId}:
+  /api/projects/{id}/images/{imageId}:
     put:
       summary: Update a pictures for a project
       description: Updates fields of an existing project picture by image ID.
@@ -1308,7 +1308,7 @@ paths:
           schema:
             type: integer
             example: 1
-        - name: picId
+        - name: imageId
           in: path
           description: ID of the picture to update
           required: true
@@ -1369,7 +1369,7 @@ paths:
           schema:
             type: integer
           description: Project ID
-        - name: picId
+        - name: imageId
           in: path
           required: true
           schema:

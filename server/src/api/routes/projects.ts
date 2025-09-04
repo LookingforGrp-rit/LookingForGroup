@@ -42,10 +42,10 @@ router.delete(
 );
 
 //Receives pictures from project through id
-router.get('/:id/pictures', PROJECT.getProjectPics);
+router.get('/:id/images', PROJECT.getProjectPics);
 
 router.put(
-  '/:id/pictures/reorder',
+  '/:id/images/reorder',
   requiresLogin,
   injectCurrentUser,
   requiresProjectOwner,
@@ -54,7 +54,7 @@ router.put(
 
 //Creates a new picture for a project
 router.post(
-  '/:id/pictures',
+  '/:id/images',
   requiresLogin,
   injectCurrentUser,
   requiresProjectOwner,
@@ -64,7 +64,7 @@ router.post(
 
 //Changes a picture for a project
 router.put(
-  '/:id/pictures/:picId',
+  '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
   requiresProjectOwner,
@@ -74,7 +74,7 @@ router.put(
 
 //Removes picture from a project
 router.delete(
-  '/:id/pictures/:picId',
+  '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
   requiresProjectOwner,
