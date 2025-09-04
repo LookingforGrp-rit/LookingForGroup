@@ -1,8 +1,8 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getService from '#services/datasets/get-project-genres.ts';
+import getService from '#services/datasets/get-mediums.ts';
 
-const getGenresController = async (_request: Request, response: Response): Promise<void> => {
+const getMediumsController = async (_request: Request, response: Response): Promise<void> => {
   const result = await getService();
 
   if (result === 'INTERNAL_ERROR') {
@@ -25,4 +25,4 @@ const getGenresController = async (_request: Request, response: Response): Promi
   response.status(200).json(resBody);
 };
 
-export default getGenresController;
+export default getMediumsController;

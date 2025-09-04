@@ -16,8 +16,6 @@ export const deleteProjectService = async (
     const deletedProject = await prisma.projects.delete({ where: { projectId: projectId } });
     await Promise.all([
       prisma.members.deleteMany({ where: { projectId: projectId } }),
-      prisma.projectGenres.deleteMany({ where: { projectId: projectId } }),
-      prisma.projectTags.deleteMany({ where: { projectId: projectId } }),
       prisma.projectFollowings.deleteMany({ where: { projectId: projectId } }),
       prisma.projectImages.deleteMany({ where: { projectId: projectId } }),
     ]);

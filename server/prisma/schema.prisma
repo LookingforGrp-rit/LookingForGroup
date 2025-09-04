@@ -8,12 +8,12 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Genres {
-  typeId        Int             @id @default(autoincrement()) @map("type_id")
-  label         String          @db.VarChar(50)
-  projectGenres ProjectGenres[]
-
-  @@map("genres")
+model Mediums {
+  mediumId        Int        @id @default(autoincrement()) @map("medium_id")
+  label           String     @unique @db.VarChar(50)
+  projects        Projects[]
+  
+  @@map("medium")
 }
 
 model Roles {
@@ -81,18 +81,6 @@ model ProjectFollowings {
   @@map("project_followings")
 }
 
-model ProjectGenres {
-  projectId Int      @map("project_id")
-  typeId    Int      @map("type_id")
-  genres    Genres   @relation(fields: [typeId], references: [typeId], onDelete: NoAction, map: "FK_project_genres_genres")
-  projects  Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_genres_projects")
-
-  @@id([projectId, typeId])
-  @@index([typeId], map: "FK_project_genres_genres")
-  @@index([projectId], map: "FK_project_genres_projects")
-  @@map("project_genres")
-}
-
 model ProjectImages {
   imageId   Int      @id @default(autoincrement()) @map("image_id")
   image     String   @db.VarChar(100)
@@ -111,23 +99,10 @@ model ProjectSocials {
   url       String   @db.VarChar(2000)
   projects  Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_socials_projects")
   socials   Socials  @relation(fields: [websiteId], references: [websiteId], map: "FK_project_socials_socials")
-
+  
   @@id([projectId, websiteId])
   @@index([websiteId], map: "FK_project_socials_socials")
   @@map("project_socials")
-}
-
-model ProjectTags {
-  projectId Int      @map("project_id")
-  tagId     Int      @map("tag_id")
-  position  Int
-  projects  Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_tags_projects")
-  tags      Tags     @relation(fields: [tagId], references: [tagId], onDelete: NoAction, map: "FK_project_tags_tags")
-
-  @@id([projectId, tagId])
-  @@index([projectId], map: "FK_project_tags_projects")
-  @@index([tagId], map: "FK_project_tags_tags")
-  @@map("project_tags")
 }
 
 model Projects {
@@ -145,11 +120,11 @@ model Projects {
   jobs              Jobs[]
   members           Members[]
   projectFollowings ProjectFollowings[]
-  projectGenres     ProjectGenres[]
   projectImages     ProjectImages[]
   projectSocials    ProjectSocials[]
-  projectTags       ProjectTags[]
-  users             Users              @relation(fields: [userId], references: [userId], map: "FK_user_id")
+  mediums           Mediums[]
+  tags              Tags[]
+  users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")
 
   @@index([userId], map: "FK_user_id")
   @@map("projects")
@@ -165,10 +140,10 @@ model Socials {
 }
 
 model Tags {
-  tagId       Int           @id @default(autoincrement()) @map("tag_id")
-  label       String        @db.VarChar(50)
-  type        String        @db.VarChar(50)
-  projectTags ProjectTags[]
+  tagId    Int        @id @default(autoincrement()) @map("tag_id")
+  label    String     @db.VarChar(50)
+  type     String     @db.VarChar(50)
+  projects Projects[]
 
   @@unique([label, type])
   @@map("tags")
