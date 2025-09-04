@@ -193,8 +193,10 @@ export const updateProfilePicture = async (
 ): Promise<ApiResponse> => {
   const apiURL = `/users/${id}/profile-picture`;
 
-  const data = { image: image };
-  const response = await PUT(apiURL, data);
+  const formData = new FormData();
+  formData.append("image", image);
+  
+  const response = await PUT(apiURL, formData);
   if (response.status === 400) {
     console.log("error updating profile picture.");
     return { status: 400, error: "Error updating profile picture." };

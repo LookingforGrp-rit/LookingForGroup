@@ -142,8 +142,11 @@ export const updateThumbnail = async (
   _image: File
 ): Promise<ApiResponse<{ filename: string }>> => {
   const apiURL = `/projects/${ID}/thumbnail`;
-  const data = { image: _image };
-  const response = await PUT(apiURL, data);
+  
+  const formData = new FormData();
+  formData.append("image", _image);
+
+  const response = await PUT(apiURL, formData);
   if (response.error) {
     return { status: response.status, error: response.error };
   }
@@ -177,11 +180,12 @@ export const addPic = async (
   _position: number
 ): Promise<ApiResponse<any[]>> => {
   const apiURL = `/projects/${ID}/pictures`;
-  const data = {
-    image: _image,
-    position: _position,
-  };
-  const response = await POST(apiURL, data);
+  
+  const formData = new FormData();
+  formData.append("image", _image);
+  formData.append("position", _position.toString());
+
+  const response = await POST(apiURL, formData);
   if (response.error) {
     return { status: response.status, error: response.error };
   }

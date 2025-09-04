@@ -59,12 +59,14 @@ export const POST = async (
   apiURL: string,
   newData: object
 ): Promise<ApiResponse<unknown>> => {
+  const isFormData = newData instanceof FormData;
+
   try {
     const response = await fetch(getBaseUrl() + apiURL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(newData),
+      body: isFormData ? newData : JSON.stringify(newData),
     });
 
     const contentType = response.headers.get("content-type") || "";
@@ -103,12 +105,14 @@ export const PUT = async (
   apiURL: string,
   newData: object
 ): Promise<ApiResponse<unknown>> => {
+  const isFormData = newData instanceof FormData;
+
   try {
     const response = await fetch(getBaseUrl() + apiURL, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(newData),
+      body: isFormData ? newData : JSON.stringify(newData),
     });
 
     const contentType = response.headers.get("content-type") || "";
@@ -147,12 +151,14 @@ export const DELETE = async (
   apiURL: string,
   data: object = {}
 ): Promise<ApiResponse<unknown>> => {
+  const isFormData = data instanceof FormData;
+
   try {
     const response = await fetch(getBaseUrl() + apiURL, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
     });
 
     const contentType = response.headers.get("content-type") || "";
