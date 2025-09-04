@@ -17,8 +17,8 @@ router.get('/skills', getSkillsController);
 //Receives list of all majors
 router.get('/majors', getMajorsController);
 
-//Receives list of all possible project-types
-router.get('/project-types', getProjectTypesController);
+//Receives list of all possible mediums
+router.get('/mediums', getProjectTypesController);
 
 //Receives list of all tags
 router.get('/tags', getTagsController);

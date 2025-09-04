@@ -131,7 +131,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/datasets/project-types:
+  /api/datasets/mediums:
     get:
       summary: Receives list of all project types
       tags:
