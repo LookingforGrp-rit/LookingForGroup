@@ -1324,24 +1324,19 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                url:
+                image:
                   type: string
-                  format: uri
-                  description: URL of the updated image
-                  example: https://example.com/new-image.jpg
-                description:
+                  format: binary
+                altText:
                   type: string
-                  description: Description or alt text for the image
-                  example: Updated project screenshot
                 isThumbnail:
                   type: boolean
                   description: Whether this image should be set as the project thumbnail
                   example: false
-              additionalProperties: false
       responses:
         '200':
           description: Image updated successfully
