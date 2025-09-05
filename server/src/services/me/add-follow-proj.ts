@@ -9,7 +9,7 @@ export const addProjectFollowingService = async (
   projectId: number,
 ): Promise<ProjectFollowings | AddFollowServiceError> => {
   try {
-    //add no following own project???
+    //add no following own project??
 
     //check if project exists
     const project = await prisma.projects.findUnique({
@@ -31,7 +31,7 @@ export const addProjectFollowingService = async (
 
     if (exists) return 'CONFLICT';
 
-    ///create the following
+    /// create the following
     const addFollow = await prisma.projectFollowings.create({
       data: {
         userId,
@@ -39,7 +39,12 @@ export const addProjectFollowingService = async (
       },
     });
 
-    return addFollow;
+    const result: ProjectFollowings = {
+      ...addFollow,
+      apiUrl: `api/me/followings/projects/${projectId}`,
+    };
+
+    return result;
   } catch (error) {
     console.error('Error in addProjectFollowingService:', error);
     return 'INTERNAL_ERROR';
