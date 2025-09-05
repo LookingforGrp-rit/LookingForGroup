@@ -8,11 +8,13 @@ import deleteProject from './delete-project.ts';
 import deleteTags from './delete-tags.ts';
 import getProjectImages from './get-proj-images.ts';
 import getProjectByID from './get-project-id.ts';
+import getProjectSocials from './get-project-socials.ts';
 import getProjects from './get-projects.ts';
 import removeImage from './remove-image.ts';
 import reorderImages from './reorder-images.ts';
 import updateImage from './update-image.ts';
 import updateMember from './update-member.ts';
+import { updateProjectSocial } from './update-project-social.ts';
 import updateProject from './update-project.ts';
 
 export default {
@@ -32,4 +34,6 @@ export default {
   reorderImages,
   deleteTags,
   addProjectSocial,
+  getProjectSocials,
+  updateProjectSocial,
 };
