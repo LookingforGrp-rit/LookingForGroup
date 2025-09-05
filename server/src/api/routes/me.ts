@@ -10,6 +10,7 @@ import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getSocials } from '#controllers/me/get-socials.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
+import { updateSocial } from '#controllers/me/update-social.ts';
 import { getUsernameByShib } from '#controllers/projects/get-username-shib.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
@@ -44,6 +45,9 @@ router.post('/followings/projects/:id', addProjectFollowing);
 
 //Adds a social
 router.post('/socials', addSocial);
+
+//Updates a social
+router.put('/socials/:socialId', updateSocial);
 
 //Unfollows a project
 router.delete('/followings/projects/:id', deleteProjectFollowing);

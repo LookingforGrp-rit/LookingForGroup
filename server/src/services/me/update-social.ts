@@ -7,12 +7,12 @@ type Social = {
   url: string;
 };
 
-type AddSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type UpdateSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
-export const addSocialService = async (
+export const updateSocialService = async (
   data: Social,
   userId: number,
-): Promise<UserSocials | AddSocialServiceError> => {
+): Promise<UserSocials | UpdateSocialServiceError> => {
   try {
     //socialId validation
     const socialExists = await prisma.socials.findFirst({
@@ -20,13 +20,16 @@ export const addSocialService = async (
         websiteId: data.socialId,
       },
     });
-
     if (!socialExists) return 'NOT_FOUND';
 
-    const social = await prisma.userSocials.create({
+    const social = await prisma.userSocials.update({
+      where: {
+        userId_websiteId: {
+          userId: userId,
+          websiteId: data.socialId,
+        },
+      },
       data: {
-        userId: userId,
-        websiteId: data.socialId,
         url: data.url,
       },
     });
