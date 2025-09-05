@@ -9,6 +9,7 @@ import deleteProject from './delete-project.ts';
 import deleteTags from './delete-tags.ts';
 import getProjectImages from './get-proj-images.ts';
 import getProjectByID from './get-project-id.ts';
+import getProjectMediums from './get-project-mediums.ts';
 import getProjectSocials from './get-project-socials.ts';
 import getProjects from './get-projects.ts';
 import removeImage from './remove-image.ts';
@@ -38,4 +39,5 @@ export default {
   getProjectSocials,
   updateProjectSocial,
   deleteProjectSocial,
+  getProjectMediums,
 };

@@ -75,6 +75,7 @@ router.delete(
 //Receives pictures from project through id
 router.get('/:id/images', PROJECT.getProjectImages);
 
+//Reorders a project's images
 router.put(
   '/:id/images/reorder',
   requiresLogin,
@@ -82,6 +83,9 @@ router.put(
   requiresProjectOwner,
   PROJECT.reorderImages,
 );
+
+//Gets a project's mediums
+router.get(':/id/mediums', PROJECT.getProjectMediums);
 
 //Creates a new picture for a project
 router.post(
@@ -103,7 +107,8 @@ router.put(
   PROJECT.updateImage,
 );
 
-router.put('/:id/tags', requiresLogin, injectCurrentUser, requiresProjectOwner, PROJECT.addTags);
+//Adds a project tag
+router.post('/:id/tags', requiresLogin, injectCurrentUser, requiresProjectOwner, PROJECT.addTags);
 
 //Removes picture from a project
 router.delete(
