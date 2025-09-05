@@ -1,8 +1,9 @@
+import type { MySkill } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { SkillProficiency } from '#prisma-models/index.js';
-//import { MySkillSelector } from '#services/selectors/me/my-skill.ts';
+import { MySkillSelector } from '#services/selectors/me/my-skill.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-//import { transformMySkill } from '#services/transformers/me/my-skill.ts';
+import { transformMySkill } from '#services/transformers/me/my-skill.ts';
 
 type AddSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
@@ -13,20 +14,23 @@ type Skill = {
   proficiency: SkillProficiency;
 };
 
-//this would take type Skill in place of data with the Skill type implemented
-//Skill[] if we plan to handle adding multiple skills at once, and just Skill if one
-const addSkillsService = async (
-  data: Skill[],
-): Promise<ReturnType<typeof prisma.userSkills.createMany> | AddSkillsServiceError> => {
+const addSkillsService = async (data: Skill[]): Promise<MySkill[] | AddSkillsServiceError> => {
   try {
     if (data.length === 0) return 'NOT_FOUND';
 
     //creates the skills
-    const result = await prisma.userSkills.createMany({
+    await prisma.userSkills.createMany({
       data: data,
     });
 
-    return result;
+    const result = await prisma.userSkills.findMany({
+      where: {
+        userId: data[0].userId,
+      },
+      select: MySkillSelector,
+    });
+
+    return result.map(transformMySkill);
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {
