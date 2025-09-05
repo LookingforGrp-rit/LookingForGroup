@@ -30,7 +30,7 @@ export const deleteSocialService = async (
 
     return social;
   } catch (error) {
-    console.error('Error in addSocialService:', error);
+    console.error('Error in deleteSocialService:', error);
     return 'INTERNAL_ERROR';
   }
 };
