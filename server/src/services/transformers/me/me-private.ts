@@ -3,8 +3,8 @@ import type {
   SkillProficiency,
   MyMajor,
   MySocial,
-  User,
   Visibility,
+  MePrivate,
 } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MePrivateSelector } from '#services/selectors/me/me-private.ts';
@@ -18,7 +18,7 @@ const sampleUsers = prisma.users.findMany({
 type UsersGetPayload = Awaited<typeof sampleUsers>[number];
 
 //map to shared type
-export const transformMeToPrivate = (user: UsersGetPayload): User => {
+export const transformMeToPrivate = (user: UsersGetPayload): MePrivate => {
   return {
     userId: user.userId,
     firstName: user.firstName,
