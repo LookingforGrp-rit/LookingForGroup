@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getUserFollowingService } from '#services/users/get-user-following.ts';
+import { getUserFollowersService } from '#services/users/get-user-followers.ts';
 
 //get the user by the username
-export const getUserFollowing = async (req: Request, res: Response): Promise<void> => {
+export const getUserFollowers = async (req: Request, res: Response): Promise<void> => {
   const userId = parseInt(req.params.id);
 
   if (isNaN(userId)) {
@@ -17,7 +17,7 @@ export const getUserFollowing = async (req: Request, res: Response): Promise<voi
     return;
   }
 
-  const result = await getUserFollowingService(userId);
+  const result = await getUserFollowersService(userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -33,7 +33,7 @@ export const getUserFollowing = async (req: Request, res: Response): Promise<voi
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Followings for user not found',
+      error: 'Followers for user not found',
       data: null,
       memetype: 'application/json',
     };
