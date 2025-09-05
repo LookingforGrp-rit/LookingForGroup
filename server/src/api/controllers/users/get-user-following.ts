@@ -2,7 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { getUserFollowingService } from '#services/users/get-user-following.ts';
 
-//get the user by the username
+//get the user by the id
 export const getUserFollowing = async (req: Request, res: Response): Promise<void> => {
   const userId = parseInt(req.params.id);
 

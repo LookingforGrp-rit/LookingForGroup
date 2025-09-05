@@ -41,6 +41,15 @@ router.delete(
   PROJECT.deleteProject,
 );
 
+//Deletes the tags in a project
+router.delete(
+  '/:id/tags/:tagid',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.deleteTags,
+);
+
 //Receives pictures from project through id
 router.get('/:id/images', PROJECT.getProjectImages);
 

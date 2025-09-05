@@ -4,6 +4,7 @@ import addTags from './add-tags.ts';
 import createProject from './create-project.ts';
 import deleteMember from './delete-member.ts';
 import deleteProject from './delete-project.ts';
+import deleteTags from './delete-tags.ts';
 import getProjectImages from './get-proj-images.ts';
 import getProjectByID from './get-project-id.ts';
 import getProjects from './get-projects.ts';
@@ -28,4 +29,5 @@ export default {
   deleteMember,
   removeImage,
   reorderImages,
+  deleteTags,
 };
