@@ -58,10 +58,10 @@ export const deleteUserFollowing = async (req: Request, res: Response): Promise<
   }
 
   //passed
-  const resBody: ApiResponse<typeof result> = {
+  const resBody: ApiResponse<null> = {
     status: 200,
     error: null,
-    data: result,
+    data: null,
     memetype: 'application/json',
   };
   res.status(200).json(resBody);
