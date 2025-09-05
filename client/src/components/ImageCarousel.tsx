@@ -8,7 +8,8 @@ import { ThemeIcon } from './ThemeIcon';
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
 
-//To-do:
+//TODO:
+//IMPORTANT: Remove this component? ImageCarouselNew.tsx is being called and seems to work as intended.
 //Finish Discover page version of this component
 
 //Default list of images to use
@@ -135,11 +136,7 @@ export const ImageCarousel = ({
                 onClick={() => handleIndexChange(currentIndex - 1)}
                 id="project-image-carousel-left"
               >
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'left'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Previous Image'}/>
               </button>
               <div id="carousel-tabs">
                 {dataList.map((image, index) => {

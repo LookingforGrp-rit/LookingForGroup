@@ -23,7 +23,7 @@ const deleteAccountPressed = async () => {
   });
 };
 
-const Settings = ({ }) => {
+const Settings = () => {
   // --------------------
   // Global variables
   // --------------------
@@ -555,10 +555,11 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                       <div className="input-container">
                         <input id="option-theme" placeholder={themeOption} type="text" disabled />
                         <ThemeIcon
-                          src={'assets/dropdown_light.svg'}
-                          darkSrc={'assets/dropdown_dark.svg'}
-                          alt={'Current Theme'}
-                          addClass={'options-dropdown-parent-btn'}
+                          id={'dropdown-arrow'}
+                          width={15}
+                          height={12}
+                          className={'color-fill options-dropdown-parent-btn'}
+                          ariaLabel={'current theme'}
                         />
                       </div>
                     </DropdownButton>

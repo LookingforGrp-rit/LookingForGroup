@@ -267,22 +267,14 @@ const NewProfile = () => {
               window.open("https://www.linkedin.com/", "_blank");
             }}
           >
-            <ThemeIcon
-              src={"assets/white/linkedIn_white.svg"}
-              lightModeColor={"black"}
-              alt={"LinkedIn"}
-            />
+            <ThemeIcon id={'linkedin'} width={25} height={25} className={'color-fill'} ariaLabel={'LinkedIn'}/>
           </button>
           <button
             onClick={() => {
               window.open("https://www.instagram.com/", "_blank");
             }}
           >
-            <ThemeIcon
-              src={"assets/white/instagram_white.svg"}
-              lightModeColor={"black"}
-              alt={"Instagram"}
-            />
+            <ThemeIcon id={'instagram'} width={25} height={25} className={'color-fill'} ariaLabel={'Instagram'}/>
           </button>
           <ProfileEditPopup />
         </div>
@@ -293,51 +285,36 @@ const NewProfile = () => {
       {
         <div id="about-me-buttons" className="about-me-buttons-minimal">
           <button>
-            <ThemeIcon
-              src={"assets/linkedIn_logo_light.svg"}
-              darkSrc={"assets/linkedIn_logo_dark.svg"}
-              alt={"LinkedIn"}
-            />
+            <ThemeIcon id={'linkedin'} width={25} height={25} className={'color-fill'} ariaLabel={'LinkedIn'}/>
           </button>
           <button>
-            <ThemeIcon
-              src={"assets/instagram_logo_light.svg"}
-              darkSrc={"assets/instagram_logo_dark.svg"}
-              alt={"Instagram"}
-            />
+            <ThemeIcon id={'instagram'} width={25} height={25} className={'color-fill'} ariaLabel={'Instagram'}/>
           </button>
           <button>
-            <ThemeIcon
-              src={"assets/follow_user_light.svg"}
-              darkSrc={"assets/follow_user_dark.svg"}
-              alt={"Like/Follow"}
-            />
+            <i className="fa-solid fa-heart" />
+            {/* Taken from ProjectPanel.tsx/NewProject.tsx: */}
+            {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i> */}
           </button>
           {/* TO-DO: Implement Share, Block, and Report functionality */}
           <Dropdown>
             <DropdownButton>
-              <ThemeIcon
-                src={"assets/menu_light.svg"}
-                darkSrc={"assets/menu_dark.svg"}
-                alt={"More options"}
-                addClass={"dropdown-menu"}
-              />
+              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
             </DropdownButton>
             <DropdownContent rightAlign={true}>
               <div id="profile-menu-dropdown">
                 <button className="profile-menu-dropdown-button">
-                  <i className="fa-solid fa-share"></i>
+                  <ThemeIcon id={'share'} width={27} height={27} className={'mono-fill'} ariaLabel={'Share'}/>
                   Share
                 </button>
                 <button className="profile-menu-dropdown-button">
-                  <i className="fa-solid fa-shield"></i>
+                  <ThemeIcon id={'cancel'} width={27} height={27} className={'mono-fill'} ariaLabel={'Block'}/>
                   Block
                 </button>
                 <button
                   className="profile-menu-dropdown-button"
                   id="profile-menu-report"
                 >
-                  <i className="fa-solid fa-flag"></i>
+                  <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
                   Report
                 </button>
               </div>
@@ -389,35 +366,19 @@ const NewProfile = () => {
 
           <div id="profile-info-extras">
             <div className="profile-extra">
-              <ThemeIcon
-                src={"assets/white/role.svg"}
-                lightModeColor={"black"}
-                alt={"Profession"}
-              />
+              <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
               {displayedProfile.job_title}
             </div>
             <div className="profile-extra">
-              <ThemeIcon
-                src={"assets/white/major.svg"}
-                lightModeColor={"black"}
-                alt={"Major"}
-              />
+              <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
               {displayedProfile.major} {displayedProfile.academic_year}
             </div>
             <div className="profile-extra">
-              <ThemeIcon
-                src={"assets/white/location.svg"}
-                lightModeColor={"black"}
-                alt={"Location"}
-              />
+              <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
               {displayedProfile.location}
             </div>
             <div className="profile-extra">
-              <ThemeIcon
-                src={"assets/white/pronouns.svg"}
-                lightModeColor={"black"}
-                alt={"Pronouns"}
-              />
+              <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
               {displayedProfile.pronouns}
             </div>
           </div>

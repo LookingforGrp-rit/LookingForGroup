@@ -124,6 +124,14 @@ Profile Panel component style rules
     color: var(--invert-text);
     font-weight: 600;
   }
+
+  /* !important because Icons prioritize black because of added [data-theme] specification in general.css */
+  .mono-stroke > use {
+    stroke: var(--invert-text) !important;
+  }
+  .mono-fill > use {
+    fill: var(--invert-text) !important;
+  }
 }
 
 .profile-panel:hover .profile-panel-hover {
@@ -1504,6 +1512,7 @@ New Profile page style rules
 
 #about-me-buttons .dropdown-menu {
   width: auto !important;
+  transform: rotate(90deg);
 }
 
 #profile-menu-dropdown {

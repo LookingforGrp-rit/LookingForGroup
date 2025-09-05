@@ -457,23 +457,6 @@ Project Creator and Editor style rules
   border: 1px solid var(--border-color);
 }
 
-#project-editor-content select::after {
-  content: url('../../../build/assets/dropdown_dark.svg');
-  position: absolute;
-  top: 50%;
-  right: 1rem;
-  transform: translateY(50%);
-}
-
-/* #project-editor-content select {
-  appearance: none;
-  background-image: url('../../../build/assets/dropdown_dark.svg');
-  background-repeat: no-repeat;
-  background-size: 20px;
-  background-position-x: 150px;
-  background-position-y: 20px;
-} */
-
 #project-editor-content .title-input {
   padding: 8px 15px;
 }
@@ -801,13 +784,19 @@ Project Creator and Editor style rules
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2px dashed #424242;
   border-radius: 10px;
   gap: 10px;
 
   position: relative;
   max-height: 182px;
   width: 323px;
+}
+
+[data-theme="light"] #project-editor-add-image {
+  border: 2px dashed #BDBDBD;
+}
+[data-theme="dark"] #project-editor-add-image {
+  border: 2px dashed #424242;
 }
 
 /* Project Editor/Creator Tags Tab */
@@ -1049,11 +1038,6 @@ Project Creator and Editor style rules
   align-items: center;
   justify-content: center;
   background-color: var(--primary-color) !important;
-}
-
-#project-team-add-member-image {
-  width: 74px;
-  height: 74px;
 }
 
 #project-team-add-member-text {

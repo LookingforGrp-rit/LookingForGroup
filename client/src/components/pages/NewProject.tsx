@@ -313,7 +313,7 @@ const NewProject = () => {
                       <></>
                     )}
                     <button className="project-info-dropdown-option" id="project-info-report">
-                      <i className="fa-solid fa-flag"></i>
+                      <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
                       Report
                     </button>
                   </div>

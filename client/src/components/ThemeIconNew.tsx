@@ -9,22 +9,9 @@ type ThemeIconProps = {
   onClick?: React.MouseEventHandler<SVGSVGElement>;
 };
 
-// Location of the SVG sprite sheet
 const source = '/assets/icons.svg';
 
-/**
- * ThemeIcon Component
- * Renders an SVG icon that adapts to the current theme (light/dark).
- * Uses a single SVG sprite sheet for all icons to optimize performance.
- * Props:
- * - width: Width of the icon
- * - height: Height of the icon
- * - id: ID of the icon in the sprite sheet
- * - className: Additional CSS classes for styling
- * - ariaLabel: Accessibility label for the icon
- * - onClick: Click event handler
- */
-export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
+export const ThemeIconNew: React.FC<ThemeIconProps> = memo(({
   width = 0,
   height = 0,
   id = '',

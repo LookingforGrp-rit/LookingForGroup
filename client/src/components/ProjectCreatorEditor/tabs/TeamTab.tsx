@@ -535,12 +535,7 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
           setEditMode(true);
         }}
       >
-        <ThemeIcon
-          src={'assets/white/pencil.svg'}
-          darkModeColor={"black"}
-          alt={"edit"}
-          addClass={"edit-project-member-icon"}
-        />
+        <ThemeIcon id={'pencil'} width={11} height={12} className={'gradient-color-fill edit-project-member-icon'} ariaLabel={'edit'}/>
       </button>
       <div className="positions-popup-info-title">{getProjectJob(currentRole)?.jobTitle}</div>
       <div className="positions-popup-info-description">
@@ -953,17 +948,7 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
             { /*((m.permissions < permissions) || (modifiedProject.userId === m.userId)) ? (*/
               <Popup>
                 <PopupButton className="edit-project-member-button">
-                  {/* <img
-                  className="edit-project-member-icon"
-                  src="/images/icons/pencil.png"
-                  alt=""
-                /> */}
-                  <ThemeIcon
-                    src={'assets/white/pencil.svg'}
-                    alt={"edit"}
-                    darkModeColor={"black"}
-                    addClass={"edit-project-member-icon"}
-                  />
+                  <ThemeIcon id={'pencil'} width={11} height={12} className={'gradient-color-fill edit-project-member-icon'} ariaLabel={'edit'}/>
                 </PopupButton>
                 {/* Edit member button */}
                 <PopupContent useClose={false}>
@@ -1094,12 +1079,7 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
       <Popup>
         <PopupButton buttonId="project-editor-add-member">
           {/* <img id="project-team-add-member-image" src={profileImage} alt="" /> */}
-          <ThemeIcon
-            src={'/assets/white/add_member.svg'}
-            id={'project-team-add-member-image'}
-            darkModeColor={"black"}
-            alt={'add member'}
-          />
+          <ThemeIcon id="add-person" width={74} height={74} className="header-color-fill" ariaLabel="add member" />
           <div id="project-team-add-member-text">Add Member</div>
         </PopupButton>
         <PopupContent useClose={true}>
@@ -1232,10 +1212,8 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
                 }
               }}
             >
-              <svg xmlns="http://www.w3.org/2000/svg" width="11" height="10" viewBox="0 0 11 10" fill="none">
-                <path d="M6.28571 0.714286C6.28571 0.524845 6.20293 0.343164 6.05558 0.20921C5.90823 0.075255 5.70838 0 5.5 0C5.29162 0 5.09177 0.075255 4.94442 0.20921C4.79707 0.343164 4.71429 0.524845 4.71429 0.714286V4.28571H0.785714C0.57733 4.28571 0.377481 4.36097 0.230131 4.49492C0.0827805 4.62888 0 4.81056 0 5C0 5.18944 0.0827805 5.37112 0.230131 5.50508C0.377481 5.63903 0.57733 5.71429 0.785714 5.71429H4.71429V9.28571C4.71429 9.47515 4.79707 9.65684 4.94442 9.79079C5.09177 9.92475 5.29162 10 5.5 10C5.70838 10 5.90823 9.92475 6.05558 9.79079C6.20293 9.65684 6.28571 9.47515 6.28571 9.28571V5.71429H10.2143C10.4227 5.71429 10.6225 5.63903 10.7699 5.50508C10.9172 5.37112 11 5.18944 11 5C11 4.81056 10.9172 4.62888 10.7699 4.49492C10.6225 4.36097 10.4227 4.28571 10.2143 4.28571H6.28571V0.714286Z" fill="var(--neutral-gray)"/>
-              </svg>
-              <span className="project-editor-extra-info">Add position</span>
+              <i className="fa fa-plus" />
+              <p className="project-editor-extra-info">Add position</p>
             </button>
           </div>
         </div>

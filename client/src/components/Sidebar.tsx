@@ -7,6 +7,7 @@ import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
 //user utils
 import { getCurrentUsername } from "../api/users.ts";
+import { ThemeIconNew } from "./ThemeIconNew.tsx";
 
 export interface User {
   firstName: string;
@@ -114,12 +115,12 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
           ?.classList.add("active");
   }
 
-  const [activePage, setActivePage] = useState(startingPage); // State to manage the active page [Discover, Meet, My Projects, Messages, Profile, Settings]
+  const [activePage, setActivePage] = useState<string>(startingPage); // State to manage the active page [Discover, Meet, My Projects, Messages, Profile, Settings]
 
-  const [showNotifications, setShowNotifications] = useState(false); // State to manage the notifications modal
+  const [showNotifications, setShowNotifications] = useState<boolean>(false); // State to manage the notifications modal
 
   // Error to handle if Create button opens project creator
-  const [createError, setCreateError] = useState(true);
+  const [createError, setCreateError] = useState<boolean>(true);
 
   // Store user data, if authenticated
   const [userData, setUserData] = useState<User>();
@@ -155,7 +156,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
   };
 
   // Function to handle the button clicks and update the h1 text
-  const handleTextChange = (text, path) => {
+  const handleTextChange = (text: string, path: string) => {
     // setHeaderText(text);
     setActivePage(text);
     navigate(path); // Navigate to the specified path
@@ -181,7 +182,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                 }
                 onClick={() => handleTextChange("Discover", paths.routes.HOME)}
               >
-                <ThemeIcon src={'assets/white/compass.svg'}  lightModeColor={'black'} alt={'discover'} />
+                <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
               </button>
               <button
                 id={"meet-sidebar-btn"}
@@ -190,7 +191,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                 }
                 onClick={() => handleTextChange("Meet", paths.routes.MEET)}
               >
-                <ThemeIcon src={'assets/white/meet.svg'} lightModeColor={'black'} alt={'meet users'} />
+                <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
               </button>
               <button
                 id={"my-projects-sidebar-btn"}
@@ -203,7 +204,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                   handleTextChange("My Projects", paths.routes.MYPROJECTS)
                 }
               >
-                <ThemeIcon src={'assets/white/folder.svg'} lightModeColor={'black'} alt={'my projects'} />
+                <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
               </button>
               <button
                 id={"my-profile-sidebar-btn"}
@@ -248,8 +249,8 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
             }
             onClick={() => handleTextChange("Discover", paths.routes.HOME)}
           >
-            <ThemeIcon src={'assets/white/compass.svg'} lightModeColor={'black'} alt={'discover'}/>
-            Discover
+            <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
+            Discover 
           </button>
           <button
             id={"meet-sidebar-btn"}
@@ -258,7 +259,8 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
             }
             onClick={() => handleTextChange("Meet", paths.routes.MEET)}
           >
-            <ThemeIcon src={'assets/white/meet.svg'}  lightModeColor={'black'} alt={'meet users'} /> Meet
+            <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
+            Meet
           </button>
           <button
             id={"my-projects-sidebar-btn"}
@@ -271,15 +273,16 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
               handleTextChange("My Projects", paths.routes.MYPROJECTS)
             }
           >
-            <ThemeIcon src={'assets/white/folder.svg'} lightModeColor={'black'} alt={'my projects'} /> My
-            Projects
+            <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
+            My Projects
           </button>
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
+            // If implementing, use SVG sprite sheet instead of hard-coded png
             <img
               className='theme-icon'
-              src="assets/white/following.png"
-              src-light="assets/white/following.png"
-              src-dark="assets/white/following.png"
+              src="assets/following.png"
+              src-light="assets/following.png"
+              src-dark="assets/following.png"
               alt="" /> Following
           </button> */}
 

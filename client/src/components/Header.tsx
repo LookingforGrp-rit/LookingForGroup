@@ -118,6 +118,7 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
         {/* Notififcations not being used rn */}
         {/* <Dropdown>
           <DropdownButton buttonId="notif-btn">
+            // If implementing, use SVG sprite sheet instead of hard-coded pngs
             <img
               className="theme-icon"
               src="assets/bell_dark.png"
@@ -149,17 +150,14 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 }}
               />
             ) : (
-              <ThemeIcon
-                src={'assets/profile_light.svg'}
-                darkSrc={'assets/profile_dark.svg'}
-                id={'profile-img-icon'}
-              />
+              <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
             )}
             <ThemeIcon
-              src={'assets/dropdown_light.svg'}
-              darkSrc={'assets/dropdown_dark.svg'}
-              id="dropdown-arrow"
-            />
+              id={'dropdown-arrow'}
+              width={15}
+              height={12}
+              className={'color-fill'}
+              ariaLabel={'dropdown arrow'}/>
           </DropdownButton>
 
           {/* These are its elements once opened (unique for logged out/in) */}
@@ -169,11 +167,7 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
 
                 {/* (Blank) Profile Icon */}
                 <button id="header-profile-user">
-                  <ThemeIcon
-                    src={'assets/profile_light.svg'}
-                    darkSrc={'assets/profile_dark.svg'}
-                    alt={'profile'}
-                  />
+                  <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
                   <div>
                     {username}
                     <br />
@@ -185,21 +179,13 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
 
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
-                  <ThemeIcon
-                    src={'assets/white/mode.svg'}
-                    lightModeColor={'black'}
-                    alt={'current mode'}
-                  />
+                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'}/>
                   {modeToggle}
                 </button>{' '}
 
                 {/* LOG IN Button */}
                 <button onClick={() => navigate(paths.routes.LOGIN, { state: { from: location.pathname } })}>
-                  <ThemeIcon
-                    src={'assets/white/logout.svg'}
-                    lightModeColor={'black'}
-                    alt={'log in'}
-                  />
+                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
                   Log In
                 </button>
               </div>
@@ -225,11 +211,7 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                       }}
                     />
                   ) : (
-                    <ThemeIcon
-                      src={'assets/profile_light.svg'}
-                      darkSrc={'assets/profile_dark.svg'}
-                      alt={'profile'}
-                    />
+                    <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
                   )}
                   <div>
                     {username}
@@ -242,31 +224,19 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
 
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
-                  <ThemeIcon
-                    src={'assets/white/mode.svg'}
-                    lightModeColor={'black'}
-                    alt={'current mode'}
-                  />
+                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'}/>
                   {modeToggle}
                 </button>{' '}
 
                 {/* Settings Link */}
                 <button onClick={() => handlePageChange(paths.routes.SETTINGS)}>
-                  <ThemeIcon
-                    src={'assets/white/settings.svg'}
-                    lightModeColor={'black'}
-                    alt={'settings'}
-                  />
+                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'}/>
                   Settings
                 </button>
 
                 {/* LOG OUT Button */}
                 <button onClick={() => sendPost('/api/logout')}>
-                  <ThemeIcon
-                    src={'assets/white/logout.svg'}
-                    lightModeColor={'black'}
-                    alt={'log out'}
-                  />
+                  <ThemeIcon id={'logout'} width={25} height={25} className={'mono-fill'} ariaLabel={'log out'}/>
                   Log Out
                 </button>
               </div>

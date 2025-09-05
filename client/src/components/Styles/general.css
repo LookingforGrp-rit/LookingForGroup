@@ -45,7 +45,7 @@ General style rules
   --sidebar-gradient: linear-gradient(180deg, #2c2a3a 30%, #fead81 100%);
   --hero-gradient: linear-gradient(180deg, #0e0e0e 30%, #2c2a3a 100%);
   /* gradient for  discover hero section */
-  --modal-gradient: linear-gradient(293deg, #0a0a0a 0%, #2c2a3a 100%);
+  --modal-gradient: linear-gradient(293deg, var(--modal-gradient-start) 0%, var(--modal-gradient-end) 100%);
   /* gradient for bigger modals (project/profile settings, etc.) */
   --border-color: #2b2939;
   /* border for elements like textboxes that are on top of gradients for better visibility */
@@ -60,8 +60,8 @@ General style rules
   --neutral-gray: #9d9d9d;
 
   /* sidebar create button */
-  --create-bg: #2c2a3a;
-  --create-text: white;
+  --create-bg: #1A1921;
+  --create-text: #FEAD81;
 
   /* don't invert black image */
   --image-filter: invert(1);
@@ -101,6 +101,9 @@ General style rules
   --tag-text-unselected-purple: #d7bed3;
   --tag-text-unselected-grey: #d0d0d0;
 
+  --modal-gradient-start: #0a0a0a;
+  --modal-gradient-end: #2c2a3a;
+
   /* 
     When implemented look into this https://codepen.io/sosuke/pen/Pjoqqp
     to change the add_tag.svg color in tag selection.
@@ -120,7 +123,7 @@ General style rules
   --dropdown-color: #fff;
   --sidebar-gradient: linear-gradient(180deg, #d3d3ff 0%, #ffceb4 100%);
   --hero-gradient: linear-gradient(180deg, #ffffff 50%, #d3d3ff 100%);
-  --modal-gradient: linear-gradient(113deg, #d3d3ff 0%, #fff 100%);
+  --modal-gradient: linear-gradient(293deg, var(--modal-gradient-start) 0%, var(--modal-gradient-end) 100%);
   --border-color: #d3d3ff;
   --error-delete-color: #ff3859;
   --shadow-color: rgba(0, 0, 0, 0.2);
@@ -169,6 +172,9 @@ General style rules
   --tag-text-unselected-blue: black;
   --tag-text-unselected-purple: black;
   --tag-text-unselected-grey: black;
+
+  --modal-gradient-start: #ffffff;
+  --modal-gradient-end: #d3d3ff;
 }
 
 * {
@@ -599,6 +605,10 @@ Sidebar Nav style rules
   }
 }
 
+.containerButtonSideBar .active > svg {
+  
+}
+
 /* Profile picture or avatar */
 .displayProfilePic,
 #profile-pic {
@@ -674,7 +684,6 @@ Sidebar Nav style rules
   align-items: center;
   justify-content: center;
   background-color: var(--create-bg);
-  color: var(--create-text);
   position: absolute;
   bottom: 0;
   margin-bottom: 40px;
@@ -687,9 +696,9 @@ Sidebar Nav style rules
   /* outline: solid var(--orange) 2px; */
   font-weight: bold;
 
-  img {
-    width: 25px;
-    margin-right: 10px;
+  p {
+    margin-left: 15px;
+    color: var(--create-text);
   }
 }
 
@@ -1168,10 +1177,12 @@ Header style rules
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 80px;
+  width: 100%;
   display: flex;
   justify-content: space-around;
   align-items: center;
+  gap: 5px;
+  padding: 5px 5px 5px 6px;
 
   #profile-img-icon {
     width: 32px;
@@ -1657,33 +1668,75 @@ Theme Icons style rules
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 
-/* CSS-based color control for single white SVGs */
-.svg-color-icon {
-  /* Default: keep white SVG white (for dark mode) */
-  filter: none;
-}
+/* Rule
+** Applied to the svg via ThemeIcon component...
+** Mono icons: use white SVGs that can be converted to black in light mode
+** Colored icons: SVGs that use a color
+*/
 
-/* Light mode: convert white SVG to black */
-[data-theme="light"] .svg-color-icon,
+/* Monochrome SVGs */
+[data-theme="light"] .mono-stroke use,
+[data-theme="dark"] button.active .mono-stroke use,
+/* Where is this used? */
 .theme-light .svg-color-icon {
-  filter: invert(1); /* Converts white to black */
+  stroke: black;
 }
 
-/* Dark mode: keep white SVG white */
-[data-theme="dark"] .svg-color-icon,
+[data-theme="dark"] .mono-stroke use,
+[data-theme="light"] button.active .mono-stroke use,
+/* Where is this used? */
 .theme-dark .svg-color-icon {
+  stroke: white;
+  /*
   filter: none; /* Keep original white */
+}
+
+[data-theme="light"] .mono-fill use,
+[data-theme="dark"] button.active .mono-fill use,
+/* Where is this used? */
+.theme-light .svg-color-icon {
+  fill: black;
+}
+[data-theme="dark"] .mono-fill use,
+[data-theme="light"] button.active .mono-fill use,
+/* Where is this used? */
+.theme-dark .svg-color-icon {
+  fill: white;
+}
+
+/* Colored SVGs */
+.color-stroke > use {
+  stroke: var(--primary-color);
+}
+.color-fill > use {
+  fill: var(--primary-color);
+}
+
+/* Header Color SVGs */
+.header-color-stroke > use {
+  stroke: var(--header-color);
+}
+.header-color-fill > use {
+  fill: var(--header-color);
+}
+
+/* Gradient Color SVGs */
+.gradient-color-stroke > use {
+  stroke: var(--modal-gradient-start);
+}
+.gradient-color-fill > use {
+  fill: var(--modal-gradient-start);
 }
 
 /* Fallback using CSS media queries */
 @media (prefers-color-scheme: light) {
   .svg-color-icon {
-    filter: invert(1);
+    /* filter: invert(1); */
   }
 }
 
 @media (prefers-color-scheme: dark) {
   .svg-color-icon {
-    filter: none;
+    /* filter: none; */
   }
 }

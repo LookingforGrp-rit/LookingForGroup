@@ -340,11 +340,7 @@ export const ProjectInfoMember = (props) => {
               className="icon-button"
               onClick={projectPageHelper.toggleOptionDisplay}
             >
-              <ThemeIcon
-                src={'assets/menu_light.svg'}
-                darkSrc={'assets/menu_dark.svg'}
-                alt={'more options'}
-              />
+              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'more options'}/>
             </button>
             <div id="more-options-popup" className="hide">
               <button className="white-button" onClick={openSettings}>

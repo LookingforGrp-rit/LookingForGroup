@@ -202,10 +202,11 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     <div className="background-cover">
       <div className="login-signup-container" onKeyDown={handleKeyPress}>
         <ThemeIcon //Back button to return to the previous page
-          src={'assets/back_light.svg'}
-          darkSrc={'assets/back_dark.svg'}
-          alt="Back Button"
-          id="backPage-arrow"
+          id={'back'}
+          width={70}
+          height={25}
+          className={'color-fill'}
+          ariaLabel={'back'}
           onClick={() => navigate(-1)}
         />
         {/*************************************************************
@@ -274,18 +275,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
               <button id="show-password" onClick={() => setShowPassword((prevState) =>
                 !prevState)}>
                 {showPassword ? (
-                  <ThemeIcon
-                    id='eye-icon'
-                    src={'/assets/black/password_shown.svg'}
-                    darkSrc={'/assets/white/password_shown.svg'}
-                  />) :
-                  (
-                    <ThemeIcon
-                      id='eye-icon'
-                      src={'/assets/black/password_hidden.svg'}
-                      darkSrc={'/assets/white/password_hidden.svg'}
-                    />
-                  )}
+                  <ThemeIcon id={'eye-line'} width={18} height={13} className={'mono-fill'} ariaLabel={'Show password'}/>
+                ) : (
+                  <ThemeIcon id={'eye'} width={18} height={13} className={'mono-fill'} ariaLabel={'Hide password'}/>
+                )}
               </button>
             </div>
             {/* {(passwordMessage !== '') ? (

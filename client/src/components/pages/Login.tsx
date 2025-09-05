@@ -140,10 +140,11 @@ const Login: React.FC = () => {
                 *************************************************************/}
         <div className="login-form column">
           <ThemeIcon //Back button to return to the previous page
-            src={'assets/back_light.svg'}
-            darkSrc={'assets/back_dark.svg'}
-            alt="Back Button"
-            id="backPage-arrow"
+            id={'back'}
+            width={70}
+            height={25}
+            className={'color-fill'}
+            ariaLabel={'back'}
             onClick={() => {
               console.log(from)
               // Return to previous page (unless it is the forgot password page, or the settings page)
@@ -180,20 +181,10 @@ const Login: React.FC = () => {
               <button id="show-password" onClick={() => setShowPassword((prevState) =>
                 !prevState)}>
                 {showPassword ? (
-                  <ThemeIcon
-                    id='eye-icon'
-                    src={'assets/white/password_shown.svg'}
-                    lightModeColor={'black'}
-                    alt={'show password'}
-                  />) :
-                  (
-                    <ThemeIcon
-                      id='eye-icon'
-                      src={'assets/white/password_hidden.svg'}
-                      lightModeColor={'black'}
-                      alt={'hide password'}
-                    />
-                  )}
+                  <ThemeIcon id={'eye-line'} width={18} height={13} className={'mono-fill'} ariaLabel={'Show password'}/>
+                ) : (
+                  <ThemeIcon id={'eye'} width={18} height={13} className={'mono-fill'} ariaLabel={'Hide password'}/>
+                )}
               </button>
             </div>
             <button id="forgot-password" onClick={handleForgotPass}>

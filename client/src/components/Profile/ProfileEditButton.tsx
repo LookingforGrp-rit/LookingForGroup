@@ -155,7 +155,7 @@ const EditButton = ({ userData }) => {
             <div className="edit-region-button-div photo">
               <form className="edit-region-button-wrapper photo">
                 <div className="edit-region-fake-button photo">
-                  <img src="assets/white/upload_image.png" alt="upload image" />
+                  <img src="assets/upload_image.png" alt="upload image" />
                 </div>
                 <input
                   type="file"
