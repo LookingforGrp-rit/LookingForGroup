@@ -42,7 +42,12 @@ export const addUserFollowingService = async (
       },
     });
 
-    return addFollow;
+    const result: UserFollowings = {
+      ...addFollow,
+      apiUrl: `/api/me/followings/people/${receiverId}`,
+    };
+
+    return result;
   } catch (error) {
     console.error('Error in addUserFollowingService:', error);
     return 'INTERNAL_ERROR';
