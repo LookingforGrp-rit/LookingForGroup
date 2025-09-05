@@ -1,5 +1,6 @@
 import addImage from './add-image.ts';
 import addMember from './add-member.ts';
+import { addProjectSocial } from './add-social.ts';
 import addTags from './add-tags.ts';
 import createProject from './create-project.ts';
 import deleteMember from './delete-member.ts';
@@ -30,4 +31,5 @@ export default {
   removeImage,
   reorderImages,
   deleteTags,
+  addProjectSocial,
 };
