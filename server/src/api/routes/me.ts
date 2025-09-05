@@ -6,6 +6,7 @@ import addSkills from '#controllers/me/add-skills.ts';
 import { addSocial } from '#controllers/me/add-social.ts';
 import { deleteProjectFollowing } from '#controllers/me/delete-follow-proj.ts';
 import { deleteUserFollowing } from '#controllers/me/delete-follow-user.ts';
+import { deleteSkills } from '#controllers/me/delete-skills.ts';
 import { deleteSocial } from '#controllers/me/delete-social.ts';
 import { deleteUser } from '#controllers/me/delete-user.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
@@ -56,6 +57,9 @@ router.delete('/socials/:socialId', deleteSocial);
 
 //Adds skills
 router.post('/skills', addSkills);
+
+//Deletes a skill
+router.delete('/skills/:id', deleteSkills);
 
 //Unfollows a project
 router.delete('/followings/projects/:id', deleteProjectFollowing);

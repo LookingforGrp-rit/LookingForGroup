@@ -1,8 +1,8 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteSocialService } from '#services/me/delete-social.ts';
+import { deleteSkillsService } from '#services/me/delete-skills.ts';
 
-export const deleteSocial = async (req: Request, res: Response): Promise<void> => {
+export const deleteSkills = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -30,9 +30,9 @@ export const deleteSocial = async (req: Request, res: Response): Promise<void> =
   }
 
   //the one you're deleting
-  const social = parseInt(req.params.socialId);
+  const skill = parseInt(req.params.socialId);
 
-  const result = await deleteSocialService(social, UserId);
+  const result = await deleteSkillsService(skill, UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -48,7 +48,7 @@ export const deleteSocial = async (req: Request, res: Response): Promise<void> =
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Social not found',
+      error: 'Skill not found',
       data: null,
       memetype: 'application/json',
     };
