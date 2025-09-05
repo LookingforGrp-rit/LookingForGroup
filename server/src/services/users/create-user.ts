@@ -1,7 +1,9 @@
+import type { MePrivate } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { Users } from '#prisma-models/index.js';
 import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
+import { MePrivateSelector } from '#services/selectors/me/me-private.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformMeToPrivate } from '#services/transformers/me/me-private.ts';
 
 type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT'>;
 
@@ -11,9 +13,9 @@ const createUserService = async (
   firstName: string,
   lastName: string,
   email: string,
-): Promise<Users | CreateUserServiceError> => {
+): Promise<MePrivate | CreateUserServiceError> => {
   try {
-    return await prisma.users.create({
+    const result = await prisma.users.create({
       data: {
         universityId: uid,
         username: username,
@@ -21,7 +23,10 @@ const createUserService = async (
         lastName,
         ritEmail: email,
       },
+      select: MePrivateSelector,
     });
+
+    return transformMeToPrivate(result);
   } catch (e) {
     console.error(`Error in createUserService: ${JSON.stringify(e)}`);
 
