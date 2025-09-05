@@ -1,8 +1,13 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getSocialsService } from '#services/me/get-socials.ts';
+import { addSocialService } from '#services/me/add-social.ts';
 
-export const getSocials = async (req: Request, res: Response): Promise<void> => {
+type Social = {
+  socialId: number;
+  url: string;
+};
+
+export const addSocial = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -29,7 +34,9 @@ export const getSocials = async (req: Request, res: Response): Promise<void> => 
     return;
   }
 
-  const result = await getSocialsService(UserId);
+  const social: Social = req.body as Social;
+
+  const result = await addSocialService(social, UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

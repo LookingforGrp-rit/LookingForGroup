@@ -2,11 +2,13 @@ import { Router } from 'express';
 import { upload } from '#config/multer.ts';
 import { addProjectFollowing } from '#controllers/me/add-follow-proj.ts';
 import { addUserFollowing } from '#controllers/me/add-follow-user.ts';
+import { addSocial } from '#controllers/me/add-social.ts';
 import { deleteProjectFollowing } from '#controllers/me/delete-follow-proj.ts';
 import { deleteUserFollowing } from '#controllers/me/delete-follow-user.ts';
 import { deleteUser } from '#controllers/me/delete-user.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
+import { getSocials } from '#controllers/me/get-socials.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
 import { getUsernameByShib } from '#controllers/projects/get-username-shib.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
@@ -23,6 +25,8 @@ router.get('/get-username', requiresLogin, getUsernameByShib);
 //Gets user's account
 router.get('/', getAccount);
 
+router.get('/socials', getSocials);
+
 //Updates users information
 router.patch('/', upload.single('profile-pic'), updateUserInfo);
 
@@ -37,6 +41,9 @@ router.get('/projects', getMyProjects);
 
 //Follows a project
 router.post('/followings/projects/:id', addProjectFollowing);
+
+//Adds a social
+router.post('/socials', addSocial);
 
 //Unfollows a project
 router.delete('/followings/projects/:id', deleteProjectFollowing);
