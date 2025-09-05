@@ -2,9 +2,9 @@ import type { Medium } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-error.ts';
 
-type GetGenresServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
+type GetMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
-const getGenreService = async (): Promise<Medium[] | GetGenresServiceError> => {
+const getMediumsService = async (): Promise<Medium[] | GetMediumsServiceError> => {
   try {
     return await prisma.mediums.findMany({
       select: {
@@ -13,10 +13,10 @@ const getGenreService = async (): Promise<Medium[] | GetGenresServiceError> => {
       },
     });
   } catch (e) {
-    console.error(`Error in getGenreService: ${JSON.stringify(e)}`);
+    console.error(`Error in getMediumsService: ${JSON.stringify(e)}`);
 
     return 'INTERNAL_ERROR';
   }
 };
 
-export default getGenreService;
+export default getMediumsService;

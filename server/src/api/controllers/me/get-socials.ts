@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getMyProjectsService } from '#services/me/get-my-proj.ts';
+import { getSocialsService } from '#services/me/get-socials.ts';
 
 export const getMyProjects = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
@@ -29,7 +29,7 @@ export const getMyProjects = async (req: Request, res: Response): Promise<void> 
     return;
   }
 
-  const result = await getMyProjectsService(UserId);
+  const result = await getSocialsService(UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

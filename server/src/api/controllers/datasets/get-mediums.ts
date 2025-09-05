@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getService from '#services/datasets/get-mediums.ts';
+import getMediumsService from '#services/datasets/get-mediums.ts';
 
 const getMediumsController = async (_request: Request, response: Response): Promise<void> => {
-  const result = await getService();
+  const result = await getMediumsService();
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

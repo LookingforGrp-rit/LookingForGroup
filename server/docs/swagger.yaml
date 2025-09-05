@@ -133,12 +133,12 @@ paths:
 
   /api/datasets/mediums:
     get:
-      summary: Receives list of all project types
+      summary: Receives list of all mediums
       tags:
         - Datasets
       responses:
         '200':
-          description: A list of project types
+          description: A list of mediums
           content:
             application/json:
               schema:
@@ -667,7 +667,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-    put:
+    patch:
       summary: Updates user profile information
       tags:
         - Me

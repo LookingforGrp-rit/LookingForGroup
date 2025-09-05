@@ -1,6 +1,6 @@
 import { Router } from 'express';
 import getMajorsController from '#controllers/datasets/get-majors.ts';
-import getProjectTypesController from '#controllers/datasets/get-mediums.ts';
+import getMediumsController from '#controllers/datasets/get-mediums.ts';
 import getRolesController from '#controllers/datasets/get-roles.ts';
 import getSkillsController from '#controllers/datasets/get-skills.ts';
 import getSocialsController from '#controllers/datasets/get-socials.ts';
@@ -18,7 +18,7 @@ router.get('/skills', getSkillsController);
 router.get('/majors', getMajorsController);
 
 //Receives list of all possible mediums
-router.get('/mediums', getProjectTypesController);
+router.get('/mediums', getMediumsController);
 
 //Receives list of all tags
 router.get('/tags', getTagsController);

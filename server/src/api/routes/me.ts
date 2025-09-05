@@ -24,7 +24,7 @@ router.get('/get-username', requiresLogin, getUsernameByShib);
 router.get('/', getAccount);
 
 //Updates users information
-router.put('/', upload.single('profile-pic'), updateUserInfo);
+router.patch('/', upload.single('profile-pic'), updateUserInfo);
 
 //Delete user
 router.delete('/', deleteUser);

@@ -9,29 +9,30 @@ export const getMyProjectsService = async (
   userId: number,
 ): Promise<ProjectWithFollowers[] | GetProjectsError> => {
   try {
-    const projects = await prisma.projects.findMany({
+    //all the projects they own
+    const ownedProjects = await prisma.projects.findMany({
       where: {
         userId: userId,
       },
-      include: {
-        _count: { select: { projectFollowings: true } },
-        projectGenres: { include: { genres: true } },
-        projectTags: { include: { tags: true } },
-        projectImages: true,
-        projectSocials: { include: { socials: true } },
-        jobs: true,
-        members: true,
-        users: true,
-      },
-      orderBy: {
-        createdAt: 'desc',
+    });
+    //all the projects they're a member of
+    const memberProjects = await prisma.projects.findMany({
+      where: {
+        members: {
+          every: {
+            userId: userId,
+          },
+        },
       },
     });
 
-    //check if they exits
+    //all the projects
+    const projects = Array.prototype.concat(ownedProjects, memberProjects);
+
+    //return not found if they don't have any
     if (projects.length === 0) return 'NOT_FOUND';
 
-    //user helper to tranform project
+    //user helper to transform project
     const fullProject = projects.map(transformProject);
 
     return fullProject;
