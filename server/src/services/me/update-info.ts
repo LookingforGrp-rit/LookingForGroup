@@ -1,8 +1,10 @@
+import type { MePrivate } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import type { Users } from '#prisma-models/index.js';
 import { deleteImageService } from '#services/images/delete-image.ts';
-//import { MePrivateSelector } from '#services/selectors/me/me-private.ts';
+import { MePrivateSelector } from '#services/selectors/me/me-private.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformMeToPrivate } from '#services/transformers/me/me-private.ts';
 
 type UpdateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -29,7 +31,7 @@ type UpdatebleUserFields = Partial<
 export const updateUserInfoService = async (
   userId: number,
   updates: UpdatebleUserFields,
-): Promise<UpdatebleUserFields | UpdateUserServiceError> => {
+): Promise<MePrivate | UpdateUserServiceError> => {
   try {
     const curUser = await prisma.users.findFirst({
       where: {
@@ -48,12 +50,11 @@ export const updateUserInfoService = async (
 
     const user = await prisma.users.update({
       where: { userId },
-      data: {
-        ...updates,
-      },
+      data: { ...updates },
+      select: MePrivateSelector,
     });
 
-    return user;
+    return transformMeToPrivate(user);
   } catch (e) {
     console.error('Error in updateUserInfoService:', e);
     return 'INTERNAL_ERROR';
