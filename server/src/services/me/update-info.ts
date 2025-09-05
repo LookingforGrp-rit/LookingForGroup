@@ -1,6 +1,7 @@
 import prisma from '#config/prisma.ts';
 import type { Users } from '#prisma-models/index.js';
 import { deleteImageService } from '#services/images/delete-image.ts';
+//import { MePrivateSelector } from '#services/selectors/me/me-private.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type UpdateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
