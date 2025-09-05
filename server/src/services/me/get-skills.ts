@@ -1,19 +1,22 @@
+import type { MySkill } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { UserSkills } from '#prisma-models/index.js';
+import { MySkillSelector } from '#services/selectors/me/my-skill.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformMySkill } from '#services/transformers/me/my-skill.ts';
 
 type GetSkillsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
-export const getSkillsService = async (userId: number): Promise<UserSkills[] | GetSkillsError> => {
+export const getSkillsService = async (userId: number): Promise<MySkill[] | GetSkillsError> => {
   try {
     //all their skills
     const skills = await prisma.userSkills.findMany({
       where: {
-        userId: userId,
+        userId,
       },
+      select: MySkillSelector,
     });
 
-    return skills;
+    return skills.map(transformMySkill);
   } catch (e) {
     console.error(`Error in getSkillsService: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';
