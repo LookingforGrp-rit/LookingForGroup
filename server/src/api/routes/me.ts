@@ -5,6 +5,7 @@ import { addUserFollowing } from '#controllers/me/add-follow-user.ts';
 import { addSocial } from '#controllers/me/add-social.ts';
 import { deleteProjectFollowing } from '#controllers/me/delete-follow-proj.ts';
 import { deleteUserFollowing } from '#controllers/me/delete-follow-user.ts';
+import { deleteSocial } from '#controllers/me/delete-social.ts';
 import { deleteUser } from '#controllers/me/delete-user.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
@@ -48,6 +49,9 @@ router.post('/socials', addSocial);
 
 //Updates a social
 router.put('/socials/:socialId', updateSocial);
+
+//Deletes a social
+router.delete('/socials/:socialId', deleteSocial);
 
 //Unfollows a project
 router.delete('/followings/projects/:id', deleteProjectFollowing);
