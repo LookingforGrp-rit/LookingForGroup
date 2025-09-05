@@ -11,6 +11,9 @@ export const getUserFollowersService = async (
   try {
     const following = await prisma.userFollowings.findMany({
       where: { receiverId: receiverId },
+      orderBy: {
+        followedAt: 'desc',
+      },
       select: {
         senderId: true,
         receiverId: true,
