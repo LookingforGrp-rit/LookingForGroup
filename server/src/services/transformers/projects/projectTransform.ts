@@ -6,8 +6,8 @@ import prisma from '#config/prisma.ts';
 const sampleProject = prisma.projects.findMany({
   include: {
     _count: { select: { projectFollowings: true } },
-    projectGenres: { include: { genres: true } },
-    projectTags: { include: { tags: true } },
+    mediums: { select: { label: true, mediumId: true } },
+    tags: { select: { label: true, tagId: true, type: true } },
     projectImages: true,
     projectSocials: { include: { socials: true } },
     jobs: true,
@@ -32,25 +32,23 @@ export const transformProject = (project: ProjectsGetPayload): ProjectWithFollow
     userId: project.userId,
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
-    projectType: project.projectGenres.map((pg) => ({
-      typeId: pg.typeId,
-      label: pg.genres.label,
+    mediums: project.mediums.map((medium) => ({
+      mediumId: medium.mediumId,
+      label: medium.label,
     })),
-    projectTags: project.projectTags.map((pt) => ({
-      projectId: pt.projectId,
-      tagId: pt.tagId,
-      position: pt.position,
-      type: pt.tags.type,
-      label: pt.tags.label,
+    tags: project.tags.map((tag) => ({
+      tagId: tag.tagId,
+      type: tag.type,
+      label: tag.label,
     })),
     projectImages: project.projectImages.map((img) => ({
       imageId: img.imageId,
       image: img.image,
       altText: '',
     })),
-    projectSocials: project.projectSocials.map((ps) => ({
-      websiteId: ps.websiteId,
-      label: ps.socials.label,
+    projectSocials: project.projectSocials.map((social) => ({
+      websiteId: social.websiteId,
+      label: social.socials.label,
     })),
     jobs: project.jobs.map((job) => ({
       ...job,

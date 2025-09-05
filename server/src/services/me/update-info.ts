@@ -1,7 +1,7 @@
 import prisma from '#config/prisma.ts';
 import type { Users } from '#prisma-models/index.js';
 import { deleteImageService } from '#services/images/delete-image.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type UpdateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -14,7 +14,7 @@ type UpdatebleUserFields = Partial<
     | 'headline'
     | 'pronouns'
     | 'title'
-    | 'majorId'
+    | 'profileImage'
     | 'academicYear'
     | 'location'
     | 'funFact'
@@ -22,7 +22,6 @@ type UpdatebleUserFields = Partial<
     | 'visibility'
     | 'username'
     | 'phoneNumber'
-    | 'profileImage'
   >
 >;
 
@@ -37,29 +36,19 @@ export const updateUserInfoService = async (
       },
     });
 
-    if (curUser && curUser.profileImage !== null) {
-      const currentPfp = curUser.profileImage;
-      await deleteImageService(currentPfp);
+    if (!curUser) return 'NOT_FOUND';
+
+    if (updates.profileImage) {
+      const oldProfileImage = curUser.profileImage;
+      if (oldProfileImage !== null) {
+        await deleteImageService(oldProfileImage);
+      }
     }
 
     const user = await prisma.users.update({
       where: { userId },
-      data: { ...updates },
-      select: {
-        username: true,
-        firstName: true,
-        lastName: true,
-        headline: true,
-        pronouns: true,
-        title: true,
-        majorId: true,
-        academicYear: true,
-        location: true,
-        funFact: true,
-        bio: true,
-        visibility: true,
-        phoneNumber: true,
-        profileImage: true,
+      data: {
+        ...updates,
       },
     });
 
