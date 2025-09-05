@@ -1,7 +1,7 @@
 import type { ProjectWithFollowers } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
-import { transformProject } from '../helpers/projTransform.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProject } from '../transformers/projects/projectTransform.ts';
 
 type GetProjectsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

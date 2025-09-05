@@ -1,7 +1,7 @@
 import prisma from '#config/prisma.ts';
 import type { Users } from '#prisma-models/index.js';
 import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT'>;
 
@@ -15,7 +15,7 @@ const createUserService = async (
   try {
     return await prisma.users.create({
       data: {
-        universityId: uid.toString(),
+        universityId: uid,
         username: username,
         firstName,
         lastName,

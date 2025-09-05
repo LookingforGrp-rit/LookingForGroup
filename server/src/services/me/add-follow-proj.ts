@@ -1,6 +1,6 @@
 import type { ProjectFollowings } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type AddFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
@@ -41,7 +41,7 @@ export const addProjectFollowingService = async (
 
     const result: ProjectFollowings = {
       ...addFollow,
-      apiUrl: `api/me/followings/projects/${projectId}`,
+      apiUrl: `api/me/followings/projects/${projectId.toString()}`,
     };
 
     return result;

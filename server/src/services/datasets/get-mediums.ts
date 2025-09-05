@@ -1,6 +1,6 @@
 import type { Medium } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type GetMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 

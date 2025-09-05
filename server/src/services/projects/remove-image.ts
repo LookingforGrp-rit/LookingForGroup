@@ -1,6 +1,6 @@
 import prisma from '#config/prisma.ts';
 import { deleteImageService } from '#services/images/delete-image.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type RemoveImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
