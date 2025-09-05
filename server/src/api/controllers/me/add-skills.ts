@@ -1,25 +1,17 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
+import type { SkillProficiency } from '#prisma-models/index.js';
 import addSkillsService from '#services/me/add-skills.ts';
 
-//the ids of the skills they want to add
-type Skills = {
-  skills?: number[];
+type Skill = {
+  userId: number;
+  skillId: number;
+  position: number;
+  proficiency: SkillProficiency;
 };
 
-//putting this here because this is what a single skill will look like
-//once proficiency is added properly
-// type Skill = {
-//   skillId?: number;
-//   proficiency?: number;
-// };
-
 const addSkillsController = async (req: Request, res: Response) => {
-  const data: Skills = req.body as Skills;
-
-  //with type Skill, if they're still giving us multiple skills at once
-  //we can use Skill[] as the request body type instead
-  //or just Skill if it's one
+  const data: Skill[] = req.body as Skill[];
 
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
@@ -47,8 +39,12 @@ const addSkillsController = async (req: Request, res: Response) => {
     return;
   }
 
+  data.forEach((skill) => {
+    skill.userId = UserId;
+  });
+
   //add the skills they wanna add
-  const result = await addSkillsService(UserId, data);
+  const result = await addSkillsService(data);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

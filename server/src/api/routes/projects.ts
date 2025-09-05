@@ -85,7 +85,16 @@ router.put(
 );
 
 //Gets a project's mediums
-router.get(':/id/mediums', PROJECT.getProjectMediums);
+router.get('/:id/mediums', PROJECT.getProjectMediums);
+
+//Adds mediums to a project
+router.post(
+  '/:id/mediums',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.addMediums,
+);
 
 //Creates a new picture for a project
 router.post(

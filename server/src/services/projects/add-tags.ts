@@ -3,7 +3,7 @@ import type { ServiceErrorSubset } from '#services/service-error.ts';
 
 type AddTagsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
-//the tags (or their idsanyway)
+//the tags (or their ids anyway)
 type Tags = {
   tags?: number[];
 };
@@ -17,6 +17,7 @@ const addTagsService = async (
 
     //the tagIds, but as an array of objects
     //maybe i should just ask for this instead of making it here...
+    //or have frontend autogenerate it...
     //eh it'll be fine
     const allTagIds = [];
     for (let i = 0; i < data.tags.length; i++) {
@@ -29,7 +30,7 @@ const addTagsService = async (
       },
       data: {
         tags: {
-          connect: allTagIds,
+          connect: allTagIds, //that for loop was just so i could do this
         },
       },
     });

@@ -1,47 +1,27 @@
 import prisma from '#config/prisma.ts';
+import { SkillProficiency } from '#prisma-models/index.js';
 import type { ServiceErrorSubset } from '#services/service-error.ts';
 
 type AddSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
-//the skills (or their idsanyway)
-type Skills = {
-  skills?: number[];
+type Skill = {
+  userId: number;
+  skillId: number;
+  position: number;
+  proficiency: SkillProficiency;
 };
-
-//putting this here because this is what a single skill will look like
-//once proficiency is added properly
-// type Skill = {
-//   skillId?: number;
-//   proficiency?: number; (number bc it'd probably be pulled by id)
-// };
 
 //this would take type Skill in place of data with the Skill type implemented
 //Skill[] if we plan to handle adding multiple skills at once, and just Skill if one
 const addSkillsService = async (
-  userId: number,
-  data: Skills,
-): Promise<ReturnType<typeof prisma.userSkills.findMany> | AddSkillsServiceError> => {
+  data: Skill[],
+): Promise<ReturnType<typeof prisma.userSkills.createMany> | AddSkillsServiceError> => {
   try {
-    if (!data.skills) return 'NOT_FOUND';
+    if (data.length === 0) return 'NOT_FOUND';
 
-    //creates the skills form the skillIds they gave us
-    for (let i = 0; i < data.skills.length; i++) {
-      //this SHOULD be able to just be data: data[i]
-      //and if not we can just populate it manually
-      await prisma.userSkills.create({
-        data: {
-          userId: userId,
-          skillId: data.skills[i],
-          position: 0, //doesn't do anything but it wants it for some reason
-          //proficiency: 5
-        },
-      });
-    }
-
-    const result = await prisma.userSkills.findMany({
-      where: {
-        userId: userId,
-      },
+    //creates the skills
+    const result = await prisma.userSkills.createMany({
+      data: data,
     });
 
     return result;

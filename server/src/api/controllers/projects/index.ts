@@ -1,5 +1,6 @@
 import addImage from './add-image.ts';
 import addMember from './add-member.ts';
+import addMediums from './add-project-mediums.ts';
 import { addProjectSocial } from './add-social.ts';
 import addTags from './add-tags.ts';
 import createProject from './create-project.ts';
@@ -40,4 +41,5 @@ export default {
   updateProjectSocial,
   deleteProjectSocial,
   getProjectMediums,
+  addMediums,
 };
