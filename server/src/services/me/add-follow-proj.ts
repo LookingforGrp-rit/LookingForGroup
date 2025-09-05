@@ -41,7 +41,7 @@ export const addProjectFollowingService = async (
 
     const result: ProjectFollowings = {
       ...addFollow,
-      apiUrl: `api/me/followings/projects/${projectId.toString()}`,
+      apiUrl: `api/me/followings/projects/${projectId}`,
     };
 
     return result;
