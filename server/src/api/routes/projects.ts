@@ -39,7 +39,20 @@ router.post('/:id/socials', requiresLogin, requiresProjectOwner, PROJECT.addProj
 router.get('/:id/socials', PROJECT.getProjectSocials);
 
 //Updates a project social
-router.put('/:id/socials/:socialId', PROJECT.updateProjectSocial);
+router.put(
+  '/:id/socials/:socialId',
+  requiresLogin,
+  requiresProjectOwner,
+  PROJECT.updateProjectSocial,
+);
+
+//Deletes a project social
+router.delete(
+  '/:id/socials/:socialId',
+  requiresLogin,
+  requiresProjectOwner,
+  PROJECT.deleteProjectSocial,
+);
 
 //Deletes project through a specific id
 router.delete(

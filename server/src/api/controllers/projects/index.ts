@@ -4,6 +4,7 @@ import { addProjectSocial } from './add-social.ts';
 import addTags from './add-tags.ts';
 import createProject from './create-project.ts';
 import deleteMember from './delete-member.ts';
+import { deleteProjectSocial } from './delete-project-social.ts';
 import deleteProject from './delete-project.ts';
 import deleteTags from './delete-tags.ts';
 import getProjectImages from './get-proj-images.ts';
@@ -36,4 +37,5 @@ export default {
   addProjectSocial,
   getProjectSocials,
   updateProjectSocial,
+  deleteProjectSocial,
 };
