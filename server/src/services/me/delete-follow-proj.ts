@@ -1,17 +1,17 @@
-import type { ProjectFollowings } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
 
 type DeleteFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
+type DeleteFollowServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 //delete a project following
 export const deleteProjectFollowService = async (
   userId: number,
   projectId: number,
-): Promise<ProjectFollowings | DeleteFollowServiceError> => {
+): Promise<DeleteFollowServiceError | DeleteFollowServiceSuccess> => {
   try {
     //delete the project being followed
-    const deleteFollow = await prisma.projectFollowings.delete({
+    await prisma.projectFollowings.delete({
       where: {
         userId_projectId: {
           userId,
@@ -20,7 +20,7 @@ export const deleteProjectFollowService = async (
       },
     });
 
-    return deleteFollow;
+    return 'NO_CONTENT';
   } catch (error) {
     console.error('Error in deleteProjectFollowService:', error);
     return 'INTERNAL_ERROR';
