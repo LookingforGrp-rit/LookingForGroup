@@ -1,0 +1,73 @@
+import type { ApiResponse } from '@looking-for-group/shared';
+import type { Request, Response } from 'express';
+import addSkillsService from '#services/me/add-skills.ts';
+
+//the ids of the skills they want to add
+type Skills = {
+  skills?: number[];
+};
+
+//putting this here because this is what a single skill will look like
+//once proficiency is added properly
+// type Skill = {
+//   skillId?: number;
+//   proficiency?: number;
+// };
+
+const addSkillsController = async (req: Request, res: Response) => {
+  const data: Skills = req.body as Skills;
+
+  //with type Skill, if they're still giving us multiple skills at once
+  //we can use Skill[] as the request body type instead
+  //or just Skill if it's one
+
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  //current user ID
+  const UserId = parseInt(req.currentUser);
+
+  //check if ID is number
+  if (isNaN(UserId)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  //add the skills they wanna add
+  const result = await addSkillsService(UserId, data);
+
+  if (result === 'INTERNAL_ERROR') {
+    const resBody: ApiResponse = {
+      status: 500,
+      error: 'Internal Server Error',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(500).json(resBody);
+    return;
+  }
+
+  const resBody: ApiResponse = {
+    status: 200,
+    error: null,
+    data: result,
+    memetype: 'application/json',
+  };
+  res.status(200).json(resBody);
+};
+
+export default addSkillsController;

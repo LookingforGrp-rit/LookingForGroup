@@ -6,7 +6,7 @@ type GetSkillsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 export const getSkillsService = async (userId: number): Promise<UserSkills[] | GetSkillsError> => {
   try {
-    //all their socials
+    //all their skills
     const skills = await prisma.userSkills.findMany({
       where: {
         userId: userId,

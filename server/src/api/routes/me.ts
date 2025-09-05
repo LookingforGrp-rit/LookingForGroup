@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { upload } from '#config/multer.ts';
 import { addProjectFollowing } from '#controllers/me/add-follow-proj.ts';
 import { addUserFollowing } from '#controllers/me/add-follow-user.ts';
+import addSkills from '#controllers/me/add-skills.ts';
 import { addSocial } from '#controllers/me/add-social.ts';
 import { deleteProjectFollowing } from '#controllers/me/delete-follow-proj.ts';
 import { deleteUserFollowing } from '#controllers/me/delete-follow-user.ts';
@@ -52,6 +53,9 @@ router.put('/socials/:socialId', updateSocial);
 
 //Deletes a social
 router.delete('/socials/:socialId', deleteSocial);
+
+//Adds skills
+router.post('/skills', addSkills);
 
 //Unfollows a project
 router.delete('/followings/projects/:id', deleteProjectFollowing);
