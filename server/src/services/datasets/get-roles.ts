@@ -1,6 +1,6 @@
 import type { Role } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type GetRolesServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 

@@ -1,7 +1,7 @@
 import { DeleteObjectCommand, HeadObjectCommand, NotFound } from '@aws-sdk/client-s3';
 import envConfig from '#config/env.ts';
 import s3 from '#config/s3.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type UploadImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

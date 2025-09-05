@@ -4,7 +4,7 @@ import { PutObjectCommand, S3ServiceException } from '@aws-sdk/client-s3';
 import type { ImageUploadResult } from '@looking-for-group/shared';
 import envConfig from '#config/env.ts';
 import s3 from '#config/s3.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type UploadImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONTENT_TOO_LARGE'>;
 

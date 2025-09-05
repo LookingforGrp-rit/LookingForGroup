@@ -1,6 +1,6 @@
 import prisma from '#config/prisma.ts';
 import type { Prisma } from '#prisma-models/index.js';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type CreateProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
