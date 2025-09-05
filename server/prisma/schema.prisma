@@ -163,11 +163,12 @@ model UserFollowings {
 }
 
 model UserSkills {
-  userId   Int    @map("user_id")
-  skillId  Int    @map("skill_id")
-  position Int
-  skills   Skills @relation(fields: [skillId], references: [skillId], onDelete: NoAction, map: "FK_user_skills_skills")
-  users    Users  @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_user_skills_users")
+  userId      Int              @map("user_id")
+  skillId     Int              @map("skill_id")
+  position    Int
+  proficiency SkillProficiency
+  skills      Skills           @relation(fields: [skillId], references: [skillId], onDelete: NoAction, map: "FK_user_skills_skills")
+  users       Users            @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_user_skills_users")
 
   @@id([userId, skillId])
   @@index([skillId], map: "FK_user_skills_skills")
@@ -197,7 +198,6 @@ model Users {
   headline          String?             @db.VarChar(100)
   pronouns          String?             @db.Text
   title             String?             @db.VarChar(50)
-  majorId           Int?                @map("major_id")
   academicYear      UsersAcademicYear?  @map("academic_year")
   location          String?             @db.VarChar(150)
   funFact           String?             @map("fun_fact") @db.VarChar(100)
@@ -214,9 +214,8 @@ model Users {
   following         UserFollowings[]    @relation("sender_user")
   userSkills        UserSkills[]
   userSocials       UserSocials[]
-  majors            Majors?             @relation(fields: [majorId], references: [majorId], onDelete: Restrict, map: "FK_users_majors")
+  majors            Majors[]             
 
-  @@index([majorId], map: "FK_users_majors")
   @@map("users")
 }
 
@@ -294,4 +293,11 @@ enum UsersAcademicYear {
   Grad2
 
   @@map("users_academic_year")
+}
+
+enum SkillProficiency {
+  Novice
+  Intermediate
+  Advanced
+  Expert
 }

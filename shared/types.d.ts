@@ -20,6 +20,11 @@ export type AcademicYear =
     | "Graduate"
     | string;
 export type Visibility = 0 | 1;
+export type SkillProficiency =
+    | "Novice"
+    | "Intermediate"
+    | "Advanced"
+    | "Expert"
 
 
 //API REQUEST
@@ -79,23 +84,50 @@ export interface Medium {
 //USER DATA
 
 export interface UserSkill extends Skill {
+    proficiency: SkillProficiency;
     position: number;
 }
 
-export interface UserSocial {
-    userId: number;
-    websiteId: number;
+export interface UserSocial extends Social {
     url: string;
-    social: Social;
 }
 
+export type ProjectFollowsList = {
+    projects: ProjectPreview[];
+    count: number;
+    apiUrl: string;
+}
+
+export type UserFollowsList = {
+    users: UserPreview[];
+    count: number;
+    apiUrl: string;
+}
 
 export type UserFollowings = {
     senderId: number;
     receiverId: number;
     followedAt: Date;
+    apiUrl: string;
 };
 
+export interface MySkill extends UserSkill {
+    apiUrl: string;
+}
+
+export interface MySocial extends UserSocial {
+    apiUrl: string;
+}
+
+export interface MyMajor extends Major {
+    apiUrl: string;
+}
+
+export type MyFollowsList = {
+    users: UserPreview[];
+    count: number;
+    apiUrl: string;
+}
 
 // USERS
 
@@ -106,6 +138,7 @@ export type UserPreview = {
     lastName: string;
     username: string;
     profileImage?: string | null;
+    apiUrl: string;
 };
 
 //show only non-sensitive data
@@ -118,14 +151,17 @@ export type UserDetail = {
     headline: string | null;
     pronouns: string | null;
     title: string | null;
-    major: string | null;
+    majors: Major[];
     academicYear: string | null;
     location: string | null;
     funFact: string | null;
     bio?: string | null;
-    skills?: UserSkill[] | null;
-    //might need to add userSocial
-    socials?: Social[] | null;
+    projects: ProjectPreview[];
+    skills?: UserSkill[];
+    socials?: UserSocial[];
+    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
+    followers: UserFollowsList;
+    apiUrl: string;
 };
 
 //all user private data
@@ -139,18 +175,86 @@ export interface User {
     headline: string | null;
     pronouns: string | null;
     title: string | null;
-    majorId: number | null;
     academicYear: string | null;
     location: string | null;
     funFact: string | null;
     bio: string | null;
     visibility: Visibility;
+    projects: ProjectPreview[];
+    majors?: Major[] | null;
     skills?: UserSkill[] | null;
     socials?: Social[] | null;
     phoneNumber: string | null;
-    universityId: number | null;
+    universityId: string | null;
     createdAt: Date;
     updatedAt: Date;
+    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
+    followers: UserFollowsList;
+    apiUrl: string;
+}
+
+// ME
+
+//show only preview data
+export type MePreview = {
+    userId: number;
+    firstName: string;
+    lastName: string;
+    username: string;
+    profileImage?: string | null;
+    apiUrl: string;
+};
+
+//show only non-sensitive data
+export type MeDetail = {
+    userId: number;
+    firstName: string;
+    lastName: string;
+    username: string;
+    profileImage?: string | null;
+    headline: string | null;
+    pronouns: string | null;
+    title: string | null;
+    majors: MyMajor[];
+    academicYear: string | null;
+    location: string | null;
+    funFact: string | null;
+    bio?: string | null;
+    projects: ProjectPreview[];
+    skills?: MySkill[];
+    socials?: MySocial[];
+    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
+    followers: UserFollowsList;
+    apiUrl: string;
+};
+
+//all user private data
+export interface MePrivate {
+    userId: number;
+    username: string;
+    ritEmail: string;
+    firstName: string;
+    lastName: string;
+    profileImage?: string | null;
+    headline: string | null;
+    pronouns: string | null;
+    title: string | null;
+    academicYear: string | null;
+    location: string | null;
+    funFact: string | null;
+    bio: string | null;
+    visibility: Visibility;
+    projects: ProjectPreview[];
+    majors?: MyMajor[] | null;
+    skills?: MySkill[] | null;
+    socials?: MySocial[] | null;
+    phoneNumber: string | null;
+    universityId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
+    followers: UserFollowsList;
+    apiUrl: string;
 }
 
 //creating users
@@ -160,14 +264,13 @@ export interface CreateUserData {
     headline?: string;
     pronouns?: string;
     title?: string;
-    majorId?: number;
     academicYear?: number;
     location?: string;
     funFact?: string;
+    majors?: Major[];
     skills?: UserSkill[];
     socials?: Social[];
 }
-
 
 // PROjECT DATA
 
@@ -175,6 +278,7 @@ export interface ProjectFollowings {
     userId: number;
     projectId: number;
     followedAt: Date;
+    apiUrl: string;
 }
 
 //images for projects
@@ -182,15 +286,7 @@ export interface ProjectImage {
     imageId: number;
     image: string;
     altText: '';
-}
-
-//tags for projects
-export interface ProjectTag {
-    projectId: number;
-    tagId: number;
-    label: string;
-    type: TagType;
-    position: number;
+    apiUrl: string;
 }
 
 //permissions not yet in database
@@ -198,14 +294,16 @@ export interface Member {
     projectId: number;
     userId: number;
     roleId: number;
+    apiUrl: string;
     //permission: number;
 }
 
 // Represents the followers info for a project
 export interface ProjectFollowers {
     count: number;
+    users: UserPreview[];
+    apiUrl: string;
 }
-
 
 // PROJECTS
 
@@ -221,16 +319,24 @@ export interface Project {
     userId: number;
     createdAt: Date;
     updatedAt: Date;
-    //might need to add projectGenre
-    medium: Medium[];
-    projectTags: ProjectTag[];
+    mediums: Medium[];
+    tags: Tag[];
     projectImages: ProjectImage[];
-    //might need to add projectSocial
     projectSocials: Social[];
     jobs: Job[];
     members: Member[];
+    apiUrl: string;
 }
 
+//show only preview data
+export interface ProjectPreview {
+    projectId: number;
+    title: string;
+    hook: string;
+    thumbnail?: string | null;
+    mediums: Medium[];
+    apiUrl: string;
+}
 
 // project with the followers data
 export interface ProjectWithFollowers extends Project {
@@ -248,6 +354,7 @@ export interface Job {
     description?: string;
     createdAt: Date;
     updatedAt: Date;
+    apiUrl: string;
 }
 
 // IMAGES
