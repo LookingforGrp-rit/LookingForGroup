@@ -1,14 +1,15 @@
 import prisma from '#config/prisma.ts';
 import { deleteImageService } from '#services/images/delete-image.ts';
-import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
 
 type RemoveImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type RemoveImageServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 //delete a member
 export const removeImageService = async (
   projectId: number,
   imageId: number,
-): Promise<ReturnType<typeof prisma.projectImages.delete> | RemoveImageServiceError> => {
+): Promise<RemoveImageServiceSuccess | RemoveImageServiceError> => {
   try {
     const deletedImage = await prisma.projectImages.delete({
       where: {
@@ -22,7 +23,7 @@ export const removeImageService = async (
     const dbDelete = await deleteImageService(dbImage);
     if (dbDelete === 'INTERNAL_ERROR' || dbDelete === 'NOT_FOUND') return dbDelete;
 
-    return deletedImage;
+    return 'NO_CONTENT';
   } catch (error) {
     console.error('Error in deleteImageService:', error);
 
