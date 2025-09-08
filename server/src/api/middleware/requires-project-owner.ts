@@ -67,7 +67,7 @@ const requiresProjectOwner = async (request: Request, response: Response, next: 
     return;
   }
 
-  if (!result?.userId || result.userId !== userId) {
+  if (result.owner.userId !== userId) {
     const resBody: ApiResponse = {
       status: 403,
       error: 'Insufficient permissions',
