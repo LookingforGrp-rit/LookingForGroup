@@ -294,6 +294,7 @@ export interface ProjectImage {
     imageId: number;
     image: string;
     altText: string;
+    apiUrl: string;
 }
 
 //permissions not yet in database
@@ -322,7 +323,8 @@ export interface ProjectMember {
 
 // Represents the social info for a project
 export interface ProjectSocial extends Social {
-    url: string,
+    url: string;
+    apiUrl: string;
 }
 
 // Represents the job info for a project
