@@ -227,7 +227,7 @@ export type MeDetail = {
     academicYear: string | null;
     location: string | null;
     funFact: string | null;
-    bio?: string | null;
+    bio: string | null;
     projects: ProjectPreview[];
     skills?: MySkill[];
     socials?: MySocial[];
@@ -297,6 +297,12 @@ export interface ProjectImage {
     apiUrl: string;
 }
 
+//mediums for projects
+export interface ProjectMedium extends Medium {
+    apiUrl: string;
+}
+
+
 //permissions not yet in database
 export interface Member {
     projectId: number;
@@ -343,25 +349,19 @@ export interface ProjectJob {
 
 // PROJECTS
 
-export interface ProjectDetail {
-    projectId: number;
-    title: string;
-    hook: string;
+export interface ProjectDetail extends ProjectPreview {
     description: string;
-    thumbnail: string | null;
     purpose: string | null;
     status: string | null;
     audience: string | null;
     createdAt: Date;
     updatedAt: Date;
     owner: UserPreview;
-    mediums: Medium[];
     tags: Tag[];
     projectImages: ProjectImage[];
     projectSocials: ProjectSocial[];
     jobs: ProjectJob[];
     members: ProjectMember[];
-    apiUrl: string;
 }
 
 //show only preview data
@@ -370,7 +370,7 @@ export interface ProjectPreview {
     title: string;
     hook: string;
     thumbnail: string | null;
-    mediums: Medium[];
+    mediums: ProjectMedium[];
     apiUrl: string;
 }
 

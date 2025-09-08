@@ -1,29 +1,32 @@
+import type { ProjectMedium } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import { ProjectMediumSelector } from '#services/selectors/projects/parts/project-medium.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProjectMedium } from '#services/transformers/projects/project-medium.ts';
 
 type AddMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
 //the tags (or their ids anyway)
-type Mediums = {
-  mediums?: number[];
+type MediumInputs = {
+  mediumIds?: number[];
 };
 
 const addTagsService = async (
   projectId: number,
-  data: Mediums,
-): Promise<ReturnType<typeof prisma.projects.update> | AddMediumsServiceError> => {
+  data: MediumInputs,
+): Promise<ProjectMedium[] | AddMediumsServiceError> => {
   try {
-    if (!data.mediums) return 'NOT_FOUND';
+    if (!data.mediumIds) return 'NOT_FOUND';
 
     //had to do this one like the tags because
     //unlike user skills mediums are not tied to the project
     //so we're updating the project's mediums param rather than creating new objects
     const allMediumIds = [];
-    for (let i = 0; i < data.mediums.length; i++) {
-      allMediumIds[i] = { mediumId: data.mediums[i] };
+    for (let i = 0; i < data.mediumIds.length; i++) {
+      allMediumIds[i] = { mediumId: data.mediumIds[i] };
     }
 
-    const result = await prisma.projects.update({
+    const newMediums = await prisma.projects.update({
       where: {
         projectId: projectId,
       },
@@ -32,9 +35,19 @@ const addTagsService = async (
           connect: allMediumIds,
         },
       },
+      include: {
+        mediums: {
+          where: {
+            mediumId: {
+              in: data.mediumIds,
+            },
+          },
+          select: ProjectMediumSelector,
+        },
+      },
     });
 
-    return result;
+    return newMediums.mediums.map((medium) => transformProjectMedium(projectId, medium));
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {
