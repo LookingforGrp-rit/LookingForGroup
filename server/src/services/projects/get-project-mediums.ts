@@ -1,16 +1,21 @@
+import type { ProjectMedium } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import { ProjectMediumSelector } from '#services/selectors/projects/parts/project-medium.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProjectMedium } from '#services/transformers/projects/project-medium.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 const getProjectMediumsService = async (
   projectId: number,
-): Promise<Array<object> | null | GetServiceError> => {
+): Promise<ProjectMedium[] | GetServiceError> => {
   try {
     const project = await prisma.projects.findUnique({
       where: { projectId },
       include: {
-        mediums: true,
+        mediums: {
+          select: ProjectMediumSelector,
+        },
       },
     });
 
@@ -18,7 +23,7 @@ const getProjectMediumsService = async (
       return 'NOT_FOUND';
     }
 
-    return project.mediums;
+    return project.mediums.map((medium) => transformProjectMedium(projectId, medium));
   } catch (e) {
     console.error(`Error in getProjectMediumsService: ${JSON.stringify(e)}`);
 
