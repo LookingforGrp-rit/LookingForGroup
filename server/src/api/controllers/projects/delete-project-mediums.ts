@@ -7,6 +7,7 @@ type MediumInputs = {
   mediumIds?: number[];
 };
 
+//deletes multiple mediums
 const deleteMediumsController = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const mediumData = req.body as MediumInputs;

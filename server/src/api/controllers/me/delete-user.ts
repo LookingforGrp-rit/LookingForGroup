@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteUserService } from '#services/me/delete-user.ts';
 
+//delete your own account
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
@@ -41,6 +42,16 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
     return;
   }
 
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'User not found',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(404).json(resBody);
+    return;
+  }
   //passed
   const resBody: ApiResponse<null> = {
     status: 200,

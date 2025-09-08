@@ -4,6 +4,7 @@ import type { Request, Response } from 'express';
 import type { Prisma, ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import createProjectService from '#services/projects/create-proj.ts';
 
+//creates a project
 const createProjectController = async (req: Request, res: Response) => {
   const curUserId = req.currentUser;
   req.body['userId'] = parseInt(curUserId as string);

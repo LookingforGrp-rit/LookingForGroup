@@ -33,7 +33,7 @@ export const deleteUserFollowing = async (req: Request, res: Response): Promise<
   //call service
   const result = await deleteUserFollowService(userId, followingId);
 
-  //internal error
+  //not found
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,

@@ -2,7 +2,8 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { getSkillsService } from '#services/me/get-skills.ts';
 
-export const getSocials = async (req: Request, res: Response): Promise<void> => {
+//get skills on user profile
+export const getSkills = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -45,7 +46,7 @@ export const getSocials = async (req: Request, res: Response): Promise<void> => 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'No Projects for user found',
+      error: 'Skills not found',
       data: null,
       memetype: 'application/json',
     };

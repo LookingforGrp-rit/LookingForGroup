@@ -6,6 +6,7 @@ type ImageOrder = {
   imageOrder?: string[];
 };
 
+//reorders the images in a project
 const reorderImagesController: RequestHandler<{ projectId: string }, unknown> = async (
   req,
   res,

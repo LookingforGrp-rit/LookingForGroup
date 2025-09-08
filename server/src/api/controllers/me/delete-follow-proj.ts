@@ -45,6 +45,18 @@ export const deleteProjectFollowing = async (req: Request, res: Response): Promi
     return;
   }
 
+  //not found
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Project is not already followed',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(404).json(resBody);
+    return;
+  }
+
   //passed
   const resBody: ApiResponse<null> = {
     status: 200,

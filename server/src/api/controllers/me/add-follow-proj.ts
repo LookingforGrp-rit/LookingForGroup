@@ -57,7 +57,7 @@ export const addProjectFollowing = async (req: Request, res: Response): Promise<
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'User not found',
+      error: 'Project not found',
       data: null,
       memetype: 'application/json',
     };

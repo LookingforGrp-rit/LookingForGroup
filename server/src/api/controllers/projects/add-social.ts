@@ -7,6 +7,7 @@ type Social = {
   url: string;
 };
 
+//adds a social to the project
 export const addProjectSocial = async (req: Request, res: Response): Promise<void> => {
   const social: Social = req.body as Social;
   const id = parseInt(req.params.id);

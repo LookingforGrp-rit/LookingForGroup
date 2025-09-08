@@ -22,6 +22,7 @@ interface UpdateUserInfo {
   profileImage?: string;
 }
 
+//update user info
 export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserInfo> = async (
   req,
   res,

@@ -7,6 +7,7 @@ type Social = {
   url: string;
 };
 
+//updates a social associated with a project
 export const updateProjectSocial = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
@@ -55,7 +56,7 @@ export const updateProjectSocial = async (req: Request, res: Response): Promise<
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'No Projects for user found',
+      error: 'Social not found',
       data: null,
       memetype: 'application/json',
     };

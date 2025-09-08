@@ -28,7 +28,7 @@ export const getProjectFollowingService = async (
 
     return result;
   } catch (e) {
-    console.error(`Error in getVisibleProjects: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectFollowingService: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';
   }
 };

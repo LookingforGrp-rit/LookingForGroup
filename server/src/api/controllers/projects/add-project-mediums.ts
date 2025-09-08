@@ -2,16 +2,16 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import addMediumsService from '#services/projects/add-project-mediums.ts';
 
-//the tags (or their labels anyway)
+//the mediums (or their ids anyway)
 type Mediums = {
   mediumIds?: number[];
 };
 
+//adds multiple mediums to the project
 const addMediumsController = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const data: Mediums = req.body as Mediums;
 
-  //add the mediums to the project
   const result = await addMediumsService(id, data);
 
   if (result === 'INTERNAL_ERROR') {
@@ -22,6 +22,16 @@ const addMediumsController = async (req: Request, res: Response) => {
       memetype: 'application/json',
     };
     res.status(500).json(resBody);
+    return;
+  }
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Medium not found',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(404).json(resBody);
     return;
   }
 

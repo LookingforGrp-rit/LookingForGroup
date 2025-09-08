@@ -2,6 +2,11 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteSkillsService } from '#services/me/delete-skills.ts';
 
+type Skills = {
+  skillIds: number[];
+};
+
+//delete multiple ksills from user profile
 export const deleteSkills = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
@@ -30,7 +35,7 @@ export const deleteSkills = async (req: Request, res: Response): Promise<void> =
   }
 
   //the one you're deleting
-  const skill = parseInt(req.params.socialId);
+  const skill = req.body as Skills;
 
   const result = await deleteSkillsService(skill, UserId);
 

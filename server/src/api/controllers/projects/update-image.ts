@@ -1,13 +1,14 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { RequestHandler } from 'express';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import getService from '#services/projects/update-image.ts';
+import getUpdateImageService from '#services/projects/update-image.ts';
 
 interface UpdateImageInfo {
   image?: string;
   altText?: string;
 }
 
+//updates an image in a project
 const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImageInfo> = async (
   req,
   res,
@@ -21,7 +22,7 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
     return;
   }
 
-  const allowedFields = ['url', 'altText'];
+  const allowedFields = ['image', 'altText'];
   const invalidFields = Object.keys(updates).filter((field) => !allowedFields.includes(field));
 
   if (invalidFields.length > 0) {
@@ -29,7 +30,7 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
     return;
   }
 
-  //check if they sent over a new pfp, and upload it to the db
+  //check if they sent over a new image, and upload it to the db
   if (req.file) {
     const dbImage = await uploadImageService(
       req.file.buffer,
@@ -62,7 +63,7 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
     updates['image'] = dbImage.location;
   }
 
-  const result = await getService(imageId, updates);
+  const result = await getUpdateImageService(imageId, updates);
 
   if (result === 'NOT_FOUND') {
     res.status(404).json({ message: 'Image not found' });

@@ -31,7 +31,7 @@ const updateMemberController = async (_req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Not Found',
+      error: 'Member not Found',
       data: null,
       memetype: 'application/json',
     };

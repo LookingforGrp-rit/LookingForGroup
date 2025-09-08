@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { removeImageService } from '#services/projects/remove-image.ts';
 
+//removes an image frmo a project
 const removeImageController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
   const imageId = parseInt(req.params.picId);
@@ -22,7 +23,7 @@ const removeImageController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Internal Server Error',
+      error: 'Image not found',
       data: null,
       memetype: 'application/json',
     };

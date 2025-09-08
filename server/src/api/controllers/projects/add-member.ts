@@ -3,6 +3,7 @@ import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
 import getService from '#services/projects/add-member.ts';
 
+//adds a member to the project
 const addMemberController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
 
@@ -23,8 +24,6 @@ const addMemberController = async (req: Request, res: Response) => {
 
   const rolesWhere = roleId !== undefined ? rolesWhereId : rolesWhereLabel;
 
-  //currently just creating a new JobTitle record,
-  //should be changed to avoid duplicate records
   const data: Prisma.MembersCreateInput = {
     projects: { connect: { projectId } },
     users: { connect: { userId } },

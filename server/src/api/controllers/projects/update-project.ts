@@ -18,6 +18,7 @@ interface UpdateProjectInfo {
   thumbnail?: string;
 }
 
+//updates a projec's info
 const updateProjectsController: RequestHandler<{ id: string }, unknown, UpdateProjectInfo> = async (
   req,
   res,

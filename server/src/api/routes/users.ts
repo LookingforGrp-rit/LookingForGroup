@@ -24,9 +24,6 @@ router.get('/search-username/:username', getUserByUsername);
 // Gets users by email
 router.get('/search-email/:email', getUserByEmail);
 
-//Updates users profile images
-//router.put('/:id/profile-picture', requiresLogin, checkImageFile, updateProfilePicture);
-
 //Gets another user's projects
 router.get('/:id/projects/', getOtherUserProjects);
 

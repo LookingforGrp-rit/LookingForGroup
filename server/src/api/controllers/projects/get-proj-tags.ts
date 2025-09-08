@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getProjectTagsService from '#services/projects/get-proj-tags.ts';
 
+//gets the tags associated with a project
 const getProjectTagsController = async (_req: Request, res: Response): Promise<void> => {
   const projID = parseInt(_req.params.id);
 

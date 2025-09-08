@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteSocialService } from '#services/me/delete-social.ts';
 
+//delete a social from user profile
 export const deleteSocial = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {

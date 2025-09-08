@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getProjectImagesService from '#services/projects/get-proj-images.ts';
 
+//gets the images associated with a project
 const getProjectImagesController = async (_req: Request, res: Response): Promise<void> => {
   const projID = parseInt(_req.params.id);
 

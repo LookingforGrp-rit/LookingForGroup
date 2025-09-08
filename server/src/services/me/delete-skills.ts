@@ -4,26 +4,34 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type DeleteSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteSkillsServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
+type Skills = {
+  skillIds: number[];
+};
+
 export const deleteSkillsService = async (
-  skillId: number,
+  skills: Skills,
   userId: number,
 ): Promise<DeleteSkillsServiceError | DeleteSkillsServiceSuccess> => {
   try {
-    //skill validation (do you have this skill)
-    const skillExists = await prisma.userSkills.findFirst({
+    const skillData = skills.skillIds;
+
+    //skill validation (do you have these skills)
+    const skillExists = await prisma.userSkills.findMany({
       where: {
-        skillId: skillId,
+        skillId: {
+          in: skillData,
+        },
         userId: userId,
       },
     });
 
-    if (!skillExists) return 'NOT_FOUND';
+    if (skillExists.length === 0) return 'NOT_FOUND';
 
-    await prisma.userSkills.delete({
+    await prisma.userSkills.deleteMany({
       where: {
-        userId_skillId: {
-          userId: userId,
-          skillId: skillId,
+        userId: userId,
+        skillId: {
+          in: skillData,
         },
       },
     });

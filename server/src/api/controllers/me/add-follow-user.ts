@@ -68,7 +68,7 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'User not found/cannot follow self',
+      error: 'User not found',
       data: null,
       memetype: 'application/json',
     };

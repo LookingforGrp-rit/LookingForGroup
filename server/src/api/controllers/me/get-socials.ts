@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { getSocialsService } from '#services/me/get-socials.ts';
 
+//get socials on user profile
 export const getSocials = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
@@ -45,7 +46,7 @@ export const getSocials = async (req: Request, res: Response): Promise<void> => 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'No Projects for user found',
+      error: 'Socials not found',
       data: null,
       memetype: 'application/json',
     };

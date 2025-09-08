@@ -10,6 +10,7 @@ type Skill = {
   proficiency: SkillProficiency;
 };
 
+//add skills to user profile
 const addSkillsController = async (req: Request, res: Response) => {
   const data: Skill[] = req.body as Skill[];
 

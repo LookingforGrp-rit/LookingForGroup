@@ -10,6 +10,7 @@ import envConfig from '#config/env.ts';
 import createUserService from '#services/users/create-user.ts';
 import { getUserByUsernameService } from '#services/users/get-by-username.ts';
 
+//creates a user
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   let uid = req.headers[uidHeaderKey] as string;
   let firstName = req.headers[firstNameHeaderKey] as string | undefined;
