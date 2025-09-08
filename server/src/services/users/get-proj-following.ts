@@ -1,13 +1,14 @@
-import type { ProjectWithFollowers } from '@looking-for-group/shared';
+import type { ProjectPreview } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
+import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformProject } from '../transformers/projects/projectTransform.ts';
+import { transformProjectToPreview } from '#services/transformers/projects/project-preview.ts';
 
 type GetProjectsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 export const getProjectFollowingService = async (
   userId: number,
-): Promise<ProjectWithFollowers[] | GetProjectsError> => {
+): Promise<ProjectPreview[] | GetProjectsError> => {
   try {
     const projects = await prisma.projects.findMany({
       where: {
@@ -18,23 +19,14 @@ export const getProjectFollowingService = async (
         },
       },
       orderBy: { createdAt: 'desc' },
-      include: {
-        _count: { select: { projectFollowings: true } },
-        projectGenres: { include: { genres: true } },
-        projectTags: { include: { tags: true } },
-        projectImages: true,
-        projectSocials: { include: { socials: true } },
-        jobs: true,
-        members: true,
-        users: true,
-      },
+      select: ProjectPreviewSelector,
     });
 
     if (projects.length === 0) return 'NOT_FOUND';
 
-    const fullProject = projects.map(transformProject);
+    const result = projects.map(transformProjectToPreview);
 
-    return fullProject;
+    return result;
   } catch (e) {
     console.error(`Error in getVisibleProjects: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';
