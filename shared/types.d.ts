@@ -333,6 +333,10 @@ export interface ProjectSocial extends Social {
     apiUrl: string;
 }
 
+export interface ProjectTag extends Tag {
+    apiUrl: string;
+}
+
 // Represents the job info for a project
 export interface ProjectJob {
     jobId: number;
