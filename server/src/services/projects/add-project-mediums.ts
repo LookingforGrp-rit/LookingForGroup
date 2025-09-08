@@ -6,7 +6,7 @@ import { transformProjectMedium } from '#services/transformers/projects/parts/pr
 
 type AddMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
-//the mediums
+//the mediums (or their ids anyway)
 type MediumInputs = {
   mediumIds?: number[];
 };

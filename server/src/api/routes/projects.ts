@@ -65,7 +65,7 @@ router.delete(
 
 //Deletes the tags in a project
 router.delete(
-  '/:id/tags/:tagid',
+  '/:id/tags/',
   requiresLogin,
   injectCurrentUser,
   requiresProjectOwner,
@@ -94,6 +94,15 @@ router.post(
   injectCurrentUser,
   requiresProjectOwner,
   PROJECT.addMediums,
+);
+
+//Removes mediums from a project
+router.delete(
+  '/:id/mediums/',
+  requiresLogin,
+  injectCurrentUser,
+  requiresProjectOwner,
+  PROJECT.deleteMediums,
 );
 
 //Creates a new picture for a project

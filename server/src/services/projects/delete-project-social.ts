@@ -6,24 +6,24 @@ type DeleteProjectSocialServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 export const deleteProjectSocialService = async (
   socialId: number,
-  userId: number,
+  projectId: number,
 ): Promise<DeleteProjectSocialServiceSuccess | DeleteProjectSocialServiceError> => {
   try {
     //social validation (do you have this social)
     const socialExists = await prisma.projectSocials.findFirst({
       where: {
         websiteId: socialId,
-        projectId: userId,
+        projectId: projectId,
       },
     });
 
     if (!socialExists) return 'NOT_FOUND';
 
-    await prisma.userSocials.delete({
+    await prisma.projectSocials.delete({
       where: {
-        userId_websiteId: {
+        projectId_websiteId: {
           websiteId: socialId,
-          userId: userId,
+          projectId: projectId,
         },
       },
     });

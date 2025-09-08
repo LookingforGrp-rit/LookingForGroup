@@ -1,18 +1,18 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteTagsService } from '#services/projects/delete-tags.ts';
+import { deleteMediumsService } from '#services/projects/delete-project-mediums.ts';
 
 //the tags (or their ids anyway)
-type TagInputs = {
-  tagIds?: number[];
+type MediumInputs = {
+  mediumIds?: number[];
 };
 
-const deleteTagsController = async (req: Request, res: Response) => {
+const deleteMediumsController = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const tagData = req.body as TagInputs;
+  const mediumData = req.body as MediumInputs;
 
-  //add the image to the project
-  const result = await deleteTagsService(id, tagData);
+  //delete the mediums they passed in
+  const result = await deleteMediumsService(id, mediumData);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -34,4 +34,4 @@ const deleteTagsController = async (req: Request, res: Response) => {
   res.status(200).json(resBody);
 };
 
-export default deleteTagsController;
+export default deleteMediumsController;

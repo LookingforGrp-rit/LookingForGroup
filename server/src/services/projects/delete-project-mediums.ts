@@ -1,21 +1,21 @@
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
 
-type DeleteTagsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteTagsServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type DeleteMediumsServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
-//the tags (or their ids anyway)
-type TagInputs = {
-  tagIds?: number[];
+//the mediums (or their ids anyway)
+type MediumInputs = {
+  mediumIds?: number[];
 };
 
-//delete however many tags
-export const deleteTagsService = async (
+//delete however many mediums
+export const deleteMediumsService = async (
   projectId: number,
-  tagData: TagInputs,
-): Promise<DeleteTagsServiceSuccess | DeleteTagsServiceError> => {
+  mediumData: MediumInputs,
+): Promise<DeleteMediumsServiceSuccess | DeleteMediumsServiceError> => {
   try {
-    const data = tagData.tagIds;
+    const data = mediumData.mediumIds;
     if (!data) return 'NOT_FOUND';
 
     for (let i = 0; i < data.length; i++) {
@@ -24,20 +24,21 @@ export const deleteTagsService = async (
           projectId: projectId,
         },
         select: {
-          tags: true,
+          mediums: true,
         },
         data: {
-          tags: {
+          mediums: {
             disconnect: {
-              tagId: data[i],
+              mediumId: data[i],
             },
           },
         },
       });
     }
+
     return 'NO_CONTENT';
   } catch (error) {
-    console.error('Error in deleteMediumsService:', error);
+    console.error('Error in deleteTagsService:', error);
 
     if (error instanceof Object && 'code' in error) {
       if (error.code === 'P2025') {
