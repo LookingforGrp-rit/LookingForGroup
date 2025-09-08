@@ -291,9 +291,9 @@ const NewProfile = () => {
             <ThemeIcon id={'instagram'} width={25} height={25} className={'color-fill'} ariaLabel={'Instagram'}/>
           </button>
           <button>
-            <i className="fa-solid fa-heart" />
-            {/* Taken from ProjectPanel.tsx/NewProject.tsx: */}
-            {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i> */}
+            <ThemeIcon id={'heart'} width={25} height={25} className={'empty-heart'} />
+            {/* FIXME: When following is implemented, use this: */}
+            {/* <ThemeIcon id={'heart'} width={25} height={25} className={isFollowing ? 'filled-heart' : 'empty-heart'} /> */}
           </button>
           {/* TO-DO: Implement Share, Block, and Report functionality */}
           <Dropdown>

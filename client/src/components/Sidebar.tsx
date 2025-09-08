@@ -217,7 +217,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                   handleTextChange("My Profile", paths.routes.NEWPROFILE)
                 }
               >
-                <ThemeIcon src={'assets/white/profile.png'} lightModeColor={'black'} alt={'my profile'} />
+                <ThemeIcon id={'profile'} width={30} height={28.85} className={'mono-fill'} ariaLabel={'my profile'} />
               </button>
             </div>
           </div>

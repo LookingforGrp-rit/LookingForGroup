@@ -1728,6 +1728,13 @@ Theme Icons style rules
   fill: var(--modal-gradient-start);
 }
 
+.empty-heart > use {
+  fill: white;
+}
+.filled-heart > use {
+  fill: #F14F76;
+}
+
 /* Fallback using CSS media queries */
 @media (prefers-color-scheme: light) {
   .svg-color-icon {
