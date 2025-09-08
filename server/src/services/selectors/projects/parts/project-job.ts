@@ -1,6 +1,6 @@
 export const ProjectJobSelector = Object.freeze({
   jobId: true,
-  role: {
+  roles: {
     select: {
       roleId: true,
       label: true,
