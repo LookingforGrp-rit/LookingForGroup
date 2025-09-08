@@ -28,7 +28,7 @@ model Roles {
 model Jobs {
   jobId        Int              @id @default(autoincrement()) @map("job_id")
   projectId    Int              @map("project_id")
-  roleId       Int              @map("title_id")
+  roleId       Int              @map("role_id")
   availability JobsAvailability
   duration     JobsDuration
   location     JobsLocation
