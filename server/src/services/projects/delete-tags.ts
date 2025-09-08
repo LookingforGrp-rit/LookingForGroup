@@ -1,23 +1,16 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
 
 type DeleteTagServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type DeleteTagServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
-type Tag = {
-  tags: {
-    tagId: number;
-    label: string;
-    type: string;
-  }[];
-};
-
-//delete a member
+//delete a tag
 export const deleteTagsService = async (
   projectId: number,
   tagId: number,
-): Promise<Tag | DeleteTagServiceError> => {
+): Promise<DeleteTagServiceSuccess | DeleteTagServiceError> => {
   try {
-    const deleteTag = await prisma.projects.update({
+    await prisma.projects.update({
       where: {
         projectId: projectId,
       },
@@ -33,7 +26,7 @@ export const deleteTagsService = async (
       },
     });
 
-    return deleteTag;
+    return 'NO_CONTENT';
   } catch (error) {
     console.error('Error in deleteTagsService:', error);
 
