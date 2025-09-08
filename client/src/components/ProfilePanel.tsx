@@ -35,6 +35,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
         alt='profile image'
         // default profile picture if profile image doesn't load
         onError={(e) => {
+          // might be handled by preloaded image function. TODO: test
           const profileImg = e.target as HTMLImageElement;
           profileImg.src = profilePicture;
         }}
@@ -44,21 +45,30 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
       </h2>
       <h3>{profileData.major}</h3>
       <div id="quote">"{profileData.headline}"</div>
+
       <div className={'profile-panel-hover'} onClick={() => navigate(profileURL)}>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
+          <div className={'icon-box'}>
+            <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
+          </div>
           <p>{profileData.jobTitle}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'} />
+          <div className={'icon-box'}>
+            <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'} />
+          </div>
           <p>{profileData.location}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+          <div className={'icon-box'}>
+            <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+          </div>
           <p>{profileData.pronouns}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
-          <ThemeIcon id={'funfact'} width={24} height={24} className={'mono-stroke'} ariaLabel={'Fun Fact'} />
+          <div className={'icon-box'}>
+            <ThemeIcon id={'funfact'} width={24} height={24} className={'mono-stroke'} ariaLabel={'Fun Fact'} />
+          </div>
           <p>{profileData.funFact}</p>
         </div>
       </div>

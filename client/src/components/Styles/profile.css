@@ -95,7 +95,8 @@ Profile Panel component style rules
   right: 0;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: center;
+  gap: 20px;
   text-align: left;
   padding: 20px;
   overflow: auto;
@@ -105,27 +106,28 @@ Profile Panel component style rules
   /* border: 1px solid black; */
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: start;
   font-style: italic;
   gap: 15px;
-  margin: 10px 0;
 
-  img {
-    height: 28px;
-    width: 28px;
-    object-fit: contain;
-    /* border: 1px solid black; */
-    align-self: flex-start;
+  .icon-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px; 
   }
 
   p {
     /* border: 1px solid black; */
     margin: 0;
     color: var(--invert-text);
-    font-weight: 600;
+    overflow-x: hidden;
+    text-wrap: wrap;
+    align-self: center;
   }
 
-  /* !important because Icons prioritize black because of added [data-theme] specification in general.css */
+  /* !important because icons prioritize black due to added [data-theme] specification in general.css */
   .mono-stroke > use {
     stroke: var(--invert-text) !important;
   }
