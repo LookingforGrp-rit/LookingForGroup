@@ -1,13 +1,13 @@
 import prisma from '#config/prisma.ts';
-import type { UserSocials } from '#prisma-models/index.js';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
 
 type DeleteProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type DeleteProjectServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 export const deleteProjectSocialService = async (
   socialId: number,
   userId: number,
-): Promise<UserSocials | DeleteProjectSocialServiceError> => {
+): Promise<DeleteProjectServiceSuccess | DeleteProjectSocialServiceError> => {
   try {
     //social validation (do you have this social)
     const socialExists = await prisma.projectSocials.findFirst({
@@ -19,7 +19,7 @@ export const deleteProjectSocialService = async (
 
     if (!socialExists) return 'NOT_FOUND';
 
-    const social = await prisma.userSocials.delete({
+    await prisma.userSocials.delete({
       where: {
         userId_websiteId: {
           websiteId: socialId,
@@ -28,7 +28,7 @@ export const deleteProjectSocialService = async (
       },
     });
 
-    return social;
+    return 'NO_CONTENT';
   } catch (error) {
     console.error('Error in deleteProjectSocialService:', error);
     return 'INTERNAL_ERROR';
