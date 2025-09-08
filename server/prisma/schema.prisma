@@ -26,6 +26,7 @@ model Roles {
 }
 
 model Jobs {
+  jobId        Int              @id @default(autoincrement()) @map("job_id")
   projectId    Int              @map("project_id")
   roleId       Int              @map("title_id")
   availability JobsAvailability
@@ -38,7 +39,6 @@ model Jobs {
   projects     Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
   roles        Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
 
-  @@id([projectId, roleId])
   @@index([projectId], map: "FK2_project_id")
   @@index([roleId], map: "FK_jobs_job_titles")
   @@map("jobs")

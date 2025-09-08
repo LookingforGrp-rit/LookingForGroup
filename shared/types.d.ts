@@ -193,6 +193,14 @@ export interface User {
     apiUrl: string;
 }
 
+// Represents the member info for a project
+export interface UserMember {
+    project: ProjectPreview;
+    role: Role;
+    memberSince: Date;
+    apiUrl: string;
+}
+
 // ME
 
 //show only preview data
@@ -285,15 +293,14 @@ export interface ProjectFollowings {
 export interface ProjectImage {
     imageId: number;
     image: string;
-    altText: '';
-    apiUrl: string;
+    altText: string;
 }
 
 //permissions not yet in database
 export interface Member {
     projectId: number;
-    userId: number;
-    roleId: number;
+    user: UserPreview;
+    role: Role;
     apiUrl: string;
     //permission: number;
 }
@@ -305,26 +312,53 @@ export interface ProjectFollowers {
     apiUrl: string;
 }
 
+// Represents the member info for a project
+export interface ProjectMember {
+    user: UserPreview;
+    role: Role;
+    memberSince: Date;
+    apiUrl: string;
+}
+
+// Represents the social info for a project
+export interface ProjectSocial extends Social {
+    url: string,
+}
+
+// Represents the job info for a project
+export interface ProjectJob {
+    jobId: number;
+    role: Role;
+    availability: string;
+    duration: string;
+    location: string;
+    compensation: string;
+    description: string;
+    createdAt: Date;
+    updatedAt: Date;
+    apiUrl: string;
+}
+
 // PROJECTS
 
-export interface Project {
+export interface ProjectDetail {
     projectId: number;
     title: string;
     hook: string;
     description: string;
-    thumbnail?: string | null;
-    purpose?: string | null;
-    status?: string | null;
-    audience?: string | null;
-    userId: number;
+    thumbnail: string | null;
+    purpose: string | null;
+    status: string | null;
+    audience: string | null;
     createdAt: Date;
     updatedAt: Date;
+    owner: UserPreview;
     mediums: Medium[];
     tags: Tag[];
     projectImages: ProjectImage[];
-    projectSocials: Social[];
-    jobs: Job[];
-    members: Member[];
+    projectSocials: ProjectSocial[];
+    jobs: ProjectJob[];
+    members: ProjectMember[];
     apiUrl: string;
 }
 
@@ -333,18 +367,19 @@ export interface ProjectPreview {
     projectId: number;
     title: string;
     hook: string;
-    thumbnail?: string | null;
+    thumbnail: string | null;
     mediums: Medium[];
     apiUrl: string;
 }
 
 // project with the followers data
-export interface ProjectWithFollowers extends Project {
+export interface ProjectWithFollowers extends ProjectDetail {
     followers: ProjectFollowers;
 }
 
 //Jobs for projects
 export interface Job {
+    jobId: number;
     projectId: number;
     roleId: number;
     availability: string;
