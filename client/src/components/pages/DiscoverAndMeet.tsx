@@ -17,7 +17,7 @@ import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
-import { ThemeIcon } from '../ThemeIcon';
+import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { devSkills, desSkills } from '../../constants/tags';
 import { getProjects } from '../../api/projects';
@@ -74,8 +74,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         <div id="profile-hero-bg1">
           <div id="profile-hero">
             <div id="profile-hero-blurb-1" className="profile-hero-blurb">
-              <ThemeIcon
-                src={'assets/bannerImages/people1_light.png'}
+              <ThemeImage
+                lightSrc={'assets/bannerImages/people1_light.png'}
                 darkSrc={'assets/bannerImages/people1_dark.png'}
                 id={'profile-hero-img-1'}
                 alt={'banner image'}
@@ -87,8 +87,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
             <div id="profile-hero-blurb-2" className="profile-hero-blurb">
               {/* <h2>Look for people to work with!</h2> */}
-              <ThemeIcon
-                src={'assets/bannerImages/people2_light.png'}
+              <ThemeImage
+                lightSrc={'assets/bannerImages/people2_light.png'}
                 darkSrc={'assets/bannerImages/people2_dark.png'}
                 id={'profile-hero-img-2'}
                 alt={'banner image'}
@@ -101,8 +101,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             </div>
 
             <div id="profile-hero-blurb-3" className="profile-hero-blurb">
-              <ThemeIcon
-                src={'assets/bannerImages/people3_light.png'}
+              <ThemeImage
+                lightSrc={'assets/bannerImages/people3_light.png'}
                 darkSrc={'assets/bannerImages/people3_dark.png'}
                 id={'profile-hero-img-3'}
                 alt={'banner image'}
@@ -177,7 +177,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     await getAuth();
 
     try {
-      var response;
+      let response;
       
       if (category == 'projects'){response = await getProjects();}
       else {response = await getUsers();}
@@ -410,7 +410,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         {(!dataLoaded && filteredItemList.length === 0) ? (
           <div className='spinning-loader'></div>
         ) : (
-          <PanelBox category={category} itemList={filteredItemList} itemAddInterval={25} userId={userId} />
+          <PanelBox category={category} itemList={filteredItemList} itemAddInterval={25} userId={Number(userId)} />
         )}
       </div>
       <CreditsFooter />

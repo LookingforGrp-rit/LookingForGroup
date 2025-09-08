@@ -157,11 +157,7 @@ export const ImageCarousel = ({
                 onClick={() => handleIndexChange(currentIndex + 1)}
                 id="project-image-carousel-right"
               >
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'right'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Next Image'}/>
               </button>
             </div>
           </>
@@ -181,11 +177,7 @@ export const ImageCarousel = ({
                 onClick={() => handleIndexChange(currentIndex - 1)}
                 id="discover-carousel-left"
               >
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'left'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Previous Image'}/>
               </button>
               <div
                 id="discover-carousel-content"
@@ -214,22 +206,14 @@ export const ImageCarousel = ({
 
               <button className="discover-carousel-link">
                 Learn More
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'right'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Next Image'}/>
               </button>
 
               <button
                 onClick={() => handleIndexChange(currentIndex + 1)}
                 id="discover-carousel-right"
               >
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'right'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Next Image'}/>
               </button>
             </div>
 

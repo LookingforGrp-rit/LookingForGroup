@@ -2,7 +2,7 @@ import '../Styles/pages.css';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { ThemeIcon } from '../ThemeIcon';
+import { ThemeImage } from '../ThemeIcon';
 import { sendPost } from '../../functions/fetch.js';
 import { getUserByEmail } from '../../api/users.js';
 
@@ -102,8 +102,8 @@ if (response && response.error) {
         <div className="directory column">
           {/* <h1>Welcome!</h1>
                     <p>Don't have an account?</p> */}
-          <ThemeIcon
-            src={'assets/bannerImages/login_light.png'}
+          <ThemeImage
+            lightSrc={'assets/bannerImages/login_light.png'}
             darkSrc={'assets/bannerImages/login_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>

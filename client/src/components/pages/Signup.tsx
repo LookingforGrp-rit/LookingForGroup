@@ -9,7 +9,7 @@ import ChooseInterests from '../SignupProcess/ChooseInterests';
 import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { sendPost } from '../../functions/fetch';
-import { ThemeIcon } from '../ThemeIcon';
+import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
 import { getUserByEmail, getUserByUsername } from '../../api/users';
 
@@ -416,8 +416,8 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
         <div className="directory column">
           {/* <h1>Welcome!</h1>
                     <p>Already have an account?</p> */}
-          <ThemeIcon
-            src={'assets/bannerImages/signup_light.png'}
+          <ThemeImage
+            lightSrc={'assets/bannerImages/signup_light.png'}
             darkSrc={'assets/bannerImages/signup_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.LOGIN)}>Log In</button>
