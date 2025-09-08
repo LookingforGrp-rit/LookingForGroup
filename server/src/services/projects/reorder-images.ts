@@ -1,5 +1,8 @@
+import type { ProjectImage } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
+import { ProjectImageSelector } from '#services/selectors/projects/parts/project-image.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProjectImage } from '#services/transformers/projects/project-image.ts';
 
 type ReorderImagesError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -10,7 +13,7 @@ type ImageOrder = {
 const reorderImagesService = async (
   projectId: number,
   imageOrder: ImageOrder,
-): Promise<ReturnType<typeof prisma.projects.findFirst> | ReorderImagesError> => {
+): Promise<ProjectImage[] | ReorderImagesError> => {
   try {
     const order = imageOrder.imageOrder;
 
@@ -30,9 +33,16 @@ const reorderImagesService = async (
 
     const project = await prisma.projects.findFirst({
       where: { projectId },
+      include: {
+        projectImages: {
+          select: ProjectImageSelector,
+        },
+      },
     });
 
-    return project;
+    if (!project) return 'NOT_FOUND';
+
+    return project.projectImages.map((image) => transformProjectImage(projectId, image));
   } catch (e) {
     console.error('Error in updateProjectService:', e);
     return 'INTERNAL_ERROR';
