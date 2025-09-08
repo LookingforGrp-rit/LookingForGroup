@@ -1029,7 +1029,7 @@ New Profile page style rules
     300px 1fr auto;
   background-color: var(--header-color);
   border-radius: 10px;
-  padding: 30px;
+  padding: 22px 25px 25px 26px;
   gap: 10px;
   color: var(--main-text);
   max-width: 100%;
@@ -1074,7 +1074,7 @@ New Profile page style rules
   grid-area: image;
   object-fit: cover;
   border-radius: 10px;
-  border: 2px solid var(--primary-color);
+  border: 2px solid white;
 }
 
 #profile-bio {
@@ -1443,11 +1443,12 @@ New Profile page style rules
   /*height:calc(100% - 40px);*/
   height: 100%;
   /* padding:20px 0; */
-  gap: 5px;
+  gap: 9px;
 }
 
-.about-me-buttons-minimal {
+#about-me-buttons.about-me-buttons-minimal {
   justify-content: flex-end;
+  gap: 7px;
 }
 
 @media only screen and (max-width: 1200px) {
@@ -1510,11 +1511,6 @@ New Profile page style rules
 
 #about-me-buttons img {
   height: 32px;
-}
-
-#about-me-buttons .dropdown-menu {
-  width: auto !important;
-  transform: rotate(90deg);
 }
 
 #profile-menu-dropdown {
