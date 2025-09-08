@@ -11,8 +11,7 @@ interface UpdateUserInfo {
   headline?: string;
   pronouns?: string;
   title?: string;
-  majorId?: number;
-  academic_year?: UsersAcademicYear | null;
+  academicYear?: UsersAcademicYear | null;
   location?: string;
   funFact?: string;
   bio?: string;
@@ -61,7 +60,6 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     'headline',
     'pronouns',
     'title',
-    'majorId',
     'academicYear',
     'location',
     'funFact',

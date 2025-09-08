@@ -43,7 +43,7 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
         duration,
         jobId,
         location,
-        role: { roleId, label },
+        roles: { roleId, label },
         updatedAt,
       }) => ({
         availability,
