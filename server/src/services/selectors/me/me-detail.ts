@@ -1,9 +1,9 @@
 import { ProjectPreviewSelector } from '../projects/project-preview.ts';
 import { UserPreviewSelector } from '../users/user-preview.ts';
 import { MePreviewSelector } from './me-preview.ts';
-import { MyMajorSelector } from './my-major.ts';
-import { MySkillSelector } from './my-skill.ts';
-import { MySocialSelector } from './my-social.ts';
+import { MyMajorSelector } from './parts/my-major.ts';
+import { MySkillSelector } from './parts/my-skill.ts';
+import { MySocialSelector } from './parts/my-social.ts';
 
 export const MeDetailSelector = Object.freeze({
   _count: {

@@ -7,6 +7,8 @@ import type {
 } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { UserDetailSelector } from '#services/selectors/users/user-detail.ts';
+import { transformProjectToPreview } from '../projects/project-preview.ts';
+import { transformUserToPreview } from './user-preview.ts';
 
 //sample project from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,11 +21,7 @@ type UsersGetPayload = Awaited<typeof sampleUsers>[number];
 //map to shared type
 export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
   return {
-    userId: user.userId,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    username: user.username,
-    profileImage: user.profileImage,
+    ...transformUserToPreview(user),
     headline: user.headline,
     pronouns: user.pronouns,
     bio: user.bio ?? '',
@@ -55,70 +53,29 @@ export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
       }),
     ),
     socials: user.userSocials.map(
-      ({ url, socials }): UserSocial => ({
-        websiteId: socials.websiteId,
-        label: socials.label,
+      ({ url, socials: { label, websiteId } }): UserSocial => ({
+        websiteId,
+        label,
         url,
       }),
     ),
-    projects: user.members.map(({ projects: { projectId, title, hook, thumbnail, mediums } }) => ({
-      projectId,
-      title,
-      hook,
-      thumbnail,
-      mediums: mediums.map(({ mediumId, label }) => ({
-        mediumId,
-        label,
-      })),
-      apiUrl: `api/projects/${projectId.toString()}`,
-    })),
+    projects: user.members.map(({ projects }) => transformProjectToPreview(projects)),
     followers: {
-      users: user.followers.map(
-        ({ receiverUser: { userId, username, firstName, lastName, profileImage } }) => ({
-          userId,
-          username,
-          firstName,
-          lastName,
-          profileImage,
-          apiUrl: `/api/users/${userId.toString()}`,
-        }),
-      ),
+      users: user.followers.map(({ receiverUser }) => transformUserToPreview(receiverUser)),
       count: user._count.followers,
       apiUrl: `/api/me/followers`,
     },
     following: {
       usersFollowing: {
-        users: user.following.map(
-          ({ senderUser: { userId, username, firstName, lastName, profileImage } }) => ({
-            userId,
-            username,
-            firstName,
-            lastName,
-            profileImage,
-            apiUrl: `/api/users/${userId.toString()}`,
-          }),
-        ),
+        users: user.following.map(({ senderUser }) => transformUserToPreview(senderUser)),
         count: user._count.following,
         apiUrl: '/api/me/followings/people',
       },
       projectsFollowing: {
         count: user._count.projectFollowings,
-        projects: user.projectFollowings.map(
-          ({ projects: { projectId, title, hook, thumbnail, mediums } }) => ({
-            projectId,
-            title,
-            hook,
-            thumbnail,
-            mediums: mediums.map(({ mediumId, label }) => ({
-              mediumId,
-              label,
-            })),
-            apiUrl: `/api/projects/${projectId.toString()}`,
-          }),
-        ),
+        projects: user.projectFollowings.map(({ projects }) => transformProjectToPreview(projects)),
         apiUrl: `/api/me/followings/projects`,
       },
     },
-    apiUrl: `api/users/${user.userId.toString()}`,
   };
 };

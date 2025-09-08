@@ -157,8 +157,8 @@ export type UserDetail = {
     funFact: string | null;
     bio?: string | null;
     projects: ProjectPreview[];
-    skills?: UserSkill[];
-    socials?: UserSocial[];
+    skills: UserSkill[];
+    socials: UserSocial[];
     following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
     followers: UserFollowsList;
     apiUrl: string;

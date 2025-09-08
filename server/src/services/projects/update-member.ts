@@ -3,7 +3,7 @@ import prisma from '#config/prisma.ts';
 import type { Prisma } from '#prisma-models/index.js';
 import { ProjectMemberSelector } from '#services/selectors/projects/parts/project-member.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformProjectMember } from '#services/transformers/projects/project-member.ts';
+import { transformProjectMember } from '#services/transformers/projects/parts/project-member.ts';
 
 type UpdateMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

@@ -1,6 +1,7 @@
 import type { ProjectPreview } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
+import { transformProjectMedium } from './parts/project-medium.ts';
 
 //sample project from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -17,10 +18,7 @@ export const transformProjectToPreview = (project: ProjectsGetPayload): ProjectP
     title: project.title,
     hook: project.hook,
     thumbnail: project.thumbnail,
-    mediums: project.mediums.map(({ mediumId, label }) => ({
-      mediumId,
-      label,
-    })),
-    apiUrl: `/api/projects/${project.projectId}`,
+    mediums: project.mediums.map((medium) => transformProjectMedium(project.projectId, medium)),
+    apiUrl: `/api/projects/${project.projectId.toString()}`,
   };
 };

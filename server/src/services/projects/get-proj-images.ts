@@ -2,7 +2,7 @@ import type { ProjectImage } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectImageSelector } from '#services/selectors/projects/parts/project-image.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformProjectImage } from '#services/transformers/projects/project-image.ts';
+import { transformProjectImage } from '#services/transformers/projects/parts/project-image.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

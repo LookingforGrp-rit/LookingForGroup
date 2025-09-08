@@ -1,8 +1,8 @@
 import type { MySocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { MySocialSelector } from '#services/selectors/me/my-social.ts';
+import { MySocialSelector } from '#services/selectors/me/parts/my-social.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformMySocial } from '#services/transformers/me/my-social.ts';
+import { transformMySocial } from '#services/transformers/me/parts/my-social.ts';
 
 type GetSocialsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

@@ -2,7 +2,7 @@ import type { ProjectMedium } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectMediumSelector } from '#services/selectors/projects/parts/project-medium.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformProjectMedium } from '#services/transformers/projects/project-medium.ts';
+import { transformProjectMedium } from '#services/transformers/projects/parts/project-medium.ts';
 
 type AddMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 

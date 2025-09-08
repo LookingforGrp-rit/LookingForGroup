@@ -7,6 +7,7 @@ import type {
 } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MeDetailSelector } from '#services/selectors/me/me-detail.ts';
+import { transformMeToPreview } from './me-preview.ts';
 
 //sample project from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -19,11 +20,7 @@ type UsersGetPayload = Awaited<typeof sampleUsers>[number];
 //map to shared type
 export const transformMeToDetail = (user: UsersGetPayload): MeDetail => {
   return {
-    userId: user.userId,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    username: user.username,
-    profileImage: user.profileImage,
+    ...transformMeToPreview(user),
     headline: user.headline,
     pronouns: user.pronouns,
     bio: user.bio ?? '',
@@ -72,6 +69,7 @@ export const transformMeToDetail = (user: UsersGetPayload): MeDetail => {
       mediums: mediums.map(({ mediumId, label }) => ({
         mediumId,
         label,
+        apiUrl: `api/projects/${projectId.toString()}/mediums/${mediumId.toString()}`,
       })),
       apiUrl: `api/projects/${projectId.toString()}`,
     })),
@@ -115,6 +113,7 @@ export const transformMeToDetail = (user: UsersGetPayload): MeDetail => {
             mediums: mediums.map(({ mediumId, label }) => ({
               mediumId,
               label,
+              apiUrl: `TODO`,
             })),
             apiUrl: `/api/projects/${projectId.toString()}`,
           }),
@@ -122,6 +121,5 @@ export const transformMeToDetail = (user: UsersGetPayload): MeDetail => {
         apiUrl: `/api/me/followings/projects`,
       },
     },
-    apiUrl: `api/me`,
   };
 };

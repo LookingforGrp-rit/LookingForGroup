@@ -2,7 +2,7 @@ import type { ProjectSocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectSocialSelector } from '#services/selectors/projects/parts/project-social.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformProjectSocial } from '#services/transformers/projects/project-social.ts';
+import { transformProjectSocial } from '#services/transformers/projects/parts/project-social.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

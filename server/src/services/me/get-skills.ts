@@ -1,8 +1,8 @@
 import type { MySkill } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { MySkillSelector } from '#services/selectors/me/my-skill.ts';
+import { MySkillSelector } from '#services/selectors/me/parts/my-skill.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformMySkill } from '#services/transformers/me/my-skill.ts';
+import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
 type GetSkillsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

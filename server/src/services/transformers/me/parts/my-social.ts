@@ -1,6 +1,6 @@
 import type { MySocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { MySocialSelector } from '#services/selectors/me/my-social.ts';
+import { MySocialSelector } from '#services/selectors/me/parts/my-social.ts';
 
 //sample project from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

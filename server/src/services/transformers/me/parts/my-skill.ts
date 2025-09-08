@@ -1,6 +1,6 @@
 import type { MySkill } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { MySkillSelector } from '#services/selectors/me/my-skill.ts';
+import { MySkillSelector } from '#services/selectors/me/parts/my-skill.ts';
 
 //sample project from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars

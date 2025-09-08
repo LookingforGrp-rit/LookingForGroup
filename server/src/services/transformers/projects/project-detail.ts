@@ -2,6 +2,10 @@ import type { ProjectDetail } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectDetailSelector } from '#services/selectors/projects/project-detail.ts';
 import { transformUserToPreview } from '../users/user-preview.ts';
+import { transformProjectImage } from './parts/project-image.ts';
+import { transformProjectMember } from './parts/project-member.ts';
+import { transformProjectSocial } from './parts/project-social.ts';
+import { transformProjectTag } from './parts/project-tag.ts';
 import { transformProjectToPreview } from './project-preview.ts';
 
 //sample project from prisma to be mapped
@@ -23,21 +27,13 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
     owner: transformUserToPreview(project.users),
-    tags: project.tags.map(({ tagId, label, type }) => ({
-      tagId,
-      label,
-      type,
-    })),
-    projectImages: project.projectImages.map(({ imageId, image, altText }) => ({
-      imageId,
-      image,
-      altText,
-    })),
-    projectSocials: project.projectSocials.map(({ websiteId, label, url }) => ({
-      websiteId,
-      label,
-      url,
-    })),
+    tags: project.tags.map((tag) => transformProjectTag(project.projectId, tag)),
+    projectImages: project.projectImages.map((image) =>
+      transformProjectImage(project.projectId, image),
+    ),
+    projectSocials: project.projectSocials.map((social) =>
+      transformProjectSocial(project.projectId, social),
+    ),
     jobs: project.jobs.map(
       ({
         availability,
@@ -65,14 +61,6 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
         apiUrl: `/api/projects/${project.projectId.toString()}/jobs/${jobId.toString()}`,
       }),
     ),
-    members: project.members.map(({ createdAt, roles: { roleId, label }, users }) => ({
-      memberSince: createdAt,
-      role: {
-        roleId,
-        label,
-      },
-      user: transformUserToPreview(users),
-      apiUrl: `/api/projects/${project.projectId.toString()}/members/${users.userId.toString()}`,
-    })),
+    members: project.members.map((member) => transformProjectMember(project.projectId, member)),
   };
 };

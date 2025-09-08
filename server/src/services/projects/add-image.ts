@@ -3,7 +3,7 @@ import prisma from '#config/prisma.ts';
 import type { Prisma } from '#prisma-models/index.js';
 import { ProjectImageSelector } from '#services/selectors/projects/parts/project-image.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformProjectImage } from '#services/transformers/projects/project-image.ts';
+import { transformProjectImage } from '#services/transformers/projects/parts/project-image.ts';
 
 type AddImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 

@@ -33,6 +33,6 @@ export const transformProjectMember = (
       label,
     },
     memberSince: createdAt,
-    apiUrl: `/api/projects/${projectId.toString()}/members/${userId}`,
+    apiUrl: `/api/projects/${projectId.toString()}/members/${userId.toString()}`,
   };
 };

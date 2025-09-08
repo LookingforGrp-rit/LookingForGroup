@@ -2,7 +2,7 @@ import type { ProjectTag } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectTagSelector } from '#services/selectors/projects/parts/project-tag.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformProjectTag } from '#services/transformers/projects/project-tag.ts';
+import { transformProjectTag } from '#services/transformers/projects/parts/project-tag.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
