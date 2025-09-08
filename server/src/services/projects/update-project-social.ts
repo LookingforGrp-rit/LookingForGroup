@@ -1,8 +1,10 @@
+import type { ProjectSocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ProjectSocials } from '#prisma-models/index.js';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import { ProjectSocialSelector } from '#services/selectors/projects/parts/project-social.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProjectSocial } from '#services/transformers/projects/project-social.ts';
 
-type Social = {
+type SocialInput = {
   socialId: number;
   url: string;
 };
@@ -10,9 +12,9 @@ type Social = {
 type UpdateProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 export const updateProjectSocialService = async (
-  data: Social,
+  data: SocialInput,
   projectId: number,
-): Promise<ProjectSocials | UpdateProjectSocialServiceError> => {
+): Promise<ProjectSocial | UpdateProjectSocialServiceError> => {
   try {
     //social validation (does it have this social)
     const socialExists = await prisma.projectSocials.findFirst({
@@ -33,9 +35,10 @@ export const updateProjectSocialService = async (
       data: {
         url: data.url,
       },
+      select: ProjectSocialSelector,
     });
 
-    return social;
+    return transformProjectSocial(projectId, social);
   } catch (error) {
     console.error('Error in addProjectSocialService:', error);
     return 'INTERNAL_ERROR';
