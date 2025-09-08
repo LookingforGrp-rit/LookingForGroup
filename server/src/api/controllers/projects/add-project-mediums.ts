@@ -4,7 +4,7 @@ import addMediumsService from '#services/projects/add-project-mediums.ts';
 
 //the tags (or their labels anyway)
 type Mediums = {
-  mediums?: number[];
+  mediumIds?: number[];
 };
 
 const addMediumsController = async (req: Request, res: Response) => {

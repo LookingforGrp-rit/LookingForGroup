@@ -6,12 +6,12 @@ import { transformProjectMedium } from '#services/transformers/projects/parts/pr
 
 type AddMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
-//the tags (or their ids anyway)
+//the mediums
 type MediumInputs = {
   mediumIds?: number[];
 };
 
-const addTagsService = async (
+const addMediumsService = async (
   projectId: number,
   data: MediumInputs,
 ): Promise<ProjectMedium[] | AddMediumsServiceError> => {
@@ -64,4 +64,4 @@ const addTagsService = async (
   }
 };
 
-export default addTagsService;
+export default addMediumsService;
