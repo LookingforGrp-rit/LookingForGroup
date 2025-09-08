@@ -1,16 +1,21 @@
+import type { ProjectSocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import { ProjectSocialSelector } from '#services/selectors/projects/parts/project-social.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProjectSocial } from '#services/transformers/projects/project-social.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 const getProjectSocialsService = async (
   projectId: number,
-): Promise<Array<object> | null | GetServiceError> => {
+): Promise<ProjectSocial[] | GetServiceError> => {
   try {
     const project = await prisma.projects.findUnique({
       where: { projectId },
       include: {
-        projectSocials: true,
+        projectSocials: {
+          select: ProjectSocialSelector,
+        },
       },
     });
 
@@ -18,7 +23,7 @@ const getProjectSocialsService = async (
       return 'NOT_FOUND';
     }
 
-    return project.projectSocials;
+    return project.projectSocials.map((social) => transformProjectSocial(projectId, social));
   } catch (e) {
     console.error(`Error in getProjectSocialsService: ${JSON.stringify(e)}`);
 
