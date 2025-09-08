@@ -1,14 +1,16 @@
+import type { ProjectImage } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import type { Prisma } from '#prisma-models/index.js';
+import { ProjectImageSelector } from '#services/selectors/projects/parts/project-image.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type AddImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 const addImageService = async (
   data: Prisma.ProjectImagesCreateInput,
-): Promise<ReturnType<typeof prisma.projectImages.create> | AddImageServiceError> => {
+): Promise<ProjectImage | AddImageServiceError> => {
   try {
-    const result = await prisma.projectImages.create({ data });
+    const result = await prisma.projectImages.create({ data, select: ProjectImageSelector });
 
     return result;
   } catch (e) {
