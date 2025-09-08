@@ -32,17 +32,13 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
   ariaLabel = '',
   onClick = () => {}
 }) => {
-  // Return the image element with the appropriate src based on the theme
-  const getClasses = () => {
-    return `theme-icon ${className}`;
-  };
 
   return (
     <svg
       width={width}
       height={height}
       id={id}
-      className={getClasses()}
+      className={className}
       onClick={onClick}
       aria-label={ariaLabel}
     >

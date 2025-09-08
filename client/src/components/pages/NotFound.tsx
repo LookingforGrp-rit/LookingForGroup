@@ -30,7 +30,6 @@ const NotFoundPage = () => {
                     */}
                     <button className = "" onClick={ (event: any) => navigate(paths.routes.HOME)}>
                         <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/> {/*Home Button Icon*/}
-                        {/*}<img className = 'theme-icon'></img>{*/}
                         Home
                         </button>
                     

@@ -279,7 +279,6 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
             <img
-              className='theme-icon'
               src="assets/following.png"
               src-light="assets/following.png"
               src-dark="assets/following.png"

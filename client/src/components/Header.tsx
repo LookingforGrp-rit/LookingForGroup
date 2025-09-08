@@ -120,7 +120,6 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
           <DropdownButton buttonId="notif-btn">
             // If implementing, use SVG sprite sheet instead of hard-coded pngs
             <img
-              className="theme-icon"
               src="assets/bell_dark.png"
               src-light="assets/bell_light.png"
               src-dark="assets/bell_dark.png"
