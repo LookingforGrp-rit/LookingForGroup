@@ -1,16 +1,16 @@
-import type { Member } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
 
 type DeleteFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type DeleteFollowServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 //delete a member
 export const deleteMemberService = async (
   projectId: number,
   memberId: number,
-): Promise<Member | DeleteFollowServiceError> => {
+): Promise<DeleteFollowServiceError | DeleteFollowServiceSuccess> => {
   try {
-    const deleteMember = await prisma.members.delete({
+    await prisma.members.delete({
       where: {
         projectId_userId: {
           projectId: projectId,
@@ -19,7 +19,7 @@ export const deleteMemberService = async (
       },
     });
 
-    return deleteMember;
+    return 'NO_CONTENT';
   } catch (error) {
     console.error('Error in deleteMemberService:', error);
 
