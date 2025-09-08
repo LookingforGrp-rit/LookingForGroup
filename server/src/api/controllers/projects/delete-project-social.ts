@@ -30,10 +30,10 @@ export const deleteProjectSocial = async (req: Request, res: Response): Promise<
     return;
   }
 
-  const resBody: ApiResponse<typeof result> = {
+  const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: result,
+    data: null,
     memetype: 'application/json',
   };
   res.status(200).json(resBody);

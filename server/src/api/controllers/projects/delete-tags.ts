@@ -23,7 +23,7 @@ const deleteTagsController = async (req: Request, res: Response) => {
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: result,
+    data: null,
     memetype: 'application/json',
   };
   res.status(200).json(resBody);
