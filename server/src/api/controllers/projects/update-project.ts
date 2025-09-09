@@ -11,10 +11,6 @@ interface UpdateProjectInfo {
   purpose?: ProjectsPurpose;
   status?: ProjectsStatus;
   audience?: string;
-  projectTags?: object;
-  jobs?: object;
-  members?: object;
-  projectSocials?: object;
   thumbnail?: string;
 }
 
@@ -40,10 +36,6 @@ const updateProjectsController: RequestHandler<{ id: string }, unknown, UpdatePr
     'purpose',
     'status',
     'audience',
-    'projectTags',
-    'jobs',
-    'members',
-    'projectSocials',
     'thumbnail',
   ];
 
