@@ -954,6 +954,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
   /api/me/socials/{websiteId}:
     put:
       summary: Updates a user social

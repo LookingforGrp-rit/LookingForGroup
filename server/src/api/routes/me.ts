@@ -14,6 +14,7 @@ import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getSocials } from '#controllers/me/get-socials.ts';
 import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
+import updateSkills from '#controllers/me/update-skills.ts';
 import { updateSocial } from '#controllers/me/update-social.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
@@ -52,11 +53,17 @@ router.put('/socials/:websiteId', updateSocial);
 //Deletes a social
 router.delete('/socials/:websiteId', deleteSocial);
 
+//Gets a user's skills
+//router.post('/skills', addSkills);
+
 //Adds skills
 router.post('/skills', addSkills);
 
 //Deletes a skill
 router.delete('/skills/:id', deleteSkills);
+
+//Updates a skill's proficiency (or position if it ever becomes useful)
+router.patch('/skills/:id', updateSkills);
 
 //Unfollows a project
 router.delete('/followings/projects/:id', deleteProjectFollowing);
