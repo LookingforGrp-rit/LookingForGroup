@@ -10,6 +10,7 @@ import { deleteProjectSocial } from './delete-project-social.ts';
 import deleteProject from './delete-project.ts';
 import deleteTags from './delete-tags.ts';
 import getProjectImages from './get-proj-images.ts';
+import getTags from './get-proj-tags.ts';
 import getProjectByID from './get-project-id.ts';
 import getProjectMediums from './get-project-mediums.ts';
 import getProjectSocials from './get-project-socials.ts';
@@ -36,6 +37,7 @@ export default {
   deleteMember,
   removeImage,
   reorderImages,
+  getTags,
   deleteTags,
   addProjectSocial,
   getProjectSocials,

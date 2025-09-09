@@ -154,7 +154,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectGenre'
+                      $ref: '#/components/schemas/Medium'
               examples:
                 default:
                   summary: Example project types list
@@ -2175,6 +2175,306 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/tags:
+    get:
+      summary: Get a project's tags
+      description: Returns the list of tags associated with the specified project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: List of tags the current project has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds multiple project tags
+      description: Adds an amount of tags to the specified project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagIds:
+                  type: array
+                  items:
+                    type: integer
+
+      responses:
+        '200':
+          description: Tags created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Tag'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Deletes many of the specified project's tags
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Tags deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/mediums:
+    get:
+      summary: Get a project's mediums
+      description: Returns the list of mediums associated with the specified project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: List of mediums the current project has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Medium'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds multiple project mediums
+      description: Adds an amount of mediums to the specified project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mediumIds:
+                  type: array
+                  items:
+                    type: integer
+
+      responses:
+        '200':
+          description: Mediums created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Tag'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Deletes many of the specified project's mediums
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mediumIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Tags deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   # IMAGES
   /api/images/{image}:
     get:
@@ -2299,7 +2599,7 @@ components:
     ProjectDetails:
       type: string
 
-    ProjectGenre:
+    Medium:
       type: object
       properties:
         typeId:
@@ -2517,7 +2817,7 @@ components:
           properties:
             projectFollowings:
               type: integer
-        projectGenres:
+        mediums:
           type: array
           items:
             type: object
@@ -2649,7 +2949,7 @@ components:
             universityId:
               type: integer
               nullable: true
-        ProjectGenre:
+        Medium:
           type: array
           items:
             type: object
