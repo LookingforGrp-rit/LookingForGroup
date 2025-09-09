@@ -12,9 +12,9 @@ import { deleteUser } from '#controllers/me/delete-user.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getSocials } from '#controllers/me/get-socials.ts';
+import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
 import { updateSocial } from '#controllers/me/update-social.ts';
-import { getUsernameByShib } from '#controllers/projects/get-username-shib.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
 
@@ -36,9 +36,6 @@ router.patch('/', upload.single('profile-pic'), updateUserInfo);
 
 //Delete user
 router.delete('/', deleteUser);
-
-//Updates users profile images
-//router.put('/profile-picture', checkImageFile, updateProfilePicture);
 
 //Gets current user's projects
 router.get('/projects', getMyProjects);
