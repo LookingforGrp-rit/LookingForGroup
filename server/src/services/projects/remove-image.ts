@@ -25,7 +25,7 @@ export const removeImageService = async (
 
     return 'NO_CONTENT';
   } catch (error) {
-    console.error('Error in deleteImageService:', error);
+    console.error('Error in removeImageService:', error);
 
     if (error instanceof Object && 'code' in error) {
       if (error.code === 'P2025') {

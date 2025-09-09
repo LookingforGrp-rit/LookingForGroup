@@ -22,7 +22,7 @@ export const getUserByEmailService = async (
     //return the transformed user
     return transformUserToPreview(user);
   } catch (e) {
-    console.error(`Error in getUserByUsernameService: ${JSON.stringify(e)}`);
+    console.error(`Error in getUserByEmailService: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';
   }
 };

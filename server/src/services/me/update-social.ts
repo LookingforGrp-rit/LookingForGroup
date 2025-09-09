@@ -40,7 +40,7 @@ export const updateSocialService = async (
 
     return transformMySocial(social);
   } catch (error) {
-    console.error('Error in addSocialService:', error);
+    console.error('Error in updateSocialService:', error);
     return 'INTERNAL_ERROR';
   }
 };

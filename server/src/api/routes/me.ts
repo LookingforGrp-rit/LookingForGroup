@@ -24,7 +24,7 @@ const router = Router();
 router.use(requiresLogin, injectCurrentUser);
 
 //Gets username by shib ID
-router.get('/get-username', requiresLogin, getUsernameByShib);
+router.get('/get-username', getUsernameByShib);
 
 //Gets user's account
 router.get('/', getAccount);

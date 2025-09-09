@@ -6,7 +6,7 @@ import { transformUserToPreview } from '#services/transformers/users/user-previe
 
 type GetUserFollowerServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
-//get the user by the username
+//get the users that follow a specific user
 export const getUserFollowersService = async (
   receiverId: number,
 ): Promise<UserPreview[] | GetUserFollowerServiceError> => {
@@ -29,7 +29,7 @@ export const getUserFollowersService = async (
 
     return following.map(({ senderUser }) => transformUserToPreview(senderUser));
   } catch (e) {
-    console.error(`Error in getUserFollowingService: ${JSON.stringify(e)}`);
+    console.error(`Error in getUserFollowersService: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';
   }
 };

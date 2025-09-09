@@ -44,7 +44,7 @@ const reorderImagesService = async (
 
     return project.projectImages.map((image) => transformProjectImage(projectId, image));
   } catch (e) {
-    console.error('Error in updateProjectService:', e);
+    console.error('Error in reorderImagesService:', e);
     return 'INTERNAL_ERROR';
   }
 };
