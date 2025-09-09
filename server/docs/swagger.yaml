@@ -1609,10 +1609,10 @@ paths:
   # IMAGES
   /api/images/{image}:
     get:
-      summary: Gets an image by its URL
+      summary: Gets an image by its key
       tags:
         - Images
-      description: Retrieves an image from the database by its unique URL.
+      description: Retrieves an image from the database by its unique key.
       parameters:
         - in: path
           name: image
@@ -1621,8 +1621,12 @@ paths:
             type: string
           description: Image URL
       responses:
-        '301':
+        '200':
           description: Image found
+          content:
+            image/png:
+              type: string
+              format: binary
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
