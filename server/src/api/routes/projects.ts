@@ -40,7 +40,7 @@ router.get('/:id/socials', PROJECT.getProjectSocials);
 
 //Updates a project social
 router.put(
-  '/:id/socials/:socialId',
+  '/:id/socials/:websiteId',
   requiresLogin,
   requiresProjectOwner,
   PROJECT.updateProjectSocial,
@@ -48,7 +48,7 @@ router.put(
 
 //Deletes a project social
 router.delete(
-  '/:id/socials/:socialId',
+  '/:id/socials/:websiteId',
   requiresLogin,
   requiresProjectOwner,
   PROJECT.deleteProjectSocial,

@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { addSocialService } from '#services/me/add-social.ts';
 
 type Social = {
-  socialId: number;
+  websiteId: number;
   url: string;
 };
 

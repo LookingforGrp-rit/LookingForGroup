@@ -5,7 +5,7 @@ import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectSocial } from '#services/transformers/projects/parts/project-social.ts';
 
 type SocialInput = {
-  socialId: number;
+  websiteId: number;
   url: string;
 };
 
@@ -16,10 +16,10 @@ export const addProjectSocialService = async (
   projectId: number,
 ): Promise<ProjectSocial | AddProjectSocialServiceError> => {
   try {
-    //socialId validation
+    //websiteId validation
     const socialExists = await prisma.socials.findFirst({
       where: {
-        websiteId: data.socialId,
+        websiteId: data.websiteId,
       },
     });
 
@@ -28,7 +28,7 @@ export const addProjectSocialService = async (
     const social = await prisma.projectSocials.create({
       data: {
         projectId: projectId,
-        websiteId: data.socialId,
+        websiteId: data.websiteId,
         url: data.url,
       },
       select: ProjectSocialSelector,

@@ -5,14 +5,14 @@ type DeleteProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NO
 type DeleteProjectSocialServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 export const deleteProjectSocialService = async (
-  socialId: number,
+  websiteId: number,
   projectId: number,
 ): Promise<DeleteProjectSocialServiceSuccess | DeleteProjectSocialServiceError> => {
   try {
     //social validation (do you have this social)
     const socialExists = await prisma.projectSocials.findFirst({
       where: {
-        websiteId: socialId,
+        websiteId: websiteId,
         projectId: projectId,
       },
     });
@@ -22,7 +22,7 @@ export const deleteProjectSocialService = async (
     await prisma.projectSocials.delete({
       where: {
         projectId_websiteId: {
-          websiteId: socialId,
+          websiteId: websiteId,
           projectId: projectId,
         },
       },

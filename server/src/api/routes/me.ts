@@ -47,10 +47,10 @@ router.post('/followings/projects/:id', addProjectFollowing);
 router.post('/socials', addSocial);
 
 //Updates a social
-router.put('/socials/:socialId', updateSocial);
+router.put('/socials/:websiteId', updateSocial);
 
 //Deletes a social
-router.delete('/socials/:socialId', deleteSocial);
+router.delete('/socials/:websiteId', deleteSocial);
 
 //Adds skills
 router.post('/skills', addSkills);

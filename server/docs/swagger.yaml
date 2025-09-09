@@ -574,6 +574,54 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/users/{id}/followers:
+    get:
+      tags:
+        - Users
+      summary: Get list of users that are following the specified user
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of users following the current user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId:
+                          type: integer
+                          example: 1
+                        followingId:
+                          type: integer
+                          example: 2
+                        followedAt:
+                          type: string
+                          format: date-time
+                          example: 2025-05-01T10:00:00Z
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   # ME
   /api/me:
     get:
@@ -608,60 +656,6 @@ paths:
                     $ref: '#/components/schemas/UserDetails'
         '500':
           $ref: '#/components/responses/InternalServerError'
-  /api/me/get-username:
-    get:
-      summary: Get username through Shibboleth headers
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      description: |
-        Retrieves the username of the current user authenticated via Shibboleth. Needs the uid header
-      parameters:
-        - in: header
-          name: uid
-          required: true
-          schema:
-            type: string
-          description: University ID from the Shibboleth authentication headers
-      responses:
-        '200':
-          description: Username successfully retrieved
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: object
-                    properties:
-                      username:
-                        type: string
-                      userId:
-                        type: integer
-              examples:
-                default:
-                  summary: Example response
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      username: mistahbones
-                      userId: 18
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
     patch:
       summary: Updates user profile information
       tags:
@@ -776,6 +770,60 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/me/get-username:
+    get:
+      summary: Get username through Shibboleth headers
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      description: |
+        Retrieves the username of the current user authenticated via Shibboleth. Needs the uid header
+      parameters:
+        - in: header
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: University ID from the Shibboleth authentication headers
+      responses:
+        '200':
+          description: Username successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      userId:
+                        type: integer
+              examples:
+                default:
+                  summary: Example response
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      username: mistahbones
+                      userId: 18
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/me/projects:
     get:
       summary: Get current user's own projects
@@ -816,6 +864,171 @@ paths:
           $ref: '#/components/responses/NotFound'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/socials:
+    get:
+      summary: Get current user's socials
+      description: Returns the list of socials associated with the current user
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: List of socials the current user has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSocial'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds a user social
+      description: Adds a specified social to the current user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialCreateInput'
+      responses:
+        '200':
+          description: Social created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/UserSocial'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/me/socials/{websiteId}:
+    put:
+      summary: Updates a user social
+      description: Updates one of the socials specified by the current user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialCreateInput'
+      responses:
+        '200':
+          description: Social created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSocial'
+              example:
+                status: 201
+                error: null
+                data:
+                  userId: 1
+                  projectId: 2
+                  followedAt: '2025-07-16T12:34:56Z'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete one of the current user's socials
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: websiteId
+          in: path
+          required: true
+          description: ID of the social to be deleted
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Social deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1606,13 +1819,14 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
   # IMAGES
   /api/images/{image}:
     get:
-      summary: Gets an image by its key
+      summary: Gets an image by file name
       tags:
         - Images
-      description: Retrieves an image from the database by its unique key.
+      description: Retrieves an image from the database by its unique file name.
       parameters:
         - in: path
           name: image
@@ -1659,6 +1873,36 @@ components:
         websiteId:
           type: integer
         label:
+          type: string
+
+    UserSocial:
+      type: object
+      properties:
+        apiUrl:
+          type: string
+        url:
+          type: string
+        label:
+          type: string
+        websiteId:
+          type: integer
+
+    ProjectSocial:
+      type: object
+      properties:
+        websiteId:
+          type: integer
+        projectId:
+          type: integer
+        url:
+          type: string
+
+    SocialCreateInput:
+      type: object
+      properties:
+        websiteId:
+          type: integer
+        url:
           type: string
 
     Skill:

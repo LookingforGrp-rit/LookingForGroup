@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { updateSocialService } from '#services/me/update-social.ts';
 
 type Social = {
-  socialId: number;
+  websiteId: number;
   url: string;
 };
 
@@ -33,10 +33,7 @@ export const updateSocial = async (req: Request, res: Response): Promise<void> =
     return;
   }
 
-  const social: Social = {
-    socialId: parseInt(req.params.socialId),
-    url: req.params.url,
-  };
+  const social: Social = req.body as Social;
 
   const result = await updateSocialService(social, UserId);
 

@@ -5,7 +5,7 @@ import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectSocial } from '#services/transformers/projects/parts/project-social.ts';
 
 type SocialInput = {
-  socialId: number;
+  websiteId: number;
   url: string;
 };
 
@@ -19,7 +19,7 @@ export const updateProjectSocialService = async (
     //social validation (does it have this social)
     const socialExists = await prisma.projectSocials.findFirst({
       where: {
-        websiteId: data.socialId,
+        websiteId: data.websiteId,
         projectId: projectId,
       },
     });
@@ -29,7 +29,7 @@ export const updateProjectSocialService = async (
       where: {
         projectId_websiteId: {
           projectId: projectId,
-          websiteId: data.socialId,
+          websiteId: data.websiteId,
         },
       },
       data: {

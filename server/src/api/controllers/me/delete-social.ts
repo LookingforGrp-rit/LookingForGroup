@@ -29,7 +29,7 @@ export const deleteSocial = async (req: Request, res: Response): Promise<void> =
   }
 
   //the one you're deleting
-  const social = parseInt(req.params.socialId);
+  const social = parseInt(req.params.websiteId);
 
   const result = await deleteSocialService(social, UserId);
 
