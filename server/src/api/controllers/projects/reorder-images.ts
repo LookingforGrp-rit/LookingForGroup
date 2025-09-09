@@ -1,20 +1,16 @@
-import type { RequestHandler } from 'express';
+import type { Request, Response } from 'express';
 import reorderImagesService from '#services/projects/reorder-images.ts';
 
 //an array of the imageIds of each of the images in their new order
 type ImageOrder = {
-  imageOrder?: string[];
+  imageOrder?: number[];
 };
 
 //reorders the images in a project
-const reorderImagesController: RequestHandler<{ projectId: string }, unknown> = async (
-  req,
-  res,
-): Promise<void> => {
-  const { projectId } = req.params;
+const reorderImagesController = async (req: Request, res: Response): Promise<void> => {
   const imageOrder: ImageOrder = req.body as ImageOrder;
 
-  const projId = parseInt(projectId);
+  const projId = parseInt(req.params.id);
   if (isNaN(projId)) {
     res.status(400).json({ message: 'Invalid project ID' });
     return;

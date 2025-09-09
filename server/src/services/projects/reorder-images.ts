@@ -7,7 +7,7 @@ import { transformProjectImage } from '#services/transformers/projects/parts/pro
 type ReorderImagesError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 type ImageOrder = {
-  imageOrder?: string[];
+  imageOrder?: number[];
 };
 
 const reorderImagesService = async (
@@ -22,7 +22,7 @@ const reorderImagesService = async (
         const curImg = await prisma.projectImages.findFirst({
           where: {
             projectId: projectId,
-            imageId: parseInt(order[i]),
+            imageId: order[i],
           },
         });
         if (!curImg) return 'NOT_FOUND';
