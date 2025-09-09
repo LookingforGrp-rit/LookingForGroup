@@ -116,7 +116,7 @@ router.post(
 );
 
 //Changes a picture for a project
-router.put(
+router.patch(
   '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
