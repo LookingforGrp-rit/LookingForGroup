@@ -10,7 +10,6 @@ export const getImage = async (req: Request, res: Response): Promise<void> => {
       status: 400,
       error: 'Missing image key',
       data: null,
-      memetype: 'application/json',
     };
     res.status(400).json(resBody);
     return;
@@ -23,7 +22,6 @@ export const getImage = async (req: Request, res: Response): Promise<void> => {
       status: 404,
       error: 'Image not found',
       data: null,
-      memetype: 'application/json',
     };
     res.status(404).json(resBody);
     return;
@@ -34,7 +32,6 @@ export const getImage = async (req: Request, res: Response): Promise<void> => {
       status: 500,
       error: 'Image not found',
       data: null,
-      memetype: 'application/json',
     };
     res.status(500).json(resBody);
     return;

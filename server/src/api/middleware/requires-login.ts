@@ -21,7 +21,6 @@ const requiresLogin = (request: Request, response: Response, next: NextFunction)
     status: 401,
     error: 'User not logged in',
     data: null,
-    memetype: 'application/json',
   };
   response.status(401).json(resBody);
   return;

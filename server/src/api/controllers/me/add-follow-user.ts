@@ -9,7 +9,6 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
       status: 400,
       error: 'Invalid user ID',
       data: null,
-      memetype: 'application/json',
     };
     res.status(400).json(resBody);
     return;
@@ -24,7 +23,6 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
       status: 400,
       error: 'Invalid user ID',
       data: null,
-      memetype: 'application/json',
     };
     res.status(400).json(resBody);
     return;
@@ -37,7 +35,6 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
       status: 403,
       error: 'Cannot follow self',
       data: null,
-      memetype: 'application/json',
     };
     res.status(403).json(resBody);
     return;
@@ -48,7 +45,6 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
       status: 409,
       error: 'Already following user',
       data: null,
-      memetype: 'application/json',
     };
     res.status(409).json(resBody);
     return;
@@ -59,7 +55,6 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
       status: 500,
       error: 'Internal Server Error',
       data: null,
-      memetype: 'application/json',
     };
     res.status(500).json(resBody);
     return;
@@ -70,7 +65,6 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
       status: 404,
       error: 'User not found',
       data: null,
-      memetype: 'application/json',
     };
     res.status(404).json(resBody);
     return;
@@ -80,7 +74,6 @@ export const addUserFollowing = async (req: Request, res: Response): Promise<voi
     status: 201,
     error: null,
     data: result,
-    memetype: 'application/json',
   };
   res.status(201).json(resBody);
 };

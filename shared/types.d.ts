@@ -43,7 +43,6 @@ export interface ApiResponse<_data = any> {
     status: number;
     error?: string | null;
     data?: _data | null;
-    memetype?: string;
 }
 
 // DATASETS

@@ -235,9 +235,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Tag'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Example tags list
@@ -258,61 +255,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   # USERS
-  /api/users/get-username:
-    get:
-      summary: Get username through Shibboleth headers
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      description: |
-        Retrieves the username of a user authenticated via Shibboleth. Needs the uid header
-      parameters:
-        - in: header
-          name: uid
-          required: true
-          schema:
-            type: string
-          description: University ID from the Shibboleth authentication headers
-      responses:
-        '200':
-          description: Username successfully retrieved
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: object
-                    properties:
-                      username:
-                        type: string
-                      userId:
-                        type: integer
-              examples:
-                default:
-                  summary: Example response
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      username: mistahbones
-                      userId: 18
-                    memetype: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
   /api/users:
     get:
       summary: Get all users
@@ -664,6 +606,59 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/UserDetails'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /api/me/get-username:
+    get:
+      summary: Get username through Shibboleth headers
+      tags:
+        - Users
+      security:
+        - shibbolethAuth: []
+      description: |
+        Retrieves the username of the current user authenticated via Shibboleth. Needs the uid header
+      parameters:
+        - in: header
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: University ID from the Shibboleth authentication headers
+      responses:
+        '200':
+          description: Username successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      userId:
+                        type: integer
+              examples:
+                default:
+                  summary: Example response
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      username: mistahbones
+                      userId: 18
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1611,7 +1606,29 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
+  # IMAGES
+  /api/images/{image}:
+    get:
+      summary: Gets an image by its URL
+      tags:
+        - Images
+      description: Retrieves an image from the database by its unique URL.
+      parameters:
+        - in: path
+          name: image
+          required: true
+          schema:
+            type: string
+          description: Image URL
+      responses:
+        '301':
+          description: Image found
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 # COMPONENTS
 components:
   securitySchemes:
@@ -2087,9 +2104,6 @@ components:
               type: string
               format: date-time
               example: 2025-07-16T12:34:56Z
-        memetype:
-          type: string
-          example: application/json
 
     UserFollowingsResponse:
       type: object
@@ -2114,9 +2128,6 @@ components:
               type: string
               format: date-time
               example: 2025-07-16T12:34:56Z
-        memetype:
-          type: string
-          example: application/json
 
     ErrorMessage:
       type: object
@@ -2131,14 +2142,10 @@ components:
           type: string
           nullable: true
           example: null
-        memetype:
-          type: string
-          example: application/json
       required:
         - status
         - error
         - data
-        - memetype
 
   responses:
     InternalServerError:

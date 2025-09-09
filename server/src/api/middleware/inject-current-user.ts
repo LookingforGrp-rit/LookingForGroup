@@ -25,7 +25,6 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       status: 400,
       error: 'Missing university ID in headers',
       data: null,
-      memetype: 'application/json',
     };
     response.status(400).json(resBody);
     return;
@@ -38,7 +37,6 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       status: 500,
       error: 'Internal Server Error',
       data: null,
-      memetype: 'application/json',
     };
     response.status(500).json(resBody);
     return;
@@ -49,7 +47,6 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       status: 404,
       error: 'User not found',
       data: null,
-      memetype: 'application/json',
     };
     response.status(404).json(resBody);
     return;

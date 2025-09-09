@@ -43,7 +43,6 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
         status: 413,
         error: 'Image too large',
         data: null,
-        memetype: 'application/json',
       };
       res.status(413).json(resBody);
       return;
@@ -54,7 +53,6 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
         status: 500,
         error: 'Internal Server Error',
         data: null,
-        memetype: 'application/json',
       };
       res.status(500).json(resBody);
       return;

@@ -46,7 +46,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       status: 400,
       error: 'Missing information in headers',
       data: null,
-      memetype: 'application/json',
     };
     res.status(400).json(resBody);
     return;
@@ -61,7 +60,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       status: 409,
       error: 'Username already taken',
       data: null,
-      memetype: 'application/json',
     };
     res.status(409).json(resBody);
     return;
@@ -74,7 +72,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       status: 500,
       error: 'Internal Server Error',
       data: null,
-      memetype: 'application/json',
     };
     res.status(500).json(resBody);
     return;
@@ -85,7 +82,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       status: 409,
       error: 'User already exists',
       data: null,
-      memetype: 'application/json',
     };
     res.status(409).json(resBody);
     return;
@@ -95,7 +91,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     status: 201,
     error: null,
     data: result,
-    memetype: 'application/json',
   };
   res.status(201).json(resBody);
 };

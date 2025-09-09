@@ -19,7 +19,6 @@ const addTagsController = async (req: Request, res: Response) => {
       status: 500,
       error: 'Internal Server Error',
       data: null,
-      memetype: 'application/json',
     };
     res.status(500).json(resBody);
     return;
@@ -30,7 +29,6 @@ const addTagsController = async (req: Request, res: Response) => {
       status: 404,
       error: 'Tags not found',
       data: null,
-      memetype: 'application/json',
     };
     res.status(404).json(resBody);
     return;
@@ -40,7 +38,6 @@ const addTagsController = async (req: Request, res: Response) => {
     status: 200,
     error: null,
     data: result,
-    memetype: 'application/json',
   };
   res.status(200).json(resBody);
 };

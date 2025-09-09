@@ -8,7 +8,6 @@ const requiresProjectOwner = async (request: Request, response: Response, next: 
       status: 400,
       error: 'Invalid user ID',
       data: null,
-      memetype: 'application/json',
     };
     response.status(400).json(resBody);
     return;
@@ -23,7 +22,6 @@ const requiresProjectOwner = async (request: Request, response: Response, next: 
       status: 400,
       error: 'Invalid user ID',
       data: null,
-      memetype: 'application/json',
     };
     response.status(400).json(resBody);
     return;
@@ -37,7 +35,6 @@ const requiresProjectOwner = async (request: Request, response: Response, next: 
       status: 400,
       error: 'Invalid project ID',
       data: null,
-      memetype: 'application/json',
     };
     response.status(400).json(resBody);
     return;
@@ -50,7 +47,6 @@ const requiresProjectOwner = async (request: Request, response: Response, next: 
       status: 500,
       error: 'Internal Server Error',
       data: null,
-      memetype: 'application/json',
     };
     response.status(500).json(resBody);
     return;
@@ -61,7 +57,6 @@ const requiresProjectOwner = async (request: Request, response: Response, next: 
       status: 404,
       error: 'Project not found',
       data: null,
-      memetype: 'application/json',
     };
     response.status(404).json(resBody);
     return;
@@ -72,7 +67,6 @@ const requiresProjectOwner = async (request: Request, response: Response, next: 
       status: 403,
       error: 'Insufficient permissions',
       data: null,
-      memetype: 'application/json',
     };
     response.status(403).json(resBody);
     return;

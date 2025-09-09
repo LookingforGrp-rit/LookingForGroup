@@ -14,7 +14,6 @@ const deleteMemberController = async (req: Request, res: Response) => {
       status: 400,
       error: 'Invalid project or member id',
       data: null,
-      memetype: 'application/json',
     };
     res.status(400).json(resBody);
     return;
@@ -27,7 +26,6 @@ const deleteMemberController = async (req: Request, res: Response) => {
       status: 404,
       error: 'Member not found',
       data: null,
-      memetype: 'application/json',
     };
     res.status(404).json(resBody);
     return;
@@ -37,7 +35,6 @@ const deleteMemberController = async (req: Request, res: Response) => {
       status: 500,
       error: 'Internal Server Error',
       data: null,
-      memetype: 'application/json',
     };
     res.status(500).json(resBody);
     return;
@@ -46,7 +43,6 @@ const deleteMemberController = async (req: Request, res: Response) => {
     status: 200,
     error: null,
     data: null,
-    memetype: 'application/json',
   };
   res.status(200).json(resBody);
 };

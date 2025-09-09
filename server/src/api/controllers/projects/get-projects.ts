@@ -11,7 +11,6 @@ const getProjectsController = async (_req: Request, res: Response): Promise<void
       status: 500,
       error: 'Internal Server Error',
       data: null,
-      memetype: 'application/json',
     };
     res.status(500).json(resBody);
     return;
@@ -21,7 +20,6 @@ const getProjectsController = async (_req: Request, res: Response): Promise<void
     status: 200,
     error: null,
     data: result,
-    memetype: 'application/json',
   };
   res.status(200).json(resBody);
 };
