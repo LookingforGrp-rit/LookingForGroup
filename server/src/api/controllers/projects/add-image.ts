@@ -6,14 +6,16 @@ import addImageService from '#services/projects/add-image.ts';
 
 //adds an image to the project
 const addImageController = async (req: Request, res: Response) => {
-  const data: Prisma.ProjectImagesCreateInput = req.body as Prisma.ProjectImagesCreateInput;
-
-  //get the project they're adding it to via the project id
-  data.projects = {
-    connect: {
-      projectId: parseInt(req.params.id),
-    },
-  };
+  if (!(req.body as { altText: string }).altText) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Missing alt text',
+      data: null,
+      memetype: 'application/json',
+    };
+    res.status(400).json(resBody);
+    return;
+  }
 
   //check if they send a file
   if (!req.file) {
@@ -55,8 +57,16 @@ const addImageController = async (req: Request, res: Response) => {
     return;
   }
 
-  //set the image in the data to the file
-  data.image = dbResult.location;
+  const data: Prisma.ProjectImagesCreateInput = {
+    image: dbResult.location,
+    altText: (req.body as { altText: string }).altText,
+    position: 0,
+    projects: {
+      connect: {
+        projectId: parseInt(req.params.id),
+      },
+    },
+  };
 
   //add the image to the project
   const result = await addImageService(data);
