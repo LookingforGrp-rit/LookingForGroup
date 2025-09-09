@@ -12,7 +12,6 @@ type SkillInfo = {
 //add skills to user profile
 const updateSkillsController = async (req: Request, res: Response) => {
   const data: SkillInfo = req.body as SkillInfo;
-  data.skillId = parseInt(req.params.id);
 
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
@@ -40,6 +39,16 @@ const updateSkillsController = async (req: Request, res: Response) => {
 
   //update the skills they wanna update
   const result = await updateSkillsService(UserId, data);
+
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Skill not found',
+      data: null,
+    };
+    res.status(404).json(resBody);
+    return;
+  }
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -18,7 +18,15 @@ const updateSkillsService = async (
   data: Skill,
 ): Promise<MySkill[] | UpdateSkillsServiceError> => {
   try {
-    if (!data.skillId) return 'NOT_FOUND';
+    //skill validation (do you have these skills)
+    const skillExists = await prisma.userSkills.findMany({
+      where: {
+        skillId: data.skillId,
+        userId: userId,
+      },
+    });
+
+    if (skillExists.length === 0) return 'NOT_FOUND';
 
     //this is just for proficiency for now
     await prisma.userSkills.update({

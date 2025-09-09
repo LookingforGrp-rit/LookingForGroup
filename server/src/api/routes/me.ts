@@ -11,6 +11,7 @@ import { deleteSocial } from '#controllers/me/delete-social.ts';
 import { deleteUser } from '#controllers/me/delete-user.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
+import { getSkills } from '#controllers/me/get-skills.ts';
 import { getSocials } from '#controllers/me/get-socials.ts';
 import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
@@ -54,7 +55,7 @@ router.put('/socials/:websiteId', updateSocial);
 router.delete('/socials/:websiteId', deleteSocial);
 
 //Gets a user's skills
-//router.post('/skills', addSkills);
+router.get('/skills', getSkills);
 
 //Adds skills
 router.post('/skills', addSkills);

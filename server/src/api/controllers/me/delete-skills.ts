@@ -6,7 +6,7 @@ type Skills = {
   skillIds: number[];
 };
 
-//delete multiple ksills from user profile
+//delete multiple skills from user profile
 export const deleteSkills = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {

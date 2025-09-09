@@ -1033,6 +1033,172 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/me/skills:
+    get:
+      summary: Get current user's skills
+      description: Returns the list of skills associated with the current user
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: List of skills the current user has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSkill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Adds multiple user skills
+      description: Adds a specified skill to the current user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/SkillCreateInput'
+      responses:
+        '200':
+          description: Skill created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/UserSkill'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/skills/{id}:
+    patch:
+      summary: Updates a user skill
+      description: Updates all of the skills specified for the current user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillCreateInput'
+      responses:
+        '200':
+          description: Skill updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSkill'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete many of the current user's skills
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                skillIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Skills deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/me/followings/projects/{id}:
     post:
       summary: Follow a project
@@ -1914,6 +2080,32 @@ components:
         label:
           type: string
         type:
+          type: string
+
+    UserSkill:
+      type: object
+      properties:
+        apiUrl:
+          type: string
+        proficiency:
+          type: string
+        position:
+          type: integer
+        skillId:
+          type: integer
+        label:
+          type: string
+        type:
+          type: string
+
+    SkillCreateInput:
+      type: object
+      properties:
+        skillId:
+          type: integer
+        position:
+          type: integer
+        proficiency:
           type: string
 
     ProjectDetails:
