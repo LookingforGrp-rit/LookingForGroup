@@ -9,7 +9,7 @@ type SocialInput = {
   url: string;
 };
 
-type AddProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type AddProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
 export const addProjectSocialService = async (
   data: SocialInput,
@@ -24,6 +24,15 @@ export const addProjectSocialService = async (
     });
 
     if (!socialExists) return 'NOT_FOUND';
+
+    //can't add multiple socials of the same type
+    const hasSocial = await prisma.projectSocials.findFirst({
+      where: {
+        websiteId: data.websiteId,
+      },
+    });
+
+    if (hasSocial) return 'CONFLICT';
 
     const social = await prisma.projectSocials.create({
       data: {

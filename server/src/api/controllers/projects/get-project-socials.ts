@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getProjectSocialsService from '#services/projects/get-proj-tags.ts';
+import getProjectSocialsService from '#services/projects/get-project-socials.ts';
 
 //gets the socials associated with a project
 const getProjectSocialsController = async (req: Request, res: Response): Promise<void> => {

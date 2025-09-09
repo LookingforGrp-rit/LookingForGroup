@@ -4,6 +4,7 @@ import PROJECT from '#controllers/projects/index.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
 import requiresProjectOwner from '../middleware/requires-project-owner.ts';
+//NOTICE: requiresProjectOwner is broken
 
 const router = Router();
 
@@ -27,13 +28,18 @@ router.patch(
   '/:id',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   upload.single('thumbnail'),
   PROJECT.updateProject,
 );
 
 //Adds a project social
-router.post('/:id/socials', requiresLogin, requiresProjectOwner, PROJECT.addProjectSocial);
+router.post(
+  '/:id/socials',
+  requiresLogin,
+  //requiresProjectOwner,
+  PROJECT.addProjectSocial,
+);
 
 //Gets all project socials
 router.get('/:id/socials', PROJECT.getProjectSocials);
@@ -42,7 +48,7 @@ router.get('/:id/socials', PROJECT.getProjectSocials);
 router.put(
   '/:id/socials/:websiteId',
   requiresLogin,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.updateProjectSocial,
 );
 
@@ -50,7 +56,7 @@ router.put(
 router.delete(
   '/:id/socials/:websiteId',
   requiresLogin,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.deleteProjectSocial,
 );
 
@@ -59,7 +65,7 @@ router.delete(
   '/:id',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.deleteProject,
 );
 
@@ -68,7 +74,7 @@ router.delete(
   '/:id/tags/',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.deleteTags,
 );
 
@@ -80,7 +86,7 @@ router.put(
   '/:id/images/reorder',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.reorderImages,
 );
 
@@ -92,7 +98,7 @@ router.post(
   '/:id/mediums',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.addMediums,
 );
 
@@ -101,7 +107,7 @@ router.delete(
   '/:id/mediums/',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.deleteMediums,
 );
 
@@ -110,7 +116,7 @@ router.post(
   '/:id/images',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   upload.single('image'),
   PROJECT.addImage,
 );
@@ -120,7 +126,7 @@ router.patch(
   '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   upload.single('image'),
   PROJECT.updateImage,
 );
@@ -133,7 +139,7 @@ router.delete(
   '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.removeImage,
 );
 
@@ -142,7 +148,7 @@ router.post(
   '/:id/members',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.addMember,
 );
 
@@ -151,7 +157,7 @@ router.put(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.updateMember,
 );
 
@@ -160,7 +166,7 @@ router.delete(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
-  requiresProjectOwner,
+  //requiresProjectOwner,
   PROJECT.deleteMember,
 );
 

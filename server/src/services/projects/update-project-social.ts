@@ -4,23 +4,21 @@ import { ProjectSocialSelector } from '#services/selectors/projects/parts/projec
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectSocial } from '#services/transformers/projects/parts/project-social.ts';
 
-type SocialInput = {
-  websiteId: number;
-  url: string;
-};
-
 type UpdateProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 export const updateProjectSocialService = async (
-  data: SocialInput,
+  url: string,
   projectId: number,
+  websiteId: number,
 ): Promise<ProjectSocial | UpdateProjectSocialServiceError> => {
   try {
     //social validation (does it have this social)
-    const socialExists = await prisma.projectSocials.findFirst({
+    const socialExists = await prisma.projectSocials.findUnique({
       where: {
-        websiteId: data.websiteId,
-        projectId: projectId,
+        projectId_websiteId: {
+          projectId,
+          websiteId,
+        },
       },
     });
     if (!socialExists) return 'NOT_FOUND';
@@ -28,12 +26,12 @@ export const updateProjectSocialService = async (
     const social = await prisma.projectSocials.update({
       where: {
         projectId_websiteId: {
-          projectId: projectId,
-          websiteId: data.websiteId,
+          projectId,
+          websiteId,
         },
       },
       data: {
-        url: data.url,
+        url,
       },
       select: ProjectSocialSelector,
     });
