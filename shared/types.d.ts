@@ -131,22 +131,17 @@ export type MyFollowsList = {
 // USERS
 
 //show only preview data
-export type UserPreview = {
+export interface UserPreview {
     userId: number;
     firstName: string;
     lastName: string;
     username: string;
     profileImage?: string | null;
     apiUrl: string;
-};
+}
 
 //show only non-sensitive data
-export type UserDetail = {
-    userId: number;
-    firstName: string;
-    lastName: string;
-    username: string;
-    profileImage?: string | null;
+export interface UserDetail extends UserPreview {
     headline: string | null;
     pronouns: string | null;
     title: string | null;
@@ -160,8 +155,7 @@ export type UserDetail = {
     socials: UserSocial[];
     following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
     followers: UserFollowsList;
-    apiUrl: string;
-};
+}
 
 //all user private data
 export interface User {
@@ -203,22 +197,17 @@ export interface UserMember {
 // ME
 
 //show only preview data
-export type MePreview = {
+export interface MePreview {
     userId: number;
     firstName: string;
     lastName: string;
     username: string;
     profileImage?: string | null;
     apiUrl: string;
-};
+}
 
 //show only non-sensitive data
-export type MeDetail = {
-    userId: number;
-    firstName: string;
-    lastName: string;
-    username: string;
-    profileImage?: string | null;
+export interface MeDetail extends MePreview {
     headline: string | null;
     pronouns: string | null;
     title: string | null;
@@ -232,36 +221,16 @@ export type MeDetail = {
     socials?: MySocial[];
     following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
     followers: UserFollowsList;
-    apiUrl: string;
-};
+}
 
 //all user private data
-export interface MePrivate {
-    userId: number;
-    username: string;
+export interface MePrivate extends MeDetail {
     ritEmail: string;
-    firstName: string;
-    lastName: string;
-    profileImage?: string | null;
-    headline: string | null;
-    pronouns: string | null;
-    title: string | null;
-    academicYear: string | null;
-    location: string | null;
-    funFact: string | null;
-    bio: string | null;
     visibility: Visibility;
-    projects: ProjectPreview[];
-    majors?: MyMajor[] | null;
-    skills?: MySkill[] | null;
-    socials?: MySocial[] | null;
     phoneNumber: string | null;
     universityId: string | null;
     createdAt: Date;
     updatedAt: Date;
-    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
-    followers: UserFollowsList;
-    apiUrl: string;
 }
 
 //creating users
