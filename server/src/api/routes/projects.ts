@@ -23,7 +23,7 @@ router.post(
 router.get('/:id', PROJECT.getProjectByID);
 
 //Edits a project through a specific id
-router.put(
+router.patch(
   '/:id',
   requiresLogin,
   injectCurrentUser,
