@@ -674,42 +674,9 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              type: object
-              properties:
-                firstName:
-                  type: string
-                lastName:
-                  type: string
-                headline:
-                  type: string
-                pronouns:
-                  type: string
-                title:
-                  type: string
-                MajorId:
-                  type: integer
-                academicYear:
-                  type: string
-                  enum: [Freshman, Sophmore, Junior, Senior, Graduate]
-                location:
-                  type: string
-                funFact:
-                  type: string
-                bio:
-                  type: string
-              example:
-                firstName: Mistah
-                lastName: Bones
-                headline: Sigh..
-                pronouns: they/them
-                title: 'Student'
-                majorId: 2
-                academicYear: Senior
-                location: Grave Yard
-                funFact: Bones
-                bio: AHHHHHHHH
+              $ref: '#/components/schemas/UserCreateInput'
 
       responses:
         '200':
@@ -1396,7 +1363,7 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/ProjectsCreateInput'
       responses:
@@ -1458,7 +1425,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-    put:
+    patch:
       summary: Updates project information
       tags:
         - Projects
@@ -1471,26 +1438,18 @@ paths:
           schema:
             type: integer
           description: The project ID
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                hook:
-                  type: string
-                description:
-                  type: string
-                audience:
-                  type: string
-              example:
-                title: Mistah Bones Awesome Game
-                hook: Mistah Bones Awesomest GAME! PLAY NOW!
-                description: Mistah Bones Game is about Mistah Bones. Explore over three levels.
-                audience: YOU.
+              $ref: '#/components/schemas/ProjectsUpdateInput'
 
       responses:
         '200':
@@ -2844,6 +2803,32 @@ components:
           type: string
           nullable: true
 
+    UserCreateInput:
+      type: object
+      properties:
+        profileImage:
+          type: string
+          format: binary
+        firstName:
+          type: string
+        lastName:
+          type: string
+        headline:
+          type: string
+        pronouns:
+          type: string
+        title:
+          type: string
+        academicYear:
+          type: string
+          enum: [Freshman, Sophmore, Junior, Senior, Grad1, Grad2]
+        location:
+          type: string
+        funFact:
+          type: string
+        bio:
+          type: string
+
     ProjectWithFollowers:
       type: object
       properties:
@@ -3045,7 +3030,34 @@ components:
           maxLength: 2000
         thumbnail:
           type: string
-          format: uri
+          format: binary
+          nullable: true
+        purpose:
+          type: string
+          enum: [Personal, PortfolioPiece, Academic, CoOp]
+        status:
+          type: string
+          enum: [Planning, Development, PostProduction, Complete]
+        audience:
+          type: string
+          maxLength: 300
+          nullable: true
+
+    ProjectsUpdateInput:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 150
+        hook:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 2000
+        thumbnail:
+          type: string
+          format: binary
           nullable: true
         purpose:
           type: string

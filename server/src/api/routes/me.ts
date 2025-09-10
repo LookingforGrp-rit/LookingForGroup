@@ -34,7 +34,7 @@ router.get('/', getAccount);
 router.get('/socials', getSocials);
 
 //Updates users information
-router.patch('/', upload.single('profile-pic'), updateUserInfo);
+router.patch('/', upload.single('profileImage'), updateUserInfo);
 
 //Delete user
 router.delete('/', deleteUser);

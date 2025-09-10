@@ -23,7 +23,7 @@ router.post(
 //Get a specific project
 router.get('/:id', PROJECT.getProjectByID);
 
-//et a project's tags
+//Get a project's tags
 router.get('/:id/tags', PROJECT.getTags);
 
 //Edits a project through a specific id
