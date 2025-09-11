@@ -1,4 +1,4 @@
-import React, { act, useState, Fragment } from 'react';
+import React, {useState, Fragment } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
