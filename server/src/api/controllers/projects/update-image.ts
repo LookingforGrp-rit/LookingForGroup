@@ -1,18 +1,20 @@
+import type { ApiResponse } from '@looking-for-group/shared';
 import type { RequestHandler } from 'express';
-import getService from '#services/projects/update-image.ts';
+import { uploadImageService } from '#services/images/upload-image.ts';
+import getUpdateImageService from '#services/projects/update-image.ts';
 
 interface UpdateImageInfo {
-  url?: string;
-  description?: string;
-  isThumbnail?: boolean;
+  image?: string;
+  altText?: string;
 }
 
+//updates an image in a project
 const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImageInfo> = async (
   req,
-  res
+  res,
 ): Promise<void> => {
   const { id } = req.params;
-  const updates: object = req.body;
+  const updates: UpdateImageInfo = req.body;
 
   const imageId = parseInt(id);
   if (isNaN(imageId)) {
@@ -20,7 +22,7 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
     return;
   }
 
-  const allowedFields = ['url', 'description', 'isThumbnail'];
+  const allowedFields = ['image', 'altText'];
   const invalidFields = Object.keys(updates).filter((field) => !allowedFields.includes(field));
 
   if (invalidFields.length > 0) {
@@ -28,7 +30,38 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
     return;
   }
 
-  const result = await getService(imageId, updates);
+  //check if they sent over a new image, and upload it to the db
+  if (req.file) {
+    const dbImage = await uploadImageService(
+      req.file.buffer,
+      req.file.originalname,
+      req.file.mimetype,
+    );
+
+    if (dbImage === 'CONTENT_TOO_LARGE') {
+      const resBody: ApiResponse = {
+        status: 413,
+        error: 'Image too large',
+        data: null,
+      };
+      res.status(413).json(resBody);
+      return;
+    }
+
+    if (dbImage === 'INTERNAL_ERROR') {
+      const resBody: ApiResponse = {
+        status: 500,
+        error: 'Internal Server Error',
+        data: null,
+      };
+      res.status(500).json(resBody);
+      return;
+    }
+
+    updates['image'] = dbImage.location;
+  }
+
+  const result = await getUpdateImageService(imageId, updates);
 
   if (result === 'NOT_FOUND') {
     res.status(404).json({ message: 'Image not found' });

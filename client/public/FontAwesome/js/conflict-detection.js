@@ -583,7 +583,6 @@
       progressIndicator,
     } = _ref;
     return new Promise(function (resolve, reject) {
-      // eslint-disable-line compat/compat
       function poll(duration, cumulativeDuration) {
         setTimeout(function () {
           const result = fn();

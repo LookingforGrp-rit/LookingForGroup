@@ -6,17 +6,16 @@ info:
     LFG API Documentation. This will showcase all the endpoints available and how to use them.
     Note: When accessed directly from the express app, the endpoints will have an additional "/api" prefix.
     Because of this, please use the vite proxy when reviewing the docs.
-
 paths:
   # DATASETS
-  /api/datasets/job-titles:
+  /api/datasets/roles:
     get:
-      summary: Returns a list of all job titles
+      summary: Returns a list of all roles
       tags:
         - Datasets
       responses:
         '200':
-          description: List of all the job titles available
+          description: List of all the roles available
           content:
             application/json:
               schema:
@@ -32,23 +31,20 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/JobTitle'
-                  memetype:
-                    type: string
-                    example: application/json
-                examples:
-                  default:
-                    summary: Example job titles list
-                    value:
-                      status: 200
-                      error: null
-                      data:
-                        - titleId: 1
-                          label: Full-Stack Developer
-                        - titleId: 2
-                          label: Front-End Developer
-                        - titleId: 3
-                          label: Back-End Developer
+                      $ref: '#/components/schemas/Role'
+              examples:
+                default:
+                  summary: Example job titles list
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      - titleId: 1
+                        label: Full-Stack Developer
+                      - titleId: 2
+                        label: Front-End Developer
+                      - titleId: 3
+                        label: Back-End Developer
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -76,9 +72,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Social'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Example socials list
@@ -119,9 +112,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Skill'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Example skill list
@@ -129,26 +119,26 @@ paths:
                     status: 200
                     error: null
                     data:
-                      - skill_id: 1
+                      - skillId: 1
                         label: C++
                         type: Developer
-                      - skill_id: 2
+                      - skillId: 2
                         label: CSS
                         type: Developer
-                      - skill_id: 3
+                      - skillId: 3
                         label: C#
                         type: Developer
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/datasets/project-types:
+  /api/datasets/mediums:
     get:
-      summary: Receives list of all project types
+      summary: Receives list of all mediums
       tags:
         - Datasets
       responses:
         '200':
-          description: A list of project types
+          description: A list of mediums
           content:
             application/json:
               schema:
@@ -164,10 +154,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectGenre'
-                  memetype:
-                    type: string
-                    example: application/json
+                      $ref: '#/components/schemas/Medium'
               examples:
                 default:
                   summary: Example project types list
@@ -208,9 +195,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Major'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Examples majors list
@@ -251,9 +235,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Tag'
-                  memetype:
-                    type: string
-                    example: application/json
               examples:
                 default:
                   summary: Example tags list
@@ -274,64 +255,6 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   # USERS
-  /api/users/get-username:
-    get:
-      summary: Get username through Shibboleth headers
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      description: |
-        Retrieves the username of a user authenticated via Shibboleth. Needs the uid header
-      parameters:
-        - in: header
-          name: uid
-          required: true
-          schema:
-            type: string
-          description: University ID from the Shibboleth authentication headers
-      responses:
-        '200':
-          description: Username successfully retrieved
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: object
-                    properties:
-                      username:
-                        type: string
-                      userId:
-                        type: integer
-                  memetype:
-                    type: string
-                    example: application/json
-              examples:
-                default:
-                  summary: Example response
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      username: mistahbones
-                      userId: 18
-                    memetype: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
   /api/users:
     get:
       summary: Get all users
@@ -356,60 +279,12 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/UserDetails'
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
-
-  /api/users/{id}:
-    get:
-      summary: Get a user by ID
+    post:
+      summary: Create a user
       tags:
         - Users
-      parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: The user ID
-      responses:
-        '200':
-          description: A single user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    $ref: '#/components/schemas/UserDetails'
-                  memetype:
-                    type: string
-                    example: application/json
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    put:
-      summary: Updates user profile information
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: The user ID
       requestBody:
         required: true
         content:
@@ -417,42 +292,39 @@ paths:
             schema:
               type: object
               properties:
-                firstName:
+                username:
                   type: string
-                lastName:
-                  type: string
-                headline:
-                  type: string
-                pronouns:
-                  type: string
-                jobTitleId:
-                  type: integer
-                MajorId:
-                  type: integer
-                academic_year:
-                  type: string
-                  enum: [Freshman, Sophmore, Junior, Senior, Graduate]
-                location:
-                  type: string
-                funFact:
-                  type: string
-                bio:
-                  type: string
-              example:
-                firstName: Mistah
-                lastName: Bones
-                headline: Sigh..
-                pronouns: they/them
-                jobTitleId: 1
-                majorId: 2
-                academic_year: Senior
-                location: Grave Yard
-                funFact: Bones
-                bio: AHHHHHHHH
-
+                  example: User01
+      parameters:
+        - in: query
+          name: devFirstName
+          required: false
+          schema:
+            type: string
+          description: The first name to be used as the current first name
+        - in: query
+          name: devLastName
+          required: false
+          schema:
+            type: string
+          description: The last name to be used as the current last name
+        - in: query
+          name: devEmail
+          required: false
+          schema:
+            type: string
+          description: The email to be used as the current email
+        - in: query
+          name: devUID
+          required: false
+          schema:
+            type: string
+          description: The UID to be used as the current UID
+      security:
+        shibbolethAuth: []
       responses:
-        '200':
-          description: Update a single user
+        '201':
+          description: User Created
           content:
             application/json:
               schema:
@@ -460,38 +332,39 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserDetails'
-                  memetype:
-                    type: string
-                    example: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        username:
+                          type: string
+                          example: User01
+        '409':
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
-    delete:
-      summary: Delete a user by ID
+
+  /api/users/{id}:
+    get:
+      summary: Get a user by their ID
       tags:
         - Users
-      security:
-        - shibbolethAuth: []
       parameters:
         - in: path
           name: id
           required: true
           schema:
             type: integer
-          description: The user ID
+          description: The ID of the user to retrieve
       responses:
         '200':
-          description: User successfully deleted
+          description: User found successfully
           content:
             application/json:
               schema:
@@ -505,15 +378,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: string
-                    example: User deleted successfully
-                  memetype:
-                    type: string
-                    example: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
+                    $ref: '#/components/schemas/UserPreview'
 
   /api/users/search-username/{username}:
     get:
@@ -544,9 +409,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/UserPreview'
-                  memetype:
-                    type: string
-                    example: application/json
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -581,228 +443,12 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/UserPreview'
-                  memetype:
-                    type: string
-                    example: application/json
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/users/{id}/account:
-    get:
-      summary: Get user account (requires authentication)
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: The ID of the user
-      responses:
-        '200':
-          description: User account info
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    $ref: '#/components/schemas/User'
-                  memetype:
-                    type: string
-                    example: application/json
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/users/{id}/username:
-    put:
-      summary: Update a user's username (requires authentication)
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: User ID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - username
-              properties:
-                username:
-                  type: string
-                  description: New username
-      responses:
-        '200':
-          description: Username successfully updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: object
-                    properties:
-                      username:
-                        type: string
-                        example: newUsername
-                    required:
-                      - username
-                  memetype:
-                    type: string
-                    example: application/json
-              examples:
-                default:
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      username: newUsername
-                    memetype: application/json
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/users/{id}/visibility:
-    put:
-      summary: Update a user's visibility (requires authentication)
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: User ID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required:
-                - visibility
-              properties:
-                visibility:
-                  type: integer
-                  enum: [0, 1]
-                  description: visibility (0=private, 1=public)
-      responses:
-        '200':
-          description: Username successfully updated
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: object
-                    properties:
-                      visibility:
-                        type: integer
-                        enum: [0, 1]
-                        example: 1
-                  memetype:
-                    type: string
-                    example: application/json
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
   /api/users/{id}/projects:
-    get:
-      summary: Get current user's own projects
-      description: Returns the list of projects owned by the user identified by userID.
-      tags:
-        - Users
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - name: id
-          in: path
-          description: User ID to get projects for
-          required: true
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: List of projects owned by the user
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '401':
-          $ref: '#/components/responses/Unauthorized'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/users/{id}/projects/profile:
     get:
       summary: Get another user's projects
       description: Retrieve projects of a user (not current user)
@@ -834,9 +480,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -852,7 +495,7 @@ paths:
       parameters:
         - name: id
           in: path
-          description: User ID to get followed projects for
+          description: User ID
           required: true
           schema:
             type: integer
@@ -875,85 +518,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/users/{id}/followings/projects/{followId}:
-    post:
-      summary: Follow a project
-      security:
-        - shibbolethAuth: []
-      tags:
-        - Users
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID of the user who is following the project
-          schema:
-            type: integer
-        - name: followId
-          in: path
-          required: true
-          description: ID of the project to follow
-          schema:
-            type: integer
-      responses:
-        '201':
-          description: Project followed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProjectFollowingsResponse'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  projectId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
-
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '409':
-          $ref: '#/components/responses/Conflict'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-    delete:
-      summary: Unfollow a project
-      security:
-        - shibbolethAuth: []
-      tags:
-        - Users
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: ID of the user who is unfollowing the project
-          schema:
-            type: integer
-        - name: followId
-          in: path
-          required: true
-          description: ID of the project to unfollow
-          schema:
-            type: integer
-      responses:
-        '200':
-          description: Project unfollowed successfully
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ProjectFollowingsResponse'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -969,8 +533,8 @@ paths:
       parameters:
         - name: id
           in: path
+          description: User ID
           required: true
-          description: ID of the user
           schema:
             type: integer
       responses:
@@ -1003,9 +567,6 @@ paths:
                           type: string
                           format: date-time
                           example: 2025-05-01T10:00:00Z
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1013,26 +574,694 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/users/{id}/followings/people/{followId}:
+  /api/users/{id}/followers:
+    get:
+      tags:
+        - Users
+      summary: Get list of users that are following the specified user
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of users following the current user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        userId:
+                          type: integer
+                          example: 1
+                        followingId:
+                          type: integer
+                          example: 2
+                        followedAt:
+                          type: string
+                          format: date-time
+                          example: 2025-05-01T10:00:00Z
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  # ME
+  /api/me:
+    get:
+      summary: Gets the current user by ID
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: A single user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserDetails'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Updates user profile information
+      tags:
+        - Me
+      x-middleware:
+        - injectCurrentUser
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserCreateInput'
+
+      responses:
+        '200':
+          description: Update a single user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserDetails'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete a user by ID
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: User successfully deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: User deleted successfully
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/get-username:
+    get:
+      summary: Get username through Shibboleth headers
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      description: |
+        Retrieves the username of the current user authenticated via Shibboleth. Needs the uid header
+      parameters:
+        - in: header
+          name: uid
+          required: true
+          schema:
+            type: string
+          description: University ID from the Shibboleth authentication headers
+      responses:
+        '200':
+          description: Username successfully retrieved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    properties:
+                      username:
+                        type: string
+                      userId:
+                        type: integer
+              examples:
+                default:
+                  summary: Example response
+                  value:
+                    status: 200
+                    error: null
+                    data:
+                      username: mistahbones
+                      userId: 18
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/projects:
+    get:
+      summary: Get current user's own projects
+      description: Returns the list of projects owned by the user identified by userID.
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: List of projects owned by the user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectWithFollowers'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/socials:
+    get:
+      summary: Get current user's socials
+      description: Returns the list of socials associated with the current user
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: List of socials the current user has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSocial'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds a user social
+      description: Adds a specified social to the current user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialCreateInput'
+      responses:
+        '200':
+          description: Social created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/UserSocial'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/socials/{websiteId}:
+    put:
+      summary: Updates a user social
+      description: Updates one of the socials specified by the current user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialCreateInput'
+      responses:
+        '200':
+          description: Social created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSocial'
+              example:
+                status: 201
+                error: null
+                data:
+                  userId: 1
+                  projectId: 2
+                  followedAt: '2025-07-16T12:34:56Z'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete one of the current user's socials
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: websiteId
+          in: path
+          required: true
+          description: ID of the social to be deleted
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Social deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/skills:
+    get:
+      summary: Get current user's skills
+      description: Returns the list of skills associated with the current user
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: List of skills the current user has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserSkill'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: Adds multiple user skills
+      description: Adds a specified skill to the current user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/SkillCreateInput'
+      responses:
+        '200':
+          description: Skill created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/UserSkill'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/skills/{id}:
+    patch:
+      summary: Updates a user skill
+      description: Updates all of the skills specified for the current user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SkillCreateInput'
+      responses:
+        '200':
+          description: Skill updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSkill'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: Delete many of the current user's skills
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                skillIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Skills deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/followings/projects/{id}:
+    post:
+      summary: Follow a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the project to follow
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '201':
+          description: Project followed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectFollowingsResponse'
+              example:
+                status: 201
+                error: null
+                data:
+                  userId: 1
+                  projectId: 2
+                  followedAt: '2025-07-16T12:34:56Z'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Unfollow a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the project to unfollow
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Project unfollowed successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectFollowingsResponse'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/followings/people/{id}:
     post:
       summary: Follow another user
       security:
         - shibbolethAuth: []
       tags:
-        - Users
+        - Me
       parameters:
         - name: id
-          in: path
-          required: true
-          description: ID of the user initiating the follow
-          schema:
-            type: integer
-        - name: followId
           in: path
           required: true
           description: ID of the user to be followed
           schema:
             type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '201':
           description: User followed successfully
@@ -1047,7 +1276,6 @@ paths:
                   userId: 1
                   followingId: 2
                   followedAt: '2025-07-16T12:34:56Z'
-                memetype: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1062,20 +1290,20 @@ paths:
       security:
         - shibbolethAuth: []
       tags:
-        - Users
+        - Me
       parameters:
         - name: id
-          in: path
-          required: true
-          description: ID of the user who wants to unfollow another user
-          schema:
-            type: integer
-        - name: followId
           in: path
           required: true
           description: ID of the user to be unfollowed
           schema:
             type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: User unfollowed successfully
@@ -1116,9 +1344,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
@@ -1128,10 +1353,17 @@ paths:
         - Projects
       security:
         - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               $ref: '#/components/schemas/ProjectsCreateInput'
       responses:
@@ -1151,9 +1383,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1187,9 +1416,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/ProjectWithFollowers'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
 
@@ -1199,7 +1425,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-    put:
+    patch:
       summary: Updates project information
       tags:
         - Projects
@@ -1212,26 +1438,18 @@ paths:
           schema:
             type: integer
           description: The project ID
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              type: object
-              properties:
-                title:
-                  type: string
-                hook:
-                  type: string
-                description:
-                  type: string
-                audience:
-                  type: string
-              example:
-                title: Mistah Bones Awesome Game
-                hook: Mistah Bones Awesomest GAME! PLAY NOW!
-                description: Mistah Bones Game is about Mistah Bones. Explore over three levels.
-                audience: YOU.
+              $ref: '#/components/schemas/ProjectsUpdateInput'
 
       responses:
         '200':
@@ -1250,9 +1468,6 @@ paths:
                     example: null
                   data:
                     $ref: '#/components/schemas/ProjectDetails'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1272,6 +1487,12 @@ paths:
           in: path
           required: true
           description: The ID of the project to delete
+          schema:
+            type: integer
+        - name: devId
+          in: query
+          required: false
+          description: The ID to be used as the current user
           schema:
             type: integer
       responses:
@@ -1294,66 +1515,12 @@ paths:
                     properties:
                       id:
                         type: string
-                  memetype:
-                    type: string
-                    example: application/json
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /projects/{id}/thumbnail:
-    put:
-      summary: Update the thumbnail image of a project
-      description: Updates the thumbnail URL of a project by its ID. Only the thumbnail can be updated.
-      tags:
-        - Projects
-      security:
-        - shibbolethAuth: []
-      parameters:
-        - name: id
-          in: path
-          description: The ID of the project to update
-          required: true
-          schema:
-            type: integer
-            example: 1
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                thumbnail:
-                  type: string
-                  format: uri
-                  example: https://example.com/new-thumbnail.jpg
-              required:
-                - thumbnail
-      responses:
-        '200':
-          description: Thumbnail updated successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  projectId:
-                    type: integer
-                    example: 42
-                  thumbnail:
-                    type: string
-                    format: uri
-                    example: https://example.com/new-thumbnail.jpg
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/projects/{id}/pictures:
+  /api/projects/{id}/images:
     get:
       summary: Get project pictures by ID
       tags:
@@ -1386,9 +1553,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/ProjectImage'
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1410,29 +1574,24 @@ paths:
           schema:
             type: integer
             example: 42
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
-              required:
-                - projectId
-                - image
               properties:
-                projectId:
-                  type: integer
-                  description: ID of the project
-                  example: 42
                 image:
                   type: string
-                  format: uri
-                  description: URL of the picture
-                  example: https://example.com/image.jpg
+                  format: binary
                 altText:
                   type: string
-                  description: Alternate text for the image
-                  example: Screenshot of the project UI
       responses:
         '200':
           description: Picture added successfully
@@ -1464,13 +1623,10 @@ paths:
                       altText:
                         type: string
                         example: Screenshot of the project UI
-                  memetype:
-                    type: string
-                    example: application/json
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/projects/{id}/pictures/{picId}:
+  /api/projects/{id}/images/{imageId}:
     put:
       summary: Update a pictures for a project
       description: Updates fields of an existing project picture by image ID.
@@ -1486,34 +1642,35 @@ paths:
           schema:
             type: integer
             example: 1
-        - name: picId
+        - name: imageId
           in: path
           description: ID of the picture to update
           required: true
           schema:
             type: integer
             example: 1
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
               type: object
               properties:
-                url:
+                image:
                   type: string
-                  format: uri
-                  description: URL of the updated image
-                  example: https://example.com/new-image.jpg
-                description:
+                  format: binary
+                altText:
                   type: string
-                  description: Description or alt text for the image
-                  example: Updated project screenshot
                 isThumbnail:
                   type: boolean
                   description: Whether this image should be set as the project thumbnail
                   example: false
-              additionalProperties: false
       responses:
         '200':
           description: Image updated successfully
@@ -1533,11 +1690,12 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
     delete:
-      summary: Remove a picture from a project (NOT FINISHED)
+      summary: Remove a picture from a project
       tags:
         - Projects
-      description: This endpoint is intended to remove a picture from a project by picture ID,
-        but is not implemented yet.
+      description: Removes a picture from a project by picture ID
+      security:
+        - shibbolethAuth: []
       parameters:
         - in: path
           name: id
@@ -1545,15 +1703,21 @@ paths:
           schema:
             type: integer
           description: Project ID
-        - name: picId
+        - name: imageId
           in: path
           required: true
           schema:
             type: integer
           description: Picture ID to remove
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
-        '501':
-          description: NOT DONE
+        '200':
+          description: Picture removed successfully
           content:
             application/json:
               schema:
@@ -1561,17 +1725,34 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 501
+                    example: 200
                   error:
                     type: string
-                    example: NOT DONE
-                  data:
-                    type: string
-                    nullable: true
                     example: null
-                  memetype:
-                    type: string
-                    example: application/json
+                  data:
+                    type: object
+                    properties:
+                      imageId:
+                        type: integer
+                        example: 1
+                      image:
+                        type: string
+                        example: string
+                      altText:
+                        type: string
+                        example: string
+                      position:
+                        type: integer
+                        position: integer
+                      projectId:
+                        type: integer
+                        position: integer
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /api/projects/{id}/members:
     post:
@@ -1588,6 +1769,12 @@ paths:
           schema:
             type: integer
           description: Project ID to add the member to
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -1596,16 +1783,16 @@ paths:
               type: object
               required:
                 - userId
-                - role
+                - roleId
               properties:
                 userId:
                   type: integer
                   description: The ID of the user to add
                   example: 1
-                role:
-                  type: string
-                  description: Role of the user in the project (e.g., "admin", "member")
-                  example: member
+                roleId:
+                  type: integer
+                  description: The ID of the role of the user in the project
+                  example: 3
       responses:
         '200':
           description: Member added successfully
@@ -1633,12 +1820,9 @@ paths:
                       projectId:
                         type: integer
                         example: 1
-                      role:
-                        type: string
-                        example: member
-                  memetype:
-                    type: string
-                    example: application/json
+                      roleId:
+                        type: integer
+                        example: 76
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1663,6 +1847,12 @@ paths:
           schema:
             type: integer
           description: The ID of the member to update
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       requestBody:
         required: true
         content:
@@ -1670,12 +1860,12 @@ paths:
             schema:
               type: object
               required:
-                - role
+                - roleId
               properties:
-                role:
-                  type: string
-                  description: Updated role for the user
-                  example: Artist
+                roleId:
+                  type: integer
+                  description: Updated ID of the role for the user
+                  example: 9
       responses:
         '200':
           description: Member updated successfully
@@ -1697,12 +1887,9 @@ paths:
                       userId:
                         type: integer
                         example: 1
-                      role:
-                        type: string
-                        example: Artist
-                  memetype:
-                    type: string
-                    example: application/json
+                      roleId:
+                        type: integer
+                        example: 76
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -1722,12 +1909,18 @@ paths:
           schema:
             type: integer
           description: Project ID
-        - in: query
+        - in: path
           name: userId
           required: true
           schema:
             type: integer
           description: The ID of the user to remove
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
       responses:
         '200':
           description: Member removed successfully
@@ -1746,9 +1939,6 @@ paths:
                   data:
                     type: string
                     example: Member removed
-                  memetype:
-                    type: string
-                    example: application/json
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1756,18 +1946,601 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-# COMPONANTS
+  /api/projects/{id}/socials:
+    get:
+      summary: Get a project's socials
+      description: Returns the list of socials associated with the specified project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: List of socials the current project has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectSocial'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds a project social
+      description: Adds a specified social to the current project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialCreateInput'
+      responses:
+        '200':
+          description: Social created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectSocial'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/socials/{websiteId}:
+    put:
+      summary: Updates a project social
+      description: Updates one of the project socials specified
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SocialCreateInput'
+      responses:
+        '200':
+          description: Social created successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProjectSocial'
+              example:
+                status: 201
+                error: null
+                data:
+                  userId: 1
+                  projectId: 2
+                  followedAt: '2025-07-16T12:34:56Z'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete one of the specified project's socials
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - name: websiteId
+          in: path
+          required: true
+          description: ID of the social to be deleted
+          schema:
+            type: integer
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Social deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/tags:
+    get:
+      summary: Get a project's tags
+      description: Returns the list of tags associated with the specified project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: List of tags the current project has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Tag'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds multiple project tags
+      description: Adds an amount of tags to the specified project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Tags created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Tag'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Deletes many of the specified project's tags
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                tagIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Tags deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/mediums:
+    get:
+      summary: Get a project's mediums
+      description: Returns the list of mediums associated with the specified project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: List of mediums the current project has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Medium'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds multiple project mediums
+      description: Adds an amount of mediums to the specified project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mediumIds:
+                  type: array
+                  items:
+                    type: integer
+
+      responses:
+        '200':
+          description: Mediums created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/Tag'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Deletes many of the specified project's mediums
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                mediumIds:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Tags deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/images/reorder:
+    put:
+      summary: Reorders the images in a project
+      description: Takes the IDs of a project's images and reorders them in the specified project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                imageOrder:
+                  type: array
+                  items:
+                    type: integer
+      responses:
+        '200':
+          description: Images reordered successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectImage'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # IMAGES
+  /api/images/{image}:
+    get:
+      summary: Gets an image by file name
+      tags:
+        - Images
+      description: Retrieves an image from the database by its unique file name.
+      parameters:
+        - in: path
+          name: image
+          required: true
+          schema:
+            type: string
+          description: Image URL
+      responses:
+        '200':
+          description: Image found
+          content:
+            image/png:
+              type: string
+              format: binary
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+# COMPONENTS
 components:
+  securitySchemes:
+    shibbolethAuth:
+      #Filler values need to be changed
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   schemas:
-    JobTitle:
+    Role:
       type: object
       properties:
-        titleId:
+        roleId:
           type: integer
         label:
           type: string
       example:
-        titleId: 1
+        roleId: 1
         label: Full-Stack Developer
 
     Social:
@@ -1778,17 +2551,76 @@ components:
         label:
           type: string
 
+    UserSocial:
+      type: object
+      properties:
+        apiUrl:
+          type: string
+        url:
+          type: string
+        label:
+          type: string
+        websiteId:
+          type: integer
+
+    ProjectSocial:
+      type: object
+      properties:
+        websiteId:
+          type: integer
+        projectId:
+          type: integer
+        url:
+          type: string
+
+    SocialCreateInput:
+      type: object
+      properties:
+        websiteId:
+          type: integer
+        url:
+          type: string
+
     Skill:
       type: object
       properties:
-        skill_id:
+        skillId:
           type: integer
         label:
           type: string
         type:
           type: string
 
-    ProjectGenre:
+    UserSkill:
+      type: object
+      properties:
+        apiUrl:
+          type: string
+        proficiency:
+          type: string
+        position:
+          type: integer
+        skillId:
+          type: integer
+        label:
+          type: string
+        type:
+          type: string
+
+    SkillCreateInput:
+      type: object
+      properties:
+        skillId:
+          type: integer
+        position:
+          type: integer
+        proficiency:
+          type: string
+
+    ProjectDetails:
+      type: string
+
+    Medium:
       type: object
       properties:
         typeId:
@@ -1836,13 +2668,13 @@ components:
         pronouns:
           type: string
           nullable: true
-        jobTitleId:
-          type: integer
+        title:
+          type: string
           nullable: true
         majorId:
           type: integer
           nullable: true
-        academic_year:
+        academicYear:
           type: string
           nullable: true
         location:
@@ -1913,13 +2745,13 @@ components:
         pronouns:
           type: string
           nullable: true
-        jobTitle:
+        title:
           type: string
           nullable: true
         major:
           type: string
           nullable: true
-        academic_year:
+        academicYear:
           type: string
           nullable: true
         location:
@@ -1971,6 +2803,32 @@ components:
           type: string
           nullable: true
 
+    UserCreateInput:
+      type: object
+      properties:
+        profileImage:
+          type: string
+          format: binary
+        firstName:
+          type: string
+        lastName:
+          type: string
+        headline:
+          type: string
+        pronouns:
+          type: string
+        title:
+          type: string
+        academicYear:
+          type: string
+          enum: [Freshman, Sophmore, Junior, Senior, Grad1, Grad2]
+        location:
+          type: string
+        funFact:
+          type: string
+        bio:
+          type: string
+
     ProjectWithFollowers:
       type: object
       properties:
@@ -2006,7 +2864,7 @@ components:
           properties:
             projectFollowings:
               type: integer
-        projectGenres:
+        mediums:
           type: array
           items:
             type: object
@@ -2111,8 +2969,8 @@ components:
               type: string
             pronouns:
               type: string
-            jobTitleId:
-              type: integer
+            title:
+              type: string
             majorId:
               type: integer
             academicYear:
@@ -2138,7 +2996,7 @@ components:
             universityId:
               type: integer
               nullable: true
-        ProjectGenre:
+        Medium:
           type: array
           items:
             type: object
@@ -2172,7 +3030,7 @@ components:
           maxLength: 2000
         thumbnail:
           type: string
-          format: uri
+          format: binary
           nullable: true
         purpose:
           type: string
@@ -2184,8 +3042,32 @@ components:
           type: string
           maxLength: 300
           nullable: true
-        userId:
-          type: integer
+
+    ProjectsUpdateInput:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 150
+        hook:
+          type: string
+          maxLength: 200
+        description:
+          type: string
+          maxLength: 2000
+        thumbnail:
+          type: string
+          format: binary
+          nullable: true
+        purpose:
+          type: string
+          enum: [Personal, PortfolioPiece, Academic, CoOp]
+        status:
+          type: string
+          enum: [Planning, Development, PostProduction, Complete]
+        audience:
+          type: string
+          maxLength: 300
           nullable: true
 
     ProjectImage:
@@ -2225,9 +3107,6 @@ components:
               type: string
               format: date-time
               example: 2025-07-16T12:34:56Z
-        memetype:
-          type: string
-          example: application/json
 
     UserFollowingsResponse:
       type: object
@@ -2252,9 +3131,6 @@ components:
               type: string
               format: date-time
               example: 2025-07-16T12:34:56Z
-        memetype:
-          type: string
-          example: application/json
 
     ErrorMessage:
       type: object
@@ -2266,17 +3142,13 @@ components:
           type: string
           example: Internal Server Error
         data:
-          type: 'null'
+          type: string
           nullable: true
           example: null
-        memetype:
-          type: string
-          example: application/json
       required:
         - status
         - error
         - data
-        - memetype
 
   responses:
     InternalServerError:
@@ -2291,7 +3163,6 @@ components:
                 status: 500
                 error: Internal Server Error
                 data: null
-                memetype: application/json
     BadRequest:
       description: The request was invalid (e.g., malformed parameters)
       content:
@@ -2304,7 +3175,6 @@ components:
                 status: 400
                 error: Invalid parameter(s)
                 data: null
-                memetype: application/json
     NotFound:
       description: The requested resource was not found
       content:
@@ -2317,7 +3187,6 @@ components:
                 status: 404
                 error: Not found
                 data: null
-                memetype: application/json
     Unauthorized:
       description: Authentication is required and has failed or has not been provided
       content:
@@ -2330,7 +3199,6 @@ components:
                 status: 401
                 error: Unauthorized
                 data: null
-                memetype: application/json
     Conflict:
       description: Conflict to show resource already exists
       content:
@@ -2343,4 +3211,3 @@ components:
                 status: 409
                 error: Resource already exists
                 data: null
-                memetype: application/json
