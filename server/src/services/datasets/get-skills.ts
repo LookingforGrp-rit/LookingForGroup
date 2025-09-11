@@ -7,9 +7,6 @@ type GetSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 const getSkillsService = async (): Promise<Skill[] | GetSkillsServiceError> => {
   try {
     return await prisma.skills.findMany({
-      where: {
-        type: 'Developer',
-      },
       select: {
         skillId: true,
         label: true,
