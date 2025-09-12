@@ -4,9 +4,9 @@ import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMajor } from '#services/transformers/datasets/major.ts';
 import type { Major } from '../../../../shared/types.ts';
 
-type GeMajorsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
+type GetMajorsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
-const getMajorsService = async (): Promise<Major[] | GeMajorsServiceError> => {
+const getMajorsService = async (): Promise<Major[] | GetMajorsServiceError> => {
   try {
     const majors = await prisma.majors.findMany({
       select: MajorSelector,
