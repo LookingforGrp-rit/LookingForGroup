@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - main
-      - fix-container
     paths:
       - "server/**"
       - "Dockerfile"
@@ -35,7 +34,6 @@ jobs:
             org.opencontainers.image.source=https://github.com/${{ github.repository }}
             org.opencontainers.image.revision=${{ github.sha }}
             build.number=${{ github.run_number }}
-          no-cache: true
 
   deploy-server-image:
     needs: build-server-image
