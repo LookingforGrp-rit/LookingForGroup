@@ -80,6 +80,7 @@ export const PostComment = (props) => {
   const comment = comments.find((c) => c._id === props.commentId) || comments[0];
   return (
     <div className="post-comment" id={props.commentId}>
+      {/* Get image of profile and use preloader function in functions/imageLoad.tsx */}
       <img className="comment-profile" src={profilePlaceholder} alt="profile" />
       <div className="comment-header">
         <span

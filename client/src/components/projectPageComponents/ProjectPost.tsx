@@ -24,6 +24,7 @@ export const ProjectPost = (props) => {
 
   return (
     <div className="project-post" onClick={() => navigate(paths.routes.PROJECTPOST + pathQuery)}>
+      {/* Get image of post and use preloader function in functions/imageLoad.tsx */}
       <img src={postImagePlaceholder} alt="post image" />
       <div className="post-content">
         <div className="post-info">

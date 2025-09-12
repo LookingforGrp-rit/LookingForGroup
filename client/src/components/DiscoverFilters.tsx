@@ -322,7 +322,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: string
             {/* Additional filters popup */}
             <Popup>
               <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
-                <ThemeIcon src={'assets/filters_light.svg'} darkSrc={'assets/filters_dark.svg'} />
+                <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'}/>
               </PopupButton>
               {/* 
                             When page loads, get all necessary tag lists based on page category.
@@ -336,11 +336,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: string
               <PopupContent useClose={false}>
                 {/* Back button */}
                 <PopupButton className="popup-back">
-                  <ThemeIcon
-                    src={'assets/back_light.png'}
-                    darkSrc={'assets/back_dark.png'}
-                    id="dropdown-arrow"
-                  />
+                  <ThemeIcon id={'back'} width={70} height={25} className={'color-fill'} ariaLabel={'back'}/>
                 </PopupButton>
                 <div id="filters-popup">
                   <h2>{category === 'projects' ? 'Project Filters' : 'People Filters'}</h2>

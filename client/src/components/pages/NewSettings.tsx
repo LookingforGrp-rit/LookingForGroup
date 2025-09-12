@@ -23,7 +23,7 @@ const deleteAccountPressed = async () => {
   });
 };
 
-const Settings = ({ }) => {
+const Settings = () => {
   // --------------------
   // Global variables
   // --------------------
@@ -39,7 +39,7 @@ const Settings = ({ }) => {
 
   // Stateful variables responsible for displaying settings
   const [themeOption, setThemeOption] = useState(theme === 'dark' ? 'Dark Mode' : 'Light Mode');
-  const [visibilityOption, setVisibilityOption] = useState('Public Account');
+  // const [visibilityOption, setVisibilityOption] = useState('Public Account');
 
   // --------------------
   // Helper functions
@@ -425,22 +425,22 @@ const Settings = ({ }) => {
   // Visibility num corresponds to private vs public
   // 0 - private
   // 1 - public
-  const updateVisibility = async (visibilityNum) => {
-    // Don't run if the value hasn't changed
-    if (visibilityNum !== userInfo.visibility) {
-      const url = `/api/users/${userInfo.userId}/visibility`;
-      const response = await sendPut(url, { newVisibility: visibilityNum });
+  // const updateVisibility = async (visibilityNum) => {
+  //   // Don't run if the value hasn't changed
+  //   if (visibilityNum !== userInfo.visibility) {
+  //     const url = `/api/users/${userInfo.userId}/visibility`;
+  //     const response = await sendPut(url, { newVisibility: visibilityNum });
 
-      if (response !== undefined && response.error) {
-        console.log(response.error);
-      } else {
-        // Update userInfo with newly updated visibility value
-        const tempInfo = { ...userInfo };
-        tempInfo.visibility = visibilityNum;
-        setUserInfo(tempInfo);
-      }
-    }
-  };
+  //     if (response !== undefined && response.error) {
+  //       console.log(response.error);
+  //     } else {
+  //       // Update userInfo with newly updated visibility value
+  //       const tempInfo = { ...userInfo };
+  //       tempInfo.visibility = visibilityNum;
+  //       setUserInfo(tempInfo);
+  //     }
+  //   }
+  // };
 
   return (
     <div className="page" style={{ position: 'relative' }}>
@@ -556,10 +556,11 @@ const Settings = ({ }) => {
                       <div className="input-container">
                         <input id="option-theme" placeholder={themeOption} type="text" disabled />
                         <ThemeIcon
-                          src={'assets/dropdown_light.svg'}
-                          darkSrc={'assets/dropdown_dark.svg'}
-                          alt={'Current Theme'}
-                          addClass={'options-dropdown-parent-btn'}
+                          id={'dropdown-arrow'}
+                          width={15}
+                          height={12}
+                          className={'color-fill options-dropdown-parent-btn'}
+                          ariaLabel={'current theme'}
                         />
                       </div>
                     </DropdownButton>
@@ -613,7 +614,7 @@ const Settings = ({ }) => {
               </div>
               {/* Account Visibility */}
               <div className="settings-column">
-                <h2 className="settings-header">Account Visibility</h2>
+                {/* <h2 className="settings-header">Account Visibility</h2>
                 <div className="subsection">
                   <label htmlFor="option-theme">Who can view you</label>
                   <Dropdown>
@@ -658,7 +659,7 @@ const Settings = ({ }) => {
                       </div>
                     </DropdownContent>
                   </Dropdown>
-                </div>
+                </div> */}
                 {/* Account Deletion */}
                 <div className="subsection">
                   <Popup>

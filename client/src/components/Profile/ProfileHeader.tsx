@@ -29,11 +29,7 @@ export const ProfileHeader = ({ user }) => {
           <div className="profile-name-button">
             <h2 id="profile-name">{user.name}</h2>
             <button className="icon-button" onClick={toggleUserOptions}>
-              <ThemeIcon
-                src={'assets/menu_light.svg'}
-                darkSrc={'assets/menu_dark.svg'}
-                alt={'More Options'}
-              />
+              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'More options'}/>
             </button>
             {/*div for the popup window for user options*/}
             <div id="user-options-popup" className="hide">

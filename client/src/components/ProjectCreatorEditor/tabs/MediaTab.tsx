@@ -49,8 +49,20 @@ const defaultProject: ProjectData = {
   title: '',
 };
 
+type MediaTabProps = {
+  projectData?: ProjectData;
+  setProjectData?: (data: ProjectData) => void;
+  saveProject?: () => void;
+  failCheck: boolean;
+}
+
 // --- Component ---
-export const MediaTab = ({ isNewProject = false, projectData = defaultProject, setProjectData }) => {
+export const MediaTab = ({
+  projectData = defaultProject,
+  setProjectData = () => {},
+  saveProject = () => {},
+  failCheck,
+}: MediaTabProps) => {
 
   // --- Hooks ---
   // tracking project modifications
@@ -159,15 +171,13 @@ export const MediaTab = ({ isNewProject = false, projectData = defaultProject, s
           })
         }
         <div id="project-editor-add-image">
-          <label htmlFor="image-uploader" id="drop-area">
-            <input type="file" name="image" id="image-uploader" accept="image/png, image/jpg" onChange={handleImageUpload} hidden />
-            <div id="img-view">
-              <img src="/assets/white/upload_image.png" />
-              <p className="project-editor-extra-info">Drop your image here, or browse</p>
-              <span className="project-editor-extra-info">Supports: JPEG, PNG</span>
-            </div>
-          </label>
+          <ProjectImageUploader onFileSelected={handleImageUpload} />
         </div>
+      </div>
+      <div id="general-save-info">
+        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
+          Save Changes
+        </PopupButton>
       </div>
     </div>
   );

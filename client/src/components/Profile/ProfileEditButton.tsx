@@ -55,7 +55,7 @@ const EditButton = ({ userData }) => {
 
   // const [currentPFPLink, setCurrentPFPLink] = useState(require(`../../../../server/images/profiles/${userData.profile_image}`));
   const [currentPFPLink, setCurrentPFPLink] = useState(
-    `${API_BASE}/images/profiles/${userData.profileImage}`
+    usePreloadedImage(`${API_BASE}/images/profiles/${userData.profileImage}`, profilePicture)
   );
   const [currentFirstName, setCurrentFirstName] = useState(userData.firstName);
   const [currentLastName, setCurrentLastName] = useState(userData.lastName);
@@ -145,7 +145,7 @@ const EditButton = ({ userData }) => {
             <div className="edit-region-button-div photo">
               <form className="edit-region-button-wrapper photo">
                 <div className="edit-region-fake-button photo">
-                  <img src="assets/white/upload_image.png" alt="upload image" />
+                  <img src="assets/upload_image.png" alt="upload image" />
                 </div>
                 <input
                   type="file"
@@ -1178,13 +1178,13 @@ const EditButton = ({ userData }) => {
           const response = await updateProjectVisibility(userData.userId, userProjects[i].projectId,
              checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private');
 
-          console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
-        } catch (error) {
-          console.log(error);
-        }
-      }
-    }
-  };
+  //         console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     }
+  //   }
+  // };
 
   return (
     <div id="profile-edit-button-section">

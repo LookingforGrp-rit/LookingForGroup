@@ -111,7 +111,11 @@ const Profile = (props) => {
         <ProfileInterests user={user} />
         <div>
           <ProfileSkills user={user} />
-          <ProfileEndorsements user={user} />
+          {userData ? (
+            <ProfileEndorsements user={userData} />
+          ) : (
+            <p>Loading endorsements...</p>
+          )}
         </div>
         <ProfileProjects user={user} />
       </div>

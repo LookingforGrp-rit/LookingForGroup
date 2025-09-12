@@ -7,7 +7,7 @@ import { addProjectFollowing, deleteProjectFollowing } from '../api/users.ts';
 
 //import shares types
 import { Project, ProjectFollowers, ProjectGenres, ProjectTag } from '../../../shared/types.ts'; // wherever your types live
-
+import usePreloadedImage from '../functions/imageLoad.tsx';
 
 //Component that will contain info about a project, used in the discovery page
 //Smaller and more concise than ProjectCard.tsx
@@ -48,16 +48,11 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
     return `${followerNum}`;
   };
 
-
   return (
     // <div className={'project-panel'} style={{ width: width }}>
     <div className={'project-panel'}>
       <img
-        src={
-          project.thumbnail != null
-            ? `${API_BASE}/images/thumbnails/${project.thumbnail}`
-            : placeholderThumbnail
-        }
+        src={usePreloadedImage(`${API_BASE}/images/thumbnails/${project.thumbnail}`, placeholderThumbnail)}
         alt={'project image'}
       />
       <div
@@ -66,22 +61,18 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
       // style={rightAlign ? { width: width, right: 0 } : { width: width }}
       >
         <img
-          src={
-            project.thumbnail != null
-              ? `${API_BASE}/images/thumbnails/${project.thumbnail}`
-              : placeholderThumbnail
-          }
+          src={usePreloadedImage(`${API_BASE}/images/thumbnails/${project.thumbnail}`, placeholderThumbnail)}
           alt={'project image'}
         />
         {/* <h2>{project.title}</h2> */}
         <div className='project-title-likes'>
           <h2>{project.title}</h2>
           <div className='project-likes'>
-            <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
+            <p className={`follow-amt ${isFollowing ?? 'following'}`}>
               {formatFollowCount(followCount)}
             </p>
             <button
-              className={`follow-icon ${isFollowing ? 'following' : ''}`}
+              className={`follow-icon ${isFollowing ?? 'following'}`}
               onClick={(e) => {
                 // Prevent parent onClick event from running
                 if (e.stopPropagation) e.stopPropagation();
@@ -107,6 +98,7 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
                   }
                 }
               }}
+              title={isFollowing ? "Unfollow" : "Follow"}
             >
               <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>
             </button>

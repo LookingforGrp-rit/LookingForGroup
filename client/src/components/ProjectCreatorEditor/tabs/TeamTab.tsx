@@ -98,8 +98,18 @@ const locationOptions = ['On-site', 'Remote', 'Hybrid'];
 const compensationOptions = ['Unpaid', 'Paid'];
 const permissionOptions = ['Project Member', 'Project Manager', 'Project Owner'];
 
+type TeamTabProps = {
+  projectData: ProjectData;
+  setProjectData: (data: ProjectData) => void;
+  setErrorMember: (error: string) => void;
+  setErrorPosition: (error: string) => void;
+  permissions: number;
+  saveProject: () => void;
+  failCheck: boolean;
+};
+
 // --- Component ---
-export const TeamTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, setErrorMember, setErrorPosition, permissions }) => {
+export const TeamTab = ({ projectData = defaultProject, setProjectData, setErrorMember, setErrorPosition, permissions, saveProject, failCheck }: TeamTabProps) => {
 
   // --- Hooks ---
   // tracking project modifications
@@ -508,12 +518,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
           setEditMode(true);
         }}
       >
-        <ThemeIcon
-          src={'assets/white/pencil.svg'}
-          darkModeColor={"black"}
-          alt={"edit"}
-          addClass={"edit-project-member-icon"}
-        />
+        <ThemeIcon id={'pencil'} width={11} height={12} className={'gradient-color-fill edit-project-member-icon'} ariaLabel={'edit'}/>
       </button>
       <div className="positions-popup-info-title">{getProjectJob(currentRole)?.jobTitle}</div>
       <div className="positions-popup-info-description">
@@ -546,13 +551,18 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                       <span key={m.userId} id="position-contact-link">
                         <img 
                           className='project-member-image'
-                          src={(m.profileImage) ? `${API_BASE}/images/profiles/${m.profileImage}` : profileImage}
+                          src={`${API_BASE}/images/profiles/${m.profileImage}`}
                           alt="profile"
                           // default profile picture if user image doesn't load
-                        onError={(e) => {
-                          const profileImg = e.target as HTMLImageElement;
-                          profileImg.src = profileImage;
-                        }}
+                          // Cannot use usePreloadedImage function because this is in a callback
+                          onLoad={() => {
+                            const profileImg = document.getElementById(`profile-image-${m.userId}`) as HTMLImageElement;
+                            profileImg.src = `${API_BASE}/images/profiles/${m.profileImage}`;
+                          }}
+                          onError={(e) => {
+                            const profileImg = e.target as HTMLImageElement;
+                            profileImg.src = profileImage;
+                          }}
                         />
                         {m.firstName} {m.lastName}
                       </span>
@@ -780,9 +790,14 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                 markup: (
                   <>
                     <img className='project-member-image' 
-                      src={m.profileImage ? `${API_BASE}/images/profiles/${m.profileImage}` : profileImage}
+                      src={`${API_BASE}/images/profiles/${m.profileImage}`}
                       alt="profile"
-                      // default profile picture if user image doesn't load
+                      title={'Profile picture'}
+                      // Cannot use usePreloadedImage function because this is in a callback
+                      onLoad={(e) => {
+                        const profileImg = e.target as HTMLImageElement;
+                        profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                      }}
                       onError={(e) => {
                         const profileImg = e.target as HTMLImageElement;
                         profileImg.src = profileImage;
@@ -885,13 +900,18 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
           <div key={m.userId} className="project-editor-project-member">
             <img
               className="project-member-image"
-              src={(m.profileImage) ? `${API_BASE}/images/profiles/${m.profileImage}` : profileImage}
+              src={`${API_BASE}/images/profiles/${m.profileImage}`}
               alt="profile image"
-              // default profile picture if user image doesn't load
-              onError={(e) => {
-                const profileImg = e.target as HTMLImageElement;
-                profileImg.src = profileImage;
-              }}
+              title={'Profile picture'}
+                // Cannot use usePreloadedImage function because this is in a callback
+                onLoad={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                }}
+                onError={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = profileImage;
+                }}
             />
             <div className="project-editor-project-member-info">
               <div className="project-editor-project-member-name">
@@ -911,17 +931,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
             { /*((m.permissions < permissions) || (modifiedProject.userId === m.userId)) ? (*/
               <Popup>
                 <PopupButton className="edit-project-member-button">
-                  {/* <img
-                  className="edit-project-member-icon"
-                  src="/images/icons/pencil.png"
-                  alt=""
-                /> */}
-                  <ThemeIcon
-                    src={'assets/white/pencil.svg'}
-                    alt={"edit"}
-                    darkModeColor={"black"}
-                    addClass={"edit-project-member-icon"}
-                  />
+                  <ThemeIcon id={'pencil'} width={11} height={12} className={'gradient-color-fill edit-project-member-icon'} ariaLabel={'edit'}/>
                 </PopupButton>
                 {/* Edit member button */}
                 <PopupContent useClose={false}>
@@ -1052,12 +1062,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
       <Popup>
         <PopupButton buttonId="project-editor-add-member">
           {/* <img id="project-team-add-member-image" src={profileImage} alt="" /> */}
-          <ThemeIcon
-            src={'/assets/white/add_member.svg'}
-            id={'project-team-add-member-image'}
-            darkModeColor={"black"}
-            alt={'add member'}
-          />
+          <ThemeIcon id="add-person" width={74} height={74} className="header-color-fill" ariaLabel="add member" />
           <div id="project-team-add-member-text">Add Member</div>
         </PopupButton>
         <PopupContent useClose={true}>
@@ -1162,7 +1167,7 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
         </PopupContent>
       </Popup>
     </div>
-  ), [allJobs, closePopup, currentMember, currentRole, errorAddMember, handleNewMember, handleSearch, handleUserSelect, modifiedProject, searchResults.data, searchableUsers]);
+  ), [allJobs, errorAddMember, handleNewMember, handleSearch, handleUserSelect, modifiedProject, newMember, permissions, searchBarKey, searchQuery, searchResults.data, searchableUsers, selectKey, successAddMember]);
   const openPositionsContent: JSX.Element = useMemo(() => (
     <div id="project-team-open-positions-popup">
       <div className="positions-popup-list">
@@ -1190,8 +1195,8 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
                 }
               }}
             >
-              <img src={'/images/icons/cancel.png'} alt="add" />
-              <span className="project-editor-extra-info">Add position</span>
+              <i className="fa fa-plus" />
+              <p className="project-editor-extra-info">Add position</p>
             </button>
           </div>
         </div>
@@ -1230,13 +1235,20 @@ export const TeamTab = ({ isNewProject = false, projectData = defaultProject, se
       </div>
 
       <div id="project-editor-team-content">{teamTabContent}</div>
+
+      <div id="team-save-info">
+        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
+          Save Changes
+        </PopupButton>
+      </div>
     </div>
-  );
+  ); 
 };
 
 // Because of hooks depending on each other, this is not implemented.
 // Relevant references are commented out above.
 // positionWindowContent is one of these
+
 // Open position display
 // const positionViewWindow = useMemo(() => (
 //   <>

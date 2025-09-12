@@ -96,6 +96,10 @@ const defaultProject = runningServer
     ],
   };
 
+function useProfileImage(user) {
+  return usePreloadedImage(`${API_BASE}/images/profiles/${user.profileImage}`, profilePicture);
+}
+
 //Main component for the project page
 const NewProject = () => {
   //Navigation hook
@@ -345,7 +349,7 @@ const NewProject = () => {
                       <></>
                     )}
                     <button className="project-info-dropdown-option" id="project-info-report">
-                      <i className="fa-solid fa-flag"></i>
+                      <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
                       Report
                     </button>
                   </div>
@@ -375,15 +379,11 @@ const NewProject = () => {
       <>
         {projectMembers?.map((user) => {
           // Don't show users that chose to hide themselves as a member of this project
-          if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
-            return (
-              <></>
-            );
-          }
-
-          //FIXME: get profile image from API call
-          const imgSrc = (user.profileImage) ? `${API_BASE}/images/profiles/${user.profileImage}` : profilePicture;
-          //const imgSrc = profilePicture; // temporary
+          // if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
+          //   return (
+          //     <></>
+          //   );
+          // }
 
           return (
             <div
@@ -391,7 +391,20 @@ const NewProject = () => {
               className="project-contributor"
               onClick={() => navigate(`${paths.routes.NEWPROFILE}?userID=${user.userId}`)}
             >
-              <img className="project-contributor-profile" src={imgSrc} alt="contributor profile" />
+              <img
+                className="project-contributor-profile"
+                src={`${API_BASE}/images/profiles/${user.profileImage}`}
+                alt="contributor profile"
+                // Cannot use usePreloadedImage function because this is in a callback
+                onLoad={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = `${API_BASE}/images/profiles/${user.profileImage}`;
+                }}
+                onError={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = profileImage;
+                }}
+              />
               <div className="project-contributor-info">
                 <div className="team-member-name">
                   {user.firstName} {user.lastName}
@@ -413,7 +426,7 @@ const NewProject = () => {
       projectContributors.length > 0 ? (
         <>
           {projectContributors.map((user) => {
-            const imgSrc = (user.profileImage) ? `${API_BASE}/images/profiles/${user.profileImage}` : profilePicture;
+            const imgSrc = useProfileImage(user);
 
             return (
               <div

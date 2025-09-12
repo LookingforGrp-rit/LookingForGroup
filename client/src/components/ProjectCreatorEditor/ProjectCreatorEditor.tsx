@@ -26,7 +26,6 @@ interface Image {
   id: number;
   image: string;
   position: number;
-  file: File
 }
 
 interface ProjectData {
@@ -264,7 +263,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     <Popup>
       {
         newProject ? (
-          <PopupButton callback={buttonCallback} buttonId='project-info-create' > <ThemeIcon src={'assets/create_light.svg'} darkSrc={'assets/create_dark.svg'} /> Create </PopupButton>
+          <PopupButton callback={buttonCallback} buttonId='project-info-create' > <ThemeIcon id={'create'} width={25} height={25} className={'color-fill'} ariaLabel={'create'}/> <p>Create</p> </PopupButton>
         ) : (
           <PopupButton callback={buttonCallback} buttonId="project-info-edit">Edit Project</PopupButton>
         )
@@ -323,9 +322,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
               <div id="project-editor-content">
                 {
-                  currentTab === 0 ? <GeneralTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
-                    currentTab === 1 ? <MediaTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} /> :
-                      currentTab === 2 ? <TagsTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} /> :
+                  currentTab === 0 ? <GeneralTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
+                    currentTab === 1 ? <MediaTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
+                      currentTab === 2 ? <TagsTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
                         currentTab === 3 ? <TeamTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorMember={setErrorAddMember} setErrorPosition={setErrorAddPosition} permissions={permissions} /> :
                           currentTab === 4 ? <LinksTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorLinks={setErrorLinks} /> :
                             <></>
@@ -335,10 +334,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               {currentTab !== 0 ? <div id="invalid-input-error" className={"save-error-msg"}>
                 <p>{message}</p>
               </div> : <></>}
-              {currentTab !== 0 ? 
-              <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
-                Save Changes
-              </PopupButton> : <></>}
             </div>
           </PopupContent>
         ) : (

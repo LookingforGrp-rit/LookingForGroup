@@ -322,47 +322,47 @@ export const updateUsername = async (
  * Updates user visibility, between 0 (private) and 1 (public). just a switch.
  * @param id - user_id for the user
  * @returns 400 if error, 200 if valid
- */
-export const updateUserVisibility = async (
-  id: number
-): Promise<ApiResponse> => {
-  const url = `/users/${id}`;
-  const userResponse = await GET(url);
-  if (userResponse.status !== 200) {
-    return {
-      status: 400,
-      error: "Unable to fetch user data",
-    };
-  }
+//  */
+// export const updateUserVisibility = async (
+//   id: number
+// ): Promise<ApiResponse> => {
+//   const url = `/users/${id}`;
+//   const userResponse = await GET(url);
+//   if (userResponse.status !== 200) {
+//     return {
+//       status: 400,
+//       error: "Unable to fetch user data",
+//     };
+//   }
 
-  const vis = userResponse.data.visibility;
-  let data: { visibility: number };
+//   const vis = userResponse.data.visibility;
+//   let data: { visibility: number };
 
-  if (vis == 1) {
-    data = {
-      visibility: 0,
-    };
-  } else if (vis == 0) {
-    data = {
-      visibility: 1,
-    };
-  } else {
-    return {
-      status: 400,
-      error: "Invalid visibility error.",
-    };
-  }
-  const result = await editUser(id, data);
-  if (result.status === 400) {
-    console.log("Error editing user.");
-    return { status: 400, error: "Error editing user." };
-  }
-  return {
-    status: 200,
-    error: null,
-    data: result.data,
-  };
-};
+//   if (vis == 1) {
+//     data = {
+//       visibility: 0,
+//     };
+//   } else if (vis == 0) {
+//     data = {
+//       visibility: 1,
+//     };
+//   } else {
+//     return {
+//       status: 400,
+//       error: "Invalid visibility error.",
+//     };
+//   }
+//   const result = await editUser(id, data);
+//   if (result.status === 400) {
+//     console.log("Error editing user.");
+//     return { status: 400, error: "Error editing user." };
+//   }
+//   return {
+//     status: 200,
+//     error: null,
+//     data: result.data,
+//   };
+// };
 
 /* ACCOUNT INFO/ PASSWORD RESET*/
 
@@ -734,7 +734,7 @@ export default {
   updateEmail,
   updateUsername,
   //updatePassword,
-  updateUserVisibility,
+  // updateUserVisibility,
   // requestPasswordReset,
   getUserByUsername,
   getUserByEmail,
