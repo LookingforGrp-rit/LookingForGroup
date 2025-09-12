@@ -1,0 +1,7 @@
+export const MePreviewSelector = Object.freeze({
+  userId: true,
+  firstName: true,
+  lastName: true,
+  username: true,
+  profileImage: true,
+});

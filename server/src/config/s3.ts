@@ -7,6 +7,7 @@ const s3 = new S3Client({
     accessKeyId: envConfig.s3User,
     secretAccessKey: envConfig.s3Pass,
   },
+  region: 'us-east-1',
   forcePathStyle: true,
 });
 

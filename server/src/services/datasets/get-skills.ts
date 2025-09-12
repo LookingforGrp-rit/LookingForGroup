@@ -1,5 +1,5 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import type { Skill } from '../../../../shared/types.ts';
 
 type GetSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;

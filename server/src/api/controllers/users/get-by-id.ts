@@ -11,7 +11,6 @@ export const getUsernameById = async (req: Request, res: Response): Promise<void
       status: 400,
       error: 'Invalid user ID',
       data: null,
-      memetype: 'application/json',
     };
     res.status(400).json(resBody);
     return;
@@ -24,7 +23,6 @@ export const getUsernameById = async (req: Request, res: Response): Promise<void
       status: 500,
       error: 'Internal Server Error',
       data: null,
-      memetype: 'application/json',
     };
     res.status(500).json(resBody);
     return;
@@ -35,7 +33,6 @@ export const getUsernameById = async (req: Request, res: Response): Promise<void
       status: 404,
       error: 'User not found',
       data: null,
-      memetype: 'application/json',
     };
     res.status(404).json(resBody);
     return;
@@ -45,7 +42,6 @@ export const getUsernameById = async (req: Request, res: Response): Promise<void
     status: 200,
     error: null,
     data: result,
-    memetype: 'application/json',
   };
   res.status(200).json(resBody);
 };

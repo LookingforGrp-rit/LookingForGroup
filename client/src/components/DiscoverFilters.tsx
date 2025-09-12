@@ -87,7 +87,7 @@ export const DiscoverFilters = ({ category, updateItemList }: { category: string
         }
       } else if (category === 'projects') {
         // Pull Project Types and append it to full data
-        response = await fetch(`/api/datasets/project-types`);
+        response = await fetch(`/api/datasets/mediums`);
         const extraData = await response.json();
         if (extraData.data !== undefined) {
           extraData.data.forEach((projectType: Skill) => data.push({ label: projectType.label, type: 'Project Type' }));

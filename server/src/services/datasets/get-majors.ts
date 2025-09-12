@@ -1,5 +1,5 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import type { Major } from '../../../../shared/types.ts';
 
 type GeMajorsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;

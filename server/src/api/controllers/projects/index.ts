@@ -1,27 +1,49 @@
 import addImage from './add-image.ts';
 import addMember from './add-member.ts';
+import addMediums from './add-project-mediums.ts';
+import { addProjectSocial } from './add-social.ts';
+import addTags from './add-tags.ts';
 import createProject from './create-project.ts';
 import deleteMember from './delete-member.ts';
+import deleteMediums from './delete-project-mediums.ts';
+import { deleteProjectSocial } from './delete-project-social.ts';
 import deleteProject from './delete-project.ts';
-import getProjectPics from './get-proj-pictures.ts';
+import deleteTags from './delete-tags.ts';
+import getProjectImages from './get-proj-images.ts';
+import getTags from './get-proj-tags.ts';
 import getProjectByID from './get-project-id.ts';
+import getProjectMediums from './get-project-mediums.ts';
+import getProjectSocials from './get-project-socials.ts';
 import getProjects from './get-projects.ts';
+import removeImage from './remove-image.ts';
+import reorderImages from './reorder-images.ts';
 import updateImage from './update-image.ts';
 import updateMember from './update-member.ts';
+import { updateProjectSocial } from './update-project-social.ts';
 import updateProject from './update-project.ts';
-import updateThumbnail from './update-thumbnail.ts';
 
 export default {
   getProjects,
   getProjectByID,
-  getProjectPics,
+  getProjectImages,
   createProject,
   addImage,
   addMember,
+  addTags,
   updateProject,
-  updateThumbnail,
   updateMember,
   deleteProject,
   updateImage,
   deleteMember,
+  removeImage,
+  reorderImages,
+  getTags,
+  deleteTags,
+  addProjectSocial,
+  getProjectSocials,
+  updateProjectSocial,
+  deleteProjectSocial,
+  getProjectMediums,
+  addMediums,
+  deleteMediums,
 };
