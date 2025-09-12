@@ -1,5 +1,5 @@
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | string;
+export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft";
 export type TagType =
     | "Creative"
     | "Technical"
@@ -10,15 +10,13 @@ export type TagType =
     | "Developer Skill"
     | "Designer Skill"
     | "Soft Skill"
-    | "Purpose"
-    | string;
+    | "Purpose";
 export type AcademicYear =
     | "Freshman"
     | "Sophomore"
     | "Junior"
     | "Senior"
-    | "Graduate"
-    | string;
+    | "Graduate";
 export type Visibility = 0 | 1;
 export type SkillProficiency =
     | "Novice"
@@ -27,18 +25,23 @@ export type SkillProficiency =
     | "Expert";
 export type ProjectPurpose = 
     | "Personal"
-    | "Portfolio Piece"
+    | "PortfolioPiece"
     | "Academic"
-    | "Co-Op";
+    | "CoOp";
+export type ProjectStatus = 
+    | "Planning"
+    | "Development"
+    | "PostProduction"
+    | "Complete"
 export type JobAvailability =
-    | "Full Time"
-    | "Part Time"
+    | "FullTime"
+    | "PartTime"
     | "Flexible";
 export type JobDuration = 
-    | "Short Term"
-    | "Long Term";
+    | "ShortTerm"
+    | "LongTerm";
 export type JobLocation = 
-    | "On Site"
+    | "OnSite"
     | "Remote"
     | "Hybrid";
 export type JobCompensation = 
@@ -317,8 +320,8 @@ export interface ProjectJob {
 export interface ProjectDetail extends ProjectPreview {
     description: string;
     purpose: ProjectPurpose | null;
-    status: string | null;
-    audience: string | null;
+    status: ProjectStatus;
+    audience: string;
     createdAt: Date;
     updatedAt: Date;
     owner: UserPreview;
