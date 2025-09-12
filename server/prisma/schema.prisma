@@ -108,8 +108,8 @@ model ProjectSocials {
 model Projects {
   projectId         Int                 @id @default(autoincrement()) @map("project_id")
   title             String              @db.VarChar(150)
-  hook              String              @db.VarChar(200)
-  description       String              @db.VarChar(2000)
+  hook              String              @default("") @db.VarChar(200)
+  description       String              @default("") @db.VarChar(2000)
   thumbnail         String?             @db.VarChar(100)
   purpose           ProjectsPurpose?
   status            ProjectsStatus      @default(Planning)
