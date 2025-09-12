@@ -10,7 +10,6 @@ const getTagsController = async (_request: Request, response: Response): Promise
       status: 500,
       error: 'Internal Server Error',
       data: null,
-      memetype: 'application/json',
     };
     response.status(500).json(resBody);
     return;
@@ -20,7 +19,6 @@ const getTagsController = async (_request: Request, response: Response): Promise
     status: 200,
     error: null,
     data: result,
-    memetype: 'application/json',
   };
   response.status(200).json(resBody);
 };

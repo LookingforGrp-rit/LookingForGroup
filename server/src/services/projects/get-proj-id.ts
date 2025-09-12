@@ -1,49 +1,25 @@
 import type { ProjectWithFollowers } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
-import { transformProject } from '../helpers/projTransform.ts';
+import { ProjectWithFollowersSelector } from '#services/selectors/projects/projects-with-followers.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProjectToWithFollowers } from '#services/transformers/projects/project-with-followers.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 const getProjectByIdService = async (
   projectId: number,
-): Promise<ProjectWithFollowers | null | GetServiceError> => {
+): Promise<ProjectWithFollowers | GetServiceError> => {
   try {
     const project = await prisma.projects.findUnique({
       where: { projectId },
-      include: {
-        _count: {
-          select: {
-            projectFollowings: true,
-          },
-        },
-        projectGenres: {
-          include: {
-            genres: true,
-          },
-        },
-        projectTags: {
-          include: {
-            tags: true,
-          },
-        },
-        projectImages: true,
-        projectSocials: {
-          include: {
-            socials: true,
-          },
-        },
-        jobs: true,
-        members: true,
-        users: true,
-      },
+      select: ProjectWithFollowersSelector,
     });
 
     //check if project exists
     if (!project) return 'NOT_FOUND';
 
     //return transformed project
-    return transformProject(project);
+    return transformProjectToWithFollowers(project);
   } catch (e) {
     console.error(`Error in getProjectByIdService: ${JSON.stringify(e)}`);
 

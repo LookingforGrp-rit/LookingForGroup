@@ -20,7 +20,22 @@ export type AcademicYear =
     | "Graduate"
     | string;
 export type Visibility = 0 | 1;
+export type SkillProficiency =
+    | "Novice"
+    | "Intermediate"
+    | "Advanced"
+    | "Expert"
 
+
+//API REQUEST
+
+declare global{
+    namespace Express {
+        interface Request {
+            currentUser?: string
+        }
+    }
+}
 
 //API RESPONSE
 
@@ -28,13 +43,12 @@ export interface ApiResponse<_data = any> {
     status: number;
     error?: string | null;
     data?: _data | null;
-    memetype?: string;
 }
 
 // DATASETS
 
-export interface JobTitle {
-    titleId: number;
+export interface Role {
+    roleId: number;
     label: string;
 }
 
@@ -60,8 +74,8 @@ export interface Skill {
     type: SkillType;
 }
 
-export interface Genre {
-    typeId: number;
+export interface Medium {
+    mediumId: number;
     label: string;
 }
 
@@ -69,54 +83,79 @@ export interface Genre {
 //USER DATA
 
 export interface UserSkill extends Skill {
+    proficiency: SkillProficiency;
     position: number;
 }
 
-export interface UserSocial {
-    userId: number;
-    websiteId: number;
+export interface UserSocial extends Social {
     url: string;
-    social: Social;
 }
 
+export type ProjectFollowsList = {
+    projects: ProjectPreview[];
+    count: number;
+    apiUrl: string;
+}
+
+export type UserFollowsList = {
+    users: UserPreview[];
+    count: number;
+    apiUrl: string;
+}
 
 export type UserFollowings = {
-    userId: number;
-    followingId: number;
+    senderId: number;
+    receiverId: number;
     followedAt: Date;
+    apiUrl: string;
 };
 
+export interface MySkill extends UserSkill {
+    apiUrl: string;
+}
+
+export interface MySocial extends UserSocial {
+    apiUrl: string;
+}
+
+export interface MyMajor extends Major {
+    apiUrl: string;
+}
+
+export type MyFollowsList = {
+    users: UserPreview[];
+    count: number;
+    apiUrl: string;
+}
 
 // USERS
 
 //show only preview data
-export type UserPreview = {
+export interface UserPreview {
     userId: number;
     firstName: string;
     lastName: string;
     username: string;
     profileImage?: string | null;
-};
+    apiUrl: string;
+}
 
 //show only non-sensitive data
-export type UserDetail = {
-    userId: number;
-    firstName: string;
-    lastName: string;
-    username: string;
-    profileImage?: string | null;
+export interface UserDetail extends UserPreview {
     headline: string | null;
     pronouns: string | null;
-    jobTitle: string | null;
-    major: string | null;
+    title: string | null;
+    majors: Major[];
     academicYear: string | null;
     location: string | null;
     funFact: string | null;
     bio?: string | null;
-    skills?: UserSkill[] | null;
-    //might need to add userSocial
-    socials?: Social[] | null;
-};
+    projects: ProjectPreview[];
+    skills: UserSkill[];
+    socials: UserSocial[];
+    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
+    followers: UserFollowsList;
+}
 
 //all user private data
 export interface User {
@@ -128,17 +167,68 @@ export interface User {
     profileImage?: string | null;
     headline: string | null;
     pronouns: string | null;
-    jobTitleId: number | null;
-    majorId: number | null;
+    title: string | null;
     academicYear: string | null;
     location: string | null;
     funFact: string | null;
     bio: string | null;
     visibility: Visibility;
+    projects: ProjectPreview[];
+    majors?: Major[] | null;
     skills?: UserSkill[] | null;
     socials?: Social[] | null;
     phoneNumber: string | null;
-    universityId: number | null;
+    universityId: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
+    followers: UserFollowsList;
+    apiUrl: string;
+}
+
+// Represents the member info for a project
+export interface UserMember {
+    project: ProjectPreview;
+    role: Role;
+    memberSince: Date;
+    apiUrl: string;
+}
+
+// ME
+
+//show only preview data
+export interface MePreview {
+    userId: number;
+    firstName: string;
+    lastName: string;
+    username: string;
+    profileImage?: string | null;
+    apiUrl: string;
+}
+
+//show only non-sensitive data
+export interface MeDetail extends MePreview {
+    headline: string | null;
+    pronouns: string | null;
+    title: string | null;
+    majors: MyMajor[];
+    academicYear: string | null;
+    location: string | null;
+    funFact: string | null;
+    bio: string | null;
+    projects: ProjectPreview[];
+    skills?: MySkill[];
+    socials?: MySocial[];
+    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
+    followers: UserFollowsList;
+}
+
+//all user private data
+export interface MePrivate extends MeDetail {
+    ritEmail: string;
+    visibility: Visibility;
+    phoneNumber: string | null;
+    universityId: string | null;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -147,17 +237,16 @@ export interface User {
 export interface CreateUserData {
     firstName: string;
     lastName: string;
-    headline: string;
-    pronouns: string;
-    jobTitleId: number;
-    majorId: number;
-    academicYear: number;
-    location: string;
-    funFact: string;
-    skills: UserSkill[];
-    socials: Social[];
+    headline?: string;
+    pronouns?: string;
+    title?: string;
+    academicYear?: number;
+    location?: string;
+    funFact?: string;
+    majors?: Major[];
+    skills?: UserSkill[];
+    socials?: Social[];
 }
-
 
 // PROjECT DATA
 
@@ -165,73 +254,108 @@ export interface ProjectFollowings {
     userId: number;
     projectId: number;
     followedAt: Date;
+    apiUrl: string;
 }
 
-
-//there is no alt text in database yet
+//images for projects
 export interface ProjectImage {
     imageId: number;
     image: string;
-    //altText: '';
+    altText: string;
+    apiUrl: string;
 }
 
-//tags for projects
-export interface ProjectTag {
-    projectId: number;
-    tagId: number;
-    label: string;
-    type: TagType;
-    position: number;
+//mediums for projects
+export interface ProjectMedium extends Medium {
+    apiUrl: string;
 }
+
 
 //permissions not yet in database
 export interface Member {
     projectId: number;
-    userId: number;
-    titleId: number;
+    user: UserPreview;
+    role: Role;
+    apiUrl: string;
     //permission: number;
 }
 
 // Represents the followers info for a project
 export interface ProjectFollowers {
     count: number;
+    users: UserPreview[];
+    apiUrl: string;
 }
 
+// Represents the member info for a project
+export interface ProjectMember {
+    user: UserPreview;
+    role: Role;
+    memberSince: Date;
+    apiUrl: string;
+}
+
+// Represents the social info for a project
+export interface ProjectSocial extends Social {
+    url: string;
+    apiUrl: string;
+}
+
+export interface ProjectTag extends Tag {
+    apiUrl: string;
+}
+
+// Represents the job info for a project
+export interface ProjectJob {
+    jobId: number;
+    role: Role;
+    availability: string;
+    duration: string;
+    location: string;
+    compensation: string;
+    description: string;
+    createdAt: Date;
+    updatedAt: Date;
+    apiUrl: string;
+}
 
 // PROJECTS
 
-export interface Project {
+export interface ProjectDetail extends ProjectPreview {
+    description: string;
+    purpose: string | null;
+    status: string | null;
+    audience: string | null;
+    createdAt: Date;
+    updatedAt: Date;
+    owner: UserPreview;
+    tags: Tag[];
+    projectImages: ProjectImage[];
+    projectSocials: ProjectSocial[];
+    jobs: ProjectJob[];
+    members: ProjectMember[];
+}
+
+//show only preview data
+export interface ProjectPreview {
     projectId: number;
     title: string;
     hook: string;
-    description: string;
-    thumbnail?: string | null;
-    purpose?: string | null;
-    status?: string | null;
-    audience?: string | null;
-    userId: number;
-    createdAt: Date;
-    updatedAt: Date;
-    //might need to add projectGenre
-    projectType: Genre[];
-    projectTags: ProjectTag[];
-    projectImages: ProjectImage[];
-    //might need to add projectSocial
-    projectSocials: Social[];
-    jobs: Job[];
-    members: Member[];
+    thumbnail: string | null;
+    mediums: ProjectMedium[];
+    apiUrl: string;
 }
 
-
 // project with the followers data
-export interface ProjectWithFollowers extends Project {
+export interface ProjectWithFollowers extends ProjectDetail {
     followers: ProjectFollowers;
 }
 
 //Jobs for projects
 export interface Job {
+    jobId: number;
     projectId: number;
-    titleId: number;
+    roleId: number;
     availability: string;
     duration: string;
     location: string;
@@ -239,4 +363,11 @@ export interface Job {
     description?: string;
     createdAt: Date;
     updatedAt: Date;
+    apiUrl: string;
+}
+
+// IMAGES
+
+export type ImageUploadResult = {
+    location: string;
 }
