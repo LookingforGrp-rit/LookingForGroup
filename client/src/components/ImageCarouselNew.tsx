@@ -33,11 +33,7 @@ export const CarouselButton = ({
             className={`${className} carousel-btn-${direction}`}
             onClick={() => handleIndexChange(currentIndex + directionNum)}
         >
-            <ThemeIcon
-                src={'assets/arrow_light.png'}
-                darkSrc={'assets/arrow_dark.png'}
-                alt={direction === 'left' ? 'left' : 'right'}
-            />
+            <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={direction === 'left' ? 'Previous Image' : 'Next Image'}/>
         </button>
     );
 };

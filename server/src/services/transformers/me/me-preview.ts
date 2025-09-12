@@ -17,7 +17,7 @@ export const transformMeToPreview = (user: UsersGetPayload): MePreview => {
     firstName: user.firstName,
     lastName: user.lastName,
     username: user.username,
-    profileImage: user.profileImage,
+    profileImage: user.profileImage ?? null,
     apiUrl: `api/me`,
   };
 };
