@@ -1,12 +1,22 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getUserByUsernameService } from '#services/users/get-by-username.ts';
+import { getUserByIdService } from '#services/users/get-user/get-by-id.ts';
 
-//get the user by the username
-export const getUserByUsername = async (req: Request, res: Response): Promise<void> => {
-  const { username } = req.params;
+//get user by id
+export const getUsernameById = async (req: Request, res: Response): Promise<void> => {
+  const id = parseInt(req.params.id);
 
-  const result = await getUserByUsernameService(username);
+  if (isNaN(id)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const result = await getUserByIdService(id);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

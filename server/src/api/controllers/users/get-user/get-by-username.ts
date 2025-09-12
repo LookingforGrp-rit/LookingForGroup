@@ -1,12 +1,12 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getUserByEmailService } from '#services/users/get-by-email.ts';
+import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
 
-//get the user by the email
-export const getUserByEmail = async (req: Request, res: Response): Promise<void> => {
-  const { email } = req.params;
+//get the user by the username
+export const getUserByUsername = async (req: Request, res: Response): Promise<void> => {
+  const { username } = req.params;
 
-  const result = await getUserByEmailService(email);
+  const result = await getUserByUsernameService(username);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

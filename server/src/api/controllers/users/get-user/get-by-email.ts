@@ -1,22 +1,12 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getUserFollowingService } from '#services/users/get-user-following.ts';
+import { getUserByEmailService } from '#services/users/get-user/get-by-email.ts';
 
-//get the users a user is following
-export const getUserFollowing = async (req: Request, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id);
+//get the user by the email
+export const getUserByEmail = async (req: Request, res: Response): Promise<void> => {
+  const { email } = req.params;
 
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const result = await getUserFollowingService(userId);
+  const result = await getUserByEmailService(email);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -31,7 +21,7 @@ export const getUserFollowing = async (req: Request, res: Response): Promise<voi
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Followings for user not found',
+      error: 'User not found',
       data: null,
     };
     res.status(404).json(resBody);

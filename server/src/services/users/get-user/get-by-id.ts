@@ -2,7 +2,7 @@ import type { UserDetail } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { UserDetailSelector } from '#services/selectors/users/user-detail.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformUserToDetail } from '../transformers/users/user-detail.ts';
+import { transformUserToDetail } from '../../transformers/users/user-detail.ts';
 
 type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

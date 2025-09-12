@@ -1,14 +1,12 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getProjectFollowingService } from '#services/users/get-proj-following.ts';
+import { getUserFollowingService } from '#services/users/followings/get-user-following.ts';
 
-// gets the projects a user is following
-export const getProjectsFollowing = async (req: Request, res: Response): Promise<void> => {
-  //user ID
-  const UserId = parseInt(req.params.id);
+//get the users a user is following
+export const getUserFollowing = async (req: Request, res: Response): Promise<void> => {
+  const userId = parseInt(req.params.id);
 
-  //check if ID is number
-  if (isNaN(UserId)) {
+  if (isNaN(userId)) {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Invalid user ID',
@@ -18,7 +16,7 @@ export const getProjectsFollowing = async (req: Request, res: Response): Promise
     return;
   }
 
-  const result = await getProjectFollowingService(UserId);
+  const result = await getUserFollowingService(userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -33,7 +31,7 @@ export const getProjectsFollowing = async (req: Request, res: Response): Promise
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'No projects followed',
+      error: 'Followings for user not found',
       data: null,
     };
     res.status(404).json(resBody);
