@@ -1,13 +1,18 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { removeImageService } from '#services/projects/remove-image.ts';
+import addMediumsService from '#services/projects/mediums/add-project-mediums.ts';
 
-//removes an image frmo a project
-const removeImageController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
-  const imageId = parseInt(req.params.picId);
+//the mediums (or their ids anyway)
+type Mediums = {
+  mediumIds?: number[];
+};
 
-  const result = await removeImageService(projectId, imageId);
+//adds multiple mediums to the project
+const addMediumsController = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const data: Mediums = req.body as Mediums;
+
+  const result = await addMediumsService(id, data);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -18,16 +23,16 @@ const removeImageController = async (req: Request, res: Response) => {
     res.status(500).json(resBody);
     return;
   }
-
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Image not found',
+      error: 'Medium not found',
       data: null,
     };
-    res.status(500).json(resBody);
+    res.status(404).json(resBody);
     return;
   }
+
   const resBody: ApiResponse = {
     status: 200,
     error: null,
@@ -36,4 +41,4 @@ const removeImageController = async (req: Request, res: Response) => {
   res.status(200).json(resBody);
 };
 
-export default removeImageController;
+export default addMediumsController;

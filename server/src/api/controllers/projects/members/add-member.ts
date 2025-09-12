@@ -1,7 +1,7 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
-import getService from '#services/projects/add-member.ts';
+import getService from '#services/projects/members/add-member.ts';
 
 //adds a member to the project
 const addMemberController = async (req: Request, res: Response) => {

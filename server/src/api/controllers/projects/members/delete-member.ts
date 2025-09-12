@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteMemberService } from '#services/projects/delete-member.ts';
+import { deleteMemberService } from '#services/projects/members/delete-member.ts';
 
 //deletes a member frmo a project
 const deleteMemberController = async (req: Request, res: Response) => {

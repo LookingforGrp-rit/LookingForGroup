@@ -1,10 +1,10 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getProjectTagsService from '#services/projects/get-proj-tags.ts';
+import getProjectMediumsService from '#services/projects/mediums/get-project-mediums.ts';
 
-//gets the tags associated with a project
-const getProjectTagsController = async (_req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(_req.params.id);
+//gets the mediums associated with a project
+const getProjectMediumsController = async (req: Request, res: Response): Promise<void> => {
+  const projID = parseInt(req.params.id);
 
   if (isNaN(projID)) {
     const resBody: ApiResponse = {
@@ -16,7 +16,7 @@ const getProjectTagsController = async (_req: Request, res: Response): Promise<v
     return;
   }
 
-  const result = await getProjectTagsService(projID);
+  const result = await getProjectMediumsService(projID);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -46,4 +46,4 @@ const getProjectTagsController = async (_req: Request, res: Response): Promise<v
   res.status(200).json(resBody);
 };
 
-export default getProjectTagsController;
+export default getProjectMediumsController;

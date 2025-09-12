@@ -1,7 +1,7 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
-import getService from '#services/projects/update-member.ts';
+import getService from '#services/projects/members/update-member.ts';
 
 const updateMemberController = async (_req: Request, res: Response) => {
   const { userId, id } = _req.params;

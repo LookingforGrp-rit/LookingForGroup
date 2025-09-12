@@ -2,7 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import addImageService from '#services/projects/add-image.ts';
+import addImageService from '#services/projects/images/add-image.ts';
 
 //adds an image to the project
 const addImageController = async (req: Request, res: Response) => {

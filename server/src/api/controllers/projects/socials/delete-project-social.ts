@@ -1,18 +1,13 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteTagsService } from '#services/projects/delete-tags.ts';
+import { deleteProjectSocialService } from '#services/projects/socials/delete-project-social.ts';
 
-//the tags (or their ids anyway)
-type TagInputs = {
-  tagIds?: number[];
-};
+//deletes a project's social
+export const deleteProjectSocial = async (req: Request, res: Response): Promise<void> => {
+  const projId = parseInt(req.params.id);
+  const social = parseInt(req.params.websiteId);
 
-//deletes multiple tags from a project
-const deleteTagsController = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const tagData = req.body as TagInputs;
-
-  const result = await deleteTagsService(id, tagData);
+  const result = await deleteProjectSocialService(social, projId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -23,15 +18,17 @@ const deleteTagsController = async (req: Request, res: Response) => {
     res.status(500).json(resBody);
     return;
   }
+
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Tags not found',
+      error: 'Social not found',
       data: null,
     };
     res.status(404).json(resBody);
     return;
   }
+
   const resBody: ApiResponse = {
     status: 200,
     error: null,
@@ -39,5 +36,3 @@ const deleteTagsController = async (req: Request, res: Response) => {
   };
   res.status(200).json(resBody);
 };
-
-export default deleteTagsController;

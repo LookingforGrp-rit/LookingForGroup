@@ -1,13 +1,13 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteProjectSocialService } from '#services/projects/delete-project-social.ts';
+import { removeImageService } from '#services/projects/images/remove-image.ts';
 
-//deletes a project's social
-export const deleteProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const projId = parseInt(req.params.id);
-  const social = parseInt(req.params.websiteId);
+//removes an image frmo a project
+const removeImageController = async (req: Request, res: Response) => {
+  const projectId = parseInt(req.params.id);
+  const imageId = parseInt(req.params.picId);
 
-  const result = await deleteProjectSocialService(social, projId);
+  const result = await removeImageService(projectId, imageId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -22,17 +22,18 @@ export const deleteProjectSocial = async (req: Request, res: Response): Promise<
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Social not found',
+      error: 'Image not found',
       data: null,
     };
-    res.status(404).json(resBody);
+    res.status(500).json(resBody);
     return;
   }
-
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: null,
+    data: result,
   };
   res.status(200).json(resBody);
 };
+
+export default removeImageController;

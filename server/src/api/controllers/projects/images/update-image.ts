@@ -1,7 +1,7 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { RequestHandler } from 'express';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import getUpdateImageService from '#services/projects/update-image.ts';
+import getUpdateImageService from '#services/projects/images/update-image.ts';
 
 interface UpdateImageInfo {
   image?: string;

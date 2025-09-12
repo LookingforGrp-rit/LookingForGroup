@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import reorderImagesService from '#services/projects/reorder-images.ts';
+import reorderImagesService from '#services/projects/images/reorder-images.ts';
 
 //an array of the imageIds of each of the images in their new order
 type ImageOrder = {
