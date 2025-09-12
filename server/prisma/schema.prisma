@@ -196,7 +196,7 @@ model Users {
   lastName          String              @map("last_name") @db.Text
   profileImage      String?             @map("profile_image") @db.VarChar(100)
   headline          String              @default("") @db.VarChar(100)
-  pronouns          String              @default("") @db.Text
+  pronouns          String              @default("") @db.VarChar(20)
   title             String              @default("") @db.VarChar(50)
   academicYear      UsersAcademicYear?  @map("academic_year")
   location          String              @default("") @db.VarChar(150)
