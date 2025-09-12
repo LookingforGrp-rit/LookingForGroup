@@ -8,7 +8,8 @@ import { ThemeIcon } from './ThemeIcon';
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
 
-//To-do:
+//TODO:
+//IMPORTANT: Remove this component? ImageCarouselNew.tsx is being called and seems to work as intended.
 //Finish Discover page version of this component
 
 //Default list of images to use
@@ -104,14 +105,26 @@ export const ImageCarousel = ({
               onMouseLeave={() => handleHover(false)}
             >
               {dataList.map((image, index) => {
-                const imageLink = runningServer ? `${API_BASE}/images/projects/${image}` : image;
                 return (
                   <div
                     className="project-image-carousel-item"
                     key={index}
                     style={{ transform: `translate(-${currentIndex * 100}%)` }}
                   >
-                    <img className="project-image-carousel-image" src={imageLink} />
+                    <img
+                      className="project-image-carousel-image"
+                      src={`${API_BASE}/images/projects/${image}`}
+                      alt={'project image'}
+                      // Cannot use usePreloadedImage function because this is in a callback
+                      onLoad={(e) => {
+                        const projectImg = e.target as HTMLImageElement;
+                        projectImg.src = `${API_BASE}/images/projects/${image}`;
+                      }}
+                      onError={(e) => {
+                        const projectImg = e.target as HTMLImageElement;
+                        projectImg.src = image;
+                      }}
+                    />
                   </div>
                 );
               })}
@@ -123,11 +136,7 @@ export const ImageCarousel = ({
                 onClick={() => handleIndexChange(currentIndex - 1)}
                 id="project-image-carousel-left"
               >
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'left'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Previous Image'}/>
               </button>
               <div id="carousel-tabs">
                 {dataList.map((image, index) => {
@@ -148,11 +157,7 @@ export const ImageCarousel = ({
                 onClick={() => handleIndexChange(currentIndex + 1)}
                 id="project-image-carousel-right"
               >
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'right'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Next Image'}/>
               </button>
             </div>
           </>
@@ -172,11 +177,7 @@ export const ImageCarousel = ({
                 onClick={() => handleIndexChange(currentIndex - 1)}
                 id="discover-carousel-left"
               >
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'left'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Previous Image'}/>
               </button>
               <div
                 id="discover-carousel-content"
@@ -205,22 +206,14 @@ export const ImageCarousel = ({
 
               <button className="discover-carousel-link">
                 Learn More
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'right'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Next Image'}/>
               </button>
 
               <button
                 onClick={() => handleIndexChange(currentIndex + 1)}
                 id="discover-carousel-right"
               >
-                <ThemeIcon
-                  src={'assets/arrow_light.svg'}
-                  darkSrc={'assets/arrow_dark.svg'}
-                  alt={'right'}
-                />
+                <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Next Image'}/>
               </button>
             </div>
 

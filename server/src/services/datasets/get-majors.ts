@@ -1,17 +1,18 @@
 import prisma from '#config/prisma.ts';
+import { MajorSelector } from '#services/selectors/datasets/major.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformMajor } from '#services/transformers/datasets/major.ts';
 import type { Major } from '../../../../shared/types.ts';
 
 type GetMajorsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 const getMajorsService = async (): Promise<Major[] | GetMajorsServiceError> => {
   try {
-    return await prisma.majors.findMany({
-      select: {
-        majorId: true,
-        label: true,
-      },
+    const majors = await prisma.majors.findMany({
+      select: MajorSelector,
     });
+
+    return majors.map(transformMajor);
   } catch (e) {
     console.error(`Error in getMajorsService: ${JSON.stringify(e)}`);
 

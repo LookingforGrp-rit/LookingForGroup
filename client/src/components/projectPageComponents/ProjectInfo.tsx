@@ -15,6 +15,7 @@ export const ProjectInfo = (props) => {
   let key = 0; //key is not required for functionality, but react will give an error without it when using the .map function later
   return (
     <div id="project-info">
+      {/* Get image of project and use preloader function in functions/imageLoad.tsx */}
       <img id="project-picture" src={profilePlaceholder} alt="project picture" />
 
       <div id="project-header">
@@ -29,6 +30,7 @@ export const ProjectInfo = (props) => {
           {projectPageHelper.createMemberCount(props.projectData)}
         </div>
         <div id="project-member-preview">
+          {/* Get image of members and use preloader function in functions/imageLoad.tsx */}
           <img id="member-preview-1" src={profilePlaceholder} />
           <img id="member-preview-2" src={profilePlaceholder} />
           <img id="member-preview-3" src={profilePlaceholder} />
@@ -48,11 +50,7 @@ export const ProjectInfo = (props) => {
               className="icon-button"
               onClick={projectPageHelper.toggleOptionDisplay}
             >
-              <ThemeIcon
-                src={'assets/menu_light.svg'}
-                darkSrc={'assets/menu_dark.svg'}
-                alt={'...'}
-              />
+              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'...'}/>
             </button>
             <div id="more-options-popup" className="hide">
               <button className="white-button" onClick={projectPageHelper.blockProject}>
