@@ -7,6 +7,7 @@ import profilePicture from '../images/blue_frog.png';
 import followPicture from '../images/heart.png';
 
 import { projects } from '../constants/fakeData'; // FIXME: use data in db
+import usePreloadedImage from '../functions/imageLoad';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -56,7 +57,7 @@ export const ProfileCard = ({ profile }: { profile: ProfileData }) => {
   return (
     <div className="discover-card">
       <img
-        src={profile.profile_image ? `${API_BASE}/images/profiles/${profile.profile_image}` : profilePicture}
+        src={usePreloadedImage(`${API_BASE}/images/profiles/${profile.profile_image}`, profilePicture)}
         alt={'profile image'}
       />
       <div id="discover-card-body">
