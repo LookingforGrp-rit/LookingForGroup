@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, ReactNode, useRef, useEffect } from 'react';
+import { useState, createContext, useContext, ReactNode, useRef, useEffect, useCallback } from 'react';
 import close from '../icons/cancel.png';
 //This is a reusable component that can be used to make popup windows on pages
 
@@ -35,6 +35,9 @@ const PopupContext = createContext<PopupContextType>({
   open: false,
   setOpen: () => { },
 });
+
+// Create array to properly close popups, specifically stacked ones
+let popupStack: (() => void)[] = [];
 
 //Button component that will open/close the popup
 export const PopupButton = ({
@@ -87,31 +90,45 @@ export const PopupContent = ({
   const { open, setOpen } = useContext(PopupContext);
   const popupRef = useRef(null);
 
-  const closePopup = () => {
+  const closePopup = useCallback(() => {
     callback();
     setOpen(false);
-  };
+  }, [callback, setOpen]);
 
-  // Close on Escape
+  useEffect(() => {
+    // On popup open, add closer to stack
+    if (open) {
+      popupStack.push(closePopup);
+    }
+
+    return () => {
+      // Remove when closed
+      popupStack = popupStack.filter(func => func !== closePopup);
+    };
+  }, [open, closePopup]);
+
+  // Close on Escape - only close one at a time
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closePopup();
+      if (e.key === 'Escape' && popupStack[popupStack.length - 1] === closePopup) {
+        closePopup();
+      }
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [closePopup]);
 
   // Close on click outside
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const refNode = popupRef.current as Node | null;
       if (refNode && e.target instanceof Node && !refNode.contains(e.target) && e.button !== 2) {
-        closePopup();
-      }
+          closePopup();
+      };
     };
     document.addEventListener('mouseup', handleClickOutside);
     return () => document.removeEventListener('mouseup', handleClickOutside);
-  }, []);
+  }, [closePopup]);
 
   // Close on browser button click
   useEffect(() => {
@@ -140,9 +157,10 @@ export const PopupContent = ({
         <div className="popup-cover" />
         <div className="popup-container">
           <div className="popup" ref={popupRef}>
-            <button className={`popup-close ${profilePopup === true ? 'popup-close-edit' : ''}`} onClick={closePopup}>
-              <img src={close} alt="close" />
-            </button>
+              <button className={`popup-close ${profilePopup === true ? 'popup-close-edit' : ''}`}
+                onClick={closePopup}>
+                <img src={close} alt="close" />
+              </button>  
             {children}
           </div>
         </div>
