@@ -1,18 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import type { SkillProficiency } from '#prisma-models/index.js';
-import updateSkillsService from '#services/me/update-skills.ts';
+import { getSkillsService } from '#services/me/skills/get-skills.ts';
 
-type SkillInfo = {
-  skillId: number;
-  position?: number;
-  proficiency: SkillProficiency;
-};
-
-//add skills to user profile
-const updateSkillsController = async (req: Request, res: Response) => {
-  const data: SkillInfo = req.body as SkillInfo;
-
+//get skills on user profile
+export const getSkills = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -37,18 +28,7 @@ const updateSkillsController = async (req: Request, res: Response) => {
     return;
   }
 
-  //update the skills they wanna update
-  const result = await updateSkillsService(UserId, data);
-
-  if (result === 'NOT_FOUND') {
-    const resBody: ApiResponse = {
-      status: 404,
-      error: 'Skill not found',
-      data: null,
-    };
-    res.status(404).json(resBody);
-    return;
-  }
+  const result = await getSkillsService(UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -60,12 +40,20 @@ const updateSkillsController = async (req: Request, res: Response) => {
     return;
   }
 
-  const resBody: ApiResponse = {
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Skills not found',
+      data: null,
+    };
+    res.status(404).json(resBody);
+    return;
+  }
+
+  const resBody: ApiResponse<typeof result> = {
     status: 200,
     error: null,
     data: result,
   };
   res.status(200).json(resBody);
 };
-
-export default updateSkillsController;

@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteSocialService } from '#services/me/delete-social.ts';
+import { addProjectFollowingService } from '#services/me/followings/add-follow-proj.ts';
 
-//delete a social from user profile
-export const deleteSocial = async (req: Request, res: Response): Promise<void> => {
+//add project to follow list
+export const addProjectFollowing = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -14,24 +14,31 @@ export const deleteSocial = async (req: Request, res: Response): Promise<void> =
     return;
   }
 
-  //current user ID
-  const UserId = parseInt(req.currentUser);
+  const userId = parseInt(req.currentUser);
+  const projectId = parseInt(req.params.id);
 
-  //check if ID is number
-  if (isNaN(UserId)) {
+  //validate input
+  if (isNaN(userId) || isNaN(projectId)) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Invalid user ID',
+      error: 'Invalid user ID or project ID',
       data: null,
     };
     res.status(400).json(resBody);
     return;
   }
 
-  //the one you're deleting
-  const social = parseInt(req.params.websiteId);
+  const result = await addProjectFollowingService(userId, projectId);
 
-  const result = await deleteSocialService(social, UserId);
+  if (result === 'CONFLICT') {
+    const resBody: ApiResponse = {
+      status: 409,
+      error: 'Already following project',
+      data: null,
+    };
+    res.status(409).json(resBody);
+    return;
+  }
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -46,17 +53,17 @@ export const deleteSocial = async (req: Request, res: Response): Promise<void> =
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Social not found',
+      error: 'Project not found',
       data: null,
     };
     res.status(404).json(resBody);
     return;
   }
 
-  const resBody: ApiResponse<null> = {
-    status: 200,
+  const resBody: ApiResponse<typeof result> = {
+    status: 201,
     error: null,
-    data: null,
+    data: result,
   };
-  res.status(200).json(resBody);
+  res.status(201).json(resBody);
 };

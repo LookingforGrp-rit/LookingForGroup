@@ -1,19 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import type { SkillProficiency } from '#prisma-models/index.js';
-import addSkillsService from '#services/me/add-skills.ts';
+import { deleteSocialService } from '#services/me/socials/delete-social.ts';
 
-type Skill = {
-  userId: number;
-  skillId: number;
-  position: number;
-  proficiency: SkillProficiency;
-};
-
-//add skills to user profile
-const addSkillsController = async (req: Request, res: Response) => {
-  const data: Skill[] = req.body as Skill[];
-
+//delete a social from user profile
+export const deleteSocial = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -38,12 +28,10 @@ const addSkillsController = async (req: Request, res: Response) => {
     return;
   }
 
-  data.forEach((skill) => {
-    skill.userId = UserId;
-  });
+  //the one you're deleting
+  const social = parseInt(req.params.websiteId);
 
-  //add the skills they wanna add
-  const result = await addSkillsService(data);
+  const result = await deleteSocialService(social, UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -55,12 +43,20 @@ const addSkillsController = async (req: Request, res: Response) => {
     return;
   }
 
-  const resBody: ApiResponse = {
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Social not found',
+      data: null,
+    };
+    res.status(404).json(resBody);
+    return;
+  }
+
+  const resBody: ApiResponse<null> = {
     status: 200,
     error: null,
-    data: result,
+    data: null,
   };
   res.status(200).json(resBody);
 };
-
-export default addSkillsController;

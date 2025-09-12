@@ -1,9 +1,14 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getSocialsService } from '#services/me/get-socials.ts';
+import { updateSocialService } from '#services/me/socials/update-social.ts';
 
-//get socials on user profile
-export const getSocials = async (req: Request, res: Response): Promise<void> => {
+type Social = {
+  websiteId: number;
+  url: string;
+};
+
+//update one of current user's social
+export const updateSocial = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -28,7 +33,9 @@ export const getSocials = async (req: Request, res: Response): Promise<void> => 
     return;
   }
 
-  const result = await getSocialsService(UserId);
+  const social: Social = req.body as Social;
+
+  const result = await updateSocialService(social, UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -43,7 +50,7 @@ export const getSocials = async (req: Request, res: Response): Promise<void> => 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Socials not found',
+      error: 'Social not found',
       data: null,
     };
     res.status(404).json(resBody);

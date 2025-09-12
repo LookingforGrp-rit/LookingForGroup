@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { addUserFollowingService } from '#services/me/add-follow-user.ts';
+import { addUserFollowingService } from '#services/me/followings/add-follow-user.ts';
 
 //add user to follow list
 export const addUserFollowing = async (req: Request, res: Response): Promise<void> => {

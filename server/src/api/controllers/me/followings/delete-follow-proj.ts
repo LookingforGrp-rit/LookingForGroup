@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteUserFollowService } from '#services/me/delete-follow-user.ts';
+import { deleteProjectFollowService } from '#services/me/followings/delete-follow-proj.ts';
 
-// delete a user from follow list
-export const deleteUserFollowing = async (req: Request, res: Response): Promise<void> => {
+// delete a project from follow list
+export const deleteProjectFollowing = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -15,13 +15,13 @@ export const deleteUserFollowing = async (req: Request, res: Response): Promise<
   }
 
   const userId = parseInt(req.currentUser);
-  const followingId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.followId);
 
   //validate input
-  if (isNaN(userId) || isNaN(followingId)) {
+  if (isNaN(userId) || isNaN(projectId)) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Invalid user IDs',
+      error: 'Invalid user ID or project ID',
       data: null,
     };
     res.status(400).json(resBody);
@@ -29,18 +29,7 @@ export const deleteUserFollowing = async (req: Request, res: Response): Promise<
   }
 
   //call service
-  const result = await deleteUserFollowService(userId, followingId);
-
-  //not found
-  if (result === 'NOT_FOUND') {
-    const resBody: ApiResponse = {
-      status: 404,
-      error: 'User is not already followed',
-      data: null,
-    };
-    res.status(404).json(resBody);
-    return;
-  }
+  const result = await deleteProjectFollowService(userId, projectId);
 
   //internal error
   if (result === 'INTERNAL_ERROR') {
@@ -50,6 +39,17 @@ export const deleteUserFollowing = async (req: Request, res: Response): Promise<
       data: null,
     };
     res.status(500).json(resBody);
+    return;
+  }
+
+  //not found
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Project is not already followed',
+      data: null,
+    };
+    res.status(404).json(resBody);
     return;
   }
 

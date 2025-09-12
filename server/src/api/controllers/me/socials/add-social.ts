@@ -1,9 +1,14 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getSkillsService } from '#services/me/get-skills.ts';
+import { addSocialService } from '#services/me/socials/add-social.ts';
 
-//get skills on user profile
-export const getSkills = async (req: Request, res: Response): Promise<void> => {
+type Social = {
+  websiteId: number;
+  url: string;
+};
+
+//add social to user profile
+export const addSocial = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -28,7 +33,9 @@ export const getSkills = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const result = await getSkillsService(UserId);
+  const social: Social = req.body as Social;
+
+  const result = await addSocialService(social, UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -43,7 +50,7 @@ export const getSkills = async (req: Request, res: Response): Promise<void> => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Skills not found',
+      error: 'Social not found',
       data: null,
     };
     res.status(404).json(resBody);
