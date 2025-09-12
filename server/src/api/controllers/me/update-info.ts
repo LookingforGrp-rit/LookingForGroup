@@ -17,7 +17,7 @@ interface UpdateUserInfo {
   bio?: string;
   visibility?: number;
   username?: string;
-  phoneNumber?: number;
+  phoneNumber?: string;
   profileImage?: string;
 }
 
