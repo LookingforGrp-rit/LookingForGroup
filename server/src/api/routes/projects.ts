@@ -28,7 +28,7 @@ router.patch(
   '/:id',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   upload.single('thumbnail'),
   PROJECT.updateProject,
 );
@@ -38,7 +38,7 @@ router.delete(
   '/:id',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.deleteProject,
 );
 
@@ -51,7 +51,7 @@ router.post(
   '/:id/images',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   upload.single('image'),
   PROJECT.addImage,
 );
@@ -60,7 +60,7 @@ router.patch(
   '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   upload.single('image'),
   PROJECT.updateImage,
 );
@@ -69,7 +69,7 @@ router.delete(
   '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.removeImage,
 );
 //Reorders a project's images
@@ -77,7 +77,7 @@ router.put(
   '/:id/images/reorder',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.reorderImages,
 );
 
@@ -90,7 +90,7 @@ router.post(
   '/:id/mediums',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.addMediums,
 );
 //Removes mediums from a project
@@ -98,7 +98,7 @@ router.delete(
   '/:id/mediums/',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.deleteMediums,
 );
 
@@ -109,7 +109,7 @@ router.post(
   '/:id/members',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.addMember,
 );
 //Edits a member of a specific project through id
@@ -117,7 +117,7 @@ router.put(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.updateMember,
 );
 //Removes a member from a specific project through project and user ID
@@ -125,33 +125,28 @@ router.delete(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.deleteMember,
 );
 
 // SOCIALS ROUTES
 
 //Adds a project social
-router.post(
-  '/:id/socials',
-  requiresLogin,
-  //requiresProjectOwner,
-  PROJECT.addProjectSocial,
-);
+router.post('/:id/socials', requiresLogin, requiresProjectOwner, PROJECT.addProjectSocial);
 //Gets all project socials
 router.get('/:id/socials', PROJECT.getProjectSocials);
 //Updates a project social
 router.put(
   '/:id/socials/:websiteId',
   requiresLogin,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.updateProjectSocial,
 );
 //Deletes a project social
 router.delete(
   '/:id/socials/:websiteId',
   requiresLogin,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.deleteProjectSocial,
 );
 
@@ -164,7 +159,7 @@ router.delete(
   '/:id/tags/',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.deleteTags,
 );
 //Adds a project tag
