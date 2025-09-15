@@ -58,9 +58,9 @@ export const addSocial = async (req: Request, res: Response): Promise<void> => {
   }
 
   const resBody: ApiResponse<typeof result> = {
-    status: 200,
+    status: 201,
     error: null,
     data: result,
   };
-  res.status(200).json(resBody);
+  res.status(201).json(resBody);
 };
