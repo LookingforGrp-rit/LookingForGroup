@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { createUser } from '#controllers/users/create-user.ts';
+import { getProjectsFollowing } from '#controllers/users/followings/get-proj-following.ts';
+import { getUserFollowers } from '#controllers/users/followings/get-user-followers.ts';
+import { getUserFollowing } from '#controllers/users/followings/get-user-following.ts';
 import { getAllUsers } from '#controllers/users/get-all.ts';
-import { getUserByEmail } from '#controllers/users/get-by-email.ts';
-import { getUsernameById } from '#controllers/users/get-by-id.ts';
-import { getUserByUsername } from '#controllers/users/get-by-username.ts';
-import { getProjectsFollowing } from '#controllers/users/get-proj-following.ts';
-import { getUserFollowers } from '#controllers/users/get-user-followers.ts';
-import { getUserFollowing } from '#controllers/users/get-user-following.ts';
+import { getUserByEmail } from '#controllers/users/get-user/get-by-email.ts';
+import { getUsernameById } from '#controllers/users/get-user/get-by-id.ts';
+import { getUserByUsername } from '#controllers/users/get-user/get-by-username.ts';
 import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
 import requiresLogin from '../middleware/requires-login.ts';
 
@@ -15,27 +15,28 @@ const router = Router();
 //Gets users
 router.get('/', getAllUsers);
 
-//Gets users by id
-router.get('/:id', getUsernameById);
-
-//Gets users by username
-router.get('/search-username/:username', getUserByUsername);
-
-// Gets users by email
-router.get('/search-email/:email', getUserByEmail);
+//Creates a new user
+router.post('/', requiresLogin, createUser);
 
 //Gets another user's projects
 router.get('/:id/projects/', getOtherUserProjects);
 
+// FOLLOW ROUTES
+
 //Gets projects user is following
 router.get('/:id/followings/projects', requiresLogin, getProjectsFollowing);
-
 //Gets users user is following
 router.get('/:id/followings/people', requiresLogin, getUserFollowing);
-
 //Gets users that follow this user
 router.get('/:id/followers', requiresLogin, getUserFollowers);
 
-router.post('/', requiresLogin, createUser);
+// GET USER ROUTES
+
+//Gets users by id
+router.get('/:id', getUsernameById);
+//Gets users by username
+router.get('/search-username/:username', getUserByUsername);
+// Gets users by email
+router.get('/search-email/:email', getUserByEmail);
 
 export default router;
