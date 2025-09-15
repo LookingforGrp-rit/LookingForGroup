@@ -23,9 +23,6 @@ router.post(
 //Get a specific project
 router.get('/:id', PROJECT.getProjectByID);
 
-//Get a project's tags
-router.get('/:id/tags', PROJECT.getTags);
-
 //Edits a project through a specific id
 router.patch(
   '/:id',
@@ -34,33 +31,6 @@ router.patch(
   //requiresProjectOwner,
   upload.single('thumbnail'),
   PROJECT.updateProject,
-);
-
-//Adds a project social
-router.post(
-  '/:id/socials',
-  requiresLogin,
-  //requiresProjectOwner,
-  PROJECT.addProjectSocial,
-);
-
-//Gets all project socials
-router.get('/:id/socials', PROJECT.getProjectSocials);
-
-//Updates a project social
-router.put(
-  '/:id/socials/:websiteId',
-  requiresLogin,
-  //requiresProjectOwner,
-  PROJECT.updateProjectSocial,
-);
-
-//Deletes a project social
-router.delete(
-  '/:id/socials/:websiteId',
-  requiresLogin,
-  //requiresProjectOwner,
-  PROJECT.deleteProjectSocial,
 );
 
 //Deletes project through a specific id
@@ -72,48 +42,10 @@ router.delete(
   PROJECT.deleteProject,
 );
 
-//Deletes the tags in a project
-router.delete(
-  '/:id/tags/',
-  requiresLogin,
-  injectCurrentUser,
-  //requiresProjectOwner,
-  PROJECT.deleteTags,
-);
+// IMAGE ROUTES
 
 //Receives pictures from project through id
 router.get('/:id/images', PROJECT.getProjectImages);
-
-//Reorders a project's images
-router.put(
-  '/:id/images/reorder',
-  requiresLogin,
-  injectCurrentUser,
-  //requiresProjectOwner,
-  PROJECT.reorderImages,
-);
-
-//Gets a project's mediums
-router.get('/:id/mediums', PROJECT.getProjectMediums);
-
-//Adds mediums to a project
-router.post(
-  '/:id/mediums',
-  requiresLogin,
-  injectCurrentUser,
-  //requiresProjectOwner,
-  PROJECT.addMediums,
-);
-
-//Removes mediums from a project
-router.delete(
-  '/:id/mediums/',
-  requiresLogin,
-  injectCurrentUser,
-  //requiresProjectOwner,
-  PROJECT.deleteMediums,
-);
-
 //Creates a new picture for a project
 router.post(
   '/:id/images',
@@ -123,7 +55,6 @@ router.post(
   upload.single('image'),
   PROJECT.addImage,
 );
-
 //Changes a picture for a project
 router.patch(
   '/:id/images/:imageId',
@@ -133,10 +64,6 @@ router.patch(
   upload.single('image'),
   PROJECT.updateImage,
 );
-
-//Adds a project tag
-router.post('/:id/tags', requiresLogin, injectCurrentUser, requiresProjectOwner, PROJECT.addTags);
-
 //Removes picture from a project
 router.delete(
   '/:id/images/:imageId',
@@ -145,6 +72,37 @@ router.delete(
   //requiresProjectOwner,
   PROJECT.removeImage,
 );
+//Reorders a project's images
+router.put(
+  '/:id/images/reorder',
+  requiresLogin,
+  injectCurrentUser,
+  //requiresProjectOwner,
+  PROJECT.reorderImages,
+);
+
+// MEDIUMS ROUTES
+
+//Gets a project's mediums
+router.get('/:id/mediums', PROJECT.getProjectMediums);
+//Adds mediums to a project
+router.post(
+  '/:id/mediums',
+  requiresLogin,
+  injectCurrentUser,
+  //requiresProjectOwner,
+  PROJECT.addMediums,
+);
+//Removes mediums from a project
+router.delete(
+  '/:id/mediums/',
+  requiresLogin,
+  injectCurrentUser,
+  //requiresProjectOwner,
+  PROJECT.deleteMediums,
+);
+
+// MEMBERS ROUTES
 
 //Adds member to a specific project through id
 router.post(
@@ -154,7 +112,6 @@ router.post(
   //requiresProjectOwner,
   PROJECT.addMember,
 );
-
 //Edits a member of a specific project through id
 router.put(
   '/:id/members/:userId',
@@ -163,7 +120,6 @@ router.put(
   //requiresProjectOwner,
   PROJECT.updateMember,
 );
-
 //Removes a member from a specific project through project and user ID
 router.delete(
   '/:id/members/:userId',
@@ -172,5 +128,46 @@ router.delete(
   //requiresProjectOwner,
   PROJECT.deleteMember,
 );
+
+// SOCIALS ROUTES
+
+//Adds a project social
+router.post(
+  '/:id/socials',
+  requiresLogin,
+  //requiresProjectOwner,
+  PROJECT.addProjectSocial,
+);
+//Gets all project socials
+router.get('/:id/socials', PROJECT.getProjectSocials);
+//Updates a project social
+router.put(
+  '/:id/socials/:websiteId',
+  requiresLogin,
+  //requiresProjectOwner,
+  PROJECT.updateProjectSocial,
+);
+//Deletes a project social
+router.delete(
+  '/:id/socials/:websiteId',
+  requiresLogin,
+  //requiresProjectOwner,
+  PROJECT.deleteProjectSocial,
+);
+
+// TAGS ROUTES
+
+//Get a project's tags
+router.get('/:id/tags', PROJECT.getTags);
+//Deletes the tags in a project
+router.delete(
+  '/:id/tags/',
+  requiresLogin,
+  injectCurrentUser,
+  //requiresProjectOwner,
+  PROJECT.deleteTags,
+);
+//Adds a project tag
+router.post('/:id/tags', requiresLogin, injectCurrentUser, requiresProjectOwner, PROJECT.addTags);
 
 export default router;

@@ -3,7 +3,7 @@ import type { RequestHandler } from 'express';
 import type { UsersAcademicYear } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import { updateUserInfoService } from '#services/me/update-info.ts';
-import { getUserByUsernameService } from '#services/users/get-by-username.ts';
+import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
 
 interface UpdateUserInfo {
   firstName?: string;
