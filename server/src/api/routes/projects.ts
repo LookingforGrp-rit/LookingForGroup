@@ -23,6 +23,9 @@ router.post(
 //Get a specific project
 router.get('/:id', PROJECT.getProjectByID);
 
+//Get a specific project's members
+router.get('/:id/members', PROJECT.getMembers);
+
 //Edits a project through a specific id
 router.patch(
   '/:id',
