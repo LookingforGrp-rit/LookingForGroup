@@ -7,8 +7,27 @@ import createProjectService from '#services/projects/create-proj.ts';
 
 //creates a project
 const createProjectController = async (req: Request, res: Response) => {
-  const curUserId = req.currentUser;
-  req.body['userId'] = parseInt(curUserId as string);
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const userId = parseInt(req.currentUser);
+
+  if (isNaN(userId)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user IDs',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
   const data: Prisma.ProjectsCreateInput = {
     title: req.body.title as string,
     hook: req.body.hook as string,
@@ -19,9 +38,10 @@ const createProjectController = async (req: Request, res: Response) => {
     audience: req.body.audience as string,
     users: {
       connect: {
-        userId: req.body.userId as number,
+        userId,
       },
     },
+    members: {},
   };
 
   //thumbnail handling
@@ -54,7 +74,7 @@ const createProjectController = async (req: Request, res: Response) => {
     data.thumbnail = dbImage.location;
   }
 
-  const result = await createProjectService(data);
+  const result = await createProjectService(data, userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

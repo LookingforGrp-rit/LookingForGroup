@@ -9,9 +9,21 @@ type CreateProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUN
 
 const createProjectService = async (
   data: Prisma.ProjectsCreateInput,
+  curUserId: number,
 ): Promise<ProjectDetail | CreateProjectServiceError> => {
   try {
     const project = await prisma.projects.create({ data, select: ProjectDetailSelector });
+
+    await prisma.members.create({
+      data: {
+        //projectId
+        userId: curUserId,
+        projectId: project.projectId,
+        roleId: 77, //owner
+        // (this version doesn't have a label param i can use to hook it up so i just used the id instead)
+        // and the version with the label was being annoying so
+      },
+    });
 
     return transformProjectToDetail(project);
   } catch (e) {
