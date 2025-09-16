@@ -17,15 +17,27 @@ const createProjectService = async (
     await prisma.members.create({
       data: {
         //projectId
-        userId: curUserId,
-        projectId: project.projectId,
-        roleId: 77, //owner
-        // (this version doesn't have a label param i can use to hook it up so i just used the id instead)
-        // and the version with the label was being annoying so
+        users: {
+          connect: { userId: curUserId },
+        },
+        projects: {
+          connect: { projectId: project.projectId },
+        },
+        roles: {
+          connect: { label: 'Owner' },
+        },
       },
     });
 
-    return transformProjectToDetail(project);
+    const result = await prisma.projects.findUnique({
+      where: {
+        projectId: project.projectId,
+      },
+      select: ProjectDetailSelector,
+    });
+    if (!result) return 'INTERNAL_ERROR';
+
+    return transformProjectToDetail(result);
   } catch (e) {
     console.error('Error in createProjectService:', e);
     return 'INTERNAL_ERROR';
