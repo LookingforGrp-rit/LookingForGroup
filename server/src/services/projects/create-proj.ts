@@ -12,11 +12,10 @@ const createProjectService = async (
   curUserId: number,
 ): Promise<ProjectDetail | CreateProjectServiceError> => {
   try {
-    const project = await prisma.projects.create({ data, select: ProjectDetailSelector });
+    const project = await prisma.projects.create({ data, select: { projectId: true } });
 
     await prisma.members.create({
       data: {
-        //projectId
         users: {
           connect: { userId: curUserId },
         },
