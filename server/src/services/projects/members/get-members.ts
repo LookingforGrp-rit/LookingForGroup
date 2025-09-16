@@ -19,7 +19,7 @@ const getMembersService = async (projectId: number): Promise<ProjectMember[] | G
 
     return members.map((member) => transformProjectMember(projectId, member));
   } catch (e) {
-    console.error(`Error in getProjectSocialsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getMemberssService: ${JSON.stringify(e)}`);
 
     return 'INTERNAL_ERROR';
   }

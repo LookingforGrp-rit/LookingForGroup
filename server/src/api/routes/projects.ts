@@ -4,7 +4,6 @@ import PROJECT from '#controllers/projects/index.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
 import requiresProjectOwner from '../middleware/requires-project-owner.ts';
-//NOTICE: requiresProjectOwner is broken
 
 const router = Router();
 
@@ -124,13 +123,7 @@ router.put(
   PROJECT.updateMember,
 );
 //Removes a member from a specific project through project and user ID
-router.delete(
-  '/:id/members/:userId',
-  requiresLogin,
-  injectCurrentUser,
-  requiresProjectOwner,
-  PROJECT.deleteMember,
-);
+router.delete('/:id/members/:userId', requiresLogin, injectCurrentUser, PROJECT.deleteMember);
 
 // SOCIALS ROUTES
 

@@ -31,7 +31,7 @@ const getMembersController = async (req: Request, res: Response): Promise<void> 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Project not found',
+      error: 'Members not found',
       data: null,
     };
     res.status(404).json(resBody);
