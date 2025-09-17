@@ -1,7 +1,8 @@
-import { describe, expect, test } from 'vitest';
+import type { MePrivate } from '@looking-for-group/shared';
+import { describe, expect, test, expectTypeOf } from 'vitest';
 import prisma from '#config/prisma.ts';
 import createUserService from '#services/users/create-user.ts';
-import { blankUserPriv } from './util.ts';
+import { mePrivateKeys } from './is-type/keys/me.ts';
 
 describe('create user', async () => {
   //James Testguy, our test user
@@ -20,13 +21,12 @@ describe('create user', async () => {
   //is it returning the right thing?
   //(i actually don't know if this checks if it's all of them or either of them)
   test('Must return Object, INTERNAL_ERROR, or CONFLICT', () => {
-    expect(user).toBeTypeOf('object');
-    expect(user).toBe('INTERNAL_ERROR');
-    expect(user).toBe('CONFLICT');
+    expectTypeOf(user).toEqualTypeOf<MePrivate | 'INTERNAL_ERROR' | 'CONFLICT'>();
+    expect(user).toEqual(expect.any(Object));
   });
   //is it the right type?
   test('Object must contain all properties in MePrivate type', () => {
-    for (const key of Object.keys(blankUserPriv)) {
+    for (const key of mePrivateKeys) {
       expect(user).toHaveProperty(key);
     }
   });
