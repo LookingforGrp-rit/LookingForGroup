@@ -221,8 +221,8 @@ export interface MeDetail extends MePreview {
     funFact: string;
     bio: string;
     projects: ProjectPreview[];
-    skills?: MySkill[];
-    socials?: MySocial[];
+    skills: MySkill[];
+    socials: MySocial[];
     following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
     followers: UserFollowsList;
 }
