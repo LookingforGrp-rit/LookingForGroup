@@ -38,11 +38,6 @@ describe.skip('create user', async () => {
   });
   //is it the right type?
   isMePrivate(user as MePrivate);
-  //i don't understand the purpose of this.
-  //does this not just always pass?
-  // we're literally passing in a MePrivate object (that has to be a MePrivate or else it yells at me)
-  //and then that code checks whether or not the MePrivate we just made, that has to be a MePrivate, is in fact a MePrivate
-  //like what are we testing for at that point
 
   //are they in the database?
   test('Database must contain the created user', async () => {

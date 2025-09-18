@@ -22,7 +22,7 @@ const createProjectController = async (req: Request, res: Response) => {
   if (isNaN(userId)) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Invalid user IDs',
+      error: 'Invalid user ID',
       data: null,
     };
     res.status(400).json(resBody);
