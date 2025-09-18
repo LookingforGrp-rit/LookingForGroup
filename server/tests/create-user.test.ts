@@ -1,35 +1,40 @@
-import { describe, expect, test } from 'vitest';
+import type { MePrivate } from '@looking-for-group/shared';
+import { describe, expect, expectTypeOf, test, vi } from 'vitest';
 import prisma from '#config/prisma.ts';
 import createUserService from '#services/users/create-user.ts';
-import { blankUserPriv } from './util.ts';
+import { containsAllKeys } from './is-type/contains-all-keys.ts';
+import { mePrivateKeys } from './is-type/keys/me.ts';
+
+vi.mock('#config/prisma.ts');
 
 describe('create user', async () => {
   //James Testguy, our test user
-  const user = await createUserService(
-    '123456789',
-    'TESTGUY',
-    'james',
-    'testguy',
-    'jtg0000@rit.edu.com',
-  );
+  const jamesTestguy = {
+    universityId: '123456789',
+    username: 'TESTGUY',
+    firstName: 'james',
+    lastName: 'testguy',
+    ritEmail: 'jtg0000@rit.edu',
+  } as MePrivate;
+  const user = (await createUserService(
+    jamesTestguy.universityId,
+    jamesTestguy.username,
+    jamesTestguy.firstName,
+    jamesTestguy.lastName,
+    jamesTestguy.ritEmail,
+  )) as MePrivate;
 
   //did it error? it better not we catch those
   test('Must not error', () => {
     expect(user).not.toThrowError();
   });
   //is it returning the right thing?
-  //(i actually don't know if this checks if it's all of them or either of them)
-  test('Must return Object, INTERNAL_ERROR, or CONFLICT', () => {
-    expect(user).toBeTypeOf('object');
-    expect(user).toBe('INTERNAL_ERROR');
-    expect(user).toBe('CONFLICT');
+  test('Must return Object', () => {
+    expectTypeOf(user).toEqualTypeOf<MePrivate>();
+    expect(user).toEqual(expect.any(Object));
   });
   //is it the right type?
-  test('Object must contain all properties in MePrivate type', () => {
-    for (const key of Object.keys(blankUserPriv)) {
-      expect(user).toHaveProperty(key);
-    }
-  });
+  containsAllKeys<MePrivate>('MePrivate', user, mePrivateKeys);
   //are they in the database?
   test('Database must contain the created user', async () => {
     const getHim = await prisma.users.findUnique({

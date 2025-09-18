@@ -6,7 +6,7 @@
   "scripts": {
     "start": "node src/index.ts",
     "dev": "nodemon",
-    "test": "vitest run",
+    "test": "vitest",
     "lint": "eslint --fix .",
     "lint:types": "tsc --project tsconfig.json --noEmit",
     "format": "prettier --write ."
@@ -52,6 +52,7 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.38.0",
     "vitest": "^3.2.4",
+    "vitest-mock-extended": "^3.1.0",
     "yamljs": "^0.3.0"
   }
 }
