@@ -32,6 +32,7 @@ export default tseslint.config(
     plugins: { vitest },
     rules: {
       ...vitest.configs.recommended.rules,
+      '@typescript-eslint/unbound-method': 'off',
     },
   },
   {
