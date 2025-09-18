@@ -7,7 +7,7 @@ import {
   emailHeaderKey,
 } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
-import createUserService from '#services/users/create-user.ts';
+import { createUserService } from '#services/users/create-user.ts';
 import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
 
 //creates a user
