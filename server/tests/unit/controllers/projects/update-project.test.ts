@@ -1,5 +1,6 @@
 import type { Readable } from 'stream';
-import type { Request, Response } from 'express';
+import type { AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import { describe, expect, test, vi } from 'vitest';
 import updateProjectsController from '#controllers/projects/update-project.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
@@ -21,7 +22,7 @@ const req = {
     description: 'The first game ever created by James Testguy',
     status: 'Planning',
   },
-} as unknown as Request;
+} as unknown as AuthenticatedRequest;
 
 //dummy resp
 const res = {
@@ -44,21 +45,6 @@ const file = {
 };
 
 describe('updateProject', () => {
-  //currentUser is undefined, should return 400
-  test('Must return 400 with invalid currentUser', async () => {
-    req.currentUser = undefined;
-
-    const resBody = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-
-    await updateProjectsController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-  });
-
   //currentUser has a non-numerical id, should return 400
   test('Must return 400 when currentUser id is not a number', async () => {
     req.currentUser = 'nowhere NEAR a number';
