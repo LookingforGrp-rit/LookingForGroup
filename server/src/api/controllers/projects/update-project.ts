@@ -1,5 +1,5 @@
 import type { ApiResponse } from '@looking-for-group/shared';
-import type { RequestHandler } from 'express';
+import type { Request, Response } from 'express';
 import type { ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import updateProjectService from '#services/projects/update-proj.ts';
@@ -15,10 +15,7 @@ interface UpdateProjectInfo {
 }
 
 //updates a project's info
-const updateProjectsController: RequestHandler<{ id: string }, unknown, UpdateProjectInfo> = async (
-  req,
-  res,
-): Promise<void> => {
+const updateProjectsController = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -42,12 +39,17 @@ const updateProjectsController: RequestHandler<{ id: string }, unknown, UpdatePr
   }
 
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body as UpdateProjectInfo;
 
   //validate ID
   const projectId = parseInt(id);
   if (isNaN(projectId)) {
-    res.status(400).json({ message: 'Invalid project ID' });
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid project ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
     return;
   }
 
@@ -102,15 +104,30 @@ const updateProjectsController: RequestHandler<{ id: string }, unknown, UpdatePr
   const result = await updateProjectService(projectId, updates);
 
   if (result === 'NOT_FOUND') {
-    res.status(404).json({ message: 'Project not found' });
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Project not found',
+      data: null,
+    };
+    res.status(404).json(resBody);
     return;
   }
   if (result === 'INTERNAL_ERROR') {
-    res.status(500).json({ message: 'Internal Server Error' });
+    const resBody: ApiResponse = {
+      status: 500,
+      error: 'Internal Server Error',
+      data: null,
+    };
+    res.status(500).json(resBody);
     return;
   }
 
-  res.status(200).json(result);
+  const resBody: ApiResponse = {
+    status: 200,
+    error: null,
+    data: result,
+  };
+  res.status(200).json(resBody);
 };
 
 export default updateProjectsController;
