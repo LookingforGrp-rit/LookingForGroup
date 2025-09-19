@@ -4,7 +4,7 @@ import { describe, expect, test, vi } from 'vitest';
 import updateProjectsController from '#controllers/projects/update-project.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import updateProjectService from '#services/projects/update-proj.ts';
-import { blankProjectDetail } from '../../blanks/projects.ts';
+import { blankProjectDetail } from '#tests/resources/blanks/projects.ts';
 
 vi.mock('#services/projects/update-proj.ts');
 vi.mock('#services/images/upload-image.ts');
@@ -43,7 +43,7 @@ const file = {
   buffer: {} as unknown as Buffer,
 };
 
-describe('createProject', () => {
+describe('updateProject', () => {
   //currentUser is undefined, should return 400
   test('Must return 400 with invalid currentUser', async () => {
     req.currentUser = undefined;
