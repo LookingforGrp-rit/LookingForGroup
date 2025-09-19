@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getMyProjectsService } from '#services/me/get-my-proj.ts';
+import { getMyProjectsService } from '#services/me/get-my-projects.ts';
 
 //get projects user owns/is a member of
 export const getMyProjects = async (req: Request, res: Response): Promise<void> => {

@@ -3,7 +3,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import type { Prisma, ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import createProjectService from '#services/projects/create-proj.ts';
+import createProjectService from '#services/projects/create-project.ts';
 
 //creates a project
 const createProjectController = async (req: Request, res: Response) => {

@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
-import getProjectByIdService from '#services/projects/get-proj-id.ts';
+import getProjectByIdService from '#services/projects/get-project-id.ts';
 
 const requiresProjectOwner = async (request: Request, response: Response, next: NextFunction) => {
   if (request.currentUser === undefined) {

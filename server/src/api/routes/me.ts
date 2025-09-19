@@ -1,12 +1,12 @@
 import { Router } from 'express';
 import { upload } from '#config/multer.ts';
 import { deleteUser } from '#controllers/me/delete-user.ts';
-import { addProjectFollowing } from '#controllers/me/followings/add-follow-proj.ts';
+import { addProjectFollowing } from '#controllers/me/followings/add-follow-project.ts';
 import { addUserFollowing } from '#controllers/me/followings/add-follow-user.ts';
-import { deleteProjectFollowing } from '#controllers/me/followings/delete-follow-proj.ts';
+import { deleteProjectFollowing } from '#controllers/me/followings/delete-follow-project.ts';
 import { deleteUserFollowing } from '#controllers/me/followings/delete-follow-user.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
-import { getMyProjects } from '#controllers/me/get-my-proj.ts';
+import { getMyProjects } from '#controllers/me/get-my-projects.ts';
 import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
 import { deleteSkills } from '#controllers/me/skills/delete-skills.ts';

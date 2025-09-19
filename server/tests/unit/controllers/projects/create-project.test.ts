@@ -3,8 +3,8 @@ import type { Request, Response } from 'express';
 import { describe, expect, test, vi } from 'vitest';
 import createProjectController from '#controllers/projects/create-project.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import createProjectService from '#services/projects/create-proj.ts';
-import { blankProjectDetail } from '../../../resources/blanks/projects.ts';
+import createProjectService from '#services/projects/create-project.ts';
+import { blankProjectDetail } from '#tests/resources/blanks/projects.ts';
 
 vi.mock('#services/projects/create-proj.ts');
 vi.mock('#services/images/upload-image.ts');

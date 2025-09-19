@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getProjectImagesService from '#services/projects/images/get-proj-images.ts';
+import getProjectImagesService from '#services/projects/images/get-project-images.ts';
 
 //gets the images associated with a project
 const getProjectImagesController = async (_req: Request, res: Response): Promise<void> => {
