@@ -6,7 +6,7 @@ import { transformMedium } from '#services/transformers/datasets/medium.ts';
 
 type GetMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
-const getMediumsService = async (): Promise<Medium[] | GetMediumsServiceError> => {
+export const getMediumsService = async (): Promise<Medium[] | GetMediumsServiceError> => {
   try {
     const mediums = await prisma.mediums.findMany({
       select: MediumSelector,
@@ -19,5 +19,3 @@ const getMediumsService = async (): Promise<Medium[] | GetMediumsServiceError> =
     return 'INTERNAL_ERROR';
   }
 };
-
-export default getMediumsService;
