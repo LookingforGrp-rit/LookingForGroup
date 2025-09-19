@@ -9,14 +9,7 @@ vi.mock('#services/projects/get-projects.ts');
 const blankProjectList = [blankProjectPreview];
 
 //dummy req
-const req = {
-  body: {
-    title: "James Testguy's Great Game",
-    hook: "James Testguy's Great Hook",
-    description: 'The first game ever created by James Testguy',
-    status: 'Planning',
-  },
-} as unknown as Request;
+const req = {} as unknown as Request;
 
 //dummy resp
 const res = {

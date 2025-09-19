@@ -11,12 +11,6 @@ const req = {
   params: {
     id: '1',
   },
-  body: {
-    title: "James Testguy's Great Game",
-    hook: "James Testguy's Great Hook",
-    description: 'The first game ever created by James Testguy',
-    status: 'Planning',
-  },
 } as unknown as Request;
 
 //dummy resp
