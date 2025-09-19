@@ -6,7 +6,7 @@ import type { Social } from '../../../../shared/types.ts';
 
 type GetSocialsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
-const getSocialsService = async (): Promise<Social[] | GetSocialsServiceError> => {
+export const getSocialsService = async (): Promise<Social[] | GetSocialsServiceError> => {
   try {
     const socials = await prisma.socials.findMany({
       select: SocialSelector,
@@ -19,5 +19,3 @@ const getSocialsService = async (): Promise<Social[] | GetSocialsServiceError> =
     return 'INTERNAL_ERROR';
   }
 };
-
-export default getSocialsService;
