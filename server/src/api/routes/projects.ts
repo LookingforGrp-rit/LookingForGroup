@@ -20,7 +20,7 @@ router.post(
 );
 
 //Get a specific project
-router.get('/:id', PROJECT.getProjectByID);
+router.get('/:id', PROJECT.getProjectById);
 
 //Get a specific project's members
 router.get('/:id/members', PROJECT.getMembers);

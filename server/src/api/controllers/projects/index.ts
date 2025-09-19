@@ -1,6 +1,6 @@
 import createProject from './create-project.ts';
 import deleteProject from './delete-project.ts';
-import getProjectByID from './get-project-id.ts';
+import getProjectById from './get-project-id.ts';
 import getProjects from './get-projects.ts';
 import addImage from './images/add-image.ts';
 import getProjectImages from './images/get-proj-images.ts';
@@ -25,7 +25,7 @@ import updateProject from './update-project.ts';
 
 export default {
   getProjects,
-  getProjectByID,
+  getProjectById,
   getProjectImages,
   createProject,
   addImage,

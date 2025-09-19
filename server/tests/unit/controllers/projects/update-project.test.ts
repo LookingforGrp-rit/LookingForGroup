@@ -1,7 +1,7 @@
 import type { Readable } from 'stream';
 import type { Request, Response } from 'express';
 import { describe, expect, test, vi } from 'vitest';
-import updateProjectsController from '#controllers/projects/update-project.ts';
+import updateProjectController from '#controllers/projects/update-project.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import updateProjectService from '#services/projects/update-proj.ts';
 import { blankProjectDetail } from '#tests/resources/blanks/projects.ts';
@@ -54,7 +54,7 @@ describe('updateProject', () => {
       data: null,
     };
 
-    await updateProjectsController(req, res);
+    await updateProjectController(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(resBody);
   });
@@ -68,7 +68,7 @@ describe('updateProject', () => {
       error: 'Invalid user ID',
       data: null,
     };
-    await updateProjectsController(req, res);
+    await updateProjectController(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(resBody);
 
@@ -84,7 +84,7 @@ describe('updateProject', () => {
       data: null,
     };
 
-    await updateProjectsController(req, res);
+    await updateProjectController(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(resBody);
 
@@ -102,7 +102,7 @@ describe('updateProject', () => {
       data: null,
     };
 
-    await updateProjectsController(req, res);
+    await updateProjectController(req, res);
     expect(uploadImageService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(413);
     expect(res.json).toHaveBeenCalledWith(resBody);
@@ -122,7 +122,7 @@ describe('updateProject', () => {
       data: null,
     };
 
-    await updateProjectsController(req, res);
+    await updateProjectController(req, res);
     expect(uploadImageService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
@@ -142,7 +142,7 @@ describe('updateProject', () => {
       data: null,
     };
 
-    await updateProjectsController(req, res);
+    await updateProjectController(req, res);
     expect(updateProjectService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
@@ -160,7 +160,7 @@ describe('updateProject', () => {
       data: blankProjectDetail,
     };
 
-    await updateProjectsController(req, res);
+    await updateProjectController(req, res);
     expect(updateProjectService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(resBody);

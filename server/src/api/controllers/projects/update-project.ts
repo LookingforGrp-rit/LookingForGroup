@@ -15,7 +15,7 @@ interface UpdateProjectInfo {
 }
 
 //updates a project's info
-const updateProjectsController = async (req: Request, res: Response): Promise<void> => {
+const updateProjectController = async (req: Request, res: Response): Promise<void> => {
   if (req.currentUser === undefined) {
     const resBody: ApiResponse = {
       status: 400,
@@ -130,4 +130,4 @@ const updateProjectsController = async (req: Request, res: Response): Promise<vo
   res.status(200).json(resBody);
 };
 
-export default updateProjectsController;
+export default updateProjectController;
