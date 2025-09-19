@@ -3,9 +3,7 @@ import { vi, describe, test, expect } from 'vitest';
 import { getImage } from '#controllers/images/get-image.ts';
 import { getImageService } from '#services/images/get-image.ts';
 
-vi.mock('#services/images/get-image.ts', () => ({
-  getImageService: vi.fn(),
-}));
+vi.mock('#services/images/get-image.ts');
 
 describe('Get image', () => {
   const req = {

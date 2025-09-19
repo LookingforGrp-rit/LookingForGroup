@@ -3,9 +3,7 @@ import { vi, describe, test, expect } from 'vitest';
 import getSocialsController from '#controllers/datasets/get-socials.ts';
 import { getSocialsService } from '#services/datasets/get-socials.ts';
 
-vi.mock('#services/datasets/get-socials.ts', () => ({
-  getSocialsService: vi.fn(),
-}));
+vi.mock('#services/datasets/get-socials.ts');
 
 describe('Get socials', () => {
   const req = {} as unknown as Request;

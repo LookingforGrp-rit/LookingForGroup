@@ -3,9 +3,7 @@ import { vi, describe, test, expect } from 'vitest';
 import getMajorsController from '#controllers/datasets/get-majors.ts';
 import { getMajorsService } from '#services/datasets/get-majors.ts';
 
-vi.mock('#services/datasets/get-majors.ts', () => ({
-  getMajorsService: vi.fn(),
-}));
+vi.mock('#services/datasets/get-majors.ts');
 
 describe('Get majors', () => {
   const req = {} as unknown as Request;
