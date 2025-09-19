@@ -12,13 +12,9 @@ import { getUserByUsernameService } from '#services/users/get-user/get-by-userna
 import { blankMePrivate } from '#tests/resources/blanks/me.ts';
 import { blankUserPreview } from '#tests/resources/blanks/users.ts';
 
-vi.mock('#services/users/create-user.ts', () => ({
-  createUserService: vi.fn(),
-}));
+vi.mock('#services/users/create-user.ts');
 
-vi.mock('#services/users/get-user/get-by-username.ts', () => ({
-  getUserByUsernameService: vi.fn(),
-}));
+vi.mock('#services/users/get-user/get-by-username.ts');
 
 describe('createUser', () => {
   const req = {

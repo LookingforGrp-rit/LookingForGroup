@@ -3,9 +3,7 @@ import { vi, describe, test, expect } from 'vitest';
 import getRolesController from '#controllers/datasets/get-roles.ts';
 import { getRolesService } from '#services/datasets/get-roles.ts';
 
-vi.mock('#services/datasets/get-roles.ts', () => ({
-  getRolesService: vi.fn(),
-}));
+vi.mock('#services/datasets/get-roles.ts');
 
 describe('Get roles', () => {
   const req = {} as unknown as Request;

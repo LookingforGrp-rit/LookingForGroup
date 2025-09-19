@@ -3,9 +3,7 @@ import { vi, describe, test, expect } from 'vitest';
 import getSkillsController from '#controllers/datasets/get-skills.ts';
 import { getSkillsService } from '#services/datasets/get-skills.ts';
 
-vi.mock('#services/datasets/get-skills.ts', () => ({
-  getSkillsService: vi.fn(),
-}));
+vi.mock('#services/datasets/get-skills.ts');
 
 describe('Get skills', () => {
   const req = {} as unknown as Request;
