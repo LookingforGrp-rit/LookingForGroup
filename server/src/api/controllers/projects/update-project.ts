@@ -1,5 +1,5 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { RequestHandler } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import type { ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import updateProjectService from '#services/projects/update-proj.ts';
@@ -14,13 +14,25 @@ interface UpdateProjectInfo {
   thumbnail?: string;
 }
 
-//updates a projec's info
-const updateProjectsController: RequestHandler<{ id: string }, unknown, UpdateProjectInfo> = async (
-  req,
-  res,
+//updates a project's info
+const updateProjectsController = async (
+  req: AuthenticatedRequest,
+  res: Response,
 ): Promise<void> => {
+  const userId = parseInt(req.currentUser);
+
+  if (isNaN(userId)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
   const { id } = req.params;
-  const updates = req.body;
+  const updates = req.body as UpdateProjectInfo;
 
   //validate ID
   const projectId = parseInt(id);

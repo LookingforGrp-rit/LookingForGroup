@@ -1,12 +1,25 @@
-import { Router } from 'express';
+import type { AuthenticatedRequest } from '@looking-for-group/shared';
+import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
 import requiresProjectOwner from '../middleware/requires-project-owner.ts';
-//NOTICE: requiresProjectOwner is broken
 
 const router = Router();
+
+export const authenticated = (
+  controller: (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => void | Promise<void>,
+) =>
+  controller as unknown as (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => void | Promise<void>;
 
 //Receive all projects
 router.get('/', PROJECT.getProjects);
@@ -17,7 +30,7 @@ router.post(
   requiresLogin,
   injectCurrentUser,
   upload.single('thumbnail'),
-  PROJECT.createProject,
+  authenticated(PROJECT.createProject),
 );
 
 //Get a specific project
@@ -28,9 +41,9 @@ router.patch(
   '/:id',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   upload.single('thumbnail'),
-  PROJECT.updateProject,
+  authenticated(PROJECT.updateProject),
 );
 
 //Deletes project through a specific id
@@ -38,7 +51,7 @@ router.delete(
   '/:id',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.deleteProject,
 );
 
@@ -51,7 +64,7 @@ router.post(
   '/:id/images',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   upload.single('image'),
   PROJECT.addImage,
 );
@@ -60,7 +73,7 @@ router.patch(
   '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   upload.single('image'),
   PROJECT.updateImage,
 );
@@ -69,7 +82,7 @@ router.delete(
   '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.removeImage,
 );
 //Reorders a project's images
@@ -77,7 +90,7 @@ router.put(
   '/:id/images/reorder',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.reorderImages,
 );
 
@@ -90,7 +103,7 @@ router.post(
   '/:id/mediums',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.addMediums,
 );
 //Removes mediums from a project
@@ -98,7 +111,7 @@ router.delete(
   '/:id/mediums/',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.deleteMediums,
 );
 
@@ -109,7 +122,7 @@ router.post(
   '/:id/members',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.addMember,
 );
 //Edits a member of a specific project through id
@@ -117,7 +130,7 @@ router.put(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.updateMember,
 );
 //Removes a member from a specific project through project and user ID
@@ -125,8 +138,7 @@ router.delete(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
-  PROJECT.deleteMember,
+  authenticated(PROJECT.deleteMember),
 );
 
 // SOCIALS ROUTES
@@ -135,7 +147,7 @@ router.delete(
 router.post(
   '/:id/socials',
   requiresLogin,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.addProjectSocial,
 );
 //Gets all project socials
@@ -144,14 +156,14 @@ router.get('/:id/socials', PROJECT.getProjectSocials);
 router.put(
   '/:id/socials/:websiteId',
   requiresLogin,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.updateProjectSocial,
 );
 //Deletes a project social
 router.delete(
   '/:id/socials/:websiteId',
   requiresLogin,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.deleteProjectSocial,
 );
 
@@ -164,10 +176,16 @@ router.delete(
   '/:id/tags/',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  authenticated(requiresProjectOwner),
   PROJECT.deleteTags,
 );
 //Adds a project tag
-router.post('/:id/tags', requiresLogin, injectCurrentUser, requiresProjectOwner, PROJECT.addTags);
+router.post(
+  '/:id/tags',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresProjectOwner),
+  PROJECT.addTags,
+);
 
 export default router;

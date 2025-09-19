@@ -1,5 +1,5 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import type { SkillProficiency } from '#prisma-models/index.js';
 import updateSkillsService from '#services/me/skills/update-skills.ts';
 
@@ -10,18 +10,8 @@ type SkillInfo = {
 };
 
 //add skills to user profile
-const updateSkillsController = async (req: Request, res: Response) => {
+const updateSkillsController = async (req: AuthenticatedRequest, res: Response) => {
   const data: SkillInfo = req.body as SkillInfo;
-
-  if (req.currentUser === undefined) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
 
   //current user ID
   const UserId = parseInt(req.currentUser);
