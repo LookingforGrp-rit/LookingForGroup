@@ -1,4 +1,5 @@
-import { Router } from 'express';
+import type { AuthenticatedRequest } from '@looking-for-group/shared';
+import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import { deleteUser } from '#controllers/me/delete-user.ts';
 import { addProjectFollowing } from '#controllers/me/followings/add-follow-project.ts';
@@ -22,52 +23,65 @@ import requiresLogin from '../middleware/requires-login.ts';
 
 const router = Router();
 
+export const authenticated = (
+  controller: (
+    req: AuthenticatedRequest,
+    res: Response,
+    next: NextFunction,
+  ) => void | Promise<void>,
+) =>
+  controller as unknown as (
+    req: Request,
+    res: Response,
+    next: NextFunction,
+  ) => void | Promise<void>;
+
 //All routes use requiresLogin and injectCurrentUser
 router.use(requiresLogin, injectCurrentUser);
 
 // FOLLOW ROUTES
 
 //Follows a project
-router.post('/followings/projects/:id', addProjectFollowing);
+router.post('/followings/projects/:id', authenticated(addProjectFollowing));
 //Unfollows a project
-router.delete('/followings/projects/:id', deleteProjectFollowing);
+router.delete('/followings/projects/:id', authenticated(deleteProjectFollowing));
 //Follows a user
-router.post('/followings/people/:id', addUserFollowing);
+router.post('/followings/people/:id', authenticated(addUserFollowing));
 //Unfollows a user
-router.delete('/followings/people/:id', deleteUserFollowing);
+router.delete('/followings/people/:id', authenticated(deleteUserFollowing));
 
 // SKILLS ROUTES
 
 //Gets a user's skills
-router.get('/skills', getSkills);
+router.get('/skills', authenticated(getSkills));
 //Adds skills
-router.post('/skills', addSkills);
+router.post('/skills', authenticated(addSkills));
 //Deletes a skill
-router.delete('/skills/:id', deleteSkills);
+router.delete('/skills/:id', authenticated(deleteSkills));
 //Updates a skill's proficiency (or position if it ever becomes useful)
-router.patch('/skills/:id', updateSkills);
+router.patch('/skills/:id', authenticated(updateSkills));
 
 // SOCIALS ROUTES
 
 //Gets a user's socials
-router.get('/socials', getSocials);
+router.get('/socials', authenticated(getSocials));
 //Adds a social
-router.post('/socials', addSocial);
+router.post('/socials', authenticated(addSocial));
 //Updates a social
-router.put('/socials/:websiteId', updateSocial);
+router.put('/socials/:websiteId', authenticated(updateSocial));
 //Deletes a social
-router.delete('/socials/:websiteId', deleteSocial);
+router.delete('/socials/:websiteId', authenticated(deleteSocial));
 
 //Gets user's account
-router.get('/', getAccount);
+router.get('/', authenticated(getAccount));
 //Updates users information
-router.patch('/', upload.single('profileImage'), updateUserInfo);
+router.patch('/', upload.single('profileImage'), authenticated(updateUserInfo));
 //Delete user
-router.delete('/', deleteUser);
+router.delete('/', authenticated(deleteUser));
 
 //Gets username by shib ID
-router.get('/get-username', getUsernameByShib);
+router.get('/get-username', authenticated(getUsernameByShib));
 //Gets current user's projects
-router.get('/projects', getMyProjects);
+router.get('/projects', authenticated(getMyProjects));
 
 export default router;

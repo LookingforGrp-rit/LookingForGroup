@@ -1,22 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import type { Prisma, ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import createProjectService from '#services/projects/create-project.ts';
 
 //creates a project
-const createProjectController = async (req: Request, res: Response) => {
-  if (req.currentUser === undefined) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
+const createProjectController = async (req: AuthenticatedRequest, res: Response) => {
   const userId = parseInt(req.currentUser);
 
   if (isNaN(userId)) {

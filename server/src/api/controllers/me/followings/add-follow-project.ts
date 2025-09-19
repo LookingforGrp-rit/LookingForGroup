@@ -1,19 +1,12 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import { addProjectFollowingService } from '#services/me/followings/add-follow-project.ts';
 
 //add project to follow list
-export const addProjectFollowing = async (req: Request, res: Response): Promise<void> => {
-  if (req.currentUser === undefined) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
+export const addProjectFollowing = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
   const userId = parseInt(req.currentUser);
   const projectId = parseInt(req.params.id);
 

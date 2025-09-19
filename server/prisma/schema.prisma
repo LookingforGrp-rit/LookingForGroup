@@ -35,7 +35,7 @@ model Jobs {
   compensation JobsCompensation
   description  String           @default("") @db.VarChar(500)
   createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt    DateTime         @default(now()) @map("updated_at") @db.Timestamp(0)
+  updatedAt    DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)
   projects     Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
   roles        Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
 
@@ -116,7 +116,7 @@ model Projects {
   audience          String              @default("") @db.VarChar(300)
   userId            Int                 @map("user_id")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamp(0)
+  updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   jobs              Jobs[]
   members           Members[]
   projectFollowings ProjectFollowings[]
@@ -204,7 +204,7 @@ model Users {
   bio               String              @default("") @db.VarChar(600)
   visibility        Int                 @default(1) @db.TinyInt
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamp(0)
+  updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @unique @db.VarChar(20) @map("phone_number")
   universityId      String              @unique(map: "university_id_UNIQUE") @map("university_id") @db.VarChar(9)
   members           Members[]
