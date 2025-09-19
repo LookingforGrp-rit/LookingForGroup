@@ -1,4 +1,3 @@
-import type { UserPreview, MePrivate } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { vi, describe, test, expect } from 'vitest';
 import {
@@ -10,6 +9,8 @@ import {
 import { createUser } from '#controllers/users/create-user.ts';
 import { createUserService } from '#services/users/create-user.ts';
 import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
+import { blankMePrivate } from '../../blanks/me.ts'; //the double ../ is killing me but 'tis what it is
+import { blankUserPreview } from '../../blanks/users.ts';
 
 vi.mock('#services/users/create-user.ts', () => ({
   createUserService: vi.fn(),
@@ -20,26 +21,6 @@ vi.mock('#services/users/get-user/get-by-username.ts', () => ({
 }));
 
 describe('createUser', () => {
-  //again i think these should be plopped into another file
-  //James Testguy, our test user
-  const previewTestguy = {
-    userId: '1',
-    username: 'TESTGUY',
-    firstName: 'james',
-    lastName: 'testguy',
-    profileImage: null,
-    apiUrl: '',
-  } as unknown as UserPreview;
-
-  //James Testguy, our test user
-  const privateTestguy = {
-    universityId: '123456789',
-    username: 'TESTGUY',
-    firstName: 'james',
-    lastName: 'testguy',
-    ritEmail: 'jtg0000@rit.edu',
-  } as MePrivate;
-
   const req = {
     headers: {
       [uidHeaderKey]: '000000001',
@@ -83,7 +64,7 @@ describe('createUser', () => {
 
   //username taken (409)
   test('should return 409 if getUserByUsername service returns a user', async () => {
-    vi.mocked(getUserByUsernameService).mockResolvedValue(previewTestguy);
+    vi.mocked(getUserByUsernameService).mockResolvedValue(blankUserPreview);
     const responseBody = {
       status: 409,
       error: 'Username already taken',
@@ -148,12 +129,12 @@ describe('createUser', () => {
 
   //user creation successful (201)
   test('should return 201 if user was successfully created', async () => {
-    vi.mocked(createUserService).mockResolvedValue(privateTestguy);
+    vi.mocked(createUserService).mockResolvedValue(blankMePrivate);
     vi.mocked(getUserByUsernameService).mockResolvedValue('NOT_FOUND');
     const responseBody = {
       status: 201,
       error: null,
-      data: privateTestguy,
+      data: blankMePrivate,
     };
 
     expect(getUserByUsernameService).toBe(vi.mocked(getUserByUsernameService));

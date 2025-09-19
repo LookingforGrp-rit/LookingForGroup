@@ -14,11 +14,33 @@ interface UpdateProjectInfo {
   thumbnail?: string;
 }
 
-//updates a projec's info
+//updates a project's info
 const updateProjectsController: RequestHandler<{ id: string }, unknown, UpdateProjectInfo> = async (
   req,
   res,
 ): Promise<void> => {
+  if (req.currentUser === undefined) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const userId = parseInt(req.currentUser);
+
+  if (isNaN(userId)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
   const { id } = req.params;
   const updates = req.body;
 

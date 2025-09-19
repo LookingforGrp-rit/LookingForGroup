@@ -1,10 +1,10 @@
 import type { Readable } from 'stream';
-import type { ProjectDetail } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { describe, expect, test, vi } from 'vitest';
 import createProjectController from '#controllers/projects/create-project.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import createProjectService from '#services/projects/create-proj.ts';
+import { blankProjectDetail } from '../../blanks/projects.ts';
 
 vi.mock('#services/projects/create-proj.ts');
 vi.mock('#services/images/upload-image.ts');
@@ -25,14 +25,6 @@ const res = {
   json: vi.fn(() => res),
   status: vi.fn(() => res),
 } as unknown as Response;
-
-//dummy project
-const project = {
-  title: "James Testguy's Great Game",
-  hook: "James Testguy's Great Hook",
-  description: 'The first game ever created by James Testguy',
-  status: 'Planning',
-} as ProjectDetail;
 
 //dummy image file
 const file = {
@@ -141,12 +133,12 @@ describe('createProject', () => {
 
   //everything's good, return 200
   test('Must return 200 when the project is successfully created', async () => {
-    vi.mocked(createProjectService).mockResolvedValue(project);
+    vi.mocked(createProjectService).mockResolvedValue(blankProjectDetail);
     expect(createProjectService).toBe(vi.mocked(createProjectService));
     const resBody = {
       status: 200,
       error: null,
-      data: project,
+      data: blankProjectDetail,
     };
 
     await createProjectController(req, res);
