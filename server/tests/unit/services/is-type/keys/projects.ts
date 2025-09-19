@@ -23,7 +23,7 @@ import {
   blankProjectPreview,
   blankProjectDetail,
   blankProjectWithFollowers,
-} from '../../../blanks/projects.ts';
+} from '../../../../resources/blanks/projects.ts';
 
 export const projectFollowingsKeys: (keyof ProjectFollowings)[] = Object.keys(
   blankProjectFollowings,

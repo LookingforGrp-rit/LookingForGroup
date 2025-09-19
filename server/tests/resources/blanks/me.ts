@@ -1,10 +1,10 @@
 import type {
-  MeDetail,
   MePreview,
+  MeDetail,
   MePrivate,
-  MyMajor,
   MySkill,
   MySocial,
+  MyMajor,
 } from '@looking-for-group/shared';
 
 export const blankMySkill: MySkill = {
@@ -20,12 +20,6 @@ export const blankMySocial: MySocial = {
   apiUrl: '',
   url: '',
   websiteId: 0,
-  label: '',
-};
-
-export const blankMyMajor: MyMajor = {
-  apiUrl: '',
-  majorId: 0,
   label: '',
 };
 
@@ -116,4 +110,10 @@ export const blankMePrivate: MePrivate = {
   apiUrl: '',
   skills: [],
   socials: [],
+};
+
+export const blankMyMajor: MyMajor = {
+  apiUrl: '',
+  majorId: 0,
+  label: '',
 };

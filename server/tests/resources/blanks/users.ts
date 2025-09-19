@@ -1,38 +1,40 @@
 import type {
-  ProjectFollowsList,
   ProjectPreview,
-  Role,
-  UserDetail,
-  UserFollowings,
-  UserFollowsList,
-  UserMember,
   UserPreview,
   UserSkill,
   UserSocial,
+  ProjectFollowsList,
+  UserFollowsList,
+  UserFollowings,
+  UserDetail,
+  Major,
+  User,
+  UserMember,
+  Role,
 } from '@looking-for-group/shared';
 
 export const blankUserSkill: UserSkill = {
-  proficiency: 'Novice',
-  position: 0,
-  skillId: 0,
+  skillId: 1,
   label: '',
   type: 'Developer',
+  proficiency: 'Novice',
+  position: 0,
 };
 
 export const blankUserSocial: UserSocial = {
-  url: '',
-  websiteId: 0,
+  websiteId: 1,
   label: '',
+  url: '',
 };
 
 export const blankProjectFollowsList: ProjectFollowsList = {
-  projects: [],
+  projects: Object.prototype as ProjectPreview[],
   count: 0,
   apiUrl: '',
 };
 
 export const blankUserFollowsList: UserFollowsList = {
-  users: [],
+  users: Object.prototype as UserPreview[],
   count: 0,
   apiUrl: '',
 };
@@ -44,11 +46,12 @@ export const blankUserFollowings: UserFollowings = {
   apiUrl: '',
 };
 
+//james testguy shall live on
 export const blankUserPreview: UserPreview = {
   userId: 0,
-  firstName: '',
-  lastName: '',
-  username: '',
+  firstName: 'James',
+  lastName: 'Testguy',
+  username: 'TESTGUY',
   profileImage: null,
   apiUrl: '',
 };
@@ -57,39 +60,60 @@ export const blankUserDetail: UserDetail = {
   headline: '',
   pronouns: '',
   title: '',
-  majors: [],
-  academicYear: null,
+  majors: Object.prototype as Major[],
+  academicYear: 'Freshman',
   location: '',
   funFact: '',
   bio: '',
-  projects: [],
-  skills: [],
-  socials: [],
+  projects: Object.prototype as ProjectPreview[],
+  skills: Object.prototype as UserSkill[],
+  socials: Object.prototype as UserSocial[],
   following: {
-    usersFollowing: {
-      users: [],
-      count: 0,
-      apiUrl: '',
-    },
-    projectsFollowing: {
-      projects: [],
-      count: 0,
-      apiUrl: '',
-    },
+    usersFollowing: Object.prototype as UserFollowsList,
+    projectsFollowing: Object.prototype as ProjectFollowsList,
   },
-  followers: {
-    users: [],
-    count: 0,
-    apiUrl: '',
-  },
+  followers: Object.prototype as UserFollowsList,
   userId: 0,
-  firstName: '',
-  lastName: '',
-  username: '',
+  firstName: 'James',
+  lastName: 'Testguy',
+  username: 'TESTGUY',
   profileImage: null,
   apiUrl: '',
 };
 
+//all user private data
+export const blankUser: User = {
+  ritEmail: '',
+  visibility: 1,
+  projects: Object.prototype as ProjectPreview[],
+  phoneNumber: '',
+  universityId: '',
+  createdAt: Date.prototype,
+  updatedAt: Date.prototype,
+  headline: '',
+  pronouns: '',
+  title: '',
+  majors: Object.prototype as Major[],
+  academicYear: 'Freshman',
+  location: '',
+  funFact: '',
+  bio: '',
+  skills: Object.prototype as UserSkill[],
+  socials: Object.prototype as UserSocial[],
+  following: {
+    usersFollowing: Object.prototype as UserFollowsList,
+    projectsFollowing: Object.prototype as ProjectFollowsList,
+  },
+  followers: Object.prototype as UserFollowsList,
+  userId: 0,
+  firstName: 'James',
+  lastName: 'Testguy',
+  username: 'TESTGUY',
+  profileImage: null,
+  apiUrl: '',
+};
+
+// Represents the member info for a project
 export const blankUserMember: UserMember = {
   project: Object.prototype as ProjectPreview,
   role: Object.prototype as Role,
