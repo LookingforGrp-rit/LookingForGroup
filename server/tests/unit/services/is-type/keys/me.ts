@@ -9,11 +9,11 @@ import type {
 import {
   blankMySkill,
   blankMySocial,
-  blankMeDetail,
-  blankMePreview,
-  blankMePrivate,
   blankMyMajor,
-} from '../../../blanks/me.ts';
+  blankMePreview,
+  blankMeDetail,
+  blankMePrivate,
+} from '#tests/resources/blanks/me.ts';
 
 export const mySkillKeys: (keyof MySkill)[] = Object.keys(blankMySkill) as (keyof MySkill)[];
 

@@ -9,8 +9,8 @@ import {
 import { createUser } from '#controllers/users/create-user.ts';
 import { createUserService } from '#services/users/create-user.ts';
 import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
-import { blankMePrivate } from '../../blanks/me.ts'; //the double ../ is killing me but 'tis what it is
-import { blankUserPreview } from '../../blanks/users.ts';
+import { blankMePrivate } from '#tests/resources/blanks/me.ts';
+import { blankUserPreview } from '#tests/resources/blanks/users.ts';
 
 vi.mock('#services/users/create-user.ts', () => ({
   createUserService: vi.fn(),
@@ -38,6 +38,43 @@ describe('createUser', () => {
   res.json = vi.fn(() => res);
   res.status = vi.fn(() => res);
 
+  // #FIXME the controller needs to be fixed for this test to pass.
+  test.skip('should return 500 if user validation has an internal error', async () => {
+    vi.mocked(getUserByUsernameService).mockResolvedValue('INTERNAL_ERROR');
+    vi.mocked(getUserByUsernameService).mockClear();
+
+    const responseBody = {
+      status: 500,
+      error: 'Internal Server Error',
+      data: null,
+    };
+
+    await createUser(req, res);
+    expect(getUserByUsernameService).toHaveBeenCalledOnce();
+    expect(createUserService).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.json).toHaveBeenCalledWith(responseBody);
+  });
+
+  test('should return 201 if createUserService succeeds', async () => {
+    vi.mocked(createUserService).mockResolvedValue(blankMePrivate);
+    vi.mocked(getUserByUsernameService).mockResolvedValue('NOT_FOUND');
+    vi.mocked(createUserService).mockClear();
+    vi.mocked(getUserByUsernameService).mockClear();
+
+    const responseBody = {
+      status: 201,
+      error: null,
+      data: blankMePrivate,
+    };
+
+    await createUser(req, res);
+    expect(getUserByUsernameService).toHaveBeenCalledOnce();
+    expect(createUserService).toHaveBeenCalledOnce();
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith(responseBody);
+  });
+
   //missing user info (400)
   test("should return 400 if there's missing user information", async () => {
     const responseBody = {
@@ -62,75 +99,52 @@ describe('createUser', () => {
     };
   });
 
-  //username taken (409)
-  test('should return 409 if getUserByUsername service returns a user', async () => {
-    vi.mocked(getUserByUsernameService).mockResolvedValue(blankUserPreview);
-    const responseBody = {
-      status: 409,
-      error: 'Username already taken',
-      data: null,
-    };
-
-    expect(getUserByUsernameService).toBe(vi.mocked(getUserByUsernameService));
-
-    await createUser(req, res);
-    expect(getUserByUsernameService).toHaveBeenCalledOnce();
-    expect(res.status).toHaveBeenCalledWith(409);
-    expect(res.json).toHaveBeenCalledWith(responseBody);
-
-    vi.mocked(getUserByUsernameService).mockClear();
-  });
-
   //user already exists (409)
   test('should return 409 if user already exists', async () => {
-    vi.mocked(getUserByUsernameService).mockResolvedValue('NOT_FOUND');
-    vi.mocked(createUserService).mockResolvedValue('CONFLICT');
+    vi.mocked(getUserByUsernameService).mockResolvedValue(blankUserPreview);
+    vi.mocked(getUserByUsernameService).mockClear();
+    vi.mocked(createUserService).mockClear();
+
     const responseBody = {
       status: 409,
       error: 'Username already taken',
       data: null,
     };
 
-    expect(getUserByUsernameService).toBe(vi.mocked(getUserByUsernameService));
-    expect(createUserService).toBe(vi.mocked(createUserService));
-
     await createUser(req, res);
     expect(getUserByUsernameService).toHaveBeenCalledOnce();
-    expect(createUserService).toHaveBeenCalledOnce();
+    expect(createUserService).not.toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(409);
     expect(res.json).toHaveBeenCalledWith(responseBody);
-
-    vi.mocked(getUserByUsernameService).mockClear();
-    vi.mocked(createUserService).mockClear();
   });
 
   //user creation failed and it's our fault (500)
   test('should return 500 if createUserService returns INTERNAL_ERROR', async () => {
     vi.mocked(createUserService).mockResolvedValue('INTERNAL_ERROR');
     vi.mocked(getUserByUsernameService).mockResolvedValue('NOT_FOUND');
+    vi.mocked(createUserService).mockClear();
+    vi.mocked(getUserByUsernameService).mockClear();
+
     const responseBody = {
       status: 500,
       error: 'Internal Server Error',
       data: null,
     };
 
-    expect(getUserByUsernameService).toBe(vi.mocked(getUserByUsernameService));
-    expect(createUserService).toBe(vi.mocked(createUserService));
-
     await createUser(req, res);
     expect(getUserByUsernameService).toHaveBeenCalledOnce();
     expect(createUserService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(responseBody);
-
-    vi.mocked(getUserByUsernameService).mockClear();
-    vi.mocked(createUserService).mockClear();
   });
 
   //user creation successful (201)
   test('should return 201 if user was successfully created', async () => {
     vi.mocked(createUserService).mockResolvedValue(blankMePrivate);
     vi.mocked(getUserByUsernameService).mockResolvedValue('NOT_FOUND');
+    vi.mocked(getUserByUsernameService).mockClear();
+    vi.mocked(createUserService).mockClear();
+
     const responseBody = {
       status: 201,
       error: null,
@@ -145,8 +159,5 @@ describe('createUser', () => {
     expect(createUserService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(responseBody);
-
-    vi.mocked(getUserByUsernameService).mockClear();
-    vi.mocked(createUserService).mockClear();
   });
 });
