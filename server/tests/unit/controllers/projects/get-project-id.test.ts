@@ -4,7 +4,7 @@ import getProjectByIdController from '#controllers/projects/get-project-id.ts';
 import getProjectByIdService from '#services/projects/get-project-id.ts';
 import { blankProjectWithFollowers } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/get-proj-id.ts');
+vi.mock('#services/projects/get-project-id.ts');
 
 //dummy req
 const req = {

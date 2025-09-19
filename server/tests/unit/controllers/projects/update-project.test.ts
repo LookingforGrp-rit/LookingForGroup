@@ -3,10 +3,10 @@ import type { Request, Response } from 'express';
 import { describe, expect, test, vi } from 'vitest';
 import updateProjectController from '#controllers/projects/update-project.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import updateProjectService from '#services/projects/update-proj.ts';
+import updateProjectService from '#services/projects/update-project.ts';
 import { blankProjectDetail } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/update-proj.ts');
+vi.mock('#services/projects/update-project.ts');
 vi.mock('#services/images/upload-image.ts');
 
 //all of these consts should ideally be shoved into their own file

@@ -4,7 +4,7 @@ import getProjectsController from '#controllers/projects/get-projects.ts';
 import getProjectsService from '#services/projects/get-projects.ts';
 import { blankProjectPreview } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/get-proj-id.ts');
+vi.mock('#services/projects/get-projects.ts');
 
 const blankProjectList = [blankProjectPreview];
 
