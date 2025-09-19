@@ -8,8 +8,6 @@ import { isMePrivate } from './is-type/me.ts';
 
 vi.mock('#config/prisma.ts');
 describe.skip('create user', async () => {
-  //const { createUserService } = await import('#services/users/create-user.ts');
-
   //James Testguy, our test user
   const jamesTestguy = {
     universityId: '123456789',

@@ -6,7 +6,6 @@ import createProjectController from '#controllers/projects/create-project.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import createProjectService from '#services/projects/create-proj.ts';
 
-vi.mock('#config/prisma.ts');
 vi.mock('#services/projects/create-proj.ts');
 vi.mock('#services/images/upload-image.ts');
 
@@ -65,8 +64,9 @@ describe('createProject', () => {
   });
 
   //currentUser has a non-numerical id, should return 400
-  test('Must return 400 with invalid user ID for current user', async () => {
+  test('Must return 400 when currentUser is invalid', async () => {
     req.currentUser = 'nowhere NEAR a number';
+
     const resBody = {
       status: 400,
       error: 'Invalid user ID',
