@@ -1,5 +1,5 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import { deleteSkillsService } from '#services/me/skills/delete-skills.ts';
 
 type Skills = {
@@ -7,17 +7,7 @@ type Skills = {
 };
 
 //delete multiple skills from user profile
-export const deleteSkills = async (req: Request, res: Response): Promise<void> => {
-  if (req.currentUser === undefined) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
+export const deleteSkills = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //current user ID
   const UserId = parseInt(req.currentUser);
 

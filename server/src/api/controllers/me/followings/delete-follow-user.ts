@@ -1,19 +1,12 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import { deleteUserFollowService } from '#services/me/followings/delete-follow-user.ts';
 
 // delete a user from follow list
-export const deleteUserFollowing = async (req: Request, res: Response): Promise<void> => {
-  if (req.currentUser === undefined) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
+export const deleteUserFollowing = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
   const userId = parseInt(req.currentUser);
   const followingId = parseInt(req.params.id);
 
