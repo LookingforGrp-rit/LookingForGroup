@@ -63,7 +63,7 @@ describe('getProjectImages', () => {
   });
 
   //everything's good, return 200
-  test('Must return 200 when the project was retrieved successfully', async () => {
+  test('Must return 200 when the images were retrieved successfully', async () => {
     vi.mocked(getProjectImagesService).mockResolvedValue(blankImageList);
     expect(getProjectImagesService).toBe(vi.mocked(getProjectImagesService));
     const resBody = {

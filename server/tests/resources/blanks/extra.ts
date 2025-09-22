@@ -28,6 +28,8 @@ export const blankRequest = {} as unknown as Request;
 export const blankIdRequest = {
   params: {
     id: '1',
+    picId: '1',
+    userId: '1',
   },
 } as unknown as Request;
 
