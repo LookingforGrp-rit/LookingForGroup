@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import removeImageController from '#controllers/projects/images/remove-image.ts';
 import getProjectByIdService from '#services/projects/get-project-id.ts';
 import removeImageService from '#services/projects/images/remove-image.ts';
@@ -12,6 +12,14 @@ const req = blankIdRequest;
 const res = blankResponse;
 
 describe('removeImage', () => {
+  beforeEach(() => {
+    vi.mocked(removeImageService).mockClear();
+    vi.mocked(getProjectByIdService).mockClear();
+  });
+  afterEach(() => {
+    vi.mocked(removeImageService).mockClear();
+    vi.mocked(getProjectByIdService).mockClear();
+  });
   //project has a non-numerical id, should return 400
   test('Must return 400 when the project id is invalid', async () => {
     req.params.id = 'nowhere NEAR a number';
@@ -58,8 +66,6 @@ describe('removeImage', () => {
     expect(getProjectByIdService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(getProjectByIdService).mockClear();
   });
 
   //image couldn't be found, return 404
@@ -79,9 +85,6 @@ describe('removeImage', () => {
     expect(getProjectByIdService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(removeImageService).mockClear();
-    vi.mocked(getProjectByIdService).mockClear();
   });
 
   //there's something wrong with the service, should return 500
@@ -101,9 +104,6 @@ describe('removeImage', () => {
     expect(getProjectByIdService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(removeImageService).mockClear();
-    vi.mocked(getProjectByIdService).mockClear();
   });
 
   //everything's good, return 200
@@ -123,8 +123,5 @@ describe('removeImage', () => {
     expect(getProjectByIdService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(removeImageService).mockClear();
-    vi.mocked(getProjectByIdService).mockClear();
   });
 });

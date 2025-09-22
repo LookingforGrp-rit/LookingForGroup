@@ -1,7 +1,7 @@
-import type { Request, Response } from 'express';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import getProjectsController from '#controllers/projects/get-projects.ts';
 import getProjectsService from '#services/projects/get-projects.ts';
+import { blankRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectPreview } from '#tests/resources/blanks/projects.ts';
 
 vi.mock('#services/projects/get-projects.ts');
@@ -9,15 +9,18 @@ vi.mock('#services/projects/get-projects.ts');
 const blankProjectList = [blankProjectPreview];
 
 //dummy req
-const req = {} as unknown as Request;
+const req = blankRequest;
 
 //dummy resp
-const res = {
-  json: vi.fn(() => res),
-  status: vi.fn(() => res),
-} as unknown as Response;
-
+const res = blankResponse;
 describe('getProjects', () => {
+  beforeEach(() => {
+    vi.mocked(getProjectsService).mockClear();
+  });
+  afterEach(() => {
+    vi.mocked(getProjectsService).mockClear();
+  });
+
   //there's something wrong with the service, should return 500
   test('Must return 500 when the service errors', async () => {
     vi.mocked(getProjectsService).mockResolvedValue('INTERNAL_ERROR');
@@ -32,8 +35,6 @@ describe('getProjects', () => {
     expect(getProjectsService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(getProjectsService).mockClear();
   });
 
   //everything's good, return 200
@@ -50,7 +51,5 @@ describe('getProjects', () => {
     expect(getProjectsService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(getProjectsService).mockClear();
   });
 });

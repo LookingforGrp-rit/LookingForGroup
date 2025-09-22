@@ -1,5 +1,4 @@
-import type { Request, Response } from 'express';
-import { vi, describe, test, expect } from 'vitest';
+import { vi, describe, test, expect, beforeEach, afterEach } from 'vitest';
 import {
   uidHeaderKey,
   firstNameHeaderKey,
@@ -9,6 +8,7 @@ import {
 import { createUser } from '#controllers/users/create-user.ts';
 import { createUserService } from '#services/users/create-user.ts';
 import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
+import { blankResponse, blankUserRequest } from '#tests/resources/blanks/extra.ts';
 import { blankMePrivate } from '#tests/resources/blanks/me.ts';
 import { blankUserPreview } from '#tests/resources/blanks/users.ts';
 
@@ -17,26 +17,20 @@ vi.mock('#services/users/create-user.ts');
 vi.mock('#services/users/get-user/get-by-username.ts');
 
 describe('createUser', () => {
-  const req = {
-    headers: {
-      [uidHeaderKey]: '000000001',
-      [firstNameHeaderKey]: 'firstname',
-      [lastNameHeaderKey]: 'lastname',
-      [emailHeaderKey]: 'email@rit.edu',
-    },
-    body: {
-      username: 'username',
-    },
-    query: {},
-  } as unknown as Request;
+  const req = blankUserRequest;
+  const res = blankResponse;
 
-  const res = {} as unknown as Response;
-  res.json = vi.fn(() => res);
-  res.status = vi.fn(() => res);
+  beforeEach(() => {
+    vi.mocked(createUserService).mockClear();
+    vi.mocked(getUserByUsernameService).mockClear();
+  });
+  afterEach(() => {
+    vi.mocked(createUserService).mockClear();
+    vi.mocked(getUserByUsernameService).mockClear();
+  });
 
   test('should return 500 if user validation has an internal error', async () => {
     vi.mocked(getUserByUsernameService).mockResolvedValue('INTERNAL_ERROR');
-    vi.mocked(getUserByUsernameService).mockClear();
 
     const responseBody = {
       status: 500,
@@ -54,8 +48,6 @@ describe('createUser', () => {
   test('should return 201 if createUserService succeeds', async () => {
     vi.mocked(createUserService).mockResolvedValue(blankMePrivate);
     vi.mocked(getUserByUsernameService).mockResolvedValue('NOT_FOUND');
-    vi.mocked(createUserService).mockClear();
-    vi.mocked(getUserByUsernameService).mockClear();
 
     const responseBody = {
       status: 201,
@@ -97,8 +89,6 @@ describe('createUser', () => {
   //user already exists (409)
   test('should return 409 if user already exists', async () => {
     vi.mocked(getUserByUsernameService).mockResolvedValue(blankUserPreview);
-    vi.mocked(getUserByUsernameService).mockClear();
-    vi.mocked(createUserService).mockClear();
 
     const responseBody = {
       status: 409,
@@ -117,8 +107,6 @@ describe('createUser', () => {
   test('should return 500 if createUserService returns INTERNAL_ERROR', async () => {
     vi.mocked(createUserService).mockResolvedValue('INTERNAL_ERROR');
     vi.mocked(getUserByUsernameService).mockResolvedValue('NOT_FOUND');
-    vi.mocked(createUserService).mockClear();
-    vi.mocked(getUserByUsernameService).mockClear();
 
     const responseBody = {
       status: 500,
@@ -137,8 +125,6 @@ describe('createUser', () => {
   test('should return 201 if user was successfully created', async () => {
     vi.mocked(createUserService).mockResolvedValue(blankMePrivate);
     vi.mocked(getUserByUsernameService).mockResolvedValue('NOT_FOUND');
-    vi.mocked(getUserByUsernameService).mockClear();
-    vi.mocked(createUserService).mockClear();
 
     const responseBody = {
       status: 201,

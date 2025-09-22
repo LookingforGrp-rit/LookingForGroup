@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import getProjectImagesController from '#controllers/projects/images/get-project-images.ts';
 import getProjectImagesService from '#services/projects/images/get-project-images.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
@@ -11,6 +11,12 @@ const req = blankIdRequest;
 const res = blankResponse;
 
 describe('getProjectImages', () => {
+  beforeEach(() => {
+    vi.mocked(getProjectImagesService).mockClear();
+  });
+  afterEach(() => {
+    vi.mocked(getProjectImagesService).mockClear();
+  });
   //project has a non-numerical id, should return 400
   test('Must return 400 when the project id is invalid', async () => {
     req.params.id = 'nowhere NEAR a number';
@@ -40,8 +46,6 @@ describe('getProjectImages', () => {
     expect(getProjectImagesService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(getProjectImagesService).mockClear();
   });
 
   //there's something wrong with the service, should return 500
@@ -58,8 +62,6 @@ describe('getProjectImages', () => {
     expect(getProjectImagesService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(getProjectImagesService).mockClear();
   });
 
   //everything's good, return 200
@@ -76,7 +78,5 @@ describe('getProjectImages', () => {
     expect(getProjectImagesService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(getProjectImagesService).mockClear();
   });
 });

@@ -1,10 +1,8 @@
-import type { Readable } from 'stream';
-import type { AuthenticatedRequest } from '@looking-for-group/shared';
-import type { Response } from 'express';
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import createProjectController from '#controllers/projects/create-project.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import createProjectService from '#services/projects/create-project.ts';
+import { blankFile, blankProjectRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectDetail } from '#tests/resources/blanks/projects.ts';
 
 vi.mock('#services/projects/create-project.ts');
@@ -12,36 +10,23 @@ vi.mock('#services/images/upload-image.ts');
 
 //all of these consts should ideally be shoved into their own file
 //dummy req
-const req = {
-  body: {
-    title: "James Testguy's Great Game",
-    hook: "James Testguy's Great Hook",
-    description: 'The first game ever created by James Testguy',
-    status: 'Planning',
-  },
-} as unknown as AuthenticatedRequest;
+const req = blankProjectRequest;
 
 //dummy resp
-const res = {
-  json: vi.fn(() => res),
-  status: vi.fn(() => res),
-} as unknown as Response;
+const res = blankResponse;
 
 //dummy image file
-const file = {
-  fieldname: 'test name',
-  originalname: 'test og',
-  encoding: 'idk something',
-  mimetype: 'json',
-  size: 82,
-  stream: {} as unknown as Readable,
-  destination: 'nowhere',
-  filename: 'blankImg',
-  path: 'road/to/nowhere',
-  buffer: {} as unknown as Buffer,
-};
+const file = blankFile;
 
 describe('createProject', () => {
+  beforeEach(() => {
+    vi.mocked(uploadImageService).mockClear();
+    vi.mocked(createProjectService).mockClear();
+  });
+  afterEach(() => {
+    vi.mocked(uploadImageService).mockClear();
+    vi.mocked(createProjectService).mockClear();
+  });
   //currentUser has a non-numerical id, should return 400
   test('Must return 400 when currentUser is invalid', async () => {
     req.currentUser = 'nowhere NEAR a number';
@@ -74,8 +59,6 @@ describe('createProject', () => {
     expect(uploadImageService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(413);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(uploadImageService).mockClear();
   });
 
   //they added an image that had a problem somewhere, should return 500
@@ -95,8 +78,6 @@ describe('createProject', () => {
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
 
-    vi.mocked(uploadImageService).mockClear();
-
     req.file = undefined; //resetting it for the next test
   });
 
@@ -114,8 +95,6 @@ describe('createProject', () => {
     expect(createProjectService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(createProjectService).mockClear();
   });
 
   //everything's good, return 200
@@ -132,7 +111,5 @@ describe('createProject', () => {
     expect(createProjectService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(createProjectService).mockClear();
   });
 });

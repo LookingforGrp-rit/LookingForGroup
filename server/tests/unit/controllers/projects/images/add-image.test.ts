@@ -1,4 +1,4 @@
-import { describe, expect, test, vi } from 'vitest';
+import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import addImageController from '#controllers/projects/images/add-image.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import addImageService from '#services/projects/images/add-image.ts';
@@ -18,6 +18,15 @@ const res = blankResponse;
 const file = blankFile;
 
 describe('addImage', () => {
+  beforeEach(() => {
+    vi.mocked(addImageService).mockClear();
+    vi.mocked(uploadImageService).mockClear();
+  });
+  afterEach(() => {
+    vi.mocked(addImageService).mockClear();
+    vi.mocked(uploadImageService).mockClear();
+  });
+
   //project has a non-numerical id, should return 400
   test('Must return 400 when alt text is missing', async () => {
     (req.body as { altText: string }).altText = '';
@@ -75,8 +84,6 @@ describe('addImage', () => {
     expect(uploadImageService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(413);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(uploadImageService).mockClear();
   });
 
   //they added an image that had a problem somewhere, should return 500
@@ -93,8 +100,6 @@ describe('addImage', () => {
     expect(uploadImageService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(uploadImageService).mockClear();
   });
 
   //there's something wrong with the add image service, should return 500
@@ -114,9 +119,6 @@ describe('addImage', () => {
     expect(uploadImageService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(addImageService).mockClear();
-    vi.mocked(uploadImageService).mockClear();
   });
 
   //everything's good, return 200
@@ -136,8 +138,5 @@ describe('addImage', () => {
     expect(uploadImageService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(resBody);
-
-    vi.mocked(addImageService).mockClear();
-    vi.mocked(uploadImageService).mockClear();
   });
 });
