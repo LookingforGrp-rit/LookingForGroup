@@ -1,57 +1,37 @@
 // --- Imports ---
 import { useCallback, useEffect, useState } from "react";
 import { addPic, updateThumbnail, deletePic } from "../../../api/projects";
+import { ProjectDetail, ProjectImage } from "@looking-for-group/shared";
+import { PopupButton } from "../../Popup";
+import { ProjectImageUploader } from "../../ImageUploader";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
 
-// --- Interfaces ---
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number}[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string}[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string}[];
-  thumbnail: string;
-  title: string;
-  userId?: number;
-}
-
-// --- Variables ---
-// Default project value
-const defaultProject: ProjectData = {
-  audience: '',
-  description: '',
-  hook: '',
+// --- Default Project ---
+const defaultProject: ProjectDetail = {
+  audience: "",
+  description: "",
+  hook: "",
   images: [],
   jobs: [],
   members: [],
   projectId: -1,
   projectTypes: [],
-  purpose: '',
+  purpose: "",
   socials: [],
-  status: '',
+  status: "",
   tags: [],
-  thumbnail: '',
-  title: '',
+  thumbnail: "",
+  title: "",
+  userId: -1,
 };
 
+
+// --- Variables ---
 type MediaTabProps = {
-  projectData?: ProjectData;
-  setProjectData?: (data: ProjectData) => void;
+  projectData?: ProjectDetail;
+  setProjectData?: (data: ProjectDetail) => void;
   saveProject?: () => void;
   failCheck: boolean;
 }
@@ -66,7 +46,7 @@ export const MediaTab = ({
 
   // --- Hooks ---
   // tracking project modifications
-  const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
+  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(projectData);
 
   // Update data when data is changed
   useEffect(() => {
@@ -95,15 +75,16 @@ export const MediaTab = ({
       const response = await addPic(modifiedProject.projectId, file, modifiedProject.images.length + 1);
       if(response.status === 200) {
         const imgLink = URL.createObjectURL(file);
+        const newImage: ProjectImage = {
+          imageId: modifiedProject.images.length + 1,
+          image: imgLink,
+          altText: "",
+          apiUrl: ""
+        };
+        
         setModifiedProject({
           ...modifiedProject,
-          images: [
-            ...modifiedProject.images, 
-            { 
-              id: modifiedProject.images.length + 1, 
-              image: imgLink, position: modifiedProject.images.length + 1 
-            }
-          ],
+          images: [...modifiedProject.images, newImage],
         });
       }
     } catch (err) { console.error(err); }
@@ -122,7 +103,7 @@ export const MediaTab = ({
   }, [modifiedProject]);
 
   // Handle image deletion
-  const handleImageDelete = useCallback(async (image: Image) => {
+  const handleImageDelete = useCallback(async (image: ProjectImage ) => {
     if (!modifiedProject.projectId) return;
 
     try {

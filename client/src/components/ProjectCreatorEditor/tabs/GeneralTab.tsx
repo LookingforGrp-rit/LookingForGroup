@@ -3,43 +3,18 @@ import { useEffect, useState, useRef } from "react";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton } from '../../Popup';
-
-
-// --- Interfaces ---
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number}[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string}[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string}[];
-  thumbnail: string;
-  title: string;
-  userId?: number;
-}
+import { ProjectDetail } from '@looking-for-group/shared';
 
 // --- Variables ---
 // Default project value
-const defaultProject: ProjectData = {
+const defaultProject: ProjectDetail & { userId?: number } = {
+  _id: '',
   audience: '',
   description: '',
   hook: '',
   images: [],
   jobs: [],
   members: [],
-  projectId: -1,
   projectTypes: [],
   purpose: '',
   socials: [],
@@ -63,8 +38,8 @@ const keyboardDebounce = (func: any, delay: any) => {
 };
 
 type GeneralTabProps = {
-  projectData?: ProjectData;
-  setProjectData?: (data: ProjectData) => void;
+  projectData?: ProjectDetail;
+  setProjectData?: (data: ProjectDetail) => void;
   saveProject?: () => void;
   failCheck: boolean;
 }
@@ -79,7 +54,7 @@ export const GeneralTab = ({
 
   // --- Hooks ---
   // tracking project modifications
-  const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
+  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(projectData || defaultProject);
 
   // Textbox input callback: useRef to avoid unintended reset bugs
   const debounce = useRef(keyboardDebounce((updatedProject) => {

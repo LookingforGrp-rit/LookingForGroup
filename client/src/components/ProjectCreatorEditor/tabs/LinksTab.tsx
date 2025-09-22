@@ -1,62 +1,13 @@
 // --- Imports ---
 import { useEffect, useState } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { getSocials as fetchSocials } from "../../../api/users";
-
-
-// --- Interfaces ---
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-  file: File
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number }[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string }[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string }[];
-  thumbnail: string;
-  title: string;
-  userId?: number;
-}
-
-interface Social {
-  websiteId: number;
-  label: string;
-}
+import { PopupButton } from "../../Popup";
+import { ProjectDetail, Social } from "@looking-for-group/shared";
 
 // --- Variables ---
-// Default project value
-const defaultProject: ProjectData = {
-  audience: '',
-  description: '',
-  hook: '',
-  images: [],
-  jobs: [],
-  members: [],
-  projectId: -1,
-  projectTypes: [],
-  purpose: '',
-  socials: [],
-  status: '',
-  tags: [],
-  thumbnail: '',
-  title: '',
-};
-
 type LinksTabProps = {
-  projectData?: ProjectData;
-  setProjectData?: (data: ProjectData) => void;
+  projectData?: ProjectDetail;
+  setProjectData?: (data: ProjectDetail) => void;
   setErrorLinks?: (error: string) => void;
   saveProject?: () => void;
   failCheck: boolean;
@@ -64,7 +15,7 @@ type LinksTabProps = {
 
 // --- Component ---
 export const LinksTab = ({
-  projectData = defaultProject,
+  projectData,
   setProjectData = () => {},
   setErrorLinks = () => {},
   saveProject = () => {},
@@ -94,7 +45,7 @@ export const LinksTab = ({
 
   // --- Hooks --- 
   // tracking project modifications
-  const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
+  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(projectData || { socials: [] } as ProjectDetail);
   // complete list of socials
   const [allSocials, setAllSocials] = useState<Social[]>([]);
   // sets error when adding a link to the project
@@ -102,7 +53,7 @@ export const LinksTab = ({
 
   // Update data when data is changed
   useEffect(() => {
-    setModifiedProject(projectData);
+    setModifiedProject(projectData || {} as ProjectDetail);
   }, [projectData]);
 
   // Update parent state with new project data
@@ -288,19 +239,17 @@ export const LinksTab = ({
           <button id="profile-editor-add-link"
             onClick={() => {
               //addLinkInput();
-              let tempSocials = modifiedProject.socials;
+              let tempSocials = modifiedProject.socials || [];
 
-              // Create the socials array if it doesn't exist already
-              if (!tempSocials) {
-                tempSocials = [];
-              }
+              const defaultSocial = allSocials.length > 0
+                ? {
+                  id: allSocials[0].websiteId,
+                  website: allSocials[0].label,
+                  url: '',
+                } as Social
+              : { id: 0, website: '', url: '' } as Social;
 
-              //FIXME: implement website name (id?) in project socials type
-              tempSocials.push({
-                id: 1,
-                website: 'Instagram',
-                url: '',
-              });
+              tempSocials.push(defaultSocial);
 
               setModifiedProject({ ...modifiedProject, socials: tempSocials });
             }}>

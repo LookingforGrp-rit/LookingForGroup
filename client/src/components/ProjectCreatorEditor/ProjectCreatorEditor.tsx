@@ -19,33 +19,10 @@ import { createNewProject, getByID, updateProject, getPics, addPic, updatePicPos
 import { getUsersById } from '../../api/users';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
+import { ProjectDetail } from '@looking-for-group/shared';
+
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
-
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number }[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string }[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string }[];
-  thumbnail: string;
-  thumbnailFile?: File;
-  title: string;
-  userId?: number;
-}
 
 interface User {
   firstName: string,
@@ -63,7 +40,8 @@ interface Props {
 }
 
 // default value for project data
-const emptyProject: ProjectData = {
+const emptyProject: ProjectDetail = {
+  _id: '',
   audience: '',
   description: '',
   hook: '',
@@ -93,10 +71,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // --- Hooks ---
   // store project data
-  const [projectData, setProjectData] = useState(emptyProject);
+  const [projectData, setProjectData] = useState<ProjectDetail>(emptyProject);
 
   // tracking temporary project changes before committing to a save
-  const [modifiedProject, setModifiedProject] = useState(emptyProject);
+  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(emptyProject);
 
   // check whether or not the data in the popup is valid
   const [failCheck, setFailCheck] = useState(false);
@@ -136,7 +114,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     setErrorLinks('');
     if (newProject && user) {
       const initProject = async() => {
-        const project: ProjectData = { ...emptyProject, userId: user.userId };
+        const project: ProjectDetail  & { userId?: number } = { ...emptyProject, userId: user.userId };
         try {
           const response = await getUsersById(user.userId.toString());
           // Add creator as Project Lead
@@ -147,7 +125,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
             profileImage: response.data?.profileImage || '',
             userId: user?.userId || 0
           };
-          projectData.members = [member];
+          project.members = [member];
         } catch (error) {
           console.error(error);
         }
