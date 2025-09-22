@@ -25,6 +25,12 @@ export const blankFile = {
 
 export const blankRequest = {} as unknown as Request;
 
+export const blankIdRequest = {
+  params: {
+    id: '1',
+  },
+} as unknown as Request;
+
 export const blankResponse = {
   json: vi.fn(() => blankResponse),
   status: vi.fn(() => blankResponse),

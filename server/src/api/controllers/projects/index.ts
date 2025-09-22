@@ -3,7 +3,7 @@ import deleteProject from './delete-project.ts';
 import getProjectById from './get-project-id.ts';
 import getProjects from './get-projects.ts';
 import addImage from './images/add-image.ts';
-import getProjectImages from './images/get-proj-images.ts';
+import getProjectImages from './images/get-project-images.ts';
 import removeImage from './images/remove-image.ts';
 import reorderImages from './images/reorder-images.ts';
 import updateImage from './images/update-image.ts';
@@ -20,7 +20,7 @@ import getProjectSocials from './socials/get-project-socials.ts';
 import { updateProjectSocial } from './socials/update-project-social.ts';
 import addTags from './tags/add-tags.ts';
 import deleteTags from './tags/delete-tags.ts';
-import getTags from './tags/get-proj-tags.ts';
+import getTags from './tags/get-project-tags.ts';
 import updateProject from './update-project.ts';
 
 export default {

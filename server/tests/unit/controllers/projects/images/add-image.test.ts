@@ -46,7 +46,7 @@ describe('addImage', () => {
     ).altText = 'sample text'; //resetting it for the next test
   });
 
-  //project has a non-numerical id, should return 400
+  //no file sent, should return 404
   test("Must return 404 when file couldn't be found", async () => {
     req.file = undefined;
     const resBody = {
