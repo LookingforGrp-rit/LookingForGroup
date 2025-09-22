@@ -21,7 +21,7 @@ const res = {
 describe('deleteProject', () => {
   //project has a non-numerical id, should return 400
   test('Must return 400 when project id is invalid', async () => {
-    req.params.id = 'not a number either';
+    req.params.projectId = 'not a number either';
     const resBody = {
       status: 400,
       error: 'Invalid project ID',
@@ -35,7 +35,6 @@ describe('deleteProject', () => {
     vi.mocked(deleteProjectService).mockClear();
     req.params.id = '1'; //resetting it for the next test
   });
-
   //there's something wrong with the service, should return 500
   test('Must return 500 when the service errors', async () => {
     vi.mocked(deleteProjectService).mockResolvedValue('INTERNAL_ERROR');
