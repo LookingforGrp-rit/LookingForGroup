@@ -34,8 +34,7 @@ describe('createUser', () => {
   res.json = vi.fn(() => res);
   res.status = vi.fn(() => res);
 
-  // #FIXME the controller needs to be fixed for this test to pass.
-  test.skip('should return 500 if user validation has an internal error', async () => {
+  test('should return 500 if user validation has an internal error', async () => {
     vi.mocked(getUserByUsernameService).mockResolvedValue('INTERNAL_ERROR');
     vi.mocked(getUserByUsernameService).mockClear();
 

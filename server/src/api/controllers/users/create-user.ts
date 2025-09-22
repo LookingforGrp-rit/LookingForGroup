@@ -65,6 +65,16 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     return;
   }
 
+  if (userExist === 'INTERNAL_ERROR') {
+    const resBody: ApiResponse = {
+      status: 500,
+      error: 'Internal Server Error',
+      data: null,
+    };
+    res.status(500).json(resBody);
+    return;
+  }
+
   const result = await createUserService(uid, username, firstName, lastName, email);
 
   if (result === 'INTERNAL_ERROR') {
