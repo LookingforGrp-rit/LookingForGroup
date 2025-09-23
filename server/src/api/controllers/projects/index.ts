@@ -14,7 +14,7 @@ import addMember from './members/add-member.ts';
 import deleteMember from './members/delete-member.ts';
 import getMembers from './members/get-members.ts';
 import updateMember from './members/update-member.ts';
-import { addProjectSocial } from './socials/add-social.ts';
+import addProjectSocial from './socials/add-project-social.ts';
 import { deleteProjectSocial } from './socials/delete-project-social.ts';
 import getProjectSocials from './socials/get-project-socials.ts';
 import { updateProjectSocial } from './socials/update-project-social.ts';

@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { addProjectSocialService } from '#services/projects/socials/add-social.ts';
+import { addProjectSocialService } from '#services/projects/socials/add-project-social.ts';
 
 type Social = {
   websiteId: number;
@@ -8,7 +8,7 @@ type Social = {
 };
 
 //adds a social to the project
-export const addProjectSocial = async (req: Request, res: Response): Promise<void> => {
+const addProjectSocial = async (req: Request, res: Response): Promise<void> => {
   const social: Social = req.body as Social;
   const id = parseInt(req.params.id);
 
@@ -27,7 +27,7 @@ export const addProjectSocial = async (req: Request, res: Response): Promise<voi
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'No Projects for user found',
+      error: 'Social at provided ID does not exist',
       data: null,
     };
     res.status(404).json(resBody);
@@ -50,3 +50,5 @@ export const addProjectSocial = async (req: Request, res: Response): Promise<voi
   };
   res.status(201).json(resBody);
 };
+
+export default addProjectSocial;

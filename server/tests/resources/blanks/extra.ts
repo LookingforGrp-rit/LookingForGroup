@@ -99,4 +99,14 @@ export const blankImageRequest = {
   currentUser: '1',
 } as unknown as AuthenticatedRequest;
 
+export const blankSocialRequest = {
+  params: {
+    id: '1',
+  },
+  body: {
+    websiteId: 1,
+    url: '',
+  },
+} as unknown as AuthenticatedRequest;
+
 export const blankUploadImage = { location: `` };
