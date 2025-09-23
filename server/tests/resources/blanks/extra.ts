@@ -66,6 +66,15 @@ export const blankUserRequest = {
   query: {},
 } as unknown as Request;
 
+export const blankMediumsRequest = {
+  params: {
+    id: '1',
+  },
+  body: {
+    mediumIds: [1, 2, 3],
+  },
+} as unknown as AuthenticatedRequest;
+
 export const blankImageRequest = {
   params: {
     id: '1',
