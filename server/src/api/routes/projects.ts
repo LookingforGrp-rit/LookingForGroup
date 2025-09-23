@@ -78,7 +78,7 @@ router.patch(
   injectCurrentUser,
   authenticated(requiresProjectOwner),
   upload.single('image'),
-  PROJECT.updateImage,
+  authenticated(PROJECT.updateImage),
 );
 //Removes picture from a project
 router.delete(

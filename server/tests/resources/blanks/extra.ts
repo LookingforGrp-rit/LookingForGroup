@@ -38,6 +38,8 @@ export const blankResponse = {
   status: vi.fn(() => blankResponse),
 } as unknown as Response;
 
+//these two should probably go into their respective files...
+//but i already did the imports solike
 export const blankProjectRequest = {
   params: {
     id: '1',
@@ -67,6 +69,7 @@ export const blankUserRequest = {
 export const blankImageRequest = {
   params: {
     id: '1',
+    imageId: '1',
   },
   body: {
     image: '',
