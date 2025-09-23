@@ -53,6 +53,9 @@ export const blankUserPreview: UserPreview = {
   lastName: 'Testguy',
   username: 'TESTGUY',
   profileImage: null,
+  mentor: false,
+  designer: false,
+  developer: false,
   apiUrl: '',
 };
 
@@ -65,6 +68,9 @@ export const blankUserDetail: UserDetail = {
   location: '',
   funFact: '',
   bio: '',
+  mentor: false,
+  designer: false,
+  developer: false,
   projects: Object.prototype as ProjectPreview[],
   skills: Object.prototype as UserSkill[],
   socials: Object.prototype as UserSocial[],
@@ -98,6 +104,9 @@ export const blankUser: User = {
   location: '',
   funFact: '',
   bio: '',
+  mentor: false,
+  designer: false,
+  developer: false,
   skills: Object.prototype as UserSkill[],
   socials: Object.prototype as UserSocial[],
   following: {

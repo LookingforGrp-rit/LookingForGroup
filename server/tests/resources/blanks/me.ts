@@ -29,6 +29,9 @@ export const blankMePreview: MePreview = {
   lastName: '',
   username: '',
   profileImage: null,
+  mentor: false,
+  designer: false,
+  developer: false,
   apiUrl: '',
 };
 
@@ -41,6 +44,9 @@ export const blankMeDetail: MeDetail = {
   location: '',
   funFact: '',
   bio: '',
+  mentor: false,
+  designer: false,
+  developer: false,
   projects: [],
   following: {
     usersFollowing: {
@@ -84,6 +90,9 @@ export const blankMePrivate: MePrivate = {
   location: '',
   funFact: '',
   bio: '',
+  mentor: false,
+  designer: false,
+  developer: false,
   projects: [],
   following: {
     usersFollowing: {
