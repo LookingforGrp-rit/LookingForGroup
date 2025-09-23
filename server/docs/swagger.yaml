@@ -2871,6 +2871,10 @@ components:
           type: string
         bio:
           type: string
+        mentor:
+          type: integer
+          minimum: 0
+          maximium: 1
 
     ProjectWithFollowers:
       type: object
