@@ -1,6 +1,6 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { NextFunction, Response } from 'express';
-import getProjectByIdService from '#services/projects/get-proj-id.ts';
+import getProjectByIdService from '#services/projects/get-project-id.ts';
 
 const requiresProjectOwner = async (
   request: AuthenticatedRequest,

@@ -19,6 +19,7 @@ interface UpdateUserInfo {
   username?: string;
   phoneNumber?: string;
   profileImage?: string;
+  mentor?: 0 | 1;
 }
 
 //update user info
@@ -53,6 +54,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'username',
     'phoneNumber',
     'profileImage',
+    'mentor',
   ];
 
   //validate update fields

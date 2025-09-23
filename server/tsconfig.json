@@ -18,7 +18,8 @@
       "#config/*.ts": ["./src/config/*.ts"],
       "#services/*.ts": ["./src/services/*.ts"],
       "#controllers/*.ts": ["./src/api/controllers/*.ts"],
-      "#routes/*.ts": ["./src/api/routes/*.ts"]
+      "#routes/*.ts": ["./src/api/routes/*.ts"],
+      "#tests/*.ts": ["./tests/*.ts"]
     }
   },
   "include": ["src", "tests"],

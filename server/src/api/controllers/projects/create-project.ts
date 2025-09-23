@@ -3,7 +3,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import type { Prisma, ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import createProjectService from '#services/projects/create-proj.ts';
+import createProjectService from '#services/projects/create-project.ts';
 
 //creates a project
 const createProjectController = async (req: AuthenticatedRequest, res: Response) => {
@@ -28,9 +28,10 @@ const createProjectController = async (req: AuthenticatedRequest, res: Response)
     audience: req.body.audience as string,
     users: {
       connect: {
-        userId: req.body.userId as number,
+        userId,
       },
     },
+    members: {},
   };
 
   //thumbnail handling
@@ -63,7 +64,7 @@ const createProjectController = async (req: AuthenticatedRequest, res: Response)
     data.thumbnail = dbImage.location;
   }
 
-  const result = await createProjectService(data);
+  const result = await createProjectService(data, userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

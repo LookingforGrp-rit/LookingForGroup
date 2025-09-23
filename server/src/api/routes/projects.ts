@@ -34,7 +34,10 @@ router.post(
 );
 
 //Get a specific project
-router.get('/:id', PROJECT.getProjectByID);
+router.get('/:id', PROJECT.getProjectById);
+
+//Get a specific project's members
+router.get('/:id/members', PROJECT.getMembers);
 
 //Edits a project through a specific id
 router.patch(
@@ -75,7 +78,7 @@ router.patch(
   injectCurrentUser,
   authenticated(requiresProjectOwner),
   upload.single('image'),
-  PROJECT.updateImage,
+  authenticated(PROJECT.updateImage),
 );
 //Removes picture from a project
 router.delete(

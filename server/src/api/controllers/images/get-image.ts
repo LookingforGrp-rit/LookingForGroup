@@ -30,7 +30,7 @@ export const getImage = async (req: Request, res: Response): Promise<void> => {
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 500,
-      error: 'Image not found',
+      error: 'Internal Server Error',
       data: null,
     };
     res.status(500).json(resBody);

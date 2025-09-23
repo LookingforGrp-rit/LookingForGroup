@@ -26,7 +26,7 @@ export const transformProjectMember = (
       lastName,
       username,
       profileImage,
-      apiUrl: `api/users/${userId.toString()}}`,
+      apiUrl: `api/users/${userId.toString()}`,
     },
     role: {
       roleId,

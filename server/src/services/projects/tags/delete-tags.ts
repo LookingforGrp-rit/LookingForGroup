@@ -37,7 +37,7 @@ export const deleteTagsService = async (
     }
     return 'NO_CONTENT';
   } catch (error) {
-    console.error('Error in deleteMediumsService:', error);
+    console.error('Error in deleteTagsService:', error);
 
     if (error instanceof Object && 'code' in error) {
       if (error.code === 'P2025') {

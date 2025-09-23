@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getService from '#services/projects/get-proj-id.ts';
+import getService from '#services/projects/get-project-id.ts';
 
 //gets a prject by itsid
-const getProjectByIDController = async (_req: Request, res: Response): Promise<void> => {
+const getProjectByIdController = async (_req: Request, res: Response): Promise<void> => {
   const projID = parseInt(_req.params.id);
 
   if (isNaN(projID)) {
@@ -46,4 +46,4 @@ const getProjectByIDController = async (_req: Request, res: Response): Promise<v
   res.status(200).json(resBody);
 };
 
-export default getProjectByIDController;
+export default getProjectByIdController;

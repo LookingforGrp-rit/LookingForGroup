@@ -1755,6 +1755,39 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /api/projects/{id}/members:
+    get:
+      summary: Get a project's members
+      description: Returns the list of members on the specified project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: List of members the current project has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectMember'
     post:
       summary: Add a member to a project
       tags:
@@ -2572,6 +2605,16 @@ components:
           type: integer
         url:
           type: string
+
+    ProjectMember:
+      type: object
+      properties:
+        projectId:
+          type: integer
+        userId:
+          type: integer
+        titleId:
+          type: integer
 
     SocialCreateInput:
       type: object

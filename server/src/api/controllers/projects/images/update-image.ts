@@ -1,7 +1,7 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { RequestHandler } from 'express';
+import type { AuthenticatedRequest, ApiResponse } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import getUpdateImageService from '#services/projects/images/update-image.ts';
+import updateImageService from '#services/projects/images/update-image.ts';
 
 interface UpdateImageInfo {
   image?: string;
@@ -9,16 +9,18 @@ interface UpdateImageInfo {
 }
 
 //updates an image in a project
-const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImageInfo> = async (
-  req,
-  res,
-): Promise<void> => {
-  const { id } = req.params;
-  const updates: UpdateImageInfo = req.body;
+const updateImageController = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const id = req.params.imageId;
+  const updates: UpdateImageInfo = req.body as UpdateImageInfo;
 
   const imageId = parseInt(id);
   if (isNaN(imageId)) {
-    res.status(400).json({ message: 'Invalid image ID' });
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid image ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
     return;
   }
 
@@ -26,7 +28,12 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
   const invalidFields = Object.keys(updates).filter((field) => !allowedFields.includes(field));
 
   if (invalidFields.length > 0) {
-    res.status(400).json({ message: `Invalid fields: ${JSON.stringify(invalidFields)}` });
+    const resBody: ApiResponse = {
+      status: 400,
+      error: `Invalid fields: ${JSON.stringify(invalidFields)}`,
+      data: null,
+    };
+    res.status(400).json(resBody);
     return;
   }
 
@@ -61,19 +68,34 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
     updates['image'] = dbImage.location;
   }
 
-  const result = await getUpdateImageService(imageId, updates);
+  const result = await updateImageService(imageId, updates);
 
   if (result === 'NOT_FOUND') {
-    res.status(404).json({ message: 'Image not found' });
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Image not found',
+      data: null,
+    };
+    res.status(404).json(resBody);
     return;
   }
 
   if (result === 'INTERNAL_ERROR') {
-    res.status(500).json({ message: 'Internal Server Error' });
+    const resBody: ApiResponse = {
+      status: 500,
+      error: 'Internal Server Error',
+      data: null,
+    };
+    res.status(500).json(resBody);
     return;
   }
 
-  res.status(200).json({ success: true });
+  const resBody: ApiResponse = {
+    status: 200,
+    error: null,
+    data: result,
+  };
+  res.status(200).json(resBody);
 };
 
 export default updateImageController;
