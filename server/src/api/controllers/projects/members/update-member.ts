@@ -1,7 +1,7 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
-import getService from '#services/projects/members/update-member.ts';
+import updateMemberService from '#services/projects/members/update-member.ts';
 
 const updateMemberController = async (_req: Request, res: Response) => {
   const { userId, id } = _req.params;
@@ -11,7 +11,7 @@ const updateMemberController = async (_req: Request, res: Response) => {
   if (isNaN(userIdReal) || isNaN(projectIdReal)) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Bad Request (invalid params)',
+      error: 'Invalid user or project ID',
       data: null,
     };
     res.status(400).json(resBody);
@@ -25,12 +25,12 @@ const updateMemberController = async (_req: Request, res: Response) => {
 
   const data: Prisma.MembersUpdateInput = _req.body as Prisma.MembersUpdateInput;
 
-  const result = await getService(memberId, data);
+  const result = await updateMemberService(memberId, data);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Member not Found',
+      error: 'Member not found',
       data: null,
     };
     res.status(404).json(resBody);

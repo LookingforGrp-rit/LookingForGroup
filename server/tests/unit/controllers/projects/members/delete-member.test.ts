@@ -1,12 +1,12 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import deleteMemberController from '#controllers/projects/members/delete-member.ts';
 import { deleteMemberService } from '#services/projects/members/delete-member.ts';
-import { blankMemberDeleteRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
+import { blankMemberRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 
 vi.mock('#services/projects/members/delete-member.ts');
 
 //dummy req
-const req = blankMemberDeleteRequest;
+const req = blankMemberRequest;
 
 //dummy resp
 const res = blankResponse;

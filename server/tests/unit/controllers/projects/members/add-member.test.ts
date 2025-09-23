@@ -1,13 +1,13 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import addMemberController from '#controllers/projects/members/add-member.ts';
 import addMemberService from '#services/projects/members/add-member.ts';
-import { blankMediumsRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
+import { blankMemberRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectMember } from '#tests/resources/blanks/projects.ts';
 
 vi.mock('#services/projects/members/add-member.ts');
 
 //dummy req
-const req = blankMediumsRequest;
+const req = blankMemberRequest;
 
 //dummy resp
 const res = blankResponse;
