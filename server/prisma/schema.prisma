@@ -33,9 +33,9 @@ model Jobs {
   duration     JobsDuration
   location     JobsLocation
   compensation JobsCompensation
-  description  String?          @db.VarChar(500)
+  description  String           @default("") @db.VarChar(500)
   createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt    DateTime         @default(now()) @map("updated_at") @db.Timestamp(0)
+  updatedAt    DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)
   projects     Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
   roles        Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
 
@@ -108,15 +108,15 @@ model ProjectSocials {
 model Projects {
   projectId         Int                 @id @default(autoincrement()) @map("project_id")
   title             String              @db.VarChar(150)
-  hook              String              @db.VarChar(200)
-  description       String              @db.VarChar(2000)
+  hook              String              @default("") @db.VarChar(200)
+  description       String              @default("") @db.VarChar(2000)
   thumbnail         String?             @db.VarChar(100)
   purpose           ProjectsPurpose?
-  status            ProjectsStatus
-  audience          String?             @db.VarChar(300)
+  status            ProjectsStatus      @default(Planning)
+  audience          String              @default("") @db.VarChar(300)
   userId            Int                 @map("user_id")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamp(0)
+  updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   jobs              Jobs[]
   members           Members[]
   projectFollowings ProjectFollowings[]
@@ -195,17 +195,17 @@ model Users {
   firstName         String              @map("first_name") @db.Text
   lastName          String              @map("last_name") @db.Text
   profileImage      String?             @map("profile_image") @db.VarChar(100)
-  headline          String?             @db.VarChar(100)
-  pronouns          String?             @db.Text
-  title             String?             @db.VarChar(50)
+  headline          String              @default("") @db.VarChar(100)
+  pronouns          String              @default("") @db.VarChar(20)
+  title             String              @default("") @db.VarChar(50)
   academicYear      UsersAcademicYear?  @map("academic_year")
-  location          String?             @db.VarChar(150)
-  funFact           String?             @map("fun_fact") @db.VarChar(100)
-  bio               String?             @db.VarChar(600)
+  location          String              @default("") @db.VarChar(150)
+  funFact           String              @default("") @map("fun_fact") @db.VarChar(100)
+  bio               String              @default("") @db.VarChar(600)
   visibility        Int                 @default(1) @db.TinyInt
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt         DateTime            @default(now()) @map("updated_at") @db.Timestamp(0)
-  phoneNumber       Int?                @unique @map("phone_number")
+  updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
+  phoneNumber       String?             @unique @db.VarChar(20) @map("phone_number")
   universityId      String              @unique(map: "university_id_UNIQUE") @map("university_id") @db.VarChar(9)
   members           Members[]
   projectFollowings ProjectFollowings[]
@@ -289,8 +289,7 @@ enum UsersAcademicYear {
   Sophomore
   Junior
   Senior
-  Grad1
-  Grad2
+  Graduate
 
   @@map("users_academic_year")
 }

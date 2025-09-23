@@ -1,6 +1,7 @@
 import type { ProjectSocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectSocialSelector } from '#services/selectors/projects/parts/project-social.ts';
+import { transformSocial } from '#services/transformers/datasets/social.ts';
 
 //sample project social from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -18,7 +19,6 @@ export const transformProjectSocial = (
   return {
     url,
     apiUrl: `/api/projects/${projectId.toString()}/socials/${websiteId.toString()}`,
-    websiteId,
-    label,
+    ...transformSocial({ websiteId, label }),
   };
 };
