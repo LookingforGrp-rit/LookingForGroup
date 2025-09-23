@@ -83,7 +83,18 @@ export const blankMemberRequest = {
     roleId: 1,
     userId: 1,
   },
-};
+} as unknown as AuthenticatedRequest;
+export const blankMemberDeleteRequest = {
+  params: {
+    id: '1',
+    userId: '1',
+  },
+  currentUser: '1',
+  body: {
+    roleId: 1,
+    userId: 1,
+  },
+} as unknown as AuthenticatedRequest;
 
 export const blankImageRequest = {
   params: {
