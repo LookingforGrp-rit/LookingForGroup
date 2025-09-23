@@ -1,15 +1,17 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import { deleteMemberService } from '#services/projects/members/delete-member.ts';
 
-//deletes a member frmo a project
-const deleteMemberController = async (req: Request, res: Response) => {
+//deletes a member from a project
+const deleteMemberController = async (req: AuthenticatedRequest, res: Response) => {
   const { id } = req.params;
   const { userId } = req.params;
   const projectId = parseInt(id);
   const memberId = parseInt(userId);
 
-  if (isNaN(projectId) || isNaN(memberId)) {
+  const curUser = parseInt(req.currentUser);
+
+  if (isNaN(projectId) || isNaN(memberId) || isNaN(curUser)) {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Invalid project or member id',
