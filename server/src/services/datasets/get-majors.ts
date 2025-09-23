@@ -6,7 +6,7 @@ import type { Major } from '../../../../shared/types.ts';
 
 type GetMajorsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
-export const getMajorsService = async (): Promise<Major[] | GetMajorsServiceError> => {
+const getMajorsService = async (): Promise<Major[] | GetMajorsServiceError> => {
   try {
     const majors = await prisma.majors.findMany({
       select: MajorSelector,
@@ -19,3 +19,5 @@ export const getMajorsService = async (): Promise<Major[] | GetMajorsServiceErro
     return 'INTERNAL_ERROR';
   }
 };
+
+export default getMajorsService;

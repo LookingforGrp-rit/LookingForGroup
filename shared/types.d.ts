@@ -226,8 +226,8 @@ export interface MeDetail extends MePreview {
     bio: string;
     mentor: boolean;
     projects: ProjectPreview[];
-    skills: MySkill[];
-    socials: MySocial[];
+    skills?: MySkill[];
+    socials?: MySocial[];
     following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
     followers: UserFollowsList;
 }
@@ -330,7 +330,7 @@ export interface ProjectDetail extends ProjectPreview {
     createdAt: Date;
     updatedAt: Date;
     owner: UserPreview;
-    tags: ProjectTag[];
+    tags: Tag[];
     projectImages: ProjectImage[];
     projectSocials: ProjectSocial[];
     jobs: ProjectJob[];

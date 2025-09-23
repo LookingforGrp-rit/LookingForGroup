@@ -1,4 +1,3 @@
-import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import reorderImagesService from '#services/projects/images/reorder-images.ts';
 
@@ -13,34 +12,19 @@ const reorderImagesController = async (req: Request, res: Response): Promise<voi
 
   const projId = parseInt(req.params.id);
   if (isNaN(projId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project or image ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
+    res.status(400).json({ message: 'Invalid project ID' });
     return;
   }
 
   const result = await reorderImagesService(projId, imageOrder);
 
   if (result === 'NOT_FOUND') {
-    const resBody: ApiResponse = {
-      status: 404,
-      error: 'Image not found',
-      data: null,
-    };
-    res.status(404).json(resBody);
+    res.status(404).json({ message: 'Image not found' });
     return;
   }
 
   if (result === 'INTERNAL_ERROR') {
-    const resBody: ApiResponse = {
-      status: 500,
-      error: 'Internal Server Error',
-      data: null,
-    };
-    res.status(500).json(resBody);
+    res.status(500).json({ message: 'Internal Server Error' });
     return;
   }
 

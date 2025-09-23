@@ -6,7 +6,7 @@ type RemoveImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'
 type RemoveImageServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 //delete a member
-const removeImageService = async (
+export const removeImageService = async (
   projectId: number,
   imageId: number,
 ): Promise<RemoveImageServiceSuccess | RemoveImageServiceError> => {
@@ -36,4 +36,3 @@ const removeImageService = async (
     return 'INTERNAL_ERROR';
   }
 };
-export default removeImageService;

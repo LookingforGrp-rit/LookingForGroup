@@ -7,7 +7,7 @@ import { transformMeToPrivate } from '#services/transformers/me/me-private.ts';
 
 type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT'>;
 
-export const createUserService = async (
+const createUserService = async (
   uid: string,
   username: string,
   firstName: string,
@@ -42,3 +42,5 @@ export const createUserService = async (
     return 'INTERNAL_ERROR';
   }
 };
+
+export default createUserService;

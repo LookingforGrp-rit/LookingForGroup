@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getSkillsService } from '#services/datasets/get-skills.ts';
+import getService from '#services/datasets/get-skills.ts';
 
 const getSkillsController = async (_request: Request, response: Response): Promise<void> => {
-  const result = await getSkillsService();
+  const result = await getService();
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

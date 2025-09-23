@@ -9,34 +9,11 @@ type CreateProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUN
 
 const createProjectService = async (
   data: Prisma.ProjectsCreateInput,
-  curUserId: number,
 ): Promise<ProjectDetail | CreateProjectServiceError> => {
   try {
-    const project = await prisma.projects.create({ data, select: { projectId: true } });
+    const project = await prisma.projects.create({ data, select: ProjectDetailSelector });
 
-    await prisma.members.create({
-      data: {
-        users: {
-          connect: { userId: curUserId },
-        },
-        projects: {
-          connect: { projectId: project.projectId },
-        },
-        roles: {
-          connect: { label: 'Owner' },
-        },
-      },
-    });
-
-    const result = await prisma.projects.findUnique({
-      where: {
-        projectId: project.projectId,
-      },
-      select: ProjectDetailSelector,
-    });
-    if (!result) return 'INTERNAL_ERROR';
-
-    return transformProjectToDetail(result);
+    return transformProjectToDetail(project);
   } catch (e) {
     console.error('Error in createProjectService:', e);
     return 'INTERNAL_ERROR';

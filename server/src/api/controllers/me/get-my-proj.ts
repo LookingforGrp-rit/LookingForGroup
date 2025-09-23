@@ -1,22 +1,24 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
-import getMembersService from '#services/projects/members/get-members.ts';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
+import { getMyProjectsService } from '#services/me/get-my-proj.ts';
 
-//gets the socials associated with a project
-const getMembersController = async (req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(req.params.id);
+//get projects user owns/is a member of
+export const getMyProjects = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  //current user ID
+  const UserId = parseInt(req.currentUser);
 
-  if (isNaN(projID)) {
+  //check if ID is number
+  if (isNaN(UserId)) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Invalid project ID',
+      error: 'Invalid user ID',
       data: null,
     };
     res.status(400).json(resBody);
     return;
   }
 
-  const result = await getMembersService(projID);
+  const result = await getMyProjectsService(UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -31,7 +33,7 @@ const getMembersController = async (req: Request, res: Response): Promise<void> 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Members not found',
+      error: 'Projects not found',
       data: null,
     };
     res.status(404).json(resBody);
@@ -45,5 +47,3 @@ const getMembersController = async (req: Request, res: Response): Promise<void> 
   };
   res.status(200).json(resBody);
 };
-
-export default getMembersController;

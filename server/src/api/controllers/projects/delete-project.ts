@@ -5,16 +5,6 @@ import { deleteProjectService } from '#services/projects/delete-project.ts';
 //deletes a project
 const deleteProjectController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.projectId);
-
-  if (isNaN(projectId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-  }
-
   const result = await deleteProjectService(projectId);
 
   if (result === 'NOT_FOUND') {

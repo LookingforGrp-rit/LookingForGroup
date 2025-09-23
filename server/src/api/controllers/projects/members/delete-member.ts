@@ -21,17 +21,7 @@ const deleteMemberController = async (req: AuthenticatedRequest, res: Response) 
     return;
   }
 
-  const result = await deleteMemberService(projectId, memberId, curUser);
-
-  if (result === 'FORBIDDEN') {
-    const resBody: ApiResponse = {
-      status: 403,
-      error: 'Insufficient permissions',
-      data: null,
-    };
-    res.status(403).json(resBody);
-    return;
-  }
+  const result = await deleteMemberService(projectId, memberId);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

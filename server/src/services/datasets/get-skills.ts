@@ -6,7 +6,7 @@ import type { Skill } from '../../../../shared/types.ts';
 
 type GetSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
-export const getSkillsService = async (): Promise<Skill[] | GetSkillsServiceError> => {
+const getSkillsService = async (): Promise<Skill[] | GetSkillsServiceError> => {
   try {
     const skills = await prisma.skills.findMany({
       select: SkillSelector,
@@ -19,3 +19,5 @@ export const getSkillsService = async (): Promise<Skill[] | GetSkillsServiceErro
     return 'INTERNAL_ERROR';
   }
 };
+
+export default getSkillsService;

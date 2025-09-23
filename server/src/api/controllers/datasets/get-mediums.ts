@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getMediumsService } from '#services/datasets/get-mediums.ts';
+import getMediumsService from '#services/datasets/get-mediums.ts';
 
 const getMediumsController = async (_request: Request, response: Response): Promise<void> => {
   const result = await getMediumsService();

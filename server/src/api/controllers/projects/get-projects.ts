@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getService from '#services/projects/get-projects.ts';
+import getService from '#services/projects/get-proj.ts';
 
 //gets all projects
 const getProjectsController = async (_req: Request, res: Response): Promise<void> => {

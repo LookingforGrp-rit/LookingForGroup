@@ -36,7 +36,7 @@ export const addProjectSocial = async (req: Request, res: Response): Promise<voi
   if (result === 'CONFLICT') {
     const resBody: ApiResponse = {
       status: 409,
-      error: 'You already have a social from this site',
+      error: 'You already have a social from thsis site',
       data: null,
     };
     res.status(409).json(resBody);
@@ -44,9 +44,9 @@ export const addProjectSocial = async (req: Request, res: Response): Promise<voi
   }
 
   const resBody: ApiResponse<typeof result> = {
-    status: 201,
+    status: 200,
     error: null,
     data: result,
   };
-  res.status(201).json(resBody);
+  res.status(200).json(resBody);
 };

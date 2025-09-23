@@ -1,14 +1,14 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import { addProjectFollowingService } from '#services/me/followings/add-follow-project.ts';
+import { deleteProjectFollowService } from '#services/me/followings/delete-follow-proj.ts';
 
-//add project to follow list
-export const addProjectFollowing = async (
+// delete a project from follow list
+export const deleteProjectFollowing = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
   const userId = parseInt(req.currentUser);
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.followId);
 
   //validate input
   if (isNaN(userId) || isNaN(projectId)) {
@@ -21,18 +21,10 @@ export const addProjectFollowing = async (
     return;
   }
 
-  const result = await addProjectFollowingService(userId, projectId);
+  //call service
+  const result = await deleteProjectFollowService(userId, projectId);
 
-  if (result === 'CONFLICT') {
-    const resBody: ApiResponse = {
-      status: 409,
-      error: 'Already following project',
-      data: null,
-    };
-    res.status(409).json(resBody);
-    return;
-  }
-
+  //internal error
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 500,
@@ -43,20 +35,22 @@ export const addProjectFollowing = async (
     return;
   }
 
+  //not found
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Project not found',
+      error: 'Project is not already followed',
       data: null,
     };
     res.status(404).json(resBody);
     return;
   }
 
-  const resBody: ApiResponse<typeof result> = {
-    status: 201,
+  //passed
+  const resBody: ApiResponse<null> = {
+    status: 200,
     error: null,
-    data: result,
+    data: null,
   };
-  res.status(201).json(resBody);
+  res.status(200).json(resBody);
 };

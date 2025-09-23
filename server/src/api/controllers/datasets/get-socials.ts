@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getSocialsService } from '#services/datasets/get-socials.ts';
+import getService from '#services/datasets/get-socials.ts';
 
 const getSocialsController = async (_request: Request, response: Response): Promise<void> => {
-  const result = await getSocialsService();
+  const result = await getService();
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

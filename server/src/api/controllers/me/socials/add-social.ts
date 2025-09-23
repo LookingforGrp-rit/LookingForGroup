@@ -48,9 +48,9 @@ export const addSocial = async (req: AuthenticatedRequest, res: Response): Promi
   }
 
   const resBody: ApiResponse<typeof result> = {
-    status: 201,
+    status: 200,
     error: null,
     data: result,
   };
-  res.status(201).json(resBody);
+  res.status(200).json(resBody);
 };
