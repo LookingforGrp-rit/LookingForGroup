@@ -19,6 +19,7 @@ interface UpdateUserInfo {
   username?: string;
   phoneNumber?: string;
   profileImage?: string;
+  mentor?: '0' | '1';
 }
 
 //update user info
@@ -53,6 +54,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'username',
     'phoneNumber',
     'profileImage',
+    'mentor',
   ];
 
   //validate update fields
@@ -118,7 +120,10 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     updates['profileImage'] = dbImage.location;
   }
 
-  const result = await updateUserInfoService(userId, updates);
+  const result = await updateUserInfoService(userId, {
+    ...updates,
+    mentor: updates.mentor ? parseInt(updates.mentor) : undefined,
+  });
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
