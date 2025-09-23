@@ -1,7 +1,7 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
-import getService from '#services/projects/members/add-member.ts';
+import addMemberService from '#services/projects/members/add-member.ts';
 
 //adds a member to the project
 const addMemberController = async (req: Request, res: Response) => {
@@ -29,7 +29,7 @@ const addMemberController = async (req: Request, res: Response) => {
     roles: { connect: rolesWhere },
   };
 
-  const result = await getService(data);
+  const result = await addMemberService(data);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -44,7 +44,7 @@ const addMemberController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'User or Role not found',
+      error: 'User or role not found',
       data: null,
     };
     res.status(404).json(resBody);

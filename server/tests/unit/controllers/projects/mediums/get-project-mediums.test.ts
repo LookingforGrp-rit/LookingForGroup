@@ -36,8 +36,8 @@ describe('getProjectMediums', () => {
     req.params.id = '1'; //resetting it for the next test
   });
 
-  //there's something wrong with the update project service, should return 500
-  test('Must return 500 when the update project service errors', async () => {
+  //there's something wrong with the service, should return 500
+  test('Must return 500 when the service errors', async () => {
     vi.mocked(getProjectMediumsService).mockResolvedValue('INTERNAL_ERROR');
     expect(getProjectMediumsService).toBe(vi.mocked(getProjectMediumsService));
     const resBody = {
@@ -68,7 +68,7 @@ describe('getProjectMediums', () => {
     expect(res.json).toHaveBeenCalledWith(resBody);
   });
   //everything's good, return 200
-  test('Must return 200 when the project was retrieved successfully', async () => {
+  test('Must return 200 when the mediums were retrieved successfully', async () => {
     vi.mocked(getProjectMediumsService).mockResolvedValue([blankProjectMedium]);
     expect(getProjectMediumsService).toBe(vi.mocked(getProjectMediumsService));
     const resBody = {

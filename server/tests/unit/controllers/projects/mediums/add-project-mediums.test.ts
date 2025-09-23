@@ -6,7 +6,6 @@ import { blankProjectMedium } from '#tests/resources/blanks/projects.ts';
 
 vi.mock('#services/projects/mediums/add-project-mediums.ts');
 
-//all of these consts should ideally be shoved into their own file
 //dummy req
 const req = blankMediumsRequest;
 

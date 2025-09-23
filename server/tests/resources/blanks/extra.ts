@@ -75,6 +75,16 @@ export const blankMediumsRequest = {
   },
 } as unknown as AuthenticatedRequest;
 
+export const blankMemberRequest = {
+  params: {
+    id: '1',
+  },
+  body: {
+    roleId: 1,
+    userId: 1,
+  },
+};
+
 export const blankImageRequest = {
   params: {
     id: '1',
