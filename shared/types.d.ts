@@ -158,6 +158,8 @@ export interface UserPreview {
     username: string;
     profileImage: string | null;
     mentor: boolean;
+    designer: boolean;
+    developer: boolean
     apiUrl: string;
 }
 
@@ -207,6 +209,8 @@ export interface MePreview {
     username: string;
     profileImage: string | null;
     mentor: boolean;
+    designer: boolean;
+    developer: boolean
     apiUrl: string;
 }
 
