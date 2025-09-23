@@ -4,4 +4,5 @@ export const MePreviewSelector = Object.freeze({
   lastName: true,
   username: true,
   profileImage: true,
+  mentor: true,
 });

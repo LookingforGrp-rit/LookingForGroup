@@ -157,6 +157,7 @@ export interface UserPreview {
     lastName: string;
     username: string;
     profileImage: string | null;
+    mentor: boolean;
     apiUrl: string;
 }
 
@@ -205,6 +206,7 @@ export interface MePreview {
     lastName: string;
     username: string;
     profileImage: string | null;
+    mentor: boolean;
     apiUrl: string;
 }
 
@@ -218,6 +220,7 @@ export interface MeDetail extends MePreview {
     location: string;
     funFact: string;
     bio: string;
+    mentor: boolean;
     projects: ProjectPreview[];
     skills?: MySkill[];
     socials?: MySocial[];
