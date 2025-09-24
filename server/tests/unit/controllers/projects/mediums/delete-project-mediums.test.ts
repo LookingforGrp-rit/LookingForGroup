@@ -37,7 +37,7 @@ describe('deleteMediums', () => {
   });
 
   //everything's good, return 200
-  test('Must return 200 when the project is successfully created', async () => {
+  test('Must return 200 when the mediums are successfully deleted', async () => {
     vi.mocked(deleteMediumsService).mockResolvedValue('NO_CONTENT');
     expect(deleteMediumsService).toBe(vi.mocked(deleteMediumsService));
     const resBody = {

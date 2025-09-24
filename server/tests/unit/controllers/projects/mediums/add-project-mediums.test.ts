@@ -53,7 +53,7 @@ describe('addMediums', () => {
   });
 
   //everything's good, return 200
-  test('Must return 200 when the project is successfully created', async () => {
+  test('Must return 200 when the mediums are successfully added', async () => {
     vi.mocked(addMediumsService).mockResolvedValue([blankProjectMedium]);
     expect(addMediumsService).toBe(vi.mocked(addMediumsService));
     const resBody = {

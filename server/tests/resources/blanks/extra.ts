@@ -109,4 +109,13 @@ export const blankSocialRequest = {
   },
 } as unknown as AuthenticatedRequest;
 
+export const blankTagsRequest = {
+  params: {
+    id: '1',
+  },
+  body: {
+    tagIds: [1, 2, 3],
+  },
+} as unknown as AuthenticatedRequest;
+
 export const blankUploadImage = { location: `` };
