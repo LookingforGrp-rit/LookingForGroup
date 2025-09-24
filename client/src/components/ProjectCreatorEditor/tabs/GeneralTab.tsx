@@ -1,6 +1,5 @@
 // --- Imports ---
 import { useEffect, useState, useRef } from "react";
-import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton } from '../../Popup';
@@ -63,8 +62,20 @@ const keyboardDebounce = (func: any, delay: any) => {
   };
 };
 
+type GeneralTabProps = {
+  projectData?: ProjectData;
+  setProjectData?: (data: ProjectData) => void;
+  saveProject?: () => void;
+  failCheck: boolean;
+}
+
 // --- Component ---
-export const GeneralTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, saveProject, failCheck }) => {
+export const GeneralTab = ({
+  projectData = defaultProject,
+  setProjectData = () => {},
+  saveProject = () => {},
+  failCheck
+}: GeneralTabProps) => {
 
   // --- Hooks ---
   // tracking project modifications
@@ -84,14 +95,15 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
   useEffect(() => {
     // delay with setTimeout() used to fix input glitch bug
     debounce(modifiedProject)
-  }, [modifiedProject, setProjectData]);
+  }, [debounce, modifiedProject, setProjectData]);
 
   // --- Complete component ---
   return (
     <div id="project-editor-general">
       <div id="project-editor-title-input" className="project-editor-input-item">
-        <label>Title*</label>
+        <label htmlFor="title">Title*</label>
         <input
+          id="title"
           type="text"
           className="title-input"
           value={modifiedProject.title}
@@ -102,28 +114,7 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
       </div>
 
       <div id="project-editor-status-input" className="project-editor-input-item">
-        <label>Status*</label>
-        {/* <Dropdown> TODO: implement dropdown and styling
-          <DropdownButton buttonId="status-btn">
-            {modifiedProject.status || 'Select'}
-            <ThemeIcon
-              src={'assets/dropdown_light.svg'}
-              darkSrc={'assets/dropdown_dark.svg'}
-              id="dropdown-arrow"
-            />
-          </DropdownButton>
-          <DropdownContent>
-            {statusOptions.map((o) => (
-              <button
-                onClick={() => {
-                  setModifiedProject({ ...modifiedProject, status: o });
-                }}
-              >
-                {o}
-              </button>
-            ))}
-          </DropdownContent>
-        </Dropdown> */}
+        <label htmlFor="status">Status*</label>
         <Select>
           <SelectButton 
             placeholder='Select'
@@ -143,36 +134,10 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
             })}
           />
         </Select>
-        {/* <select
-          value={modifiedProject.status || 'Select'}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, status: e.target.value });
-          }}
-        >
-          <option disabled selected={isNewProject}>
-            Select
-          </option>
-          {statusOptions.map((o) => (
-            <option selected={isNewProject ? false : modifiedProject.status === o}>{o}</option>
-          ))}
-        </select> */}
       </div>
 
       <div id="project-editor-purpose-input" className="project-editor-input-item">
-        <label>Purpose</label>
-        {/* <select
-          value={modifiedProject.purpose || 'Select'}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, purpose: e.target.value });
-          }}
-        >
-          <option disabled selected={isNewProject}>
-            Select
-          </option>
-          {purposeOptions.map((o) => (
-            <option selected={isNewProject ? false : modifiedProject.purpose === o}>{o}</option>
-          ))}
-        </select> */}
+        <label htmlFor="purpose">Purpose</label>
         <Select>
           <SelectButton 
             placeholder='Select'
@@ -195,7 +160,7 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
       </div>
 
       <div id="project-editor-audience-input" className="project-editor-input-item">
-        <label>Target Audience</label>
+        <label htmlFor="audience">Target Audience</label>
         <div className="project-editor-extra-info">
           Define who this project is intended for--consider age group, interest, industry, or
           specific user needs.
@@ -204,6 +169,7 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
           {modifiedProject.audience ? modifiedProject.audience.length : '0'}/100
         </span>{' '}
         <textarea
+          id="audience"
           maxLength={100}
           value={modifiedProject.audience}
           onChange={(e) => {
@@ -213,7 +179,7 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
       </div>
 
       <div id="project-editor-description-input" className="project-editor-input-item">
-        <label>Short Description*</label>
+        <label htmlFor="short-description">Short Description*</label>
         <div className="project-editor-extra-info">
           Share a brief summary of your project. This will be displayed in your project's
           discover card.
@@ -222,6 +188,7 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
           {modifiedProject.hook ? modifiedProject.hook.length : '0'}/300
         </span>{' '}
         <textarea
+          id="short-description"
           maxLength={300}
           value={modifiedProject.hook}
           onChange={(e) => {
@@ -231,7 +198,7 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
       </div>
 
       <div id="project-editor-long-description-input" className="project-editor-input-item">
-        <label>About This Project*</label>
+        <label htmlFor="long-description">About This Project*</label>
         <div className="project-editor-extra-info">
           Use this space to go into detail about your project! Feel free to share it's
           inspirations and goals, outline key features, and describe this impact you hope it
@@ -241,6 +208,7 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
           {modifiedProject.description ? modifiedProject.description.length : '0'}/2000
         </span>{' '}
         <textarea
+          id="long-description"
           maxLength={2000}
           value={modifiedProject.description}
           onChange={(e) => {
@@ -248,15 +216,15 @@ export const GeneralTab = ({ isNewProject = false, projectData = defaultProject,
           }}
         />
       </div>
-      
-    <div id="general-save-info">
+    
+      <div id="general-save-info">
       <div id="invalid-input-error" className={"save-error-msg-general"}>
          <p>*Fill out all required info before saving!*</p>
       </div>
-        <PopupButton buttonId="project-editor-save-general" callback={saveProject} doNotClose={() => !failCheck}>
+        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
           Save Changes
         </PopupButton>
+      </div>
     </div>
-  </div>
   );
 };

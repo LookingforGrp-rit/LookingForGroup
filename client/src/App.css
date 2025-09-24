@@ -5,7 +5,7 @@
   --header-color: #1a1921;
   --sidebar-gradient: linear-gradient(180deg, #2c2a3a 30%, #fead81 100%);
   --hero-gradient: linear-gradient(180deg, #0e0e0e 30%, #2c2a3a 100%);
-  --modal-gradient: linear-gradient(293deg, #0a0a0a 0%, #2c2a3a 100%);
+  --modal-gradient: linear-gradient(293deg, var(--modal-gradient-start) 0%, var(--modal-gradient-end) 100%);
 
   --main-text: white;
   --invert-text: black;
@@ -23,6 +23,9 @@
   --tag-light-green: #e5f0dd;
   --tag-light-blue: #dff1f8;
   --tag-light-purple: #e6e6ff;
+
+  --modal-gradient-start: #0a0a0a;
+  --modal-gradient-end: #2c2a3a;
 }
 
 /*light mode color scheme*/

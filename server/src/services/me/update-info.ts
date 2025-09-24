@@ -25,6 +25,7 @@ type UpdatebleUserFields = Partial<
     | 'visibility'
     | 'username'
     | 'phoneNumber'
+    | 'mentor'
   >
 >;
 

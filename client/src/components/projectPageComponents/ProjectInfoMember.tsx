@@ -328,6 +328,7 @@ export const ProjectInfoMember = (props) => {
   // html can also utilize useState and useEffect later to better represent data updates
   return (
     <div id="project-info-member">
+      {/* Get image of project and use preloader function in functions/imageLoad.tsx */}
       <img id="project-picture" src={profilePlaceholder} alt="project picture" />
 
       <div id="project-header">
@@ -339,11 +340,7 @@ export const ProjectInfoMember = (props) => {
               className="icon-button"
               onClick={projectPageHelper.toggleOptionDisplay}
             >
-              <ThemeIcon
-                src={'assets/menu_light.svg'}
-                darkSrc={'assets/menu_dark.svg'}
-                alt={'more options'}
-              />
+              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'more options'}/>
             </button>
             <div id="more-options-popup" className="hide">
               <button className="white-button" onClick={openSettings}>

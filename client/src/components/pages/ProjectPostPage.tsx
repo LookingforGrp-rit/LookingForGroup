@@ -183,11 +183,12 @@ const ProjectPostPage = () => {
       </div>
 
       <div id="post-header">
+        {/* Use preloader function in /functions/imageLoad.tsx if placeholder may be replaced */}
         <img id="post-project-image" src={profilePlaceholder} alt="project image" />
         <h2 id="post-project-name">{projects[projectId].name}</h2>
         <button className="orange-button">Follow</button>
         <button className="icon-button">
-          <ThemeIcon src={'/assets/menu_light.svg'} darkSrc={'/assets/menu_dark.svg'} alt={'More Options'} />
+          <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'more options'}/>
         </button>
       </div>
 
@@ -196,12 +197,8 @@ const ProjectPostPage = () => {
       <div id="post-page-content">
         <div id="post">
           <h3 id="post-name">{postData.title}</h3>
-          <button id="post-options" className="icon-button">
-            <ThemeIcon
-              src={'/assets/menu_light.svg'}
-              darkSrc={'/assets/menu_dark.svg'}
-              alt={'menu'}
-            />
+          <button id="post-options" className="icon-button" title={'Menu'}>
+            <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'Menu'}/>
           </button>
 
           <div id="post-content">{postData.postText}</div>

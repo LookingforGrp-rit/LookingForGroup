@@ -1,3 +1,4 @@
+import { RoleSelector } from '#services/selectors/datasets/role.ts';
 import { UserPreviewSelector } from '../../users/user-preview.ts';
 
 export const ProjectMemberSelector = Object.freeze({
@@ -5,10 +6,7 @@ export const ProjectMemberSelector = Object.freeze({
     select: UserPreviewSelector,
   },
   roles: {
-    select: {
-      roleId: true,
-      label: true,
-    },
+    select: RoleSelector,
   },
   createdAt: true,
 });

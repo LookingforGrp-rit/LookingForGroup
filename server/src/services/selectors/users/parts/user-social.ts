@@ -1,4 +1,6 @@
+import { SocialSelector } from '#services/selectors/datasets/social.ts';
+
 export const UserSocialSelector = Object.freeze({
   url: true,
-  socials: { select: { websiteId: true, label: true } },
+  socials: { select: SocialSelector },
 });

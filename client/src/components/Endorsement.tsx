@@ -1,32 +1,41 @@
-import { projects } from '../constants/fakeData'; // FIXME: use data in db
-import { profiles } from '../constants/fakeData'; // FIXME: use data in db
 import profilePicture from '../images/blue_frog.png';
 import { Tags } from './Tags';
 
+interface Project {
+  id: number;
+  name: string;
+  description?: string;
+  thumbnail?: string;
+  tags?: string[];
+}
+
+interface EndorsementProps {
+  project: Project;
+}
+
 //used on the profile page to show an endorsement
-export const Endorsement = ({ endorsement, endorsedID }) => {
-  const user = profiles[endorsedID];
+export const Endorsement: React.FC<EndorsementProps> = ({ project }) => {
   return (
-    <div id="endorsement">
+    <div id="endorsement" className="endorsement-card">
       <img
-        id="endorsement-profile-picture"
-        src={profilePicture}
-        alt={profiles[endorsement.endorserID].name}
+        id="endorsement-thumbnail"
+        src={project.thumbnail ?? profilePicture}
+        alt={project.name}
+        className="endorsement-image"
       />
       <div id="endorsement-body">
         <p id="endorsement-text">
-          <b>"{endorsement.endorsement}"</b>
+          <b>{project.name}</b>
         </p>
-        <p>
-          From {profiles[endorsement.endorserID].name} for work on{' '}
-          <b>{projects[endorsement.endorseProjectID].name}</b>
-        </p>
-        {/*the skills the user is being endorsed for*/}
-        <div id="profile-endorsement-skills" className="profile-list">
-          {endorsement.skills.map((skill) => (
-            <Tags>{user.skills[skill].skill}</Tags>
-          ))}
-        </div>
+        {project.description && <p>{project.description}</p>}
+        {project.tags && project.tags.length > 0 && (
+          <div id="profile-endorsement-tags" className="profile-list">
+            {/* The tags that go with the project */}
+            {project.tags.map((tag) => (
+              <Tags key={tag}>{tag}</Tags>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

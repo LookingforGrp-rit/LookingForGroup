@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { sendPost } from '../../functions/fetch.js';
-import { ThemeIcon } from '../ThemeIcon';
+import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import { getUserByEmail } from '../../api/users.js';
 
 type LoginResponse = {
@@ -140,10 +140,11 @@ const Login: React.FC = () => {
                 *************************************************************/}
         <div className="login-form column">
           <ThemeIcon //Back button to return to the previous page
-            src={'assets/back_light.svg'}
-            darkSrc={'assets/back_dark.svg'}
-            alt="Back Button"
-            id="backPage-arrow"
+            id={'back'}
+            width={70}
+            height={25}
+            className={'color-fill'}
+            ariaLabel={'back'}
             onClick={() => {
               console.log(from)
               // Return to previous page (unless it is the forgot password page, or the settings page)
@@ -180,20 +181,10 @@ const Login: React.FC = () => {
               <button id="show-password" onClick={() => setShowPassword((prevState) =>
                 !prevState)}>
                 {showPassword ? (
-                  <ThemeIcon
-                    id='eye-icon'
-                    src={'assets/white/password_shown.svg'}
-                    lightModeColor={'black'}
-                    alt={'show password'}
-                  />) :
-                  (
-                    <ThemeIcon
-                      id='eye-icon'
-                      src={'assets/white/password_hidden.svg'}
-                      lightModeColor={'black'}
-                      alt={'hide password'}
-                    />
-                  )}
+                  <ThemeIcon id={'eye-line'} width={18} height={13} className={'mono-fill'} ariaLabel={'Show password'}/>
+                ) : (
+                  <ThemeIcon id={'eye'} width={18} height={13} className={'mono-fill'} ariaLabel={'Hide password'}/>
+                )}
               </button>
             </div>
             <button id="forgot-password" onClick={handleForgotPass}>
@@ -219,8 +210,8 @@ const Login: React.FC = () => {
         <div className="directory column">
           {/* <h1>Welcome!</h1>
                     <p>Don't have an account?</p> */}
-          <ThemeIcon
-            src={'assets/bannerImages/login_light.png'}
+          <ThemeImage
+            lightSrc={'assets/bannerImages/login_light.png'}
             darkSrc={'assets/bannerImages/login_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>

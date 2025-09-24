@@ -1,10 +1,13 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import { uidHeaderKey } from '#config/constants.ts';
 import { getUserByShibService } from '#services/me/get-user-shib.ts';
 
 //get username by shibboleth
-export const getUsernameByShib = async (req: Request, res: Response): Promise<void> => {
+export const getUsernameByShib = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
   const universityId = req.headers[uidHeaderKey] as string | undefined;
 
   //if no university id found

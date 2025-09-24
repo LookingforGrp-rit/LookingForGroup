@@ -17,7 +17,7 @@ export const transformMeToPrivate = (user: UsersGetPayload): MePrivate => {
     ...transformMeToDetail(user),
     ritEmail: user.ritEmail,
     visibility: user.visibility as Visibility,
-    phoneNumber: (user.phoneNumber ?? '').toString(),
+    phoneNumber: user.phoneNumber ?? null,
     universityId: user.universityId,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,

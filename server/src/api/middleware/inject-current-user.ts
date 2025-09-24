@@ -1,23 +1,25 @@
 /* eslint-disable @typescript-eslint/restrict-template-expressions */
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import { uidHeaderKey } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
 import { getUserByShibService } from '#services/me/get-user-shib.ts';
 
 const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
+  const authenticatedRequest = request as AuthenticatedRequest;
+
   if (envConfig.env === 'development' || envConfig.env === 'test') {
     /// Add currentUser for development
     const devId = request.query.devId as string | undefined;
 
     if (devId) {
-      request.currentUser = devId;
+      authenticatedRequest.currentUser = devId;
       next();
       return;
     }
   }
 
-  const universityId = request.headers[uidHeaderKey] as string | undefined;
+  const universityId = authenticatedRequest.headers[uidHeaderKey] as string | undefined;
 
   //if no university id found
   if (!universityId) {
@@ -53,7 +55,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
   }
 
   const userID = result.userId;
-  request.currentUser = `${userID}`;
+  authenticatedRequest.currentUser = `${userID}`;
   next();
 };
 

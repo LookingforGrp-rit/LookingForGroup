@@ -12,7 +12,7 @@ import CreditsFooter from '../CreditsFooter';
 import MyProjectsDisplayList from '../MyProjectsDisplayList';
 import MyProjectsDisplayGrid from '../MyProjectsDisplayGrid';
 import { Header } from '../Header';
-import { ThemeIcon } from '../ThemeIcon';
+import { ThemeImage } from '../ThemeIcon';
 import { Select, SelectButton, SelectOptions } from '../Select';
 import { LeaveDeleteContext } from '../../contexts/LeaveDeleteContext';
 
@@ -364,11 +364,11 @@ const MyProjects = () => {
       {/* Banner */}
     <div className="projects-banner-outer">
     <div className="projects-banner-wrapper">
-      <ThemeIcon
-        src={'assets/projects_header_light.png'}
+      <ThemeImage
+        lightSrc={'assets/projects_header_light.png'}
         darkSrc={'assets/projects_header_dark.png'}
+        className={'my-projects-banner'}
         alt={'My Projects Banner'}
-        addClass={'my-projects-banner'}
       />
     </div>
     </div>
@@ -495,7 +495,7 @@ const MyProjects = () => {
         {/* Display Switch */}
         <div
           className="my-projects-display-switch"
-          onClick={(e) => {
+          onClick={() => {
             toggleDisplayMode();
           }}
         >

@@ -37,7 +37,13 @@ const ToTopButton = () => {
         onClick={() => scrollToTop(document.querySelector('.page') as HTMLElement | null)}
         style={{ display: visible ? 'inline' : 'none' }}
       >
-        <ThemeIcon src={'assets/dropdown_light.svg'} darkSrc={'assets/dropdown_dark.svg'} />
+        <ThemeIcon
+          id={'dropdown-arrow'}
+          width={15}
+          height={12}
+          className={'color-fill'}
+          ariaLabel={'dropdown arrow'}
+        />
       </button>
     </div>
   );

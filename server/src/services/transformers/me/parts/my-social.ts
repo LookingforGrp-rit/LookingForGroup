@@ -1,6 +1,7 @@
 import type { MySocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MySocialSelector } from '#services/selectors/me/parts/my-social.ts';
+import { transformSocial } from '#services/transformers/datasets/social.ts';
 
 //sample project from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -18,7 +19,6 @@ export const transformMySocial = ({
   return {
     apiUrl: `api/me/socials/${websiteId.toString()}`,
     url,
-    label,
-    websiteId,
+    ...transformSocial({ label, websiteId }),
   };
 };

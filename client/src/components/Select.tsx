@@ -77,11 +77,12 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
             ) : (
                 <span className='placeholder'>{placeholder}</span>
             )}
-            <ThemeIcon 
-                src={'assets/dropdown_light.svg'}
-                darkSrc={'assets/dropdown_dark.svg'}
-                addClass={`select-button-arrow ${(open) ? 'opened' : ''}`}
-            />
+            <ThemeIcon
+              id={'dropdown-arrow'}
+              width={15}
+              height={12}
+              className={`color-fill select-button-arrow ${open && 'opened'}`}
+              ariaLabel={'dropdown arrow'}/>
         </button>
     );
 };

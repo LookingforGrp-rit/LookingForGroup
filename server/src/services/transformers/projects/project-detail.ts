@@ -49,7 +49,7 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
         availability,
         compensation,
         createdAt,
-        description: description ?? '',
+        description,
         duration,
         jobId,
         location,

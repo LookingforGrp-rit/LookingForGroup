@@ -309,7 +309,6 @@ Project Creator and Editor style rules
   border: none;
   border-radius: 10px;
   color: var(--main-text);
-  overflow-y: auto;
 }
 
 @media (min-width: 1172px) {
@@ -322,9 +321,9 @@ Project Creator and Editor style rules
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  margin-top: 38px;
+  margin-top: 28px;
 }
-
+ 
 .project-editor-tab {
   border: none;
   border-radius: 30px;
@@ -334,7 +333,7 @@ Project Creator and Editor style rules
   font-size: 2ch;
   font-weight: 500;
 }
-
+ 
 .project-editor-tab:hover,
 .project-editor-tab-active,
 #team-add-member-add-button,
@@ -345,7 +344,6 @@ Project Creator and Editor style rules
 }
 
 #project-editor-save,
-#project-editor-save-general,
 #team-add-member-add-button,
 #team-edit-member-save-button {
   border: none;
@@ -372,7 +370,7 @@ Project Creator and Editor style rules
 
 #project-editor-content {
   flex-grow: 1;
-  margin: 35px 56px 40px 55px;
+  margin: 35px 56px 26px 55px;
 }
 
 #project-editor-content label,
@@ -405,7 +403,6 @@ Project Creator and Editor style rules
 .project-link-select-wrapper .project-link-select {
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
-  padding: .5rem !important;
 }
 
 .project-link-input-wrapper {
@@ -414,17 +411,20 @@ Project Creator and Editor style rules
   display: flex;
   align-items: center;
 }
-
 .project-link-input-wrapper input {
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: .5rem;
+  padding: 15px;
   flex-grow: 1;
   background-color: var(--bg-color);
   color: var(--main-text);
   font-size: 1.6ch;
   outline: none;
   min-height: 40px;
+}
+.project-link-input-wrapper input::placeholder {
+  color: var(--neutral-gray);
+  font-style: italic;
 }
 
 /* Project Editor/Creator General Tab */
@@ -457,23 +457,6 @@ Project Creator and Editor style rules
   border: 1px solid var(--border-color);
 }
 
-#project-editor-content select::after {
-  content: url('../../../build/assets/dropdown_dark.svg');
-  position: absolute;
-  top: 50%;
-  right: 1rem;
-  transform: translateY(50%);
-}
-
-/* #project-editor-content select {
-  appearance: none;
-  background-image: url('../../../build/assets/dropdown_dark.svg');
-  background-repeat: no-repeat;
-  background-size: 20px;
-  background-position-x: 150px;
-  background-position-y: 20px;
-} */
-
 #project-editor-content .title-input {
   padding: 8px 15px;
 }
@@ -495,7 +478,7 @@ Project Creator and Editor style rules
 
 #project-editor-general {
   display: grid;
-  height: 50vh;
+  height: 100%;
   grid-template:
     'title title about' 1fr
     'status purpose about' 1fr
@@ -536,15 +519,21 @@ Project Creator and Editor style rules
   position: relative;
 
   input {
+    margin-top: 10px;
     background-color: var(--bg-color);
   }
 
   textarea {
+    margin-top: 10px;
     background-color: var(--bg-color);
   }
 
   select {
     background-color: var(--bg-color);
+  }
+
+  .select-container {
+    margin-top: 10px;
   }
 
   .select-button {
@@ -587,10 +576,10 @@ Project Creator and Editor style rules
   font-style: italic;
   font-size: 1.6ch;
   position: absolute;
-  margin: 10px 0;
   bottom: 7px;
   right: 14px;
   color: var(--neutral-gray);
+  -webkit-user-select: none;
   user-select: none;
 }
 
@@ -623,11 +612,24 @@ Project Creator and Editor style rules
 #project-editor-description-input textarea {
   min-height: 150px;
   max-height: 250px;
-  resize: vertical;
   width: 100%;
   box-sizing: border-box;
 }
 
+/* Project Editor/Creator Media Tab */
+#project-editor-media {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  height: 100%;
+}
+
+#project-editor-media #general-save-info {
+  margin-top: auto;
+  align-self: center;
+}
+
+/* Project Editor/Creator Tags Tab */
 #project-editor-type-tags,
 #project-editor-selected-tags {
   background-color: var(--bg-color);
@@ -645,6 +647,8 @@ Project Creator and Editor style rules
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: 10px;
+  grid-area: search;
+  min-width: 150px;
 }
 
 #project-editor-tag-search-container {
@@ -660,14 +664,14 @@ Project Creator and Editor style rules
 #project-editor-tag-wrapper {
   display: flex;
   flex-direction: column;
+  gap: 10px;
 }
 
 #tag-search-divider,
 #selected-tag-divider {
-  height: 4px;
-  width: 80%;
-  border: none;
-  border-radius: 3px;
+  height: 2px;
+  width: 100%;
+  border: none; 
   background-color: var(--header-color);
 }
 
@@ -697,6 +701,7 @@ Project Creator and Editor style rules
 .project-editor-image-container {
   position: relative;
   max-height: 182px;
+  width: 323px;
   border: 2px solid white;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
@@ -708,6 +713,7 @@ Project Creator and Editor style rules
 
 .project-editor-image-container img {
   object-fit: cover;
+  object-position: center;
   max-height: inherit;
   border-radius: 10px;
 }
@@ -778,8 +784,19 @@ Project Creator and Editor style rules
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  border: 2px dashed #424242;
+  border-radius: 10px;
   gap: 10px;
+
+  position: relative;
+  max-height: 182px;
+  width: 323px;
+}
+
+[data-theme="light"] #project-editor-add-image {
+  border: 2px dashed #BDBDBD;
+}
+[data-theme="dark"] #project-editor-add-image {
+  border: 2px dashed #424242;
 }
 
 /* Project Editor/Creator Tags Tab */
@@ -787,10 +804,18 @@ Project Creator and Editor style rules
   display: grid;
   grid-template:
     'type search' auto
-    'select search' 1fr /
+    'select search' 1fr
+    'save save' auto /
     1fr 2fr;
   gap: 20px;
   height: 100%;
+}
+
+#tags-save-info {
+  grid-area: save;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 @media only screen and (max-width: 650px) {
@@ -802,14 +827,17 @@ Project Creator and Editor style rules
 
 #project-editor-type-tags {
   grid-area: type;
-  min-height: 80px;
   display: flex;
-  flex-direction: column;
+  flex-direction: column; 
   gap: 15px;
 }
 
 #project-editor-selected-tags {
   grid-area: select;
+  
+  .error {
+    margin-top: 15px;
+  }
 }
 
 #project-editor-selected-tags-container {
@@ -828,22 +856,12 @@ Project Creator and Editor style rules
   gap: 8px;
 }
 
-#project-editor-tag-search {
-  grid-area: search;
-  min-width: 150px;
-}
-
 #project-editor-type-tags,
 #project-editor-selected-tags,
 #project-editor-tag-search {
   background-color: var(--bg-color);
   /* box-shadow: 0 0 3px var(--gray); */
   border-radius: 8px;
-}
-
-#project-editor-selected-tags>.error,
-#project-editor-type-tags>.error {
-  margin-top: 15px;
 }
 
 .project-editor-section-header {
@@ -883,8 +901,8 @@ Project Creator and Editor style rules
   margin-bottom: 10px;
   padding: 0;
   color: var(--neutral-gray);
-  font-size: 1.6ch;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 400;
   word-break: normal;
   max-width: 100%;
 }
@@ -901,19 +919,25 @@ Project Creator and Editor style rules
 .project-editor-team-tab:hover,
 .team-tab-active {
   color: var(--primary-color);
-  font-weight: 600;
+  font-weight: 700;
 }
-
-
 
 #project-editor-team {
+  display: flex;
+  flex-direction: column;
   height: 100%;
 }
-
 
 #project-editor-team-content {
   display: flex;
   height: 100%;
+  margin-bottom: 40px;
+}
+
+#team-save-info {
+  display: flex;
+  align-items: center;
+  margin-top: auto;
 }
 
 #project-editor-project-members {
@@ -1016,11 +1040,6 @@ Project Creator and Editor style rules
   background-color: var(--primary-color) !important;
 }
 
-#project-team-add-member-image {
-  width: 74px;
-  height: 74px;
-}
-
 #project-team-add-member-text {
   font-weight: 700;
   color: var(--header-color);
@@ -1048,7 +1067,7 @@ Project Creator and Editor style rules
   width: 100%;
 }
 
-#user-search-container .search-bar {
+#user-search-container .search-bar  {
   /* Override for default SearchBar component */
   display: flex;
   align-items: center;
@@ -1309,8 +1328,7 @@ Project Creator and Editor style rules
   align-items: start;
 }
 
-#team-positions-popup-list-buttons img,
-.add-item-button img {
+#team-positions-popup-list-buttons img {
   width: 21px;
   height: 21px;
 }
@@ -1485,6 +1503,16 @@ select.edit-position-compensation {
 }
 
 /* Project Editor/Creator Links Tab */
+#project-editor-links {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+#project-editor-links > label {
+  margin-bottom: 3px;
+}
+
 #project-editor-links>.project-editor-extra-info {
   margin-bottom: 15px;
 }
@@ -1517,7 +1545,12 @@ select.edit-position-compensation {
   border: none;
   border-radius: 50%;
   transition: .15s;
-  align-self: anchor-center;
+}
+
+#link-save-info {
+  display: flex;
+  justify-content: center;
+  margin-top: auto;
 }
 
 @media only screen and (max-width: 700px) {
@@ -2865,7 +2898,7 @@ Project Carousel style rules
 .add-item-button>button {
   display: flex;
   flex-direction: row;
-  align-items: end;
+  align-items: center;
   gap: 10px;
   padding: 0 10px;
   background: transparent;
@@ -2875,11 +2908,6 @@ Project Carousel style rules
 .add-item-button * {
   font-size: 16px;
   color: var(--neutral-gray);
-}
-
-.add-item-button img {
-  transform: rotate(45deg);
-  filter: var(--image-filter);
 }
 
 .positions-popup-list-item {

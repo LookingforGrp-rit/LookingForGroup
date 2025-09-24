@@ -22,6 +22,7 @@ import { ThemeIcon } from "../ThemeIcon";
 import { fetchUserID } from "../../functions/fetch";
 import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
+import usePreloadedImage from "../../functions/imageLoad";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -237,7 +238,7 @@ const NewProfile = () => {
         // Only run this if profile data exists for user
         if (data[0] !== undefined) {
           // If profile is private, and isn't the user's, don't display it
-          if (isUsersProfile || data[0].visibility == 1) {
+          if (isUsersProfile /*|| data[0].visibility == 1*/) {
             setDisplayedProfile(data[0]);
             await getProfileProjectData();
           }
@@ -266,22 +267,14 @@ const NewProfile = () => {
               window.open("https://www.linkedin.com/", "_blank");
             }}
           >
-            <ThemeIcon
-              src={"assets/white/linkedIn_white.svg"}
-              lightModeColor={"black"}
-              alt={"LinkedIn"}
-            />
+            <ThemeIcon id={'linkedin'} width={25} height={25} className={'color-fill'} ariaLabel={'LinkedIn'}/>
           </button>
           <button
             onClick={() => {
               window.open("https://www.instagram.com/", "_blank");
             }}
           >
-            <ThemeIcon
-              src={"assets/white/instagram_white.svg"}
-              lightModeColor={"black"}
-              alt={"Instagram"}
-            />
+            <ThemeIcon id={'instagram'} width={25} height={25} className={'color-fill'} ariaLabel={'Instagram'}/>
           </button>
           <ProfileEditPopup />
         </div>
@@ -292,51 +285,36 @@ const NewProfile = () => {
       {
         <div id="about-me-buttons" className="about-me-buttons-minimal">
           <button>
-            <ThemeIcon
-              src={"assets/linkedIn_logo_light.svg"}
-              darkSrc={"assets/linkedIn_logo_dark.svg"}
-              alt={"LinkedIn"}
-            />
+            <ThemeIcon id={'linkedin'} width={25} height={25} className={'color-fill'} ariaLabel={'LinkedIn'}/>
           </button>
           <button>
-            <ThemeIcon
-              src={"assets/instagram_logo_light.svg"}
-              darkSrc={"assets/instagram_logo_dark.svg"}
-              alt={"Instagram"}
-            />
+            <ThemeIcon id={'instagram'} width={25} height={25} className={'color-fill'} ariaLabel={'Instagram'}/>
           </button>
           <button>
-            <ThemeIcon
-              src={"assets/follow_user_light.svg"}
-              darkSrc={"assets/follow_user_dark.svg"}
-              alt={"Like/Follow"}
-            />
+            <ThemeIcon id={'heart'} width={25} height={25} className={'empty-heart'} />
+            {/* FIXME: When following is implemented, use this: */}
+            {/* <ThemeIcon id={'heart'} width={25} height={25} className={isFollowing ? 'filled-heart' : 'empty-heart'} /> */}
           </button>
           {/* TO-DO: Implement Share, Block, and Report functionality */}
           <Dropdown>
             <DropdownButton>
-              <ThemeIcon
-                src={"assets/menu_light.svg"}
-                darkSrc={"assets/menu_dark.svg"}
-                alt={"More options"}
-                addClass={"dropdown-menu"}
-              />
+              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
             </DropdownButton>
             <DropdownContent rightAlign={true}>
               <div id="profile-menu-dropdown">
                 <button className="profile-menu-dropdown-button">
-                  <i className="fa-solid fa-share"></i>
+                  <ThemeIcon id={'share'} width={27} height={27} className={'mono-fill'} ariaLabel={'Share'}/>
                   Share
                 </button>
                 <button className="profile-menu-dropdown-button">
-                  <i className="fa-solid fa-shield"></i>
+                  <ThemeIcon id={'cancel'} width={27} height={27} className={'mono-fill'} ariaLabel={'Block'}/>
                   Block
                 </button>
                 <button
                   className="profile-menu-dropdown-button"
                   id="profile-menu-report"
                 >
-                  <i className="fa-solid fa-flag"></i>
+                  <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
                   Report
                 </button>
               </div>
@@ -366,11 +344,7 @@ const NewProfile = () => {
         {/* New profile display using css grid, will contain all info except for projects */}
         <div id="profile-information-grid">
           <img
-            src={
-              displayedProfile.profile_image
-                ? `${API_BASE}/images/profiles/${displayedProfile.profile_image}`
-                : profilePicture
-            }
+            src={usePreloadedImage(`${API_BASE}/images/profiles/${displayedProfile.profile_image}`, profilePicture)}
             id="profile-image"
             alt="profile image"
             onError={(e) => {
@@ -392,35 +366,19 @@ const NewProfile = () => {
 
           <div id="profile-info-extras">
             <div className="profile-extra">
-              <ThemeIcon
-                src={"assets/white/role.svg"}
-                lightModeColor={"black"}
-                alt={"Profession"}
-              />
+              <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
               {displayedProfile.job_title}
             </div>
             <div className="profile-extra">
-              <ThemeIcon
-                src={"assets/white/major.svg"}
-                lightModeColor={"black"}
-                alt={"Major"}
-              />
+              <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
               {displayedProfile.major} {displayedProfile.academic_year}
             </div>
             <div className="profile-extra">
-              <ThemeIcon
-                src={"assets/white/location.svg"}
-                lightModeColor={"black"}
-                alt={"Location"}
-              />
+              <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
               {displayedProfile.location}
             </div>
             <div className="profile-extra">
-              <ThemeIcon
-                src={"assets/white/pronouns.svg"}
-                lightModeColor={"black"}
-                alt={"Pronouns"}
-              />
+              <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
               {displayedProfile.pronouns}
             </div>
           </div>

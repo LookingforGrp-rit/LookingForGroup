@@ -95,7 +95,8 @@ Profile Panel component style rules
   right: 0;
   display: flex;
   flex-direction: column;
-  justify-content: start;
+  justify-content: center;
+  gap: 20px;
   text-align: left;
   padding: 20px;
   overflow: auto;
@@ -105,24 +106,33 @@ Profile Panel component style rules
   /* border: 1px solid black; */
   display: flex;
   flex-direction: row;
-  align-items: flex-start;
+  align-items: start;
   font-style: italic;
   gap: 15px;
-  margin: 10px 0;
 
-  img {
-    height: 28px;
-    width: 28px;
-    object-fit: contain;
-    /* border: 1px solid black; */
-    align-self: flex-start;
+  .icon-box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 24px;
+    height: 24px; 
   }
 
   p {
     /* border: 1px solid black; */
     margin: 0;
     color: var(--invert-text);
-    font-weight: 600;
+    overflow-x: hidden;
+    text-wrap: wrap;
+    align-self: center;
+  }
+
+  /* !important because icons prioritize black due to added [data-theme] specification in general.css */
+  .mono-stroke > use {
+    stroke: var(--invert-text) !important;
+  }
+  .mono-fill > use {
+    fill: var(--invert-text) !important;
   }
 }
 
@@ -1019,7 +1029,7 @@ New Profile page style rules
     300px 1fr auto;
   background-color: var(--header-color);
   border-radius: 10px;
-  padding: 30px;
+  padding: 22px 25px 25px 26px;
   gap: 10px;
   color: var(--main-text);
   max-width: 100%;
@@ -1064,7 +1074,7 @@ New Profile page style rules
   grid-area: image;
   object-fit: cover;
   border-radius: 10px;
-  border: 2px solid var(--primary-color);
+  border: 2px solid white;
 }
 
 #profile-bio {
@@ -1433,11 +1443,12 @@ New Profile page style rules
   /*height:calc(100% - 40px);*/
   height: 100%;
   /* padding:20px 0; */
-  gap: 5px;
+  gap: 9px;
 }
 
-.about-me-buttons-minimal {
+#about-me-buttons.about-me-buttons-minimal {
   justify-content: flex-end;
+  gap: 7px;
 }
 
 @media only screen and (max-width: 1200px) {
@@ -1500,10 +1511,6 @@ New Profile page style rules
 
 #about-me-buttons img {
   height: 32px;
-}
-
-#about-me-buttons .dropdown-menu {
-  width: auto !important;
 }
 
 #profile-menu-dropdown {

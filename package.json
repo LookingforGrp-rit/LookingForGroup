@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "prepare": "husky && npm run prisma:generate",
-    "compose:up": "npx dotenv -- docker compose --file=./containers/docker-compose.yml up -d",
+    "compose:up": "npx dotenv -- docker compose --file=./containers/docker-compose.yml up --build -d",
     "compose:start": "npx dotenv -- docker compose --file=./containers/docker-compose.yml start",
     "compose:down": "npx dotenv -- docker compose --file=./containers/docker-compose.yml down -v",
     "compose:stop": "npx dotenv -- docker compose --file=./containers/docker-compose.yml stop",

@@ -89,7 +89,7 @@ yarn-error.log*
 .vscode
 
 # SQL files
-*.sql
+# *.sql
 
 # QodoGen files
 .qodo

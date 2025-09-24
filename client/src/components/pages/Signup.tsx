@@ -9,7 +9,7 @@ import ChooseInterests from '../SignupProcess/ChooseInterests';
 import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { sendPost } from '../../functions/fetch';
-import { ThemeIcon } from '../ThemeIcon';
+import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
 import { getUserByEmail, getUserByUsername } from '../../api/users';
 
@@ -202,10 +202,11 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     <div className="background-cover">
       <div className="login-signup-container" onKeyDown={handleKeyPress}>
         <ThemeIcon //Back button to return to the previous page
-          src={'assets/back_light.svg'}
-          darkSrc={'assets/back_dark.svg'}
-          alt="Back Button"
-          id="backPage-arrow"
+          id={'back'}
+          width={70}
+          height={25}
+          className={'color-fill'}
+          ariaLabel={'back'}
           onClick={() => navigate(-1)}
         />
         {/*************************************************************
@@ -274,18 +275,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
               <button id="show-password" onClick={() => setShowPassword((prevState) =>
                 !prevState)}>
                 {showPassword ? (
-                  <ThemeIcon
-                    id='eye-icon'
-                    src={'/assets/black/password_shown.svg'}
-                    darkSrc={'/assets/white/password_shown.svg'}
-                  />) :
-                  (
-                    <ThemeIcon
-                      id='eye-icon'
-                      src={'/assets/black/password_hidden.svg'}
-                      darkSrc={'/assets/white/password_hidden.svg'}
-                    />
-                  )}
+                  <ThemeIcon id={'eye-line'} width={18} height={13} className={'mono-fill'} ariaLabel={'Show password'}/>
+                ) : (
+                  <ThemeIcon id={'eye'} width={18} height={13} className={'mono-fill'} ariaLabel={'Hide password'}/>
+                )}
               </button>
             </div>
             {/* {(passwordMessage !== '') ? (
@@ -423,8 +416,8 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
         <div className="directory column">
           {/* <h1>Welcome!</h1>
                     <p>Already have an account?</p> */}
-          <ThemeIcon
-            src={'assets/bannerImages/signup_light.png'}
+          <ThemeImage
+            lightSrc={'assets/bannerImages/signup_light.png'}
             darkSrc={'assets/bannerImages/signup_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.LOGIN)}>Log In</button>
