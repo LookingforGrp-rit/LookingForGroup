@@ -314,6 +314,7 @@ export interface ProjectJob {
     duration: JobDuration;
     location: JobLocation;
     compensation: JobCompensation;
+    contact: string;
     description: string;
     createdAt: Date;
     updatedAt: Date;

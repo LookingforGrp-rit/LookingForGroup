@@ -33,6 +33,7 @@ model Jobs {
   duration     JobsDuration
   location     JobsLocation
   compensation JobsCompensation
+  contact      String           @db.VarChar(320)
   description  String           @default("") @db.VarChar(500)
   createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)

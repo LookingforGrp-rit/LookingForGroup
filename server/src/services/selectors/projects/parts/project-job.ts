@@ -10,6 +10,7 @@ export const ProjectJobSelector = Object.freeze({
   duration: true,
   location: true,
   compensation: true,
+  contact: true,
   description: true,
   createdAt: true,
   updatedAt: true,
