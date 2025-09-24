@@ -1,6 +1,7 @@
 // --- Imports ---
 import { useEffect, useState } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
+import { PopupButton } from "../../Popup";
 
 
 // --- Interfaces ---
@@ -53,8 +54,22 @@ const defaultProject: ProjectData = {
   title: '',
 };
 
+type LinksTabProps = {
+  projectData?: ProjectData;
+  setProjectData?: (data: ProjectData) => void;
+  setErrorLinks?: (error: string) => void;
+  saveProject?: () => void;
+  failCheck: boolean;
+}
+
 // --- Component ---
-export const LinksTab = ({ isNewProject = false, projectData = defaultProject, setProjectData, setErrorLinks }) => {
+export const LinksTab = ({
+  projectData = defaultProject,
+  setProjectData = () => {},
+  setErrorLinks = () => {},
+  saveProject = () => {},
+  failCheck
+}: LinksTabProps) => {
 
   // Icon failure to load by default fix
   const iconCheck = document.getElementsByClassName("project-link-select");
@@ -77,7 +92,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
     }
   }
 
-  // --- Hooks ---
+  // --- Hooks --- 
   // tracking project modifications
   const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
   // complete list of socials
@@ -117,7 +132,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
         setAllSocials(socialsData);
 
       } catch (error) {
-        console.error(error.message);
+        console.error((error as Error).message);
       }
     };
     if (allSocials.length === 0) {
@@ -187,7 +202,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
     <div id="project-editor-links">
       <label>Social Links</label>
       <div className="project-editor-extra-info">
-        Provide any links you wish to include on your project's page.
+        Provide the links to pages you wish to include on your page.
       </div>
       <div className='error'>{error}</div>
 
@@ -198,6 +213,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
               <div className="project-editor-link-item" key={`social.id-${index}`}>
                 <div className='project-link-select-wrapper'>
                   <Select>
+                    {/* FIXME: does not default to "Select" value */}
                     <SelectButton
                       placeholder='Select'
                       initialVal={social.website}
@@ -206,6 +222,7 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                     <SelectOptions
                       callback={(e) => {
                         if (allSocials) {
+                          // FIXME: implement website name (id?) in project socials type
                           // Create a copy of the current social, and change it
                           const tempSocials = modifiedProject.socials;
                           tempSocials[index].website = e.target.value;
@@ -242,7 +259,6 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                 <div className='project-link-input-wrapper'>
                   {/* FIXME: handle onChange to allow for editing input */}
                   <input
-                    style={{ height: "60%" }}
                     type="text"
                     placeholder="URL"
                     value={social.url}
@@ -257,19 +273,20 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
                       console.log(tempSocials);
                     }}
                   />
-                  <button className='remove-link-button' onClick={
-                    (e) => {
-                      // const wrapper = e.currentTarget.closest('.project-editor-link-item');
-                      // if (wrapper) {
-                      //   wrapper.remove();
-                      // }
-
+                  <button
+                    className='remove-link-button'
+                    onClick={ () => {
                       // Remove element from modified socials array
                       console.log(index);
-                      const tempSocials = modifiedProject.socials.toSpliced(index, 1);
+                      const tempSocials = [
+                        ...modifiedProject.socials.slice(0, index),
+                        ...modifiedProject.socials.slice(index + 1)
+                      ];
                       setModifiedProject({ ...modifiedProject, socials: tempSocials });
                       console.log(tempSocials);
-                    }}>
+                    }}
+                    title="Remove link"
+                  >
                     <i className="fa-solid fa-minus"></i>
                   </button>
                 </div>
@@ -278,26 +295,34 @@ export const LinksTab = ({ isNewProject = false, projectData = defaultProject, s
           }) : ''
         }
         <div id="add-link-container">
-          <button id="profile-editor-add-link" onClick={() => {
-            //addLinkInput();
-            let tempSocials = modifiedProject.socials;
+          <button id="profile-editor-add-link"
+            onClick={() => {
+              //addLinkInput();
+              let tempSocials = modifiedProject.socials;
 
-            // Create the socials array if it doesn't exist already
-            if (!tempSocials) {
-              tempSocials = [];
-            }
+              // Create the socials array if it doesn't exist already
+              if (!tempSocials) {
+                tempSocials = [];
+              }
 
-            tempSocials.push({
-              id: 1,
-              website: 'Instagram',
-              url: '',
-            });
+              //FIXME: implement website name (id?) in project socials type
+              tempSocials.push({
+                id: 1,
+                website: 'Instagram',
+                url: '',
+              });
 
-            setModifiedProject({ ...modifiedProject, socials: tempSocials });
-          }}>
-            + Add project link
+              setModifiedProject({ ...modifiedProject, socials: tempSocials });
+            }}>
+            <i className="fa fa-plus" />
+            <p>Add social profile</p>
           </button>
         </div>
+      </div>
+      <div id="link-save-info">
+        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
+          Save Changes
+        </PopupButton>
       </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import type { MePreview } from '@looking-for-group/shared';
+import type { MePreview, SkillType } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MePreviewSelector } from '#services/selectors/me/me-preview.ts';
 
@@ -10,6 +10,10 @@ const sampleUsers = prisma.users.findMany({
 
 type UsersGetPayload = Awaited<typeof sampleUsers>[number];
 
+const hasSkillOfType = (skill: { skills: { type: string } }, type: SkillType): boolean => {
+  return skill.skills.type === type;
+};
+
 //map to shared type
 export const transformMeToPreview = (user: UsersGetPayload): MePreview => {
   return {
@@ -17,7 +21,10 @@ export const transformMeToPreview = (user: UsersGetPayload): MePreview => {
     firstName: user.firstName,
     lastName: user.lastName,
     username: user.username,
-    profileImage: user.profileImage,
+    profileImage: user.profileImage ?? null,
+    mentor: !!user.mentor,
+    developer: user.userSkills.some((skill) => hasSkillOfType(skill, 'Developer')),
+    designer: user.userSkills.some((skill) => hasSkillOfType(skill, 'Designer')),
     apiUrl: `api/me`,
   };
 };

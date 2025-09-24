@@ -1,9 +1,9 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { RequestHandler } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import type { UsersAcademicYear } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import { updateUserInfoService } from '#services/me/update-info.ts';
-import { getUserByUsernameService } from '#services/users/get-by-username.ts';
+import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
 
 interface UpdateUserInfo {
   firstName?: string;
@@ -17,27 +17,15 @@ interface UpdateUserInfo {
   bio?: string;
   visibility?: number;
   username?: string;
-  phoneNumber?: number;
+  phoneNumber?: string;
   profileImage?: string;
+  mentor?: '0' | '1';
 }
 
 //update user info
-export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserInfo> = async (
-  req,
-  res,
-) => {
-  if (req.currentUser === undefined) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
+export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const id = req.currentUser;
-  const updates = req.body;
+  const updates = req.body as UpdateUserInfo;
 
   //validate ID
   const userId = parseInt(id);
@@ -66,6 +54,7 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     'username',
     'phoneNumber',
     'profileImage',
+    'mentor',
   ];
 
   //validate update fields
@@ -131,7 +120,10 @@ export const updateUserInfo: RequestHandler<{ id: string }, unknown, UpdateUserI
     updates['profileImage'] = dbImage.location;
   }
 
-  const result = await updateUserInfoService(userId, updates);
+  const result = await updateUserInfoService(userId, {
+    ...updates,
+    mentor: updates.mentor ? parseInt(updates.mentor) : undefined,
+  });
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

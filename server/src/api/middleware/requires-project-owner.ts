@@ -1,18 +1,12 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { NextFunction, Request, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { NextFunction, Response } from 'express';
 import getProjectByIdService from '#services/projects/get-proj-id.ts';
 
-const requiresProjectOwner = async (request: Request, response: Response, next: NextFunction) => {
-  if (request.currentUser === undefined) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    response.status(400).json(resBody);
-    return;
-  }
-
+const requiresProjectOwner = async (
+  request: AuthenticatedRequest,
+  response: Response,
+  next: NextFunction,
+) => {
   //current user ID
   const userId = parseInt(request.currentUser);
 

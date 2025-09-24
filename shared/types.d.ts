@@ -1,5 +1,7 @@
+import type { Request } from 'express';
+
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | string;
+export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft";
 export type TagType =
     | "Creative"
     | "Technical"
@@ -10,31 +12,49 @@ export type TagType =
     | "Developer Skill"
     | "Designer Skill"
     | "Soft Skill"
-    | "Purpose"
-    | string;
+    | "Purpose";
 export type AcademicYear =
     | "Freshman"
     | "Sophomore"
     | "Junior"
     | "Senior"
-    | "Graduate"
-    | string;
+    | "Graduate";
 export type Visibility = 0 | 1;
 export type SkillProficiency =
     | "Novice"
     | "Intermediate"
     | "Advanced"
-    | "Expert"
+    | "Expert";
+export type ProjectPurpose = 
+    | "Personal"
+    | "PortfolioPiece"
+    | "Academic"
+    | "CoOp";
+export type ProjectStatus = 
+    | "Planning"
+    | "Development"
+    | "PostProduction"
+    | "Complete"
+export type JobAvailability =
+    | "FullTime"
+    | "PartTime"
+    | "Flexible";
+export type JobDuration = 
+    | "ShortTerm"
+    | "LongTerm";
+export type JobLocation = 
+    | "OnSite"
+    | "Remote"
+    | "Hybrid";
+export type JobCompensation = 
+    | "Unpaid"
+    | "Paid";
 
 
 //API REQUEST
 
-declare global{
-    namespace Express {
-        interface Request {
-            currentUser?: string
-        }
-    }
+export interface AuthenticatedRequest extends Request {
+    currentUser: string
 }
 
 //API RESPONSE
@@ -136,20 +156,23 @@ export interface UserPreview {
     firstName: string;
     lastName: string;
     username: string;
-    profileImage?: string | null;
+    profileImage: string | null;
+    mentor: boolean;
+    designer: boolean;
+    developer: boolean
     apiUrl: string;
 }
 
 //show only non-sensitive data
 export interface UserDetail extends UserPreview {
-    headline: string | null;
-    pronouns: string | null;
-    title: string | null;
+    headline: string;
+    pronouns: string;
+    title: string;
     majors: Major[];
-    academicYear: string | null;
-    location: string | null;
-    funFact: string | null;
-    bio?: string | null;
+    academicYear: AcademicYear | null;
+    location: string;
+    funFact: string;
+    bio: string;
     projects: ProjectPreview[];
     skills: UserSkill[];
     socials: UserSocial[];
@@ -158,32 +181,14 @@ export interface UserDetail extends UserPreview {
 }
 
 //all user private data
-export interface User {
-    userId: number;
-    username: string;
+export interface User extends UserDetail {
     ritEmail: string;
-    firstName: string;
-    lastName: string;
-    profileImage?: string | null;
-    headline: string | null;
-    pronouns: string | null;
-    title: string | null;
-    academicYear: string | null;
-    location: string | null;
-    funFact: string | null;
-    bio: string | null;
     visibility: Visibility;
     projects: ProjectPreview[];
-    majors?: Major[] | null;
-    skills?: UserSkill[] | null;
-    socials?: Social[] | null;
     phoneNumber: string | null;
-    universityId: string | null;
+    universityId: string;
     createdAt: Date;
     updatedAt: Date;
-    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
-    followers: UserFollowsList;
-    apiUrl: string;
 }
 
 // Represents the member info for a project
@@ -202,20 +207,24 @@ export interface MePreview {
     firstName: string;
     lastName: string;
     username: string;
-    profileImage?: string | null;
+    profileImage: string | null;
+    mentor: boolean;
+    designer: boolean;
+    developer: boolean
     apiUrl: string;
 }
 
 //show only non-sensitive data
 export interface MeDetail extends MePreview {
-    headline: string | null;
-    pronouns: string | null;
-    title: string | null;
+    headline: string;
+    pronouns: string;
+    title: string;
     majors: MyMajor[];
-    academicYear: string | null;
-    location: string | null;
-    funFact: string | null;
-    bio: string | null;
+    academicYear: AcademicYear;
+    location: string;
+    funFact: string;
+    bio: string;
+    mentor: boolean;
     projects: ProjectPreview[];
     skills?: MySkill[];
     socials?: MySocial[];
@@ -228,7 +237,7 @@ export interface MePrivate extends MeDetail {
     ritEmail: string;
     visibility: Visibility;
     phoneNumber: string | null;
-    universityId: string | null;
+    universityId: string;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -237,15 +246,7 @@ export interface MePrivate extends MeDetail {
 export interface CreateUserData {
     firstName: string;
     lastName: string;
-    headline?: string;
-    pronouns?: string;
-    title?: string;
-    academicYear?: number;
-    location?: string;
-    funFact?: string;
-    majors?: Major[];
-    skills?: UserSkill[];
-    socials?: Social[];
+    username: string;
 }
 
 // PROjECT DATA
@@ -309,10 +310,10 @@ export interface ProjectTag extends Tag {
 export interface ProjectJob {
     jobId: number;
     role: Role;
-    availability: string;
-    duration: string;
-    location: string;
-    compensation: string;
+    availability: JobAvailability;
+    duration: JobDuration;
+    location: JobLocation;
+    compensation: JobCompensation;
     description: string;
     createdAt: Date;
     updatedAt: Date;
@@ -323,9 +324,9 @@ export interface ProjectJob {
 
 export interface ProjectDetail extends ProjectPreview {
     description: string;
-    purpose: string | null;
-    status: string | null;
-    audience: string | null;
+    purpose: ProjectPurpose | null;
+    status: ProjectStatus;
+    audience: string;
     createdAt: Date;
     updatedAt: Date;
     owner: UserPreview;
@@ -356,11 +357,11 @@ export interface Job {
     jobId: number;
     projectId: number;
     roleId: number;
-    availability: string;
-    duration: string;
-    location: string;
-    compensation: string;
-    description?: string;
+    availability: JobAvailability;
+    duration: JobDuration;
+    location: JobLocation;
+    compensation: JobCompensation;
+    description: string;
     createdAt: Date;
     updatedAt: Date;
     apiUrl: string;
