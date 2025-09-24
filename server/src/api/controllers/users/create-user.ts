@@ -51,8 +51,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     return;
   }
 
-  const data = req.body as { username: string };
-  const username = data.username;
+  const username = email.substring(0, email.indexOf('@'));
 
   const userExist = await getUserByUsernameService(username);
   if (userExist !== 'NOT_FOUND' && userExist !== 'INTERNAL_ERROR') {

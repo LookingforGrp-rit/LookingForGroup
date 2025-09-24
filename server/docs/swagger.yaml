@@ -285,16 +285,6 @@ paths:
       summary: Create a user
       tags:
         - Users
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-                  example: User01
       parameters:
         - in: query
           name: devFirstName
