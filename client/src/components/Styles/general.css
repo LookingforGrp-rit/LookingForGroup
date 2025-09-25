@@ -68,7 +68,7 @@ General style rules
 
   /* tags */
   --tag-red-selected: #ffa0b0;
-  --tag-orange-selected: #ffa381;
+  --tag-orange-selected: #ffa281;
   --tag-yellow-selected: #ffcf8b;
   --tag-green-selected: #bed9aa;
   --tag-blue-selected: #b0dcee;
@@ -84,7 +84,7 @@ General style rules
   --tag-grey-unselected: #0e0e0e;
 
   --tag-red-unselected-border: #ffa0b0;
-  --tag-orange-unselected-border: #ffa381;
+  --tag-orange-unselected-border: #ffa281;
   --tag-yellow-unselected-border: #ffcf8b;
   --tag-green-unselected-border: #bed9aa;
   --tag-blue-unselected-border: #b0dcee;
@@ -94,7 +94,7 @@ General style rules
   --tag-text-selected: black;
 
   --tag-text-unselected-red: #ffa0b0;
-  --tag-text-unselected-orange: #ffa381;
+  --tag-text-unselected-orange: #ffa281;
   --tag-text-unselected-yellow: #ffcf8b;
   --tag-text-unselected-green: #bed9aa;
   --tag-text-unselected-blue: #b0dcee;
@@ -140,7 +140,7 @@ General style rules
 
   /* tags */
   --tag-red-selected: #ffa0b0;
-  --tag-orange-selected: #ffa381;
+  --tag-orange-selected: #ffa281;
   --tag-yellow-selected: #ffcf8b;
   --tag-green-selected: #bed9aa;
   --tag-blue-selected: #b0dcee;
