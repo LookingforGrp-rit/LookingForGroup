@@ -15,34 +15,14 @@ import { TeamTab } from './tabs/TeamTab';
 import { TagsTab } from './tabs/TagsTab';
 import { ThemeIcon } from '../ThemeIcon';
 import { loggedIn } from '../Header';
+import { createNewProject, getByID, updateProject, getPics, addPic, updatePicPositions, deletePic, updateThumbnail } from '../../api/projects';
+import { getUsersById } from '../../api/users';
 // import { showPopup } from '../Sidebar';  // No longer exists?
+
+import { ProjectDetail } from '@looking-for-group/shared';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
-
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number }[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string }[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string }[];
-  thumbnail: string;
-  title: string;
-  userId?: number;
-}
 
 interface User {
   firstName: string,
@@ -60,7 +40,8 @@ interface Props {
 }
 
 // default value for project data
-const emptyProject: ProjectData = {
+const emptyProject: ProjectDetail = {
+  _id: '',
   audience: '',
   description: '',
   hook: '',
@@ -90,10 +71,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // --- Hooks ---
   // store project data
-  const [projectData, setProjectData] = useState(emptyProject);
+  const [projectData, setProjectData] = useState<ProjectDetail>(emptyProject);
 
   // tracking temporary project changes before committing to a save
-  const [modifiedProject, setModifiedProject] = useState(emptyProject);
+  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(emptyProject);
 
   // check whether or not the data in the popup is valid
   const [failCheck, setFailCheck] = useState(false);
@@ -109,73 +90,50 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   //State variable for error message
   const [message, setMessage] = useState('')
 
-  // Get project data on projectID change
+  // Load existing project
   useEffect(() => {
     if (!newProject && projectID) {
-      const getProjectData = async () => {
-        const url = `/api/projects/${projectID}`;
+      const loadProject = async () => {
         try {
-          const response = await fetch(url);
-
-          const projectResponse = await response.json();
-          const projectData = projectResponse.data[0];
-
-          if (projectData === undefined) {
-            return;
-          }
-
-          projectData.userId = user?.userId;
-
-          // save project data
-          setProjectData(projectData);
-          setModifiedProject(projectData);
-        } catch (error) {
-          console.error(error);
+          const response = await getByID(Number(projectID));
+          if (!response.data) return;
+          const data = response.data;
+          data.userId = user?.userId;
+          setProjectData(data);
+          setModifiedProject(data);
+        } catch (err) {
+          console.error("Error loading existing project:", err);
         }
       };
-      getProjectData();
+      loadProject();
     }
   }, [newProject, projectID, user]);
 
-  // Handle events for tab switch
+  // Setup default project for creation
   useEffect(() => {
-    // reset link error
     setErrorLinks('');
-    if (newProject) {
-      const makeDefaultProjectData = async () => {
-        // adjust default and set as project data
-        const projectData = emptyProject;
-        projectData.userId = user?.userId;
-
-        // Get user profile image
+    if (newProject && user) {
+      const initProject = async() => {
+        const project: ProjectDetail  & { userId?: number } = { ...emptyProject, userId: user.userId };
         try {
-          const response = await fetch(`/api/users/${user?.userId}`);
-          const userResponse = await response.json();
-          const data = userResponse.data[0];
-          
-
+          const response = await getUsersById(user.userId.toString());
           // Add creator as Project Lead
           const member = {
             firstName: user?.firstName || '',
             lastName: user?.lastName || '',
             jobTitle: 'Project Lead',
-            titleId: 73,
-            profileImage: data?.profileImage || '',
+            profileImage: response.data?.profileImage || '',
             userId: user?.userId || 0
           };
-
-          projectData.members = [member];
-
-          // Save to temp project
-          setModifiedProject(projectData);
-
+          project.members = [member];
         } catch (error) {
           console.error(error);
         }
-      }
-      makeDefaultProjectData();
+        setModifiedProject(project);
+      };
+      initProject();
     }
-  }, [currentTab, newProject, user]);
+  }, [newProject, user]);
 
   //Save project editor changes
   const saveProject = async () => {
@@ -214,223 +172,69 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       return;
     }
 
-    // --- Creator ---
-    if (newProject) {
-      try {
-        // Record information from inputs
-      }
-      catch (error) {
-        console.error(error);
-        return false;
-      }
-    }
+    try {
+      // NEW PROJECT
+      if (newProject && user) {
+        const resp = await createNewProject(
+          user.userId,
+          modifiedProject.title,
+          modifiedProject.hook,
+          modifiedProject.description,
+          modifiedProject.purpose,
+          modifiedProject.status,
+          modifiedProject.audience,
+          modifiedProject.projectTypes,
+          modifiedProject.tags,
+          modifiedProject.jobs,
+          modifiedProject.members,
+          modifiedProject.socials
+        );
+        const newProjectID = resp.data?.projectId;
+        if (!newProjectID) return;
 
-    // --- Editor ---
-    if (!newProject) {
-      try {
-        // Update images
-        let dbImages: Image[] = [];
-        // Get images on database
-        const picturesResponse = await fetch(`/api/projects/${projectID}/pictures`);
-        const imagesResponse = await picturesResponse.json();
-        const imageData = imagesResponse.data;
-
-        // add images to reference later
-        dbImages = imageData;
-
-        // Compare new images to database to find images to delete
-        const imagesToDelete: Image[] = dbImages.filter(
-          image => !modifiedProject.images.find(newImage => newImage.image === image.image)
+        // Upload images
+        await Promise.all(
+          modifiedProject.images.map(image => addPic(newProjectID, image.file, image.position))
         );
 
-        // Delete images
+        if (modifiedProject.thumbnailFile) {
+          await updateThumbnail(newProjectID, modifiedProject.thumbnailFile);
+        }
+
+        setProjectData(modifiedProject);
+      }
+
+      // EXISTING PROJECT
+      if (!newProject && projectID) {
+        const projectNumID = Number(projectID);
+        const picsResp = await getPics(projectNumID);
+        const dbImages = picsResp.data || [];
+
+        const imagesToDelete = dbImages.filter(img => !modifiedProject.images.find(i => i.image === img.image));
+        await Promise.all(imagesToDelete.map(img => deletePic(projectNumID, img.image)));
+
         await Promise.all(
-          imagesToDelete.map(async (image) => {
-            // remove image from database
-            await fetch(`/api/projects/${projectID}/pictures`, {
-              method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ image: image.image })
-            });
+          modifiedProject.images.map(img => {
+            if (!dbImages.find(db => db.image === img.image)) return addPic(projectNumID, img.file, img.position);
+            return Promise.resolve();
           })
         );
 
-        // Add new images to database
-        // Wrap upload in promise
-        const uploadImages = modifiedProject.images.map(async (image) => {
-          if (!dbImages.find((dbImage) => dbImage.image === image.image)) {
-            // file must be new: recreate file
-            const fileResponse = await fetch(image.image);
-            const fileBlob = await fileResponse.blob();
-            const file = new File([fileBlob], image.image, { type: fileBlob.type });
+        await updatePicPositions(
+          projectNumID,
+          modifiedProject.images.map(i => ({ id: i.id!, position: i.position }))
+        );
 
-            // create form data to send
-            const formData = new FormData();
-            formData.append('image', file);
-            formData.append('position', image.position.toString());
-
-            // add image to database
-            await fetch(`/api/projects/${projectID}/pictures`, {
-              method: 'POST',
-              body: formData
-            });
-          }
-        });
-
-        // Wait for all images to upload
-        await Promise.all(uploadImages);
-
-        // Reestablish image positions
-        await fetch(`/api/projects/${projectID}/pictures`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ images: modifiedProject.images })
-        });
-
-        // Compare thumbnail
-        if (modifiedProject.thumbnail !== projectData.thumbnail) {
-          // get thumbnail
-          const thumbnailResponse = await fetch(`${API_BASE}/images/projects/${modifiedProject.thumbnail}`);
-
-          // create file
-          const thumbnailBlob = await thumbnailResponse.blob();
-          const thumbnailFile = new File([thumbnailBlob], modifiedProject.thumbnail, { type: "image/png" }); // type is valid if its added to modifiedProject
-
-          const formData = new FormData();
-          formData.append('image', thumbnailFile);
-
-          // update thumbnail
-          await fetch(`/api/projects/${projectID}/thumbnail`, {
-            method: 'PUT',
-            body: formData
-          });
+        if (modifiedProject.thumbnailFile && modifiedProject.thumbnail !== projectData.thumbnail) {
+          await updateThumbnail(projectNumID, modifiedProject.thumbnailFile);
         }
 
-        // Send PUT request for general project info
-        await fetch(`/api/projects/${projectID}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(modifiedProject),
-        });
-
+        await updateProject(projectNumID, modifiedProject);
         setProjectData(modifiedProject);
-
-      } catch (error) {
-        console.error(error);
-        return false;
       }
+    } catch (err) {
+      console.error(err);
     }
-    // Creator
-    else {
-      try {
-        // Send POST request for general project info
-        await fetch(`/api/projects`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(modifiedProject),
-        });
-
-        setProjectData(modifiedProject);
-
-        // Add images, if any
-        modifiedProject.images.map(async (image) => {
-          // file must be new: recreate file
-          const fileResponse = await fetch(image.image);
-          const fileBlob = await fileResponse.blob();
-          const file = new File([fileBlob], image.image, { type: fileBlob.type });
-
-          // create form data to send
-          const formData = new FormData();
-          formData.append('image', file);
-          formData.append('position', image.position.toString());
-
-          // add image to database
-          await fetch(`/api/projects/${projectID}/pictures`, {
-            method: 'POST',
-            body: formData
-          });
-        });
-
-        // Update thumbnail if a thumbnail is set
-        if (modifiedProject.thumbnail !== '') {
-          // get thumbnail
-          const thumbnailResponse = await fetch(`${API_BASE}/images/projects/${modifiedProject.thumbnail}`);
-
-          // create file
-          const thumbnailBlob = await thumbnailResponse.blob();
-          const thumbnailFile = new File([thumbnailBlob], modifiedProject.thumbnail, { type: "image/png" }); // type is valid if its added to modifiedProject
-
-          const formData = new FormData();
-          formData.append('image', thumbnailFile);
-
-          // update thumbnail
-          await fetch(`/api/projects/${projectID}/thumbnail`, {
-            method: 'PUT',
-            body: formData
-          });
-        }
-
-      } catch (error) {
-        console.error(error);
-        return false;
-      }
-    }
-  };
-
-  // Save links to modifiedProject
-  const updateLinks = () => {
-    // temp social links
-    const newSocials: { id: number, url: string }[] = [];
-
-    // get parent element
-    const parentDiv = document.querySelector('#project-editor-link-list');
-
-    // iterate through children
-    parentDiv?.childNodes.forEach(element => {
-      // skip element if its the last (add button)
-      if (element === parentDiv.lastElementChild) {
-        return;
-      }
-
-      // get dropdown and input
-      const dropdown = (element as HTMLElement).querySelector('select');
-      const input = (element as HTMLElement).querySelector('input');
-
-      // get values
-      const id = Number(dropdown?.options[dropdown?.selectedIndex].dataset.id);
-      const url = input?.value;
-
-      // if no values at all, ignore and remove
-      if (!id && !url) {
-        return;
-      }
-      // check for valid id
-      if (isNaN(id) || id === -1) {
-        setErrorLinks('Select a website in the dropdown');
-        return;
-      }
-      if (!url) {
-        setErrorLinks('Enter a URL');
-        return;
-      }
-
-      // add to list
-      newSocials.push({ id: id, url: url });
-
-      // remove error
-      setErrorLinks('');
-    });
-
-    // update socials
-    setModifiedProject({ ...modifiedProject, socials: newSocials });
   };
 
   return (

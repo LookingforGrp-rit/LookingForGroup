@@ -13,6 +13,7 @@ import './Styles/pages.css';
 
 import { useState, useEffect } from 'react';
 import type { JSX } from 'react';
+import { getJobTitles } from '../api/users';
 
 
 interface JobTitle {
@@ -21,11 +22,9 @@ interface JobTitle {
 }
 
 const getRoles = async (): Promise<JobTitle[]> => {
-  // TODO: create error handling, try catch block
-  const response = await fetch('/api/datasets/job-titles');
-  const { data } = await response.json();
+    const response = await getJobTitles(); 
+    return response.data ?? [];
   // console.log(data);
-  return data;
 };
 
 

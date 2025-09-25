@@ -3,8 +3,8 @@ import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { sendPost } from '../../functions/fetch.js';
-import { ThemeIcon, ThemeImage } from '../ThemeIcon';
-import { getUserByEmail } from '../../api/users.js';
+import { ThemeIcon } from '../ThemeIcon';
+import { getUserByEmail, getUserByUsername } from '../../api/users.js';
 
 type LoginResponse = {
   error?: string;
@@ -61,9 +61,8 @@ const Login: React.FC = () => {
     }
     // search input as username
     try {
-      const response = await fetch(`/api/users/search-username/${loginInput}`);
-      const data = await response.json();
-      if (data) {
+      const response = await getUserByUsername(loginInput);
+      if (response.data) {
         // try login
         try {
           sendPost('/api/login', { loginInput, password }, (response: LoginResponse) => {

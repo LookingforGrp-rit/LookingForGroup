@@ -13,7 +13,7 @@ import '../Styles/pages.css';
 
 // Utilities and React functions
 import { useState, useEffect } from 'react';
-import { sendPut, sendFile, fetchUserID } from '../../functions/fetch';
+import { sendPut, sendFile } from '../../functions/fetch';
 
 // Components
 import { Popup, PopupButton, PopupContent } from '../Popup';
@@ -25,6 +25,7 @@ import { ProjectsTab } from './tabs/ProjectsTab';
 import { SkillsTab } from './tabs/SkillsTab';
 import { InterestTab } from './tabs/InterestTab';
 import { interests } from '../../constants/interests';
+import { getCurrentUsername, getUsersById, updateProfilePicture } from '../../api/users';
 
 // exportable interface for TypeScript errors
 export interface ProfileData {
@@ -56,16 +57,10 @@ export const ProfileEditPopup = () => {
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
 
   // Send selected image to server for save
-  const saveImage = async (userID) => {
+  const saveImage = async (userID: number) => {
   if (!selectedImageFile) return;
-  // saves the profile pic if there has been a change
-  const formData = new FormData();
-  formData.append('image', selectedImageFile);
 
-  await fetch(`/api/users/${userID}/profile-picture`, {
-    method: 'PUT',
-    body: formData,
-  });
+  await updateProfilePicture(userID, selectedImageFile);
 };
 
 const onSaveClicked = async (e : Event) => {
@@ -109,7 +104,7 @@ const onSaveClicked = async (e : Event) => {
   // console.log('Saving data...');
   // console.log(dataToStore);
 
-  const userID = await fetchUserID();
+  const userID = await getCurrentUsername();
   await sendPut(`/api/users/${userID}`, dataToStore);
   await saveImage(userID);
 
@@ -182,16 +177,15 @@ const onSaveClicked = async (e : Event) => {
     const setUpProfileData = async () => {
       // Pick which socials to use based on type
       // fetch for profile on ID
-      const userID = await fetchUserID();
-      const response = await fetch(`api/users/${userID}`);
-      const { data } = await response.json(); // use data[0]
+      const userID = await getCurrentUsername();
+      const response = await getUsersById(userID);
 
-      console.log('ProfileEditPopup - Raw API response:', data);
-      console.log('ProfileEditPopup - User profile data:', data[0]);
-      console.log('ProfileEditPopup - User interests from API:', data[0]?.interests);
+      console.log('ProfileEditPopup - Raw API response:', response.data);
+      console.log('ProfileEditPopup - User profile data:', response.data[0]);
+      console.log('ProfileEditPopup - User interests from API:', response.data[0]?.interests);
 
 
-      profile = await data[0];
+      profile = await response.data[0];
     };
     setUpProfileData();
   }, []);
