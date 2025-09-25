@@ -33,7 +33,7 @@ model Jobs {
   duration     JobsDuration
   location     JobsLocation
   compensation JobsCompensation
-  contact      String           @db.VarChar(320)
+  contact      Members          @relation(fields: [userId, projectId], references: [userId, projectId])
   description  String           @default("") @db.VarChar(500)
   createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt    DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)
@@ -61,6 +61,7 @@ model Members {
   createdAt         DateTime                 @default(now()) @map("created_at") @db.Timestamp(0)
   roles             Roles                    @relation(fields: [roleId], references: [roleId], map: "FK_members_job_titles")
   projects          Projects                 @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_members_projects")
+  jobs              Jobs[]                   
   users             Users                    @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_members_users")
 
   @@id([projectId, userId])
