@@ -34,7 +34,7 @@ model Jobs {
   duration      JobsDuration
   location      JobsLocation
   compensation  JobsCompensation
-  contact       Members          @relation(fields: [contactUserId, projectId], references: [userId, projectId])
+  contact       Members          @relation(fields: [projectId, contactUserId], references: [projectId, userId])
   description   String           @default("") @db.VarChar(500)
   createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)

@@ -3,45 +3,97 @@ import prisma from '../src/config/prisma.ts';
 async function main() {
     //Datasets
     await prisma.mediums.createMany({
-        data: [{ label: 'Poster' }],
+        data: [
+            { label: 'Video Game' },
+            { label: 'Analog Game' },
+            { label: 'Mobile Application' },
+        ],
     });
 
     await prisma.roles.createMany({
-        data: [{ label: 'Developer' }],
+        data: [
+            { label: 'Full-Stack Developer' },
+            { label: 'Front-End Developer' },
+            { label: 'Back-End Developer' },
+        ],
     });
 
     await prisma.majors.createMany({
-        data: [{ label: 'Game Design & Development' }],
+        data: [
+            { label: 'Animation' },
+            { label: 'Computer Engineering' },
+            { label: 'Computing Engineering Technology' },
+        ],
     });
 
     await prisma.socials.createMany({
-        data: [{ label: 'Website' }],
+        data: [
+            { label: 'Instagram' },
+            { label: 'Twitter' },
+            { label: 'Facebook' },
+        ],
     });
 
     await prisma.tags.createMany({
-        data: [{ label: 'Web', type: 'General' }],
+        data: [
+            { label: 'Indie', type: 'Creative' },
+            { label: 'Abstract', type: 'Creative' },
+            { label: 'Horror', type: 'Creative' },
+        ],
     });
 
     await prisma.skills.createMany({
-        data: [{ label: 'TypeScript', type: 'Language' }],
+        data: [
+            { label: 'C++', type: 'Developer' },
+            { label: 'CSS', type: 'Developer' },
+            { label: 'C#', type: 'Developer' },
+        ],
     });
 
     //Users
     await prisma.users.createMany({
         data: [
             {
-                username: 'example_user',
-                ritEmail: 'abc1234@rit.edu',
-                firstName: 'Example',
-                lastName: 'User',
+                username: 'mhr2964',
+                ritEmail: 'mhr2964@rit.edu',
+                firstName: 'Michael',
+                lastName: 'Robinson',
                 headline: 'Hello world',
                 pronouns: 'they/them',
                 title: 'Student',
                 location: 'Rochester, NY',
-                funFact: 'Loves seeding',
-                bio: 'This is a simple seed user.',
-                universityId: '123456789',
+                funFact: 'Loves Prisma',
+                bio: 'This is an example user.',
+                universityId: '11111111',
                 academicYear: 'Freshman',
+            },
+            {
+                username: 'anw7643',
+                ritEmail: 'anw7643@rit.edu',
+                firstName: 'Ashley',
+                lastName: 'Whigam',
+                headline: 'Hello world',
+                pronouns: 'they/them',
+                title: 'Student',
+                location: 'Rochester, NY',
+                funFact: 'Loves cheez-its',
+                bio: 'This is an example user.',
+                universityId: '222222222',
+                academicYear: 'Freshman',
+            },
+            {
+                username: 'swc3333',
+                ritEmail: 'swc3333@rit.edu',
+                firstName: 'Stephen',
+                lastName: 'Curry',
+                headline: 'Hello world',
+                pronouns: 'they/them',
+                title: 'Student',
+                location: 'Rochester, NY',
+                funFact: 'Loves shooting',
+                bio: 'This is an example user.',
+                universityId: '33333333',
+                academicYear: 'Senior',
             },
         ],
     });
@@ -50,12 +102,30 @@ async function main() {
     await prisma.projects.createMany({
         data: [
             {
-                title: 'Example Project',
-                hook: 'A tiny seed project',
-                description: 'Seeded via prisma/seed.ts',
+                title: 'Looking For Group',
+                hook: 'You can LOOK for a GROUP',
+                description: 'Have you ever needed a project or a group?',
                 audience: 'Everybody',
                 purpose: 'Personal',
                 userId: 1,
+                status: "Development",
+            },
+            {
+                title: 'Changeling',
+                hook: 'You can CHANGE a LING',
+                description: 'Have you ever needed a Changeling?',
+                audience: 'Everybody',
+                purpose: 'Personal',
+                userId: 2,
+                status: "Development",
+            },
+            {
+                title: 'Manhattan Project',
+                hook: 'You can make an ATOMIC BOMB',
+                description: 'Have you ever needed to nuke a country?',
+                audience: 'Everybody',
+                purpose: 'Personal',
+                userId: 3,
                 status: "Development",
             },
         ],
@@ -69,6 +139,18 @@ async function main() {
                 altText: 'An example image',
                 position: 1,
                 projectId: 1,
+            },
+            {
+                image: 'example.jpg',
+                altText: 'An example image',
+                position: 1,
+                projectId: 2,
+            },
+            {
+                image: 'example.jpg',
+                altText: 'An example image',
+                position: 1,
+                projectId: 3,
             },
         ],
     });
@@ -84,6 +166,30 @@ async function main() {
         ],
     });
 
+    //Members
+    await prisma.members.createMany({
+        data: [
+            {
+                projectId: 1,
+                userId: 1,
+                roleId: 1,
+                profileVisibility: 'public',
+            },
+            {
+                projectId: 2,
+                userId: 2,
+                roleId: 1,
+                profileVisibility: 'public',
+            },
+            {
+                projectId: 3,
+                userId: 3,
+                roleId: 1,
+                profileVisibility: 'public',
+            },
+        ],
+    });
+
     //Jobs
     await prisma.jobs.createMany({
         data: [
@@ -94,29 +200,47 @@ async function main() {
                 duration: 'ShortTerm',
                 location: 'Remote',
                 compensation: 'Unpaid',
-                description: 'One simple seeded job',
+                description: 'One example job',
+                contactUserId: 1
+            },
+            {
+                projectId: 2,
+                roleId: 1,
+                availability: 'Flexible',
+                duration: 'ShortTerm',
+                location: 'Remote',
+                compensation: 'Unpaid',
+                description: 'One example job',
+                contactUserId: 2
+            },
+            {
+                projectId: 3,
+                roleId: 1,
+                availability: 'Flexible',
+                duration: 'ShortTerm',
+                location: 'Remote',
+                compensation: 'Unpaid',
+                description: 'One example job',
+                contactUserId: 3
             },
         ],
     });
 
-    //Members
-    await prisma.members.createMany({
-        data: [
-            {
-                projectId: 1,
-                userId: 1,
-                roleId: 1,
-                profileVisibility: 'public',
-            },
-        ],
-    });
 
     //ProjectFollowings
     await prisma.projectFollowings.createMany({
         data: [
             {
                 userId: 1,
+                projectId: 3,
+            },
+            {
+                userId: 2,
                 projectId: 1,
+            },
+            {
+                userId: 3,
+                projectId: 2,
             },
         ],
     });
@@ -127,6 +251,16 @@ async function main() {
             {
                 userId: 1,
                 websiteId: 1,
+                url: 'https://example.com/u/example_user',
+            },
+            {
+                userId: 2,
+                websiteId: 2,
+                url: 'https://example.com/u/example_user',
+            },
+            {
+                userId: 3,
+                websiteId: 3,
                 url: 'https://example.com/u/example_user',
             },
         ],
@@ -141,6 +275,18 @@ async function main() {
                 position: 1,
                 proficiency: 'Intermediate',
             },
+            {
+                userId: 2,
+                skillId: 2,
+                position: 1,
+                proficiency: 'Intermediate',
+            },
+            {
+                userId: 3,
+                skillId: 3,
+                position: 1,
+                proficiency: 'Intermediate',
+            },
         ],
     });
 
@@ -149,6 +295,14 @@ async function main() {
         data: [
             {
                 senderId: 1,
+                receiverId: 2,
+            },
+            {
+                senderId: 2,
+                receiverId: 3,
+            },
+            {
+                senderId: 3,
                 receiverId: 1,
             },
         ],
