@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { getUserByIdService } from '#services/users/get-user/get-by-id.ts';
 
 //get user by id
-export const getUsernameById = async (req: Request, res: Response): Promise<void> => {
+export const getUserById = async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(req.params.id);
 
   if (isNaN(id)) {

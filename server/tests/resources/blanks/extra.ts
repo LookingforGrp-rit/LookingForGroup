@@ -66,6 +66,14 @@ export const blankUserRequest = {
   query: {},
 } as unknown as Request;
 
+export const blankGetUserRequest = {
+  params: {
+    id: '1',
+    username: 'username',
+    email: 'email@email.email',
+  },
+} as unknown as Request;
+
 export const blankMediumsRequest = {
   params: {
     id: '1',

@@ -5,7 +5,7 @@ import { getUserFollowers } from '#controllers/users/followings/get-user-followe
 import { getUserFollowing } from '#controllers/users/followings/get-user-following.ts';
 import { getAllUsers } from '#controllers/users/get-all-users.ts';
 import { getUserByEmail } from '#controllers/users/get-user/get-by-email.ts';
-import { getUsernameById } from '#controllers/users/get-user/get-by-id.ts';
+import { getUserById } from '#controllers/users/get-user/get-by-id.ts';
 import { getUserByUsername } from '#controllers/users/get-user/get-by-username.ts';
 import { getUserProjects } from '#controllers/users/get-user-proj.ts';
 import requiresLogin from '../middleware/requires-login.ts';
@@ -33,7 +33,7 @@ router.get('/:id/followers', requiresLogin, getUserFollowers);
 // GET USER ROUTES
 
 //Gets users by id
-router.get('/:id', getUsernameById);
+router.get('/:id', getUserById);
 //Gets users by username
 router.get('/search-username/:username', getUserByUsername);
 // Gets users by email
