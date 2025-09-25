@@ -2528,6 +2528,48 @@ plus a follow button & a more options button*/
   }
 }
 
+.create-post-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-color, #fff);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px 30px;
+  z-index: 1000;
+  width:400px;
+  max-width: 90%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.create-post-popup input, .create-post-popup textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 14px;
+}
+
+.create-post-popup button {
+  align-self: flex-end;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  background-color: orange;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.create-post-popup button:hover{
+  background-color: darkorange;
+}
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
