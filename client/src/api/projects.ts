@@ -1,6 +1,8 @@
 import { GET, POST, PUT, DELETE } from "./index";
 import type {
   ApiResponse,
+  Project,
+  ProjectImage,
   Genre,
   Tag,
   JobTitle,
@@ -39,7 +41,7 @@ export const createNewProject = async (
   _jobs: JobTitle[],
   _members: Member[],
   _socials: Social[]
-): Promise<unknown> => {
+): Promise<ApiResponse<Project>> => {
   const apiURL = `/projects`;
 
   const data = {
@@ -63,22 +65,20 @@ export const createNewProject = async (
     return { status: response.status, error: response.error };
   }
   console.log(`Created project named "${_title}"`);
-  return { status: 200, error: null, data: response.data };
+  return { status: 200, error: null, data: response.data as Project };
 };
 
 /**
  * Gets all projects in the database
  * @returns Array of all projects if valid, 400 if not
  */
-export const getProjects = async (): Promise<ApiResponse<unknown>> => {
+export const getProjects = async (): Promise<ApiResponse<Project[]>> => {
   const apiURL = `/projects`;
-
   const response = await GET(apiURL);
-
   if (response.error) {
     return { status: response.status, error: response.error };
   }
-  return { status: 200, error: null, data: response.data };
+  return { status: 200, error: null, data: response.data as Project[] };
 };
 
 /**
@@ -86,13 +86,13 @@ export const getProjects = async (): Promise<ApiResponse<unknown>> => {
  * @param ID -  ID of project to retrieve
  * @returns - A project object if valid, 400 if not
  */
-export const getByID = async (ID: number): Promise<ApiResponse<unknown>> => {
+export const getByID = async (ID: number): Promise<ApiResponse<Project>> => {
   const apiURL = `/projects/${ID}`;
   const response = await GET(apiURL);
   if (response.error) {
-    return { status: response.status, error: response.error };
+    return { status: response.status, error: response.error, data: null };
   }
-  return { status: 200, error: null, data: response.data };
+  return { status: 200, error: null, data: response.data as Project };
 };
 
 /**
@@ -104,7 +104,7 @@ export const getByID = async (ID: number): Promise<ApiResponse<unknown>> => {
 export const updateProject = async (
   ID: number,
   data: object
-): Promise<ApiResponse<unknown>> => {
+): Promise<ApiResponse<null>> => {
   const apiURL = `/projects/${ID}`;
   const response = await PUT(apiURL, data);
   if (response.error) {
@@ -140,14 +140,17 @@ export const deleteProject = async (
 export const updateThumbnail = async (
   ID: number,
   _image: File
-): Promise<unknown> => {
+): Promise<ApiResponse<{ filename: string }>> => {
   const apiURL = `/projects/${ID}/thumbnail`;
-  const data = { image: _image };
-  const response = await PUT(apiURL, data);
+  
+  const formData = new FormData();
+  formData.append("image", _image);
+
+  const response = await PUT(apiURL, formData);
   if (response.error) {
     return { status: response.status, error: response.error };
   }
-  return { status: 200, error: null, data: response.data };
+  return { status: 200, error: null, data: response.data as { filename: string } };
 };
 
 /**
@@ -155,13 +158,13 @@ export const updateThumbnail = async (
  * @param ID - ID of the target project
  * @returns Array of image objects if valid, "400" if not
  */
-export const getPics = async (ID: number): Promise<ApiResponse<unknown>> => {
+export const getPics = async (ID: number): Promise<ApiResponse<ProjectImage[]>> => {
   const apiURL = `/projects/${ID}/pictures`;
   const response = await GET(apiURL);
   if (response.error) {
-    return { status: response.status, error: response.error };
+    return { status: response.status, error: response.error, data: null };
   }
-  return { status: 200, error: null, data: response.data };
+  return { status: 200, error: null, data: response.data as ProjectImage[] };
 };
 
 /**
@@ -177,15 +180,16 @@ export const addPic = async (
   _position: number
 ): Promise<ApiResponse<any[]>> => {
   const apiURL = `/projects/${ID}/pictures`;
-  const data = {
-    image: _image,
-    position: _position,
-  };
-  const response = await POST(apiURL, data);
+  
+  const formData = new FormData();
+  formData.append("image", _image);
+  formData.append("position", _position.toString());
+
+  const response = await POST(apiURL, formData);
   if (response.error) {
     return { status: response.status, error: response.error };
   }
-  return { status: 200 };
+  return { status: 200, error: null, data: null };
 };
 
 /**
@@ -198,12 +202,12 @@ export const updatePicPositions = async (
   ID: number,
   images: Array<{ id: number; position: number }>
 ): Promise<ApiResponse<any[]>> => {
-  const apiURL = `$/projects/${ID}/pictures`;
+  const apiURL = `/projects/${ID}/pictures`;
   const response = await PUT(apiURL, images);
   if (response.error) {
     return { status: response.status, error: response.error };
   }
-  return { status: 200 };
+  return { status: 200, error: null, data: null };
 };
 
 /**
@@ -224,7 +228,7 @@ export const deletePic = async (
   if (response.error) {
     return { status: response.status, error: response.error };
   }
-  return { status: 200 };
+  return { status: 200, error: null, data: null };
 };
 
 /* MEMBERS */
@@ -253,7 +257,7 @@ export const addMember = async (
   if (response.error) {
     return { status: response.status, error: response.error };
   }
-  return { status: 200 };
+  return { status: 200, error: null, data: null};
 };
 
 /**
@@ -280,7 +284,7 @@ export const updateMember = async (
   if (response.error) {
     return { status: response.status, error: response.error };
   }
-  return { status: 200 };
+  return { status: 200, error: null, data: null };
 };
 
 /**
@@ -298,7 +302,7 @@ export const deleteMember = async (
   if (response.error) {
     return { status: response.status, error: response.error };
   }
-  return { status: 200 };
+  return { status: 200, error: null, data: null };
 };
 
 export default {

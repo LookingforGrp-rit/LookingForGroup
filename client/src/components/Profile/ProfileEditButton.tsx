@@ -1,9 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { PagePopup, openClosePopup } from '../PagePopup';
 import { getByID } from '../../api/projects';
-import usePreloadedImage from '../../functions/imageLoad';
-import profilePicture from '../../images/blue_frog.png';
+import { getJobTitles, getMajors, getSkills, getSocials as fetchSocials, editUser, updateProjectVisibility, getVisibleProjects as fetchProjects, 
+  updateProfilePicture, getVisibleProjects, getSkillsByType } from '../../api/users';
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
+
+interface ProjectType {
+  projectId: number;
+  title: string;
+  thumbnail?: string | null;
+}
 
 
 //backend base url for getting images
@@ -26,37 +32,25 @@ const EditButton = ({ userData }) => {
   const [rolesList, setRolesList] = useState();
   const [majorsList, setMajorsList] = useState();
 
-  const getJobTitles = async () => {
-    const url = '/api/datasets/job-titles';
-
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setRolesList(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
+  const getJobTitlesData = async () => {
+      const response = await getJobTitles();
+      if (response.data) {
+       setRolesList(response.data);
+      }
   };
 
-  const getMajors = async () => {
-    const url = '/api/datasets/majors';
-
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setMajorsList(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
+  const getMajorsData = async () => {
+      const response = await getMajors();
+      if (response.data) {
+        setMajorsList(response.data);
+      }
   };
 
   if (rolesList === undefined) {
-    getJobTitles();
+    getJobTitlesData();
   }
   if (majorsList === undefined) {
-    getMajors();
+    getMajorsData();
   }
 
   // const [currentPFPLink, setCurrentPFPLink] = useState(require(`../../../../server/images/profiles/${userData.profile_image}`));
@@ -102,7 +96,7 @@ const EditButton = ({ userData }) => {
         getImage(userData.profile_image);
     }*/
 
-  const uploadNewImage = async (theInput) => {
+  const uploadNewImage = async (theInput: HTMLInputElement) => {
     const form = document.querySelector('.edit-region-button-wrapper.photo');
     if (
       form !== undefined &&
@@ -111,18 +105,14 @@ const EditButton = ({ userData }) => {
       theInput.files !== null &&
       theInput.files.length > 0
     ) {
-      const fileForm = new FormData(form);
+      const file = theInput.files[0];
 
-      const url = `/api/users/${userData.userId}/profile-picture`;
       try {
-        const response = await fetch(url, {
-          method: 'PUT',
-          body: fileForm,
-        });
+        const response = await updateProfilePicture(userData.userId, file);
 
         console.log(`User data: Response status: ${response.status}`);
 
-        const rawData = await response.json();
+        const rawData = response;
         console.log(rawData);
         getImage(rawData.data[0].profileImage);
 
@@ -348,79 +338,46 @@ const EditButton = ({ userData }) => {
   );
 
   // "Projects"
-  const [userProjects, setUserProjects] = useState();
-  const [shownProjects, setShownProjects] = useState();
+  const [userProjects, setUserProjects] = useState<ProjectType[] | undefined>();
+  const [shownProjects, setShownProjects] = useState<ProjectType[] | undefined>();
 
-  const getUsersProjects = async () => {
-    const url = `/api/users/${userData.userId}/projects`;
-    try {
-     // const response = await fetch(url, {
-     //   method: 'GET',
-     //   headers: { 'Content-Type': 'application/json' },
-     // });
-     // const rawData = await response.json();
+  // Fetches projects that are current on that profile
+  useEffect(() => {
+    const fetchUserProjects = async () => {
+      try {
+        const data = await getByID(userData.userId);
+        setUserProjects(data.data);
+      } catch (err) {
+        console.error("Failed to fetch user projects:", err);
+      }
+    };
+    fetchUserProjects();
+  }, [userData.userId]);
 
-      const data = getByID(userData.userId);
-      console.log("Sepukku. Called in Profile Edit Button.");
-      setUserProjects(data.data);     // IF DOESN'T Work, replace data.data with rawData.data
-      
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getVisibleProjects = async () => {
-    const url = `/api/users/${userData.userId}/projects/profile`;
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setShownProjects(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  if (userProjects === undefined) {
-    getUsersProjects();
-  }
-  if (shownProjects === undefined) {
-    getVisibleProjects();
-  }
+ // Fetches projects that are currently shown on profile
+  useEffect(() => {
+    const fetchVisibleProjects = async () => {
+      try {
+        const response = await getVisibleProjects(userData.userId);
+        setShownProjects(response.data);
+      } catch (err) {
+        console.log("Failed to fetch visible projects:", err);
+      }
+    };
+    fetchVisibleProjects();
+  }, [userData.userId]);
 
   const checkIfProjectIsShown = (projectID: number) => {
-    if (shownProjects !== undefined) {
-      for (let i = 0; i < shownProjects.length; i++) {
-        if (shownProjects[i].projectId === projectID) {
-          return true;
-        }
-      }
-      return false;
-    }
-    return false;
+    return shownProjects?.some((p) => p.projectId === projectID) ?? false;
   };
 
-  const updateHiddenProjects = (project) => {
-    if (shownProjects !== undefined) {
-      if (checkIfProjectIsShown(project.project_id)) {
-        const tempList = new Array(0);
-        for (let i = 0; i < shownProjects.length; i++) {
-          if (shownProjects[i].projectId !== project.project_id) {
-            tempList.push(shownProjects[i]);
-          }
-        }
+  const toggleProjectVisibility = (project: ProjectType) => {
+    if (!shownProjects) return;
 
-        setShownProjects(tempList);
-      } else {
-        const tempList = new Array(0);
-        for (let i = 0; i < shownProjects.length; i++) {
-          tempList.push(shownProjects[i]);
-        }
-        tempList.push(project);
-
-        setShownProjects(tempList);
-      }
-    }
+    const isShown = checkIfProjectIsShown(project.projectId);
+    setShownProjects(
+      isShown ? shownProjects.filter((p) => p.projectId !== project. projectId) : [...shownProjects, project]
+    );
   };
 
   const page2 = (
@@ -687,13 +644,9 @@ const EditButton = ({ userData }) => {
       type.toLowerCase() === 'designer' ||
       type.toLowerCase() === 'soft'
     ) {
-      const url = `/api/datasets/skills?type=${type.toLowerCase()}`;
-      try {
-        const response = await fetch(url);
-
-        const rawData = await response.json();
+        const response = await getSkillsByType(type);
         setSkillsList(
-          rawData.data.toSorted((a, b) => {
+          response.data.toSorted((a, b) => {
             if (a.label.toLowerCase() < b.label.toLowerCase()) {
               return -1;
             }
@@ -703,19 +656,11 @@ const EditButton = ({ userData }) => {
             return 0;
           })
         );
-      } catch (error) {
-        console.log(error);
-      }
     } else {
-      const url = `/api/datasets/skills`;
-      try {
-        const response = await fetch(url);
-
-        const rawData = await response.json();
-        setSkillsList(rawData.data);
-      } catch (error) {
-        console.log(error);
-      }
+        const response = await getSkills();
+        if (response.data) {
+          setSkillsList(response.data);
+        }
     }
   };
 
@@ -899,15 +844,8 @@ const EditButton = ({ userData }) => {
   const [socialLinks, setSocialLinks] = useState();
 
   const getSocials = async () => {
-    const url = `/api/datasets/socials`;
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setSocialLinks(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
+      const response = await fetchSocials();
+      setSocialLinks(response.data);
   };
 
   if (socialLinks === undefined) {
@@ -1212,14 +1150,8 @@ const EditButton = ({ userData }) => {
 
   const saveUserData = async () => {
     console.log("I'M BEING RAN HAHAHAAHAHAHAHAHAHH");
-    const url = `/api/users/${userData.userId}`;
     try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      const response = await editUser(userData.userId, {
           firstName: currentFirstName,
           lastName: currentLastName,
           headline: currentQuote,
@@ -1232,30 +1164,19 @@ const EditButton = ({ userData }) => {
           bio: currentAbout,
           skills: createSkillsList(),
           socials: createLinksList(),
-        }),
-      });
-
+        });
       console.log(`User data: Response status: ${response.status}`);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // const saveProjectsPage = async () => {
-  //   if (userProjects !== undefined) {
-  //     for (let i = 0; i < userProjects.length; i++) {
-  //       const url = `/api/users/${userData.userId}/projects/visibility`;
-  //       try {
-  //         const response = await fetch(url, {
-  //           method: 'PUT',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //             projectId: userProjects[i].projectId,
-  //             visibility: checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private',
-  //           }),
-  //         });
+  const saveProjectsPage = async () => {
+    if (userProjects !== undefined) {
+      for (let i = 0; i < userProjects.length; i++) {
+        try {
+          const response = await updateProjectVisibility(userData.userId, userProjects[i].projectId,
+             checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private');
 
   //         console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
   //       } catch (error) {

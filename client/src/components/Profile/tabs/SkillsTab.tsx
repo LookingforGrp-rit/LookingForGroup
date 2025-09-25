@@ -6,6 +6,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { SearchBar } from '../../SearchBar';
 import { ProfileData } from '../ProfileEditPopup';
+import { getSkills } from '../../../api/users';
 
 interface Tag {
   tag_id: number;
@@ -43,26 +44,16 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
 
   // load skills
   useEffect(() => {
-    const getSkills = async () => {
-      const url = `/api/datasets/skills`;
+    const fetchSkills = async () => {
+        const response = await getSkills();
 
-      try {
-        const response = await fetch(url);
-
-        const skills = await response.json();
-        const skillData = skills.data;
-
-        if (skillData === undefined) {
+        if (response.data === undefined) {
           return;
         }
-        setAllSkills(skillData);
-
-      } catch (error) {
-        console.error(error);
-      }
+        setAllSkills(response.data);
     };
     if (allSkills.length === 0) {
-      getSkills();
+      fetchSkills();
     }
   }, [allSkills]);
 

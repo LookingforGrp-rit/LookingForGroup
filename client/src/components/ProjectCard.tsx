@@ -8,6 +8,8 @@ import followPicture from '../images/heart.png';
 
 import { projects } from '../constants/fakeData';
 
+import { ProjectDetail } from '@looking-for-group/shared';
+
 /*
 
 Project Card is featured on the Discover Page as the way for users to see
@@ -33,20 +35,8 @@ This component is not necessarily the final version and doesn't match the visual
 
 */
 
-interface NeededRole {
-  Role: string;
-  amount: number;
-}
-
-interface ProjectData {
-  _id: string;
-  name: string;
-  description: string;
-  tags: string[];
-  neededRoles: NeededRole[];
-}
 // This is used by the Discover Page to display Project information
-export const ProjectCard = ({ project }: { project: ProjectData }) => {
+export const ProjectCard = ({ project }: { project: ProjectDetail }) => {
   // Updates the url to point toward the project being clicked
   const navigate = useNavigate();
   const pathQuery = `?projID=${project._id}`;

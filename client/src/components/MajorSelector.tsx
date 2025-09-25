@@ -12,6 +12,7 @@ import './Styles/settings.css';
 import './Styles/pages.css';
 
 import { useState, useEffect, ReactElement } from 'react';
+import { getMajors as fetchMajors } from '../api/users';
 
 interface Major {
   major_id: string;
@@ -19,11 +20,9 @@ interface Major {
 }
 
 const getMajors = async (): Promise<Major[]> => {
-  // TODO: create error handling, try-catch block
-  const response = await fetch('/api/datasets/majors');
-  const { data } = await response.json();
+  const response = await fetchMajors();
+  return response.data;
   // console.log(data);
-  return data;
 };
 
 // MajorSelector component allows users to select their major from a dropdown list

@@ -7,7 +7,7 @@ import type {
 
 /* USER CRUD */
 
-//This probably with change with shibbolth???
+//This probably will change with shibbolth???
 /**
  * Creates a new user, and adds them to the signups table. All data params default to null.
  * NOT GOING TO NEED THIS WITH SHIBBOLETH
@@ -48,6 +48,47 @@ export const createNewUser = async (
   console.log(response);
   return response;
 };
+
+/**
+ * Signup with token only, unneeded with shibboleth
+ * @param token - from url, security token
+ */
+export const signupWithToken = async (
+  token: string
+): Promise<ApiResponse> => {
+  // check if token is valid
+  const apiURL = `/signup/${token}`;
+
+  const response = await GET(apiURL);
+
+  if (response.status === 400) {
+    console.log("Invalid signup token.");
+    return { status: 400, error: "Invalid signup token." };
+  }
+
+  return response;
+};
+
+/**
+ * Signup with no token (unneeded with shibboleth?)
+ * @param data - Object sent with user info 
+ */
+export const signUp = async (
+  data: object
+): Promise<ApiResponse> => {
+  const apiURL = `/signup`;
+  
+  const response = await POST(apiURL, data);
+
+  if (response.status === 400) {
+    console.log("Error creating a new user.");
+    return { status: 400, error: "Error creating a new user." };
+  }
+  console.log(`User created.`);
+
+  return response;
+}
+
 
 /**
  * Checks if the user is logged in (shibboleth) and returns username if they are
@@ -152,8 +193,10 @@ export const updateProfilePicture = async (
 ): Promise<ApiResponse> => {
   const apiURL = `/users/${id}/profile-picture`;
 
-  const data = { image: image };
-  const response = await PUT(apiURL, data);
+  const formData = new FormData();
+  formData.append("image", image);
+  
+  const response = await PUT(apiURL, formData);
   if (response.status === 400) {
     console.log("error updating profile picture.");
     return { status: 400, error: "Error updating profile picture." };
@@ -455,6 +498,17 @@ export const deleteUserFollowing = async (id: number, unfollowID: number) => {
 
 /* PROJECT FOLLOWINGS/VISIBILITY */
 
+export const getProjectsByUser = async (id: number) => {
+  const url = `/users/${id}/projects`;
+  const response = await GET(url);
+  if (response.status === 400) {
+    console.log("Error getting projects.");
+    return { status: 400, error: response.error };
+  }
+  console.log("Data received.");
+  return response;
+};
+
 /**
  * Get all projects the user is a member of and has set to be public for the profile page
  * @param id - user to search
@@ -551,6 +605,117 @@ export const deleteProjectFollowing = async (id: number, projID: number) => {
   return { status: 201, data: response.data };
 };
 
+/* DATASETS */
+
+/**
+ * Retrieves list of majors.
+ */
+export const getMajors = async (): Promise<ApiResponse> => {
+   const apiURL = `/datasets/majors`;
+
+   try {
+   const response = await GET(apiURL);
+   return response;
+   }
+   catch (e) {
+    console.log("Error fetching majors", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
+
+/**
+ * Gets list of job titles.
+ */
+export const getJobTitles = async (): Promise<ApiResponse> => {
+  const apiURL = `/datasets/job-titles`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching job titles", e);
+    return { status: 500, error: "Internal error" };
+  }
+};
+
+/**
+ * Retrieves list of project types.
+ */
+export const getProjectTypes = async (): Promise<ApiResponse> => {
+    const apiURL = `/datasets/project-types`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching project types", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
+
+/**
+ * Gets list of skills.
+ */
+export const getSkills = async (): Promise<ApiResponse> => {
+    const apiURL = `/datasets/skills`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching skills", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
+
+export const getSkillsByType = async (type: string): Promise<ApiResponse> => {
+  const apiURL = `/datasets/skills?type=${type.toLowerCase()}`;
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  }
+  catch (e) {
+    console.error("Error fetching skills", e);
+    return { status: 500, error: "Internal error" };
+  }
+} 
+
+/**
+ * Retrieves list of tags.
+ */
+export const getTags = async (): Promise<ApiResponse> => {
+    const apiURL = `/datasets/tags`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching tags", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
+
+/**
+ * Gets list of socials links.
+ */
+export const getSocials = async (): Promise<ApiResponse> => {
+    const apiURL = `/datasets/socials`
+
+  try {
+    const response = await GET(apiURL);
+    return response;
+  } 
+  catch (e) {
+    console.error("Error fetching socials", e);
+    return { status: 500, error: "Internal error" };
+  }
+}
+
 //getVisibleProjects
 //updateProjectVisibility
 //getProjectFollowing
@@ -576,9 +741,17 @@ export default {
   getUserFollowing,
   addUserFollowing,
   deleteUserFollowing,
+  getProjectsByUser,
   getVisibleProjects,
   updateProjectVisibility,
   getProjectFollowing,
   addProjectFollowing,
   deleteProjectFollowing,
+  getMajors,
+  getJobTitles,
+  getProjectTypes,
+  getSkills,
+  getSkillsByType,
+  getTags,
+  getSocials,
 };
