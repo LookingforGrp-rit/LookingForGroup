@@ -96,6 +96,17 @@ const ProjectPostPage = () => {
     <PostReplies postComments={postData.comments} />
   );
 
+  const [showCreatePost, setShowCreatePost] = useState(false);
+  const [newPostTitle, setNewPostTitle] = useState('');
+  const [newPostContent, setNewPostContent] = useState('');
+
+  //Placeholder of current user
+  const currentUserId = 0;
+
+  const isProjectMember = projects[projectId].members.some(
+    (member) => member.userID === currentUserId
+  )
+
   //Function used when sending a new reply, serves as the onClick function for the 'reply-submit' button
   //Constructs a new reply object & writes it to the database
   //Afterwards, updates the 'commentComponent' state with the newly written info
@@ -166,6 +177,30 @@ const ProjectPostPage = () => {
     );
   };
 
+  const handleSubmitPost = () => {
+    if(!newPostTitle || !newPostContent) {
+      alert('Please fill out all fields');
+      return;
+    }
+    const newId = Math.trunc(Math.random() * 100000000);
+    const date = new Date();
+    const newPost = {
+      _id: newId,
+      title: newPostTitle,
+      postText: newPostContent,
+      author: currentUserId,
+      comments: [],
+      createdDate: date.toString(),
+    };
+    posts.push(newPost);
+
+    setNewPostTitle('');
+    setNewPostContent('');
+    setShowCreatePost(false);
+
+    setCommentComponent(<PostReplies postComments={newPost.comments} />);
+  }
+
   // Some comments may be moved into html
   return (
     <div className="page">
@@ -187,10 +222,34 @@ const ProjectPostPage = () => {
         <img id="post-project-image" src={profilePlaceholder} alt="project image" />
         <h2 id="post-project-name">{projects[projectId].name}</h2>
         <button className="orange-button">Follow</button>
+        {isProjectMember && (
+          <button className="orange-button" onClick={() => setShowCreatePost(true)}>
+            Create Post
+          </button>
+        )}
         <button className="icon-button">
           <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'more options'}/>
         </button>
       </div>
+
+      {showCreatePost && (
+        <div className="create-post-popup">
+          <h3>Create a New Post</h3>
+          <input
+            type="text"
+            placeholder="Post Title"
+            value={newPostTitle}
+            onChange={(e) => setNewPostTitle(e.target.value)}
+          />
+          <textarea
+            placeholder="Write your post..."
+            value={newPostContent}
+            onChange={(e) => setNewPostContent(e.target.value)}
+          />
+          <button onClick={handleSubmitPost}>Submit</button>
+          <button onClick={() => setShowCreatePost(false)}>Cancel</button>
+        </div>
+      )}
 
       <hr />
 
