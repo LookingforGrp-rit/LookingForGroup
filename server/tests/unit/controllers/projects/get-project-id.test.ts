@@ -64,7 +64,7 @@ describe('getProjectById', () => {
 
     await getProjectByIdController(req, res);
     expect(getProjectByIdService).toHaveBeenCalledOnce();
-    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(resBody);
   });
   //everything's good, return 200

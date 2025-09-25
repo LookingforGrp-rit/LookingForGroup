@@ -3,11 +3,11 @@ import { createUser } from '#controllers/users/create-user.ts';
 import { getProjectsFollowing } from '#controllers/users/followings/get-proj-following.ts';
 import { getUserFollowers } from '#controllers/users/followings/get-user-followers.ts';
 import { getUserFollowing } from '#controllers/users/followings/get-user-following.ts';
-import { getAllUsers } from '#controllers/users/get-all.ts';
+import { getAllUsers } from '#controllers/users/get-all-users.ts';
 import { getUserByEmail } from '#controllers/users/get-user/get-by-email.ts';
 import { getUsernameById } from '#controllers/users/get-user/get-by-id.ts';
 import { getUserByUsername } from '#controllers/users/get-user/get-by-username.ts';
-import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
+import { getUserProjects } from '#controllers/users/get-user-proj.ts';
 import requiresLogin from '../middleware/requires-login.ts';
 
 const router = Router();
@@ -19,7 +19,7 @@ router.get('/', getAllUsers);
 router.post('/', requiresLogin, createUser);
 
 //Gets another user's projects
-router.get('/:id/projects/', getOtherUserProjects);
+router.get('/:id/projects/', getUserProjects);
 
 // FOLLOW ROUTES
 

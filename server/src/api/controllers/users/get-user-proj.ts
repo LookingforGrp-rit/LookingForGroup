@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { getUserProjectsService } from '#services/users/get-user-proj.ts';
 
 // gets the projects of another user to view
-export const getOtherUserProjects = async (req: Request, res: Response): Promise<void> => {
+export const getUserProjects = async (req: Request, res: Response): Promise<void> => {
   //current user ID
   const UserId = parseInt(req.params.id);
 
