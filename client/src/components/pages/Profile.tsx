@@ -21,7 +21,7 @@ import { ProfileProjects } from '../Profile/ProfileProjects';
 import { useEffect, useState } from 'react';
 import ToTopButton from '../ToTopButton';
 import EditButton from '../Profile/ProfileEditButton';
-import { getUsers } from '../../api/users';
+//import { getUsers } from '../../api/users';
 
 // Get user ID from API
 const fetchUserID = async () => {
