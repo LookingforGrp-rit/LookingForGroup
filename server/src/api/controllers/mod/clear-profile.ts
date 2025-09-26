@@ -2,7 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { updateUserInfoService } from '#services/me/update-info.ts';
 
-interface UpdateUserInfo {
+interface ClearUserInfo {
   firstName?: string;
   lastName?: string;
   headline?: string;
@@ -12,11 +12,10 @@ interface UpdateUserInfo {
   funFact?: string;
   bio?: string;
   profileImage?: string;
-  mentor?: '0' | '1';
 }
 
 //clear a selected user profile
-export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const clearProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const id = req.params.id; //the mod takes the id of the user they wish to mod
   const clearing = {
     firstName: 'David',
@@ -28,8 +27,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     funFact: '',
     bio: '',
     profileImage: '',
-    mentor: '0',
-  } as UpdateUserInfo;
+  } as ClearUserInfo;
 
   //validate ID
   const userId = parseInt(id);
@@ -43,10 +41,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     return;
   }
 
-  const result = await updateUserInfoService(userId, {
-    ...clearing,
-    mentor: clearing.mentor ? parseInt(clearing.mentor) : undefined,
-  });
+  const result = await updateUserInfoService(userId, clearing);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
