@@ -21,3 +21,5 @@ export const authenticated = (
 
 //All routes use requiresLogin, injectCurrentUser, and requiresModerator
 router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
+
+export default router;
