@@ -1,49 +1,58 @@
-// import type { PrismaClient } from '@prisma/client';
-// import prisma from '#config/prisma.ts';
+import type {
+  ProjectJob,
+  JobAvailability,
+  JobDuration,
+  JobLocation,
+  JobCompensation,
+} from '@looking-for-group/shared';
+import prisma from '#config/prisma.ts';
+import { ProjectJobSelector } from '#services/selectors/projects/parts/project-job.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProjectJob } from '#services/transformers/projects/parts/project-job.ts';
 
-// type ServiceOutcome<T> = T | 'NOT_FOUND' | 'INTERNAL_ERROR';
+type AddJobServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
-// type Job = Awaited<ReturnType<PrismaClient['jobs']['create']>>;
+export type JobInput = {
+  roleId: number;
+  availability: JobAvailability;
+  duration: JobDuration;
+  location: JobLocation;
+  compensation: JobCompensation;
+  description: string;
+};
 
-// type CreateJobData = {
-//   roleId: number;
-//   availability: 'FullTime' | 'PartTime' | 'Flexible';
-//   duration: 'ShortTerm' | 'LongTerm';
-//   location: 'OnSite' | 'Remote' | 'Hybrid';
-//   compensation: 'Unpaid' | 'Paid';
-//   description: string;
-// };
+const addJobService = async (
+  projectId: number,
+  data: JobInput,
+): Promise<ProjectJob | AddJobServiceError> => {
+  try {
+    const project = await prisma.projects.findUnique({
+      where: { projectId },
+    });
 
-// const addJobService = async (
-//   projectId: number,
-//   data: CreateJobData
-// ): Promise<ServiceOutcome<Job>> => {
-//   try {
-//     const project = await prisma.projects.findUnique({
-//       where: { projectId },
-//     });
+    if (!project) {
+      return 'NOT_FOUND';
+    }
 
-//     if (!project) {
-//       return 'NOT_FOUND';
-//     }
+    const job = await prisma.jobs.create({
+      data: {
+        projectId,
+        roleId: data.roleId,
+        availability: data.availability,
+        duration: data.duration,
+        location: data.location,
+        compensation: data.compensation,
+        description: data.description,
+      },
+      select: ProjectJobSelector,
+    });
 
-//     const job = await prisma.jobs.create({
-//       data: {
-//         projectId,
-//         roleId: data.roleId,
-//         availability: data.availability,
-//         duration: data.duration,
-//         location: data.location,
-//         compensation: data.compensation,
-//         description: data.description,
-//       },
-//     });
+    return transformProjectJob(projectId, job);
+  } catch (error) {
+    console.error('Error in addJobService:', error);
+    return 'INTERNAL_ERROR';
+  }
+};
 
-//     return job;
-//   } catch (error) {
-//     console.error('Error in addJobService:', error);
-//     return 'INTERNAL_ERROR';
-//   }
-// };
-
-// export default addJobService;
+export type AddJobServiceResult = Awaited<ReturnType<typeof addJobService>>;
+export default addJobService;
