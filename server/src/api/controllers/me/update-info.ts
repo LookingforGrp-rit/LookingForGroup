@@ -54,7 +54,6 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'username',
     'phoneNumber',
     'profileImage',
-    'mentor',
   ];
 
   //validate update fields
