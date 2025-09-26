@@ -278,7 +278,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserDetails'
+                      $ref: '#/components/schemas/UserDetail'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
@@ -643,7 +643,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserDetails'
+                    $ref: '#/components/schemas/UserDetail'
         '500':
           $ref: '#/components/responses/InternalServerError'
     patch:
@@ -684,7 +684,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserDetails'
+                    $ref: '#/components/schemas/UserDetail'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1457,7 +1457,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/ProjectDetails'
+                    $ref: '#/components/schemas/ProjectDetail'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2523,45 +2523,70 @@ components:
       bearerFormat: JWT
   schemas:
     Role:
-      type: object
-      properties:
-        roleId:
-          type: integer
-        label:
-          type: string
-      example:
-        roleId: 1
-        label: Full-Stack Developer
-
+      $ref: 'schemas/datasets.yaml#/components/schemas/Role'
+    Major:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Major'
+    Tag:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Tag'
     Social:
-      type: object
-      properties:
-        websiteId:
-          type: integer
-        label:
-          type: string
+      $ref: 'schemas/datasets.yaml#/components/schemas/Social'
+    Skill:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Skill'
+    Medium:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Medium'
 
+    UserMember:
+      $ref: 'schemas/users.yaml#/components/schemas/UserMember'
+    UserSkill:
+      $ref: 'schemas/users.yaml#/components/schemas/UserSkill'
     UserSocial:
-      type: object
-      properties:
-        apiUrl:
-          type: string
-        url:
-          type: string
-        label:
-          type: string
-        websiteId:
-          type: integer
+      $ref: 'schemas/users.yaml#/components/schemas/UserSocial'
+    ProjectFollowsList:
+      $ref: 'schemas/users.yaml#/components/schemas/ProjectFollowsList'
+    UserFollowsList:
+      $ref: 'schemas/users.yaml#/components/schemas/UserFollowsList'
+    UserFollowings:
+      $ref: 'schemas/users.yaml#/components/schemas/UserFollowings'
+    UserPreview:
+      $ref: 'schemas/users.yaml#/components/schemas/UserPreview'
+    UserDetail:
+      $ref: 'schemas/users.yaml#/components/schemas/UserDetail'
 
+    MySkill:
+      $ref: 'schemas/me.yaml#/components/schemas/MySkill'
+    MySocial:
+      $ref: 'schemas/me.yaml#/components/schemas/MySocial'
+    MyMajor:
+      $ref: 'schemas/me.yaml#/components/schemas/MyMajor'
+    MyFollowsList:
+      $ref: 'schemas/me.yaml#/components/schemas/MyFollowsList'
+    MePreview:
+      $ref: 'schemas/me.yaml#/components/schemas/MePreview'
+    MeDetail:
+      $ref: 'schemas/me.yaml#/components/schemas/MeDetail'
+    MePrivate:
+      $ref: 'schemas/me.yaml#/components/schemas/MePrivate'
+    MyMember:
+      $ref: 'schemas/me.yaml#/components/schemas/MyMember'
+
+    ProjectImage:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectImage'
+    ProjectMedium:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectMedium'
+    ProjectFollowers:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollowers'
+    ProjectMember:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectMember'
     ProjectSocial:
-      type: object
-      properties:
-        websiteId:
-          type: integer
-        projectId:
-          type: integer
-        url:
-          type: string
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectSocial'
+    ProjectJob:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectJob'
+    ProjectPreview:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectPreview'
+    ProjectDetail:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectDetail'
+    ProjectWithFollowers:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectWithFollowers'
 
     SocialCreateInput:
       type: object
@@ -2569,32 +2594,6 @@ components:
         websiteId:
           type: integer
         url:
-          type: string
-
-    Skill:
-      type: object
-      properties:
-        skillId:
-          type: integer
-        label:
-          type: string
-        type:
-          type: string
-
-    UserSkill:
-      type: object
-      properties:
-        apiUrl:
-          type: string
-        proficiency:
-          type: string
-        position:
-          type: integer
-        skillId:
-          type: integer
-        label:
-          type: string
-        type:
           type: string
 
     SkillCreateInput:
@@ -2605,35 +2604,6 @@ components:
         position:
           type: integer
         proficiency:
-          type: string
-
-    ProjectDetails:
-      type: string
-
-    Medium:
-      type: object
-      properties:
-        typeId:
-          type: integer
-        label:
-          type: string
-
-    Major:
-      type: object
-      properties:
-        majorId:
-          type: integer
-        label:
-          type: string
-
-    Tag:
-      type: object
-      properties:
-        tagId:
-          type: integer
-        label:
-          type: string
-        type:
           type: string
 
     User:
@@ -2715,84 +2685,6 @@ components:
           type: string
           nullable: true
 
-    UserDetails:
-      type: object
-      properties:
-        userId:
-          type: integer
-        firstName:
-          type: string
-        lastName:
-          type: string
-        username:
-          type: string
-        profileImage:
-          type: string
-          nullable: true
-        headline:
-          type: string
-          nullable: true
-        pronouns:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        major:
-          type: string
-          nullable: true
-        academicYear:
-          type: string
-          nullable: true
-        location:
-          type: string
-          nullable: true
-        funFact:
-          type: string
-          nullable: true
-        bio:
-          type: string
-          nullable: true
-        skills:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              skill:
-                type: string
-              type:
-                type: string
-              position:
-                type: integer
-        socials:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              websiteId:
-                type: integer
-              label:
-                type: string
-
-    UserPreview:
-      type: object
-      properties:
-        userId:
-          type: integer
-        firstName:
-          type: string
-        lastName:
-          type: string
-        username:
-          type: string
-        profileImage:
-          type: string
-          nullable: true
-
     UserCreateInput:
       type: object
       properties:
@@ -2822,188 +2714,6 @@ components:
           type: integer
           minimum: 0
           maximium: 1
-
-    ProjectWithFollowers:
-      type: object
-      properties:
-        projectId:
-          type: integer
-        title:
-          type: string
-        hook:
-          type: string
-        description:
-          type: string
-        thumbnail:
-          type: string
-          nullable: true
-        purpose:
-          type: string
-          nullable: true
-        status:
-          type: string
-        audience:
-          type: string
-          nullable: true
-        userId:
-          type: integer
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        _count:
-          type: object
-          properties:
-            projectFollowings:
-              type: integer
-        mediums:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              typeId:
-                type: integer
-              genres:
-                type: object
-                properties:
-                  typeId:
-                    type: integer
-                  label:
-                    type: string
-        projectTags:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              tagId:
-                type: integer
-              position:
-                type: integer
-              type:
-                type: string
-              label:
-                type: string
-        projectImages:
-          type: array
-          items:
-            type: object
-            properties:
-              imageId:
-                type: integer
-              image:
-                type: string
-              altText:
-                type: string
-        projectSocials:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        jobs:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              titleId:
-                type: integer
-              availability:
-                type: string
-              duration:
-                type: string
-              location:
-                type: string
-              compensation:
-                type: string
-              description:
-                type: string
-              createdAt:
-                type: string
-                format: date-time
-              updatedAt:
-                type: string
-                format: date-time
-        members:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              userId:
-                type: integer
-              titleId:
-                type: integer
-              permission:
-                type: integer
-        users:
-          type: object
-          nullable: true
-          properties:
-            userId:
-              type: integer
-            username:
-              type: string
-            ritEmail:
-              type: string
-            firstName:
-              type: string
-            lastName:
-              type: string
-            profileImage:
-              type: string
-            headline:
-              type: string
-            pronouns:
-              type: string
-            title:
-              type: string
-            majorId:
-              type: integer
-            academicYear:
-              type: string
-            location:
-              type: string
-            funFact:
-              type: string
-              nullable: true
-            bio:
-              type: string
-            visibility:
-              type: integer
-            createdAt:
-              type: string
-              format: date-time
-            updatedAt:
-              type: string
-              format: date-time
-            phoneNumber:
-              type: string
-              nullable: true
-            universityId:
-              type: integer
-              nullable: true
-        Medium:
-          type: array
-          items:
-            type: object
-            properties:
-              typeId:
-                type: integer
-              label:
-                type: string
-        followers:
-          type: object
-          properties:
-            count:
-              type: integer
 
     ProjectsCreateInput:
       type: object
@@ -3063,20 +2773,6 @@ components:
           type: string
           maxLength: 300
           nullable: true
-
-    ProjectImage:
-      type: object
-      properties:
-        imageId:
-          type: integer
-        url:
-          type: string
-        altText:
-          type: string
-      example:
-        imageId: 2
-        url: http://LGF.com/images/project-101.png
-        altText: Picture
 
     ProjectFollowingsResponse:
       type: object

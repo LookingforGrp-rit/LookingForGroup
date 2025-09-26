@@ -1,0 +1,181 @@
+components:
+  schemas:
+    MySkill:
+      allOf:
+        - $ref: 'users.yaml#/components/schemas/UserSkill'
+        - type: object
+          properties:
+            apiUrl:
+              type: string
+      example:
+        apiUrl: /api/me/skills/1
+
+    MySocial:
+      allOf:
+        - $ref: 'users.yaml#/components/schemas/UserSocial'
+        - type: object
+          properties:
+            apiUrl:
+              type: string
+      example:
+        apiUrl: /api/me/socials/1
+
+    MyMajor:
+      allOf:
+        - $ref: 'datasets.yaml#/components/schemas/Major'
+        - type: object
+          properties:
+            apiUrl:
+              type: string
+      example:
+        apiUrl: /api/me/majors/1
+
+    MyFollowsList:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: 'users.yaml#/components/schemas/UserPreview'
+        count:
+          type: integer
+        apiUrl:
+          type: string
+      example:
+        count: 1
+        apiUrl: string
+
+    MePreview:
+      type: object
+      properties:
+        userId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        profileImage:
+          type: string
+          nullable: true
+        mentor:
+          type: boolean
+        designer:
+          type: boolean
+        developer:
+          type: boolean
+        apiUrl:
+          type: string
+      example:
+        userId: 1
+        firstName: Michael
+        lastName: Robinson
+        username: mrc2964
+        profileImage: null
+        mentor: false
+        designer: false
+        developer: false
+        apiUrl: /api/me
+
+    MeDetail:
+      allOf:
+        - $ref: '#/components/schemas/MePreview'
+        - type: object
+          properties:
+            headline:
+              type: string
+            pronouns:
+              type: string
+            title:
+              type: string
+            majors:
+              type: array
+              items:
+                $ref: '#/components/schemas/MyMajor'
+            academicYear:
+              $ref: 'enums.yaml#/components/schemas/AcademicYear'
+            location:
+              type: string
+            funFact:
+              type: string
+            bio:
+              type: string
+            mentor:
+              type: boolean
+            projects:
+              type: array
+              items:
+                $ref: 'projects.yaml#/components/schemas/ProjectPreview'
+            skills:
+              type: array
+              items:
+                $ref: '#/components/schemas/MySkill'
+              nullable: true
+            socials:
+              type: array
+              items:
+                $ref: '#/components/schemas/MySocial'
+              nullable: true
+            following:
+              type: object
+              properties:
+                usersFollowing:
+                  $ref: 'users.yaml#/components/schemas/UserFollowsList'
+                projectsFollowing:
+                  $ref: 'users.yaml#/components/schemas/ProjectFollowsList'
+            followers:
+              $ref: 'users.yaml#/components/schemas/UserFollowsList'
+      example:
+        headline: Hello world
+        pronouns: they/them
+        title: Student
+        academicYear: Freshman
+        location: Rochester, NY
+        funFact: Loves Prisma
+        bio: This is an example user.
+
+    MePrivate:
+      allOf:
+        - $ref: '#/components/schemas/MeDetail'
+        - type: object
+          properties:
+            ritEmail:
+              type: string
+            visibility:
+              $ref: 'enums.yaml#/components/schemas/Visibility'
+            phoneNumber:
+              type: string
+              nullable: true
+            universityId:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+      example:
+        ritEmail: mhr2964@rit.edu
+        visibility: 1
+        phoneNumber: null
+        universityId: 11111111
+
+    MyMember:
+      type: object
+      properties:
+        project:
+          $ref: 'projects.yaml#/components/schemas/ProjectPreview'
+        role:
+          $ref: 'datasets.yaml#/components/schemas/Role'
+        visibility:
+          type: string
+          enum: [Public, Private]
+        memberSince:
+          type: string
+          format: date-time
+        apiUrl:
+          type: string
+      example:
+        visibility: Private
+        apiUrl: /api/me/projects/1

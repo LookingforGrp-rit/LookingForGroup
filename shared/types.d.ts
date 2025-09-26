@@ -130,6 +130,15 @@ export type UserFollowings = {
     apiUrl: string;
 };
 
+// Represents the member info for a project
+export interface MyMember {
+    project: ProjectPreview;
+    role: Role;
+    visibility: "Public" | "Private";
+    memberSince: Date;
+    apiUrl: string;
+}
+
 export interface MySkill extends UserSkill {
     apiUrl: string;
 }
@@ -195,6 +204,7 @@ export interface User extends UserDetail {
 export interface UserMember {
     project: ProjectPreview;
     role: Role;
+    visibility: "Public" | "Private";
     memberSince: Date;
     apiUrl: string;
 }
