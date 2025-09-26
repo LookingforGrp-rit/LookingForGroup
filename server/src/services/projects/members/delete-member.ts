@@ -1,14 +1,14 @@
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
 
-type DeleteFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteFollowServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type DeleteMemberServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 //delete a member
 export const deleteMemberService = async (
   projectId: number,
   memberId: number,
-): Promise<DeleteFollowServiceError | DeleteFollowServiceSuccess> => {
+): Promise<DeleteMemberServiceError | DeleteMemberServiceSuccess> => {
   try {
     // Prevent project owners from being deleted through this route
     const project = await prisma.projects.findUnique({
