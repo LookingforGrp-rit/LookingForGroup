@@ -22,6 +22,6 @@
       "#tests/*.ts": ["./tests/*.ts"]
     }
   },
-  "include": ["src", "tests"],
+  "include": ["src", "tests", "prisma"],
   "exclude": ["**/generated/**"]
 }

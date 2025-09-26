@@ -39,5 +39,11 @@
   },
   "engines": {
     "node": ">=v23.6.0"
+  },
+  "prisma": {
+    "seed": "tsx server/prisma/seed.ts"
+  },
+  "dependencies": {
+    "tsx": "^4.20.5"
   }
 }

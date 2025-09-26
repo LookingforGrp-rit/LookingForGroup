@@ -1,36 +1,28 @@
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
 
-type DeleteFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'FORBIDDEN'>;
+type DeleteFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteFollowServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 //delete a member
 export const deleteMemberService = async (
   projectId: number,
   memberId: number,
-  curUser: number,
 ): Promise<DeleteFollowServiceError | DeleteFollowServiceSuccess> => {
   try {
-    //is this member you?
-    const member = await prisma.members.findUnique({
-      where: {
-        projectId_userId: {
-          projectId,
-          userId: curUser,
-        },
-      },
+    // Prevent project owners from being deleted through this route
+    const project = await prisma.projects.findUnique({
+      where: { projectId },
+      select: { userId: true },
     });
 
-    //do you own this project?
-    const owner = await prisma.projects.findUnique({
-      where: {
-        projectId,
-        userId: curUser,
-      },
-    });
+    if (!project) {
+      return 'NOT_FOUND';
+    }
 
-    //if you are neither of these things you cannot delete this member
-    if (!member && !owner) return 'FORBIDDEN';
+    if (project.userId === memberId) {
+      return 'NOT_FOUND'; // Return NOT_FOUND to avoid revealing project ownership structure
+    }
 
     await prisma.members.delete({
       where: {
