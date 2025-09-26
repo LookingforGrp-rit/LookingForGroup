@@ -169,7 +169,7 @@ router.delete(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
-  //requiresProjectOwner,
+  requiresProjectOwner,
   PROJECT.deleteMember,
 );
 

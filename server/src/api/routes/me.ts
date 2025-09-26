@@ -14,6 +14,7 @@ import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getSkills } from '#controllers/me/get-skills.ts';
 import { getSocials } from '#controllers/me/get-socials.ts';
 import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
+import { leaveProjectController } from '#controllers/me/leave-project.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
 import updateSkills from '#controllers/me/update-skills.ts';
 import { updateSocial } from '#controllers/me/update-social.ts';
@@ -41,6 +42,9 @@ router.delete('/', deleteUser);
 
 //Gets current user's projects
 router.get('/projects', getMyProjects);
+
+//Allows user to leave a project by setting visibility to private
+router.put('/projects/:id/visibility', leaveProjectController);
 
 //Follows a project
 router.post('/followings/projects/:id', addProjectFollowing);
