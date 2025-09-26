@@ -23,6 +23,6 @@ export const authenticated = (
 //All routes use requiresLogin, injectCurrentUser, and requiresModerator
 router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
-router.put('/clear-profile/:id/', authenticated(clearProfile));
+router.put('/clear-profile/:id/', clearProfile);
 
 export default router;

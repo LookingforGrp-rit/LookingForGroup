@@ -1,5 +1,5 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
-import type { Response } from 'express';
+import type { ApiResponse } from '@looking-for-group/shared';
+import type { Request, Response } from 'express';
 import { updateUserInfoService } from '#services/me/update-info.ts';
 
 interface ClearUserInfo {
@@ -15,7 +15,7 @@ interface ClearUserInfo {
 }
 
 //clear a selected user profile
-export const clearProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+export const clearProfile = async (req: Request, res: Response): Promise<void> => {
   const id = req.params.id; //the id of the user whose profile must be cleared
   const clearing = {
     firstName: 'David',
