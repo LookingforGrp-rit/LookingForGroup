@@ -12,10 +12,10 @@ const res = blankResponse;
 
 describe('updateProjectSocial', () => {
   beforeEach(() => {
-    vi.mocked(updateProjectSocialService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(updateProjectSocialService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //the project could not be found, should return 404

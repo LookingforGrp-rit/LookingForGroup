@@ -14,10 +14,10 @@ const res = blankResponse;
 
 describe('deleteProjectSocial', () => {
   beforeEach(() => {
-    vi.mocked(deleteProjectSocialService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(deleteProjectSocialService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //there's something wrong with the service, should return 500

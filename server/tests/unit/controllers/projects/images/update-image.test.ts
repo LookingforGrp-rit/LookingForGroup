@@ -19,12 +19,10 @@ const file = blankFile;
 
 describe('updateImage', () => {
   beforeEach(() => {
-    vi.mocked(updateImageService).mockClear();
-    vi.mocked(uploadImageService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(updateImageService).mockClear();
-    vi.mocked(uploadImageService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //project has a non-numerical id, should return 400

@@ -12,11 +12,12 @@ const res = blankResponse;
 
 describe('getProjectImages', () => {
   beforeEach(() => {
-    vi.mocked(getProjectImagesService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(getProjectImagesService).mockClear();
+    vi.restoreAllMocks();
   });
+
   //project has a non-numerical id, should return 400
   test('Must return 400 when the project id is invalid', async () => {
     req.params.id = 'nowhere NEAR a number';

@@ -14,10 +14,10 @@ const res = blankResponse;
 
 describe('getUserProjects', () => {
   beforeEach(() => {
-    vi.mocked(getUserProjectsService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(getUserProjectsService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //user has a non-numerical id, should return 400

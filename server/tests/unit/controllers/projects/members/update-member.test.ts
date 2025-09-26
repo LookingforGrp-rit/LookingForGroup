@@ -12,10 +12,10 @@ const res = blankResponse;
 
 describe('updateMember', () => {
   beforeEach(() => {
-    vi.mocked(updateMemberService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(updateMemberService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //currentUser has a non-numerical id, should return 400

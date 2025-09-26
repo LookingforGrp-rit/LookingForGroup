@@ -14,10 +14,10 @@ const res = blankResponse;
 
 describe('addProjectSocial', () => {
   beforeEach(() => {
-    vi.mocked(addProjectSocialService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(addProjectSocialService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //the social id was invalid, should return 404

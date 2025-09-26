@@ -13,10 +13,10 @@ const req = blankRequest;
 const res = blankResponse;
 describe('getAllUsers', () => {
   beforeEach(() => {
-    vi.mocked(getAllUsersService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(getAllUsersService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //there's something wrong with the service, should return 500

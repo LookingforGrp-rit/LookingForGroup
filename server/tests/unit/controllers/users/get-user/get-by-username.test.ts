@@ -14,10 +14,10 @@ const res = blankResponse;
 
 describe('getUserByUsername', () => {
   beforeEach(() => {
-    vi.mocked(getUserByUsernameService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(getUserByUsernameService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //there's something wrong with the service, should return 500

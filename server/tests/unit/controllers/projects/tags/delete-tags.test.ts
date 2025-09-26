@@ -14,12 +14,11 @@ const res = blankResponse;
 
 describe('deleteTags', () => {
   beforeEach(() => {
-    vi.mocked(deleteTagsService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(deleteTagsService).mockClear();
+    vi.restoreAllMocks();
   });
-
   //there's something wrong with the service, should return 500
   test('Must return 500 when the service errors', async () => {
     vi.mocked(deleteTagsService).mockResolvedValue('INTERNAL_ERROR');

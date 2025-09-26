@@ -14,10 +14,10 @@ const res = blankResponse;
 
 describe('addMediums', () => {
   beforeEach(() => {
-    vi.mocked(addMediumsService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(addMediumsService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //one of the mediums doesn't exist, should return 404

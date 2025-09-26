@@ -6,8 +6,6 @@ import { blankProjectPreview } from '#tests/resources/blanks/projects.ts';
 
 vi.mock('#services/projects/get-projects.ts');
 
-const blankProjectList = [blankProjectPreview];
-
 //dummy req
 const req = blankRequest;
 
@@ -15,10 +13,10 @@ const req = blankRequest;
 const res = blankResponse;
 describe('getProjects', () => {
   beforeEach(() => {
-    vi.mocked(getProjectsService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(getProjectsService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //there's something wrong with the service, should return 500
@@ -39,12 +37,12 @@ describe('getProjects', () => {
 
   //everything's good, return 200
   test('Must return 200 when the project was retrieved successfully', async () => {
-    vi.mocked(getProjectsService).mockResolvedValue(blankProjectList);
+    vi.mocked(getProjectsService).mockResolvedValue([blankProjectPreview]);
     expect(getProjectsService).toBe(vi.mocked(getProjectsService));
     const resBody = {
       status: 200,
       error: null,
-      data: blankProjectList,
+      data: [blankProjectPreview],
     };
 
     await getProjectsController(req, res);

@@ -14,10 +14,10 @@ const res = blankResponse;
 
 describe('addTags', () => {
   beforeEach(() => {
-    vi.mocked(addTagsService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(addTagsService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //one of the tags doesn't exist, should return 404

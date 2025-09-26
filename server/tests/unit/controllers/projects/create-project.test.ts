@@ -20,12 +20,10 @@ const file = blankFile;
 
 describe('createProject', () => {
   beforeEach(() => {
-    vi.mocked(uploadImageService).mockClear();
-    vi.mocked(createProjectService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(uploadImageService).mockClear();
-    vi.mocked(createProjectService).mockClear();
+    vi.restoreAllMocks();
   });
   //currentUser has a non-numerical id, should return 400
   test('Must return 400 when currentUser is invalid', async () => {

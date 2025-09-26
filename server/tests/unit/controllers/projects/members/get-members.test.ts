@@ -14,12 +14,11 @@ const res = blankResponse;
 
 describe('getMembers', () => {
   beforeEach(() => {
-    vi.mocked(getMembersService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(getMembersService).mockClear();
+    vi.restoreAllMocks();
   });
-
   //project has a non-numerical id, should return 400
   test('Must return 400 when project id is invalid', async () => {
     req.params.id = 'not a number either';

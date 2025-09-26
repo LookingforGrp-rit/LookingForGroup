@@ -21,12 +21,10 @@ describe('createUser', () => {
   const res = blankResponse;
 
   beforeEach(() => {
-    vi.mocked(createUserService).mockClear();
-    vi.mocked(getUserByUsernameService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(createUserService).mockClear();
-    vi.mocked(getUserByUsernameService).mockClear();
+    vi.restoreAllMocks();
   });
 
   test('should return 500 if user validation has an internal error', async () => {

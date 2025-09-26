@@ -14,10 +14,10 @@ const res = blankResponse;
 
 describe('addMember', () => {
   beforeEach(() => {
-    vi.mocked(addMemberService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(addMemberService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //project has a non-numerical id, should return 400

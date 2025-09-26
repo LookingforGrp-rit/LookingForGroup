@@ -14,12 +14,10 @@ const file = blankFile;
 
 describe('updateProject', () => {
   beforeEach(() => {
-    vi.mocked(uploadImageService).mockClear();
-    vi.mocked(updateProjectService).mockClear();
+    vi.clearAllMocks();
   });
   afterEach(() => {
-    vi.mocked(uploadImageService).mockClear();
-    vi.mocked(updateProjectService).mockClear();
+    vi.restoreAllMocks();
   });
 
   //currentUser has a non-numerical id, should return 400
