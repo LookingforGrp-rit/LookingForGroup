@@ -9,17 +9,17 @@ export const deleteProjectService = async (
 ): Promise<DeleteProjectServiceSuccess | DeleteProjectServiceError> => {
   try {
     const exists = await prisma.projects.findUnique({
-      where: { projectId: projectId },
+      where: { projectId },
     });
 
     if (!exists) return 'NOT_FOUND';
 
-    await prisma.projects.delete({ where: { projectId: projectId } });
+    await prisma.projects.delete({ where: { projectId } });
     await Promise.all([
       prisma.jobs.deleteMany({ where: { projectId } }),
-      prisma.members.deleteMany({ where: { projectId: projectId } }),
-      prisma.projectFollowings.deleteMany({ where: { projectId: projectId } }),
-      prisma.projectImages.deleteMany({ where: { projectId: projectId } }),
+      prisma.members.deleteMany({ where: { projectId } }),
+      prisma.projectFollowings.deleteMany({ where: { projectId } }),
+      prisma.projectImages.deleteMany({ where: { projectId } }),
     ]);
 
     return 'NO_CONTENT';

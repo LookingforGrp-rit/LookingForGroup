@@ -1,5 +1,6 @@
 import createProject from './create-project.ts';
 import deleteProject from './delete-project.ts';
+import { getProjectFollowers } from './get-project-followers.ts';
 import getProjectByID from './get-project-id.ts';
 import getProjects from './get-projects.ts';
 import addImage from './images/add-image.ts';
@@ -35,6 +36,7 @@ export default {
   deleteProject,
   updateImage,
   deleteMember,
+  getProjectFollowers,
   removeImage,
   reorderImages,
   getTags,

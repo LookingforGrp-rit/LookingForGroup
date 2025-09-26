@@ -1556,6 +1556,46 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/followers:
+    get:
+      summary: Get project followers by id
+      tags:
+        - Projects
+      description: |
+        Gets all users following a project specified by its ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Project ID
+      responses:
+        '200':
+          description: A list of followers of the project
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectFollowers'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/projects/{id}/images:
     get:
       summary: Get project pictures by ID
@@ -3050,6 +3090,27 @@ components:
           properties:
             count:
               type: integer
+            users:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserPreview'
+            apiUrl:
+              type: string
+
+    ProjectFollowers:
+      type: object
+      properties:
+        followers:
+          type: object
+          properties:
+            count:
+              type: integer
+            users:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserPreview'
+            apiUrl:
+              type: string
 
     ProjectsCreateInput:
       type: object
