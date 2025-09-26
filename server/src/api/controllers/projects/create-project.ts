@@ -28,7 +28,7 @@ const createProjectController = async (req: AuthenticatedRequest, res: Response)
     audience: req.body.audience as string,
     users: {
       connect: {
-        userId: req.body.userId as number,
+        userId: userId,
       },
     },
   };
