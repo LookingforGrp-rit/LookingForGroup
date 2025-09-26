@@ -70,6 +70,7 @@ export const MemberListing = (props) => {
         Member Removed. Saving changes will finalize this.
         <button onClick={undoRemoveMember}>undo</button>
       </div>
+      {/* Get image of profile and use preloader function in functions/imageLoad.tsx */}
       <img className="member-settings-profile" src={profilePlaceholder} alt="profilePlaceholder" />
       <span className="member-settings-name">{props.name}</span>
       <span className="member-settings-role">{props.role}</span>
@@ -81,7 +82,7 @@ export const MemberListing = (props) => {
         done
       </button>
       <button className="member-settings-more" onClick={() => moreSettingsToggle(props.idNum)}>
-        <ThemeIcon src={'assets/menu_light.svg'} darkSrc={'assets/menu_dark.svg'} alt={'more settings'} />
+        <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'...'}/>
       </button>
       <div id={'member-settings-dropdown-' + props.idNum} className="settings-hide">
         <button className="white-button" onClick={() => props.updateMemberSettings(1, props.idNum)}>

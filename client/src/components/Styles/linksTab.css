@@ -11,26 +11,40 @@
 }
 
 #add-link-container {
-  display: grid;
-  grid-template-columns: 1fr 2fr;
+  display: flex;
+  flex-direction: row;
 }
 
+/* Also used by project editor/creator */
 #profile-editor-add-link {
-  background-color: #0000;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 10px;
+  background-color: transparent;
   border: none;
-  border-radius: 30px;
-  font-size: 1.8ch;
-  font-weight: 700;
-  padding: 0.5ch 1.8ch;
-  white-space: normal;
-  word-break: normal;
+  font-size: 1.4ch;
+  padding: 10px;
+}
+#profile-editor-add-link > * {
+  margin: 0;
+  color: var(--neutral-gray);
+}
+#profile-editor-add-link > p:first-child {
+  font-size: 2.0ch;
+}
+#profile-editor-add-link > p:last-child {
+  font-style: italic;
 }
 
 .editor-input-item {
 }
 
+/* Should put something here, but no designs to go off of.
+** No other instances to reference either.
+*/
 #profile-editor-add-link:hover {
-  background-color: var(--bg-color);
+  /* background-color: var(--bg-color); */
 }
 
 .link-input-wrapper {

@@ -1,13 +1,11 @@
-import type {
-  UserDetail,
-  UserSkill,
-  SkillProficiency,
-  Major,
-  UserSocial,
-} from '@looking-for-group/shared';
+import type { UserDetail, UserSkill, UserSocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { UserDetailSelector } from '#services/selectors/users/user-detail.ts';
+import { transformMajor } from '../datasets/major.ts';
+import { transformSkill } from '../datasets/skill.ts';
+import { transformSocial } from '../datasets/social.ts';
 import { transformProjectToPreview } from '../projects/project-preview.ts';
+import { transformUserMember } from './parts/user-member.ts';
 import { transformUserToPreview } from './user-preview.ts';
 
 //sample project from prisma to be mapped
@@ -24,42 +22,26 @@ export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
     ...transformUserToPreview(user),
     headline: user.headline,
     pronouns: user.pronouns,
-    bio: user.bio ?? '',
+    bio: user.bio,
     academicYear: user.academicYear,
     location: user.location,
     funFact: user.funFact,
     title: user.title,
-    majors: user.majors.map(
-      ({ majorId, label }: { majorId: number; label: string }): Major => ({
-        majorId,
-        label,
-      }),
-    ),
+    majors: user.majors.map(transformMajor),
     skills: user.userSkills.map(
-      ({
-        position,
-        proficiency,
-        skills,
-      }: {
-        position: number;
-        proficiency: SkillProficiency;
-        skills: { skillId: number; label: string; type: string };
-      }): UserSkill => ({
-        skillId: skills.skillId,
-        label: skills.label,
-        type: skills.type,
+      ({ position, proficiency, skills }): UserSkill => ({
+        ...transformSkill(skills),
         proficiency,
         position,
       }),
     ),
     socials: user.userSocials.map(
-      ({ url, socials: { label, websiteId } }): UserSocial => ({
-        websiteId,
-        label,
+      ({ url, socials }): UserSocial => ({
+        ...transformSocial(socials),
         url,
       }),
     ),
-    projects: user.members.map(({ projects }) => transformProjectToPreview(projects)),
+    projects: user.members.map(transformUserMember),
     followers: {
       users: user.followers.map(({ receiverUser }) => transformUserToPreview(receiverUser)),
       count: user._count.followers,
