@@ -1,6 +1,4 @@
-import { PrismaClient } from '../src/models/generated/prisma/index.js';
-
-const prisma = new PrismaClient();
+import prisma from '../src/config/prisma.ts';
 
 async function main() {
     //Datasets
