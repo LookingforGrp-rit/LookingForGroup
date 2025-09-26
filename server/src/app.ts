@@ -4,6 +4,7 @@ import envConfig from '#config/env.ts';
 import datasetsRouter from '#routes/datasets.ts';
 import imagesRouter from '#routes/images.ts';
 import meRouter from '#routes/me.ts';
+import modRouter from '#routes/mod.ts';
 import projectsRouter from '#routes/projects.ts';
 import usersRouter from '#routes/users.ts';
 
@@ -27,6 +28,7 @@ app.use('/datasets', datasetsRouter);
 app.use('/users', usersRouter);
 app.use('/projects', projectsRouter);
 app.use('/me', meRouter);
+app.use('/mod', modRouter);
 app.use('/images', imagesRouter);
 
 app.get('', (_req: Request, res: Response) => {

@@ -1319,7 +1319,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   # MOD
-  /api/mod:
+  /api/mod/clear-profile/{id}:
     put:
       summary: Clears a user profile
       tags:
