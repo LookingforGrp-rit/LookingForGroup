@@ -1,25 +1,26 @@
-import type { ProjectWithFollowers } from '@looking-for-group/shared';
+import type { ProjectPreview } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset } from '#services/service-error.ts';
-import { transformProject } from '../helpers/projTransform.ts';
+import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProjectToPreview } from '#services/transformers/projects/project-preview.ts';
 
 type GetProjectsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 //gets projects of other uses to view
 export const getUserProjectsService = async (
   userId: number,
-): Promise<ProjectWithFollowers[] | GetProjectsError> => {
+): Promise<ProjectPreview[] | GetProjectsError> => {
   try {
-    //check user visibility
-    const user = await prisma.users.findUnique({
-      where: { userId },
-      select: { visibility: true },
-    });
+    // //check user visibility
+    // const user = await prisma.users.findUnique({
+    //   where: { userId },
+    //   select: { visibility: true },
+    // });
 
-    //if user is not visible
-    if (!user || user.visibility !== 1) {
-      return 'NOT_FOUND';
-    }
+    // //if user is not visible
+    // if (!user || user.visibility !== 1) {
+    //   return 'NOT_FOUND';
+    // }
 
     //get projects of public user
     const projects = await prisma.projects.findMany({
@@ -31,23 +32,14 @@ export const getUserProjectsService = async (
         },
       },
       orderBy: { createdAt: 'desc' },
-      include: {
-        _count: { select: { projectFollowings: true } },
-        projectGenres: { include: { genres: true } },
-        projectTags: { include: { tags: true } },
-        projectImages: true,
-        projectSocials: { include: { socials: true } },
-        jobs: true,
-        members: true,
-        users: true,
-      },
+      select: ProjectPreviewSelector,
     });
 
     if (projects.length === 0) return 'NOT_FOUND';
 
-    const fullProject = projects.map(transformProject);
+    const result = projects.map(transformProjectToPreview);
 
-    return fullProject;
+    return result;
   } catch (e) {
     console.error(`Error in getUserProjectsService: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';

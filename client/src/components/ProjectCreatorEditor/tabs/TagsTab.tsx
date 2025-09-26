@@ -1,6 +1,7 @@
 // --- Imports ---
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SearchBar } from "../../SearchBar";
+import { PopupButton } from "../../Popup";
 
 
 // --- Interfaces ---
@@ -8,7 +9,6 @@ interface Image {
   id: number;
   image: string;
   position: number;
-  file: File
 }
 
 interface ProjectData {
@@ -86,8 +86,15 @@ const getTagColor = (type: string) => {
   return 'blue';
 }
 
+type TagsTabProps = {
+  projectData?: ProjectData;
+  setProjectData?: (data: ProjectData) => void;
+  saveProject?: () => void;
+  failCheck: boolean;
+}
+
 // --- Component ---
-export const TagsTab = ({ isNewProject = false, projectData = defaultProject, setProjectData }) => {
+export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProject, failCheck }: TagsTabProps) => {
   //  --- Hooks ---
   // tracking project modifications
   const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
@@ -323,7 +330,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
       .map((t) => (
           <button key={t.tag} className={`tag-button tag-button-${getTagColor(t.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
             <i className="fa fa-close"></i>
-            &nbsp;{t.tag}
+            <p>{t.tag}</p>
           </button>
       ))
   }, [modifiedProject.tags, handleTagSelect]);
@@ -355,11 +362,11 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
               <i
                 className={
                   isTagSelected(id, t.label, currentTagsTab) === 'selected'
-                    ? 'fa fa-close'
+                    ? 'fa fa-check'
                     : 'fa fa-plus'
                 }
               ></i>
-              &nbsp;{t.label}
+              <p>{t.label}</p>
             </button>
           );
         })
@@ -383,7 +390,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
                 : 'fa fa-plus'
             }
           ></i>
-          &nbsp;{t.label}
+          <p>{t.label}</p>
         </button>
       ));
     } else if (currentTagsTab === 1) {
@@ -402,7 +409,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
                   : 'fa fa-plus'
               }
             ></i>
-            &nbsp;{t.label}
+            <p>{t.label}</p>
           </button>
       ));
     } else if (currentTagsTab === 2) {
@@ -421,7 +428,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
                   : 'fa fa-plus'
               }
             ></i>
-            &nbsp;{s.label}
+            <p>{s.label}</p>
           </button>
       ));
     } else if (currentTagsTab === 3) {
@@ -440,7 +447,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
                   : 'fa fa-plus'
               }
             ></i>
-            &nbsp;{s.label}
+            <p>{s.label}</p>
           </button>
         ));
     }
@@ -459,7 +466,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
                 : 'fa fa-plus'
             }
           ></i>
-          &nbsp;{s.label}
+          <p>{s.label}</p>
         </button>
       ));
   }, [searchedTags, currentTagsTab, allSkills, isTagSelected, handleTagSelect, allProjectTypes, allTags]);
@@ -474,7 +481,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
     else {
       setSearchedTags(results[0]);
     }
-  }, []);
+  }, [currentDataSet.length]);
 
   // --- Complete component ---
   return (
@@ -486,7 +493,7 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
           {modifiedProject.projectTypes.map((t) => (
             <button key={t.projectType} className={`tag-button tag-button-blue-selected`} onClick={(e) => handleTagSelect(e)}>
               <i className="fa fa-close"></i>
-              &nbsp;{t.projectType}
+              <p>{t.projectType}</p>
             </button>
           ))}
         </div>
@@ -549,6 +556,15 @@ export const TagsTab = ({ isNewProject = false, projectData = defaultProject, se
           <hr id="tag-search-divider" />
         </div>
         <div id="project-editor-tag-search-container">{renderTags()}</div>
+      </div>
+
+      <div id="tags-save-info">
+        <div id="invalid-input-error" className={"save-error-msg-general"}>
+            <p>*Fill out all required info before saving!*</p>
+        </div>
+        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
+          Save Changes
+        </PopupButton>
       </div>
     </div>
   );
