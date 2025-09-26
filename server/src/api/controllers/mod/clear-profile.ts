@@ -19,8 +19,8 @@ interface UpdateUserInfo {
 export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const id = req.params.id; //the mod takes the id of the user they wish to mod
   const clearing = {
-    firstName: '',
-    lastName: '',
+    firstName: 'David',
+    lastName: 'Munson',
     headline: '',
     pronouns: '',
     title: '',
