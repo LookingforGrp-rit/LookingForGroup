@@ -18,6 +18,7 @@ import { deleteSocial } from '#controllers/me/socials/delete-social.ts';
 import { getSocials } from '#controllers/me/socials/get-socials.ts';
 import { updateSocial } from '#controllers/me/socials/update-social.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
+import { updateProjectVisibilityController } from '#controllers/me/update-project-visibility.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import requiresLogin from '../middleware/requires-login.ts';
 
@@ -72,6 +73,13 @@ router.put('/socials/:websiteId', authenticated(updateSocial));
 //Deletes a social
 router.delete('/socials/:websiteId', authenticated(deleteSocial));
 
+// PROJECTS ROUTES
+
+//Gets current user's projects
+router.get('/projects', authenticated(getMyProjects));
+//Change project profile visibility
+router.put('/projects/:id/visibility', authenticated(updateProjectVisibilityController));
+
 //Gets user's account
 router.get('/', authenticated(getAccount));
 //Updates users information
@@ -81,7 +89,5 @@ router.delete('/', authenticated(deleteUser));
 
 //Gets username by shib ID
 router.get('/get-username', authenticated(getUsernameByShib));
-//Gets current user's projects
-router.get('/projects', authenticated(getMyProjects));
 
 export default router;
