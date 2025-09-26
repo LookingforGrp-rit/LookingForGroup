@@ -34,6 +34,9 @@ describe('deleteMember', () => {
     req.params.id = '1'; //resetting it for the next test
   });
   //the member could not be found, should return 404
+  //FIXME update delete member test(s) to reflect new functionality.
+  //Sebastian wrote a test but it has a lot of linting errors so probably
+  //a cross between that one and this one is good.
   test("Must return 403 when the uer doesn't have permission to delete this member", async () => {
     vi.mocked(deleteMemberService).mockResolvedValue('FORBIDDEN');
     expect(deleteMemberService).toBe(vi.mocked(deleteMemberService));
