@@ -10,6 +10,20 @@ export const deleteMemberService = async (
   memberId: number,
 ): Promise<DeleteFollowServiceError | DeleteFollowServiceSuccess> => {
   try {
+    // Prevent project owners from being deleted through this route
+    const project = await prisma.projects.findUnique({
+      where: { projectId },
+      select: { userId: true },
+    });
+
+    if (!project) {
+      return 'NOT_FOUND';
+    }
+
+    if (project.userId === memberId) {
+      return 'NOT_FOUND'; // Return NOT_FOUND to avoid revealing project ownership structure
+    }
+
     await prisma.members.delete({
       where: {
         projectId_userId: {

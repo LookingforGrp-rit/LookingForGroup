@@ -4,6 +4,7 @@ import { MeDetailSelector } from '#services/selectors/me/me-detail.ts';
 import { transformProjectToPreview } from '../projects/project-preview.ts';
 import { transformUserToPreview } from '../users/user-preview.ts';
 import { transformMeToPreview } from './me-preview.ts';
+import { transformMyMember } from './parts/my-member.ts';
 import { transformMySkill } from './parts/my-skill.ts';
 import { transformMySocial } from './parts/my-social.ts';
 
@@ -35,7 +36,7 @@ export const transformMeToDetail = (user: UsersGetPayload): MeDetail => {
     ),
     skills: user.userSkills.map(transformMySkill),
     socials: user.userSocials.map(transformMySocial),
-    projects: user.members.map(({ projects }) => transformProjectToPreview(projects)),
+    projects: user.members.map(transformMyMember),
     followers: {
       users: user.followers.map(({ receiverUser }) => transformUserToPreview(receiverUser)),
       count: user._count.followers,
