@@ -16,7 +16,7 @@ interface ClearUserInfo {
 
 //clear a selected user profile
 export const clearProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const id = req.params.id; //the mod takes the id of the user they wish to mod
+  const id = req.params.id; //the id of the user whose profile must be cleared
   const clearing = {
     firstName: 'David',
     lastName: 'Munson',
@@ -61,7 +61,6 @@ export const clearProfile = async (req: AuthenticatedRequest, res: Response): Pr
     res.status(500).json(resBody);
     return;
   }
-
   const resBody: ApiResponse<typeof result> = {
     status: 200,
     error: null,

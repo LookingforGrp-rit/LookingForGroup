@@ -9,7 +9,7 @@ import { transformMeToPrivate } from '#services/transformers/me/me-private.ts';
 type UpdateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 // updatable fields only
-type UpdatebleUserFields = Partial<
+type UpdateableUserFields = Partial<
   Pick<
     Users,
     | 'firstName'
@@ -31,7 +31,7 @@ type UpdatebleUserFields = Partial<
 
 export const updateUserInfoService = async (
   userId: number,
-  updates: UpdatebleUserFields,
+  updates: UpdateableUserFields,
 ): Promise<MePrivate | UpdateUserServiceError> => {
   try {
     const curUser = await prisma.users.findFirst({
