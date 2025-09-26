@@ -2,16 +2,23 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { leaveProjectService } from '#services/me/leave-project.ts';
 
+interface LeaveProjectRequest extends Request {
+  body: {
+    visibility?: string;
+  };
+  currentUser?: string;
+}
+
 /**
  * Handles PUT /me/projects/:id/visibility requests
  * Allows authenticated users to leave a project by setting their visibility to private
  */
-const leaveProjectController = async (req: Request, res: Response) => {
+const leaveProjectController = async (req: LeaveProjectRequest, res: Response) => {
   const { id } = req.params;
   const projectId = parseInt(id);
   
   // Get current user ID from middleware
-  const currentUserId = parseInt(req.currentUser as string);
+  const currentUserId = parseInt(req.currentUser ?? '');
 
   if (isNaN(projectId)) {
     const resBody: ApiResponse = {
