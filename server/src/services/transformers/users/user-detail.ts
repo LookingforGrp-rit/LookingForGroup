@@ -5,6 +5,7 @@ import { transformMajor } from '../datasets/major.ts';
 import { transformSkill } from '../datasets/skill.ts';
 import { transformSocial } from '../datasets/social.ts';
 import { transformProjectToPreview } from '../projects/project-preview.ts';
+import { transformUserMember } from './parts/user-member.ts';
 import { transformUserToPreview } from './user-preview.ts';
 
 //sample project from prisma to be mapped
@@ -40,7 +41,7 @@ export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
         url,
       }),
     ),
-    projects: user.members.map(({ projects }) => transformProjectToPreview(projects)),
+    projects: user.members.map(transformUserMember),
     followers: {
       users: user.followers.map(({ receiverUser }) => transformUserToPreview(receiverUser)),
       count: user._count.followers,

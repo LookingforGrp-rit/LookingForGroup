@@ -1,5 +1,6 @@
 import { ProjectPreviewSelector } from '../projects/project-preview.ts';
 import { UserMajorSelector } from './parts/user-major.ts';
+import { UserMemberSelector } from './parts/user-member.ts';
 import { UserSkillSelector } from './parts/user-skill.ts';
 import { UserSocialSelector } from './parts/user-social.ts';
 import { UserPreviewSelector } from './user-preview.ts';
@@ -21,11 +22,7 @@ export const UserDetailSelector = Object.freeze({
   funFact: true,
   title: true,
   members: {
-    select: {
-      projects: {
-        select: ProjectPreviewSelector,
-      },
-    },
+    select: UserMemberSelector,
   },
   majors: { select: UserMajorSelector },
   userSkills: {

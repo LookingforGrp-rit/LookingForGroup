@@ -21,6 +21,6 @@
       "#routes/*.ts": ["./src/api/routes/*.ts"]
     }
   },
-  "include": ["src", "tests"],
+  "include": ["src", "tests", "prisma"],
   "exclude": ["**/generated/**"]
 }
