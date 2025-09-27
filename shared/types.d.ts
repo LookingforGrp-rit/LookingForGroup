@@ -66,7 +66,7 @@ export interface ApiResponse<_data = any> {
 }
 
 // DATASETS
-
+// import type { ApiResponse } from '@looking-for-group/shared';
 export interface Role {
     roleId: number;
     label: string;
