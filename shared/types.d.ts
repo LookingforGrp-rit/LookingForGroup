@@ -1,3 +1,5 @@
+import type { Request } from 'express';
+
 // Enums for better typing
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft";
 export type TagType =
@@ -51,12 +53,8 @@ export type JobCompensation =
 
 //API REQUEST
 
-declare global{
-    namespace Express {
-        interface Request {
-            currentUser?: string
-        }
-    }
+export interface AuthenticatedRequest extends Request {
+    currentUser: string
 }
 
 //API RESPONSE
