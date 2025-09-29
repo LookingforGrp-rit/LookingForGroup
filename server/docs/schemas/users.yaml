@@ -16,7 +16,18 @@ components:
         apiUrl:
           type: string
       example:
-        visibility: Public
+        project:
+          projectId: 1
+          title: Looking For Group
+          hook: You can LOOK for a GROUP
+          mediums: []
+          thumbnail: null
+          apiUrl: /api/projects/1
+        role:
+          roleId: 1
+          label: Full-Stack Developer
+        visibility: Private
+        memberSince: 2038-01-19 03:14:07
         apiUrl: /api/projects/1/members/1
 
     UserSkill:
@@ -29,6 +40,9 @@ components:
             position:
               type: integer
       example:
+        skillId: 1
+        label: C++
+        type: Developer
         proficiency: Novice
         position: 1
 
@@ -40,6 +54,8 @@ components:
             url:
               type: string
       example:
+        websiteId: 1
+        label: Instagram
         url: https://www.instagram.com/rittigers/
 
     ProjectFollowsList:
@@ -55,6 +71,7 @@ components:
           type: string
       example:
         count: 1
+        projects: []
         apiUrl: /api/users/1/followings/projects
 
     UserFollowsList:
@@ -70,6 +87,7 @@ components:
           type: string
       example:
         count: 1
+        users: []
         apiUrl: string
 
     UserFollowings:
@@ -115,7 +133,7 @@ components:
         userId: 1
         firstName: Michael
         lastName: Robinson
-        username: mrc2964
+        username: mhr2964
         profileImage: null
         mentor: false
         designer: false
@@ -168,10 +186,35 @@ components:
             followers:
               $ref: '#/components/schemas/UserFollowsList'
       example:
+        userId: 1
+        firstName: Michael
+        lastName: Robinson
+        username: mhr2964
+        profileImage: null
+        mentor: false
+        designer: false
+        developer: true
         headline: Hello world
         pronouns: they/them
         title: Student
-        academicYear: Freshman
+        academicYear:
         location: Rochester, NY
         funFact: Loves Prisma
         bio: This is an example user.
+        projects: []
+        skills: []
+        socials: []
+        following:
+          usersFollowing:
+            users: []
+            count: 0
+            apiUrl: /api/users/1/followings/people
+          ProjectFollowing:
+            projects: []
+            count: 0
+            apiUrl: /api/users/1/followings/projects
+        followers:
+          users: []
+          count: 0
+          apiUrl: /api/users/1/followers
+        apiUrl: /api/users/1

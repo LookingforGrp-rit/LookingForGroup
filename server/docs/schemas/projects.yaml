@@ -1,21 +1,21 @@
 components:
   schemas:
-    # ProjectFollowings:
-    #   type: object
-    #   properties:
-    #     userId:
-    #       type: integer
-    #     projectId:
-    #       type: integer
-    #     followedAt:
-    #       type: string
-    #       format: date-time
-    #     apiUrl:
-    #       type: string
-    #   example:
-    #     userId: 1
-    #     projectId: 1
-    #     apiUrl: /api/users/1/followings/projects
+    ProjectFollowings:
+      type: object
+      properties:
+        userId:
+          type: integer
+        projectId:
+          type: integer
+        followedAt:
+          type: string
+          format: date-time
+        apiUrl:
+          type: string
+      example:
+        userId: 1
+        projectId: 1
+        apiUrl: /api/users/1/followings/projects
 
     ProjectImage:
       type: object
@@ -42,6 +42,8 @@ components:
             apiUrl:
               type: string
       example:
+        mediumId: 1
+        label: Video Game
         apiUrl: /api/projects/1/mediums
 
     ProjectFollowers:
@@ -57,6 +59,7 @@ components:
           type: string
       example:
         count: 1
+        users: []
         apiUrl: /api/projects/1/followers
 
     ProjectMember:
@@ -72,6 +75,20 @@ components:
         apiUrl:
           type: string
       example:
+        user:
+          userId: 1
+          firstName: Michael
+          lastName: Robinson
+          username: mhr2964
+          profileImage: null
+          mentor: false
+          designer: false
+          developer: true
+          apiUrl: /api/users/1
+        role:
+          roleId: 1
+          label: Full-Stack Developer
+        memberSince: 2038-01-19 03:14:07
         apiUrl: /api/projects/1/members/1
 
     ProjectSocial:
@@ -84,6 +101,8 @@ components:
             apiUrl:
               type: string
       example:
+        websiteId: 1
+        label: Instagram
         url: https://www.instagram.com/rittigers/
         apiUrl: /api/projects/1/socials/1
 
@@ -95,6 +114,9 @@ components:
             apiUrl:
               type: string
       example:
+        tagId: 1
+        label: Indie
+        type: Creative
         apiUrl: /api/projects/1/tags/1
 
     ProjectJob:
@@ -126,7 +148,26 @@ components:
           type: string
       example:
         jobId: 1
+        role:
+          roleId: 1
+          label: Full-Stack Developer
+        availability: FullTime
+        duration: ShortTerm
+        location: OnSite
+        compensation: Unpaid
+        contact:
+          userId: 1
+          firstName: Michael
+          lastName: Robinson
+          username: mhr2964
+          profileImage: null
+          mentor: false
+          designer: false
+          developer: true
+          apiUrl: /api/users/1
         description: i'm a job
+        createdAt: 2038-01-19 03:14:07
+        updatedAt: 2038-01-19 03:14:07
         apiUrl: /api/projects/1/jobs/1
 
     ProjectPreview:
@@ -151,6 +192,7 @@ components:
         projectId: 1
         title: Looking For Group
         hook: You can LOOK for a GROUP
+        mediums: []
         thumbnail: null
         apiUrl: /api/projects/1
 
@@ -197,13 +239,67 @@ components:
               items:
                 $ref: '#/components/schemas/ProjectMember'
       example:
+        projectId: 1
+        title: Looking For Group
+        hook: You can LOOK for a GROUP
+        mediums: []
+        thumbnail: null
         description: Have you ever needed a project or a group?
+        purpose: Personal
+        status: Planning
         audience: Everybody
+        createdAt: 2038-01-19 03:14:07
+        updatedAt: 2038-01-19 03:14:07
+        owner:
+          userId: 1
+          firstName: Michael
+          lastName: Robinson
+          username: mhr2964
+          profileImage: null
+          mentor: false
+          designer: false
+          developer: true
+          apiUrl: /api/users/1
+        tags: []
+        projectImages: []
+        projectSocials: []
+        jobs: []
+        members: []
+        apiUrl: /api/projects/1
 
     ProjectWithFollowers:
       allOf:
         - $ref: '#/components/schemas/ProjectDetail'
         - type: object
           properties:
+            projectId: 1
+            title: Looking For Group
+            hook: You can LOOK for a GROUP
+            mediums: []
+            thumbnail: null
+            description: Have you ever needed a project or a group?
+            purpose: Personal
+            status: Planning
+            audience: Everybody
+            createdAt: 2038-01-19 03:14:07
+            updatedAt: 2038-01-19 03:14:07
+            owner:
+              userId: 1
+              firstName: Michael
+              lastName: Robinson
+              username: mhr2964
+              profileImage: null
+              mentor: false
+              designer: false
+              developer: true
+              apiUrl: /api/users/1
+            tags: []
+            projectImages: []
+            projectSocials: []
+            jobs: []
+            members: []
             followers:
-              $ref: '#/components/schemas/ProjectFollowers'
+              count: 1
+              users: []
+              apiUrl: /api/projects/1/followers
+            apiUrl: /api/projects/1
