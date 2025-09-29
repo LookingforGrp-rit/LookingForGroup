@@ -14,6 +14,7 @@ type AddJobServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 export type JobInput = {
   roleId: number;
+  contactUserId: number;
   availability: JobAvailability;
   duration: JobDuration;
   location: JobLocation;
@@ -34,10 +35,19 @@ const addJobService = async (
       return 'NOT_FOUND';
     }
 
+    const contactUser = await prisma.users.findUnique({
+      where: { userId: data.contactUserId },
+    });
+
+    if (!contactUser) {
+      return 'NOT_FOUND';
+    }
+
     const job = await prisma.jobs.create({
       data: {
         projectId,
         roleId: data.roleId,
+        contactUserId: data.contactUserId,
         availability: data.availability,
         duration: data.duration,
         location: data.location,

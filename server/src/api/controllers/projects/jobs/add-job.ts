@@ -23,6 +23,7 @@ const validateJobData = (data: unknown): data is JobInput => {
 
   return (
     typeof d.roleId === 'number' &&
+    typeof d.contactUserId === 'number' &&
     validateEnum(d.availability, validAvailabilities) &&
     validateEnum(d.duration, validDurations) &&
     validateEnum(d.location, validLocations) &&
@@ -33,11 +34,22 @@ const validateJobData = (data: unknown): data is JobInput => {
 
 const addJobController = async (req: Request<{ id: string }>, res: Response) => {
   const projectId = parseInt(req.params.id);
+  const contactUserId = parseInt(req.params.id);
 
   if (!projectId || isNaN(projectId)) {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Invalid project ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  if (!contactUserId || isNaN(contactUserId)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid contact user',
       data: null,
     };
     res.status(400).json(resBody);
