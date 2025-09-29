@@ -15,7 +15,7 @@ import { TeamTab } from './tabs/TeamTab';
 import { TagsTab } from './tabs/TagsTab';
 import { ThemeIcon } from '../ThemeIcon';
 import { loggedIn } from '../Header';
-import { createNewProject, getByID, updateProject, getPics, addPic, updatePicPositions, deletePic, updateThumbnail } from '../../api/projects';
+import { createNewProject, getByID, updateProject, getPics, addPic, updatePic, deletePic, updateThumbnail } from '../../api/projects';
 import { getUsersById } from '../../api/users';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
