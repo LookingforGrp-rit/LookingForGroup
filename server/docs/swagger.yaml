@@ -32,19 +32,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Role'
-              examples:
-                default:
-                  summary: Example job titles list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - titleId: 1
-                        label: Full-Stack Developer
-                      - titleId: 2
-                        label: Front-End Developer
-                      - titleId: 3
-                        label: Back-End Developer
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -72,19 +59,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Social'
-              examples:
-                default:
-                  summary: Example socials list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - websiteId: 1
-                        label: Instagram
-                      - websiteId: 2
-                        label: Twitter
-                      - websiteId: 3
-                        label: Facebook
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -112,22 +86,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Skill'
-              examples:
-                default:
-                  summary: Example skill list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - skillId: 1
-                        label: C++
-                        type: Developer
-                      - skillId: 2
-                        label: CSS
-                        type: Developer
-                      - skillId: 3
-                        label: C#
-                        type: Developer
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -155,19 +113,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Medium'
-              examples:
-                default:
-                  summary: Example project types list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - typeId: 1
-                        label: Video Game
-                      - typeId: 2
-                        label: Analog Game
-                      - typeId: 3
-                        label: Mobile Application
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -195,19 +140,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Major'
-              examples:
-                default:
-                  summary: Examples majors list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - majorId: 1
-                        label: Animation
-                      - majorId: 2
-                        label: Computer Engineering
-                      - majorId: 3
-                        label: Computing Engineering Technology
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -235,22 +167,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Tag'
-              examples:
-                default:
-                  summary: Example tags list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - tagId: 1
-                        label: Indie
-                        type: Creative
-                      - tagId: 2
-                        label: Abstract
-                        type: Creative
-                      - tagId: 3
-                        label: Horror
-                        type: Creative
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -278,7 +194,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserDetail'
+                      $ref: '#/components/schemas/UserPreview'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
@@ -328,13 +244,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        username:
-                          type: string
-                          example: User01
+                    $ref: '#/components/schemas/MePrivate'
         '409':
           $ref: '#/components/responses/Conflict'
         '500':

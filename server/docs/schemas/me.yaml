@@ -71,7 +71,7 @@ components:
         userId: 1
         firstName: Michael
         lastName: Robinson
-        username: mrc2964
+        username: mhr2964
         profileImage: null
         mentor: false
         designer: false
@@ -127,10 +127,20 @@ components:
             followers:
               $ref: 'users.yaml#/components/schemas/UserFollowsList'
       example:
+        userId: 1
+        firstName: Michael
+        lastName: Robinson
+        username: mhr2964
+        profileImage: null
+        mentor: false
+        designer: false
+        developer: false
+        apiUrl: /api/me
         headline: Hello world
         pronouns: they/them
         title: Student
-        academicYear: Freshman
+        academicYear:
+          $ref: 'enums.yaml#/components/schemas/AcademicYear'
         location: Rochester, NY
         funFact: Loves Prisma
         bio: This is an example user.
@@ -156,10 +166,27 @@ components:
               type: string
               format: date-time
       example:
+        userId: 1
+        firstName: Michael
+        lastName: Robinson
+        username: mhr2964
+        profileImage: null
+        mentor: false
+        designer: false
+        developer: false
+        apiUrl: /api/me
+        headline: Hello world
+        pronouns: they/them
+        title: Student
+        location: Rochester, NY
+        funFact: Loves Prisma
+        bio: This is an example user.
         ritEmail: mhr2964@rit.edu
         visibility: 1
         phoneNumber: null
         universityId: 11111111
+        createdAt: 2038-01-19 03:14:07
+        updatedAt: 2038-01-19 03:14:07
 
     MyMember:
       type: object
