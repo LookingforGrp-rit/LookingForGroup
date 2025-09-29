@@ -43,10 +43,10 @@ const emptyMember: ProjectMember = {
 const emptyJob: ProjectJob = {
   jobId: 0,
   role: {roleId: 0, label: '' },
-  availability: JobAvailability.Flexible,
-  duration: JobDuration.ShortTerm,
-  location: JobLocation.Remote,
-  compensation: JobCompensation.Unpaid,
+  availability: "Flexible",
+  duration: "ShortTerm",
+  location: "Remote",
+  compensation: "Unpaid",
   description: '',
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -54,10 +54,10 @@ const emptyJob: ProjectJob = {
 };
 
 // Job detail options (according to documentation enums)
-const availabilityOptions = Object.values(JobAvailability);
-const durationOptions = Object.values(JobDuration);
-const locationOptions = Object.values(JobLocation);
-const compensationOptions = Object.values(JobCompensation);
+const availabilityOptions = ['FullTime', 'PartTime', 'Flexible'];
+const durationOptions = ['ShortTerm', 'LongTerm'];
+const locationOptions = ['OnSite', 'Remote', 'Hybrid'];
+const compensationOptions = ['Unpaid', 'Paid'];
 const permissionOptions = ['Project Member', 'Project Manager', 'Project Owner'];
 
 type TeamTabProps = {
