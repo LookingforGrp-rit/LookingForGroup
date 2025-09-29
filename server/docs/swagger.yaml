@@ -796,6 +796,20 @@ paths:
             type: integer
           required: false
           description: The user ID to be used as the current user
+        - in: query
+          name: visibility
+          schema:
+            type: string
+            enum: [all, public, private]
+          required: false
+          description: Filter for visibility (accepts all, public, or private)
+        - in: query
+          name: owner
+          schema:
+            type: string
+            enum: [all, me]
+          required: false
+          description: Filter for whether or not you are the project owner
       responses:
         '200':
           description: List of projects owned by the user
@@ -1851,11 +1865,16 @@ paths:
               type: object
               required:
                 - roleId
+                - profileVisibility
               properties:
                 roleId:
                   type: integer
                   description: Updated ID of the role for the user
                   example: 9
+                profileVisibility:
+                  type: string
+                  description: Visibility of the member (public or private)
+                  example: public
       responses:
         '200':
           description: Member updated successfully

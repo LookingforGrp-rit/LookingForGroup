@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteProjectSocialService } from '#services/projects/socials/delete-project-social.ts';
+import { deleteProjectSocialService } from '#services/projects/socials/delete-proj-social.ts';
 
 //deletes a project's social
 export const deleteProjectSocial = async (req: Request, res: Response): Promise<void> => {

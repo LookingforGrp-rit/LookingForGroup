@@ -57,6 +57,11 @@ export interface AuthenticatedRequest extends Request {
     currentUser: string
 }
 
+export interface GetProjectsRequest extends AuthenticatedRequest {
+    visibiility: "all" | "public" | "private",
+    owner: "all" | "me"
+}
+
 //API RESPONSE
 
 export interface ApiResponse<_data = any> {
