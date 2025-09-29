@@ -38,6 +38,7 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
       ({
         availability,
         compensation,
+        contact,
         createdAt,
         description,
         duration,
@@ -50,6 +51,7 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
         compensation,
         createdAt,
         description,
+        contact,
         duration,
         jobId,
         location,
