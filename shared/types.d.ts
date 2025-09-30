@@ -46,6 +46,20 @@ export interface AuthenticatedRequest extends Request {
   currentUser: string;
 }
 
+export interface UserFilters {
+  mentor?: 0 | 1,
+  designer?: 0 | 1,
+  developer?: 0 | 1,
+  skills?: string,
+  majors?: string,
+  academicYear?: string,
+  socials?: string
+}
+
+export interface FilterRequest extends Request {
+  filters: UserFilters
+}
+
 export interface GetProjectsRequest extends AuthenticatedRequest {
   visibiility: "all" | "public" | "private";
   owner: "all" | "me";

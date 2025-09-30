@@ -260,6 +260,36 @@ paths:
       summary: Get all users
       tags:
         - Users
+      parameters:
+        - in: query
+          name: filters
+          required: false
+          schema:
+            type: object
+            properties:
+              mentor:
+                type: integer
+                example: 0
+              designer:
+                type: integer
+                example: 0
+              developer:
+                type: integer
+                example: 0
+              skills:
+                type: integer
+                example: 1
+              majors:
+                type: integer
+                example: 1
+              academicYear:
+                type: string
+                example: Freshman
+              socials:
+                type: integer
+                example: 1
+
+          description: The filters to apply on users that you wish to get
       responses:
         '200':
           description: A list of users

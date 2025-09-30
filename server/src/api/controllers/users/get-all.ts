@@ -1,10 +1,12 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
+import type { ApiResponse, FilterRequest, UserFilters } from '@looking-for-group/shared';
+import type { Response } from 'express';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
 
 //get all users
-export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
-  const result = await getAllUsersService();
+export const getAllUsers = async (req: FilterRequest, res: Response): Promise<void> => {
+  const filters = req.query as UserFilters;
+
+  const result = await getAllUsersService(filters);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
