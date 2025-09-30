@@ -57,7 +57,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
 
   //#TODO in the future this can be taken out as usernames won't be updateable
   //check if username was updated, and only do this whole check if it was
-  const newUsername = body.username;
+  const newUsername = body.username as string;
   if (newUsername) {
     const userExist = await getUserByUsernameService(newUsername);
     if (
