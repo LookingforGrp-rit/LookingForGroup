@@ -1,14 +1,22 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { updateProjectSocialService } from '#services/projects/socials/update-project-social.ts';
+import getProjectSocialsService from '#services/projects/socials/get-proj-socials.ts';
 
-//updates a social associated with a project
-export const updateProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const social = req.params.url;
-  const websiteId = parseInt(req.params.websiteId);
-  const projectId = parseInt(req.params.id);
+//gets the socials associated with a project
+const getProjectSocialsController = async (req: Request, res: Response): Promise<void> => {
+  const projID = parseInt(req.params.id);
 
-  const result = await updateProjectSocialService(social, projectId, websiteId);
+  if (isNaN(projID)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid project ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const result = await getProjectSocialsService(projID);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -23,7 +31,7 @@ export const updateProjectSocial = async (req: Request, res: Response): Promise<
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Social not found',
+      error: 'Project not found',
       data: null,
     };
     res.status(404).json(resBody);
@@ -37,3 +45,5 @@ export const updateProjectSocial = async (req: Request, res: Response): Promise<
   };
   res.status(200).json(resBody);
 };
+
+export default getProjectSocialsController;
