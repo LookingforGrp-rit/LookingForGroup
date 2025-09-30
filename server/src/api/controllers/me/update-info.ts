@@ -1,31 +1,15 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest, UpdateUserInput } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import type { UsersAcademicYear } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import { updateUserInfoService } from '#services/me/update-info.ts';
 import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
 
-interface UpdateUserInfo {
-  firstName?: string;
-  lastName?: string;
-  headline?: string;
-  pronouns?: string;
-  title?: string;
-  academicYear?: UsersAcademicYear | null;
-  location?: string;
-  funFact?: string;
-  bio?: string;
-  visibility?: number;
-  username?: string;
-  phoneNumber?: string;
-  profileImage?: string;
-  mentor?: '0' | '1';
-}
+type RequestBody = Partial<Omit<UpdateUserInput, 'profileImage'>>;
 
 //update user info
 export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const id = req.currentUser;
-  const updates = req.body as UpdateUserInfo;
+  const body = req.body as RequestBody;
 
   //validate ID
   const userId = parseInt(id);
@@ -53,12 +37,11 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'visibility',
     'username',
     'phoneNumber',
-    'profileImage',
     'mentor',
   ];
 
   //validate update fields
-  const invalid = Object.keys(updates).filter((field) => !updateFields.includes(field));
+  const invalid = Object.keys(body).filter((field) => !updateFields.includes(field));
 
   if (invalid.length > 0) {
     const resBody: ApiResponse = {
@@ -70,8 +53,11 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     return;
   }
 
+  const updates: Parameters<typeof updateUserInfoService>[1] = { ...body, mentor: undefined };
+
+  //#TODO in the future this can be taken out as usernames won't be updateable
   //check if username was updated, and only do this whole check if it was
-  const newUsername = updates['username'];
+  const newUsername = body.username;
   if (newUsername) {
     const userExist = await getUserByUsernameService(newUsername);
     if (
@@ -117,13 +103,14 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
       return;
     }
 
-    updates['profileImage'] = dbImage.location;
+    updates.profileImage = dbImage.location;
   }
 
-  const result = await updateUserInfoService(userId, {
-    ...updates,
-    mentor: updates.mentor ? parseInt(updates.mentor) : undefined,
-  });
+  if (body.mentor !== undefined) {
+    updates.mentor = body.mentor ? 1 : 0;
+  }
+
+  const result = await updateUserInfoService(userId, updates);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
