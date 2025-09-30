@@ -32,19 +32,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Role'
-              examples:
-                default:
-                  summary: Example job titles list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - titleId: 1
-                        label: Full-Stack Developer
-                      - titleId: 2
-                        label: Front-End Developer
-                      - titleId: 3
-                        label: Back-End Developer
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -72,19 +59,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Social'
-              examples:
-                default:
-                  summary: Example socials list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - websiteId: 1
-                        label: Instagram
-                      - websiteId: 2
-                        label: Twitter
-                      - websiteId: 3
-                        label: Facebook
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -112,22 +86,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Skill'
-              examples:
-                default:
-                  summary: Example skill list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - skillId: 1
-                        label: C++
-                        type: Developer
-                      - skillId: 2
-                        label: CSS
-                        type: Developer
-                      - skillId: 3
-                        label: C#
-                        type: Developer
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -155,19 +113,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Medium'
-              examples:
-                default:
-                  summary: Example project types list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - typeId: 1
-                        label: Video Game
-                      - typeId: 2
-                        label: Analog Game
-                      - typeId: 3
-                        label: Mobile Application
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -195,19 +140,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Major'
-              examples:
-                default:
-                  summary: Examples majors list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - majorId: 1
-                        label: Animation
-                      - majorId: 2
-                        label: Computer Engineering
-                      - majorId: 3
-                        label: Computing Engineering Technology
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -235,22 +167,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Tag'
-              examples:
-                default:
-                  summary: Example tags list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - tagId: 1
-                        label: Indie
-                        type: Creative
-                      - tagId: 2
-                        label: Abstract
-                        type: Creative
-                      - tagId: 3
-                        label: Horror
-                        type: Creative
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -308,7 +224,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserDetails'
+                      $ref: '#/components/schemas/UserPreview'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
@@ -340,6 +256,17 @@ paths:
           schema:
             type: string
           description: The UID to be used as the current UID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - username
       security:
         shibbolethAuth: []
       responses:
@@ -358,13 +285,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        username:
-                          type: string
-                          example: User01
+                    $ref: '#/components/schemas/MePrivate'
         '409':
           $ref: '#/components/responses/Conflict'
         '500':
@@ -398,7 +319,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserPreview'
+                    $ref: '#/components/schemas/UserDetail'
 
   /api/users/search-username/{username}:
     get:
@@ -499,7 +420,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
+                      $ref: '#/components/schemas/ProjectPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -537,7 +458,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
+                      $ref: '#/components/schemas/ProjectPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -575,18 +496,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        userId:
-                          type: integer
-                          example: 1
-                        followingId:
-                          type: integer
-                          example: 2
-                        followedAt:
-                          type: string
-                          format: date-time
-                          example: 2025-05-01T10:00:00Z
+                      $ref: '#/components/schemas/UserPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -624,18 +534,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        userId:
-                          type: integer
-                          example: 1
-                        followingId:
-                          type: integer
-                          example: 2
-                        followedAt:
-                          type: string
-                          format: date-time
-                          example: 2025-05-01T10:00:00Z
+                      $ref: '#/components/schemas/UserPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -645,7 +544,7 @@ paths:
   # ME
   /api/me:
     get:
-      summary: Gets the current user by ID
+      summary: Gets the current user
       tags:
         - Me
       security:
@@ -673,7 +572,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserDetails'
+                    $ref: '#/components/schemas/MePrivate'
         '500':
           $ref: '#/components/responses/InternalServerError'
     patch:
@@ -696,7 +595,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UserCreateInput'
+              $ref: '#/components/schemas/UpdateUserInput'
 
       responses:
         '200':
@@ -714,7 +613,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserDetails'
+                    $ref: '#/components/schemas/MePrivate'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -750,8 +649,9 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: string
-                    example: User deleted successfully
+                    type: object
+                    nullable: true
+                    example: null
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -858,7 +758,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
+                      $ref: '#/components/schemas/ProjectPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -901,7 +801,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserSocial'
+                      $ref: '#/components/schemas/MySocial'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -929,9 +829,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/AddUserSocialInput'
       responses:
-        '200':
+        '201':
           description: Social created successfully
           content:
             application/json:
@@ -940,14 +840,14 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
                     type: object
-                    $ref: '#/components/schemas/UserSocial'
+                    $ref: '#/components/schemas/MySocial'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -976,21 +876,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/UpdateUserSocialInput'
       responses:
         '200':
           description: Social created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSocial'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  projectId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/MySocial'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -1067,7 +971,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserSkill'
+                      $ref: '#/components/schemas/MySkill'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1096,11 +1000,9 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/SkillCreateInput'
+              $ref: '#/components/schemas/AddUserSkillsInput'
       responses:
-        '200':
+        '201':
           description: Skill created successfully
           content:
             application/json:
@@ -1109,14 +1011,15 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
-                    type: object
-                    $ref: '#/components/schemas/UserSkill'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MySkill'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -1145,14 +1048,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SkillCreateInput'
+              $ref: '#/components/schemas/UpdateUserSkillInput'
       responses:
         '200':
           description: Skill updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSkill'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/MySkill'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -1226,15 +1140,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectFollowingsResponse'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  projectId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
-
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectFollowings'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1268,7 +1185,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectFollowingsResponse'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1302,14 +1231,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFollowingsResponse'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  followingId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/UserFollowings'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1344,7 +1277,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFollowingsResponse'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1377,7 +1322,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
+                      $ref: '#/components/schemas/ProjectPreview'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
@@ -1399,9 +1344,9 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ProjectsCreateInput'
+              $ref: '#/components/schemas/CreateProjectInput'
       responses:
-        '200':
+        '201':
           description: Project created successfully
           content:
             application/json:
@@ -1410,13 +1355,13 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/ProjectWithFollowers'
+                    $ref: '#/components/schemas/ProjectDetail'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1483,7 +1428,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ProjectsUpdateInput'
+              $ref: '#/components/schemas/UpdateProjectInput'
 
       responses:
         '200':
@@ -1501,7 +1446,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/ProjectDetails'
+                    $ref: '#/components/schemas/ProjectDetail'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1546,9 +1491,8 @@ paths:
                     example: null
                   data:
                     type: object
-                    properties:
-                      id:
-                        type: string
+                    nullable:
+                    example: null
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -1619,15 +1563,9 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                altText:
-                  type: string
+              $ref: '#/components/schemas/CreateProjectImageInput'
       responses:
-        '200':
+        '201':
           description: Picture added successfully
           content:
             application/json:
@@ -1636,27 +1574,14 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
                     type: object
-                    properties:
-                      imageId:
-                        type: integer
-                        example: 12
-                      projectId:
-                        type: integer
-                        example: 1
-                      image:
-                        type: string
-                        format: uri
-                        example: https://example.com/image.jpg
-                      altText:
-                        type: string
-                        example: Screenshot of the project UI
+                    $ref: '#/components/schemas/ProjectImage'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1694,17 +1619,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                altText:
-                  type: string
-                isThumbnail:
-                  type: boolean
-                  description: Whether this image should be set as the project thumbnail
-                  example: false
+              $ref: '#/components/schemas/UpdateProjectImageInput'
       responses:
         '200':
           description: Image updated successfully
@@ -1713,9 +1628,16 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectImage'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1759,28 +1681,16 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
+                    nullable: true
                     example: null
                   data:
                     type: object
-                    properties:
-                      imageId:
-                        type: integer
-                        example: 1
-                      image:
-                        type: string
-                        example: string
-                      altText:
-                        type: string
-                        example: string
-                      position:
-                        type: integer
-                        position: integer
-                      projectId:
-                        type: integer
-                        position: integer
+                    nullable: true
+                    example: null
+
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1814,21 +1724,9 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - userId
-                - roleId
-              properties:
-                userId:
-                  type: integer
-                  description: The ID of the user to add
-                  example: 1
-                roleId:
-                  type: integer
-                  description: The ID of the role of the user in the project
-                  example: 3
+              $ref: '#/components/schemas/CreateProjectMemberInput'
       responses:
-        '200':
+        '201':
           description: Member added successfully
           content:
             application/json:
@@ -1837,26 +1735,14 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
                     type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 5
-                      userId:
-                        type: integer
-                        example: 1
-                      projectId:
-                        type: integer
-                        example: 1
-                      roleId:
-                        type: integer
-                        example: 76
+                    $ref: '#/components/schemas/ProjectMember'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1892,19 +1778,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - roleId
-                - profileVisibility
-              properties:
-                roleId:
-                  type: integer
-                  description: Updated ID of the role for the user
-                  example: 9
-                profileVisibility:
-                  type: string
-                  description: Visibility of the member (public or private)
-                  example: public
+              $ref: '#/components/schemas/UpdateProjectMemberInput'
       responses:
         '200':
           description: Member updated successfully
@@ -1922,13 +1796,7 @@ paths:
                     example: null
                   data:
                     type: object
-                    properties:
-                      userId:
-                        type: integer
-                        example: 1
-                      roleId:
-                        type: integer
-                        example: 76
+                    $ref: '#/components/schemas/ProjectMember'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -1976,8 +1844,9 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: string
-                    example: Member removed
+                    type: object
+                    nullable: null
+                    example: null
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2052,9 +1921,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/AddProjectSocialInput'
       responses:
-        '200':
+        '201':
           description: Social created successfully
           content:
             application/json:
@@ -2063,7 +1932,7 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
@@ -2109,22 +1978,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/UpdateProjectSocialInput'
       responses:
         '200':
           description: Social created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectSocial'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  projectId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
-
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectSocial'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2206,7 +2078,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Tag'
+                      $ref: '#/components/schemas/ProjectTag'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2240,14 +2112,9 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                tagIds:
-                  type: array
-                  items:
-                    type: integer
+              $ref: '#/components/schemas/AddProjectTagsInput'
       responses:
-        '200':
+        '201':
           description: Tags created successfully
           content:
             application/json:
@@ -2256,14 +2123,14 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
                     type: object
-                    $ref: '#/components/schemas/Tag'
+                    $ref: '#/components/schemas/ProjectTag'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -2355,7 +2222,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Medium'
+                      $ref: '#/components/schemas/ProjectMedium'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2389,12 +2256,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                mediumIds:
-                  type: array
-                  items:
-                    type: integer
+              $ref: '#/components/schemas/AddProjectMediumsInput'
 
       responses:
         '200':
@@ -2413,7 +2275,7 @@ paths:
                     example: null
                   data:
                     type: object
-                    $ref: '#/components/schemas/Tag'
+                    $ref: '#/components/schemas/ProjectMedium'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -2457,7 +2319,7 @@ paths:
                     type: integer
       responses:
         '200':
-          description: Tags deleted successfully
+          description: Mediums deleted successfully
           content:
             application/json:
               example:
@@ -2498,12 +2360,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                imageOrder:
-                  type: array
-                  items:
-                    type: integer
+              $ref: '#/components/schemas/ReorderProjectImagesInput'
       responses:
         '200':
           description: Images reordered successfully
@@ -2572,45 +2429,107 @@ components:
       bearerFormat: JWT
   schemas:
     Role:
-      type: object
-      properties:
-        roleId:
-          type: integer
-        label:
-          type: string
-      example:
-        roleId: 1
-        label: Full-Stack Developer
-
+      $ref: 'schemas/datasets.yaml#/components/schemas/Role'
+    Major:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Major'
+    Tag:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Tag'
     Social:
-      type: object
-      properties:
-        websiteId:
-          type: integer
-        label:
-          type: string
+      $ref: 'schemas/datasets.yaml#/components/schemas/Social'
+    Skill:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Skill'
+    Medium:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Medium'
 
+    UserMember:
+      $ref: 'schemas/users.yaml#/components/schemas/UserMember'
+    UserSkill:
+      $ref: 'schemas/users.yaml#/components/schemas/UserSkill'
     UserSocial:
-      type: object
-      properties:
-        apiUrl:
-          type: string
-        url:
-          type: string
-        label:
-          type: string
-        websiteId:
-          type: integer
+      $ref: 'schemas/users.yaml#/components/schemas/UserSocial'
+    ProjectFollowsList:
+      $ref: 'schemas/users.yaml#/components/schemas/ProjectFollowsList'
+    UserFollowsList:
+      $ref: 'schemas/users.yaml#/components/schemas/UserFollowsList'
+    UserFollowings:
+      $ref: 'schemas/users.yaml#/components/schemas/UserFollowings'
+    UserPreview:
+      $ref: 'schemas/users.yaml#/components/schemas/UserPreview'
+    UserDetail:
+      $ref: 'schemas/users.yaml#/components/schemas/UserDetail'
 
+    MySkill:
+      $ref: 'schemas/me.yaml#/components/schemas/MySkill'
+    MySocial:
+      $ref: 'schemas/me.yaml#/components/schemas/MySocial'
+    MyMajor:
+      $ref: 'schemas/me.yaml#/components/schemas/MyMajor'
+    MyFollowsList:
+      $ref: 'schemas/me.yaml#/components/schemas/MyFollowsList'
+    MePreview:
+      $ref: 'schemas/me.yaml#/components/schemas/MePreview'
+    MeDetail:
+      $ref: 'schemas/me.yaml#/components/schemas/MeDetail'
+    MePrivate:
+      $ref: 'schemas/me.yaml#/components/schemas/MePrivate'
+    MyMember:
+      $ref: 'schemas/me.yaml#/components/schemas/MyMember'
+
+    ProjectImage:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectImage'
+    ProjectMedium:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectMedium'
+    ProjectFollowers:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollowers'
+    ProjectFollowings:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollowings'
+    ProjectMember:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectMember'
     ProjectSocial:
-      type: object
-      properties:
-        websiteId:
-          type: integer
-        projectId:
-          type: integer
-        url:
-          type: string
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectSocial'
+    ProjectTag:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectTag'
+    ProjectJob:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectJob'
+    ProjectPreview:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectPreview'
+    ProjectDetail:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectDetail'
+    ProjectWithFollowers:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectWithFollowers'
+
+    UpdateUserInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserInput'
+    AddUserSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddUserSocialInput'
+    UpdateUserSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserSocialInput'
+    AddUserSkillsInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddUserSkillsInput'
+    UpdateUserSkillInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserSkillInput'
+    CreateProjectInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectInput'
+    UpdateProjectInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectInput'
+    CreateProjectImageInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectImageInput'
+    UpdateProjectImageInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectImageInput'
+    ReorderProjectImagesInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/ReorderProjectImagesInput'
+    CreateProjectMemberInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectMemberInput'
+    UpdateProjectMemberInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectMemberInput'
+    AddProjectSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectSocialInput'
+    UpdateProjectSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectSocialInput'
+    AddProjectTagsInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectTagsInput'
+    AddProjectMediumsInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectMediumsInput'
 
     SocialCreateInput:
       type: object
@@ -2618,32 +2537,6 @@ components:
         websiteId:
           type: integer
         url:
-          type: string
-
-    Skill:
-      type: object
-      properties:
-        skillId:
-          type: integer
-        label:
-          type: string
-        type:
-          type: string
-
-    UserSkill:
-      type: object
-      properties:
-        apiUrl:
-          type: string
-        proficiency:
-          type: string
-        position:
-          type: integer
-        skillId:
-          type: integer
-        label:
-          type: string
-        type:
           type: string
 
     SkillCreateInput:
@@ -2654,35 +2547,6 @@ components:
         position:
           type: integer
         proficiency:
-          type: string
-
-    ProjectDetails:
-      type: string
-
-    Medium:
-      type: object
-      properties:
-        typeId:
-          type: integer
-        label:
-          type: string
-
-    Major:
-      type: object
-      properties:
-        majorId:
-          type: integer
-        label:
-          type: string
-
-    Tag:
-      type: object
-      properties:
-        tagId:
-          type: integer
-        label:
-          type: string
-        type:
           type: string
 
     User:
@@ -2764,84 +2628,6 @@ components:
           type: string
           nullable: true
 
-    UserDetails:
-      type: object
-      properties:
-        userId:
-          type: integer
-        firstName:
-          type: string
-        lastName:
-          type: string
-        username:
-          type: string
-        profileImage:
-          type: string
-          nullable: true
-        headline:
-          type: string
-          nullable: true
-        pronouns:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        major:
-          type: string
-          nullable: true
-        academicYear:
-          type: string
-          nullable: true
-        location:
-          type: string
-          nullable: true
-        funFact:
-          type: string
-          nullable: true
-        bio:
-          type: string
-          nullable: true
-        skills:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              skill:
-                type: string
-              type:
-                type: string
-              position:
-                type: integer
-        socials:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              websiteId:
-                type: integer
-              label:
-                type: string
-
-    UserPreview:
-      type: object
-      properties:
-        userId:
-          type: integer
-        firstName:
-          type: string
-        lastName:
-          type: string
-        username:
-          type: string
-        profileImage:
-          type: string
-          nullable: true
-
     UserCreateInput:
       type: object
       properties:
@@ -2860,7 +2646,7 @@ components:
           type: string
         academicYear:
           type: string
-          enum: [Freshman, Sophmore, Junior, Senior, Grad1, Grad2]
+          enum: [Freshman, Sophomore, Junior, Senior, Grad1, Grad2]
         location:
           type: string
         funFact:
@@ -2871,188 +2657,6 @@ components:
           type: integer
           minimum: 0
           maximium: 1
-
-    ProjectWithFollowers:
-      type: object
-      properties:
-        projectId:
-          type: integer
-        title:
-          type: string
-        hook:
-          type: string
-        description:
-          type: string
-        thumbnail:
-          type: string
-          nullable: true
-        purpose:
-          type: string
-          nullable: true
-        status:
-          type: string
-        audience:
-          type: string
-          nullable: true
-        userId:
-          type: integer
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        _count:
-          type: object
-          properties:
-            projectFollowings:
-              type: integer
-        mediums:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              typeId:
-                type: integer
-              genres:
-                type: object
-                properties:
-                  typeId:
-                    type: integer
-                  label:
-                    type: string
-        projectTags:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              tagId:
-                type: integer
-              position:
-                type: integer
-              type:
-                type: string
-              label:
-                type: string
-        projectImages:
-          type: array
-          items:
-            type: object
-            properties:
-              imageId:
-                type: integer
-              image:
-                type: string
-              altText:
-                type: string
-        projectSocials:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        jobs:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              titleId:
-                type: integer
-              availability:
-                type: string
-              duration:
-                type: string
-              location:
-                type: string
-              compensation:
-                type: string
-              description:
-                type: string
-              createdAt:
-                type: string
-                format: date-time
-              updatedAt:
-                type: string
-                format: date-time
-        members:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              userId:
-                type: integer
-              titleId:
-                type: integer
-              permission:
-                type: integer
-        users:
-          type: object
-          nullable: true
-          properties:
-            userId:
-              type: integer
-            username:
-              type: string
-            ritEmail:
-              type: string
-            firstName:
-              type: string
-            lastName:
-              type: string
-            profileImage:
-              type: string
-            headline:
-              type: string
-            pronouns:
-              type: string
-            title:
-              type: string
-            majorId:
-              type: integer
-            academicYear:
-              type: string
-            location:
-              type: string
-            funFact:
-              type: string
-              nullable: true
-            bio:
-              type: string
-            visibility:
-              type: integer
-            createdAt:
-              type: string
-              format: date-time
-            updatedAt:
-              type: string
-              format: date-time
-            phoneNumber:
-              type: string
-              nullable: true
-            universityId:
-              type: integer
-              nullable: true
-        Medium:
-          type: array
-          items:
-            type: object
-            properties:
-              typeId:
-                type: integer
-              label:
-                type: string
-        followers:
-          type: object
-          properties:
-            count:
-              type: integer
 
     ProjectsCreateInput:
       type: object
@@ -3112,20 +2716,6 @@ components:
           type: string
           maxLength: 300
           nullable: true
-
-    ProjectImage:
-      type: object
-      properties:
-        imageId:
-          type: integer
-        url:
-          type: string
-        altText:
-          type: string
-      example:
-        imageId: 2
-        url: http://LGF.com/images/project-101.png
-        altText: Picture
 
     ProjectFollowingsResponse:
       type: object
