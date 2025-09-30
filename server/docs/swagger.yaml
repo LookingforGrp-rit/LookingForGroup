@@ -226,6 +226,17 @@ paths:
           schema:
             type: string
           description: The UID to be used as the current UID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - username
       security:
         shibbolethAuth: []
       responses:
@@ -554,7 +565,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UserCreateInput'
+              $ref: '#/components/schemas/UpdateUserInput'
 
       responses:
         '200':
@@ -788,7 +799,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/AddUserSocialInput'
       responses:
         '201':
           description: Social created successfully
@@ -835,7 +846,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/UpdateUserSocialInput'
       responses:
         '200':
           description: Social created successfully
@@ -959,9 +970,7 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/SkillCreateInput'
+              $ref: '#/components/schemas/AddUserSkillsInput'
       responses:
         '201':
           description: Skill created successfully
@@ -1009,7 +1018,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SkillCreateInput'
+              $ref: '#/components/schemas/UpdateUserSkillInput'
       responses:
         '200':
           description: Skill updated successfully
@@ -1305,7 +1314,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ProjectsCreateInput'
+              $ref: '#/components/schemas/CreateProjectInput'
       responses:
         '201':
           description: Project created successfully
@@ -1389,7 +1398,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ProjectsUpdateInput'
+              $ref: '#/components/schemas/UpdateProjectInput'
 
       responses:
         '200':
@@ -1524,13 +1533,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                altText:
-                  type: string
+              $ref: '#/components/schemas/CreateProjectImageInput'
       responses:
         '201':
           description: Picture added successfully
@@ -1586,17 +1589,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                altText:
-                  type: string
-                isThumbnail:
-                  type: boolean
-                  description: Whether this image should be set as the project thumbnail
-                  example: false
+              $ref: '#/components/schemas/UpdateProjectImageInput'
       responses:
         '200':
           description: Image updated successfully
@@ -1701,19 +1694,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - userId
-                - roleId
-              properties:
-                userId:
-                  type: integer
-                  description: The ID of the user to add
-                  example: 1
-                roleId:
-                  type: integer
-                  description: The ID of the role of the user in the project
-                  example: 3
+              $ref: '#/components/schemas/CreateProjectMemberInput'
       responses:
         '201':
           description: Member added successfully
@@ -1767,19 +1748,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - roleId
-                - profileVisibility
-              properties:
-                roleId:
-                  type: integer
-                  description: Updated ID of the role for the user
-                  example: 9
-                profileVisibility:
-                  type: string
-                  description: Visibility of the member (public or private)
-                  example: public
+              $ref: '#/components/schemas/UpdateProjectMemberInput'
       responses:
         '200':
           description: Member updated successfully
@@ -1922,7 +1891,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/AddProjectSocialInput'
       responses:
         '201':
           description: Social created successfully
@@ -1979,7 +1948,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/UpdateProjectSocialInput'
       responses:
         '200':
           description: Social created successfully
@@ -2113,12 +2082,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                tagIds:
-                  type: array
-                  items:
-                    type: integer
+              $ref: '#/components/schemas/AddProjectTagsInput'
       responses:
         '201':
           description: Tags created successfully
@@ -2262,12 +2226,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                mediumIds:
-                  type: array
-                  items:
-                    type: integer
+              $ref: '#/components/schemas/AddProjectMediumsInput'
 
       responses:
         '200':
@@ -2371,12 +2330,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                imageOrder:
-                  type: array
-                  items:
-                    type: integer
+              $ref: '#/components/schemas/ReorderProjectImagesInput'
       responses:
         '200':
           description: Images reordered successfully
@@ -2514,6 +2468,39 @@ components:
     ProjectWithFollowers:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectWithFollowers'
 
+    UpdateUserInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserInput'
+    AddUserSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddUserSocialInput'
+    UpdateUserSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserSocialInput'
+    AddUserSkillsInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddUserSkillsInput'
+    UpdateUserSkillInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserSkillInput'
+    CreateProjectInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectInput'
+    UpdateProjectInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectInput'
+    CreateProjectImageInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectImageInput'
+    UpdateProjectImageInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectImageInput'
+    ReorderProjectImagesInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/ReorderProjectImagesInput'
+    CreateProjectMemberInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectMemberInput'
+    UpdateProjectMemberInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectMemberInput'
+    AddProjectSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectSocialInput'
+    UpdateProjectSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectSocialInput'
+    AddProjectTagsInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectTagsInput'
+    AddProjectMediumsInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectMediumsInput'
+
     SocialCreateInput:
       type: object
       properties:
@@ -2629,7 +2616,7 @@ components:
           type: string
         academicYear:
           type: string
-          enum: [Freshman, Sophmore, Junior, Senior, Grad1, Grad2]
+          enum: [Freshman, Sophomore, Junior, Senior, Grad1, Grad2]
         location:
           type: string
         funFact:
