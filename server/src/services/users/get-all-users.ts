@@ -16,9 +16,34 @@ export const getAllUsersService = async (
 
       Object.entries(filters).forEach((pair) => {
         let objectPair = {};
-        if (pair[0] === 'mentor' || pair[0] === 'designer' || pair[0] === 'developer') {
+        if (pair[0] === 'mentor') {
           pair[1] = parseInt(pair[1] as string);
           objectPair = Object.fromEntries([pair]);
+        }
+        if (pair[0] === 'designer' || pair[0] === 'developer') {
+          pair[1] = parseInt(pair[1] as string);
+          pair[0] = pair[0][0].toUpperCase() + pair[0].substring(1); //uppercasing for labels
+          if (pair[1] === 0) {
+            objectPair = {
+              userSkills: {
+                every: {
+                  skills: {
+                    label: pair[0],
+                  },
+                },
+              },
+            };
+          } else if (pair[1] === 1) {
+            objectPair = {
+              userSkills: {
+                none: {
+                  skills: {
+                    label: pair[0],
+                  },
+                },
+              },
+            };
+          }
         }
         if (pair[0] === 'userSkills') {
           const skills = filters.skills?.split(',').map((skill) => parseInt(skill));
@@ -62,7 +87,7 @@ export const getAllUsersService = async (
           const socials = filters.socials?.split(',').map((social) => parseInt(social));
           if (socials?.includes(NaN)) return 'BAD_REQUEST'; //if it failed to parse because you didn't give me a number
           objectPair = {
-            socials: {
+            userSocials: {
               every: {
                 websiteId: {
                   in: socials,

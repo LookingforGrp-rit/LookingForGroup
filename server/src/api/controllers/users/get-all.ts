@@ -17,6 +17,15 @@ export const getAllUsers = async (req: FilterRequest, res: Response): Promise<vo
     res.status(500).json(resBody);
     return;
   }
+  if (result === 'BAD_REQUEST') {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid filters',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
 
   const resBody: ApiResponse<typeof result> = {
     status: 200,

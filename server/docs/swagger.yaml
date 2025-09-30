@@ -193,16 +193,16 @@ paths:
                 type: integer
                 example: 0
               skills:
-                type: integer
+                type: string
                 example: 1
               majors:
-                type: integer
+                type: string
                 example: 1
               academicYear:
                 type: string
                 example: Freshman
               socials:
-                type: integer
+                type: string
                 example: 1
 
           description: The filters to apply on users that you wish to get
