@@ -1,0 +1,259 @@
+components:
+  schemas:
+    MySkill:
+      allOf:
+        - $ref: 'users.yaml#/components/schemas/UserSkill'
+        - type: object
+          properties:
+            apiUrl:
+              type: string
+      example:
+        skillId: 1
+        label: C++
+        type: Developer
+        apiUrl: /api/me/skills/1
+
+    MySocial:
+      allOf:
+        - $ref: 'users.yaml#/components/schemas/UserSocial'
+        - type: object
+          properties:
+            apiUrl:
+              type: string
+      example:
+        websiteId: 1
+        label: Instagram
+        apiUrl: /api/me/socials/1
+
+    MyMajor:
+      allOf:
+        - $ref: 'datasets.yaml#/components/schemas/Major'
+        - type: object
+          properties:
+            apiUrl:
+              type: string
+      example:
+        majorId: 1
+        label: Animation
+        apiUrl: /api/me/majors/1
+
+    MyFollowsList:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: 'users.yaml#/components/schemas/UserPreview'
+        count:
+          type: integer
+        apiUrl:
+          type: string
+      example:
+        count: 1
+        users: []
+        apiUrl: string
+
+    MePreview:
+      type: object
+      properties:
+        userId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        profileImage:
+          type: string
+          nullable: true
+        mentor:
+          type: boolean
+        designer:
+          type: boolean
+        developer:
+          type: boolean
+        apiUrl:
+          type: string
+      example:
+        userId: 1
+        firstName: Michael
+        lastName: Robinson
+        username: mhr2964
+        profileImage: null
+        mentor: false
+        designer: false
+        developer: false
+        apiUrl: /api/me
+
+    MeDetail:
+      allOf:
+        - $ref: '#/components/schemas/MePreview'
+        - type: object
+          properties:
+            headline:
+              type: string
+            pronouns:
+              type: string
+            title:
+              type: string
+            majors:
+              type: array
+              items:
+                $ref: '#/components/schemas/MyMajor'
+            academicYear:
+              $ref: 'enums.yaml#/components/schemas/AcademicYear'
+            location:
+              type: string
+            funFact:
+              type: string
+            bio:
+              type: string
+            mentor:
+              type: boolean
+            projects:
+              type: array
+              items:
+                $ref: 'projects.yaml#/components/schemas/ProjectPreview'
+            skills:
+              type: array
+              items:
+                $ref: '#/components/schemas/MySkill'
+              nullable: true
+            socials:
+              type: array
+              items:
+                $ref: '#/components/schemas/MySocial'
+              nullable: true
+            following:
+              type: object
+              properties:
+                usersFollowing:
+                  $ref: 'users.yaml#/components/schemas/UserFollowsList'
+                projectsFollowing:
+                  $ref: 'users.yaml#/components/schemas/ProjectFollowsList'
+            followers:
+              $ref: 'users.yaml#/components/schemas/UserFollowsList'
+      example:
+        userId: 1
+        firstName: Michael
+        lastName: Robinson
+        username: mhr2964
+        profileImage: null
+        mentor: false
+        designer: false
+        developer: true
+        headline: Hello world
+        pronouns: they/them
+        title: Student
+        academicYear:
+        location: Rochester, NY
+        funFact: Loves Prisma
+        bio: This is an example user.
+        projects: []
+        skills: []
+        socials: []
+        following:
+          usersFollowing:
+            users: []
+            count: 0
+            apiUrl: /api/users/1/followings/people
+          ProjectFollowing:
+            projects: []
+            count: 0
+            apiUrl: /api/users/1/followings/projects
+        followers:
+          users: []
+          count: 0
+          apiUrl: /api/users/1/followers
+        apiUrl: /api/users/1
+
+    MePrivate:
+      allOf:
+        - $ref: '#/components/schemas/MeDetail'
+        - type: object
+          properties:
+            ritEmail:
+              type: string
+            visibility:
+              $ref: 'enums.yaml#/components/schemas/Visibility'
+            phoneNumber:
+              type: string
+              nullable: true
+            universityId:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+      example:
+        userId: 1
+        firstName: Michael
+        lastName: Robinson
+        username: mhr2964
+        profileImage: null
+        mentor: false
+        designer: false
+        developer: true
+        headline: Hello world
+        pronouns: they/them
+        title: Student
+        academicYear:
+        location: Rochester, NY
+        funFact: Loves Prisma
+        bio: This is an example user.
+        projects: []
+        skills: []
+        socials: []
+        following:
+          usersFollowing:
+            users: []
+            count: 0
+            apiUrl: /api/users/1/followings/people
+          ProjectFollowing:
+            projects: []
+            count: 0
+            apiUrl: /api/users/1/followings/projects
+        followers:
+          users: []
+          count: 0
+          apiUrl: /api/users/1/followers
+        apiUrl: /api/users/1
+        ritEmail: mhr2964@rit.edu
+        visibility: 1
+        phoneNumber: null
+        universityId: 11111111
+        createdAt: 2038-01-19 03:14:07
+        updatedAt: 2038-01-19 03:14:07
+
+    MyMember:
+      type: object
+      properties:
+        project:
+          $ref: 'projects.yaml#/components/schemas/ProjectPreview'
+        role:
+          $ref: 'datasets.yaml#/components/schemas/Role'
+        visibility:
+          type: string
+          enum: [Public, Private]
+        memberSince:
+          type: string
+          format: date-time
+        apiUrl:
+          type: string
+      example:
+        project:
+          projectId: 1
+          title: Looking For Group
+          hook: You can LOOK for a GROUP
+          mediums: []
+          thumbnail: null
+          apiUrl: /api/projects/1
+        role:
+          roleId: 1
+          label: Full-Stack Developer
+        visibility: Private
+        memberSince: 2038-01-19 03:14:07
+        apiUrl: /api/me/projects/1
