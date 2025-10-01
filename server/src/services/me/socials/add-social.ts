@@ -1,18 +1,13 @@
-import type { MySocial } from '@looking-for-group/shared';
+import type { MySocial, AddUserSocialInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MySocialSelector } from '#services/selectors/me/parts/my-social.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMySocial } from '#services/transformers/me/parts/my-social.ts';
 
-type SocialCreateInput = {
-  websiteId: number;
-  url: string;
-};
-
 type AddSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 export const addSocialService = async (
-  data: SocialCreateInput,
+  data: AddUserSocialInput,
   userId: number,
 ): Promise<MySocial | AddSocialServiceError> => {
   try {

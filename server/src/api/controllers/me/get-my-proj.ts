@@ -1,13 +1,13 @@
-import type { ApiResponse, GetProjectsRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { getMyProjectsService } from '#services/me/get-my-proj.ts';
 
 //get projects user owns/is a member of
-export const getMyProjects = async (req: GetProjectsRequest, res: Response): Promise<void> => {
+export const getMyProjects = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //current user ID
   const UserId = parseInt(req.currentUser);
-  const visibility = req.visibiility;
-  const owner = req.owner;
+  const visibility = req.query.visibility as 'all' | 'public' | 'private' | undefined;
+  const owner = req.query.owner as 'all' | 'me' | undefined;
 
   //check if ID is number
   if (isNaN(UserId)) {

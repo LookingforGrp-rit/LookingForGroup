@@ -1,27 +1,21 @@
-import type { MySkill } from '@looking-for-group/shared';
+import type { MySkill, UpdateUserSkillInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { SkillProficiency } from '#prisma-models/index.js';
 import { MySkillSelector } from '#services/selectors/me/parts/my-skill.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
 type UpdateSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
-type Skill = {
-  skillId: number;
-  position?: number;
-  proficiency: SkillProficiency;
-};
-
 const updateSkillsService = async (
   userId: number,
-  data: Skill,
+  skillId: number,
+  data: UpdateUserSkillInput,
 ): Promise<MySkill[] | UpdateSkillsServiceError> => {
   try {
     //skill validation (do you have these skills)
     const skillExists = await prisma.userSkills.findMany({
       where: {
-        skillId: data.skillId,
+        skillId: skillId,
         userId: userId,
       },
     });
@@ -33,10 +27,13 @@ const updateSkillsService = async (
       where: {
         userId_skillId: {
           userId,
-          skillId: data.skillId,
+          skillId: skillId,
         },
       },
-      data: { proficiency: data.proficiency, position: data.position },
+      data: {
+        ...(data.proficiency !== undefined && { proficiency: data.proficiency }),
+        ...(data.position !== undefined && { position: data.position }),
+      },
     });
 
     const result = await prisma.userSkills.findMany({

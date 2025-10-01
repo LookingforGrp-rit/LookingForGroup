@@ -1,18 +1,13 @@
-import type { MySocial } from '@looking-for-group/shared';
+import type { MySocial, UpdateUserSocialInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MySocialSelector } from '#services/selectors/me/parts/my-social.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMySocial } from '#services/transformers/me/parts/my-social.ts';
 
-type SocialUpdateInput = {
-  websiteId: number;
-  url: string;
-};
-
 type UpdateSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 export const updateSocialService = async (
-  data: SocialUpdateInput,
+  data: UpdateUserSocialInput & { websiteId: number },
   userId: number,
 ): Promise<MySocial | UpdateSocialServiceError> => {
   try {
@@ -32,9 +27,7 @@ export const updateSocialService = async (
           websiteId: data.websiteId,
         },
       },
-      data: {
-        url: data.url,
-      },
+      data: data.url ? { url: data.url } : {},
       select: MySocialSelector,
     });
 

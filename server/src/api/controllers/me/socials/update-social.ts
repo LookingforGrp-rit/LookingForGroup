@@ -1,11 +1,10 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  UpdateUserSocialInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { updateSocialService } from '#services/me/socials/update-social.ts';
-
-type Social = {
-  websiteId: number;
-  url: string;
-};
 
 //update one of current user's social
 export const updateSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -23,9 +22,21 @@ export const updateSocial = async (req: AuthenticatedRequest, res: Response): Pr
     return;
   }
 
-  const social: Social = req.body as Social;
+  const social: UpdateUserSocialInput = req.body as UpdateUserSocialInput;
+  const websiteId = parseInt(req.params.websiteId);
 
-  const result = await updateSocialService(social, UserId);
+  //check if websiteId is number
+  if (isNaN(websiteId)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid website ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  const result = await updateSocialService({ ...social, websiteId }, UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

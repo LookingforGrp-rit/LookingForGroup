@@ -1,6 +1,5 @@
-import type { ProjectMember } from '@looking-for-group/shared';
+import type { ProjectMember, CreateProjectMemberInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { Prisma } from '#prisma-models/index.js';
 import { ProjectMemberSelector } from '#services/selectors/projects/parts/project-member.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectMember } from '#services/transformers/projects/parts/project-member.ts';
@@ -8,11 +7,16 @@ import { transformProjectMember } from '#services/transformers/projects/parts/pr
 type AddMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
 const addMemberService = async (
-  data: Prisma.MembersCreateInput,
+  projectId: number,
+  data: CreateProjectMemberInput,
 ): Promise<ProjectMember | AddMemberServiceError> => {
   try {
     const newMember = await prisma.members.create({
-      data,
+      data: {
+        projects: { connect: { projectId } },
+        users: { connect: { userId: data.userId } },
+        roles: { connect: data.roleId ? { roleId: data.roleId } : { label: 'Member' } },
+      },
       select: {
         ...ProjectMemberSelector,
         projectId: true,
