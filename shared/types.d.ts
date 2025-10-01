@@ -47,13 +47,13 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export interface UserFilters {
-  mentor?: 0 | 1;
-  designer?: 0 | 1;
-  developer?: 0 | 1;
-  skills?: string;
-  majors?: string;
-  academicYear?: string;
-  socials?: string;
+  mentor?: boolean;
+  designer?: boolean;
+  developer?: boolean;
+  skills?: number[];
+  majors?: number[];
+  academicYear?: string[];
+  socials?: number[]
 }
 
 export interface FilterRequest extends Request {

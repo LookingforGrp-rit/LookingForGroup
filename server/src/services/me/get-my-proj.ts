@@ -23,7 +23,7 @@ export const getMyProjectsService = async (
     const allMemberProjects = await prisma.projects.findMany({
       where: {
         members: {
-          every: {
+          some: {
             userId: userId,
           },
         },
@@ -43,7 +43,7 @@ export const getMyProjectsService = async (
       const visibilityMemberProjects = await prisma.projects.findMany({
         where: {
           members: {
-            every: {
+            some: {
               userId,
               profileVisibility: visibility,
             },
@@ -56,7 +56,7 @@ export const getMyProjectsService = async (
         where: {
           userId: userId,
           members: {
-            every: {
+            some: {
               userId,
               profileVisibility: visibility,
             },

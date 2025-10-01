@@ -190,14 +190,14 @@ paths:
             type: object
             properties:
               mentor:
-                type: integer
-                example: 0
+                type: boolean
+                example: false
               designer:
-                type: integer
-                example: 0
+                type: boolean
+                example: false
               developer:
-                type: integer
-                example: 0
+                type: boolean
+                example: false
               skills:
                 type: string
                 example: 1
