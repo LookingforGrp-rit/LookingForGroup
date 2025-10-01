@@ -178,6 +178,12 @@ paths:
         - Users
       parameters:
         - in: query
+          name: strictness
+          required: true
+          schema:
+            type: string
+          description: The strictness with which to apply the filters (return if they match either any of the filters or all of them)
+        - in: query
           name: filters
           required: false
           schema:

@@ -9,8 +9,10 @@ type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'BAD_REQUEST'>;
 
 export const getAllUsersService = async (
   filters: UserFilters,
+  restriction: 'any' | 'all',
 ): Promise<UserDetail[] | GetUserServiceError> => {
   try {
+    console.log(restriction);
     if (Object.keys(filters).length !== 0) {
       const parsedFilters = [] as object[];
 
@@ -99,8 +101,17 @@ export const getAllUsersService = async (
         parsedFilters.push(objectPair);
       });
 
+      //any/all toggle, param given as query
+      let restrictionObject = {};
+      if (restriction === 'any') {
+        restrictionObject = { OR: parsedFilters };
+      }
+      if (restriction === 'all') {
+        restrictionObject = { AND: parsedFilters };
+      }
+
       const filteredUsers = await prisma.users.findMany({
-        where: { OR: parsedFilters },
+        where: restrictionObject,
         orderBy: { createdAt: 'desc' },
         select: UserDetailSelector,
       });

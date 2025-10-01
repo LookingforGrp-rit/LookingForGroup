@@ -57,6 +57,7 @@ export interface UserFilters {
 }
 
 export interface FilterRequest extends Request {
+  strictness: "any" | "all",
   filters: UserFilters
 }
 

@@ -5,8 +5,9 @@ import { getAllUsersService } from '#services/users/get-all-users.ts';
 //get all users
 export const getAllUsers = async (req: FilterRequest, res: Response): Promise<void> => {
   const filters = req.query as UserFilters;
+  const restriction = req.query.strictness as 'any' | 'all';
 
-  const result = await getAllUsersService(filters);
+  const result = await getAllUsersService(filters, restriction);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
