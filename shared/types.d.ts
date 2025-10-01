@@ -47,18 +47,18 @@ export interface AuthenticatedRequest extends Request {
 }
 
 export interface UserFilters {
-  mentor?: 0 | 1,
-  designer?: 0 | 1,
-  developer?: 0 | 1,
-  skills?: string,
-  majors?: string,
-  academicYear?: string,
-  socials?: string
+  mentor?: 0 | 1;
+  designer?: 0 | 1;
+  developer?: 0 | 1;
+  skills?: string;
+  majors?: string;
+  academicYear?: string;
+  socials?: string;
 }
 
 export interface FilterRequest extends Request {
-  strictness: "any" | "all",
-  filters: UserFilters
+  strictness: "any" | "all";
+  filters: UserFilters;
 }
 
 export interface GetProjectsRequest extends AuthenticatedRequest {
@@ -140,11 +140,11 @@ export type UserFollowings = {
 
 // Represents the member info for a project
 export interface MyMember {
-    project: ProjectPreview;
-    role: Role;
-    visibility: "Public" | "Private";
-    memberSince: Date;
-    apiUrl: string;
+  project: ProjectPreview;
+  role: Role;
+  visibility: "Public" | "Private";
+  memberSince: Date;
+  apiUrl: string;
 }
 
 export interface MySkill extends UserSkill {
@@ -213,11 +213,11 @@ export interface User extends UserDetail {
 
 // Represents the member info for a project
 export interface UserMember {
-    project: ProjectPreview;
-    role: Role;
-    visibility: "Public" | "Private";
-    memberSince: Date;
-    apiUrl: string;
+  project: ProjectPreview;
+  role: Role;
+  visibility: "Public" | "Private";
+  memberSince: Date;
+  apiUrl: string;
 }
 
 // ME
@@ -463,3 +463,13 @@ export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url">>;
 export type AddProjectTagsInput = Pick<ProjectTag, "tagId">[];
 
 export type AddProjectMediumsInput = Pick<ProjectMedium, "mediumId">[];
+
+export type CreateProjectJobInput = Required<
+  Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
+> &
+  Partial<Pick<ProjectJob, "description">> & {
+    roleId: number;
+    contactUserId: number;
+  };
+
+export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
