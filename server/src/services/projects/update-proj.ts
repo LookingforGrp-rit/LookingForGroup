@@ -1,6 +1,5 @@
-import type { ProjectDetail } from '@looking-for-group/shared';
+import type { ProjectDetail, UpdateProjectInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { Prisma } from '#prisma-models/index.js';
 import { deleteImageService } from '#services/images/delete-image.ts';
 import { ProjectDetailSelector } from '#services/selectors/projects/project-detail.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -10,7 +9,8 @@ type UpdateProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUN
 
 const updateProjectService = async (
   projectId: number,
-  updates: Prisma.ProjectsUpdateInput,
+  updates: Omit<UpdateProjectInput, 'thumbnail'>,
+  thumbnailUrl?: string,
 ): Promise<ProjectDetail | UpdateProjectServiceError> => {
   try {
     const curProject = await prisma.projects.findFirst({
@@ -19,14 +19,17 @@ const updateProjectService = async (
       },
     });
 
-    if (curProject && curProject.thumbnail !== null) {
+    if (thumbnailUrl && curProject && curProject.thumbnail !== null) {
       const currentThumb = curProject.thumbnail;
       await deleteImageService(currentThumb);
     }
 
     const project = await prisma.projects.update({
       where: { projectId },
-      data: updates,
+      data: {
+        ...updates,
+        ...(thumbnailUrl && { thumbnail: thumbnailUrl }),
+      },
       select: ProjectDetailSelector,
     });
 

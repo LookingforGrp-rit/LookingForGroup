@@ -1,18 +1,13 @@
-import type { ProjectSocial } from '@looking-for-group/shared';
+import type { ProjectSocial, AddProjectSocialInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectSocialSelector } from '#services/selectors/projects/parts/project-social.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectSocial } from '#services/transformers/projects/parts/project-social.ts';
 
-type SocialInput = {
-  websiteId: number;
-  url: string;
-};
-
 type AddProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
 export const addProjectSocialService = async (
-  data: SocialInput,
+  data: AddProjectSocialInput,
   projectId: number,
 ): Promise<ProjectSocial | AddProjectSocialServiceError> => {
   try {

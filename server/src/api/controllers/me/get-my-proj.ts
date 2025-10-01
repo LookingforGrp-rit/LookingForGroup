@@ -6,6 +6,8 @@ import { getMyProjectsService } from '#services/me/get-my-proj.ts';
 export const getMyProjects = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //current user ID
   const UserId = parseInt(req.currentUser);
+  const visibility = req.query.visibility as 'all' | 'public' | 'private' | undefined;
+  const owner = req.query.owner as 'all' | 'me' | undefined;
 
   //check if ID is number
   if (isNaN(UserId)) {
@@ -18,7 +20,7 @@ export const getMyProjects = async (req: AuthenticatedRequest, res: Response): P
     return;
   }
 
-  const result = await getMyProjectsService(UserId);
+  const result = await getMyProjectsService(UserId, visibility, owner);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -32,19 +32,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Role'
-              examples:
-                default:
-                  summary: Example job titles list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - titleId: 1
-                        label: Full-Stack Developer
-                      - titleId: 2
-                        label: Front-End Developer
-                      - titleId: 3
-                        label: Back-End Developer
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -72,19 +59,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Social'
-              examples:
-                default:
-                  summary: Example socials list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - websiteId: 1
-                        label: Instagram
-                      - websiteId: 2
-                        label: Twitter
-                      - websiteId: 3
-                        label: Facebook
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -112,22 +86,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Skill'
-              examples:
-                default:
-                  summary: Example skill list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - skillId: 1
-                        label: C++
-                        type: Developer
-                      - skillId: 2
-                        label: CSS
-                        type: Developer
-                      - skillId: 3
-                        label: C#
-                        type: Developer
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -155,19 +113,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Medium'
-              examples:
-                default:
-                  summary: Example project types list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - typeId: 1
-                        label: Video Game
-                      - typeId: 2
-                        label: Analog Game
-                      - typeId: 3
-                        label: Mobile Application
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -195,19 +140,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Major'
-              examples:
-                default:
-                  summary: Examples majors list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - majorId: 1
-                        label: Animation
-                      - majorId: 2
-                        label: Computer Engineering
-                      - majorId: 3
-                        label: Computing Engineering Technology
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -235,22 +167,6 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/Tag'
-              examples:
-                default:
-                  summary: Example tags list
-                  value:
-                    status: 200
-                    error: null
-                    data:
-                      - tagId: 1
-                        label: Indie
-                        type: Creative
-                      - tagId: 2
-                        label: Abstract
-                        type: Creative
-                      - tagId: 3
-                        label: Horror
-                        type: Creative
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -260,6 +176,42 @@ paths:
       summary: Get all users
       tags:
         - Users
+      parameters:
+        - in: query
+          name: strictness
+          required: true
+          schema:
+            type: string
+          description: The strictness with which to apply the filters (return if they match either any of the filters or all of them)
+        - in: query
+          name: filters
+          required: false
+          schema:
+            type: object
+            properties:
+              mentor:
+                type: integer
+                example: 0
+              designer:
+                type: integer
+                example: 0
+              developer:
+                type: integer
+                example: 0
+              skills:
+                type: string
+                example: 1
+              majors:
+                type: string
+                example: 1
+              academicYear:
+                type: string
+                example: Freshman
+              socials:
+                type: string
+                example: 1
+
+          description: The filters to apply on users that you wish to get
       responses:
         '200':
           description: A list of users
@@ -278,7 +230,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserDetails'
+                      $ref: '#/components/schemas/UserPreview'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
@@ -310,6 +262,17 @@ paths:
           schema:
             type: string
           description: The UID to be used as the current UID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - username
       security:
         shibbolethAuth: []
       responses:
@@ -328,13 +291,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: array
-                    items:
-                      type: object
-                      properties:
-                        username:
-                          type: string
-                          example: User01
+                    $ref: '#/components/schemas/MePrivate'
         '409':
           $ref: '#/components/responses/Conflict'
         '500':
@@ -368,7 +325,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserPreview'
+                    $ref: '#/components/schemas/UserDetail'
 
   /api/users/search-username/{username}:
     get:
@@ -469,7 +426,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
+                      $ref: '#/components/schemas/ProjectPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -507,7 +464,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
+                      $ref: '#/components/schemas/ProjectPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -545,18 +502,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        userId:
-                          type: integer
-                          example: 1
-                        followingId:
-                          type: integer
-                          example: 2
-                        followedAt:
-                          type: string
-                          format: date-time
-                          example: 2025-05-01T10:00:00Z
+                      $ref: '#/components/schemas/UserPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -594,18 +540,7 @@ paths:
                   data:
                     type: array
                     items:
-                      type: object
-                      properties:
-                        userId:
-                          type: integer
-                          example: 1
-                        followingId:
-                          type: integer
-                          example: 2
-                        followedAt:
-                          type: string
-                          format: date-time
-                          example: 2025-05-01T10:00:00Z
+                      $ref: '#/components/schemas/UserPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -615,7 +550,7 @@ paths:
   # ME
   /api/me:
     get:
-      summary: Gets the current user by ID
+      summary: Gets the current user
       tags:
         - Me
       security:
@@ -643,7 +578,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserDetails'
+                    $ref: '#/components/schemas/MePrivate'
         '500':
           $ref: '#/components/responses/InternalServerError'
     patch:
@@ -666,7 +601,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/UserCreateInput'
+              $ref: '#/components/schemas/UpdateUserInput'
 
       responses:
         '200':
@@ -684,7 +619,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserDetails'
+                    $ref: '#/components/schemas/MePrivate'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -720,8 +655,9 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: string
-                    example: User deleted successfully
+                    type: object
+                    nullable: true
+                    example: null
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -796,6 +732,20 @@ paths:
             type: integer
           required: false
           description: The user ID to be used as the current user
+        - in: query
+          name: visibility
+          schema:
+            type: string
+            enum: [all, public, private]
+          required: false
+          description: Filter for visibility (accepts all, public, or private)
+        - in: query
+          name: owner
+          schema:
+            type: string
+            enum: [all, me]
+          required: false
+          description: Filter for whether or not you are the project owner
       responses:
         '200':
           description: List of projects owned by the user
@@ -814,7 +764,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
+                      $ref: '#/components/schemas/ProjectPreview'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -857,7 +807,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserSocial'
+                      $ref: '#/components/schemas/MySocial'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -885,9 +835,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/AddUserSocialInput'
       responses:
-        '200':
+        '201':
           description: Social created successfully
           content:
             application/json:
@@ -896,14 +846,14 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
                     type: object
-                    $ref: '#/components/schemas/UserSocial'
+                    $ref: '#/components/schemas/MySocial'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -932,21 +882,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/UpdateUserSocialInput'
       responses:
         '200':
           description: Social created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSocial'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  projectId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/MySocial'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -1023,7 +977,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/UserSkill'
+                      $ref: '#/components/schemas/MySkill'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1052,11 +1006,9 @@ paths:
         content:
           application/json:
             schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/SkillCreateInput'
+              $ref: '#/components/schemas/AddUserSkillsInput'
       responses:
-        '200':
+        '201':
           description: Skill created successfully
           content:
             application/json:
@@ -1065,14 +1017,15 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
-                    type: object
-                    $ref: '#/components/schemas/UserSkill'
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/MySkill'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -1101,14 +1054,25 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SkillCreateInput'
+              $ref: '#/components/schemas/UpdateUserSkillInput'
       responses:
         '200':
           description: Skill updated successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserSkill'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/MySkill'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -1182,15 +1146,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectFollowingsResponse'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  projectId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
-
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectFollowings'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1224,7 +1191,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectFollowingsResponse'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1258,14 +1237,18 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFollowingsResponse'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  followingId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/UserFollowings'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1300,7 +1283,19 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/UserFollowingsResponse'
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1333,7 +1328,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/ProjectWithFollowers'
+                      $ref: '#/components/schemas/ProjectPreview'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
@@ -1355,9 +1350,9 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ProjectsCreateInput'
+              $ref: '#/components/schemas/CreateProjectInput'
       responses:
-        '200':
+        '201':
           description: Project created successfully
           content:
             application/json:
@@ -1366,13 +1361,13 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/ProjectWithFollowers'
+                    $ref: '#/components/schemas/ProjectDetail'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1439,7 +1434,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              $ref: '#/components/schemas/ProjectsUpdateInput'
+              $ref: '#/components/schemas/UpdateProjectInput'
 
       responses:
         '200':
@@ -1457,7 +1452,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/ProjectDetails'
+                    $ref: '#/components/schemas/ProjectDetail'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1502,9 +1497,8 @@ paths:
                     example: null
                   data:
                     type: object
-                    properties:
-                      id:
-                        type: string
+                    nullable:
+                    example: null
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -1575,15 +1569,9 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                altText:
-                  type: string
+              $ref: '#/components/schemas/CreateProjectImageInput'
       responses:
-        '200':
+        '201':
           description: Picture added successfully
           content:
             application/json:
@@ -1592,27 +1580,14 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
                     type: object
-                    properties:
-                      imageId:
-                        type: integer
-                        example: 12
-                      projectId:
-                        type: integer
-                        example: 1
-                      image:
-                        type: string
-                        format: uri
-                        example: https://example.com/image.jpg
-                      altText:
-                        type: string
-                        example: Screenshot of the project UI
+                    $ref: '#/components/schemas/ProjectImage'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1650,17 +1625,7 @@ paths:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                image:
-                  type: string
-                  format: binary
-                altText:
-                  type: string
-                isThumbnail:
-                  type: boolean
-                  description: Whether this image should be set as the project thumbnail
-                  example: false
+              $ref: '#/components/schemas/UpdateProjectImageInput'
       responses:
         '200':
           description: Image updated successfully
@@ -1669,9 +1634,16 @@ paths:
               schema:
                 type: object
                 properties:
-                  success:
-                    type: boolean
-                    example: true
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectImage'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1715,28 +1687,16 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
+                    nullable: true
                     example: null
                   data:
                     type: object
-                    properties:
-                      imageId:
-                        type: integer
-                        example: 1
-                      image:
-                        type: string
-                        example: string
-                      altText:
-                        type: string
-                        example: string
-                      position:
-                        type: integer
-                        position: integer
-                      projectId:
-                        type: integer
-                        position: integer
+                    nullable: true
+                    example: null
+
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1770,21 +1730,9 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - userId
-                - roleId
-              properties:
-                userId:
-                  type: integer
-                  description: The ID of the user to add
-                  example: 1
-                roleId:
-                  type: integer
-                  description: The ID of the role of the user in the project
-                  example: 3
+              $ref: '#/components/schemas/CreateProjectMemberInput'
       responses:
-        '200':
+        '201':
           description: Member added successfully
           content:
             application/json:
@@ -1793,26 +1741,14 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
                     type: object
-                    properties:
-                      id:
-                        type: integer
-                        example: 5
-                      userId:
-                        type: integer
-                        example: 1
-                      projectId:
-                        type: integer
-                        example: 1
-                      roleId:
-                        type: integer
-                        example: 76
+                    $ref: '#/components/schemas/ProjectMember'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -1848,14 +1784,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - roleId
-              properties:
-                roleId:
-                  type: integer
-                  description: Updated ID of the role for the user
-                  example: 9
+              $ref: '#/components/schemas/UpdateProjectMemberInput'
       responses:
         '200':
           description: Member updated successfully
@@ -1873,13 +1802,7 @@ paths:
                     example: null
                   data:
                     type: object
-                    properties:
-                      userId:
-                        type: integer
-                        example: 1
-                      roleId:
-                        type: integer
-                        example: 76
+                    $ref: '#/components/schemas/ProjectMember'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -1927,8 +1850,9 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: string
-                    example: Member removed
+                    type: object
+                    nullable: null
+                    example: null
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2003,9 +1927,9 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/AddProjectSocialInput'
       responses:
-        '200':
+        '201':
           description: Social created successfully
           content:
             application/json:
@@ -2014,7 +1938,7 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
@@ -2055,27 +1979,36 @@ paths:
             type: integer
           required: true
           description: The ID of the project
+        - name: websiteId
+          in: path
+          required: true
+          description: ID of the social to be deleted
+          schema:
+            type: integer
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/SocialCreateInput'
+              $ref: '#/components/schemas/UpdateProjectSocialInput'
       responses:
         '200':
           description: Social created successfully
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/ProjectSocial'
-              example:
-                status: 201
-                error: null
-                data:
-                  userId: 1
-                  projectId: 2
-                  followedAt: '2025-07-16T12:34:56Z'
-
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectSocial'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2157,7 +2090,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Tag'
+                      $ref: '#/components/schemas/ProjectTag'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2191,14 +2124,9 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                tagIds:
-                  type: array
-                  items:
-                    type: integer
+              $ref: '#/components/schemas/AddProjectTagsInput'
       responses:
-        '200':
+        '201':
           description: Tags created successfully
           content:
             application/json:
@@ -2207,14 +2135,14 @@ paths:
                 properties:
                   status:
                     type: integer
-                    example: 200
+                    example: 201
                   error:
                     type: string
                     nullable: true
                     example: null
                   data:
                     type: object
-                    $ref: '#/components/schemas/Tag'
+                    $ref: '#/components/schemas/ProjectTag'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -2306,7 +2234,7 @@ paths:
                   data:
                     type: array
                     items:
-                      $ref: '#/components/schemas/Medium'
+                      $ref: '#/components/schemas/ProjectMedium'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2340,12 +2268,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                mediumIds:
-                  type: array
-                  items:
-                    type: integer
+              $ref: '#/components/schemas/AddProjectMediumsInput'
 
       responses:
         '200':
@@ -2364,7 +2287,7 @@ paths:
                     example: null
                   data:
                     type: object
-                    $ref: '#/components/schemas/Tag'
+                    $ref: '#/components/schemas/ProjectMedium'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -2408,7 +2331,204 @@ paths:
                     type: integer
       responses:
         '200':
-          description: Tags deleted successfully
+          description: Mediums deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/jobs:
+    get:
+      summary: Get a project's jobs
+      description: Returns the list of jobs associated with the specified project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: List of jobs the current project has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectJob'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds a project job
+      description: Adds a specified job to the current project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectJobInput'
+      responses:
+        '201':
+          description: Job created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectJob'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/jobs/{jobId}:
+    put:
+      summary: Updates a project job
+      description: Updates one of the project jobs specified
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - name: jobId
+          in: path
+          required: true
+          description: ID of the job to be deleted
+          schema:
+            type: integer
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectJobInput'
+      responses:
+        '200':
+          description: Job updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectJob'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete one of the specified project's jobs
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          description: ID of the job to be deleted
+          schema:
+            type: integer
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Job deleted successfully
           content:
             application/json:
               example:
@@ -2449,12 +2569,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                imageOrder:
-                  type: array
-                  items:
-                    type: integer
+              $ref: '#/components/schemas/ReorderProjectImagesInput'
       responses:
         '200':
           description: Images reordered successfully
@@ -2523,608 +2638,111 @@ components:
       bearerFormat: JWT
   schemas:
     Role:
-      type: object
-      properties:
-        roleId:
-          type: integer
-        label:
-          type: string
-      example:
-        roleId: 1
-        label: Full-Stack Developer
-
-    Social:
-      type: object
-      properties:
-        websiteId:
-          type: integer
-        label:
-          type: string
-
-    UserSocial:
-      type: object
-      properties:
-        apiUrl:
-          type: string
-        url:
-          type: string
-        label:
-          type: string
-        websiteId:
-          type: integer
-
-    ProjectSocial:
-      type: object
-      properties:
-        websiteId:
-          type: integer
-        projectId:
-          type: integer
-        url:
-          type: string
-
-    SocialCreateInput:
-      type: object
-      properties:
-        websiteId:
-          type: integer
-        url:
-          type: string
-
-    Skill:
-      type: object
-      properties:
-        skillId:
-          type: integer
-        label:
-          type: string
-        type:
-          type: string
-
-    UserSkill:
-      type: object
-      properties:
-        apiUrl:
-          type: string
-        proficiency:
-          type: string
-        position:
-          type: integer
-        skillId:
-          type: integer
-        label:
-          type: string
-        type:
-          type: string
-
-    SkillCreateInput:
-      type: object
-      properties:
-        skillId:
-          type: integer
-        position:
-          type: integer
-        proficiency:
-          type: string
-
-    ProjectDetails:
-      type: string
-
-    Medium:
-      type: object
-      properties:
-        typeId:
-          type: integer
-        label:
-          type: string
-
+      $ref: 'schemas/datasets.yaml#/components/schemas/Role'
     Major:
-      type: object
-      properties:
-        majorId:
-          type: integer
-        label:
-          type: string
-
+      $ref: 'schemas/datasets.yaml#/components/schemas/Major'
     Tag:
-      type: object
-      properties:
-        tagId:
-          type: integer
-        label:
-          type: string
-        type:
-          type: string
+      $ref: 'schemas/datasets.yaml#/components/schemas/Tag'
+    Social:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Social'
+    Skill:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Skill'
+    Medium:
+      $ref: 'schemas/datasets.yaml#/components/schemas/Medium'
 
-    User:
-      type: object
-      properties:
-        userId:
-          type: integer
-        username:
-          type: string
-        ritEmail:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        profileImage:
-          type: string
-          nullable: true
-        headline:
-          type: string
-          nullable: true
-        pronouns:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        majorId:
-          type: integer
-          nullable: true
-        academicYear:
-          type: string
-          nullable: true
-        location:
-          type: string
-          nullable: true
-        funFact:
-          type: string
-          nullable: true
-        bio:
-          type: string
-          nullable: true
-        visibility:
-          type: integer
-        skills:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              skill:
-                type: string
-              type:
-                type: string
-              position:
-                type: integer
-        socials:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              websiteId:
-                type: integer
-              label:
-                type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        phoneNumber:
-          type: string
-          nullable: true
-        universityId:
-          type: string
-          nullable: true
-
-    UserDetails:
-      type: object
-      properties:
-        userId:
-          type: integer
-        firstName:
-          type: string
-        lastName:
-          type: string
-        username:
-          type: string
-        profileImage:
-          type: string
-          nullable: true
-        headline:
-          type: string
-          nullable: true
-        pronouns:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        major:
-          type: string
-          nullable: true
-        academicYear:
-          type: string
-          nullable: true
-        location:
-          type: string
-          nullable: true
-        funFact:
-          type: string
-          nullable: true
-        bio:
-          type: string
-          nullable: true
-        skills:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              skill:
-                type: string
-              type:
-                type: string
-              position:
-                type: integer
-        socials:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              websiteId:
-                type: integer
-              label:
-                type: string
-
+    UserMember:
+      $ref: 'schemas/users.yaml#/components/schemas/UserMember'
+    UserSkill:
+      $ref: 'schemas/users.yaml#/components/schemas/UserSkill'
+    UserSocial:
+      $ref: 'schemas/users.yaml#/components/schemas/UserSocial'
+    ProjectFollowsList:
+      $ref: 'schemas/users.yaml#/components/schemas/ProjectFollowsList'
+    UserFollowsList:
+      $ref: 'schemas/users.yaml#/components/schemas/UserFollowsList'
+    UserFollowings:
+      $ref: 'schemas/users.yaml#/components/schemas/UserFollowings'
     UserPreview:
-      type: object
-      properties:
-        userId:
-          type: integer
-        firstName:
-          type: string
-        lastName:
-          type: string
-        username:
-          type: string
-        profileImage:
-          type: string
-          nullable: true
+      $ref: 'schemas/users.yaml#/components/schemas/UserPreview'
+    UserDetail:
+      $ref: 'schemas/users.yaml#/components/schemas/UserDetail'
 
-    UserCreateInput:
-      type: object
-      properties:
-        profileImage:
-          type: string
-          format: binary
-        firstName:
-          type: string
-        lastName:
-          type: string
-        headline:
-          type: string
-        pronouns:
-          type: string
-        title:
-          type: string
-        academicYear:
-          type: string
-          enum: [Freshman, Sophmore, Junior, Senior, Grad1, Grad2]
-        location:
-          type: string
-        funFact:
-          type: string
-        bio:
-          type: string
-        mentor:
-          type: integer
-          minimum: 0
-          maximium: 1
-
-    ProjectWithFollowers:
-      type: object
-      properties:
-        projectId:
-          type: integer
-        title:
-          type: string
-        hook:
-          type: string
-        description:
-          type: string
-        thumbnail:
-          type: string
-          nullable: true
-        purpose:
-          type: string
-          nullable: true
-        status:
-          type: string
-        audience:
-          type: string
-          nullable: true
-        userId:
-          type: integer
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        _count:
-          type: object
-          properties:
-            projectFollowings:
-              type: integer
-        mediums:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              typeId:
-                type: integer
-              genres:
-                type: object
-                properties:
-                  typeId:
-                    type: integer
-                  label:
-                    type: string
-        projectTags:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              tagId:
-                type: integer
-              position:
-                type: integer
-              type:
-                type: string
-              label:
-                type: string
-        projectImages:
-          type: array
-          items:
-            type: object
-            properties:
-              imageId:
-                type: integer
-              image:
-                type: string
-              altText:
-                type: string
-        projectSocials:
-          type: array
-          items:
-            type: object
-            additionalProperties: true
-        jobs:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              titleId:
-                type: integer
-              availability:
-                type: string
-              duration:
-                type: string
-              location:
-                type: string
-              compensation:
-                type: string
-              description:
-                type: string
-              createdAt:
-                type: string
-                format: date-time
-              updatedAt:
-                type: string
-                format: date-time
-        members:
-          type: array
-          items:
-            type: object
-            properties:
-              projectId:
-                type: integer
-              userId:
-                type: integer
-              titleId:
-                type: integer
-              permission:
-                type: integer
-        users:
-          type: object
-          nullable: true
-          properties:
-            userId:
-              type: integer
-            username:
-              type: string
-            ritEmail:
-              type: string
-            firstName:
-              type: string
-            lastName:
-              type: string
-            profileImage:
-              type: string
-            headline:
-              type: string
-            pronouns:
-              type: string
-            title:
-              type: string
-            majorId:
-              type: integer
-            academicYear:
-              type: string
-            location:
-              type: string
-            funFact:
-              type: string
-              nullable: true
-            bio:
-              type: string
-            visibility:
-              type: integer
-            createdAt:
-              type: string
-              format: date-time
-            updatedAt:
-              type: string
-              format: date-time
-            phoneNumber:
-              type: string
-              nullable: true
-            universityId:
-              type: integer
-              nullable: true
-        Medium:
-          type: array
-          items:
-            type: object
-            properties:
-              typeId:
-                type: integer
-              label:
-                type: string
-        followers:
-          type: object
-          properties:
-            count:
-              type: integer
-
-    ProjectsCreateInput:
-      type: object
-      required:
-        - title
-        - hook
-        - description
-        - status
-      properties:
-        title:
-          type: string
-          maxLength: 150
-        hook:
-          type: string
-          maxLength: 200
-        description:
-          type: string
-          maxLength: 2000
-        thumbnail:
-          type: string
-          format: binary
-          nullable: true
-        purpose:
-          type: string
-          enum: [Personal, PortfolioPiece, Academic, CoOp]
-        status:
-          type: string
-          enum: [Planning, Development, PostProduction, Complete]
-        audience:
-          type: string
-          maxLength: 300
-          nullable: true
-
-    ProjectsUpdateInput:
-      type: object
-      properties:
-        title:
-          type: string
-          maxLength: 150
-        hook:
-          type: string
-          maxLength: 200
-        description:
-          type: string
-          maxLength: 2000
-        thumbnail:
-          type: string
-          format: binary
-          nullable: true
-        purpose:
-          type: string
-          enum: [Personal, PortfolioPiece, Academic, CoOp]
-        status:
-          type: string
-          enum: [Planning, Development, PostProduction, Complete]
-        audience:
-          type: string
-          maxLength: 300
-          nullable: true
+    MySkill:
+      $ref: 'schemas/me.yaml#/components/schemas/MySkill'
+    MySocial:
+      $ref: 'schemas/me.yaml#/components/schemas/MySocial'
+    MyMajor:
+      $ref: 'schemas/me.yaml#/components/schemas/MyMajor'
+    MyFollowsList:
+      $ref: 'schemas/me.yaml#/components/schemas/MyFollowsList'
+    MePreview:
+      $ref: 'schemas/me.yaml#/components/schemas/MePreview'
+    MeDetail:
+      $ref: 'schemas/me.yaml#/components/schemas/MeDetail'
+    MePrivate:
+      $ref: 'schemas/me.yaml#/components/schemas/MePrivate'
+    MyMember:
+      $ref: 'schemas/me.yaml#/components/schemas/MyMember'
 
     ProjectImage:
-      type: object
-      properties:
-        imageId:
-          type: integer
-        url:
-          type: string
-        altText:
-          type: string
-      example:
-        imageId: 2
-        url: http://LGF.com/images/project-101.png
-        altText: Picture
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectImage'
+    ProjectMedium:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectMedium'
+    ProjectFollowers:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollowers'
+    ProjectFollowings:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollowings'
+    ProjectMember:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectMember'
+    ProjectSocial:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectSocial'
+    ProjectTag:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectTag'
+    ProjectJob:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectJob'
+    ProjectPreview:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectPreview'
+    ProjectDetail:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectDetail'
+    ProjectWithFollowers:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectWithFollowers'
 
-    ProjectFollowingsResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 200
-        error:
-          type: string
-          nullable: true
-          example: null
-        data:
-          type: object
-          properties:
-            userId:
-              type: integer
-              example: 1
-            projectId:
-              type: integer
-              example: 42
-            followedAt:
-              type: string
-              format: date-time
-              example: 2025-07-16T12:34:56Z
-
-    UserFollowingsResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 200
-        error:
-          type: string
-          nullable: true
-          example: null
-        data:
-          type: object
-          properties:
-            userId:
-              type: integer
-              example: 1
-            followingId:
-              type: integer
-              example: 2
-            followedAt:
-              type: string
-              format: date-time
-              example: 2025-07-16T12:34:56Z
+    UpdateUserInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserInput'
+    AddUserSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddUserSocialInput'
+    UpdateUserSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserSocialInput'
+    AddUserSkillsInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddUserSkillsInput'
+    UpdateUserSkillInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserSkillInput'
+    CreateProjectInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectInput'
+    UpdateProjectInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectInput'
+    CreateProjectImageInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectImageInput'
+    UpdateProjectImageInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectImageInput'
+    ReorderProjectImagesInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/ReorderProjectImagesInput'
+    CreateProjectMemberInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectMemberInput'
+    UpdateProjectMemberInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectMemberInput'
+    AddProjectSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectSocialInput'
+    UpdateProjectSocialInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectSocialInput'
+    AddProjectTagsInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectTagsInput'
+    AddProjectMediumsInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectMediumsInput'
+    CreateProjectJobInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectJobInput'
+    UpdateProjectJobInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectJobInput'
 
     ErrorMessage:
       type: object

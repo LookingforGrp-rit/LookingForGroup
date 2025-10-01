@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteMediumsService } from '#services/projects/mediums/delete-project-mediums.ts';
+import { deleteMediumsService } from '#services/projects/mediums/delete-proj-mediums.ts';
 
 //the tags (or their ids anyway)
 type MediumInputs = {

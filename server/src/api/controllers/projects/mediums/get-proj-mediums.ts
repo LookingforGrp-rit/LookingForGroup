@@ -1,9 +1,9 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getProjectSocialsService from '#services/projects/socials/get-project-socials.ts';
+import getProjectMediumsService from '#services/projects/mediums/get-proj-mediums.ts';
 
-//gets the socials associated with a project
-const getProjectSocialsController = async (req: Request, res: Response): Promise<void> => {
+//gets the mediums associated with a project
+const getProjectMediumsController = async (req: Request, res: Response): Promise<void> => {
   const projID = parseInt(req.params.id);
 
   if (isNaN(projID)) {
@@ -16,7 +16,7 @@ const getProjectSocialsController = async (req: Request, res: Response): Promise
     return;
   }
 
-  const result = await getProjectSocialsService(projID);
+  const result = await getProjectMediumsService(projID);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -46,4 +46,4 @@ const getProjectSocialsController = async (req: Request, res: Response): Promise
   res.status(200).json(resBody);
 };
 
-export default getProjectSocialsController;
+export default getProjectMediumsController;

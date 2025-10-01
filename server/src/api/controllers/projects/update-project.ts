@@ -1,18 +1,11 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  UpdateProjectInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
-import type { ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import updateProjectService from '#services/projects/update-proj.ts';
-
-interface UpdateProjectInfo {
-  title?: string;
-  hook?: string;
-  description?: string;
-  purpose?: ProjectsPurpose;
-  status?: ProjectsStatus;
-  audience?: string;
-  thumbnail?: string;
-}
 
 //updates a project's info
 const updateProjectsController = async (
@@ -32,7 +25,8 @@ const updateProjectsController = async (
   }
 
   const { id } = req.params;
-  const updates = req.body as UpdateProjectInfo;
+  const updates = req.body as Omit<UpdateProjectInput, 'thumbnail'>;
+  let thumbnailUrl: string | undefined;
 
   //validate ID
   const projectId = parseInt(id);
@@ -86,10 +80,10 @@ const updateProjectsController = async (
       return;
     }
 
-    updates['thumbnail'] = dbImage.location;
+    thumbnailUrl = dbImage.location;
   }
 
-  const result = await updateProjectService(projectId, updates);
+  const result = await updateProjectService(projectId, updates, thumbnailUrl);
 
   if (result === 'NOT_FOUND') {
     res.status(404).json({ message: 'Project not found' });

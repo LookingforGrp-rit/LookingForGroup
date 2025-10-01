@@ -1,0 +1,98 @@
+components:
+  schemas:
+    SkillType:
+      type: string
+      enum:
+        - Developer
+        - Designer
+        - Artist
+        - Music
+        - Soft
+      example: Developer
+
+    TagType:
+      type: string
+      enum:
+        - Creative
+        - Technical
+        - Games
+        - Multimedia
+        - Music
+        - Other
+        - Developer Skill
+        - Designer Skill
+        - Soft Skill
+        - Purpose
+      example: Creative
+
+    AcademicYear:
+      type: string
+      enum:
+        - Freshman
+        - Sophomore
+        - Junior
+        - Senior
+        - Graduate
+      example: Freshman
+
+    Visibility:
+      type: integer
+      enum: [0, 1]
+      example: 1
+
+    SkillProficiency:
+      type: string
+      enum:
+        - Novice
+        - Intermediate
+        - Advanced
+        - Expert
+      example: Novice
+
+    ProjectPurpose:
+      type: string
+      enum:
+        - Personal
+        - PortfolioPiece
+        - Academic
+        - CoOp
+      example: Personal
+
+    ProjectStatus:
+      type: string
+      enum:
+        - Planning
+        - Development
+        - PostProduction
+        - Complete
+      example: Planning
+
+    JobAvailability:
+      type: string
+      enum:
+        - FullTime
+        - PartTime
+        - Flexible
+      example: FullTime
+
+    JobDuration:
+      type: string
+      enum:
+        - ShortTerm
+        - LongTerm
+      example: ShortTerm
+
+    JobLocation:
+      type: string
+      enum:
+        - OnSite
+        - Remote
+        - Hybrid
+      example: OnSite
+
+    JobCompensation:
+      type: string
+      enum:
+        - Unpaid
+        - Paid
+      example: Unpaid

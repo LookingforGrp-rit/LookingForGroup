@@ -1,18 +1,14 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  AddUserSkillsInput,
+  ApiResponse,
+  AuthenticatedRequest,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
-import type { SkillProficiency } from '#prisma-models/index.js';
 import addSkillsService from '#services/me/skills/add-skills.ts';
-
-type Skill = {
-  userId: number;
-  skillId: number;
-  position: number;
-  proficiency: SkillProficiency;
-};
 
 //add skills to user profile
 const addSkillsController = async (req: AuthenticatedRequest, res: Response) => {
-  const data: Skill[] = req.body as Skill[];
+  const data: AddUserSkillsInput = req.body as AddUserSkillsInput;
 
   //current user ID
   const UserId = parseInt(req.currentUser);
@@ -28,12 +24,10 @@ const addSkillsController = async (req: AuthenticatedRequest, res: Response) => 
     return;
   }
 
-  data.forEach((skill) => {
-    skill.userId = UserId;
-  });
+  const skillsWithUserId = data.map((skill) => ({ ...skill, userId: UserId }));
 
   //add the skills they wanna add
-  const result = await addSkillsService(data);
+  const result = await addSkillsService(skillsWithUserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

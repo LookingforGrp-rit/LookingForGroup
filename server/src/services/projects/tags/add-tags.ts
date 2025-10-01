@@ -1,4 +1,4 @@
-import type { ProjectTag } from '@looking-for-group/shared';
+import type { ProjectTag, AddProjectTagsInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectTagSelector } from '#services/selectors/projects/parts/project-tag.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -6,26 +6,18 @@ import { transformProjectTag } from '#services/transformers/projects/parts/proje
 
 type AddTagsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
-//the tags (or their ids anyway)
-type TagInputs = {
-  tagIds?: number[];
-};
-
 const addTagsService = async (
   projectId: number,
-  data: TagInputs,
+  data: AddProjectTagsInput,
 ): Promise<ProjectTag[] | AddTagsServiceError> => {
   try {
-    if (!data.tagIds) return 'NOT_FOUND';
+    if (data.length === 0) return 'NOT_FOUND';
 
     //the tagIds, but as an array of objects
     //maybe i should just ask for this instead of making it here...
     //or have frontend autogenerate it...
     //eh it'll be fine
-    const allTagIds = [];
-    for (let i = 0; i < data.tagIds.length; i++) {
-      allTagIds[i] = { tagId: data.tagIds[i] };
-    }
+    const allTagIds = data.map((tag) => ({ tagId: tag.tagId }));
 
     const newTags = await prisma.projects.update({
       where: {
@@ -40,7 +32,7 @@ const addTagsService = async (
         tags: {
           where: {
             tagId: {
-              in: data.tagIds,
+              in: data.map((tag) => tag.tagId),
             },
           },
           select: ProjectTagSelector,

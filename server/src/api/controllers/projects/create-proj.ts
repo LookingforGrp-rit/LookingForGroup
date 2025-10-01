@@ -1,7 +1,9 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  CreateProjectInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
-import type { Prisma, ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import createProjectService from '#services/projects/create-proj.ts';
 
@@ -18,20 +20,11 @@ const createProjectController = async (req: AuthenticatedRequest, res: Response)
     res.status(400).json(resBody);
     return;
   }
-  const data: Prisma.ProjectsCreateInput = {
-    title: req.body.title as string,
-    hook: req.body.hook as string,
-    description: req.body.description as string,
-    thumbnail: req.body.thumbnail as string,
-    purpose: req.body.purpose as ProjectsPurpose,
-    status: req.body.status as ProjectsStatus,
-    audience: req.body.audience as string,
-    users: {
-      connect: {
-        userId: userId,
-      },
-    },
-  };
+  const inputData: Omit<CreateProjectInput, 'thumbnail'> = req.body as Omit<
+    CreateProjectInput,
+    'thumbnail'
+  >;
+  let thumbnailUrl: string | undefined;
 
   //thumbnail handling
   if (req.file) {
@@ -60,10 +53,10 @@ const createProjectController = async (req: AuthenticatedRequest, res: Response)
       res.status(500).json(resBody);
       return;
     }
-    data.thumbnail = dbImage.location;
+    thumbnailUrl = dbImage.location;
   }
 
-  const result = await createProjectService(data);
+  const result = await createProjectService(inputData, userId, thumbnailUrl);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
