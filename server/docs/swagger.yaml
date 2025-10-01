@@ -1979,6 +1979,12 @@ paths:
             type: integer
           required: true
           description: The ID of the project
+        - name: websiteId
+          in: path
+          required: true
+          description: ID of the social to be deleted
+          schema:
+            type: integer
       requestBody:
         required: true
         content:
@@ -2340,6 +2346,203 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/jobs:
+    get:
+      summary: Get a project's jobs
+      description: Returns the list of jobs associated with the specified project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: List of jobs the current project has
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectJob'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Adds a project job
+      description: Adds a specified job to the current project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectJobInput'
+      responses:
+        '201':
+          description: Job created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectJob'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/jobs/{jobId}:
+    put:
+      summary: Updates a project job
+      description: Updates one of the project jobs specified
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - name: jobId
+          in: path
+          required: true
+          description: ID of the job to be deleted
+          schema:
+            type: integer
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectJobInput'
+      responses:
+        '200':
+          description: Job updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectJob'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Delete one of the specified project's jobs
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - name: jobId
+          in: path
+          required: true
+          description: ID of the job to be deleted
+          schema:
+            type: integer
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Job deleted successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/projects/{id}/images/reorder:
     put:
       summary: Reorders the images in a project
@@ -2536,240 +2739,10 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectTagsInput'
     AddProjectMediumsInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectMediumsInput'
-
-    SocialCreateInput:
-      type: object
-      properties:
-        websiteId:
-          type: integer
-        url:
-          type: string
-
-    SkillCreateInput:
-      type: object
-      properties:
-        skillId:
-          type: integer
-        position:
-          type: integer
-        proficiency:
-          type: string
-
-    User:
-      type: object
-      properties:
-        userId:
-          type: integer
-        username:
-          type: string
-        ritEmail:
-          type: string
-        firstName:
-          type: string
-        lastName:
-          type: string
-        profileImage:
-          type: string
-          nullable: true
-        headline:
-          type: string
-          nullable: true
-        pronouns:
-          type: string
-          nullable: true
-        title:
-          type: string
-          nullable: true
-        majorId:
-          type: integer
-          nullable: true
-        academicYear:
-          type: string
-          nullable: true
-        location:
-          type: string
-          nullable: true
-        funFact:
-          type: string
-          nullable: true
-        bio:
-          type: string
-          nullable: true
-        visibility:
-          type: integer
-        skills:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              id:
-                type: integer
-              skill:
-                type: string
-              type:
-                type: string
-              position:
-                type: integer
-        socials:
-          type: array
-          nullable: true
-          items:
-            type: object
-            properties:
-              websiteId:
-                type: integer
-              label:
-                type: string
-        createdAt:
-          type: string
-          format: date-time
-        updatedAt:
-          type: string
-          format: date-time
-        phoneNumber:
-          type: string
-          nullable: true
-        universityId:
-          type: string
-          nullable: true
-
-    UserCreateInput:
-      type: object
-      properties:
-        profileImage:
-          type: string
-          format: binary
-        firstName:
-          type: string
-        lastName:
-          type: string
-        headline:
-          type: string
-        pronouns:
-          type: string
-        title:
-          type: string
-        academicYear:
-          type: string
-          enum: [Freshman, Sophomore, Junior, Senior, Grad1, Grad2]
-        location:
-          type: string
-        funFact:
-          type: string
-        bio:
-          type: string
-        mentor:
-          type: integer
-          minimum: 0
-          maximium: 1
-
-    ProjectsCreateInput:
-      type: object
-      required:
-        - title
-        - hook
-        - description
-        - status
-      properties:
-        title:
-          type: string
-          maxLength: 150
-        hook:
-          type: string
-          maxLength: 200
-        description:
-          type: string
-          maxLength: 2000
-        thumbnail:
-          type: string
-          format: binary
-          nullable: true
-        purpose:
-          type: string
-          enum: [Personal, PortfolioPiece, Academic, CoOp]
-        status:
-          type: string
-          enum: [Planning, Development, PostProduction, Complete]
-        audience:
-          type: string
-          maxLength: 300
-          nullable: true
-
-    ProjectsUpdateInput:
-      type: object
-      properties:
-        title:
-          type: string
-          maxLength: 150
-        hook:
-          type: string
-          maxLength: 200
-        description:
-          type: string
-          maxLength: 2000
-        thumbnail:
-          type: string
-          format: binary
-          nullable: true
-        purpose:
-          type: string
-          enum: [Personal, PortfolioPiece, Academic, CoOp]
-        status:
-          type: string
-          enum: [Planning, Development, PostProduction, Complete]
-        audience:
-          type: string
-          maxLength: 300
-          nullable: true
-
-    ProjectFollowingsResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 200
-        error:
-          type: string
-          nullable: true
-          example: null
-        data:
-          type: object
-          properties:
-            userId:
-              type: integer
-              example: 1
-            projectId:
-              type: integer
-              example: 42
-            followedAt:
-              type: string
-              format: date-time
-              example: 2025-07-16T12:34:56Z
-
-    UserFollowingsResponse:
-      type: object
-      properties:
-        status:
-          type: integer
-          example: 200
-        error:
-          type: string
-          nullable: true
-          example: null
-        data:
-          type: object
-          properties:
-            userId:
-              type: integer
-              example: 1
-            followingId:
-              type: integer
-              example: 2
-            followedAt:
-              type: string
-              format: date-time
-              example: 2025-07-16T12:34:56Z
+    CreateProjectJobInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectJobInput'
+    UpdateProjectJobInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectJobInput'
 
     ErrorMessage:
       type: object

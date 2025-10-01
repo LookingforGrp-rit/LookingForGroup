@@ -194,3 +194,46 @@ components:
             type: number
         required:
           - mediumId
+
+    CreateProjectJobInput:
+      type: object
+      properties:
+        availability:
+          $ref: 'enums.yaml#/components/schemas/JobAvailability'
+        duration:
+          $ref: 'enums.yaml#/components/schemas/JobDuration'
+        location:
+          $ref: 'enums.yaml#/components/schemas/JobLocation'
+        compensation:
+          $ref: 'enums.yaml#/components/schemas/JobCompensation'
+        description:
+          type: string
+        roleId:
+          type: number
+        contactUserId:
+          type: number
+      required:
+        - availability
+        - duration
+        - location
+        - compensation
+        - roleId
+        - contactUserId
+
+    UpdateProjectJobInput:
+      type: object
+      properties:
+        availability:
+          $ref: 'enums.yaml#/components/schemas/JobAvailability'
+        duration:
+          $ref: 'enums.yaml#/components/schemas/JobDuration'
+        location:
+          $ref: 'enums.yaml#/components/schemas/JobLocation'
+        compensation:
+          $ref: 'enums.yaml#/components/schemas/JobCompensation'
+        description:
+          type: string
+        roleId:
+          type: number
+        contactUserId:
+          type: number
