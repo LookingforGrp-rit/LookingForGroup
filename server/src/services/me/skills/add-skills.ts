@@ -1,20 +1,16 @@
-import type { MySkill } from '@looking-for-group/shared';
+import type { MySkill, AddUserSkillsInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { SkillProficiency } from '#prisma-models/index.js';
 import { MySkillSelector } from '#services/selectors/me/parts/my-skill.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
 type AddSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
-type Skill = {
-  userId: number;
-  skillId: number;
-  position: number;
-  proficiency: SkillProficiency;
-};
+type SkillWithUserId = AddUserSkillsInput[0] & { userId: number };
 
-const addSkillsService = async (data: Skill[]): Promise<MySkill[] | AddSkillsServiceError> => {
+const addSkillsService = async (
+  data: SkillWithUserId[],
+): Promise<MySkill[] | AddSkillsServiceError> => {
   try {
     if (data.length === 0) return 'NOT_FOUND';
 

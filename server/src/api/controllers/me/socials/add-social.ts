@@ -1,11 +1,10 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  AddUserSocialInput,
+  ApiResponse,
+  AuthenticatedRequest,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { addSocialService } from '#services/me/socials/add-social.ts';
-
-type Social = {
-  websiteId: number;
-  url: string;
-};
 
 //add social to user profile
 export const addSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
@@ -23,7 +22,7 @@ export const addSocial = async (req: AuthenticatedRequest, res: Response): Promi
     return;
   }
 
-  const social: Social = req.body as Social;
+  const social: AddUserSocialInput = req.body as AddUserSocialInput;
 
   const result = await addSocialService(social, UserId);
 
