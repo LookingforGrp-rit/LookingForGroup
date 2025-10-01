@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import deleteJobService from '#services/projects/jobs/delete-job.ts';
 
 const deleteJobController = async (req: Request, res: Response): Promise<void> => {
-  const projectId = parseInt(req.params.projectId);
+  const projectId = parseInt(req.params.id);
   const jobId = parseInt(req.params.jobId);
 
   if (isNaN(projectId) || isNaN(jobId)) {

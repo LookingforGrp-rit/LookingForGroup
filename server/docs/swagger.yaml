@@ -2462,7 +2462,7 @@ paths:
         - name: jobId
           in: path
           required: true
-          description: ID of the job to be deleted
+          description: ID of the job to be updated
           schema:
             type: integer
         - in: path

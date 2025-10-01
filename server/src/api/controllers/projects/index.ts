@@ -7,6 +7,9 @@ import getProjectImages from './images/get-proj-images.ts';
 import removeImage from './images/remove-image.ts';
 import reorderImages from './images/reorder-images.ts';
 import updateImage from './images/update-image.ts';
+import addJobController from './jobs/add-job.ts';
+import deleteJobController from './jobs/delete-job.ts';
+import updateJobController from './jobs/update-job.ts';
 import addMediums from './mediums/add-proj-mediums.ts';
 import deleteMediums from './mediums/delete-proj-mediums.ts';
 import getProjectMediums from './mediums/get-proj-mediums.ts';
@@ -46,4 +49,7 @@ export default {
   getProjectMediums,
   addMediums,
   deleteMediums,
+  addJobController,
+  updateJobController,
+  deleteJobController,
 };

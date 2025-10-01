@@ -11,7 +11,7 @@ import type { Prisma } from '#prisma-models/index.js';
 import updateJobService from '#services/projects/jobs/update-job.ts';
 
 const updateJobController = async (req: Request, res: Response): Promise<void> => {
-  const projectId = parseInt(req.params.projectId);
+  const projectId = parseInt(req.params.id);
   const jobId = parseInt(req.params.jobId);
 
   if (isNaN(projectId) || isNaN(jobId)) {
