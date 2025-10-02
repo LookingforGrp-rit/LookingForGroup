@@ -10,121 +10,110 @@ export const getAllUsersService = async (
   filters: FilterRequest,
 ): Promise<UserDetail[] | GetUserServiceError> => {
   try {
-    if (Object.keys(filters).length !== 0) {
-      const parsedFilters = [] as object[];
+    const parsedFilters = [] as object[];
 
-      if (filters.mentor !== undefined) {
-        parsedFilters.push({ mentor: filters.mentor });
-      }
-      if (filters.designer !== undefined) {
-        parsedFilters.push({
-          userSkills: {
-            ...(filters.designer
-              ? {
-                  some: {
-                    skills: {
-                      type: 'Designer',
-                    },
+    if (filters.mentor !== undefined) {
+      parsedFilters.push({ mentor: filters.mentor });
+    }
+    if (filters.designer !== undefined) {
+      parsedFilters.push({
+        userSkills: {
+          ...(filters.designer
+            ? {
+                some: {
+                  skills: {
+                    type: 'Designer',
                   },
-                }
-              : {
-                  none: {
-                    skills: {
-                      type: 'Designer',
-                    },
+                },
+              }
+            : {
+                none: {
+                  skills: {
+                    type: 'Designer',
                   },
-                }),
-          },
-        });
-      }
-      //a little dry... but it works
-      if (filters.developer !== undefined) {
-        parsedFilters.push({
-          userSkills: {
-            ...(filters.developer
-              ? {
-                  some: {
-                    skills: {
-                      type: 'Developer',
-                    },
-                  },
-                }
-              : {
-                  none: {
-                    skills: {
-                      type: 'Developer',
-                    },
-                  },
-                }),
-          },
-        });
-      }
-      if (filters.skills !== undefined) {
-        parsedFilters.push({
-          userSkills: {
-            every: {
-              skillId: {
-                in: filters.skills,
-              },
-            },
-          },
-        });
-      }
-      if (filters.academicYear !== undefined) {
-        parsedFilters.push({
-          academicYear: {
-            in: filters.academicYear,
-          },
-        });
-      }
-      if (filters.majors !== undefined) {
-        parsedFilters.push({
-          majors: {
-            every: {
-              majorId: {
-                in: filters.majors,
-              },
-            },
-          },
-        });
-      }
-      if (filters.socials !== undefined) {
-        parsedFilters.push({
-          userSocials: {
-            every: {
-              websiteId: {
-                in: filters.socials,
-              },
-            },
-          },
-        });
-      }
-
-      //any/all toggle, param given as query
-      let restrictionObject = {};
-      if (filters.strictness === 'any') {
-        restrictionObject = { OR: parsedFilters };
-      }
-      if (filters.strictness === 'all') {
-        restrictionObject = { AND: parsedFilters };
-      }
-
-      const filteredUsers = await prisma.users.findMany({
-        where: restrictionObject,
-        orderBy: { createdAt: 'desc' },
-        select: UserDetailSelector,
+                },
+              }),
+        },
       });
+    }
+    //a little dry... but it works
+    if (filters.developer !== undefined) {
+      parsedFilters.push({
+        userSkills: {
+          ...(filters.developer
+            ? {
+                some: {
+                  skills: {
+                    type: 'Developer',
+                  },
+                },
+              }
+            : {
+                none: {
+                  skills: {
+                    type: 'Developer',
+                  },
+                },
+              }),
+        },
+      });
+    }
+    if (filters.skills !== undefined) {
+      parsedFilters.push({
+        userSkills: {
+          every: {
+            skillId: {
+              in: filters.skills,
+            },
+          },
+        },
+      });
+    }
+    if (filters.academicYear !== undefined) {
+      parsedFilters.push({
+        academicYear: {
+          in: filters.academicYear,
+        },
+      });
+    }
+    if (filters.majors !== undefined) {
+      parsedFilters.push({
+        majors: {
+          every: {
+            majorId: {
+              in: filters.majors,
+            },
+          },
+        },
+      });
+    }
+    if (filters.socials !== undefined) {
+      parsedFilters.push({
+        userSocials: {
+          every: {
+            websiteId: {
+              in: filters.socials,
+            },
+          },
+        },
+      });
+    }
 
-      const transformedUsers = filteredUsers.map(transformUserToDetail);
-      return transformedUsers;
+    //any/all toggle, param given as query
+    let restrictionObject = {};
+    if (filters.strictness === 'any') {
+      restrictionObject = { OR: parsedFilters };
+    }
+    if (filters.strictness === 'all') {
+      restrictionObject = { AND: parsedFilters };
     }
 
     const users = await prisma.users.findMany({
+      where: restrictionObject,
       orderBy: { createdAt: 'desc' },
       select: UserDetailSelector,
     });
 
-    //return the transformed users
     const transformedUsers = users.map(transformUserToDetail);
     return transformedUsers;
   } catch (error) {
