@@ -184,32 +184,53 @@ paths:
             type: string
           description: The strictness with which to apply the filters (return if they match either any of the filters or all of them)
         - in: query
-          name: filters
+          name: mentor
           required: false
           schema:
-            type: object
-            properties:
-              mentor:
-                type: boolean
-                example: false
-              designer:
-                type: boolean
-                example: false
-              developer:
-                type: boolean
-                example: false
-              skills:
-                type: string
-                example: 1
-              majors:
-                type: string
-                example: 1
-              academicYear:
-                type: string
-                example: Freshman
-              socials:
-                type: string
-                example: 1
+            type: boolean
+            example: false
+        - in: query
+          name: mentor
+          required: false
+          schema:
+            type: boolean
+            example: false
+        - in: query
+          name: designer
+          required: false
+          schema:
+            type: boolean
+            example: false
+        - in: query
+          name: developer
+          required: false
+          schema:
+            type: boolean
+            example: false
+        - in: query
+          name: skills
+          required: false
+          schema:
+            type: string
+            example: 1
+        - in: query
+          name: majors
+          required: false
+          schema:
+            type: string
+            example: 1
+        - in: query
+          name: academicYear
+          required: false
+          schema:
+            type: string
+            example: Freshman
+        - in: query
+          name: socials
+          required: false
+          schema:
+            type: string
+            example: 1
 
           description: The filters to apply on users that you wish to get
       responses:

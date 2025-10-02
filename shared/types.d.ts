@@ -46,7 +46,8 @@ export interface AuthenticatedRequest extends Request {
   currentUser: string;
 }
 
-export interface UserFilters {
+export interface FilterRequest extends Request {
+  strictness: "any" | "all";
   mentor?: boolean;
   designer?: boolean;
   developer?: boolean;
@@ -54,11 +55,6 @@ export interface UserFilters {
   majors?: number[];
   academicYear?: string[];
   socials?: number[]
-}
-
-export interface FilterRequest extends Request {
-  strictness: "any" | "all";
-  filters: UserFilters;
 }
 
 export interface GetProjectsRequest extends AuthenticatedRequest {

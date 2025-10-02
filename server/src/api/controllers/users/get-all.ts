@@ -1,25 +1,48 @@
-import type {
-  AcademicYear,
-  ApiResponse,
-  FilterRequest,
-  UserFilters,
-} from '@looking-for-group/shared';
+import type { AcademicYear, ApiResponse, FilterRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { UsersAcademicYear } from '#prisma-models/index.js';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
 
 //get all users
 export const getAllUsers = async (req: FilterRequest, res: Response): Promise<void> => {
-  const restriction = req.query.strictness as 'any' | 'all';
-  const filters = {
-    mentor: req.query.mentor === 'true',
-    designer: req.query.designer === 'true',
-    developer: req.query.developer === 'true',
-    skills: (req.query.skills as string).split(',').map((val) => parseInt(val)),
-    majors: (req.query.majors as string).split(',').map((val) => parseInt(val)),
-    academicYear: (req.query.academicYear as string).split(','),
-    socials: (req.query.socials as string).split(',').map((val) => parseInt(val)),
-  } as UserFilters;
+  //so essentially
+  const filters = {} as FilterRequest;
+
+  //going through and parsing/validating the results
+  if (req.query.strictness) {
+    //if there's strictness and there's only one thing in the query,
+    //then they tried to pass in strictness with no filters
+    if (Object.entries(req.query as object).length === 1) {
+      const resBody: ApiResponse = {
+        status: 400,
+        error: 'Do not pass in strictness without any filters',
+        data: null,
+      };
+      res.status(400).json(resBody);
+    }
+    filters.strictness = req.query.strictness as 'any' | 'all';
+  }
+  if (req.query.mentor) {
+    filters.mentor = req.query.mentor === 'true';
+  }
+  if (req.query.deisgner) {
+    filters.designer = req.query.designer === 'true';
+  }
+  if (req.query.developer) {
+    filters.developer = req.query.developer === 'true';
+  }
+  if (req.query.skills) {
+    filters.skills = (req.query.skills as string).split(',').map((val) => parseInt(val));
+  }
+  if (req.query.majors) {
+    filters.majors = (req.query.majors as string).split(',').map((val) => parseInt(val));
+  }
+  if (req.query.academicYear) {
+    filters.academicYear = (req.query.academicYear as string).split(',');
+  }
+  if (req.query.socials) {
+    filters.socials = (req.query.socials as string).split(',').map((val) => parseInt(val));
+  }
 
   if (
     filters.skills?.includes(NaN) ||
@@ -49,7 +72,7 @@ export const getAllUsers = async (req: FilterRequest, res: Response): Promise<vo
     });
   }
 
-  const result = await getAllUsersService(filters, restriction);
+  const result = await getAllUsersService(filters);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
