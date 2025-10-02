@@ -179,16 +179,10 @@ paths:
       parameters:
         - in: query
           name: strictness
-          required: true
+          required: false
           schema:
             type: string
           description: The strictness with which to apply the filters (return if they match either any of the filters or all of them)
-        - in: query
-          name: mentor
-          required: false
-          schema:
-            type: boolean
-            example: false
         - in: query
           name: mentor
           required: false
@@ -252,6 +246,8 @@ paths:
                     type: array
                     items:
                       $ref: '#/components/schemas/UserPreview'
+        '400':
+          $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:

@@ -9,13 +9,23 @@ export const getAllUsers = async (req: FilterRequest, res: Response): Promise<vo
   const filters = {} as FilterRequest;
 
   //going through and parsing/validating the results
+  //i feel like there's an easier way to do this...
   if (req.query.strictness) {
     //if there's strictness and there's only one thing in the query,
     //then they tried to pass in strictness with no filters
+    //so i 400 them
     if (Object.entries(req.query as object).length === 1) {
       const resBody: ApiResponse = {
         status: 400,
-        error: 'Do not pass in strictness without any filters',
+        error: 'Strictness provided without filters',
+        data: null,
+      };
+      res.status(400).json(resBody);
+    }
+    if (req.query.strictness !== 'any' && req.query.strictness !== 'all') {
+      const resBody: ApiResponse = {
+        status: 400,
+        error: 'Invalid strictness',
         data: null,
       };
       res.status(400).json(resBody);
@@ -25,7 +35,7 @@ export const getAllUsers = async (req: FilterRequest, res: Response): Promise<vo
   if (req.query.mentor) {
     filters.mentor = req.query.mentor === 'true';
   }
-  if (req.query.deisgner) {
+  if (req.query.designer) {
     filters.designer = req.query.designer === 'true';
   }
   if (req.query.developer) {
@@ -58,7 +68,6 @@ export const getAllUsers = async (req: FilterRequest, res: Response): Promise<vo
   }
 
   const years = filters.academicYear as string[];
-
   if (filters.academicYear !== undefined) {
     years.forEach((year) => {
       if (!Object.values(UsersAcademicYear).includes(year as AcademicYear)) {
@@ -70,6 +79,20 @@ export const getAllUsers = async (req: FilterRequest, res: Response): Promise<vo
         res.status(400).json(resBody);
       }
     });
+  }
+
+  if (Object.entries(filters).length >= 1 && !Object.keys(filters).includes('strictness')) {
+    //if there's more than one thing in the query and there isn't strictness,
+    //then they tried to pass in filters with no strictness
+    //so i 400 them
+    if (Object.entries(req.query as object).length === 1) {
+      const resBody: ApiResponse = {
+        status: 400,
+        error: 'No strictness provided for filters',
+        data: null,
+      };
+      res.status(400).json(resBody);
+    }
   }
 
   const result = await getAllUsersService(filters);
