@@ -2601,6 +2601,52 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  # MOD
+  /api/mod/clear-profile/{id}:
+    put:
+      summary: Clears a user profile
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user whose account will be cleared
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: Profile cleared successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserDetail'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   # IMAGES
   /api/images/{image}:
     get:
