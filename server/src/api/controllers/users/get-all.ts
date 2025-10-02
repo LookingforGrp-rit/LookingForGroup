@@ -34,8 +34,10 @@ export const getAllUsers = async (req: FilterRequest, res: Response): Promise<vo
     res.status(400).json(resBody);
   }
 
+  const years = filters.academicYear as string[];
+
   if (filters.academicYear !== undefined) {
-    filters.academicYear.forEach((year) => {
+    years.forEach((year) => {
       if (!Object.values(UsersAcademicYear).includes(year as AcademicYear)) {
         const resBody: ApiResponse = {
           status: 400,
