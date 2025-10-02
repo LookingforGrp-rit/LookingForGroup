@@ -2,6 +2,7 @@ import { ProjectPreviewSelector } from '../projects/project-preview.ts';
 import { UserPreviewSelector } from '../users/user-preview.ts';
 import { MePreviewSelector } from './me-preview.ts';
 import { MyMajorSelector } from './parts/my-major.ts';
+import { MyMemberSelector } from './parts/my-member.ts';
 import { MySkillSelector } from './parts/my-skill.ts';
 import { MySocialSelector } from './parts/my-social.ts';
 
@@ -22,11 +23,7 @@ export const MeDetailSelector = Object.freeze({
   funFact: true,
   title: true,
   members: {
-    select: {
-      projects: {
-        select: ProjectPreviewSelector,
-      },
-    },
+    select: MyMemberSelector,
   },
   majors: {
     select: MyMajorSelector,
