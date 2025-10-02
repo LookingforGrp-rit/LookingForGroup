@@ -774,6 +774,55 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/me/projects/{id}/leave:
+    delete:
+      summary: Leave a specified project
+      description: Deletes the Members object associated with the logged in user and a project
+      tags:
+        - Me
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: false
+          description: The project ID of the project being left
+      responses:
+        '200':
+          description: Successfully left project
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/me/socials:
     get:
       summary: Get current user's socials

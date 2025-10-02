@@ -9,6 +9,7 @@ import { deleteUserFollowing } from '#controllers/me/followings/delete-follow-us
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
+import { leaveProjectController } from '#controllers/me/leave-project.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
 import { deleteSkills } from '#controllers/me/skills/delete-skills.ts';
 import { getSkills } from '#controllers/me/skills/get-skills.ts';
@@ -77,6 +78,8 @@ router.delete('/socials/:websiteId', authenticated(deleteSocial));
 
 //Gets current user's projects
 router.get('/projects', authenticated(getMyProjects));
+//Leave a project
+router.delete('/projects/:id/leave', authenticated(leaveProjectController));
 //Change project profile visibility
 router.put('/projects/:id/visibility', authenticated(updateProjectVisibilityController));
 
