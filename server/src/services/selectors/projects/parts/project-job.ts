@@ -12,7 +12,9 @@ export const ProjectJobSelector = Object.freeze({
   compensation: true,
   contact: {
     select: {
-      users: UserPreviewSelector,
+      users: {
+        select: UserPreviewSelector,
+      },
     },
   },
   description: true,
