@@ -22,6 +22,7 @@ import { updateUserInfo } from '#controllers/me/update-info.ts';
 import { updateProjectVisibilityController } from '#controllers/me/update-project-visibility.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
+import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
 
 const router = Router();
 
@@ -44,9 +45,17 @@ router.use(requiresLogin, injectCurrentUser);
 // FOLLOW ROUTES
 
 //Follows a project
-router.post('/followings/projects/:id', authenticated(addProjectFollowing));
+router.post(
+  '/followings/projects/:id',
+  projectExistsAt('path', 'id'),
+  authenticated(addProjectFollowing),
+);
 //Unfollows a project
-router.delete('/followings/projects/:id', authenticated(deleteProjectFollowing));
+router.delete(
+  '/followings/projects/:id',
+  projectExistsAt('path', 'id'),
+  authenticated(deleteProjectFollowing),
+);
 //Follows a user
 router.post('/followings/people/:id', authenticated(addUserFollowing));
 //Unfollows a user
@@ -79,9 +88,17 @@ router.delete('/socials/:websiteId', authenticated(deleteSocial));
 //Gets current user's projects
 router.get('/projects', authenticated(getMyProjects));
 //Leave a project
-router.delete('/projects/:id/leave', authenticated(leaveProjectController));
+router.delete(
+  '/projects/:id/leave',
+  projectExistsAt('path', 'id'),
+  authenticated(leaveProjectController),
+);
 //Change project profile visibility
-router.put('/projects/:id/visibility', authenticated(updateProjectVisibilityController));
+router.put(
+  '/projects/:id/visibility',
+  projectExistsAt('path', 'id'),
+  authenticated(updateProjectVisibilityController),
+);
 
 //Gets user's account
 router.get('/', authenticated(getAccount));
