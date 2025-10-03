@@ -1,14 +1,14 @@
-import type { FilterRequest, UserDetail } from '@looking-for-group/shared';
+import type { FilterRequest, UserPreview } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { UserDetailSelector } from '#services/selectors/users/user-detail.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformUserToDetail } from '../transformers/users/user-detail.ts';
+import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
 
 type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 export const getAllUsersService = async (
   filters: FilterRequest,
-): Promise<UserDetail[] | GetUserServiceError> => {
+): Promise<UserPreview[] | GetUserServiceError> => {
   try {
     const parsedFilters = [] as object[];
 
@@ -114,7 +114,7 @@ export const getAllUsersService = async (
       select: UserDetailSelector,
     });
 
-    const transformedUsers = users.map(transformUserToDetail);
+    const transformedUsers = users.map(transformUserToPreview);
     return transformedUsers;
   } catch (error) {
     console.error('Error in getAllUsersService:', error);
