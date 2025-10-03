@@ -191,4 +191,33 @@ router.post(
   PROJECT.addTags,
 );
 
+// JOBS ROUTES
+
+// creates a new project job
+router.get('/:id/jobs', PROJECT.getJobsController);
+// creates a new project job
+router.post(
+  '/:id/jobs',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresProjectOwner),
+  PROJECT.addJobController,
+);
+// updates an existing project job
+router.put(
+  '/:id/jobs/:jobId',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresProjectOwner),
+  PROJECT.updateJobController,
+);
+// deletes an existing project job
+router.delete(
+  '/:id/jobs/:jobId',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresProjectOwner),
+  PROJECT.deleteJobController,
+);
+
 export default router;
