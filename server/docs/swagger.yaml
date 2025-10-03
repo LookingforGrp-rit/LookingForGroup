@@ -188,43 +188,36 @@ paths:
           required: false
           schema:
             type: boolean
-            example: false
         - in: query
           name: designer
           required: false
           schema:
             type: boolean
-            example: false
         - in: query
           name: developer
           required: false
           schema:
             type: boolean
-            example: false
         - in: query
           name: skills
           required: false
           schema:
             type: string
-            example: 1
         - in: query
           name: majors
           required: false
           schema:
             type: string
-            example: 1
         - in: query
           name: academicYear
           required: false
           schema:
             type: string
-            example: Freshman
         - in: query
           name: socials
           required: false
           schema:
             type: string
-            example: 1
 
           description: The filters to apply on users that you wish to get
       responses:
