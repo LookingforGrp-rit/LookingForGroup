@@ -9,7 +9,7 @@ type UpdateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>
 
 // updatable fields only
 type UpdateUserServiceParameters = Partial<
-  Omit<UpdateUserInput, 'profileImage' | 'mentor'> & { profileImage: string; mentor: 0 | 1 }
+  Omit<UpdateUserInput, 'profileImage' | 'mentor'> & { profileImage: string; mentor: boolean }
 >;
 
 export const updateUserInfoService = async (
