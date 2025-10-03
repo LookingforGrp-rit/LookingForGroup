@@ -5,6 +5,7 @@ import PROJECT from '#controllers/projects/index.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
+import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
 import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
 
 const router = Router();
@@ -113,6 +114,7 @@ router.post(
   '/:id/mediums',
   requiresLogin,
   injectCurrentUser,
+  // attributeExistsAt('medium', 'body', 'mediumId'),
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.addMediums,
@@ -162,7 +164,9 @@ router.delete(
 router.post(
   '/:id/socials',
   requiresLogin,
+  injectCurrentUser,
   projectExistsAt('path', 'id'),
+  attributeExistsAt('social', 'body', 'websiteId'),
   authenticated(requiresProjectOwner),
   PROJECT.addProjectSocial,
 );
@@ -172,6 +176,7 @@ router.get('/:id/socials', projectExistsAt('path', 'id'), PROJECT.getProjectSoci
 router.put(
   '/:id/socials/:websiteId',
   requiresLogin,
+  injectCurrentUser,
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.updateProjectSocial,
@@ -180,6 +185,7 @@ router.put(
 router.delete(
   '/:id/socials/:websiteId',
   requiresLogin,
+  injectCurrentUser,
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.deleteProjectSocial,
@@ -194,6 +200,7 @@ router.delete(
   '/:id/tags/',
   requiresLogin,
   injectCurrentUser,
+  // attributeExistsAt('tag', 'body', 'tagId'),
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.deleteTags,
