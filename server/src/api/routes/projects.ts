@@ -55,6 +55,9 @@ router.delete(
   PROJECT.deleteProject,
 );
 
+//Gets the followers of a project
+router.get('/:id/followers', PROJECT.getProjectFollowers);
+
 // IMAGE ROUTES
 
 //Receives pictures from project through id
