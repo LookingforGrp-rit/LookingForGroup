@@ -272,17 +272,6 @@ paths:
           schema:
             type: string
           description: The UID to be used as the current UID
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                username:
-                  type: string
-              required:
-                - username
       security:
         shibbolethAuth: []
       responses:

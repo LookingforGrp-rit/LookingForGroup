@@ -23,8 +23,6 @@ components:
           type: string
         visibility:
           $ref: 'enums.yaml#/components/schemas/Visibility'
-        username:
-          type: string
         phoneNumber:
           type: string
         mentor:

@@ -2,7 +2,6 @@ import type { ApiResponse, AuthenticatedRequest, UpdateUserInput } from '@lookin
 import type { Response } from 'express';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import { updateUserInfoService } from '#services/me/update-info.ts';
-import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
 
 type RequestBody = Partial<Omit<UpdateUserInput, 'profileImage'>>;
 
@@ -35,7 +34,6 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'funFact',
     'bio',
     'visibility',
-    'username',
     'phoneNumber',
     'mentor',
   ];
@@ -54,26 +52,6 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
   }
 
   const updates: Parameters<typeof updateUserInfoService>[1] = { ...body, mentor: undefined };
-
-  //#TODO in the future this can be taken out as usernames won't be updateable
-  //check if username was updated, and only do this whole check if it was
-  const newUsername = body.username as string;
-  if (newUsername) {
-    const userExist = await getUserByUsernameService(newUsername);
-    if (
-      userExist !== 'NOT_FOUND' &&
-      userExist !== 'INTERNAL_ERROR' &&
-      userExist.userId !== userId
-    ) {
-      const resBody: ApiResponse = {
-        status: 409,
-        error: 'Username already taken',
-        data: null,
-      };
-      res.status(409).json(resBody);
-      return;
-    }
-  }
 
   //check if they sent over a new pfp, and upload it to the db
   if (req.file) {

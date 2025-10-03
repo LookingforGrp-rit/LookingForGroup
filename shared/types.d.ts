@@ -413,7 +413,6 @@ export type UpdateUserInput = Partial<
     | "funFact"
     | "bio"
     | "visibility"
-    | "username"
     | "phoneNumber"
     | "mentor"
   > & {

@@ -8,7 +8,6 @@ import {
 } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
 import createUserService from '#services/users/create-user.ts';
-import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
 
 //creates a user
 export const createUser = async (req: Request, res: Response): Promise<void> => {
@@ -52,17 +51,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   }
 
   const username = email.substring(0, email.indexOf('@'));
-
-  const userExist = await getUserByUsernameService(username);
-  if (userExist !== 'NOT_FOUND' && userExist !== 'INTERNAL_ERROR') {
-    const resBody: ApiResponse = {
-      status: 409,
-      error: 'Username already taken',
-      data: null,
-    };
-    res.status(409).json(resBody);
-    return;
-  }
 
   const result = await createUserService(uid, username, firstName, lastName, email);
 

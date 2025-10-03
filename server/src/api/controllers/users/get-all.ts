@@ -1,10 +1,10 @@
 import type { AcademicYear, ApiResponse, FilterRequest } from '@looking-for-group/shared';
-import type { Response } from 'express';
+import type { Request, Response } from 'express';
 import { UsersAcademicYear } from '#prisma-models/index.js';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
 
 //get all users
-export const getAllUsers = async (req: FilterRequest, res: Response): Promise<void> => {
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
   const filters = {} as FilterRequest;
 
   //going through and parsing/validating the results
