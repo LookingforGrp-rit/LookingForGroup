@@ -14,32 +14,21 @@ import './Styles/pages.css';
 import { useState, useEffect } from 'react';
 import type { JSX } from 'react';
 import { getJobTitles } from '../api/users';
-
-
-interface JobTitle {
-  titleId: string;
-  label: string;
-}
-
-const getRoles = async (): Promise<JobTitle[]> => {
-    const response = await getJobTitles(); 
-    return response.data ?? [];
-  // console.log(data);
-};
-
+import { Role } from '@looking-for-group/shared';
 
 export const RoleSelector = () => {
-  const [options, setOptions] = useState<JSX.Element[] | null>(null);
+  const [options, setOptions] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     const setUpRoleSelector = async () => {
-      const jobTitles = await getRoles();
-      const selectorOptions = jobTitles.map((job: JobTitle) => (
-        <option key={job.titleId} value={job.titleId}>
-          {job.label}
-        </option>
-      ));
-      setOptions(selectorOptions);
+      const roles: Role[] = (await getJobTitles()) ?? [];
+      setOptions(
+        roles.map((role) => (
+          <option key={role.roleId} value={role.roleId}>
+            {role.label}
+          </option>
+        ))
+      );
     };
     setUpRoleSelector();
   }, []);

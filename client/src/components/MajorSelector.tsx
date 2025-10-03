@@ -13,33 +13,24 @@ import './Styles/pages.css';
 
 import { useState, useEffect, ReactElement } from 'react';
 import { getMajors as fetchMajors } from '../api/users';
-
-interface Major {
-  major_id: string;
-  label: string;
-}
-
-const getMajors = async (): Promise<Major[]> => {
-  const response = await fetchMajors();
-  return response.data;
-  // console.log(data);
-};
+import { Major } from '@looking-for-group/shared';
 
 // MajorSelector component allows users to select their major from a dropdown list
 export const MajorSelector = () => {
   // State to hold the options for the dropdown
-  const [options, setOptions] = useState<ReactElement[] | null>(null);
+  const [options, setOptions] = useState<ReactElement[]>([]);
 
   // useEffect runs once when the component mounts to fetch the majors and set the options
   useEffect(() => {
     const setUp = async () => {
-      const jobTitles = await getMajors();
-      const selectorOptions = jobTitles.map((job: Major) => (
-        <option key={job.major_id} value={job.major_id}>
-          {job.label}
-        </option>
-      ));
-      setOptions(selectorOptions);
+      const majors = await fetchMajors();
+      setOptions(
+        majors.map((major: Major) => (
+          <option key={major.majorId} value={major.majorId}>
+            {major.label}
+          </option>
+        ))
+      );
     };
     setUp();
   }, []);

@@ -19,18 +19,10 @@ import { createNewProject, getByID, updateProject, getPics, addPic, updatePic, d
 import { getUsersById } from '../../api/users';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-import { ProjectDetail } from '@looking-for-group/shared';
+import { ProjectDetail, User } from '@looking-for-group/shared';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
-
-interface User {
-  firstName: string,
-  lastName: string,
-  username: string,
-  primaryEmail: string,
-  userId: number
-}
 
 interface Props {
   newProject: boolean;
@@ -114,16 +106,16 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     setErrorLinks('');
     if (newProject && user) {
       const initProject = async() => {
-        const project: ProjectDetail  & { userId?: number } = { ...emptyProject, userId: user.userId };
+        const project: ProjectDetail = { ...emptyProject };
         try {
           const response = await getUsersById(user.userId.toString());
           // Add creator as Project Lead
           const member = {
-            firstName: user?.firstName || '',
-            lastName: user?.lastName || '',
+            firstName: user.firstName,
+            lastName: user.lastName,
             jobTitle: 'Project Lead',
             profileImage: response.data?.profileImage || '',
-            userId: user?.userId || 0
+            userId: user.userId
           };
           project.members = [member];
         } catch (error) {

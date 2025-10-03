@@ -3,25 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
 import usePreloadedImage from '../functions/imageLoad';
+import { MeDetail } from '@looking-for-group/shared';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
 
-interface ProfileData {
-  userId: string;
-  profileImage?: string;
-  firstName: string;
-  lastName: string;
-  major: string;
-  headline: string;
-  jobTitle: string;
-  location: string;
-  pronouns: string;
-  funFact: string;
-}
-
 interface ProfilePanelProps {
-  profileData: ProfileData;
+  profileData: MeDetail;
 }
 
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
@@ -43,7 +31,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
       <h2>
         {profileData.firstName} {profileData.lastName}
       </h2>
-      <h3>{profileData.major}</h3>
+      <h3>{profileData.majors?.join(', ') || ''}</h3>
       <div id="quote">"{profileData.headline}"</div>
 
       <div className={'profile-panel-hover'} onClick={() => navigate(profileURL)}>
@@ -51,7 +39,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
           <div className={'icon-box'}>
             <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
           </div>
-          <p>{profileData.jobTitle}</p>
+          <p>{profileData.title}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>

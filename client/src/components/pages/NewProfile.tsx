@@ -23,39 +23,14 @@ import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
 import { getCurrentUsername, getVisibleProjects, getProjectsByUser } from "../../api/users";
 import { getUsersById } from "../../api/users";
+import { MeDetail, UserSkill, ProjectPreview } from '@looking-for-group/shared';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
 
-// --------------------
-// Interfaces
-// --------------------
-interface Project {
-  name: string;
-  hook: string;
-}
-
-interface Tag {
-  type: string;
-  skill: string;
-}
-
-interface Profile {
-  first_name: string;
-  last_name: string;
-  username: string;
-  profile_image: HTMLImageElement;
-  headline: string;
-  pronouns: string;
-  job_title: string;
-  major: string;
-  academic_year: string;
-  location: string;
-  fun_fact: string;
-  bio: string;
-  skills: Tag[];
-  interests?: string[];
-}
+type Profile = MeDetail;
+type Tag = UserSkill;
+type Project = ProjectPreview;
 
 // Stores if profile is loaded from server and if it's user's respectively
 // const [profileLoaded, setProfileLoaded] = useState(false);
@@ -77,9 +52,10 @@ const NewProfile = () => {
     "Flexibility",
     "Krita",
   ];
-  const skills: Tag[] = skillsStr.map((skillStr) => {
-    return { type: "Soft", skill: skillStr };
-  });
+  const skills: UserSkill[] = skillsStr.map((skillStr) => ({
+    type: "Soft",
+    skill: skillStr,
+  }));
   // const defaultProfile: Profile = {
   //   first_name: 'User',
   //   last_name: 'Name',
@@ -95,7 +71,7 @@ const NewProfile = () => {
   //   bio: 'A bunch of Lorem Ipsum text, not bothering to type it out.',
   //   skills: skills,
   // };
-  const defaultProfile: Profile = {
+  const defaultProfile: MeDetail = {
     first_name: "Private",
     last_name: "User",
     username: "privateuser",
@@ -121,9 +97,9 @@ const NewProfile = () => {
   const [displayedProfile, setDisplayedProfile] = useState(defaultProfile);
 
   // Stores all projects
-  const [fullProjectList, setFullProjectList] = useState<Project[]>([]);
+  const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
   // Projects displayed for searches
-  const [displayedProjects, setDisplayedProjects] = useState<Project[]>([]);
+  const [displayedProjects, setDisplayedProjects] = useState<ProjectPreview[]>([]);
 
   const projectSearchData = fullProjectList.map(
     (project: Project) => {
@@ -183,7 +159,7 @@ const NewProfile = () => {
 
   const getProfileProjectData = async () => {
     try {
-      const response = isUsersProfile ? await getProjectsByUser(Number(profileID)) : await getVisibleProjects(Number(profileID));          // IMPLEMENT PROJECT GETTING
+      const response = isUsersProfile ? await getProjectsByUser(Number(profileID)) : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };          // IMPLEMENT PROJECT GETTING
       const data = response.data;
       
       console.log(data);
@@ -222,7 +198,7 @@ const NewProfile = () => {
       setUpProfileID();
 
       try {
-        const { data } = await getUsersById(profileID ?? "");
+        const { data } = await getUsersById(profileID ?? "") as { data: MeDetail[] };
 
         // Only run this if profile data exists for user
         if (data[0] !== undefined) {

@@ -1,20 +1,15 @@
 import { memo, FC, ChangeEvent, useState, useLayoutEffect } from 'react';
 // import { ProjectCard } from './ProjectCard';
-
-interface Person {
-  name: string;
-  age: number;
-  email?: string;
-}
+import { UserPreview } from '@looking-for-group/shared';
 
 interface DataSet {
-  data: (string | Person)[];
+  data: (string | UserPreview)[];
 }
 
 
 interface SearchBarProps {
   dataSets: DataSet[];
-  onSearch: (results: (string | Person)[][]) => void;
+  onSearch: (results: (string | UserPreview)[][]) => void;
   // Optional value & onChange for different searchbar behaviors (adding team member names)
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -48,17 +43,15 @@ const handleSearch = (searchQuery: string) => {
       // ONLY return fields we want to match, this avoids unintended searchbar behavior
        return (
         (item.name && item.name.toLowerCase().includes(searchQuery)) ||
-        (item.role && item.role.toLowerCase().includes(searchQuery)) ||
-        (item.label && item.label.toLowerCase().includes(searchQuery)) || 
+        (item.username && item.username.toLowerCase().includes(searchQuery)) ||
         (item.firstName && item.firstName.toLowerCase().includes(searchQuery)) ||
         (item.lastName && item.lastName.toLowerCase().includes(searchQuery))
-       )
+       );
      }
      else {
-        String(item).toLowerCase().includes(searchQuery)
+        return String(item).toLowerCase().includes(searchQuery)
      }
-    }
-    )
+    })
   );
 
   onSearch(filteredResults);
