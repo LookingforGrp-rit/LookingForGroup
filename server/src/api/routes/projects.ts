@@ -2,9 +2,9 @@ import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
+import requiresLogin from '../middleware/authorization/requires-login.ts';
+import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
-import requiresLogin from '../middleware/requires-login.ts';
-import requiresProjectOwner from '../middleware/requires-project-owner.ts';
 
 const router = Router();
 
