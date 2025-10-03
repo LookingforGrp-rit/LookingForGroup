@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { useSelector } from "react-redux";
-import Notifications from "./pages/Notifications";
+// import Notifications from "./pages/Notifications";
 import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
 //user utils
@@ -117,7 +117,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
 
   const [activePage, setActivePage] = useState<string>(startingPage); // State to manage the active page [Discover, Meet, My Projects, Messages, Profile, Settings]
 
-  const [showNotifications, setShowNotifications] = useState<boolean>(false); // State to manage the notifications modal
+  // const [showNotifications, setShowNotifications] = useState<boolean>(false); // State to manage the notifications modal
 
   // Error to handle if Create button opens project creator
   const [createError, setCreateError] = useState<boolean>(true);
@@ -306,12 +306,12 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
         </div>
       </div>
 
-      <Notifications
+      {/* <Notifications
         show={showNotifications}
         onClose={() => {
           setShowNotifications(false);
         }}
-      />
+      /> */}
     </div>
   );
 };

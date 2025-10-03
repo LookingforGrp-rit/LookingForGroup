@@ -1,5 +1,5 @@
 import { hardSkills, proficiencies, softSkills } from './skills';
-import { interests } from './interests';
+// import { interests } from './interests';
 
 // same as projects in db
 export const projects = [
@@ -218,7 +218,7 @@ export const profiles = [
     username: 'TheGreatOldOne',
     pronouns: ['He', 'Him'],
     bio: 'A Super cool coder!',
-    interests: [interests[0], interests[7], interests[15], interests[26]],
+    // interests: [interests[0], interests[7], interests[15], interests[26]],
     messages: [0, 1],
     skills: [
       {
@@ -278,16 +278,16 @@ export const profiles = [
       { text: 'twitter', url: 'https://www.twitter.com/' },
       { text: 'itch.io', url: 'https://www.itch.io.com/' },
     ],
-    endorsements: [
-      { endorsement: 'hes really good at it', endorserID: '1', endorseProjectID: '0', skills: [1] },
-      { endorsement: 'his greatest skill', endorserID: '2', endorseProjectID: '2', skills: [2, 3] },
-      {
-        endorsement: 'he saved our project',
-        endorserID: '3',
-        endorseProjectID: '2',
-        skills: [4, 5, 6],
-      },
-    ],
+    // endorsements: [
+    //   { endorsement: 'hes really good at it', endorserID: '1', endorseProjectID: '0', skills: [1] },
+    //   { endorsement: 'his greatest skill', endorserID: '2', endorseProjectID: '2', skills: [2, 3] },
+    //   {
+    //     endorsement: 'he saved our project',
+    //     endorserID: '3',
+    //     endorseProjectID: '2',
+    //     skills: [4, 5, 6],
+    //   },
+    // ],
   },
   {
     _id: 1,
@@ -295,7 +295,7 @@ export const profiles = [
     username: 'Wario',
     pronouns: ['they', 'she'],
     bio: 'The best Wario to grace this land!',
-    interests: [interests[5], interests[8], interests[24], interests[29]],
+    // interests: [interests[5], interests[8], interests[24], interests[29]],
     messages: [0, 1],
     skills: [
       {
@@ -355,21 +355,21 @@ export const profiles = [
       { text: 'twitter', url: 'https://www.twitter.com/' },
       { text: 'itch.io', url: 'https://www.itch.io.com/' },
     ],
-    endorsements: [
-      { endorsement: "she's cool", endorserID: '0', endorseProjectID: '3', skills: [1, 2] },
-      {
-        endorsement: 'The best WAAH-er around',
-        endorserID: '0',
-        endorseProjectID: '0',
-        skills: [2, 4],
-      },
-      {
-        endorsement: "waa'd all over those guys",
-        endorserID: '2',
-        endorseProjectID: '0',
-        skills: [3, 5],
-      },
-    ],
+    // endorsements: [
+    //   { endorsement: "she's cool", endorserID: '0', endorseProjectID: '3', skills: [1, 2] },
+    //   {
+    //     endorsement: 'The best WAAH-er around',
+    //     endorserID: '0',
+    //     endorseProjectID: '0',
+    //     skills: [2, 4],
+    //   },
+    //   {
+    //     endorsement: "waa'd all over those guys",
+    //     endorserID: '2',
+    //     endorseProjectID: '0',
+    //     skills: [3, 5],
+    //   },
+    // ],
   },
   {
     _id: 2,
@@ -377,8 +377,8 @@ export const profiles = [
     username: 'Princess2108279',
     pronouns: ['She', 'Her'],
     bio: 'I dont need to be saved!',
-    interests: [interests[6], interests[18], interests[21], interests[25], interests[30]],
-    messages: [],
+    // interests: [interests[6], interests[18], interests[21], interests[25], interests[30]],
+    // messages: [],
     skills: [
       {
         skill: softSkills[0],
@@ -407,7 +407,7 @@ export const profiles = [
       { text: 'twitter', url: 'https://www.twitter.com/' },
       { text: 'itch.io', url: 'https://www.itch.io.com/' },
     ],
-    endorsements: [],
+    // endorsements: [],
   },
   {
     _id: 3,
@@ -415,8 +415,8 @@ export const profiles = [
     username: 'ILoveBuilding',
     pronouns: ['He', 'They'],
     bio: "Bob the Builder is a British animated children's television series created by Keith Chapman for HIT Entertainment and Hot Animation. The series follows the adventures of Bob, a general contractor, specialising in masonry, along with his colleague Wendy, various neighbours, and friends, and equipment, and their gang of anthropomorphised work-vehicles, Scoop, Muck, Dizzy, Roley, Lofty and many others. The series ran from 12 April 1999 to 31 December 20",
-    interests: [interests[3], interests[4], interests[11]],
-    messages: [],
+    // interests: [interests[3], interests[4], interests[11]],
+    // messages: [],
     skills: [
       {
         skill: softSkills[7],
@@ -445,181 +445,181 @@ export const profiles = [
       { text: 'twitter', url: 'https://www.twitter.com/' },
       { text: 'itch.io', url: 'https://www.itch.io.com/' },
     ],
-    endorsements: [],
+    // endorsements: [],
   },
 ];
 
-// not in db
-export const messages = [
-  {
-    _id: 0,
-    senderID: 0,
-    recipientID: 1,
-    sentDate: '10/10/10',
-    messageContent: 'hello',
-  },
-  {
-    _id: 1,
-    senderID: 1,
-    recipientID: 0,
-    sentDate: '1/1/1',
-    messageContent: 'howdy',
-  },
-  {
-    _id: 2,
-    senderID: 1,
-    recipientID: 0,
-    sentDate: '2/2/2',
-    messageContent: 'wah amirite',
-  },
-  {
-    _id: 3,
-    senderID: 1,
-    recipientID: 2,
-    sentDate: '1/1/1',
-    messageContent: 'hey princess',
-  },
-  {
-    _id: 4,
-    senderID: 2,
-    recipientID: 1,
-    sentDate: '1/1/1',
-    messageContent: 'leave me alone',
-  },
-  {
-    _id: 3,
-    senderID: 3,
-    recipientID: 0,
-    sentDate: '1/1/1',
-    messageContent: 'i LOVE building',
-  },
-  {
-    _id: 3,
-    senderID: 3,
-    recipientID: 1,
-    sentDate: '1/1/1',
-    messageContent: 'i LOVE building',
-  },
-  {
-    _id: 3,
-    senderID: 3,
-    recipientID: 2,
-    sentDate: '1/1/1',
-    messageContent: 'i LOVE building',
-  },
-];
+// // not in db
+// export const messages = [
+//   {
+//     _id: 0,
+//     senderID: 0,
+//     recipientID: 1,
+//     sentDate: '10/10/10',
+//     messageContent: 'hello',
+//   },
+//   {
+//     _id: 1,
+//     senderID: 1,
+//     recipientID: 0,
+//     sentDate: '1/1/1',
+//     messageContent: 'howdy',
+//   },
+//   {
+//     _id: 2,
+//     senderID: 1,
+//     recipientID: 0,
+//     sentDate: '2/2/2',
+//     messageContent: 'wah amirite',
+//   },
+//   {
+//     _id: 3,
+//     senderID: 1,
+//     recipientID: 2,
+//     sentDate: '1/1/1',
+//     messageContent: 'hey princess',
+//   },
+//   {
+//     _id: 4,
+//     senderID: 2,
+//     recipientID: 1,
+//     sentDate: '1/1/1',
+//     messageContent: 'leave me alone',
+//   },
+//   {
+//     _id: 3,
+//     senderID: 3,
+//     recipientID: 0,
+//     sentDate: '1/1/1',
+//     messageContent: 'i LOVE building',
+//   },
+//   {
+//     _id: 3,
+//     senderID: 3,
+//     recipientID: 1,
+//     sentDate: '1/1/1',
+//     messageContent: 'i LOVE building',
+//   },
+//   {
+//     _id: 3,
+//     senderID: 3,
+//     recipientID: 2,
+//     sentDate: '1/1/1',
+//     messageContent: 'i LOVE building',
+//   },
+// ];
 
 // not in db
-export const posts = [
-  {
-    _id: 0,
-    author: 0,
-    createdDate: 'sample date',
-    title: 'A cool post',
-    postText: 'welcome to the coolest project of all time',
-    postImage: {
-      name: 'image1',
-      data: '',
-      mimeType: '',
-    },
-    comments: [0, 3], // unique
-  },
-  {
-    _id: 1,
-    author: 0,
-    createdDate: 'sample date',
-    title: 'a cooler post',
-    postText: 'development is going great! our team rocks',
-    postImage: {
-      name: 'image1',
-      data: '',
-      mimeType: '',
-    },
-    comments: [4],
-  },
-  {
-    _id: 2,
-    author: 1,
-    createdDate: 'sample date',
-    title: 'help',
-    postText: 'can you go to the hospital from eating rocks',
-    postImage: {
-      name: 'image1',
-      data: '',
-      mimeType: '',
-    },
-    comments: [],
-  },
-  {
-    _id: 3,
-    author: 1,
-    createdDate: 'sample date',
-    title: 'WAAH',
-    postText: 'wah',
-    postImage: {
-      name: 'image1',
-      data: '',
-      mimeType: '',
-    },
-    comments: [],
-  },
-  {
-    _id: 4,
-    author: 0,
-    createdDate: 'sample date',
-    title: 'guys please join',
-    postText: "i'm going to fail",
-    postImage: {
-      name: 'image1',
-      data: '',
-      mimeType: '',
-    },
-    comments: [],
-  },
-];
+// export const posts = [
+//   {
+//     _id: 0,
+//     author: 0,
+//     createdDate: 'sample date',
+//     title: 'A cool post',
+//     postText: 'welcome to the coolest project of all time',
+//     postImage: {
+//       name: 'image1',
+//       data: '',
+//       mimeType: '',
+//     },
+//     comments: [0, 3], // unique
+//   },
+//   {
+//     _id: 1,
+//     author: 0,
+//     createdDate: 'sample date',
+//     title: 'a cooler post',
+//     postText: 'development is going great! our team rocks',
+//     postImage: {
+//       name: 'image1',
+//       data: '',
+//       mimeType: '',
+//     },
+//     comments: [4],
+//   },
+//   {
+//     _id: 2,
+//     author: 1,
+//     createdDate: 'sample date',
+//     title: 'help',
+//     postText: 'can you go to the hospital from eating rocks',
+//     postImage: {
+//       name: 'image1',
+//       data: '',
+//       mimeType: '',
+//     },
+//     comments: [],
+//   },
+//   {
+//     _id: 3,
+//     author: 1,
+//     createdDate: 'sample date',
+//     title: 'WAAH',
+//     postText: 'wah',
+//     postImage: {
+//       name: 'image1',
+//       data: '',
+//       mimeType: '',
+//     },
+//     comments: [],
+//   },
+//   {
+//     _id: 4,
+//     author: 0,
+//     createdDate: 'sample date',
+//     title: 'guys please join',
+//     postText: "i'm going to fail",
+//     postImage: {
+//       name: 'image1',
+//       data: '',
+//       mimeType: '',
+//     },
+//     comments: [],
+//   },
+// ];
 
-// not in db
-export const comments = [
-  {
-    _id: 0,
-    author: 0,
-    replies: [1], // unique
-    createdDate: '1',
-    content: 'bleh',
-  },
-  {
-    _id: 1,
-    author: 0,
-    replies: [2, 5],
-    createdDate: '2',
-    content: 'blah',
-  },
-  {
-    _id: 2,
-    author: 0,
-    replies: [],
-    createdDate: '3',
-    content: 'bluh',
-  },
-  {
-    _id: 3,
-    author: 0,
-    replies: [],
-    createdDate: '4',
-    content: 'blih',
-  },
-  {
-    _id: 4,
-    author: 0,
-    replies: [],
-    createdDate: '5',
-    content: 'bloh',
-  },
-  {
-    _id: 5,
-    author: 1,
-    replies: [],
-    createdDate: '6',
-    content: 'bleh ultimate',
-  },
-];
+// // not in db
+// export const comments = [
+//   {
+//     _id: 0,
+//     author: 0,
+//     replies: [1], // unique
+//     createdDate: '1',
+//     content: 'bleh',
+//   },
+//   {
+//     _id: 1,
+//     author: 0,
+//     replies: [2, 5],
+//     createdDate: '2',
+//     content: 'blah',
+//   },
+//   {
+//     _id: 2,
+//     author: 0,
+//     replies: [],
+//     createdDate: '3',
+//     content: 'bluh',
+//   },
+//   {
+//     _id: 3,
+//     author: 0,
+//     replies: [],
+//     createdDate: '4',
+//     content: 'blih',
+//   },
+//   {
+//     _id: 4,
+//     author: 0,
+//     replies: [],
+//     createdDate: '5',
+//     content: 'bloh',
+//   },
+//   {
+//     _id: 5,
+//     author: 1,
+//     replies: [],
+//     createdDate: '6',
+//     content: 'bleh ultimate',
+//   },
+// ];

@@ -14,9 +14,9 @@ import '../Styles/settings.css';
 import '../Styles/pages.css';
 
 import { ProfileHeader } from '../Profile/ProfileHeader';
-import { ProfileInterests } from '../Profile/ProfileInterests';
+// import { ProfileInterests } from '../Profile/ProfileInterests';
 import { ProfileSkills } from '../Profile/ProfileSkills';
-import { ProfileEndorsements } from '../Profile/ProfileEndorsements';
+// import { ProfileEndorsements } from '../Profile/ProfileEndorsements';
 import { ProfileProjects } from '../Profile/ProfileProjects';
 import { useEffect, useState } from 'react';
 import ToTopButton from '../ToTopButton';
@@ -108,14 +108,14 @@ const Profile = (props) => {
       </select>
       <div id="profile-page">
         <ProfileHeader user={user} />
-        <ProfileInterests user={user} />
+        {/* <ProfileInterests user={user} /> */}
         <div>
           <ProfileSkills user={user} />
-          {userData ? (
+          {/* {userData ? (
             <ProfileEndorsements user={userData} />
           ) : (
             <p>Loading endorsements...</p>
-          )}
+          )} */}
         </div>
         <ProfileProjects user={user} />
       </div>

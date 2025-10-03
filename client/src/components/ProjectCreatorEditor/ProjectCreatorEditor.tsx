@@ -2,7 +2,7 @@
 import '../Styles/discoverMeet.css';
 import '../Styles/general.css';
 import '../Styles/imageUploader.css'
-import '../Styles/notification.css';
+// import '../Styles/notification.css';
 import '../Styles/projects.css';
 import '../Styles/pages.css';
 
@@ -36,7 +36,7 @@ interface Props {
   newProject: boolean;
   buttonCallback?: () => void;
   user?: User;
-  permissions?: number;
+  // permissions?: number;
 }
 
 // default value for project data
@@ -64,7 +64,7 @@ const emptyProject: ProjectDetail = {
  * 
  * @returns React component Popup
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, user, permissions }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, user, /*permissions*/ }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const projectID = urlParams.get('projectID');
@@ -303,7 +303,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                   currentTab === 0 ? <GeneralTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
                     currentTab === 1 ? <MediaTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
                       currentTab === 2 ? <TagsTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
-                        currentTab === 3 ? <TeamTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorMember={setErrorAddMember} setErrorPosition={setErrorAddPosition} permissions={permissions} /> :
+                        currentTab === 3 ? <TeamTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorMember={setErrorAddMember} setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/ /> :
                           currentTab === 4 ? <LinksTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorLinks={setErrorLinks} /> :
                             <></>
                 }

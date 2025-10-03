@@ -37,25 +37,25 @@ const makeProjectPost = () => {
 
 //Placeholder for entering the virtual space for a project
 //Can likely be replaced with a simple redirect funciton with useNavigation
-const enterVirtualSpace = () => {
-  console.log("This will take the user into the project's virtual space");
-};
+// const enterVirtualSpace = () => {
+//   console.log("This will take the user into the project's virtual space");
+// };
 
 //Lets the user block this project, preventing it from appearing for them
 //Should only be accessible to non-project members
-const blockProject = () => {
-  console.log('This will allow a user to block the current project');
-  //Get current user id
-  //Add project to user's block projects list
-};
+// const blockProject = () => {
+//   console.log('This will allow a user to block the current project');
+//   //Get current user id
+//   //Add project to user's block projects list
+// };
 
 //Lets the user open a report popup, which can then be used to report an inappropriate project to site admins
 //Should only be accessible to non-project members
-const reportProject = () => {
-  console.log('This will let the user report the project to moderators');
-  //Get project id & user id (if user is not anonymous)
-  //Send a report for admins to review filled with relevant info (need location for reports)
-};
+// const reportProject = () => {
+//   console.log('This will let the user report the project to moderators');
+//   //Get project id & user id (if user is not anonymous)
+//   //Send a report for admins to review filled with relevant info (need location for reports)
+// };
 
 //Lets the user leave the project
 //Should only be accessible to project members
@@ -102,9 +102,9 @@ export {
   followProject,
   addInterested,
   makeProjectPost,
-  enterVirtualSpace,
-  blockProject,
-  reportProject,
+  // enterVirtualSpace,
+  // blockProject,
+  // reportProject,
   leaveProject,
   createMemberCount,
   toggleOptionDisplay,

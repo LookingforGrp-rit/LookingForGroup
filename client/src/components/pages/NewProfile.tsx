@@ -4,8 +4,8 @@ import "../Styles/discoverMeet.css";
 import "../Styles/emailConfirmation.css";
 import "../Styles/general.css";
 import "../Styles/loginSignup.css";
-import "../Styles/messages.css";
-import "../Styles/notification.css";
+// import "../Styles/messages.css";
+// import "../Styles/notification.css";
 import "../Styles/profile.css";
 import "../Styles/projects.css";
 import "../Styles/settings.css";
@@ -19,7 +19,7 @@ import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ThemeIcon } from "../ThemeIcon";
-import { ProfileInterests } from "../Profile/ProfileInterests";
+// import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
 import { getCurrentUsername, getVisibleProjects, getProjectsByUser } from "../../api/users";
 import { getUsersById } from "../../api/users";
@@ -227,7 +227,7 @@ const NewProfile = () => {
         // Only run this if profile data exists for user
         if (data[0] !== undefined) {
           // If profile is private, and isn't the user's, don't display it
-          if (isUsersProfile /*|| data[0].visibility == 1*/) {
+          if (isUsersProfile || data[0].visibility == 1) {
             setDisplayedProfile(data[0]);
             await getProfileProjectData();
           }
@@ -285,7 +285,7 @@ const NewProfile = () => {
             {/* <ThemeIcon id={'heart'} width={25} height={25} className={isFollowing ? 'filled-heart' : 'empty-heart'} /> */}
           </button>
           {/* TO-DO: Implement Share, Block, and Report functionality */}
-          <Dropdown>
+          {/* <Dropdown>
             <DropdownButton>
               <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
             </DropdownButton>
@@ -308,7 +308,7 @@ const NewProfile = () => {
                 </button>
               </div>
             </DropdownContent>
-          </Dropdown>
+          </Dropdown> */}
           {/* Alternate follow button (unused): */}
           {/* <button id="profile-follow-button" onClick={followUser}>Follow</button> */}
         </div>
@@ -380,12 +380,12 @@ const NewProfile = () => {
             </span>
             {displayedProfile.fun_fact}
           </div>
-          <div id="profile-info-interest">
+          {/* <div id="profile-info-interest">
             <ProfileInterests
               user={{ interests: displayedProfile.interests || [] }}
               isUsersProfile={isUsersProfile}
             />
-          </div>
+          </div> */}
 
           <div id="profile-info-skills">
             {displayedProfile.skills !== null ? (

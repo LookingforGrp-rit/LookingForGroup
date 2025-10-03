@@ -4,8 +4,8 @@ import '../Styles/discoverMeet.css';
 import '../Styles/emailConfirmation.css';
 import '../Styles/general.css';
 import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
+// import '../Styles/messages.css';
+// import '../Styles/notification.css';
 import '../Styles/profile.css';
 import '../Styles/projects.css';
 import '../Styles/settings.css';
@@ -23,8 +23,8 @@ import { AboutTab } from './tabs/AboutTab';
 import { LinksTab, getSocials } from './tabs/LinksTab';
 import { ProjectsTab } from './tabs/ProjectsTab';
 import { SkillsTab } from './tabs/SkillsTab';
-import { InterestTab } from './tabs/InterestTab';
-import { interests } from '../../constants/interests';
+// import { InterestTab } from './tabs/InterestTab';
+// import { interests } from '../../constants/interests';
 import { getCurrentUsername, getUsersById, updateProfilePicture } from '../../api/users';
 
 // exportable interface for TypeScript errors
@@ -42,13 +42,13 @@ export interface ProfileData {
   bio: string;
   profile_image: string;
   skills: { id: number; skill: string, type: string, tag: string }[];
-  interests: { id: number; interest: string, type: string, tag: string }[];
+  // interests: { id: number; interest: string, type: string, tag: string }[];
   socials: { id: number; url: string }[];
 }
 
 // The profile to view is independent upon the site's state changes
 let profile: ProfileData;
-const pageTabs = ['About', 'Projects', 'Skills', 'Interests', 'Links'];
+const pageTabs = ['About', 'Projects', 'Skills', /*'Interests',*/ 'Links'];
 
 export const ProfileEditPopup = () => {
   // Keeps track of what tab we are in
@@ -98,7 +98,7 @@ const onSaveClicked = async (e : Event) => {
     funFact: getInputValue('funFact'),
     bio,
     skills: getInputValue('skills'),
-    interests: getInputValue('interests'),
+    // interests: getInputValue('interests'),
     socials: getSocials(),
   };
   // console.log('Saving data...');
@@ -182,7 +182,7 @@ const onSaveClicked = async (e : Event) => {
 
       console.log('ProfileEditPopup - Raw API response:', response.data);
       console.log('ProfileEditPopup - User profile data:', response.data[0]);
-      console.log('ProfileEditPopup - User interests from API:', response.data[0]?.interests);
+      // console.log('ProfileEditPopup - User interests from API:', response.data[0]?.interests);
 
 
       profile = await response.data[0];
@@ -197,7 +197,7 @@ const onSaveClicked = async (e : Event) => {
         <AboutTab profile={profile} selectedImageFile={selectedImageFile} setSelectedImageFile={setSelectedImageFile}/>
         <ProjectsTab profile={profile} />
         <SkillsTab profile={profile} />
-        <InterestTab profile={profile} />
+        {/* <InterestTab profile={profile} /> */}
         <LinksTab profile={profile} type={'profile'} />
       </div>
     );
