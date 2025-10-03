@@ -9,6 +9,7 @@ import reorderImages from './images/reorder-images.ts';
 import updateImage from './images/update-image.ts';
 import addJobController from './jobs/add-job.ts';
 import deleteJobController from './jobs/delete-job.ts';
+import getJobsController from './jobs/get-all-jobs.ts';
 import updateJobController from './jobs/update-job.ts';
 import addMediums from './mediums/add-proj-mediums.ts';
 import deleteMediums from './mediums/delete-proj-mediums.ts';
@@ -26,6 +27,7 @@ import getTags from './tags/get-proj-tags.ts';
 import updateProject from './update-project.ts';
 
 export default {
+  getJobsController,
   getProjects,
   getProjectByID,
   getProjectImages,

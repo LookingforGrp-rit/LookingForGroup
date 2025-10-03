@@ -191,6 +191,8 @@ router.post(
 // JOBS ROUTES
 
 // creates a new project job
+router.get('/:id/jobs', PROJECT.getJobsController);
+// creates a new project job
 router.post(
   '/:id/jobs',
   requiresLogin,

@@ -1,25 +1,24 @@
 import type { ApiResponse, ProjectJob } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getJobService from '#services/projects/jobs/get-job.ts';
+import getJobService from '#services/projects/jobs/get-all-jobs.ts';
 
-const getJobController = async (req: Request, res: Response): Promise<void> => {
-  const projectId = parseInt(req.params.projectId);
-  const jobId = parseInt(req.params.jobId);
+const getJobsController = async (req: Request, res: Response): Promise<void> => {
+  const projectId = parseInt(req.params.id);
 
-  if (isNaN(projectId) || isNaN(jobId)) {
-    const resBody: ApiResponse<ProjectJob> = {
+  if (isNaN(projectId)) {
+    const resBody: ApiResponse = {
       status: 400,
-      error: 'Invalid project ID or job ID',
+      error: 'Invalid project ID',
       data: null,
     };
     res.status(400).json(resBody);
     return;
   }
 
-  const result = await getJobService(projectId, jobId);
+  const result = await getJobService(projectId);
 
   if (result === 'NOT_FOUND') {
-    const resBody: ApiResponse<ProjectJob> = {
+    const resBody: ApiResponse = {
       status: 404,
       error: 'Job not found',
       data: null,
@@ -29,7 +28,7 @@ const getJobController = async (req: Request, res: Response): Promise<void> => {
   }
 
   if (result === 'INTERNAL_ERROR') {
-    const resBody: ApiResponse<ProjectJob> = {
+    const resBody: ApiResponse = {
       status: 500,
       error: 'Internal Server Error',
       data: null,
@@ -38,7 +37,7 @@ const getJobController = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  const resBody: ApiResponse<ProjectJob> = {
+  const resBody: ApiResponse<ProjectJob[]> = {
     status: 200,
     error: null,
     data: result,
@@ -46,4 +45,4 @@ const getJobController = async (req: Request, res: Response): Promise<void> => {
   res.status(200).json(resBody);
 };
 
-export default getJobController;
+export default getJobsController;
