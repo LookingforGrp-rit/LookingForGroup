@@ -22,7 +22,7 @@ export const transformMeToPreview = (user: UsersGetPayload): MePreview => {
     lastName: user.lastName,
     username: user.username,
     profileImage: user.profileImage ?? null,
-    mentor: !!user.mentor,
+    mentor: user.mentor,
     developer: user.userSkills.some((skill) => hasSkillOfType(skill, 'Developer')),
     designer: user.userSkills.some((skill) => hasSkillOfType(skill, 'Designer')),
     apiUrl: `api/me`,

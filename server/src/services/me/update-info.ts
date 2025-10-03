@@ -23,7 +23,6 @@ type UpdatebleUserFields = Partial<
     | 'funFact'
     | 'bio'
     | 'visibility'
-    | 'username'
     | 'phoneNumber'
     | 'mentor'
   >
