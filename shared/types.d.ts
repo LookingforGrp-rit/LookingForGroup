@@ -264,14 +264,6 @@ export interface MePrivate extends MeDetail {
   updatedAt: Date;
 }
 
-// TODO this may be unneeded now. doesn't seem to be referenced anywhere
-//creating users
-export interface CreateUserData {
-  firstName: string;
-  lastName: string;
-  username: string;
-}
-
 // PROjECT DATA
 
 export interface ProjectFollowings {
