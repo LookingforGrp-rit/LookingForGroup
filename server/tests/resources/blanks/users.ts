@@ -71,7 +71,7 @@ export const blankUserDetail: UserDetail = {
   mentor: false,
   designer: false,
   developer: false,
-  projects: Object.prototype as ProjectPreview[],
+  projects: Object.prototype as UserMember[],
   skills: Object.prototype as UserSkill[],
   socials: Object.prototype as UserSocial[],
   following: {
@@ -91,7 +91,7 @@ export const blankUserDetail: UserDetail = {
 export const blankUser: User = {
   ritEmail: '',
   visibility: 1,
-  projects: Object.prototype as ProjectPreview[],
+  projects: Object.prototype as UserMember[],
   phoneNumber: '',
   universityId: '',
   createdAt: Date.prototype,
@@ -126,6 +126,7 @@ export const blankUser: User = {
 export const blankUserMember: UserMember = {
   project: Object.prototype as ProjectPreview,
   role: Object.prototype as Role,
+  visibility: 'Private',
   memberSince: Date.prototype,
   apiUrl: '',
 };

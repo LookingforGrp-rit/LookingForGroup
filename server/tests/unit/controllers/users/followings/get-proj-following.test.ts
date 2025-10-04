@@ -25,7 +25,7 @@ describe('getProjectsFollowing', () => {
     req.params.id = 'not a number either';
     const resBody = {
       status: 400,
-      error: 'Invalid project ID',
+      error: 'Invalid user ID',
       data: null,
     };
 
@@ -52,13 +52,13 @@ describe('getProjectsFollowing', () => {
     expect(res.json).toHaveBeenCalledWith(resBody);
   });
 
-  //there's something wrong with the update project service, should return 500
-  test('Must return 404 when the project could not be found', async () => {
+  //no projects followed, should return 404
+  test('Must return 404 when no projects are followed', async () => {
     vi.mocked(getProjectFollowingService).mockResolvedValue('NOT_FOUND');
     expect(getProjectFollowingService).toBe(vi.mocked(getProjectFollowingService));
     const resBody = {
       status: 404,
-      error: 'Project not found',
+      error: 'No projects followed',
       data: null,
     };
 

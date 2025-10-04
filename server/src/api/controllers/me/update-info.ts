@@ -3,7 +3,6 @@ import type { Response } from 'express';
 import type { UsersAcademicYear } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import { updateUserInfoService } from '#services/me/update-info.ts';
-import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
 
 interface UpdateUserInfo {
   firstName?: string;
@@ -67,25 +66,6 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     };
     res.status(400).json(resBody);
     return;
-  }
-
-  //check if username was updated, and only do this whole check if it was
-  const newUsername = updates['username'];
-  if (newUsername) {
-    const userExist = await getUserByUsernameService(newUsername);
-    if (
-      userExist !== 'NOT_FOUND' &&
-      userExist !== 'INTERNAL_ERROR' &&
-      userExist.userId !== userId
-    ) {
-      const resBody: ApiResponse = {
-        status: 409,
-        error: 'Username already taken',
-        data: null,
-      };
-      res.status(409).json(resBody);
-      return;
-    }
   }
 
   //check if they sent over a new pfp, and upload it to the db

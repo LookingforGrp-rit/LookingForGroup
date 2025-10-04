@@ -58,7 +58,7 @@ describe('deleteProject', () => {
 
     await deleteProjectController(req, res);
     expect(deleteProjectService).toHaveBeenCalledOnce();
-    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(resBody);
   });
   //everything's good, return 200

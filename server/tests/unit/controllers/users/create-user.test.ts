@@ -136,7 +136,7 @@ describe('createUser', () => {
     await createUser(req, res);
     expect(getUserByUsernameService).toHaveBeenCalledOnce();
     expect(createUserService).toHaveBeenCalledOnce();
-    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith(responseBody);
   });
 });
