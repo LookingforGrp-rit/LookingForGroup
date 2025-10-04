@@ -4,7 +4,7 @@ import getProjectByIdService from '#services/projects/get-proj-id.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectWithFollowers } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/get-project-id.ts');
+vi.mock('#services/projects/get-proj-id.ts');
 
 //dummy req
 const req = blankIdRequest;

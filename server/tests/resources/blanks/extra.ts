@@ -66,6 +66,20 @@ export const blankUserRequest = {
   query: {},
 } as unknown as Request;
 
+export const blankAuthUserRequest = {
+  headers: {
+    [uidHeaderKey]: '000000001',
+    [firstNameHeaderKey]: 'firstname',
+    [lastNameHeaderKey]: 'lastname',
+    [emailHeaderKey]: 'email@rit.edu',
+  },
+  body: {
+    username: 'username',
+  },
+  query: {},
+  currentUser: '1',
+} as unknown as AuthenticatedRequest;
+
 export const blankGetUserRequest = {
   params: {
     id: '1',

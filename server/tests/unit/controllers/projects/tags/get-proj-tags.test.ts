@@ -1,10 +1,10 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import getProjectTagsController from '#controllers/projects/tags/get-project-tags.ts';
+import getProjectTagsController from '#controllers/projects/tags/get-proj-tags.ts';
 import getProjectTagsService from '#services/projects/tags/get-proj-tags.ts';
 import { blankTagsRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectTag } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/tags/get-project-tags.ts');
+vi.mock('#services/projects/tags/get-proj-tags.ts');
 
 //dummy req
 const req = blankTagsRequest;

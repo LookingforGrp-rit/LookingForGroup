@@ -1,10 +1,10 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import getProjectMediumsController from '#controllers/projects/mediums/get-project-mediums.ts';
+import getProjectMediumsController from '#controllers/projects/mediums/get-proj-mediums.ts';
 import getProjectMediumsService from '#services/projects/mediums/get-proj-mediums.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectMedium } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/mediums/get-project-mediums.ts');
+vi.mock('#services/projects/mediums/get-proj-mediums.ts');
 
 //dummy req
 const req = blankIdRequest;

@@ -1,9 +1,9 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import deleteMediumsController from '#controllers/projects/mediums/delete-project-mediums.ts';
+import deleteMediumsController from '#controllers/projects/mediums/delete-proj-mediums.ts';
 import { deleteMediumsService } from '#services/projects/mediums/delete-proj-mediums.ts';
 import { blankMediumsRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 
-vi.mock('#services/projects/mediums/delete-project-mediums.ts');
+vi.mock('#services/projects/mediums/delete-proj-mediums.ts');
 
 //all of these consts should ideally be shoved into their own file
 //dummy req

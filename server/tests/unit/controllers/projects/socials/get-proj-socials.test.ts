@@ -1,10 +1,10 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import getProjectSocialsController from '#controllers/projects/socials/get-project-socials.ts';
+import getProjectSocialsController from '#controllers/projects/socials/get-proj-socials.ts';
 import getProjectSocialsService from '#services/projects/socials/get-proj-socials.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectSocial } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/socials/get-project-socials.ts');
+vi.mock('#services/projects/socials/get-proj-socials.ts');
 
 //dummy req
 const req = blankIdRequest;

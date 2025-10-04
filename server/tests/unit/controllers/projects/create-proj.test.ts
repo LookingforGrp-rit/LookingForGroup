@@ -5,7 +5,7 @@ import createProjectService from '#services/projects/create-proj.ts';
 import { blankFile, blankProjectRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectDetail } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/create-project.ts');
+vi.mock('#services/projects/create-proj.ts');
 vi.mock('#services/images/upload-image.ts');
 
 //all of these consts should ideally be shoved into their own file

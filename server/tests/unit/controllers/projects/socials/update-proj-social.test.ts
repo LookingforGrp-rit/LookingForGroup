@@ -1,10 +1,10 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import { updateProjectSocial } from '#controllers/projects/socials/update-project-social.ts';
+import { updateProjectSocial } from '#controllers/projects/socials/update-proj-social.ts';
 import { updateProjectSocialService } from '#services/projects/socials/update-proj-social.ts';
 import { blankSocialRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectSocial } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/socials/update-project-social.ts');
+vi.mock('#services/projects/socials/update-proj-social.ts');
 vi.mock('#services/images/upload-image.ts');
 
 const req = blankSocialRequest;

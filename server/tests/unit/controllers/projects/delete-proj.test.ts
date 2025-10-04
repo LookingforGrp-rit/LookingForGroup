@@ -3,7 +3,7 @@ import deleteProjectController from '#controllers/projects/delete-proj.ts';
 import { deleteProjectService } from '#services/projects/delete-proj.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 
-vi.mock('#services/projects/delete-project.ts');
+vi.mock('#services/projects/delete-proj.ts');
 
 const req = blankIdRequest;
 const res = blankResponse;

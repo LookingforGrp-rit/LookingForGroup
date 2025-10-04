@@ -1,10 +1,10 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import getProjectImagesController from '#controllers/projects/images/get-project-images.ts';
+import getProjectImagesController from '#controllers/projects/images/get-proj-images.ts';
 import getProjectImagesService from '#services/projects/images/get-proj-images.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectImage } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/images/get-project-images.ts');
+vi.mock('#services/projects/images/get-proj-images.ts');
 
 const blankImageList = [blankProjectImage];
 const req = blankIdRequest;

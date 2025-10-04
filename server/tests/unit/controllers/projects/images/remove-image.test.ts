@@ -6,7 +6,7 @@ import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts'
 import { blankProjectWithFollowers } from '#tests/resources/blanks/projects.ts';
 
 vi.mock('#services/projects/images/remove-image.ts');
-vi.mock('#services/projects/get-project-id.ts');
+vi.mock('#services/projects/get-proj-id.ts');
 
 const req = blankIdRequest;
 const res = blankResponse;

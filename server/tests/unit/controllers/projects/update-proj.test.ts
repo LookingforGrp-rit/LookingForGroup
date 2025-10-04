@@ -5,7 +5,7 @@ import updateProjectService from '#services/projects/update-proj.ts';
 import { blankFile, blankProjectRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectDetail } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/update-project.ts');
+vi.mock('#services/projects/update-proj.ts');
 vi.mock('#services/images/upload-image.ts');
 
 const req = blankProjectRequest;
