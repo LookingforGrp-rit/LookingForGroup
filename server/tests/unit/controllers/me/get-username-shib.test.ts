@@ -5,7 +5,7 @@ import { getUserByShibService } from '#services/me/get-user-shib.ts';
 import { blankAuthUserRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankUserPreview } from '#tests/resources/blanks/users.ts';
 
-vi.mock('#services/users/get-user/get-username-shib.ts');
+vi.mock('#services/me/get-user-shib.ts');
 
 //dummy req
 const req = blankAuthUserRequest;
@@ -27,15 +27,16 @@ describe('getUsernameByShib', () => {
     vi.mocked(getUserByShibService).mockResolvedValue('INTERNAL_ERROR');
     expect(getUserByShibService).toBe(vi.mocked(getUserByShibService));
     const resBody = {
-      status: 500,
-      error: 'Internal Server Error',
+      status: 400,
+      error: 'Missing university ID in headers',
       data: null,
     };
 
     await getUsernameByShib(req, res);
-    expect(getUserByShibService).toHaveBeenCalledOnce();
-    expect(res.status).toHaveBeenCalledWith(500);
+    expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(resBody);
+
+    req.headers[uidHeaderKey] = '000000001';
   });
 
   //there's something wrong with the service, should return 500
@@ -54,8 +55,8 @@ describe('getUsernameByShib', () => {
     expect(res.json).toHaveBeenCalledWith(resBody);
   });
 
-  //no projects found, should return 404
-  test('Must return 404 when no projects could be found', async () => {
+  //user not found, should return 404
+  test('Must return 404 when the user could not be found', async () => {
     vi.mocked(getUserByShibService).mockResolvedValue('NOT_FOUND');
     expect(getUserByShibService).toBe(vi.mocked(getUserByShibService));
     const resBody = {

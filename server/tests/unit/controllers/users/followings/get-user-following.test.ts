@@ -58,7 +58,7 @@ describe('getUserFollowing', () => {
     expect(getUserFollowingService).toBe(vi.mocked(getUserFollowingService));
     const resBody = {
       status: 404,
-      error: 'Following for user not found',
+      error: 'Followings for user not found',
       data: null,
     };
 
