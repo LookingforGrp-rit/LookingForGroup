@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getProjectMediumsService from '#services/projects/mediums/get-project-mediums.ts';
+import getProjectMediumsService from '#services/projects/mediums/get-proj-mediums.ts';
 
 //gets the mediums associated with a project
 const getProjectMediumsController = async (req: Request, res: Response): Promise<void> => {

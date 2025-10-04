@@ -1,18 +1,18 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import getProjectTagsController from '#controllers/projects/tags/get-project-tags.ts';
-import getProjectTagsService from '#services/projects/tags/get-project-tags.ts';
-import { blankTagsRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
-import { blankProjectTag } from '#tests/resources/blanks/projects.ts';
+import getProjectMediumsController from '#controllers/projects/mediums/get-project-mediums.ts';
+import getProjectMediumsService from '#services/projects/mediums/get-proj-mediums.ts';
+import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
+import { blankProjectMedium } from '#tests/resources/blanks/projects.ts';
 
-vi.mock('#services/projects/tags/get-project-tags.ts');
+vi.mock('#services/projects/mediums/get-project-mediums.ts');
 
 //dummy req
-const req = blankTagsRequest;
+const req = blankIdRequest;
 
 //dummy resp
 const res = blankResponse;
 
-describe('getProjectTags', () => {
+describe('getProjectMediums', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -29,7 +29,7 @@ describe('getProjectTags', () => {
       data: null,
     };
 
-    await getProjectTagsController(req, res);
+    await getProjectMediumsController(req, res);
     expect(res.status).toHaveBeenCalledWith(400);
     expect(res.json).toHaveBeenCalledWith(resBody);
 
@@ -38,48 +38,47 @@ describe('getProjectTags', () => {
 
   //there's something wrong with the service, should return 500
   test('Must return 500 when the service errors', async () => {
-    vi.mocked(getProjectTagsService).mockResolvedValue('INTERNAL_ERROR');
-    expect(getProjectTagsService).toBe(vi.mocked(getProjectTagsService));
+    vi.mocked(getProjectMediumsService).mockResolvedValue('INTERNAL_ERROR');
+    expect(getProjectMediumsService).toBe(vi.mocked(getProjectMediumsService));
     const resBody = {
       status: 500,
       error: 'Internal Server Error',
       data: null,
     };
 
-    await getProjectTagsController(req, res);
-    expect(getProjectTagsService).toHaveBeenCalledOnce();
+    await getProjectMediumsController(req, res);
+    expect(getProjectMediumsService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
   });
 
   //project could not be found, return 404
   test('Must return 404 when the project could not be found', async () => {
-    vi.mocked(getProjectTagsService).mockResolvedValue('NOT_FOUND');
-    expect(getProjectTagsService).toBe(vi.mocked(getProjectTagsService));
+    vi.mocked(getProjectMediumsService).mockResolvedValue('NOT_FOUND');
+    expect(getProjectMediumsService).toBe(vi.mocked(getProjectMediumsService));
     const resBody = {
       status: 404,
       error: 'Project not found',
       data: null,
     };
 
-    await getProjectTagsController(req, res);
-    expect(getProjectTagsService).toHaveBeenCalledOnce();
+    await getProjectMediumsController(req, res);
+    expect(getProjectMediumsService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(resBody);
   });
-
   //everything's good, return 200
-  test('Must return 200 when the tags were retrieved successfully', async () => {
-    vi.mocked(getProjectTagsService).mockResolvedValue([blankProjectTag]);
-    expect(getProjectTagsService).toBe(vi.mocked(getProjectTagsService));
+  test('Must return 200 when the mediums were retrieved successfully', async () => {
+    vi.mocked(getProjectMediumsService).mockResolvedValue([blankProjectMedium]);
+    expect(getProjectMediumsService).toBe(vi.mocked(getProjectMediumsService));
     const resBody = {
       status: 200,
       error: null,
-      data: [blankProjectTag],
+      data: [blankProjectMedium],
     };
 
-    await getProjectTagsController(req, res);
-    expect(getProjectTagsService).toHaveBeenCalledOnce();
+    await getProjectMediumsController(req, res);
+    expect(getProjectMediumsService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(resBody);
   });

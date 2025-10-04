@@ -1,6 +1,6 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import deleteMediumsController from '#controllers/projects/mediums/delete-project-mediums.ts';
-import { deleteMediumsService } from '#services/projects/mediums/delete-project-mediums.ts';
+import { deleteMediumsService } from '#services/projects/mediums/delete-proj-mediums.ts';
 import { blankMediumsRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 
 vi.mock('#services/projects/mediums/delete-project-mediums.ts');

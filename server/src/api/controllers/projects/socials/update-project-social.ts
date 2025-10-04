@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { updateProjectSocialService } from '#services/projects/socials/update-project-social.ts';
+import { updateProjectSocialService } from '#services/projects/socials/update-proj-social.ts';
 
 //updates a social associated with a project
 export const updateProjectSocial = async (req: Request, res: Response): Promise<void> => {

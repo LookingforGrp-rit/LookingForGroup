@@ -2,7 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import type { ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import updateProjectService from '#services/projects/update-project.ts';
+import updateProjectService from '#services/projects/update-proj.ts';
 
 interface UpdateProjectInfo {
   title?: string;

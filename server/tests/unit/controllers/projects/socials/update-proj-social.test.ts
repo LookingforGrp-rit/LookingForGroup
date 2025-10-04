@@ -1,6 +1,6 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import { updateProjectSocial } from '#controllers/projects/socials/update-project-social.ts';
-import { updateProjectSocialService } from '#services/projects/socials/update-project-social.ts';
+import { updateProjectSocialService } from '#services/projects/socials/update-proj-social.ts';
 import { blankSocialRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectSocial } from '#tests/resources/blanks/projects.ts';
 

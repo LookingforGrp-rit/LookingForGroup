@@ -1,6 +1,6 @@
-import createProject from './create-project.ts';
-import deleteProject from './delete-project.ts';
-import getProjectById from './get-project-id.ts';
+import createProject from './create-proj.ts';
+import deleteProject from './delete-proj.ts';
+import getProjectById from './get-proj-id.ts';
 import getProjects from './get-projects.ts';
 import addImage from './images/add-image.ts';
 import getProjectImages from './images/get-project-images.ts';
@@ -21,7 +21,7 @@ import { updateProjectSocial } from './socials/update-project-social.ts';
 import addTags from './tags/add-tags.ts';
 import deleteTags from './tags/delete-tags.ts';
 import getTags from './tags/get-project-tags.ts';
-import updateProject from './update-project.ts';
+import updateProject from './update-proj.ts';
 
 export default {
   getProjects,

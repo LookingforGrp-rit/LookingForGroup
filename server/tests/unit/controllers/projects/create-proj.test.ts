@@ -1,7 +1,7 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import createProjectController from '#controllers/projects/create-project.ts';
+import createProjectController from '#controllers/projects/create-proj.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import createProjectService from '#services/projects/create-project.ts';
+import createProjectService from '#services/projects/create-proj.ts';
 import { blankFile, blankProjectRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectDetail } from '#tests/resources/blanks/projects.ts';
 

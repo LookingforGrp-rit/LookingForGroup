@@ -1,6 +1,6 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import removeImageController from '#controllers/projects/images/remove-image.ts';
-import getProjectByIdService from '#services/projects/get-project-id.ts';
+import getProjectByIdService from '#services/projects/get-proj-id.ts';
 import { removeImageService } from '#services/projects/images/remove-image.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectWithFollowers } from '#tests/resources/blanks/projects.ts';

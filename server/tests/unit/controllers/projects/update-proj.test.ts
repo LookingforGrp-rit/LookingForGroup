@@ -1,7 +1,7 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import updateProjectController from '#controllers/projects/update-project.ts';
+import updateProjectController from '#controllers/projects/update-proj.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import updateProjectService from '#services/projects/update-project.ts';
+import updateProjectService from '#services/projects/update-proj.ts';
 import { blankFile, blankProjectRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectDetail } from '#tests/resources/blanks/projects.ts';
 

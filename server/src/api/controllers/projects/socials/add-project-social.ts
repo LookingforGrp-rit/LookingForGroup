@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { addProjectSocialService } from '#services/projects/socials/add-project-social.ts';
+import { addProjectSocialService } from '#services/projects/socials/add-proj-social.ts';
 
 type Social = {
   websiteId: number;
