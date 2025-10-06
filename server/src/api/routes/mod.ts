@@ -1,9 +1,9 @@
 import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { clearProfile } from '#controllers/mod/clear-profile.ts';
+import requiresLogin from '../middleware/authorization/requires-login.ts';
+import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
-import requiresLogin from '../middleware/requires-login.ts';
-import requiresModerator from '../middleware/requires-mod.ts';
 
 const router = Router();
 

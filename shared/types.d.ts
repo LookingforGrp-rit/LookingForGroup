@@ -54,7 +54,7 @@ export interface FilterRequest extends Request {
   skills?: number[];
   majors?: number[];
   academicYear?: string[];
-  socials?: number[]
+  socials?: number[];
 }
 
 export interface GetProjectsRequest extends AuthenticatedRequest {
@@ -108,11 +108,11 @@ export interface Medium {
 
 // Represents the member info for a project
 export interface UserMember {
-    project: ProjectPreview;
-    role: Role;
-    visibility: "Public" | "Private";
-    memberSince: Date;
-    apiUrl: string;
+  project: ProjectPreview;
+  role: Role;
+  visibility: "Public" | "Private";
+  memberSince: Date;
+  apiUrl: string;
 }
 
 export interface UserSkill extends Skill {
@@ -145,11 +145,11 @@ export type UserFollowings = {
 
 // Represents the member info for a project
 export interface MyMember {
-    project: ProjectPreview;
-    role: Role;
-    visibility: "Public" | "Private";
-    memberSince: Date;
-    apiUrl: string;
+  project: ProjectPreview;
+  role: Role;
+  visibility: "Public" | "Private";
+  memberSince: Date;
+  apiUrl: string;
 }
 
 export interface MySkill extends UserSkill {
@@ -187,29 +187,32 @@ export interface UserPreview {
 
 //show only non-sensitive data
 export interface UserDetail extends UserPreview {
-    headline: string;
-    pronouns: string;
-    title: string;
-    majors: Major[];
-    academicYear: AcademicYear | null;
-    location: string;
-    funFact: string;
-    bio: string;
-    projects: UserMember[];
-    skills: UserSkill[];
-    socials: UserSocial[];
-    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
-    followers: UserFollowsList;
+  headline: string;
+  pronouns: string;
+  title: string;
+  majors: Major[];
+  academicYear: AcademicYear | null;
+  location: string;
+  funFact: string;
+  bio: string;
+  projects: UserMember[];
+  skills: UserSkill[];
+  socials: UserSocial[];
+  following: {
+    usersFollowing: UserFollowsList;
+    projectsFollowing: ProjectFollowsList;
+  };
+  followers: UserFollowsList;
 }
 
 //all user private data
 export interface User extends UserDetail {
-    ritEmail: string;
-    visibility: Visibility;
-    phoneNumber: string | null;
-    universityId: string;
-    createdAt: Date;
-    updatedAt: Date;
+  ritEmail: string;
+  visibility: Visibility;
+  phoneNumber: string | null;
+  universityId: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 // Represents the member info for a project
@@ -238,20 +241,23 @@ export interface MePreview {
 
 //show only non-sensitive data
 export interface MeDetail extends MePreview {
-    headline: string;
-    pronouns: string;
-    title: string;
-    majors: MyMajor[];
-    academicYear: AcademicYear;
-    location: string;
-    funFact: string;
-    bio: string;
-    mentor: boolean;
-    projects: MyMember[];
-    skills?: MySkill[];
-    socials?: MySocial[];
-    following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
-    followers: UserFollowsList;
+  headline: string;
+  pronouns: string;
+  title: string;
+  majors: MyMajor[];
+  academicYear: AcademicYear;
+  location: string;
+  funFact: string;
+  bio: string;
+  mentor: boolean;
+  projects: MyMember[];
+  skills?: MySkill[];
+  socials?: MySocial[];
+  following: {
+    usersFollowing: UserFollowsList;
+    projectsFollowing: ProjectFollowsList;
+  };
+  followers: UserFollowsList;
 }
 
 //all user private data

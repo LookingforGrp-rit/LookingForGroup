@@ -8,7 +8,7 @@ import { getUserByEmail } from '#controllers/users/get-user/get-by-email.ts';
 import { getUsernameById } from '#controllers/users/get-user/get-by-id.ts';
 import { getUserByUsername } from '#controllers/users/get-user/get-by-username.ts';
 import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
-import requiresLogin from '../middleware/requires-login.ts';
+import requiresLogin from '../middleware/authorization/requires-login.ts';
 
 const router = Router();
 

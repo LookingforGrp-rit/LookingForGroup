@@ -2,9 +2,11 @@ import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
+import requiresLogin from '../middleware/authorization/requires-login.ts';
+import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
-import requiresLogin from '../middleware/requires-login.ts';
-import requiresProjectOwner from '../middleware/requires-project-owner.ts';
+import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
+import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
 
 const router = Router();
 
@@ -41,6 +43,7 @@ router.patch(
   '/:id',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   upload.single('thumbnail'),
   authenticated(PROJECT.updateProject),
@@ -51,22 +54,24 @@ router.delete(
   '/:id',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.deleteProject,
 );
 
 //Gets the followers of a project
-router.get('/:id/followers', PROJECT.getProjectFollowers);
+router.get('/:id/followers', projectExistsAt('path', 'id'), PROJECT.getProjectFollowers);
 
 // IMAGE ROUTES
 
 //Receives pictures from project through id
-router.get('/:id/images', PROJECT.getProjectImages);
+router.get('/:id/images', projectExistsAt('path', 'id'), PROJECT.getProjectImages);
 //Creates a new picture for a project
 router.post(
   '/:id/images',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   upload.single('image'),
   PROJECT.addImage,
@@ -76,6 +81,7 @@ router.patch(
   '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   upload.single('image'),
   PROJECT.updateImage,
@@ -85,6 +91,7 @@ router.delete(
   '/:id/images/:imageId',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.removeImage,
 );
@@ -93,6 +100,7 @@ router.put(
   '/:id/images/reorder',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.reorderImages,
 );
@@ -106,6 +114,8 @@ router.post(
   '/:id/mediums',
   requiresLogin,
   injectCurrentUser,
+  // attributeExistsAt('medium', 'body', 'mediumId'),
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.addMediums,
 );
@@ -114,6 +124,7 @@ router.delete(
   '/:id/mediums/',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.deleteMediums,
 );
@@ -125,6 +136,7 @@ router.post(
   '/:id/members',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.addMember,
 );
@@ -133,6 +145,7 @@ router.put(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.updateMember,
 );
@@ -141,6 +154,7 @@ router.delete(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(PROJECT.deleteMember),
 );
 
@@ -150,15 +164,20 @@ router.delete(
 router.post(
   '/:id/socials',
   requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  attributeExistsAt('social', 'body', 'websiteId'),
   authenticated(requiresProjectOwner),
   PROJECT.addProjectSocial,
 );
 //Gets all project socials
-router.get('/:id/socials', PROJECT.getProjectSocials);
+router.get('/:id/socials', projectExistsAt('path', 'id'), PROJECT.getProjectSocials);
 //Updates a project social
 router.put(
   '/:id/socials/:websiteId',
   requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.updateProjectSocial,
 );
@@ -166,6 +185,8 @@ router.put(
 router.delete(
   '/:id/socials/:websiteId',
   requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.deleteProjectSocial,
 );
@@ -173,12 +194,14 @@ router.delete(
 // TAGS ROUTES
 
 //Get a project's tags
-router.get('/:id/tags', PROJECT.getTags);
+router.get('/:id/tags', projectExistsAt('path', 'id'), PROJECT.getTags);
 //Deletes the tags in a project
 router.delete(
   '/:id/tags/',
   requiresLogin,
   injectCurrentUser,
+  // attributeExistsAt('tag', 'body', 'tagId'),
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.deleteTags,
 );
@@ -187,8 +210,41 @@ router.post(
   '/:id/tags',
   requiresLogin,
   injectCurrentUser,
+  projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.addTags,
+);
+
+// JOBS ROUTES
+
+// creates a new project job
+router.get('/:id/jobs', projectExistsAt('path', 'id'), PROJECT.getJobsController);
+// creates a new project job
+router.post(
+  '/:id/jobs',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.addJobController,
+);
+// updates an existing project job
+router.put(
+  '/:id/jobs/:jobId',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.updateJobController,
+);
+// deletes an existing project job
+router.delete(
+  '/:id/jobs/:jobId',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.deleteJobController,
 );
 
 export default router;
