@@ -60,7 +60,11 @@ router.delete(
 //Follows a user
 router.post('/followings/people/:id', authenticated(addUserFollowing));
 //Unfollows a user
-router.delete('/followings/people/:id', authenticated(deleteUserFollowing));
+router.delete(
+  '/followings/people/:id',
+  authenticated(userAttributeExistsAt('userFollowing', 'path', 'id')),
+  authenticated(deleteUserFollowing),
+);
 
 // SKILLS ROUTES
 
