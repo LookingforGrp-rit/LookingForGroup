@@ -15,7 +15,10 @@ type ProjectsGetPayload = Awaited<typeof sampleProjectFollowers>[number];
 export const transformProjectToFollowers = (project: ProjectsGetPayload): ProjectFollowers => {
   return {
     count: project._count.projectFollowings,
-    users: project.projectFollowings.map((following) => transformUserToPreview(following.users)),
+    users: project.projectFollowings.map(({ users, followedAt }) => ({
+      followedAt,
+      user: transformUserToPreview(users),
+    })),
     apiUrl: `/api/projects/${project.projectId.toString()}/followers`,
   };
 };

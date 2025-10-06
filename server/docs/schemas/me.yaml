@@ -37,13 +37,37 @@ components:
         label: Animation
         apiUrl: /api/me/majors/1
 
+    MyFollowing:
+      type: object
+      properties:
+        user:
+          $ref: 'users.yaml#/components/schemas/UserPreview'
+        followedAt:
+          type: string
+          format: date-time
+        apiUrl:
+          type: string
+      example:
+        user:
+          userId: 1
+          firstName: Michael
+          lastName: Robinson
+          username: mhr2964
+          profileImage: null
+          mentor: false
+          designer: false
+          developer: true
+          apiUrl: /api/users/1
+        followedAt: 2038-01-19 03:14:07
+        apiUrl: 'api/users/1'
+
     MyFollowsList:
       type: object
       properties:
         users:
           type: array
           items:
-            $ref: 'users.yaml#/components/schemas/UserPreview'
+            $ref: '#/components/schemas/MyFollowing'
         count:
           type: integer
         apiUrl:
@@ -51,6 +75,43 @@ components:
       example:
         count: 1
         users: []
+        apiUrl: string
+
+    MyProjectFollowing:
+      type: object
+      properties:
+        project:
+          $ref: 'projects.yaml#/components/schemas/ProjectPreview'
+        followedAt:
+          type: string
+          format: date-time
+        apiUrl:
+          type: string
+      example:
+        project:
+          projectId: 1
+          title: Looking For Group
+          hook: You can LOOK for a GROUP
+          mediums: []
+          thumbnail: null
+          apiUrl: /api/projects/1
+        followedAt: 2038-01-19 03:14:07
+        apiUrl: /api/me/followings/projects/1
+
+    MyProjectFollowsList:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/MyProjectFollowing'
+        count:
+          type: integer
+        apiUrl:
+          type: string
+      example:
+        count: 1
+        projects: []
         apiUrl: string
 
     MePreview:
@@ -129,7 +190,7 @@ components:
               type: object
               properties:
                 usersFollowing:
-                  $ref: 'users.yaml#/components/schemas/UserFollowsList'
+                  $ref: '#/components/schemas/MyFollowsList'
                 projectsFollowing:
                   $ref: 'users.yaml#/components/schemas/ProjectFollowsList'
             followers:
@@ -158,7 +219,7 @@ components:
             users: []
             count: 0
             apiUrl: /api/users/1/followings/people
-          ProjectFollowing:
+          projectFollowing:
             projects: []
             count: 0
             apiUrl: /api/users/1/followings/projects

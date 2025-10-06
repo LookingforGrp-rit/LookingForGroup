@@ -461,9 +461,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/ProjectPreview'
+                    $ref: '#/components/schemas/ProjectFollowsList'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -499,9 +497,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/UserPreview'
+                    $ref: '#/components/schemas/UserFollowsList'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -537,9 +533,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/UserPreview'
+                    $ref: '#/components/schemas/UserFollowsList'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1205,7 +1199,7 @@ paths:
                     example: null
                   data:
                     type: object
-                    $ref: '#/components/schemas/ProjectFollowings'
+                    $ref: '#/components/schemas/MyProjectFollowing'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -1296,7 +1290,7 @@ paths:
                     example: null
                   data:
                     type: object
-                    $ref: '#/components/schemas/UserFollowings'
+                    $ref: '#/components/schemas/MyFollowing'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -2794,10 +2788,12 @@ components:
       $ref: 'schemas/users.yaml#/components/schemas/UserSocial'
     ProjectFollowsList:
       $ref: 'schemas/users.yaml#/components/schemas/ProjectFollowsList'
+    ProjectFollowing:
+      $ref: 'schemas/users.yaml#/components/schemas/ProjectFollowing'
     UserFollowsList:
       $ref: 'schemas/users.yaml#/components/schemas/UserFollowsList'
-    UserFollowings:
-      $ref: 'schemas/users.yaml#/components/schemas/UserFollowings'
+    UserFollowing:
+      $ref: 'schemas/users.yaml#/components/schemas/UserFollowing'
     UserPreview:
       $ref: 'schemas/users.yaml#/components/schemas/UserPreview'
     UserDetail:
@@ -2809,8 +2805,14 @@ components:
       $ref: 'schemas/me.yaml#/components/schemas/MySocial'
     MyMajor:
       $ref: 'schemas/me.yaml#/components/schemas/MyMajor'
+    MyFollowing:
+      $ref: 'schemas/me.yaml#/components/schemas/MyFollowing'
     MyFollowsList:
       $ref: 'schemas/me.yaml#/components/schemas/MyFollowsList'
+    MyProjectFollowing:
+      $ref: 'schemas/me.yaml#/components/schemas/MyProjectFollowing'
+    MyProjectFollowsList:
+      $ref: 'schemas/me.yaml#/components/schemas/MyProjectFollowsList'
     MePreview:
       $ref: 'schemas/me.yaml#/components/schemas/MePreview'
     MeDetail:
@@ -2826,8 +2828,8 @@ components:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectMedium'
     ProjectFollowers:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollowers'
-    ProjectFollowings:
-      $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollowings'
+    ProjectFollower:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollower'
     ProjectMember:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectMember'
     ProjectSocial:
