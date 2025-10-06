@@ -43,8 +43,8 @@ export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
     ),
     projects: user.members.map(transformUserMember),
     followers: {
-      users: user.followers.map(({ senderUser, createdAt }) => ({
-        followedAt: createdAt,
+      users: user.followers.map(({ senderUser, followedAt }) => ({
+        followedAt,
         user: transformUserToPreview(senderUser),
       })),
       count: user._count.followers,
@@ -52,8 +52,8 @@ export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
     },
     following: {
       usersFollowing: {
-        users: user.following.map(({ receiverUser, createdAt }) => ({
-          followedAt: createdAt,
+        users: user.following.map(({ receiverUser, followedAt }) => ({
+          followedAt,
           user: transformUserToPreview(receiverUser),
         })),
         count: user._count.following,
@@ -61,8 +61,8 @@ export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
       },
       projectsFollowing: {
         count: user._count.projectFollowings,
-        projects: user.projectFollowings.map(({ projects, createdAt }) => ({
-          followedAt: createdAt,
+        projects: user.projectFollowings.map(({ projects, followedAt }) => ({
+          followedAt,
           project: transformProjectToPreview(projects),
         })),
         apiUrl: `/api/users/${user.userId.toString()}/followings/projects`,
