@@ -20,6 +20,16 @@ export const getProjectFollowers = async (req: Request, res: Response): Promise<
 
   const result = await getProjectFollowersService(projectId);
 
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Project not found',
+      data: null,
+    };
+    res.status(404).json(resBody);
+    return;
+  }
+
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 500,

@@ -4,21 +4,23 @@ import { ProjectFollowersSelector } from '#services/selectors/projects/parts/pro
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectToFollowers } from '#services/transformers/projects/parts/project-followers.ts';
 
-type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
+type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 const getProjectsService = async (
   projectId: number,
-): Promise<ProjectFollowers[] | GetServiceError> => {
+): Promise<ProjectFollowers | GetServiceError> => {
   try {
-    const result = await prisma.projects.findMany({
+    const project = await prisma.projects.findUnique({
       where: {
         projectId,
       },
       select: ProjectFollowersSelector,
     });
 
+    if (!project) return 'NOT_FOUND';
+
     //return transformed projects
-    const transformedFollowers = result.map(transformProjectToFollowers);
+    const transformedFollowers = transformProjectToFollowers(project);
     return transformedFollowers;
   } catch (e) {
     console.error(`Error in getProjectsService: ${JSON.stringify(e)}`);
