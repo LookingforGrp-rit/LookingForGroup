@@ -1,13 +1,15 @@
-import type { ProjectFollowings } from '@looking-for-group/shared';
+import type { MyProjectFollowing } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
+import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformProjectToPreview } from '#services/transformers/projects/project-preview.ts';
 
 type AddFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
 export const addProjectFollowingService = async (
   userId: number,
   projectId: number,
-): Promise<ProjectFollowings | AddFollowServiceError> => {
+): Promise<MyProjectFollowing | AddFollowServiceError> => {
   try {
     //add no following own project??
 
@@ -37,11 +39,18 @@ export const addProjectFollowingService = async (
         userId,
         projectId,
       },
+      select: {
+        followedAt: true,
+        projects: {
+          select: ProjectPreviewSelector,
+        },
+      },
     });
 
-    const result: ProjectFollowings = {
-      ...addFollow,
-      apiUrl: `api/me/followings/projects/${projectId}`,
+    const result: MyProjectFollowing = {
+      followedAt: addFollow.followedAt,
+      project: transformProjectToPreview(addFollow.projects),
+      apiUrl: `api/me/followings/projects/${projectId.toString()}`,
     };
 
     return result;
