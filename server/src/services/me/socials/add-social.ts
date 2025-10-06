@@ -11,15 +11,6 @@ export const addSocialService = async (
   userId: number,
 ): Promise<MySocial | AddSocialServiceError> => {
   try {
-    //websiteId validation
-    const socialExists = await prisma.socials.findFirst({
-      where: {
-        websiteId: data.websiteId,
-      },
-    });
-
-    if (!socialExists) return 'NOT_FOUND';
-
     const social = await prisma.userSocials.create({
       data: {
         userId: userId,

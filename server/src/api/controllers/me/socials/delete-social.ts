@@ -7,17 +7,6 @@ export const deleteSocial = async (req: AuthenticatedRequest, res: Response): Pr
   //current user ID
   const UserId = parseInt(req.currentUser);
 
-  //check if ID is number
-  if (isNaN(UserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   //the one you're deleting
   const social = parseInt(req.params.websiteId);
 
@@ -30,16 +19,6 @@ export const deleteSocial = async (req: AuthenticatedRequest, res: Response): Pr
       data: null,
     };
     res.status(500).json(resBody);
-    return;
-  }
-
-  if (result === 'NOT_FOUND') {
-    const resBody: ApiResponse = {
-      status: 404,
-      error: 'Social not found',
-      data: null,
-    };
-    res.status(404).json(resBody);
     return;
   }
 

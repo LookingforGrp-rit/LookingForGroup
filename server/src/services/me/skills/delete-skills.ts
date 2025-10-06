@@ -5,14 +5,16 @@ type DeleteSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'
 type DeleteSkillServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 export const deleteSkillService = async (
-  skill: number,
+  skillId: number,
   userId: number,
 ): Promise<DeleteSkillServiceError | DeleteSkillServiceSuccess> => {
   try {
-    await prisma.userSkills.deleteMany({
+    await prisma.userSkills.delete({
       where: {
-        userId: userId,
-        skillId: skill,
+        userId_skillId: {
+          userId,
+          skillId,
+        },
       },
     });
 

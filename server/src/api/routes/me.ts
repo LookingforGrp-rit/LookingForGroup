@@ -91,9 +91,13 @@ router.patch(
 //Gets a user's socials
 router.get('/socials', authenticated(getSocials));
 //Adds a social
-router.post('/socials', authenticated(addSocial));
+router.post('/socials', attributeExistsAt('social', 'body', 'websiteId'), authenticated(addSocial));
 //Updates a social
-router.put('/socials/:websiteId', authenticated(updateSocial));
+router.patch(
+  '/socials/:websiteId',
+  authenticated(userAttributeExistsAt('social', 'path', 'websiteId')),
+  authenticated(updateSocial),
+);
 //Deletes a social
 router.delete(
   '/socials/:websiteId',

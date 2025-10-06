@@ -1,13 +1,13 @@
-import type { ApiResponse, AddProjectTagsInput } from '@looking-for-group/shared';
+import type { AddProjectTagsInput, ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import addTagsService from '#services/projects/tags/add-tags.ts';
 
 //adds multiple tags to the project
 const addTagsController = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const data = req.body as AddProjectTagsInput;
+  const projectId = parseInt(req.params.id);
+  const tag = req.body as AddProjectTagsInput;
 
-  const result = await addTagsService(id, data);
+  const result = await addTagsService(projectId, tag);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

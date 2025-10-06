@@ -5,7 +5,6 @@ import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
 type AddSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-
 type SkillWithUserId = AddUserSkillsInput & { userId: number };
 
 const addSkillService = async (data: SkillWithUserId): Promise<MySkill | AddSkillServiceError> => {

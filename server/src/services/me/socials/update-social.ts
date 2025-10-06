@@ -11,15 +11,6 @@ export const updateSocialService = async (
   userId: number,
 ): Promise<MySocial | UpdateSocialServiceError> => {
   try {
-    //social validation (do you have this social)
-    const socialExists = await prisma.userSocials.findFirst({
-      where: {
-        websiteId: data.websiteId,
-        userId: userId,
-      },
-    });
-    if (!socialExists) return 'NOT_FOUND';
-
     const social = await prisma.userSocials.update({
       where: {
         userId_websiteId: {

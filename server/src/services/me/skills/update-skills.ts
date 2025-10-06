@@ -17,7 +17,7 @@ const updateSkillsService = async (
       where: {
         userId_skillId: {
           userId,
-          skillId: skillId,
+          skillId,
         },
       },
       data: {

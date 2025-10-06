@@ -11,18 +11,7 @@ export const updateSocial = async (req: AuthenticatedRequest, res: Response): Pr
   //current user ID
   const UserId = parseInt(req.currentUser);
 
-  //check if ID is number
-  if (isNaN(UserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const social: UpdateUserSocialInput = req.body as UpdateUserSocialInput;
+  const social: UpdateUserSocialInput = { url: req.params.url } as UpdateUserSocialInput;
   const websiteId = parseInt(req.params.websiteId);
 
   //check if websiteId is number

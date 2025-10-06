@@ -911,9 +911,9 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /api/me/socials/{websiteId}:
-    put:
+    patch:
       summary: Updates a user social
-      description: Updates one of the socials specified by the current user
+      description: Updates the social specified by the current user
       security:
         - shibbolethAuth: []
       tags:
@@ -925,12 +925,12 @@ paths:
             type: integer
           required: false
           description: The user ID to be used as the current user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserSocialInput'
+        - in: query
+          name: url
+          schema:
+            type: string
+          required: true
+          description: The updated URL to add to the social
       responses:
         '200':
           description: Social created successfully
@@ -1036,7 +1036,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
     post:
-      summary: Adds multiple user skills
+      summary: Adds a user skill
       description: Adds a specified skill to the current user
       security:
         - shibbolethAuth: []
@@ -1071,9 +1071,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/MySkill'
+                    $ref: '#/components/schemas/MySkill'
 
         '400':
           $ref: '#/components/responses/BadRequest'
@@ -1091,6 +1089,12 @@ paths:
       tags:
         - Me
       parameters:
+        - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the skill to be updated
         - in: query
           name: devId
           schema:
@@ -1130,28 +1134,24 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
     delete:
-      summary: Delete many of the current user's skills
+      summary: Delete a user skill
       security:
         - shibbolethAuth: []
       tags:
         - Me
       parameters:
         - in: query
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the skill to be deleted
+        - in: query
           name: devId
           schema:
             type: integer
           required: false
           description: The user ID to be used as the current user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              properties:
-                skillIds:
-                  type: array
-                  items:
-                    type: integer
       responses:
         '200':
           description: Skills deleted successfully

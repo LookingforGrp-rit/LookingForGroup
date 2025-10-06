@@ -455,7 +455,7 @@ export type UpdateProjectMemberInput = Partial<
 export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url">;
 export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url">>;
 
-export type AddProjectTagsInput = Pick<ProjectTag, "tagId">[];
+export type AddProjectTagsInput = Pick<ProjectTag, "tagId">;
 
 export type AddProjectMediumsInput = Pick<ProjectMedium, "mediumId">[];
 

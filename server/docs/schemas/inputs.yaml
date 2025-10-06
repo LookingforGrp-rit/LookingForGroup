@@ -49,18 +49,16 @@ components:
           type: string
 
     AddUserSkillsInput:
-      type: array
-      items:
-        type: object
-        properties:
-          skillId:
-            type: number
-          position:
-            type: number
-          proficiency:
-            $ref: 'enums.yaml#/components/schemas/SkillProficiency'
-        required:
-          - skillId
+      type: object
+      properties:
+        skillId:
+          type: number
+        position:
+          type: number
+        proficiency:
+          $ref: 'enums.yaml#/components/schemas/SkillProficiency'
+      required:
+        - skillId
           - position
           - proficiency
 
