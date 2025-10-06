@@ -125,23 +125,34 @@ export interface UserSocial extends Social {
 }
 
 export type ProjectFollowsList = {
-  projects: ProjectPreview[];
+  projects: ProjectFollowing[];
   count: number;
   apiUrl: string;
 };
 
 export type UserFollowsList = {
-  users: UserPreview[];
+  users: UserFollowing[];
   count: number;
   apiUrl: string;
 };
 
-export type UserFollowings = {
-  senderId: number;
-  receiverId: number;
+export type UserFollowing = {
+  user: UserPreview;
   followedAt: Date;
-  apiUrl: string;
 };
+
+export type ProjectFollowing = {
+  project: ProjectPreview;
+  followedAt: Date;
+};
+
+// replacing this with above ^^^
+// export type UserFollowings = {
+//   senderId: number;
+//   receiverId: number;
+//   followedAt: Date;
+//   apiUrl: string;
+// };
 
 // Represents the member info for a project
 export interface MyMember {
@@ -165,8 +176,26 @@ export interface MyMajor extends Major {
 }
 
 export type MyFollowsList = {
-  users: UserPreview[];
+  users: MyFollowing[];
   count: number;
+  apiUrl: string;
+};
+
+export type MyFollowing = {
+  user: UserPreview;
+  followedAt: Date;
+  apiUrl: string;
+};
+
+export type MyProjectFollowsList = {
+  projects: MyProjectFollowing[];
+  count: number;
+  apiUrl: string;
+};
+
+export type MyProjectFollowing = {
+  project: ProjectPreview;
+  followedAt: Date;
   apiUrl: string;
 };
 
@@ -254,8 +283,8 @@ export interface MeDetail extends MePreview {
   skills?: MySkill[];
   socials?: MySocial[];
   following: {
-    usersFollowing: UserFollowsList;
-    projectsFollowing: ProjectFollowsList;
+    usersFollowing: MyFollowsList;
+    projectsFollowing: MyProjectFollowsList;
   };
   followers: UserFollowsList;
 }
