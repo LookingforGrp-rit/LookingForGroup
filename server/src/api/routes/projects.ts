@@ -6,6 +6,7 @@ import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
+import { projectAttributeExistsAt } from '../middleware/validators/project-attribute-exists-at.ts';
 import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
 
 const router = Router();
@@ -187,6 +188,11 @@ router.delete(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  projectAttributeExistsAt(
+    'social',
+    { type: 'path', key: 'id' },
+    { type: 'path', key: 'websiteId' },
+  ),
   authenticated(requiresProjectOwner),
   PROJECT.deleteProjectSocial,
 );
