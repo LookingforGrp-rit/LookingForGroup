@@ -40,14 +40,14 @@ export const UserDetailSelector = Object.freeze({
   },
   following: {
     select: {
-      senderUser: {
+      receiverUser: {
         select: UserPreviewSelector,
       },
     },
   },
   followers: {
     select: {
-      receiverUser: {
+      senderUser: {
         select: UserPreviewSelector,
       },
     },
