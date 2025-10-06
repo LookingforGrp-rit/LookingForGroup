@@ -1,22 +1,5 @@
 components:
   schemas:
-    ProjectFollowings:
-      type: object
-      properties:
-        userId:
-          type: integer
-        projectId:
-          type: integer
-        followedAt:
-          type: string
-          format: date-time
-        apiUrl:
-          type: string
-      example:
-        userId: 1
-        projectId: 1
-        apiUrl: /api/users/1/followings/projects
-
     ProjectImage:
       type: object
       properties:
@@ -46,6 +29,15 @@ components:
         label: Video Game
         apiUrl: /api/projects/1/mediums
 
+    ProjectFollower:
+      type: object
+      properties:
+        user:
+          $ref: 'users.yaml#/components/schemas/UserPreview'
+        followedAt:
+          type: string
+          format: date-time
+
     ProjectFollowers:
       type: object
       properties:
@@ -54,7 +46,7 @@ components:
         users:
           type: array
           items:
-            $ref: 'users.yaml#/components/schemas/UserPreview'
+            $ref: '#/components/schemas/ProjectFollower'
         apiUrl:
           type: string
       example:
