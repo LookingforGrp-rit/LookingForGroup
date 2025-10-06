@@ -4,7 +4,7 @@ import { getUserByIdService } from '#services/users/get-user/get-by-id.ts';
 
 type ParameterLocation = 'path' | 'body';
 
-export const projectExistsAt = (type: ParameterLocation, key: string): RequestHandler => {
+export const userExistsAt = (type: ParameterLocation, key: string): RequestHandler => {
   return async (req: Request, res: Response, next: NextFunction) => {
     let rawUserId;
 

@@ -1,22 +1,9 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
-import { type NextFunction, type Request, type Response } from 'express';
+import { type NextFunction, type Response } from 'express';
 import prisma from '#config/prisma.ts';
 
-export const authenticated = (
-  controller: (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ) => void | Promise<void>,
-) =>
-  controller as unknown as (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => void | Promise<void>;
-
 type ParameterLocation = 'path' | 'body';
-type Attribute = 'social' | 'skill' | 'major';
+type Attribute = 'social' | 'skill' | 'major' | 'projectFollowing' | 'userFollowing' | 'project';
 
 export const userAttributeExistsAt = (
   attribute: Attribute,
@@ -116,6 +103,33 @@ const getAttributeById = async (userId: number, attributeId: number, attribute: 
             some: {
               majorId: attributeId,
             },
+          },
+        },
+      });
+    case 'projectFollowing':
+      return await prisma.projectFollowings.findUnique({
+        where: {
+          userId_projectId: {
+            userId,
+            projectId: attributeId,
+          },
+        },
+      });
+    case 'userFollowing':
+      return await prisma.userFollowings.findUnique({
+        where: {
+          senderId_receiverId: {
+            senderId: userId,
+            receiverId: attributeId,
+          },
+        },
+      });
+    case 'project':
+      return await prisma.members.findUnique({
+        where: {
+          projectId_userId: {
+            userId,
+            projectId: attributeId,
           },
         },
       });
