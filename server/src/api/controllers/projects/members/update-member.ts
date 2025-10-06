@@ -3,8 +3,8 @@ import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
 import getService from '#services/projects/members/update-member.ts';
 
-const updateMemberController = async (_req: Request, res: Response) => {
-  const { userId, id } = _req.params;
+const updateMemberController = async (req: Request, res: Response) => {
+  const { userId, id } = req.params;
   const userIdReal = parseInt(userId);
   const projectIdReal = parseInt(id);
 
@@ -23,7 +23,7 @@ const updateMemberController = async (_req: Request, res: Response) => {
     projectId: projectIdReal,
   };
 
-  const data: Prisma.MembersUpdateInput = _req.body as Prisma.MembersUpdateInput;
+  const data: Prisma.MembersUpdateInput = req.body as Prisma.MembersUpdateInput;
 
   const result = await getService(memberId, data);
 

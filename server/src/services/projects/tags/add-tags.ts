@@ -9,7 +9,7 @@ type AddTagsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | '
 const addTagsService = async (
   projectId: number,
   tag: AddProjectTagsInput,
-): Promise<ProjectTag | AddTagsServiceError> => {
+): Promise<ProjectTag[] | AddTagsServiceError> => {
   try {
     const result = await prisma.projects.update({
       where: {
@@ -28,7 +28,7 @@ const addTagsService = async (
       },
     });
 
-    return transformProjectTag(projectId, result.tags[0]);
+    return result.tags.map((tag) => transformProjectTag(projectId, tag));
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {

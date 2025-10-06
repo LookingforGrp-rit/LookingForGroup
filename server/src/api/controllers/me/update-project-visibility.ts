@@ -13,26 +13,6 @@ const updateProjectVisibilityController = async (req: AuthenticatedRequest, res:
   // Get current user ID from middleware
   const currentUserId = parseInt(req.currentUser);
 
-  if (isNaN(projectId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  if (isNaN(currentUserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   // Validate request body - expecting { visibility: 'private' or 'public' }
   const visibility = (req.body as { visibility: 'private' | 'public' | undefined }).visibility;
 

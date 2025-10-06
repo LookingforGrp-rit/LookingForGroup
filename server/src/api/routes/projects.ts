@@ -8,6 +8,7 @@ import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
 import { projectAttributeExistsAt } from '../middleware/validators/project-attribute-exists-at.ts';
 import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
+import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
 
@@ -83,6 +84,7 @@ router.patch(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  projectAttributeExistsAt('image', { type: 'path', key: 'id' }, { type: 'path', key: 'imageId' }),
   authenticated(requiresProjectOwner),
   upload.single('image'),
   PROJECT.updateImage,
@@ -93,10 +95,12 @@ router.delete(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  projectAttributeExistsAt('image', { type: 'path', key: 'id' }, { type: 'path', key: 'imageId' }),
   authenticated(requiresProjectOwner),
   PROJECT.removeImage,
 );
 //Reorders a project's images
+//is this really even needed...
 router.put(
   '/:id/images/reorder',
   requiresLogin,
@@ -109,23 +113,28 @@ router.put(
 // MEDIUMS ROUTES
 
 //Gets a project's mediums
-router.get('/:id/mediums', PROJECT.getProjectMediums);
+router.get('/:id/mediums', projectExistsAt('path', 'id'), PROJECT.getProjectMediums);
 //Adds mediums to a project
 router.post(
   '/:id/mediums',
   requiresLogin,
   injectCurrentUser,
-  // attributeExistsAt('medium', 'body', 'mediumId'),
   projectExistsAt('path', 'id'),
+  attributeExistsAt('medium', 'body', 'mediumId'),
   authenticated(requiresProjectOwner),
   PROJECT.addMediums,
 );
 //Removes mediums from a project
 router.delete(
-  '/:id/mediums/',
+  '/:id/mediums/:mediumId',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  projectAttributeExistsAt(
+    'medium',
+    { type: 'path', key: 'id' },
+    { type: 'path', key: 'mediumId' },
+  ),
   authenticated(requiresProjectOwner),
   PROJECT.deleteMediums,
 );
@@ -138,6 +147,8 @@ router.post(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  userExistsAt('body', 'userId'),
+  attributeExistsAt('role', 'body', 'roleId'),
   authenticated(requiresProjectOwner),
   PROJECT.addMember,
 );
@@ -147,6 +158,9 @@ router.put(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  userExistsAt('path', 'userId'),
+  projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
+  attributeExistsAt('role', 'body', 'roleId'),
   authenticated(requiresProjectOwner),
   PROJECT.updateMember,
 );
@@ -156,6 +170,8 @@ router.delete(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  userExistsAt('path', 'userId'),
+  projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
   authenticated(PROJECT.deleteMember),
 );
 
@@ -179,6 +195,11 @@ router.put(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  projectAttributeExistsAt(
+    'social',
+    { type: 'path', key: 'id' },
+    { type: 'path', key: 'websiteId' },
+  ),
   authenticated(requiresProjectOwner),
   PROJECT.updateProjectSocial,
 );
@@ -201,13 +222,13 @@ router.delete(
 
 //Get a project's tags
 router.get('/:id/tags', projectExistsAt('path', 'id'), PROJECT.getTags);
-//Deletes the tags in a project
+//Deletes a project tag
 router.delete(
-  '/:id/tags/',
+  '/:id/tags/:tagId',
   requiresLogin,
   injectCurrentUser,
-  // attributeExistsAt('tag', 'body', 'tagId'),
   projectExistsAt('path', 'id'),
+  projectAttributeExistsAt('tag', { type: 'path', key: 'id' }, { type: 'path', key: 'tagId' }),
   authenticated(requiresProjectOwner),
   PROJECT.deleteTags,
 );
@@ -217,7 +238,7 @@ router.post(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
-  attributeExistsAt('tag', 'body', 'tagId'),
+  attributeExistsAt('tag', 'path', 'tagId'),
   authenticated(requiresProjectOwner),
   PROJECT.addTags,
 );
@@ -241,6 +262,7 @@ router.put(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  projectAttributeExistsAt('job', { type: 'path', key: 'id' }, { type: 'path', key: 'jobId' }),
   authenticated(requiresProjectOwner),
   PROJECT.updateJobController,
 );
@@ -250,6 +272,7 @@ router.delete(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  projectAttributeExistsAt('job', { type: 'path', key: 'id' }, { type: 'path', key: 'jobId' }),
   authenticated(requiresProjectOwner),
   PROJECT.deleteJobController,
 );

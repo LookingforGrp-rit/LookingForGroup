@@ -5,7 +5,7 @@ import addTagsService from '#services/projects/tags/add-tags.ts';
 //adds multiple tags to the project
 const addTagsController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
-  const tag = req.body as AddProjectTagsInput;
+  const tag: AddProjectTagsInput = req.body as AddProjectTagsInput;
 
   const result = await addTagsService(projectId, tag);
 
@@ -22,7 +22,7 @@ const addTagsController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Tags not found',
+      error: 'Tag not found',
       data: null,
     };
     res.status(404).json(resBody);

@@ -913,7 +913,7 @@ paths:
   /api/me/socials/{websiteId}:
     patch:
       summary: Updates a user social
-      description: Updates the social specified by the current user
+      description: Updates one of the socials specified by the current user
       security:
         - shibbolethAuth: []
       tags:
@@ -925,12 +925,12 @@ paths:
             type: integer
           required: false
           description: The user ID to be used as the current user
-        - in: query
-          name: url
-          schema:
-            type: string
-          required: true
-          description: The updated URL to add to the social
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserSocialInput'
       responses:
         '200':
           description: Social created successfully
@@ -2148,7 +2148,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
     post:
-      summary: Adds multiple project tags
+      summary: Adds a project tag
       description: Adds an amount of tags to the specified project
       security:
         - shibbolethAuth: []
@@ -2202,13 +2202,20 @@ paths:
           $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /api/projects/{id}/tags/{tagId}:
     delete:
-      summary: Deletes many of the specified project's tags
+      summary: Deletes a project tag
       security:
         - shibbolethAuth: []
       tags:
         - Projects
       parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
         - in: path
           name: id
           schema:
@@ -2228,10 +2235,8 @@ paths:
             schema:
               type: object
               properties:
-                tagIds:
-                  type: array
-                  items:
-                    type: integer
+                tagId:
+                  type: integer
       responses:
         '200':
           description: Tags deleted successfully

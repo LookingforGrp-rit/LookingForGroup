@@ -1,13 +1,13 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import { getSkillsService } from '#services/me/skills/get-skills.ts';
+import getUserMajorsService from '#services/me/majors/get-majors.ts';
 
-//get skills on user profile
-export const getSkills = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+//get majors on user profile
+export const getUserMajors = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //current user ID
   const UserId = parseInt(req.currentUser);
 
-  const result = await getSkillsService(UserId);
+  const result = await getUserMajorsService(UserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -22,7 +22,7 @@ export const getSkills = async (req: AuthenticatedRequest, res: Response): Promi
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Skills not found',
+      error: 'Majors not found',
       data: null,
     };
     res.status(404).json(resBody);

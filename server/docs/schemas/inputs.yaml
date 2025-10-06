@@ -172,14 +172,12 @@ components:
           type: string
 
     AddProjectTagsInput:
-      type: array
-      items:
-        type: object
-        properties:
-          tagId:
-            type: number
-        required:
-          - tagId
+      type: object
+      properties:
+        tagId:
+          type: number
+      required:
+        - tagId
 
     AddProjectMediumsInput:
       type: array

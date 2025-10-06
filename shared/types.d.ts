@@ -458,6 +458,8 @@ export type UpdateUserSkillInput = Partial<
   Pick<UserSkill, "position" | "proficiency">
 >;
 
+export type AddUserMajorInput = Pick<Major, "majorId">;
+
 // PROJECTS inputs
 export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
@@ -486,7 +488,7 @@ export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url">>;
 
 export type AddProjectTagsInput = Pick<ProjectTag, "tagId">;
 
-export type AddProjectMediumsInput = Pick<ProjectMedium, "mediumId">[];
+export type AddProjectMediumsInput = Pick<ProjectMedium, "mediumId">;
 
 export type CreateProjectJobInput = Required<
   Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">

@@ -2,18 +2,13 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteMediumsService } from '#services/projects/mediums/delete-proj-mediums.ts';
 
-//the tags (or their ids anyway)
-type MediumInputs = {
-  mediumIds?: number[];
-};
-
 //deletes multiple mediums
 const deleteMediumsController = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const mediumData = req.body as MediumInputs;
+  const medium = parseInt(req.params.mediumId);
 
   //delete the mediums they passed in
-  const result = await deleteMediumsService(id, mediumData);
+  const result = await deleteMediumsService(id, medium);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

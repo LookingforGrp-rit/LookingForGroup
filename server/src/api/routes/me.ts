@@ -10,6 +10,9 @@ import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
 import { leaveProjectController } from '#controllers/me/leave-project.ts';
+import addUserMajor from '#controllers/me/majors/add-major.ts';
+import { deleteMajor } from '#controllers/me/majors/delete-major.ts';
+import { getUserMajors } from '#controllers/me/majors/get-majors.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
 import { deleteSkill } from '#controllers/me/skills/delete-skills.ts';
 import { getSkills } from '#controllers/me/skills/get-skills.ts';
@@ -67,11 +70,41 @@ router.delete(
   authenticated(deleteUserFollowing),
 );
 
+// MAJORS ROUTES
+
+//Gets a user's majors
+router.get('/majors', authenticated(getUserMajors));
+//Adds a major
+router.post('/majors', attributeExistsAt('major', 'body', 'majorId'), authenticated(addUserMajor));
+//Deletes a major
+router.delete(
+  '/majors/:id',
+  authenticated(userAttributeExistsAt('major', 'path', 'id')),
+  authenticated(deleteMajor),
+);
+
+// PROJECTS ROUTES
+
+//Gets current user's projects
+router.get('/projects', authenticated(getMyProjects));
+//Leave a project
+router.delete(
+  '/projects/:id/leave',
+  projectExistsAt('path', 'id'),
+  authenticated(leaveProjectController),
+);
+//Change project profile visibility
+router.put(
+  '/projects/:id/visibility',
+  projectExistsAt('path', 'id'),
+  authenticated(updateProjectVisibilityController),
+);
+
 // SKILLS ROUTES
 
 //Gets a user's skills
 router.get('/skills', authenticated(getSkills));
-//Adds skills
+//Adds a skill
 router.post('/skills', attributeExistsAt('skill', 'body', 'skillId'), authenticated(addSkills));
 //Deletes a skill
 router.delete(
@@ -103,23 +136,6 @@ router.delete(
   '/socials/:websiteId',
   authenticated(userAttributeExistsAt('social', 'path', 'websiteId')),
   authenticated(deleteSocial),
-);
-
-// PROJECTS ROUTES
-
-//Gets current user's projects
-router.get('/projects', authenticated(getMyProjects));
-//Leave a project
-router.delete(
-  '/projects/:id/leave',
-  projectExistsAt('path', 'id'),
-  authenticated(leaveProjectController),
-);
-//Change project profile visibility
-router.put(
-  '/projects/:id/visibility',
-  projectExistsAt('path', 'id'),
-  authenticated(updateProjectVisibilityController),
 );
 
 //Gets user's account
