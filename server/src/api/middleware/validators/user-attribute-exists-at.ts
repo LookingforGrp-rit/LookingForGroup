@@ -3,7 +3,7 @@ import { type NextFunction, type Response } from 'express';
 import prisma from '#config/prisma.ts';
 
 type ParameterLocation = 'path' | 'body';
-type Attribute = 'social' | 'skill' | 'major';
+type Attribute = 'social' | 'skill' | 'major' | 'projectFollowing' | 'userFollowing' | 'project';
 
 export const userAttributeExistsAt = (
   attribute: Attribute,
@@ -103,6 +103,33 @@ const getAttributeById = async (userId: number, attributeId: number, attribute: 
             some: {
               majorId: attributeId,
             },
+          },
+        },
+      });
+    case 'projectFollowing':
+      return await prisma.projectFollowings.findUnique({
+        where: {
+          userId_projectId: {
+            userId,
+            projectId: attributeId,
+          },
+        },
+      });
+    case 'userFollowing':
+      return await prisma.userFollowings.findUnique({
+        where: {
+          senderId_receiverId: {
+            senderId: userId,
+            receiverId: attributeId,
+          },
+        },
+      });
+    case 'project':
+      return await prisma.members.findUnique({
+        where: {
+          projectId_userId: {
+            userId,
+            projectId: attributeId,
           },
         },
       });
