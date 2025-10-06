@@ -424,7 +424,7 @@ export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url">>;
 export type AddUserSkillsInput = Pick<
   UserSkill,
   "skillId" | "position" | "proficiency"
->[];
+>;
 export type UpdateUserSkillInput = Partial<
   Pick<UserSkill, "position" | "proficiency">
 >;

@@ -14,17 +14,6 @@ const updateSkillsController = async (req: AuthenticatedRequest, res: Response) 
   //current user ID
   const UserId = parseInt(req.currentUser);
 
-  //check if ID is number
-  if (isNaN(UserId) || isNaN(skillId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID or skill ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   //update the skills they wanna update
   const result = await updateSkillsService(UserId, skillId, data);
 

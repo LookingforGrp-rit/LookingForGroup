@@ -11,7 +11,7 @@ import { getMyProjects } from '#controllers/me/get-my-proj.ts';
 import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
 import { leaveProjectController } from '#controllers/me/leave-project.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
-import { deleteSkills } from '#controllers/me/skills/delete-skills.ts';
+import { deleteSkill } from '#controllers/me/skills/delete-skills.ts';
 import { getSkills } from '#controllers/me/skills/get-skills.ts';
 import updateSkills from '#controllers/me/skills/update-skills.ts';
 import { addSocial } from '#controllers/me/socials/add-social.ts';
@@ -22,6 +22,7 @@ import { updateUserInfo } from '#controllers/me/update-info.ts';
 import { updateProjectVisibilityController } from '#controllers/me/update-project-visibility.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
+import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
 import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
 import { userAttributeExistsAt } from '../middleware/validators/user-attribute-exists-at.ts';
 
@@ -67,11 +68,19 @@ router.delete('/followings/people/:id', authenticated(deleteUserFollowing));
 //Gets a user's skills
 router.get('/skills', authenticated(getSkills));
 //Adds skills
-router.post('/skills', authenticated(addSkills));
+router.post('/skills', attributeExistsAt('skill', 'body', 'skillId'), authenticated(addSkills));
 //Deletes a skill
-router.delete('/skills/:id', authenticated(deleteSkills));
+router.delete(
+  '/skills/:id',
+  authenticated(userAttributeExistsAt('skill', 'path', 'id')),
+  authenticated(deleteSkill),
+);
 //Updates a skill's proficiency (or position if it ever becomes useful)
-router.patch('/skills/:id', authenticated(updateSkills));
+router.patch(
+  '/skills/:id',
+  authenticated(userAttributeExistsAt('skill', 'path', 'id')),
+  authenticated(updateSkills),
+);
 
 // SOCIALS ROUTES
 
