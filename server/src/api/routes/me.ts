@@ -23,6 +23,7 @@ import { updateProjectVisibilityController } from '#controllers/me/update-projec
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
+import { userAttributeExistsAt } from '../middleware/validators/user-attribute-exists-at.ts';
 
 const router = Router();
 
@@ -81,7 +82,11 @@ router.post('/socials', authenticated(addSocial));
 //Updates a social
 router.put('/socials/:websiteId', authenticated(updateSocial));
 //Deletes a social
-router.delete('/socials/:websiteId', authenticated(deleteSocial));
+router.delete(
+  '/socials/:websiteId',
+  authenticated(userAttributeExistsAt('social', 'path', 'websiteId')),
+  authenticated(deleteSocial),
+);
 
 // PROJECTS ROUTES
 
