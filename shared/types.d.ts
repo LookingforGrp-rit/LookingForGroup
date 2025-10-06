@@ -146,6 +146,11 @@ export type ProjectFollowing = {
   followedAt: Date;
 };
 
+export type ProjectFollower = {
+  user: UserPreview;
+  followedAt: Date;
+};
+
 // replacing this with above ^^^
 // export type UserFollowings = {
 //   senderId: number;
@@ -301,12 +306,12 @@ export interface MePrivate extends MeDetail {
 
 // PROjECT DATA
 
-export interface ProjectFollowings {
-  userId: number;
-  projectId: number;
-  followedAt: Date;
-  apiUrl: string;
-}
+// export interface ProjectFollowings {
+//   userId: number;
+//   projectId: number;
+//   followedAt: Date;
+//   apiUrl: string;
+// }
 
 //images for projects
 export interface ProjectImage {
@@ -333,7 +338,7 @@ export interface Member {
 // Represents the followers info for a project
 export interface ProjectFollowers {
   count: number;
-  users: UserPreview[];
+  users: ProjectFollower[];
   apiUrl: string;
 }
 
