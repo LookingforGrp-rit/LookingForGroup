@@ -85,7 +85,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
   }
 
   if (body.mentor !== undefined) {
-    updates.mentor = body.mentor ? 1 : 0;
+    updates.mentor = body.mentor;
   }
 
   const result = await updateUserInfoService(userId, updates);
