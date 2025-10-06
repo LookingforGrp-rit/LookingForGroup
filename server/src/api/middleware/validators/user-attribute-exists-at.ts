@@ -1,19 +1,6 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
-import { type NextFunction, type Request, type Response } from 'express';
+import { type NextFunction, type Response } from 'express';
 import prisma from '#config/prisma.ts';
-
-export const authenticated = (
-  controller: (
-    req: AuthenticatedRequest,
-    res: Response,
-    next: NextFunction,
-  ) => void | Promise<void>,
-) =>
-  controller as unknown as (
-    req: Request,
-    res: Response,
-    next: NextFunction,
-  ) => void | Promise<void>;
 
 type ParameterLocation = 'path' | 'body';
 type Attribute = 'social' | 'skill' | 'major';
