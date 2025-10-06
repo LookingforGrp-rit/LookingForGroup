@@ -102,6 +102,15 @@ export interface Medium {
 
 //USER DATA
 
+// Represents the member info for a project
+export interface UserMember {
+    project: ProjectPreview;
+    role: Role;
+    visibility: "Public" | "Private";
+    memberSince: Date;
+    apiUrl: string;
+}
+
 export interface UserSkill extends Skill {
     proficiency: SkillProficiency;
     position: number;
@@ -130,6 +139,15 @@ export type UserFollowings = {
     apiUrl: string;
 };
 
+// Represents the member info for a project
+export interface MyMember {
+    project: ProjectPreview;
+    role: Role;
+    visibility: "Public" | "Private";
+    memberSince: Date;
+    apiUrl: string;
+}
+
 export interface MySkill extends UserSkill {
     apiUrl: string;
 }
@@ -157,6 +175,9 @@ export interface UserPreview {
     lastName: string;
     username: string;
     profileImage: string | null;
+    mentor: boolean;
+    designer: boolean;
+    developer: boolean
     apiUrl: string;
 }
 
@@ -170,7 +191,7 @@ export interface UserDetail extends UserPreview {
     location: string;
     funFact: string;
     bio: string;
-    projects: ProjectPreview[];
+    projects: UserMember[];
     skills: UserSkill[];
     socials: UserSocial[];
     following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},
@@ -181,7 +202,6 @@ export interface UserDetail extends UserPreview {
 export interface User extends UserDetail {
     ritEmail: string;
     visibility: Visibility;
-    projects: ProjectPreview[];
     phoneNumber: string | null;
     universityId: string;
     createdAt: Date;
@@ -205,6 +225,9 @@ export interface MePreview {
     lastName: string;
     username: string;
     profileImage: string | null;
+    mentor: boolean;
+    designer: boolean;
+    developer: boolean
     apiUrl: string;
 }
 
@@ -218,7 +241,8 @@ export interface MeDetail extends MePreview {
     location: string;
     funFact: string;
     bio: string;
-    projects: ProjectPreview[];
+    mentor: boolean;
+    projects: MyMember[];
     skills?: MySkill[];
     socials?: MySocial[];
     following: {usersFollowing: UserFollowsList, projectsFollowing: ProjectFollowsList},

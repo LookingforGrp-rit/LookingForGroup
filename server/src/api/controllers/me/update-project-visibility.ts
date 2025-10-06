@@ -1,0 +1,69 @@
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
+import { updateProjectVisibility } from '#services/me/update-profile-visibility.ts';
+
+/**
+ * Handles PUT /me/projects/:id/visibility requests
+ * Allows authenticated users to update their project visibility
+ */
+const updateProjectVisibilityController = async (req: AuthenticatedRequest, res: Response) => {
+  const { id } = req.params;
+  const projectId = parseInt(id);
+
+  // Get current user ID from middleware
+  const currentUserId = parseInt(req.currentUser);
+
+  if (isNaN(projectId)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid project ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  if (isNaN(currentUserId)) {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Invalid user ID',
+      data: null,
+    };
+    res.status(400).json(resBody);
+    return;
+  }
+
+  // Validate request body - expecting { visibility: 'private' or 'public' }
+  const visibility = (req.body as { visibility: 'private' | 'public' | undefined }).visibility;
+
+  const result = await updateProjectVisibility(projectId, currentUserId, visibility);
+
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Project not found or you are not a member of this project',
+      data: null,
+    };
+    res.status(404).json(resBody);
+    return;
+  }
+
+  if (result === 'INTERNAL_ERROR') {
+    const resBody: ApiResponse = {
+      status: 500,
+      error: 'Internal Server Error',
+      data: null,
+    };
+    res.status(500).json(resBody);
+    return;
+  }
+
+  const resBody: ApiResponse = {
+    status: 200,
+    error: null,
+    data: result,
+  };
+  res.status(200).json(resBody);
+};
+
+export { updateProjectVisibilityController };
