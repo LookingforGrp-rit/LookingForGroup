@@ -30,12 +30,12 @@ import { getCurrentUsername, getUsersById, updateProfilePicture } from '../../ap
 import { MeDetail, MySkill, UserSocial } from '@looking-for-group/shared';
 
 // The profile to view is independent upon the site's state changes
-const [profile, setProfile] = useState<MeDetail | null>(null);
 const pageTabs = ['About', 'Projects', 'Skills', 'Interests', 'Links'];
 
 export const ProfileEditPopup = () => {
   // Holds new profile image if one is selected
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
+  const [profile, setProfile] = useState<MeDetail | null>(null);
 
   // Send selected image to server for save
   const saveImage = async (userID: number) => {
