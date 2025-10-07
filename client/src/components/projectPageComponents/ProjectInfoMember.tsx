@@ -357,13 +357,13 @@ export const ProjectInfoMember = (props) => {
       <p id="project-desc">{props.projectData.description}</p>
 
       <div id="member-buttons">
-        <button
+        {/* <button
           id="virtual-space-entrance"
           className="white-button"
           onClick={projectPageHelper.enterVirtualSpace}
         >
           Enter virtual space
-        </button>
+        </button> */}
         <button
           id="make-post-button"
           className="white-button"

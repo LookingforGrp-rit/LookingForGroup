@@ -203,6 +203,7 @@ model Users {
   funFact           String              @default("") @map("fun_fact") @db.VarChar(100)
   bio               String              @default("") @db.VarChar(600)
   visibility        Int                 @default(1) @db.TinyInt
+  mentor            Int                 @default(0) @db.TinyInt
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @unique @db.VarChar(20) @map("phone_number")

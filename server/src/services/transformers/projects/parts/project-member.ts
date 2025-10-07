@@ -1,6 +1,7 @@
 import type { ProjectMember } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectMemberSelector } from '#services/selectors/projects/parts/project-member.ts';
+import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
 
 //sample project from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -13,26 +14,15 @@ type ProjectImageGetPayload = Awaited<typeof sampleMember>[number];
 //map to shared type
 export const transformProjectMember = (
   projectId: number,
-  {
-    users: { userId, firstName, lastName, username, profileImage },
-    roles: { roleId, label },
-    createdAt,
-  }: ProjectImageGetPayload,
+  { users, roles: { roleId, label }, createdAt }: ProjectImageGetPayload,
 ): ProjectMember => {
   return {
-    user: {
-      userId,
-      firstName,
-      lastName,
-      username,
-      profileImage,
-      apiUrl: `api/users/${userId.toString()}}`,
-    },
+    user: transformUserToPreview(users),
     role: {
       roleId,
       label,
     },
     memberSince: createdAt,
-    apiUrl: `/api/projects/${projectId.toString()}/members/${userId.toString()}`,
+    apiUrl: `/api/projects/${projectId.toString()}/members/${users.userId.toString()}`,
   };
 };

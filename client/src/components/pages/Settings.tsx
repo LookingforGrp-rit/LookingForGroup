@@ -3,9 +3,9 @@ import '../Styles/pages.css';
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
-import VolumeSettings from '../SettingsPageComponents/VolumeSetting';
-import NotificationSettings from '../SettingsPageComponents/NotificationSetting';
+// import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
+// import VolumeSettings from '../SettingsPageComponents/VolumeSetting';
+// import NotificationSettings from '../SettingsPageComponents/NotificationSetting';
 import ProfileVisibilitySetting from '../SettingsPageComponents/ProfileVisibilitySetting';
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
@@ -68,7 +68,7 @@ const Settings = () => {
           id="general"
         >
           <div className="setting-in-page">
-            <h3>My Avatar</h3>
+            {/*<h3>My Avatar</h3>*/}
             <div className="setting-content">
               {/* <div className="displayProfilePic">
                 <img src={avatarImage} alt="Profile Pic" />
@@ -163,7 +163,7 @@ const Settings = () => {
             </div>
           </div>
 
-          <VolumeSettings />
+          {/* <VolumeSettings /> */}
 
           <div id="setting-spacer"></div>
         </div>

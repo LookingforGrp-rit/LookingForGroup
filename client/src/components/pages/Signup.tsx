@@ -2,10 +2,10 @@ import '../Styles/pages.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
+// import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
 import ChooseSkills from '../SignupProcess/ChooseSkills';
 // import ChooseProficiencies from "../SignupProcess/ChooseProficiencies";
-import ChooseInterests from '../SignupProcess/ChooseInterests';
+// import ChooseInterests from '../SignupProcess/ChooseInterests';
 import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { sendPost } from '../../functions/fetch';
@@ -13,7 +13,7 @@ import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
 import { getUserByEmail, getUserByUsername, signUp } from '../../api/users';
 
-const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) => {
+const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation
 
   // State variables
@@ -28,10 +28,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
   const [showPassword, setShowPassword] = useState(false);
 
   // State variables for modals
-  const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [showSkillsModal, setShowSkillsModal] = useState(false);
+  // const [showAvatarModal, setShowAvatarModal] = useState(false);
+  // const [showSkillsModal, setShowSkillsModal] = useState(false);
   // const [showProficienciesModal, setShowProficienciesModal] = useState(false);
-  const [showInterestsModal, setShowInterestsModal] = useState(false);
+  // const [showInterestsModal, setShowInterestsModal] = useState(false);
   const [showCompleteProfileModal, setShowCompleteProfileModal] = useState(false);
   const [showGetStartedModal, setShowGetStartedModal] = useState(false);
 
@@ -39,7 +39,7 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
   // to remeber the user's choices when they go back and forth between modals
   // const [selectedProficiencies, setSelectedProficiencies] = useState<string[]>([]); // State variable for the selected proficiencies
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]); // State variable for the selected skills
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
+  // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
   const [bio, setBio] = useState(''); // State variable for the user's bio
 
@@ -52,10 +52,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     password: password,
     // proficiencies: selectedProficiencies,
     skills: selectedSkills,
-    interests: selectedInterests,
+    // interests: selectedInterests,
     pronouns: pronouns,
     bio: bio,
-    avatarImage: avatarImage,
+    // avatarImage: avatarImage,
     profileImage: profileImage, // if they upload their own image
   };
 
@@ -317,7 +317,7 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
           <ChooseSkills
             onNext={() => {
               setShowSkillsModal(false);
-              setShowInterestsModal(true);
+              // setShowInterestsModal(true);
             }}
             onBack={() => {
               setShowSkillsModal(false);
@@ -331,10 +331,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
             }}
           />
 
-          <ChooseInterests
+          {/* <ChooseInterests
             onNext={() => {
               setShowInterestsModal(false);
-              setShowAvatarModal(true);
+              // setShowAvatarModal(true);
             }}
             onBack={() => {
               setShowInterestsModal(false);
@@ -347,9 +347,9 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
             onClose={() => {
               setShowInterestsModal(false);
             }}
-          />
+          /> */}
 
-          <MakeAvatarModal
+          {/* <MakeAvatarModal
             mode="signup"
             onBack={() => {
               setShowAvatarModal(false);
@@ -364,7 +364,7 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
               setShowAvatarModal(false);
             }}
             setAvatarImage={setAvatarImage}
-          />
+          /> */}
 
           <CompleteProfile
             onNext={() => {
@@ -373,10 +373,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
             }}
             onBack={() => {
               setShowCompleteProfileModal(false);
-              setShowAvatarModal(true);
+              // setShowAvatarModal(true);
             }}
             show={showCompleteProfileModal}
-            avatarImage={avatarImage}
+            // avatarImage={avatarImage}
             userInfo={userInfo}
             bio={bio}
             pronouns={pronouns}
