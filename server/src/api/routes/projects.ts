@@ -8,6 +8,7 @@ import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
 import { projectAttributeExistsAt } from '../middleware/validators/project-attribute-exists-at.ts';
 import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
+import { skipIfEmpty } from '../middleware/validators/skip-if-empty.ts';
 import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
@@ -160,7 +161,7 @@ router.patch(
   projectExistsAt('path', 'id'),
   userExistsAt('path', 'userId'),
   projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
-  attributeExistsAt('role', 'body', 'roleId'),
+  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
   authenticated(requiresProjectOwner),
   PROJECT.updateMember,
 );
