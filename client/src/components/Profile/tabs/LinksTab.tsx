@@ -1,133 +1,84 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { sendPut, sendFile, fetchUserID } from '../../../functions/fetch';
+import { sendPut, sendFile } from '../../../functions/fetch';
 import { SocialSelector } from '../../SocialSelector';
 import { getByID } from '../../../api/projects';
-import { getUsersById } from '../../../api/users';
+import { getCurrentUsername, getUsers, getUsersById } from '../../../api/users';
+import { UserSocial, ProjectSocial, UserDetail, ProjectDetail } from '@looking-for-group/shared';
 
-interface LinkData {
-  id: number;
-  url: string;
+interface LinksTabProps {
+  type: 'project' | 'user';
+  socials?: UserSocial[] | ProjectSocial[];
 }
 
-let links = [] as LinkData[];
+export const LinksTab: React.FC<LinksTabProps> = ({ type, socials: initialSocials }) => {
+  const [links, setLinks] = useState<UserSocial[] | ProjectSocial[]>(initialSocials || []);
 
-export const LinksTab = (props) => {
-  const type = props.type;
-  let socials = props.socials;
-
-  const [update, setUpdate] = useState(false);
   useEffect(() => {
     const loadSocials = async () => {
+      if (initialSocials && initialSocials.length > 0) return;
+
       // Pick which socials to use based on type
-      const userID = await fetchUserID();
+      const userID = await getCurrentUsername();
+
+      let response;
       
-     // var { data } = [];
-     // switch(type){
-     //   case 'project':
-     //     data = await getByID(userID);
-     //     break;
-     //   default:
-     //     data = await getUsersById(userID);
-     //     break;
-     // }
-     // console.log("Break")
-     // console.log(data);
-
-      let url;
-      switch (type) {
-        case 'project':
-          url = `api/users/${userID}`; // Replace with project url
-          break;
-        default:
-          url = `api/users/${userID}`;
-          break;
-
+      if (type === 'project') {
+        const projectData = await getByID(userID.toString());
+        if (projectData.projectSocials) {
+          setLinks(projectData.projectSocials);
+        }
+      } else {
+        response = await getUsersById(userID.toString());
+        if (response.data[0].socials) {
+          setLinks(response.data[0].socials);
+        }
       }
-      // fetch for profile on ID
-      const response = await fetch(url);
-      const { data } = await response.json(); // use data[0]
-      socials = data[0].socials;
-      // Setup links
-      if (socials) {
-        links = socials.map(s => {
-          return {
-            id: s.id,
-            url: s.url
-          };
-        });
-      }
-      setUpdate(!update);
-    }
+    };
     loadSocials();
 
-  }, []);
+  }, [initialSocials, type]);
   // Update Functions ----------------------
 
-  const updateURL = (index, newUrl) => {
-    // ld = linkData
-    links = links.map((ld, i) => i === index ? { ...ld, url: newUrl } : ld);
+  const updateURL = (index: number, newUrl: string) => {
+    setLinks(prev => prev.map((l, i) => (i === index ? { ...l, url: newUrl } : l)));
   }
 
-  const updateWebsite = (index, newWebsite) => {
-    links = links.map((ld, i) => i === index ? { ...ld, id: newWebsite } : ld);
+  const updateWebsite = (index: number, newId: number) => {
+    setLinks(prev => prev.map((l, i) => (i === index ? { ...l, websiteId: newId } : l)));
   }
 
   // Button Functions ----------------------
 
-  const onAddLinkClicked = (e) => {
+  const onAddLinkClicked = (e: React.MouseEvent) => {
     e.preventDefault();
     // Save current state
     // Adds another LinkInput into the chain
-    links.push({ id: 0, url: '' });
-
-    setUpdate(!update);
-    return false;
+    setLinks(prev => [...prev, { websiteId: 0, url: ''} as UserSocial]);
   };
 
-  const onRemoveLinkClicked = (e, index) => {
+  const onRemoveLinkClicked = (e: React.MouseEvent, index: number) => {
     e.preventDefault();
     // save this change into the state
-    // setLinks(prev => prev.filter((_, i) => i !== index));
-    links = links.filter((_, i) => i !== index);
-    setUpdate(!update);
-    return false;
+    setLinks(prev => prev.filter((_, i) => i !== index));
   };
 
   // Components ----------------------
 
-  const LinkInput = (props) => {
-    const [text, setText] = useState('');
-
-    useEffect(() => {
-      console.log(props.data);
-
-      if (links[props.index]) {
-        // If there exists a value for it in the array
-        // Load in the value
-        setText(props.data.url); // textInput
-      }
-    }, []);
+  const LinkInput: React.FC<{ data: UserSocial | ProjectSocial; index: number }> = ({ data, index }) => {
+    const [text, setText] = useState(data.url || '');
 
     return (
-      <div id={`link-${props.index}`} className='link-input'>
-        <SocialSelector value={props.data.id}
-          onChange={
-            (e) => {
-              updateWebsite(props.index, e.target.selectedIndex);
-            }} />
+      <div id={`link-${index}`} className='link-input'>
+        <SocialSelector value={data.websiteId}
+          onChange={e => updateWebsite(index, e.target.selectedIndex)} />
         <div className='link-input-wrapper'>
           <div className='editor-input-item'>
             <input type="text" name="url" id="link-url-input" placeholder="URL" value={text}
-              onChange={
-                (e) => {
-                  setText(e.target.value);
-                  updateURL(props.index, e.target.value);
-                }
-              } />
-            <button className='remove-link-button' onClick={
-              (e) => {
-                onRemoveLinkClicked(e, props.index);
-              }}><i className="fa-solid fa-minus"></i></button>
+              onChange={e => {setText(e.target.value); updateURL(index, e.target.value);
+                }}/>
+            <button className='remove-link-button' onClick={e => onRemoveLinkClicked(e, index)}>
+              <i className="fa-solid fa-minus"></i>
+            </button>
           </div>
         </div>
       </div>
@@ -135,28 +86,15 @@ export const LinksTab = (props) => {
   };
 
   const LinkContainer = () => {
-    // Use an effect to reload the container based on the
-    // number of links the user has/requests
-    let render;
-    if (socials && socials.length > 0) {
-      console.log('Using user data...');
-      render = socials.map((social, i) => {
-        return <LinkInput data={social} index={i} />;
-      });
-    }
-    else if (links.length > 0) {
-      render = links.map((ld, i) => {
-        return <LinkInput key={i} data={ld} index={i} />;
-      });
-    }
-    else {
-      render = <p>No Socials Posted!</p>;
-    }
+    if (links.length === 0) return <p>No Socials Posted!</p>;
+
     return (
-      <div id='links-container'>
-        {render}
+      <div id="links-container">
+        {links.map((link, i) => (
+          <LinkInput key={i} data={link} index={i}/>
+        ))}
       </div>
-    );
+    )
   };
 
   // Tab Component ----------------------
@@ -177,7 +115,6 @@ export const LinksTab = (props) => {
   );
 };
 
-export const getSocials = () => {
-  console.log(links);
-  return links;
+export const getSocials = (linksState: UserSocial[] | ProjectSocial[]): UserSocial[] | ProjectSocial[] => {
+  return linksState;
 }

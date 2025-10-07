@@ -13,34 +13,22 @@ import './Styles/pages.css';
 
 import { useState, useEffect } from 'react';
 import type { JSX } from 'react';
-
-
-interface JobTitle {
-  titleId: string;
-  label: string;
-}
-
-const getRoles = async (): Promise<JobTitle[]> => {
-  // TODO: create error handling, try catch block
-  const response = await fetch('/api/datasets/job-titles');
-  const { data } = await response.json();
-  // console.log(data);
-  return data;
-};
-
+import { getJobTitles } from '../api/users';
+import { Role } from '@looking-for-group/shared';
 
 export const RoleSelector = () => {
-  const [options, setOptions] = useState<JSX.Element[] | null>(null);
+  const [options, setOptions] = useState<JSX.Element[]>([]);
 
   useEffect(() => {
     const setUpRoleSelector = async () => {
-      const jobTitles = await getRoles();
-      const selectorOptions = jobTitles.map((job: JobTitle) => (
-        <option key={job.titleId} value={job.titleId}>
-          {job.label}
-        </option>
-      ));
-      setOptions(selectorOptions);
+      const roles: Role[] = (await getJobTitles()) ?? [];
+      setOptions(
+        roles.map((role) => (
+          <option key={role.roleId} value={role.roleId}>
+            {role.label}
+          </option>
+        ))
+      );
     };
     setUpRoleSelector();
   }, []);

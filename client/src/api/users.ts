@@ -1,13 +1,22 @@
-import { GET, POST, PUT, DELETE } from "./index";
+import { GET, POST, PUT, DELETE, PATCH } from "./index";
 import type {
   ApiResponse,
   User,
   CreateUserData,
+  UserPreview,
+  UserDetail,
+  ProjectPreview,
+  ProjectFollowings,
+  UserFollowings,
+  MePrivate,
+  MySocial,
+  MySkill,
+  Major, Skill, Role, Medium, Tag, Social
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
 
-//This probably with change with shibbolth???
+//This probably will change with shibbolth???
 /**
  * Creates a new user, and adds them to the signups table. All data params default to null.
  * NOT GOING TO NEED THIS WITH SHIBBOLETH
@@ -50,19 +59,64 @@ export const createNewUser = async (
 };
 
 /**
+ * Signup with token only, unneeded with shibboleth
+ * @param token - from url, security token
+ */
+export const signupWithToken = async (
+  token: string
+): Promise<ApiResponse> => {
+  // check if token is valid
+  const apiURL = `/signup/${token}`;
+
+  const response = await GET(apiURL);
+
+  if (response.status === 400) {
+    console.log("Invalid signup token.");
+    return { status: 400, error: "Invalid signup token." };
+  }
+
+  return response;
+};
+
+/**
+ * Signup with no token (unneeded with shibboleth?)
+ * @param data - Object sent with user info 
+ */
+export const signUp = async (
+  data: object
+): Promise<ApiResponse> => {
+  const apiURL = `/signup`;
+  
+  const response = await POST(apiURL, data);
+
+  if (response.status === 400) {
+    console.log("Error creating a new user.");
+    return { status: 400, error: "Error creating a new user." };
+  }
+  console.log(`User created.`);
+
+  return response;
+}
+
+
+/**
  * Checks if the user is logged in (shibboleth) and returns username if they are
  * @returns ApiResponse with username is logged in, 404 if guest
  */
 export const getCurrentUsername = async (): Promise<ApiResponse> => {
-  const apiURL = `/users/get-username`;
+  const apiURL = `/me/get-username`;
 
   try {
     //can maybe add custom headers here for dev mode
     const response = await GET(apiURL);
-    return response;
+    if (response.status !== 200) {
+      return { status: response.status, error: response.error, data: null };
+    }
+
+    return { status: 200, error: null, data: response.data };
   } catch (e) {
     console.log("Error fetching username by Shibboleth:", e);
-    return { status: 500, error: "Internal error" };
+    return { status: 500, error: "Internal error", data: null };
   }
 };
 
@@ -70,10 +124,16 @@ export const getCurrentUsername = async (): Promise<ApiResponse> => {
  * Gets all data on all public users. Does not return private ones
  * @returns result - JSONified data of all users, else if error, '400'.
  */
-export const getUsers = async (): Promise<ApiResponse> => {
+export const getUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
   const apiURL = `/users`;
-  const response = await GET(apiURL);
-  return response;
+  try {
+    const response = await GET(apiURL);
+    return { status: 200, error: null, data: response.data as UserPreview[] };
+  }
+  catch (e) {
+    console.log("Error fetching users: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
 };
 
 /**
@@ -81,35 +141,80 @@ export const getUsers = async (): Promise<ApiResponse> => {
  * @param id - university id for user
  * @returns result - JSONified data of specified user.
  */
-export const getUsersById = async (id: string): Promise<ApiResponse> => {
+export const getUsersById = async (id: string): Promise<ApiResponse<UserDetail>> => {
   const apiURL = `/users/${id}`;
-  const response = await GET(apiURL);
-  return response;
+  try {
+    const response = await GET(apiURL);
+    return {status: 200, error: null, data: response.data as UserDetail};
+  }
+  catch (e) {
+    console.log("Error fetching users with ID: ", e);
+    return {status: 500, error: "Internal error", data: null};
+  }
 };
 
 /**
+ * Gets the current user by ID
+ * @param devId - ID to be used as the current user
+ */
+export const getCurrentUserById = async (devId?: number): Promise<ApiResponse<MePrivate>> => {
+  const apiURL = `/me${devId ? `?devId=${devId}` : ""}`;
+  try {
+    const response = await GET(apiURL);
+    if (response.status !== 200) {
+      return { status: response.status, error: response.error, data: null }
+    }
+
+    return { status: 200, error: null, data: response.data as MePrivate }
+  }
+  catch (e) {
+    console.log("Error fetching users with ID: ", e);
+    return {status: 500, error: "Internal error", data: null};
+  }
+}
+
+/**
  * Edit information for one user, specified by URL.
- * @param id - user_id for user
+ * @param devId - user_id for user
  * @param data - mapped(eg {data1:'value1', data2:'value2'}) data to change for user
  * @returns response data
  */
 export const editUser = async (
-  id: number,
-  data: Partial<User>
-): Promise<ApiResponse> => {
-  const apiURL = `/users/${id}`;
-  const response = await PUT(apiURL, data);
-  return response;
+  data: Partial<User>,
+  devId?: number
+): Promise<ApiResponse<MePrivate>> => {
+  const apiURL = `/me${devId ? `?devId=${devId}` : ""}`;
+  try {
+  const response = await PATCH(apiURL, data);
+  if (response.status !== 200) {
+    return { status: response.status, error: response.error, data: null}
+  }
+  return { status: 200, error: null, data: response.data as MePrivate}
+  }
+  catch (e) {
+    console.log("Error editing user ", e);
+    return {status: 500, error: "Internal error", data: null};
+  }
 };
 
 /**
  * Removes a user specified by URL.
- * @param id - user_id to be deleted
  * @returns response data
+ * @param devId - ID to be used as the current user
  */
-export const deleteUser = async (id: number): Promise<ApiResponse> => {
-  const apiURL = `/users/${id}`;
-  return await DELETE(apiURL);
+export const deleteUser = async (devId?: number): Promise<ApiResponse> => {
+  const apiURL = `/me${devId ? `?devId=${devId}` : ""}`;
+  try {
+    const response = await DELETE(apiURL);
+    if (response.status !== 200) {
+      return {status: response.status, error: response.error, data: null}
+    }
+    return {status: 200, error: null, data: null};
+  }
+  catch (e) {
+    console.log("Error deleting user ", e);
+    return {status: 500, error: "Internal error", data: null};
+  }
 };
 
 /* USER VERIFICATION */
@@ -142,18 +247,20 @@ export const userInDatabase = async (email: string): Promise<boolean> => {
 
 /**
  * Update Profile Picture for a user's id.
- * @param id - int, the user_id to change
  * @param image - file, the picture to put into the user's profile
+ * @param devId - ID to be used as the current user
  * @return status, 200 if successful, 400 if not, and data. data=array[object] with the profile_image, string, name of the file
  */
 export const updateProfilePicture = async (
-  id: number,
-  image: File
+  image: File,
+  devId?: number
 ): Promise<ApiResponse> => {
-  const apiURL = `/users/${id}/profile-picture`;
+  const apiURL = `/me${devId ? `?devId=${devId}` : ""}`;
 
-  const data = { image: image };
-  const response = await PUT(apiURL, data);
+  const formData = new FormData();
+  formData.append("image", image);
+  
+  const response = await PUT(apiURL, formData);
   if (response.status === 400) {
     console.log("error updating profile picture.");
     return { status: 400, error: "Error updating profile picture." };
@@ -352,23 +459,24 @@ export const getAccountInformation = async (user_id: number) => {
  * @return data, list of 1 user, or 400 if not successful
  * DOES NOT NEED USERNAME, requires UID!
  */
-export const getUserByUsername = async (username: string) => {
+export const getUserByUsername = async (username: string): Promise<ApiResponse<UserPreview>> => {
   const url = `/users/search-username/${username}`;
+  try {
   const response = await GET(url);
   console.log(response);
-  if (response.status === 400) {
-    console.log("Error getting user.");
-    return { status: 400, error: response.error };
-  }
 
-  //check if array is not empty
-  if (!response.data) {
-    console.log("No user found");
-    return { status: 404, error: response.error };
+  if (response.status !== 200) {
+    console.log("Error getting user.");
+    return { status: response.status, error: response.error, data: null };
   }
 
   console.log("Data recieved.");
-  return response;
+  return { status: 200, error: null, data: response.data as UserPreview };
+  }
+  catch (e) {
+    console.log("Error getting user: ", e);
+    return {status: 500, error: "Internal error", data: null};
+  }
 };
 
 /**
@@ -376,23 +484,23 @@ export const getUserByUsername = async (username: string) => {
  * @param email - email of user to be recieved
  * @return data, list of 1 user, or 400 if not successful
  */
-export const getUserByEmail = async (email: string) => {
+export const getUserByEmail = async (email: string): Promise<ApiResponse<UserPreview>> => {
   const url = `/users/search-email/${email}`;
+  try {
   const response = await GET(url);
 
-  if (response.status === 400) {
+  if (response.status !== 200) {
     console.log("Error getting user.");
-    return { status: 400, error: response.error };
-  }
-
-  //check if array is not empty
-  if (!response.data) {
-    console.log("No user found");
-    return { status: 404, error: "No user found." };
+    return { status: response.status, error: response.error, data: null };
   }
 
   console.log("Data recieved.");
-  return response;
+  return { status: 200, error: null, data: response.data as UserPreview };
+  }
+  catch (e) {
+    console.log("Error getting user: ", e);
+    return {status: 500, error: "Internal error", data: null};
+  }
 };
 
 /* USER FOLLOWINGS */
@@ -402,73 +510,141 @@ export const getUserByEmail = async (email: string) => {
  * @param {number} id - id of the user that we are searching.
  * @returns array of users following, or 400 if unsuccessful.
  */
-export const getUserFollowing = async (id: number) => {
+export const getUserFollowing = async (id: number): Promise<ApiResponse<UserPreview[]>> => {
   const url = `/users/${id}/followings/people`;
+  try {
   const response = await GET(url);
-  if (response.status === 400) {
+
+  if (response.status !== 200) {
     console.log("Error getting users.");
-    return { status: 400, error: response.error };
+    return { status: response.status, error: response.error, data: null };
   }
+
   console.log("Data recieved.");
-  return response;
+  return { status: response.status, error: null, data: response.data as UserPreview[]};
+  }
+  catch (e) {
+    console.log("Error getting users: ", e);
+    return {status: 500, error: "Internal error", data: null};
+  }
 };
+
+/** Get list of users that are following the specified user
+* @param {number} id - id of the user that we are searching.
+*/
+export const getUserFollowers = async (id: number): Promise<ApiResponse> => {
+  const url = `/users/${id}/followers`;
+  try {
+    const response = await GET(url);
+
+    if (response.status !== 200) {
+      console.log("Error getting users");
+      return { status: response.status, error: response.error, data: null };
+    }
+
+  console.log("Data recieved.");
+  return { status: response.status, error: null, data: response.data };
+  }
+  catch (e) {
+    console.log("Error getting users: ", e);
+    return {status: 500, error: "Internal error", data: null};
+  }
+}
 
 /**
  * Follow a person for a user.
  * @param {number} id - user's id
- * @param {number} followID - user to be followed.
+ * @param devId - ID to be used as the current user
  * @returns 201 if successful, 400 if not
  */
-export const addUserFollowing = async (id: number, followID: number) => {
-  const url = `/users/${id}/followings/people`;
-  const data = {
-    userId: followID,
-  };
-  const response = await POST(url, data);
-  if (response.status === 400) {
+export const addUserFollowing = async (id: number, devId?: number): Promise<ApiResponse<UserFollowings>> => {
+  const url = `/me/followings/people/${id}${devId ? `?devId=${devId}` : ""}`;
+  try {
+  const response = await POST(url, {});
+
+  if (response.status !== 201) {
     console.log("Error creating user following.");
-    return { status: 400, error: response.error };
+    return { status: response.status, error: response.error, data: null };
   }
+
   console.log("Created user following.");
-  return { status: 201, data: response.data };
+  return { status: 201, error: null, data: response.data as UserFollowings };
+  }
+  catch (e) {
+    console.error("Error creating user following:", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
 };
 
 /**
  * Unfollow person for a user. Unauthorized until shibboleth.
  * @param {number} id - user id of the user.
- * @param {number} unfollowID - user id to be unfollowed.
+ * @param devId - ID to be used as the current user
  */
-export const deleteUserFollowing = async (id: number, unfollowID: number) => {
-  const url = `/users/${id}/followings/people`;
-  const data = {
-    userId: unfollowID,
-  };
-  const response = await DELETE(url, data);
+export const deleteUserFollowing = async (id: number, devId?: number) => {
+  const url = `/me/followings/people/${id}${devId ? `?devId=${devId}` : ""}`;
+  try {
+  const response = await DELETE(url);
 
-  if (response.status === 400) {
+  if (response.status !== 200) {
     console.log("Error deleting user following.");
-    return { status: 400, error: response.error };
+    return { status: response.status, error: response.error, data: null };
   }
+
   console.log("Deleted user following.");
-  return { status: 201, data: response.data };
+  return { status: 200, error: null, data: null };
+  }
+  catch (e) {
+    console.error("Error deleting user following:", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
 };
 
 /* PROJECT FOLLOWINGS/VISIBILITY */
+/**
+ * @param devId - ID to be used as the current user
+ */
+export const getProjectsByUser = async (devId?: number): Promise<ApiResponse<ProjectPreview[]>> => {
+  const url = `/me/projects${devId ? `?devId=${devId}` : ""}`;
+  try {
+  const response = await GET(url);
+
+  if (response.status !== 200) {
+    console.log("Error getting projects.");
+    return { status: response.status, error: response.error, data: null };
+  }
+
+  console.log("Data received.");
+  return { status: 200, error: null, data: response.data as ProjectPreview[]}
+  }
+  catch (e) {
+    console.error("Error getting projects: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+};
 
 /**
  * Get all projects the user is a member of and has set to be public for the profile page
  * @param id - user to search
  * @return - array of projects, or 400 if unsuccessful.
  */
-export const getVisibleProjects = async (id: number) => {
-  const url = `/users/${id}/projects/profile`;
+export const getVisibleProjects = async (id: number): Promise<ApiResponse<ProjectPreview[]>> => {
+  const url = `/users/${id}/projects`;
+  try {
   const response = await GET(url);
-  if (response.status === 400) {
+
+  if (response.status !== 200) {
     console.log("Error getting projects.");
-    return { status: 400, error: response.error };
+    return { status: response.status, error: response.error, data: null };
   }
+
   console.log("Data recieved.");
-  return response;
+  return { status: 200, error: null, data: response.data as ProjectPreview[] }
+  }
+  catch (e) {
+    console.error("Error getting projects: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
 };
 
 /**
@@ -483,7 +659,7 @@ export const updateProjectVisibility = async (
   projectID: number,
   _visibility: string
 ) => {
-  const url = `/users/${userID}/projects/visibility`;
+  const url = `/users/${userID}`;
   const data = {
     projectId: projectID,
     visibility: _visibility,
@@ -503,53 +679,360 @@ export const updateProjectVisibility = async (
  * @param id - ID of the user.
  * @returns array of projects, or 400 if error.
  */
-export const getProjectFollowing = async (id: number) => {
+export const getProjectFollowing = async (id: number): Promise<ApiResponse<ProjectPreview[]>> => {
   const url = `/users/${id}/followings/projects`;
+  try {
   const response = await GET(url);
-  if (response.status === 400) {
+
+  if (response.status !== 200) {
     console.log("Error getting projects.");
-    return { status: 400, error: response.error };
+    return { status: response.status, error: response.error, data: null };
   }
+
   console.log("Data recieved.");
-  return response;
+  return {status: 200, error: null, data: response.data as ProjectPreview[]};
+  }
+  catch (e) {
+    console.error("Error getting projects: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
 };
 
 /**
  * Follow a project for a user.
  * @param id - user ID trying to follow a project.
- * @param projectID - ID of the project trying to follow.
+ * @param devId - ID to be used as the current user
  * @returns 201 if successful, 400 if not.
  */
-export const addProjectFollowing = async (id: number, projectID: number) => {
-  const url = `/users/${id}/followings/projects`;
-  const data = {
-    projectId: projectID,
-  };
-  const response = await POST(url, data);
-  if (response.status === 400) {
-    console.log("Error creating project following, unauthorized.");
-    return { status: 400, error: response.error };
+export const addProjectFollowing = async (id: number, devId?: number): Promise<ApiResponse<ProjectFollowings>> => {
+  const url = `/me/followings/projects/${id}${devId ? `?devId=${devId}` : ""}`;
+  try {
+  const response = await POST(url, {});
+
+  if (response.status !== 201) {
+    console.log("Error creating project following");
+    return { status: response.status, error: response.error, data: null };
   }
+
   console.log("Created project following.");
-  return { status: 200, data: id };
-};
+  return { status: 201, error: null, data: response.data as ProjectFollowings};
+}
+catch (e) {
+    console.error("Error creating project following: ", e);
+    return { status: 500, error: "Internal error", data: null };
+ }
+}
 
 /**
  * Unfollow a project for a user.
  * @param id - user id
- * @param projID - project Id to be unfollowed.
- * @returns 201 if successful, 400 if not.
+ * @param devId - ID to be used as the current user
+ * @returns 200 if successful, 400 if not.
  */
-export const deleteProjectFollowing = async (id: number, projID: number) => {
-  const url = `/users/${id}/followings/projects/${projID}`;
+export const deleteProjectFollowing = async (id: number, devId?: number): Promise<ApiResponse> => {
+  const url = `/me/followings/projects/${id}${devId ? `?devId=${devId}` : ""}`;
+  try {
   const response = await DELETE(url);
-  if (response.status === 400) {
+
+  if (response.status !== 200) {
     console.log("Error deleting project following.");
-    return { status: 400, error: response.error };
+    return { status: response.status, error: response.error, data: null };
   }
+
   console.log("Deleted project following.");
-  return { status: 201, data: response.data };
+  return { status: 200, error: null, data: null };
+  }
+  catch (e) {
+    console.error("Error deleting project following: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
 };
+
+// Get socials for the current user based on ID
+/**
+ * 
+ * @param devId - ID to be used as the current user
+ */
+export const getUserSocials = async (devId?: number): Promise<ApiResponse<MySocial[]>> => {
+  const url = `/me/socials${devId ? `?devId=${devId}` : ""}`;
+  try {
+  const response = await GET(url);
+
+  if (response.status !== 200) {
+    console.log("Error getting socials.");
+    return { status: response.status, error: response.error, data: null };
+  }
+
+  console.log("Data received.");
+  return { status: 200, error: null, data: response.data as MySocial[]}
+  }
+  catch (e) {
+    console.error("Error getting socials: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+};
+
+// Add socials for the current user by ID
+/** 
+ * @param devId - ID to be used as the current user
+ */
+export const addUserSocials = async (websiteId: number, url: string, devId?: number): Promise<ApiResponse<MySocial>> => {
+  const apiURL = `/me/socials${devId ? `?devId=${devId}` : ""}`;
+  try {
+    const response = await POST(apiURL, { websiteId, url });
+
+    if (response.status !== 201) {
+      return { status: response.status, error: response.error, data: null };
+    }
+
+    return { status: 201, error: null, data: response.data as MySocial };
+  }
+  catch (e) {
+    console.error("Error adding socials: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+};
+
+// Update socials specified by the current user
+/**
+ * @param devId - ID to be used as the current user
+ */
+export const updateUserSocials = async (websiteId: number, url: string, devId?: number): Promise<ApiResponse<MySocial>> => {
+   const apiURL = `/me/socials/${websiteId}${devId ? `?devId=${devId}` : ""}`;
+   try {
+     const response = await PUT(apiURL, { websiteId, url });
+
+     if (response.status !== 200) {
+      return { status: response.status, error: response.error, data: null };
+     }
+
+     return { status: 200, error: null, data: response.data as MySocial };
+   }
+   catch (e) {
+    console.error("Error updating socials: ", e);
+    return { status: 500, error: "Internal error", data: null };
+   }
+};
+
+// Delete user socials
+/**
+* @param devId - ID to be used as the current user
+*/
+export const deleteUserSocials = async (websiteId: number, devId?: number): Promise<ApiResponse> => {
+  const url = `/me/socials/${websiteId}${devId ? `?devId=${devId}` : ""}`;
+  try {
+    const response = await DELETE(url);
+    
+  if (response.status !== 200) {
+    console.log("Error deleting user socials");
+    return { status: response.status, error: response.error, data: null };
+  }
+
+  return { status: 200, error: null, data: null };
+  }
+  catch (e) {
+    console.error("Error deleting user socials:", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+}
+
+// Get skills for the current user based on ID
+/**
+ * @param devId - ID to be used as the current user
+ */
+export const getUserSkills = async (devId?: number): Promise<ApiResponse<MySkill[]>> => {
+  const url = `/me/skills${devId ? `?devId=${devId}` : ""}`;
+  try {
+  const response = await GET(url);
+
+  if (response.status !== 200) {
+    console.log("Error getting skills.");
+    return { status: response.status, error: response.error, data: null };
+  }
+
+  console.log("Data received.");
+  return { status: 200, error: null, data: response.data as MySkill[]}
+  }
+  catch (e) {
+    console.error("Error getting skills: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+};
+
+// Add skills to the current user 
+/** 
+ * @param devId - ID to be used as the current user
+ */
+export const addUserSkills = async (
+  skillId: number,
+  position: number, 
+  proficiency: string,
+  devId?: number
+): Promise<ApiResponse<MySkill>> => {
+  const url = `/me/skills${devId ? `?devId=${devId}` : ""}`;
+  const data = [ { skillId, position, proficiency } ];
+  try {
+    const response = await POST(url, data);
+    if (response.status !== 201) {
+      return { status: response.status, error: response.error, data: null };
+    }
+
+    return { status: 201, error: null, data: response.data as MySkill };
+  }
+  catch (e) {
+    console.error("Error adding skills: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+}
+
+// Updates a user skill
+/** 
+ * @param devId - ID to be used as the current user
+*/
+export const updateUserSkills = async (
+  skillId: number, 
+  position?: number, 
+  proficiency?: string,
+  devId?: number,
+): Promise<ApiResponse<MySkill>> => {
+    const url = `/me/skills/${skillId}${devId ? `?devId=${devId}` : ""}`;
+
+    // Only include fields passed in for request body
+    const data: Record<string, unknown> = {};
+    if (position !== undefined) data.position = position;
+    if (proficiency !== undefined) data.proficiency = proficiency;
+
+    try {
+      const response = await PATCH(url, data);
+      if (response.status !== 200) {
+        return { status: response.status, error: response.error, data: null };
+      }
+      return { status: 200, error: null, data: response.data as MySkill };
+    }
+    catch (e) {
+    console.error("Error updating skills: ", e);
+    return { status: 500, error: "Internal error", data: null };
+    }
+} 
+
+// Delete many of the current user's skills
+/** 
+ * @param devId - ID to be used as the current user
+*/
+export const deleteUserSkills = async (skillId: number, skillIds: number[], devId?: number): Promise<ApiResponse<null>> => {
+  const url = `/me/skills/${skillId}${devId ? `?devId=${devId}` : ""}`;
+  const data = { skillIds };
+
+  try {
+   const response = await DELETE(url, data);
+    if (response.status !== 200) {
+      return { status: response.status, error: response.error, data: null };
+    }
+    return { status: 200, error: null, data: null };
+  }
+  catch (e) {
+    console.error("Error deleting skills: ", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+};
+
+/* DATASETS */
+
+/**
+ * Retrieves list of majors.
+ */
+export const getMajors = async (): Promise<ApiResponse<Major[]>> => {
+   const apiURL = `/datasets/majors`;
+
+   try {
+   const response = await GET(apiURL);
+   return {status: 200, error: null, data: response.data as Major[]};
+   }
+   catch (e) {
+    console.log("Error fetching majors", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+}
+
+/**
+ * Gets list of job titles.
+ */
+export const getJobTitles = async (): Promise<ApiResponse<Role[]>> => {
+  const apiURL = `/datasets/roles`
+
+  try {
+    const response = await GET(apiURL);
+    return {status: 200, error: null, data: response.data as Role[]};
+  } 
+  catch (e) {
+    console.error("Error fetching job titles", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+};
+
+/**
+ * Retrieves list of project types.
+ */
+export const getProjectTypes = async (): Promise<ApiResponse<Medium[]>> => {
+    const apiURL = `/datasets/mediums`
+
+  try {
+    const response = await GET(apiURL);
+    return { status: 200, error: null, data: response.data as Medium[] };
+  } 
+  catch (e) {
+    console.error("Error fetching project types", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+}
+
+/**
+ * Gets list of skills.
+ */
+export const getSkills = async (): Promise<ApiResponse<Skill[]>> => {
+    const apiURL = `/datasets/skills`
+
+  try {
+    const response = await GET(apiURL);
+    return { status: 200, error: null, data: response.data as Skill[] };
+  } 
+  catch (e) {
+    console.error("Error fetching skills", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+}
+
+/**
+ * Retrieves list of tags.
+ */
+export const getTags = async (): Promise<ApiResponse<Tag[]>> => {
+    const apiURL = `/datasets/tags`
+
+  try {
+    const response = await GET(apiURL);
+    return { status: 200, error: null, data: response.data as Tag[] };
+  } 
+  catch (e) {
+    console.error("Error fetching tags", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+}
+
+/**
+ * Gets list of socials links.
+ */
+export const getSocials = async (): Promise<ApiResponse<Social[]>> => {
+    const apiURL = `/datasets/socials`
+
+  try {
+    const response = await GET(apiURL);
+    return { status: 200, error: null, data: response.data as Social[] };
+  } 
+  catch (e) {
+    console.error("Error fetching socials", e);
+    return { status: 500, error: "Internal error", data: null };
+  }
+}
 
 //getVisibleProjects
 //updateProjectVisibility
@@ -576,9 +1059,24 @@ export default {
   getUserFollowing,
   addUserFollowing,
   deleteUserFollowing,
+  getProjectsByUser,
   getVisibleProjects,
   updateProjectVisibility,
   getProjectFollowing,
   addProjectFollowing,
   deleteProjectFollowing,
+  getUserSocials,
+  addUserSocials,
+  updateUserSocials,
+  deleteUserSocials,
+  getUserSkills,
+  addUserSkills,
+  updateUserSkills,
+  deleteUserSkills,
+  getMajors,
+  getJobTitles,
+  getProjectTypes,
+  getSkills,
+  getTags,
+  getSocials,
 };

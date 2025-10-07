@@ -7,100 +7,62 @@ import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { current } from "@reduxjs/toolkit";
-import usePreloadedImage from "../../../functions/imageLoad";
+import { getJobTitles, getUsers, getUsersById, getUserByUsername } from "../../../api/users";
+import { 
+  ProjectDetail,
+  ProjectJob,
+  User,
+  UserPreview,
+  ProjectMember,
+  JobAvailability,
+  JobDuration,
+  JobLocation,
+  JobCompensation,
+  Role
+} from "@looking-for-group/shared";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
 
-// --- Interfaces ---
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number, permissions: number }[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string }[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string }[];
-  thumbnail: string;
-  title: string;
-  userId?: number;
-}
-
-interface SearchableUser {
-  username: string;
-  firstName: string;
-  lastName: string;
-}
-
-// only includes properties relevant to this component
-interface User {
-  userId: number;
-  username: string;
-  firstName: string;
-  lastName: string;
-  profileImage: string;
-  permissions: number;
-}
-
 // --- Variables ---
 // Default project value
-const defaultProject: ProjectData = {
-  audience: '',
-  description: '',
-  hook: '',
-  images: [],
-  jobs: [],
-  members: [],
-  projectId: -1,
-  projectTypes: [],
-  purpose: '',
-  socials: [],
-  status: '',
-  tags: [],
-  thumbnail: '',
-  title: '',
+const emptyMember: ProjectMember = {
+  user: {
+    userId: -1,
+    firstName: '',
+    lastName: '',
+    username: '',
+    profileImage: null,
+    apiUrl: ''
+  },
+  role: { roleId: 0, label: '' },
+  memberSince: new Date(),
+  apiUrl: ''
 };
 
-const emptyMember = {
-  firstName: '',
-  lastName: '',
-  jobTitle: '',
-  profileImage: '',
-  userId: -1,
-  permissions: -1,
-};
-
-const emptyJob = {
-  titleId: 0,
-  jobTitle: '',
+const emptyJob: ProjectJob = {
+  jobId: 0,
+  role: {roleId: 0, label: '' },
+  availability: "Flexible",
+  duration: "ShortTerm",
+  location: "Remote",
+  compensation: "Unpaid",
   description: '',
-  availability: '',
-  location: '',
-  duration: '',
-  compensation: '',
+  createdAt: new Date(),
+  updatedAt: new Date(),
+  apiUrl: ''
 };
 
 // Job detail options (according to documentation enums)
-const availabilityOptions = ['Full-time', 'Part-time', 'Flexible'];
-const durationOptions = ['Short-term', 'Long-term'];
-const locationOptions = ['On-site', 'Remote', 'Hybrid'];
+const availabilityOptions = ['FullTime', 'PartTime', 'Flexible'];
+const durationOptions = ['ShortTerm', 'LongTerm'];
+const locationOptions = ['OnSite', 'Remote', 'Hybrid'];
 const compensationOptions = ['Unpaid', 'Paid'];
 const permissionOptions = ['Project Member', 'Project Manager', 'Project Owner'];
 
 type TeamTabProps = {
-  projectData: ProjectData;
-  setProjectData: (data: ProjectData) => void;
+  projectData: ProjectDetail;
+  setProjectData: (data: ProjectDetail) => void;
   setErrorMember: (error: string) => void;
   setErrorPosition: (error: string) => void;
   permissions: number;
@@ -109,16 +71,16 @@ type TeamTabProps = {
 };
 
 // --- Component ---
-export const TeamTab = ({ projectData = defaultProject, setProjectData, setErrorMember, setErrorPosition, permissions, saveProject, failCheck }: TeamTabProps) => {
+export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorPosition, permissions, saveProject, failCheck }: TeamTabProps) => {
 
   // --- Hooks ---
   // tracking project modifications
-  const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
+  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(projectData);
 
   // for complete list of...
   const [allJobs, setAllJobs] = useState<{ titleId: number, label: string }[]>([]);
-  const [allUsers, setAllUsers] = useState<User[]>([]);
-  const [searchableUsers, setSearchableUsers] = useState<{ data: SearchableUser[] }>({ data: [] });
+  const [allUsers, setAllUsers] = useState<UserPreview[]>([]);
+  const [searchableUsers, setSearchableUsers] = useState<UserPreview[]>([]);
 
   // HTML contents
   // const [teamTabContent, setTeamTabContent] = useState(<></>);
@@ -131,11 +93,11 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
   const [currentRole, setCurrentRole] = useState(0);
 
   // tracking edits for...
-  const [currentMember, setCurrentMember] = useState(emptyMember);
-  const [currentJob, setCurrentJob] = useState(emptyJob);
+  const [currentMember, setCurrentMember] = useState<ProjectMember>(emptyMember);
+  const [currentJob, setCurrentJob] = useState<ProjectJob>(emptyJob);
 
   // store new member data to save later
-  const [newMember, setNewMember] = useState(emptyMember);
+  const [newMember, setNewMember] = useState<ProjectMember>(emptyMember);
 
   // tracking whether position view is in edit mode or not
   const [editMode, setEditMode] = useState(false);
@@ -147,7 +109,7 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
   const [closePopup, setClosePopup] = useState(false);
 
   // store search results
-  const [searchResults, setSearchResults] = useState<{ data: User[] }>({ data: [] });
+  const [searchResults, setSearchResults] = useState<UserPreview[]>([]);
 
   // errors/successful messages
   const [errorAddMember, setErrorAddMember] = useState('');
@@ -158,6 +120,7 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
   const [searchQuery, setSearchQuery] = useState('');
   const [searchBarKey, setSearchBarKey] = useState(0);
   const [selectKey, setSelectKey] = useState(0);
+  const [permissionSelectKey, setPermissionSelectKey] = useState(0);
 
   // Initial load
   // useEffect(() => {
@@ -185,21 +148,10 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
   // Get job list if allJobs is empty
   useEffect(() => {
     const getJobsList = async () => {
-      const url = `/api/datasets/job-titles`;
-
-      try {
-        const response = await fetch(url);
-
-        const jobTitles = await response.json();
-        const jobTitleData = jobTitles.data;
-
-        if (jobTitleData === undefined) {
-          return;
+        const response = await getJobTitles();
+        if (response.data) {
+          setAllJobs(response.data);
         }
-        setAllJobs(jobTitleData);
-      } catch (error) {
-        console.error((error as Error).message);
-      }
     };
     if (allJobs.length === 0) {
       getJobsList();
@@ -209,24 +161,19 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
   // Get user list if allUsers is empty
   useEffect(() => {
     const getUsersList = async () => {
-      const url = `/api/users`;
-
       try {
-        const response = await fetch(url);
+        const response = await getUsers();
 
-        const users = await response.json();
-
-        setAllUsers(users.data);
+        setAllUsers(response.data);
 
         // list of users to search. users searchable by first name, last name, or username
-        const searchableUsers = await Promise.all(users.data.map(async (user: User) => {
+        const searchableUsers = await Promise.all(response.data.map(async (user: User) => {
           // get username
-          const usernameResponse = await fetch(`/api/users/${user.userId}`);
-          const usernameJson = await usernameResponse.json();
+          const userResponse = await getUsersById(user.userId.toString());
 
           // get make searchable user
           const filteredUser = {
-            "username": usernameJson.data[0].username,
+            "username": userResponse.data.username,
             "firstName": user.firstName,
             "lastName": user.lastName,
           };
@@ -236,9 +183,9 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
         if (searchableUsers === undefined) {
           return;
         }
-        setSearchableUsers({ data: searchableUsers });
+        setSearchableUsers(searchableUsers);
       } catch (error) {
-        console.error((error as Error).message);
+        console.error(error);
       }
     };
     if (!allUsers || allUsers.length === 0) {
@@ -303,14 +250,14 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
   };
 
     // check if member is already in project
-    const isMember = modifiedProject.members.find((m) => m.userId === member.userId);
+    const isMember = modifiedProject.members.find((m) => m.user.userId === newMember.user.userId);
     if (isMember) {
-      return errorWarning(`${member.firstName} ${member.lastName} is already on the team`);
+      return errorWarning(`${newMember.user.firstName} ${newMember.user.lastName} is already on the team`);
     }
 
     // get name
     if (!newMember.firstName || !newMember.lastName) {
-      return errorWarning("Can\'t find user");
+      return errorWarning("Can't find user");
     }
 
     // get job title
@@ -358,21 +305,12 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
   }, [allUsers, modifiedProject.members, newMember]);
 
   // Handle search results
-  const handleSearch = useCallback((results: User[][]) => {
-    // Check if too many results
-    if (!allUsers || results[0].length === allUsers.length) {
-      // Check if results are the same, do nothing
-      if (searchResults.data.length === 0) return;
-      setSearchResults({ data: [] });
-    }
-    // Check if results are the same, do nothing
-    if (JSON.stringify(searchResults.data) === JSON.stringify(results[0])) return;
-    // Set results
-    setSearchResults({ data: results[0] });
-  }, [allUsers, searchResults.data]);
+  const handleSearch = useCallback((results: UserPreview[][]) => {
+    setSearchResults(results[0] || []);
+  }, []);
 
   // Handle clicking on a member in the search dropdown
-  const handleUserSelect = useCallback(async (user: User) => {
+  const handleUserSelect = useCallback(async (user: UserPreview) => {
     // reset error
     setErrorAddMember('');
 
@@ -383,11 +321,10 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
     let userId = -1;
     const getUserId = async () => {
       try {
-        const response = await fetch(`/api/users/search-username/${user.username}`);
-        const userJson = await response.json();
-        userId = userJson.data[0].userId;
+        const response = await getUserByUsername(user.username);
+        userId = response.data.userId;
       } catch (error) {
-        console.error((error as Error).message);
+        console.error(error);
       }
     }
     await Promise.all([getUserId()]);
@@ -411,7 +348,7 @@ export const TeamTab = ({ projectData = defaultProject, setProjectData, setError
     setNewMember(mem);
 
     // clear search results
-    setSearchResults({ data: [] });
+    setSearchResults([]);
   }, [allUsers]);
 
   // Resets Add Member name field, role/permission dropdowns

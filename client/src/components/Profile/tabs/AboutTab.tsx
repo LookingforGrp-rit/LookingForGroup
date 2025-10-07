@@ -2,9 +2,8 @@ import { useState, useEffect } from 'react';
 import { ProfileData } from '../ProfileEditPopup';
 import { RoleSelector } from '../../RoleSelector';
 import { MajorSelector } from '../../MajorSelector';
-import { ProfileImageUploader } from '../../ImageUploader';
-import profilePicture from '../../../images/blue_frog.png';
-import usePreloadedImage from '../../../functions/imageLoad';
+import { ImageUploader } from '../../ImageUploader';
+import { getMajors, getJobTitles } from "../../../api/users";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -16,13 +15,11 @@ const setUpInputs = async (profileData: ProfileData) => {
   // Obtain roles and majors to obtain the proper label for the Role Selector and Major Selector
   let roles: any, majors: any;
   const getRolesAndMajors = async () => {
-    const roleResponse = await fetch(`/api/datasets/job-titles`);
-    const majorResponse = await fetch(`/api/datasets/majors`);
+    const roleResponse = await getJobTitles();
+    const majorResponse = await getMajors();
 
-    roles = await roleResponse.json();
-    majors = await majorResponse.json();
-    roles = roles.data;
-    majors = majors.data;
+    roles = roleResponse.data;
+    majors = majorResponse.data;
   };
 
   // Used to avoid repetition and map values onto element IDs.

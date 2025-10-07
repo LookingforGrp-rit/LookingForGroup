@@ -14,6 +14,7 @@ import '../Styles/pages.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
+import { signupWithToken } from '../../api/users';
 //import * as fetch from "../../functions/fetch";
 
 // Interface for the response data from the server
@@ -80,15 +81,14 @@ const EmailConfirmation = (props: EmailConfirmationProps) => {
   useEffect(() => {
     const getUserCreationStatus = async () => {
       // Construct the URL to fetch the user creation status
-      const url = `/api/signup/${path.substring(path.lastIndexOf('/') + 1, path.length)}`;
+      const token = path.substring(path.lastIndexOf('/') + 1, path.length);
       try {
-        const response = await fetch(url);
-        const data: ResponseData = await response.json();
-        console.log(`Status: ${data.status}`);
-        if (data.error) {
-          console.log(`Error: ${data.error}`);
+        const response = await signupWithToken(token);
+        console.log(`Status: ${response.status}`);
+        if (response.error) {
+          console.log(`Error: ${response.error}`);
         }
-        setResponseData(data);
+        setResponseData(response.data);
       } catch (err) {
         console.error(err);
       }

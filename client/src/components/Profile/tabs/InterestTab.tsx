@@ -4,16 +4,11 @@ import { interests } from '../../../constants/interests';
 import { Tags } from '../../Tags';
 import { ProfileData } from '../ProfileEditPopup'
 //import { ThemeIcon } from '../../ThemeIcon';
+import { Tag } from '@looking-for-group/shared';
 
-interface Tag {
-  tag_id: number;
-  label: string;
-  type: string;
-}
 export const InterestTab = (props: { profile: ProfileData}) => {
   // Initialize state with profile data 
   const [modifiedProfile, setModifiedProfile] = useState<ProfileData>(props.profile);
-  //const [allInterests, setAllInterests] = useState<Tag[]>([]);
   const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
   const [showPopup, setShowPopup] = useState(false);
   const [filteredInterests, setFilteredInterests] = useState<string[]>(interests);
@@ -36,8 +31,8 @@ export const InterestTab = (props: { profile: ProfileData}) => {
   useEffect(() => {
     setModifiedProfile(props.profile);
     if (props.profile?.interests) {
-      const interestStrings = props.profile.interests.map(i => i.interest);  
-      setSelectedInterests(interestStrings || []);
+      const interestStrings = props.profile.interests.map((i: Tag) => i.interest);  
+      setSelectedInterests(interestStrings);
     }
   }, [props.profile]);
   
@@ -68,7 +63,7 @@ export const InterestTab = (props: { profile: ProfileData}) => {
   };
 
   // Search function for the "edit interests" popup
-  const Search = (results: string) => {
+  const Search = (results: Array<Array<{ name: string }>>) => {
     if (!results || results.length === 0) {
       //setTimeout to avoid crashing error
       // If no search results, show all interests  
@@ -77,7 +72,7 @@ export const InterestTab = (props: { profile: ProfileData}) => {
       return;
     }
     // Filter interests based on search results
-    const matchedInterests = results[0].map(result => result.name || result);
+    const matchedInterests: string[] = results[0].map(result => result.name);
     matchedInterests.length === 0 ? setNoResults(true) : setNoResults(false);
     // setTimeout to avoid crashing error
     setTimeout(() => setFilteredInterests(matchedInterests), 0);
@@ -116,10 +111,8 @@ export const InterestTab = (props: { profile: ProfileData}) => {
   // load interests from API
   /*useEffect(() => {
     const getInterests = async () => {
-      const url = `/api/datasets/skills`;
-
       try {
-        const response = await fetch(url);
+        const response = await getSkills();   <--- import getSkills from api/users.ts
 
         const interests = await response.json();
         const interestData = interests.data;

@@ -12,49 +12,38 @@ import './Styles/settings.css';
 import './Styles/pages.css';
 import '../../public/FontAwesome/css/brands.css';
 
-import { useState, useEffect } from 'react';
-import { JSX } from 'react';
-
-interface Social {
-  id: string | number;
-  label: string;
-}
+import { JSX, useState, useEffect } from 'react';
+import { getSocials as fetchSocials } from '../api/users'; 
+import type { Social } from '@looking-for-group/shared';
 
 interface SocialSelectorProps {
-  value: string | number;
+  value: number;
   onChange: React.ChangeEventHandler<HTMLSelectElement>;
 }
 
-const getSocials = async (): Promise<Social[]> => {
-  // TODO: create error handling, try catch block
-  const response = await fetch('/api/datasets/socials');
-  const { data } = await response.json();
-  return data;
-};
-
-export const SocialSelector: React.FC<SocialSelectorProps> = (props) => {
-const [options, setOptions] = useState<JSX.Element[] | null>(null);
+export const SocialSelector = ({ value, onChange}: SocialSelectorProps): JSX.Element => {
+const [socials, setSocials] = useState<Social[]>([]);
 
   useEffect(() => {
-    const setUpSocialSelector = async () => {
-      const socials = await getSocials();
-      const selectorOptions = socials.map((social, i) => {
-        if(`${props.value}` === `${i}`) {
-          console.log('Social Website:');
-          console.log(social.label.toLowerCase());
-          
-          return <option value={social.id} key={`${social.id}-${social.label}`} selected>{/*<i className={`fa-brands fa-${social.label.toLowerCase()}`}></i>*/}{social.label}</option>;
-        }
-        return <option value={social.id} key={`${social.id}-${social.label}`}>{/*<i className={`fa-brands fa-${social.label.toLowerCase()}`}></i>*/}{social.label}</option>;
-      });
-      setOptions(selectorOptions);
+    const fetchData = async () => {
+      const data = await fetchSocials();
+      setSocials(data);
     };
-    setUpSocialSelector();
+    fetchData();
   }, []);
 
   return (
     <div className="editor-input-item">
-      <select id="profile-editor-social" onChange={props.onChange}>{options}</select>
+      <select id="profile-editor-social" onChange={onChange}>
+        {socials.map((social) => (
+          <option
+            key={`${social.websiteId}-${social.label}`}
+            value={social.websiteId}
+          >
+            {social.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 };

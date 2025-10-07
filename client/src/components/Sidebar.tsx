@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { useSelector } from "react-redux";
@@ -8,14 +8,7 @@ import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEdito
 //user utils
 import { getCurrentUsername } from "../api/users.ts";
 import { ThemeIconNew } from "./ThemeIconNew.tsx";
-
-export interface User {
-  firstName: string;
-  lastName: string;
-  username: string;
-  primaryEmail: string;
-  userId: number;
-}
+import { UserPreview, UserDetail } from "@looking-for-group/shared";
 
 //Style changes to do:
 //Remove blue background image, replace with single color (or gradient?)
@@ -123,7 +116,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
   const [createError, setCreateError] = useState<boolean>(true);
 
   // Store user data, if authenticated
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<UserDetail>();
 
   const getAuth = async () => {
     // Is user authenticated?
@@ -135,12 +128,10 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
         // Authenticated
         setCreateError(false);
 
-        const userInfo = {
-          firstName: res.data.firstName,
-          lastName: res.data.lastName,
-          username: res.data.username,
-          primaryEmail: res.data.primaryEmail,
-          userId: res.data.userId,
+        const userInfo: UserDetail = {
+          ...res.data,
+          following: res.data.following || { usersFollowing: { users: [], count: 0, apiUrl: "" }, projectsFollowing: { projects: [], count: 0, apiUrl: "" } },
+          followers: res.data.followers || { users: [], count: 0, apiUrl: "" },
         };
 
         setUserData(userInfo);
@@ -162,9 +153,11 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
     navigate(path); // Navigate to the specified path
   };
 
-  React.useEffect(() => {
-    window.addEventListener("resize", () => setWidth(window.innerWidth));
-  });
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Mobile layout
   if (width < breakpoint) {

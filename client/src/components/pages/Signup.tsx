@@ -11,7 +11,7 @@ import GetStarted from '../SignupProcess/GetStarted';
 import { sendPost } from '../../functions/fetch';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
-import { getUserByEmail, getUserByUsername } from '../../api/users';
+import { getUserByEmail, getUserByUsername, signUp } from '../../api/users';
 
 const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation
@@ -129,19 +129,13 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     else {
       setMessage('Please wait...');
       // Send info to begin account activation
-      await fetch('/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          confirm: confirm,
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-        }),
+      await signUp({
+        email: email,
+        password: password,
+        confirm: confirm,
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
       });
       setMessage('An account activation email has been sent');
     }
