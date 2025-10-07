@@ -40,9 +40,9 @@ export const deleteProject = async (req: AuthenticatedRequest, res: Response): P
   }
 
   const resBody: ApiResponse = {
-    status: 204,
+    status: 200,
     error: null,
     data: null,
   };
-  res.status(204).json(resBody);
+  res.status(200).json(resBody);
 };
