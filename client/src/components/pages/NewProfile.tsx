@@ -23,6 +23,7 @@ import { fetchUserID } from "../../functions/fetch";
 import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
 import usePreloadedImage from "../../functions/imageLoad";
+import { getUsersById } from "../../api/users";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -55,6 +56,7 @@ interface Profile {
   bio: string;
   skills: Tag[];
   interests?: string[];
+  mentor: boolean;
 }
 
 // Stores if profile is loaded from server and if it's user's respectively
@@ -110,6 +112,7 @@ const NewProfile = () => {
     bio: "",
     skills: [],
     interests: [],
+    mentor: false,
   };
 
   const navigate = useNavigate(); // Hook for navigation
@@ -216,7 +219,7 @@ const NewProfile = () => {
   // Gets the profile data
   useEffect(() => {
     const getProfileData = async () => {
-      userID = await fetchUserID();
+      const userID = await fetchUserID();
 
       // Get the profileID to pull data for whoever's profile it is
       const setUpProfileID = () => {
@@ -224,10 +227,10 @@ const NewProfile = () => {
         // profileID = urlParams.get('userID');
         // If no profileID is in search query, set to be current user
         if (profileID === undefined || profileID === null) {
-          profileID = `${userID}`;
+          profileID = userID;
         }
         // Check if the userID matches the profile
-        isUsersProfile = `${userID}` === profileID;
+        isUsersProfile = userID === profileID;
       };
 
       setUpProfileID();
@@ -235,13 +238,12 @@ const NewProfile = () => {
       try {
         const { data } = await getUsersById(profileID);
 
+        console.log("data", data);
+
         // Only run this if profile data exists for user
-        if (data[0] !== undefined) {
-          // If profile is private, and isn't the user's, don't display it
-          if (isUsersProfile /*|| data[0].visibility == 1*/) {
-            setDisplayedProfile(data[0]);
-            await getProfileProjectData();
-          }
+        if (data !== undefined) {
+          setDisplayedProfile(data);
+          await getProfileProjectData();
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -251,8 +253,8 @@ const NewProfile = () => {
         }
       }
     };
-
     getProfileData();
+    
   }, [profileID]);
 
   // --------------------
@@ -381,6 +383,13 @@ const NewProfile = () => {
               <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
               {displayedProfile.pronouns}
             </div>
+            {/* Only show mentor status if user is a mentor */}
+            {displayedProfile.mentor && 
+              <div className="profile-extra">
+                <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
+                Mentor
+              </div>
+            }
           </div>
 
           <div id="profile-info-description">{displayedProfile.bio}</div>
