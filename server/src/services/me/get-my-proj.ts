@@ -8,17 +8,19 @@ type GetProjectsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 export const getMyProjectsService = async (
   userId: number,
+  visibility?: 'all' | 'public' | 'private',
+  owner?: string,
 ): Promise<ProjectPreview[] | GetProjectsError> => {
   try {
     //all the projects they own
-    const ownedProjects = await prisma.projects.findMany({
+    const allOwnedProjects = await prisma.projects.findMany({
       where: {
         userId: userId,
       },
       select: ProjectPreviewSelector,
     });
     //all the projects they're a member of
-    const memberProjects = await prisma.projects.findMany({
+    const allMemberProjects = await prisma.projects.findMany({
       where: {
         members: {
           some: {
@@ -30,7 +32,44 @@ export const getMyProjectsService = async (
     });
 
     //all the projects
-    const projects = Array.prototype.concat(ownedProjects, memberProjects);
+    let projects = Array.prototype.concat(allOwnedProjects, allMemberProjects);
+
+    if (owner === 'me') {
+      projects = allOwnedProjects;
+    }
+
+    if (visibility !== 'all') {
+      //all the projects they're a member of filtered based on what they're visibly a member of
+      const visibilityMemberProjects = await prisma.projects.findMany({
+        where: {
+          members: {
+            some: {
+              userId,
+              profileVisibility: visibility,
+            },
+          },
+        },
+        select: ProjectPreviewSelector,
+      });
+      //all the projects they own filtered based on what's visible
+      const visibilityOwnedProjects = await prisma.projects.findMany({
+        where: {
+          userId: userId,
+          members: {
+            some: {
+              userId,
+              profileVisibility: visibility,
+            },
+          },
+        },
+        select: ProjectPreviewSelector,
+      });
+      if (owner === 'all') {
+        projects = Array.prototype.concat(visibilityOwnedProjects, visibilityMemberProjects);
+      } else if (owner === 'me') {
+        projects = visibilityOwnedProjects;
+      }
+    }
 
     //return not found if they don't have any
     if (projects.length === 0) return 'NOT_FOUND';

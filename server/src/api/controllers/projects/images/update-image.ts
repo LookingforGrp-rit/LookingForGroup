@@ -13,14 +13,9 @@ const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImage
   req,
   res,
 ): Promise<void> => {
-  const { id } = req.params;
   const updates: UpdateImageInfo = req.body;
 
-  const imageId = parseInt(id);
-  if (isNaN(imageId)) {
-    res.status(400).json({ message: 'Invalid image ID' });
-    return;
-  }
+  const imageId = parseInt(req.params.id);
 
   const allowedFields = ['image', 'altText'];
   const invalidFields = Object.keys(updates).filter((field) => !allowedFields.includes(field));

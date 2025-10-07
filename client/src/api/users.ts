@@ -28,7 +28,7 @@ import type {
 export const createNewUser = async (
   token: string,
   email: string,
-  userData: CreateUserData
+  userData: UserPreview
 ): Promise<ApiResponse> => {
   //check if token is valid
   const apiURL = `/signup/${token}`;

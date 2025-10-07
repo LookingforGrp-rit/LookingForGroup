@@ -3,18 +3,8 @@ import type { Request, Response } from 'express';
 import getProjectImagesService from '#services/projects/images/get-proj-images.ts';
 
 //gets the images associated with a project
-const getProjectImagesController = async (_req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(_req.params.id);
-
-  if (isNaN(projID)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
+const getProjectImagesController = async (req: Request, res: Response): Promise<void> => {
+  const projID = parseInt(req.params.id);
 
   const result = await getProjectImagesService(projID);
 

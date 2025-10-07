@@ -9,15 +9,15 @@ datasource db {
 }
 
 model Mediums {
-  mediumId        Int        @id @default(autoincrement()) @map("medium_id")
-  label           String     @unique @db.VarChar(50)
-  projects        Projects[]
-  
+  mediumId Int        @id @default(autoincrement()) @map("medium_id")
+  label    String     @unique @db.VarChar(50)
+  projects Projects[]
+
   @@map("mediums")
 }
 
 model Roles {
-  roleId  Int       @id     @default(autoincrement()) @map("title_id")
+  roleId  Int       @id @default(autoincrement()) @map("title_id")
   label   String    @unique @db.VarChar(50)
   jobs    Jobs[]
   members Members[]
@@ -26,18 +26,20 @@ model Roles {
 }
 
 model Jobs {
-  jobId        Int              @id @default(autoincrement()) @map("job_id")
-  projectId    Int              @map("project_id")
-  roleId       Int              @map("role_id")
-  availability JobsAvailability
-  duration     JobsDuration
-  location     JobsLocation
-  compensation JobsCompensation
-  description  String           @default("") @db.VarChar(500)
-  createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt    DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)
-  projects     Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
-  roles        Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
+  jobId         Int              @id @default(autoincrement()) @map("job_id")
+  projectId     Int              @map("project_id")
+  roleId        Int              @map("role_id")
+  contactUserId Int              @map("contact_user_id")
+  availability  JobsAvailability
+  duration      JobsDuration
+  location      JobsLocation
+  compensation  JobsCompensation
+  contact       Members          @relation(fields: [projectId, contactUserId], references: [projectId, userId])
+  description   String           @default("") @db.VarChar(500)
+  createdAt     DateTime         @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)
+  projects      Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
+  roles         Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
 
   @@index([projectId], map: "FK2_project_id")
   @@index([roleId], map: "FK_jobs_job_titles")
@@ -45,7 +47,7 @@ model Jobs {
 }
 
 model Majors {
-  majorId Int     @id     @default(autoincrement()) @map("major_id")
+  majorId Int     @id @default(autoincrement()) @map("major_id")
   label   String  @unique @db.VarChar(100)
   users   Users[]
 
@@ -60,6 +62,7 @@ model Members {
   createdAt         DateTime                 @default(now()) @map("created_at") @db.Timestamp(0)
   roles             Roles                    @relation(fields: [roleId], references: [roleId], map: "FK_members_job_titles")
   projects          Projects                 @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_members_projects")
+  jobs              Jobs[]
   users             Users                    @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_members_users")
 
   @@id([projectId, userId])
@@ -99,7 +102,7 @@ model ProjectSocials {
   url       String   @db.VarChar(2000)
   projects  Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_socials_projects")
   socials   Socials  @relation(fields: [websiteId], references: [websiteId], map: "FK_project_socials_socials")
-  
+
   @@id([projectId, websiteId])
   @@index([websiteId], map: "FK_project_socials_socials")
   @@map("project_socials")
@@ -131,7 +134,7 @@ model Projects {
 }
 
 model Socials {
-  websiteId      Int              @id     @default(autoincrement()) @map("website_id")
+  websiteId      Int              @id @default(autoincrement()) @map("website_id")
   label          String           @unique @db.VarChar(50)
   projectSocials ProjectSocials[]
   userSocials    UserSocials[]
@@ -203,10 +206,10 @@ model Users {
   funFact           String              @default("") @map("fun_fact") @db.VarChar(100)
   bio               String              @default("") @db.VarChar(600)
   visibility        Int                 @default(1) @db.TinyInt
-  mentor            Int                 @default(0) @db.TinyInt
+  mentor            Boolean             @default(false)
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
-  phoneNumber       String?             @unique @db.VarChar(20) @map("phone_number")
+  phoneNumber       String?             @unique @map("phone_number") @db.VarChar(20)
   universityId      String              @unique(map: "university_id_UNIQUE") @map("university_id") @db.VarChar(9)
   members           Members[]
   projectFollowings ProjectFollowings[]
@@ -215,7 +218,7 @@ model Users {
   following         UserFollowings[]    @relation("sender_user")
   userSkills        UserSkills[]
   userSocials       UserSocials[]
-  majors            Majors[]             
+  majors            Majors[]
 
   @@map("users")
 }

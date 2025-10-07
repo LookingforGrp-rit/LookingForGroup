@@ -1,4 +1,4 @@
-import type { UserPreview } from '@looking-for-group/shared';
+import type { UserFollowsList } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { UserPreviewSelector } from '#services/selectors/users/user-preview.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -9,9 +9,9 @@ type GetUserFollowerServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FO
 //get the users that follow a specific user
 export const getUserFollowersService = async (
   receiverId: number,
-): Promise<UserPreview[] | GetUserFollowerServiceError> => {
+): Promise<UserFollowsList | GetUserFollowerServiceError> => {
   try {
-    const following = await prisma.userFollowings.findMany({
+    const userFollowings = await prisma.userFollowings.findMany({
       where: { receiverId: receiverId },
       orderBy: {
         followedAt: 'desc',
@@ -20,14 +20,20 @@ export const getUserFollowersService = async (
         senderUser: {
           select: UserPreviewSelector,
         },
+        followedAt: true,
       },
     });
 
-    if (following.length === 0) {
-      return 'NOT_FOUND';
-    }
+    const followings: UserFollowsList = {
+      count: userFollowings.length,
+      users: userFollowings.map(({ followedAt, senderUser }) => ({
+        followedAt,
+        user: transformUserToPreview(senderUser),
+      })),
+      apiUrl: `/api/users/${receiverId.toString()}/followers`,
+    };
 
-    return following.map(({ senderUser }) => transformUserToPreview(senderUser));
+    return followings;
   } catch (e) {
     console.error(`Error in getUserFollowersService: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';

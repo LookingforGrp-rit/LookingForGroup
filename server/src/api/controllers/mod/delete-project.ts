@@ -1,10 +1,11 @@
-import type { ApiResponse } from '@looking-for-group/shared';
-import type { Request, Response } from 'express';
-import { deleteProjectService } from '#services/projects/delete-project.ts';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { Response } from 'express';
+import { deleteProjectService } from '#services/projects/delete-proj.ts';
 
-//deletes a project
-const deleteProjectController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.projectId);
+//deletes a project (moderator action)
+export const deleteProject = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const projectId = parseInt(req.params.id);
+
   const result = await deleteProjectService(projectId);
 
   if (result === 'NOT_FOUND') {
@@ -25,6 +26,7 @@ const deleteProjectController = async (req: Request, res: Response) => {
     res.status(500).json(resBody);
     return;
   }
+
   const resBody: ApiResponse = {
     status: 200,
     error: null,
@@ -32,5 +34,3 @@ const deleteProjectController = async (req: Request, res: Response) => {
   };
   res.status(200).json(resBody);
 };
-
-export default deleteProjectController;
