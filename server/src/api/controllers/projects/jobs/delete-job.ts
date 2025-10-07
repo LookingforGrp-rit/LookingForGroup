@@ -6,16 +6,6 @@ const deleteJobController = async (req: Request, res: Response): Promise<void> =
   const projectId = parseInt(req.params.id);
   const jobId = parseInt(req.params.jobId);
 
-  if (isNaN(projectId) || isNaN(jobId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID or job ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   const result = await deleteJobService(projectId, jobId);
 
   if (result === 'NOT_FOUND') {

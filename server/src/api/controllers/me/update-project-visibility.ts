@@ -7,8 +7,7 @@ import { updateProjectVisibility } from '#services/me/update-profile-visibility.
  * Allows authenticated users to update their project visibility
  */
 const updateProjectVisibilityController = async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const projectId = parseInt(id);
+  const projectId = parseInt(req.params.id);
 
   // Validate request body - expecting { visibility: 'private' or 'public' }
   const visibility = (req.body as { visibility: 'private' | 'public' | undefined }).visibility;

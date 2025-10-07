@@ -36,7 +36,7 @@ export const userAttributeExistsAt = (
 
     const rawUserId = req.currentUser;
 
-    const userId = parseInt(rawUserId);
+    const userId = rawUserId;
 
     if (isNaN(userId)) {
       const resBody: ApiResponse = {

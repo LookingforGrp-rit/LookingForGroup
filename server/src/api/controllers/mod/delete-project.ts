@@ -4,19 +4,7 @@ import { deleteProjectService } from '#services/projects/delete-proj.ts';
 
 //deletes a project (moderator action)
 export const deleteProject = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const id = req.params.id; //the id of the project to be deleted
-
-  //validate ID
-  const projectId = parseInt(id);
-  if (isNaN(projectId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
+  const projectId = parseInt(req.params.id);
 
   const result = await deleteProjectService(projectId);
 

@@ -7,8 +7,7 @@ import { leaveProjectService } from '#services/me/leave-project.ts';
  * Allows authenticated users to leave a project by setting their visibility to private
  */
 const leaveProjectController = async (req: AuthenticatedRequest, res: Response) => {
-  const { id } = req.params;
-  const projectId = parseInt(id);
+  const projectId = parseInt(req.params.id);
 
   const result = await leaveProjectService(projectId, req.currentUser);
 

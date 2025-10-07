@@ -16,7 +16,6 @@ interface ClearUserInfo {
 
 //clear a selected user profile
 export const clearProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const id = req.params.id; //the id of the user whose profile must be cleareds
   const clearing = {
     firstName: 'David',
     lastName: 'Munson',
@@ -29,17 +28,7 @@ export const clearProfile = async (req: AuthenticatedRequest, res: Response): Pr
     profileImage: '',
   } as ClearUserInfo;
 
-  //validate ID
-  const userId = parseInt(id);
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
+  const userId = parseInt(req.params.id);
 
   const result = await updateUserInfoService(userId, clearing);
 

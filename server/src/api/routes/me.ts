@@ -59,7 +59,6 @@ router.post(
 //Unfollows a project
 router.delete(
   '/followings/projects/:id',
-  projectExistsAt('path', 'id'),
   authenticated(userAttributeExistsAt('projectFollowing', 'path', 'id')),
   authenticated(deleteProjectFollowing),
 );
@@ -78,7 +77,7 @@ router.delete(
 
 // MAJORS ROUTES
 
-//Gets a user's majors
+//Gets the current user's majors
 router.get('/majors', authenticated(getUserMajors));
 //Adds a major
 router.post('/majors', attributeExistsAt('major', 'body', 'majorId'), authenticated(addUserMajor));
@@ -97,6 +96,7 @@ router.get('/projects', authenticated(getMyProjects));
 router.delete(
   '/projects/:id/leave',
   projectExistsAt('path', 'id'),
+  authenticated(userAttributeExistsAt('project', 'path', 'id')),
   authenticated(leaveProjectController),
 );
 //Change project profile visibility

@@ -13,20 +13,6 @@ export const leaveProjectService = async (
   userId: number,
 ): Promise<LeaveProjectServiceError | LeaveProjectServiceSuccess> => {
   try {
-    // First verify the user is actually a member of the project
-    const existingMember = await prisma.members.findUnique({
-      where: {
-        projectId_userId: {
-          projectId: projectId,
-          userId: userId,
-        },
-      },
-    });
-
-    if (!existingMember) {
-      return 'NOT_FOUND';
-    }
-
     // Check if user is the project owner - owners cannot leave their own projects
     const project = await prisma.projects.findUnique({
       where: { projectId },

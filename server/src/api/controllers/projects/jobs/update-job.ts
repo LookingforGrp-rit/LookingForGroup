@@ -14,16 +14,6 @@ const updateJobController = async (req: Request, res: Response): Promise<void> =
   const projectId = parseInt(req.params.id);
   const jobId = parseInt(req.params.jobId);
 
-  if (isNaN(projectId) || isNaN(jobId)) {
-    const resBody: ApiResponse<ProjectJob> = {
-      status: 400,
-      error: 'Invalid project ID or job ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   // Parse and validate the request body
   const body = req.body as Partial<{
     roleId: number;
