@@ -153,7 +153,7 @@ router.post(
   PROJECT.addMember,
 );
 //Edits a member of a specific project through id
-router.put(
+router.patch(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
@@ -190,7 +190,7 @@ router.post(
 //Gets all project socials
 router.get('/:id/socials', projectExistsAt('path', 'id'), PROJECT.getProjectSocials);
 //Updates a project social
-router.put(
+router.patch(
   '/:id/socials/:websiteId',
   requiresLogin,
   injectCurrentUser,
@@ -257,7 +257,7 @@ router.post(
   PROJECT.addJobController,
 );
 // updates an existing project job
-router.put(
+router.patch(
   '/:id/jobs/:jobId',
   requiresLogin,
   injectCurrentUser,
