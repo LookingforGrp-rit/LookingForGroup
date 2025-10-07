@@ -166,8 +166,7 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
               <SelectButton
                 placeholder="Select..."
                 initialVal={profile.mentor === true ? 'Mentor' : 'Not a mentor'}
-                // TODO: get mentorship status from profile data response (make sure backend is connected)
-                // 
+                callback={(e) => {e.preventDefault();}}
               />
               <SelectOptions
                 callback={(e) => {e.preventDefault();}}
