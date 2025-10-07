@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/restrict-template-expressions */
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import { uidHeaderKey } from '#config/constants.ts';
@@ -10,7 +9,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
 
   if (envConfig.env === 'development' || envConfig.env === 'test') {
     /// Add currentUser for development
-    const devId = request.query.devId as string | undefined;
+    const devId = request.query.devId as number | undefined;
 
     if (devId) {
       authenticatedRequest.currentUser = devId;
@@ -55,7 +54,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
   }
 
   const userID = result.userId;
-  authenticatedRequest.currentUser = `${userID}`;
+  authenticatedRequest.currentUser = userID;
   next();
 };
 

@@ -5,16 +5,6 @@ import getJobService from '#services/projects/jobs/get-all-jobs.ts';
 const getJobsController = async (req: Request, res: Response): Promise<void> => {
   const projectId = parseInt(req.params.id);
 
-  if (isNaN(projectId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   const result = await getJobService(projectId);
 
   if (result === 'NOT_FOUND') {

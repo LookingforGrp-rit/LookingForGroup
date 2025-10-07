@@ -8,7 +8,7 @@ const requiresModerator = (
   next: NextFunction,
 ) => {
   //current user ID
-  const userId = parseInt(request.currentUser);
+  const userId = request.currentUser;
 
   //check if ID is number
   if (isNaN(userId)) {

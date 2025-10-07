@@ -5,17 +5,6 @@ import getService from '#services/projects/members/add-member.ts';
 //adds a member to the project
 const addMemberController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
-
-  if (isNaN(projectId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   const memberData: CreateProjectMemberInput = req.body as CreateProjectMemberInput;
 
   const result = await getService(projectId, memberData);

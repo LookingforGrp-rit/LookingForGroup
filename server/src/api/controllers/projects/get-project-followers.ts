@@ -7,17 +7,6 @@ export const getProjectFollowers = async (req: Request, res: Response): Promise<
   //user ID
   const projectId = parseInt(req.params.id);
 
-  //check if ID is number
-  if (isNaN(projectId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   const result = await getProjectFollowersService(projectId);
 
   if (result === 'NOT_FOUND') {

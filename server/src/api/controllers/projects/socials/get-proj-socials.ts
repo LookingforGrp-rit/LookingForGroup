@@ -6,16 +6,6 @@ import getProjectSocialsService from '#services/projects/socials/get-proj-social
 const getProjectSocialsController = async (req: Request, res: Response): Promise<void> => {
   const projID = parseInt(req.params.id);
 
-  if (isNaN(projID)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   const result = await getProjectSocialsService(projID);
 
   if (result === 'INTERNAL_ERROR') {

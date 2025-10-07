@@ -64,7 +64,11 @@ router.delete(
   authenticated(deleteProjectFollowing),
 );
 //Follows a user
-router.post('/followings/people/:id', authenticated(addUserFollowing));
+router.post(
+  '/followings/people/:id',
+  userExistsAt('path', 'receiverId'),
+  authenticated(addUserFollowing),
+);
 //Unfollows a user
 router.delete(
   '/followings/people/:id',
@@ -75,7 +79,7 @@ router.delete(
 
 // MAJORS ROUTES
 
-//Gets a user's majors
+//Gets the current user's majors
 router.get('/majors', authenticated(getUserMajors));
 //Adds a major
 router.post('/majors', attributeExistsAt('major', 'body', 'majorId'), authenticated(addUserMajor));

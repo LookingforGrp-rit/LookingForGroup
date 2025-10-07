@@ -4,13 +4,10 @@ import { deleteSocialService } from '#services/me/socials/delete-social.ts';
 
 //delete a social from user profile
 export const deleteSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  //current user ID
-  const UserId = parseInt(req.currentUser);
-
   //the one you're deleting
   const social = parseInt(req.params.websiteId);
 
-  const result = await deleteSocialService(social, UserId);
+  const result = await deleteSocialService(social, req.currentUser);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -9,17 +9,6 @@ import createProjectService from '#services/projects/create-proj.ts';
 
 //creates a project
 const createProjectController = async (req: AuthenticatedRequest, res: Response) => {
-  const userId = parseInt(req.currentUser);
-
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
   const inputData: Omit<CreateProjectInput, 'thumbnail'> = req.body as Omit<
     CreateProjectInput,
     'thumbnail'
@@ -56,7 +45,7 @@ const createProjectController = async (req: AuthenticatedRequest, res: Response)
     thumbnailUrl = dbImage.location;
   }
 
-  const result = await createProjectService(inputData, userId, thumbnailUrl);
+  const result = await createProjectService(inputData, req.currentUser, thumbnailUrl);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

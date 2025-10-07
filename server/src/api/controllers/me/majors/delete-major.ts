@@ -4,13 +4,10 @@ import { deleteMajorService } from '#services/me/majors/delete-major.ts';
 
 //delete a major from user profile
 export const deleteMajor = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  //current user ID
-  const userId = parseInt(req.currentUser);
-
   //the one you're deleting
   const major = parseInt(req.params.id);
 
-  const result = await deleteMajorService(major, userId);
+  const result = await deleteMajorService(major, req.currentUser);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

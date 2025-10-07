@@ -7,20 +7,7 @@ type RequestBody = Partial<Omit<UpdateUserInput, 'profileImage'>>;
 
 //update user info
 export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const id = req.currentUser;
   const body = req.body as RequestBody;
-
-  //validate ID
-  const userId = parseInt(id);
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
 
   //fields that can be updated
   const updateFields = [
@@ -88,7 +75,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     updates.mentor = body.mentor;
   }
 
-  const result = await updateUserInfoService(userId, updates);
+  const result = await updateUserInfoService(req.currentUser, updates);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
