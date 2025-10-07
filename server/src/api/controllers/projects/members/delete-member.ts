@@ -9,18 +9,6 @@ const deleteMemberController = async (req: AuthenticatedRequest, res: Response) 
   const projectId = parseInt(id);
   const memberId = parseInt(userId);
 
-  const curUser = parseInt(req.currentUser);
-
-  if (isNaN(projectId) || isNaN(memberId) || isNaN(curUser)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project or member id',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   const result = await deleteMemberService(projectId, memberId);
 
   if (result === 'NOT_FOUND') {

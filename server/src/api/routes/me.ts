@@ -28,6 +28,7 @@ import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
 import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
 import { userAttributeExistsAt } from '../middleware/validators/user-attribute-exists-at.ts';
+import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
 
@@ -59,10 +60,15 @@ router.post(
 router.delete(
   '/followings/projects/:id',
   projectExistsAt('path', 'id'),
+  authenticated(userAttributeExistsAt('projectFollowing', 'path', 'id')),
   authenticated(deleteProjectFollowing),
 );
 //Follows a user
-router.post('/followings/people/:id', authenticated(addUserFollowing));
+router.post(
+  '/followings/people/:id',
+  userExistsAt('path', 'receiverId'),
+  authenticated(addUserFollowing),
+);
 //Unfollows a user
 router.delete(
   '/followings/people/:id',

@@ -12,7 +12,7 @@ const addSkill = async (req: AuthenticatedRequest, res: Response) => {
 
   const skillWithUserId = {
     ...data,
-    userId: parseInt(req.currentUser),
+    userId: req.currentUser,
   };
 
   //add the skill they wanna add

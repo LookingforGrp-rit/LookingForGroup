@@ -12,28 +12,9 @@ const updateProjectsController = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const userId = parseInt(req.currentUser);
-
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const { id } = req.params;
   const updates = req.body as Omit<UpdateProjectInput, 'thumbnail'>;
   let thumbnailUrl: string | undefined;
-
-  //validate ID
-  const projectId = parseInt(id);
-  if (isNaN(projectId)) {
-    res.status(400).json({ message: 'Invalid project ID' });
-    return;
-  }
+  const projectId = parseInt(req.params.id);
 
   const updateFields = [
     'title',

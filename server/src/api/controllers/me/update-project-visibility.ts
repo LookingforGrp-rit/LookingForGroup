@@ -10,13 +10,10 @@ const updateProjectVisibilityController = async (req: AuthenticatedRequest, res:
   const { id } = req.params;
   const projectId = parseInt(id);
 
-  // Get current user ID from middleware
-  const currentUserId = parseInt(req.currentUser);
-
   // Validate request body - expecting { visibility: 'private' or 'public' }
   const visibility = (req.body as { visibility: 'private' | 'public' | undefined }).visibility;
 
-  const result = await updateProjectVisibility(projectId, currentUserId, visibility);
+  const result = await updateProjectVisibility(projectId, req.currentUser, visibility);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

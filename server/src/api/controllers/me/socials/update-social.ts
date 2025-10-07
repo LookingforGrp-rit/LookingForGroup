@@ -9,23 +9,10 @@ import { updateSocialService } from '#services/me/socials/update-social.ts';
 //update one of current user's social
 export const updateSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //current user ID
-  const UserId = parseInt(req.currentUser);
-
   const social: UpdateUserSocialInput = { url: req.params.url } as UpdateUserSocialInput;
   const websiteId = parseInt(req.params.websiteId);
 
-  //check if websiteId is number
-  if (isNaN(websiteId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid website ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const result = await updateSocialService({ ...social, websiteId }, UserId);
+  const result = await updateSocialService({ ...social, websiteId }, req.currentUser);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

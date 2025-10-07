@@ -12,7 +12,7 @@ const addUserMajor = async (req: AuthenticatedRequest, res: Response) => {
 
   const majorWithUserId = {
     ...data,
-    userId: parseInt(req.currentUser),
+    userId: req.currentUser,
   };
 
   //add the major they wanna add

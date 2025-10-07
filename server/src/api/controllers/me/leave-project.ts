@@ -10,30 +10,7 @@ const leaveProjectController = async (req: AuthenticatedRequest, res: Response) 
   const { id } = req.params;
   const projectId = parseInt(id);
 
-  // Get current user ID from middleware
-  const currentUserId = parseInt(req.currentUser);
-
-  if (isNaN(projectId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  if (isNaN(currentUserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const result = await leaveProjectService(projectId, currentUserId);
+  const result = await leaveProjectService(projectId, req.currentUser);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

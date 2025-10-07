@@ -43,7 +43,7 @@ export type JobCompensation = "Unpaid" | "Paid";
 //API REQUEST
 
 export interface AuthenticatedRequest extends Request {
-  currentUser: string;
+  currentUser: number;
 }
 
 export interface FilterRequest extends Request {

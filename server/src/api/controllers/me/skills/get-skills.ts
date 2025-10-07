@@ -4,10 +4,7 @@ import { getSkillsService } from '#services/me/skills/get-skills.ts';
 
 //get skills on user profile
 export const getSkills = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  //current user ID
-  const UserId = parseInt(req.currentUser);
-
-  const result = await getSkillsService(UserId);
+  const result = await getSkillsService(req.currentUser);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
