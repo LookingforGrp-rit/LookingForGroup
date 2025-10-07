@@ -1634,7 +1634,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /api/projects/{id}/images/{imageId}:
-    put:
+    patch:
       summary: Update a pictures for a project
       description: Updates fields of an existing project picture by image ID.
       tags:
@@ -1795,7 +1795,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /api/projects/{id}/members/{userId}:
-    put:
+    patch:
       summary: Update a member in a project
       security:
         - shibbolethAuth: []
@@ -2001,7 +2001,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /api/projects/{id}/socials/{websiteId}:
-    put:
+    patch:
       summary: Updates a project social
       description: Updates one of the project socials specified
       security:
@@ -2492,7 +2492,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /api/projects/{id}/jobs/{jobId}:
-    put:
+    patch:
       summary: Updates a project job
       description: Updates one of the project jobs specified
       security:
@@ -2687,7 +2687,7 @@ paths:
 
   # MOD
   /api/mod/clear-profile/{id}:
-    put:
+    patch:
       summary: Clears a user profile
       tags:
         - Mod

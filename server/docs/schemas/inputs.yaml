@@ -146,7 +146,6 @@ components:
           type: number
       required:
         - userId
-        - roleId
 
     UpdateProjectMemberInput:
       type: object

@@ -24,7 +24,7 @@ export const authenticated = (
 //All routes use requiresLogin, injectCurrentUser, and requiresModerator
 router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
-router.put('/clear-profile/:id/', authenticated(clearProfile));
+router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.delete('/delete-project/:id/', authenticated(deleteProject));
 
 export default router;

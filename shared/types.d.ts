@@ -482,7 +482,7 @@ export type ReorderProjectImagesInput = {
 
 export type CreateProjectMemberInput = {
   userId: number;
-  roleId: number;
+  roleId?: number;
 };
 export type UpdateProjectMemberInput = Partial<
   Pick<CreateProjectMemberInput, "roleId">

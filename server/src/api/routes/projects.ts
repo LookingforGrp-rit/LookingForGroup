@@ -8,6 +8,7 @@ import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
 import { projectAttributeExistsAt } from '../middleware/validators/project-attribute-exists-at.ts';
 import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
+import { skipIfEmpty } from '../middleware/validators/skip-if-empty.ts';
 import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
@@ -153,14 +154,14 @@ router.post(
   PROJECT.addMember,
 );
 //Edits a member of a specific project through id
-router.put(
+router.patch(
   '/:id/members/:userId',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   userExistsAt('path', 'userId'),
   projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
-  attributeExistsAt('role', 'body', 'roleId'),
+  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
   authenticated(requiresProjectOwner),
   PROJECT.updateMember,
 );
@@ -190,7 +191,7 @@ router.post(
 //Gets all project socials
 router.get('/:id/socials', projectExistsAt('path', 'id'), PROJECT.getProjectSocials);
 //Updates a project social
-router.put(
+router.patch(
   '/:id/socials/:websiteId',
   requiresLogin,
   injectCurrentUser,
@@ -257,7 +258,7 @@ router.post(
   PROJECT.addJobController,
 );
 // updates an existing project job
-router.put(
+router.patch(
   '/:id/jobs/:jobId',
   requiresLogin,
   injectCurrentUser,
