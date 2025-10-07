@@ -103,6 +103,7 @@ router.delete(
 router.put(
   '/projects/:id/visibility',
   projectExistsAt('path', 'id'),
+  authenticated(userAttributeExistsAt('project', 'path', 'id')),
   authenticated(updateProjectVisibilityController),
 );
 
