@@ -29,100 +29,16 @@ import { getCurrentUsername, getUsersById, updateProfilePicture } from '../../ap
 
 import { MeDetail, MySkill, UserSocial } from '@looking-for-group/shared';
 
-// The profile to view is independent upon the site's state changes
-const [profile, setProfile] = useState<MeDetail | null>(null);
-const pageTabs = ['About', 'Projects', 'Skills', 'Interests', 'Links'];
-
 export const ProfileEditPopup = () => {
+  // The profile to view is independent upon the site's state changes
+  const [profile, setProfile] = useState<MeDetail | null>(null);
+
   // Holds new profile image if one is selected
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
-
-  // Send selected image to server for save
-  const saveImage = async (userID: number) => {
-  if (!selectedImageFile) return;
-
-  await updateProfilePicture(userID, selectedImageFile);
-};
-
-const onSaveClicked = async (e : Event) => {
-  e.preventDefault(); // prevents any default calls
-  // Receive all inputted values
-  const getInputValue = (input: string) => {
-    const element = document.getElementById(`profile-editor-${input}`) as HTMLInputElement;
-    return element?.value?.trim() || ''; // null
-  };
-
-  // required fields: ensure not just empty/spaces
-  const firstName = getInputValue('firstName');
-  const lastName = getInputValue('lastName');
-  const bio = getInputValue('bio');
-
-  // pop up error text if fields invalid
-  if (!firstName || !lastName || !bio) {
-    const errorText = document.getElementById('invalid-input-error');
-    if (errorText) {
-      errorText.style.display = 'block';
-    }
-    return;
-  }
-
-  // Prepare these values for a POST/PUT request
-  const dataToStore: MeDetail = {
-    ...profile!,
-    firstName,
-    lastName,
-    headline: getInputValue('headline'),
-    pronouns: getInputValue('pronouns'),
-    title: getInputValue('jobTitle'),
-    majors: profile?.majors ?? [],
-    academicYear: getInputValue('academicYear'),
-    location: getInputValue('location'),
-    funFact: getInputValue('funFact'),
-    bio,
-    skills: profile?.skills || [],
-    socials: profile?.socials || [],
-  };
-  // console.log('Saving data...');
-  // console.log(dataToStore);
-
-  const userID = await getCurrentUsername();
-  await sendPut(`/api/users/${userID}`, dataToStore);
-  await saveImage(userID);
-
-  window.location.reload(); // reload page
-};
-
-  // In your ProfileEditPopup.tsx file
-
-  // useEffect to initialize the tabs
-  useEffect(() => {
-
-    setTimeout(() => {
-      // Initialize all tabs to be hidden except the first one
-      pageTabs.forEach((tab, idx) => {
-        const tabElement = document.querySelector(`#profile-editor-${tab.toLowerCase()}`);
-        if (tabElement) {
-          if (idx === 0) {
-            tabElement.classList.remove('hidden');
-          } else {
-            tabElement.classList.add('hidden');
-          }
-        }
-      },);
-
-
-    }, []);
-
-    // Highlight the first tab button
-    const firstTab = document.querySelector(`#profile-tab-${pageTabs[0]}`);
-    if (firstTab) {
-      firstTab.classList.add('project-editor-tab-active');
-    }
-  }, []);
-
-  // Fix the switchTab function
   const [currentTab, setCurrentTab] = useState(0);
-  const switchTab = (index: number) => setCurrentTab(index);
+  const [errorVisible, setErrorVisible] = useState(false);
+
+  const pageTabs = ['About', 'Projects', 'Skills', 'Interests', 'Links'];
 
   // Profile should be set up on intialization
   useEffect(() => {
@@ -142,19 +58,103 @@ const onSaveClicked = async (e : Event) => {
     setUpProfileData();
   }, []);
 
-  // Component to organize the main tab content
-  const TabContent = () => {
-    if (!profile) return null;
-    return (
-      <div id="profile-editor-content">
-        {currentTab === 0 && <AboutTab profile={profile} selectedImageFile={selectedImageFile} setSelectedImageFile={setSelectedImageFile} />}
-        {currentTab === 1 && <ProjectsTab profile={profile} />}
-        {currentTab === 2 && <SkillsTab profile={profile} />}
-        {currentTab === 3 && <InterestTab profile={profile} />}
-        {currentTab === 4 && <LinksTab profile={profile} type="profile" />}
-      </div>
-    );
+  // Send selected image to server for save
+  const saveImage = async (userID: number) => {
+  if (!selectedImageFile) return;
+
+  await updateProfilePicture(selectedImageFile, userID);
+};
+
+const onSaveClicked = async (e : React.FormEvent<HTMLFormElement>) => {
+  e.preventDefault(); // prevents any default calls
+
+  if (!profile) return;
+
+  // Receive all inputted values
+  const getInputValue = (input: string) => {
+    const element = document.getElementById(`profile-editor-${input}`) as HTMLInputElement;
+    return element?.value?.trim() || ''; // null
   };
+
+  // required fields: ensure not just empty/spaces
+  const firstName = getInputValue('firstName');
+  const lastName = getInputValue('lastName');
+  const bio = getInputValue('bio');
+
+  // pop up error text if fields invalid
+  if (!firstName || !lastName || !bio) {
+    setErrorVisible(true);
+    return;
+  }
+
+  // Prepare these values for a POST/PUT request
+  const updatedProfile: MeDetail = {
+    ...profile!,
+    firstName,
+    lastName,
+    headline: getInputValue('headline'),
+    pronouns: getInputValue('pronouns'),
+    title: getInputValue('jobTitle'),
+    majors: profile.majors ?? [],
+    academicYear: getInputValue('academicYear'),
+    location: getInputValue('location'),
+    funFact: getInputValue('funFact'),
+    bio,
+    skills: profile.skills || [],
+    socials: profile.socials || [],
+  };
+  // console.log('Saving data...');
+  // console.log(dataToStore);
+
+  const userID = await getCurrentUsername();
+  await Promise.all([
+    sendPut(`/api/users/${userID}`, updatedProfile),
+    saveImage(userID)
+  ]);
+
+  setProfile(updatedProfile);
+  setErrorVisible(false);
+};
+
+  // Component to organize the main tab content
+  const renderTabContent = () => {
+    if (!profile) return <p>Loading...</p>;
+    switch (currentTab) {
+      case 0:
+        return (
+          <AboutTab
+            profile={profile}
+            selectedImageFile={selectedImageFile}
+            setSelectedImageFile={setSelectedImageFile}
+          />
+        );
+      case 1:
+        return <ProjectsTab profile={profile} />;
+      case 2:
+        return <SkillsTab profile={profile} />;
+      case 3:
+        return <InterestTab profile={profile} />;
+      case 4:
+        return <LinksTab profile={profile} type="profile" />;
+      default:
+        return null;
+    }
+  };
+
+  // Maps the pageTabs into interactable page tabs, to switch between the Tab Content
+  const editorTabs = pageTabs.map((tag, i) => (
+    <button
+      key={tag}
+      onClick={(e) => {
+        e.preventDefault();
+        setCurrentTab(i);
+      }}
+      id={`profile-tab-${tag}`}
+      className={`project-editor-tab ${currentTab === i ? 'project-editor-tab-active' : ''}`}
+    >
+      {tag}
+    </button>
+  ));
 
   // Method to switch between tabs
   /*const switchTab = (tabIndex: number) => {
@@ -205,44 +205,19 @@ const onSaveClicked = async (e : Event) => {
     }
   };*/
 
-
-
-  // Maps the pageTabs into interactable page tabs, to switch between the Tab Content
-  const editorTabs = pageTabs.map((tag, i) => {
-    return (
-      <button
-        key={tag}
-        onClick={(e) => {
-          e.preventDefault();
-          switchTab(i);
-        }}
-        id={`profile-tab-${tag}`}
-        className={`project-editor-tab ${currentTab === i ? 'project-editor-tab-active' : ''}`}
-      >
-        {tag}
-      </button>
-    );
-  });
-
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit</PopupButton>
-      <PopupContent
-      profilePopup={true}
-        callback={() => setCurrentTab(0)}
-      >
-        <form id="profile-creator-editor" encType="multipart/form-data">
+      <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
+        <form id="profile-creator-editor" onSubmit={onSaveClicked} encType="multipart/form-data">
           <div id="profile-editor-tabs">{editorTabs}</div>
-          <TabContent />
-          <input
-            type="submit"
-            id="profile-editor-save"
-            onClick={onSaveClicked}
-            value={'Save Changes'}
-          />
-          <div id="invalid-input-error" className="error-message">
-            <p>*Fill out all required fields before saving!*</p>
-          </div>
+          {renderTabContent()}
+          <input type="submit" id="profile-editor-save" value="Save Changes" />
+          {errorVisible &&  (
+            <div id="invalid-input-error" className="error-message">
+              <p>*Fill out all required fields before saving!*</p>
+            </div>
+          )}
         </form>
       </PopupContent>
     </Popup>
