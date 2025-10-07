@@ -28,6 +28,7 @@ import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
 import { projectExistsAt } from '../middleware/validators/project-exists-at.ts';
 import { userAttributeExistsAt } from '../middleware/validators/user-attribute-exists-at.ts';
+import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
 
@@ -59,6 +60,7 @@ router.post(
 router.delete(
   '/followings/projects/:id',
   projectExistsAt('path', 'id'),
+  authenticated(userAttributeExistsAt('projectFollowing', 'path', 'id')),
   authenticated(deleteProjectFollowing),
 );
 //Follows a user
@@ -66,6 +68,7 @@ router.post('/followings/people/:id', authenticated(addUserFollowing));
 //Unfollows a user
 router.delete(
   '/followings/people/:id',
+  userExistsAt('path', 'id'),
   authenticated(userAttributeExistsAt('userFollowing', 'path', 'id')),
   authenticated(deleteUserFollowing),
 );
@@ -91,12 +94,14 @@ router.get('/projects', authenticated(getMyProjects));
 router.delete(
   '/projects/:id/leave',
   projectExistsAt('path', 'id'),
+  authenticated(userAttributeExistsAt('project', 'path', 'id')),
   authenticated(leaveProjectController),
 );
 //Change project profile visibility
 router.put(
   '/projects/:id/visibility',
   projectExistsAt('path', 'id'),
+  authenticated(userAttributeExistsAt('project', 'path', 'id')),
   authenticated(updateProjectVisibilityController),
 );
 
