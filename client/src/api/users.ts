@@ -93,9 +93,15 @@ export const editUser = async (
   devId?: number
 ): Promise<ApiResponse<MePrivate>> => {
   const apiURL = `/me${devId ? `?devId=${devId}` : ""}`;
-  const response = await PATCH(apiURL, data);
+  const form = new FormData();
+  
+  for (const [name, value] of Object.entries(data)){
+    if(value !== null) form.append(name, value);
+  }
 
-  if(response.error) console.log(`Error in editUser: ${response.error}`)
+  const response = await PATCH(apiURL, form);
+
+  if(response.error) console.log(`Error in editUser: ${response.error}`);
   return response as ApiResponse<MePrivate>; //it would get mad at me if i didn't do this soooo
 };
 
