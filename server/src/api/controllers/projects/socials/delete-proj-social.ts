@@ -1,14 +1,13 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { updateProjectSocialService } from '#services/projects/socials/update-project-social.ts';
+import { deleteProjectSocialService } from '#services/projects/socials/delete-proj-social.ts';
 
-//updates a social associated with a project
-export const updateProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const social = req.params.url;
-  const websiteId = parseInt(req.params.websiteId);
-  const projectId = parseInt(req.params.id);
+//deletes a project's social
+export const deleteProjectSocial = async (req: Request, res: Response): Promise<void> => {
+  const projId = parseInt(req.params.id);
+  const social = parseInt(req.params.websiteId);
 
-  const result = await updateProjectSocialService(social, projectId, websiteId);
+  const result = await deleteProjectSocialService(social, projId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -30,10 +29,10 @@ export const updateProjectSocial = async (req: Request, res: Response): Promise<
     return;
   }
 
-  const resBody: ApiResponse<typeof result> = {
+  const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: result,
+    data: null,
   };
   res.status(200).json(resBody);
 };

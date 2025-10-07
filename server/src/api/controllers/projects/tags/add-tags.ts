@@ -1,18 +1,13 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { AddProjectTagsInput, ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import addTagsService from '#services/projects/tags/add-tags.ts';
 
-//the tags (or their labels anyway)
-type TagInputs = {
-  tagIds?: number[];
-};
-
 //adds multiple tags to the project
 const addTagsController = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const data = req.body as TagInputs;
+  const projectId = parseInt(req.params.id);
+  const tag: AddProjectTagsInput = req.body as AddProjectTagsInput;
 
-  const result = await addTagsService(id, data);
+  const result = await addTagsService(projectId, tag);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -27,7 +22,7 @@ const addTagsController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Tags not found',
+      error: 'Tag not found',
       data: null,
     };
     res.status(404).json(resBody);

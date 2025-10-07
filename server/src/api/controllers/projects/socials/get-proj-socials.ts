@@ -1,18 +1,12 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import addMediumsService from '#services/projects/mediums/add-project-mediums.ts';
+import getProjectSocialsService from '#services/projects/socials/get-proj-socials.ts';
 
-//the mediums (or their ids anyway)
-type Mediums = {
-  mediumIds?: number[];
-};
+//gets the socials associated with a project
+const getProjectSocialsController = async (req: Request, res: Response): Promise<void> => {
+  const projID = parseInt(req.params.id);
 
-//adds multiple mediums to the project
-const addMediumsController = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
-  const data: Mediums = req.body as Mediums;
-
-  const result = await addMediumsService(id, data);
+  const result = await getProjectSocialsService(projID);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -23,17 +17,18 @@ const addMediumsController = async (req: Request, res: Response) => {
     res.status(500).json(resBody);
     return;
   }
+
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Medium not found',
+      error: 'Project not found',
       data: null,
     };
     res.status(404).json(resBody);
     return;
   }
 
-  const resBody: ApiResponse = {
+  const resBody: ApiResponse<typeof result> = {
     status: 200,
     error: null,
     data: result,
@@ -41,4 +36,4 @@ const addMediumsController = async (req: Request, res: Response) => {
   res.status(200).json(resBody);
 };
 
-export default addMediumsController;
+export default getProjectSocialsController;

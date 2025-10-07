@@ -2,12 +2,11 @@ import { GET, POST, PUT, DELETE, PATCH } from "./index";
 import type {
   ApiResponse,
   User,
-  CreateUserData,
   UserPreview,
   UserDetail,
   ProjectPreview,
-  ProjectFollowings,
-  UserFollowings,
+  ProjectFollowing,
+  UserFollowing,
   MePrivate,
   MySocial,
   MySkill,
@@ -28,7 +27,7 @@ import type {
 export const createNewUser = async (
   token: string,
   email: string,
-  userData: CreateUserData
+  userData: UserPreview
 ): Promise<ApiResponse> => {
   //check if token is valid
   const apiURL = `/signup/${token}`;

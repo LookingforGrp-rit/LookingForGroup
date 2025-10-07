@@ -7,22 +7,10 @@ export const deleteUserFollowing = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const userId = parseInt(req.currentUser);
   const followingId = parseInt(req.params.id);
 
-  //validate input
-  if (isNaN(userId) || isNaN(followingId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user IDs',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   //call service
-  const result = await deleteUserFollowService(userId, followingId);
+  const result = await deleteUserFollowService(req.currentUser, followingId);
 
   //not found
   if (result === 'NOT_FOUND') {

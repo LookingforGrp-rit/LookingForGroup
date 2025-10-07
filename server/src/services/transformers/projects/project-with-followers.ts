@@ -1,7 +1,7 @@
 import type { ProjectWithFollowers } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectWithFollowersSelector } from '#services/selectors/projects/projects-with-followers.ts';
-import { transformUserToPreview } from '../users/user-preview.ts';
+import { transformProjectToFollowers } from './parts/project-followers.ts';
 import { transformProjectToDetail } from './project-detail.ts';
 
 //sample project from prisma to be mapped
@@ -18,10 +18,6 @@ export const transformProjectToWithFollowers = (
 ): ProjectWithFollowers => {
   return {
     ...transformProjectToDetail(project),
-    followers: {
-      count: project._count.projectFollowings,
-      users: project.projectFollowings.map((following) => transformUserToPreview(following.users)),
-      apiUrl: `/api/projects/${project.projectId.toString()}/followers`,
-    },
+    followers: transformProjectToFollowers(project),
   };
 };
