@@ -6,11 +6,11 @@ import { transformUserToPreview } from '#services/transformers/users/user-previe
 
 //sample project from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
-const sampleMedium = prisma.jobs.findMany({
+const sampleJob = prisma.jobs.findMany({
   select: ProjectJobSelector,
 });
 
-type ProjectJobGetPayload = Awaited<typeof sampleMedium>[number];
+type ProjectJobGetPayload = Awaited<typeof sampleJob>[number];
 
 //map to shared type
 export const transformProjectJob = (

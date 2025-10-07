@@ -3,6 +3,7 @@ import prisma from '#config/prisma.ts';
 import { ProjectDetailSelector } from '#services/selectors/projects/project-detail.ts';
 import { transformUserToPreview } from '../users/user-preview.ts';
 import { transformProjectImage } from './parts/project-image.ts';
+import { transformProjectJob } from './parts/project-job.ts';
 import { transformProjectMember } from './parts/project-member.ts';
 import { transformProjectSocial } from './parts/project-social.ts';
 import { transformProjectTag } from './parts/project-tag.ts';
@@ -34,35 +35,7 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
     projectSocials: project.projectSocials.map((social) =>
       transformProjectSocial(project.projectId, social),
     ),
-    jobs: project.jobs.map(
-      ({
-        availability,
-        compensation,
-        contact,
-        createdAt,
-        description,
-        duration,
-        jobId,
-        location,
-        roles: { roleId, label },
-        updatedAt,
-      }) => ({
-        availability,
-        compensation,
-        createdAt,
-        description,
-        contact,
-        duration,
-        jobId,
-        location,
-        role: {
-          roleId,
-          label,
-        },
-        updatedAt,
-        apiUrl: `/api/projects/${project.projectId.toString()}/jobs/${jobId.toString()}`,
-      }),
-    ),
+    jobs: project.jobs.map((job) => transformProjectJob(project.projectId, job)),
     members: project.members.map((member) => transformProjectMember(project.projectId, member)),
   };
 };
