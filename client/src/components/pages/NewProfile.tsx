@@ -4,8 +4,8 @@ import "../Styles/discoverMeet.css";
 import "../Styles/emailConfirmation.css";
 import "../Styles/general.css";
 import "../Styles/loginSignup.css";
-import "../Styles/messages.css";
-import "../Styles/notification.css";
+// import "../Styles/messages.css";
+// import "../Styles/notification.css";
 import "../Styles/profile.css";
 import "../Styles/projects.css";
 import "../Styles/settings.css";
@@ -19,7 +19,7 @@ import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ThemeIcon } from "../ThemeIcon";
-import { ProfileInterests } from "../Profile/ProfileInterests";
+// import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
 import usePreloadedImage from "../../functions/imageLoad";
 import { getCurrentUsername, getVisibleProjects, getProjectsByUser } from "../../api/users";
@@ -359,12 +359,12 @@ const NewProfile = () => {
             </span>
             {displayedProfile.funFact}
           </div>
-          <div id="profile-info-interest">
+          {/* <div id="profile-info-interest">
             <ProfileInterests
               user={{ interests: displayedProfile.interests || [] }}
               isUsersProfile={isUsersProfile}
             />
-          </div>
+          </div> */}
 
           <div id="profile-info-skills">
             {displayedProfile.skills !== null ? (

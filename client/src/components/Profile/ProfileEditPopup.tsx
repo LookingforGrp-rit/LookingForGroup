@@ -4,8 +4,8 @@ import '../Styles/discoverMeet.css';
 import '../Styles/emailConfirmation.css';
 import '../Styles/general.css';
 import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
+// import '../Styles/messages.css';
+// import '../Styles/notification.css';
 import '../Styles/profile.css';
 import '../Styles/projects.css';
 import '../Styles/settings.css';
@@ -23,8 +23,8 @@ import { AboutTab } from './tabs/AboutTab';
 import { LinksTab, getSocials } from './tabs/LinksTab';
 import { ProjectsTab } from './tabs/ProjectsTab';
 import { SkillsTab } from './tabs/SkillsTab';
-import { InterestTab } from './tabs/InterestTab';
-import { interests } from '../../constants/interests';
+// import { InterestTab } from './tabs/InterestTab';
+// import { interests } from '../../constants/interests';
 import { getCurrentUsername, getUsersById, updateProfilePicture } from '../../api/users';
 
 import { MeDetail, MySkill, UserSocial } from '@looking-for-group/shared';
@@ -134,7 +134,7 @@ const onSaveClicked = async (e : Event) => {
 
       console.log('ProfileEditPopup - Raw API response:', response.data);
       console.log('ProfileEditPopup - User profile data:', response.data[0]);
-      console.log('ProfileEditPopup - User interests from API:', response.data[0]?.interests);
+      // console.log('ProfileEditPopup - User interests from API:', response.data[0]?.interests);
 
 
       setProfile(response.data[0]);

@@ -4,8 +4,8 @@ import '../Styles/discoverMeet.css';
 import '../Styles/emailConfirmation.css';
 import '../Styles/general.css';
 import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
+// import '../Styles/messages.css';
+// import '../Styles/notification.css';
 import '../Styles/profile.css';
 import '../Styles/projects.css';
 import '../Styles/settings.css';
@@ -113,7 +113,7 @@ const NewProject = () => {
   const [failCheck, setFailCheck] = useState(false);
 
   // State variable used to determine permissions level, and if user should have edit access
-  const [userPerms, setUserPerms] = useState(-1);
+  // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState(null);
 
@@ -184,14 +184,14 @@ const NewProject = () => {
         console.log('user')
         console.log(userData.data);
         setUser(userData.data[0]);
-        const projectMembers = projectData.data[0].members;
+        // const projectMembers = projectData.data[0].members;
 
-        for (let i = 0; i < projectMembers.length; i++) {
-          if (projectMembers[i].user_id === authData.data) {
-            setUserPerms(projectMembers[i].permissions);
-            break;
-          }
-        }
+        // for (let i = 0; i < projectMembers.length; i++) {
+        //   if (projectMembers[i].user_id === authData.data) {
+        //     setUserPerms(projectMembers[i].permissions);
+        //     break;
+        //   }
+        // }
 
         // // Get all projects user is following to see if they follow this one
         // const followRes = await fetch(`/api/users/${authData.data}/followings/projects`);
@@ -258,18 +258,15 @@ const NewProject = () => {
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
-  const buttonContent = (userPerms > 0) ? (
-    <>
-      {
-        <>
-          <ProjectCreatorEditor newProject={false} permissions={userPerms} user={user} />
-        </>
-      }
-    </>
-  ) : (
-    <>
-      {
-        <>
+  // const buttonContent = (userPerms > 0) ? (
+  //   <>
+  //     {
+  //       <>
+  //         <ProjectCreatorEditor newProject={false} permissions={userPerms} user={user} />
+  //       </>
+  //     }
+  //   </>
+  // ) : (
           {(user && user.userId !== 0) ? (
             <>
               { /* Heart icon, with number indicating follows */}
@@ -317,7 +314,7 @@ const NewProject = () => {
                       Share
                     </button>
                     { /* Only be able to leave if you're a member of the project */}
-                    {userPerms === 0 ? (
+                    {/* {userPerms === 0 ? ( */}
                       <Popup>
                         <PopupButton
                           className='project-info-dropdown-option'
@@ -345,9 +342,9 @@ const NewProject = () => {
                           </div>
                         </PopupContent>
                       </Popup>
-                    ) : (
+                    {/* ) : (
                       <></>
-                    )}
+                    )} */}
                     <button className="project-info-dropdown-option" id="project-info-report">
                       <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
                       Report
@@ -359,10 +356,6 @@ const NewProject = () => {
           ) : (
             <></>
           )}
-        </>
-      }
-    </>
-  );
 
   //Lists of users who have worked on this project
   //Members - people who actively work on the project

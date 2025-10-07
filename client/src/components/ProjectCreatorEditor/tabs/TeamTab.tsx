@@ -43,10 +43,10 @@ const emptyMember: ProjectMember = {
 const emptyJob: ProjectJob = {
   jobId: 0,
   role: {roleId: 0, label: '' },
-  availability: "Flexible",
-  duration: "ShortTerm",
-  location: "Remote",
-  compensation: "Unpaid",
+  availability: 'Flexible',
+  duration: 'ShortTerm',
+  location: 'Remote',
+  compensation: 'Unpaid',
   description: '',
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -58,20 +58,20 @@ const availabilityOptions = ['FullTime', 'PartTime', 'Flexible'];
 const durationOptions = ['ShortTerm', 'LongTerm'];
 const locationOptions = ['OnSite', 'Remote', 'Hybrid'];
 const compensationOptions = ['Unpaid', 'Paid'];
-const permissionOptions = ['Project Member', 'Project Manager', 'Project Owner'];
+// const permissionOptions = ['Project Member', 'Project Manager', 'Project Owner'];
 
 type TeamTabProps = {
   projectData: ProjectDetail;
   setProjectData: (data: ProjectDetail) => void;
   setErrorMember: (error: string) => void;
   setErrorPosition: (error: string) => void;
-  permissions: number;
+  // permissions: number;
   saveProject: () => void;
   failCheck: boolean;
 };
 
 // --- Component ---
-export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorPosition, permissions, saveProject, failCheck }: TeamTabProps) => {
+export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorPosition, /*permissions,*/ saveProject, failCheck }: TeamTabProps) => {
 
   // --- Hooks ---
   // tracking project modifications
@@ -935,7 +935,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
                       />
                     </Select>
                   </div>
-                  <div id="project-team-add-member-permissions">
+                  {/* <div id="project-team-add-member-permissions">
                     <label>Permissions</label>
                     <Select>
                       <SelectButton
@@ -956,7 +956,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
                         })}
                       />
                     </Select>
-                  </div>
+                  </div> */}
                   {/* Action buttons */}
                   <div className="project-editor-button-pair">
                     <PopupButton
@@ -1073,28 +1073,6 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
                 })}
               />
             </Select>
-            <div id="project-team-add-member-permissions">
-              <label>Permissions</label>
-              <Select key={selectKey}>
-                <SelectButton
-                  placeholder='Select'
-                  initialVal=''
-                  className=''
-                />
-                <SelectOptions
-                  callback={(e) => {
-                    setNewMember({ ...newMember, permissions: parseInt(e.target.value) })
-                  }}
-                  options={permissionOptions.map((perm, index) => {
-                    return {
-                      markup: <>{perm}</>,
-                      value: `${index}`,
-                      disabled: (permissions < index),
-                    };
-                  })}
-                />
-              </Select>
-            </div>
           </div>
           {/* Action buttons */}
           <div className="project-editor-button-pair">
@@ -1121,7 +1099,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
         </PopupContent>
       </Popup>
     </div>
-  ), [allJobs, errorAddMember, handleNewMember, handleSearch, handleUserSelect, modifiedProject, newMember, permissions, searchBarKey, searchQuery, searchResults.data, searchableUsers, selectKey, successAddMember]);
+  ), [allJobs, errorAddMember, handleNewMember, handleSearch, handleUserSelect, modifiedProject, newMember, /*permissions,*/ searchBarKey, searchQuery, searchResults.data, searchableUsers, selectKey, successAddMember]);
   const openPositionsContent: JSX.Element = useMemo(() => (
     <div id="project-team-open-positions-popup">
       <div className="positions-popup-list">
