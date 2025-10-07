@@ -1,6 +1,7 @@
 import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { clearProfile } from '#controllers/mod/clear-profile.ts';
+import { deleteProject } from '#controllers/mod/delete-project.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
@@ -24,5 +25,6 @@ export const authenticated = (
 router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
 router.put('/clear-profile/:id/', authenticated(clearProfile));
+router.delete('/delete-project/:id/', authenticated(deleteProject));
 
 export default router;
