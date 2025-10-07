@@ -2,17 +2,12 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteTagsService } from '#services/projects/tags/delete-tags.ts';
 
-//the tags (or their ids anyway)
-type TagInputs = {
-  tagIds?: number[];
-};
-
 //deletes multiple tags from a project
 const deleteTagsController = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const tagData = req.body as TagInputs;
+  const tag = parseInt(req.params.tagId);
 
-  const result = await deleteTagsService(id, tagData);
+  const result = await deleteTagsService(id, tag);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -26,7 +21,7 @@ const deleteTagsController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Tags not found',
+      error: 'Tag not found',
       data: null,
     };
     res.status(404).json(resBody);

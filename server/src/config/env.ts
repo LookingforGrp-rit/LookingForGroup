@@ -6,6 +6,7 @@ const envConfig = Object.freeze({
   s3User: `${process.env.S3_USER}`,
   s3Pass: `${process.env.S3_PASS}`,
   port: process.env.PORT ?? 3000,
+  modId: process.env.MOD_ID,
 });
 
 export default envConfig;

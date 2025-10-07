@@ -1,0 +1,242 @@
+components:
+  schemas:
+    UserMember:
+      type: object
+      properties:
+        project:
+          $ref: 'projects.yaml#/components/schemas/ProjectPreview'
+        role:
+          $ref: 'datasets.yaml#/components/schemas/Role'
+        visibility:
+          type: string
+          enum: [Public, Private]
+        memberSince:
+          type: string
+          format: date-time
+        apiUrl:
+          type: string
+      example:
+        project:
+          projectId: 1
+          title: Looking For Group
+          hook: You can LOOK for a GROUP
+          mediums: []
+          thumbnail: null
+          apiUrl: /api/projects/1
+        role:
+          roleId: 1
+          label: Full-Stack Developer
+        visibility: Private
+        memberSince: 2038-01-19 03:14:07
+        apiUrl: /api/projects/1/members/1
+
+    UserSkill:
+      allOf:
+        - $ref: 'datasets.yaml#/components/schemas/Skill'
+        - type: object
+          properties:
+            proficiency:
+              $ref: 'enums.yaml#/components/schemas/SkillProficiency'
+            position:
+              type: integer
+      example:
+        skillId: 1
+        label: C++
+        type: Developer
+        proficiency: Novice
+        position: 1
+
+    UserSocial:
+      allOf:
+        - $ref: 'datasets.yaml#/components/schemas/Social'
+        - type: object
+          properties:
+            url:
+              type: string
+      example:
+        websiteId: 1
+        label: Instagram
+        url: https://www.instagram.com/rittigers/
+
+    ProjectFollowsList:
+      type: object
+      properties:
+        projects:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectFollowing'
+        count:
+          type: integer
+        apiUrl:
+          type: string
+      example:
+        count: 1
+        projects: []
+        apiUrl: /api/users/1/followings/projects
+
+    ProjectFollowing:
+      type: object
+      properties:
+        project:
+          $ref: 'projects.yaml#/components/schemas/ProjectPreview'
+        follwedAt:
+          type: string
+          format: date-time
+      example:
+        project:
+          projectId: 1
+          title: Looking For Group
+          hook: You can LOOK for a GROUP
+          mediums: []
+          thumbnail: null
+          apiUrl: /api/projects/1
+        followedAt: 2038-01-19 03:14:07
+
+    UserFollowsList:
+      type: object
+      properties:
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/UserFollowing'
+        count:
+          type: integer
+        apiUrl:
+          type: string
+      example:
+        count: 1
+        users: []
+        apiUrl: string
+
+    UserFollowing:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/UserPreview'
+        followedAt:
+          type: string
+          format: date-time
+      example:
+        user:
+          userId: 1
+          firstName: Michael
+          lastName: Robinson
+          username: mhr2964
+          profileImage: null
+          mentor: false
+          designer: false
+          developer: true
+          apiUrl: /api/users/1
+        followedAt: 2038-01-19 03:14:07
+
+    UserPreview:
+      type: object
+      properties:
+        userId:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        username:
+          type: string
+        profileImage:
+          type: string
+          nullable: true
+        mentor:
+          type: boolean
+        designer:
+          type: boolean
+        developer:
+          type: boolean
+        apiUrl:
+          type: string
+      example:
+        userId: 1
+        firstName: Michael
+        lastName: Robinson
+        username: mhr2964
+        profileImage: null
+        mentor: false
+        designer: false
+        developer: true
+        apiUrl: /api/users/1
+
+    UserDetail:
+      allOf:
+        - $ref: '#/components/schemas/UserPreview'
+        - type: object
+          properties:
+            headline:
+              type: string
+            pronouns:
+              type: string
+            title:
+              type: string
+            majors:
+              type: array
+              items:
+                $ref: 'datasets.yaml#/components/schemas/Major'
+            academicYear:
+              $ref: 'enums.yaml#/components/schemas/AcademicYear'
+              nullable: true
+            location:
+              type: string
+            funFact:
+              type: string
+            bio:
+              type: string
+            projects:
+              type: array
+              items:
+                $ref: 'projects.yaml#/components/schemas/ProjectPreview'
+            skills:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserSkill'
+            socials:
+              type: array
+              items:
+                $ref: '#/components/schemas/UserSocial'
+            following:
+              type: object
+              properties:
+                usersFollowing:
+                  $ref: '#/components/schemas/UserFollowsList'
+                projectsFollowing:
+                  $ref: '#/components/schemas/ProjectFollowsList'
+            followers:
+              $ref: '#/components/schemas/UserFollowsList'
+      example:
+        userId: 1
+        firstName: Michael
+        lastName: Robinson
+        username: mhr2964
+        profileImage: null
+        mentor: false
+        designer: false
+        developer: true
+        headline: Hello world
+        pronouns: they/them
+        title: Student
+        academicYear:
+        location: Rochester, NY
+        funFact: Loves Prisma
+        bio: This is an example user.
+        projects: []
+        skills: []
+        socials: []
+        following:
+          usersFollowing:
+            users: []
+            count: 0
+            apiUrl: /api/users/1/followings/people
+          projectFollowing:
+            projects: []
+            count: 0
+            apiUrl: /api/users/1/followings/projects
+        followers:
+          users: []
+          count: 0
+          apiUrl: /api/users/1/followers
+        apiUrl: /api/users/1

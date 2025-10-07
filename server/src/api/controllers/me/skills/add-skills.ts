@@ -1,39 +1,22 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  AddUserSkillsInput,
+  ApiResponse,
+  AuthenticatedRequest,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
-import type { SkillProficiency } from '#prisma-models/index.js';
-import addSkillsService from '#services/me/skills/add-skills.ts';
+import addSkillService from '#services/me/skills/add-skills.ts';
 
-type Skill = {
-  userId: number;
-  skillId: number;
-  position: number;
-  proficiency: SkillProficiency;
-};
+//add a skill to user profile
+const addSkill = async (req: AuthenticatedRequest, res: Response) => {
+  const data: AddUserSkillsInput = req.body as AddUserSkillsInput;
 
-//add skills to user profile
-const addSkillsController = async (req: AuthenticatedRequest, res: Response) => {
-  const data: Skill[] = req.body as Skill[];
+  const skillWithUserId = {
+    ...data,
+    userId: req.currentUser,
+  };
 
-  //current user ID
-  const UserId = parseInt(req.currentUser);
-
-  //check if ID is number
-  if (isNaN(UserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  data.forEach((skill) => {
-    skill.userId = UserId;
-  });
-
-  //add the skills they wanna add
-  const result = await addSkillsService(data);
+  //add the skill they wanna add
+  const result = await addSkillService(skillWithUserId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -53,4 +36,4 @@ const addSkillsController = async (req: AuthenticatedRequest, res: Response) => 
   res.status(200).json(resBody);
 };
 
-export default addSkillsController;
+export default addSkill;

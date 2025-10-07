@@ -3,54 +3,54 @@ import { PrismaClient } from '../src/models/generated/prisma/index.js';
 const prisma = new PrismaClient();
 
 async function main() {
-    //Datasets
-    await prisma.mediums.createMany({
-        data: [
-            { label: 'Video Game' },
-            { label: 'Analog Game' },
-            { label: 'Mobile Application' },
-        ],
-    });
+    // //Datasets
+    // await prisma.mediums.createMany({
+    //     data: [
+    //         { label: 'Video Game' },
+    //         { label: 'Analog Game' },
+    //         { label: 'Mobile Application' },
+    //     ],
+    // });
 
-    await prisma.roles.createMany({
-        data: [
-            { label: 'Full-Stack Developer' },
-            { label: 'Front-End Developer' },
-            { label: 'Back-End Developer' },
-        ],
-    });
+    // await prisma.roles.createMany({
+    //     data: [
+    //         { label: 'Full-Stack Developer' },
+    //         { label: 'Front-End Developer' },
+    //         { label: 'Back-End Developer' },
+    //     ],
+    // });
 
-    await prisma.majors.createMany({
-        data: [
-            { label: 'Animation' },
-            { label: 'Computer Engineering' },
-            { label: 'Computing Engineering Technology' },
-        ],
-    });
+    // await prisma.majors.createMany({
+    //     data: [
+    //         { label: 'Animation' },
+    //         { label: 'Computer Engineering' },
+    //         { label: 'Computing Engineering Technology' },
+    //     ],
+    // });
 
-    await prisma.socials.createMany({
-        data: [
-            { label: 'Instagram' },
-            { label: 'Twitter' },
-            { label: 'Facebook' },
-        ],
-    });
+    // await prisma.socials.createMany({
+    //     data: [
+    //         { label: 'Instagram' },
+    //         { label: 'Twitter' },
+    //         { label: 'Facebook' },
+    //     ],
+    // });
 
-    await prisma.tags.createMany({
-        data: [
-            { label: 'Indie', type: 'Creative' },
-            { label: 'Abstract', type: 'Creative' },
-            { label: 'Horror', type: 'Creative' },
-        ],
-    });
+    // await prisma.tags.createMany({
+    //     data: [
+    //         { label: 'Indie', type: 'Creative' },
+    //         { label: 'Abstract', type: 'Creative' },
+    //         { label: 'Horror', type: 'Creative' },
+    //     ],
+    // });
 
-    await prisma.skills.createMany({
-        data: [
-            { label: 'C++', type: 'Developer' },
-            { label: 'CSS', type: 'Developer' },
-            { label: 'C#', type: 'Developer' },
-        ],
-    });
+    // await prisma.skills.createMany({
+    //     data: [
+    //         { label: 'C++', type: 'Developer' },
+    //         { label: 'CSS', type: 'Developer' },
+    //         { label: 'C#', type: 'Developer' },
+    //     ],
+    // });
 
     //Users
     await prisma.users.createMany({

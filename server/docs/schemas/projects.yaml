@@ -1,0 +1,297 @@
+components:
+  schemas:
+    ProjectImage:
+      type: object
+      properties:
+        imageId:
+          type: integer
+        image:
+          type: string
+        altText:
+          type: string
+        apiUrl:
+          type: string
+      example:
+        imageId: 1
+        image: https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSK9gJACNLV5RJ5RC8Me7u3GRvAQ-w8DHNqNw&s
+        altText: cat yawning
+        apiUrl: /api/projects/1/images/1
+
+    ProjectMedium:
+      allOf:
+        - $ref: 'datasets.yaml#/components/schemas/Medium'
+        - type: object
+          properties:
+            apiUrl:
+              type: string
+      example:
+        mediumId: 1
+        label: Video Game
+        apiUrl: /api/projects/1/mediums
+
+    ProjectFollower:
+      type: object
+      properties:
+        user:
+          $ref: 'users.yaml#/components/schemas/UserPreview'
+        followedAt:
+          type: string
+          format: date-time
+
+    ProjectFollowers:
+      type: object
+      properties:
+        count:
+          type: integer
+        users:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectFollower'
+        apiUrl:
+          type: string
+      example:
+        count: 1
+        users: []
+        apiUrl: /api/projects/1/followers
+
+    ProjectMember:
+      type: object
+      properties:
+        user:
+          $ref: 'users.yaml#/components/schemas/UserPreview'
+        role:
+          $ref: 'datasets.yaml#/components/schemas/Role'
+        memberSince:
+          type: string
+          format: date-time
+        apiUrl:
+          type: string
+      example:
+        user:
+          userId: 1
+          firstName: Michael
+          lastName: Robinson
+          username: mhr2964
+          profileImage: null
+          mentor: false
+          designer: false
+          developer: true
+          apiUrl: /api/users/1
+        role:
+          roleId: 1
+          label: Full-Stack Developer
+        memberSince: 2038-01-19 03:14:07
+        apiUrl: /api/projects/1/members/1
+
+    ProjectSocial:
+      allOf:
+        - $ref: 'datasets.yaml#/components/schemas/Social'
+        - type: object
+          properties:
+            url:
+              type: string
+            apiUrl:
+              type: string
+      example:
+        websiteId: 1
+        label: Instagram
+        url: https://www.instagram.com/rittigers/
+        apiUrl: /api/projects/1/socials/1
+
+    ProjectTag:
+      allOf:
+        - $ref: 'datasets.yaml#/components/schemas/Tag'
+        - type: object
+          properties:
+            apiUrl:
+              type: string
+      example:
+        tagId: 1
+        label: Indie
+        type: Creative
+        apiUrl: /api/projects/1/tags/1
+
+    ProjectJob:
+      type: object
+      properties:
+        jobId:
+          type: integer
+        role:
+          $ref: 'datasets.yaml#/components/schemas/Role'
+        availability:
+          type: 'enums.yaml#/components/schemas/JobAvailability'
+        duration:
+          type: 'enums.yaml#/components/schemas/JobDuration'
+        location:
+          type: 'enums.yaml#/components/schemas/JobLocation'
+        compensation:
+          type: 'enums.yaml#/components/schemas/JobCompensation'
+        contact:
+          $ref: 'users.yaml#/components/schemas/UserPreview'
+        description:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+        apiUrl:
+          type: string
+      example:
+        jobId: 1
+        role:
+          roleId: 1
+          label: Full-Stack Developer
+        availability: FullTime
+        duration: ShortTerm
+        location: OnSite
+        compensation: Unpaid
+        contact:
+          userId: 1
+          firstName: Michael
+          lastName: Robinson
+          username: mhr2964
+          profileImage: null
+          mentor: false
+          designer: false
+          developer: true
+          apiUrl: /api/users/1
+        description: i'm a job
+        createdAt: 2038-01-19 03:14:07
+        updatedAt: 2038-01-19 03:14:07
+        apiUrl: /api/projects/1/jobs/1
+
+    ProjectPreview:
+      type: object
+      properties:
+        projectId:
+          type: integer
+        title:
+          type: string
+        hook:
+          type: string
+        thumbnail:
+          type: string
+          nullable: true
+        mediums:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProjectMedium'
+        apiUrl:
+          type: string
+      example:
+        projectId: 1
+        title: Looking For Group
+        hook: You can LOOK for a GROUP
+        mediums: []
+        thumbnail: null
+        apiUrl: /api/projects/1
+
+    ProjectDetail:
+      allOf:
+        - $ref: '#/components/schemas/ProjectPreview'
+        - type: object
+          properties:
+            description:
+              type: string
+            purpose:
+              type: 'enums.yaml#/components/schemas/ProjectPurpose'
+              nullable: true
+            status:
+              type: 'enums.yaml#/components/schemas/ProjectStatus'
+            audience:
+              type: string
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+            owner:
+              $ref: 'users.yaml#/components/schemas/UserPreview'
+            tags:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProjectTag'
+            projectImages:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProjectImage'
+            projectSocials:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProjectSocial'
+            jobs:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProjectJob'
+            members:
+              type: array
+              items:
+                $ref: '#/components/schemas/ProjectMember'
+      example:
+        projectId: 1
+        title: Looking For Group
+        hook: You can LOOK for a GROUP
+        mediums: []
+        thumbnail: null
+        description: Have you ever needed a project or a group?
+        purpose: Personal
+        status: Planning
+        audience: Everybody
+        createdAt: 2038-01-19 03:14:07
+        updatedAt: 2038-01-19 03:14:07
+        owner:
+          userId: 1
+          firstName: Michael
+          lastName: Robinson
+          username: mhr2964
+          profileImage: null
+          mentor: false
+          designer: false
+          developer: true
+          apiUrl: /api/users/1
+        tags: []
+        projectImages: []
+        projectSocials: []
+        jobs: []
+        members: []
+        apiUrl: /api/projects/1
+
+    ProjectWithFollowers:
+      allOf:
+        - $ref: '#/components/schemas/ProjectDetail'
+        - type: object
+          properties:
+            projectId: 1
+            title: Looking For Group
+            hook: You can LOOK for a GROUP
+            mediums: []
+            thumbnail: null
+            description: Have you ever needed a project or a group?
+            purpose: Personal
+            status: Planning
+            audience: Everybody
+            createdAt: 2038-01-19 03:14:07
+            updatedAt: 2038-01-19 03:14:07
+            owner:
+              userId: 1
+              firstName: Michael
+              lastName: Robinson
+              username: mhr2964
+              profileImage: null
+              mentor: false
+              designer: false
+              developer: true
+              apiUrl: /api/users/1
+            tags: []
+            projectImages: []
+            projectSocials: []
+            jobs: []
+            members: []
+            followers:
+              count: 1
+              users: []
+              apiUrl: /api/projects/1/followers
+            apiUrl: /api/projects/1

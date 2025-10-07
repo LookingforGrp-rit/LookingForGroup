@@ -1,6 +1,8 @@
-import type { UserFollowings } from '@looking-for-group/shared';
+import type { MyFollowing } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
+import { UserPreviewSelector } from '#services/selectors/users/user-preview.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
 
 type AddFollowServiceError = ServiceErrorSubset<
   'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT' | 'FORBIDDEN'
@@ -9,7 +11,7 @@ type AddFollowServiceError = ServiceErrorSubset<
 export const addUserFollowingService = async (
   senderId: number,
   receiverId: number,
-): Promise<UserFollowings | AddFollowServiceError> => {
+): Promise<MyFollowing | AddFollowServiceError> => {
   try {
     //no following self
     if (senderId === receiverId) return 'FORBIDDEN';
@@ -40,10 +42,17 @@ export const addUserFollowingService = async (
         senderId,
         receiverId,
       },
+      select: {
+        followedAt: true,
+        receiverUser: {
+          select: UserPreviewSelector,
+        },
+      },
     });
 
-    const result: UserFollowings = {
-      ...addFollow,
+    const result: MyFollowing = {
+      followedAt: addFollow.followedAt,
+      user: transformUserToPreview(addFollow.receiverUser),
       apiUrl: `/api/me/followings/people/${receiverId.toString()}`,
     };
 

@@ -3,18 +3,8 @@ import type { Request, Response } from 'express';
 import getService from '#services/projects/get-proj-id.ts';
 
 //gets a prject by itsid
-const getProjectByIDController = async (_req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(_req.params.id);
-
-  if (isNaN(projID)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
+const getProjectByIDController = async (req: Request, res: Response): Promise<void> => {
+  const projID = parseInt(req.params.id);
 
   const result = await getService(projID);
 

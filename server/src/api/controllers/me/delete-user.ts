@@ -4,19 +4,7 @@ import { deleteUserService } from '#services/me/delete-user.ts';
 
 //delete your own account
 export const deleteUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const userId = parseInt(req.currentUser);
-
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user IDs',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const result = await deleteUserService(userId);
+  const result = await deleteUserService(req.currentUser);
 
   //internal error
   if (result === 'INTERNAL_ERROR') {

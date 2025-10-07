@@ -7,21 +7,9 @@ export const addProjectFollowing = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const userId = parseInt(req.currentUser);
   const projectId = parseInt(req.params.id);
 
-  //validate input
-  if (isNaN(userId) || isNaN(projectId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID or project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const result = await addProjectFollowingService(userId, projectId);
+  const result = await addProjectFollowingService(req.currentUser, projectId);
 
   if (result === 'CONFLICT') {
     const resBody: ApiResponse = {

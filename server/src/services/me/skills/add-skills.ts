@@ -1,36 +1,21 @@
-import type { MySkill } from '@looking-for-group/shared';
+import type { MySkill, AddUserSkillsInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { SkillProficiency } from '#prisma-models/index.js';
 import { MySkillSelector } from '#services/selectors/me/parts/my-skill.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
-type AddSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
+type AddSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
+type SkillWithUserId = AddUserSkillsInput & { userId: number };
 
-type Skill = {
-  userId: number;
-  skillId: number;
-  position: number;
-  proficiency: SkillProficiency;
-};
-
-const addSkillsService = async (data: Skill[]): Promise<MySkill[] | AddSkillsServiceError> => {
+const addSkillService = async (data: SkillWithUserId): Promise<MySkill | AddSkillServiceError> => {
   try {
-    if (data.length === 0) return 'NOT_FOUND';
-
-    //creates the skills
-    await prisma.userSkills.createMany({
-      data: data,
-    });
-
-    const result = await prisma.userSkills.findMany({
-      where: {
-        userId: data[0].userId,
-      },
+    //creates the skill
+    const result = await prisma.userSkills.create({
+      data,
       select: MySkillSelector,
     });
 
-    return result.map(transformMySkill);
+    return transformMySkill(result);
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {
@@ -47,4 +32,4 @@ const addSkillsService = async (data: Skill[]): Promise<MySkill[] | AddSkillsSer
   }
 };
 
-export default addSkillsService;
+export default addSkillService;

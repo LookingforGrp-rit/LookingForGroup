@@ -4,21 +4,7 @@ import { getSocialsService } from '#services/me/socials/get-socials.ts';
 
 //get socials on user profile
 export const getSocials = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  //current user ID
-  const UserId = parseInt(req.currentUser);
-
-  //check if ID is number
-  if (isNaN(UserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const result = await getSocialsService(UserId);
+  const result = await getSocialsService(req.currentUser);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
