@@ -149,7 +149,7 @@ router.post(
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   userExistsAt('body', 'userId'),
-  attributeExistsAt('role', 'body', 'roleId'),
+  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
   authenticated(requiresProjectOwner),
   PROJECT.addMember,
 );
@@ -254,6 +254,13 @@ router.post(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
+  attributeExistsAt('role', 'body', 'roleId'),
+  userExistsAt('body', 'contactUserId'),
+  projectAttributeExistsAt(
+    'member',
+    { type: 'path', key: 'id' },
+    { type: 'body', key: 'contactUserId' },
+  ),
   authenticated(requiresProjectOwner),
   PROJECT.addJobController,
 );
@@ -264,6 +271,17 @@ router.patch(
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   projectAttributeExistsAt('job', { type: 'path', key: 'id' }, { type: 'path', key: 'jobId' }),
+  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  skipIfEmpty('body', 'contactUserId', userExistsAt('body', 'contactUserId')),
+  skipIfEmpty(
+    'body',
+    'contactUserId',
+    projectAttributeExistsAt(
+      'member',
+      { type: 'path', key: 'id' },
+      { type: 'body', key: 'contactUserId' },
+    ),
+  ),
   authenticated(requiresProjectOwner),
   PROJECT.updateJobController,
 );
