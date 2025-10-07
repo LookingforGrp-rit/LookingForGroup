@@ -4,14 +4,12 @@ import "../Styles/discoverMeet.css";
 import "../Styles/emailConfirmation.css";
 import "../Styles/general.css";
 import "../Styles/loginSignup.css";
-// import "../Styles/messages.css";
-// import "../Styles/notification.css";
 import "../Styles/profile.css";
 import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
@@ -22,10 +20,9 @@ import { ThemeIcon } from "../ThemeIcon";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
 import usePreloadedImage from "../../functions/imageLoad";
-import { getCurrentUsername, getVisibleProjects, getProjectsByUser } from "../../api/users";
+import { getCurrentUsername, getVisibleProjects, getProjectsByUser, getCurrentUserById } from "../../api/users";
 import { getUsersById } from "../../api/users";
 import { MeDetail, UserSkill, ProjectPreview } from '@looking-for-group/shared';
-import { getUsersById } from "../../api/users";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -46,50 +43,44 @@ const NewProfile = () => {
   // --------------------
   // Global variables
   // --------------------
-  // Just to prevent typescript errors
-  const skillsStr = [
-    "Figma",
-    "JavaScript",
-    "Visual Studio Code",
-    "Flexibility",
-    "Krita",
-  ];
-  const skills: UserSkill[] = skillsStr.map((skillStr) => ({
-    type: "Soft",
-    skill: skillStr,
-  }));
-  // const defaultProfile: Profile = {
-  //   first_name: 'User',
-  //   last_name: 'Name',
-  //   username: 'someguy',
-  //   profile_image: profilePicture,
-  //   headline: `Here's a quick lil blurb about me!`,
-  //   pronouns: 'Was/Were',
-  //   job_title: 'Profession',
-  //   major: 'Professional Typer',
-  //   academic_year: '13th',
-  //   location: 'Middle of, Nowhere',
-  //   fun_fact: `I'm not a real person, I'm just a digital representation of one!`,
-  //   bio: 'A bunch of Lorem Ipsum text, not bothering to type it out.',
-  //   skills: skills,
-  // };
   const defaultProfile: MeDetail = {
-    first_name: "Private",
-    last_name: "User",
+    firstName: "Private",
+    lastName: "User",
     username: "privateuser",
     profileImage: `private.webp`,
     headline: `This user is private`,
     pronouns: "NA/NA",
-    jobTitle: "NA",
-    major: "NA",
-    academicYear: "NA",
+    title: "NA",
+    majors: [],
+    academicYear: "Freshman",
     location: "NA, NA",
     funFact: ``,
     bio: "",
     skills: [],
-    interests: [],
     mentor: false,
     socials: [],
+    projects: [],
+    following: {
+      usersFollowing: {
+        users: [],
+        count: 0,
+        apiUrl: ""
+      },
+      projectsFollowing: {
+        projects: [],
+        count: 0,
+        apiUrl: ""
+      }
+    },
+    followers: {
+      users: [],
+      count: 0,
+      apiUrl: ""
+    },
+    userId: 0,
+    designer: false,
+    developer: false,
+    apiUrl: ""
   };
 
   const navigate = useNavigate(); // Hook for navigation
@@ -97,7 +88,7 @@ const NewProfile = () => {
   // Get URL parameters to tell what user we're looking for and store it
   const urlParams = new URLSearchParams(window.location.search);
   // User ID of profile being viewed
-  const profileID: string = urlParams.get("userID")!;
+  let profileID: string = urlParams.get("userID")!;
 
   const [displayedProfile, setDisplayedProfile] = useState(defaultProfile);
 
@@ -106,9 +97,9 @@ const NewProfile = () => {
   // Projects displayed for searches
   const [displayedProjects, setDisplayedProjects] = useState<ProjectPreview[]>([]);
 
-  const projectSearchData = fullProjectList.map(
+  const projectSearchData = fullProjectList?.map(
     (project: Project) => {
-      return { name: project.name, description: project.hook };
+      return { name: project.title, description: project.hook };
     }
   );
 
@@ -162,15 +153,16 @@ const NewProfile = () => {
     }
   };
 
-  const getProfileProjectData = async () => {
+
+  const getProfileProjectData = useCallback(async () => {
     try {
-      const response = isUsersProfile ? await getProjectsByUser(Number(profileID)) : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };          // IMPLEMENT PROJECT GETTING
+      const response = isUsersProfile ? await getProjectsByUser(Number(profileID)) : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };// TODO: IMPLEMENT PROJECT GETTING
       const data = response.data;
       
-      console.log(data);
+      console.log(response);
 
       // Only update if there's data
-      if (data !== undefined) {
+      if (data) {
         setFullProjectList(data);
         setDisplayedProjects(data);
       }
@@ -181,30 +173,22 @@ const NewProfile = () => {
         console.log(`Unknown error: ${error}`);
       }
     }
-  };
+  }, [profileID, setFullProjectList, setDisplayedProjects]);
 
   // Gets the profile data
   useEffect(() => {
     const getProfileData = async () => {
-      const userID = await getCurrentUsername();
-
       // Get the profileID to pull data for whoever's profile it is
-      const setUpProfileID = () => {
-        // If no profileID is in search query, set to be current user
-        if (profileID === undefined || profileID === null) {
-          profileID = userID;
-        }
-        // Check if the userID matches the profile
-        isUsersProfile = userID === profileID;
-      };
-
-      setUpProfileID();
+      const response = await getCurrentUserById(2) // TODO: remove hardcoded devID value from debugging
+      if (response.data) {
+        isUsersProfile = true;
+      }
 
       try {
         const { data } = await getUsersById(profileID ?? "");
 
         // Only run this if profile data exists for user
-        if (data !== undefined) {
+        if (data) {
           setDisplayedProfile(data);
           await getProfileProjectData();
         }
@@ -218,7 +202,7 @@ const NewProfile = () => {
     };
     getProfileData();
     
-  }, [profileID]);
+  }, [getProfileProjectData, profileID]);
 
   // --------------------
   // Components
@@ -328,11 +312,11 @@ const NewProfile = () => {
           <div id="profile-info-extras">
             <div className="profile-extra">
               <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
-              {displayedProfile.jobTitle}
+              {displayedProfile.title}
             </div>
             <div className="profile-extra">
               <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
-              {displayedProfile.major} {displayedProfile.academicYear}
+              {displayedProfile.majors.join(", ")} {displayedProfile.academicYear}
             </div>
             <div className="profile-extra">
               <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
@@ -404,12 +388,16 @@ const NewProfile = () => {
         <div id="profile-projects">
           <h2>Projects</h2>
           {/* Probably fine to use 25 for itemAddInterval */}
-          <PanelBox
-            category={"projects"}
-            itemList={displayedProjects}
-            itemAddInterval={25}
-            userId={userID}
-          />
+          {displayedProjects ? (
+            <PanelBox
+              category={"projects"}
+              itemList={displayedProjects}
+              itemAddInterval={25}
+              userId={userID}
+            />
+          ) : (
+            <div>No projects to display</div>
+          )}
         </div>
       </div>
     </div>

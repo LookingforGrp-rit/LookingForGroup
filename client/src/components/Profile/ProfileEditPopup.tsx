@@ -44,8 +44,7 @@ export const ProfileEditPopup = () => {
   await updateProfilePicture(userID, selectedImageFile);
 };
 
-const onSaveClicked = async (e : Event) => {
-  e.preventDefault(); // prevents any default calls
+const onSaveClicked = async () => {
   // Receive all inputted values
   const getInputValue = (input: string) => {
     const element = document.getElementById(`profile-editor-${input}`) as HTMLInputElement;
@@ -75,7 +74,7 @@ const onSaveClicked = async (e : Event) => {
     pronouns: getInputValue('pronouns'),
     title: getInputValue('jobTitle'),
     majors: profile?.majors ?? [],
-    academicYear: getInputValue('academicYear'),
+    academicYear: getInputValue('academicYear') as MeDetail['academicYear'],
     location: getInputValue('location'),
     funFact: getInputValue('funFact'),
     bio,
@@ -108,10 +107,8 @@ const onSaveClicked = async (e : Event) => {
             tabElement.classList.add('hidden');
           }
         }
-      },);
-
-
-    }, []);
+      });
+    });
 
     // Highlight the first tab button
     const firstTab = document.querySelector(`#profile-tab-${pageTabs[0]}`);
@@ -129,15 +126,12 @@ const onSaveClicked = async (e : Event) => {
     const setUpProfileData = async () => {
       // Pick which socials to use based on type
       // fetch for profile on ID
-      const userID = await getCurrentUsername();
-      const response = await getUsersById(userID);
+      const response = await getUsersById("2"); // TODO: remove hardcoding
 
       console.log('ProfileEditPopup - Raw API response:', response.data);
-      console.log('ProfileEditPopup - User profile data:', response.data[0]);
       // console.log('ProfileEditPopup - User interests from API:', response.data[0]?.interests);
 
-
-      setProfile(response.data[0]);
+      setProfile(response.data);
     };
     setUpProfileData();
   }, []);
@@ -150,8 +144,8 @@ const onSaveClicked = async (e : Event) => {
         {currentTab === 0 && <AboutTab profile={profile} selectedImageFile={selectedImageFile} setSelectedImageFile={setSelectedImageFile} />}
         {currentTab === 1 && <ProjectsTab profile={profile} />}
         {currentTab === 2 && <SkillsTab profile={profile} />}
-        {currentTab === 3 && <InterestTab profile={profile} />}
-        {currentTab === 4 && <LinksTab profile={profile} type="profile" />}
+        {/* {currentTab === 3 && <InterestTab profile={profile} />} */}
+        {currentTab === 4 && <LinksTab profile={profile} type="user" />}
       </div>
     );
   };
@@ -205,8 +199,6 @@ const onSaveClicked = async (e : Event) => {
     }
   };*/
 
-
-
   // Maps the pageTabs into interactable page tabs, to switch between the Tab Content
   const editorTabs = pageTabs.map((tag, i) => {
     return (
@@ -226,7 +218,7 @@ const onSaveClicked = async (e : Event) => {
 
   return (
     <Popup>
-      <PopupButton buttonId="project-info-edit">Edit</PopupButton>
+      <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
       <PopupContent
       profilePopup={true}
         callback={() => setCurrentTab(0)}
@@ -237,7 +229,7 @@ const onSaveClicked = async (e : Event) => {
           <input
             type="submit"
             id="profile-editor-save"
-            onClick={onSaveClicked}
+            onClick={(e) => { e.preventDefault(); onSaveClicked(); }}
             value={'Save Changes'}
           />
           <div id="invalid-input-error" className="error-message">
