@@ -2222,15 +2222,6 @@ paths:
             type: integer
           required: false
           description: The user ID to be used as the current user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                tagId:
-                  type: integer
       responses:
         '200':
           description: Tags deleted successfully
@@ -2346,6 +2337,8 @@ paths:
           $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/mediums/{mediumId}:
     delete:
       summary: Deletes many of the specified project's mediums
       security:
@@ -2359,23 +2352,18 @@ paths:
             type: integer
           required: true
           description: The ID of the project
+        - in: path
+          name: mediumId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the medium
         - in: query
           name: devId
           schema:
             type: integer
           required: false
           description: The user ID to be used as the current user
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                mediumIds:
-                  type: array
-                  items:
-                    type: integer
       responses:
         '200':
           description: Mediums deleted successfully
