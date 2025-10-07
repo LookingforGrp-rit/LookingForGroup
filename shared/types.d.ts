@@ -444,11 +444,11 @@ export type UpdateUserInput = Partial<
     | "location"
     | "funFact"
     | "bio"
-    | "visibility"
     | "phoneNumber"
-    | "mentor"
   > & {
     profileImage?: File;
+    mentor?: "true" | "false";
+    visibility?: "1" | "0";
   }
 >;
 

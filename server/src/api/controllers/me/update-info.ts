@@ -38,7 +38,11 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     return;
   }
 
-  const updates: Parameters<typeof updateUserInfoService>[1] = { ...body, mentor: undefined };
+  const updates: Parameters<typeof updateUserInfoService>[1] = {
+    ...body,
+    mentor: undefined,
+    visibility: undefined,
+  };
 
   //check if they sent over a new pfp, and upload it to the db
   if (req.file) {
@@ -72,7 +76,11 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
   }
 
   if (body.mentor !== undefined) {
-    updates.mentor = body.mentor;
+    updates.mentor = body.mentor === 'true';
+  }
+
+  if (body.visibility !== undefined) {
+    updates.visibility = body.visibility === '1' ? 1 : 0;
   }
 
   const result = await updateUserInfoService(req.currentUser, updates);

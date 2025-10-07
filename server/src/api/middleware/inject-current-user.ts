@@ -9,10 +9,10 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
 
   if (envConfig.env === 'development' || envConfig.env === 'test') {
     /// Add currentUser for development
-    const devId = request.query.devId as number | undefined;
+    const devId = request.query.devId as string | undefined;
 
     if (devId) {
-      authenticatedRequest.currentUser = devId;
+      authenticatedRequest.currentUser = parseInt(devId);
       next();
       return;
     }
