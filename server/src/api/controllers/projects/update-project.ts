@@ -1,45 +1,20 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  UpdateProjectInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
-import type { ProjectsPurpose, ProjectsStatus } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import updateProjectService from '#services/projects/update-proj.ts';
-
-interface UpdateProjectInfo {
-  title?: string;
-  hook?: string;
-  description?: string;
-  purpose?: ProjectsPurpose;
-  status?: ProjectsStatus;
-  audience?: string;
-  thumbnail?: string;
-}
 
 //updates a project's info
 const updateProjectsController = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const userId = parseInt(req.currentUser);
-
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const { id } = req.params;
-  const updates = req.body as UpdateProjectInfo;
-
-  //validate ID
-  const projectId = parseInt(id);
-  if (isNaN(projectId)) {
-    res.status(400).json({ message: 'Invalid project ID' });
-    return;
-  }
+  const updates = req.body as Omit<UpdateProjectInput, 'thumbnail'>;
+  let thumbnailUrl: string | undefined;
+  const projectId = parseInt(req.params.id);
 
   const updateFields = [
     'title',
@@ -86,10 +61,10 @@ const updateProjectsController = async (
       return;
     }
 
-    updates['thumbnail'] = dbImage.location;
+    thumbnailUrl = dbImage.location;
   }
 
-  const result = await updateProjectService(projectId, updates);
+  const result = await updateProjectService(projectId, updates, thumbnailUrl);
 
   if (result === 'NOT_FOUND') {
     res.status(404).json({ message: 'Project not found' });

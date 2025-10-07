@@ -1,0 +1,73 @@
+components:
+  schemas:
+    Role:
+      type: object
+      properties:
+        roleId:
+          type: integer
+        label:
+          type: string
+      example:
+        roleId: 1
+        label: Full-Stack Developer
+
+    Major:
+      type: object
+      properties:
+        majorId:
+          type: integer
+        label:
+          type: string
+      example:
+        majorId: 1
+        label: Animation
+
+    Tag:
+      type: object
+      properties:
+        tagId:
+          type: integer
+        label:
+          type: string
+        type:
+          $ref: 'enums.yaml#/components/schemas/TagType'
+      example:
+        tagId: 1
+        label: Indie
+        type: Creative
+
+    Social:
+      type: object
+      properties:
+        websiteId:
+          type: integer
+        label:
+          type: string
+      example:
+        websiteId: 1
+        label: Instagram
+
+    Skill:
+      type: object
+      properties:
+        skillId:
+          type: integer
+        label:
+          type: string
+        type:
+          $ref: 'enums.yaml#/components/schemas/SkillType'
+      example:
+        skillId: 1
+        label: C++
+        type: Developer
+
+    Medium:
+      type: object
+      properties:
+        mediumId:
+          type: integer
+        label:
+          type: string
+      example:
+        mediumId: 1
+        label: Video Game

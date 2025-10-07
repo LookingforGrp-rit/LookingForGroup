@@ -4,19 +4,8 @@ import { addUserFollowingService } from '#services/me/followings/add-follow-user
 
 //add user to follow list
 export const addUserFollowing = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const senderId = parseInt(req.currentUser);
+  const senderId = req.currentUser; //keeping this definition bc it has semantic meaning
   const receiverId = parseInt(req.params.id);
-
-  //validate input
-  if (isNaN(senderId) || isNaN(receiverId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
 
   const result = await addUserFollowingService(senderId, receiverId);
 

@@ -1,34 +1,18 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  UpdateUserSkillInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
-import type { SkillProficiency } from '#prisma-models/index.js';
 import updateSkillsService from '#services/me/skills/update-skills.ts';
-
-type SkillInfo = {
-  skillId: number;
-  position?: number;
-  proficiency: SkillProficiency;
-};
 
 //add skills to user profile
 const updateSkillsController = async (req: AuthenticatedRequest, res: Response) => {
-  const data: SkillInfo = req.body as SkillInfo;
-
-  //current user ID
-  const UserId = parseInt(req.currentUser);
-
-  //check if ID is number
-  if (isNaN(UserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
+  const data: UpdateUserSkillInput = req.body as UpdateUserSkillInput;
+  const skillId = parseInt(req.params.id);
 
   //update the skills they wanna update
-  const result = await updateSkillsService(UserId, data);
+  const result = await updateSkillsService(req.currentUser, skillId, data);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

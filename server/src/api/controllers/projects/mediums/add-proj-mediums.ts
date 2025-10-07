@@ -1,13 +1,13 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { AddProjectMediumsInput, ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { deleteProjectSocialService } from '#services/projects/socials/delete-project-social.ts';
+import addMediumsService from '#services/projects/mediums/add-proj-mediums.ts';
 
-//deletes a project's social
-export const deleteProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const projId = parseInt(req.params.id);
-  const social = parseInt(req.params.websiteId);
+//adds multiple mediums to the project
+const addMediumsController = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const data: AddProjectMediumsInput = req.body as AddProjectMediumsInput;
 
-  const result = await deleteProjectSocialService(social, projId);
+  const result = await addMediumsService(id, data);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -18,11 +18,10 @@ export const deleteProjectSocial = async (req: Request, res: Response): Promise<
     res.status(500).json(resBody);
     return;
   }
-
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Social not found',
+      error: 'Medium not found',
       data: null,
     };
     res.status(404).json(resBody);
@@ -32,7 +31,9 @@ export const deleteProjectSocial = async (req: Request, res: Response): Promise<
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: null,
+    data: result,
   };
   res.status(200).json(resBody);
 };
+
+export default addMediumsController;

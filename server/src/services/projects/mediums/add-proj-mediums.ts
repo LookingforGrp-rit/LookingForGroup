@@ -1,4 +1,4 @@
-import type { ProjectMedium } from '@looking-for-group/shared';
+import type { AddProjectMediumsInput, ProjectMedium } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectMediumSelector } from '#services/selectors/projects/parts/project-medium.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -6,48 +6,29 @@ import { transformProjectMedium } from '#services/transformers/projects/parts/pr
 
 type AddMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
-//the mediums (or their ids anyway)
-type MediumInputs = {
-  mediumIds?: number[];
-};
-
 const addMediumsService = async (
   projectId: number,
-  data: MediumInputs,
+  data: AddProjectMediumsInput,
 ): Promise<ProjectMedium[] | AddMediumsServiceError> => {
   try {
-    if (!data.mediumIds) return 'NOT_FOUND';
-
-    //had to do this one like the tags because
-    //unlike user skills mediums are not tied to the project
-    //so we're updating the project's mediums param rather than creating new objects
-    const allMediumIds = [];
-    for (let i = 0; i < data.mediumIds.length; i++) {
-      allMediumIds[i] = { mediumId: data.mediumIds[i] };
-    }
-
-    const newMediums = await prisma.projects.update({
+    const result = await prisma.projects.update({
       where: {
-        projectId: projectId,
+        projectId,
       },
       data: {
         mediums: {
-          connect: allMediumIds,
+          connect: { mediumId: data.mediumId },
         },
       },
       include: {
         mediums: {
-          where: {
-            mediumId: {
-              in: data.mediumIds,
-            },
-          },
+          where: data,
           select: ProjectMediumSelector,
         },
       },
     });
 
-    return newMediums.mediums.map((medium) => transformProjectMedium(projectId, medium));
+    return result.mediums.map((medium) => transformProjectMedium(projectId, medium));
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {
