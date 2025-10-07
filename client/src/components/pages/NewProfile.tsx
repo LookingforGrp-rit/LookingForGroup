@@ -41,22 +41,29 @@ interface Tag {
   skill: string;
 }
 
+interface Social {
+  websiteId: number;
+  label: string;
+  url: string;
+}
+
 interface Profile {
-  first_name: string;
-  last_name: string;
+  firstName: string;
+  lastName: string;
   username: string;
-  profile_image: HTMLImageElement;
+  profileImage: HTMLImageElement;
   headline: string;
   pronouns: string;
-  job_title: string;
+  jobTitle: string;
   major: string;
-  academic_year: string;
+  academicYear: string;
   location: string;
-  fun_fact: string;
+  funFact: string;
   bio: string;
   skills: Tag[];
   interests?: string[];
   mentor: boolean;
+  socials: Social[];
 }
 
 // Stores if profile is loaded from server and if it's user's respectively
@@ -98,28 +105,30 @@ const NewProfile = () => {
   //   skills: skills,
   // };
   const defaultProfile: Profile = {
-    first_name: "Private",
-    last_name: "User",
+    firstName: "Private",
+    lastName: "User",
     username: "privateuser",
-    profile_image: `private.webp`,
+    profileImage: `private.webp`,
     headline: `This user is private`,
     pronouns: "NA/NA",
-    job_title: "NA",
+    jobTitle: "NA",
     major: "NA",
-    academic_year: "NA",
+    academicYear: "NA",
     location: "NA, NA",
-    fun_fact: ``,
+    funFact: ``,
     bio: "",
     skills: [],
     interests: [],
     mentor: false,
+    socials: [],
   };
 
   const navigate = useNavigate(); // Hook for navigation
 
   // Get URL parameters to tell what user we're looking for and store it
   const urlParams = new URLSearchParams(window.location.search);
-  let profileID = urlParams.get("userID");
+  // User ID of profile being viewed
+  let profileID: number = parseInt(urlParams.get("userID")!);
 
   let displayedProfile: Profile;
   let setDisplayedProfile: Function;
@@ -223,8 +232,6 @@ const NewProfile = () => {
 
       // Get the profileID to pull data for whoever's profile it is
       const setUpProfileID = () => {
-        // urlParams = new URLSearchParams(window.location.search);
-        // profileID = urlParams.get('userID');
         // If no profileID is in search query, set to be current user
         if (profileID === undefined || profileID === null) {
           profileID = userID;
@@ -236,7 +243,7 @@ const NewProfile = () => {
       setUpProfileID();
 
       try {
-        const { data } = await getUsersById(profileID);
+        const { data } = await getUsersById(profileID.toString());
 
         console.log("data", data);
 
@@ -260,73 +267,69 @@ const NewProfile = () => {
   // --------------------
   // Components
   // --------------------
-  const aboutMeButtons = isUsersProfile ? (
-    <>
-      {
-        <div id="about-me-buttons">
+  const aboutMeButtons = (
+  <>
+    {/* Add social links if present */}
+    {displayedProfile.socials && (
+      <div id="about-me-buttons">
+        {displayedProfile.socials.map((link) => (
           <button
+            key={link.websiteId}
             onClick={() => {
-              window.open("https://www.linkedin.com/", "_blank");
+              window.open(link.url, "_blank");
             }}
           >
-            <ThemeIcon id={'linkedin'} width={25} height={25} className={'color-fill'} ariaLabel={'LinkedIn'}/>
+            <ThemeIcon
+              id={link.label}
+              width={25}
+              height={25}
+              className={"color-fill"}
+              ariaLabel={link.label}
+            />
           </button>
-          <button
-            onClick={() => {
-              window.open("https://www.instagram.com/", "_blank");
-            }}
-          >
-            <ThemeIcon id={'instagram'} width={25} height={25} className={'color-fill'} ariaLabel={'Instagram'}/>
-          </button>
-          <ProfileEditPopup />
-        </div>
-      }
-    </>
-  ) : (
-    <>
-      {
-        <div id="about-me-buttons" className="about-me-buttons-minimal">
-          <button>
-            <ThemeIcon id={'linkedin'} width={25} height={25} className={'color-fill'} ariaLabel={'LinkedIn'}/>
-          </button>
-          <button>
-            <ThemeIcon id={'instagram'} width={25} height={25} className={'color-fill'} ariaLabel={'Instagram'}/>
-          </button>
-          <button>
-            <ThemeIcon id={'heart'} width={25} height={25} className={'empty-heart'} />
-            {/* FIXME: When following is implemented, use this: */}
-            {/* <ThemeIcon id={'heart'} width={25} height={25} className={isFollowing ? 'filled-heart' : 'empty-heart'} /> */}
-          </button>
-          {/* TO-DO: Implement Share, Block, and Report functionality */}
-          <Dropdown>
-            <DropdownButton>
-              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
-            </DropdownButton>
-            <DropdownContent rightAlign={true}>
-              <div id="profile-menu-dropdown">
-                <button className="profile-menu-dropdown-button">
-                  <ThemeIcon id={'share'} width={27} height={27} className={'mono-fill'} ariaLabel={'Share'}/>
-                  Share
-                </button>
-                <button className="profile-menu-dropdown-button">
-                  <ThemeIcon id={'cancel'} width={27} height={27} className={'mono-fill'} ariaLabel={'Block'}/>
-                  Block
-                </button>
-                <button
-                  className="profile-menu-dropdown-button"
-                  id="profile-menu-report"
-                >
-                  <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
-                  Report
-                </button>
-              </div>
-            </DropdownContent>
-          </Dropdown>
-          {/* Alternate follow button (unused): */}
-          {/* <button id="profile-follow-button" onClick={followUser}>Follow</button> */}
-        </div>
-      }
-    </>
+        ))}
+      </div>
+    )}
+
+    {/* If the displayed user is the user's profile */}
+    {isUsersProfile ? (
+      // Show edit buttons
+      <ProfileEditPopup />
+    ) : (
+      <>
+      {/* Or, show follow and options buttons */}
+      <ThemeIcon id={'heart'} width={25} height={25} className={'empty-heart'} ariaLabel="follow"/>
+      {/* FIXME: When following is implemented, use this: */}
+      {/* <ThemeIcon id={'heart'} width={25} height={25} className={isFollowing ? 'filled-heart' : 'empty-heart'} /> */}
+      
+      {/* TODO: Implement Share, Block, and Report functionality */}
+      <Dropdown>
+        <DropdownButton>
+          <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
+        </DropdownButton>
+        <DropdownContent rightAlign={true}>
+          <div id="profile-menu-dropdown">
+            <button className="profile-menu-dropdown-button">
+              <ThemeIcon id={'share'} width={27} height={27} className={'mono-fill'} ariaLabel={'Share'}/>
+              Share
+            </button>
+            <button className="profile-menu-dropdown-button">
+              <ThemeIcon id={'cancel'} width={27} height={27} className={'mono-fill'} ariaLabel={'Block'}/>
+              Block
+            </button>
+            <button
+              className="profile-menu-dropdown-button"
+              id="profile-menu-report"
+            >
+              <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
+              Report
+            </button>
+          </div>
+        </DropdownContent>
+      </Dropdown>
+      </>
+    )}
+  </>
   );
 
   // --------------------
@@ -346,7 +349,7 @@ const NewProfile = () => {
         {/* New profile display using css grid, will contain all info except for projects */}
         <div id="profile-information-grid">
           <img
-            src={usePreloadedImage(`${API_BASE}/images/profiles/${displayedProfile.profile_image}`, profilePicture)}
+            src={usePreloadedImage(`${API_BASE}/images/profiles/${displayedProfile.profileImage}`, profilePicture)}
             id="profile-image"
             alt="profile image"
             onError={(e) => {
@@ -359,7 +362,7 @@ const NewProfile = () => {
 
           <div id="profile-info-name">
             <span id="profile-fullname">
-              {displayedProfile.first_name} {displayedProfile.last_name}
+              {displayedProfile.firstName} {displayedProfile.lastName}
             </span>
             @{displayedProfile.username}
           </div>
@@ -369,11 +372,11 @@ const NewProfile = () => {
           <div id="profile-info-extras">
             <div className="profile-extra">
               <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
-              {displayedProfile.job_title}
+              {displayedProfile.jobTitle}
             </div>
             <div className="profile-extra">
               <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
-              {displayedProfile.major} {displayedProfile.academic_year}
+              {displayedProfile.major} {displayedProfile.academicYear}
             </div>
             <div className="profile-extra">
               <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
@@ -396,9 +399,9 @@ const NewProfile = () => {
 
           <div id="profile-info-funfact">
             <span id="fun-fact-start">
-              {displayedProfile.fun_fact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
+              {displayedProfile.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
             </span>
-            {displayedProfile.fun_fact}
+            {displayedProfile.funFact}
           </div>
           <div id="profile-info-interest">
             <ProfileInterests
