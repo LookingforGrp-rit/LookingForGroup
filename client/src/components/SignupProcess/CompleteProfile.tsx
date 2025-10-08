@@ -7,7 +7,7 @@ const CompleteProfile = ({
   show,
   onNext,
   onBack,
-  avatarImage,
+  // avatarImage,
   userInfo,
   bio,
   pronouns,
@@ -46,9 +46,9 @@ const CompleteProfile = ({
   };
 
   // if the user chooses to use their avatar, set the profile image to the avatar
-  const handleUseAvatar = () => {
-    setProfileImage(avatarImage);
-  };
+  // const handleUseAvatar = () => {
+  //   setProfileImage(avatarImage);
+  // };
 
   // if the modal is not shown, return null
   if (!show) {
@@ -69,7 +69,7 @@ const CompleteProfile = ({
                 {/* Profile picture container */}
                 <div id="profile-pic" style={{ width: 160, height: 160 }}>
                   {/* image is profile image, if empty/null display avatar image */}
-                  <img src={profileImage ? profileImage : avatarImage} alt="profile-pic" />
+                  <img src={profileImage ? profileImage : /*avatarImage*/ ''} alt="profile-pic" />
                   {/* <img src={profileImage} alt="profile-pic" /> */}
                 </div>
                 <div className="profile-pic-option">
@@ -85,7 +85,7 @@ const CompleteProfile = ({
                   <label htmlFor="upload-pfp">Upload Picture</label>
 
                   {/* button to use avatar as profile picture */}
-                  <button onClick={handleUseAvatar}>Use Avatar</button>
+                  {/* <button onClick={handleUseAvatar}>Use Avatar</button> */}
                 </div>
               </div>
 

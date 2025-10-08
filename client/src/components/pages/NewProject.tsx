@@ -4,14 +4,14 @@ import '../Styles/discoverMeet.css';
 import '../Styles/emailConfirmation.css';
 import '../Styles/general.css';
 import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
+// import '../Styles/messages.css';
+// import '../Styles/notification.css';
 import '../Styles/profile.css';
 import '../Styles/projects.css';
 import '../Styles/settings.css';
 import '../Styles/pages.css';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Header } from '../Header';
 import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
@@ -27,9 +27,9 @@ import * as paths from '../../constants/routes';
 import Project from './Project';
 import { ThemeIcon } from '../ThemeIcon';
 import { sendPost, sendDelete } from '../../functions/fetch';
-import { getByID } from '../../api/projects';
-import { getAccountInformation } from '../../api/users';
-import usePreloadedImage from '../../functions/imageLoad';
+import { getByID, deleteProject, deleteMember } from '../../api/projects';
+import { getAccountInformation, deleteProjectFollowing, addProjectFollowing } from '../../api/users';
+import { leaveProject } from '../projectPageComponents/ProjectPageHelper';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -107,24 +107,65 @@ const NewProject = () => {
 
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
-  const projectID = urlParams.get('projectID');
+  const projectID: number = Number(urlParams.get('projectID'));
 
   //state variable used to check whether or not data was successfully obtained from database
   const [failCheck, setFailCheck] = useState(false);
 
   // State variable used to determine permissions level, and if user should have edit access
-  const [userPerms, setUserPerms] = useState(-1);
+  // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState(null);
 
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
 
+  // API FUNCTIONS (/PROJECTS/)
+
+  const fetchprojectByID = async (id: number) => {
+    try {
+      const response = await getByID(id);
+      return response.data?.[0] ?? null;
+    } catch (err) {
+      console.error(err);
+      return null;
+    }
+  };
+
+  const removeMember = async(userId: number) => {
+    try {
+      await deleteMember(projectID, userId);
+      location.reload();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  // FETCHING PROJECTS DATA
+
+  useEffect(() => {
+    const init = async () => {
+      if (!projectID) {
+        setFailCheck(true);
+        return;
+      }
+      const project = await getByID(projectID);
+      if (!project) {
+        setFailCheck(true);
+        return;
+      }
+    };
+    init();
+  }, [projectID]);
+
   //Function used to get project data
   const getProjectData = async () => {
-    const url = `/api/projects/${projectID}`;
-
     try {
+      if (!projectID) {
+        setFailCheck(true);
+        return;
+      }
+
       const projectData = await getByID(projectID);
 
       if (projectData.data[0] === undefined) {
@@ -133,6 +174,7 @@ const NewProject = () => {
       }
 
       // Get user data and check if user is part of the project
+      // Auth: replaced with shibboleth
       const authRes = await fetch(`/api/auth`);
       const authData = await authRes.json();
 
@@ -142,14 +184,14 @@ const NewProject = () => {
         console.log('user')
         console.log(userData.data);
         setUser(userData.data[0]);
-        const projectMembers = projectData.data[0].members;
+        // const projectMembers = projectData.data[0].members;
 
-        for (let i = 0; i < projectMembers.length; i++) {
-          if (projectMembers[i].user_id === authData.data) {
-            setUserPerms(projectMembers[i].permissions);
-            break;
-          }
-        }
+        // for (let i = 0; i < projectMembers.length; i++) {
+        //   if (projectMembers[i].user_id === authData.data) {
+        //     setUserPerms(projectMembers[i].permissions);
+        //     break;
+        //   }
+        // }
 
         // // Get all projects user is following to see if they follow this one
         // const followRes = await fetch(`/api/users/${authData.data}/followings/projects`);
@@ -216,18 +258,15 @@ const NewProject = () => {
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
-  const buttonContent = (userPerms > 0) ? (
-    <>
-      {
-        <>
-          <ProjectCreatorEditor newProject={false} permissions={userPerms} user={user} />
-        </>
-      }
-    </>
-  ) : (
-    <>
-      {
-        <>
+  // const buttonContent = (userPerms > 0) ? (
+  //   <>
+  //     {
+  //       <>
+  //         <ProjectCreatorEditor newProject={false} permissions={userPerms} user={user} />
+  //       </>
+  //     }
+  //   </>
+  // ) : (
           {(user && user.userId !== 0) ? (
             <>
               { /* Heart icon, with number indicating follows */}
@@ -238,19 +277,20 @@ const NewProject = () => {
                 <button
                   className={`follow-icon ${isFollowing ? 'following' : ''}`}
                   onClick={() => {
-                    let url = `/api/users/${user.userId}/followings/projects`;
-
                     if (!isFollowing) {
-                      sendPost(url, { projectId: projectID }, () => {
-                        setFollowing(true);
-                        setFollowCount(followCount + 1);
-                      });
+                      addProjectFollowing(user.userId, projectID).then(res => {
+                        if (res.status === 200) {
+                          setFollowing(true);
+                          setFollowCount(followCount + 1);
+                        }
+                      })
                     } else {
-                      url += `/${projectID}`;
-                      sendDelete(url, () => {
-                        setFollowing(false);
-                        setFollowCount(followCount - 1);
-                      });
+                      deleteProjectFollowing(user.userId, projectID).then(res => {
+                        if (res.status === 200) {
+                          setFollowing(false);
+                          setFollowCount(followCount - 1);
+                        }
+                      })
                     }
                   }}
                 >
@@ -274,7 +314,7 @@ const NewProject = () => {
                       Share
                     </button>
                     { /* Only be able to leave if you're a member of the project */}
-                    {userPerms === 0 ? (
+                    {/* {userPerms === 0 ? ( */}
                       <Popup>
                         <PopupButton
                           className='project-info-dropdown-option'
@@ -295,23 +335,16 @@ const NewProject = () => {
                             <div className='confirm-deny-btns'>
                               <PopupButton
                                 className='confirm-btn'
-                                callback={async () => {
-                                  const url = `/api/projects/${projectID}/members/${user.userId}`;
-
-                                  // For now, just reload the page. Ideally, there'd be something more
-                                  sendDelete(url, () => {
-                                    location.reload();
-                                  });
-                                }}
+                                callback={leaveProject}
                               >Confirm</PopupButton>
                               <PopupButton className='deny-btn'>Cancel</PopupButton>
                             </div>
                           </div>
                         </PopupContent>
                       </Popup>
-                    ) : (
+                    {/* ) : (
                       <></>
-                    )}
+                    )} */}
                     <button className="project-info-dropdown-option" id="project-info-report">
                       <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
                       Report
@@ -323,10 +356,6 @@ const NewProject = () => {
           ) : (
             <></>
           )}
-        </>
-      }
-    </>
-  );
 
   //Lists of users who have worked on this project
   //Members - people who actively work on the project

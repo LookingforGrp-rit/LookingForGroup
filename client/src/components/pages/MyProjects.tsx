@@ -20,7 +20,7 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 import { User } from '../Sidebar'; // For use with project creation button
 
 //import api utils
-import { getCurrentUsername } from '../../api/users.ts'
+import { getCurrentUsername, getVisibleProjects } from '../../api/users.ts'
 
 const MyProjects = () => {
 
@@ -62,16 +62,13 @@ const MyProjects = () => {
     try {
       const res = await getCurrentUsername();
 
-
       // User is logged in, pull their data
-      if (res.status === 200 && res.data?.username && res.data.user_id) {
+      if (res.status === 200 && res.data?.username && res.data.userId) {
         setLoggedIn(res.data.userId);
-        const projectsURL = `/api/users/${res.data.userId}/projects`;
-        const projectsRes = await fetch(projectsURL);
-        const data = await projectsRes.json();
+        const projectsRes = await getVisibleProjects(res.data.userId);
 
-        if ((data.status === 200) && (data.data[0] !== undefined)) {
-          setProjectsList(data.data);
+        if ((projectsRes.status === 200) && (projectsRes.data !== undefined)) {
+          setProjectsList(projectsRes.data);
         }
       } else {
         //guest

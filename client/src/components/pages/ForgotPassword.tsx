@@ -40,12 +40,12 @@ const ForgotPassword: React.FC = () => {
         setError('Sending email...');
 
         // All checks passed, issue a password change request
-  const response = await sendPost('/api/resets/password', { email: emailInput }) as unknown as { error?: string; message?: string };
-if (response && response.error) {
-  setError(response.error);
-} else {
-  setError('Email sent');
-}
+        const response = await sendPost('/api/resets/password', { email: emailInput }) as unknown as { error?: string; message?: string };
+        if (response && response.error) {
+          setError(response.error);
+        } else {
+          setError('Email sent');
+        }
 
         // Navigate back to LOGIN
         navigate(paths.routes.LOGIN);

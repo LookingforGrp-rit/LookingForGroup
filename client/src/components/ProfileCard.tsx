@@ -9,6 +9,8 @@ import followPicture from '../images/heart.png';
 import { projects } from '../constants/fakeData'; // FIXME: use data in db
 import usePreloadedImage from '../functions/imageLoad';
 
+import { MeDetail } from '@looking-for-group/shared';
+
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
 
@@ -37,43 +39,34 @@ This component is not necessarily the final version and doesn't match the visual
 
 */
 
-interface Skill {
-  skill: string;
+interface ProfileCardProps {
+  profile: MeDetail;
 }
 
-interface ProfileData {
-  _id: string;
-  name: string;
-  pronouns: string[];
-  bio: string;
-  profile_image?: string;
-  skills: Skill[];
-}
-
-export const ProfileCard = ({ profile }: { profile: ProfileData }) => {
+export const ProfileCard = ({ profile }: ProfileCardProps ) => {
   // Updates the url to point toward the profile being clicked
   const navigate = useNavigate();
-  const pathQuery = `?profID=${profile._id}`;
+  const pathQuery = `?userID=${profile.userId}`;
   return (
     <div className="discover-card">
       <img
-        src={usePreloadedImage(`${API_BASE}/images/profiles/${profile.profile_image}`, profilePicture)}
+        src={usePreloadedImage(`${API_BASE}/images/profiles/${profile.profileImage}`, profilePicture)}
         alt={'profile image'}
       />
       <div id="discover-card-body">
         <span>
           {/* When the title is clicked it navigates to the profile page */}
           <h2 id="discover-card-name" onClick={() => navigate(paths.routes.PROFILE + pathQuery)}>
-            {profile.name}
+            {profile.firstName + ' ' + profile.lastName}
           </h2>
           {/* The pronouns are pulled from an array in fakeData.ts, and are mapped/joined together with / */}
-          <p id="discover-card-pronouns">{profile.pronouns.map((p) => `${p}`).join('/')}</p>
+          <p id="discover-card-pronouns">{profile.pronouns}</p>
         </span>
         <p id="discover-card-description">{profile.bio}</p>
         <div id="discover-card-tag-wrapper">
-          <Tags>{profile.skills[0].skill}</Tags>
-          <Tags>{profile.skills[1].skill}</Tags>
-          <Tags>{profile.skills[2].skill}</Tags>
+          {profile.skills?.slice(0, 3).map((s) => (
+            <Tags key={s.skillId}>{s.label}</Tags>
+          ))}
         </div>
       </div>
     </div>

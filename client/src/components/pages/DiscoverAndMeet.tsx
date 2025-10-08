@@ -4,8 +4,8 @@ import '../Styles/discoverMeet.css';
 import '../Styles/emailConfirmation.css';
 import '../Styles/general.css';
 import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
+// import '../Styles/messages.css';
+// import '../Styles/notification.css';
 import '../Styles/profile.css';
 import '../Styles/projects.css';
 import '../Styles/settings.css';
@@ -22,6 +22,7 @@ import ToTopButton from '../ToTopButton';
 import { devSkills, desSkills } from '../../constants/tags';
 import { getProjects } from '../../api/projects';
 import { getUsers } from '../../api/users';
+import { Tag, Skill } from '@looking-for-group/shared';
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'
@@ -35,17 +36,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
   // Interfaces
   // --------------------
-  interface Tag {
-    tag: string;
-    color: string;
-    id: number;
-  }
-
-  interface Skill {
-    id: number;
-    name: string;
-  }
-
   interface ProjectType {
     project_type: string;
   }
@@ -177,13 +167,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     await getAuth();
 
     try {
-      let response;
-      
-      if (category == 'projects'){response = await getProjects();}
-      else {response = await getUsers();}
+      const response = (category == 'projects') ? await getProjects() : await getUsers();
 
       const data = await response;
-      console.log(data.data);
+      console.log('data.data', data.data);
 
       // Don't assign if there's no array returned
       console.log(data.data == undefined);

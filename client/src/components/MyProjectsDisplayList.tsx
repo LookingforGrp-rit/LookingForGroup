@@ -1,11 +1,11 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
-import { sendDelete } from '../functions/fetch';
+import { getByID,  deleteProject, deleteMember} from '../api/projects';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -16,86 +16,67 @@ const MyProjectsDisplayList = ({ projectData }) => {
 
   const { projId, userId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
 
-  const [status, setStatus] = useState();
+  const [status, setStatus] = useState<string>();
   const [optionsShown, setOptionsShown] = useState(false);
 
   // State variable for displaying output of API request, whether success or failure
   const [showResult, setShowResult] = useState(false);
-  const [requestType, setRequestType] = useState('delete');
+  const [requestType, setRequestType] = useState<'delete' | 'leave'>('delete');
   const [resultObj, setResultObj] = useState({ status: 400, error: 'Not initialized' });
 
-  const getStatus = async () => {
-    const url = `/api/projects/${projectData.projectId}`;
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setStatus(rawData.data[0].status === undefined ? 'No data' : rawData.data[0].status);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  if (status === undefined) {
-    getStatus();
-  }
-
-  const deleteProject = async () => {
-    const url = `/api/projects/${projectData.projectId}`;
-    try {
-      // send a DELETE request to the API
-      const response = await fetch(url, {
-        method: 'DELETE',
-      });
-
-      // check if the delete request was successful
-      if (response.ok) {
-        console.log('Project deleted successfully');
-      } else {
-        console.log('Failed to delete project');
-      }
-    } catch (error) {
-      console.error('Error deleting project:', error);
-    }
-  };
-
-  let optionsClass = 'list-card-options-list';
-  if (optionsShown) {
-    optionsClass += ' show';
-  }
-
-  const toggleOptions = () => {
-    if (optionsShown) {
-      setOptionsShown(false);
+  // Fetches project status
+  const fetchStatus = async () => {
+    const response = await getByID(projectData.projectId);
+    if(response.status === 200 && response.data) {
+      setStatus(response.data.status || 'No data');
     } else {
-      setOptionsShown(true);
+      setStatus('Error loading status');
     }
   };
 
-  const createDate = (theDate: string) => {
-    const dataList = theDate.split('T');
-    const dateParts = dataList[0].split('-');
-    return `${dateParts[2]}/${dateParts[1]}/${dateParts[0]}`;
-  };
+  useEffect(() => {
+    fetchStatus();
+  }, [projectData.projectId]);
+
+  const toggleOptions = () => setOptionsShown(!optionsShown);
 
   //Constructs url linking to relevant project page
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
 
+  const handleLeaveProject = async () => {
+    const response = await deleteMember(projId, userId);
+    setRequestType('leave');
+    setResultObj(response);
+    setShowResult(true);
+  };
+
+  const handleDeleteProject = async () => {
+    const response = await deleteProject(projId);
+    setRequestType('delete');
+    setResultObj(response);
+    setShowResult(true);
+  };
+
+  const formatDate = (dateStr: string) => {
+    if (!dateStr) return 'No data';
+    const [date] = dateStr.split('T');
+    const [year, month, day] = date.split('-');
+    return `${day}/${month}/${year}`;
+  };
+
   return (
     <div className="my-project-list-card">
+      {/* Thumbnail and Title*/}
       <div className="list-card-section1">
-        {/* Thumbnail */}
         <img
           className="list-card-image"
-          src={(projectData.thumbnail)
+          src={projectData.thumbnail
             ? `${API_BASE}/images/thumbnails/${projectData.thumbnail}`
             : `/assets/project_temp-DoyePTay.png`
           }
           alt={`${projectData.title} Thumbnail`}
           onClick={() => navigate(projectURL)}
         ></img>
-
-        {/* Title */}
         <div
           className="list-card-title"
           onClick={() => navigate(projectURL)}
@@ -106,19 +87,13 @@ const MyProjectsDisplayList = ({ projectData }) => {
       <div className="list-card-status">{status}</div>
 
       {/* Data Created */}
-      <div className="list-card-date">
-        {projectData.createdAt === null ||
-          projectData.createdAt === undefined ||
-          projectData.createdAt === ''
-          ? 'No data'
-          : createDate(projectData.createdAt)}
-      </div>
+      <div className="list-card-date">{formatDate(projectData.createdAt)}</div>
 
       {/* Options */}
       <Dropdown>
         <DropdownButton buttonId="list-card-options-button">•••</DropdownButton>
         <DropdownContent rightAlign={true}>
-          <div className="list-card-options-list">
+          <div className={`list-card-options-list ${optionsShown ? 'show' : ''}`}>
             <Popup>
               <PopupButton className='card-leave-button'>
                 <i
@@ -135,21 +110,9 @@ const MyProjectsDisplayList = ({ projectData }) => {
                     to rejoin unless you're re-added by a project member.
                   </p>
                   <div className='confirm-deny-btns'>
-                    <PopupButton
-                      className='confirm-btn'
-                      callback={async () => {
-                        // Attempt to remove user from project.
-                        // Display PagePopup.tsx on success or failure
-                        // And display error message inside said popup
-                        const url = `/api/projects/${projId}/members/${userId}`;
-
-                        sendDelete(url, (result) => {
-                          setRequestType('leave');
-                          setResultObj(result);
-                          setShowResult(true);
-                        })
-                      }}
-                    >Confirm</PopupButton>
+                    <PopupButton className='confirm-btn' callback={handleLeaveProject}>
+                      Confirm
+                    </PopupButton>
                     <PopupButton className='deny-btn'>Cancel</PopupButton>
                   </div>
                 </div>
@@ -166,26 +129,14 @@ const MyProjectsDisplayList = ({ projectData }) => {
                 </PopupButton>
                 <PopupContent>
                   <div className='small-popup'>
-                    <h3>Leave Project</h3>
+                    <h3>Delete Project</h3>
                     <p className='confirm-msg'>
                       Are you sure you want to delete this project? This action cannot be undone.
                     </p>
                     <div className='confirm-deny-btns'>
-                      <PopupButton
-                        className='confirm-btn'
-                        callback={async () => {
-                          // Attempt to remove user from project.
-                          // Display PagePopup.tsx on success or failure
-                          // And display error message inside said popup
-                          const url = `/api/projects/${projId}`;
-
-                          sendDelete(url, (result) => {
-                            setRequestType('delete');
-                            setResultObj(result);
-                            setShowResult(true);
-                          })
-                        }}
-                      >Confirm</PopupButton>
+                      <PopupButton className='confirm-btn' callback={handleDeleteProject}>
+                        Confirm
+                      </PopupButton>
                       <PopupButton className='deny-btn'>Cancel</PopupButton>
                     </div>
                   </div>
@@ -206,10 +157,10 @@ const MyProjectsDisplayList = ({ projectData }) => {
         zIndex={3}
         show={showResult}
         setShow={setShowResult}
-        onClose={() => reloadProjects()}
+        onClose={reloadProjects}
       >
         <div className='small-popup'>
-          {(resultObj.status === 200) ? (
+          {resultObj.status === 200 ? (
             <p>
               <span className='success-msg'>Success:</span>
               &nbsp;

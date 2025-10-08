@@ -1,108 +1,50 @@
 // --- Imports ---
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { SearchBar } from "../../SearchBar";
+import { getProjectTypes, getTags, getSkills } from "../../../api/users";
+import { ProjectDetail, Tag as SharedTag, ProjectType as SharedProjectType, TagType } from "@looking-for-group/shared";
 import { PopupButton } from "../../Popup";
 
-
-// --- Interfaces ---
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number}[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string}[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string}[];
-  thumbnail: string;
-  title: string;
-  userId?: number;
-}
-
-interface Tag {
-  tagId: number;
-  label: string;
-  type: string;
-}
-
-interface ProjectType {
-  typeId: number;
-  label: string;
-}
-
-// --- Variables ---
-// Default project value
-const defaultProject: ProjectData = {
-  audience: '',
-  description: '',
-  hook: '',
-  images: [],
-  jobs: [],
-  members: [],
-  projectId: -1,
-  projectTypes: [],
-  purpose: '',
-  socials: [],
-  status: '',
-  tags: [],
-  thumbnail: '',
-  title: '',
+// --- Constant ---
+const TAG_COLORS: Record<TagType | "Project Type", string> = {
+  "Genre": "green",
+  "Developer Skill": "yellow",
+  "Designer Skill": "red",
+  "Soft Skill": "purple",
+  "Project Type": "blue",
 };
 
-// --- Methods ---
-// Get appropriate tag color for tag
-const getTagColor = (type: string) => {
-  // Genre
-  if (type === 'Genre') {
-    return 'green';
-  }
+const TAG_TYPES = {
+  DEV: "Developer Skill" as TagType,
+  DESIGNER: "Designer Skill" as TagType,
+  SOFT: "Soft Skill" as TagType,
+  GENRE: "Genre" as TagType,
+  PROJECT: "Project Type" as "Project Type",
+};
 
-  // Developer Skills
-  if (type === 'Developer Skill') {
-    return 'yellow';
-  }
-
-  // Designer Skills
-  if (type === 'Designer Skill') {
-    return 'red';
-  }
-
-  // Soft Skills
-  if (type === 'Soft Skill') {
-    return 'purple';
-  }
-
-  // Project Type
-  return 'blue';
-}
-
+// --- Props ---
 type TagsTabProps = {
-  projectData?: ProjectData;
-  setProjectData?: (data: ProjectData) => void;
+  projectData?: ProjectDetail;
+  setProjectData?: (data: ProjectDetail) => void;
   saveProject?: () => void;
   failCheck: boolean;
 }
 
 // --- Component ---
-export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProject, failCheck }: TagsTabProps) => {
+export const TagsTab = ({ 
+  projectData = {} as ProjectDetail, 
+  setProjectData = () => {}, 
+  saveProject = () => {}, 
+  failCheck,
+}: TagsTabProps) => {
   //  --- Hooks ---
   // tracking project modifications
-  const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
+  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(projectData);
 
   // Complete list of...
-  const [allProjectTypes, setAllProjectTypes] = useState<ProjectType[]>([]);
-  const [allTags, setAllTags] = useState<Tag[]>([]);
-  const [allSkills, setAllSkills] = useState<Tag[]>([]);
+  const [allProjectTypes, setAllProjectTypes] = useState<SharedProjectType[]>([]);
+  const [allTags, setAllTags] = useState<SharedTag[]>([]);
+  const [allSkills, setAllSkills] = useState<SharedTag[]>([]);
 
   // sets error when adding a link to the project
   // const [error, setError] = useState('');
@@ -111,7 +53,7 @@ export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProj
   const [currentTagsTab, setCurrentTagsTab] = useState(0);
 
   //filtered results from tag search bar
-  const [searchedTags, setSearchedTags] = useState<(Tag | ProjectType)[]>([]);
+  const [searchedTags, setSearchedTags] = useState<(SharedTag | SharedProjectType)[]>([]);
 
   // Update data when data is changed
   useEffect(() => {
@@ -125,71 +67,41 @@ export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProj
 
   // Get full lists of project types, tags, and skills
   useEffect(() => {
-    const getProjectTypes = async () => {
-      const url = `/api/datasets/project-types`;
-
-      try {
-        const response = await fetch(url);
-
-        const projectTypes = await response.json();
-        const projectTypeData = projectTypes.data;
-
-        if (projectTypeData === undefined) {
+    const fetchProjectTypes = async () => {
+        const response = await getProjectTypes();
+        if (!response.data) {
           return;
         }
-        setAllProjectTypes(projectTypeData);
-      } catch (error) {
-        console.error(error);
-      }
+        setAllProjectTypes(response.data);
     };
     if (allProjectTypes.length === 0) {
-      getProjectTypes();
+      fetchProjectTypes();
     }
   }, [allProjectTypes]);
+
   useEffect(() => {
-    const getTags = async () => {
-      const url = `/api/datasets/tags`;
-
-      try {
-        const response = await fetch(url);
-
-        const tags = await response.json();
-        const tagsData = tags.data;
-
-        if (tagsData === undefined) {
+    const getAllTags = async () => {
+        const response = await getTags();
+        if (response.data === undefined) {
           return;
         }
-        setAllTags(tagsData);
-
-      } catch (error) {
-        console.error(error);
-      }
+        setAllTags(response.data);
     };
     if (allTags.length === 0) {
-      getTags();
+      getAllTags();
     }
   }, [allTags]);
+
   useEffect(() => {
-    const getSkills = async () => {
-      const url = `/api/datasets/skills`;
-
-      try {
-        const response = await fetch(url);
-
-        const skills = await response.json();
-        const skillData = skills.data;
-
-        if (skillData === undefined) {
+    const getSkill = async () => {
+        const response = await getSkills();
+        if (response.data === undefined) {
           return;
         }
-        setAllSkills(skillData);
-
-      } catch (error) {
-        console.error(error);
+        setAllSkills(response.data);
       }
-    };
     if (allSkills.length === 0) {
-      getSkills();
+      getSkill();
     }
   }, [allSkills]);
 
@@ -199,13 +111,13 @@ export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProj
       case 0:
         return [{ data: allProjectTypes }];
       case 1:
-        return [{ data: allTags.filter((t) => t.type === 'Genre') }];
+        return [{ data: allTags.filter(t => t.type === TAG_TYPES.GENRE) }];
       case 2:
-        return [{ data: allSkills.filter((s) => s.type === 'Developer Skill') }];
+        return [{ data: allSkills.filter(s => s.type === TAG_TYPES.DEV) }];
       case 3:
-        return [{ data: allSkills.filter((s) => s.type === 'Designer Skill') }];
+        return [{ data: allSkills.filter(s => s.type ===  TAG_TYPES.DESIGNER) }];
       case 4:
-        return [{ data: allSkills.filter((s) => s.type === 'Soft Skill') }];
+        return [{ data: allSkills.filter(s => s.type === TAG_TYPES.SOFT) }];
       default:
         return [{ data: [] }];
     }
@@ -217,17 +129,19 @@ export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProj
   setSearchedTags(defaultTags);
   }, [currentTagsTab, currentDataSet])
 
+  const getTagColor = (type: TagType | "Project Type") => TAG_COLORS[type];
+
   // Find if a tag is present on the project
   const isTagSelected = useCallback((id: number, label: string, tab: number = -1) => {
     // if no tab, iterate through all categories
     if (tab === -1) {
       // search project types
-      if (modifiedProject.projectTypes.some(t => t.id === id && t.projectType === label)) {
+      if (modifiedProject.projectTypes.some(t => t.typeId === id && t.label === label)) {
         return 'selected';
       }
 
       // search tags
-      if (modifiedProject.tags.some(t => t.id === id && t.tag === label)) {
+      if (modifiedProject.tags.some(t => t.tagId === id && t.label === label)) {
         return 'selected';
       }
 
@@ -236,28 +150,28 @@ export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProj
 
     // Project Type
     if (tab === 0) {
-      return modifiedProject.projectTypes.some(t => t.id === id && t.projectType === label) ?
+      return modifiedProject.projectTypes.some(t => t.typeId === id && t.label === label) ?
         'selected' : 'unselected';
     }
     // Genre
     if (tab === 1) {
-      return modifiedProject.tags.some(t => t.id === id && t.tag === label) ?
+      return modifiedProject.tags.some(t => t.typeId === id && t.label === label) ?
         'selected' : 'unselected';
     }
     //TODO: complete other skills
     // Developer Skills
     if (tab === 2) {
-      return modifiedProject.tags.some(t => t.id === id && t.tag === label) ?
+      return modifiedProject.tags.some(t => t.typeId === id && t.label === label) ?
         'selected' : 'unselected';
     }
     // Designer Skills
     if (tab === 3) {
-      return modifiedProject.tags.some(t => t.id === id && t.tag === label) ?
+      return modifiedProject.tags.some(t => t.typeId === id && t.label === label) ?
         'selected' : 'unselected';
     }
     // Soft Skills
     if (tab === 4) {
-      return modifiedProject.tags.some(t => t.id === id && t.tag === label) ?
+      return modifiedProject.tags.some(t => t.typeId === id && t.label === label) ?
         'selected' : 'unselected';
     }
     return 'unselected';
@@ -268,69 +182,67 @@ export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProj
     // trim whitespace to get tag name
     // take closest button to allow click on icon
     const button = e.target.closest('button');
-    const tag: string = button.innerText.trim();
-    
-    // if tag is unselected
-    if (button.className.includes('unselected')) {
-      // get tag id and type according to type of tag
-      let id: number = -1;
-      let type: string = '';
+    const tagLabel = button.innerText.trim();
+    const isSelected = button.className.includes("selected");
 
-      if (button.className.includes('blue')) { // project type
-        id = allProjectTypes.find((t) => t.label === tag)?.typeId ?? -1;
-        type = 'Project Type';
-      }
-      else if (button.className.includes('green')) { // genre
-        id = allTags.find((t) => t.label === tag)?.tagId ?? -1;
-        type = 'Genre';
-      }
-      else if (button.className.includes('yellow')) { // developer skills
-        id = allSkills.find((s) => s.type === 'Developer Skill' && s.label === tag)?.tagId ?? -1;
-        type = 'Developer Skill';
-      }
-      else if (button.className.includes('red')) { // designer skills
-        id = allSkills.find((s) => s.type === 'Designer Skill' && s.label === tag)?.tagId ?? -1;
-        type = 'Designer Skill';
-      }
-      else if (button.className.includes('purple')) { // soft skills
-        id = allSkills.find((s) => s.type === 'Soft Skill' && s.label === tag)?.tagId ?? -1;
-        type = 'Soft Skill';
-      }
+    let id = -1;
+    let type: TagType | "Project Type" = TAG_TYPES.PROJECT;
 
-      // error check: no tag found
-      if (id === -1) {
-        return;
-      }
-      
-      // add tag to project
-      if (type === 'Project Type') {
-        setModifiedProject({ ...modifiedProject, projectTypes: [...modifiedProject.projectTypes, { id: id, projectType: tag }] });
-      } else {
-        setModifiedProject({ ...modifiedProject, tags: [...modifiedProject.tags, {
-          id: id,
-          position: modifiedProject.tags.length,// TODO: update this according to position
-          tag: tag,
-          type: type
-        }] });
-      }
+    if (button.className.includes('blue')) { // project type
+      const projectType = allProjectTypes.find(t => t.label === tagLabel);
+      if (!projectType) return;
+      id = allProjectTypes.find((t) => t.label === tagLabel)?.typeId ?? -1;
+      type = TAG_TYPES.PROJECT;
     }
-    // if tag is selected
-    else {
-      // remove tag from project
-      setModifiedProject({ ...modifiedProject,
-        projectTypes: modifiedProject.projectTypes.filter((t) => t.projectType !== tag),
-        tags: modifiedProject.tags.filter((t) => t.tag !== tag)
+    else if (button.className.includes('green')) { // genre
+      const tag = allTags.find(t => t.label === tagLabel);
+      if (!tag) return;
+      id = tag.tagId;
+      type = TAG_TYPES.GENRE;
+    }
+    else if (button.className.includes('yellow')) { // developer skills
+      const tag = allSkills.find(t => t.type === TAG_TYPES.DEV && t.label === tagLabel);
+      if (!tag) return;
+      id = tag.tagId;
+      type = TAG_TYPES.DEV;
+    }
+    else if (button.className.includes('red')) { // designer skills
+      const tag = allSkills.find(t => t.type === TAG_TYPES.DESIGNER && t.label === tagLabel);
+      if (!tag) return;
+      id = tag.tagId;
+      type = TAG_TYPES.DESIGNER;
+    }
+    else if (button.className.includes('purple')) { // soft skills
+      const tag = allSkills.find(t => t.type === TAG_TYPES.SOFT &&  t.label === tagLabel);
+      if (!tag) return;
+      id = tag.tagId;
+      type = TAG_TYPES.SOFT;
+    }
+
+    if (type === TAG_TYPES.PROJECT) {
+      setModifiedProject({
+        ...modifiedProject,
+        projectTypes: isSelected
+          ? modifiedProject.projectTypes.filter(t => t.label !== tagLabel)
+          : [...modifiedProject.projectTypes, { typeId: id, label: tagLabel }],
+      });
+    } else {
+      setModifiedProject({
+        ...modifiedProject,
+        tags: isSelected
+          ? modifiedProject.tags.filter(t => t.label !== tagLabel)
+          : [...modifiedProject.tags, { tagId: id, label: tagLabel, type }],
       });
     }
-  }, [allProjectTypes, allSkills, allTags, modifiedProject]);
+  }, [allProjectTypes, allTags, allSkills, modifiedProject]);
 
   // Create elements for selected tags in sidebar
   const loadProjectTags = useMemo(() => {
-    return modifiedProject.tags
+    return (modifiedProject.tags ?? [])
       .map((t) => (
-          <button key={t.tag} className={`tag-button tag-button-${getTagColor(t.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
+          <button key={t.tagId} className={`tag-button tag-button-${getTagColor(t.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
             <i className="fa fa-close"></i>
-            <p>{t.tag}</p>
+            <p>{t.label}</p>
           </button>
       ))
   }, [modifiedProject.tags, handleTagSelect]);
@@ -472,7 +384,7 @@ export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProj
   }, [searchedTags, currentTagsTab, allSkills, isTagSelected, handleTagSelect, allProjectTypes, allTags]);
 
   // Update shown tags according to search results
-  const handleSearch = useCallback((results: (Tag | ProjectType)[][]) => {
+  const handleSearch = useCallback((results: (SharedTag | SharedProjectType)[][]) => {
     // setSearchResults(results);
     if (results.length === 0 && currentDataSet.length !== 0) {
       // no results or current data set
@@ -488,12 +400,12 @@ export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProj
     <div id="project-editor-tags">
       <div id="project-editor-type-tags">
         <div className="project-editor-section-header">Project Type</div>
-        {modifiedProject.projectTypes.length === 0 ? <div className="error">*At least 1 type is required</div> : <></> }
+        {modifiedProject.projectTypes?.length === 0 ? <div className="error">*At least 1 type is required</div> : <></> }
         <div id="project-editor-type-tags-container">
-          {modifiedProject.projectTypes.map((t) => (
-            <button key={t.projectType} className={`tag-button tag-button-blue-selected`} onClick={(e) => handleTagSelect(e)}>
+          {(modifiedProject.projectTypes ?? []).map((t) => (
+            <button key={t.typeId} className={`tag-button tag-button-blue-selected`} onClick={(e) => handleTagSelect(e)}>
               <i className="fa fa-close"></i>
-              <p>{t.projectType}</p>
+              <p>{t.label}</p>
             </button>
           ))}
         </div>
@@ -505,7 +417,7 @@ export const TagsTab = ({ projectData = defaultProject, setProjectData, saveProj
           Drag and drop to reorder. The first 2 tags will be displayed on your project's
           discover card.
         </div>
-        {modifiedProject.tags.length === 0 ? <div className="error">*At least 1 tag is required</div> : <></> }
+        {modifiedProject.tags?.length === 0 ? <div className="error">*At least 1 tag is required</div> : <></> }
         <div id="project-editor-selected-tags-container">
           <hr id="selected-tag-divider" />
           {/* TODO: Separate top 2 tags from others with hr element */}

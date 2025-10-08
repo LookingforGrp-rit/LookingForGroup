@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
-import { sendPut, fetchUserID } from '../../../functions/fetch';
+import { sendPut } from '../../../functions/fetch';
 import { getByID } from '../../../api/projects';
+import { getCurrentUsername } from '../../../api/users';
 
 // let userProjects : [];
 
@@ -18,7 +19,7 @@ export const ProjectsTab = (props: {profile: {}}) => {
     useEffect(() => {
         // Load in userProfile and then the projects
         const setUpProjects = async () => {
-            const userID = await fetchUserID();
+            const userID = await getCurrentUsername();
             const data = await getByID(userID);
             setUserProjects(data.data);
             // userProjects = data.data;

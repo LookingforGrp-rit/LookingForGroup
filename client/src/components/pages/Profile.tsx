@@ -14,17 +14,19 @@ import '../Styles/settings.css';
 import '../Styles/pages.css';
 
 import { ProfileHeader } from '../Profile/ProfileHeader';
-import { ProfileInterests } from '../Profile/ProfileInterests';
+// import { ProfileInterests } from '../Profile/ProfileInterests';
 import { ProfileSkills } from '../Profile/ProfileSkills';
-import { ProfileEndorsements } from '../Profile/ProfileEndorsements';
+// import { ProfileEndorsements } from '../Profile/ProfileEndorsements';
 import { ProfileProjects } from '../Profile/ProfileProjects';
 import { useEffect, useState } from 'react';
 import ToTopButton from '../ToTopButton';
 import EditButton from '../Profile/ProfileEditButton';
-import { getUsers } from '../../api/users';
+import { getUsers, getUsersById } from '../../api/users';
 
 // Get user ID from API
+// NOTE: name used to match same api call as getCurrentUsername(). Not to be confused.
 const fetchUserID = async () => {
+  // Auth: replaced with shibboleth
   const response = await fetch('/api/auth');
   const {
     data: { userID },
@@ -34,11 +36,8 @@ const fetchUserID = async () => {
 
 // Get list of users on site from API
 const getProfiles = async () => {  
-  const response = await fetch('/api/users');
-  const {
-    data: { users },
-  } = await response.json();
-  return users;
+  const response = await getUsers();
+  return response.data?.users ?? [];
 };
 
 // Main Profile component
@@ -84,15 +83,9 @@ const Profile = (props) => {
 
   //Get user data from API
   const getUserData = async (userID: number) => {
-    const url = `http://localhost:8081/api/users/${userID}`;
     try {
-      const response = await fetch(url, {
-        method: 'GET',
-        headers: { 'Content-Type': 'application/json' },
-      });
-
-      const rawData = await response.json();
-      setUserData(rawData.data[0]);
+      const response = await getUsersById(userID.toString());
+      setUserData(response.data[0]);
     } catch (error) {
       console.log(error);
     }
@@ -115,14 +108,14 @@ const Profile = (props) => {
       </select>
       <div id="profile-page">
         <ProfileHeader user={user} />
-        <ProfileInterests user={user} />
+        {/* <ProfileInterests user={user} /> */}
         <div>
           <ProfileSkills user={user} />
-          {userData ? (
+          {/* {userData ? (
             <ProfileEndorsements user={userData} />
           ) : (
             <p>Loading endorsements...</p>
-          )}
+          )} */}
         </div>
         <ProfileProjects user={user} />
       </div>

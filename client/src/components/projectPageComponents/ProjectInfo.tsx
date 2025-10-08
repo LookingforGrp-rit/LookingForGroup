@@ -52,14 +52,14 @@ export const ProjectInfo = (props) => {
             >
               <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'...'}/>
             </button>
-            <div id="more-options-popup" className="hide">
+            {/* <div id="more-options-popup" className="hide">
               <button className="white-button" onClick={projectPageHelper.blockProject}>
                 Block
               </button>
               <button className="white-button" onClick={projectPageHelper.reportProject}>
                 Report
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

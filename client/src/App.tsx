@@ -3,8 +3,8 @@ import './components/Styles/credits.css';
 import './components/Styles/discoverMeet.css';
 import './components/Styles/emailConfirmation.css';
 import './components/Styles/loginSignup.css';
-import './components/Styles/messages.css';
-import './components/Styles/notification.css';
+// import './components/Styles/messages.css';
+// import './components/Styles/notification.css';
 import './components/Styles/profile.css';
 import './components/Styles/projects.css';
 import './components/Styles/settings.css';
@@ -17,19 +17,19 @@ import SignUp from './components/pages/Signup';
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
 import Home from './components/pages/Home';
-import Messages from './components/pages/Messages';
+// import Messages from './components/pages/Messages';
 import MyProjects from './components/pages/MyProjects';
 import Profile from './components/pages/Profile';
 import NewProfile from './components/pages/NewProfile';
 import Project from './components/pages/Project';
 import NewProject from './components/pages/NewProject';
-import ProjectPostPage from './components/pages/ProjectPostPage';
+// import ProjectPostPage from './components/pages/ProjectPostPage';
 import { Discover, Meet } from './components/pages/DiscoverAndMeet';
 import Settings from './components/pages/Settings';
 import NewSettings from './components/pages/NewSettings';
 import NotFound from './components/pages/NotFound';
 import SideBar from './components/Sidebar';
-import MessageHistory from './components/pages/MessageHistory';
+// import MessageHistory from './components/pages/MessageHistory';
 import CreateProject from './components/pages/CreateProject';
 import CreditsFooter from './components/CreditsFooter';
 import Credits from './components/pages/CreditsPage';
@@ -57,8 +57,8 @@ function App() {
             path={paths.routes.SIGNUP}
             element={
               <SignUp
-                avatarImage={avatarImage}
-                setAvatarImage={setAvatarImage}
+                // avatarImage={avatarImage}
+                // setAvatarImage={setAvatarImage}
                 profileImage={profileImage}
                 setProfileImage={setProfileImage}
               />
@@ -69,14 +69,14 @@ function App() {
 
           <Route path={paths.routes.HOME} element={<Discover />} />
           <Route path={paths.routes.MEET} element={<Meet />} />
-          <Route path={paths.routes.MESSAGES} element={<Messages />} />
+          {/* <Route path={paths.routes.MESSAGES} element={<Messages />} /> */}
           <Route path={paths.routes.MYPROJECTS} element={<MyProjects />} />
           <Route path={paths.routes.PROFILE} element={<NewProfile />} />
           <Route path={paths.routes.NEWPROFILE} element={<NewProfile />} />
           <Route path={paths.routes.PROJECT} element={<Project />} />
           <Route path={paths.routes.NEWPROJECT} element={<NewProject />} />
           <Route path={paths.routes.CREATEPROJECT} element={<CreateProject />} />
-          <Route path={paths.routes.PROJECTPOST} element={<ProjectPostPage />} />
+          {/* <Route path={paths.routes.PROJECTPOST} element={<ProjectPostPage />} /> */}
           {/* <Route
             path={paths.routes.SETTINGS}
             element={
@@ -90,7 +90,7 @@ function App() {
           /> */}
           <Route path={paths.routes.SETTINGS} element={<NewSettings />} />
           <Route path={paths.routes.NOTFOUND} element={<NotFound />} />
-          <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} />
+          {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
           <Route path={paths.routes.CREDITS} element={<Credits />} />
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
         </Routes>

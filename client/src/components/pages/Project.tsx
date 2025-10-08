@@ -4,8 +4,8 @@ import '../Styles/discoverMeet.css';
 import '../Styles/emailConfirmation.css';
 import '../Styles/general.css';
 import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
+// import '../Styles/messages.css';
+// import '../Styles/notification.css';
 import '../Styles/profile.css';
 import '../Styles/projects.css';
 import '../Styles/settings.css';
@@ -14,11 +14,10 @@ import '../Styles/pages.css';
 import { useState } from 'react';
 // import { ProjectInfo } from '../projectPageComponents/ProjectInfo';
 import { ProjectInfoMember } from '../projectPageComponents/ProjectInfoMember';
-import { ProjectPost } from '../projectPageComponents/ProjectPost';
 import { ProjectMember } from '../projectPageComponents/ProjectMember';
 import { ProjectMemberPopup } from '../projectPageComponents/ProjectMemberPopup';
 import { PagePopup, openClosePopup } from '../PagePopup';
-import { projects, posts, profiles } from '../../constants/fakeData'; // FIXME: use data in db
+import { projects, /*posts,*/ profiles } from '../../constants/fakeData'; // FIXME: use data in db
 
 //Styling changes needed:
 /*

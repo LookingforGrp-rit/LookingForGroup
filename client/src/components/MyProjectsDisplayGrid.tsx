@@ -1,11 +1,11 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
-import { sendDelete } from '../functions/fetch';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { PagePopup } from './PagePopup';
+import { getByID, deleteProject, deleteMember } from '../api/projects';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -13,48 +13,47 @@ const API_BASE = `http://localhost:8081`;
 const MyProjectsDisplayGrid = ({ projectData }) => {
   //Navigation hook
   const navigate = useNavigate();
-
   const { projId, userId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
 
-  const [status, setStatus] = useState();
+  const [status, setStatus] = useState<string>();
   const [optionsShown, setOptionsShown] = useState(false);
-
   // State variable for displaying output of API request, whether success or failure
   const [showResult, setShowResult] = useState(false);
-  const [requestType, setRequestType] = useState('delete');
+  const [requestType, setRequestType] = useState<'delete' | 'leave'>('delete');
   const [resultObj, setResultObj] = useState({ status: 400, error: 'Not initialized' });
 
-  const getStatus = async () => {
-    const url = `/api/projects/${projectData.projectId}`;
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setStatus(rawData.data[0].status === undefined ? 'No data' : rawData.data[0].status);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  if (status === undefined) {
-    getStatus();
-  }
-
-  let optionsClass = 'grid-card-options-list';
-  if (optionsShown) {
-    optionsClass += ' show';
-  }
-
-  const toggleOptions = () => {
-    if (optionsShown) {
-      setOptionsShown(false);
+  // Fetches the status of a project via projects.ts
+  const fetchStatus = async () => {
+    const response = await getByID(projectData.projectId);
+    if (response.status === 200 && response.data) {
+      setStatus(response.data.status || 'No data');
     } else {
-      setOptionsShown(true);
+      setStatus('Error loading status');
     }
   };
+
+  useEffect(() => {
+    fetchStatus();
+  }, [projectData.projectId]);
+
+  const toggleOptions = () => setOptionsShown(!optionsShown);
 
   //Constructs url linking to relevant project page
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
+
+  const handleLeaveProject = async() => {
+    const response = await deleteMember(projId, userId);
+    setRequestType('leave');
+    setResultObj(response);
+    setShowResult(true);
+  }
+
+  const handleDeleteProject = async() => {
+    const response = await deleteProject(projId);
+    setRequestType('delete');
+    setResultObj(response);
+    setShowResult(true);
+  };
 
   return (
     <div className="my-project-grid-card">
@@ -78,7 +77,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
       <Dropdown>
         <DropdownButton buttonId="grid-card-options-button">•••</DropdownButton>
         <DropdownContent rightAlign={true}>
-          <div className="grid-card-options-list">
+          <div className={`grid-card-options-list ${optionsShown ? 'show' : ''}`}>
             <Popup>
               <PopupButton className='card-leave-button'>
                 <i
@@ -97,19 +96,9 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
                   <div className='confirm-deny-btns'>
                     <PopupButton
                       className='confirm-btn'
-                      callback={async () => {
-                        // Attempt to remove user from project.
-                        // Display PagePopup.tsx on success or failure
-                        // And display error message inside said popup
-                        const url = `/api/projects/${projId}/members/${userId}`;
-
-                        sendDelete(url, (result) => {
-                          setRequestType('leave');
-                          setResultObj(result);
-                          setShowResult(true);
-                        })
-                      }}
-                    >Confirm</PopupButton>
+                      callback={handleLeaveProject}>
+                        Confirm
+                    </PopupButton>
                     <PopupButton className='deny-btn'>Cancel</PopupButton>
                   </div>
                 </div>
@@ -133,19 +122,9 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
                     <div className='confirm-deny-btns'>
                       <PopupButton
                         className='confirm-btn'
-                        callback={async () => {
-                          // Attempt to remove user from project.
-                          // Display PagePopup.tsx on success or failure
-                          // And display error message inside said popup
-                          const url = `/api/projects/${projId}`;
-
-                          sendDelete(url, (result) => {
-                            setRequestType('delete');
-                            setResultObj(result);
-                            setShowResult(true);
-                          })
-                        }}
-                      >Confirm</PopupButton>
+                        callback={handleDeleteProject}>
+                          Confirm
+                      </PopupButton>
                       <PopupButton className='deny-btn'>Cancel</PopupButton>
                     </div>
                   </div>
@@ -166,7 +145,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
         zIndex={3}
         show={showResult}
         setShow={setShowResult}
-        onClose={() => reloadProjects()}
+        onClose={reloadProjects}
       >
         <div className='small-popup'>
           {(resultObj.status === 200) ? (

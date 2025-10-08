@@ -1,10 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { PagePopup, openClosePopup } from '../PagePopup';
 import { getByID } from '../../api/projects';
-import usePreloadedImage from '../../functions/imageLoad';
-import profilePicture from '../../images/blue_frog.png';
+import { getJobTitles, getMajors, getSkills, getSocials as fetchSocials, editUser, updateProjectVisibility, getVisibleProjects as fetchProjects, 
+  updateProfilePicture, getVisibleProjects } from '../../api/users';
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
+import { MeDetail, UserSkill, MySocial, Role, Major, ProjectPreview, Social} from '@looking-for-group/shared';
 
+interface ProfileEditButtonProps {
+  user: MeDetail;
+}
+
+type EditProfileData = Partial<MeDetail>;
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -17,62 +23,56 @@ TO DO:
 
 
 // On click, this button should open the Profile Edit modal
-const EditButton = ({ userData }) => {
-  // console.log(userData);
+const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
+  // console.log(user);
 
   const [showPopup, setShowPopup] = useState(false);
 
   // "About"
-  const [rolesList, setRolesList] = useState();
-  const [majorsList, setMajorsList] = useState();
+  const [rolesList, setRolesList] = useState<Role[]>();
+  const [majorsList, setMajorsList] = useState<Major[]>();
 
-  const getJobTitles = async () => {
-    const url = '/api/datasets/job-titles';
-
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setRolesList(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
+  const getJobTitlesData = async () => {
+      const response = await getJobTitles();
+      if (response.data) {
+       setRolesList(response.data as Role[]);
+      }
   };
 
-  const getMajors = async () => {
-    const url = '/api/datasets/majors';
-
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setMajorsList(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
+  const getMajorsData = async () => {
+      const response = await getMajors();
+      if (response.data) {
+        setMajorsList(response.data as Major[]);
+      }
   };
 
-  if (rolesList === undefined) {
-    getJobTitles();
-  }
-  if (majorsList === undefined) {
-    getMajors();
-  }
+  useEffect(() => {
+    getJobTitlesData();
+    getMajorsData();
+  }, []);
 
-  // const [currentPFPLink, setCurrentPFPLink] = useState(require(`../../../../server/images/profiles/${userData.profile_image}`));
-  const [currentPFPLink, setCurrentPFPLink] = useState(
-    usePreloadedImage(`${API_BASE}/images/profiles/${userData.profileImage}`, profilePicture)
-  );
-  const [currentFirstName, setCurrentFirstName] = useState(userData.firstName);
-  const [currentLastName, setCurrentLastName] = useState(userData.lastName);
-  const [currentPronouns, setCurrentPronouns] = useState(userData.pronouns);
-  const [currentRole, setCurrentRole] = useState(userData.jobTitle);
-  const [currentMajor, setCurrentMajor] = useState(userData.major);
-  const [currentYear, setCurrentYear] = useState(userData.academicYear);
-  const [currentLocation, setCurrentLocation] = useState(userData.location);
-  const [currentQuote, setCurrentQuote] = useState(userData.headline);
-  const [currentFunFact, setCurrentFunFact] = useState(userData.funFact);
-  const [currentAbout, setCurrentAbout] = useState(userData.bio);
+  // const [currentPFPLink, setCurrentPFPLink] = useState(require(`../../../../server/images/profiles/${user.profile_image}`));
+  const [currentPFPLink, setCurrentPFPLink] = useState('');
+
+  useEffect(() => {
+    setCurrentPFPLink(`${API_BASE}/images/profiles/${user.profileImage}`);
+  }, [user.profileImage]);
+  
+  const [currentEditData, setCurrentEditData] = useState<EditProfileData>({
+    firstName: user.firstName ?? '',
+    lastName: user.lastName ?? '',
+    headline: user.headline ?? '',
+    pronouns: user.pronouns ?? '',
+    title: user.title ?? '',
+    majors: user.majors ?? [],
+    academicYear: user.academicYear ?? '',
+    location: user.location ?? '',
+    funFact: user.funFact ?? '',
+    bio: user.bio ?? '',
+    projects: user.projects ?? [],
+    skills: user.skills ?? [],
+    socials: user.socials ?? [],
+  });
 
   const getOrdinal = (index: number) => {
     if (index === 1) {
@@ -99,10 +99,10 @@ const EditButton = ({ userData }) => {
   };
 
   /*if (currentPFPLink === undefined) {
-        getImage(userData.profile_image);
+        getImage(user.profile_image);
     }*/
 
-  const uploadNewImage = async (theInput) => {
+  const uploadNewImage = async (theInput: HTMLInputElement) => {
     const form = document.querySelector('.edit-region-button-wrapper.photo');
     if (
       form !== undefined &&
@@ -111,18 +111,14 @@ const EditButton = ({ userData }) => {
       theInput.files !== null &&
       theInput.files.length > 0
     ) {
-      const fileForm = new FormData(form);
+      const file = theInput.files[0];
 
-      const url = `/api/users/${userData.userId}/profile-picture`;
       try {
-        const response = await fetch(url, {
-          method: 'PUT',
-          body: fileForm,
-        });
+        const response = await updateProfilePicture(user.userId, file);
 
         console.log(`User data: Response status: ${response.status}`);
 
-        const rawData = await response.json();
+        const rawData = response;
         console.log(rawData);
         getImage(rawData.data[0].profileImage);
 
@@ -178,9 +174,9 @@ const EditButton = ({ userData }) => {
             <input
               type="text"
               className="edit-region-input first-name"
-              value={currentFirstName}
+              value={currentEditData.firstName ?? ''}
               onChange={(e) => {
-                setCurrentFirstName(e.target.value);
+                setCurrentEditData({ ...currentEditData, firstName: e.target.value });
               }}
             ></input>
           </div>
@@ -191,9 +187,9 @@ const EditButton = ({ userData }) => {
             <input
               type="text"
               className="edit-region-input last-name"
-              value={currentLastName}
+              value={currentEditData.lastName ?? ''}
               onChange={(e) => {
-                setCurrentLastName(e.target.value);
+                setCurrentEditData({ ...currentEditData, lastName: e.target.value });
               }}
             ></input>
           </div>
@@ -204,9 +200,9 @@ const EditButton = ({ userData }) => {
             <input
               type="text"
               className="edit-region-input pronouns"
-              value={currentPronouns}
+              value={currentEditData.pronouns ?? ''}
               onChange={(e) => {
-                setCurrentPronouns(e.target.value);
+                setCurrentEditData({ ...currentEditData, pronouns: e.target.value });
               }}
             ></input>
           </div>
@@ -218,9 +214,9 @@ const EditButton = ({ userData }) => {
             <div className="edit-region-header role">Role*</div>
             <select
               className="edit-region-input role"
-              value={currentRole}
+              value={currentEditData.title ?? ''}
               onChange={(e) => {
-                setCurrentRole(e.target.value);
+                setCurrentEditData({ ...currentEditData, title: e.target.value });
               }}
             >
               <option value="none" disabled>
@@ -239,9 +235,9 @@ const EditButton = ({ userData }) => {
             <div className="edit-region-header major">Major*</div>
             <select
               className="edit-region-input major"
-              value={currentMajor}
+              value={currentEditData.majors ?? ''}
               onChange={(e) => {
-                setCurrentMajor(e.target.value);
+                setCurrentEditData({ ...currentEditData, majors: [e.target.value] });
               }}
             >
               <option value="none" disabled>
@@ -260,9 +256,9 @@ const EditButton = ({ userData }) => {
             <div className="edit-region-header year">Year</div>
             <select
               className="edit-region-input year"
-              value={currentYear}
+              value={currentEditData.academicYear ?? ''}
               onChange={(e) => {
-                setCurrentYear(e.target.value);
+                setCurrentEditData({ ...currentEditData, academicYear: e.target.value });;
               }}
             >
               {yearOptions}
@@ -276,9 +272,9 @@ const EditButton = ({ userData }) => {
           <input
             type="text"
             className="edit-region-input location"
-            value={currentLocation}
+            value={currentEditData.location ?? ''}
             onChange={(e) => {
-              setCurrentLocation(e.target.value);
+              setCurrentEditData({ ...currentEditData, location: e.target.value });
             }}
           ></input>
         </div>
@@ -295,12 +291,12 @@ const EditButton = ({ userData }) => {
             <textarea
               className="edit-region-input big quote"
               maxLength={100}
-              value={currentQuote.substring(0, 100)}
+              value={currentEditData.headline ?? ''}
               onChange={(e) => {
-                setCurrentQuote(e.target.value);
+                setCurrentEditData({ ...currentEditData, headline: e.target.value });;
               }}
             ></textarea>
-            <span className="word-limit-label quote">{currentQuote.length} / 100</span>
+            <span className="word-limit-label quote">{currentEditData.headline.length} / 100</span>
           </div>
         </div>
 
@@ -314,12 +310,12 @@ const EditButton = ({ userData }) => {
             <textarea
               className="edit-region-input big fact"
               maxLength={100}
-              value={currentFunFact.substring(0, 100)}
+              value={currentEditData.funFact ?? ''}
               onChange={(e) => {
-                setCurrentFunFact(e.target.value);
+                setCurrentEditData({ ...currentEditData, funFact: e.target.value });
               }}
             ></textarea>
-            <span className="word-limit-label fact">{currentFunFact.length} / 100</span>
+            <span className="word-limit-label fact">{currentEditData.funFact.length} / 100</span>
           </div>
         </div>
       </div>
@@ -335,12 +331,12 @@ const EditButton = ({ userData }) => {
             <textarea
               className="edit-region-input big you"
               maxLength={600}
-              value={currentAbout.substring(0, 600)}
+              value={currentEditData.bio ?? ''}
               onChange={(e) => {
-                setCurrentAbout(e.target.value);
+                setCurrentEditData({ ...currentEditData, bio: e.target.value });
               }}
             ></textarea>
-            <span className="word-limit-label you">{currentAbout.length} / 600</span>
+            <span className="word-limit-label you">{currentEditData.bio.length} / 600</span>
           </div>
         </div>
       </div>
@@ -348,79 +344,46 @@ const EditButton = ({ userData }) => {
   );
 
   // "Projects"
-  const [userProjects, setUserProjects] = useState();
-  const [shownProjects, setShownProjects] = useState();
+  const [userProjects, setUserProjects] = useState<ProjectPreview[]>();
+  const [shownProjects, setShownProjects] = useState<ProjectPreview[]>();
 
-  const getUsersProjects = async () => {
-    const url = `/api/users/${userData.userId}/projects`;
-    try {
-     // const response = await fetch(url, {
-     //   method: 'GET',
-     //   headers: { 'Content-Type': 'application/json' },
-     // });
-     // const rawData = await response.json();
+  // Fetches projects that are current on that profile
+  useEffect(() => {
+    const fetchUserProjects = async () => {
+      try {
+        const data = await getByID(user.userId);
+        setUserProjects(data.data);
+      } catch (err) {
+        console.error("Failed to fetch user projects:", err);
+      }
+    };
+    fetchUserProjects();
+  }, [user.userId]);
 
-      const data = getByID(userData.userId);
-      console.log("Sepukku. Called in Profile Edit Button.");
-      setUserProjects(data.data);     // IF DOESN'T Work, replace data.data with rawData.data
-      
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const getVisibleProjects = async () => {
-    const url = `/api/users/${userData.userId}/projects/profile`;
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setShownProjects(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  if (userProjects === undefined) {
-    getUsersProjects();
-  }
-  if (shownProjects === undefined) {
-    getVisibleProjects();
-  }
+ // Fetches projects that are currently shown on profile
+  useEffect(() => {
+    const fetchVisibleProjects = async () => {
+      try {
+        const response = await getVisibleProjects(user.userId);
+        setShownProjects(response.data);
+      } catch (err) {
+        console.log("Failed to fetch visible projects:", err);
+      }
+    };
+    fetchVisibleProjects();
+  }, [user.userId]);
 
   const checkIfProjectIsShown = (projectID: number) => {
-    if (shownProjects !== undefined) {
-      for (let i = 0; i < shownProjects.length; i++) {
-        if (shownProjects[i].projectId === projectID) {
-          return true;
-        }
-      }
-      return false;
-    }
-    return false;
+    return shownProjects?.some((p) => p.projectId === projectID) ?? false;
   };
 
-  const updateHiddenProjects = (project) => {
-    if (shownProjects !== undefined) {
-      if (checkIfProjectIsShown(project.project_id)) {
-        const tempList = new Array(0);
-        for (let i = 0; i < shownProjects.length; i++) {
-          if (shownProjects[i].projectId !== project.project_id) {
-            tempList.push(shownProjects[i]);
-          }
-        }
+  const toggleProjectVisibility = (project: ProjectPreview) => {
+    if (!shownProjects) return;
 
-        setShownProjects(tempList);
-      } else {
-        const tempList = new Array(0);
-        for (let i = 0; i < shownProjects.length; i++) {
-          tempList.push(shownProjects[i]);
-        }
-        tempList.push(project);
-
-        setShownProjects(tempList);
-      }
-    }
+    const isShown = checkIfProjectIsShown(project.projectId);
+    setShownProjects(
+      isShown ? shownProjects.filter((p) => p.projectId !== project. projectId) : [...shownProjects, project]
+    );
   };
 
   const page2 = (
@@ -489,16 +452,14 @@ const EditButton = ({ userData }) => {
   );
 
   // "Skills"
-  if (userData.skills == null) {
-    userData.skills = [];
+  if (user.skills == null) {
+    user.skills = [];
   }
 
-  const [currentSkills, setCurrentSkills] = useState(
-    userData.skills.toSorted((a, b) => a.position - b.position)
-  );
+  const [currentSkills, setCurrentSkills] = useState<UserSkill[]>(user.skills ?? []);
 
-  const addToSkillsList = (newSkill) => {
-    if (userData.skills != null) {
+  const addToSkillsList = (newSkill: UserSkill) => {
+    if (user.skills != null) {
       let found = false;
       for (let i = 0; i < currentSkills.length; i++) {
         if (currentSkills[i].type == newSkill.type && currentSkills[i].skill == newSkill.skill) {
@@ -507,7 +468,7 @@ const EditButton = ({ userData }) => {
       }
 
       if (!found) {
-        const tempList = new Array(0);
+        const tempList: UserSkill[] = [];
         for (let i = 0; i < currentSkills.length; i++) {
           tempList.push(currentSkills[i]);
         }
@@ -526,7 +487,7 @@ const EditButton = ({ userData }) => {
   };
 
   const removeFromSkillsList = (index: number) => {
-    const tempList = new Array(0);
+    const tempList: UserSkill[] = [];
     for (let i = 0; i < currentSkills.length; i++) {
       if (i != index) {
         tempList.push(currentSkills[i]);
@@ -608,7 +569,7 @@ const EditButton = ({ userData }) => {
     }
   };
 
-  const mySkillsList = new Array(0);
+  const mySkillsList: JSX.Element[] = [];
   mySkillsList.push(
     <span
       className="chosen-gap"
@@ -679,7 +640,7 @@ const EditButton = ({ userData }) => {
   const displayedSkillsList = <div className="chosen-skills-list">{mySkillsList}</div>;
 
   const [currentSearch, setCurrentSearch] = useState('');
-  const [skillsList, setSkillsList] = useState();
+  const [skillsList, setSkillsList] = useState<UserSkill[]>();
 
   const getSkillsList = async (type: string) => {
     if (
@@ -687,13 +648,9 @@ const EditButton = ({ userData }) => {
       type.toLowerCase() === 'designer' ||
       type.toLowerCase() === 'soft'
     ) {
-      const url = `/api/datasets/skills?type=${type.toLowerCase()}`;
-      try {
-        const response = await fetch(url);
-
-        const rawData = await response.json();
+        const response = await getSkillsByType(type);
         setSkillsList(
-          rawData.data.toSorted((a, b) => {
+          response.data.toSorted((a, b) => {
             if (a.label.toLowerCase() < b.label.toLowerCase()) {
               return -1;
             }
@@ -703,25 +660,17 @@ const EditButton = ({ userData }) => {
             return 0;
           })
         );
-      } catch (error) {
-        console.log(error);
-      }
     } else {
-      const url = `/api/datasets/skills`;
-      try {
-        const response = await fetch(url);
-
-        const rawData = await response.json();
-        setSkillsList(rawData.data);
-      } catch (error) {
-        console.log(error);
-      }
+        const response = await getSkills();
+        if (response.data) {
+          setSkillsList(response.data);
+        }
     }
   };
 
-  if (skillsList === undefined) {
-    getSkillsList('developer');
-  }
+  useEffect(() => {
+    if (!skillsList) getSkillsList('developer');
+  }, []);
 
   const [filterSel, setFilterSel] = useState(0);
   // 0 -> Developer Skills -> Hard Skills
@@ -893,26 +842,17 @@ const EditButton = ({ userData }) => {
   );
 
   // "Links"
-  const [currentLinks, setCurrentLinks] = useState(
-    userData.socials == null ? [] : userData.socials
-  );
-  const [socialLinks, setSocialLinks] = useState();
+  const [currentLinks, setCurrentLinks] = useState<MySocial[]>(user.socials ?? []);
+  const [socialLinks, setSocialLinks] = useState<Social[]>();
 
   const getSocials = async () => {
-    const url = `/api/datasets/socials`;
-    try {
-      const response = await fetch(url);
-
-      const rawData = await response.json();
-      setSocialLinks(rawData.data);
-    } catch (error) {
-      console.log(error);
-    }
+      const response = await fetchSocials();
+      setSocialLinks(response.data);
   };
 
-  if (socialLinks === undefined) {
-    getSocials();
-  }
+  useEffect(() => {
+    if (!socialLinks) getSocials();
+  }, []);
 
   const getWebsiteIcon = (websiteName: string) => {
     switch (websiteName.toLowerCase()) {
@@ -960,7 +900,7 @@ const EditButton = ({ userData }) => {
 
   const getLinksDropDown = (currentSite: string, index: number) => {
     if (socialLinks !== undefined) {
-      const socialsList = new Array(0);
+      const socialsList: JSX.Element[] = [];
       for (let i = 0; i < socialLinks.length; i++) {
         const tempLink = (
           <option value={socialLinks[i].label.toLowerCase()}>
@@ -1000,16 +940,16 @@ const EditButton = ({ userData }) => {
   };
 
   const addNewLink = () => {
-    const tempList = new Array(0);
+    const tempList: MySocial[] = [];
     for (let i = 0; i < currentLinks.length; i++) {
       tempList.push(currentLinks[i]);
     }
-    tempList.push({ id: 0, website: 'select', url: '' });
-    setCurrentLinks(tempList);
+    const newLink: MySocial = { id: 0, website: 'select', url: '' };
+    setCurrentLinks([...currentLinks, { id: 0, website: 'select', url: '' }]);
   };
 
   const removeLink = (index: number) => {
-    const tempList = new Array(0);
+    const tempList: MySocial[] = [];
     for (let i = 0; i < currentLinks.length; i++) {
       if (i !== index) {
         tempList.push(currentLinks[i]);
@@ -1019,7 +959,7 @@ const EditButton = ({ userData }) => {
   };
 
   const updateSite = (index: number, newSite: string) => {
-    const tempList = new Array(0);
+    const tempList: MySocial[] = [];
     for (let i = 0; i < currentLinks.length; i++) {
       if (i === index) {
         tempList.push({ id: getIdOfWebsite(newSite), website: newSite, url: currentLinks[i].url });
@@ -1031,7 +971,7 @@ const EditButton = ({ userData }) => {
   };
 
   const updateURL = (index: number, newURL: string) => {
-    const tempList = new Array(0);
+    const tempList: MySocial[] = [];
     for (let i = 0; i < currentLinks.length; i++) {
       if (i === index) {
         tempList.push({ id: currentLinks[i].id, website: currentLinks[i].website, url: newURL });
@@ -1180,27 +1120,15 @@ const EditButton = ({ userData }) => {
     }
   };
 
-  const createSkillsList = () => {
-    const tempList = new Array(0);
-    for (let i = 0; i < currentSkills.length; i++) {
-      tempList.push({ id: currentSkills[i].id, position: currentSkills[i].position });
-    }
-    return tempList;
-  };
+  const createSkillsList = (): Pick<UserSkill, 'id' | 'position'>[] =>
+    currentSkills.map(skill => ({ id: skill.id, position: skill.position }));
 
-  const createLinksList = () => {
-    const tempList = new Array(0);
-    for (let i = 0; i < currentLinks.length; i++) {
-      if (currentLinks[i].id !== 0) {
-        tempList.push({ id: currentLinks[i].id, url: currentLinks[i].url });
-      }
-    }
-    return tempList;
-  };
+  const createLinksList = (): Pick<MySocial, 'id' | 'url'>[] =>
+    currentLinks.filter(link => link.id !== 0).map(link => ({ id: link.id, url: link.url }));
 
   const saveData = async () => {
     // User
-    await saveUserData();
+    await saveuser();
 
     // Projects
     await saveProjectsPage();
@@ -1210,60 +1138,31 @@ const EditButton = ({ userData }) => {
     window.location.reload();
   };
 
-  const saveUserData = async () => {
+  const saveuser = async () => {
     console.log("I'M BEING RAN HAHAHAAHAHAHAHAHAHH");
-    const url = `/api/users/${userData.userId}`;
     try {
-      const response = await fetch(url, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          firstName: currentFirstName,
-          lastName: currentLastName,
-          headline: currentQuote,
-          pronouns: currentPronouns,
-          jobTitleId: getRoleId(currentRole),
-          majorId: getMajorId(currentMajor),
-          academicYear: currentYear,
-          location: currentLocation,
-          funFact: currentFunFact,
-          bio: currentAbout,
-          skills: createSkillsList(),
-          socials: createLinksList(),
-        }),
-      });
-
+      const response = await editUser(user.userId, {
+          ...currentEditData
+        });
       console.log(`User data: Response status: ${response.status}`);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // const saveProjectsPage = async () => {
-  //   if (userProjects !== undefined) {
-  //     for (let i = 0; i < userProjects.length; i++) {
-  //       const url = `/api/users/${userData.userId}/projects/visibility`;
-  //       try {
-  //         const response = await fetch(url, {
-  //           method: 'PUT',
-  //           headers: {
-  //             'Content-Type': 'application/json',
-  //           },
-  //           body: JSON.stringify({
-  //             projectId: userProjects[i].projectId,
-  //             visibility: checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private',
-  //           }),
-  //         });
-
-  //         console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     }
-  //   }
-  // };
+  const saveProjectsPage = async () => {
+    if (userProjects !== undefined) {
+      for (let i = 0; i < userProjects.length; i++) {
+        try {
+          const response = await updateProjectVisibility(user.userId, userProjects[i].projectId,
+             checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private');
+            //console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
+          } catch (error) {
+          console.log(error);
+        }
+      }
+    }
+  };
 
   return (
     <div id="profile-edit-button-section">

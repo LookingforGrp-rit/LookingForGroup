@@ -2,9 +2,10 @@ import { useState, useEffect } from 'react';
 import { ProfileData } from '../ProfileEditPopup';
 import { RoleSelector } from '../../RoleSelector';
 import { MajorSelector } from '../../MajorSelector';
-import { ProfileImageUploader } from '../../ImageUploader';
-import profilePicture from '../../../images/blue_frog.png';
+import { ImageUploader, ProfileImageUploader } from '../../ImageUploader';
+import { getMajors, getJobTitles } from "../../../api/users";
 import usePreloadedImage from '../../../functions/imageLoad';
+import { Select, SelectButton, SelectOptions } from '../../Select';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -16,13 +17,11 @@ const setUpInputs = async (profileData: ProfileData) => {
   // Obtain roles and majors to obtain the proper label for the Role Selector and Major Selector
   let roles: any, majors: any;
   const getRolesAndMajors = async () => {
-    const roleResponse = await fetch(`/api/datasets/job-titles`);
-    const majorResponse = await fetch(`/api/datasets/majors`);
+    const roleResponse = await getJobTitles();
+    const majorResponse = await getMajors();
 
-    roles = await roleResponse.json();
-    majors = await majorResponse.json();
-    roles = roles.data;
-    majors = majors.data;
+    roles = roleResponse.data;
+    majors = majorResponse.data;
   };
 
   // Used to avoid repetition and map values onto element IDs.
@@ -87,7 +86,7 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
 }) => {
 
   // Preview URL for profile image
-  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`${API_BASE}/images/profiles/${profile.profile_image}`, profilePicture));
+  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`${API_BASE}/images/profiles/${profile.profile_image}`, "../../../images/blue_frog.png"));
 
   // Effects
   // Set up profile input on first load
@@ -96,7 +95,7 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
       await setUpInputs(profile);
     };
     setUp();
-  }, []);
+  }, [profile]);
 
   // Update preview image when selected image changes
   useEffect(() => {
@@ -159,6 +158,29 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
           <div className="editor-input-item">
             <label>Location</label>
             <input id="profile-editor-location" maxLength={150} type="text"></input>
+          </div>
+
+          <div className="editor-input-item">
+            <label>Mentorship Status</label>
+            <Select>
+              <SelectButton
+                placeholder="Select..."
+                initialVal={profile.mentor === true ? 'Mentor' : 'Not a mentor'}
+                callback={(e) => {e.preventDefault();}}
+              />
+              <SelectOptions
+                callback={(e) => {e.preventDefault();}}
+                options={[{
+                  value: 'Not a mentor',
+                  markup: <>Not a mentor</>,
+                  disabled: false
+                }, {
+                  value: 'Mentor',
+                  markup: <>Mentor</>,
+                  disabled: false
+                }]}
+              />
+            </Select>
           </div>
         </div>
       </div>

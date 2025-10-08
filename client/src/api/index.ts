@@ -59,12 +59,14 @@ export const POST = async (
   apiURL: string,
   newData: object
 ): Promise<ApiResponse<unknown>> => {
+  const isFormData = newData instanceof FormData;
+
   try {
     const response = await fetch(getBaseUrl() + apiURL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(newData),
+      body: isFormData ? newData : JSON.stringify(newData),
     });
 
     const contentType = response.headers.get("content-type") || "";
@@ -103,12 +105,14 @@ export const PUT = async (
   apiURL: string,
   newData: object
 ): Promise<ApiResponse<unknown>> => {
+  const isFormData = newData instanceof FormData;
+
   try {
     const response = await fetch(getBaseUrl() + apiURL, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(newData),
+      body: isFormData ? newData : JSON.stringify(newData),
     });
 
     const contentType = response.headers.get("content-type") || "";
@@ -147,12 +151,14 @@ export const DELETE = async (
   apiURL: string,
   data: object = {}
 ): Promise<ApiResponse<unknown>> => {
+  const isFormData = data instanceof FormData;
+
   try {
     const response = await fetch(getBaseUrl() + apiURL, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
     });
 
     const contentType = response.headers.get("content-type") || "";
@@ -186,6 +192,53 @@ export const DELETE = async (
   }
 };
 
+//Basic PATCH function
+export const PATCH = async (
+  apiURL: string,
+  newData: object
+): Promise<ApiResponse<unknown>> => {
+  const isFormData = newData instanceof FormData;
+
+  try {
+    const response = await fetch(getBaseUrl() + apiURL, {
+      method: "PATCH",
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
+      credentials: "include",
+      body: isFormData ? newData : JSON.stringify(newData),
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+
+    //check if response is JSON
+    if (contentType.includes("application/json")) {
+      //return if json
+      const obj = await response.json();
+
+      if (response.ok) {
+        return { data: obj.data, status: response.status };
+      } else {
+        console.log(obj.error);
+        return {
+          error: obj.error || "Network response was not ok",
+          status: response.status,
+        };
+      }
+    } else {
+      //handle HTML error pages
+      const html = await response.text();
+      console.error("Expected json but got:", html);
+      return {
+        error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
+        status: 400,
+      };
+    }
+  } catch (error: any) {
+    console.error("PATCH error:", error);
+    return { error: error.message || "Unknown error", status: 400 };
+  }
+};
+
+
 //jsonify the data
 function jsonify<_data = unknown>(
   data: _data,
@@ -206,5 +259,6 @@ export default {
   POST,
   PUT,
   DELETE,
+  PATCH,
   jsonify,
 };

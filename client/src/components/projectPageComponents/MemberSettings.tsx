@@ -47,7 +47,7 @@ export const MemberSettings = (props) => {
     <div id="member-settings">
       <div id="member-settings-header">
         <SearchBar dataSets={[{ data: members }]} onSearch={updateMembers} />
-        <button className="white-button">Invite</button>
+        {/* <button className="white-button">Invite</button> */}
       </div>
       <div id="member-settings-list">
         <hr />

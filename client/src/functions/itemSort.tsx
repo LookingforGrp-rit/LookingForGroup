@@ -1,5 +1,5 @@
 import { projects, profiles } from '../constants/fakeData';
-import { interests } from '../constants/interests';
+// import { interests } from '../constants/interests';
 import { softSkills, hardSkills, proficiencies } from '../constants/skills';
 
 //Interest & skill imports are currently unused, but may become relevant later in development
@@ -58,8 +58,8 @@ export const sortItems = (tags: string[], projectSearch: boolean) => {
       username: string;
       pronouns: string[];
       bio: string;
-      interests: string[];
-      messages: number[];
+      // interests: string[];
+      // messages: number[];
       skills: { skill: string; type: string; highlighted: boolean }[];
       profilePicture: {
         name: string;
@@ -68,12 +68,12 @@ export const sortItems = (tags: string[], projectSearch: boolean) => {
       };
       projects: number[];
       links: { text: string; url: string }[];
-      endorsements: {
-        endorsement: string;
-        endorserID: string;
-        endorseProjectID: string;
-        skills: number[];
-      }[];
+      // endorsements: {
+      //   endorsement: string;
+      //   endorserID: string;
+      //   endorseProjectID: string;
+      //   skills: number[];
+      // }[];
     }[] = [];
     //iterate through all people. For each one...
     for (const profile of profiles) {
@@ -82,10 +82,10 @@ export const sortItems = (tags: string[], projectSearch: boolean) => {
       let matchingTags: number = 0;
       for (const tag of tags) {
         //Search interests first
-        if (profile.interests.includes(tag)) {
-          matchingTags++;
-          continue;
-        }
+        // if (profile.interests.includes(tag)) {
+        //   matchingTags++;
+        //   continue;
+        // }
         //If it is not found in interests, search skills next
         for (const skill of profile.skills) {
           if (skill.skill == tag) {
