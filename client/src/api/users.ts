@@ -14,7 +14,9 @@ import type {
   AddUserSocialInput,
   UpdateUserSocialInput,
   AddUserSkillsInput,
-  UpdateUserSkillInput
+  UpdateUserSkillInput,
+  AddUserMajorInput,
+  MyMajor
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -52,7 +54,8 @@ export const getCurrentUsername = async (): Promise<ApiResponse> => {
 export const getUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
   const apiURL = `/users`;
   const response = await GET(apiURL);
-
+  //TODO: revisit this to make it include filters
+  //but filters are a stretch goal anyway so it's not too important
   console.log(response);
   return response;
 };
@@ -119,20 +122,6 @@ export const deleteUser = async (devId?: number): Promise<ApiResponse> => {
 };
 
 /* ACCOUNT INFO/ PASSWORD RESET*/
-
-/**
- * Get account information of a user through ID.
- * Invalid until we get shibboleth.
- * @param user_id - int, id of the user
- * @returns data - JSONified data from account information. 400 if not valid.
- */
-export const getAccountInformation = async (user_id: number) => {
-  const apiURL = `/users/${user_id}`;
-  const response = await GET(apiURL);
-
-  console.log(response);
-  return response;
-};
 
 
 /* LOOKUP USER */
@@ -252,11 +241,27 @@ export const updateProjectVisibility = async (
   projectID: number,
   _visibility: string
 ) => {
-  const url = `/projects/${projectID}/visibility`;
+  const url = `me/projects/${projectID}/visibility`;
   const data = { visibility: _visibility }; //it's just expecting this
   const response = await PUT(url, data);
 
   if(response.error) console.log(`Error in updateProjectVisibility: ${response.error}`)
+  console.log(response);
+  return response;
+};
+
+/**
+ * Leaves a project a user is a member of
+ * @param _visibility - either "public" or "private", set visibility
+ * @return 201 if successful, 400 if not
+ */
+export const leaveProject = async (
+  projectID: number
+) => {
+  const url = `me/projects/${projectID}/leave`;
+  const response = await DELETE(url);
+
+  if(response.error) console.log(`Error in leaveProject: ${response.error}`)
   console.log(response);
   return response;
 };
@@ -412,6 +417,45 @@ export const deleteUserSkills = async (skillId: number, devId?: number): Promise
 };
 
 
+// Get majors for the current user based on ID
+/**
+ * @param devId - ID to be used as the current user
+ */
+export const getUserMajors = async (devId?: number): Promise<ApiResponse<MyMajor[]>> => {
+  const url = `/me/majors${devId ? `?devId=${devId}` : ""}`;
+  const response = await GET(url);
+
+  console.log(response);
+  return response;
+};
+// Add a major to the current user 
+/** 
+ * @param devId - ID to be used as the current user
+ */
+export const addUserMajor = async (
+  majorData: AddUserMajorInput,
+  devId?: number
+): Promise<ApiResponse<MyMajor>> => {
+  const url = `/me/majors${devId ? `?devId=${devId}` : ""}`;
+  const response = await POST(url, majorData);
+
+  if(response.error) console.log(`Error in addUserMajor: ${response.error}`)
+  console.log(response);
+  return response as ApiResponse<MyMajor>;
+}
+
+// Delete a user major
+/** 
+ * @param devId - ID to be used as the current user
+*/
+export const deleteUserMajor = async (majorId: number, devId?: number): Promise<ApiResponse<null>> => {
+  const url = `/me/majors/${majorId}${devId ? `?devId=${devId}` : ""}`;
+  const response = await DELETE(url);
+  
+  console.log(response);
+  return response as ApiResponse<null>;
+};
+
 /* DATASETS */
 
 /**
@@ -486,7 +530,6 @@ export default {
   getUsersById,
   editUser,
   deleteUser,
-  getAccountInformation,
   getUserByUsername,
   getUserByEmail,
   getUserFollowing,
@@ -495,6 +538,7 @@ export default {
   getProjectsByUser,
   getVisibleProjects,
   updateProjectVisibility,
+  leaveProject,
   getProjectFollowing,
   addProjectFollowing,
   deleteProjectFollowing,
@@ -506,6 +550,9 @@ export default {
   addUserSkills,
   updateUserSkills,
   deleteUserSkills,
+  getUserMajors,
+  addUserMajor,
+  deleteUserMajor,
   getMajors,
   getJobTitles,
   getProjectTypes,
