@@ -73,12 +73,10 @@ export const getUsersById = async (id: string): Promise<ApiResponse<UserDetail>>
   return response;
 };
 
-/**
- * Gets the current user by ID
- * @param devId - ID to be used as the current user
- */
-export const getCurrentUserById = async (devId?: number): Promise<ApiResponse<MePrivate>> => {
-  const apiURL = `/me${devId ? `?devId=${devId}` : ""}`;
+
+//Gets the current user by ID 
+export const getCurrentUserById = async (): Promise<ApiResponse<MePrivate>> => {
+  const apiURL = `/me`;
   const response = await GET(apiURL);
 
   console.log(response);
@@ -87,18 +85,16 @@ export const getCurrentUserById = async (devId?: number): Promise<ApiResponse<Me
 
 /**
  * Edit information for one user, specified by URL.
- * @param devId - user_id for user
- * @param data - mapped(eg {data1:'value1', data2:'value2'}) data to change for user
+ * @param userData - The data to change for the user
  * @returns response data
  */
 export const editUser = async (
-  data: UpdateUserInput,
-  devId?: number
+  userData: UpdateUserInput,
 ): Promise<ApiResponse<MePrivate>> => {
-  const apiURL = `/me${devId ? `?devId=${devId}` : ""}`;
+  const apiURL = `/me`;
   const form = new FormData();
   
-  for (const [name, value] of Object.entries(data)){
+  for (const [name, value] of Object.entries(userData)){
     if(value !== null) form.append(name, value);
   }
 
@@ -108,13 +104,10 @@ export const editUser = async (
   return response as ApiResponse<MePrivate>; //it would get mad at me if i didn't do this soooo
 };
 
-/**
- * Removes a user specified by URL.
- * @returns response data
- * @param devId - ID to be used as the current user
- */
-export const deleteUser = async (devId?: number): Promise<ApiResponse> => {
-  const apiURL = `/me${devId ? `?devId=${devId}` : ""}`;
+
+//Removes a user specified by URL.
+export const deleteUser = async (): Promise<ApiResponse> => {
+  const apiURL = `/me`;
   const response = await DELETE(apiURL);
 
   console.log(response);
@@ -180,12 +173,11 @@ export const getUserFollowers = async (id: number): Promise<ApiResponse> => {
 
 /**
  * Follow a person for a user.
- * @param {number} id - user's id
- * @param devId - ID to be used as the current user
+ * @param {number} userId - ID of the user being followed
  * @returns 201 if successful, 400 if not
  */
-export const addUserFollowing = async (id: number, devId?: number): Promise<ApiResponse<UserFollowing>> => {
-  const url = `/me/followings/people/${id}${devId ? `?devId=${devId}` : ""}`;
+export const addUserFollowing = async (userId: number): Promise<ApiResponse<UserFollowing>> => {
+  const url = `/me/followings/people/${userId}`;
   const response = await POST(url, {});
 
   if(response.error) console.log(`Error in addUserFollowing: ${response.error}`)
@@ -195,11 +187,10 @@ export const addUserFollowing = async (id: number, devId?: number): Promise<ApiR
 
 /**
  * Unfollow person for a user. Unauthorized until shibboleth.
- * @param {number} id - user id of the user.
- * @param devId - ID to be used as the current user
+ * @param {number} userId - ID of the user being followed
  */
-export const deleteUserFollowing = async (id: number, devId?: number) => {
-  const url = `/me/followings/people/${id}${devId ? `?devId=${devId}` : ""}`;
+export const deleteUserFollowing = async (id: number) => {
+  const url = `/me/followings/people/${id}`;
   const response = await DELETE(url);
 
   console.log(response);
@@ -207,11 +198,10 @@ export const deleteUserFollowing = async (id: number, devId?: number) => {
 };
 
 /* PROJECT FOLLOWINGS/VISIBILITY */
-/**
- * @param devId - ID to be used as the current user
- */
-export const getProjectsByUser = async (devId?: number): Promise<ApiResponse<ProjectPreview[]>> => {
-  const url = `/me/projects${devId ? `?devId=${devId}` : ""}`;
+
+//Get the current user's projects
+export const getProjectsByUser = async (): Promise<ApiResponse<ProjectPreview[]>> => {
+  const url = `/me/projects`;
   const response = await GET(url);
 
   console.log(response);
@@ -220,11 +210,11 @@ export const getProjectsByUser = async (devId?: number): Promise<ApiResponse<Pro
 
 /**
  * Get all projects the user is a member of and has set to be public for the profile page
- * @param id - user to search
+ * @param userId - user to search
  * @return - array of projects, or 400 if unsuccessful.
  */
-export const getVisibleProjects = async (id: number): Promise<ApiResponse<ProjectPreview[]>> => {
-  const url = `/users/${id}/projects`;
+export const getVisibleProjects = async (userId: number): Promise<ApiResponse<ProjectPreview[]>> => {
+  const url = `/users/${userId}/projects`;
   const response = await GET(url);
 
   console.log(response);
@@ -233,7 +223,7 @@ export const getVisibleProjects = async (id: number): Promise<ApiResponse<Projec
 
 /**
  * Update project visibility for a project a user is a member of. Invalid until shibboleth
- * @param projectID - Id of the project
+ * @param projectID - ID of the project
  * @param _visibility - either "public" or "private", set visibility
  * @return 201 if successful, 400 if not
  */
@@ -242,8 +232,8 @@ export const updateProjectVisibility = async (
   _visibility: string
 ) => {
   const url = `me/projects/${projectID}/visibility`;
-  const data = { visibility: _visibility }; //it's just expecting this
-  const response = await PUT(url, data);
+  const visData = { visibility: _visibility }; //it's expecting this
+  const response = await PUT(url, visData);
 
   if(response.error) console.log(`Error in updateProjectVisibility: ${response.error}`)
   console.log(response);
@@ -252,7 +242,7 @@ export const updateProjectVisibility = async (
 
 /**
  * Leaves a project a user is a member of
- * @param _visibility - either "public" or "private", set visibility
+ * @param projectID - ID of the project you're leaving
  * @return 201 if successful, 400 if not
  */
 export const leaveProject = async (
@@ -268,11 +258,11 @@ export const leaveProject = async (
 
 /**
  * Get projects the user is following.
- * @param id - ID of the user.
+ * @param userId - ID of the user.
  * @returns array of projects, or 400 if error.
  */
-export const getProjectFollowing = async (id: number): Promise<ApiResponse<ProjectPreview[]>> => {
-  const url = `/users/${id}/followings/projects`;
+export const getProjectFollowing = async (userId: number): Promise<ApiResponse<ProjectPreview[]>> => {
+  const url = `/users/${userId}/followings/projects`;
   const response = await GET(url);
 
   console.log(response);
@@ -281,12 +271,11 @@ export const getProjectFollowing = async (id: number): Promise<ApiResponse<Proje
 
 /**
  * Follow a project for a user.
- * @param id - user ID trying to follow a project.
- * @param devId - ID to be used as the current user
+ * @param projectId - ID of the project you're following
  * @returns 201 if successful, 400 if not.
  */
-export const addProjectFollowing = async (id: number, devId?: number): Promise<ApiResponse<ProjectFollowing>> => {
-  const url = `/me/followings/projects/${id}${devId ? `?devId=${devId}` : ""}`;
+export const addProjectFollowing = async (projectId: number): Promise<ApiResponse<ProjectFollowing>> => {
+  const url = `/me/followings/projects/${projectId}`;
   const response = await POST(url, {});
 
   if(response.error) console.log(`Error in addProjectFollowing: ${response.error}`)
@@ -296,25 +285,20 @@ export const addProjectFollowing = async (id: number, devId?: number): Promise<A
 
 /**
  * Unfollow a project for a user.
- * @param id - user id
- * @param devId - ID to be used as the current user
+ * @param projectId - ID of the project you're unfollowing
  * @returns 200 if successful, 400 if not.
  */
-export const deleteProjectFollowing = async (id: number, devId?: number): Promise<ApiResponse> => {
-  const url = `/me/followings/projects/${id}${devId ? `?devId=${devId}` : ""}`;
+export const deleteProjectFollowing = async (projectId: number): Promise<ApiResponse> => {
+  const url = `/me/followings/projects/${projectId}`;
   const response = await DELETE(url);
 
   console.log(response);
   return response;
 };
 
-// Get socials for the current user based on ID
-/**
- * 
- * @param devId - ID to be used as the current user
- */
-export const getUserSocials = async (devId?: number): Promise<ApiResponse<MySocial[]>> => {
-  const url = `/me/socials${devId ? `?devId=${devId}` : ""}`;
+// Get socials for the current user based on ID.
+export const getUserSocials = async (): Promise<ApiResponse<MySocial[]>> => {
+  const url = `/me/socials`;
   const response = await GET(url);
 
   console.log(response);
@@ -323,11 +307,11 @@ export const getUserSocials = async (devId?: number): Promise<ApiResponse<MySoci
 
 // Add socials for the current user by ID
 /** 
- * @param devId - ID to be used as the current user
+ * @param socialData - Data used to add the social
  */
-export const addUserSocials = async (data: AddUserSocialInput, devId?: number): Promise<ApiResponse<MySocial>> => {
-  const apiURL = `/me/socials${devId ? `?devId=${devId}` : ""}`;
-  const response = await POST(apiURL, data);
+export const addUserSocials = async (socialData: AddUserSocialInput): Promise<ApiResponse<MySocial>> => {
+  const apiURL = `/me/socials`;
+  const response = await POST(apiURL, socialData);
 
   if(response.error) console.log(`Error in addUserSocials: ${response.error}`)
   console.log(response);
@@ -336,11 +320,12 @@ export const addUserSocials = async (data: AddUserSocialInput, devId?: number): 
 
 // Update socials specified by the current user
 /**
- * @param devId - ID to be used as the current user
+ * @param websiteId - ID of the social to be updated
+ * @param socialData - Data used to update the social
  */
-export const updateUserSocials = async (websiteId: number, data: UpdateUserSocialInput, devId?: number): Promise<ApiResponse<MySocial>> => {
-  const apiURL = `/me/socials/${websiteId}${devId ? `?devId=${devId}` : ""}`;
-  const response = await PATCH(apiURL, data);
+export const updateUserSocials = async (websiteId: number, socialData: UpdateUserSocialInput): Promise<ApiResponse<MySocial>> => {
+  const apiURL = `/me/socials/${websiteId}`;
+  const response = await PATCH(apiURL, socialData);
 
   if(response.error) console.log(`Error in updateUserSocials: ${response.error}`)
   console.log(response);
@@ -349,10 +334,10 @@ export const updateUserSocials = async (websiteId: number, data: UpdateUserSocia
 
 // Delete user socials
 /**
-* @param devId - ID to be used as the current user
+* @param websiteId - ID of the social to be deleted
 */
-export const deleteUserSocials = async (websiteId: number, devId?: number): Promise<ApiResponse> => {
-  const url = `/me/socials/${websiteId}${devId ? `?devId=${devId}` : ""}`;
+export const deleteUserSocials = async (websiteId: number): Promise<ApiResponse> => {
+  const url = `/me/socials/${websiteId}`;
   const response = await DELETE(url);
 
   console.log(response);
@@ -360,27 +345,23 @@ export const deleteUserSocials = async (websiteId: number, devId?: number): Prom
 }
 
 // Get skills for the current user based on ID
-/**
- * @param devId - ID to be used as the current user
- */
-export const getUserSkills = async (devId?: number): Promise<ApiResponse<MySkill[]>> => {
-  const url = `/me/skills${devId ? `?devId=${devId}` : ""}`;
+export const getUserSkills = async (): Promise<ApiResponse<MySkill[]>> => {
+  const url = `/me/skills`;
   const response = await GET(url);
 
   console.log(response);
   return response;
 };
 
-// Add skills to the current user 
+// Add a skill to the current user 
 /** 
- * @param devId - ID to be used as the current user
+ * @param skillData - Data with which to add a skill
  */
 export const addUserSkills = async (
-  data: AddUserSkillsInput,
-  devId?: number
+  skillData: AddUserSkillsInput
 ): Promise<ApiResponse<MySkill>> => {
-  const url = `/me/skills${devId ? `?devId=${devId}` : ""}`;
-  const response = await POST(url, data);
+  const url = `/me/skills`;
+  const response = await POST(url, skillData);
 
   if(response.error) console.log(`Error in addUserSkills: ${response.error}`)
   console.log(response);
@@ -389,15 +370,15 @@ export const addUserSkills = async (
 
 // Updates a user skill
 /** 
- * @param devId - ID to be used as the current user
+ * @param skillId - ID of the skill to be updated
+ * @param skillData - Data with which to update the skill
 */
 export const updateUserSkills = async (
   skillId: number, 
-  data: UpdateUserSkillInput,
-  devId?: number,
+  skillData: UpdateUserSkillInput,
 ): Promise<ApiResponse<MySkill>> => {
-  const url = `/me/skills/${skillId}${devId ? `?devId=${devId}` : ""}`;
-  const response = await PATCH(url, data);
+  const url = `/me/skills/${skillId}`;
+  const response = await PATCH(url, skillData);
 
   if(response.error) console.log(`Error in updateUserSkills: ${response.error}`)
   console.log(response);
@@ -406,10 +387,10 @@ export const updateUserSkills = async (
 
 // Delete a user skill
 /** 
- * @param devId - ID to be used as the current user
+ * @param skillId - ID of the skill
 */
-export const deleteUserSkills = async (skillId: number, devId?: number): Promise<ApiResponse<null>> => {
-  const url = `/me/skills/${skillId}${devId ? `?devId=${devId}` : ""}`;
+export const deleteUserSkills = async (skillId: number): Promise<ApiResponse<null>> => {
+  const url = `/me/skills/${skillId}`;
   const response = await DELETE(url);
   
   console.log(response);
@@ -418,25 +399,19 @@ export const deleteUserSkills = async (skillId: number, devId?: number): Promise
 
 
 // Get majors for the current user based on ID
-/**
- * @param devId - ID to be used as the current user
- */
-export const getUserMajors = async (devId?: number): Promise<ApiResponse<MyMajor[]>> => {
-  const url = `/me/majors${devId ? `?devId=${devId}` : ""}`;
+export const getUserMajors = async (): Promise<ApiResponse<MyMajor[]>> => {
+  const url = `/me/majors`;
   const response = await GET(url);
 
   console.log(response);
   return response;
 };
+
 // Add a major to the current user 
-/** 
- * @param devId - ID to be used as the current user
- */
 export const addUserMajor = async (
-  majorData: AddUserMajorInput,
-  devId?: number
+  majorData: AddUserMajorInput
 ): Promise<ApiResponse<MyMajor>> => {
-  const url = `/me/majors${devId ? `?devId=${devId}` : ""}`;
+  const url = `/me/majors`;
   const response = await POST(url, majorData);
 
   if(response.error) console.log(`Error in addUserMajor: ${response.error}`)
@@ -446,10 +421,10 @@ export const addUserMajor = async (
 
 // Delete a user major
 /** 
- * @param devId - ID to be used as the current user
+ * @param majorId - ID of the major to be deleted
 */
-export const deleteUserMajor = async (majorId: number, devId?: number): Promise<ApiResponse<null>> => {
-  const url = `/me/majors/${majorId}${devId ? `?devId=${devId}` : ""}`;
+export const deleteUserMajor = async (majorId: number): Promise<ApiResponse<null>> => {
+  const url = `/me/majors/${majorId}`;
   const response = await DELETE(url);
   
   console.log(response);

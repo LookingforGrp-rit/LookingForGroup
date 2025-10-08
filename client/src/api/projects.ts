@@ -2,74 +2,32 @@ import { GET, POST, PUT, DELETE, PATCH } from "./index";
 import type {
   ApiResponse,
   ProjectImage,
-  Medium, ProjectMedium,
-  Tag, ProjectTag,
-  Role,
-  Member, ProjectMember,
-  Social, ProjectSocial,
+  ProjectMedium,
+  ProjectTag,
+  ProjectMember,
+  ProjectSocial,
   ProjectPreview,
   ProjectDetail,
   ProjectWithFollowers,
+  CreateProjectInput,
 } from "@looking-for-group/shared";
 
 /* PROJECT CRUD */
 
 /**
  * Creates a new project and adds it to the database. All params default to null.
- * @param _userId - ID of the user creating the project
- * @param _title - Name of the project
- * @param _hook - The short description of the project
- * @param _desc - The long description of the project
- * @param _purpose - The purpose selected for this project
- * @param _status - The status of the project
- * @param _audience - The project's intended audience
- * @param _pTypes - List of project types
- * @param _pTags - List of project tags
- * @param _jobs - List of roles being recruited for
- * @param _members  - List of project members
- * @param _socials - List of relevant social media pages
+ * @param projectData - the data with which to create the project
  * @param devId - ID to be used as the current user
  * @returns 200 if valid, 400 if not
  */ //might need to change Array<object>
 export const createNewProject = async (
-  _userId: number,
-  _title: string,
-  _hook: string,
-  _desc: string,
-  _purpose: string,
-  _status: string,
-  _audience: string,
-  _pTypes: Medium[],
-  _pTags: Tag[],
-  _jobs: Role[],
-  _members: Member[],
-  _socials: Social[],
-  devId?: number,
+  projectData: CreateProjectInput,
 ): Promise<ApiResponse<ProjectDetail>> => {
-  const apiURL = `/projects${devId ? `?devId=${devId}` : ""}`;
+  const apiURL = `/projects`;
+  const response = await POST(apiURL, projectData);
 
-  const data = {
-    userId: _userId,
-    title: _title,
-    hook: _hook,
-    description: _desc,
-    purpose: _purpose,
-    status: _status,
-    audience: _audience,
-    project_types: _pTypes,
-    tags: _pTags,
-    jobs: _jobs,
-    members: _members,
-    socials: _socials,
-  };
-
-  const response = await POST(apiURL, data);
-  if (response.error) {
-    console.log("Error creating new project:", response.error);
-    return { status: response.status, error: response.error, data: null };
-  }
-  console.log(`Created project named "${_title}"`);
-  return { status: 201, error: null, data: response.data as ProjectDetail };
+  if (response.error) console.log("Error creating new project:", response.error);
+  return response as ApiResponse<ProjectDetail>;
 };
 
 /**
@@ -82,7 +40,7 @@ export const getProjects = async (): Promise<ApiResponse<ProjectPreview[]>> => {
   if (response.error) {
     return { status: response.status, error: response.error, data: null };
   }
-  return { status: 200, error: null, data: response.data as ProjectPreview[] };
+  return response;
 };
 
 /**
