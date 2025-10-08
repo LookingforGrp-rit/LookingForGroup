@@ -15,6 +15,15 @@ import type {
   UpdateProjectImageInput,
   CreateProjectMemberInput,
   UpdateProjectMemberInput,
+  AddProjectSocialInput,
+  UpdateProjectSocialInput,
+  AddProjectTagsInput,
+  AddProjectMediumsInput,
+  ReorderProjectImagesInput,
+  ProjectFollowers,
+  ProjectJob,
+  CreateProjectJobInput,
+  UpdateProjectJobInput,
 } from "@looking-for-group/shared";
 
 /* PROJECT CRUD */
@@ -22,7 +31,6 @@ import type {
 /**
  * Creates a new project and adds it to the database. All params default to null.
  * @param projectData - the data with which to create the project
- * @param devId - ID to be used as the current user
  * @returns 200 if valid, 400 if not
  */ //might need to change Array<object>
 export const createNewProject = async (
@@ -65,6 +73,18 @@ export const getByID = async (projectID: number): Promise<ApiResponse<ProjectWit
   if (response.error) console.log(`Error in getByID: ${response.error}`);
   return response;
 };
+/**
+ * Retrieves data of a project by its ID
+ * @param projectID -  ID of project to retrieve
+ * @returns - A project object if valid, 400 if not
+ */
+export const getProjectFollowers = async (projectID: number): Promise<ApiResponse<ProjectFollowers>> => {
+  const apiURL = `/projects/${projectID}/followers`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getProjectFollowers: ${response.error}`);
+  return response;
+};
 
 /**
  * Updates data of an existing project
@@ -91,7 +111,6 @@ export const updateProject = async (
 /**
  * Deletes an existing project
  * @param projectID - ID of the project to delete
- * @param devId - ID to be used as the current user
  * @returns Response status
  */
 export const deleteProject = async (
@@ -147,7 +166,7 @@ export const addPic = async (
  * Updates position order of a project's carousel pictures
  * @param projectID - ID of the target project
  * @param imageData - Data with which to update the image
- * @param devId - ID to be used as the current user
+ * @param imageId - ID of the image to be updated
  * @returns Response status
  */
 export const updatePic = async (
@@ -193,10 +212,24 @@ export const deletePic = async (
 /* MEMBERS */
 
 /**
+ * Gets all the members in a project [GET MEMBERS ISN'T ON THIS BRANCH YET]
+ * @param projectID - ID of the target project
+ * @returns Response status
+ */
+export const getMembers = async (
+  projectID: number,
+): Promise<ApiResponse<ProjectMember>> => {
+  const apiURL = `/projects/${projectID}/members`;
+  const response = await GET(apiURL);
+  
+  if (response.error) console.log(`Error in getMembers: ${response.error}`);
+  return response;
+};
+
+/**
  * Adds a member to a project
  * @param projectID - ID of the target project
  * @param memberData - Data with which to add a member
- * @param devId - ID to be used as the current user
  * @returns Response status
  */
 export const addMember = async (
@@ -231,263 +264,256 @@ export const updateMember = async (
 
 /**
  * Removes a member from a project
- * @param ID - ID of the target project
+ * @param projectID - ID of the target project
  * @param userId - ID of the target user
- * @param devId - ID to be used as the current user
  * @returns Response status
  */
 export const deleteMember = async (
-  ID: number,
+  projectID: number,
   userId: number,
-  devId?: number
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${ID}/members/${userId}${devId ? `?devId=${devId}` : ""}`;
+  const apiURL = `/projects/${projectID}/members/${userId}`;
   const response = await DELETE(apiURL);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
-  }
-  return { status: 200, error: null, data: null };
+
+  if (response.error) console.log(`Error in deleteMember: ${response.error}`);
+  return response as ApiResponse<null>;
 };
 
 // Get a project's socials
 export const getProjectSocials = async (
-  ID: number
+  projectID: number
 ): Promise<ApiResponse<ProjectSocial[]>> => {
-  const apiURL = `/projects/${ID}/socials`;
+  const apiURL = `/projects/${projectID}/socials`;
   const response = await GET(apiURL);
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-  return { status: 200, error: null, data: response.data as ProjectSocial[] };
+
+  if (response.error) console.log(`Error in getProjectSocials: ${response.error}`);
+  return response;
 }
 
 // Add a project's socials
 /**
  * @param ID - ID of the project
- * @param devId - ID to be used as the current user
+ * @param socialData - Data with which to create the social
 */
 export const addProjectSocials = async (
-  ID: number,
-  websiteId: number,
-  url: string,
-  devId?: number,
+  projectID: number,
+  socialData: AddProjectSocialInput
 ): Promise <ApiResponse<ProjectSocial>> => {
-  const apiURL = `/projects/${ID}/socials${devId ? `?devId=${devId}` : ""}`;
-  const data = { websiteId, url };
+  const apiURL = `/projects/${projectID}/socials`;
+  const response = await POST(apiURL, socialData);
 
-  const response = await POST(apiURL, data);
-
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-
-  return { status: 200, error: null, data: response.data as ProjectSocial };
+  if (response.error) console.log(`Error in addProjectSocials: ${response.error}`);
+  return response as ApiResponse<ProjectSocial>;
 };
 
 // Update project socials
 /**
- * @param ID - ID of the project
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the project
+ * @param websiteId - ID of the social to be updated
+ * @param socialData - Data with which to update the social
 */
 export const updateProjectSocials = async (
-  ID: number,
+  projectID: number,
   websiteId: number,
-  url: string,
-  devId?: number
+  socialData: UpdateProjectSocialInput
 ): Promise<ApiResponse<ProjectSocial>> => {
-  const apiURL = `/projects/${ID}/socials/${websiteId}${devId ? `?devId=${devId}` : ""}`;
-  const data = { websiteId, url };
+  const apiURL = `/projects/${projectID}/socials/${websiteId}`;
+  const response = await PUT(apiURL, socialData);
 
-  const response = await PUT(apiURL, data);
-
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-
-  return { status: 200, error: null, data: response.data as ProjectSocial };
+  if (response.error) console.log(`Error in updateProjectSocials: ${response.error}`);
+  return response as ApiResponse<ProjectSocial>;
 };
 
 // Delete project socials
 /**
- * @param ID - ID of the project
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the project
+ * @param websiteId - ID of the social to be deleted
 */
 export const deleteProjectSocials = async (
-  ID: number,
+  projectID: number,
   websiteId: number,
-  devId?: number
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${ID}/socials/${websiteId}${devId ? `?devId=${devId}` : ""}`;
-
+  const apiURL = `/projects/${projectID}/socials/${websiteId}`;
   const response = await DELETE(apiURL);
 
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-
-  return { status: 200, error: null, data: null };
+  if (response.error) console.log(`Error in deleteProjectSocials: ${response.error}`);
+  return response as ApiResponse<null>;
 };
 
 // Get project tags
 /**
- * @param ID - ID of the project
+ * @param projectID - ID of the project
 */
 export const getProjectTags = async (
-  ID: number
+  projectID: number
 ): Promise<ApiResponse<ProjectTag[]>> => {
-  const apiURL = `/projects/${ID}/tags`;
-
+  const apiURL = `/projects/${projectID}/tags`;
   const response = await GET(apiURL);
 
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-
-  return { status: 200, error: null, data: response.data as ProjectTag[] };
+  if (response.error) console.log(`Error in getProjectTags: ${response.error}`);
+  return response;
 };
 
 // Add project tags
 /**
- * @param ID - ID of the project
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the project
+ * @param tagData - Data with which to add the tags
 */
 export const addProjectTags = async (
-  ID: number,
-  tagIds: number[],
-  devId?: number
+  projectID: number,
+  tagData: AddProjectTagsInput
 ): Promise<ApiResponse<ProjectTag>> => {
-  const apiURL = `/projects/${ID}/tags${devId ? `?devId=${devId}` : ""}`;
-  const data = { tagIds };
+  const apiURL = `/projects/${projectID}/tags`;
+  const response = await POST(apiURL, tagData);
 
-  const response = await POST(apiURL, data);
-
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-
-  return { status: 200, error: null, data: response.data as ProjectTag };
+  if (response.error) console.log(`Error in addProjectTags: ${response.error}`);
+  return response as ApiResponse<ProjectTag>;
 };
 
 // Delete project tags
 /**
- * @param ID - ID of the project
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the project
+ * @param tagId - ID of the tag to be deleted
 */
 export const deleteProjectTags = async (
-  ID: number,
-  tagIds: number[],
-  devId?: number
+  projectID: number,
+  tagId: number,
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${ID}/tags${devId ? `?devId=${devId}` : ""}`;
-  const data = { tagIds };
+  const apiURL = `/projects/${projectID}/tags${tagId}`;
+  const response = await DELETE(apiURL);
 
-  const response = await DELETE(apiURL, data);
-
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-
-  return { status: 200, error: null, data: null };
+  if (response.error) console.log(`Error in deleteProjectTags: ${response.error}`);
+  return response as ApiResponse<null>;
 };
 
 // Get project mediums
 export const getProjectMediums = async (
-  ID: number
+  projectID: number
 ): Promise<ApiResponse<ProjectMedium[]>> => {
-  const apiURL = `/projects/${ID}/mediums`;
+  const apiURL = `/projects/${projectID}/mediums`;
   const response = await GET(apiURL);
 
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-
-  return { status: 200, error: null, data: response.data as ProjectMedium[] };
+  if (response.error) console.log(`Error in getProjectMediums: ${response.error}`);
+  return response;
 };
 
 // Add project mediums
 /**
- * @param ID - ID of the project
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the project
+ * @param mediumId - Data with which to add the medium
 */
 export const addProjectMediums = async (
-  ID: number,
-  mediumIds: number[],
-  devId?: number
+  projectID: number,
+  mediumData: AddProjectMediumsInput,
 ): Promise<ApiResponse<ProjectMedium>> => {
-  const apiURL = `/projects/${ID}/mediums${devId ? `?devId=${devId}` : ""}`;
-  const body = { mediumIds };
+  const apiURL = `/projects/${projectID}/mediums`;
+  const response = await POST(apiURL, mediumData);
 
-  const response = await POST(apiURL, body);
-
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-
-  return { status: 200, error: null, data: response.data as ProjectMedium };
+  if (response.error) console.log(`Error in addProjectMediums: ${response.error}`);
+  return response as ApiResponse<ProjectMedium>
 };
 
 // Delete project mediums
 /**
- * @param ID - ID of the project
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the project
+ * @param mediumId - ID of the medium to delete
 */
 export const deleteProjectMediums = async (
-  ID: number,
-  mediumIds: number[],
-  devId?: number
+  projectID: number,
+  mediumId: number
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${ID}/mediums${devId ? `?devId=${devId}` : ""}`;
-  const body = { mediumIds };
+  const apiURL = `/projects/${projectID}/mediums${mediumId}`;
+  const response = await DELETE(apiURL);
 
-  const response = await DELETE(apiURL, body);
+  if (response.error) console.log(`Error in deleteProjectMediums: ${response.error}`);
+  return response as ApiResponse<null>
+};
 
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
+// Get a project's jobs
+export const getProjectJobs = async (
+  projectID: number
+): Promise<ApiResponse<ProjectJob[]>> => {
+  const apiURL = `/projects/${projectID}/jobs`;
+  const response = await GET(apiURL);
 
-  return { status: 200, error: null, data: null };
+  if (response.error) console.log(`Error in getProjectJobs: ${response.error}`);
+  return response;
+}
+
+// Add a project job
+/**
+ * @param projectID - ID of the project
+ * @param jobData - Data with which to create the joob
+*/
+export const addProjectJob = async (
+  projectID: number,
+  jobData: CreateProjectJobInput
+): Promise <ApiResponse<ProjectJob>> => {
+  const apiURL = `/projects/${projectID}/jobs`;
+  const response = await POST(apiURL, jobData);
+
+  if (response.error) console.log(`Error in addProjectJob: ${response.error}`);
+  return response as ApiResponse<ProjectJob>;
+};
+
+// Update a project job
+/**
+ * @param projectID - ID of the project
+ * @param jobId - ID of the job to be updated
+ * @param jobData - Data with which to update the job
+*/
+export const updateProjectJob = async (
+  projectID: number,
+  jobId: number,
+  jobData: UpdateProjectJobInput
+): Promise<ApiResponse<ProjectJob>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobId}`;
+  const response = await PUT(apiURL, jobData);
+
+  if (response.error) console.log(`Error in updateProjectJob: ${response.error}`);
+  return response as ApiResponse<ProjectJob>;
+};
+
+// Delete a project job
+/**
+ * @param projectID - ID of the project
+ * @param jobId - ID of the job to be deleted
+*/
+export const deleteProjectJob = async (
+  projectID: number,
+  jobId: number,
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobId}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in deleteProjectJob: ${response.error}`);
+  return response as ApiResponse<null>;
 };
 
 // Re-order project images
+//i really just wanna get rid of this one...
 /**
- * @param ID - ID of the project
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the project
+ * @param imageOrder - The imageIds listed in their new order
 */
 export const reorderProjectImages = async (
-  ID: number,
-  imageOrder: number[],
-  devId?: number
+  projectID: number,
+  imageOrder: ReorderProjectImagesInput,
 ): Promise<ApiResponse<ProjectImage[]>> => {
-  const apiURL = `/projects/${ID}/images/reorder${devId ? `?devId=${devId}` : ""}`;
-  const body = { imageOrder };
+  const apiURL = `/projects/${projectID}/images/reorder`;
+  const response = await PUT(apiURL, imageOrder);
 
-  const response = await PUT(apiURL, body);
-
-  if (response.error || response.status !== 200) {
-    return { status: response.status, error: response.error, data: null };
-  }
-
-  return { status: 200, error: null, data: response.data as ProjectImage[] };
+  if (response.error) console.log(`Error in reorderProjectImages: ${response.error}`);
+  return response as ApiResponse<ProjectImage[]>
 };
 
 // Get an image by file name
 export const getImageByFileName = async (imageURL: string): Promise<ApiResponse<Blob>> => {
   const apiURL = `/images/${imageURL}`;
+  const response = await GET(apiURL);
 
-  try {
-    const response = await fetch(apiURL, { method: "GET", credentials: "include" });
-
-    if (!response.ok) {
-    return { status: response.status, error: response.statusText, data: null };
-  };
-
-  // return media type image/png
-  const blob = await response.blob();
-  return { status: 200, error: null, data: blob };
-  }
-  catch (e) {
-    return { status: 500, error: "Internal Server Error", data: null }
-  }
+  if (response.error) console.log(`Error in getImageByFileName: ${response.error}`);
+  return response;
 }
 
 export default {
