@@ -28,29 +28,19 @@ export const GET = async (apiURL: string): Promise<ApiResponse> => {
     //check if response is JSON
     if (contentType.includes("application/json")) {
       //return if json
-      const obj = await response.json();
-
-      if (response.ok) {
-        return { data: obj.data, status: response.status };
-      } else {
-        console.log(obj.error);
-        return {
-          error: obj.error || "Network response was not ok",
-          status: response.status,
-        };
-      }
+      return await response.json();
     } else {
       //handle HTML error pages
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
-        status: 400,
+        status: response.status,
       };
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("GET error", error);
-    return { error: error.message || "Unknown error", status: 500 };
+    return { error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -74,29 +64,19 @@ export const POST = async (
     //check if response is JSON
     if (contentType.includes("application/json")) {
       //return if json
-      const obj = await response.json();
-
-      if (response.ok) {
-        return { data: obj.data, status: response.status };
-      } else {
-        console.log(obj.error);
-        return {
-          error: obj.error || "Network response was not ok",
-          status: response.status,
-        };
-      }
+      return await response.json();
     } else {
       //handle HTML error pages
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
-        status: 400,
+        status: response.status,
       };
     }
-  } catch (error: any) {
-    console.error("POST error:", error);
-    return { error: error.message || "Unknown error", status: 400 };
+  } catch (error: unknown) {
+    console.error("GET error", error);
+    return { error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -120,29 +100,19 @@ export const PUT = async (
     //check if response is JSON
     if (contentType.includes("application/json")) {
       //return if json
-      const obj = await response.json();
-
-      if (response.ok) {
-        return { data: obj.data, status: response.status };
-      } else {
-        console.log(obj.error);
-        return {
-          error: obj.error || "Network response was not ok",
-          status: response.status,
-        };
-      }
+      return await response.json();
     } else {
       //handle HTML error pages
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
-        status: 400,
+        status: response.status,
       };
     }
-  } catch (error: any) {
-    console.error("POST error:", error);
-    return { error: error.message || "Unknown error", status: 400 };
+  } catch (error: unknown) {
+    console.error("GET error", error);
+    return { error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -166,29 +136,19 @@ export const DELETE = async (
     //check if response is JSON
     if (contentType.includes("application/json")) {
       //return if json
-      const obj = await response.json();
-
-      if (response.ok) {
-        return { data: obj.data, status: response.status };
-      } else {
-        console.log(obj.error);
-        return {
-          error: obj.error || "Network response was not ok",
-          status: response.status,
-        };
-      }
+      return await response.json();
     } else {
       //handle HTML error pages
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
-        status: 400,
+        status: response.status,
       };
     }
-  } catch (error: any) {
-    console.error("POST error:", error);
-    return { error: error.message || "Unknown error", status: 400 };
+  } catch (error: unknown) {
+    console.error("GET error", error);
+    return { error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -212,29 +172,19 @@ export const PATCH = async (
     //check if response is JSON
     if (contentType.includes("application/json")) {
       //return if json
-      const obj = await response.json();
-
-      if (response.ok) {
-        return { data: obj.data, status: response.status };
-      } else {
-        console.log(obj.error);
-        return {
-          error: obj.error || "Network response was not ok",
-          status: response.status,
-        };
-      }
+      return await response.json();
     } else {
       //handle HTML error pages
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
-        status: 400,
+        status: response.status,
       };
     }
-  } catch (error: any) {
-    console.error("PATCH error:", error);
-    return { error: error.message || "Unknown error", status: 400 };
+  } catch (error: unknown) {
+    console.error("GET error", error);
+    return { error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
