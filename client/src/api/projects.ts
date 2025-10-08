@@ -10,6 +10,11 @@ import type {
   ProjectDetail,
   ProjectWithFollowers,
   CreateProjectInput,
+  UpdateProjectInput,
+  CreateProjectImageInput,
+  UpdateProjectImageInput,
+  CreateProjectMemberInput,
+  UpdateProjectMemberInput,
 } from "@looking-for-group/shared";
 
 /* PROJECT CRUD */
@@ -24,7 +29,13 @@ export const createNewProject = async (
   projectData: CreateProjectInput,
 ): Promise<ApiResponse<ProjectDetail>> => {
   const apiURL = `/projects`;
-  const response = await POST(apiURL, projectData);
+  const form = new FormData();
+  
+  for (const [name, value] of Object.entries(projectData)){
+    if(value !== null) form.append(name, value);
+  }
+
+  const response = await POST(apiURL, form);
 
   if (response.error) console.log("Error creating new project:", response.error);
   return response as ApiResponse<ProjectDetail>;
@@ -37,234 +48,185 @@ export const createNewProject = async (
 export const getProjects = async (): Promise<ApiResponse<ProjectPreview[]>> => {
   const apiURL = `/projects`;
   const response = await GET(apiURL);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
-  }
+
+  if (response.error) console.log(`Error in getProjects: ${response.error}`);
   return response;
 };
 
 /**
  * Retrieves data of a project by its ID
- * @param ID -  ID of project to retrieve
+ * @param projectID -  ID of project to retrieve
  * @returns - A project object if valid, 400 if not
  */
-export const getByID = async (ID: number): Promise<ApiResponse<ProjectWithFollowers>> => {
-  const apiURL = `/projects/${ID}`;
+export const getByID = async (projectID: number): Promise<ApiResponse<ProjectWithFollowers>> => {
+  const apiURL = `/projects/${projectID}`;
   const response = await GET(apiURL);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
-  }
-  return { status: 200, error: null, data: response.data as ProjectWithFollowers };
+
+  if (response.error) console.log(`Error in getByID: ${response.error}`);
+  return response;
 };
 
 /**
  * Updates data of an existing project
- * @param ID - ID of the project to update
- * @param data - Mapped data for update
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the project to update
+ * @param projectData - Data with which to update the project
  * @returns Response status
  */
 export const updateProject = async (
-  ID: number,
-  data: object,
-  devId?: number
+  projectID: number,
+  projectData: UpdateProjectInput,
 ): Promise<ApiResponse<ProjectDetail>> => {
-  const apiURL = `/projects/${ID}${devId ? `?devId=${devId}` : ""}`;
-  const response = await PATCH(apiURL, data);
-  if (response.error) {
-    return { status: response.status, error: response.error };
+  const apiURL = `/projects/${projectID}`;
+  
+  const form = new FormData();
+  for (const [name, value] of Object.entries(projectData)){
+    if(value !== null) form.append(name, value);
   }
-  return { status: 200, data: response.data as ProjectDetail };
+
+  const response = await PATCH(apiURL, form);
+  if (response.error) console.log(`Error in updateProject: ${response.error}`);
+  return response as ApiResponse<ProjectDetail>;
 };
 
 /**
  * Deletes an existing project
- * @param ID - ID of the project to delete
+ * @param projectID - ID of the project to delete
  * @param devId - ID to be used as the current user
  * @returns Response status
  */
 export const deleteProject = async (
-  ID: number,
-  devId?: number,
+  projectID: number,
 ): Promise<ApiResponse<unknown>> => {
-  const apiURL = `/projects/${ID}${devId ? `?devId=${devId}` : ""}`;
+  const apiURL = `/projects/${projectID}`;
   const response = await DELETE(apiURL);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
-  }
-  return { status: 200, error: null, data: null };
+
+  if (response.error) console.log(`Error in deleteProject: ${response.error}`);
+  return response;
 };
 
 /* ASSETS */
 
-/**
- * Updates the thumbnail image for a project
- * @param ID - ID of the project to update
- * @param _image - Image file of new thumbnail
- * @returns The filename of the thumbnail image if valid, "400" if not
- */
-export const updateThumbnail = async (
-  ID: number,
-  _image: File
-): Promise<ApiResponse<{ filename: string }>> => {
-  const apiURL = `/projects/${ID}`;
-  
-  const formData = new FormData();
-  formData.append("image", _image);
-
-  const response = await PATCH(apiURL, formData);
-  if (response.error) {
-    return { status: response.status, error: response.error };
-  }
-  return { status: 200, error: null, data: response.data as { filename: string } };
-};
 
 /**
  * Gets the pictures used in a project's carousel
- * @param ID - ID of the target project
+ * @param projectID - ID of the target project
  * @returns Array of image objects if valid, "400" if not
  */
-export const getPics = async (ID: number): Promise<ApiResponse<ProjectImage[]>> => {
-  const apiURL = `/projects/${ID}/images`;
+export const getPics = async (projectID: number): Promise<ApiResponse<ProjectImage[]>> => {
+  const apiURL = `/projects/${projectID}/images`;
   const response = await GET(apiURL);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
-  }
-  return { status: 200, error: null, data: response.data as ProjectImage[] };
+
+  if (response.error) console.log(`Error in getPics: ${response.error}`);
+  return response;
 };
 
 /**
  * Adds a picture to a project's carousel
- * @param ID - ID of the target project
- * @param _image - Image file to be added
- * @param _altText - Image alt text to be used
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the target project
+ * @param imageData - Data with which to add the image to the project
  * @returns Response status
  */
 export const addPic = async (
-  ID: number,
-  _image: File,
-  _altText: string,
-  devId?: number,
+  projectID: number,
+  imageData: CreateProjectImageInput,
 ): Promise<ApiResponse<ProjectImage>> => {
-  const apiURL = `/projects/${ID}/images${devId ? `?devId=${devId}` : ""}`;
-  
-  const formData = new FormData();
-  formData.append("image", _image);
-  formData.append("altText", _altText);
-
-  const response = await POST(apiURL, formData);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
+  const apiURL = `/projects/${projectID}/images`;
+    
+  const form = new FormData();
+  for (const [name, value] of Object.entries(imageData)){
+    if(value !== null) form.append(name, value);
   }
-  return { status: 200, error: null, data: response.data as ProjectImage };
+
+  const response = await POST(apiURL, form);
+
+  if (response.error) console.log(`Error in addPic: ${response.error}`);
+  return response as ApiResponse<ProjectImage>;
 };
 
 /**
  * Updates position order of a project's carousel pictures
- * @param ID - ID of the target project
- * @param images - Array of objects, which contain the image "id" and new "position"
+ * @param projectID - ID of the target project
+ * @param imageData - Data with which to update the image
  * @param devId - ID to be used as the current user
  * @returns Response status
  */
 export const updatePic = async (
-  ID: number,
+  projectID: number,
   imageId: number,
-  _image?: File,
-  _altText?: string,
-  devId?: number,
+  imageData: UpdateProjectImageInput,
 ): Promise<ApiResponse<ProjectImage>> => {
-  const apiURL = `/projects/${ID}/images/${imageId}${devId ? `?devId=${devId}` : ""}`;
+  const apiURL = `/projects/${projectID}/images/${imageId}`;
 
-  const formData = new FormData();
-  if (_image) {
-    formData.append("image", _image);
-  }
-  if (_altText) {
-    formData.append("altText", _altText);
+  const form = new FormData();
+  for (const [name, value] of Object.entries(imageData)){
+    if(value !== null) form.append(name, value);
   }
 
-  const response = await PATCH(apiURL, formData);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
-  }
-  return { status: 200, error: null, data: response.data as ProjectImage };
+  const response = await PATCH(apiURL, form);
+
+  if (response.error) console.log(`Error in updatePic: ${response.error}`);
+  return response as ApiResponse<ProjectImage>;
 };
 
 /**
  * Deletes a picture in a project
- * @param ID - ID of the target project
+ * @param projectID - ID of the target project
  * @param imageId - ID of the image to delete
- * @param devId - ID to be used as the current user
  * @returns Response status
  */
 export const deletePic = async (
-  ID: number,
+  projectID: number,
   imageId: number,
-  devId?: number
 ): Promise<ApiResponse<null>> => {
   //FIX ROUTE FOR DELETING PICTURE
   //NEEDS TO SPECIFY WHAT PICTURE IS BEING DELETED BY IMAGE NAME
   //uses encode to evoid special character issues
-  const apiURL = `/projects/${ID}/images/${imageId}${devId ? `?devId=${devId}` : ""}`;
+  //is this a relic of the past or does this need to be done
+
+  const apiURL = `/projects/${projectID}/images/${imageId}`;
   const response = await DELETE(apiURL);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
-  }
-  return { status: 200, error: null, data: null };
+
+  if (response.error) console.log(`Error in deletePic: ${response.error}`);
+  return response as ApiResponse<null>;
 };
 
 /* MEMBERS */
 
 /**
  * Adds a member to a project
- * @param ID - ID of the target project
- * @param _userId - ID of the user to add
- * @param _roleId - ID of the user's role
+ * @param projectID - ID of the target project
+ * @param memberData - Data with which to add a member
  * @param devId - ID to be used as the current user
  * @returns Response status
  */
 export const addMember = async (
   ID: number,
-  _userId: number,
-  _roleId?: number,
-  devId?: number
+  memberData: CreateProjectMemberInput,
 ): Promise<ApiResponse<ProjectMember>> => {
-  const apiURL = `/projects/${ID}/members${devId ? `?devId=${devId}` : ""}`;
-  const data = {
-    userId: _userId,
-    roleId: _roleId
-  };
-  const response = await POST(apiURL, data);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
-  }
-  return { status: 200, error: null, data: response.data as ProjectMember };
+  const apiURL = `/projects/${ID}/members`;
+  const response = await POST(apiURL, memberData);
+  
+  if (response.error) console.log(`Error in addMember: ${response.error}`);
+  return response as ApiResponse<ProjectMember>;
 };
 
 /**
  * Updates an existing member in a project
- * @param ID - ID of the target project
- * @param _userId - ID of the user to update
- * @param _roleId - ID of the user's role
- * @param devId - ID to be used as the current user
+ * @param projectID - ID of the target project
+ * @param userId - database ID of the member
+ * @param memberData - Data with which to add a member
  * @returns Response status
  */
 export const updateMember = async (
-  ID: number,
-  _userId: number,
-  _roleId: number,
-  devId?: number
+  projectID: number,
+  userId: number,
+  memberData: UpdateProjectMemberInput
 ): Promise<ApiResponse<ProjectMember>> => {
-  const apiURL = `/projects/${ID}/members/${_userId}${devId ? `?devId=${devId}` : ""}`;
-  const data = {
-    roleId: _roleId,
-  };
-  const response = await PATCH(apiURL, data);
-  if (response.error) {
-    return { status: response.status, error: response.error, data: null };
-  }
-  return { status: 200, error: null, data: response.data as ProjectMember };
+  const apiURL = `/projects/${projectID}/members/${userId}`;
+  const response = await PATCH(apiURL, memberData);
+
+  if (response.error) console.log(`Error in updateMember: ${response.error}`);
+  return response as ApiResponse<ProjectMember>;
 };
 
 /**
@@ -534,7 +496,6 @@ export default {
   getByID,
   updateProject,
   deleteProject,
-  updateThumbnail,
   getPics,
   addPic,
   updatePic,
