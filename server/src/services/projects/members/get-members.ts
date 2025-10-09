@@ -11,6 +11,11 @@ const getMembersService = async (projectId: number): Promise<ProjectMember[] | G
     const members = await prisma.members.findMany({
       where: { projectId },
       select: ProjectMemberSelector,
+      orderBy: {
+        users: {
+          firstName: 'asc',
+        },
+      },
     });
 
     if (members.length === 0) {

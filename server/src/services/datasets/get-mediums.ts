@@ -10,6 +10,9 @@ const getMediumsService = async (): Promise<Medium[] | GetMediumsServiceError> =
   try {
     const mediums = await prisma.mediums.findMany({
       select: MediumSelector,
+      orderBy: {
+        label: 'asc',
+      },
     });
 
     return mediums.map(transformMedium);

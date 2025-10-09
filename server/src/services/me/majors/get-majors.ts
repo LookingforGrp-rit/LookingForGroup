@@ -13,6 +13,9 @@ const getUserMajorsService = async (userId: number): Promise<MyMajor[] | GetServ
       include: {
         majors: {
           select: MyMajorSelector,
+          orderBy: {
+            label: 'asc',
+          },
         },
       },
     });

@@ -10,6 +10,9 @@ const getSocialsService = async (): Promise<Social[] | GetSocialsServiceError> =
   try {
     const socials = await prisma.socials.findMany({
       select: SocialSelector,
+      orderBy: {
+        label: 'asc',
+      },
     });
 
     return socials.map(transformSocial);

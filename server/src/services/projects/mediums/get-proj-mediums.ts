@@ -15,6 +15,9 @@ const getProjectMediumsService = async (
       include: {
         mediums: {
           select: ProjectMediumSelector,
+          orderBy: {
+            label: 'asc',
+          },
         },
       },
     });

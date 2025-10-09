@@ -13,6 +13,11 @@ export const getSkillsService = async (userId: number): Promise<MySkill[] | GetS
       where: {
         userId,
       },
+      orderBy: {
+        skills: {
+          label: 'asc',
+        },
+      },
       select: MySkillSelector,
     });
 

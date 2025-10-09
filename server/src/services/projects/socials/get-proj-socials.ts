@@ -15,6 +15,11 @@ const getProjectSocialsService = async (
       include: {
         projectSocials: {
           select: ProjectSocialSelector,
+          orderBy: {
+            socials: {
+              label: 'asc',
+            },
+          },
         },
       },
     });

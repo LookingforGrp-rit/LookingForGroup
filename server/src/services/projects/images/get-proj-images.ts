@@ -15,6 +15,9 @@ const getProjectImagesService = async (
       include: {
         projectImages: {
           select: ProjectImageSelector,
+          orderBy: {
+            imageId: 'asc',
+          },
         },
       },
     });

@@ -18,6 +18,9 @@ export const transformProjectToFollowers = (project: ProjectsGetPayload): Projec
     users: project.projectFollowings.map(({ users, followedAt }) => ({
       followedAt,
       user: transformUserToPreview(users),
+      orderBy: {
+        firstName: 'asc',
+      },
     })),
     apiUrl: `/api/projects/${project.projectId.toString()}/followers`,
   };

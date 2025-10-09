@@ -10,6 +10,9 @@ const getMajorsService = async (): Promise<Major[] | GetMajorsServiceError> => {
   try {
     const majors = await prisma.majors.findMany({
       select: MajorSelector,
+      orderBy: {
+        label: 'asc',
+      },
     });
 
     return majors.map(transformMajor);
