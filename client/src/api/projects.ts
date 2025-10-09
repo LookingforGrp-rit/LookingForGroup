@@ -156,7 +156,7 @@ export const updateThumbnail = async (
  * @returns Array of image objects if valid, "400" if not
  */
 export const getPics = async (ID: number): Promise<ApiResponse<unknown>> => {
-  const apiURL = `/projects/${ID}/pictures`;
+  const apiURL = `/projects/${ID}/images`;
   const response = await GET(apiURL);
   if (response.error) {
     return { status: response.status, error: response.error };
