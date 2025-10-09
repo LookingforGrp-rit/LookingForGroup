@@ -1,6 +1,6 @@
 // --- Imports ---
 import { useCallback, useEffect, useState } from "react";
-import { addPic, updateThumbnail, deletePic } from "../../../api/projects";
+import { addPic, deletePic } from "../../../api/projects";
 import { ProjectDetail, ProjectImage } from "@looking-for-group/shared";
 import { PopupButton } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";

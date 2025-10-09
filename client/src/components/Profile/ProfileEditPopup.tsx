@@ -25,7 +25,7 @@ import { ProjectsTab } from './tabs/ProjectsTab';
 import { SkillsTab } from './tabs/SkillsTab';
 // import { InterestTab } from './tabs/InterestTab';
 // import { interests } from '../../constants/interests';
-import { getCurrentUsername, getUsersById, updateProfilePicture } from '../../api/users';
+import { getCurrentUsername, getUsersById, } from '../../api/users';
 
 import { MeDetail, MySkill, UserSocial } from '@looking-for-group/shared';
 

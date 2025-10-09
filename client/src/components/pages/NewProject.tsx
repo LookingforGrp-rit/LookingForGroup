@@ -28,7 +28,7 @@ import Project from './Project';
 import { ThemeIcon } from '../ThemeIcon';
 import { sendPost, sendDelete } from '../../functions/fetch';
 import { getByID, deleteProject, deleteMember } from '../../api/projects';
-import { getAccountInformation, deleteProjectFollowing, addProjectFollowing } from '../../api/users';
+import { deleteProjectFollowing, addProjectFollowing } from '../../api/users';
 import { leaveProject } from '../projectPageComponents/ProjectPageHelper';
 
 //backend base url for getting images
