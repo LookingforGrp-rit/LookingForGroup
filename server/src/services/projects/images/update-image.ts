@@ -1,5 +1,6 @@
-import type { ProjectImage, UpdateProjectImageInput } from '@looking-for-group/shared';
+import type { ProjectImage } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
+import type { Prisma } from '#prisma-models/index.js';
 import { deleteImageService } from '#services/images/delete-image.ts';
 import { ProjectImageSelector } from '#services/selectors/projects/parts/project-image.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -9,7 +10,7 @@ type UpdateImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'
 
 const updateImageService = async (
   imageId: number,
-  updates: UpdateProjectImageInput,
+  updates: Prisma.ProjectImagesUpdateInput,
 ): Promise<ProjectImage | UpdateImageServiceError> => {
   try {
     const image = await prisma.projectImages.findUnique({ where: { imageId: imageId } });
@@ -21,10 +22,7 @@ const updateImageService = async (
 
     const updatedImage = await prisma.projectImages.update({
       where: { imageId },
-      data: {
-        image: 'PLACEHOLDER PLEASE LET ME OUT',
-        altText: updates.altText,
-      },
+      data: updates,
       select: { ...ProjectImageSelector, projectId: true },
     });
 

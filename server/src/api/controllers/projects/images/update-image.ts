@@ -1,15 +1,19 @@
-import type {
-  AuthenticatedRequest,
-  ApiResponse,
-  UpdateProjectImageInput,
-} from '@looking-for-group/shared';
-import type { Response } from 'express';
+import type { ApiResponse } from '@looking-for-group/shared';
+import type { RequestHandler } from 'express';
 import { uploadImageService } from '#services/images/upload-image.ts';
-import updateImageService from '#services/projects/images/update-image.ts';
+import getUpdateImageService from '#services/projects/images/update-image.ts';
+
+interface UpdateImageInfo {
+  image?: string;
+  altText?: string;
+}
 
 //updates an image in a project
-const updateImageController = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const updates: UpdateProjectImageInput = req.body as UpdateProjectImageInput;
+const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImageInfo> = async (
+  req,
+  res,
+): Promise<void> => {
+  const updates: UpdateImageInfo = req.body;
 
   const imageId = parseInt(req.params.id);
 
@@ -17,12 +21,7 @@ const updateImageController = async (req: AuthenticatedRequest, res: Response): 
   const invalidFields = Object.keys(updates).filter((field) => !allowedFields.includes(field));
 
   if (invalidFields.length > 0) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: `Invalid fields: ${JSON.stringify(invalidFields)}`,
-      data: null,
-    };
-    res.status(400).json(resBody);
+    res.status(400).json({ message: `Invalid fields: ${JSON.stringify(invalidFields)}` });
     return;
   }
 
@@ -54,37 +53,22 @@ const updateImageController = async (req: AuthenticatedRequest, res: Response): 
       return;
     }
 
-    updates.image = req.file as unknown as File;
+    updates['image'] = dbImage.location;
   }
 
-  const result = await updateImageService(imageId, updates);
+  const result = await getUpdateImageService(imageId, updates);
 
   if (result === 'NOT_FOUND') {
-    const resBody: ApiResponse = {
-      status: 404,
-      error: 'Image not found',
-      data: null,
-    };
-    res.status(404).json(resBody);
+    res.status(404).json({ message: 'Image not found' });
     return;
   }
 
   if (result === 'INTERNAL_ERROR') {
-    const resBody: ApiResponse = {
-      status: 500,
-      error: 'Internal Server Error',
-      data: null,
-    };
-    res.status(500).json(resBody);
+    res.status(500).json({ message: 'Internal Server Error' });
     return;
   }
 
-  const resBody: ApiResponse = {
-    status: 200,
-    error: null,
-    data: result,
-  };
-  res.status(200).json(resBody);
+  res.status(200).json({ success: true });
 };
 
 export default updateImageController;
