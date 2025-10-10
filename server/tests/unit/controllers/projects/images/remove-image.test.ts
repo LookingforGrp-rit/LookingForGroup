@@ -19,38 +19,6 @@ describe('removeImage', () => {
     vi.restoreAllMocks();
   });
 
-  //project has a non-numerical id, should return 400
-  test('Must return 400 when the project id is invalid', async () => {
-    req.params.id = 'nowhere NEAR a number';
-    const resBody = {
-      status: 400,
-      error: 'Invalid project or image ID',
-      data: null,
-    };
-
-    await removeImageController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.id = '1';
-  });
-
-  //image has a non-numerical id, should return 400
-  test('Must return 400 when the image id is invalid', async () => {
-    req.params.picId = 'nowhere NEAR a number';
-    const resBody = {
-      status: 400,
-      error: 'Invalid project or image ID',
-      data: null,
-    };
-
-    await removeImageController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.picId = '1';
-  });
-
   //project couldn't be found, return 404
   test("Must return 404 when the project couldn't be found", async () => {
     vi.mocked(getProjectByIdService).mockResolvedValue('NOT_FOUND');

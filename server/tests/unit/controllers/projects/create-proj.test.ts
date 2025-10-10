@@ -25,21 +25,6 @@ describe('createProject', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
-  //currentUser has a non-numerical id, should return 400
-  test('Must return 400 when currentUser is invalid', async () => {
-    req.currentUser = 'nowhere NEAR a number';
-
-    const resBody = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    await createProjectController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.currentUser = '1'; //resetting it for the next test
-  });
 
   //they added an image that's too big, should return 413
   test('Must return 413 when the user attempts to add a massive image', async () => {

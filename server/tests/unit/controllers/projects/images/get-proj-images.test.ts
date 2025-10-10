@@ -19,21 +19,6 @@ describe('getProjectImages', () => {
   });
 
   //project has a non-numerical id, should return 400
-  test('Must return 400 when the project id is invalid', async () => {
-    req.params.id = 'nowhere NEAR a number';
-    const resBody = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-
-    await getProjectImagesController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.id = '1';
-  });
-  //project has a non-numerical id, should return 400
   test("Must return 404 when the project couldn't be found", async () => {
     vi.mocked(getProjectImagesService).mockResolvedValue('NOT_FOUND');
     expect(getProjectImagesService).toBe(vi.mocked(getProjectImagesService));

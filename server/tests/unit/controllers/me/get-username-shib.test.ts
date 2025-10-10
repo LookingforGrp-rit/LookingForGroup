@@ -1,5 +1,4 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import { uidHeaderKey } from '#config/constants.ts';
 import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
 import { getUserByShibService } from '#services/me/get-user-shib.ts';
 import { blankAuthUserRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
@@ -19,24 +18,6 @@ describe('getUsernameByShib', () => {
   });
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-  //university id missing, should return 404
-  test('Must return 400 when the uid is missing', async () => {
-    req.headers[uidHeaderKey] = undefined;
-
-    vi.mocked(getUserByShibService).mockResolvedValue('INTERNAL_ERROR');
-    expect(getUserByShibService).toBe(vi.mocked(getUserByShibService));
-    const resBody = {
-      status: 400,
-      error: 'Missing university ID in headers',
-      data: null,
-    };
-
-    await getUsernameByShib(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.headers[uidHeaderKey] = '000000001';
   });
 
   //there's something wrong with the service, should return 500

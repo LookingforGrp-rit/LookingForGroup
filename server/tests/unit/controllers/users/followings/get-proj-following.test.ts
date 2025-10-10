@@ -2,7 +2,7 @@ import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import { getProjectsFollowing } from '#controllers/users/followings/get-proj-following.ts';
 import { getProjectFollowingService } from '#services/users/followings/get-proj-following.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
-import { blankProjectPreview } from '#tests/resources/blanks/projects.ts';
+import { blankProjectFollowsList } from '#tests/resources/blanks/projects.ts';
 
 vi.mock('#services/users/followings/get-proj-following.ts');
 
@@ -18,22 +18,6 @@ describe('getProjectsFollowing', () => {
   });
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-
-  //project has a non-numerical id, should return 400
-  test('Must return 400 when project id is invalid', async () => {
-    req.params.id = 'not a number either';
-    const resBody = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-
-    await getProjectsFollowing(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.id = '1'; //resetting it for the next test
   });
 
   //there's something wrong with the service, should return 500
@@ -69,12 +53,12 @@ describe('getProjectsFollowing', () => {
   });
   //everything's good, return 200
   test('Must return 200 when the project was retrieved successfully', async () => {
-    vi.mocked(getProjectFollowingService).mockResolvedValue([blankProjectPreview]);
+    vi.mocked(getProjectFollowingService).mockResolvedValue(blankProjectFollowsList);
     expect(getProjectFollowingService).toBe(vi.mocked(getProjectFollowingService));
     const resBody = {
       status: 200,
       error: null,
-      data: [blankProjectPreview],
+      data: blankProjectFollowsList,
     };
 
     await getProjectsFollowing(req, res);

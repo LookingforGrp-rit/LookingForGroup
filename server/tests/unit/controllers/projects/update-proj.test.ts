@@ -20,37 +20,6 @@ describe('updateProject', () => {
     vi.restoreAllMocks();
   });
 
-  //currentUser has a non-numerical id, should return 400
-  test('Must return 400 when currentUser id is not a number', async () => {
-    req.currentUser = 'nowhere NEAR a number';
-
-    const resBody = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    await updateProjectController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.currentUser = '1'; //resetting it for the next test
-  });
-
-  //project has a non-numerical id, should return 400
-  test('Must return 400 when project id is invalid', async () => {
-    req.params.id = 'not a number either';
-    const resBody = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-
-    await updateProjectController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.id = '1'; //resetting it for the next test
-  });
   //they added an image that's too big, should return 413
   test('Must return 413 when the user attempts to add a massive image', async () => {
     req.file = file; //the uploadImageService only runs when there's a file

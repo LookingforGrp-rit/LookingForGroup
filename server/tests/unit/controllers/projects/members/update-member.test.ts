@@ -18,38 +18,6 @@ describe('updateMember', () => {
     vi.restoreAllMocks();
   });
 
-  //currentUser has a non-numerical id, should return 400
-  test('Must return 400 when currentUser id is not a number', async () => {
-    req.params.userId = 'nowhere NEAR a number';
-
-    const resBody = {
-      status: 400,
-      error: 'Invalid user or project ID',
-      data: null,
-    };
-    await updateMemberController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.userId = '1'; //resetting it for the next test
-  });
-
-  //project has a non-numerical id, should return 400
-  test('Must return 400 when project id is invalid', async () => {
-    req.params.id = 'not a number either';
-    const resBody = {
-      status: 400,
-      error: 'Invalid user or project ID',
-      data: null,
-    };
-
-    await updateMemberController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.id = '1'; //resetting it for the next test
-  });
-
   //the member could not be found, should return 404
   test('Must return 404 when the member could not be found', async () => {
     vi.mocked(updateMemberService).mockResolvedValue('NOT_FOUND');

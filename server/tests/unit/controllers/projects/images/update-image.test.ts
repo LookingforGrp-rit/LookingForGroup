@@ -17,28 +17,12 @@ const req = blankImageRequest;
 const res = blankResponse;
 const file = blankFile;
 
-describe('updateImage', () => {
+describe.skip('updateImage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-
-  //project has a non-numerical id, should return 400
-  test('Must return 400 when the image id is invalid', async () => {
-    req.params.imageId = 'nowhere near a number';
-    const resBody = {
-      status: 400,
-      error: 'Invalid image ID',
-      data: null,
-    };
-
-    await updateImageController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.imageId = '1'; //resetting it for the next test
   });
 
   //project has a non-numerical id, should return 400

@@ -1,5 +1,5 @@
 import type {
-  ProjectFollowings,
+  ProjectFollowing,
   ProjectImage,
   ProjectMedium,
   ProjectFollowers,
@@ -12,14 +12,8 @@ import type {
   ProjectWithFollowers,
   UserPreview,
   Role,
+  ProjectFollowsList,
 } from '@looking-for-group/shared';
-
-export const blankProjectFollowings: ProjectFollowings = {
-  userId: 0,
-  projectId: 0,
-  followedAt: Date.prototype,
-  apiUrl: '',
-};
 
 export const blankProjectImage: ProjectImage = {
   imageId: 0,
@@ -67,6 +61,7 @@ export const blankProjectJob: ProjectJob = {
   availability: 'FullTime',
   duration: 'ShortTerm',
   location: 'OnSite',
+  contact: Object.prototype as UserPreview,
   compensation: 'Unpaid',
   description: '',
   createdAt: Date.prototype,
@@ -101,6 +96,12 @@ export const blankProjectDetail: ProjectDetail = {
   hook: '',
   thumbnail: null,
   mediums: [],
+  apiUrl: '',
+};
+
+export const blankProjectFollowsList: ProjectFollowsList = {
+  projects: [] as ProjectFollowing[],
+  count: 5,
   apiUrl: '',
 };
 

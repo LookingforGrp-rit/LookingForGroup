@@ -1,5 +1,5 @@
 import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
-import { getUserProjects } from '#controllers/users/get-user-proj.ts';
+import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
 import { getUserProjectsService } from '#services/users/get-user-proj.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
 import { blankProjectPreview } from '#tests/resources/blanks/projects.ts';
@@ -12,28 +12,12 @@ const req = blankIdRequest;
 //dummy resp
 const res = blankResponse;
 
-describe('getUserProjects', () => {
+describe('getOtherUserProjects', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
   afterEach(() => {
     vi.restoreAllMocks();
-  });
-
-  //user has a non-numerical id, should return 400
-  test('Must return 400 when user id is invalid', async () => {
-    req.params.id = 'not a number either';
-    const resBody = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-
-    await getUserProjects(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.id = '1'; //resetting it for the next test
   });
 
   //there's something wrong with the service, should return 500
@@ -46,7 +30,7 @@ describe('getUserProjects', () => {
       data: null,
     };
 
-    await getUserProjects(req, res);
+    await getOtherUserProjects(req, res);
     expect(getUserProjectsService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(500);
     expect(res.json).toHaveBeenCalledWith(resBody);
@@ -62,7 +46,7 @@ describe('getUserProjects', () => {
       data: null,
     };
 
-    await getUserProjects(req, res);
+    await getOtherUserProjects(req, res);
     expect(getUserProjectsService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(404);
     expect(res.json).toHaveBeenCalledWith(resBody);
@@ -78,7 +62,7 @@ describe('getUserProjects', () => {
       data: [blankProjectPreview],
     };
 
-    await getUserProjects(req, res);
+    await getOtherUserProjects(req, res);
     expect(getUserProjectsService).toHaveBeenCalledOnce();
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith(resBody);

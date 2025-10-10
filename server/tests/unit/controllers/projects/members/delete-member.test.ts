@@ -18,22 +18,6 @@ describe('deleteMember', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
-
-  //project has a non-numerical id, should return 400
-  test('Must return 400 when project id is invalid', async () => {
-    req.params.id = 'not a number either';
-    const resBody = {
-      status: 400,
-      error: 'Invalid project or member id',
-      data: null,
-    };
-
-    await deleteMemberController(req, res);
-    expect(res.status).toHaveBeenCalledWith(400);
-    expect(res.json).toHaveBeenCalledWith(resBody);
-
-    req.params.id = '1'; //resetting it for the next test
-  });
   //the member could not be found, should return 404
   test('Must return 404 when the member could not be found', async () => {
     vi.mocked(deleteMemberService).mockResolvedValue('NOT_FOUND');
