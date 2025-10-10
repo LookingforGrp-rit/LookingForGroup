@@ -94,7 +94,7 @@ router.patch(
   projectAttributeExistsAt('image', { type: 'path', key: 'id' }, { type: 'path', key: 'imageId' }),
   authenticated(requiresProjectOwner),
   upload.single('image'),
-  authenticated(PROJECT.updateImage),
+  PROJECT.updateImage,
 );
 //Removes picture from a project
 router.delete(
