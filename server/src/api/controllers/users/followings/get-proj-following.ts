@@ -5,20 +5,9 @@ import { getProjectFollowingService } from '#services/users/followings/get-proj-
 // gets the projects a user is following
 export const getProjectsFollowing = async (req: Request, res: Response): Promise<void> => {
   //user ID
-  const UserId = parseInt(req.params.id);
+  const userId = parseInt(req.params.id);
 
-  //check if ID is number
-  if (isNaN(UserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const result = await getProjectFollowingService(UserId);
+  const result = await getProjectFollowingService(userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -1,0 +1,232 @@
+components:
+  schemas:
+    UpdateUserInput:
+      type: object
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        headline:
+          type: string
+        pronouns:
+          type: string
+        title:
+          type: string
+        academicYear:
+          $ref: 'enums.yaml#/components/schemas/AcademicYear'
+        location:
+          type: string
+        funFact:
+          type: string
+        bio:
+          type: string
+        visibility:
+          $ref: 'enums.yaml#/components/schemas/Visibility'
+        phoneNumber:
+          type: string
+        mentor:
+          type: boolean
+        profileImage:
+          type: string
+          format: binary
+
+    AddUserSocialInput:
+      type: object
+      properties:
+        websiteId:
+          type: number
+        url:
+          type: string
+      required:
+        - websiteId
+        - url
+
+    UpdateUserSocialInput:
+      type: object
+      properties:
+        url:
+          type: string
+
+    AddUserSkillsInput:
+      type: object
+      properties:
+        skillId:
+          type: number
+        position:
+          type: number
+        proficiency:
+          $ref: 'enums.yaml#/components/schemas/SkillProficiency'
+      required:
+        - skillId
+          - position
+          - proficiency
+
+    UpdateUserSkillInput:
+      type: object
+      properties:
+        position:
+          type: number
+        proficiency:
+          $ref: 'enums.yaml#/components/schemas/SkillProficiency'
+
+    CreateProjectInput:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: 'enums.yaml#/components/schemas/ProjectStatus'
+        audience:
+          type: string
+        hook:
+          type: string
+        thumbnail:
+          type: string
+          format: binary
+      required:
+        - title
+
+    UpdateProjectInput:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        status:
+          $ref: 'enums.yaml#/components/schemas/ProjectStatus'
+        audience:
+          type: string
+        hook:
+          type: string
+        thumbnail:
+          type: string
+          format: binary
+
+    CreateProjectImageInput:
+      type: object
+      properties:
+        altText:
+          type: string
+        image:
+          type: string
+          format: binary
+      required:
+        - altText
+        - image
+
+    UpdateProjectImageInput:
+      type: object
+      properties:
+        altText:
+          type: string
+        image:
+          type: string
+          format: binary
+
+    ReorderProjectImagesInput:
+      type: object
+      properties:
+        imageOrder:
+          type: array
+          items:
+            type: number
+      required:
+        - imageOrder
+
+    CreateProjectMemberInput:
+      type: object
+      properties:
+        userId:
+          type: number
+        roleId:
+          type: number
+      required:
+        - userId
+
+    UpdateProjectMemberInput:
+      type: object
+      properties:
+        roleId:
+          type: number
+
+    AddProjectSocialInput:
+      type: object
+      properties:
+        websiteId:
+          type: number
+        url:
+          type: string
+      required:
+        - websiteId
+        - url
+
+    UpdateProjectSocialInput:
+      type: object
+      properties:
+        url:
+          type: string
+
+    AddProjectTagsInput:
+      type: object
+      properties:
+        tagId:
+          type: number
+      required:
+        - tagId
+
+    AddProjectMediumsInput:
+      type: array
+      items:
+        type: object
+        properties:
+          mediumId:
+            type: number
+        required:
+          - mediumId
+
+    CreateProjectJobInput:
+      type: object
+      properties:
+        availability:
+          $ref: 'enums.yaml#/components/schemas/JobAvailability'
+        duration:
+          $ref: 'enums.yaml#/components/schemas/JobDuration'
+        location:
+          $ref: 'enums.yaml#/components/schemas/JobLocation'
+        compensation:
+          $ref: 'enums.yaml#/components/schemas/JobCompensation'
+        description:
+          type: string
+        roleId:
+          type: number
+        contactUserId:
+          type: number
+      required:
+        - availability
+        - duration
+        - location
+        - compensation
+        - roleId
+        - contactUserId
+
+    UpdateProjectJobInput:
+      type: object
+      properties:
+        availability:
+          $ref: 'enums.yaml#/components/schemas/JobAvailability'
+        duration:
+          $ref: 'enums.yaml#/components/schemas/JobDuration'
+        location:
+          $ref: 'enums.yaml#/components/schemas/JobLocation'
+        compensation:
+          $ref: 'enums.yaml#/components/schemas/JobCompensation'
+        description:
+          type: string
+        roleId:
+          type: number
+        contactUserId:
+          type: number

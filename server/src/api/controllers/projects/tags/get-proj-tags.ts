@@ -3,18 +3,8 @@ import type { Request, Response } from 'express';
 import getProjectTagsService from '#services/projects/tags/get-proj-tags.ts';
 
 //gets the tags associated with a project
-const getProjectTagsController = async (_req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(_req.params.id);
-
-  if (isNaN(projID)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
+const getProjectTagsController = async (req: Request, res: Response): Promise<void> => {
+  const projID = parseInt(req.params.id);
 
   const result = await getProjectTagsService(projID);
 

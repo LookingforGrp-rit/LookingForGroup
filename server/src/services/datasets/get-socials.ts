@@ -10,6 +10,9 @@ export const getSocialsService = async (): Promise<Social[] | GetSocialsServiceE
   try {
     const socials = await prisma.socials.findMany({
       select: SocialSelector,
+      orderBy: {
+        label: 'asc',
+      },
     });
 
     return socials.map(transformSocial);

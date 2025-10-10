@@ -10,6 +10,9 @@ export const getRolesService = async (): Promise<Role[] | GetRolesServiceError> 
   try {
     const roles = await prisma.roles.findMany({
       select: RoleSelector,
+      orderBy: {
+        label: 'asc',
+      },
     });
 
     return roles.map(transformRole);

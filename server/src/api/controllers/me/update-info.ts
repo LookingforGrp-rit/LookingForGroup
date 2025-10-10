@@ -1,42 +1,13 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest, UpdateUserInput } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import type { UsersAcademicYear } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import { updateUserInfoService } from '#services/me/update-info.ts';
 
-interface UpdateUserInfo {
-  firstName?: string;
-  lastName?: string;
-  headline?: string;
-  pronouns?: string;
-  title?: string;
-  academicYear?: UsersAcademicYear | null;
-  location?: string;
-  funFact?: string;
-  bio?: string;
-  visibility?: number;
-  username?: string;
-  phoneNumber?: string;
-  profileImage?: string;
-  mentor?: boolean;
-}
+type RequestBody = Partial<Omit<UpdateUserInput, 'profileImage'>>;
 
 //update user info
 export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const id = req.currentUser;
-  const updates = req.body as UpdateUserInfo;
-
-  //validate ID
-  const userId = parseInt(id);
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
+  const body = req.body as RequestBody;
 
   //fields that can be updated
   const updateFields = [
@@ -51,12 +22,11 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'bio',
     'visibility',
     'phoneNumber',
-    'profileImage',
     'mentor',
   ];
 
   //validate update fields
-  const invalid = Object.keys(updates).filter((field) => !updateFields.includes(field));
+  const invalid = Object.keys(body).filter((field) => !updateFields.includes(field));
 
   if (invalid.length > 0) {
     const resBody: ApiResponse = {
@@ -67,6 +37,12 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     res.status(400).json(resBody);
     return;
   }
+
+  const updates: Parameters<typeof updateUserInfoService>[1] = {
+    ...body,
+    mentor: undefined,
+    visibility: undefined,
+  };
 
   //check if they sent over a new pfp, and upload it to the db
   if (req.file) {
@@ -96,13 +72,18 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
       return;
     }
 
-    updates['profileImage'] = dbImage.location;
+    updates.profileImage = dbImage.location;
   }
 
-  const result = await updateUserInfoService(userId, {
-    ...updates,
-    mentor: updates.mentor,
-  });
+  if (body.mentor !== undefined) {
+    updates.mentor = body.mentor === 'true';
+  }
+
+  if (body.visibility !== undefined) {
+    updates.visibility = body.visibility === '1' ? 1 : 0;
+  }
+
+  const result = await updateUserInfoService(req.currentUser, updates);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

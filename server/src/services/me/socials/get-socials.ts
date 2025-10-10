@@ -13,6 +13,11 @@ export const getSocialsService = async (userId: number): Promise<MySocial[] | Ge
       where: {
         userId: userId,
       },
+      orderBy: {
+        socials: {
+          label: 'asc',
+        },
+      },
       select: MySocialSelector,
     });
 

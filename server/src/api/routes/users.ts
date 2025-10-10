@@ -7,8 +7,9 @@ import { getAllUsers } from '#controllers/users/get-all-users.ts';
 import { getUserByEmail } from '#controllers/users/get-user/get-by-email.ts';
 import { getUserById } from '#controllers/users/get-user/get-by-id.ts';
 import { getUserByUsername } from '#controllers/users/get-user/get-by-username.ts';
-import { getUserProjects } from '#controllers/users/get-user-proj.ts';
-import requiresLogin from '../middleware/requires-login.ts';
+import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
+import requiresLogin from '../middleware/authorization/requires-login.ts';
+import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
 
@@ -19,16 +20,21 @@ router.get('/', getAllUsers);
 router.post('/', requiresLogin, createUser);
 
 //Gets another user's projects
-router.get('/:id/projects/', getUserProjects);
+router.get('/:id/projects/', getOtherUserProjects);
 
 // FOLLOW ROUTES
 
 //Gets projects user is following
-router.get('/:id/followings/projects', requiresLogin, getProjectsFollowing);
+router.get(
+  '/:id/followings/projects',
+  userExistsAt('path', 'id'),
+  requiresLogin,
+  getProjectsFollowing,
+);
 //Gets users user is following
-router.get('/:id/followings/people', requiresLogin, getUserFollowing);
+router.get('/:id/followings/people', userExistsAt('path', 'id'), requiresLogin, getUserFollowing);
 //Gets users that follow this user
-router.get('/:id/followers', requiresLogin, getUserFollowers);
+router.get('/:id/followers', userExistsAt('path', 'id'), requiresLogin, getUserFollowers);
 
 // GET USER ROUTES
 

@@ -9,16 +9,6 @@ export const deleteSocialService = async (
   userId: number,
 ): Promise<DeleteSocialServiceError | DeleteSocialServiceSuccess> => {
   try {
-    //social validation (do you have this social)
-    const socialExists = await prisma.userSocials.findFirst({
-      where: {
-        websiteId: websiteId,
-        userId: userId,
-      },
-    });
-
-    if (!socialExists) return 'NOT_FOUND';
-
     await prisma.userSocials.delete({
       where: {
         userId_websiteId: {

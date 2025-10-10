@@ -1,16 +1,11 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { AddProjectMediumsInput, ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import addMediumsService from '#services/projects/mediums/add-proj-mediums.ts';
-
-//the mediums (or their ids anyway)
-type Mediums = {
-  mediumIds?: number[];
-};
 
 //adds multiple mediums to the project
 const addMediumsController = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
-  const data: Mediums = req.body as Mediums;
+  const data: AddProjectMediumsInput = req.body as AddProjectMediumsInput;
 
   const result = await addMediumsService(id, data);
 

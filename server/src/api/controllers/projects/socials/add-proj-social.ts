@@ -1,15 +1,10 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { ApiResponse, AddProjectSocialInput } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { addProjectSocialService } from '#services/projects/socials/add-proj-social.ts';
 
-type Social = {
-  websiteId: number;
-  url: string;
-};
-
 //adds a social to the project
-const addProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const social: Social = req.body as Social;
+export const addProjectSocial = async (req: Request, res: Response): Promise<void> => {
+  const social: AddProjectSocialInput = req.body as AddProjectSocialInput;
   const id = parseInt(req.params.id);
 
   const result = await addProjectSocialService(social, id);

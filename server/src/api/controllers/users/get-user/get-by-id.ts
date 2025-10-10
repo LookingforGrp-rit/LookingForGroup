@@ -6,16 +6,6 @@ import { getUserByIdService } from '#services/users/get-user/get-by-id.ts';
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(req.params.id);
 
-  if (isNaN(id)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   const result = await getUserByIdService(id);
 
   if (result === 'INTERNAL_ERROR') {

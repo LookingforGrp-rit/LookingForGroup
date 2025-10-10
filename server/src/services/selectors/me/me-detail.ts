@@ -39,20 +39,23 @@ export const MeDetailSelector = Object.freeze({
       projects: {
         select: ProjectPreviewSelector,
       },
+      followedAt: true,
     },
   },
   following: {
     select: {
-      senderUser: {
+      receiverUser: {
         select: UserPreviewSelector,
       },
+      followedAt: true,
     },
   },
   followers: {
     select: {
-      receiverUser: {
+      senderUser: {
         select: UserPreviewSelector,
       },
+      followedAt: true,
     },
   },
 });

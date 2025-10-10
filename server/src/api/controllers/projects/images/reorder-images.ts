@@ -12,15 +12,6 @@ const reorderImagesController = async (req: Request, res: Response): Promise<voi
   const imageOrder: ImageOrder = req.body as ImageOrder;
 
   const projId = parseInt(req.params.id);
-  if (isNaN(projId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project or image ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
 
   const result = await reorderImagesService(projId, imageOrder);
 

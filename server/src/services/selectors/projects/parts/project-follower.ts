@@ -4,4 +4,5 @@ export const ProjectFollowerSelector = Object.freeze({
   users: {
     select: UserPreviewSelector,
   },
+  followedAt: true,
 });

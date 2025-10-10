@@ -10,6 +10,9 @@ export const getMediumsService = async (): Promise<Medium[] | GetMediumsServiceE
   try {
     const mediums = await prisma.mediums.findMany({
       select: MediumSelector,
+      orderBy: {
+        label: 'asc',
+      },
     });
 
     return mediums.map(transformMedium);

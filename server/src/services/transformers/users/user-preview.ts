@@ -10,8 +10,8 @@ const sampleUsers = prisma.users.findMany({
 
 type UsersGetPayload = Awaited<typeof sampleUsers>[number];
 
-const hasSkillOfType = (skill: { skills: { type: string } }, type: SkillType): boolean => {
-  return skill.skills.type === type;
+const hasSkillOfType = (type: SkillType): ((skill: { skills: { type: string } }) => boolean) => {
+  return (skill) => skill.skills.type === type;
 };
 
 //map to shared type
@@ -23,8 +23,8 @@ export const transformUserToPreview = (user: UsersGetPayload): UserPreview => {
     username: user.username,
     profileImage: user.profileImage ?? null,
     mentor: user.mentor,
-    developer: user.userSkills.some((skill) => hasSkillOfType(skill, 'Developer')),
-    designer: user.userSkills.some((skill) => hasSkillOfType(skill, 'Designer')),
+    developer: user.userSkills.some(hasSkillOfType('Developer')),
+    designer: user.userSkills.some(hasSkillOfType('Designer')),
     apiUrl: `api/users/${user.userId.toString()}`,
   };
 };

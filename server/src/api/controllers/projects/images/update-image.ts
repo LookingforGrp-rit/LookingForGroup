@@ -1,28 +1,17 @@
-import type { AuthenticatedRequest, ApiResponse } from '@looking-for-group/shared';
+import type {
+  AuthenticatedRequest,
+  ApiResponse,
+  UpdateProjectImageInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import updateImageService from '#services/projects/images/update-image.ts';
 
-interface UpdateImageInfo {
-  image?: string;
-  altText?: string;
-}
-
 //updates an image in a project
 const updateImageController = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const id = req.params.imageId;
-  const updates: UpdateImageInfo = req.body as UpdateImageInfo;
+  const updates: UpdateProjectImageInput = req.body as UpdateProjectImageInput;
 
-  const imageId = parseInt(id);
-  if (isNaN(imageId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid image ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
+  const imageId = parseInt(req.params.id);
 
   const allowedFields = ['image', 'altText'];
   const invalidFields = Object.keys(updates).filter((field) => !allowedFields.includes(field));
@@ -65,7 +54,7 @@ const updateImageController = async (req: AuthenticatedRequest, res: Response): 
       return;
     }
 
-    updates['image'] = dbImage.location;
+    updates.image = req.file as unknown as File;
   }
 
   const result = await updateImageService(imageId, updates);

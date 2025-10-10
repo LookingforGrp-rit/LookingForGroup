@@ -3,27 +3,16 @@ import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
 import updateMemberService from '#services/projects/members/update-member.ts';
 
-const updateMemberController = async (_req: Request, res: Response) => {
-  const { userId, id } = _req.params;
-  const userIdReal = parseInt(userId);
-  const projectIdReal = parseInt(id);
-
-  if (isNaN(userIdReal) || isNaN(projectIdReal)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user or project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
+const updateMemberController = async (req: Request, res: Response) => {
+  const userIdReal = parseInt(req.params.userId);
+  const projectIdReal = parseInt(req.params.id);
 
   const memberId: Prisma.MembersProjectIdUserIdCompoundUniqueInput = {
     userId: userIdReal,
     projectId: projectIdReal,
   };
 
-  const data: Prisma.MembersUpdateInput = _req.body as Prisma.MembersUpdateInput;
+  const data: Prisma.MembersUpdateInput = req.body as Prisma.MembersUpdateInput;
 
   const result = await updateMemberService(memberId, data);
 

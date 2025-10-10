@@ -10,6 +10,14 @@ export const getTagsService = async (): Promise<Tag[] | GetTagsServiceError> => 
   try {
     const tags = await prisma.tags.findMany({
       select: TagSelector,
+      orderBy: [
+        {
+          type: 'asc',
+        },
+        {
+          label: 'asc',
+        },
+      ],
     });
 
     return tags.map(transformTag);

@@ -3,18 +3,8 @@ import type { Request, Response } from 'express';
 import getMembersService from '#services/projects/members/get-members.ts';
 
 //gets the members associated with a project
-const getMembersController = async (req: Request, res: Response): Promise<void> => {
+const getMembers = async (req: Request, res: Response): Promise<void> => {
   const projID = parseInt(req.params.id);
-
-  if (isNaN(projID)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid project ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
 
   const result = await getMembersService(projID);
 
@@ -46,4 +36,4 @@ const getMembersController = async (req: Request, res: Response): Promise<void> 
   res.status(200).json(resBody);
 };
 
-export default getMembersController;
+export default getMembers;

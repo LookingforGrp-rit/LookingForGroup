@@ -18,7 +18,7 @@ export const createUserService = async (
     const result = await prisma.users.create({
       data: {
         universityId: uid,
-        username: username,
+        username,
         firstName,
         lastName,
         ritEmail: email,

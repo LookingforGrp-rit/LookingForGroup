@@ -4,20 +4,7 @@ import { getUserAccountService } from '#services/me/get-user-acc.ts';
 
 //get current user's account
 export const getAccount = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  //current user ID
-  const userId = parseInt(req.currentUser);
-
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const result = await getUserAccountService(userId);
+  const result = await getUserAccountService(req.currentUser);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

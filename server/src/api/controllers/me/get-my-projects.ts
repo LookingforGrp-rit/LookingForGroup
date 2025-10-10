@@ -4,21 +4,10 @@ import { getMyProjectsService } from '#services/me/get-my-projects.ts';
 
 //get projects user owns/is a member of
 export const getMyProjects = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  //current user ID
-  const UserId = parseInt(req.currentUser);
+  const visibility = req.query.visibility as 'all' | 'public' | 'private' | undefined;
+  const owner = req.query.owner as 'all' | 'me' | undefined;
 
-  //check if ID is number
-  if (isNaN(UserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
-  const result = await getMyProjectsService(UserId);
+  const result = await getMyProjectsService(req.currentUser, visibility, owner);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

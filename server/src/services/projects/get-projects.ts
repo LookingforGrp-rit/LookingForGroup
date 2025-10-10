@@ -10,6 +10,9 @@ const getProjectsService = async (): Promise<ProjectPreview[] | GetServiceError>
   try {
     const result = await prisma.projects.findMany({
       select: ProjectPreviewSelector,
+      orderBy: {
+        createdAt: 'desc',
+      },
     });
 
     //return transformed projects
