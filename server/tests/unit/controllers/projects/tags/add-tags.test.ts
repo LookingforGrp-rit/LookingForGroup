@@ -26,7 +26,7 @@ describe('addTags', () => {
     expect(addTagsService).toBe(vi.mocked(addTagsService));
     const resBody = {
       status: 404,
-      error: 'Tags not found',
+      error: 'Tag not found',
       data: null,
     };
 

@@ -1,5 +1,5 @@
 import type { ApiResponse } from '@looking-for-group/shared';
-import type { RequestHandler } from 'express';
+import type { Request, Response } from 'express';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import getUpdateImageService from '#services/projects/images/update-image.ts';
 
@@ -9,11 +9,8 @@ interface UpdateImageInfo {
 }
 
 //updates an image in a project
-const updateImageController: RequestHandler<{ id: string }, unknown, UpdateImageInfo> = async (
-  req,
-  res,
-): Promise<void> => {
-  const updates: UpdateImageInfo = req.body;
+const updateImageController = async (req: Request, res: Response): Promise<void> => {
+  const updates: UpdateImageInfo = req.body as UpdateImageInfo;
 
   const imageId = parseInt(req.params.id);
 

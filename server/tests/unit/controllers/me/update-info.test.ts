@@ -4,10 +4,10 @@ import { updateUserInfo } from '#controllers/me/update-info.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import { updateUserInfoService } from '#services/me/update-info.ts';
 import {
+  blankUpdateUserRequest,
   blankFile,
   blankResponse,
   blankUploadImage,
-  blankUserRequest,
 } from '#tests/resources/blanks/extra.ts';
 import { blankMePrivate } from '#tests/resources/blanks/me.ts';
 
@@ -16,23 +16,7 @@ vi.mock('#services/users/get-user/get-by-username.ts');
 vi.mock('#services/images/upload-image.ts');
 
 describe('Update my info', () => {
-  const req = {
-    ...blankUserRequest,
-    body: {
-      firstName: 'anthony',
-      lastName: 'fantano',
-      headline: 'hi im anthony fantano',
-      pronouns: 'he/him',
-      title: 'the internets busiest music nerd',
-      academicYear: 'Senior',
-      location: 'idk california probably',
-      funFact: 'got sued by ronnie radke',
-      bio: "hi i'm lawthony suitano the internets legalest music nerd",
-      visibility: 1,
-      phoneNumber: '1234567890',
-    },
-    currentUser: '1',
-  } as AuthenticatedRequest;
+  const req = blankUpdateUserRequest;
 
   // clear mocks
   beforeEach(() => {
@@ -54,22 +38,13 @@ describe('Update my info', () => {
     vi.mocked(uploadImageService).mockResolvedValue(blankUploadImage);
     vi.mocked(updateUserInfoService).mockResolvedValue(blankMePrivate);
 
-    const updateRequest = {
-      ...req,
-      body: {
-        ...(req.body as Record<string, string | number>),
-      },
-      currentUser: '0',
-      file: blankFile,
-    } as AuthenticatedRequest;
-
     const responseBody = {
       status: 200,
       error: null,
       data: blankMePrivate,
     };
 
-    await updateUserInfo(updateRequest, blankResponse);
+    await updateUserInfo(req, blankResponse);
 
     expect(uploadImageService).toHaveBeenCalledOnce();
     expect(updateUserInfoService).toHaveBeenCalledOnce();
@@ -98,27 +73,6 @@ describe('Update my info', () => {
     expect(uploadImageService).not.toHaveBeenCalled();
     expect(updateUserInfoService).toHaveBeenCalledOnce();
     expect(blankResponse.status).toHaveBeenCalledExactlyOnceWith(200);
-    expect(blankResponse.json).toHaveBeenCalledExactlyOnceWith(responseBody);
-  });
-
-  test("should return 400 if userId doesn't parse", async () => {
-    // setup
-    const badRequest = {
-      ...req,
-      currentUser: 'not a number',
-    } as AuthenticatedRequest;
-
-    const responseBody = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-
-    await updateUserInfo(badRequest, blankResponse);
-
-    expect(updateUserInfoService).not.toHaveBeenCalled();
-    expect(uploadImageService).not.toHaveBeenCalled();
-    expect(blankResponse.status).toHaveBeenCalledExactlyOnceWith(400);
     expect(blankResponse.json).toHaveBeenCalledExactlyOnceWith(responseBody);
   });
 

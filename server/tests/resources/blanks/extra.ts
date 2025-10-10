@@ -80,6 +80,31 @@ export const blankAuthUserRequest = {
   currentUser: '1',
 } as unknown as AuthenticatedRequest;
 
+export const blankUpdateUserRequest = {
+  //kept anthony fantano
+  headers: {
+    [uidHeaderKey]: '000000001',
+    [firstNameHeaderKey]: 'firstname',
+    [lastNameHeaderKey]: 'lastname',
+    [emailHeaderKey]: 'email@rit.edu',
+  },
+  body: {
+    firstName: 'anthony',
+    lastName: 'fantano',
+    headline: 'hi im anthony fantano',
+    pronouns: 'he/him',
+    title: 'the internets busiest music nerd',
+    academicYear: 'Senior',
+    location: 'idk california probably',
+    funFact: 'got sued by ronnie radke',
+    bio: "hi i'm lawthony suitano the internets legalest music nerd",
+    visibility: 1,
+    phoneNumber: '1234567890',
+  },
+  file: blankFile,
+  currentUser: '1',
+} as unknown as AuthenticatedRequest;
+
 export const blankGetUserRequest = {
   params: {
     id: '1',
