@@ -24,6 +24,7 @@ import profilePicture from "../../images/blue_frog.png";
 import { getCurrentUsername, getVisibleProjects, getProjectsByUser } from "../../api/users";
 import { getUsersById } from "../../api/users";
 import { MeDetail, UserSkill, ProjectPreview } from '@looking-for-group/shared';
+import usePreloadedImage from "../../functions/imageLoad";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
