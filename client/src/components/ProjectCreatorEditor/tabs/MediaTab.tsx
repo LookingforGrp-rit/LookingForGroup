@@ -72,19 +72,14 @@ export const MediaTab = ({
 
     // Uploading image to backend
     try {
-      const response = await addPic(modifiedProject.projectId, file, modifiedProject.images.length + 1);
-      if(response.status === 200) {
-        const imgLink = URL.createObjectURL(file);
-        const newImage: ProjectImage = {
-          imageId: modifiedProject.images.length + 1,
-          image: imgLink,
-          altText: "",
-          apiUrl: ""
-        };
+      // #FIXME missing alt text
+      const response = await addPic(modifiedProject.projectId, file);
+      if(response.status === 200 && response.data) {
+        const newImage: ProjectImage = response.data;
         
         setModifiedProject({
           ...modifiedProject,
-          images: [...modifiedProject.images, newImage],
+          projectImages: [...modifiedProject.projectImages, newImage],
         });
       }
     } catch (err) { console.error(err); }
