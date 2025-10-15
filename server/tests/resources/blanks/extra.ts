@@ -35,7 +35,7 @@ export const validFilters = {
 export const blankFilters = {} as unknown as FilterRequest;
 
 export const fullFilterRequest = {
-  query: blankFilters,
+  query: validFilters,
 } as unknown as Request;
 
 export const blankRequest = {} as unknown as Request;
