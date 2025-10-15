@@ -17,7 +17,7 @@ const req = blankImageRequest;
 const res = blankResponse;
 const file = blankFile;
 
-describe.skip('updateImage', () => {
+describe('updateImage', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -37,7 +37,7 @@ describe.skip('updateImage', () => {
     req.file = file;
     const resBody = {
       status: 400,
-      error: 'Invalid fields: ["addedParam"]',
+      error: `Invalid fields: ["addedParam"]`,
       data: null,
     };
 
@@ -120,7 +120,7 @@ describe.skip('updateImage', () => {
   });
 
   //everything's good, return 200
-  test('Must return 200 when the project is successfully updated', async () => {
+  test('Must return 200 when the image is successfully updated', async () => {
     vi.mocked(updateImageService).mockResolvedValue(blankProjectImage);
     vi.mocked(uploadImageService).mockResolvedValue(blankUploadImage);
     expect(updateImageService).toBe(vi.mocked(updateImageService));

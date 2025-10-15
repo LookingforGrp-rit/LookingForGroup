@@ -1,5 +1,5 @@
 import { Readable } from 'stream';
-import type { AuthenticatedRequest } from '@looking-for-group/shared';
+import type { AuthenticatedRequest, FilterRequest } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { vi } from 'vitest';
 import {
@@ -22,6 +22,21 @@ export const blankFile = {
   path: '',
   buffer: {} as unknown as Buffer,
 };
+
+export const validFilters = {
+  strictness: 'any',
+  mentor: false,
+  skills: [],
+  majors: [],
+  academicYear: [],
+  socials: [],
+} as unknown as FilterRequest;
+
+export const blankFilters = {} as unknown as FilterRequest;
+
+export const fullFilterRequest = {
+  query: blankFilters,
+} as unknown as Request;
 
 export const blankRequest = {} as unknown as Request;
 

@@ -78,6 +78,7 @@ describe('Update my info', () => {
 
   test('should return 500 if updating user errors internally', async () => {
     // setup
+    vi.mocked(uploadImageService).mockResolvedValue(blankUploadImage);
     vi.mocked(updateUserInfoService).mockResolvedValue('INTERNAL_ERROR');
 
     const responseBody = {
@@ -88,6 +89,7 @@ describe('Update my info', () => {
 
     await updateUserInfo(req, blankResponse);
 
+    expect(uploadImageService).toHaveBeenCalledOnce();
     expect(updateUserInfoService).toHaveBeenCalledOnce();
     expect(blankResponse.status).toHaveBeenCalledExactlyOnceWith(500);
     expect(blankResponse.json).toHaveBeenCalledExactlyOnceWith(responseBody);

@@ -5,12 +5,13 @@ import type {
   UserSocial,
   ProjectFollowsList,
   UserFollowsList,
-  UserFollowings,
   UserDetail,
   Major,
   User,
   UserMember,
   Role,
+  ProjectFollowing,
+  UserFollowing,
 } from '@looking-for-group/shared';
 
 export const blankUserSkill: UserSkill = {
@@ -28,21 +29,14 @@ export const blankUserSocial: UserSocial = {
 };
 
 export const blankProjectFollowsList: ProjectFollowsList = {
-  projects: Object.prototype as ProjectPreview[],
+  projects: Object.prototype as ProjectFollowing[],
   count: 0,
   apiUrl: '',
 };
 
 export const blankUserFollowsList: UserFollowsList = {
-  users: Object.prototype as UserPreview[],
+  users: Object.prototype as UserFollowing[],
   count: 0,
-  apiUrl: '',
-};
-
-export const blankUserFollowings: UserFollowings = {
-  senderId: 0,
-  receiverId: 0,
-  followedAt: Date.prototype,
   apiUrl: '',
 };
 

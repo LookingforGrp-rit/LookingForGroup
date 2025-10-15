@@ -2,7 +2,7 @@ import { describe, expect, test, vi, beforeEach, afterEach } from 'vitest';
 import { getUserFollowing } from '#controllers/users/followings/get-user-following.ts';
 import { getUserFollowingService } from '#services/users/followings/get-user-following.ts';
 import { blankIdRequest, blankResponse } from '#tests/resources/blanks/extra.ts';
-import { blankUserFollowsList, blankUserPreview } from '#tests/resources/blanks/users.ts';
+import { blankUserFollowsList } from '#tests/resources/blanks/users.ts';
 
 vi.mock('#services/users/followings/get-user-following.ts');
 
@@ -52,13 +52,13 @@ describe('getUserFollowing', () => {
     expect(res.json).toHaveBeenCalledWith(resBody);
   });
   //everything's good, return 200
-  test('Must return 200 when the project was retrieved successfully', async () => {
+  test('Must return 200 when the following was retrieved successfully', async () => {
     vi.mocked(getUserFollowingService).mockResolvedValue(blankUserFollowsList);
     expect(getUserFollowingService).toBe(vi.mocked(getUserFollowingService));
     const resBody = {
       status: 200,
       error: null,
-      data: [blankUserPreview],
+      data: blankUserFollowsList,
     };
 
     await getUserFollowing(req, res);
