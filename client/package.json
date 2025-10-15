@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "types": "./types/types.d.ts",
   "scripts": {
     "dev": "vite",
     "test": "vitest run",
