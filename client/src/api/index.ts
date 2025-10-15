@@ -18,7 +18,10 @@ const getBaseUrl = (): string => {
 //Basic GET function for utilities
 export const GET = async (apiURL: string): Promise<ApiResponse> => {
   try {
-    const response = await fetch(getBaseUrl() + apiURL, {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
       method: "GET",
       credentials: "include",
     });
@@ -34,13 +37,14 @@ export const GET = async (apiURL: string): Promise<ApiResponse> => {
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
+        data: null,
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
         status: response.status,
       };
     }
   } catch (error: unknown) {
     console.error("GET error", error);
-    return { error: (error as TypeError).message || "Unknown error", status: 500 };
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -52,7 +56,10 @@ export const POST = async (
   const isFormData = newData instanceof FormData;
 
   try {
-    const response = await fetch(getBaseUrl() + apiURL, {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
       method: "POST",
       headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
@@ -70,13 +77,14 @@ export const POST = async (
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
+        data: null,
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
         status: response.status,
       };
     }
   } catch (error: unknown) {
     console.error("GET error", error);
-    return { error: (error as TypeError).message || "Unknown error", status: 500 };
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -88,7 +96,10 @@ export const PUT = async (
   const isFormData = newData instanceof FormData;
 
   try {
-    const response = await fetch(getBaseUrl() + apiURL, {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
       method: "PUT",
       headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
@@ -106,13 +117,14 @@ export const PUT = async (
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
+        data: null,
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
         status: response.status,
       };
     }
   } catch (error: unknown) {
     console.error("GET error", error);
-    return { error: (error as TypeError).message || "Unknown error", status: 500 };
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -124,7 +136,10 @@ export const DELETE = async (
   const isFormData = data instanceof FormData;
 
   try {
-    const response = await fetch(getBaseUrl() + apiURL, {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
       method: "DELETE",
       headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
@@ -142,13 +157,14 @@ export const DELETE = async (
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
+        data: null,
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
         status: response.status,
       };
     }
   } catch (error: unknown) {
     console.error("GET error", error);
-    return { error: (error as TypeError).message || "Unknown error", status: 500 };
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -160,7 +176,10 @@ export const PATCH = async (
   const isFormData = newData instanceof FormData;
 
   try {
-    const response = await fetch(getBaseUrl() + apiURL, {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
       method: "PATCH",
       headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
@@ -178,13 +197,14 @@ export const PATCH = async (
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
+        data: null,
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
         status: response.status,
       };
     }
   } catch (error: unknown) {
     console.error("GET error", error);
-    return { error: (error as TypeError).message || "Unknown error", status: 500 };
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 

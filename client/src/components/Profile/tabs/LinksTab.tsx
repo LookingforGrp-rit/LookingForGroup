@@ -23,14 +23,17 @@ export const LinksTab: React.FC<LinksTabProps> = ({ type, socials: initialSocial
       let response;
       
       if (type === 'project') {
-        const projectData = await getByID(userID.toString());
+        // FIXME there is no function that gets a project using only a userID 
+        // as users can have more than one project
+        // a projectID needs to be provided
+        // const projectData = await getByID(userID.toString());
         if (projectData.projectSocials) {
           setLinks(projectData.projectSocials);
         }
       } else {
         response = await getUsersById(userID.toString());
-        if (response.data[0].socials) {
-          setLinks(response.data[0].socials);
+        if (response.data?.socials) {
+          setLinks(response.data.socials);
         }
       }
     };

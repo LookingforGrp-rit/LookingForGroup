@@ -1,10 +1,26 @@
-import React, { useState, useEffect } from 'react';
-import { PagePopup, openClosePopup } from '../PagePopup';
-import { getByID } from '../../api/projects';
-import { getJobTitles, getMajors, getSkills, getSocials as fetchSocials, editUser, updateProjectVisibility, getVisibleProjects as fetchProjects, 
-  getVisibleProjects } from '../../api/users';
+import React, { useState, useEffect } from "react";
+import { PagePopup, openClosePopup } from "../PagePopup";
+import {
+  getJobTitles,
+  getMajors,
+  getSkills,
+  getSocials as fetchSocials,
+  editUser,
+  updateProjectVisibility,
+  getVisibleProjects as fetchProjects,
+  getVisibleProjects,
+  getProjectsByUser,
+} from "../../api/users";
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
-import { MeDetail, UserSkill, MySocial, Role, Major, ProjectPreview, Social} from '@looking-for-group/shared';
+import {
+  MeDetail,
+  UserSkill,
+  MySocial,
+  Role,
+  Major,
+  ProjectPreview,
+  Social,
+} from "@looking-for-group/shared";
 
 interface ProfileEditButtonProps {
   user: MeDetail;
@@ -20,8 +36,6 @@ TO DO:
  - Convert currentPFPLink to a useEffect instead of a useState 
 */
 
-
-
 // On click, this button should open the Profile Edit modal
 const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   // console.log(user);
@@ -33,17 +47,17 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   const [majorsList, setMajorsList] = useState<Major[]>();
 
   const getJobTitlesData = async () => {
-      const response = await getJobTitles();
-      if (response.data) {
-       setRolesList(response.data as Role[]);
-      }
+    const response = await getJobTitles();
+    if (response.data) {
+      setRolesList(response.data as Role[]);
+    }
   };
 
   const getMajorsData = async () => {
-      const response = await getMajors();
-      if (response.data) {
-        setMajorsList(response.data as Major[]);
-      }
+    const response = await getMajors();
+    if (response.data) {
+      setMajorsList(response.data as Major[]);
+    }
   };
 
   useEffect(() => {
@@ -52,23 +66,23 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   }, []);
 
   // const [currentPFPLink, setCurrentPFPLink] = useState(require(`../../../../server/images/profiles/${user.profile_image}`));
-  const [currentPFPLink, setCurrentPFPLink] = useState('');
+  const [currentPFPLink, setCurrentPFPLink] = useState("");
 
   useEffect(() => {
     setCurrentPFPLink(`${API_BASE}/images/profiles/${user.profileImage}`);
   }, [user.profileImage]);
-  
+
   const [currentEditData, setCurrentEditData] = useState<EditProfileData>({
-    firstName: user.firstName ?? '',
-    lastName: user.lastName ?? '',
-    headline: user.headline ?? '',
-    pronouns: user.pronouns ?? '',
-    title: user.title ?? '',
+    firstName: user.firstName ?? "",
+    lastName: user.lastName ?? "",
+    headline: user.headline ?? "",
+    pronouns: user.pronouns ?? "",
+    title: user.title ?? "",
     majors: user.majors ?? [],
-    academicYear: user.academicYear ?? '',
-    location: user.location ?? '',
-    funFact: user.funFact ?? '',
-    bio: user.bio ?? '',
+    academicYear: user.academicYear ?? "",
+    location: user.location ?? "",
+    funFact: user.funFact ?? "",
+    bio: user.bio ?? "",
     projects: user.projects ?? [],
     skills: user.skills ?? [],
     socials: user.socials ?? [],
@@ -76,13 +90,13 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
 
   const getOrdinal = (index: number) => {
     if (index === 1) {
-      return '1st';
+      return "1st";
     }
     if (index === 2) {
-      return '2nd';
+      return "2nd";
     }
     if (index === 3) {
-      return '3rd';
+      return "3rd";
     }
     return `${index}th`;
   };
@@ -90,7 +104,9 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   const yearOptions = [<option value="blank"></option>];
   for (let i = 0; i < 10; i++) {
     // The "10" can be replaced with any value we choose to use as the maximum number of years
-    yearOptions.push(<option value={getOrdinal(i + 1)}>{getOrdinal(i + 1)}</option>);
+    yearOptions.push(
+      <option value={getOrdinal(i + 1)}>{getOrdinal(i + 1)}</option>
+    );
   }
 
   const getImage = async (theImageName: string) => {
@@ -103,7 +119,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     }*/
 
   const uploadNewImage = async (theInput: HTMLInputElement) => {
-    const form = document.querySelector('.edit-region-button-wrapper.photo');
+    const form = document.querySelector(".edit-region-button-wrapper.photo");
     if (
       form !== undefined &&
       form !== null &&
@@ -174,9 +190,12 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             <input
               type="text"
               className="edit-region-input first-name"
-              value={currentEditData.firstName ?? ''}
+              value={currentEditData.firstName ?? ""}
               onChange={(e) => {
-                setCurrentEditData({ ...currentEditData, firstName: e.target.value });
+                setCurrentEditData({
+                  ...currentEditData,
+                  firstName: e.target.value,
+                });
               }}
             ></input>
           </div>
@@ -187,9 +206,12 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             <input
               type="text"
               className="edit-region-input last-name"
-              value={currentEditData.lastName ?? ''}
+              value={currentEditData.lastName ?? ""}
               onChange={(e) => {
-                setCurrentEditData({ ...currentEditData, lastName: e.target.value });
+                setCurrentEditData({
+                  ...currentEditData,
+                  lastName: e.target.value,
+                });
               }}
             ></input>
           </div>
@@ -200,9 +222,12 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             <input
               type="text"
               className="edit-region-input pronouns"
-              value={currentEditData.pronouns ?? ''}
+              value={currentEditData.pronouns ?? ""}
               onChange={(e) => {
-                setCurrentEditData({ ...currentEditData, pronouns: e.target.value });
+                setCurrentEditData({
+                  ...currentEditData,
+                  pronouns: e.target.value,
+                });
               }}
             ></input>
           </div>
@@ -214,18 +239,23 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             <div className="edit-region-header role">Role*</div>
             <select
               className="edit-region-input role"
-              value={currentEditData.title ?? ''}
+              value={currentEditData.title ?? ""}
               onChange={(e) => {
-                setCurrentEditData({ ...currentEditData, title: e.target.value });
+                setCurrentEditData({
+                  ...currentEditData,
+                  title: e.target.value,
+                });
               }}
             >
               <option value="none" disabled>
                 Select
               </option>
               {rolesList === undefined
-                ? ''
+                ? ""
                 : rolesList.map((roleItem) => {
-                    return <option value={roleItem.label}>{roleItem.label}</option>;
+                    return (
+                      <option value={roleItem.label}>{roleItem.label}</option>
+                    );
                   })}
             </select>
           </div>
@@ -235,18 +265,23 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             <div className="edit-region-header major">Major*</div>
             <select
               className="edit-region-input major"
-              value={currentEditData.majors ?? ''}
+              value={currentEditData.majors ?? ""}
               onChange={(e) => {
-                setCurrentEditData({ ...currentEditData, majors: [e.target.value] });
+                setCurrentEditData({
+                  ...currentEditData,
+                  majors: [e.target.value],
+                });
               }}
             >
               <option value="none" disabled>
                 Select
               </option>
               {majorsList === undefined
-                ? ''
+                ? ""
                 : majorsList.map((majorItem) => {
-                    return <option value={majorItem.label}>{majorItem.label}</option>;
+                    return (
+                      <option value={majorItem.label}>{majorItem.label}</option>
+                    );
                   })}
             </select>
           </div>
@@ -256,9 +291,12 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             <div className="edit-region-header year">Year</div>
             <select
               className="edit-region-input year"
-              value={currentEditData.academicYear ?? ''}
+              value={currentEditData.academicYear ?? ""}
               onChange={(e) => {
-                setCurrentEditData({ ...currentEditData, academicYear: e.target.value });;
+                setCurrentEditData({
+                  ...currentEditData,
+                  academicYear: e.target.value,
+                });
               }}
             >
               {yearOptions}
@@ -272,9 +310,12 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
           <input
             type="text"
             className="edit-region-input location"
-            value={currentEditData.location ?? ''}
+            value={currentEditData.location ?? ""}
             onChange={(e) => {
-              setCurrentEditData({ ...currentEditData, location: e.target.value });
+              setCurrentEditData({
+                ...currentEditData,
+                location: e.target.value,
+              });
             }}
           ></input>
         </div>
@@ -291,12 +332,17 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             <textarea
               className="edit-region-input big quote"
               maxLength={100}
-              value={currentEditData.headline ?? ''}
+              value={currentEditData.headline ?? ""}
               onChange={(e) => {
-                setCurrentEditData({ ...currentEditData, headline: e.target.value });;
+                setCurrentEditData({
+                  ...currentEditData,
+                  headline: e.target.value,
+                });
               }}
             ></textarea>
-            <span className="word-limit-label quote">{currentEditData.headline.length} / 100</span>
+            <span className="word-limit-label quote">
+              {currentEditData.headline.length} / 100
+            </span>
           </div>
         </div>
 
@@ -310,12 +356,17 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             <textarea
               className="edit-region-input big fact"
               maxLength={100}
-              value={currentEditData.funFact ?? ''}
+              value={currentEditData.funFact ?? ""}
               onChange={(e) => {
-                setCurrentEditData({ ...currentEditData, funFact: e.target.value });
+                setCurrentEditData({
+                  ...currentEditData,
+                  funFact: e.target.value,
+                });
               }}
             ></textarea>
-            <span className="word-limit-label fact">{currentEditData.funFact.length} / 100</span>
+            <span className="word-limit-label fact">
+              {currentEditData.funFact.length} / 100
+            </span>
           </div>
         </div>
       </div>
@@ -325,18 +376,21 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
         <div className="edit-region you">
           <div className="edit-region-header you">About You</div>
           <div className="edit-region-instruct you">
-            Share a brief overview of who you are, your interests, and what drives you!
+            Share a brief overview of who you are, your interests, and what
+            drives you!
           </div>
           <div className="edit-region-text-area you">
             <textarea
               className="edit-region-input big you"
               maxLength={600}
-              value={currentEditData.bio ?? ''}
+              value={currentEditData.bio ?? ""}
               onChange={(e) => {
                 setCurrentEditData({ ...currentEditData, bio: e.target.value });
               }}
             ></textarea>
-            <span className="word-limit-label you">{currentEditData.bio.length} / 600</span>
+            <span className="word-limit-label you">
+              {currentEditData.bio.length} / 600
+            </span>
           </div>
         </div>
       </div>
@@ -350,25 +404,23 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   // Fetches projects that are current on that profile
   useEffect(() => {
     const fetchUserProjects = async () => {
-      try {
-        const data = await getByID(user.userId);
-        setUserProjects(data.data);
-      } catch (err) {
-        console.error("Failed to fetch user projects:", err);
+      const data = await getProjectsByUser();
+      if (data.error) {
+        return console.error("Failed to fetch user projects:", data.error);
       }
+      if (data.data) setUserProjects(data.data);
     };
     fetchUserProjects();
   }, [user.userId]);
 
- // Fetches projects that are currently shown on profile
+  // Fetches projects that are currently shown on profile
   useEffect(() => {
     const fetchVisibleProjects = async () => {
-      try {
-        const response = await getVisibleProjects(user.userId);
-        setShownProjects(response.data);
-      } catch (err) {
-        console.log("Failed to fetch visible projects:", err);
+      const data = await getVisibleProjects(user.userId);
+      if (data.error) {
+        return console.error("Failed to fetch visible projects:", data.error);
       }
+      if (data.data) setShownProjects(data.data);
     };
     fetchVisibleProjects();
   }, [user.userId]);
@@ -382,7 +434,9 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
 
     const isShown = checkIfProjectIsShown(project.projectId);
     setShownProjects(
-      isShown ? shownProjects.filter((p) => p.projectId !== project. projectId) : [...shownProjects, project]
+      isShown
+        ? shownProjects.filter((p) => p.projectId !== project.projectId)
+        : [...shownProjects, project]
     );
   };
 
@@ -396,7 +450,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
         <div className="edit-region-input projects">
           {userProjects !== undefined && shownProjects !== undefined
             ? userProjects.map((project) => {
-                if (project.thumbnail === null || project.thumbnail == '') {
+                if (project.thumbnail === null || project.thumbnail == "") {
                   return (
                     <div className="list-project">
                       <div className="inner-list-project">{project.title}</div>
@@ -445,7 +499,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                   );
                 }
               })
-            : ''}
+            : ""}
         </div>
       </div>
     </div>
@@ -456,13 +510,18 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     user.skills = [];
   }
 
-  const [currentSkills, setCurrentSkills] = useState<UserSkill[]>(user.skills ?? []);
+  const [currentSkills, setCurrentSkills] = useState<UserSkill[]>(
+    user.skills ?? []
+  );
 
   const addToSkillsList = (newSkill: UserSkill) => {
     if (user.skills != null) {
       let found = false;
       for (let i = 0; i < currentSkills.length; i++) {
-        if (currentSkills[i].type == newSkill.type && currentSkills[i].skill == newSkill.skill) {
+        if (
+          currentSkills[i].type == newSkill.type &&
+          currentSkills[i].skill == newSkill.skill
+        ) {
           found = true;
         }
       }
@@ -544,22 +603,22 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
 
   const allowDrop = (ev) => {
     ev.preventDefault();
-    ev.target.style.borderColor = 'black';
+    ev.target.style.borderColor = "black";
   };
 
   const disallowDrop = (ev) => {
     ev.preventDefault();
-    ev.target.style.borderColor = '#00000000';
+    ev.target.style.borderColor = "#00000000";
   };
 
   const drag = (ev) => {
-    ev.dataTransfer.setData('text', ev.target.id);
+    ev.dataTransfer.setData("text", ev.target.id);
   };
 
   const drop = (ev) => {
     ev.preventDefault();
-    ev.target.style.borderColor = '#00000000';
-    const data = ev.dataTransfer.getData('text');
+    ev.target.style.borderColor = "#00000000";
+    const data = ev.dataTransfer.getData("text");
 
     const theSkill = document.querySelector(`#${data}`);
     if (theSkill !== undefined && theSkill !== null) {
@@ -587,15 +646,15 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     ></span>
   );
   for (let i = 0; i < currentSkills.length; i++) {
-    if (currentSkills[i].skill != '') {
+    if (currentSkills[i].skill != "") {
       // Skill
-      let chosenClass = 'skill-item chosen';
+      let chosenClass = "skill-item chosen";
       chosenClass += ` ${currentSkills[i].type.toLowerCase().substring(0, 4)}`;
       mySkillsList.push(
         <div
           className="chosen-item"
-          id={'drag' + (i + 1)}
-          key={'skill' + i}
+          id={"drag" + (i + 1)}
+          key={"skill" + i}
           draggable="true"
           onDragStart={(e) => {
             drag(e);
@@ -620,8 +679,8 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
       const newGap = (
         <span
           className="chosen-gap"
-          id={'spot' + (i + 2)}
-          key={'key' + i}
+          id={"spot" + (i + 2)}
+          key={"key" + i}
           onDrop={(e) => {
             drop(e);
           }}
@@ -637,39 +696,41 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     }
   }
 
-  const displayedSkillsList = <div className="chosen-skills-list">{mySkillsList}</div>;
+  const displayedSkillsList = (
+    <div className="chosen-skills-list">{mySkillsList}</div>
+  );
 
-  const [currentSearch, setCurrentSearch] = useState('');
+  const [currentSearch, setCurrentSearch] = useState("");
   const [skillsList, setSkillsList] = useState<UserSkill[]>();
 
   const getSkillsList = async (type: string) => {
     if (
-      type.toLowerCase() === 'developer' ||
-      type.toLowerCase() === 'designer' ||
-      type.toLowerCase() === 'soft'
+      type.toLowerCase() === "developer" ||
+      type.toLowerCase() === "designer" ||
+      type.toLowerCase() === "soft"
     ) {
-        const response = await getSkillsByType(type);
-        setSkillsList(
-          response.data.toSorted((a, b) => {
-            if (a.label.toLowerCase() < b.label.toLowerCase()) {
-              return -1;
-            }
-            if (a.label.toLowerCase() > b.label.toLowerCase()) {
-              return 1;
-            }
-            return 0;
-          })
-        );
+      const response = await getSkillsByType(type);
+      setSkillsList(
+        response.data.toSorted((a, b) => {
+          if (a.label.toLowerCase() < b.label.toLowerCase()) {
+            return -1;
+          }
+          if (a.label.toLowerCase() > b.label.toLowerCase()) {
+            return 1;
+          }
+          return 0;
+        })
+      );
     } else {
-        const response = await getSkills();
-        if (response.data) {
-          setSkillsList(response.data);
-        }
+      const response = await getSkills();
+      if (response.data) {
+        setSkillsList(response.data);
+      }
     }
   };
 
   useEffect(() => {
-    if (!skillsList) getSkillsList('developer');
+    if (!skillsList) getSkillsList("developer");
   }, []);
 
   const [filterSel, setFilterSel] = useState(0);
@@ -677,19 +738,19 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   // 1 -> Designer Skills -> Proficiencies
   // 2 -> Soft Skills -> Soft Skills
   const changeFilter = (val: number) => {
-    if (currentSearch === '') {
+    if (currentSearch === "") {
       setFilterSel(val);
       switch (val) {
         case 0:
-          getSkillsList('developer');
+          getSkillsList("developer");
           break;
 
         case 1:
-          getSkillsList('designer');
+          getSkillsList("designer");
           break;
 
         case 2:
-          getSkillsList('soft');
+          getSkillsList("soft");
           break;
       }
     }
@@ -698,7 +759,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   const filterButton1 = (
     <button
       className="skills-filter-button"
-      id={filterSel === 0 ? 'selected' : ''}
+      id={filterSel === 0 ? "selected" : ""}
       onClick={() => changeFilter(0)}
     >
       Developer Skills
@@ -707,7 +768,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   const filterButton2 = (
     <button
       className="skills-filter-button"
-      id={filterSel === 1 ? 'selected' : ''}
+      id={filterSel === 1 ? "selected" : ""}
       onClick={() => changeFilter(1)}
     >
       Designer Skills
@@ -716,7 +777,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   const filterButton3 = (
     <button
       className="skills-filter-button"
-      id={filterSel === 2 ? 'selected' : ''}
+      id={filterSel === 2 ? "selected" : ""}
       onClick={() => changeFilter(2)}
     >
       Soft Skills
@@ -724,15 +785,16 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   );
 
   let filteredSkillsListDisplay = <div className="skills-list"></div>;
-  if (currentSearch !== '') {
+  if (currentSearch !== "") {
     filteredSkillsListDisplay = (
       <div className="skills-list">
         {skillsList === undefined
-          ? ''
+          ? ""
           : skillsList.map((skillItem) => {
               if (
-                skillItem.label.substring(0, currentSearch.length).toLowerCase() ==
-                currentSearch.toLowerCase()
+                skillItem.label
+                  .substring(0, currentSearch.length)
+                  .toLowerCase() == currentSearch.toLowerCase()
               ) {
                 let skillClass = `skill-item-button ${skillItem.type.toLowerCase().substring(0, 4)}`;
                 let found = false;
@@ -742,7 +804,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                   }
                 }
                 if (found) {
-                  skillClass += ' chosen';
+                  skillClass += " chosen";
                 }
 
                 return (
@@ -757,7 +819,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                       });
                     }}
                   >
-                    {found ? '✓' : '+'}&nbsp;&nbsp;&nbsp;{skillItem.label}
+                    {found ? "✓" : "+"}&nbsp;&nbsp;&nbsp;{skillItem.label}
                   </button>
                 );
               }
@@ -768,7 +830,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     filteredSkillsListDisplay = (
       <div className="skills-list">
         {skillsList === undefined
-          ? ''
+          ? ""
           : skillsList.map((skillItem) => {
               let skillClass = `skill-item-button ${skillItem.type.toLowerCase().substring(0, 4)}`;
               let found = false;
@@ -778,7 +840,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                 }
               }
               if (found) {
-                skillClass += ' chosen';
+                skillClass += " chosen";
               }
 
               return (
@@ -793,7 +855,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                     });
                   }}
                 >
-                  {found ? '✓' : '+'}&nbsp;&nbsp;&nbsp;{skillItem.label}
+                  {found ? "✓" : "+"}&nbsp;&nbsp;&nbsp;{skillItem.label}
                 </button>
               );
             })}
@@ -807,7 +869,9 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
         {/* Current skills area */}
         <div className="selected-skills-region">
           <div className="edit-region-header skills">Selected</div>
-          <div className="edit-region-instruct skills">Drag and drop to reorder</div>
+          <div className="edit-region-instruct skills">
+            Drag and drop to reorder
+          </div>
           {displayedSkillsList}
         </div>
 
@@ -842,7 +906,9 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   );
 
   // "Links"
-  const [currentLinks, setCurrentLinks] = useState<MySocial[]>(user.socials ?? []);
+  const [currentLinks, setCurrentLinks] = useState<MySocial[]>(
+    user.socials ?? []
+  );
   const [socialLinks, setSocialLinks] = useState<Social[]>();
 
   const getSocials = async () => {
@@ -856,43 +922,43 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
 
   const getWebsiteIcon = (websiteName: string) => {
     switch (websiteName.toLowerCase()) {
-      case 'instagram':
+      case "instagram":
         return <>&#xf16d;</>;
         break;
 
-      case 'x':
+      case "x":
         return <>&#xe61b;</>;
         break;
 
-      case 'facebook':
+      case "facebook":
         return <>&#xf39e;</>;
         break;
 
-      case 'discord':
+      case "discord":
         return <>&#xf392;</>;
         break;
 
-      case 'bluesky':
+      case "bluesky":
         return <>&#xe671;</>;
         break;
 
-      case 'linkedin':
+      case "linkedin":
         return <>&#xf08c;</>;
         break;
 
-      case 'youtube':
+      case "youtube":
         return <>&#xf167;</>;
         break;
 
-      case 'steam':
+      case "steam":
         return <>&#xf1b6;</>;
         break;
 
-      case 'itch':
+      case "itch":
         return <>&#xf83a;</>;
         break;
 
-      case 'other':
+      case "other":
         return <>&#xf0c1;</>;
         break;
     }
@@ -944,8 +1010,8 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     for (let i = 0; i < currentLinks.length; i++) {
       tempList.push(currentLinks[i]);
     }
-    const newLink: MySocial = { id: 0, website: 'select', url: '' };
-    setCurrentLinks([...currentLinks, { id: 0, website: 'select', url: '' }]);
+    const newLink: MySocial = { id: 0, website: "select", url: "" };
+    setCurrentLinks([...currentLinks, { id: 0, website: "select", url: "" }]);
   };
 
   const removeLink = (index: number) => {
@@ -962,7 +1028,11 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     const tempList: MySocial[] = [];
     for (let i = 0; i < currentLinks.length; i++) {
       if (i === index) {
-        tempList.push({ id: getIdOfWebsite(newSite), website: newSite, url: currentLinks[i].url });
+        tempList.push({
+          id: getIdOfWebsite(newSite),
+          website: newSite,
+          url: currentLinks[i].url,
+        });
       } else {
         tempList.push(currentLinks[i]);
       }
@@ -974,7 +1044,11 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     const tempList: MySocial[] = [];
     for (let i = 0; i < currentLinks.length; i++) {
       if (i === index) {
-        tempList.push({ id: currentLinks[i].id, website: currentLinks[i].website, url: newURL });
+        tempList.push({
+          id: currentLinks[i].id,
+          website: currentLinks[i].website,
+          url: newURL,
+        });
       } else {
         tempList.push(currentLinks[i]);
       }
@@ -992,7 +1066,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
           </div>
           <div className="edit-region-links-list">
             {currentLinks == null
-              ? ''
+              ? ""
               : currentLinks.map((linkItem, index: number) => {
                   return (
                     <div className="edit-region-link-item">
@@ -1056,7 +1130,11 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   );
   if (page === 1) {
     button1 = (
-      <button className="profile-discover-button" id="selected" onClick={() => setPage(1)}>
+      <button
+        className="profile-discover-button"
+        id="selected"
+        onClick={() => setPage(1)}
+      >
         About
       </button>
     );
@@ -1068,7 +1146,11 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   );
   if (page === 2) {
     button2 = (
-      <button className="profile-discover-button" id="selected" onClick={() => setPage(2)}>
+      <button
+        className="profile-discover-button"
+        id="selected"
+        onClick={() => setPage(2)}
+      >
         Projects
       </button>
     );
@@ -1080,7 +1162,11 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   );
   if (page === 3) {
     button3 = (
-      <button className="profile-discover-button" id="selected" onClick={() => setPage(3)}>
+      <button
+        className="profile-discover-button"
+        id="selected"
+        onClick={() => setPage(3)}
+      >
         Skills
       </button>
     );
@@ -1092,7 +1178,11 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   );
   if (page === 4) {
     button4 = (
-      <button className="profile-discover-button" id="selected" onClick={() => setPage(4)}>
+      <button
+        className="profile-discover-button"
+        id="selected"
+        onClick={() => setPage(4)}
+      >
         Links
       </button>
     );
@@ -1120,11 +1210,13 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     }
   };
 
-  const createSkillsList = (): Pick<UserSkill, 'id' | 'position'>[] =>
-    currentSkills.map(skill => ({ id: skill.id, position: skill.position }));
+  const createSkillsList = (): Pick<UserSkill, "id" | "position">[] =>
+    currentSkills.map((skill) => ({ id: skill.id, position: skill.position }));
 
-  const createLinksList = (): Pick<MySocial, 'id' | 'url'>[] =>
-    currentLinks.filter(link => link.id !== 0).map(link => ({ id: link.id, url: link.url }));
+  const createLinksList = (): Pick<MySocial, "id" | "url">[] =>
+    currentLinks
+      .filter((link) => link.id !== 0)
+      .map((link) => ({ id: link.id, url: link.url }));
 
   const saveData = async () => {
     // User
@@ -1177,8 +1269,8 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
 
       {/* The "Edit Profile" popup */}
       <PagePopup
-        width={'1120px'}
-        height={'850px'}
+        width={"1120px"}
+        height={"850px"}
         popupId={0}
         zIndex={3}
         show={showPopup}

@@ -22,7 +22,7 @@ import ToTopButton from '../ToTopButton';
 import { devSkills, desSkills } from '../../constants/tags';
 import { getProjects } from '../../api/projects';
 import { getUsers } from '../../api/users';
-import { Tag, Skill } from '@looking-for-group/shared';
+import { Tag, Skill, UserPreview, ProjectPreview } from '@looking-for-group/shared';
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'
@@ -122,7 +122,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   let tempItemList: Item[] = fullItemList;
 
   // List that holds trimmed data for searching. Empty before fullItemList is initialized
-  const [itemSearchData, setItemSearchData] = useState([]);
+  const [itemSearchData, setItemSearchData] = useState<Item[]>([]);
 
   // Stores userId for ability to follow users/projects
     const [userId, setUserId] = useState<string>('guest');
@@ -173,8 +173,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       console.log('data.data', data.data);
 
       // Don't assign if there's no array returned
-      console.log(data.data == undefined);
-      if (data.data !== undefined) {
+      console.log(data.data == null);
+      if (data.data !== null) {
         setFullItemList(data.data);
         setFilteredItemList(data.data);
         setItemSearchData(
@@ -182,12 +182,14 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           // loop through JSON, get data based on category
           data.data.map((item) => {
             if (category === 'projects') {
-              return { name: item.title, description: item.hook };
+              const project = item as ProjectPreview;
+              return { name: project.title, description: project.hook };
             } else {
+              const user = item as UserPreview;
               return {
-                name: `${item.firstName} ${item.lastName}`,
-                username: item.username,
-                bio: item.bio,
+                name: `${user.firstName} ${user.lastName}`,
+                username: user.username,
+                bio: user.bio,
               };
             }
           })

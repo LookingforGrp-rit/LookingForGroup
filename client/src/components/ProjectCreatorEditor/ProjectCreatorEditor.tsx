@@ -90,7 +90,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           const response = await getByID(Number(projectID));
           if (!response.data) return;
           const data = response.data;
-          data.userId = user?.userId;
+          // data.userId = user?.userId; // why would this be needed?
           setProjectData(data);
           setModifiedProject(data);
         } catch (err) {
