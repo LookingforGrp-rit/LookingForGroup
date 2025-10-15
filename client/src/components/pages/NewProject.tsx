@@ -151,6 +151,7 @@ const NewProject = () => {
 
   // API FUNCTIONS (/PROJECTS/)
 
+  // #FIXME is this really necessary?
   const fetchprojectByID = async (id: number) => {
     const response = await getByID(id);
     return response.data;
