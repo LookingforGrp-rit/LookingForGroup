@@ -37,7 +37,7 @@ const fetchUserID = async () => {
 // Get list of users on site from API
 const getProfiles = async () => {  
   const response = await getUsers();
-  return response.data?.users ?? [];
+  return response.data;
 };
 
 // Main Profile component

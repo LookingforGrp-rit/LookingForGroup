@@ -168,12 +168,9 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
 
         // list of users to search. users searchable by first name, last name, or username
         const searchableUsers = await Promise.all(response.data.map(async (user: User) => {
-          // get username
-          const userResponse = await getUsersById(user.userId.toString());
-
           // get make searchable user
           const filteredUser = {
-            "username": userResponse.data.username,
+            "username": user.username,
             "firstName": user.firstName,
             "lastName": user.lastName,
           };
@@ -317,20 +314,8 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
     // set text input
     setSearchQuery(`${user.firstName} ${user.lastName} (${user.username})`);
 
-    // get user id of this user to compare
-    let userId = -1;
-    const getUserId = async () => {
-      try {
-        const response = await getUserByUsername(user.username);
-        userId = response.data.userId;
-      } catch (error) {
-        console.error(error);
-      }
-    }
-    await Promise.all([getUserId()]);
-
     // get matching user data from user id
-    const matchedUser = allUsers.find((u) => u.userId === userId);
+    const matchedUser = allUsers.find((u) => u.userId === user.userId);
     if (!matchedUser) {
       setErrorAddMember('User not found');
       return;

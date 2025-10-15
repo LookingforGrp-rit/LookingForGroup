@@ -78,7 +78,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     try {
       const data = await getUserByUsername(username);
       // if there is a result, a match is found
-      if (data.data.length > 0) {
+      if (data) {
         setMessage('Username already in use');
         return false;
       }
@@ -101,10 +101,10 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
     // check if the email is in use
     try {
-      const data = getUserByEmail(email);
+      const data = await getUserByEmail(email);
       
       // if there is a result, a match is found
-      if (data.data.length > 0) {
+      if (data) {
         setMessage('Email already in use');
         return false;
       }

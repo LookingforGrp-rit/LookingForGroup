@@ -68,14 +68,14 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
     }
 
     if(!isFollowing) {
-      addProjectFollowing(userId, project.projectID).then(res => {
+      addProjectFollowing(project.projectId).then(res => {
         if (res.status === 200) {
           setFollowing(true);
           setFollowCount(followCount + 1);
         }
       });
     } else { 
-      deleteProjectFollowing(userId, project.projectID).then(res => {
+      deleteProjectFollowing(project.projectId).then(res => {
         if (res.status === 200) {
           setFollowing(false);
           setFollowCount(followCount - 1);

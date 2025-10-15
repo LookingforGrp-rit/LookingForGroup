@@ -114,13 +114,13 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
       const file = theInput.files[0];
 
       try {
-        const response = await updateProfilePicture(user.userId, file);
+        const response = await editUser({profileImage: file});
 
         console.log(`User data: Response status: ${response.status}`);
 
         const rawData = response;
         console.log(rawData);
-        getImage(rawData.data[0].profileImage);
+        if(rawData.data && rawData.data?.profileImage !== null) getImage(rawData.data.profileImage);
 
         // const file = theInput.files[0];
         // const reader = new FileReader();
@@ -847,7 +847,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
 
   const getSocials = async () => {
       const response = await fetchSocials();
-      setSocialLinks(response.data);
+     if(response.data !== null) setSocialLinks(response.data);
   };
 
   useEffect(() => {
@@ -1128,7 +1128,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
 
   const saveData = async () => {
     // User
-    await saveuser();
+    await saveUser();
 
     // Projects
     await saveProjectsPage();
@@ -1138,10 +1138,10 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     window.location.reload();
   };
 
-  const saveuser = async () => {
+  const saveUser = async () => {
     console.log("I'M BEING RAN HAHAHAAHAHAHAHAHAHH");
     try {
-      const response = await editUser(user.userId, {
+      const response = await editUser({
           ...currentEditData
         });
       console.log(`User data: Response status: ${response.status}`);
@@ -1154,7 +1154,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     if (userProjects !== undefined) {
       for (let i = 0; i < userProjects.length; i++) {
         try {
-          const response = await updateProjectVisibility(user.userId, userProjects[i].projectId,
+          const response = await updateProjectVisibility(userProjects[i].projectId,
              checkIfProjectIsShown(userProjects[i].projectId) ? 'public' : 'private');
             //console.log(`Projects data #${i + 1}: Response status: ${response.status}`);
           } catch (error) {

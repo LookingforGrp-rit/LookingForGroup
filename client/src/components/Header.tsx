@@ -66,14 +66,14 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
           setEmail(res.data.email ?? null);
           setProfileImg(res.data.profileImage ?? '');
         } else {
-          loggedIn == false;
+          loggedIn = false;
           setUsername('Guest');
           setEmail(null);
           setProfileImg('');
         }
       } catch (err) {
         console.log('Error fetching username: ' + err);
-        loggedIn == false;
+        loggedIn = false;
         setUsername('Guest');
         setEmail(null);
         setProfileImg('');

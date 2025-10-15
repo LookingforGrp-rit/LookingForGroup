@@ -159,7 +159,7 @@ const NewProfile = () => {
 
   const getProfileProjectData = async () => {
     try {
-      const response = isUsersProfile ? await getProjectsByUser(Number(profileID)) : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };          // IMPLEMENT PROJECT GETTING
+      const response = isUsersProfile ? await getProjectsByUser() : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };          // IMPLEMENT PROJECT GETTING
       const data = response.data;
       
       console.log(data);

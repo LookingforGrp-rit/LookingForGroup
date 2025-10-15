@@ -508,6 +508,7 @@ export default {
   getUserByUsername,
   getUserByEmail,
   getUserFollowing,
+  getUserFollowers,
   addUserFollowing,
   deleteUserFollowing,
   getProjectsByUser,

@@ -15,6 +15,8 @@ import '../Styles/pages.css';
 import { useState, useEffect } from 'react';
 import { sendPut, sendFile } from '../../functions/fetch';
 
+import { editUser } from '../../api/users';
+
 // Components
 import { Popup, PopupButton, PopupContent } from '../Popup';
 
@@ -46,23 +48,23 @@ export const ProfileEditPopup = () => {
       // Pick which socials to use based on type
       // fetch for profile on ID
       const userID = await getCurrentUsername();
-      const response = await getUsersById(userID);
+      const response = await getUsersById(userID.data?.userId);
 
       console.log('ProfileEditPopup - Raw API response:', response.data);
-      console.log('ProfileEditPopup - User profile data:', response.data[0]);
-      console.log('ProfileEditPopup - User interests from API:', response.data[0]?.interests);
+      console.log('ProfileEditPopup - User profile data:', response.data);
+      //console.log('ProfileEditPopup - User interests from API:', response.data?.skills);
 
 
-      setProfile(response.data[0]);
+      setProfile(response.data as MeDetail);
     };
     setUpProfileData();
   }, []);
 
   // Send selected image to server for save
-  const saveImage = async (userID: number) => {
+  const saveImage = async () => {
   if (!selectedImageFile) return;
 
-  await updateProfilePicture(selectedImageFile, userID);
+  await editUser({ profileImage: selectedImageFile }); //no longer exists, wrapped into updateUser
 };
 
 const onSaveClicked = async (e : React.FormEvent<HTMLFormElement>) => {

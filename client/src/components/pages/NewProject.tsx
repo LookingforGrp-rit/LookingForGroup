@@ -278,14 +278,14 @@ const NewProject = () => {
                   className={`follow-icon ${isFollowing ? 'following' : ''}`}
                   onClick={() => {
                     if (!isFollowing) {
-                      addProjectFollowing(user.userId, projectID).then(res => {
+                      addProjectFollowing(projectID).then(res => {
                         if (res.status === 200) {
                           setFollowing(true);
                           setFollowCount(followCount + 1);
                         }
                       })
                     } else {
-                      deleteProjectFollowing(user.userId, projectID).then(res => {
+                      deleteProjectFollowing(projectID).then(res => {
                         if (res.status === 200) {
                           setFollowing(false);
                           setFollowCount(followCount - 1);

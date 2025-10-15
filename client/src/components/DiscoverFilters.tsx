@@ -4,7 +4,7 @@ import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
 import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
-import { Tag, Skill } from '@looking-for-group/shared';
+import { Tag, Skill, Role, Major, Medium } from '@looking-for-group/shared';
 
 interface DiscoverFiltersProps {
   category: 'projects' | 'profiles';
@@ -65,23 +65,23 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   // --------------------
   const getData = async () => {
     try {
-      let response = category === 'projects' ? await getTags() : await getSkills();
-      const data: Skill[] = [...response.data];
+      const response = category === 'projects' ? await getTags() : await getSkills();
+      const data: Skill[] = response.data;
 
       // Need to also pull from majors and job_titles tables
       if (category === 'profiles') {
         // Get job titles and append it to full data
         const jobTitles = await getJobTitles();
-        jobTitles.data.forEach((job: Skill) => data.push({ label: job.label, type: 'Role' }));
+        jobTitles.data.forEach((job: Role) => data.push({ label: job.label, type: 'Role' }));
 
         // Get majors and append it to full data
         const majors = await getMajors();
-        majors.data.forEach((major: Skill) => data.push({ label: major.label, type: 'Major' }));
+        majors.data.forEach((major: Major) => data.push({ label: major.label, type: 'Major' }));
 
       } else if (category === 'projects') {
         // Pull Project Types and append it to full data
         const projectTypes = await getProjectTypes();
-        projectTypes.data.forEach((proj: Skill) => data.push({ label: proj.label, type: 'Project Type' }));
+        projectTypes.data.forEach((proj: Medium) => data.push({ label: proj.label, type: 'Project Type' }));
       }
 
       // Construct the finalized version of the data to be moved into filterPopupTabs
