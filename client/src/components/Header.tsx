@@ -83,7 +83,7 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
     fetchUsername();
   }, []);
 
-  const handlePageChange = (path) => {
+  const handlePageChange = (path: string) => {
     //Have code to update sidebar display (unsure of how to do this yet)
     //Navigate to desired page
     navigate(path);
@@ -92,8 +92,8 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
   const handleProfileAccess = async () => {
     // navigate to Profile, attach userID
     const res = await getCurrentUsername();
-    const username = res.data.username;
-    navigate(`${paths.routes.NEWPROFILE}?userID=${username}`);
+    const userId = res.data.userId;
+    navigate(`${paths.routes.NEWPROFILE}?userID=${userId}`);
 
     // Collapse the dropwdown if coming from another user's page
     if (window.location.href.includes("profile")) {
