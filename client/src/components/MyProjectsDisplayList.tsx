@@ -7,6 +7,7 @@ import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
 import { getByID,  deleteProject, deleteMember} from '../api/projects';
 import { ApiResponse } from '@looking-for-group/shared';
+import { leaveProject } from '../api/users';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -45,7 +46,7 @@ const MyProjectsDisplayList = ({ projectData }) => {
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
 
   const handleLeaveProject = async () => {
-    const response = await deleteMember(projId, userId);
+    const response = await leaveProject(projId);
     setRequestType('leave');
     setResultObj(response);
     setShowResult(true);
