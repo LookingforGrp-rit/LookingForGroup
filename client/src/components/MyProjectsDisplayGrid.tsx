@@ -26,7 +26,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
   const fetchStatus = async () => {
     const response = await getByID(projectData.projectId);
     if (response.status === 200 && response.data) {
-      setStatus(response.data.status || 'No data');
+      setStatus(response.data.status);
     } else {
       setStatus('Error loading status');
     }
