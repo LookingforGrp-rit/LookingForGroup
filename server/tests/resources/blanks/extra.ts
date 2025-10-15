@@ -48,6 +48,8 @@ export const blankIdRequest = {
   },
 } as unknown as Request;
 
+export const blankAuthIdRequest = blankIdRequest as AuthenticatedRequest;
+
 export const blankResponse = {
   json: vi.fn(() => blankResponse),
   status: vi.fn(() => blankResponse),
