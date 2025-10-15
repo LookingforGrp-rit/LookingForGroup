@@ -405,12 +405,14 @@ Project Creator and Editor style rules
   border: 1px solid var(--border-color);
 }
 
+/* TODO: remove after replacing with Input component */
 .project-link-input-wrapper {
   position: relative;
   width: 100%;
   display: flex;
   align-items: center;
 }
+/* TODO: remove after replacing with Input component */
 .project-link-input-wrapper input {
   border: 1px solid var(--border-color);
   border-radius: 10px;
@@ -422,6 +424,7 @@ Project Creator and Editor style rules
   outline: none;
   min-height: 40px;
 }
+/* TODO: remove after replacing with Input component */
 .project-link-input-wrapper input::placeholder {
   color: var(--neutral-gray);
   font-style: italic;
@@ -565,11 +568,6 @@ Project Creator and Editor style rules
 .project-editor-input-item>select>option:hover {
   background-color: var(--orange);
   color: var(--bg-color);
-}
-
-/* To fix unnecessary horizontal scrollbar */
-.select {
-  overflow-x: hidden;
 }
 
 .character-count {
@@ -1536,6 +1534,7 @@ select.edit-position-compensation {
   width: 100%;
 }
 
+/* TODO: remove after using Input component */
 .remove-link-button {
   position: absolute;
   width: 23px;
@@ -1553,6 +1552,7 @@ select.edit-position-compensation {
   margin-top: auto;
 }
 
+/* TODO: remove after using Input component */
 @media only screen and (max-width: 700px) {
   .remove-link-button {
     right: 20px;
@@ -1565,10 +1565,12 @@ select.edit-position-compensation {
   }
 }
 
+/* TODO: remove after using Input component */
 .remove-link-button>.fa-minus {
   color: var(--invert-text);
 }
 
+/* TODO: remove after using Input component */
 .remove-link-button:hover {
   background-color: var(--error-delete-color) !important;
 }
