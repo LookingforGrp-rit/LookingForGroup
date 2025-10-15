@@ -14,7 +14,6 @@ import '../Styles/pages.css';
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { signupWithToken } from '../../api/users';
 //import * as fetch from "../../functions/fetch";
 
 // Interface for the response data from the server

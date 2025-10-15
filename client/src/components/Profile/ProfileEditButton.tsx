@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { PagePopup, openClosePopup } from '../PagePopup';
 import { getByID } from '../../api/projects';
 import { getJobTitles, getMajors, getSkills, getSocials as fetchSocials, editUser, updateProjectVisibility, getVisibleProjects as fetchProjects, 
-  updateProfilePicture, getVisibleProjects } from '../../api/users';
+  getVisibleProjects } from '../../api/users';
 // import { Popup, PopupContent, PopupButton } from "../Popup"; // Unused because I got confused while trying to use it and couldn't get it to work
 import { MeDetail, UserSkill, MySocial, Role, Major, ProjectPreview, Social} from '@looking-for-group/shared';
 

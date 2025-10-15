@@ -11,7 +11,7 @@ import GetStarted from '../SignupProcess/GetStarted';
 import { sendPost } from '../../functions/fetch';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
-import { getUserByEmail, getUserByUsername, signUp } from '../../api/users';
+import { getUserByEmail, getUserByUsername } from '../../api/users';
 
 const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation

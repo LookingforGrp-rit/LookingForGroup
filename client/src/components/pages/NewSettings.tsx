@@ -12,7 +12,7 @@ import CreditsFooter from '../CreditsFooter';
 import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
-import { getUserByEmail, getUserByUsername, getAccountInformation, getCurrentUsername } from '../../api/users';
+import { getUserByEmail, getUserByUsername, getCurrentUsername } from '../../api/users';
 
 // Take the user ID and delete it
 const deleteAccountPressed = async () => {
