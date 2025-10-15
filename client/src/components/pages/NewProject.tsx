@@ -158,12 +158,11 @@ const NewProject = () => {
   };
 
   const removeMember = async (userId: number) => {
-    try {
-      await deleteMember(projectID, userId);
-      location.reload();
-    } catch (err) {
-      console.error(err);
+    const response = await deleteMember(projectID, userId);
+    if (response.error) {
+      console.error("error removing a member", response.error);
     }
+    location.reload();
   };
 
   // FETCHING PROJECTS DATA
