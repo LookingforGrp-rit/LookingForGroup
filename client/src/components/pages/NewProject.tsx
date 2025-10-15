@@ -175,7 +175,7 @@ const NewProject = () => {
         return;
       }
       const project = await getByID(projectID);
-      if (!project) {
+      if (!project.data) {
         setFailCheck(true);
         return;
       }
@@ -193,7 +193,7 @@ const NewProject = () => {
 
       const projectData = await getByID(projectID);
 
-      if (projectData.data[0] === undefined) {
+      if (!projectData.data) {
         setFailCheck(true);
         return;
       }
