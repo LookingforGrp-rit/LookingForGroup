@@ -65,7 +65,7 @@ textarea {
 
 #profile-editor-save {
   position: absolute;
-  bottom: 10px;
+  bottom: 25px;
   right: 50%;
   transform: translateX(50%);
 
@@ -113,8 +113,7 @@ textarea {
 }
 
 .editor-input-item input,
-.editor-input-item select,
-.editor-input-item textarea {
+.editor-input-item select {
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: 10px;
@@ -124,12 +123,6 @@ textarea {
   margin: 10px 0;
   outline: none;
   padding: 0.5rem;
-}
-
-.edit-profile-body input,
-.edit-profile-body select,
-.edit-profile-body textarea {
-  width: auto;
 }
 
 .editor-input-item label {

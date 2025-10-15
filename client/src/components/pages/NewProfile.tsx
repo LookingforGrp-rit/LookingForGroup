@@ -23,6 +23,8 @@ import usePreloadedImage from "../../functions/imageLoad";
 import { getCurrentUsername, getVisibleProjects, getProjectsByUser, getCurrentUserById } from "../../api/users";
 import { getUsersById } from "../../api/users";
 import { MeDetail, UserSkill, ProjectPreview } from '@looking-for-group/shared';
+import { Input } from "../Input";
+import LabelInputBox from "../LabelInputBox";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -34,7 +36,7 @@ type Project = ProjectPreview;
 // Stores if profile is loaded from server and if it's user's respectively
 // const [profileLoaded, setProfileLoaded] = useState(false);
 let userID: number;
-let isUsersProfile: boolean = false;
+let isUsersProfile: boolean = true; //FIXME: undo hard-code
 
 // Change this when follow backend is added, this is just for testing purposes
 let toggleFollow = false;
@@ -179,13 +181,14 @@ const NewProfile = () => {
   useEffect(() => {
     const getProfileData = async () => {
       // Get the profileID to pull data for whoever's profile it is
-      const response = await getCurrentUserById(2) // TODO: remove hardcoded devID value from debugging
+      const response = await getCurrentUserById();
       if (response.data) {
         isUsersProfile = true;
       }
 
       try {
         const { data } = await getUsersById(profileID ?? "");
+        console.log('user data', data);
 
         // Only run this if profile data exists for user
         if (data) {
