@@ -6,6 +6,7 @@ import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
 import { getByID,  deleteProject, deleteMember} from '../api/projects';
+import { ApiResponse } from '@looking-for-group/shared';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -22,7 +23,7 @@ const MyProjectsDisplayList = ({ projectData }) => {
   // State variable for displaying output of API request, whether success or failure
   const [showResult, setShowResult] = useState(false);
   const [requestType, setRequestType] = useState<'delete' | 'leave'>('delete');
-  const [resultObj, setResultObj] = useState({ status: 400, error: 'Not initialized' });
+  const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
 
   // Fetches project status
   const fetchStatus = async () => {
