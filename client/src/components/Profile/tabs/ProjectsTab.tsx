@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { sendPut } from '../../../functions/fetch';
 import { getByID } from '../../../api/projects';
-import { getCurrentUsername } from '../../../api/users';
+import { getCurrentUsername, getProjectsByUser } from '../../../api/users';
+import { ProjectPreview } from '@looking-for-group/shared';
 
 // let userProjects : [];
 
@@ -15,13 +16,17 @@ const ProjectTile = (props: {index: string}) => {
 }
 
 export const ProjectsTab = (props: {profile: {}}) => {
-    const [userProjects, setUserProjects] = useState([]);
+    const [userProjects, setUserProjects] = useState<ProjectPreview[]>([]);
     useEffect(() => {
         // Load in userProfile and then the projects
         const setUpProjects = async () => {
-            const userID = await getCurrentUsername();
-            const data = await getByID(userID);
-            setUserProjects(data.data);
+            const projects = await getProjectsByUser();
+
+            if (projects.error) {
+                console.error('Error loading projects', projects.error);
+            }
+
+            setUserProjects(projects.data || []);
             // userProjects = data.data;
             // console.log('Projects finished loading');
         };
