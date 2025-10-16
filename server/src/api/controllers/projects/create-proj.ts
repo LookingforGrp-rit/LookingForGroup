@@ -58,11 +58,11 @@ const createProjectController = async (req: AuthenticatedRequest, res: Response)
   }
 
   const resBody: ApiResponse = {
-    status: 200,
+    status: 201,
     error: null,
     data: result,
   };
-  res.status(200).json(resBody);
+  res.status(201).json(resBody);
 };
 
 export default createProjectController;
