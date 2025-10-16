@@ -383,7 +383,9 @@ const NewProject = () => {
   //Lists of users who have worked on this project
   //Members - people who actively work on the project
   // const projectMembers = displayedProject === undefined ? [] : displayedProject.members;
-  const projectMembers = displayedProject?.members; //FIXME: add profile image data to display in HTML
+  // FIXME either get project members using api function or fetch them out of the ProjectDetail loaded in
+  // either way, displayedProject needs to be fixed and the fake data at the top can probably be removed.
+  const projectMembers = displayedProject?.members; 
   //Contributors - people who have helped, but aren't actively working on the project
   const projectContributors = [];
   //People list holds whatever list is currently being displayed
