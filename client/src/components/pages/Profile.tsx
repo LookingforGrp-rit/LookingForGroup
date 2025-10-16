@@ -124,6 +124,7 @@ const Profile = () => {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
       // (Follow behavior would be implemented here)
+      // TODO implement follow behavior
 
       if (toggleFollow) {
         followButton.innerText = "Following";
