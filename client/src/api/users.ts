@@ -91,8 +91,8 @@ export const getUsersById = async (
   return response;
 };
 
-//Gets the current user by ID
-export const getCurrentUserById = async (): Promise<ApiResponse<MePrivate>> => {
+//Gets the current user
+export const getCurrentAccount = async (): Promise<ApiResponse<MePrivate>> => {
   const apiURL = `/me`;
   const response = await GET(apiURL);
 
@@ -581,4 +581,5 @@ export default {
   getSkills,
   getTags,
   getSocials,
+  getCurrentAccount,
 };
