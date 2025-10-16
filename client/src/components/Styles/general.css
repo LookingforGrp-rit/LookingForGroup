@@ -10,11 +10,13 @@ Component Style rules
     -Header
     -Search
     -Dropdown
-    - Select
+    -Select
+    -Input
     -Scrollbar
     -Tag Filter
     -Image carousel
     -Scroll to top
+    -Theme Icons
 
 see: pages.css for the rules that format the page itself
      index.css for fonts
@@ -68,7 +70,7 @@ General style rules
 
   /* tags */
   --tag-red-selected: #ffa0b0;
-  --tag-orange-selected: #ffa381;
+  --tag-orange-selected: #ffa281;
   --tag-yellow-selected: #ffcf8b;
   --tag-green-selected: #bed9aa;
   --tag-blue-selected: #b0dcee;
@@ -84,7 +86,7 @@ General style rules
   --tag-grey-unselected: #0e0e0e;
 
   --tag-red-unselected-border: #ffa0b0;
-  --tag-orange-unselected-border: #ffa381;
+  --tag-orange-unselected-border: #ffa281;
   --tag-yellow-unselected-border: #ffcf8b;
   --tag-green-unselected-border: #bed9aa;
   --tag-blue-unselected-border: #b0dcee;
@@ -94,7 +96,7 @@ General style rules
   --tag-text-selected: black;
 
   --tag-text-unselected-red: #ffa0b0;
-  --tag-text-unselected-orange: #ffa381;
+  --tag-text-unselected-orange: #ffa281;
   --tag-text-unselected-yellow: #ffcf8b;
   --tag-text-unselected-green: #bed9aa;
   --tag-text-unselected-blue: #b0dcee;
@@ -140,7 +142,7 @@ General style rules
 
   /* tags */
   --tag-red-selected: #ffa0b0;
-  --tag-orange-selected: #ffa381;
+  --tag-orange-selected: #ffa281;
   --tag-yellow-selected: #ffcf8b;
   --tag-green-selected: #bed9aa;
   --tag-blue-selected: #b0dcee;
@@ -1383,7 +1385,42 @@ Select style rules
   width: 100%;
 }
 
+/* Universal styles for Select component */
 .select {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 45px;
+  padding: 15px 15px;
+  border: 1px solid #2B2939;
+  border-radius: 10px;
+  font-size: 15px;
+}
+.select::placeholder {
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+/* Determines background color for Select component */
+.select-button-dropdown {
+  background-color: var(--header-color);
+}
+.select-button-input {
+  background-color: var(--bg-color);
+}
+
+/* Arrow icon orientation */
+.select-button-arrow {
+  transform: scale(1, 1);
+}
+.select-button-arrow.opened {
+  transform: scale(1, -1);
+}
+
+/* Container for Select options */
+.select-options {
   width: 100%;
   border-radius: 10px;
   position: absolute;
@@ -1394,46 +1431,10 @@ Select style rules
   /* Limit height to ten items, maybe less */
   max-height: 450px;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
-.select-button {
-  min-width: 166px;
-  min-height: 45px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  border: none;
-  border-radius: 10px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--header-color);
-  padding: 15px 15px;
-  font-size: 15px;
-
-  .value {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
-    align-items: center;
-  }
-
-  .placeholder {
-    color: var(--neutral-gray);
-    font-style: italic;
-  }
-}
-
-.select-button-arrow {
-  width: 12px;
-  height: 8px;
-  transform: scale(1, 1);
-}
-
-.select-button-arrow.opened {
-  transform: scale(1, -1);
-}
-
+/* Individual options for Select component */
 .select-option {
   min-width: 166px;
   min-height: 45px;
@@ -1449,13 +1450,11 @@ Select style rules
   cursor: pointer;
   gap: 15px;
 }
-
 .select-option:disabled {
   background-color: var(--tag-grey-unselected);
   color: var(--neutral-gray);
   cursor: not-allowed;
 }
-
 .select-option:hover {
   background-color: var(--primary-color);
   color: var(--invert-text);
@@ -1467,16 +1466,114 @@ Select style rules
     color: var(--invert-text) !important;
   }
 }
-
 .select-option.top {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
-
 .select-option.bottom {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
+
+.placeholder {
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+------------------------------------------------------------------------------------------------
+Input style rules
+------------------------------------------------------------------------------------------------
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+*/
+
+/* Universal styling for all input types */
+.input {
+  min-height: 45px;
+  font-size: 15px;
+  padding-left: 15px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  flex-grow: 1;
+}
+.input::placeholder {
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+/* Container for textarea and character count */
+.input-multiline-container {
+  display: flex;
+  flex-grow: 1;
+}
+
+/* Paired with character limit */
+.input-multiline {
+  padding: 15px;
+}
+
+/* Link wrapper */
+.input-link-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Link input remove button */
+.input-link-remove {
+  position: absolute;
+  width: 23px;
+  height: 23px;
+  right: 12px;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 50%;
+  transition: .15s;
+
+  >.fa-minus {
+    color: var(--invert-text);
+  }
+}
+.input-link-remove:hover {
+  background-color: var(--error-delete-color) !important;
+  cursor: pointer;
+}
+
+/* Combo box label */
+.input-combo-label {
+  color: var(--primary-color);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Details underneath label */
+.label-info {
+  font-size: 14px;
+  color: var(--neutral-gray);
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.label-input-box {
+  display: flex;
+  flex-direction: column;
+
+  .input, .select {
+    margin-top: 10px;
+  }
+}
+.label-input-box textarea {
+  flex: 1 1 auto;
+}
+
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\

@@ -293,8 +293,8 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
         <div className="Create">
           <ProjectCreatorEditor
             newProject={createError}
-            buttonCallback={getAuth}
-            user={userData}
+            // buttonCallback={getAuth}
+            // user={userData}
           />
         </div>
       </div>

@@ -13,7 +13,6 @@ import '../Styles/pages.css';
 
 // Utilities and React functions
 import { useState, useEffect } from 'react';
-import { sendPut, sendFile } from '../../functions/fetch';
 
 import { editUser } from '../../api/users';
 
@@ -22,14 +21,17 @@ import { Popup, PopupButton, PopupContent } from '../Popup';
 
 // Tabs
 import { AboutTab } from './tabs/AboutTab';
-import { LinksTab, getSocials } from './tabs/LinksTab';
+import { LinksTab } from './tabs/LinksTab';
 import { ProjectsTab } from './tabs/ProjectsTab';
 import { SkillsTab } from './tabs/SkillsTab';
 // import { InterestTab } from './tabs/InterestTab';
 // import { interests } from '../../constants/interests';
 import { getCurrentUsername, getUsersById, } from '../../api/users';
 
-import { MeDetail, MySkill, UserSocial } from '@looking-for-group/shared';
+import { MeDetail, MySkill, UpdateUserInput, UserSocial } from '@looking-for-group/shared';
+
+// The profile to view is independent upon the site's state changes
+const pageTabs = ['About', 'Projects', 'Skills', 'Interests', 'Links'];
 
 export const ProfileEditPopup = () => {
   // The profile to view is independent upon the site's state changes
@@ -39,8 +41,6 @@ export const ProfileEditPopup = () => {
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
-
-  const pageTabs = ['About', 'Projects', 'Skills', 'Interests', 'Links'];
 
   // Profile should be set up on intialization
   useEffect(() => {
@@ -98,7 +98,7 @@ const onSaveClicked = async (e : React.FormEvent<HTMLFormElement>) => {
     pronouns: getInputValue('pronouns'),
     title: getInputValue('jobTitle'),
     majors: profile.majors ?? [],
-    academicYear: getInputValue('academicYear'),
+    academicYear: getInputValue('academicYear') as MeDetail['academicYear'],
     location: getInputValue('location'),
     funFact: getInputValue('funFact'),
     bio,
@@ -108,15 +108,59 @@ const onSaveClicked = async (e : React.FormEvent<HTMLFormElement>) => {
   // console.log('Saving data...');
   // console.log(dataToStore);
 
-  const userID = await getCurrentUsername();
-  await Promise.all([
-    sendPut(`/api/users/${userID}`, updatedProfile),
-    saveImage(userID)
-  ]);
+  // TODO track majors, skills, and socials as they're added deleted or modified so that they can be updated using their respsective endpoints.
+  const updatedUserInput : UpdateUserInput = {
+        firstName,
+    lastName,
+    headline: getInputValue('headline'),
+    pronouns: getInputValue('pronouns'),
+    title: getInputValue('jobTitle'),
+    academicYear: getInputValue('academicYear') as MeDetail['academicYear'],
+    location: getInputValue('location'),
+    funFact: getInputValue('funFact'),
+    bio,
+  };
+
+  // TODO error check result
+  await editUser(updatedUserInput);
+  await saveImage();
 
   setProfile(updatedProfile);
   setErrorVisible(false);
+
+  window.location.reload(); // reload page
 };
+
+  // In your ProfileEditPopup.tsx file
+
+  // useEffect to initialize the tabs
+  useEffect(() => {
+
+    setTimeout(() => {
+      // Initialize all tabs to be hidden except the first one
+      pageTabs.forEach((tab, idx) => {
+        const tabElement = document.querySelector(`#profile-editor-${tab.toLowerCase()}`);
+        if (tabElement) {
+          if (idx === 0) {
+            tabElement.classList.remove('hidden');
+          } else {
+            tabElement.classList.add('hidden');
+          }
+        }
+      },);
+
+
+    }, []);
+
+    // Highlight the first tab button
+    const firstTab = document.querySelector(`#profile-tab-${pageTabs[0]}`);
+    if (firstTab) {
+      firstTab.classList.add('project-editor-tab-active');
+    }
+  }, []);
+
+  // Fix the switchTab function
+  const switchTab = (index: number) => setCurrentTab(index);
 
   // Component to organize the main tab content
   const renderTabContent = () => {
@@ -137,7 +181,7 @@ const onSaveClicked = async (e : React.FormEvent<HTMLFormElement>) => {
       case 3:
         return <InterestTab profile={profile} />;
       case 4:
-        return <LinksTab profile={profile} type="profile" />;
+        return <LinksTab profile={profile} />;
       default:
         return null;
     }
@@ -206,11 +250,13 @@ const onSaveClicked = async (e : React.FormEvent<HTMLFormElement>) => {
       currTab.classList.toggle('project-editor-tab-active');
     }
   };*/
-
   return (
     <Popup>
-      <PopupButton buttonId="project-info-edit">Edit</PopupButton>
-      <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
+      <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
+      <PopupContent
+      profilePopup={true}
+        callback={() => setCurrentTab(0)}
+      >
         <form id="profile-creator-editor" onSubmit={onSaveClicked} encType="multipart/form-data">
           <div id="profile-editor-tabs">{editorTabs}</div>
           {renderTabContent()}

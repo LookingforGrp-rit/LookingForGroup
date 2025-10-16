@@ -239,7 +239,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         )
       }
       {
-        loggedIn ? (
+        // loggedIn ? (
           <PopupContent>
             <div id="project-creator-editor">
               <div id="project-editor-tabs">
@@ -306,12 +306,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               </div> : <></>}
             </div>
           </PopupContent>
-        ) : (
+        // ) : (
           // Placeholder to prevent mass error
-          <div>
+          // <div>
 
-          </div>
-        )
+          // </div>
+        // )
       }
     </Popup>
   );
