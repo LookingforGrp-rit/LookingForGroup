@@ -543,6 +543,7 @@ const NewProject = () => {
               <span className="project-info-highlight">{projectLead?.user.firstName} {projectLead?.user.lastName}</span>
               <br />
               Creation date
+              <span className="project-info-highlight"> {(new Date(displayedProject.createdAt.toString())).toLocaleDateString()}</span>
             </div>
             <div id="project-tags">
               {
