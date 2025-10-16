@@ -1,27 +1,21 @@
 import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Header } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { Popup, PopupButton, PopupContent } from "../Popup";
-import { ImageCarousel } from "../ImageCarousel";
-import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
 import profilePicture from "../../images/blue_frog.png";
 import profileImage from "../../icons/profile-user.png";
 import { ProjectCarousel } from "../ProjectCarousel";
-import tallImage from "../../images/tall_img.png";
-import heart from "../../icons/heart.png";
 import * as paths from "../../constants/routes";
-import Project from "./Project";
 import { ThemeIcon } from "../ThemeIcon";
-import { sendPost, sendDelete } from "../../functions/fetch";
-import { getByID, deleteProject, deleteMember, getMembers } from "../../api/projects";
+import { getByID, deleteMember} from "../../api/projects";
 import {
   getCurrentAccount,
   deleteProjectFollowing,
   addProjectFollowing,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate } from "@looking-for-group/shared";
+import { MePrivate, ProjectFollowers, ProjectWithFollowers, UserPreview } from "@looking-for-group/shared";
 import usePreloadedImage from "../../functions/imageLoad";
 
 //backend base url for getting images
@@ -31,91 +25,8 @@ const API_BASE = `http://localhost:8081`;
 //Have team member listings link to their respective profiles
 //Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
 
-//TODO: remove after implementing database functionality
-//Variable used for checking whether or not we are running a server or not
-//Should be 'true' when using npm run server, 'false' when using npm run client
-const runningServer = true;
 
-//TODO: remove after implementing database functionality
-//A default set of project data for the component to use
-//use while running with npm run client
-//i have to get rid of you, but what do i replace you with
-const defaultProject = runningServer
-  ? undefined
-  : {
-      title: "Title Here",
-      hook: "Hook text Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      description:
-        "Description text Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      purpose: "Insert purpose here",
-      status: "currentStatus",
-      audience: "Insert target audience here",
-      project_types: [{ id: 1, project_type: "Video Game" }],
-      tags: [
-        { id: 6, tag: "Action", type: "Creative", position: 1 },
-        { id: 40, tag: "Rogue-Like", type: "Games", position: 2 },
-        { id: 1, tag: "Sci-Fi", type: "Creative", position: 3 },
-      ],
-      jobs: [
-        {
-          duration: "Short-term",
-          location: "On-site",
-          title_id: 8,
-          job_title: "Video Game Developer",
-          description:
-            "We are looking for game developers familiar with Unreal Engine 5",
-          availability: "Full-time",
-          compensation: "Paid",
-        },
-        {
-          duration: "Long-term",
-          location: "Remote",
-          title_id: 51,
-          job_title: "2D Artist",
-          description: "We are looking for artists who know how to draw bees",
-          availability: "Part-time",
-          compensation: "Paid",
-        },
-      ],
-      members: [
-        {
-          user_id: 1,
-          job_title: "Project Lead",
-          first_name: "Lily",
-          last_name: "Carter",
-        },
-        {
-          user_id: 2,
-          job_title: "2D Artist",
-          first_name: "Maya",
-          last_name: "Bennett",
-        },
-        {
-          user_id: 3,
-          job_title: "Video Game Developer",
-          first_name: "Aiden",
-          last_name: "Brooks",
-        },
-        {
-          user_id: 4,
-          job_title: "Philosopher",
-          first_name: "Aris",
-          last_name: "Tottle",
-        },
-        {
-          user_id: 5,
-          job_title: "Impersonator",
-          first_name: "Imi",
-          last_name: "Tatter",
-        },
-      ],
-      images: [
-        { id: 1, image: profilePicture, position: 1 },
-        { id: 2, image: tallImage, position: 2 },
-        { id: 3, image: heart, position: 3 },
-      ],
-    };
-
+//what is this for
 function useProfileImage(user: { profileImage: string }) {
   return usePreloadedImage(user.profileImage, profilePicture);
 }
@@ -151,21 +62,6 @@ const NewProject = () => {
   };
 
   // FETCHING PROJECTS DATA
-
-  useEffect(() => {
-    const init = async () => {
-      if (!projectID) {
-        setFailCheck(true);
-        return;
-      }
-      const project = await getByID(projectID);
-      if (!project.data) {
-        setFailCheck(true);
-        return;
-      }
-    };
-    init();
-  }, [projectID]);
 
   //Function used to get project data
   const getProjectData = async () => {
@@ -228,12 +124,7 @@ const NewProject = () => {
   };
 
   //State variable holding information on the project to be displayed
-  const [displayedProject, setDisplayedProject] = useState(defaultProject); 
-
-  //Gets data from database on a specific project
-  if (displayedProject === undefined) {
-    getProjectData();
-  }
+  const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>(); 
 
   //Checks to see whether or not the current user is the maker/owner of the project being displayed
   // const usersProject = true;
@@ -367,7 +258,7 @@ const NewProject = () => {
   //Lists of users who have worked on this project
   //Members - people who actively work on the project
   // const projectMembers = displayedProject === undefined ? [] : displayedProject.members;
-  //const projectMembers = projectDa; 
+  const projectMembers = displayedProject!.members; 
 
   //Contributors - people who have helped, but aren't actively working on the project
   //const projectContributors = [];
@@ -378,9 +269,9 @@ const NewProject = () => {
   //HTML containing info on the members of the project
   
   const peopleContent =
-    projectMembers.data && projectMembers.data.length > 0 ? (
+    projectMembers && projectMembers.length > 0 ? (
       <>
-        {projectMembers.data.map((member) => {
+        {projectMembers.map((member) => {
           // Don't show users that chose to hide themselves as a member of this project
           // if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
           //   return (
@@ -548,7 +439,7 @@ const NewProject = () => {
                               onClick={() => setViewedPosition(index)}
                               key={index}
                             >
-                              {job?.job_title}
+                              {job.role.label}
                             </button>
                           ))}
                         </div>
