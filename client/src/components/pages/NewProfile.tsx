@@ -19,7 +19,6 @@ import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ThemeIcon } from "../ThemeIcon";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
-import usePreloadedImage from "../../functions/imageLoad";
 import { getVisibleProjects, getProjectsByUser, getCurrentUserById } from "../../api/users";
 import { getUsersById } from "../../api/users";
 import { MeDetail, UserSkill, ProjectPreview } from '@looking-for-group/shared';
