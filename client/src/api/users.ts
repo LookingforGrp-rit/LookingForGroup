@@ -343,13 +343,13 @@ export const getUserSocials = async (): Promise<ApiResponse<MySocial[]>> => {
 /**
  * @param socialData - Data used to add the social
  */
-export const addUserSocials = async (
+export const addUserSocial = async (
   socialData: AddUserSocialInput
 ): Promise<ApiResponse<MySocial>> => {
   const apiURL = `/me/socials`;
   const response = await POST(apiURL, socialData);
 
-  if (response.error) console.log(`Error in addUserSocials: ${response.error}`);
+  if (response.error) console.log(`Error in addUserSocial: ${response.error}`);
   console.log(response);
   return response as ApiResponse<MySocial>;
 };
@@ -359,7 +359,7 @@ export const addUserSocials = async (
  * @param websiteId - ID of the social to be updated
  * @param socialData - Data used to update the social
  */
-export const updateUserSocials = async (
+export const updateUserSocial = async (
   websiteId: number,
   socialData: UpdateUserSocialInput
 ): Promise<ApiResponse<MySocial>> => {
@@ -367,7 +367,7 @@ export const updateUserSocials = async (
   const response = await PATCH(apiURL, socialData);
 
   if (response.error)
-    console.log(`Error in updateUserSocials: ${response.error}`);
+    console.log(`Error in updateUserSocial: ${response.error}`);
   console.log(response);
   return response as ApiResponse<MySocial>;
 };
@@ -376,7 +376,7 @@ export const updateUserSocials = async (
 /**
  * @param websiteId - ID of the social to be deleted
  */
-export const deleteUserSocials = async (
+export const deleteUserSocial = async (
   websiteId: number
 ): Promise<ApiResponse> => {
   const url = `/me/socials/${websiteId}`;
@@ -399,13 +399,13 @@ export const getUserSkills = async (): Promise<ApiResponse<MySkill[]>> => {
 /**
  * @param skillData - Data with which to add a skill
  */
-export const addUserSkills = async (
+export const addUserSkill = async (
   skillData: AddUserSkillsInput
 ): Promise<ApiResponse<MySkill>> => {
   const url = `/me/skills`;
   const response = await POST(url, skillData);
 
-  if (response.error) console.log(`Error in addUserSkills: ${response.error}`);
+  if (response.error) console.log(`Error in addUserSkill: ${response.error}`);
   console.log(response);
   return response as ApiResponse<MySkill>;
 };
@@ -415,7 +415,7 @@ export const addUserSkills = async (
  * @param skillId - ID of the skill to be updated
  * @param skillData - Data with which to update the skill
  */
-export const updateUserSkills = async (
+export const updateUserSkill = async (
   skillId: number,
   skillData: UpdateUserSkillInput
 ): Promise<ApiResponse<MySkill>> => {
@@ -423,7 +423,7 @@ export const updateUserSkills = async (
   const response = await PATCH(url, skillData);
 
   if (response.error)
-    console.log(`Error in updateUserSkills: ${response.error}`);
+    console.log(`Error in updateUserSkill: ${response.error}`);
   console.log(response);
   return response as ApiResponse<MySkill>;
 };
@@ -432,7 +432,7 @@ export const updateUserSkills = async (
 /**
  * @param skillId - ID of the skill
  */
-export const deleteUserSkills = async (
+export const deleteUserSkill = async (
   skillId: number
 ): Promise<ApiResponse<null>> => {
   const url = `/me/skills/${skillId}`;
@@ -565,13 +565,13 @@ export default {
   addProjectFollowing,
   deleteProjectFollowing,
   getUserSocials,
-  addUserSocials,
-  updateUserSocials,
-  deleteUserSocials,
+  addUserSocial,
+  updateUserSocial,
+  deleteUserSocial,
   getUserSkills,
-  addUserSkills,
-  updateUserSkills,
-  deleteUserSkills,
+  addUserSkill,
+  updateUserSkill,
+  deleteUserSkill,
   getUserMajors,
   addUserMajor,
   deleteUserMajor,
