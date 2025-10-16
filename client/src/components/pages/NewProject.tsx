@@ -24,13 +24,9 @@ import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 import usePreloadedImage from "../../functions/imageLoad";
 
-//To-do
-//Have team member listings link to their respective profiles
+//TODO
+//✅ Have team member listings link to their respective profiles 
 //Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
-
-//Variable used for checking whether or not we are running a server or not
-//Should be 'true' when using npm run server, 'false' when using npm run client
-const runningServer = true;
 
 function useProfileImage(user: { profileImage: string }) {
   return usePreloadedImage(user.profileImage, profilePicture);
