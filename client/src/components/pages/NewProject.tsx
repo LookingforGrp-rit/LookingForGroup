@@ -49,7 +49,7 @@ const NewProject = () => {
 
   const [user, setUser] = useState<MePrivate | null>(null);
 
-  const [followCount, setFollowCount] = useState("0");
+  const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
 
   // API FUNCTIONS (/PROJECTS/)
@@ -138,7 +138,7 @@ const NewProject = () => {
       // }
       // }
 
-      setFollowCount(formatFollowCount(projectData.data.followers.count));
+      setFollowCount(projectData.data.followers.count);
       setFollowing(
         projectData.data.followers.users.some(
           ({ user }) => user.userId === userData.data?.userId
@@ -181,17 +181,18 @@ const NewProject = () => {
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
-  // const buttonContent = (userPerms > 0) ? (
-  //   <>
-  //     {
-  //       <>
-  //         <ProjectCreatorEditor newProject={false} permissions={userPerms} user={user} />
-  //       </>
-  //     }
-  //   </>
-  // ) : (
-  {
-    user && user.userId !== 0 ? (
+  const buttonContent = (
+    user && displayedProject?.members.some(member => member.role.label === "Owner" && member.user.userId === user.userId)
+  ) ? (
+    <>
+      {
+        <>
+          <ProjectCreatorEditor newProject={false} /*permissions={userPerms}*/ user={user} />
+        </>
+      }
+    </>
+  ) : (
+    (user) ? (
       <>
         {/* Heart icon, with number indicating follows */}
         <div className="project-info-followers">
@@ -285,8 +286,8 @@ const NewProject = () => {
       </>
     ) : (
       <></>
-    );
-  }
+    )
+  );
 
   //Lists of users who have worked on this project
   //Members - people who actively work on the project
@@ -429,7 +430,7 @@ const NewProject = () => {
           <div id="project-info-panel">
             <div id="project-info-header">
               <div id="project-title">{displayedProject.title}</div>
-              {/* <div id="project-info-buttons">{buttonContent}</div> */}
+              <div id="project-info-buttons">{buttonContent}</div>
             </div>
             <div id="project-hook">{displayedProject.hook}</div>
             <div id="project-status">
@@ -539,7 +540,7 @@ const NewProject = () => {
             </div>
             <div id="project-creation">
               Created by:{" "}
-              <span className="project-info-highlight">creator</span>
+              <span className="project-info-highlight">{projectLead?.user.firstName} {projectLead?.user.lastName}</span>
               <br />
               Creation date
             </div>
