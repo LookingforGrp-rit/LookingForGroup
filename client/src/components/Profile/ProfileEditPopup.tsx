@@ -1,24 +1,29 @@
 // Utilities and React functions
-import { useState, useEffect } from 'react';
+import { useState, useEffect } from "react";
 
-import { editUser } from '../../api/users';
+import { editUser } from "../../api/users";
 
 // Components
-import { Popup, PopupButton, PopupContent } from '../Popup';
+import { Popup, PopupButton, PopupContent } from "../Popup";
 
 // Tabs
-import { AboutTab } from './tabs/AboutTab';
-import { LinksTab } from './tabs/LinksTab';
-import { ProjectsTab } from './tabs/ProjectsTab';
-import { SkillsTab } from './tabs/SkillsTab';
+import { AboutTab } from "./tabs/AboutTab";
+import { LinksTab } from "./tabs/LinksTab";
+import { ProjectsTab } from "./tabs/ProjectsTab";
+import { SkillsTab } from "./tabs/SkillsTab";
 // import { InterestTab } from './tabs/InterestTab';
 // import { interests } from '../../constants/interests';
-import { getCurrentUsername, getUsersById, } from '../../api/users';
+import { getCurrentUsername, getUsersById } from "../../api/users";
 
-import { MeDetail, MySkill, UpdateUserInput, UserSocial } from '@looking-for-group/shared';
+import {
+  MeDetail,
+  MySkill,
+  UpdateUserInput,
+  UserSocial,
+} from "@looking-for-group/shared";
 
 // The profile to view is independent upon the site's state changes
-const pageTabs = ['About', 'Projects', 'Skills', 'Interests', 'Links'];
+const pageTabs = ["About", "Projects", "Skills", "Interests", "Links"];
 
 export const ProfileEditPopup = () => {
   // The profile to view is independent upon the site's state changes
@@ -37,10 +42,9 @@ export const ProfileEditPopup = () => {
       const userID = await getCurrentUsername();
       const response = await getUsersById(userID.data?.userId);
 
-      console.log('ProfileEditPopup - Raw API response:', response.data);
-      console.log('ProfileEditPopup - User profile data:', response.data);
+      console.log("ProfileEditPopup - Raw API response:", response.data);
+      console.log("ProfileEditPopup - User profile data:", response.data);
       //console.log('ProfileEditPopup - User interests from API:', response.data?.skills);
-
 
       setProfile(response.data as MeDetail);
     };
@@ -49,100 +53,101 @@ export const ProfileEditPopup = () => {
 
   // Send selected image to server for save
   const saveImage = async () => {
-  if (!selectedImageFile) return;
+    if (!selectedImageFile) return;
 
-  await editUser({ profileImage: selectedImageFile }); //no longer exists, wrapped into updateUser
-};
-
-const onSaveClicked = async (e : React.FormEvent<HTMLFormElement>) => {
-  e.preventDefault(); // prevents any default calls
-
-  if (!profile) return;
-
-  // Receive all inputted values
-  const getInputValue = (input: string) => {
-    const element = document.getElementById(`profile-editor-${input}`) as HTMLInputElement;
-    return element?.value?.trim() || ''; // null
+    await editUser({ profileImage: selectedImageFile }); //no longer exists, wrapped into updateUser
   };
 
-  // required fields: ensure not just empty/spaces
-  const firstName = getInputValue('firstName');
-  const lastName = getInputValue('lastName');
-  const bio = getInputValue('bio');
+  const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // prevents any default calls
 
-  // pop up error text if fields invalid
-  if (!firstName || !lastName || !bio) {
-    setErrorVisible(true);
-    return;
-  }
+    if (!profile) return;
 
-  // Prepare these values for a POST/PUT request
-  const updatedProfile: MeDetail = {
-    ...profile!,
-    firstName,
-    lastName,
-    headline: getInputValue('headline'),
-    pronouns: getInputValue('pronouns'),
-    title: getInputValue('jobTitle'),
-    majors: profile.majors ?? [],
-    academicYear: getInputValue('academicYear') as MeDetail['academicYear'],
-    location: getInputValue('location'),
-    funFact: getInputValue('funFact'),
-    bio,
-    skills: profile.skills || [],
-    socials: profile.socials || [],
+    // Receive all inputted values
+    const getInputValue = (input: string) => {
+      const element = document.getElementById(
+        `profile-editor-${input}`
+      ) as HTMLInputElement;
+      return element?.value?.trim() || ""; // null
+    };
+
+    // required fields: ensure not just empty/spaces
+    const firstName = getInputValue("firstName");
+    const lastName = getInputValue("lastName");
+    const bio = getInputValue("bio");
+
+    // pop up error text if fields invalid
+    if (!firstName || !lastName || !bio) {
+      setErrorVisible(true);
+      return;
+    }
+
+    // Prepare these values for a POST/PUT request
+    const updatedProfile: MeDetail = {
+      ...profile!,
+      firstName,
+      lastName,
+      headline: getInputValue("headline"),
+      pronouns: getInputValue("pronouns"),
+      title: getInputValue("jobTitle"),
+      majors: profile.majors ?? [],
+      academicYear: getInputValue("academicYear") as MeDetail["academicYear"],
+      location: getInputValue("location"),
+      funFact: getInputValue("funFact"),
+      bio,
+      skills: profile.skills || [],
+      socials: profile.socials || [],
+    };
+    // console.log('Saving data...');
+    // console.log(dataToStore);
+
+    // TODO track majors, skills, and socials as they're added deleted or modified so that they can be updated using their respsective endpoints.
+    const updatedUserInput: UpdateUserInput = {
+      firstName,
+      lastName,
+      headline: getInputValue("headline"),
+      pronouns: getInputValue("pronouns"),
+      title: getInputValue("jobTitle"),
+      academicYear: getInputValue("academicYear") as MeDetail["academicYear"],
+      location: getInputValue("location"),
+      funFact: getInputValue("funFact"),
+      bio,
+    };
+
+    // TODO error check result
+    await editUser(updatedUserInput);
+    await saveImage();
+
+    setProfile(updatedProfile);
+    setErrorVisible(false);
+
+    window.location.reload(); // reload page
   };
-  // console.log('Saving data...');
-  // console.log(dataToStore);
-
-  // TODO track majors, skills, and socials as they're added deleted or modified so that they can be updated using their respsective endpoints.
-  const updatedUserInput : UpdateUserInput = {
-        firstName,
-    lastName,
-    headline: getInputValue('headline'),
-    pronouns: getInputValue('pronouns'),
-    title: getInputValue('jobTitle'),
-    academicYear: getInputValue('academicYear') as MeDetail['academicYear'],
-    location: getInputValue('location'),
-    funFact: getInputValue('funFact'),
-    bio,
-  };
-
-  // TODO error check result
-  await editUser(updatedUserInput);
-  await saveImage();
-
-  setProfile(updatedProfile);
-  setErrorVisible(false);
-
-  window.location.reload(); // reload page
-};
 
   // In your ProfileEditPopup.tsx file
 
   // useEffect to initialize the tabs
   useEffect(() => {
-
     setTimeout(() => {
       // Initialize all tabs to be hidden except the first one
       pageTabs.forEach((tab, idx) => {
-        const tabElement = document.querySelector(`#profile-editor-${tab.toLowerCase()}`);
+        const tabElement = document.querySelector(
+          `#profile-editor-${tab.toLowerCase()}`
+        );
         if (tabElement) {
           if (idx === 0) {
-            tabElement.classList.remove('hidden');
+            tabElement.classList.remove("hidden");
           } else {
-            tabElement.classList.add('hidden');
+            tabElement.classList.add("hidden");
           }
         }
-      },);
-
-
+      });
     }, []);
 
     // Highlight the first tab button
     const firstTab = document.querySelector(`#profile-tab-${pageTabs[0]}`);
     if (firstTab) {
-      firstTab.classList.add('project-editor-tab-active');
+      firstTab.classList.add("project-editor-tab-active");
     }
   }, []);
 
@@ -183,7 +188,7 @@ const onSaveClicked = async (e : React.FormEvent<HTMLFormElement>) => {
         setCurrentTab(i);
       }}
       id={`profile-tab-${tag}`}
-      className={`project-editor-tab ${currentTab === i ? 'project-editor-tab-active' : ''}`}
+      className={`project-editor-tab ${currentTab === i ? "project-editor-tab-active" : ""}`}
     >
       {tag}
     </button>
@@ -240,15 +245,16 @@ const onSaveClicked = async (e : React.FormEvent<HTMLFormElement>) => {
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
-      <PopupContent
-      profilePopup={true}
-        callback={() => setCurrentTab(0)}
-      >
-        <form id="profile-creator-editor" onSubmit={onSaveClicked} encType="multipart/form-data">
+      <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
+        <form
+          id="profile-creator-editor"
+          onSubmit={onSaveClicked}
+          encType="multipart/form-data"
+        >
           <div id="profile-editor-tabs">{editorTabs}</div>
           {renderTabContent()}
           <input type="submit" id="profile-editor-save" value="Save Changes" />
-          {errorVisible &&  (
+          {errorVisible && (
             <div id="invalid-input-error" className="error-message">
               <p>*Fill out all required fields before saving!*</p>
             </div>
