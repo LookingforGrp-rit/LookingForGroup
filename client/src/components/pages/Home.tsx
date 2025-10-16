@@ -1,21 +1,10 @@
-//Styles
-import '../Styles/credits.css';
-import '../Styles/discoverMeet.css';
-import '../Styles/emailConfirmation.css';
-import '../Styles/general.css';
-import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
-import '../Styles/profile.css';
-import '../Styles/projects.css';
-import '../Styles/settings.css';
-import '../Styles/pages.css';
-
+import { ProjectCard } from '../ProjectCard';
+import { ProfileCard } from '../ProfileCard';
 import { ProjectPanel } from '../ProjectPanel';
 import { ProfilePanel } from '../ProfilePanel';
 import { DiscoverButton } from '../DiscoverButton';
 import { SearchBar } from '../SearchBar';
-import '../Styles/styles.css';
+import { TagFilter } from '../TagFilter';
 import { projects } from '../../constants/fakeData'; // FIXME: use project data in db
 import { profiles } from '../../constants/fakeData'; // FIXME: use user data in db
 import { useState } from 'react';

@@ -4,6 +4,7 @@ import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton } from '../../Popup';
 import { ProjectDetail } from '@looking-for-group/shared';
+import LabelInputBox from "../../LabelInputBox";
 
 // --- Variables ---
 // Default project value
@@ -75,26 +76,27 @@ export const GeneralTab = ({
   // --- Complete component ---
   return (
     <div id="project-editor-general">
-      <div id="project-editor-title-input" className="project-editor-input-item">
-        <label htmlFor="title">Title*</label>
-        <input
-          id="title"
-          type="text"
-          className="title-input"
-          value={modifiedProject.title}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, title: e.target.value });
-          }}
-        />
-      </div>
+      <LabelInputBox
+        label={'Title*'}
+        inputType={'single'}
+        id="project-editor-title-input"
+        value={modifiedProject.title || ''}
+        onChange={(e) => {
+          setModifiedProject({ ...modifiedProject, title: e.target.value });
+        }}
+      />
 
-      <div id="project-editor-status-input" className="project-editor-input-item">
-        <label htmlFor="status">Status*</label>
+      <LabelInputBox
+        label={'Status*'}
+        inputType={'none'}
+        id="project-editor-status-input"
+      >
         <Select>
           <SelectButton 
             placeholder='Select'
             initialVal={modifiedProject.status || ''}
             className='project-editor-input-item'
+            type={"input"}
           />
           <SelectOptions 
             callback={(e) => {
@@ -109,15 +111,19 @@ export const GeneralTab = ({
             })}
           />
         </Select>
-      </div>
+      </LabelInputBox>
 
-      <div id="project-editor-purpose-input" className="project-editor-input-item">
-        <label htmlFor="purpose">Purpose</label>
+      <LabelInputBox
+        label={'Purpose'}
+        inputType={'none'}
+        id="project-editor-purpose-input"
+      >
         <Select>
           <SelectButton 
             placeholder='Select'
             initialVal={modifiedProject.purpose || ''}
             className='project-editor-input-item'
+            type={"input"}
           />
           <SelectOptions 
             callback={(e) => {
@@ -132,65 +138,45 @@ export const GeneralTab = ({
             })}
           />
         </Select>
-      </div>
+      </LabelInputBox>
 
-      <div id="project-editor-audience-input" className="project-editor-input-item">
-        <label htmlFor="audience">Target Audience</label>
-        <div className="project-editor-extra-info">
-          Define who this project is intended for--consider age group, interest, industry, or
-          specific user needs.
-        </div>
-        <span className="character-count">
-          {modifiedProject.audience ? modifiedProject.audience.length : '0'}/100
-        </span>{' '}
-        <textarea
-          id="audience"
-          maxLength={100}
-          value={modifiedProject.audience}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, audience: e.target.value });
-          }}
-        />
-      </div>
+      <LabelInputBox
+        label={'Target Audience'}
+        labelInfo='Define who this project is intended for--consider age group, interest, industry, or specific user needs.'
+        inputType={'multi'}
+        id={'project-editor-audience-input'}
+        maxLength={100}
+        value={modifiedProject.audience || ''}
+        onChange={(e) => {
+          setModifiedProject({ ...modifiedProject, audience: e.target.value });
+        }}
+      />
 
-      <div id="project-editor-description-input" className="project-editor-input-item">
-        <label htmlFor="short-description">Short Description*</label>
-        <div className="project-editor-extra-info">
-          Share a brief summary of your project. This will be displayed in your project's
-          discover card.
-        </div>
-        <span className="character-count">
-          {modifiedProject.hook ? modifiedProject.hook.length : '0'}/300
-        </span>{' '}
-        <textarea
-          id="short-description"
-          maxLength={300}
-          value={modifiedProject.hook}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, hook: e.target.value });
-          }}
-        />
-      </div>
+      <LabelInputBox
+        label={'Short Description*'}
+        labelInfo="Share a brief summary of your project. This will be displayed in your project's discover card."
+        inputType={'multi'}
+        id={'project-editor-description-input'}
+        maxLength={300}
+        value={modifiedProject.hook || ''}
+        onChange={(e) => {
+          setModifiedProject({ ...modifiedProject, hook: e.target.value });
+        }}
+      />
 
-      <div id="project-editor-long-description-input" className="project-editor-input-item">
-        <label htmlFor="long-description">About This Project*</label>
-        <div className="project-editor-extra-info">
-          Use this space to go into detail about your project! Feel free to share it's
+      <LabelInputBox
+        label={'About This Project*'}
+        labelInfo="Use this space to go into detail about your project! Feel free to share it's
           inspirations and goals, outline key features, and describe this impact you hope it
-          brings to others.
-        </div>
-        <span className="character-count">
-          {modifiedProject.description ? modifiedProject.description.length : '0'}/2000
-        </span>{' '}
-        <textarea
-          id="long-description"
-          maxLength={2000}
-          value={modifiedProject.description}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, description: e.target.value });
-          }}
-        />
-      </div>
+          brings to others."
+        inputType={'multi'}
+        id={'project-editor-long-description-input'}
+        maxLength={2000}
+        value={modifiedProject.description || ''}
+        onChange={(e) => {
+          setModifiedProject({ ...modifiedProject, description: e.target.value });
+        }}
+      />
     
       <div id="general-save-info">
       <div id="invalid-input-error" className={"save-error-msg-general"}>

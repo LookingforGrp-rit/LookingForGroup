@@ -1,11 +1,3 @@
-//Styles
-import '../Styles/discoverMeet.css';
-import '../Styles/general.css';
-import '../Styles/imageUploader.css'
-// import '../Styles/notification.css';
-import '../Styles/projects.css';
-import '../Styles/pages.css';
-
 import { useEffect, useState, FC } from 'react';
 import { Popup, PopupButton, PopupContent } from '../Popup';
 import { GeneralTab } from './tabs/GeneralTab';
@@ -239,7 +231,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         )
       }
       {
-        loggedIn ? (
+        // loggedIn ? (
           <PopupContent>
             <div id="project-creator-editor">
               <div id="project-editor-tabs">
@@ -306,12 +298,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               </div> : <></>}
             </div>
           </PopupContent>
-        ) : (
+        // ) : (
           // Placeholder to prevent mass error
-          <div>
+          // <div>
 
-          </div>
-        )
+          // </div>
+        // )
       }
     </Popup>
   );

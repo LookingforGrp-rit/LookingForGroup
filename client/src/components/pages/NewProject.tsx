@@ -1,35 +1,22 @@
-//Styles
-import "../Styles/credits.css";
-import "../Styles/discoverMeet.css";
-import "../Styles/emailConfirmation.css";
-import "../Styles/general.css";
-import "../Styles/loginSignup.css";
-// import '../Styles/messages.css';
-// import '../Styles/notification.css';
-import "../Styles/profile.css";
-import "../Styles/projects.css";
-import "../Styles/settings.css";
-import "../Styles/pages.css";
-
-import { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { Header } from "../Header";
-import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
-import { Popup, PopupButton, PopupContent } from "../Popup";
-import { ImageCarousel } from "../ImageCarousel";
-import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
-import profilePicture from "../../images/blue_frog.png";
-import profileImage from "../../icons/profile-user.png";
-import { ProjectCarousel } from "../ProjectCarousel";
-import tallImage from "../../images/tall_img.png";
-import heart from "../../icons/heart.png";
-import * as paths from "../../constants/routes";
-import Project from "./Project";
-import { ThemeIcon } from "../ThemeIcon";
-import { sendPost, sendDelete } from "../../functions/fetch";
-import { getByID, deleteProject, deleteMember } from "../../api/projects";
-import { deleteProjectFollowing, addProjectFollowing } from "../../api/users";
-import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { Header } from '../Header';
+import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
+import { Popup, PopupButton, PopupContent } from '../Popup';
+import { ImageCarousel } from '../ImageCarousel';
+import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEditor';
+import profilePicture from '../../images/blue_frog.png';
+import profileImage from '../../icons/profile-user.png';
+import { ProjectCarousel } from '../ProjectCarousel';
+import tallImage from '../../images/tall_img.png';
+import heart from '../../icons/heart.png';
+import * as paths from '../../constants/routes';
+import Project from './Project';
+import { ThemeIcon } from '../ThemeIcon';
+import { sendPost, sendDelete } from '../../functions/fetch';
+import { getByID, deleteProject, deleteMember } from '../../api/projects';
+import { getAccountInformation, deleteProjectFollowing, addProjectFollowing } from '../../api/users';
+import { leaveProject } from '../projectPageComponents/ProjectPageHelper';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;

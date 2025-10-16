@@ -1,5 +1,4 @@
 import { PagePopup } from './PagePopup';
-import './Styles/projects.css';
 
 const DeleteProjectPopup = ({ show, setShow }) => {
   return (

@@ -311,7 +311,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
   };
 
   return (
-    <div id="profile-editor-skills" className="hidden">
+    <div id="profile-editor-skills">
       <div id="project-editor-selected-tags">
         <div className="project-editor-section-header">Selected Tags</div>
         <div className="project-editor-extra-info">

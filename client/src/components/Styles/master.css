@@ -1,0 +1,20 @@
+/* Only import needed for stylesheets to be used by
+  primary component (App.tsx). Add files here as created.
+*/
+
+@import url(./aboutTab.css);
+@import url(./credits.css);
+@import url(./discoverMeet.css);
+@import url(./emailConfirmation.css);
+@import url(./general.css);
+@import url(./imageUploader.css);
+@import url(./linksTab.css);
+@import url(./loginSignup.css);
+@import url(./NotFound.css);
+@import url(./pages.css);
+@import url(./profile.css);
+@import url(./profileEditor.css);
+@import url(./profileProjectEditors.css);
+@import url(./projects.css);
+@import url(./projectsTab.css);
+@import url(./settings.css);

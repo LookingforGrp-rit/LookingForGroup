@@ -9,14 +9,16 @@ type SelectContextProps = {
     value: ReactElement | null;
     setOpen: (open: boolean) => void;
     setValue: (value: ReactElement) => void;
+    type: 'input' | 'dropdown';
 }
 
 type SelectButtonProps = {
     placeholder: string;
     initialVal: any;
     buttonId?: string;
-    callback?: (e: React.MouseEvent<HTMLButtonElement>) => void;
     className?: string;
+    type: 'input' | 'dropdown';
+    callback?: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }
 
 type SelectOptions = {
@@ -44,6 +46,7 @@ export const SelectContext = createContext<SelectContextProps>({
     value: null,
     setOpen: () => { },
     setValue: () => { },
+    type: 'input',
 });
 
 // --------------------
@@ -55,6 +58,7 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
     initialVal = '',
     buttonId = '',
     className = '',
+    type = 'input' ,
     callback = () => { }
 }) => {
     const { open, value, setOpen } = useContext(SelectContext);
@@ -66,7 +70,7 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
     return (
         <button
             id={buttonId}
-            className={`${className} select-button`}
+            className={`${className} select select-button-${type}`}
             onClick={(e: React.MouseEvent<HTMLButtonElement>) => {
                 callback(e);
                 toggleOpen();
@@ -98,7 +102,7 @@ export const SelectOptions: React.FC<SelectOptionsProps> = ({
     if (open) {
         return (
             <div
-                className='select'
+                className='select-options'
                 style={rightAlign ? { right: 0 } : {}}
             >
                 {/* Using index as key is usually bad, but order is not changing here */}
@@ -148,7 +152,7 @@ export const Select: React.FC<SelectProps> = ({ children }) => {
     }, [open]);
 
     return (
-        <SelectContext.Provider value={{ open, value, setOpen, setValue }}>
+        <SelectContext.Provider value={{ open, value, setOpen, setValue, type: 'input' }}>
             <div className='select-container' ref={selectRef}>
                 {children}
             </div>

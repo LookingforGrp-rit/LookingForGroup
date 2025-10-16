@@ -1,4 +1,3 @@
-import '../Styles/pages.css';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';

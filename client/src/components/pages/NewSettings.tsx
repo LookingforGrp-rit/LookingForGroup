@@ -1,5 +1,3 @@
-import '../Styles/pages.css';
-
 import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
 import { sendPost, sendDelete, sendPut } from '../../functions/fetch';
 import { Popup, PopupButton, PopupContent } from '../Popup';

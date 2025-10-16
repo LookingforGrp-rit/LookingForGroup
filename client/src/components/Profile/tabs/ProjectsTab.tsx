@@ -28,7 +28,7 @@ export const ProjectsTab = () => {
 
             setUserProjects(projects.data || []);
             // userProjects = data.data;
-            // console.log('Projects finished loading');
+            console.log('Projects finished loading');
         };
 
         setUpProjects();
@@ -50,7 +50,7 @@ export const ProjectsTab = () => {
     }
 
     return (
-        <div id="profile-editor-projects" className="hidden">
+        <div id="profile-editor-projects">
           <div className="project-editor-section-header">Projects</div>
           <div className="project-editor-extra-info">
             Choose to hide/show projects you've worked on.
