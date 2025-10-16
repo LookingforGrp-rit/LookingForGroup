@@ -1,0 +1,54 @@
+/* Text styles */
+.editor-header {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.editor-extra-info {
+  font-size: 14px;
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+/* Links tab */
+/* Master container (including header and subtext) */
+#editor-links {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+  #editor-links > label {
+    margin-bottom: 3px;
+  }
+  #editor-links > .editor-extra-info {
+    margin-bottom: 15px;
+  }
+
+/* Container for link inputs */
+#editor-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Container for Select and Input components */
+.editor-link-item {
+  display: flex;
+  gap: 8px;
+  justify-items: center;
+  /* align-items: flex-start; */
+  align-self: stretch;
+}
+  /* Select component wrapper */
+  .editor-link-item > .select-container {
+    width: 100%;
+    max-width: 166px;
+  }
+
+  /* Container for content of Select component */
+  .editor-link-item .value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }

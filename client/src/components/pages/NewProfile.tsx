@@ -20,11 +20,9 @@ import { ThemeIcon } from "../ThemeIcon";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
 import usePreloadedImage from "../../functions/imageLoad";
-import { getCurrentUsername, getVisibleProjects, getProjectsByUser, getCurrentUserById } from "../../api/users";
+import { getVisibleProjects, getProjectsByUser, getCurrentUserById } from "../../api/users";
 import { getUsersById } from "../../api/users";
 import { MeDetail, UserSkill, ProjectPreview } from '@looking-for-group/shared';
-import { Input } from "../Input";
-import LabelInputBox from "../LabelInputBox";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -36,7 +34,7 @@ type Project = ProjectPreview;
 // Stores if profile is loaded from server and if it's user's respectively
 // const [profileLoaded, setProfileLoaded] = useState(false);
 let userID: number;
-let isUsersProfile: boolean = true; //FIXME: undo hard-code
+let isUsersProfile: boolean = true; //FIXME: undo hard-code for debugging
 
 // Change this when follow backend is added, this is just for testing purposes
 let toggleFollow = false;
@@ -90,7 +88,7 @@ const NewProfile = () => {
   // Get URL parameters to tell what user we're looking for and store it
   const urlParams = new URLSearchParams(window.location.search);
   // User ID of profile being viewed
-  let profileID: string = urlParams.get("userID")!;
+  const profileID: string = urlParams.get("userID")!;
 
   const [displayedProfile, setDisplayedProfile] = useState(defaultProfile);
 
@@ -319,7 +317,7 @@ const NewProfile = () => {
             </div>
             <div className="profile-extra">
               <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
-              {displayedProfile.majors.join(", ")} {displayedProfile.academicYear}
+              {displayedProfile.majors?.join(", ")} {displayedProfile.academicYear}
             </div>
             <div className="profile-extra">
               <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
@@ -354,7 +352,7 @@ const NewProfile = () => {
           </div> */}
 
           <div id="profile-info-skills">
-            {displayedProfile.skills !== null ? (
+            {displayedProfile.skills !== undefined && (
               /* Will take in a list of tags the user has selected, then */
               /* use a map function to generate tags to fill this div */
               displayedProfile.skills.map((tag) => {
@@ -382,8 +380,6 @@ const NewProfile = () => {
                   </div>
                 );
               })
-            ) : (
-              <></>
             )}
           </div>
         </div>

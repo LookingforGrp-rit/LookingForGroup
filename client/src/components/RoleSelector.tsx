@@ -38,7 +38,7 @@ export const RoleSelector = () => {
     >
       <Select>
         <SelectButton
-          placeholder="Select..."
+          placeholder="Select"
           initialVal={''}
           callback={(e) => { e.preventDefault(); }}
           type={'input'}

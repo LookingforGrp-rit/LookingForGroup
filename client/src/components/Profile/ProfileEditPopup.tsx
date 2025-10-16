@@ -13,21 +13,21 @@ import '../Styles/pages.css';
 
 // Utilities and React functions
 import { useState, useEffect } from 'react';
-import { sendPut, sendFile } from '../../functions/fetch';
+import { sendPut } from '../../functions/fetch';
 
 // Components
 import { Popup, PopupButton, PopupContent } from '../Popup';
 
 // Tabs
 import { AboutTab } from './tabs/AboutTab';
-import { LinksTab, getSocials } from './tabs/LinksTab';
+import { LinksTab } from './tabs/LinksTab';
 import { ProjectsTab } from './tabs/ProjectsTab';
 import { SkillsTab } from './tabs/SkillsTab';
 // import { InterestTab } from './tabs/InterestTab';
 // import { interests } from '../../constants/interests';
 import { getCurrentUsername, getUsersById, updateProfilePicture } from '../../api/users';
 
-import { MeDetail, MySkill, UserSocial } from '@looking-for-group/shared';
+import { MeDetail } from '@looking-for-group/shared';
 
 // The profile to view is independent upon the site's state changes
 const pageTabs = ['About', 'Projects', 'Skills', 'Interests', 'Links'];
@@ -145,7 +145,7 @@ const onSaveClicked = async () => {
         {currentTab === 1 && <ProjectsTab profile={profile} />}
         {currentTab === 2 && <SkillsTab profile={profile} />}
         {/* {currentTab === 3 && <InterestTab profile={profile} />} */}
-        {currentTab === 4 && <LinksTab profile={profile} type="user" />}
+        {currentTab === 4 && <LinksTab profile={profile} />}
       </div>
     );
   };

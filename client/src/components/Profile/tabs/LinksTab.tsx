@@ -1,120 +1,164 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { sendPut, sendFile } from '../../../functions/fetch';
-import { SocialSelector } from '../../SocialSelector';
-import { getByID } from '../../../api/projects';
-import { getCurrentUsername, getUsers, getUsersById } from '../../../api/users';
-import { UserSocial, ProjectSocial, UserDetail, ProjectDetail } from '@looking-for-group/shared';
+import React, { useState, useEffect } from 'react';
+import { getCurrentUsername, getUsersById, getSocials } from '../../../api/users';
+import { UserSocial, Social, MeDetail } from '@looking-for-group/shared';
+import { Select, SelectButton, SelectOptions } from '../../Select';
+import { ThemeIcon } from '../../ThemeIcon';
+import { Input } from '../../Input';
 
 interface LinksTabProps {
-  type: 'project' | 'user';
-  socials?: UserSocial[] | ProjectSocial[];
+  profile: MeDetail;
 }
 
-export const LinksTab: React.FC<LinksTabProps> = ({ type, socials: initialSocials }) => {
-  const [links, setLinks] = useState<UserSocial[] | ProjectSocial[]>(initialSocials || []);
+export const LinksTab: React.FC<LinksTabProps> = ({ profile }) => {
+  const [socials, setSocials] = useState<UserSocial[]>(profile.socials || []);
 
+  // complete list of socials
+  const [allSocials, setAllSocials] = useState<Social[]>([]);
+
+  // Get social option data
+  useEffect(() => {
+    const getAllSocials = async () => {
+      const response = await getSocials();
+
+      // Reorder so 'Other' is last
+      if (response?.data) {
+        const otherIndex = response.data.findIndex(s => s.label === 'Other');
+        if (otherIndex > -1) {
+          const other = response.data.splice(otherIndex, 1)[0];
+          response.data.push(other);
+        }
+      }
+
+      setAllSocials(response.data!);
+    };
+    getAllSocials();
+  }, []);
+
+  // Get user's socials
   useEffect(() => {
     const loadSocials = async () => {
-      if (initialSocials && initialSocials.length > 0) return;
+      if (socials && socials.length > 0) return;
 
       // Pick which socials to use based on type
       const userID = await getCurrentUsername();
 
-      let response;
-      
-      if (type === 'project') {
-        const projectData = await getByID(userID.toString());
-        if (projectData.projectSocials) {
-          setLinks(projectData.projectSocials);
-        }
-      } else {
-        response = await getUsersById(userID.toString());
-        if (response.data[0].socials) {
-          setLinks(response.data[0].socials);
-        }
+      const response = await getUsersById(userID.toString());
+      if (response?.data?.socials) {
+        setSocials(response.data.socials);
       }
     };
     loadSocials();
 
-  }, [initialSocials, type]);
-  // Update Functions ----------------------
-
-  const updateURL = (index: number, newUrl: string) => {
-    setLinks(prev => prev.map((l, i) => (i === index ? { ...l, url: newUrl } : l)));
-  }
-
-  const updateWebsite = (index: number, newId: number) => {
-    setLinks(prev => prev.map((l, i) => (i === index ? { ...l, websiteId: newId } : l)));
-  }
-
-  // Button Functions ----------------------
-
-  const onAddLinkClicked = (e: React.MouseEvent) => {
-    e.preventDefault();
-    // Save current state
-    // Adds another LinkInput into the chain
-    setLinks(prev => [...prev, { websiteId: 0, url: ''} as UserSocial]);
-  };
-
-  const onRemoveLinkClicked = (e: React.MouseEvent, index: number) => {
-    e.preventDefault();
-    // save this change into the state
-    setLinks(prev => prev.filter((_, i) => i !== index));
-  };
-
-  // Components ----------------------
-
-  const LinkInput: React.FC<{ data: UserSocial | ProjectSocial; index: number }> = ({ data, index }) => {
-    const [text, setText] = useState(data.url || '');
-
-    return (
-      <div id={`link-${index}`} className='link-input'>
-        <SocialSelector value={data.websiteId}
-          onChange={e => updateWebsite(index, e.target.selectedIndex)} />
-        <div className='link-input-wrapper'>
-          <div className='editor-input-item'>
-            <input type="text" name="url" id="link-url-input" placeholder="URL" value={text}
-              onChange={e => {setText(e.target.value); updateURL(index, e.target.value);
-                }}/>
-            <button className='remove-link-button' onClick={e => onRemoveLinkClicked(e, index)}>
-              <i className="fa-solid fa-minus"></i>
-            </button>
-          </div>
-        </div>
-      </div>
-    );
-  };
-
-  const LinkContainer = () => {
-    if (links.length === 0) return <p>No Socials Posted!</p>;
-
-    return (
-      <div id="links-container">
-        {links.map((link, i) => (
-          <LinkInput key={i} data={link} index={i}/>
-        ))}
-      </div>
-    )
-  };
+  }, [socials]);
 
   // Tab Component ----------------------
-
   return (
-    <div id="profile-editor-links" className="hidden">
-      <div className="project-editor-section-header">Social Links</div>
-      <div className="project-editor-extra-info">
-        Provide any links you wish to include on your page.
+    <div id="editor-links">
+      <div className="editor-header">Social Links</div>
+      <div className="editor-extra-info">
+        Provide the links to pages you wish to include on your page.
       </div>
-      <div id="project-editor-link-list">
-        <LinkContainer />
-        <div id='add-link-container'>
-          <button id="profile-editor-add-link" onClick={onAddLinkClicked}>+ Add Social Profile</button>
+      {/* <div className='error'>{error}</div> */}
+
+      <div id="editor-link-list">
+        {/* Social URL inputs */}
+        { socials && socials.map((social, index) => (
+          <div className="editor-link-item" key={index}>
+            {/* Social type dropdown */}
+            <Select>
+              <SelectButton
+                placeholder='Select'
+                initialVal={
+                  social.label !== '' && <>
+                    <ThemeIcon
+                      width={20}
+                      height={20}
+                      id={
+                        social.label === 'Other' ? 'link' :
+                        // TODO: revisit twitter/x label
+                        social.label === 'Twitter' ? 'x' :
+                        social.label.toLowerCase()
+                      }
+                      className={'mono-fill'}
+                      ariaLabel={social.label}
+                    />
+                    {social.label}
+                  </>
+                }
+                className='link-select'
+                type={"input"}
+                callback={(e) => {
+                  e.preventDefault();
+                }}
+              />
+              <SelectOptions
+                callback={(e) => {
+                  e.preventDefault();
+                  const tempSocials = [...socials];
+                  tempSocials[index].label = (e.target as HTMLInputElement).value;
+                  setSocials(tempSocials);
+                }}
+                options={allSocials ? allSocials.map(website => {
+                  return {
+                    markup:
+                    <>
+                      <ThemeIcon
+                        width={20}
+                        height={20}
+                        id={
+                          website.label === 'Other' ? 'link' :
+                          // TODO: revisit twitter/x label
+                          website.label === 'Twitter' ? 'x' :
+                          website.label.toLowerCase()
+                        }
+                        className={'mono-fill'}
+                        ariaLabel={website.label}
+                      />
+                      {website.label}
+                    </>,
+                    value: website.label,
+                    disabled: false,
+                  };
+                }) : []}
+              />
+            </Select>
+            {/* Social URL input */}
+            <Input
+              type="link"
+              placeholder="URL"
+              value={social.url}
+              onChange={(e) => {
+                e.preventDefault();
+                // TODO: Implement some sort of security check for URLs.
+                // Could be as simple as checking the URL matches the social media
+                // But since 'Other' is an option, might be good to just find some
+                // external list of suspicious sites and make sure it's not one of those.
+                const tempSocials = [...socials];
+                tempSocials[index].url = (e.target as HTMLInputElement).value;
+                setSocials(tempSocials);
+              }}
+              onClick={(e) => {
+                e.preventDefault();
+                (e.target as HTMLElement).closest('.editor-link-item')?.remove();
+              }}
+            />
+          </div>
+        ))}
+        <div id="add-link-container">
+          <button id="profile-editor-add-link"
+            onClick={(e) => {
+              e.preventDefault();
+              setSocials([...socials, {
+                label: '',
+                url: '',
+                websiteId: 0
+              }]);
+            }}>
+            <i className="fa fa-plus" />
+            <p>Add social profile</p>
+          </button>
         </div>
       </div>
     </div>
   );
 };
-
-export const getSocials = (linksState: UserSocial[] | ProjectSocial[]): UserSocial[] | ProjectSocial[] => {
-  return linksState;
-}

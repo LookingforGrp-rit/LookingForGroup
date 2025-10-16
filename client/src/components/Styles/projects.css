@@ -396,40 +396,6 @@ Project Creator and Editor style rules
   font-style: italic;
 }
 
-.project-link-select-wrapper {
-  width: fit-content;
-}
-
-.project-link-select-wrapper .project-link-select {
-  background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
-}
-
-/* TODO: remove after replacing with Input component */
-.project-link-input-wrapper {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-/* TODO: remove after replacing with Input component */
-.project-link-input-wrapper input {
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 15px;
-  flex-grow: 1;
-  background-color: var(--bg-color);
-  color: var(--main-text);
-  font-size: 1.6ch;
-  outline: none;
-  min-height: 40px;
-}
-/* TODO: remove after replacing with Input component */
-.project-link-input-wrapper input::placeholder {
-  color: var(--neutral-gray);
-  font-style: italic;
-}
-
 /* Project Editor/Creator General Tab */
 #project-editor-content select,
 #project-editor-general input,
@@ -448,16 +414,6 @@ Project Creator and Editor style rules
 #project-editor-content select {
   appearance: none;
   position: relative;
-}
-
-#project-editor-content .select-container {
-  width: auto;
-  flex-grow: 1;
-}
-
-#project-editor-content .select-button {
-  background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
 }
 
 #project-editor-content .title-input {
@@ -1501,78 +1457,10 @@ select.edit-position-compensation {
 }
 
 /* Project Editor/Creator Links Tab */
-#project-editor-links {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-#project-editor-links > label {
-  margin-bottom: 3px;
-}
-
-#project-editor-links>.project-editor-extra-info {
-  margin-bottom: 15px;
-}
-
-#project-editor-link-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.project-editor-link-item {
-  display: flex;
-  gap: 8px;
-  justify-items: center;
-  /* align-items: flex-start; */
-  align-self: stretch;
-}
-
-.project-editor-link-item select {
-  max-width: 166px;
-  width: 100%;
-}
-
-/* TODO: remove after using Input component */
-.remove-link-button {
-  position: absolute;
-  width: 23px;
-  height: 23px;
-  right: 12px;
-  background-color: var(--primary-color);
-  border: none;
-  border-radius: 50%;
-  transition: .15s;
-}
-
 #link-save-info {
   display: flex;
   justify-content: center;
   margin-top: auto;
-}
-
-/* TODO: remove after using Input component */
-@media only screen and (max-width: 700px) {
-  .remove-link-button {
-    right: 20px;
-  }
-}
-
-@media only screen and (max-width: 450px) {
-  .project-editor-link-item {
-    flex-direction: column;
-  }
-}
-
-/* TODO: remove after using Input component */
-.remove-link-button>.fa-minus {
-  color: var(--invert-text);
-}
-
-/* TODO: remove after using Input component */
-.remove-link-button:hover {
-  background-color: var(--error-delete-color) !important;
 }
 
 /*
