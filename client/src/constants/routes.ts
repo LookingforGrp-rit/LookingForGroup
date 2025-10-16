@@ -9,7 +9,7 @@ export const routes = {
   // MESSAGES: '/messages',
   MYPROJECTS: '/myProjects',
   PROFILE: '/profile',
-  NEWPROFILE: '/newProfile',
+  // NEWPROFILE: '/newProfile',
   PROJECT: '/project',
   NEWPROJECT: '/newProject',
   // PROJECTPOST: '/projectPost',

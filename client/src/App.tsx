@@ -12,7 +12,6 @@ import Home from './components/pages/Home';
 // import Messages from './components/pages/Messages';
 import MyProjects from './components/pages/MyProjects';
 import Profile from './components/pages/Profile';
-import NewProfile from './components/pages/NewProfile';
 import Project from './components/pages/Project';
 import NewProject from './components/pages/NewProject';
 // import ProjectPostPage from './components/pages/ProjectPostPage';
@@ -63,8 +62,8 @@ function App() {
           <Route path={paths.routes.MEET} element={<Meet />} />
           {/* <Route path={paths.routes.MESSAGES} element={<Messages />} /> */}
           <Route path={paths.routes.MYPROJECTS} element={<MyProjects />} />
-          <Route path={paths.routes.PROFILE} element={<NewProfile />} />
-          <Route path={paths.routes.NEWPROFILE} element={<NewProfile />} />
+          <Route path={paths.routes.PROFILE} element={<Profile />} />
+          {/* <Route path={paths.routes.NEWPROFILE} element={<Profile />} /> */}
           <Route path={paths.routes.PROJECT} element={<Project />} />
           <Route path={paths.routes.NEWPROJECT} element={<NewProject />} />
           <Route path={paths.routes.CREATEPROJECT} element={<CreateProject />} />

@@ -80,7 +80,7 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
     // navigate to Profile, attach userID
     const res = await getCurrentUsername();
     const userId = res.data.userId;
-    navigate(`${paths.routes.NEWPROFILE}?userID=${userId}`);
+    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
 
     // Collapse the dropwdown if coming from another user's page
     if (window.location.href.includes("profile")) {

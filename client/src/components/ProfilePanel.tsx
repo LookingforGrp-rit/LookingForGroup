@@ -14,7 +14,7 @@ interface ProfilePanelProps {
 
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   const navigate = useNavigate();
-  const profileURL = `${paths.routes.NEWPROFILE}?userID=${profileData.userId}`;
+  const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
 
   return (
     <div className={'profile-panel'}>

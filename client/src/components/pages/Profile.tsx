@@ -41,7 +41,7 @@ let isUsersProfile: boolean = true; //FIXME: undo hard-code for debugging
 // Change this when follow backend is added, this is just for testing purposes
 let toggleFollow = false;
 
-const NewProfile = () => {
+const Profile = () => {
   // --------------------
   // Global variables
   // --------------------
@@ -409,4 +409,4 @@ const NewProfile = () => {
   );
 };
 
-export default NewProfile;
+export default Profile;

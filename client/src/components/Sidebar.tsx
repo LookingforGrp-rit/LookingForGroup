@@ -54,9 +54,9 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
         .querySelector("#my-projects-sidebar-btn")
         ?.classList.add("active");
       break;
-    case "/newProfile":
+    case "/profile":
       // Only the mobile layout specifically displays the "own profile" sidebar button
-      // Default "newProfile" brings you to your own page
+      // Default "profile" brings you to your own page
       if (width < breakpoint && !window.location.href.includes("?")) {
         // Is it the mobile layout, and is it DEFINITELY your own page?
         startingPage = "My Profile";
@@ -207,7 +207,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                     : "sidebar-btn"
                 }
                 onClick={() =>
-                  handleTextChange("My Profile", paths.routes.NEWPROFILE)
+                  handleTextChange("My Profile", paths.routes.PROFILE)
                 }
               >
                 <ThemeIcon id={'profile'} width={30} height={28.85} className={'mono-fill'} ariaLabel={'my profile'} />

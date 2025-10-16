@@ -408,7 +408,7 @@ const NewProject = () => {
               key={user.userId}
               className="project-contributor"
               onClick={() =>
-                navigate(`${paths.routes.NEWPROFILE}?userID=${user.userId}`)
+                navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
               }
             >
               <img
@@ -452,7 +452,7 @@ const NewProject = () => {
               <div
                 className="project-contributor"
                 onClick={() =>
-                  navigate(`${paths.routes.NEWPROFILE}?userID=${user.userId}`)
+                  navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
                 }
               >
                 <img
@@ -617,7 +617,7 @@ const NewProject = () => {
                           <span
                             onClick={() =>
                               navigate(
-                                `${paths.routes.NEWPROFILE}?userID=${projectLead?.user_id}`
+                                `${paths.routes.PROFILE}?userID=${projectLead?.user_id}`
                               )
                             }
                             id="position-contact-link"
