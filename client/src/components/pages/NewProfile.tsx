@@ -45,6 +45,10 @@ const NewProfile = () => {
   // --------------------
   // Global variables
   // --------------------
+
+  // FIXME what is the purpose of the default profile? was this just for debugging?
+  // if the user exists, the default profile isn't necessary
+  // if the user doesn't exist, then the page should be the 404 page
   const defaultProfile: MeDetail = {
     firstName: "Private",
     lastName: "User",
