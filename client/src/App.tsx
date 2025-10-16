@@ -1,15 +1,5 @@
 // Styles
-import './components/Styles/credits.css';
-import './components/Styles/discoverMeet.css';
-import './components/Styles/emailConfirmation.css';
-import './components/Styles/loginSignup.css';
-// import './components/Styles/messages.css';
-// import './components/Styles/notification.css';
-import './components/Styles/profile.css';
-import './components/Styles/projects.css';
-import './components/Styles/settings.css';
-import './components/Styles/profileProjectEditors.css';
-
+import './components/Styles/master.css';
 // Components and pages
 import { Route, Routes } from 'react-router-dom';
 import * as paths from './constants/routes';

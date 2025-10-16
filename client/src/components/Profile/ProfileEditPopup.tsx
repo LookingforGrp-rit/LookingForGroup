@@ -1,16 +1,3 @@
-//Styles
-import '../Styles/credits.css';
-import '../Styles/discoverMeet.css';
-import '../Styles/emailConfirmation.css';
-import '../Styles/general.css';
-import '../Styles/loginSignup.css';
-// import '../Styles/messages.css';
-// import '../Styles/notification.css';
-import '../Styles/profile.css';
-import '../Styles/projects.css';
-import '../Styles/settings.css';
-import '../Styles/pages.css';
-
 // Utilities and React functions
 import { useState, useEffect } from 'react';
 import { sendPut } from '../../functions/fetch';
