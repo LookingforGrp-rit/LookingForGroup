@@ -303,7 +303,7 @@ export const getProjectSocials = async (
  * @param ID - ID of the project
  * @param socialData - Data with which to create the social
  */
-export const addProjectSocials = async (
+export const addProjectSocial = async (
   projectID: number,
   socialData: AddProjectSocialInput
 ): Promise<ApiResponse<ProjectSocial>> => {
@@ -311,7 +311,7 @@ export const addProjectSocials = async (
   const response = await POST(apiURL, socialData);
 
   if (response.error)
-    console.log(`Error in addProjectSocials: ${response.error}`);
+    console.log(`Error in addProjectSocial: ${response.error}`);
   return response as ApiResponse<ProjectSocial>;
 };
 
@@ -321,7 +321,7 @@ export const addProjectSocials = async (
  * @param websiteId - ID of the social to be updated
  * @param socialData - Data with which to update the social
  */
-export const updateProjectSocials = async (
+export const updateProjectSocial = async (
   projectID: number,
   websiteId: number,
   socialData: UpdateProjectSocialInput
@@ -330,7 +330,7 @@ export const updateProjectSocials = async (
   const response = await PUT(apiURL, socialData);
 
   if (response.error)
-    console.log(`Error in updateProjectSocials: ${response.error}`);
+    console.log(`Error in updateProjectSocial: ${response.error}`);
   return response as ApiResponse<ProjectSocial>;
 };
 
@@ -339,7 +339,7 @@ export const updateProjectSocials = async (
  * @param projectID - ID of the project
  * @param websiteId - ID of the social to be deleted
  */
-export const deleteProjectSocials = async (
+export const deleteProjectSocial = async (
   projectID: number,
   websiteId: number
 ): Promise<ApiResponse<null>> => {
@@ -347,7 +347,7 @@ export const deleteProjectSocials = async (
   const response = await DELETE(apiURL);
 
   if (response.error)
-    console.log(`Error in deleteProjectSocials: ${response.error}`);
+    console.log(`Error in deleteProjectSocial: ${response.error}`);
   return response as ApiResponse<null>;
 };
 
@@ -368,16 +368,16 @@ export const getProjectTags = async (
 // Add project tags
 /**
  * @param projectID - ID of the project
- * @param tagData - Data with which to add the tags
+ * @param tagData - Data with which to add the tag
  */
-export const addProjectTags = async (
+export const addProjectTag = async (
   projectID: number,
   tagData: AddProjectTagsInput
 ): Promise<ApiResponse<ProjectTag>> => {
   const apiURL = `/projects/${projectID}/tags`;
   const response = await POST(apiURL, tagData);
 
-  if (response.error) console.log(`Error in addProjectTags: ${response.error}`);
+  if (response.error) console.log(`Error in addProjectTag: ${response.error}`);
   return response as ApiResponse<ProjectTag>;
 };
 
@@ -386,7 +386,7 @@ export const addProjectTags = async (
  * @param projectID - ID of the project
  * @param tagId - ID of the tag to be deleted
  */
-export const deleteProjectTags = async (
+export const deleteProjectTag = async (
   projectID: number,
   tagId: number
 ): Promise<ApiResponse<null>> => {
@@ -394,7 +394,7 @@ export const deleteProjectTags = async (
   const response = await DELETE(apiURL);
 
   if (response.error)
-    console.log(`Error in deleteProjectTags: ${response.error}`);
+    console.log(`Error in deleteProjectTag: ${response.error}`);
   return response as ApiResponse<null>;
 };
 
@@ -415,7 +415,7 @@ export const getProjectMediums = async (
  * @param projectID - ID of the project
  * @param mediumId - Data with which to add the medium
  */
-export const addProjectMediums = async (
+export const addProjectMedium = async (
   projectID: number,
   mediumData: AddProjectMediumsInput
 ): Promise<ApiResponse<ProjectMedium>> => {
@@ -423,7 +423,7 @@ export const addProjectMediums = async (
   const response = await POST(apiURL, mediumData);
 
   if (response.error)
-    console.log(`Error in addProjectMediums: ${response.error}`);
+    console.log(`Error in addProjectMedium: ${response.error}`);
   return response as ApiResponse<ProjectMedium>;
 };
 
@@ -432,7 +432,7 @@ export const addProjectMediums = async (
  * @param projectID - ID of the project
  * @param mediumId - ID of the medium to delete
  */
-export const deleteProjectMediums = async (
+export const deleteProjectMedium = async (
   projectID: number,
   mediumId: number
 ): Promise<ApiResponse<null>> => {
@@ -440,7 +440,7 @@ export const deleteProjectMediums = async (
   const response = await DELETE(apiURL);
 
   if (response.error)
-    console.log(`Error in deleteProjectMediums: ${response.error}`);
+    console.log(`Error in deleteProjectMedium: ${response.error}`);
   return response as ApiResponse<null>;
 };
 
@@ -549,15 +549,15 @@ export default {
   updateMember,
   deleteMember,
   getProjectSocials,
-  addProjectSocials,
-  updateProjectSocials,
-  deleteProjectSocials,
+  addProjectSocial,
+  updateProjectSocial,
+  deleteProjectSocial,
   getProjectTags,
-  addProjectTags,
-  deleteProjectTags,
+  addProjectTag,
+  deleteProjectTag,
   getProjectMediums,
-  addProjectMediums,
-  deleteProjectMediums,
+  addProjectMedium,
+  deleteProjectMedium,
   reorderProjectImages,
   // getImageByFileName,
 };
