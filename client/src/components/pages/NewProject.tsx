@@ -382,7 +382,7 @@ const NewProject = () => {
   // either way, displayedProject needs to be fixed and the fake data at the top can probably be removed.
   const projectMembers = displayedProject?.members;
   //Contributors - people who have helped, but aren't actively working on the project
-  const projectContributors = [];
+  // const projectContributors = [];
   //People list holds whatever list is currently being displayed
   //const [peopleList, setPeopleList] = useState(displayedProject === undefined ? [] : displayedProject.members);
 
