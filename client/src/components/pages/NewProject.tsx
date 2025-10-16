@@ -385,7 +385,7 @@ const NewProject = () => {
   const peopleContent =
     projectMembers?.length && projectMembers.length > 0 ? (
       <>
-        {projectMembers?.map((user) => {
+        {projectMembers?.map((member) => {
           // Don't show users that chose to hide themselves as a member of this project
           // if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
           //   return (
@@ -395,15 +395,15 @@ const NewProject = () => {
 
           return (
             <div
-              key={user.userId}
+              key={member.user.userId}
               className="project-contributor"
               onClick={() =>
-                navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
+                navigate(`${paths.routes.PROFILE}?userID=${member.user.userId}`)
               }
             >
               <img
                 className="project-contributor-profile"
-                src={user.user.profileImage ?? profileImage}
+                src={member.user.profileImage ?? profileImage}
                 alt="contributor profile"
                 // Cannot use usePreloadedImage function because this is in a callback
                 onError={(e) => {
@@ -413,9 +413,9 @@ const NewProject = () => {
               />
               <div className="project-contributor-info">
                 <div className="team-member-name">
-                  {user.firstName} {user.lastName}
+                  {member.user.firstName} {member.user.lastName}
                 </div>
-                <div className="team-member-role">{user.jobTitle}</div>
+                <div className="team-member-role">{member.role.label}</div>
               </div>
             </div>
           );
