@@ -189,7 +189,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
               return {
                 name: `${user.firstName} ${user.lastName}`,
                 username: user.username,
-                bio: user.bio,
+                //bio: user.bio, //bios are in UserDetail, not in UserPreview. plus why would you need bios fo this little blurb anyway
               };
             }
           })
@@ -211,11 +211,11 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   }
 
   // Updates filtered project list with new search info
-  const searchItems = (searchResults) => {
+  const searchItems = (searchResults: Item[]) => { 
     // Clear list before handling search
     tempItemList = [];
 
-    for (const result of searchResults[0]) {
+    for (const result of searchResults) {
       for (const item of itemSearchData) {
         if (result === item) {
           tempItemList.push(fullItemList[itemSearchData.indexOf(item)]);
@@ -235,7 +235,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   };
 
   // Updates filtered project list with new tag info
-  const updateItemList = (activeTagFilters) => {
+  const updateItemList = (activeTagFilters: Tag[]) => {
     let tagFilteredList = tempItemList.filter((item) => {
       let tagFilterCheck = true;
 
@@ -259,7 +259,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           // Tag check can be done by ID
           if (tag.tagId) {
             if (item.tags) {
-              const tagIDs = item.tags.map((tag) => tag.id);
+              const tagIDs = item.tags.map((tag) => tag.tagId);
 
               if (!tagIDs.includes(tag.tagId)) {
                 tagFilterCheck = false;
@@ -275,7 +275,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           if (tag.label === 'Developer') {
             if (item.skills) {
               // Get all skills from users
-              const userSkills = item.skills.map((skill) => skill?.skill?.toLowerCase?.())
+              const userSkills = item.skills.map((skill) => skill?.label.toLowerCase?.())
                 .filter((label) => typeof label === 'string');
 
               // Check if skills match developer skills
@@ -295,7 +295,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           }
           // Check for specific skills
           else if (tag.type === 'Developer Skill' || tag.type === 'Designer Skill' || tag.type === 'Soft Skill') {
-            const userSkills = item.skills?.map((s) => s?.skill?.toLowerCase())
+            const userSkills = item.skills?.map((s) => s?.label.toLowerCase())
             .filter((s) => typeof s === 'string');
 
             const matched = userSkills?.includes(tag.label.toLowerCase());
@@ -310,7 +310,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           else if (tag.label === 'Designer') {
             if (item.skills) {
               // Get all skills from user
-              const userSkills = item.skills.map((skill) => skill?.skill?.toLowerCase?.())
+              const userSkills = item.skills.map((skill) => skill?.label.toLowerCase?.())
                 .filter((label) => typeof label === 'string');
 
               // Check if skills match designer skills
@@ -328,7 +328,11 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             }
           }
           // Check role and major by name since IDs are not unique relative to tags
-          else if (tag.type === 'Role') {
+          //i think i'm beginning to understand
+          //did the old team combine all the separate kinds of designations (roles, majors, skills, etc) into just "tags"?
+          //which is why all of these are expected to be types that come from a Tag[]?
+          //what do i do about that... it sounds like this would have to fundamentally be changed to work with the new system
+          else if (tag.type === 'Role') { 
             if (item.job_title) {
               if (item.job_title.toLowerCase() !== tag.label.toLowerCase()) {
                 tagFilterCheck = false;
@@ -351,7 +355,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           } else if (tag.tagId) {
             // Skill check can be done by ID
             if (item.skills) {
-              const skillIDs = item.skills.map((skill) => skill.id);
+              const skillIDs = item.skills.map((skill) => skill.skillId);
 
               if (!skillIDs.includes(tag.tagId)) {
                 tagFilterCheck = false;

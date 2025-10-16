@@ -11,24 +11,17 @@ import '../Styles/projects.css';
 import '../Styles/settings.css';
 import '../Styles/pages.css';
 
-import { ProjectCard } from '../ProjectCard';
-import { ProfileCard } from '../ProfileCard';
 import { ProjectPanel } from '../ProjectPanel';
 import { ProfilePanel } from '../ProfilePanel';
 import { DiscoverButton } from '../DiscoverButton';
-import { NotifButton } from '../NotificationButton';
 import { SearchBar } from '../SearchBar';
-import { TagFilter } from '../TagFilter';
 import '../Styles/styles.css';
 import { projects } from '../../constants/fakeData'; // FIXME: use project data in db
 import { profiles } from '../../constants/fakeData'; // FIXME: use user data in db
-import { Children, useCallback } from 'react';
-import { sortItems } from '../../functions/itemSort';
 import { useState } from 'react';
 import { useEffect } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import ToTopButton from '../ToTopButton';
-import { sendPost, sendGet, GET } from '../../functions/fetch';
 
 //These values need to be outside the component, otherwise they get reset every time it re-renders
 //List that holds project data that will be displayed. Changes along with search parameters
@@ -132,7 +125,7 @@ const Home = (props) => {
     const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
 
     // Removing temporary elements from the DOM
-    outer.parentNode.removeChild(outer);
+    if(outer.parentNode) outer.parentNode.removeChild(outer);
 
     return scrollbarWidth;
   }

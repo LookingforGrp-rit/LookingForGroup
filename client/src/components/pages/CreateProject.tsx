@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ItemMaker } from '../ItemMaker';
 
 //page to create a project

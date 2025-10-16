@@ -211,6 +211,10 @@ export const projects = [
 ];
 
 // same data format as users in db
+//a-HA! this is breaking stuff in multiple places because it's just not in the right format
+//the things that use this want a UserPreview and this has a bunch of other things that UserPreview doesn't
+//...but we already have fake data, do we need to use this anymore? 
+// no. no not at all.
 export const profiles = [
   {
     _id: 0,
