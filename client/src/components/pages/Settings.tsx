@@ -1,5 +1,3 @@
-import '../Styles/pages.css';
-
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';

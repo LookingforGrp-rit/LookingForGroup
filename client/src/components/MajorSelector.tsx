@@ -1,16 +1,3 @@
-//Styles
-import './Styles/credits.css';
-import './Styles/discoverMeet.css';
-import './Styles/emailConfirmation.css';
-import './Styles/general.css';
-import './Styles/loginSignup.css';
-// import './Styles/messages.css';
-// import './Styles/notification.css';
-import './Styles/profile.css';
-import './Styles/projects.css';
-import './Styles/settings.css';
-import './Styles/pages.css';
-
 import { useState, useEffect } from 'react';
 import { getMajors as fetchMajors } from '../api/users';
 import { Major } from '@looking-for-group/shared';
@@ -39,7 +26,7 @@ export const MajorSelector = () => {
     >
       <Select>
         <SelectButton
-          placeholder='Select...'
+          placeholder='Select'
           initialVal={''}
           callback={(e) => { e.preventDefault(); }}
           type={'input'}

@@ -152,7 +152,7 @@ export const Select: React.FC<SelectProps> = ({ children }) => {
     }, [open]);
 
     return (
-        <SelectContext.Provider value={{ open, value, setOpen, setValue }}>
+        <SelectContext.Provider value={{ open, value, setOpen, setValue, type: 'input' }}>
             <div className='select-container' ref={selectRef}>
                 {children}
             </div>

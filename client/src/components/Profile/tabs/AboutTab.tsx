@@ -140,8 +140,8 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
           >
             <Select>
               <SelectButton
-                placeholder="Select..."
-                initialVal={profile.academicYear ? profile.academicYear : 'Select...'}
+                placeholder="Select"
+                initialVal={profile.academicYear && profile.academicYear}
                 callback={(e) => { e.preventDefault(); } }
                 type={'input'}
               />
@@ -185,7 +185,7 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
           >
             <Select>
               <SelectButton
-                placeholder="Select..."
+                placeholder="Select"
                 initialVal={profile.mentor === true ? 'Mentor' : 'Not a mentor'}
                 callback={(e) => { e.preventDefault(); } }
                 type={'input'}

@@ -1,7 +1,3 @@
-import '../Styles/pages.css';
-import '../Styles/projects.css';
-import '../Styles/general.css'
-
 // import { MyProjectsDisplay } from "../MyProjectsDisplay";
 // import { profiles } from "../../constants/fakeData";
 import { useState } from 'react';

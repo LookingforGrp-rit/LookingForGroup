@@ -1,11 +1,3 @@
-//Styles
-import '../Styles/discoverMeet.css';
-import '../Styles/general.css';
-import '../Styles/imageUploader.css'
-// import '../Styles/notification.css';
-import '../Styles/projects.css';
-import '../Styles/pages.css';
-
 import { useEffect, useState, FC } from 'react';
 import { Popup, PopupButton, PopupContent } from '../Popup';
 import { GeneralTab } from './tabs/GeneralTab';

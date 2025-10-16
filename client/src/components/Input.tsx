@@ -6,25 +6,30 @@ interface CustomInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
   type: InputType;
   maxLength?: number;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onClick?: React.MouseEventHandler<HTMLElement>;
 }
 
 /**
  * Custom Input component
  * @param type - Single-line, multi-line, or link input. Defaults to single-line.
  * @param style - Optional custom styles for the input
+ * @param onChange - Change event handler
+ * @param onClick - Click event handler (for link type to handle removal)
  * @returns JSX.Element
  */
 export const Input: React.FC<CustomInputProps> = ({
   type,
-  style,
   onChange,
+  onClick,
   ...props
 }) => {
 
+  
+  // Keep track of value to change character count (multi-line only)
+  const [internalValue, setInternalValue] = useState('');
+
   // Multi-line input with character count
   if (type === 'multi') {
-    // Keep track of value to change character count
-    const [internalValue, setInternalValue] = useState('');
     const value = internalValue;
 
     // Handle prop changes
@@ -65,6 +70,9 @@ export const Input: React.FC<CustomInputProps> = ({
         <button
           className='input-link-remove'
           title="Remove link"
+          onClick={(e) => {
+            onClick?.(e);
+          }}
         >
           <i className="fa-solid fa-minus"></i>
         </button>

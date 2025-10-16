@@ -87,17 +87,32 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
       // Construct the finalized version of the data to be moved into filterPopupTabs
       const tabs = JSON.parse(JSON.stringify(category === 'projects' ? projectTabs : peopleTabs));
       Object.values(tabs).forEach((tab: any) => tab.categoryTags = tab.categoryTags || []);
+ 
+      // Map tag types to correct tab categories
+      const typeMap = category === 'projects' ? {
+        Games: 'Genre',
+        Multimedia: 'Genre',
+        Music: 'Genre',
+        Other: 'Genre',
+        Creative: 'Genre',
+        Technical: 'Genre',
+        Purpose: 'Purpose',
+        Medium: 'Project Type',
+        } : {
+        Designer: 'Designer Skill',
+        Developer: 'Developer Skill',
+        Soft: 'Soft Skill',
+        Role: 'Role',
+        Major: 'Major',
+        };
+
       data.forEach((tag: Tag) => {
         const filterTag: Tag = { ...tag };
-        if ('tagId' in tag) {
-          (filterTag as any).tag_id = (tag as any).tagId;
-        }
+        const mappedType = typeMap[tag.type] || tag.type;
 
-        if(['Creative', 'Technical', 'Games', 'Multimedia', 'Music', 'Other'].includes(tag.type)) {
-          filterTag.type = 'Genre';
-        }
-
-        tabs[filterTag.type].categoryTags.push(filterTag);
+      if (tabs[mappedType]) {
+        tabs[mappedType].categoryTags.push(filterTag);
+      } 
       });
 
       setFilterPopupTabs(Object.values(tabs));
@@ -239,7 +254,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
             const type = category === 'projects' ? 'Project Type' : tagLabel === 'Other' ? 'Major' : 'Role';
             const tagObj: Tag = { label, type };
             return (
-              <button key={label}
+              <button key={`${type}-${label}`}
                 className="discover-tag-filter"
                 data-type={type}
                 onClick={() => toggleTag(tagObj)}>
@@ -307,7 +322,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                       ) : (
                         searchedTags.tags.map((tag) => (
                           <button
-                            // add key once duplicate tags are removed:  --->  key={`${tag.label}-${tag.type}`}
+                            key={`${tag.label}-${tag.type}`}
                             // className={`tag-button tag-button-${searchedTags.color}-unselected`}
                             className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
                             onClick={(e) => {
@@ -375,7 +390,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                     <div id="selected-filters">
                       {enabledFilters.map((tag) => (
                         <button
-                          key={tag.tag.label}
+                          key={`${tag.tag.label}-${tag.color}`}
                           className={`tag-button tag-button-${tag.color}-selected`}
                           onClick={(e) => {
                             // Remove tag from list of enabled filters, re-rendering component
