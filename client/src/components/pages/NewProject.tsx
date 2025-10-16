@@ -1,22 +1,28 @@
-import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Header } from '../Header';
-import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
-import { Popup, PopupButton, PopupContent } from '../Popup';
-import { ImageCarousel } from '../ImageCarousel';
-import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEditor';
-import profilePicture from '../../images/blue_frog.png';
-import profileImage from '../../icons/profile-user.png';
-import { ProjectCarousel } from '../ProjectCarousel';
-import tallImage from '../../images/tall_img.png';
-import heart from '../../icons/heart.png';
-import * as paths from '../../constants/routes';
-import Project from './Project';
-import { ThemeIcon } from '../ThemeIcon';
-import { sendPost, sendDelete } from '../../functions/fetch';
-import { getByID, deleteProject, deleteMember } from '../../api/projects';
-import { getAccountInformation, deleteProjectFollowing, addProjectFollowing } from '../../api/users';
-import { leaveProject } from '../projectPageComponents/ProjectPageHelper';
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import { Header } from "../Header";
+import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
+import { Popup, PopupButton, PopupContent } from "../Popup";
+import { ImageCarousel } from "../ImageCarousel";
+import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
+import profilePicture from "../../images/blue_frog.png";
+import profileImage from "../../icons/profile-user.png";
+import { ProjectCarousel } from "../ProjectCarousel";
+import tallImage from "../../images/tall_img.png";
+import heart from "../../icons/heart.png";
+import * as paths from "../../constants/routes";
+import Project from "./Project";
+import { ThemeIcon } from "../ThemeIcon";
+import { sendPost, sendDelete } from "../../functions/fetch";
+import { getByID, deleteProject, deleteMember } from "../../api/projects";
+import {
+  getCurrentAccount,
+  deleteProjectFollowing,
+  addProjectFollowing,
+} from "../../api/users";
+import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
+import { MePrivate } from "@looking-for-group/shared";
+import usePreloadedImage from "../../functions/imageLoad";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -109,11 +115,8 @@ const defaultProject = runningServer
       ],
     };
 
-function useProfileImage(user) {
-  return usePreloadedImage(
-    `${API_BASE}/images/profiles/${user.profileImage}`,
-    profilePicture
-  );
+function useProfileImage(user: { profileImage: string }) {
+  return usePreloadedImage(user.profileImage, profilePicture);
 }
 
 //Main component for the project page
@@ -131,7 +134,7 @@ const NewProject = () => {
   // State variable used to determine permissions level, and if user should have edit access
   // const [userPerms, setUserPerms] = useState(-1);
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<MePrivate | null>(null);
 
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
@@ -184,42 +187,43 @@ const NewProject = () => {
         return;
       }
 
-      // Get user data and check if user is part of the project
-      // Auth: replaced with shibboleth
-      const authRes = await fetch(`/api/auth`);
-      const authData = await authRes.json();
+      // // Get user data and check if user is part of the project
+      // // Auth: replaced with shibboleth
+      // const authRes = await fetch(`/api/auth`);
+      // const authData = await authRes.json();
 
-      if (authData.data) {
-        const userData = await getAccountInformation(authData.data);
+      // if (authData.data) {
+      const userData = await getCurrentAccount();
 
-        console.log("user");
-        console.log(userData.data);
-        setUser(userData.data[0]);
-        // const projectMembers = projectData.data[0].members;
+      console.log("user");
+      console.log(userData.data);
 
-        // for (let i = 0; i < projectMembers.length; i++) {
-        //   if (projectMembers[i].user_id === authData.data) {
-        //     setUserPerms(projectMembers[i].permissions);
-        //     break;
-        //   }
-        // }
+      setUser(userData.data);
+      // const projectMembers = projectData.data[0].members;
 
-        // // Get all projects user is following to see if they follow this one
-        // const followRes = await fetch(`/api/users/${authData.data}/followings/projects`);
-        // const followData = await followRes.json();
+      // for (let i = 0; i < projectMembers.length; i++) {
+      //   if (projectMembers[i].user_id === authData.data) {
+      //     setUserPerms(projectMembers[i].permissions);
+      //     break;
+      //   }
+      // }
 
-        // if (followData.data) {
-        //   const followedProjects = followData.data;
+      // // Get all projects user is following to see if they follow this one
+      // const followRes = await fetch(`/api/users/${authData.data}/followings/projects`);
+      // const followData = await followRes.json();
 
-        //   for (let i = 0; i < followedProjects.length; i++) {
+      // if (followData.data) {
+      //   const followedProjects = followData.data;
 
-        //     if (parseInt(followedProjects[i].project_id) === parseInt(projectID)) {
-        //       setFollowing(true);
-        //       break;
-        //     }
-        //   }
-        // }
-      }
+      //   for (let i = 0; i < followedProjects.length; i++) {
+
+      //     if (parseInt(followedProjects[i].project_id) === parseInt(projectID)) {
+      //       setFollowing(true);
+      //       break;
+      //     }
+      //   }
+      // }
+      // }
 
       // Log follower count, and determine if user is a follower
       let followerNum = projectData.data[0].followers.length;

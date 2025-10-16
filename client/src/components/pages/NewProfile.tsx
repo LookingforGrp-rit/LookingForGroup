@@ -19,7 +19,7 @@ import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ThemeIcon } from "../ThemeIcon";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
-import { getVisibleProjects, getProjectsByUser, getCurrentUserById } from "../../api/users";
+import { getVisibleProjects, getProjectsByUser, getCurrentAccount } from "../../api/users";
 import { getUsersById } from "../../api/users";
 import { MeDetail, UserSkill, ProjectPreview } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
@@ -181,7 +181,7 @@ const NewProfile = () => {
   useEffect(() => {
     const getProfileData = async () => {
       // Get the profileID to pull data for whoever's profile it is
-      const response = await getCurrentUserById();
+      const response = await getCurrentAccount();
       if (response.data) {
         isUsersProfile = true;
       }
