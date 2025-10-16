@@ -6,16 +6,6 @@ import { getUserFollowersService } from '#services/users/followings/get-user-fol
 export const getUserFollowers = async (req: Request, res: Response): Promise<void> => {
   const userId = parseInt(req.params.id);
 
-  if (isNaN(userId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   const result = await getUserFollowersService(userId);
 
   if (result === 'INTERNAL_ERROR') {

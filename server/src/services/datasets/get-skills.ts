@@ -10,6 +10,14 @@ const getSkillsService = async (): Promise<Skill[] | GetSkillsServiceError> => {
   try {
     const skills = await prisma.skills.findMany({
       select: SkillSelector,
+      orderBy: [
+        {
+          type: 'asc',
+        },
+        {
+          label: 'asc',
+        },
+      ],
     });
 
     return skills.map(transformSkill);

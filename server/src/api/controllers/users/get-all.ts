@@ -18,19 +18,22 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
         data: null,
       };
       res.status(400).json(resBody);
+      return;
+    } else {
+      //if there's strictness and there's only one thing in the query,
+      //then they tried to pass in strictness with no filters
+      //so i 400 them
+      if (Object.entries(req.query as object).length === 1) {
+        const resBody: ApiResponse = {
+          status: 400,
+          error: 'Strictness provided without filters',
+          data: null,
+        };
+        res.status(400).json(resBody);
+        return;
+      }
+      filters.strictness = req.query.strictness;
     }
-    //if there's strictness and there's only one thing in the query,
-    //then they tried to pass in strictness with no filters
-    //so i 400 them
-    if (Object.entries(req.query as object).length === 1) {
-      const resBody: ApiResponse = {
-        status: 400,
-        error: 'Strictness provided without filters',
-        data: null,
-      };
-      res.status(400).json(resBody);
-    }
-    filters.strictness = req.query.strictness as 'any' | 'all';
   }
   if (req.query.mentor) {
     filters.mentor = req.query.mentor === 'true';
@@ -66,6 +69,7 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
       data: null,
     };
     res.status(400).json(resBody);
+    return;
   }
 
   //year checks using UsersAcademicYear
@@ -79,6 +83,7 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
           data: null,
         };
         res.status(400).json(resBody);
+        return;
       }
     });
   }
@@ -94,6 +99,7 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
         data: null,
       };
       res.status(400).json(resBody);
+      return;
     }
   }
 
@@ -116,4 +122,5 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     data: result,
   };
   res.status(200).json(resBody);
+  return;
 };
