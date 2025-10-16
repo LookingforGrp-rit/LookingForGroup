@@ -225,12 +225,12 @@ export const deletePic = async (
  */
 export const getMembers = async (
   projectID: number
-): Promise<ApiResponse<ProjectMember>> => {
+): Promise<ApiResponse<ProjectMember[]>> => {
   const apiURL = `/projects/${projectID}/members`;
   const response = await GET(apiURL);
 
   if (response.error) console.log(`Error in getMembers: ${response.error}`);
-  return response;
+  return response as ApiResponse<ProjectMember[]>;
 };
 
 /**

@@ -14,7 +14,7 @@ import * as paths from "../../constants/routes";
 import Project from "./Project";
 import { ThemeIcon } from "../ThemeIcon";
 import { sendPost, sendDelete } from "../../functions/fetch";
-import { getByID, deleteProject, deleteMember } from "../../api/projects";
+import { getByID, deleteProject, deleteMember, getMembers } from "../../api/projects";
 import {
   getCurrentAccount,
   deleteProjectFollowing,
@@ -39,6 +39,7 @@ const runningServer = true;
 //TODO: remove after implementing database functionality
 //A default set of project data for the component to use
 //use while running with npm run client
+//i have to get rid of you, but what do i replace you with
 const defaultProject = runningServer
   ? undefined
   : {
@@ -141,12 +142,6 @@ const NewProject = () => {
 
   // API FUNCTIONS (/PROJECTS/)
 
-  // #FIXME is this really necessary?
-  const fetchprojectByID = async (id: number) => {
-    const response = await getByID(id);
-    return response.data;
-  };
-
   const removeMember = async (userId: number) => {
     const response = await deleteMember(projectID, userId);
     if (response.error) {
@@ -174,7 +169,6 @@ const NewProject = () => {
 
   //Function used to get project data
   const getProjectData = async () => {
-    try {
       if (!projectID) {
         setFailCheck(true);
         return;
@@ -226,26 +220,15 @@ const NewProject = () => {
       // }
 
       // Log follower count, and determine if user is a follower
-      let followerNum = projectData.data[0].followers.length;
-      // Start displaying in X.X+ format if >= 1000
-      if (followerNum >= 1000) {
-        const multOfHundred = followerNum % 100 === 0;
+      formatFollowCount(projectData.data.followers.count);
 
-        followerNum /= 1000.0;
-        followerNum = followerNum.toFixed(1);
-        followerNum = `${followerNum}K ${multOfHundred ? "+" : ""}`;
-      }
-
-      setFollowCount(projectData.data[0].followers.count);
-      setFollowing(projectData.data[0].followers.isFollowing);
-      setDisplayedProject(projectData.data[0]);
-    } catch (error) {
-      console.error(error.message);
-    }
+      setFollowCount(projectData.data.followers.count);
+      setDisplayedProject(projectData.data);
+    
   };
 
   //State variable holding information on the project to be displayed
-  const [displayedProject, setDisplayedProject] = useState(defaultProject);
+  const [displayedProject, setDisplayedProject] = useState(defaultProject); 
 
   //Gets data from database on a specific project
   if (displayedProject === undefined) {
@@ -256,19 +239,20 @@ const NewProject = () => {
   // const usersProject = true;
 
   // Formats follow-count based on Figma design. Returns a string
-  const formatFollowCount = (followers) => {
-    let followerNum = followers;
+  const formatFollowCount = (followers: number) => {
+
+    let followerStr = `${followers}`;
 
     // Start displaying in X.X+ format if >= 1000
-    if (followerNum >= 1000) {
-      const multOfHundred = followerNum % 100 === 0;
+    if (followers >= 1000) {
+      const multOfHundred = followers % 100 === 0;
 
-      followerNum /= 1000.0;
-      followerNum = followerNum.toFixed(1);
-      followerNum = `${followerNum}K ${multOfHundred ? "+" : ""}`;
+      followers = (followers / 1000.0);
+      followerStr = followers.toFixed(1);
+      followerStr = `${followerStr}K ${multOfHundred ? "+" : ""}`;
     }
 
-    return `${followerNum}`;
+    return followerStr;
   };
 
   //HTML elements containing buttons used in the info panel
@@ -383,29 +367,31 @@ const NewProject = () => {
   //Lists of users who have worked on this project
   //Members - people who actively work on the project
   // const projectMembers = displayedProject === undefined ? [] : displayedProject.members;
-  // FIXME either get project members using api function or fetch them out of the ProjectDetail loaded in
-  // either way, displayedProject needs to be fixed and the fake data at the top can probably be removed.
-  const projectMembers = displayedProject?.members; 
+  //const projectMembers = projectDa; 
+
   //Contributors - people who have helped, but aren't actively working on the project
-  const projectContributors = [];
+  //const projectContributors = [];
+  
   //People list holds whatever list is currently being displayed
   //const [peopleList, setPeopleList] = useState(displayedProject === undefined ? [] : displayedProject.members);
 
   //HTML containing info on the members of the project
+  
   const peopleContent =
-    projectMembers?.length && projectMembers.length > 0 ? (
+    projectMembers.data && projectMembers.data.length > 0 ? (
       <>
-        {projectMembers?.map((user) => {
+        {projectMembers.data.map((member) => {
           // Don't show users that chose to hide themselves as a member of this project
           // if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
           //   return (
           //     <></>
           //   );
           // }
+          const user = member.user; //so i don't have to go user.user.userId or anything
 
           return (
             <div
-              key={user.userId}
+              key={user.userId} 
               className="project-contributor"
               onClick={() =>
                 navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
@@ -429,7 +415,7 @@ const NewProject = () => {
                 <div className="team-member-name">
                   {user.firstName} {user.lastName}
                 </div>
-                <div className="team-member-role">{user.jobTitle}</div>
+                <div className="team-member-role">{member.role.label}</div>
               </div>
             </div>
           );
@@ -441,48 +427,49 @@ const NewProject = () => {
 
   //FIXME: contributors are not implemented in the database or within the project editor: implement or remove feature
   //HTML containing info on people who have contributed to the project (not necessarily members)
-  const contributorContent =
-    projectContributors !== undefined ? (
-      projectContributors.length > 0 ? (
-        <>
-          {projectContributors.map((user) => {
-            const imgSrc = useProfileImage(user);
+  // const contributorContent =
+  //   projectContributors !== undefined ? (
+  //     projectContributors.length > 0 ? (
+  //       <>
+  //         {projectContributors.map((user) => {
+  //           const imgSrc = useProfileImage(user);
 
-            return (
-              <div
-                className="project-contributor"
-                onClick={() =>
-                  navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
-                }
-              >
-                <img
-                  className="project-contributor-profile"
-                  src={imgSrc}
-                  alt="contributor profile"
-                />
-                <div className="project-contributor-info">
-                  <div>
-                    {user.firstName} {user.lastName}
-                  </div>
-                  <div>{user.jobTitle}</div>
-                </div>
-              </div>
-            );
-          })}
-        </>
-      ) : (
-        <div>There are no other contributors right now.</div>
-      )
-    ) : (
-      <div>There are no other contributors right now.</div>
-    );
+  //           return (
+  //             <div
+  //               className="project-contributor"
+  //               onClick={() =>
+  //                 navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
+  //               }
+  //             >
+  //               <img
+  //                 className="project-contributor-profile"
+  //                 src={imgSrc}
+  //                 alt="contributor profile"
+  //               />
+  //               <div className="project-contributor-info">
+  //                 <div>
+  //                   {user.firstName} {user.lastName}
+  //                 </div>
+  //                 <div>{user.jobTitle}</div>
+  //               </div>
+  //             </div>
+  //           );
+  //         })}
+  //       </>
+  //     ) : (
+  //       <div>There are no other contributors right now.</div>
+  //     )
+  //   ) : (
+  //     <div>There are no other contributors right now.</div>
+  //   );
 
   //State variable that tracks whether project members or contributors will be displayed
-  const [displayedPeople, setDisplayedPeople] = useState("People");
+  //uncomment when contributors exist in the database
+  //const [displayedPeople, setDisplayedPeople] = useState("People");
 
   //Variable holding either 'peopleContent' or 'contributorContent', depending on 'displayedPeople' state (seen above)
-  const profileContent =
-    displayedPeople === "People" ? peopleContent : contributorContent;
+  //const profileContent =
+    //displayedPeople === "People" ? peopleContent : contributorContent;
 
   const openPositionListing = (positionNumber: number) => {
     //Set state to position being clicked
@@ -706,7 +693,7 @@ const NewProject = () => {
               {/* If contributors are added as a site feature, use the commented code below */}
               {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
             </div>
-            <div id="project-people-content">{profileContent}</div>
+            <div id="project-people-content">{peopleContent}</div>
           </div>
 
           <div id="project-open-positions">
