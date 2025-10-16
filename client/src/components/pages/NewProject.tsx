@@ -403,13 +403,9 @@ const NewProject = () => {
             >
               <img
                 className="project-contributor-profile"
-                src={`${API_BASE}/images/profiles/${user.profileImage}`}
+                src={user.user.profileImage ?? profileImage}
                 alt="contributor profile"
                 // Cannot use usePreloadedImage function because this is in a callback
-                onLoad={(e) => {
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = `${API_BASE}/images/profiles/${user.profileImage}`;
-                }}
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
                   profileImg.src = profileImage;
@@ -523,7 +519,7 @@ const NewProject = () => {
           <div id="project-info-panel">
             <div id="project-info-header">
               <div id="project-title">{displayedProject.title}</div>
-              <div id="project-info-buttons">{buttonContent}</div>
+              {/* <div id="project-info-buttons">{buttonContent}</div> */}
             </div>
             <div id="project-hook">{displayedProject.hook}</div>
             <div id="project-status">
