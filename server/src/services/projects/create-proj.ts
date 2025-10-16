@@ -20,6 +20,7 @@ const createProjectService = async (
         thumbnail: thumbnailUrl || undefined,
         status: data.status || undefined,
         audience: data.audience || undefined,
+        purpose: data.purpose,
         users: {
           connect: {
             userId: userId,

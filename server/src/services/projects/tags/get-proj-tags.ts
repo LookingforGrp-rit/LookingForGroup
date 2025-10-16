@@ -15,6 +15,9 @@ const getProjectTagsService = async (
       include: {
         tags: {
           select: ProjectTagSelector,
+          orderBy: {
+            label: 'asc',
+          },
         },
       },
     });

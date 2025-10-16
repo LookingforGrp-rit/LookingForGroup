@@ -468,7 +468,7 @@ export type AddUserMajorInput = Pick<Major, "majorId">;
 // PROJECTS inputs
 export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
-    Pick<ProjectDetail, "hook" | "description" | "status" | "audience">
+    Pick<ProjectDetail, "hook" | "description" | "status" | "audience" | "purpose">
   > & { thumbnail?: File };
 export type UpdateProjectInput = Partial<CreateProjectInput>;
 
