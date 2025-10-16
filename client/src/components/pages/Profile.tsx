@@ -365,7 +365,7 @@ const Profile = () => {
               displayedProfile.skills.map((tag) => {
                 let category: string;
                 switch (tag.type) {
-                  case "Design":
+                  case "Designer":
                     category = "red";
                     break;
                   case "Developer":
@@ -380,10 +380,10 @@ const Profile = () => {
 
                 return (
                   <div
-                    key={`${tag.skill}`}
+                    key={`${tag.skillId}`}
                     className={`skill-tag-label label-${category}`}
                   >
-                    {tag.skill}
+                    {tag.label}
                   </div>
                 );
               })
