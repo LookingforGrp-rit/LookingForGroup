@@ -17,6 +17,9 @@ export const getMyProjectsService = async (
       where: {
         userId: userId,
       },
+      orderBy: {
+        title: 'asc',
+      },
       select: ProjectPreviewSelector,
     });
     //all the projects they're a member of
@@ -27,6 +30,9 @@ export const getMyProjectsService = async (
             userId: userId,
           },
         },
+      },
+      orderBy: {
+        title: 'asc',
       },
       select: ProjectPreviewSelector,
     });
@@ -49,6 +55,9 @@ export const getMyProjectsService = async (
             },
           },
         },
+        orderBy: {
+          title: 'asc',
+        },
         select: ProjectPreviewSelector,
       });
       //all the projects they own filtered based on what's visible
@@ -61,6 +70,9 @@ export const getMyProjectsService = async (
               profileVisibility: visibility,
             },
           },
+        },
+        orderBy: {
+          title: 'asc',
         },
         select: ProjectPreviewSelector,
       });

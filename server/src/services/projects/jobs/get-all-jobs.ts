@@ -13,6 +13,9 @@ const getJobsService = async (projectId: number): Promise<ProjectJob[] | GetJobS
         projectId,
       },
       select: ProjectJobSelector,
+      orderBy: {
+        updatedAt: 'desc',
+      },
     });
 
     return jobs.map((job) => transformProjectJob(projectId, job));

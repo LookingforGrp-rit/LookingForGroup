@@ -7,17 +7,6 @@ export const getOtherUserProjects = async (req: Request, res: Response): Promise
   //current user ID
   const UserId = parseInt(req.params.id);
 
-  //check if ID is number
-  if (isNaN(UserId)) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Invalid user ID',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
-  }
-
   const result = await getUserProjectsService(UserId);
 
   if (result === 'INTERNAL_ERROR') {

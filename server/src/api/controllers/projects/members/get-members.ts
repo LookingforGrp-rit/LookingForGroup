@@ -1,12 +1,12 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getUserByIdService } from '#services/users/get-user/get-by-id.ts';
+import getMembersService from '#services/projects/members/get-members.ts';
 
-//get user by id
-export const getUserById = async (req: Request, res: Response): Promise<void> => {
-  const id = parseInt(req.params.id);
+//gets the members associated with a project
+const getMembers = async (req: Request, res: Response): Promise<void> => {
+  const projID = parseInt(req.params.id);
 
-  const result = await getUserByIdService(id);
+  const result = await getMembersService(projID);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -21,7 +21,7 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'User not found',
+      error: 'Members not found',
       data: null,
     };
     res.status(404).json(resBody);
@@ -35,3 +35,5 @@ export const getUserById = async (req: Request, res: Response): Promise<void> =>
   };
   res.status(200).json(resBody);
 };
+
+export default getMembers;
