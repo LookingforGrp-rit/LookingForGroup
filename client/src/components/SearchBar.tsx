@@ -40,6 +40,10 @@ const handleSearch = (searchQuery: string) => {
   const filteredResults = dataSets.map((dataSet) =>
     dataSet.data.filter((item) => {
      if (typeof item === 'object') {
+      // Handle tag objects when filtering tags
+        if ('label' in item && typeof item.label === 'string') {
+          return item.label.toLowerCase().includes(searchQuery);
+        }
       // ONLY return fields we want to match, this avoids unintended searchbar behavior
        return (
         (item.name && item.name.toLowerCase().includes(searchQuery)) ||
