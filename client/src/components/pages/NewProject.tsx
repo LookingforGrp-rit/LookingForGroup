@@ -31,89 +31,9 @@ const API_BASE = `http://localhost:8081`;
 //Have team member listings link to their respective profiles
 //Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
 
-//TODO: remove after implementing database functionality
 //Variable used for checking whether or not we are running a server or not
 //Should be 'true' when using npm run server, 'false' when using npm run client
 const runningServer = true;
-
-//TODO: remove after implementing database functionality
-//A default set of project data for the component to use
-//use while running with npm run client
-const defaultProject = runningServer
-  ? undefined
-  : {
-      title: "Title Here",
-      hook: "Hook text Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      description:
-        "Description text Lorem ipsum dolor sit amet consectetur adipisicing elit.",
-      purpose: "Insert purpose here",
-      status: "currentStatus",
-      audience: "Insert target audience here",
-      project_types: [{ id: 1, project_type: "Video Game" }],
-      tags: [
-        { id: 6, tag: "Action", type: "Creative", position: 1 },
-        { id: 40, tag: "Rogue-Like", type: "Games", position: 2 },
-        { id: 1, tag: "Sci-Fi", type: "Creative", position: 3 },
-      ],
-      jobs: [
-        {
-          duration: "Short-term",
-          location: "On-site",
-          title_id: 8,
-          job_title: "Video Game Developer",
-          description:
-            "We are looking for game developers familiar with Unreal Engine 5",
-          availability: "Full-time",
-          compensation: "Paid",
-        },
-        {
-          duration: "Long-term",
-          location: "Remote",
-          title_id: 51,
-          job_title: "2D Artist",
-          description: "We are looking for artists who know how to draw bees",
-          availability: "Part-time",
-          compensation: "Paid",
-        },
-      ],
-      members: [
-        {
-          user_id: 1,
-          job_title: "Project Lead",
-          first_name: "Lily",
-          last_name: "Carter",
-        },
-        {
-          user_id: 2,
-          job_title: "2D Artist",
-          first_name: "Maya",
-          last_name: "Bennett",
-        },
-        {
-          user_id: 3,
-          job_title: "Video Game Developer",
-          first_name: "Aiden",
-          last_name: "Brooks",
-        },
-        {
-          user_id: 4,
-          job_title: "Philosopher",
-          first_name: "Aris",
-          last_name: "Tottle",
-        },
-        {
-          user_id: 5,
-          job_title: "Impersonator",
-          first_name: "Imi",
-          last_name: "Tatter",
-        },
-      ],
-      images: [
-        { id: 1, image: profilePicture, position: 1 },
-        { id: 2, image: tallImage, position: 2 },
-        { id: 3, image: heart, position: 3 },
-      ],
-    };
 
 function useProfileImage(user: { profileImage: string }) {
   return usePreloadedImage(user.profileImage, profilePicture);
