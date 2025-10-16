@@ -565,7 +565,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
 
   // Find selected members 
   const selectedMember = modifiedProject.members.find(
-  (m) => m.userId === modifiedProject.userId
+  (m) => m.user === modifiedProject.owner
 );
 
   // Edit open position or creating new position
@@ -851,10 +851,10 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
         const activeMember = m;
 
         return (
-          <div key={m.userId} className="project-editor-project-member">
+          <div key={m.user.userId} className="project-editor-project-member">
             <img
               className="project-member-image"
-              src={`${API_BASE}/images/profiles/${m.profileImage}`}
+              src={`${API_BASE}/images/profiles/${m.user.profileImage}`}
               alt="profile image"
               title={'Profile picture'}
                 // Cannot use usePreloadedImage function because this is in a callback
@@ -870,15 +870,15 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
             <div className="project-editor-project-member-info">
               <div className="project-editor-project-member-name">
                 {/* {m.firstName} {m.lastName} */}
-                {m.firstName && m.lastName 
-                ? `${m.firstName} ${m.lastName}` 
-                : m.userId === 0  
+                {m.user.firstName && m.user.lastName
+                ? `${m.user.firstName} ${m.user.lastName}` 
+                : m.user.userId === 0  
                 ? 'You'
                 : ''
                 }
               </div>
               <div className="project-editor-project-member-role project-editor-extra-info">
-                {m.jobTitle}
+                {m.role.label}
               </div>
             </div>
             {/* ALWAYS SHOW EDIT BUTTON */}
@@ -896,7 +896,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
                   >
                     <img
                       className="project-member-image"
-                      src={`${API_BASE}/images/profiles/${m.profileImage}`}
+                      src={`${API_BASE}/images/profiles/${m.user.profileImage}`}
                       alt="profile image"
                       // default profile picture if user image doesn't load
                       onError={(e) => {
@@ -905,9 +905,9 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
                       }}
                     />
                     <div className="project-editor-project-member-name">
-                      {m.firstName && m.lastName 
-                      ? `${m.firstName} ${m.lastName}` 
-                      : m.userId === 0  
+                      {m.user.firstName && m.user.lastName
+                      ? `${m.user.firstName} ${m.user.lastName}` 
+                      : m.user.userId === 0  
                       ? 'You'
                       : ''
                 }
@@ -918,12 +918,13 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
                     <Select>
                       <SelectButton
                         placeholder=''
-                        initialVal={m.jobTitle}
+                        initialVal={m.role.label}
                         className=''
+                        type='dropdown'
                       />
                       <SelectOptions
                         callback={(e) => {
-                          activeMember.jobTitle = e.target.value;
+                          activeMember.role.label = (e.target as HTMLSelectElement).value;
                         }}
                         options={allJobs.map((job: { titleId: number; label: string }) => {
                           return {
@@ -942,6 +943,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
                         placeholder=''
                         initialVal={permissionOptions[m.permissions]}
                         className=''
+                        type='dropdown'
                       />
                       <SelectOptions
                         callback={(e) => {
