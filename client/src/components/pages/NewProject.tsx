@@ -226,7 +226,11 @@ const NewProject = () => {
       // }
 
       setFollowCount(formatFollowCount(projectData.data.followers.count));
-      setFollowing(projectData.data.followers.users.some(({ user }) => user.userId === userData.data?.userId));
+      setFollowing(
+        projectData.data.followers.users.some(
+          ({ user }) => user.userId === userData.data?.userId
+        )
+      );
       setDisplayedProject(projectData.data);
     } catch (error) {
       console.error((error as { message: string }).message);
@@ -234,7 +238,8 @@ const NewProject = () => {
   };
 
   //State variable holding information on the project to be displayed
-  const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>();
+  const [displayedProject, setDisplayedProject] =
+    useState<ProjectWithFollowers>();
 
   //Gets data from database on a specific project
   if (displayedProject === undefined) {
@@ -375,7 +380,7 @@ const NewProject = () => {
   // const projectMembers = displayedProject === undefined ? [] : displayedProject.members;
   // FIXME either get project members using api function or fetch them out of the ProjectDetail loaded in
   // either way, displayedProject needs to be fixed and the fake data at the top can probably be removed.
-  const projectMembers = displayedProject?.members; 
+  const projectMembers = displayedProject?.members;
   //Contributors - people who have helped, but aren't actively working on the project
   const projectContributors = [];
   //People list holds whatever list is currently being displayed
@@ -468,7 +473,11 @@ const NewProject = () => {
 
   //Variable holding either 'peopleContent' or 'contributorContent', depending on 'displayedPeople' state (seen above)
   const profileContent =
-    displayedPeople === "People" ? peopleContent : <div>There are no other contributors right now.</div>;
+    displayedPeople === "People" ? (
+      peopleContent
+    ) : (
+      <div>There are no other contributors right now.</div>
+    );
 
   const openPositionListing = (positionNumber: number) => {
     //Set state to position being clicked
@@ -483,7 +492,9 @@ const NewProject = () => {
 
   //Find first member with the job title of 'Project Lead'
   //If no such member exists, use first member in project member list
-  const projectLead = displayedProject?.members.find(member => member.role.label === "Owner");
+  const projectLead = displayedProject?.members.find(
+    (member) => member.role.label === "Owner"
+  );
 
   //Page layout for if project data hasn't been loaded yet
   const loadingProject = <>{<div>Loading project...</div>}</>;
@@ -599,7 +610,8 @@ const NewProject = () => {
                             ? `images/profiles/${projectLead?.profile_image}` 
                             : profilePicture} 
                           /> */}
-                            {projectLead?.user.firstName} {projectLead?.user.lastName}
+                            {projectLead?.user.firstName}{" "}
+                            {projectLead?.user.lastName}
                           </span>
                         </div>
                       </div>
@@ -671,7 +683,7 @@ const NewProject = () => {
             <div id="project-people-tabs">
               <button
                 className={`project-people-tab ${displayedPeople === "People" ? "project-people-tab-active" : ""}`}
-                onClick={(e) => setDisplayedPeople("People")}
+                onClick={() => setDisplayedPeople("People")}
               >
                 The Team
               </button>
