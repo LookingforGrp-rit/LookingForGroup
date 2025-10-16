@@ -21,7 +21,7 @@ import {
   addProjectFollowing,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate } from "@looking-for-group/shared";
+import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 import usePreloadedImage from "../../functions/imageLoad";
 
 //backend base url for getting images
@@ -136,7 +136,7 @@ const NewProject = () => {
 
   const [user, setUser] = useState<MePrivate | null>(null);
 
-  const [followCount, setFollowCount] = useState(0);
+  const [followCount, setFollowCount] = useState("0");
   const [isFollowing, setFollowing] = useState(false);
 
   // API FUNCTIONS (/PROJECTS/)
@@ -225,27 +225,16 @@ const NewProject = () => {
       // }
       // }
 
-      // Log follower count, and determine if user is a follower
-      let followerNum = projectData.data[0].followers.length;
-      // Start displaying in X.X+ format if >= 1000
-      if (followerNum >= 1000) {
-        const multOfHundred = followerNum % 100 === 0;
-
-        followerNum /= 1000.0;
-        followerNum = followerNum.toFixed(1);
-        followerNum = `${followerNum}K ${multOfHundred ? "+" : ""}`;
-      }
-
-      setFollowCount(projectData.data[0].followers.count);
-      setFollowing(projectData.data[0].followers.isFollowing);
-      setDisplayedProject(projectData.data[0]);
+      setFollowCount(formatFollowCount(projectData.data.followers.count));
+      setFollowing(projectData.data.followers.users.some(({ user }) => user.userId === userData.data?.userId));
+      setDisplayedProject(projectData.data);
     } catch (error) {
-      console.error(error.message);
+      console.error((error as { message: string }).message);
     }
   };
 
   //State variable holding information on the project to be displayed
-  const [displayedProject, setDisplayedProject] = useState(defaultProject);
+  const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>();
 
   //Gets data from database on a specific project
   if (displayedProject === undefined) {
@@ -256,7 +245,7 @@ const NewProject = () => {
   // const usersProject = true;
 
   // Formats follow-count based on Figma design. Returns a string
-  const formatFollowCount = (followers) => {
+  const formatFollowCount = (followers: number) => {
     let followerNum = followers;
 
     // Start displaying in X.X+ format if >= 1000
@@ -264,11 +253,12 @@ const NewProject = () => {
       const multOfHundred = followerNum % 100 === 0;
 
       followerNum /= 1000.0;
-      followerNum = followerNum.toFixed(1);
-      followerNum = `${followerNum}K ${multOfHundred ? "+" : ""}`;
+      const truncated = followerNum.toFixed(1);
+      const formatted = `${truncated}K${multOfHundred ? "+" : ""}`;
+      return formatted;
     }
 
-    return `${followerNum}`;
+    return followerNum.toString();
   };
 
   //HTML elements containing buttons used in the info panel
