@@ -533,7 +533,7 @@ const NewProject = () => {
                               onClick={() => setViewedPosition(index)}
                               key={index}
                             >
-                              {job?.job_title}
+                              {job?.role.label}
                             </button>
                           ))}
                         </div>
@@ -541,7 +541,7 @@ const NewProject = () => {
 
                       <div id="positions-popup-info">
                         <div id="positions-popup-info-title">
-                          {displayedProject.jobs[viewedPosition]?.job_title ??
+                          {displayedProject.jobs[viewedPosition]?.role.label ??
                             undefined}
                         </div>
                         <div id="positions-popup-info-description">
@@ -589,7 +589,7 @@ const NewProject = () => {
                           <span
                             onClick={() =>
                               navigate(
-                                `${paths.routes.PROFILE}?userID=${projectLead?.user_id}`
+                                `${paths.routes.PROFILE}?userID=${projectLead?.user.userId}`
                               )
                             }
                             id="position-contact-link"
@@ -599,7 +599,7 @@ const NewProject = () => {
                             ? `images/profiles/${projectLead?.profile_image}` 
                             : profilePicture} 
                           /> */}
-                            {projectLead?.first_name} {projectLead?.last_name}
+                            {projectLead?.user.firstName} {projectLead?.user.lastName}
                           </span>
                         </div>
                       </div>
@@ -632,7 +632,7 @@ const NewProject = () => {
                         className={`project-tag-label label-green`}
                         key={index}
                       >
-                        {tag.tag}
+                        {tag.label}
                       </div>
                     );
                   } else if (index === 3) {
@@ -690,7 +690,7 @@ const NewProject = () => {
                   onClick={() => openPositionListing(index)}
                   key={index}
                 >
-                  {position.job_title}
+                  {position.role.label}
                 </button>
               ))}
             </div>
