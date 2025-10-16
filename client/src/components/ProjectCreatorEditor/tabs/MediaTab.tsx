@@ -1,7 +1,7 @@
 // --- Imports ---
 import { useCallback, useEffect, useState } from "react";
-import { addPic, deletePic } from "../../../api/projects";
-import { ProjectDetail, ProjectImage } from "@looking-for-group/shared";
+import { addPic, deletePic, updateProject } from "../../../api/projects";
+import { CreateProjectImageInput, ProjectDetail, ProjectImage, UserPreview } from "@looking-for-group/shared";
 import { PopupButton } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
 
@@ -13,18 +13,21 @@ const defaultProject: ProjectDetail = {
   audience: "",
   description: "",
   hook: "",
-  images: [],
+  projectImages: [],
+  mediums: [],
   jobs: [],
   members: [],
   projectId: -1,
-  projectTypes: [],
-  purpose: "",
-  socials: [],
-  status: "",
+  purpose: "Personal",
+  projectSocials: [],
+  status: "Planning",
   tags: [],
   thumbnail: "",
   title: "",
-  userId: -1,
+  owner: {} as UserPreview,
+  createdAt: Date.prototype, 
+  updatedAt: Date.prototype,
+  apiUrl: ''
 };
 
 // --- Variables ---
@@ -72,8 +75,11 @@ export const MediaTab = ({
 
     // Uploading image to backend
     try {
-      // #FIXME missing alt text
-      const response = await addPic(modifiedProject.projectId, file);
+      const fullImg = {
+        image: file,
+        altText: imageUploader.alt //it looks like this is where the text would go?
+      } as CreateProjectImageInput;
+      const response = await addPic(modifiedProject.projectId, fullImg);
       if (response.status === 200 && response.data) {
         const newImage: ProjectImage = response.data;
 
@@ -91,12 +97,12 @@ export const MediaTab = ({
 
   // Handle new thumbnail
   const handleThumbnailChange = useCallback(
-    async (image: string) => {
+    async (image: string) => { //updateProject has to take a file
       if (!modifiedProject.projectId) return;
-      const newThumbnail = modifiedProject.thumbnail === image ? "" : image;
+      const imageFile = fetch(image) as unknown as File;
       try {
-        await updateThumbnail(modifiedProject.projectId, newThumbnail as any);
-        setModifiedProject({ ...modifiedProject, thumbnail: newThumbnail });
+        await updateProject(modifiedProject.projectId, { thumbnail: imageFile }); //updates project with new thumbnail
+        setModifiedProject(modifiedProject); //sets modifiedProject to the project that now has the new thumbnail
       } catch (err) {
         console.error(err);
       }
@@ -139,7 +145,7 @@ export const MediaTab = ({
         the main thumbnail on the project's discover card.
       </div>
       <div id="project-editor-image-ui">
-        {modifiedProject.images?.map((image) => {
+        {modifiedProject.projectImages?.map((image) => {
           const src = image.image.startsWith("blob")
             ? image.image
             : `${API_BASE}/images/projects/${image.image}`;
