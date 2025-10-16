@@ -24,9 +24,6 @@ import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 import usePreloadedImage from "../../functions/imageLoad";
 
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
-
 //To-do
 //Have team member listings link to their respective profiles
 //Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
