@@ -183,7 +183,7 @@ const NewProfile = () => {
       // Get the profileID to pull data for whoever's profile it is
       const response = await getCurrentAccount();
       if (response.data) {
-        isUsersProfile = true;
+        isUsersProfile = true; // FIXME this will always be true no matter who is signed in 
       }
 
       try {
