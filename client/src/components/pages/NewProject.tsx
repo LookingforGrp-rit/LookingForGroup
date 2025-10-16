@@ -427,48 +427,48 @@ const NewProject = () => {
 
   //FIXME: contributors are not implemented in the database or within the project editor: implement or remove feature
   //HTML containing info on people who have contributed to the project (not necessarily members)
-  const contributorContent =
-    projectContributors !== undefined ? (
-      projectContributors.length > 0 ? (
-        <>
-          {projectContributors.map((user) => {
-            const imgSrc = useProfileImage(user);
+  // const contributorContent =
+  //   projectContributors !== undefined ? (
+  //     projectContributors.length > 0 ? (
+  //       <>
+  //         {projectContributors.map((user) => {
+  //           const imgSrc = useProfileImage(user);
 
-            return (
-              <div
-                className="project-contributor"
-                onClick={() =>
-                  navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
-                }
-              >
-                <img
-                  className="project-contributor-profile"
-                  src={imgSrc}
-                  alt="contributor profile"
-                />
-                <div className="project-contributor-info">
-                  <div>
-                    {user.firstName} {user.lastName}
-                  </div>
-                  <div>{user.jobTitle}</div>
-                </div>
-              </div>
-            );
-          })}
-        </>
-      ) : (
-        <div>There are no other contributors right now.</div>
-      )
-    ) : (
-      <div>There are no other contributors right now.</div>
-    );
+  //           return (
+  //             <div
+  //               className="project-contributor"
+  //               onClick={() =>
+  //                 navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
+  //               }
+  //             >
+  //               <img
+  //                 className="project-contributor-profile"
+  //                 src={imgSrc}
+  //                 alt="contributor profile"
+  //               />
+  //               <div className="project-contributor-info">
+  //                 <div>
+  //                   {user.firstName} {user.lastName}
+  //                 </div>
+  //                 <div>{user.jobTitle}</div>
+  //               </div>
+  //             </div>
+  //           );
+  //         })}
+  //       </>
+  //     ) : (
+  //       <div>There are no other contributors right now.</div>
+  //     )
+  //   ) : (
+  //     <div>There are no other contributors right now.</div>
+  //   );
 
   //State variable that tracks whether project members or contributors will be displayed
   const [displayedPeople, setDisplayedPeople] = useState("People");
 
   //Variable holding either 'peopleContent' or 'contributorContent', depending on 'displayedPeople' state (seen above)
   const profileContent =
-    displayedPeople === "People" ? peopleContent : contributorContent;
+    displayedPeople === "People" ? peopleContent : <div>There are no other contributors right now.</div>;
 
   const openPositionListing = (positionNumber: number) => {
     //Set state to position being clicked
@@ -483,21 +483,7 @@ const NewProject = () => {
 
   //Find first member with the job title of 'Project Lead'
   //If no such member exists, use first member in project member list
-  const projectLead =
-    displayedProject === undefined
-      ? {
-          user_id: 0,
-          job_title: "Default guy",
-          first_name: "user",
-          last_name: "name",
-        }
-      : displayedProject.members.some(
-            (member) => member.job_title === "Project Lead"
-          )
-        ? displayedProject.members.find(
-            (member) => member.job_title === "Project Lead"
-          )
-        : displayedProject.members[0];
+  const projectLead = displayedProject?.members.find(member => member.role.label === "Owner");
 
   //Page layout for if project data hasn't been loaded yet
   const loadingProject = <>{<div>Loading project...</div>}</>;
