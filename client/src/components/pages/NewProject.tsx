@@ -2,32 +2,27 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
+import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import profileImage from "../../icons/profile-user.png";
 import { ProjectCarousel } from "../ProjectCarousel";
 import * as paths from "../../constants/routes";
 import { ThemeIcon } from "../ThemeIcon";
-import { getByID} from "../../api/projects";
+import { getByID } from "../../api/projects";
 import {
   getCurrentAccount,
   deleteProjectFollowing,
   addProjectFollowing,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate, ProjectWithFollowers} from "@looking-for-group/shared";
+import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
+import usePreloadedImage from "../../functions/imageLoad";
 
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
-
-//To-do
-//Have team member listings link to their respective profiles
+//TODO
+//✅ Have team member listings link to their respective profiles
 //Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
 
 
-//what is this for
-// function useProfileImage(user: { profileImage: string }) {
-//   return usePreloadedImage(user.profileImage, profilePicture);
-// }
 
 //Main component for the project page
 const NewProject = () => {
@@ -53,87 +48,111 @@ const NewProject = () => {
 
   // API FUNCTIONS (/PROJECTS/)
 
-
   // FETCHING PROJECTS DATA
 
   //Function used to get project data
   //not called? then why's it here?
   const getProjectData = async () => {
-      const projectData = await getByID(projectID);
+    const projectData = await getByID(projectID);
 
-      if(!projectData.data) return; //why would you care about the state of this
-      // // Get user data and check if user is part of the project
-      // // Auth: replaced with shibboleth
-      // const authRes = await fetch(`/api/auth`);
-      // const authData = await authRes.json();
+    if (!projectData.data) {
+      // setFailCheck(true);
+      return;
+    } //why would you care about the state of this
+    // // Get user data and check if user is part of the project
+    // // Auth: replaced with shibboleth
+    // const authRes = await fetch(`/api/auth`);
+    // const authData = await authRes.json();
 
-      // if (authData.data) {
-      const userData = await getCurrentAccount();
+    // if (authData.data) {
+    const userData = await getCurrentAccount();
 
-      console.log("user");
-      console.log(userData.data);
+    console.log("user");
+    console.log(userData.data);
 
-      setUser(userData.data);
-      // const projectMembers = projectData.data[0].members;
+    setUser(userData.data);
+    // const projectMembers = projectData.data[0].members;
 
-      // for (let i = 0; i < projectMembers.length; i++) {
-      //   if (projectMembers[i].user_id === authData.data) {
-      //     setUserPerms(projectMembers[i].permissions);
-      //     break;
-      //   }
-      // }
+    // for (let i = 0; i < projectMembers.length; i++) {
+    //   if (projectMembers[i].user_id === authData.data) {
+    //     setUserPerms(projectMembers[i].permissions);
+    //     break;
+    //   }
+    // }
 
-      // // Get all projects user is following to see if they follow this one
-      // const followRes = await fetch(`/api/users/${authData.data}/followings/projects`);
-      // const followData = await followRes.json();
+    // // Get all projects user is following to see if they follow this one
+    // const followRes = await fetch(`/api/users/${authData.data}/followings/projects`);
+    // const followData = await followRes.json();
 
-      // if (followData.data) {
-      //   const followedProjects = followData.data;
+    // if (followData.data) {
+    //   const followedProjects = followData.data;
 
-      //   for (let i = 0; i < followedProjects.length; i++) {
+    //   for (let i = 0; i < followedProjects.length; i++) {
 
-      //     if (parseInt(followedProjects[i].project_id) === parseInt(projectID)) {
-      //       setFollowing(true);
-      //       break;
-      //     }
-      //   }
-      // }
-      // }
+    //     if (parseInt(followedProjects[i].project_id) === parseInt(projectID)) {
+    //       setFollowing(true);
+    //       break;
+    //     }
+    //   }
+    // }
+    // }
 
-      // Log follower count, and determine if user is a follower
-      formatFollowCount(projectData.data.followers.count);
-      setFollowCount(projectData.data.followers.count);
-      setDisplayedProject(projectData.data);
+    setFollowCount(projectData.data.followers.count);
+    setFollowing(
+      projectData.data.followers.users.some(
+        ({ user }) => user.userId === userData.data?.userId
+      )
+    );
+    setDisplayedProject(projectData.data);
   };
-  getProjectData();
 
   //State variable holding information on the project to be displayed
-  const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>(); 
+  const [displayedProject, setDisplayedProject] =
+    useState<ProjectWithFollowers>();
 
-  //Checks to see whether or not the current user is the maker/owner of the project being displayed
+  if (displayedProject === undefined) {
+    getProjectData();
+  }
+  
+    //Checks to see whether or not the current user is the maker/owner of the project being displayed
   // const usersProject = true;
 
   // Formats follow-count based on Figma design. Returns a string
   const formatFollowCount = (followers: number) => {
-
-    let followerStr = `${followers}`;
+    let followerNum = followers;
 
     // Start displaying in X.X+ format if >= 1000
     if (followers >= 1000) {
       const multOfHundred = followers % 100 === 0;
 
-      followers = (followers / 1000.0);
-      followerStr = followers.toFixed(1);
-      followerStr = `${followerStr}K ${multOfHundred ? "+" : ""}`;
+      followerNum /= 1000.0;
+      const truncated = followerNum.toFixed(1);
+      const formatted = `${truncated}K${multOfHundred ? "+" : ""}`;
+      return formatted;
     }
 
-    return followerStr;
+    return followerNum.toString();
   };
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
-  const buttonContent = 
-    user && user.userId !== 0 ? (
+  const buttonContent =
+    user &&
+    displayedProject?.members.some(
+      (member) =>
+        member.role.label === "Owner" && member.user.userId === user.userId
+    ) ? (
+      <>
+        {
+          <>
+            <ProjectCreatorEditor
+              newProject={false}
+              /*permissions={userPerms}*/ user={user}
+            />
+          </>
+        }
+      </>
+    ) : user ? (
       <>
         {/* Heart icon, with number indicating follows */}
         <div className="project-info-followers">
@@ -228,25 +247,24 @@ const NewProject = () => {
     ) : (
       <></>
     );
-  
 
   //Lists of users who have worked on this project
   //Members - people who actively work on the project
   // const projectMembers = displayedProject === undefined ? [] : displayedProject.members;
-  const projectMembers = displayedProject!.members; 
-
+  // FIXME either get project members using api function or fetch them out of the ProjectDetail loaded in
+  // either way, displayedProject needs to be fixed and the fake data at the top can probably be removed.
+  const projectMembers = displayedProject?.members;
   //Contributors - people who have helped, but aren't actively working on the project
-  //const projectContributors = [];
-  
+  // const projectContributors = [];
   //People list holds whatever list is currently being displayed
   //const [peopleList, setPeopleList] = useState(displayedProject === undefined ? [] : displayedProject.members);
 
   //HTML containing info on the members of the project
-  
+
   const peopleContent =
     projectMembers && projectMembers.length > 0 ? (
       <>
-        {projectMembers.map((member) => {
+        {projectMembers?.map((member) => {
           // Don't show users that chose to hide themselves as a member of this project
           // if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
           //   return (
@@ -257,21 +275,17 @@ const NewProject = () => {
 
           return (
             <div
-              key={user.userId} 
+              key={member.user.userId}
               className="project-contributor"
               onClick={() =>
-                navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
+                navigate(`${paths.routes.PROFILE}?userID=${member.user.userId}`)
               }
             >
               <img
                 className="project-contributor-profile"
-                src={`${API_BASE}/images/profiles/${user.profileImage}`}
+                src={member.user.profileImage ?? profileImage}
                 alt="contributor profile"
                 // Cannot use usePreloadedImage function because this is in a callback
-                onLoad={(e) => {
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = `${API_BASE}/images/profiles/${user.profileImage}`;
-                }}
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
                   profileImg.src = profileImage;
@@ -279,7 +293,7 @@ const NewProject = () => {
               />
               <div className="project-contributor-info">
                 <div className="team-member-name">
-                  {user.firstName} {user.lastName}
+                  {member.user.firstName} {member.user.lastName}
                 </div>
                 <div className="team-member-role">{member.role.label}</div>
               </div>
@@ -331,11 +345,15 @@ const NewProject = () => {
 
   //State variable that tracks whether project members or contributors will be displayed
   //uncomment when contributors exist in the database
-  //const [displayedPeople, setDisplayedPeople] = useState("People");
+  // const [displayedPeople, setDisplayedPeople] = useState("People");
 
   //Variable holding either 'peopleContent' or 'contributorContent', depending on 'displayedPeople' state (seen above)
-  //const profileContent =
-    //displayedPeople === "People" ? peopleContent : contributorContent;
+  // const profileContent =
+  //   displayedPeople === "People" ? (
+  //     peopleContent
+  //   ) : (
+  //     <div>There are no other contributors right now.</div>
+  //   );
 
   const openPositionListing = (positionNumber: number) => {
     //Set state to position being clicked
@@ -350,9 +368,9 @@ const NewProject = () => {
 
   //Find first member with the job title of 'Project Lead'
   //If no such member exists, use first member in project member list
-  const projectLead = displayedProject!.members.find(
-            (member) => member.role.label === "Project Lead"
-          )?.user ?? displayedProject!.members[0].user;
+  const projectLead = displayedProject?.members.find(
+    (member) => member.role.label === "Owner"
+  );
 
   //Page layout for if project data hasn't been loaded yet
   const loadingProject = <>{<div>Loading project...</div>}</>;
@@ -458,7 +476,7 @@ const NewProject = () => {
                           <span
                             onClick={() =>
                               navigate(
-                                `${paths.routes.PROFILE}?userID=${projectLead.userId}`
+                                `${paths.routes.PROFILE}?userID=${projectLead?.user.userId}`
                               )
                             }
                             id="position-contact-link"
@@ -468,7 +486,8 @@ const NewProject = () => {
                             ? `images/profiles/${projectLead?.profile_image}` 
                             : profilePicture} 
                           /> */}
-                            {projectLead.firstName} {projectLead.lastName}
+                            {projectLead?.user.firstName}{" "}
+                            {projectLead?.user.lastName}
                           </span>
                         </div>
                       </div>
@@ -483,9 +502,17 @@ const NewProject = () => {
             </div>
             <div id="project-creation">
               Created by:{" "}
-              <span className="project-info-highlight">creator</span>
+              <span className="project-info-highlight">
+                {projectLead?.user.firstName} {projectLead?.user.lastName}
+              </span>
               <br />
               Creation date
+              <span className="project-info-highlight">
+                {" "}
+                {new Date(
+                  displayedProject.createdAt.toString()
+                ).toLocaleDateString()}
+              </span>
             </div>
             <div id="project-tags">
               {

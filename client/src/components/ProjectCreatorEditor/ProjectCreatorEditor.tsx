@@ -11,7 +11,7 @@ import { createNewProject, getByID, updateProject, getPics, addPic, updatePic, d
 import { getUsersById } from '../../api/users';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-import { ProjectDetail, User } from '@looking-for-group/shared';
+import { MePrivate, ProjectDetail, User } from '@looking-for-group/shared';
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -19,7 +19,7 @@ const API_BASE = `http://localhost:8081`;
 interface Props {
   newProject: boolean;
   buttonCallback?: () => void;
-  user?: User;
+  user?: MePrivate;
   // permissions?: number;
 }
 
