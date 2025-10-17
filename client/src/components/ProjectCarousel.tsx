@@ -4,9 +4,9 @@ import { ProjectDetail } from '@looking-for-group/shared';
 
 export const ProjectCarousel = ({ project }: { project: ProjectDetail }) => {
     // If no images exist, just use the thumbnail
-    const carouselContents = (!project.images || project.images.length === 0)
+    const carouselContents = (!project.projectImages || project.projectImages.length === 0)
     ? [<img src={`/assets/project_temp-DoyePTay.png`} />]
-    : project.images.map((imageData) => (
+    : project.projectImages.map((imageData) => (
         <img
             src={imageData.image}
             onError={(e) => {
