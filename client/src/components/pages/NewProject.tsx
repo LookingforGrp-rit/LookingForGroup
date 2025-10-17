@@ -16,7 +16,6 @@ import {
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
-import usePreloadedImage from "../../functions/imageLoad";
 
 //TODO
 //✅ Have team member listings link to their respective profiles
@@ -271,19 +270,19 @@ const NewProject = () => {
           //     <></>
           //   );
           // }
-          const user = member.user; //so i don't have to go user.user.userId or anything
+          const memberUser = member.user; //so i don't have to go user.user.userId or anything
 
           return (
             <div
-              key={member.user.userId}
+              key={memberUser.userId}
               className="project-contributor"
               onClick={() =>
-                navigate(`${paths.routes.PROFILE}?userID=${member.user.userId}`)
+                navigate(`${paths.routes.PROFILE}?userID=${memberUser.userId}`)
               }
             >
               <img
                 className="project-contributor-profile"
-                src={member.user.profileImage ?? profileImage}
+                src={memberUser.profileImage ?? profileImage}
                 alt="contributor profile"
                 // Cannot use usePreloadedImage function because this is in a callback
                 onError={(e) => {
@@ -293,7 +292,7 @@ const NewProject = () => {
               />
               <div className="project-contributor-info">
                 <div className="team-member-name">
-                  {member.user.firstName} {member.user.lastName}
+                  {memberUser.firstName} {memberUser.lastName}
                 </div>
                 <div className="team-member-role">{member.role.label}</div>
               </div>
