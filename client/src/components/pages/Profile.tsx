@@ -85,6 +85,8 @@ const Profile = () => {
       const follow = await addUserFollowing(parseInt(profileID));
       if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
 
+      //ideally these stylings are in separate classes
+      //so you can toggle between them based on follow status
         followButton.innerText = "Following";
         followButton.style.backgroundColor = "Orange";
         followButton.style.width = "185px";
@@ -151,6 +153,7 @@ const Profile = () => {
         userID = response.data.userId;
       }
       isUsersProfile = (userID.toString() === profileID)
+      console.log(isUsersProfile)
 
       try {
         const { data } = await getUsersById(profileID);
@@ -206,7 +209,7 @@ const Profile = () => {
     ) : (
       <>
       {/* Or, show follow and options buttons */}
-      <button id={'profile-follow-button'} onClick={() => followUser()}>Follow</button>
+      {<button id={'profile-follow-button'} onClick={() => followUser()}>Follow</button>}
       
       {/* TODO: Implement Share, Block, and Report functionality */}
       <Dropdown>
