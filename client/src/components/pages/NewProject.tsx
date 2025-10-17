@@ -1,22 +1,20 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { Popup, PopupButton, PopupContent } from "../Popup";
-import profilePicture from "../../images/blue_frog.png";
 import profileImage from "../../icons/profile-user.png";
 import { ProjectCarousel } from "../ProjectCarousel";
 import * as paths from "../../constants/routes";
 import { ThemeIcon } from "../ThemeIcon";
-import { getByID, deleteMember} from "../../api/projects";
+import { getByID} from "../../api/projects";
 import {
   getCurrentAccount,
   deleteProjectFollowing,
   addProjectFollowing,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate, ProjectFollowers, ProjectWithFollowers, UserPreview } from "@looking-for-group/shared";
-import usePreloadedImage from "../../functions/imageLoad";
+import { MePrivate, ProjectWithFollowers} from "@looking-for-group/shared";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -27,9 +25,9 @@ const API_BASE = `http://localhost:8081`;
 
 
 //what is this for
-function useProfileImage(user: { profileImage: string }) {
-  return usePreloadedImage(user.profileImage, profilePicture);
-}
+// function useProfileImage(user: { profileImage: string }) {
+//   return usePreloadedImage(user.profileImage, profilePicture);
+// }
 
 //Main component for the project page
 const NewProject = () => {
@@ -41,7 +39,9 @@ const NewProject = () => {
   const projectID: number = Number(urlParams.get("projectID"));
 
   //state variable used to check whether or not data was successfully obtained from database
-  const [failCheck, setFailCheck] = useState(false);
+  //but why is it here? you don't even read it
+  //commenting it out, unneeded
+  //const [failCheck, setFailCheck] = useState(false);
 
   // State variable used to determine permissions level, and if user should have edit access
   // const [userPerms, setUserPerms] = useState(-1);
@@ -53,30 +53,15 @@ const NewProject = () => {
 
   // API FUNCTIONS (/PROJECTS/)
 
-  const removeMember = async (userId: number) => {
-    const response = await deleteMember(projectID, userId);
-    if (response.error) {
-      console.error("error removing a member", response.error);
-    }
-    location.reload();
-  };
 
   // FETCHING PROJECTS DATA
 
   //Function used to get project data
+  //not called? then why's it here?
   const getProjectData = async () => {
-      if (!projectID) {
-        setFailCheck(true);
-        return;
-      }
-
       const projectData = await getByID(projectID);
 
-      if (!projectData.data) {
-        setFailCheck(true);
-        return;
-      }
-
+      if(!projectData.data) return; //why would you care about the state of this
       // // Get user data and check if user is part of the project
       // // Auth: replaced with shibboleth
       // const authRes = await fetch(`/api/auth`);
@@ -117,11 +102,10 @@ const NewProject = () => {
 
       // Log follower count, and determine if user is a follower
       formatFollowCount(projectData.data.followers.count);
-
       setFollowCount(projectData.data.followers.count);
       setDisplayedProject(projectData.data);
-    
   };
+  getProjectData();
 
   //State variable holding information on the project to be displayed
   const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>(); 
@@ -148,16 +132,7 @@ const NewProject = () => {
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
-  // const buttonContent = (userPerms > 0) ? (
-  //   <>
-  //     {
-  //       <>
-  //         <ProjectCreatorEditor newProject={false} permissions={userPerms} user={user} />
-  //       </>
-  //     }
-  //   </>
-  // ) : (
-  {
+  const buttonContent = 
     user && user.userId !== 0 ? (
       <>
         {/* Heart icon, with number indicating follows */}
@@ -253,7 +228,7 @@ const NewProject = () => {
     ) : (
       <></>
     );
-  }
+  
 
   //Lists of users who have worked on this project
   //Members - people who actively work on the project
@@ -375,21 +350,9 @@ const NewProject = () => {
 
   //Find first member with the job title of 'Project Lead'
   //If no such member exists, use first member in project member list
-  const projectLead =
-    displayedProject === undefined
-      ? {
-          user_id: 0,
-          job_title: "Default guy",
-          first_name: "user",
-          last_name: "name",
-        }
-      : displayedProject.members.some(
-            (member) => member.job_title === "Project Lead"
-          )
-        ? displayedProject.members.find(
-            (member) => member.job_title === "Project Lead"
-          )
-        : displayedProject.members[0];
+  const projectLead = displayedProject!.members.find(
+            (member) => member.role.label === "Project Lead"
+          )?.user ?? displayedProject!.members[0].user;
 
   //Page layout for if project data hasn't been loaded yet
   const loadingProject = <>{<div>Loading project...</div>}</>;
@@ -447,7 +410,7 @@ const NewProject = () => {
 
                       <div id="positions-popup-info">
                         <div id="positions-popup-info-title">
-                          {displayedProject.jobs[viewedPosition]?.job_title ??
+                          {displayedProject.jobs[viewedPosition].role.label ??
                             undefined}
                         </div>
                         <div id="positions-popup-info-description">
@@ -495,7 +458,7 @@ const NewProject = () => {
                           <span
                             onClick={() =>
                               navigate(
-                                `${paths.routes.PROFILE}?userID=${projectLead?.user_id}`
+                                `${paths.routes.PROFILE}?userID=${projectLead.userId}`
                               )
                             }
                             id="position-contact-link"
@@ -505,7 +468,7 @@ const NewProject = () => {
                             ? `images/profiles/${projectLead?.profile_image}` 
                             : profilePicture} 
                           /> */}
-                            {projectLead?.first_name} {projectLead?.last_name}
+                            {projectLead.firstName} {projectLead.lastName}
                           </span>
                         </div>
                       </div>
@@ -538,7 +501,7 @@ const NewProject = () => {
                         className={`project-tag-label label-green`}
                         key={index}
                       >
-                        {tag.tag}
+                        {tag.label}
                       </div>
                     );
                   } else if (index === 3) {
@@ -576,8 +539,8 @@ const NewProject = () => {
           <div id="project-people">
             <div id="project-people-tabs">
               <button
-                className={`project-people-tab ${displayedPeople === "People" ? "project-people-tab-active" : ""}`}
-                onClick={(e) => setDisplayedPeople("People")}
+                className={`project-people-tab ${peopleContent}`}
+                //onClick={() => setDisplayedPeople("People")} wow this button is now useless
               >
                 The Team
               </button>
@@ -596,7 +559,7 @@ const NewProject = () => {
                   onClick={() => openPositionListing(index)}
                   key={index}
                 >
-                  {position.job_title}
+                  {position.role.label}
                 </button>
               ))}
             </div>
