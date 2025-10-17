@@ -6,7 +6,7 @@ import { PopupButton } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 // --- Default Project ---
 const defaultProject: ProjectDetail = {
@@ -148,7 +148,7 @@ export const MediaTab = ({
         {modifiedProject.projectImages?.map((image) => {
           const src = image.image.startsWith("blob")
             ? image.image
-            : `${API_BASE}/images/projects/${image.image}`;
+            : `images/projects/${image.image}`;
           return (
             <div className="project-editor-image-container" key={image.image}>
               <img src={src} alt="project images" />

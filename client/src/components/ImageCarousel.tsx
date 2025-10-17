@@ -6,7 +6,7 @@ import image3 from '../images/tall_img.png';
 import { ThemeIcon } from './ThemeIcon';
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 //TODO:
 //IMPORTANT: Remove this component? ImageCarouselNew.tsx is being called and seems to work as intended.
@@ -18,7 +18,6 @@ const imageList: string[] = [image1, image2, image3];
 //Variable is identical in function to pages.
 //warnings about this variable can be found in Joseph Dunne's page documentation
 //All warnings shown about this variable in pages also applies to this one
-const runningServer = true;
 
 //This post was used to help create this component (found by Ben Gomez)
 // https://blog.bitsrc.io/simple-carousel-in-react-2aac73887243
@@ -113,12 +112,12 @@ export const ImageCarousel = ({
                   >
                     <img
                       className="project-image-carousel-image"
-                      src={`${API_BASE}/images/projects/${image}`}
+                      src={`images/projects/${image}`}
                       alt={'project image'}
                       // Cannot use usePreloadedImage function because this is in a callback
                       onLoad={(e) => {
                         const projectImg = e.target as HTMLImageElement;
-                        projectImg.src = `${API_BASE}/images/projects/${image}`;
+                        projectImg.src = `images/projects/${image}`;
                       }}
                       onError={(e) => {
                         const projectImg = e.target as HTMLImageElement;

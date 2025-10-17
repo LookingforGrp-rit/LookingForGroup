@@ -22,7 +22,7 @@ import {
 } from "@looking-for-group/shared";
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 // --- Variables ---
 // Default project value
@@ -164,7 +164,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
       try {
         const response = await getUsers();
 
-        setAllUsers(response.data);
+        setAllUsers(response.data!);
 
         // list of users to search. users searchable by first name, last name, or username
         const searchableUsers = await Promise.all(response.data.map(async (user: User) => {
@@ -403,8 +403,8 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
   const savePosition = useCallback(() => {
     // check if all values present
     if (
-      currentJob.titleId === 0 ||
-      currentJob.jobTitle === '' ||
+      currentJob.jobId ||
+      currentJob.role.label === '' ||
       currentJob.description === '' ||
       currentJob.availability === '' ||
       currentJob.location === '' ||
@@ -418,7 +418,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
 
     // check if same position is present
     const existingJob = modifiedProject.jobs.find(
-      (j) => j.titleId === currentJob.titleId && j !== currentJob
+      (j) => j.jobId === currentJob.jobId && j !== currentJob
     );
     if (existingJob) {
       setErrorAddPosition('Job already exists');
@@ -431,7 +431,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
     } else {
       // find matching position
       const updatedJobs = modifiedProject.jobs.map((j) =>
-        j.titleId === currentJob.titleId ? { ...j, ...currentJob } : j
+        j.jobId === currentJob.jobId ? { ...j, ...currentJob } : j
       );
       setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
     }
@@ -441,7 +441,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
     setEditMode(false);
 
     // set current position to saved position
-    setCurrentRole(currentJob.titleId);
+    setCurrentRole(currentJob.jobId);
   }, [currentJob, modifiedProject, newPosition]);
 
 
@@ -453,13 +453,13 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
       <button
         className="edit-project-member-button"
         onClick={() => {
-          setCurrentJob(getProjectJob(currentRole) || emptyJob);
+          setCurrentJob(getProjectJob(currentRole)!);
           setEditMode(true);
         }}
       >
         <ThemeIcon id={'pencil'} width={11} height={12} className={'gradient-color-fill edit-project-member-icon'} ariaLabel={'edit'}/>
       </button>
-      <div className="positions-popup-info-title">{getProjectJob(currentRole)?.jobTitle}</div>
+      <div className="positions-popup-info-title">{getProjectJob(currentRole)?.role.label}</div>
       <div className="positions-popup-info-description">
         <div id="position-description-content">{getProjectJob(currentRole)?.description}</div>
       </div>
@@ -485,25 +485,26 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
               Lily Carter
             </span> */}
             {modifiedProject.members.map((m) => {
-                if (m.userId === modifiedProject.userId) {
+              const memberUser = m.user;
+                if (memberUser.userId === modifiedProject.owner.userId) {
                   return (
-                      <span key={m.userId} id="position-contact-link">
+                      <span key={memberUser.userId} id="position-contact-link">
                         <img 
                           className='project-member-image'
-                          src={`${API_BASE}/images/profiles/${m.profileImage}`}
+                          src={`images/profiles/${memberUser.profileImage}`}
                           alt="profile"
                           // default profile picture if user image doesn't load
                           // Cannot use usePreloadedImage function because this is in a callback
                           onLoad={() => {
-                            const profileImg = document.getElementById(`profile-image-${m.userId}`) as HTMLImageElement;
-                            profileImg.src = `${API_BASE}/images/profiles/${m.profileImage}`;
+                            const profileImg = document.getElementById(`profile-image-${memberUser.userId}`) as HTMLImageElement;
+                            profileImg.src = `images/profiles/${memberUser.profileImage}`;
                           }}
                           onError={(e) => {
                             const profileImg = e.target as HTMLImageElement;
                             profileImg.src = profileImage;
                           }}
                         />
-                        {m.firstName} {m.lastName}
+                        {memberUser.firstName} {memberUser.lastName}
                       </span>
                   );
                 }
@@ -729,13 +730,13 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
                 markup: (
                   <>
                     <img className='project-member-image' 
-                      src={`${API_BASE}/images/profiles/${m.profileImage}`}
+                      src={`images/profiles/${m.profileImage}`}
                       alt="profile"
                       title={'Profile picture'}
                       // Cannot use usePreloadedImage function because this is in a callback
                       onLoad={(e) => {
                         const profileImg = e.target as HTMLImageElement;
-                        profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                        profileImg.src = `images/profiles/${profileImg}`;
                       }}
                       onError={(e) => {
                         const profileImg = e.target as HTMLImageElement;
@@ -839,13 +840,13 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
           <div key={m.user.userId} className="project-editor-project-member">
             <img
               className="project-member-image"
-              src={`${API_BASE}/images/profiles/${m.user.profileImage}`}
+              src={`images/profiles/${m.user.profileImage}`}
               alt="profile image"
               title={'Profile picture'}
                 // Cannot use usePreloadedImage function because this is in a callback
                 onLoad={(e) => {
                   const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                  profileImg.src = `images/profiles/${profileImg}`;
                 }}
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
@@ -881,7 +882,7 @@ export const TeamTab = ({ projectData, setProjectData, setErrorMember, setErrorP
                   >
                     <img
                       className="project-member-image"
-                      src={`${API_BASE}/images/profiles/${m.user.profileImage}`}
+                      src={`images/profiles/${m.user.profileImage}`}
                       alt="profile image"
                       // default profile picture if user image doesn't load
                       onError={(e) => {

@@ -2,16 +2,14 @@ import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./Image
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import usePreloadedImage from "../functions/imageLoad";
-import { Project } from "@looking-for-group/shared";
+import { ProjectWithFollowers } from "@looking-for-group/shared";
 
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
 
 export const DiscoverCarousel = ({ dataList = [] }) => {
-    const projectImg = usePreloadedImage(`${API_BASE}/images/thumbnails/`, placeholderThumbnail);
+    const projectImg = usePreloadedImage(`images/thumbnails/`, placeholderThumbnail);
 
     // Creates HTML elements from data, passed into the carousel
-    const carouselContents = dataList.map((project: Project) => {
+    const carouselContents = dataList.map((project: ProjectWithFollowers) => {
         return (
             <>
                 <div className='discover-project-image'>

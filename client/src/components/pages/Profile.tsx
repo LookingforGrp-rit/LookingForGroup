@@ -27,7 +27,7 @@ import { Input } from "../Input";
 import LabelInputBox from "../LabelInputBox";
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 type Profile = MeDetail;
 type Tag = UserSkill;
@@ -297,7 +297,7 @@ const Profile = () => {
         {/* New profile display using css grid, will contain all info except for projects */}
         <div id="profile-information-grid">
           <img
-            src={usePreloadedImage(`${API_BASE}/images/profiles/${displayedProfile.profileImage}`, profilePicture)}
+            src={usePreloadedImage(`images/profiles/${displayedProfile.profileImage}`, profilePicture)}
             id="profile-image"
             alt="profile image"
             onError={(e) => {

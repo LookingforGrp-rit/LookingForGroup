@@ -29,7 +29,7 @@ interface ProfileEditButtonProps {
 type EditProfileData = Partial<MeDetail>;
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 /*
 TO DO: 
@@ -69,7 +69,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   const [currentPFPLink, setCurrentPFPLink] = useState("");
 
   useEffect(() => {
-    setCurrentPFPLink(`${API_BASE}/images/profiles/${user.profileImage}`);
+    setCurrentPFPLink(`images/profiles/${user.profileImage}`);
   }, [user.profileImage]);
 
   const [currentEditData, setCurrentEditData] = useState<EditProfileData>({
@@ -110,7 +110,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   }
 
   const getImage = async (theImageName: string) => {
-    const url = `${API_BASE}/images/profiles/${theImageName}`;
+    const url = `images/profiles/${theImageName}`;
     setCurrentPFPLink(url);
   };
 
@@ -471,7 +471,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                     </div>
                   );
                 } else {
-                  const projectURL = `${API_BASE}/images/thumbnails/${project.thumbnail}`;
+                  const projectURL = `images/thumbnails/${project.thumbnail}`;
                   return (
                     <div className="list-project">
                       <div className="inner-list-project">

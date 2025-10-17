@@ -10,7 +10,7 @@ import { Input } from '../../Input';
 import LabelInputBox from '../../LabelInputBox';
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 // Methods
 const setUpInputs = async (profileData: ProfileData) => {
@@ -48,7 +48,7 @@ const setUpInputs = async (profileData: ProfileData) => {
   pairInputToData('funFact', profileData.fun_fact);
   pairInputToData('bio', profileData.bio);
   // Load in the profile picture
-  <ProfileImageUploader initialImageUrl={`${API_BASE}/images/profiles/${profileData.profile_image}`} />
+  <ProfileImageUploader initialImageUrl={`images/profiles/${profileData.profile_image}`} />
 };
 
 // Components
@@ -77,7 +77,7 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
 }) => {
 
   // Preview URL for profile image
-  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`${API_BASE}/images/profiles/${profile.profile_image}`, "../../../images/blue_frog.png"));
+  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`images/profiles/${profile.profile_image}`, "../../../images/blue_frog.png"));
 
   // Effects
   // Set up profile input on first load

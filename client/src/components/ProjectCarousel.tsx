@@ -3,7 +3,7 @@ import placeholderThumbnail from '../images/project_temp.png'; // if this gets u
 import { ProjectDetail } from '@looking-for-group/shared';
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 export const ProjectCarousel = ({ project }: { project: ProjectDetail }) => {
     // If no images exist, just use the thumbnail
@@ -11,10 +11,10 @@ export const ProjectCarousel = ({ project }: { project: ProjectDetail }) => {
     ? [<img src={`/assets/project_temp-DoyePTay.png`} />]
     : project.images.map((imageData) => (
         <img
-            src={`${API_BASE}/images/projects/${imageData.image}`}
+            src={`images/projects/${imageData.image}`}
             onLoad={(e) => {
                 const projectImg = e.target as HTMLImageElement;
-                projectImg.src = `${API_BASE}/images/projects/${imageData.image}`;
+                projectImg.src = `images/projects/${imageData.image}`;
             }}
             onError={(e) => {
                 const projectImg = e.target as HTMLImageElement;
