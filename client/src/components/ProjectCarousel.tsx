@@ -2,20 +2,13 @@ import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./Image
 import placeholderThumbnail from '../images/project_temp.png'; // if this gets used, use preloader function in /functions/imageLoad.tsx
 import { ProjectDetail } from '@looking-for-group/shared';
 
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
-
 export const ProjectCarousel = ({ project }: { project: ProjectDetail }) => {
     // If no images exist, just use the thumbnail
     const carouselContents = (!project.images || project.images.length === 0)
     ? [<img src={`/assets/project_temp-DoyePTay.png`} />]
     : project.images.map((imageData) => (
         <img
-            src={`${API_BASE}/images/projects/${imageData.image}`}
-            onLoad={(e) => {
-                const projectImg = e.target as HTMLImageElement;
-                projectImg.src = `${API_BASE}/images/projects/${imageData.image}`;
-            }}
+            src={imageData.image}
             onError={(e) => {
                 const projectImg = e.target as HTMLImageElement;
                 projectImg.src = placeholderThumbnail;
