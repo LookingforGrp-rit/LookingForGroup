@@ -24,7 +24,9 @@ import {
   JobLocation,
   JobCompensation,
   Role,
+  CreateProjectJobInput,
 } from "@looking-for-group/shared";
+import { Fillable } from "@looking-for-group/client";
 
 //backend base url for getting images
 const API_BASE = `http://localhost:8081`;
@@ -45,18 +47,15 @@ const API_BASE = `http://localhost:8081`;
 //   apiUrl: ''
 // };
 
-// const emptyJob: ProjectJob = {
-//   jobId: 0,
-//   role: {roleId: 0, label: '' },
-//   availability: 'Flexible',
-//   duration: 'ShortTerm',
-//   location: 'Remote',
-//   compensation: 'Unpaid',
-//   description: '',
-//   createdAt: new Date(),
-//   updatedAt: new Date(),
-//   apiUrl: ''
-// };
+const emptyJob: Fillable<CreateProjectJobInput> = {
+  availability: null,
+  duration: null,
+  location: null,
+  compensation: null,
+  roleId: null,
+  contactUserId: null,
+  description: "",
+};
 
 // Job detail options (according to documentation enums)
 const availabilityOptions = ["FullTime", "PartTime", "Flexible"];
@@ -106,7 +105,9 @@ export const TeamTab = ({
 
   // tracking edits for...
   const [currentMember, setCurrentMember] = useState<ProjectMember>();
-  const [currentJob, setCurrentJob] = useState<ProjectJob>();
+  const [currentJob, setCurrentJob] =
+    useState<Fillable<CreateProjectJobInput>>();
+  const [currentlyEditingJobId, setCurrentlyEditingJobId] = useState<number | null>();
 
   // store new member data to save later
   const [newMember, setNewMember] = useState<ProjectMember>();
@@ -163,12 +164,18 @@ export const TeamTab = ({
       const response = await getJobTitles();
       if (response.data) {
         setAllRoles(response.data);
+
+        const memberRole = response.data.find(
+          (role) => role.label === "Member"
+        );
+        if (memberRole) emptyJob.roleId = memberRole.roleId;
+        if (!currentJob) setCurrentJob({...emptyJob});
       }
     };
     if (allRoles.length === 0) {
       getJobsList();
     }
-  }, [allRoles]);
+  }, [allRoles, currentJob]);
 
   // Get user list if allUsers is empty
   useEffect(() => {
@@ -434,13 +441,13 @@ export const TeamTab = ({
   const savePosition = useCallback(() => {
     // check if all values present
     if (
-      currentJob.titleId === 0 ||
-      currentJob.jobTitle === "" ||
-      currentJob.description === "" ||
-      currentJob.availability === "" ||
-      currentJob.location === "" ||
-      currentJob.duration === "" ||
-      currentJob.compensation === ""
+      currentJob?.roleId === null ||
+      currentJob?.availability === null ||
+      currentJob?.description === "" ||
+      currentJob?.location === null ||
+      currentJob?.duration === null ||
+      currentJob?.compensation === null ||
+      currentJob?.contactUserId === null
     ) {
       // set error
       setErrorAddPosition("All fields are required");
@@ -451,7 +458,8 @@ export const TeamTab = ({
     // TODO projects can't have two leads? two devs? two artists? etc..
     const existingJob = modifiedProject.jobs.find(
       (job) =>
-        job.role.roleId === currentJob?.role.roleId && job.jobId !== currentJob.jobId
+        job.role.roleId === currentJob?.roleId &&
+        job.jobId !== currentJob.jobId
     );
     if (existingJob) {
       setErrorAddPosition("Job already exists");
@@ -477,7 +485,7 @@ export const TeamTab = ({
     setEditMode(false);
 
     // set current position to saved position
-    setCurrentRole(currentJob.titleId);
+    setCurrentRole(currentJob?.roleId);
   }, [currentJob, modifiedProject, newPosition]);
 
   // --- Content variables ---
@@ -488,6 +496,7 @@ export const TeamTab = ({
         className="edit-project-member-button"
         onClick={() => {
           setCurrentJob(getProjectJob(currentRole) || emptyJob);
+          setCurrentlyEditingJobId(getProjectJob(currentRole)?.jobId ?? null);
           setEditMode(true);
         }}
       >
