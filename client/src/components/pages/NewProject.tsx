@@ -51,7 +51,7 @@ const NewProject = () => {
   
   //checking function for if the current user is following a project
 const checkFollow = useCallback(async () => {
-  if(user){
+  if(user) {
   const followings = (await getProjectFollowing(user.userId)).data?.projects;
 
   let isFollow = false;
@@ -70,15 +70,15 @@ const checkFollow = useCallback(async () => {
 useEffect(() => {
   const getProjectData = async () => {
     //get our current user for use later
+    //i think the fact that this is the entire user is what's making it loop
     const userResp = await getCurrentAccount();
     if(userResp.data) setUser(userResp.data);
 
     //get the project itself
     const projectResp = await getByID(projectID);
-
     if (projectResp.data) { 
       setDisplayedProject(projectResp.data)
-      await checkFollow();
+      checkFollow();
       if(displayedProject !== undefined) setFollowCount(displayedProject?.followers.count);
     }
     

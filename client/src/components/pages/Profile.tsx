@@ -67,7 +67,6 @@ const Profile = () => {
   // --------------------
 
   //a direct check to backend for determining whether or not a user is followed
-  //it's a function so i can use it for other things
 const checkFollow = useCallback(async () => {
   const followings = (await getUserFollowing(userID)).data?.users;
 
@@ -157,12 +156,8 @@ const checkFollow = useCallback(async () => {
     const getProfileData = async () => {
       // Get the userID for our current user
       const response = await getCurrentAccount()
-
-      if (response.data) {
-        userID = response.data.userId;
-      }
+      if (response.data) userID = response.data.userId;
       setIsUsersProfile(userID.toString() === profileID);
-      console.log(isUsersProfile)
 
       try {
         const { data } = await getUsersById(profileID);
