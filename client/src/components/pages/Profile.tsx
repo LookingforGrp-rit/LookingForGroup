@@ -154,9 +154,9 @@ const checkFollow = useCallback(async () => {
   // Gets the profile data
   useEffect(() => {
     const getProfileData = async () => {
-      // Get the profileID to pull data for whoever's profile it is
+      // Get the userID for our current user
       const response = await getCurrentAccount()
-        console.log(response)
+
       if (response.data) {
         userID = response.data.userId;
       }

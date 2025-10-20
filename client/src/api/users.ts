@@ -23,6 +23,7 @@ import type {
   AddUserMajorInput,
   MyMajor,
   UserFollowsList,
+  ProjectFollowsList,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -291,7 +292,7 @@ export const leaveProject = async (projectID: number) => {
  */
 export const getProjectFollowing = async (
   userId: number
-): Promise<ApiResponse<ProjectPreview[]>> => {
+): Promise<ApiResponse<ProjectFollowsList>> => {
   const url = `/users/${userId}/followings/projects`;
   const response = await GET(url);
 

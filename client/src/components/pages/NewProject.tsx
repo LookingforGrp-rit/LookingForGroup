@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -13,6 +13,7 @@ import {
   getCurrentAccount,
   deleteProjectFollowing,
   addProjectFollowing,
+  getProjectFollowing,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
@@ -21,7 +22,8 @@ import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 //✅ Have team member listings link to their respective profiles
 //Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
 
-
+//bit of a silly implementation but it stopped yelling at me when i put this soooo
+let userID: number;
 
 //Main component for the project page
 const NewProject = () => {
@@ -33,14 +35,11 @@ const NewProject = () => {
   const projectID: number = Number(urlParams.get("projectID"));
 
   //state variable used to check whether or not data was successfully obtained from database
-  //but why is it here? you don't even read it
-  //commenting it out, unneeded
-  //const [failCheck, setFailCheck] = useState(false);
-
   // State variable used to determine permissions level, and if user should have edit access
   // const [userPerms, setUserPerms] = useState(-1);
 
-  const [user, setUser] = useState<MePrivate | null>(null);
+  const [user, setUser] = useState<MePrivate>();
+  const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>();
 
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
@@ -50,70 +49,60 @@ const NewProject = () => {
   // FETCHING PROJECTS DATA
 
   //Function used to get project data
-  //not called? then why's it here?
+  
+  
+  //checkFollow comes back for projects
+const checkFollow = useCallback(async () => {
+  const followings = (await getProjectFollowing(userID)).data?.projects;
+
+  let isFollowing = false;
+
+  if(followings !== undefined){ //if they have no follows then obviously they can't be following the project we're looking at
+  for (const follower of followings){
+    isFollowing = (follower.project.projectId === projectID);
+  }
+  }
+  setFollowing(isFollowing);
+  return isFollowing;
+}, [projectID]);
+
+useEffect(() => {
   const getProjectData = async () => {
-    const projectData = await getByID(projectID);
+    //get our current user for use later
+    const userResp = await getCurrentAccount();
+    if(userResp.data) setUser(userResp.data);
 
-    if (!projectData.data) {
-      // setFailCheck(true);
-      return;
-    } //why would you care about the state of this
-    // // Get user data and check if user is part of the project
-    // // Auth: replaced with shibboleth
-    // const authRes = await fetch(`/api/auth`);
-    // const authData = await authRes.json();
-
-    // if (authData.data) {
-    const userData = await getCurrentAccount();
+    if(user !== undefined) userID = user?.userId; 
+    //i'm a little tired of seeing "user might be undefined"
+    //i have just defined it on the line above you
 
     console.log("user");
-    console.log(userData.data);
+    console.log(user);
 
-    setUser(userData.data);
-    // const projectMembers = projectData.data[0].members;
+    //get the project itself
+    const projectResp = await getByID(projectID);
+    if (projectResp.data) { 
+      setDisplayedProject(projectResp.data)
+      checkFollow();
+    console.log("project");
+    console.log(displayedProject);
+    }
 
-    // for (let i = 0; i < projectMembers.length; i++) {
-    //   if (projectMembers[i].user_id === authData.data) {
-    //     setUserPerms(projectMembers[i].permissions);
-    //     break;
-    //   }
-    // }
-
-    // // Get all projects user is following to see if they follow this one
-    // const followRes = await fetch(`/api/users/${authData.data}/followings/projects`);
-    // const followData = await followRes.json();
-
-    // if (followData.data) {
-    //   const followedProjects = followData.data;
-
-    //   for (let i = 0; i < followedProjects.length; i++) {
-
-    //     if (parseInt(followedProjects[i].project_id) === parseInt(projectID)) {
-    //       setFollowing(true);
-    //       break;
-    //     }
-    //   }
-    // }
-    // }
-
-    setFollowCount(projectData.data.followers.count);
+    if(displayedProject !== undefined){
+    setFollowCount(displayedProject?.followers.count);
     setFollowing(
-      projectData.data.followers.users.some(
-        ({ user }) => user.userId === userData.data?.userId
+      displayedProject.followers.users.some(
+        ({ user }) => user.userId === user.userId //uh how did this happen
       )
     );
-    setDisplayedProject(projectData.data);
+    }
   };
-
-  //State variable holding information on the project to be displayed
-  const [displayedProject, setDisplayedProject] =
-    useState<ProjectWithFollowers>();
-
-  if (displayedProject === undefined) {
     getProjectData();
-  }
+}, [projectID, checkFollow, displayedProject, user])
+
   
     //Checks to see whether or not the current user is the maker/owner of the project being displayed
+    //oh do i need this too
   // const usersProject = true;
 
   // Formats follow-count based on Figma design. Returns a string
@@ -132,6 +121,29 @@ const NewProject = () => {
 
     return followerNum.toString();
   };
+
+  const followProject = (async () => {
+    const followButton = document.getElementById("project-follow-button") as HTMLButtonElement; //if you wanna use this class to style it some more you can
+    console.log(isFollowing)
+
+    if (!isFollowing) {
+      await addProjectFollowing(projectID).then((res) => {
+        if (res.status === 200) {
+          setFollowing(true);
+          setFollowCount(followCount + 1);
+          if(followButton) followButton.className = "following"
+        }
+      });
+    } else {
+      await deleteProjectFollowing(projectID).then((res) => {
+        if (res.status === 200) {
+          setFollowing(false);
+          setFollowCount(followCount - 1);
+          if(followButton) followButton.className = ""
+        }
+      });
+    }
+  })
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
@@ -160,23 +172,7 @@ const NewProject = () => {
           </p>
           <button
             className={`follow-icon ${isFollowing ? "following" : ""}`}
-            onClick={() => {
-              if (!isFollowing) {
-                addProjectFollowing(projectID).then((res) => {
-                  if (res.status === 200) {
-                    setFollowing(true);
-                    setFollowCount(followCount + 1);
-                  }
-                });
-              } else {
-                deleteProjectFollowing(projectID).then((res) => {
-                  if (res.status === 200) {
-                    setFollowing(false);
-                    setFollowCount(followCount - 1);
-                  }
-                });
-              }
-            }}
+            onClick={followProject}
           >
             <i
               className={`fa-solid fa-heart ${isFollowing ? "following" : ""}`}
