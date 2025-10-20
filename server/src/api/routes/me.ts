@@ -64,11 +64,7 @@ router.delete(
   authenticated(deleteProjectFollowing),
 );
 //Follows a user
-router.post(
-  '/followings/people/:id',
-  userExistsAt('path', 'receiverId'),
-  authenticated(addUserFollowing),
-);
+router.post('/followings/people/:id', userExistsAt('path', 'id'), authenticated(addUserFollowing));
 //Unfollows a user
 router.delete(
   '/followings/people/:id',
