@@ -100,11 +100,9 @@ const checkFollow = useCallback(async () => {
       const follow = await addUserFollowing(parseInt(profileID));
       if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
         followButton.innerText = "Following";
-        followButton.className = "user-followed"; //doesn't work fully, id styling overrides it
       } else {
       await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
         followButton.innerText = "Follow";
-        followButton.className = "user-not-followed";
       }
     }
   };
