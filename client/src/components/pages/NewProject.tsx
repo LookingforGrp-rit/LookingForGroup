@@ -4,7 +4,7 @@ import { Header } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
 import { Popup, PopupButton, PopupContent } from "../Popup";
-import profileImage from "../../icons/profile-user.png";
+import profileImage from "../../images/blue_frog.png";
 import { ProjectCarousel } from "../ProjectCarousel";
 import * as paths from "../../constants/routes";
 import { ThemeIcon } from "../ThemeIcon";
