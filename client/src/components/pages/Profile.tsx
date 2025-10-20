@@ -75,7 +75,8 @@ const checkFollow = useCallback(async () => {
 
   if(followings !== undefined){ //if they have no follows then obviously they can't be following the guy we're looking at
   for (const follower of followings){
-    isFollowing = (follower.user.userId === parseInt(profileID));
+    isFollowing = (follower.user.userId === parseInt(profileID))
+    if (isFollowing) break;
   }
   }
   setIsFollow(isFollowing);
@@ -93,15 +94,15 @@ const checkFollow = useCallback(async () => {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
       //adds the user following
-    const toggleFollow = !await checkFollow();
-      console.log(toggleFollow)
+    const toggleFollow = !(await checkFollow());
     setIsFollow(toggleFollow);
       if (toggleFollow) {
-      const follow = await addUserFollowing(parseInt(profileID));
-      if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
-        followButton.innerText = "Following";
-      } else {
-      await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
+        const follow = await addUserFollowing(parseInt(profileID));
+        if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
+          followButton.innerText = "Following";
+      }
+      else {
+        await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
         followButton.innerText = "Follow";
       }
     }

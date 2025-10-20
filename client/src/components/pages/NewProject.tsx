@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header } from "../Header";
+import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
 import { Popup, PopupButton, PopupContent } from "../Popup";
@@ -22,8 +22,6 @@ import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 //✅ Have team member listings link to their respective profiles
 //Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
 
-//bit of a silly implementation but it stopped yelling at me when i put this soooo
-let userID: number;
 
 //Main component for the project page
 const NewProject = () => {
@@ -38,7 +36,7 @@ const NewProject = () => {
   // State variable used to determine permissions level, and if user should have edit access
   // const [userPerms, setUserPerms] = useState(-1);
 
-  const [user, setUser] = useState<MePrivate>();
+  const [user, setUser] = useState<MePrivate | null>();
   const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>();
 
   const [followCount, setFollowCount] = useState(0);
@@ -51,20 +49,23 @@ const NewProject = () => {
   //Function used to get project data
   
   
-  //checkFollow comes back for projects
+  //checking function for if the current user is following a project
 const checkFollow = useCallback(async () => {
-  const followings = (await getProjectFollowing(userID)).data?.projects;
+  if(user){
+  const followings = (await getProjectFollowing(user.userId)).data?.projects;
 
-  let isFollowing = false;
+  let isFollow = false;
 
-  if(followings !== undefined){ //if they have no follows then obviously they can't be following the project we're looking at
+  if(followings !== undefined){
   for (const follower of followings){
-    isFollowing = (follower.project.projectId === projectID);
+    isFollow = (follower.project.projectId === projectID);
+    if(isFollow) break;
   }
   }
-  setFollowing(isFollowing);
-  return isFollowing;
-}, [projectID]);
+  setFollowing(isFollow);
+  return isFollow;
+  }
+}, [projectID, user]);
 
 useEffect(() => {
   const getProjectData = async () => {
@@ -72,30 +73,15 @@ useEffect(() => {
     const userResp = await getCurrentAccount();
     if(userResp.data) setUser(userResp.data);
 
-    if(user !== undefined) userID = user?.userId; 
-    //i'm a little tired of seeing "user might be undefined"
-    //i have just defined it on the line above you
-
-    console.log("user");
-    console.log(user);
-
     //get the project itself
     const projectResp = await getByID(projectID);
+
     if (projectResp.data) { 
       setDisplayedProject(projectResp.data)
-      checkFollow();
-    console.log("project");
-    console.log(displayedProject);
+      await checkFollow();
+      if(displayedProject !== undefined) setFollowCount(displayedProject?.followers.count);
     }
-
-    if(displayedProject !== undefined){
-    setFollowCount(displayedProject?.followers.count);
-    setFollowing(
-      displayedProject.followers.users.some(
-        ({ user }) => user.userId === user.userId //uh how did this happen
-      )
-    );
-    }
+    
   };
     getProjectData();
 }, [projectID, checkFollow, displayedProject, user])
@@ -123,25 +109,28 @@ useEffect(() => {
   };
 
   const followProject = (async () => {
-    const followButton = document.getElementById("project-follow-button") as HTMLButtonElement; //if you wanna use this class to style it some more you can
-    console.log(isFollowing)
-
-    if (!isFollowing) {
+    const followButton = document.getElementById("project-follow-button") as HTMLButtonElement;
+    setFollowing(!await checkFollow());
+    if (!loggedIn) {
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
+    }
+    else{
+      if (isFollowing) {
       await addProjectFollowing(projectID).then((res) => {
         if (res.status === 200) {
-          setFollowing(true);
           setFollowCount(followCount + 1);
-          if(followButton) followButton.className = "following"
+          if(followButton) followButton.className = "project-info-followers following"
         }
       });
     } else {
       await deleteProjectFollowing(projectID).then((res) => {
         if (res.status === 200) {
-          setFollowing(false);
           setFollowCount(followCount - 1);
-          if(followButton) followButton.className = ""
+          if(followButton) followButton.className = "project-info-followers"
         }
       });
+    }
+
     }
   })
 
@@ -246,8 +235,6 @@ useEffect(() => {
   //Lists of users who have worked on this project
   //Members - people who actively work on the project
   // const projectMembers = displayedProject === undefined ? [] : displayedProject.members;
-  // FIXME either get project members using api function or fetch them out of the ProjectDetail loaded in
-  // either way, displayedProject needs to be fixed and the fake data at the top can probably be removed.
   const projectMembers = displayedProject?.members;
   //Contributors - people who have helped, but aren't actively working on the project
   // const projectContributors = [];
