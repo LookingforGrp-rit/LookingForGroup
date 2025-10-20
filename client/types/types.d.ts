@@ -38,7 +38,7 @@ interface ProjectChangesCreates {
 }
 
 interface ProjectChangesUpdates {
-  fields: UpdateProjectInput;
+  fields: CRUDRequest<UpdateProjectInput>;
   projectImages: CRUDRequest<UpdateProjectImageInput>[];
   projectSocials: CRUDRequest<UpdateProjectSocialInput>[];
   jobs: CRUDRequest<UpdateProjectJobInput>[];
@@ -46,12 +46,12 @@ interface ProjectChangesUpdates {
 }
 
 interface ProjectChangesDeletes {
-  tags: Id[];
-  projectImages: Id[];
-  projectSocials: Id[];
-  jobs: Id[];
-  members: Id[];
-  mediums: Id[];
+  tags: CRUDRequest<null>[];
+  projectImages: CRUDRequest<null>[];
+  projectSocials: CRUDRequest<null>[];
+  jobs: CRUDRequest<null>[];
+  members: CRUDRequest<null>[];
+  mediums: CRUDRequest<null>[];
 }
 
 type Id = { id: number };
