@@ -26,7 +26,7 @@ interface ProjectPanelProps {
 
 export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
   const navigate = useNavigate();
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectID}`;
+  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectId}`;
 
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
   //const [isFollowing, setFollowing] = useState(project.followers.isFollowing);
