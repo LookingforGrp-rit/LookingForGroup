@@ -19,7 +19,7 @@ import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ThemeIcon } from "../ThemeIcon";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getCurrentAccount } from "../../api/users";
+import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getCurrentAccount, getUserFollowing } from "../../api/users";
 import { getUsersById } from "../../api/users";
 import { MeDetail, ProjectPreview, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
@@ -32,8 +32,6 @@ type Project = ProjectPreview;
 // const [profileLoaded, setProfileLoaded] = useState(false);
 let userID: number;
 
-// Change this when follow backend is added, this is just for testing purposes
-let toggleFollow = false;
 
 const Profile = () => {
   // --------------------
@@ -47,9 +45,11 @@ const Profile = () => {
   // User ID of profile being viewed
   const profileID: string = urlParams.get("userID")!;
 
-  let isUsersProfile: boolean = false;
+  const [isUsersProfile, setIsUsersProfile] = useState<boolean>(false);
 
   const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
+
+  const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
 
   // Stores all projects
   const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
@@ -66,35 +66,45 @@ const Profile = () => {
   // Helper functions
   // --------------------
 
+  //a direct check to backend for determining whether or not a user is followed
+  //it's a function so i can use it for other things
+const checkFollow = useCallback(async () => {
+  const followings = (await getUserFollowing(userID)).data?.users;
+
+  let isFollowing = false;
+
+  if(followings !== undefined){ //if they have no follows then obviously they can't be following the guy we're looking at
+  for (const follower of followings){
+    isFollowing = (follower.user.userId === parseInt(profileID));
+  }
+  }
+  setIsFollow(isFollowing);
+  return isFollowing;
+}, [profileID])
+
   // 'Follow' button
   const followUser = async () => {
     const followButton = document.getElementById(
       "profile-follow-button"
     ) as HTMLButtonElement;
-    toggleFollow = !toggleFollow;
+
 
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
-      // (Follow behavior would be implemented here)
-      // TODO implement follow behavior
-
       //adds the user following
-
+    const toggleFollow = !await checkFollow();
+      console.log(toggleFollow)
+    setIsFollow(toggleFollow);
       if (toggleFollow) {
       const follow = await addUserFollowing(parseInt(profileID));
       if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
-
-      //ideally these stylings are in separate classes
-      //so you can toggle between them based on follow status
         followButton.innerText = "Following";
-        followButton.style.backgroundColor = "Orange";
-        followButton.style.width = "185px";
+        followButton.className = "user-followed"; //doesn't work fully, id styling overrides it
       } else {
       await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
         followButton.innerText = "Follow";
-        followButton.style.backgroundColor = "var(--primary-color)";
-        followButton.style.width = "145px";
+        followButton.className = "user-not-followed";
       }
     }
   };
@@ -152,7 +162,7 @@ const Profile = () => {
       if (response.data) {
         userID = response.data.userId;
       }
-      isUsersProfile = (userID.toString() === profileID)
+      setIsUsersProfile(userID.toString() === profileID);
       console.log(isUsersProfile)
 
       try {
@@ -163,6 +173,7 @@ const Profile = () => {
         if (data) {
           setDisplayedProfile(data);
           await getProfileProjectData();
+          checkFollow();
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -173,7 +184,7 @@ const Profile = () => {
       }
     };
     getProfileData();
-  }, [getProfileProjectData, profileID]);
+  }, [getProfileProjectData, checkFollow, isUsersProfile, profileID]);
 
   // --------------------
   // Components
@@ -209,7 +220,12 @@ const Profile = () => {
     ) : (
       <>
       {/* Or, show follow and options buttons */}
-      {<button id={'profile-follow-button'} onClick={() => followUser()}>Follow</button>}
+      {/*must change state based on follow status*/}
+      {isFollow ? (
+        <button id={'profile-follow-button'} className="user-followed" style={{backgroundColor: "orange"}} onClick={() => followUser()}>Following</button>
+      ) : (
+        <button id={'profile-follow-button'} className="user-not-followed" onClick={() => followUser()}>Follow</button>
+      )}
       
       {/* TODO: Implement Share, Block, and Report functionality */}
       <Dropdown>
