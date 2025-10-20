@@ -12,7 +12,7 @@ import usePreloadedImage from '../functions/imageLoad';
 import { MeDetail } from '@looking-for-group/shared';
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 /*
 
@@ -50,7 +50,7 @@ export const ProfileCard = ({ profile }: ProfileCardProps ) => {
   return (
     <div className="discover-card">
       <img
-        src={usePreloadedImage(`${API_BASE}/images/profiles/${profile.profileImage}`, profilePicture)}
+        src={usePreloadedImage(`images/profiles/${profile.profileImage}`, profilePicture)}
         alt={'profile image'}
       />
       <div id="discover-card-body">

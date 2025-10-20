@@ -6,7 +6,7 @@ import usePreloadedImage from '../functions/imageLoad';
 import { MeDetail } from '@looking-for-group/shared';
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 interface ProfilePanelProps {
   profileData: MeDetail;
@@ -19,7 +19,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   return (
     <div className={'profile-panel'}>
       <img
-        src={usePreloadedImage(`${API_BASE}/images/profiles/${profileData.profileImage}`, profilePicture)}
+        src={usePreloadedImage(`images/profiles/${profileData.profileImage}`, profilePicture)}
         alt='profile image'
         // default profile picture if profile image doesn't load
         onError={(e) => {

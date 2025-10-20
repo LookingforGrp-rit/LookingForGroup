@@ -12,9 +12,6 @@ import profilePicture from '../images/blue_frog.png';
 //user utils
 import { getCurrentUsername } from '../api/users.ts';
 
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
-
 //Header component to be used in pages
 
 export let loggedIn = false;
@@ -121,14 +118,14 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
           <DropdownButton buttonId="profile-btn">
             {(profileImg) ? (
               <img
-                src={`${API_BASE}/images/profiles/${profileImg}`}
+                src={`images/profiles/${profileImg}`}
                 id={'profile-img-icon'}
                 className={'rounded'}
                 title={'Profile picture'}
                 // Cannot use usePreloadedImage function because this is in a callback
                 onLoad={(e) => {
                   const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                  profileImg.src = `images/profiles/${profileImg}`;
                 }}
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
@@ -183,13 +180,13 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 <button onClick={() => handleProfileAccess()} id="header-profile-user">
                   {(profileImg) ? (
                     <img
-                      src={`${API_BASE}/images/profiles/${profileImg}`}
+                      src={`images/profiles/${profileImg}`}
                       className={'rounded'}
                       alt={'profile'}
                       // Cannot use usePreloadedImage function because this is in a callback
                       onLoad={(e) => {
                         const profileImg = e.target as HTMLImageElement;
-                        profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                        profileImg.src = `images/profiles/${profileImg}`;
                       }}
                       onError={(e) => {
                         const profileImg = e.target as HTMLImageElement;

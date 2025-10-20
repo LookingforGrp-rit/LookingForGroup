@@ -10,7 +10,7 @@ import { ApiResponse } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 const MyProjectsDisplayGrid = ({ projectData }) => {
   //Navigation hook
@@ -63,7 +63,7 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
       <img
         className="grid-card-image"
         src={(projectData.thumbnail)
-          ? `${API_BASE}/images/thumbnails/${projectData.thumbnail}`
+          ? `images/thumbnails/${projectData.thumbnail}`
           : `/assets/project_temp-DoyePTay.png`
         }
         alt={`${projectData.title} Thumbnail`}

@@ -19,75 +19,24 @@ import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ThemeIcon } from "../ThemeIcon";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
-import { getVisibleProjects, getProjectsByUser, getCurrentAccount } from "../../api/users";
+import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getCurrentAccount, getUserFollowing } from "../../api/users";
 import { getUsersById } from "../../api/users";
-import { MeDetail, UserSkill, ProjectPreview } from '@looking-for-group/shared';
+import { MeDetail, ProjectPreview, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
-import { Input } from "../Input";
-import LabelInputBox from "../LabelInputBox";
-
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
 
 type Profile = MeDetail;
-type Tag = UserSkill;
+//type Tag = UserSkill;
 type Project = ProjectPreview;
 
 // Stores if profile is loaded from server and if it's user's respectively
 // const [profileLoaded, setProfileLoaded] = useState(false);
 let userID: number;
-let isUsersProfile: boolean = true; //FIXME: undo hard-code for debugging
 
-// Change this when follow backend is added, this is just for testing purposes
-let toggleFollow = false;
 
 const Profile = () => {
   // --------------------
   // Global variables
   // --------------------
-
-  // FIXME what is the purpose of the default profile? was this just for debugging?
-  // if the user exists, the default profile isn't necessary
-  // if the user doesn't exist, then the page should be the 404 page
-  const defaultProfile: MeDetail = {
-    firstName: "Private",
-    lastName: "User",
-    username: "privateuser",
-    profileImage: `private.webp`,
-    headline: `This user is private`,
-    pronouns: "NA/NA",
-    title: "NA",
-    majors: [],
-    academicYear: "Freshman",
-    location: "NA, NA",
-    funFact: ``,
-    bio: "",
-    skills: [],
-    mentor: false,
-    socials: [],
-    projects: [],
-    following: {
-      usersFollowing: {
-        users: [],
-        count: 0,
-        apiUrl: ""
-      },
-      projectsFollowing: {
-        projects: [],
-        count: 0,
-        apiUrl: ""
-      }
-    },
-    followers: {
-      users: [],
-      count: 0,
-      apiUrl: ""
-    },
-    userId: 0,
-    designer: false,
-    developer: false,
-    apiUrl: ""
-  };
 
   const navigate = useNavigate(); // Hook for navigation
 
@@ -96,7 +45,11 @@ const Profile = () => {
   // User ID of profile being viewed
   const profileID: string = urlParams.get("userID")!;
 
-  const [displayedProfile, setDisplayedProfile] = useState(defaultProfile);
+  const [isUsersProfile, setIsUsersProfile] = useState<boolean>(false);
+
+  const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
+
+  const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
 
   // Stores all projects
   const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
@@ -113,27 +66,43 @@ const Profile = () => {
   // Helper functions
   // --------------------
 
+  //a direct check to backend for determining whether or not a user is followed
+  //it's a function so i can use it for other things
+const checkFollow = useCallback(async () => {
+  const followings = (await getUserFollowing(userID)).data?.users;
+
+  let isFollowing = false;
+
+  if(followings !== undefined){ //if they have no follows then obviously they can't be following the guy we're looking at
+  for (const follower of followings){
+    isFollowing = (follower.user.userId === parseInt(profileID));
+  }
+  }
+  setIsFollow(isFollowing);
+  return isFollowing;
+}, [profileID])
+
   // 'Follow' button
-  const followUser = () => {
+  const followUser = async () => {
     const followButton = document.getElementById(
       "profile-follow-button"
     ) as HTMLButtonElement;
-    toggleFollow = !toggleFollow;
+
 
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
-      // (Follow behavior would be implemented here)
-      // TODO implement follow behavior
-
+      //adds the user following
+    const toggleFollow = !await checkFollow();
+      console.log(toggleFollow)
+    setIsFollow(toggleFollow);
       if (toggleFollow) {
+      const follow = await addUserFollowing(parseInt(profileID));
+      if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
         followButton.innerText = "Following";
-        followButton.style.backgroundColor = "Orange";
-        followButton.style.width = "185px";
       } else {
+      await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
         followButton.innerText = "Follow";
-        followButton.style.backgroundColor = "var(--primary-color)";
-        followButton.style.width = "145px";
       }
     }
   };
@@ -144,7 +113,7 @@ const Profile = () => {
 
     for (const result of searchResults[0]) {
       for (const proj of projectSearchData) {
-        if (result === proj) {
+        if (result === proj.name) {
           tempProjList.push(fullProjectList[projectSearchData.indexOf(proj)]);
           continue;
         }
@@ -180,25 +149,29 @@ const Profile = () => {
         console.log(`Unknown error: ${error}`);
       }
     }
-  }, [profileID, setFullProjectList, setDisplayedProjects]);
+  }, [profileID, isUsersProfile, setFullProjectList, setDisplayedProjects]);
 
   // Gets the profile data
   useEffect(() => {
     const getProfileData = async () => {
       // Get the profileID to pull data for whoever's profile it is
-      const response = await getCurrentAccount();
+      const response = await getCurrentAccount()
+        console.log(response)
       if (response.data) {
-        isUsersProfile = true; // FIXME this will always be true no matter who is signed in 
+        userID = response.data.userId;
       }
+      setIsUsersProfile(userID.toString() === profileID);
+      console.log(isUsersProfile)
 
       try {
-        const { data } = await getUsersById(profileID ?? "");
+        const { data } = await getUsersById(profileID);
         console.log('user data', data);
 
         // Only run this if profile data exists for user
         if (data) {
           setDisplayedProfile(data);
           await getProfileProjectData();
+          checkFollow();
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -209,8 +182,7 @@ const Profile = () => {
       }
     };
     getProfileData();
-    
-  }, [getProfileProjectData, profileID]);
+  }, [getProfileProjectData, checkFollow, isUsersProfile, profileID]);
 
   // --------------------
   // Components
@@ -218,9 +190,9 @@ const Profile = () => {
   const aboutMeButtons = (
   <>
     {/* Add social links if present */}
-    {displayedProfile.socials && (
+    {displayedProfile?.socials && (
       <div id="about-me-buttons">
-        {displayedProfile.socials.map((link) => (
+        {displayedProfile?.socials.map((link) => (
           <button
             key={link.websiteId}
             onClick={() => {
@@ -246,9 +218,12 @@ const Profile = () => {
     ) : (
       <>
       {/* Or, show follow and options buttons */}
-      <ThemeIcon id={'heart'} width={25} height={25} className={'empty-heart'} ariaLabel="follow"/>
-      {/* FIXME: When following is implemented, use this: */}
-      {/* <ThemeIcon id={'heart'} width={25} height={25} className={isFollowing ? 'filled-heart' : 'empty-heart'} /> */}
+      {/*must change state based on follow status*/}
+      {isFollow ? (
+        <button id={'profile-follow-button'} className="user-followed" style={{backgroundColor: "orange"}} onClick={() => followUser()}>Following</button>
+      ) : (
+        <button id={'profile-follow-button'} className="user-not-followed" onClick={() => followUser()}>Follow</button>
+      )}
       
       {/* TODO: Implement Share, Block, and Report functionality */}
       <Dropdown>
@@ -297,7 +272,7 @@ const Profile = () => {
         {/* New profile display using css grid, will contain all info except for projects */}
         <div id="profile-information-grid">
           <img
-            src={usePreloadedImage(`${API_BASE}/images/profiles/${displayedProfile.profileImage}`, profilePicture)}
+            src={usePreloadedImage(`images/profiles/${displayedProfile?.profileImage}`, profilePicture)}
             id="profile-image"
             alt="profile image"
             onError={(e) => {
@@ -306,13 +281,13 @@ const Profile = () => {
             }}
           />
 
-          <div id="profile-bio">{displayedProfile.headline}</div>
+          <div id="profile-bio">{displayedProfile?.headline}</div>
 
           <div id="profile-info-name">
             <span id="profile-fullname">
-              {displayedProfile.firstName} {displayedProfile.lastName}
+              {displayedProfile?.firstName} {displayedProfile?.lastName}
             </span>
-            @{displayedProfile.username}
+            @{displayedProfile?.username}
           </div>
 
           <div id="profile-info-buttons">{aboutMeButtons}</div>
@@ -320,22 +295,22 @@ const Profile = () => {
           <div id="profile-info-extras">
             <div className="profile-extra">
               <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
-              {displayedProfile.title}
+              {displayedProfile?.title}
             </div>
             <div className="profile-extra">
               <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
-              {displayedProfile.majors?.join(", ")} {displayedProfile.academicYear}
+              {displayedProfile?.majors?.join(", ")} {displayedProfile?.academicYear}
             </div>
             <div className="profile-extra">
               <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
-              {displayedProfile.location}
+              {displayedProfile?.location}
             </div>
             <div className="profile-extra">
               <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
-              {displayedProfile.pronouns}
+              {displayedProfile?.pronouns}
             </div>
             {/* Only show mentor status if user is a mentor */}
-            {displayedProfile.mentor && 
+            {displayedProfile?.mentor && 
               <div className="profile-extra">
                 <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
                 Mentor
@@ -343,13 +318,13 @@ const Profile = () => {
             }
           </div>
 
-          <div id="profile-info-description">{displayedProfile.bio}</div>
+          <div id="profile-info-description">{displayedProfile?.bio}</div>
 
           <div id="profile-info-funfact">
             <span id="fun-fact-start">
-              {displayedProfile.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
+              {displayedProfile?.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
             </span>
-            {displayedProfile.funFact}
+            {displayedProfile?.funFact}
           </div>
           {/* <div id="profile-info-interest">
             <ProfileInterests
@@ -359,10 +334,10 @@ const Profile = () => {
           </div> */}
 
           <div id="profile-info-skills">
-            {displayedProfile.skills !== undefined && (
+            {displayedProfile?.skills !== undefined && (
               /* Will take in a list of tags the user has selected, then */
               /* use a map function to generate tags to fill this div */
-              displayedProfile.skills.map((tag) => {
+              displayedProfile?.skills.map((tag) => {
                 let category: string;
                 switch (tag.type) {
                   case "Designer":

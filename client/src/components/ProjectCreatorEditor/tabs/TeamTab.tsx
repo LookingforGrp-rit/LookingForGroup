@@ -29,7 +29,7 @@ import {
 import { Fillable } from "@looking-for-group/client";
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 // --- Variables ---
 // Default project value
@@ -183,7 +183,7 @@ export const TeamTab = ({
       try {
         const response = await getUsers();
 
-        setAllUsers(response.data);
+        setAllUsers(response.data!);
 
         // list of users to search. users searchable by first name, last name, or username
         const searchableUsers = await Promise.all(
@@ -441,13 +441,13 @@ export const TeamTab = ({
   const savePosition = useCallback(() => {
     // check if all values present
     if (
-      currentJob?.roleId === null ||
-      currentJob?.availability === null ||
-      currentJob?.description === "" ||
-      currentJob?.location === null ||
-      currentJob?.duration === null ||
-      currentJob?.compensation === null ||
-      currentJob?.contactUserId === null
+      currentJob.jobId ||
+      currentJob.role.label === '' ||
+      currentJob.description === '' ||
+      currentJob.availability === '' ||
+      currentJob.location === '' ||
+      currentJob.duration === '' ||
+      currentJob.compensation === ''
     ) {
       // set error
       setErrorAddPosition("All fields are required");
@@ -475,7 +475,7 @@ export const TeamTab = ({
     } else {
       // find matching position
       const updatedJobs = modifiedProject.jobs.map((j) =>
-        j.titleId === currentJob.titleId ? { ...j, ...currentJob } : j
+        j.jobId === currentJob.jobId ? { ...j, ...currentJob } : j
       );
       setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
     }
@@ -485,7 +485,7 @@ export const TeamTab = ({
     setEditMode(false);
 
     // set current position to saved position
-    setCurrentRole(currentJob?.roleId);
+    setCurrentRole(currentJob.jobId);
   }, [currentJob, modifiedProject, newPosition]);
 
   // --- Content variables ---
@@ -508,9 +508,7 @@ export const TeamTab = ({
           ariaLabel={"edit"}
         />
       </button>
-      <div className="positions-popup-info-title">
-        {getProjectJob(currentRole)?.jobTitle}
-      </div>
+      <div className="positions-popup-info-title">{getProjectJob(currentRole)?.role.label}</div>
       <div className="positions-popup-info-description">
         <div id="position-description-content">
           {getProjectJob(currentRole)?.description}

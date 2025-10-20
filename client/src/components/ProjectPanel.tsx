@@ -17,7 +17,7 @@ import * as React from 'react';
 //Also takes in width (the width of this panel), and rightAlign, which determines which side the hover panel aligns with
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 interface ProjectPanelProps {
   project: ProjectWithFollowers;
@@ -26,7 +26,7 @@ interface ProjectPanelProps {
 
 export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
   const navigate = useNavigate();
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectID}`;
+  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectId}`;
 
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
   //const [isFollowing, setFollowing] = useState(project.followers.isFollowing);
@@ -88,7 +88,7 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
     // <div className={'project-panel'} style={{ width: width }}>
     <div className={'project-panel'}>
       <img
-        src={usePreloadedImage(`${API_BASE}/images/thumbnails/${project.thumbnail}`, placeholderThumbnail)}
+        src={usePreloadedImage(`images/thumbnails/${project.thumbnail}`, placeholderThumbnail)}
         alt={'project image'}
       />
       <div
@@ -97,7 +97,7 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
       // style={rightAlign ? { width: width, right: 0 } : { width: width }}
       >
         <img
-          src={usePreloadedImage(`${API_BASE}/images/thumbnails/${project.thumbnail}`, placeholderThumbnail)}
+          src={usePreloadedImage(`images/thumbnails/${project.thumbnail}`, placeholderThumbnail)}
           alt={'project image'}
         />
         {/* <h2>{project.title}</h2> */}

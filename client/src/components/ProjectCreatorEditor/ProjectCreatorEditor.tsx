@@ -14,7 +14,7 @@ import { getUsersById } from '../../api/users';
 import { MePrivate, ProjectDetail, User } from '@looking-for-group/shared';
 
 //backend base url for getting images
-const API_BASE = `http://localhost:8081`;
+
 
 interface Props {
   newProject: boolean;

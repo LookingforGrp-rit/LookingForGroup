@@ -22,6 +22,7 @@ import type {
   UpdateUserSkillInput,
   AddUserMajorInput,
   MyMajor,
+  UserFollowsList,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -173,7 +174,7 @@ export const getUserByEmail = async (
  */
 export const getUserFollowing = async (
   id: number
-): Promise<ApiResponse<UserPreview[]>> => {
+): Promise<ApiResponse<UserFollowsList>> => {
   const url = `/users/${id}/followings/people`;
   const response = await GET(url);
 
