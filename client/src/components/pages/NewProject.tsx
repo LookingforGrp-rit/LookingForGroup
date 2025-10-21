@@ -37,6 +37,7 @@ const NewProject = () => {
   // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState<MePrivate | null>();
+  const [userID, setUserID] = useState<number>(0);
   const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>();
 
   const [followCount, setFollowCount] = useState(0);
@@ -51,8 +52,7 @@ const NewProject = () => {
   
   //checking function for if the current user is following a project
 const checkFollow = useCallback(async () => {
-  if(user) {
-  const followings = (await getProjectFollowing(user.userId)).data?.projects;
+  const followings = (await getProjectFollowing(userID)).data?.projects;
 
   let isFollow = false;
 
@@ -64,27 +64,28 @@ const checkFollow = useCallback(async () => {
   }
   setFollowing(isFollow);
   return isFollow;
-  }
-}, [projectID, user]);
+}, [projectID, userID]);
 
 useEffect(() => {
   const getProjectData = async () => {
     //get our current user for use later
     //i think the fact that this is the entire user is what's making it loop
     const userResp = await getCurrentAccount();
-    if(userResp.data) setUser(userResp.data);
+    if(userResp.data) { 
+      setUser(userResp.data);
+      setUserID(userResp.data.userId)
+    }
 
     //get the project itself
     const projectResp = await getByID(projectID);
     if (projectResp.data) { 
       setDisplayedProject(projectResp.data)
       checkFollow();
-      if(displayedProject !== undefined) setFollowCount(displayedProject?.followers.count);
+      setFollowCount(projectResp.data.followers.count);
     }
-    
   };
     getProjectData();
-}, [projectID, checkFollow, displayedProject, user])
+}, [projectID, checkFollow])
 
   
     //Checks to see whether or not the current user is the maker/owner of the project being displayed
@@ -109,26 +110,18 @@ useEffect(() => {
   };
 
   const followProject = (async () => {
-    const followButton = document.getElementById("project-follow-button") as HTMLButtonElement;
-    setFollowing(!await checkFollow());
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     }
     else{
-      if (isFollowing) {
-      await addProjectFollowing(projectID).then((res) => {
-        if (res.status === 200) {
-          setFollowCount(followCount + 1);
-          if(followButton) followButton.className = "project-info-followers following"
-        }
-      });
+    const toggleFollow = !await checkFollow();
+    setFollowing(toggleFollow);
+      if (toggleFollow) {
+      await addProjectFollowing(projectID);
+        setFollowCount(followCount + 1);
     } else {
-      await deleteProjectFollowing(projectID).then((res) => {
-        if (res.status === 200) {
-          setFollowCount(followCount - 1);
-          if(followButton) followButton.className = "project-info-followers"
-        }
-      });
+      await deleteProjectFollowing(projectID);
+        setFollowCount(followCount - 1);
     }
 
     }
