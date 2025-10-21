@@ -17,7 +17,7 @@ const TAG_COLORS: Record<TagType | string, string> = {
   "Developer Skill": "yellow",
   "Designer Skill": "red",
   "Soft Skill": "purple",
-  "Project Type": "blue",
+  "Medium": "blue",
   "Purpose": "", // purpose tags are not used here
 };
 
@@ -26,7 +26,7 @@ const TAG_TYPES = {
   DESIGNER: "Designer Skill" as TagType,
   SOFT: "Soft Skill" as TagType,
   GENRE: "Genre" as TagType,
-  PROJECT: "Project Type",
+  MEDIUM: "Medium",
 };
 
 // --- Props ---
@@ -49,13 +49,13 @@ export const TagsTab = ({
   const [modifiedProject, setModifiedProject] = useState<Partial<ProjectDetail>>(projectData);
 
   // Complete list of...
-  const [allProjectTypes, setAllProjectTypes] = useState<Medium[]>([]);
+  const [allMediums, setAllMediums] = useState<Medium[]>([]);
   const [allTags, setAllTags] = useState<Tag[]>([]);
 
   // sets error when adding a link to the project
   // const [error, setError] = useState('');
 
-  //tracking which tab of tags is currently viewed: 0 - project type, 1 - genre, 2 - dev skills, 3 - design skills, 4 - soft skills
+  //tracking which tab of tags is currently viewed: 0 - medium, 1 - genre, 2 - dev skills, 3 - design skills, 4 - soft skills
   const [currentTagsTab, setCurrentTagsTab] = useState(0);
 
   //filtered results from tag search bar
@@ -71,19 +71,19 @@ export const TagsTab = ({
     setProjectData(modifiedProject);
   }, [modifiedProject, setProjectData]);
 
-  // Get full lists of project types, tags
+  // Get full lists of mediums, tags
   useEffect(() => {
     const fetchMediums = async () => {
       const response = await getProjectTypes();
       if (!response.data) {
         return;
       }
-      setAllProjectTypes(response.data);
+      setAllMediums(response.data);
     };
-    if (allProjectTypes.length === 0) {
+    if (allMediums.length === 0) {
       fetchMediums();
     }
-  }, [allProjectTypes]);
+  }, [allMediums]);
   useEffect(() => {
     const getAllTags = async () => {
         const response = await getTags();
@@ -101,7 +101,7 @@ export const TagsTab = ({
   const currentDataSet = useMemo(() => {
     switch (currentTagsTab) {
       case 0:
-        return [{ data: allProjectTypes }];
+        return [{ data: allMediums }];
       case 1:
         return [{ data: allTags.filter( g => // all tags are genres except for skills and purposes
           g.type !== 'Developer Skill' &&
@@ -118,7 +118,7 @@ export const TagsTab = ({
       default:
         return [{ data: [] }];
     }
-  }, [currentTagsTab, allProjectTypes, allTags]);
+  }, [currentTagsTab, allMediums, allTags]);
 
   // Reset tag list on tab change to default list
   useEffect(() => {
@@ -133,7 +133,7 @@ export const TagsTab = ({
   const isTagSelected = useCallback((id: number, label: string, tab: number = -1) => {
     // if no tab, iterate through all categories
     if (tab === -1) {
-      // search project types
+      // search mediums
       if (modifiedProject.mediums?.some(t => t.mediumId === id && t.label === label)) {
         return 'selected';
       }
@@ -146,7 +146,7 @@ export const TagsTab = ({
         return "unselected";
       }
 
-    // Project Type
+    // Medium
     if (tab === 0) {
       // No mediums means its not selected
       if (!modifiedProject.mediums) return 'unselected';
@@ -192,13 +192,13 @@ export const TagsTab = ({
     const isSelected = button.className.includes("selected");
 
     let id = -1;
-    let type: TagType | string = TAG_TYPES.PROJECT;
+    let type: TagType | string = TAG_TYPES.MEDIUM;
 
-    if (button.className.includes('blue')) { // project type
-      const projectType = allProjectTypes.find(t => t.label === tagLabel);
-      if (!projectType) return;
-      id = allProjectTypes.find((t) => t.label === tagLabel)?.mediumId ?? -1;
-      type = TAG_TYPES.PROJECT;
+    if (button.className.includes('blue')) { // medium
+      const medium = allMediums.find(t => t.label === tagLabel);
+      if (!medium) return;
+      id = allMediums.find((m) => m.label === tagLabel)?.mediumId ?? -1;
+      type = TAG_TYPES.MEDIUM;
     }
     else if (button.className.includes('green')) { // genre
       const tag = allTags.find(t => t.label === tagLabel);
@@ -225,9 +225,9 @@ export const TagsTab = ({
       type = TAG_TYPES.SOFT;
     }
 
-    if (type === TAG_TYPES.PROJECT) {
+    if (type === TAG_TYPES.MEDIUM) {
       // get id
-      const id = allProjectTypes.find((t) => t.label === tagLabel)?.mediumId;
+      const id = allMediums.find((m) => m.label === tagLabel)?.mediumId;
       if (id === undefined) return;
 
       setModifiedProject({
@@ -252,7 +252,7 @@ export const TagsTab = ({
             }],
       });
     }
-  }, [allProjectTypes, allTags, modifiedProject]);
+  }, [allMediums, allTags, modifiedProject]);
 
   // Create elements for selected tags in sidebar
   const loadProjectTags = useMemo(() => {
@@ -273,8 +273,8 @@ export const TagsTab = ({
     // no search item, render all tags
     if (searchedTags && searchedTags.length !== 0 ) {
       return (
-        // Project Types
-        (searchedTags && 'mediumId' in searchedTags) ? (searchedTags as Medium[]).map((t) => (
+        // Mediums
+        (searchedTags && 'mediumId' in (searchedTags[0] as Medium)) ? (searchedTags as Medium[]).map((t) => (
           <button
             key={t.mediumId}
             className={`tag-button tag-button-blue-${isTagSelected(
@@ -303,6 +303,7 @@ export const TagsTab = ({
               t.label,
               currentTagsTab
             )}`}
+
             onClick={(e) => handleTagSelect(e)}
           >
             <i
@@ -321,21 +322,21 @@ export const TagsTab = ({
      return <div className="no-results-message">No results found!</div>;
     }
     
-    if (currentTagsTab === 0) { // Project Type
-      return allProjectTypes.map((t) => (
+    if (currentTagsTab === 0) { // Medium
+      return allMediums.map((m) => (
         <button
-          key={t.mediumId}
-          className={`tag-button tag-button-blue-${isTagSelected(t.mediumId, t.label, currentTagsTab)}`}
+          key={m.mediumId}
+          className={`tag-button tag-button-blue-${isTagSelected(m.mediumId, m.label, currentTagsTab)}`}
           onClick={(e) => handleTagSelect(e)}
         >
           <i
             className={
-              isTagSelected(t.mediumId, t.label, currentTagsTab) === 'selected'
+              isTagSelected(m.mediumId, m.label, currentTagsTab) === 'selected'
                 ? 'fa fa-close'
                 : 'fa fa-plus'
             }
           ></i>
-          <p>{t.label}</p>
+          <p>{m.label}</p>
         </button>
       ));
     } else if (currentTagsTab === 1) { // Genre
@@ -419,7 +420,7 @@ export const TagsTab = ({
           <p>{s.label}</p>
         </button>
       ));
-  }, [searchedTags, currentTagsTab, allTags, isTagSelected, handleTagSelect, allProjectTypes]);
+  }, [searchedTags, currentTagsTab, allTags, isTagSelected, handleTagSelect, allMediums]);
 
   // Update shown tags according to search results
   const handleSearch = useCallback((results: unknown[][]) => {
@@ -437,7 +438,7 @@ export const TagsTab = ({
   return (
     <div id="project-editor-tags">
       <div id="project-editor-type-tags">
-        <div className="project-editor-section-header">Project Type</div>
+        <div className="project-editor-section-header">Medium</div>
         {!modifiedProject.mediums || modifiedProject.mediums.length === 0 ? <div className="error">*At least 1 type is required</div> : <></> }
         <div id="project-editor-type-tags-container">
           {(modifiedProject.mediums ?? []).map((t) => (
