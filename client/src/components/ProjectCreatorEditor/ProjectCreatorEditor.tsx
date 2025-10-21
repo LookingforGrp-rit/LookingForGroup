@@ -9,12 +9,12 @@ import { ThemeIcon } from '../ThemeIcon';
 import { createNewProject, getByID, updateProject, getPics, addPic, deletePic, getProjectSocials, addProjectSocial, updateProjectSocial, deleteProjectSocial } from '../../api/projects';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-import { ProjectDetail, ProjectPurpose, ProjectStatus, User } from '@looking-for-group/shared';
+import { MePrivate, ProjectDetail, ProjectPurpose, ProjectStatus, User } from '@looking-for-group/shared';
 
 interface Props {
   newProject: boolean;
   buttonCallback?: () => void;
-  user?: User;
+  user?: MePrivate;
   // permissions?: number;
 }
 
@@ -50,7 +50,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // --- Hooks ---
   // stores user data
-  const [user, setUser] = useState<User | null>(null);
+  const [user, setUser] = useState<MePrivate | null>(null);
 
   // store project data
   const [projectData, setProjectData] = useState<ProjectDetail>(emptyProject);

@@ -18,7 +18,6 @@ import { getByID } from '../api/projects.ts';
 
 //backend base url for getting images
 
-
 interface ProjectPanelProps {
   project: ProjectWithFollowers;
 }
@@ -27,7 +26,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const navigate = useNavigate();
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectId}`;
 
-  const [userId, setUserId] = useState<number>(0);
+  const [userId, setUserId] = useState<number>();
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
   const [isFollowing, setFollowing] = useState(false);
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
@@ -60,6 +59,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   };
   //checking function for if the current user is following a project
 const checkFollow = useCallback(async () => {
+  if(userId){
   const followings = (await getProjectFollowing(userId)).data?.projects;
 
   let isFollow = false;
@@ -72,20 +72,20 @@ const checkFollow = useCallback(async () => {
   }
   setFollowing(isFollow);
   return isFollow;
-}, [project, userId]);
 
+  }
+}, [project, userId]);
 useEffect(() => {
   const getProjectData = async () => {
     //get our current user for use later
     const userResp = await getCurrentAccount();
     if(userResp.data) setUserId(userResp.data.userId);
     
-
     //get the project itself
     const projectResp = await getByID(projectId);
     if (projectResp.data) { 
-      checkFollow();
       setFollowCount(projectResp.data.followers.count);
+      checkFollow();
     }
   };
     getProjectData();
