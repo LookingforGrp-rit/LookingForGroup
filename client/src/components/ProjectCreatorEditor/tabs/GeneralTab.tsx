@@ -1,40 +1,18 @@
 // --- Imports ---
 import { useEffect, useState, useRef } from "react";
-import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton } from '../../Popup';
-import { ProjectDetail } from '@looking-for-group/shared';
 import LabelInputBox from "../../LabelInputBox";
-
-// --- Variables ---
-// Default project value
-const defaultProject: ProjectDetail & { userId?: number } = {
-  _id: '',
-  audience: '',
-  description: '',
-  hook: '',
-  images: [],
-  jobs: [],
-  members: [],
-  projectTypes: [],
-  purpose: '',
-  socials: [],
-  status: '',
-  tags: [],
-  thumbnail: '',
-  title: '',
-};
-
-// Project purpose and status options
-const purposeOptions = ['Personal', 'Portfolio Piece', 'Academic', 'Co-op'];
-const statusOptions = ['Planning', 'Development', 'Post-Production', 'Complete'];
+import { ProjectDetail } from "@looking-for-group/shared";
+import { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared/enums";
+// import type { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared";
 
 // Delay function until user stops typing to prevent rapid text input bugs
-const keyboardDebounce = (func: any, delay: any) => {
-  let timeout: any;
-  return (...args: any) => {
+const keyboardDebounce = (func: (arg: ProjectDetail) => void, delay: number) => {
+  let timeout: NodeJS.Timeout;
+  return (arg: ProjectDetail) => {
     clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), delay);
+    timeout = setTimeout(() => func(arg), delay);
   };
 };
 
@@ -47,23 +25,24 @@ type GeneralTabProps = {
 
 // --- Component ---
 export const GeneralTab = ({
-  projectData = defaultProject,
+  projectData,
   setProjectData = () => {},
   saveProject = () => {},
   failCheck
 }: GeneralTabProps) => {
 
   // --- Hooks ---
-  // tracking project modifications
-  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(projectData || defaultProject);
+  // Tracking project modifications. Forced because projectData is always defined here
+  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(projectData!);
 
   // Textbox input callback: useRef to avoid unintended reset bugs
-  const debounce = useRef(keyboardDebounce((updatedProject) => {
+  const debounce = useRef(keyboardDebounce((updatedProject: ProjectDetail) => {
     setProjectData(updatedProject);
   }, 300)).current;
 
   // Update data when data is changed
   useEffect(() => {
+    if (!projectData) return;
     setModifiedProject(projectData);
   }, [projectData]);
 
@@ -100,9 +79,9 @@ export const GeneralTab = ({
           />
           <SelectOptions 
             callback={(e) => {
-              setModifiedProject({ ...modifiedProject, status: e.target.value });
+              setModifiedProject({ ...modifiedProject, status: (e.target as HTMLSelectElement).value as ProjectStatus});
             }}
-            options={statusOptions.map((o) => {
+            options={Object.keys(ProjectStatus).map((o) => {
               return {
                 markup: <>{o}</>,
                 value: o,
@@ -127,12 +106,12 @@ export const GeneralTab = ({
           />
           <SelectOptions 
             callback={(e) => {
-              setModifiedProject({ ...modifiedProject, purpose: e.target.value });
+              setModifiedProject({ ...modifiedProject, purpose: (e.target as HTMLSelectElement).value as ProjectPurpose });
             }}
-            options={purposeOptions.map((o) => {
+            options={Object.keys(ProjectPurpose).map((p) => {
               return {
-                markup: <>{o}</>,
-                value: o,
+                markup: <>{p}</>,
+                value: p,
                 disabled: false,
               };
             })}

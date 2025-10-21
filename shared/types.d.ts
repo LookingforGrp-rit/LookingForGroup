@@ -1,6 +1,7 @@
 import type { Request } from "express";
 
 // Enums for better typing
+// TODO: move functionality to enums.ts and make them enums instead of types
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft";
 export type TagType =
   | "Creative"
