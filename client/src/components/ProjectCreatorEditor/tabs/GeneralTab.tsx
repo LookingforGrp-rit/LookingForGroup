@@ -5,7 +5,6 @@ import { PopupButton } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { ProjectDetail } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared/enums";
-// import type { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared";
 
 // Delay function until user stops typing to prevent rapid text input bugs
 const keyboardDebounce = (func: (arg: ProjectDetail) => void, delay: number) => {
@@ -81,7 +80,8 @@ export const GeneralTab = ({
             callback={(e) => {
               setModifiedProject({ ...modifiedProject, status: (e.target as HTMLSelectElement).value as ProjectStatus});
             }}
-            options={Object.keys(ProjectStatus).map((o) => {
+            options={Object.values(ProjectStatus).map((o) => {
+              console.log('o', o);
               return {
                 markup: <>{o}</>,
                 value: o,
@@ -108,7 +108,7 @@ export const GeneralTab = ({
             callback={(e) => {
               setModifiedProject({ ...modifiedProject, purpose: (e.target as HTMLSelectElement).value as ProjectPurpose });
             }}
-            options={Object.keys(ProjectPurpose).map((p) => {
+            options={Object.values(ProjectPurpose).map((p) => {
               return {
                 markup: <>{p}</>,
                 value: p,
