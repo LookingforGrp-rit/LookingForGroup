@@ -30,7 +30,6 @@ type Project = ProjectPreview;
 
 // Stores if profile is loaded from server and if it's user's respectively
 // const [profileLoaded, setProfileLoaded] = useState(false);
-let userID: number;
 
 
 const Profile = () => {
@@ -48,6 +47,7 @@ const Profile = () => {
   const [isUsersProfile, setIsUsersProfile] = useState<boolean>(false);
 
   const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
+  const [userID, setUserID] = useState<number>(0);
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
 
@@ -80,7 +80,7 @@ const checkFollow = useCallback(async () => {
   }
   setIsFollow(isFollowing);
   return isFollowing;
-}, [profileID])
+}, [profileID, userID])
 
   // 'Follow' button
   const followUser = async () => {
@@ -135,7 +135,6 @@ const checkFollow = useCallback(async () => {
       const response = isUsersProfile ? await getProjectsByUser() : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };          // IMPLEMENT PROJECT GETTING
       const data = response.data;
       
-      console.log(response);
 
       // Only update if there's data
       if (data) {
@@ -156,7 +155,7 @@ const checkFollow = useCallback(async () => {
     const getProfileData = async () => {
       // Get the userID for our current user
       const response = await getCurrentAccount()
-      if (response.data) userID = response.data.userId;
+      if (response.data) setUserID(response.data.userId);
       setIsUsersProfile(userID.toString() === profileID);
 
       try {
@@ -178,7 +177,7 @@ const checkFollow = useCallback(async () => {
       }
     };
     getProfileData();
-  }, [getProfileProjectData, checkFollow, isUsersProfile, profileID]);
+  }, [getProfileProjectData, checkFollow, isUsersProfile, profileID, userID]);
 
   // --------------------
   // Components

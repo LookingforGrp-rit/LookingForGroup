@@ -69,7 +69,6 @@ const checkFollow = useCallback(async () => {
 useEffect(() => {
   const getProjectData = async () => {
     //get our current user for use later
-    //i think the fact that this is the entire user is what's making it loop
     const userResp = await getCurrentAccount();
     if(userResp.data) { 
       setUser(userResp.data);
@@ -93,20 +92,14 @@ useEffect(() => {
   // const usersProject = true;
 
   // Formats follow-count based on Figma design. Returns a string
-  const formatFollowCount = (followers: number) => {
-    let followerNum = followers;
-
-    // Start displaying in X.X+ format if >= 1000
+  // Formats follow-count based on Figma design. Returns a string
+  const formatFollowCount = (followers: number): string => {
     if (followers >= 1000) {
-      const multOfHundred = followers % 100 === 0;
-
-      followerNum /= 1000.0;
-      const truncated = followerNum.toFixed(1);
-      const formatted = `${truncated}K${multOfHundred ? "+" : ""}`;
-      return formatted;
+      const multOfHundred = (followers % 100) === 0;
+      const formattedNum = (followers / 1000).toFixed(1);
+      return `${formattedNum}K ${multOfHundred ? '+' : ''}`;
     }
-
-    return followerNum.toString();
+    return `${followers}`;
   };
 
   const followProject = (async () => {
