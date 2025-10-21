@@ -39,27 +39,27 @@ export enum SkillProficiency {
 };
 export enum ProjectPurpose {
   Personal = "Personal",
-  PortfolioPiece = "PortfolioPiece",
+  PortfolioPiece = "Portfolio Piece",
   Academic = "Academic",
-  CoOp = "CoOp"
+  CoOp = "Co-op"
 };
 export enum ProjectStatus {
   Planning = "Planning",
   Development = "Development",
-  PostProduction = "PostProduction",
+  PostProduction = "Post-Production",
   Complete = "Complete"
 }
 export enum JobAvailability {
-  FullTime = "FullTime",
-  PartTime = "PartTime",
+  FullTime = "Full-time",
+  PartTime = "Part-time",
   Flexible = "Flexible"
 }
 export enum JobDuration {
-  ShortTerm = "ShortTerm",
-  LongTerm = "LongTerm"
+  ShortTerm = "Short-term",
+  LongTerm = "Long-term"
 }
 export enum JobLocation {
-  OnSite = "OnSite",
+  OnSite = "On-Site",
   Remote = "Remote",
   Hybrid = "Hybrid"
 }

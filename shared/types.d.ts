@@ -1,7 +1,20 @@
 import type { Request } from "express";
+import {
+  SkillType,
+  TagType,
+  AcademicYear,
+  Visibility,
+  SkillProficiency,
+  ProjectPurpose,
+  ProjectStatus,
+  JobAvailability,
+  JobCompensation,
+  JobDuration,
+  JobLocation 
+} from "./enums";
 
 // Enums for better typing
-// TODO: move functionality to enums.ts and make them enums instead of types
+// FIXME: move functionality to use enums.ts instead of referencing here
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft";
 export type TagType =
   | "Creative"
@@ -380,7 +393,7 @@ export interface ProjectJob {
 
 export interface ProjectDetail extends ProjectPreview {
   description: string;
-  purpose: ProjectPurpose | null;
+  purpose: ProjectPurpose;
   status: ProjectStatus;
   audience: string;
   createdAt: Date;
