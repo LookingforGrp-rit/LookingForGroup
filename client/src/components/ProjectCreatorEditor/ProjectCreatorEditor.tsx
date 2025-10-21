@@ -6,12 +6,11 @@ import { LinksTab } from './tabs/LinksTab';
 import { TeamTab } from './tabs/TeamTab';
 import { TagsTab } from './tabs/TagsTab';
 import { ThemeIcon } from '../ThemeIcon';
-import { loggedIn } from '../Header';
-import { createNewProject, getByID, updateProject, getPics, addPic, updatePic, deletePic } from '../../api/projects';
+import { createNewProject, getByID, updateProject, getPics, addPic, deletePic, getProjectSocials, addProjectSocial, updateProjectSocial, deleteProjectSocial } from '../../api/projects';
 import { getUsersById } from '../../api/users';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-import { MePrivate, ProjectDetail, User } from '@looking-for-group/shared';
+import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
 
 //backend base url for getting images
 
@@ -119,13 +118,58 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     }
   }, [newProject, user]);
 
+  // Update social links for existing projects
+  const updateLinks = async () => {
+    if (newProject || !projectID) return; // Only for existing projects
+
+    const projectNumID = Number(projectID);
+    
+    try {
+      // Get current socials from database
+      const currentSocialsResponse = await getProjectSocials(projectNumID);
+      const currentSocials = currentSocialsResponse.data || [];
+      
+      // Process each social in the modified project
+      for (const social of modifiedProject.projectSocials || []) {
+        if (!social.url || !social.websiteId || social.websiteId === 0) continue; // Skip empty/invalid socials
+        
+        // Check if this social already exists
+        const existingSocial = currentSocials.find(s => s.websiteId === social.websiteId);
+        
+        if (existingSocial) {
+          // Update existing social if URL changed
+          if (existingSocial.url !== social.url) {
+            await updateProjectSocial(projectNumID, social.websiteId, { url: social.url });
+          }
+        } else {
+          // Create new social
+          await addProjectSocial(projectNumID, { websiteId: social.websiteId, url: social.url });
+        }
+      }
+      
+      // Delete socials that were removed
+      const modifiedSocialIds = (modifiedProject.projectSocials || [])
+        .filter(s => s.url && s.websiteId && s.websiteId !== 0)
+        .map(s => s.websiteId);
+      
+      for (const currentSocial of currentSocials) {
+        if (!modifiedSocialIds.includes(currentSocial.websiteId)) {
+          await deleteProjectSocial(projectNumID, currentSocial.websiteId);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating social links:', error);
+      setErrorLinks('Error updating social links. Please try again.');
+    }
+  };
+
   //Save project editor changes
   const saveProject = async () => {
     // default to no errors
     setFailCheck(false);
 
     // save if on link tab
-    if (currentTab === 4) updateLinks();
+    if (currentTab === 4) await updateLinks();
 
     //Error Handling
     if (errorAddMember !== '' ||
@@ -288,7 +332,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                     currentTab === 1 ? <MediaTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
                       currentTab === 2 ? <TagsTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
                         currentTab === 3 ? <TeamTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorMember={setErrorAddMember} setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/ /> :
-                          currentTab === 4 ? <LinksTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorLinks={setErrorLinks} /> :
+                          currentTab === 4 ? <LinksTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorLinks={setErrorLinks} saveProject={saveProject} failCheck={failCheck} /> :
                             <></>
                 }
               </div>

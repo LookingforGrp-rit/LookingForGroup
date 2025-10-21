@@ -14,6 +14,7 @@ type LinksTabProps = {
   setErrorLinks?: (error: string) => void;
   saveProject?: () => void;
   failCheck: boolean;
+  isNewProject?: boolean;
 }
 
 // --- Component ---
@@ -22,7 +23,8 @@ export const LinksTab = ({
   setProjectData = () => {},
   setErrorLinks = () => {},
   saveProject = () => {},
-  failCheck
+  failCheck,
+  isNewProject = false
 }: LinksTabProps) => {
   // --- Hooks --- 
   // tracking project modifications
@@ -106,8 +108,12 @@ export const LinksTab = ({
               />
               <SelectOptions
                 callback={(e) => {
+                  const selectedLabel = (e.target as HTMLInputElement).value;
+                  const selectedSocial = allSocials.find(s => s.label === selectedLabel);
+                  
                   const tempSocials = [...modifiedProject.projectSocials];
-                  tempSocials[index].label = (e.target as HTMLInputElement).value;
+                  tempSocials[index].label = selectedLabel;
+                  tempSocials[index].websiteId = selectedSocial?.websiteId || 0;
                   setModifiedProject({ ...modifiedProject, projectSocials: tempSocials });
                 }}
                 options={allSocials ? allSocials.map(website => {
