@@ -81,7 +81,6 @@ export const GeneralTab = ({
               setModifiedProject({ ...modifiedProject, status: (e.target as HTMLSelectElement).value as ProjectStatus});
             }}
             options={Object.values(ProjectStatus).map((o) => {
-              console.log('o', o);
               return {
                 markup: <>{o}</>,
                 value: o,
