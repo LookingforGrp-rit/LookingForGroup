@@ -473,8 +473,6 @@ Project Creator and Editor style rules
 }
 
 .project-editor-input-item {
-  display: flex;
-  flex-direction: column;
   position: relative;
 
   input {

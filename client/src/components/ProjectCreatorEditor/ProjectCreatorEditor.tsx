@@ -7,18 +7,14 @@ import { TeamTab } from './tabs/TeamTab';
 import { TagsTab } from './tabs/TagsTab';
 import { ThemeIcon } from '../ThemeIcon';
 import { createNewProject, getByID, updateProject, getPics, addPic, deletePic, getProjectSocials, addProjectSocial, updateProjectSocial, deleteProjectSocial } from '../../api/projects';
-import { getUsersById } from '../../api/users';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
-
-//backend base url for getting images
-
+import { ProjectDetail, ProjectPurpose, ProjectStatus, User } from '@looking-for-group/shared';
 
 interface Props {
   newProject: boolean;
   buttonCallback?: () => void;
-  user?: MePrivate;
+  user?: User;
   // permissions?: number;
 }
 
@@ -32,9 +28,9 @@ const emptyProject: ProjectDetail = {
   jobs: [],
   members: [],
   projectTypes: [],
-  purpose: '',
+  purpose: '' as ProjectPurpose,
   socials: [],
-  status: '',
+  status: '' as ProjectStatus,
   tags: [],
   thumbnail: '',
   title: '',
@@ -47,17 +43,20 @@ const emptyProject: ProjectDetail = {
  * 
  * @returns React component Popup
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, user, /*permissions*/ }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, /*permissions*/ }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const projectID = urlParams.get('projectID');
 
   // --- Hooks ---
+  // stores user data
+  const [user, setUser] = useState<User | null>(null);
+
   // store project data
   const [projectData, setProjectData] = useState<ProjectDetail>(emptyProject);
 
   // tracking temporary project changes before committing to a save
-  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(emptyProject);
+  const [modifiedProject, setModifiedProject] = useState<Partial<ProjectDetail>>(emptyProject);
 
   // check whether or not the data in the popup is valid
   const [failCheck, setFailCheck] = useState(false);
@@ -90,7 +89,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       };
       loadProject();
     }
-  }, [newProject, projectID, user]);
+  }, [newProject, projectID]);
 
   // Setup default project for creation
   useEffect(() => {
@@ -98,20 +97,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     if (newProject && user) {
       const initProject = async() => {
         const project: ProjectDetail = { ...emptyProject };
-        try {
-          const response = await getUsersById(user.userId.toString());
-          // Add creator as Project Lead
-          const member = {
-            firstName: user.firstName,
-            lastName: user.lastName,
-            jobTitle: 'Project Lead',
-            profileImage: response.data?.profileImage || '',
-            userId: user.userId
-          };
-          project.members = [member];
-        } catch (error) {
-          console.error(error);
-        }
+        project.owner = user;
+        project.members.push({
+          user: user,
+          role: { label: 'Project Lead', roleId: 73 },
+          memberSince: new Date(Date.now()),
+          apiUrl: `users/${user.userId}`,
+        });
         setModifiedProject(project);
       };
       initProject();
@@ -269,7 +261,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     <Popup>
       {
         newProject ? (
-          <PopupButton callback={buttonCallback} buttonId='project-info-create' > <ThemeIcon id={'create'} width={25} height={25} className={'color-fill'} ariaLabel={'create'}/> <p>Create</p> </PopupButton>
+          <PopupButton callback={buttonCallback} buttonId='project-info-create' >
+            <ThemeIcon id={'create'} width={25} height={25} className={'color-fill'} ariaLabel={'create'}/>
+            <p>Create</p>
+          </PopupButton>
         ) : (
           <PopupButton callback={buttonCallback} buttonId="project-info-edit">Edit Project</PopupButton>
         )
