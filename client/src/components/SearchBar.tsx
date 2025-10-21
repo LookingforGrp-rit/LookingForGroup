@@ -1,15 +1,12 @@
-import { memo, FC, ChangeEvent, useState, useLayoutEffect } from 'react';
-// import { ProjectCard } from './ProjectCard';
-import { UserPreview } from '@looking-for-group/shared';
+import { memo, FC, ChangeEvent, useState, useLayoutEffect, useCallback } from 'react';
 
 interface DataSet {
-  data: (string | UserPreview)[];
+  data: unknown[];
 }
-
 
 interface SearchBarProps {
   dataSets: DataSet[];
-  onSearch: (results: (string | UserPreview)[][]) => void;
+  onSearch: (results: unknown[][]) => void;
   // Optional value & onChange for different searchbar behaviors (adding team member names)
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -36,37 +33,42 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     handleSearch(newQuery);
   };
 
-const handleSearch = (searchQuery: string) => {
-  const filteredResults = dataSets.map((dataSet) =>
-    dataSet.data.filter((item) => {
-     if (typeof item === 'object') {
-      // Handle tag objects when filtering tags
-        if ('label' in item && typeof item.label === 'string') {
-          return item.label.toLowerCase().includes(searchQuery);
-        }
-      // ONLY return fields we want to match, this avoids unintended searchbar behavior
-       return (
-        (item.name && item.name.toLowerCase().includes(searchQuery)) ||
-        (item.username && item.username.toLowerCase().includes(searchQuery)) ||
-        (item.firstName && item.firstName.toLowerCase().includes(searchQuery)) ||
-        (item.lastName && item.lastName.toLowerCase().includes(searchQuery))
-       );
-     }
-     else {
-        return String(item).toLowerCase().includes(searchQuery)
-     }
-    })
-  );
+  const handleSearch = useCallback((searchQuery: string) => {
+    const filteredResults = dataSets.map((dataSet) =>
+      dataSet.data.filter((item) => {
+      if (typeof item === 'object') {
+        // ONLY return fields we want to match, this avoids unintended searchbar behavior
+        // Search using all string props on the item
+        const includesInValue = (val: unknown): boolean => {
+          if (typeof val === 'string') {
+            return val.toLowerCase().includes(searchQuery);
+          }
+          if (Array.isArray(val)) {
+            return val.some((el) => typeof el === 'string' && el.toLowerCase().includes(searchQuery));
+          }
+          if (val && typeof val === 'object') {
+            return Object.values(val).some(includesInValue);
+          }
+          return false;
+        };
 
-  onSearch(filteredResults);
-};
+        if (item === null) return false;
+        return Object.values(item).some(includesInValue);
+      }
+      else {
+          return String(item).toLowerCase().includes(searchQuery)
+      }
+      })
+    );
 
+    onSearch(filteredResults);
+  }, [dataSets, onSearch]);
 
   useLayoutEffect(() => {
     if (query !== '') {
-      handleSearch(query);
+      handleSearch(query.toLowerCase());
     }
-  }, [dataSets]);
+  }, [dataSets, handleSearch, query]);
 
   return (
     <div className="search-wrapper">
