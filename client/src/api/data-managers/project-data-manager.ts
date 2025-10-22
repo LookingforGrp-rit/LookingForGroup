@@ -52,7 +52,7 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   const getEmptyChanges = () => {
-    return {
+    const emptyChanges: ProjectChanges = {
       create: {
         tags: [],
         projectImages: [],
@@ -63,7 +63,10 @@ export const projectDataManager = async (projectId: number) => {
       },
       update: {
         fields: {
-          id: projectId,
+          id: {
+            type: "canon",
+            value: projectId,
+          },
           data: {},
         },
         projectImages: [],
@@ -80,6 +83,8 @@ export const projectDataManager = async (projectId: number) => {
         mediums: [],
       },
     };
+
+    return emptyChanges;
   };
 
   let savedProject: ProjectWithFollowers = await downloadProject();
@@ -110,6 +115,7 @@ export const projectDataManager = async (projectId: number) => {
    * @throws {Error} Throws an error if any change failed. Includes the failed changes.
    */
   const saveChanges = async () => {
+    console.log(changes);
     let errorMessage = "";
 
     try {
@@ -156,7 +162,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<UpdateProjectJobInput>(
         "Updating project job",
         updates.jobs,
-        ({ id, data }) => updateProjectJob(projectId, id, data)
+        ({ id, data }) => updateProjectJob(projectId, id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -166,7 +172,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<UpdateProjectMemberInput>(
         "Updating project member",
         updates.members,
-        ({ id, data }) => updateMemberAPI(projectId, id, data)
+        ({ id, data }) => updateMemberAPI(projectId, id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -176,7 +182,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<UpdateProjectImageInput>(
         "Updating project image",
         updates.projectImages,
-        ({ id, data }) => updatePic(projectId, id, data)
+        ({ id, data }) => updatePic(projectId, id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -186,7 +192,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<UpdateProjectSocialInput>(
         "Updating project social",
         updates.projectSocials,
-        ({ id, data }) => updateProjectSocial(projectId, id, data)
+        ({ id, data }) => updateProjectSocial(projectId, id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -274,7 +280,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<null>(
         "Deleting project job",
         deletes.jobs,
-        ({ id }) => deleteProjectJob(projectId, id)
+        ({ id }) => deleteProjectJob(projectId, id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -284,7 +290,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<null>(
         "Deleting project medium",
         deletes.mediums,
-        ({ id }) => deleteProjectMedium(projectId, id)
+        ({ id }) => deleteProjectMedium(projectId, id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -294,7 +300,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<null>(
         "Deleting project member",
         deletes.members,
-        ({ id }) => deleteMemberAPI(projectId, id)
+        ({ id }) => deleteMemberAPI(projectId, id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -304,7 +310,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<null>(
         "Deleting project image",
         deletes.projectImages,
-        ({ id }) => deletePic(projectId, id)
+        ({ id }) => deletePic(projectId, id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -314,7 +320,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<null>(
         "Deleting project social",
         deletes.projectSocials,
-        ({ id }) => deleteProjectSocial(projectId, id)
+        ({ id }) => deleteProjectSocial(projectId, id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -324,7 +330,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<null>(
         "Deleting project tag",
         deletes.tags,
-        ({ id }) => deleteProjectTag(projectId, id)
+        ({ id }) => deleteProjectTag(projectId, id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -350,9 +356,10 @@ export const projectDataManager = async (projectId: number) => {
 
     // TODO can be ran simultaneously if saving takes too long
     for (const request of requests) {
-      const succeeded = !!(await action(request));
+      const response = await action(request);
+      const succeeded = !response.error;
       statuses.push({
-        id: request.id,
+        id: request.id.value,
         succeeded,
       });
     }
@@ -366,9 +373,9 @@ export const projectDataManager = async (projectId: number) => {
   }
 
   const addTag = (tag: CRUDRequest<AddProjectTagsInput>) => {
-    if (changes.create.tags.some(({ id }) => id === tag.id)) {
+    if (changes.create.tags.some(({ id }) => id.value === tag.id.value)) {
       changes.create.tags = [
-        ...changes.create.tags.filter(({ id }) => id !== tag.id),
+        ...changes.create.tags.filter(({ id }) => id.value !== tag.id.value),
         tag,
       ];
       return;
@@ -378,9 +385,11 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   const addMedium = (medium: CRUDRequest<AddProjectMediumsInput>) => {
-    if (changes.create.mediums.some(({ id }) => id === medium.id)) {
+    if (changes.create.mediums.some(({ id }) => id.value === medium.id.value)) {
       changes.create.mediums = [
-        ...changes.create.mediums.filter(({ id }) => id !== medium.id),
+        ...changes.create.mediums.filter(
+          ({ id }) => id.value !== medium.id.value
+        ),
         medium,
       ];
       return;
@@ -390,9 +399,15 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   const addSocial = (social: CRUDRequest<AddProjectSocialInput>) => {
-    if (changes.create.projectSocials.some(({ id }) => id === social.id)) {
+    if (
+      changes.create.projectSocials.some(
+        ({ id }) => id.value === social.id.value
+      )
+    ) {
       changes.create.projectSocials = [
-        ...changes.create.projectSocials.filter(({ id }) => id !== social.id),
+        ...changes.create.projectSocials.filter(
+          ({ id }) => id.value !== social.id.value
+        ),
         social,
       ];
       return;
@@ -402,9 +417,13 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   const createImage = (image: CRUDRequest<CreateProjectImageInput>) => {
-    if (changes.create.projectImages.some(({ id }) => id === image.id)) {
+    if (
+      changes.create.projectImages.some(({ id }) => id.value === image.id.value)
+    ) {
       changes.create.projectImages = [
-        ...changes.create.projectImages.filter(({ id }) => id !== image.id),
+        ...changes.create.projectImages.filter(
+          ({ id }) => id.value !== image.id.value
+        ),
         image,
       ];
       return;
@@ -414,9 +433,11 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   const createMember = (member: CRUDRequest<CreateProjectMemberInput>) => {
-    if (changes.create.members.some(({ id }) => id === member.id)) {
+    if (changes.create.members.some(({ id }) => id.value === member.id.value)) {
       changes.create.members = [
-        ...changes.create.members.filter(({ id }) => id !== member.id),
+        ...changes.create.members.filter(
+          ({ id }) => id.value !== member.id.value
+        ),
         member,
       ];
       return;
@@ -426,9 +447,9 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   const createJob = (job: CRUDRequest<CreateProjectJobInput>) => {
-    if (changes.create.jobs.some(({ id }) => id === job.id)) {
+    if (changes.create.jobs.some(({ id }) => id.value === job.id.value)) {
       changes.create.jobs = [
-        ...changes.create.jobs.filter(({ id }) => id !== job.id),
+        ...changes.create.jobs.filter(({ id }) => id.value !== job.id.value),
         job,
       ];
       return;
@@ -439,27 +460,37 @@ export const projectDataManager = async (projectId: number) => {
 
   const updateFields = (fields: CRUDRequest<UpdateProjectInput>) => {
     changes.update.fields = {
-      ...changes.update.fields,
-      ...fields,
+      id: {
+        type: "canon",
+        value: projectId,
+      },
+      data: {
+        ...changes.update.fields.data,
+        ...fields.data,
+      },
     };
   };
 
   const updateImage = (image: CRUDRequest<UpdateProjectImageInput>) => {
     let existingImageUpdate = changes.update.projectImages.find(
-      ({ id }) => id === image.id
+      ({ id }) => id.value === image.id.value && id.type === image.id.type
     );
 
     existingImageUpdate = {
       id: image.id,
       data: {
         ...existingImageUpdate?.data,
-        ...image,
+        ...image.data,
       },
     };
 
     changes.update.projectImages = [
       ...changes.update.projectImages.filter(
-        ({ id }) => id !== existingImageUpdate.id
+        ({ id }) =>
+          !(
+            id.value == existingImageUpdate.id.value &&
+            id.type == existingImageUpdate.id.type
+          )
       ),
       existingImageUpdate,
     ];
@@ -467,165 +498,243 @@ export const projectDataManager = async (projectId: number) => {
 
   const updateSocial = (social: CRUDRequest<UpdateProjectSocialInput>) => {
     let existingSocialUpdate = changes.update.projectSocials.find(
-      ({ id }) => id === social.id
+      ({ id }) => id.value === social.id.value && id.type === social.id.type
     );
 
     existingSocialUpdate = {
       id: social.id,
       data: {
         ...existingSocialUpdate?.data,
-        ...social,
+        ...social.data,
       },
     };
 
     changes.update.projectSocials = [
       ...changes.update.projectSocials.filter(
-        ({ id }) => id !== existingSocialUpdate.id
+        ({ id }) =>
+          !(
+            id.value == existingSocialUpdate.id.value &&
+            id.type == existingSocialUpdate.id.type
+          )
       ),
       existingSocialUpdate,
     ];
   };
 
   const updateJob = (job: CRUDRequest<UpdateProjectJobInput>) => {
-    let existingJobUpdate = changes.update.jobs.find(({ id }) => id === job.id);
+    let existingJobUpdate = changes.update.jobs.find(
+      ({ id }) => id.value === job.id.value && id.type === job.id.type
+    );
 
     existingJobUpdate = {
       id: job.id,
       data: {
         ...existingJobUpdate?.data,
-        ...job,
+        ...job.data,
       },
     };
 
     changes.update.jobs = [
-      ...changes.update.jobs.filter(({ id }) => id !== existingJobUpdate.id),
+      ...changes.update.jobs.filter(
+        ({ id }) =>
+          !(
+            id.value == existingJobUpdate.id.value &&
+            id.type == existingJobUpdate.id.type
+          )
+      ),
       existingJobUpdate,
     ];
   };
 
   const updateMember = (member: CRUDRequest<UpdateProjectMemberInput>) => {
     let existingMemberUpdate = changes.update.members.find(
-      ({ id }) => id === member.id
+      ({ id }) => id.value === member.id.value && id.type === member.id.type
     );
 
     existingMemberUpdate = {
       id: member.id,
       data: {
         ...existingMemberUpdate?.data,
-        ...member,
+        ...member.data,
       },
     };
 
     changes.update.members = [
       ...changes.update.members.filter(
-        ({ id }) => id !== existingMemberUpdate.id
+        ({ id }) =>
+          !(
+            id.value == existingMemberUpdate.id.value &&
+            id.type == existingMemberUpdate.id.type
+          )
       ),
       existingMemberUpdate,
     ];
   };
 
   const deleteTag = (tag: CRUDRequest<null>) => {
-    if (changes.create.tags.some(({ id }) => id === tag.id)) {
+    // if we were gonna create this tag, don't
+    if (changes.create.tags.some(({ id }) => id.value === tag.id.value)) {
       changes.create.tags = changes.create.tags.filter(
-        ({ id }) => id !== tag.id
+        ({ id }) => id.value !== tag.id.value
       );
       return;
     }
 
-    if (!changes.delete.tags.some(({ id }) => id === tag.id)) {
+    // otherwise, delete this tag
+    if (!changes.delete.tags.some(({ id }) => id.value === tag.id.value)) {
       changes.delete.tags.push(tag);
     }
   };
 
   const deleteImage = (image: CRUDRequest<null>) => {
-    if (changes.create.projectImages.some(({ id }) => id === image.id)) {
-      changes.create.projectImages = changes.create.projectImages.filter(
-        ({ id }) => id !== image.id
-      );
-      return;
-    }
-
-    if (changes.update.projectImages.some(({ id }) => id === image.id)) {
+    // if we were gonna update this image, don't
+    if (
+      changes.update.projectImages.some(
+        ({ id }) => id.value === image.id.value && id.type === image.id.type
+      )
+    ) {
       changes.update.projectImages = changes.update.projectImages.filter(
-        ({ id }) => id !== image.id
+        ({ id }) => !(id.value === image.id.value && id.type === image.id.type)
+      );
+    }
+
+    // if we were gonna create this image, don't
+    if (
+      image.id.type === "local" &&
+      changes.create.projectImages.some(({ id }) => id.value === image.id.value)
+    ) {
+      changes.create.projectImages = changes.create.projectImages.filter(
+        ({ id }) => id.value !== image.id.value
       );
       return;
     }
 
-    if (!changes.delete.projectImages.some(({ id }) => id === image.id)) {
+    // otherwise, delete this image
+    if (
+      image.id.type === "canon" &&
+      !changes.delete.projectImages.some(
+        ({ id }) => id.value === image.id.value
+      )
+    ) {
       changes.delete.projectImages.push(image);
     }
   };
 
   const deleteSocial = (social: CRUDRequest<null>) => {
-    if (changes.create.projectSocials.some(({ id }) => id === social.id)) {
-      changes.create.projectSocials = changes.create.projectSocials.filter(
-        ({ id }) => id !== social.id
-      );
-      return;
-    }
-
-    if (changes.update.projectSocials.some(({ id }) => id === social.id)) {
+    // if we were gonna update this social, don't
+    if (
+      changes.update.projectSocials.some(
+        ({ id }) => id.value === social.id.value && id.type === social.id.type
+      )
+    ) {
       changes.update.projectSocials = changes.update.projectSocials.filter(
-        ({ id }) => id !== social.id
+        ({ id }) =>
+          !(id.value === social.id.value && id.type === social.id.type)
+      );
+    }
+
+    // if we were gonna create this social, don't
+    if (
+      social.id.type === "local" &&
+      changes.create.projectSocials.some(
+        ({ id }) => id.value === social.id.value
+      )
+    ) {
+      changes.create.projectSocials = changes.create.projectSocials.filter(
+        ({ id }) => id.value !== social.id.value
       );
       return;
     }
 
-    if (!changes.delete.projectSocials.some(({ id }) => id === social.id)) {
+    // otherwise, delete this socials
+    if (
+      social.id.type === "canon" &&
+      !changes.delete.projectSocials.some(
+        ({ id }) => id.value === social.id.value
+      )
+    ) {
       changes.delete.projectSocials.push(social);
     }
   };
 
   const deleteJob = (job: CRUDRequest<null>) => {
-    if (changes.create.jobs.some(({ id }) => id === job.id)) {
-      changes.create.jobs = changes.create.jobs.filter(
-        ({ id }) => id !== job.id
-      );
-      return;
-    }
-
-    if (changes.update.jobs.some(({ id }) => id === job.id)) {
+    // if we were gonna update this job, don't
+    if (
+      changes.update.jobs.some(
+        ({ id }) => id.value === job.id.value && id.type === job.id.type
+      )
+    ) {
       changes.update.jobs = changes.update.jobs.filter(
-        ({ id }) => id !== job.id
+        ({ id }) => !(id.value === job.id.value && id.type === job.id.type)
+      );
+    }
+
+    // if we were gonna create this job, don't
+    if (
+      job.id.type === "local" &&
+      changes.create.jobs.some(({ id }) => id.value === job.id.value)
+    ) {
+      changes.create.jobs = changes.create.jobs.filter(
+        ({ id }) => !(id.value === job.id.value && id.type === job.id.type)
       );
       return;
     }
 
-    if (!changes.delete.jobs.some(({ id }) => id === job.id)) {
+    // otherwise, delete this job
+    if (
+      job.id.type === "canon" &&
+      !changes.delete.jobs.some(({ id }) => id.value === job.id.value)
+    ) {
       changes.delete.jobs.push(job);
     }
   };
 
   const deleteMember = (member: CRUDRequest<null>) => {
-    if (changes.create.members.some(({ id }) => id === member.id)) {
-      changes.create.members = changes.create.members.filter(
-        ({ id }) => id !== member.id
-      );
-      return;
-    }
-
-    if (changes.update.members.some(({ id }) => id === member.id)) {
+    // if we were gonna update this member, don't
+    if (
+      changes.update.members.some(
+        ({ id }) => id.value === member.id.value && id.type === member.id.type
+      )
+    ) {
       changes.update.members = changes.update.members.filter(
-        ({ id }) => id !== member.id
+        ({ id }) =>
+          !(id.value === member.id.value && id.type === member.id.type)
+      );
+    }
+
+    // if we were gonna create this member, don't
+    if (
+      member.id.type === "local" &&
+      changes.create.members.some(({ id }) => id.value === member.id.value)
+    ) {
+      changes.create.members = changes.create.members.filter(
+        ({ id }) => id.value !== member.id.value
       );
       return;
     }
 
-    if (!changes.delete.members.some(({ id }) => id === member.id)) {
+    // otherwise, delete this member
+    if (
+      member.id.type === "canon" &&
+      !changes.delete.members.some(({ id }) => id.value === member.id.value)
+    ) {
       changes.delete.members.push(member);
     }
   };
 
   const deleteMedium = (medium: CRUDRequest<null>) => {
-    if (changes.create.mediums.some(({ id }) => id === medium.id)) {
+    // if we were gonna add this medium, don't
+    if (changes.create.mediums.some(({ id }) => id.value === medium.id.value)) {
       changes.create.mediums = changes.create.mediums.filter(
-        ({ id }) => id !== medium.id
+        ({ id }) => id.value !== medium.id.value
       );
       return;
     }
 
-    if (!changes.delete.mediums.some(({ id }) => id === medium.id)) {
+    // otherwise, delete this medium
+    if (
+      !changes.delete.mediums.some(({ id }) => id.value === medium.id.value)
+    ) {
       changes.delete.mediums.push(medium);
     }
   };
