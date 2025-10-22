@@ -336,9 +336,7 @@ useEffect(() => {
 
   //Find first member with the job title of 'Project Lead'
   //If no such member exists, use first member in project member list
-  const projectLead = displayedProject?.members.find(
-    (member) => member.role.label === "Owner"
-  );
+  const projectLead = displayedProject?.owner;
 
   //Page layout for if project data hasn't been loaded yet
   const loadingProject = <>{<div>Loading project...</div>}</>;
@@ -444,7 +442,7 @@ useEffect(() => {
                           <span
                             onClick={() =>
                               navigate(
-                                `${paths.routes.PROFILE}?userID=${projectLead?.user.userId}`
+                                `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
                               )
                             }
                             id="position-contact-link"
@@ -454,8 +452,8 @@ useEffect(() => {
                             ? `images/profiles/${projectLead?.profile_image}` 
                             : profilePicture} 
                           /> */}
-                            {projectLead?.user.firstName}{" "}
-                            {projectLead?.user.lastName}
+                            {projectLead?.firstName}{" "}
+                            {projectLead?.lastName}
                           </span>
                         </div>
                       </div>
@@ -469,9 +467,9 @@ useEffect(() => {
               </Popup>
             </div>
             <div id="project-creation">
-              Created by:{" "}
+              Created by: {" "}
               <span className="project-info-highlight">
-                {projectLead?.user.firstName} {projectLead?.user.lastName}
+                {projectLead?.firstName} {projectLead?.lastName}
               </span>
               <br />
               Creation date

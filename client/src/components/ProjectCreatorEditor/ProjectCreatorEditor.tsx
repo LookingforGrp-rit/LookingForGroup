@@ -9,7 +9,7 @@ import { ThemeIcon } from '../ThemeIcon';
 import { createNewProject, getByID, updateProject, getPics, addPic, deletePic, getProjectSocials, addProjectSocial, updateProjectSocial, deleteProjectSocial } from '../../api/projects';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-import { MePrivate, ProjectDetail, ProjectPurpose, ProjectStatus, User } from '@looking-for-group/shared';
+import { CreateProjectInput, MePrivate, ProjectDetail, ProjectPurpose, ProjectStatus, User } from '@looking-for-group/shared';
 
 interface Props {
   newProject: boolean;
@@ -195,33 +195,29 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     try {
       // NEW PROJECT
       if (newProject && user) {
-        const resp = await createNewProject(
-          user.userId,
-          modifiedProject.title,
-          modifiedProject.hook,
-          modifiedProject.description,
-          modifiedProject.purpose,
-          modifiedProject.status,
-          modifiedProject.audience,
-          modifiedProject.projectTypes,
-          modifiedProject.tags,
-          modifiedProject.jobs,
-          modifiedProject.members,
-          modifiedProject.socials
-        );
+        const resp = await createNewProject(modifiedProject as CreateProjectInput);
         const newProjectID = resp.data?.projectId;
         if (!newProjectID) return;
 
         // Upload images
-        await Promise.all(
-          modifiedProject.images.map(image => addPic(newProjectID, image.file, image.position))
-        );
+        modifiedProject.projectImages?.map(async (image) => {
+          const imageInput = {
+            image: fetch(image.apiUrl) as unknown as File,
+            altText: image.altText
+          }
+          await addPic(newProjectID, imageInput)
+        })
+        
 
-        if (modifiedProject.thumbnailFile) {
-          await updateThumbnail(newProjectID, modifiedProject.thumbnailFile);
+        if (modifiedProject.thumbnail) {
+          const imageInput = {
+            image: fetch(modifiedProject.thumbnail) as unknown as File,
+            altText: modifiedProject.thumbnail.altText
+          }
+          await addPic(newProjectID, modifiedProject.thumbnail);
         }
 
-        setProjectData(modifiedProject);
+        setProjectData(modifiedProject as ProjectDetail);
       }
 
       // EXISTING PROJECT
@@ -240,7 +236,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           })
         );
 
-        await updatePicPositions(
+        await updatePicPositions( //the position parameter...
           projectNumID,
           modifiedProject.images.map(i => ({ id: i.id!, position: i.position }))
         );
