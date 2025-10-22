@@ -794,10 +794,11 @@ Project Creator and Editor style rules
 
 #project-editor-selected-tags-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 8px;
+  margin-top: 15px;
 }
 
 #project-editor-type-tags-container {

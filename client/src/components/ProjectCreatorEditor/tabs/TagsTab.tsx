@@ -357,9 +357,38 @@ export const TagsTab = ({
         </div>
         {!modifiedProject.tags || modifiedProject.tags?.length === 0 ? <div className="error">*At least 1 tag is required</div> : <></> }
         <div id="project-editor-selected-tags-container">
-          <hr id="selected-tag-divider" />
+          {
+            (() => {
+              const tags = modifiedProject.tags ?? [];
+              return (
+                <>
+                  {tags.slice(0, 2).map((t) => (
+                    <button
+                      key={t.tagId}
+                      className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
+                      onClick={(e) => handleTagSelect(e)}
+                    >
+                      <i className="fa fa-close"></i>
+                      <p>{t.label}</p>
+                    </button>
+                  ))}
+                  <hr id="selected-tag-divider" />
+                  {tags.slice(2).map((t) => (
+                    <button
+                      key={t.tagId}
+                      className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
+                      onClick={(e) => handleTagSelect(e)}
+                    >
+                      <i className="fa fa-close"></i>
+                      <p>{t.label}</p>
+                    </button>
+                  ))}
+                </>
+              );
+            })()
+          }
           {/* TODO: Separate top 2 tags from others with hr element */}
-          {loadProjectTags}
+          {/* {loadProjectTags} */}
         </div>
       </div>
 
