@@ -38,10 +38,7 @@ export const getMyProjectsService = async (
     });
 
     //all the projects
-    //this is now a union instead of a concat (should've always been a union)
-    //because since owners are also members of their own projects, projects they owned would come up twice
-    //no longer
-    let projects = [...new Set([...allOwnedProjects, ...allMemberProjects])];
+    let projects = allOwnedProjects.concat(allMemberProjects);
 
     if (owner === 'me') {
       projects = allOwnedProjects;
@@ -80,9 +77,22 @@ export const getMyProjectsService = async (
         select: ProjectPreviewSelector,
       });
       if (owner === 'all') {
-        projects = [...new Set([...visibilityOwnedProjects, ...visibilityMemberProjects])];
+        projects = visibilityOwnedProjects.concat(visibilityMemberProjects);
       } else if (owner === 'me') {
         projects = visibilityOwnedProjects;
+      }
+    }
+
+    //union at the end (should've always been a union)
+    //since owners are also members of their own projects, projects they owned would come up twice
+    //no longer
+    //https://stackoverflow.com/questions/13319150/union-of-array-of-objects-in-javascript-and-es6 (thank you stack overflow)
+    for (let i = 0; i < projects.length; i++) {
+      for (let j = i + 1; j < projects.length; j++) {
+        if (projects[i].projectId === projects[j].projectId) {
+          projects.splice(j, 1);
+          j--;
+        }
       }
     }
 

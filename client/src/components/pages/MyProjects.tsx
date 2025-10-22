@@ -16,7 +16,7 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 //import user from '../Sidebar'; // For use with project creation button
 
 //import api utils
-import { getCurrentUsername, getProjectsByUser, getVisibleProjects } from '../../api/users.ts'
+import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
 import { MePrivate, ProjectDetail, ProjectPreview} from '@looking-for-group/shared';
 
 const MyProjects = () => {
@@ -366,7 +366,7 @@ const MyProjects = () => {
       {/* Header */}
       <div className="my-projects-header-row">
         {/* All Projects Button */}
-        <button className="my-projects-all-projects-button" onClick={(e) => { }}>
+        <button className="my-projects-all-projects-button" onClick={() => { }}>
           All Projects
         </button>
 
@@ -379,7 +379,7 @@ const MyProjects = () => {
             type='dropdown'
           />
           <SelectOptions
-            callback={(e) => setSortMethod(e.target.value)}
+            callback={(e) => setSortMethod((e.target as HTMLButtonElement).value)}
             options={[
               {
                 markup: <><i className="fa-solid fa-arrow-down-short-wide"></i>Newest</>,
@@ -571,7 +571,7 @@ const MyProjects = () => {
               <p>You have no projects, you're not logged in!</p>
             </div>
           ) : (
-            <ProjectListSection userProjects={projectsList} />
+            <ProjectListSection userProjects={projectsList as ProjectDetail[]} />
           )
         )}
       </div>
