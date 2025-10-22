@@ -17,7 +17,7 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
-import { MePrivate, ProjectDetail, ProjectPreview} from '@looking-for-group/shared';
+import { MePrivate, ProjectDetail} from '@looking-for-group/shared';
 
 const MyProjects = () => {
 
@@ -41,7 +41,7 @@ const MyProjects = () => {
   // - oldest
   // - a-z
   // - z-a
-  const [projectsList, setProjectsList] = useState<ProjectPreview[]>([]);
+  const [projectsList, setProjectsList] = useState<ProjectDetail[]>([]);
   const [currentSearch, setCurrentSearch] = useState('');
   // const [bannerImage, setBannerImage] = useState(require("../../images/projects_header_light.png"));
 
@@ -61,9 +61,11 @@ const MyProjects = () => {
 
       // User is logged in, pull their data
       if (res.data) {
+        setUserData(res.data) //i think this is useless actually
         setLoggedIn(res.data.userId);
         const projectsRes = await getProjectsByUser();
 
+        console.log(projectsRes.data)
         if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
         
       } else {

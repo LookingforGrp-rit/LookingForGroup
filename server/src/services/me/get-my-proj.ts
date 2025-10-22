@@ -1,8 +1,8 @@
-import type { ProjectPreview } from '@looking-for-group/shared';
+import type { ProjectDetail } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
+import { ProjectDetailSelector } from '#services/selectors/projects/project-detail.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformProjectToPreview } from '#services/transformers/projects/project-preview.ts';
+import { transformProjectToDetail } from '#services/transformers/projects/project-detail.ts';
 
 type GetProjectsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
@@ -10,7 +10,7 @@ export const getMyProjectsService = async (
   userId: number,
   visibility?: 'all' | 'public' | 'private',
   owner?: string,
-): Promise<ProjectPreview[] | GetProjectsError> => {
+): Promise<ProjectDetail[] | GetProjectsError> => {
   try {
     //all the projects they own
     const allOwnedProjects = await prisma.projects.findMany({
@@ -20,7 +20,7 @@ export const getMyProjectsService = async (
       orderBy: {
         title: 'asc',
       },
-      select: ProjectPreviewSelector,
+      select: ProjectDetailSelector,
     });
     //all the projects they're a member of
     const allMemberProjects = await prisma.projects.findMany({
@@ -34,7 +34,7 @@ export const getMyProjectsService = async (
       orderBy: {
         title: 'asc',
       },
-      select: ProjectPreviewSelector,
+      select: ProjectDetailSelector,
     });
 
     //all the projects
@@ -58,7 +58,7 @@ export const getMyProjectsService = async (
         orderBy: {
           title: 'asc',
         },
-        select: ProjectPreviewSelector,
+        select: ProjectDetailSelector,
       });
       //all the projects they own filtered based on what's visible
       const visibilityOwnedProjects = await prisma.projects.findMany({
@@ -74,7 +74,7 @@ export const getMyProjectsService = async (
         orderBy: {
           title: 'asc',
         },
-        select: ProjectPreviewSelector,
+        select: ProjectDetailSelector,
       });
       if (owner === 'all') {
         projects = visibilityOwnedProjects.concat(visibilityMemberProjects);
@@ -100,7 +100,7 @@ export const getMyProjectsService = async (
     if (projects.length === 0) return 'NOT_FOUND';
 
     //user helper to transform project
-    const fullProject = projects.map(transformProjectToPreview);
+    const fullProject = projects.map(transformProjectToDetail);
 
     return fullProject;
   } catch (e) {
