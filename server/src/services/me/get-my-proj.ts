@@ -38,7 +38,10 @@ export const getMyProjectsService = async (
     });
 
     //all the projects
-    let projects = Array.prototype.concat(allOwnedProjects, allMemberProjects);
+    //this is now a union instead of a concat (should've always been a union)
+    //because since owners are also members of their own projects, projects they owned would come up twice
+    //no longer
+    let projects = [...new Set([...allOwnedProjects, ...allMemberProjects])];
 
     if (owner === 'me') {
       projects = allOwnedProjects;
@@ -77,7 +80,7 @@ export const getMyProjectsService = async (
         select: ProjectPreviewSelector,
       });
       if (owner === 'all') {
-        projects = Array.prototype.concat(visibilityOwnedProjects, visibilityMemberProjects);
+        projects = [...new Set([...visibilityOwnedProjects, ...visibilityMemberProjects])];
       } else if (owner === 'me') {
         projects = visibilityOwnedProjects;
       }
