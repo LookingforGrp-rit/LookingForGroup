@@ -9,7 +9,8 @@ import { ThemeIcon } from '../ThemeIcon';
 import { createNewProject, getByID, updateProject, getPics, addPic, deletePic, getProjectSocials, addProjectSocial, updateProjectSocial, deleteProjectSocial } from '../../api/projects';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-import { CreateProjectInput, MePrivate, ProjectDetail, ProjectPurpose, ProjectStatus, User } from '@looking-for-group/shared';
+import { CreateProjectInput, MePrivate, ProjectDetail } from '@looking-for-group/shared';
+import { getCurrentAccount } from '../../api/users';
 
 interface Props {
   newProject: boolean;
@@ -17,24 +18,6 @@ interface Props {
   user?: MePrivate;
   // permissions?: number;
 }
-
-// default value for project data
-const emptyProject: ProjectDetail = {
-  _id: '',
-  audience: '',
-  description: '',
-  hook: '',
-  images: [],
-  jobs: [],
-  members: [],
-  projectTypes: [],
-  purpose: '' as ProjectPurpose,
-  socials: [],
-  status: '' as ProjectStatus,
-  tags: [],
-  thumbnail: '',
-  title: '',
-};
 
 /**
  * This component should allow for either editing existing projects or creating new projects entirely,
@@ -53,10 +36,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const [user, setUser] = useState<MePrivate | null>(null);
 
   // store project data
-  const [projectData, setProjectData] = useState<ProjectDetail>(emptyProject);
+  const [projectData, setProjectData] = useState<ProjectDetail>();
 
   // tracking temporary project changes before committing to a save
-  const [modifiedProject, setModifiedProject] = useState<Partial<ProjectDetail>>(emptyProject);
+  const [modifiedProject, setModifiedProject] = useState<Partial<ProjectDetail>>();
 
   // check whether or not the data in the popup is valid
   const [failCheck, setFailCheck] = useState(false);
@@ -94,9 +77,15 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   // Setup default project for creation
   useEffect(() => {
     setErrorLinks('');
-    if (newProject && user) {
+    
+    if (newProject) {
       const initProject = async() => {
-        const project: ProjectDetail = { ...emptyProject };
+        //just makin sure the user is set, setUser was never called
+        const userResp = await getCurrentAccount();
+        if(userResp.data) setUser(userResp.data);
+
+        if(user){
+        const project: ProjectDetail = Object.prototype as ProjectDetail; //does this work i wonder
         project.owner = user;
         project.members.push({
           user: user,
@@ -105,6 +94,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           apiUrl: `users/${user.userId}`,
         });
         setModifiedProject(project);
+        }
       };
       initProject();
     }
@@ -122,7 +112,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       const currentSocials = currentSocialsResponse.data || [];
       
       // Process each social in the modified project
-      for (const social of modifiedProject.projectSocials || []) {
+      for (const social of modifiedProject?.projectSocials || []) {
         if (!social.url || !social.websiteId || social.websiteId === 0) continue; // Skip empty/invalid socials
         
         // Check if this social already exists
@@ -140,7 +130,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       }
       
       // Delete socials that were removed
-      const modifiedSocialIds = (modifiedProject.projectSocials || [])
+      const modifiedSocialIds = (modifiedProject?.projectSocials || [])
         .filter(s => s.url && s.websiteId && s.websiteId !== 0)
         .map(s => s.websiteId);
       
@@ -171,7 +161,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       return;
     }
     //pops up error text if required fields in general haven't been filled out
-    if (!modifiedProject.title || !modifiedProject.description || !modifiedProject.status || !modifiedProject.hook) {
+    if (!modifiedProject?.title || !modifiedProject.description || !modifiedProject.status || !modifiedProject.hook) {
       const errorText = document.getElementById('invalid-input-error');
       setMessage('*Fill out all required info under General before saving!*');
 
@@ -182,7 +172,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     }
 
     //pops up error text if no tags have been chosen
-    if (modifiedProject.tags.length == 0 || modifiedProject.projectTypes.length == 0) {
+    if (modifiedProject.tags?.length == 0 || modifiedProject.mediums?.length == 0) {
       const errorText = document.getElementById('invalid-input-error');
       setMessage('*Choose a project type and tag under Tags before saving!*');
 
@@ -209,6 +199,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         })
         
 
+        //how should i do this...
+        //thumbnails are handled via the larger create/update project function
+        //you're able to send over a file alongside that and send that to the backend
+        //meaning that right here what we should do is check the file they should have sent us for the thumbnail
         if (modifiedProject.thumbnail) {
           const imageInput = {
             image: fetch(modifiedProject.thumbnail) as unknown as File,
