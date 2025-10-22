@@ -24,7 +24,7 @@ export const LinksTab = ({
   setErrorLinks = () => {},
   saveProject = () => {},
   failCheck,
-  isNewProject = false
+  //isNewProject = false
 }: LinksTabProps) => {
   // --- Hooks --- 
   // tracking project modifications

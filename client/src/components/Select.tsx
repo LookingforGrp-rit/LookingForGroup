@@ -14,7 +14,7 @@ type SelectContextProps = {
 
 type SelectButtonProps = {
     placeholder: string;
-    initialVal: any;
+    initialVal?: string | boolean;
     buttonId?: string;
     className?: string;
     type: 'input' | 'dropdown';

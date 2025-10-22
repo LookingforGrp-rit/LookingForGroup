@@ -1,22 +1,22 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
-import { getByID,  deleteProject, deleteMember} from '../api/projects';
-import { ApiResponse } from '@looking-for-group/shared';
+import { getByID,  deleteProject } from '../api/projects';
+import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 
 //backend base url for getting images
 
 
-const MyProjectsDisplayList = ({ projectData }) => {
+const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) => {
   // Navigation hook
   const navigate = useNavigate();
 
-  const { projId, userId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
+  const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
 
   const [status, setStatus] = useState<string>();
   const [optionsShown, setOptionsShown] = useState(false);
@@ -27,20 +27,19 @@ const MyProjectsDisplayList = ({ projectData }) => {
   const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
 
   // Fetches project status
+
   const fetchStatus = async () => {
     const response = await getByID(projectData.projectId);
-    if(response.status === 200 && response.data) {
+    if(response.data) {
       setStatus(response.data.status);
     } else {
       setStatus('Error loading status');
     }
   };
-
-  useEffect(() => {
     fetchStatus();
-  }, [projectData.projectId]);
-
-  const toggleOptions = () => setOptionsShown(!optionsShown);
+    
+//this doesn't look used and idk what it's meant to be used for
+  const toggleOptions = () => setOptionsShown(!optionsShown); 
 
   //Constructs url linking to relevant project page
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
@@ -89,7 +88,7 @@ const MyProjectsDisplayList = ({ projectData }) => {
       <div className="list-card-status">{status}</div>
 
       {/* Data Created */}
-      <div className="list-card-date">{formatDate(projectData.createdAt)}</div>
+      <div className="list-card-date">{formatDate(projectData.createdAt.toString())}</div>
 
       {/* Options */}
       <Dropdown>
