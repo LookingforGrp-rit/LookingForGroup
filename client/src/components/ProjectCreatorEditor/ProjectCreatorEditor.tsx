@@ -220,6 +220,41 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       console.error(err);
     }
   };
+ 
+  // Update links, avoid links tab glitch
+  const updateLinks = () => {
+    const newSocials: { id: number, url: string}[] = [];
+    const parentDiv = document.querySelector("#project-editor-link-list");
+
+    parentDiv?.childNodes.forEach(element => {
+      if (element === parentDiv.lastElementChild) {
+        return;
+      }
+
+      const dropdown = (element as HTMLElement).querySelector('select');
+      const input = (element as HTMLElement).querySelector('input');
+
+      const id = Number(dropdown?.options[dropdown?.selectedIndex].dataset.id);
+      const url = input?.value;
+
+      if (!id && !url) {
+        return;
+      }
+
+      if (isNaN(id) || id === -1) {
+        setErrorLinks('Select a website in the dropdown');
+        return;
+      }
+      if (!url) {
+        setErrorLinks('Enter a URL');
+        return;
+      }
+
+      newSocials.push({id: id, url: url});
+      setErrorLinks('');
+     })
+     setModifiedProject({...modifiedProject, socials: newSocials})
+  }
 
   return (
     <Popup>
