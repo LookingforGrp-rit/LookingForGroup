@@ -9,8 +9,9 @@ import { ThemeIcon } from '../ThemeIcon';
 import { createNewProject, getByID, updateProject, getPics, addPic, deletePic, getProjectSocials, addProjectSocial, updateProjectSocial, deleteProjectSocial } from '../../api/projects';
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-import { CreateProjectInput, MePrivate, ProjectDetail } from '@looking-for-group/shared';
+import { CreateProjectInput, MePrivate, ProjectDetail, User, } from '@looking-for-group/shared';
 import { getCurrentAccount } from '../../api/users';
+import { ProjectPurpose, ProjectStatus } from '@looking-for-group/shared/enums';
 
 interface Props {
   newProject: boolean;
@@ -18,6 +19,26 @@ interface Props {
   user?: MePrivate;
   // permissions?: number;
 }
+const emptyProject: ProjectDetail = {
+  projectId: 0,
+  audience: '',
+  description: '',
+  hook: '',
+  projectImages: [],
+  jobs: [],
+  owner: {} as User,
+  purpose: "" as ProjectPurpose,
+  status: "" as ProjectStatus,
+  members: [],
+  mediums: [],
+  projectSocials: [],
+  tags: [],
+  thumbnail: '',
+  title: '',
+  createdAt: Date.prototype,
+  updatedAt: Date.prototype,
+  apiUrl: ''
+};
 
 /**
  * This component should allow for either editing existing projects or creating new projects entirely,
@@ -36,10 +57,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const [user, setUser] = useState<MePrivate | null>(null);
 
   // store project data
-  const [projectData, setProjectData] = useState<ProjectDetail>();
+  const [projectData, setProjectData] = useState<ProjectDetail>(emptyProject);
 
   // tracking temporary project changes before committing to a save
-  const [modifiedProject, setModifiedProject] = useState<Partial<ProjectDetail>>();
+  const [modifiedProject, setModifiedProject] = useState<Partial<ProjectDetail>>(emptyProject);
 
   // check whether or not the data in the popup is valid
   const [failCheck, setFailCheck] = useState(false);
@@ -82,23 +103,23 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       const initProject = async() => {
         //just makin sure the user is set, setUser was never called
         const userResp = await getCurrentAccount();
-        if(userResp.data) setUser(userResp.data);
+        if(userResp.data) { 
+        setUser(userResp.data);
 
-        if(user){
-        const project: ProjectDetail = Object.prototype as ProjectDetail; //does this work i wonder
-        project.owner = user;
+        const project: ProjectDetail = emptyProject;
+        project.owner = userResp.data;
         project.members.push({
-          user: user,
+          user: userResp.data,
           role: { label: 'Project Lead', roleId: 73 },
           memberSince: new Date(Date.now()),
-          apiUrl: `users/${user.userId}`,
+          apiUrl: `users/${userResp.data.userId}`,
         });
         setModifiedProject(project);
-        }
+      }
       };
       initProject();
     }
-  }, [newProject, user]);
+  }, [newProject]);
 
   // Update social links for existing projects
   const updateLinks = async () => {
@@ -190,6 +211,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         if (!newProjectID) return;
 
         // Upload images
+        //does this work?
+        
         modifiedProject.projectImages?.map(async (image) => {
           const imageInput = {
             image: fetch(image.apiUrl) as unknown as File,
