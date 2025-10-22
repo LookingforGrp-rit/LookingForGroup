@@ -384,7 +384,6 @@ export interface ProjectDetail extends ProjectPreview {
   audience: string;
   createdAt: Date;
   updatedAt: Date;
-  owner: UserPreview;
   tags: Tag[];
   projectImages: ProjectImage[];
   projectSocials: ProjectSocial[];
@@ -397,6 +396,7 @@ export interface ProjectPreview {
   projectId: number;
   title: string;
   hook: string;
+  owner: UserPreview;
   thumbnail: string | null;
   mediums: ProjectMedium[];
   apiUrl: string;

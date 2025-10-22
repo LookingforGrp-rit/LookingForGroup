@@ -17,6 +17,7 @@ export const transformProjectToPreview = (project: ProjectsGetPayload): ProjectP
     projectId: project.projectId,
     title: project.title,
     hook: project.hook,
+    owner: project.owner,
     thumbnail: project.thumbnail,
     mediums: project.mediums.map((medium) => transformProjectMedium(project.projectId, medium)),
     apiUrl: `/api/projects/${project.projectId.toString()}`,
