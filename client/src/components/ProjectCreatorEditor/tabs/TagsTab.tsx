@@ -25,7 +25,7 @@ const TAG_TYPES = {
   DEV: "Developer Skill" as TagType,
   DESIGNER: "Designer Skill" as TagType,
   SOFT: "Soft Skill" as TagType,
-  GENRE: "Genre" as TagType,
+  GENRE: ["Creative", "Technical", "Games", "Multimedia", "Music", "Other"] as TagType[],
   MEDIUM: "Medium",
 };
 
@@ -104,8 +104,8 @@ export const TagsTab = ({
       case 0:
         return [{ data: allMediums }];
       case 1:
-        return [{ data: allTags.filter( g => g.type === TAG_TYPES.GENRE)
-        }];
+          return [{ data: allTags.filter( g => TAG_TYPES.GENRE.includes(g.type as TagType))
+          }];
       case 2:
         return [{ data: allTags.filter(t => t.type === TAG_TYPES.DEV) }];
       case 3:
@@ -200,7 +200,7 @@ export const TagsTab = ({
       const tag = allTags.find(t => t.label === tagLabel);
       if (!tag) return;
       foundId = tag.tagId;
-      type = TAG_TYPES.GENRE;
+      type = tag.type;
     } else if (button.className.includes('yellow')) { // developer skills
       const tag = allTags.find(t => t.type === TAG_TYPES.DEV && t.label === tagLabel);
       if (!tag) return;
@@ -273,7 +273,6 @@ export const TagsTab = ({
       return (
         // Mediums
         (searchedTags && 'mediumId' in (searchedTags[0] as Medium)) ? (searchedTags as Medium[]).map((t) => (
-          console.log('found mediumId in ', searchedTags[0]),
           <button
             key={t.mediumId}
             className={`tag-button tag-button-blue-${isTagSelected(
@@ -295,7 +294,6 @@ export const TagsTab = ({
         )) :
         // Other Tags
         (searchedTags as Tag[]).map((t) => (
-          console.log('tag type', t.type),
           <button
             key={t.tagId}
             className={`tag-button tag-button-${getTagColor(t.type)}-${isTagSelected(
@@ -320,107 +318,12 @@ export const TagsTab = ({
     else if (searchedTags && searchedTags.length === 0) {
      return <div className="no-results-message">No results found!</div>;
     }
-    
-    if (currentTagsTab === 0) { // Medium
-      return allMediums.map((m) => (
-        <button
-          key={m.mediumId}
-          className={`tag-button tag-button-blue-${isTagSelected(m.mediumId, m.label, currentTagsTab)}`}
-          onClick={(e) => handleTagSelect(e)}
-        >
-          <i
-            className={
-              isTagSelected(m.mediumId, m.label, currentTagsTab) === 'selected'
-                ? 'fa fa-close'
-                : 'fa fa-plus'
-            }
-          ></i>
-          <p>{m.label}</p>
-        </button>
-      ));
-    } else if (currentTagsTab === 1) { // Genre
-      console.log('allTags but with genre type', allTags.filter((g) => g.type === TAG_TYPES.GENRE));
-      return allTags
-        .filter((g) => g.type === TAG_TYPES.GENRE)
-        .map((g) => (
-          <button
-            key={g.tagId}
-            className={`tag-button tag-button-green-${isTagSelected(g.tagId, g.label, currentTagsTab)}`}
-            onClick={(e) => handleTagSelect(e)}
-          >
-            <i
-              className={
-                isTagSelected(g.tagId, g.label, currentTagsTab) === 'selected'
-                  ? 'fa fa-close'
-                  : 'fa fa-plus'
-              }
-            ></i>
-            <p>{g.label}</p>
-          </button>
-      ));
-    } else if (currentTagsTab === 2) { // Developer Skills
-      return allTags
-        .filter((s) => s.type === 'Developer Skill')
-        .map((s) => (
-          <button
-            key={s.tagId}
-            className={`tag-button tag-button-yellow-${isTagSelected(s.tagId, s.label, currentTagsTab)}`}
-            onClick={(e) => handleTagSelect(e)}
-          >
-            <i
-              className={
-                isTagSelected(s.tagId, s.label, currentTagsTab) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>{s.label}</p>
-          </button>
-      ));
-    } else if (currentTagsTab === 3) { // Designer Skills
-      return allTags
-        .filter((s) => s.type === 'Designer Skill')
-        .map((s) => (
-          <button
-            key={s.tagId}
-            className={`tag-button tag-button-red-${isTagSelected(s.tagId, s.label, currentTagsTab)}`}
-            onClick={(e) => handleTagSelect(e)}
-          >
-            <i
-              className={
-                isTagSelected(s.tagId, s.label, currentTagsTab) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>{s.label}</p>
-          </button>
-        ));
-    }
-    // Soft Skills
-    return allTags
-      .filter((s) => s.type === 'Soft Skill')
-      .map((s) => (
-        <button
-          key={s.tagId}
-          className={`tag-button tag-button-purple-${isTagSelected(s.tagId, s.label, currentTagsTab)}`}
-          onClick={(e) => handleTagSelect(e)}
-        >
-          <i
-            className={
-              isTagSelected(s.tagId, s.label, currentTagsTab) === "selected"
-                ? "fa fa-close"
-                : "fa fa-plus"
-            }
-          ></i>
-          <p>{s.label}</p>
-        </button>
-      ));
-  }, [searchedTags, currentTagsTab, allTags, isTagSelected, handleTagSelect, allMediums]);
+  }, [searchedTags, currentTagsTab, isTagSelected, handleTagSelect]);
 
   // Update shown tags according to search results
   const handleSearch = useCallback((results: unknown[][]) => {
     // setSearchResults(results);
+    console.log('search results', results);
     if (results.length === 0 && currentDataSet.length !== 0) {
       // no results or current data set
       setSearchedTags([]);
