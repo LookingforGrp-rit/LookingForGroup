@@ -5,6 +5,7 @@ export const ProjectPreviewSelector = Object.freeze({
   title: true,
   hook: true,
   thumbnail: true,
+  owner: true,
   mediums: {
     select: ProjectMediumSelector,
   },
