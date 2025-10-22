@@ -4,6 +4,7 @@ import { addPic, deletePic, updateProject } from "../../../api/projects";
 import { CreateProjectImageInput, ProjectDetail, ProjectImage, UserPreview } from "@looking-for-group/shared";
 import { PopupButton } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
+import { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared/enums";
 
 //backend base url for getting images
 
@@ -18,9 +19,9 @@ const defaultProject: ProjectDetail = {
   jobs: [],
   members: [],
   projectId: -1,
-  purpose: "Personal",
+  purpose: "Personal" as ProjectPurpose,
   projectSocials: [],
-  status: "Planning",
+  status: "Planning" as ProjectStatus,
   tags: [],
   thumbnail: "",
   title: "",

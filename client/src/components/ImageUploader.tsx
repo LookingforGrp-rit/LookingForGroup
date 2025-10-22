@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
-import { sendPost } from '../functions/fetch'; //Not fixing, is this something to be implemented later?
+import { useCallback, useEffect, useRef } from 'react';
+//import { sendPost } from '../functions/fetch'; //Not fixing, is this something to be implemented later?
 
 interface ImageUploaderProps {
   initialImageUrl?: string;
@@ -22,7 +22,6 @@ const ProjectImageUploader = (props: ImageUploaderProps) => {
 };
 
 const ImageUploader = ({
-  initialImageUrl = '',
   keepImage = true,
   onFileSelected = () => {},
   type
@@ -31,7 +30,7 @@ const ImageUploader = ({
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   // Validate file type and handle image input change
-  const handleImgChange = () => {
+  const handleImgChange = useCallback(() => {
     const file = inputRef.current?.files?.[0];
     if (!file) return;
 
@@ -40,7 +39,7 @@ const ImageUploader = ({
     } else {
       alert("File type not supported: Please use .PNG or .JPG");
     }
-  };
+  }, [keepImage, onFileSelected]);
 
   // On file input change, handle image selection 
   useEffect(() => {
@@ -49,7 +48,7 @@ const ImageUploader = ({
 
     input.addEventListener('change', handleImgChange);
     return () => input.removeEventListener('change', handleImgChange);
-  }, [keepImage, onFileSelected]);
+  }, [keepImage, handleImgChange, onFileSelected]);
 
   const profileVariant = (
     <></>

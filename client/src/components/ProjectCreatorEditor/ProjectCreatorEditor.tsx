@@ -212,11 +212,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
         // Upload images
         //does this work?
+        //i don't think it does tbh, they have to send us the file itself
+        //unless this is handled in the media tab?
         
-        modifiedProject.projectImages?.map(async (image) => {
+        modifiedProject.projectImages?.map(async (img) => {
           const imageInput = {
-            image: fetch(image.apiUrl) as unknown as File,
-            altText: image.altText
+            image: fetch(img.image) as unknown as File,
+            altText: img.altText
           }
           await addPic(newProjectID, imageInput)
         })
@@ -228,7 +230,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         //meaning that right here what we should do is check the file they should have sent us for the thumbnail
         if (modifiedProject.thumbnail) {
           const imageInput = {
-            image: fetch(modifiedProject.thumbnail) as unknown as File,
+            image: resp.data?.thumbnail,
             altText: modifiedProject.thumbnail.altText
           }
           await addPic(newProjectID, modifiedProject.thumbnail);
@@ -243,15 +245,20 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         const picsResp = await getPics(projectNumID);
         const dbImages = picsResp.data || [];
 
-        const imagesToDelete = dbImages.filter(img => !modifiedProject.images.find(i => i.image === img.image));
-        await Promise.all(imagesToDelete.map(img => deletePic(projectNumID, img.image)));
+        const imagesToDelete = dbImages.filter(img => !modifiedProject.projectImages?.find(i => i.image === img.image));
+        await Promise.all(imagesToDelete.map(img => deletePic(projectNumID, img.imageId)));
 
-        await Promise.all(
-          modifiedProject.images.map(img => {
-            if (!dbImages.find(db => db.image === img.image)) return addPic(projectNumID, img.file, img.position);
+          if(modifiedProject.projectImages !== undefined){
+          modifiedProject.projectImages.map(img => {
+          const imageInput = {
+            image: fetch(img.image) as unknown as File,
+            altText: img.altText
+          }
+            if (!dbImages.find(db => db.image === img.image)) return addPic(projectNumID, imageInput);
             return Promise.resolve();
           })
-        );
+
+          }
 
         await updatePicPositions( //the position parameter...
           projectNumID,
