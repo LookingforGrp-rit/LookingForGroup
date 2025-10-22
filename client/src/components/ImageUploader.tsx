@@ -64,7 +64,7 @@ const ImageUploader = ({
         multiple accept=".png, .jpg"
         ref={inputRef}
         onChange={handleImgChange}
-        hidden
+        // hidden
       />
       <div id="img-view" className="project-uploader">
         {/* Color style of SVG handled by fill property */}
