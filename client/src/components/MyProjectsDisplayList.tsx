@@ -16,7 +16,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   // Navigation hook
   const navigate = useNavigate();
 
-  const { projId, userId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
+  const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
 
   const [status, setStatus] = useState<string>();
   const [optionsShown, setOptionsShown] = useState(false);
@@ -37,8 +37,9 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     }
   };
     fetchStatus();
-
-  const toggleOptions = () => setOptionsShown(!optionsShown);
+    
+//this doesn't look used and idk what it's meant to be used for
+  const toggleOptions = () => setOptionsShown(!optionsShown); 
 
   //Constructs url linking to relevant project page
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
