@@ -5,6 +5,7 @@ import { getProjectTypes, getTags } from "../../../api/users";
 import { ProjectDetail, Tag, Medium, ProjectMedium } from "@looking-for-group/shared";
 import { TagType } from "@looking-for-group/shared/enums";
 import { PopupButton } from "../../Popup";
+import { ThemeIcon } from "../../ThemeIcon";
 
 // --- Constant ---
 const TAG_COLORS: Record<TagType | string, string> = {
@@ -252,20 +253,6 @@ export const TagsTab = ({
     }
   }, [allMediums, allTags, modifiedProject.projectId]);
 
-  // Create elements for selected tags in sidebar
-  const loadProjectTags = useMemo(() => {
-    return (modifiedProject.tags ?? []).map((t) => (
-      <button
-        key={t.tagId}
-        className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
-        onClick={(e) => handleTagSelect(e)}
-      >
-        <i className="fa fa-close"></i>
-        <p>{t.label}</p>
-      </button>
-    ));
-  }, [modifiedProject.tags, handleTagSelect]);
-
   // Create element for each tag in search area
   const renderTags = useCallback(() => {
     // no search item, render all tags
@@ -363,14 +350,23 @@ export const TagsTab = ({
               return (
                 <>
                   {tags.slice(0, 2).map((t) => (
-                    <button
-                      key={t.tagId}
-                      className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
-                      onClick={(e) => handleTagSelect(e)}
-                    >
-                      <i className="fa fa-close"></i>
-                      <p>{t.label}</p>
-                    </button>
+                    <div className='tag-draggable'>
+                      <ThemeIcon
+                        width={21}
+                        height={21}
+                        id={'drag'}
+                        ariaLabel="drag"
+                        onClick={() => {console.log('clicked draggable tag icon')}}
+                      />
+                      <button
+                        key={t.tagId}
+                        className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
+                        onClick={(e) => handleTagSelect(e)}
+                      >
+                        <i className="fa fa-close"></i>
+                        <p>{t.label}</p>
+                      </button>
+                    </div>
                   ))}
                   <hr id="selected-tag-divider" />
                   {tags.slice(2).map((t) => (
@@ -387,8 +383,6 @@ export const TagsTab = ({
               );
             })()
           }
-          {/* TODO: Separate top 2 tags from others with hr element */}
-          {/* {loadProjectTags} */}
         </div>
       </div>
 

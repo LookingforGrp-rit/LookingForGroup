@@ -457,6 +457,14 @@ Discover and Meet page style rules
 }
 
 /*tag rules may be used for buttons elsewhere, but will stay here for the time being*/
+/* Container for draggable tag button */
+.tag-draggable {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+}
+
 .tag-button {
   display: flex;
   flex-direction: row;
