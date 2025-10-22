@@ -242,7 +242,7 @@ router.post(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
-  attributeExistsAt('tag', 'path', 'tagId'),
+  attributeExistsAt('tag', 'body', 'tagId'),
   authenticated(requiresProjectOwner),
   PROJECT.addTags,
 );
