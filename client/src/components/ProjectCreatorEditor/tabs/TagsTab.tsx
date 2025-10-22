@@ -350,7 +350,7 @@ export const TagsTab = ({
               return (
                 <>
                   {tags.slice(0, 2).map((t) => (
-                    <div className='tag-draggable'>
+                    <div className='tag-draggable' draggable="true">
                       <ThemeIcon
                         width={21}
                         height={21}
@@ -370,14 +370,23 @@ export const TagsTab = ({
                   ))}
                   <hr id="selected-tag-divider" />
                   {tags.slice(2).map((t) => (
-                    <button
-                      key={t.tagId}
-                      className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
-                      onClick={(e) => handleTagSelect(e)}
-                    >
-                      <i className="fa fa-close"></i>
-                      <p>{t.label}</p>
-                    </button>
+                    <div className='tag-draggable' draggable="true">
+                      <ThemeIcon
+                        width={21}
+                        height={21}
+                        id={'drag'}
+                        ariaLabel="drag"
+                        onClick={() => {console.log('clicked draggable tag icon')}}
+                      />
+                      <button
+                        key={t.tagId}
+                        className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
+                        onClick={(e) => handleTagSelect(e)}
+                      >
+                        <i className="fa fa-close"></i>
+                        <p>{t.label}</p>
+                      </button>
+                    </div>
                   ))}
                 </>
               );

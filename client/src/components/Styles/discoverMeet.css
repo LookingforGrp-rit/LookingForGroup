@@ -463,6 +463,14 @@ Discover and Meet page style rules
   flex-direction: row;
   align-items: center;
   gap: 5px;
+
+  svg:hover {
+    cursor: grab;
+  }
+  /* Mouse-down */
+  svg:hover:active {
+    cursor: grabbing;
+  }
 }
 
 .tag-button {
