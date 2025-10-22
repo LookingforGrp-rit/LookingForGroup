@@ -385,7 +385,7 @@ export interface ProjectDetail extends ProjectPreview {
   createdAt: Date;
   updatedAt: Date;
   owner: UserPreview;
-  tags: Tag[];
+  tags: ProjectTag[];
   projectImages: ProjectImage[];
   projectSocials: ProjectSocial[];
   jobs: ProjectJob[];

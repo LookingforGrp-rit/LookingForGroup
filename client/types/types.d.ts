@@ -10,6 +10,14 @@ import {
   UpdateProjectJobInput,
   UpdateProjectMemberInput,
   UpdateProjectSocialInput,
+  ProjectDetail,
+  ProjectImage,
+  ProjectTag,
+  ProjectSocial,
+  ProjectJob,
+  ProjectMedium,
+  ProjectMember,
+  UserPreview,
 } from "@looking-for-group/shared";
 
 /**
@@ -54,5 +62,39 @@ interface ProjectChangesDeletes {
   mediums: CRUDRequest<null>[];
 }
 
-type Id = { id: number };
+type Id = {
+  id: {
+    type: "canon" | "local";
+    value: number;
+  };
+};
 type CRUDRequest<T> = Id & { data: T };
+
+type Pending<T> = Fillable<
+  Omit<
+    T,
+    "apiUrl" | "createdAt" | "updatedAt" | "memberSince" | "imageId" | "jobId"
+  >
+> & { localId: number | null };
+
+interface PendingProjectImage extends Pending<ProjectImage> {
+  image: File | null;
+}
+
+interface PendingProjectMember extends Pending<ProjectMember> {
+  user: Pending<UserPreview>;
+}
+
+type PendingProjectTag = Omit<ProjectTag, "apiUrl">;
+
+type PendingProjectMedium = Omit<ProjectMedium, "apiUrl">;
+
+interface PendingProject extends Omit<Pending<ProjectDetail>, "localId"> {
+  thumbnail: string | null | PendingProjectImage;
+  tags: (ProjectTag | PendingProjectTag)[];
+  projectImages: (ProjectImage | PendingProjectImage)[];
+  projectSocials: (ProjectSocial | Pending<ProjectSocial>)[];
+  jobs: (ProjectJob | Pending<ProjectJob>)[];
+  members: (ProjectMember | PendingProjectMember)[];
+  mediums: (ProjectMedium | PendingProjectMedium)[];
+}
