@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
@@ -28,6 +28,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
 
   // Fetches project status
 
+  useEffect(() => {
   const fetchStatus = async () => {
     const response = await getByID(projectData.projectId);
     if(response.data) {
@@ -37,8 +38,11 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     }
   };
     fetchStatus();
+  })
     
-//this doesn't look used and idk what it's meant to be used for
+  //this doesn't look used and idk what it's meant to be used for
+  //it looks like it's supposed to be a toggle for when you press a button but idk which button that would be
+  //i'll just leave it alone for now
   const toggleOptions = () => setOptionsShown(!optionsShown); 
 
   //Constructs url linking to relevant project page
@@ -94,7 +98,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
       <Dropdown>
         <DropdownButton buttonId="list-card-options-button">•••</DropdownButton>
         <DropdownContent rightAlign={true}>
-          <div className={`list-card-options-list ${optionsShown ? 'show' : ''}`}>
+          <div className={`list-card-options-list show`}>
             <Popup>
               <PopupButton className='card-leave-button'>
                 <i

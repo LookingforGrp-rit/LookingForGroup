@@ -1,23 +1,24 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { PagePopup } from './PagePopup';
-import { getByID, deleteProject, deleteMember } from '../api/projects';
-import { ApiResponse } from '@looking-for-group/shared';
+import { deleteProject} from '../api/projects';
+import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 
 //backend base url for getting images
 
 
-const MyProjectsDisplayGrid = ({ projectData }) => {
+const MyProjectsDisplayGrid = ({ projectData } : {projectData: ProjectDetail}) => {
   //Navigation hook
   const navigate = useNavigate();
-  const { projId, userId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
+  const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
+  //what is reloadProjects for?
 
-  const [status, setStatus] = useState<string>();
+  //const [status, setStatus] = useState<string>();
   const [optionsShown, setOptionsShown] = useState(false);
   // State variable for displaying output of API request, whether success or failure
   const [showResult, setShowResult] = useState(false);
@@ -25,18 +26,18 @@ const MyProjectsDisplayGrid = ({ projectData }) => {
   const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
 
   // Fetches the status of a project via projects.ts
-  const fetchStatus = async () => {
-    const response = await getByID(projectData.projectId);
-    if (response.status === 200 && response.data) {
-      setStatus(response.data.status);
-    } else {
-      setStatus('Error loading status');
-    }
-  };
-
-  useEffect(() => {
-    fetchStatus();
-  }, [projectData.projectId]);
+  //doesn't show in the grid, no need for it here
+  // useEffect(() => {
+  // const fetchStatus = async () => {
+  //   const response = await getByID(projectData.projectId);
+  //   if (response.data) {
+  //     setStatus(response.data.status);
+  //   } else {
+  //     setStatus('Error loading status');
+  //   }
+  // };
+  // fetchStatus();
+  // })
 
   const toggleOptions = () => setOptionsShown(!optionsShown);
 

@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { ProjectPanel } from './ProjectPanel';
 import { ProfilePanel } from './ProfilePanel';
+import { ProjectWithFollowers } from '@looking-for-group/shared';
 
 // Item list should use "useState" so that it'll re-render on the fly
 // And so that no search functionality needs to be included in this component
-export const PanelBox = ({ category, itemList, itemAddInterval, userId = 0 }) => {
+export const PanelBox = ({ category, itemList, itemAddInterval = 0 }) => {
   // Don't display all items at first, load them in periodically
   const [displayedItems, setDisplayedItems] = useState(itemList.slice(0, itemAddInterval));
   const [itemListCopy, setItemListCopy] = useState(itemList);
@@ -34,8 +35,8 @@ export const PanelBox = ({ category, itemList, itemAddInterval, userId = 0 }) =>
     return (
       <div className="project-panel-box" onScroll={addItems}>
         {displayedItems.length > 0 ? (
-          displayedItems.map((project) => (
-            <ProjectPanel project={project} key={project.projectId} userId={userId} />
+          displayedItems.map((project: ProjectWithFollowers) => (
+            <ProjectPanel project={project} key={project.projectId}/>
           ))
         ) : (
           <>Sorry, no projects here</>

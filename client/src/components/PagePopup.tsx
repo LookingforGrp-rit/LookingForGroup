@@ -1,4 +1,4 @@
-import { useEffect, useState, createContext, useContext, useRef, Dispatch,ReactNode, SetStateAction } from 'react';
+import { Dispatch,ReactNode, SetStateAction } from 'react';
 
 //This component is meant to be reusable in any area of the site, acting as an element that can be
 //  opened or closed after performing certain actions.
