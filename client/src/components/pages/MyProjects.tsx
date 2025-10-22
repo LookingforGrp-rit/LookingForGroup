@@ -13,17 +13,18 @@ import { Select, SelectButton, SelectOptions } from '../Select';
 import { LeaveDeleteContext } from '../../contexts/LeaveDeleteContext';
 
 import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEditor';
-import { User } from '../Sidebar'; // For use with project creation button
+//import user from '../Sidebar'; // For use with project creation button
 
 //import api utils
-import { getCurrentUsername, getVisibleProjects } from '../../api/users.ts'
+import { getCurrentUsername, getProjectsByUser, getVisibleProjects } from '../../api/users.ts'
+import { MePrivate, ProjectDetail, ProjectPreview} from '@looking-for-group/shared';
 
 const MyProjects = () => {
 
   const navigate = useNavigate();
 
   // Taken from Sidebar.tsx
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<MePrivate>();
 
   // const [UID, setUID] = useState(profiles[0]._id);
   // const [activePage, setActivePage] = useState(0);
@@ -40,7 +41,7 @@ const MyProjects = () => {
   // - oldest
   // - a-z
   // - z-a
-  const [projectsList, setProjectsList] = useState();
+  const [projectsList, setProjectsList] = useState<ProjectPreview[]>([]);
   const [currentSearch, setCurrentSearch] = useState('');
   // const [bannerImage, setBannerImage] = useState(require("../../images/projects_header_light.png"));
 
@@ -59,13 +60,12 @@ const MyProjects = () => {
       const res = await getCurrentUsername();
 
       // User is logged in, pull their data
-      if (res.status === 200 && res.data?.username && res.data.userId) {
+      if (res.data) {
         setLoggedIn(res.data.userId);
-        const projectsRes = await getVisibleProjects(res.data.userId);
+        const projectsRes = await getProjectsByUser();
 
-        if ((projectsRes.status === 200) && (projectsRes.data !== undefined)) {
-          setProjectsList(projectsRes.data);
-        }
+        if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
+        
       } else {
         //guest
         setLoggedIn(0);
@@ -150,7 +150,7 @@ const MyProjects = () => {
   };
 
   // Sort projects: variety of methods
-  const sortProjects = (projects) => {
+  const sortProjects = (projects: ProjectDetail[]) => {
     if (projects !== undefined) {
       const tempList = new Array(0);
 
@@ -176,31 +176,27 @@ const MyProjects = () => {
       // Sort depending on type selected by user. Default is Newest -> Oldest
       switch (sortMethod) {
         case 'oldest':
-          return tempList.toSorted((a, b) => {
-            const aTime = new Date(a.created_at).getTime();
-            const bTime = new Date(b.created_at).getTime();
+          return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
+            const aTime = new Date(a.createdAt).getTime();
+            const bTime = new Date(b.createdAt).getTime();
             return bTime - aTime;
           });
-          break;
 
         case 'a-z':
-          return tempList.toSorted((a, b) =>
+          return tempList.sort((a: ProjectDetail, b: ProjectDetail) =>
             a.title.toLowerCase().localeCompare(b.title.toLowerCase())
           );
-          break;
 
         case 'z-a':
-          return tempList.toSorted((a, b) =>
+          return tempList.sort((a: ProjectDetail, b: ProjectDetail) =>
             b.title.toLowerCase().localeCompare(a.title.toLowerCase())
           );
-          break;
         default:
-          return tempList.toSorted((a, b) => {
-            const aTime = new Date(a.created_at).getTime();
-            const bTime = new Date(b.created_at).getTime();
+          return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
+            const aTime = new Date(a.createdAt).getTime();
+            const bTime = new Date(b.createdAt).getTime();
             return aTime - bTime;
           });
-          break;
       }
     }
   };
@@ -215,13 +211,14 @@ const MyProjects = () => {
   };
 
   // Projects in grid display
-  const GridDisplay = ({ userProjects }) => {
+  const GridDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => { //it's a parameter here but a property down there
     return (
       <>
         <div className='my-projects-grid'>
           {userProjects.map(project => {
+            console.log(project)
             // Check if user is the owner of this project
-            const isOwner = (project.userId === loggedIn);
+            const isOwner = (project.owner.userId === loggedIn);
 
             return (
               <LeaveDeleteContext.Provider
@@ -244,7 +241,7 @@ const MyProjects = () => {
   };
 
   // Projects in list display
-  const ListDisplay = ({ userProjects }) => {
+  const ListDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => {
     return (
       <>
         {/* Projects List header */}
@@ -258,7 +255,7 @@ const MyProjects = () => {
         <div className='my-projects-list'>
           {userProjects.map(project => {
             // Check if user is the owner of this project
-            const isOwner = (project.userId === loggedIn);
+            const isOwner = (project.owner.userId === loggedIn);
 
             return (
               <LeaveDeleteContext.Provider
@@ -281,9 +278,9 @@ const MyProjects = () => {
   };
 
   // Return sorted projects either in Grid or List mode
-  const ProjectListSection = ({ userProjects }) => {
+  const ProjectListSection = ({userProjects} : {userProjects: ProjectDetail[]}) => {
     // Sort projects based on the method selected
-    const sortedProjects = sortProjects(userProjects);
+    const sortedProjects = sortProjects(userProjects) as ProjectDetail[];
 
     if (sortedProjects) {
       if (displayMode === 'grid') {
@@ -379,6 +376,7 @@ const MyProjects = () => {
             placeholder='Sort by'
             initialVal=''
             buttonId='my-projects-sort-btn'
+            type='dropdown'
           />
           <SelectOptions
             callback={(e) => setSortMethod(e.target.value)}
