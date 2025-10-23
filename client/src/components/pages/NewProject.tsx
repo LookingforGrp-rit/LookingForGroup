@@ -52,11 +52,11 @@ const NewProject = () => {
   
   //checking function for if the current user is following a project
 const checkFollow = useCallback(async () => {
-  const followings = (await getProjectFollowing(userID)).data;
+  const followings = (await getProjectFollowing(userID)).data?.projects;
 
   let isFollow = false;
 
-  if(followings !== undefined && followings){
+  if(followings !== undefined){
   for (const follower of followings){
     isFollow = (follower.project.projectId === projectID);
     if(isFollow) break;

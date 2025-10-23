@@ -293,7 +293,7 @@ export const leaveProject = async (projectID: number) => {
  */
 export const getProjectFollowing = async (
   userId: number
-): Promise<ApiResponse<ProjectFollowsList[]>> => {
+): Promise<ApiResponse<ProjectFollowsList>> => {
   const url = `/users/${userId}/followings/projects`;
   const response = await GET(url);
 
