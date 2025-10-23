@@ -5,7 +5,7 @@ import { getProjectTypes, getTags } from "../../../api/users";
 import { ProjectDetail, Tag, Medium, ProjectMedium } from "@looking-for-group/shared";
 import { TagType } from "@looking-for-group/shared/enums";
 import { PopupButton } from "../../Popup";
-import { ThemeIcon } from "../../ThemeIcon";
+// import { ThemeIcon } from "../../ThemeIcon";
 
 // --- Constant ---
 const TAG_COLORS: Record<TagType | string, string> = {
@@ -351,13 +351,14 @@ export const TagsTab = ({
                 <>
                   {tags.slice(0, 2).map((t) => (
                     <div className='tag-draggable' draggable="true">
+                      {/* TODO: implement dragging tags to reorder and backend functionality to track position
                       <ThemeIcon
                         width={21}
                         height={21}
                         id={'drag'}
                         ariaLabel="drag"
                         onClick={() => {console.log('clicked draggable tag icon')}}
-                      />
+                      /> */}
                       <button
                         key={t.tagId}
                         className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
@@ -371,13 +372,14 @@ export const TagsTab = ({
                   <hr id="selected-tag-divider" />
                   {tags.slice(2).map((t) => (
                     <div className='tag-draggable' draggable="true">
+                      {/* TODO: implement dragging tags to reorder and backend functionality to track position
                       <ThemeIcon
                         width={21}
                         height={21}
                         id={'drag'}
                         ariaLabel="drag"
                         onClick={() => {console.log('clicked draggable tag icon')}}
-                      />
+                      /> */}
                       <button
                         key={t.tagId}
                         className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
@@ -453,7 +455,6 @@ export const TagsTab = ({
         </div>
         <div id="project-editor-tag-search-container">{renderTags()}</div>
       </div>
-
       <div id="tags-save-info">
         <div id="invalid-input-error" className={"save-error-msg-general"}>
           <p>*Fill out all required info before saving!*</p>
