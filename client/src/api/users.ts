@@ -23,6 +23,8 @@ import type {
   AddUserMajorInput,
   MyMajor,
   UserFollowsList,
+  ProjectDetail,
+  ProjectFollowsList,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -226,7 +228,7 @@ export const deleteUserFollowing = async (id: number) => {
 
 //Get the current user's projects
 export const getProjectsByUser = async (): Promise<
-  ApiResponse<ProjectPreview[]>
+  ApiResponse<ProjectDetail[]>
 > => {
   const url = `/me/projects`;
   const response = await GET(url);
@@ -291,7 +293,7 @@ export const leaveProject = async (projectID: number) => {
  */
 export const getProjectFollowing = async (
   userId: number
-): Promise<ApiResponse<ProjectPreview[]>> => {
+): Promise<ApiResponse<ProjectFollowsList>> => {
   const url = `/users/${userId}/followings/projects`;
   const response = await GET(url);
 
