@@ -481,11 +481,16 @@ Discover and Meet page style rules
 
   border-radius: 30px;
   border: none;
-  height: 28px;
+  min-height: 28px;
+  height: fit-content;
+  width: max-content;
   padding: 0 17px; 
   font-size: medium;
-  /* margin: 0 4px; */
   flex-shrink: 0;
+  text-align: left;
+  p {
+    margin: 0px;
+  }
 }
 
 /* selected tags */
