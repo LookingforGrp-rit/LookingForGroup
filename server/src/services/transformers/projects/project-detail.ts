@@ -1,7 +1,6 @@
 import type { ProjectDetail } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectDetailSelector } from '#services/selectors/projects/project-detail.ts';
-import { transformUserToPreview } from '../users/user-preview.ts';
 import { transformProjectImage } from './parts/project-image.ts';
 import { transformProjectJob } from './parts/project-job.ts';
 import { transformProjectMember } from './parts/project-member.ts';
@@ -27,7 +26,6 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
     audience: project.audience,
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
-    owner: transformUserToPreview(project.users),
     tags: project.tags.map((tag) => transformProjectTag(project.projectId, tag)),
     projectImages: project.projectImages.map((image) =>
       transformProjectImage(project.projectId, image),

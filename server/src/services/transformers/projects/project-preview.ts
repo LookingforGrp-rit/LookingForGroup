@@ -1,6 +1,7 @@
 import type { ProjectPreview } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
+import { transformUserToPreview } from '../users/user-preview.ts';
 import { transformProjectMedium } from './parts/project-medium.ts';
 
 //sample project from prisma to be mapped
@@ -17,6 +18,7 @@ export const transformProjectToPreview = (project: ProjectsGetPayload): ProjectP
     projectId: project.projectId,
     title: project.title,
     hook: project.hook,
+    owner: transformUserToPreview(project.users),
     thumbnail: project.thumbnail,
     mediums: project.mediums.map((medium) => transformProjectMedium(project.projectId, medium)),
     apiUrl: `/api/projects/${project.projectId.toString()}`,
