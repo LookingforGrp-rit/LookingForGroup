@@ -126,7 +126,7 @@ useEffect(() => {
     user &&
     displayedProject?.members.some(
       (member) =>
-        member.role.label === "Owner" && member.user.userId === user.userId
+        displayedProject.owner.userId === member.user.userId
     ) ? (
       <>
         {
