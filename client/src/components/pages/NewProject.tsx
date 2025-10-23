@@ -427,7 +427,7 @@ const NewProject = () => {
 
                       <div id="positions-popup-info">
                         <div id="positions-popup-info-title">
-                          {displayedProject.jobs[viewedPosition].role.label ??
+                          {displayedProject.jobs[viewedPosition]?.role?.label ??
                             undefined}
                         </div>
                         <div id="positions-popup-info-description">
