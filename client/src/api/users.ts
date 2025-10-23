@@ -23,6 +23,7 @@ import type {
   AddUserMajorInput,
   MyMajor,
   UserFollowsList,
+  ProjectDetail,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -226,7 +227,7 @@ export const deleteUserFollowing = async (id: number) => {
 
 //Get the current user's projects
 export const getProjectsByUser = async (): Promise<
-  ApiResponse<ProjectPreview[]>
+  ApiResponse<ProjectDetail[]>
 > => {
   const url = `/me/projects`;
   const response = await GET(url);
