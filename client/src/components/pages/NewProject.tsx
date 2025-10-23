@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Header } from "../Header";
+import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
 import { Popup, PopupButton, PopupContent } from "../Popup";
@@ -13,6 +13,7 @@ import {
   getCurrentAccount,
   deleteProjectFollowing,
   addProjectFollowing,
+  getProjectFollowing,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
@@ -20,7 +21,6 @@ import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 //TODO
 //✅ Have team member listings link to their respective profiles
 //Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
-
 
 
 //Main component for the project page
@@ -33,14 +33,12 @@ const NewProject = () => {
   const projectID: number = Number(urlParams.get("projectID"));
 
   //state variable used to check whether or not data was successfully obtained from database
-  //but why is it here? you don't even read it
-  //commenting it out, unneeded
-  //const [failCheck, setFailCheck] = useState(false);
-
   // State variable used to determine permissions level, and if user should have edit access
   // const [userPerms, setUserPerms] = useState(-1);
 
-  const [user, setUser] = useState<MePrivate | null>(null);
+  const [user, setUser] = useState<MePrivate | null>();
+  const [userID, setUserID] = useState<number>(0);
+  const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>();
 
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
@@ -50,88 +48,77 @@ const NewProject = () => {
   // FETCHING PROJECTS DATA
 
   //Function used to get project data
-  //not called? then why's it here?
-  const getProjectData = async () => {
-    const projectData = await getByID(projectID);
+  
+  
+  //checking function for if the current user is following a project
+const checkFollow = useCallback(async () => {
+  const followings = (await getProjectFollowing(userID)).data;
 
-    if (!projectData.data) {
-      // setFailCheck(true);
-      return;
-    } //why would you care about the state of this
-    // // Get user data and check if user is part of the project
-    // // Auth: replaced with shibboleth
-    // const authRes = await fetch(`/api/auth`);
-    // const authData = await authRes.json();
+  let isFollow = false;
 
-    // if (authData.data) {
-    const userData = await getCurrentAccount();
-
-    console.log("user");
-    console.log(userData.data);
-
-    setUser(userData.data);
-    // const projectMembers = projectData.data[0].members;
-
-    // for (let i = 0; i < projectMembers.length; i++) {
-    //   if (projectMembers[i].user_id === authData.data) {
-    //     setUserPerms(projectMembers[i].permissions);
-    //     break;
-    //   }
-    // }
-
-    // // Get all projects user is following to see if they follow this one
-    // const followRes = await fetch(`/api/users/${authData.data}/followings/projects`);
-    // const followData = await followRes.json();
-
-    // if (followData.data) {
-    //   const followedProjects = followData.data;
-
-    //   for (let i = 0; i < followedProjects.length; i++) {
-
-    //     if (parseInt(followedProjects[i].project_id) === parseInt(projectID)) {
-    //       setFollowing(true);
-    //       break;
-    //     }
-    //   }
-    // }
-    // }
-
-    setFollowCount(projectData.data.followers.count);
-    setFollowing(
-      projectData.data.followers.users.some(
-        ({ user }) => user.userId === userData.data?.userId
-      )
-    );
-    setDisplayedProject(projectData.data);
-  };
-
-  //State variable holding information on the project to be displayed
-  const [displayedProject, setDisplayedProject] =
-    useState<ProjectWithFollowers>();
-
-  if (displayedProject === undefined) {
-    getProjectData();
+  if(followings !== undefined && followings){
+  for (const follower of followings){
+    isFollow = (follower.project.projectId === projectID);
+    if(isFollow) break;
   }
+  }
+  setFollowing(isFollow);
+  return isFollow;
+}, [projectID, userID]);
+
+useEffect(() => {
+  const getProjectData = async () => {
+    //get our current user for use later
+    const userResp = await getCurrentAccount();
+    if(userResp.data) { 
+      setUser(userResp.data);
+      setUserID(userResp.data.userId)
+    }
+
+    //get the project itself
+    const projectResp = await getByID(projectID);
+    if (projectResp.data) { 
+      setDisplayedProject(projectResp.data)
+      checkFollow();
+      setFollowCount(projectResp.data.followers.count);
+    }
+  };
+    getProjectData();
+}, [projectID, checkFollow])
+
   
     //Checks to see whether or not the current user is the maker/owner of the project being displayed
+    //oh do i need this too
   // const usersProject = true;
 
   // Formats follow-count based on Figma design. Returns a string
-  const formatFollowCount = (followers: number) => {
-    let followerNum = followers;
-
-    // Start displaying in X.X+ format if >= 1000
+  // Formats follow-count based on Figma design. Returns a string
+  const formatFollowCount = (followers: number): string => {
     if (followers >= 1000) {
-      const multOfHundred = followers % 100 === 0;
+      const multOfHundred = (followers % 100) === 0;
+      const formattedNum = (followers / 1000).toFixed(1);
+      return `${formattedNum}K ${multOfHundred ? '+' : ''}`;
+    }
+    return `${followers}`;
+  };
 
-      followerNum /= 1000.0;
-      const truncated = followerNum.toFixed(1);
-      const formatted = `${truncated}K${multOfHundred ? "+" : ""}`;
-      return formatted;
+  const followProject = (async () => {
+    if (!loggedIn) {
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
+    }
+    else{
+    const toggleFollow = !await checkFollow();
+    setFollowing(toggleFollow);
+      if (toggleFollow) {
+      await addProjectFollowing(projectID);
+        setFollowCount(followCount + 1);
+    } else {
+      await deleteProjectFollowing(projectID);
+        setFollowCount(followCount - 1);
     }
 
-    return followerNum.toString();
-  };
+    }
+  })
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
@@ -160,23 +147,7 @@ const NewProject = () => {
           </p>
           <button
             className={`follow-icon ${isFollowing ? "following" : ""}`}
-            onClick={() => {
-              if (!isFollowing) {
-                addProjectFollowing(projectID).then((res) => {
-                  if (res.status === 200) {
-                    setFollowing(true);
-                    setFollowCount(followCount + 1);
-                  }
-                });
-              } else {
-                deleteProjectFollowing(projectID).then((res) => {
-                  if (res.status === 200) {
-                    setFollowing(false);
-                    setFollowCount(followCount - 1);
-                  }
-                });
-              }
-            }}
+            onClick={followProject}
           >
             <i
               className={`fa-solid fa-heart ${isFollowing ? "following" : ""}`}
@@ -250,8 +221,6 @@ const NewProject = () => {
   //Lists of users who have worked on this project
   //Members - people who actively work on the project
   // const projectMembers = displayedProject === undefined ? [] : displayedProject.members;
-  // FIXME either get project members using api function or fetch them out of the ProjectDetail loaded in
-  // either way, displayedProject needs to be fixed and the fake data at the top can probably be removed.
   const projectMembers = displayedProject?.members;
   //Contributors - people who have helped, but aren't actively working on the project
   // const projectContributors = [];
@@ -367,9 +336,7 @@ const NewProject = () => {
 
   //Find first member with the job title of 'Project Lead'
   //If no such member exists, use first member in project member list
-  const projectLead = displayedProject?.members.find(
-    (member) => member.role.label === "Owner"
-  );
+  const projectLead = displayedProject?.owner;
 
   //Page layout for if project data hasn't been loaded yet
   const loadingProject = <>{<div>Loading project...</div>}</>;
@@ -475,7 +442,7 @@ const NewProject = () => {
                           <span
                             onClick={() =>
                               navigate(
-                                `${paths.routes.PROFILE}?userID=${projectLead?.user.userId}`
+                                `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
                               )
                             }
                             id="position-contact-link"
@@ -485,8 +452,8 @@ const NewProject = () => {
                             ? `images/profiles/${projectLead?.profile_image}` 
                             : profilePicture} 
                           /> */}
-                            {projectLead?.user.firstName}{" "}
-                            {projectLead?.user.lastName}
+                            {projectLead?.firstName}{" "}
+                            {projectLead?.lastName}
                           </span>
                         </div>
                       </div>
@@ -500,9 +467,9 @@ const NewProject = () => {
               </Popup>
             </div>
             <div id="project-creation">
-              Created by:{" "}
+              Created by: {" "}
               <span className="project-info-highlight">
-                {projectLead?.user.firstName} {projectLead?.user.lastName}
+                {projectLead?.firstName} {projectLead?.lastName}
               </span>
               <br />
               Creation date
