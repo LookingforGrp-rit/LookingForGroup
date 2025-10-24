@@ -6,22 +6,18 @@ import { LinksTab } from "./tabs/LinksTab";
 import { TeamTab } from "./tabs/TeamTab";
 import { TagsTab } from "./tabs/TagsTab";
 import { ThemeIcon } from "../ThemeIcon";
-import { loggedIn } from "../Header";
 import {
   createNewProject,
-  getByID,
-  updateProject,
-  getPics,
-  addPic,
-  updatePic,
-  deletePic,
+  getProjectSocials,
+  updateProjectSocial,
+  addProjectSocial,
+  deleteProjectSocial,
 } from "../../api/projects";
-import { getUsersById } from "../../api/users";
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-import { MePrivate, ProjectDetail, User } from "@looking-for-group/shared";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
-import { Pending, PendingProject } from "../../../types/types";
+import { PendingProject } from "../../../types/types";
+import { MePrivate, ProjectDetail, } from '@looking-for-group/shared';
 
 interface Props {
   newProject: boolean;
@@ -58,16 +54,15 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
  *
  * @returns React component Popup
  */
-export const ProjectCreatorEditor: FC<Props> = ({
-  newProject,
-  buttonCallback = () => {},
-  user /*permissions*/,
-}) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, /*permissions*/ }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const projectID = urlParams.get("projectID");
 
   // --- Hooks ---
+  // stores user data
+  const [user, setUser] = useState<MePrivate | null>(null);
+
   // store project data
   const [projectData, setProjectData] = useState<ProjectDetail>();
 
@@ -108,7 +103,7 @@ export const ProjectCreatorEditor: FC<Props> = ({
       };
       loadProject();
     }
-  }, [newProject, projectID, user]);
+  }, [newProject, projectID]);
 
   // Setup default project for creation
   useEffect(() => {
@@ -154,6 +149,51 @@ export const ProjectCreatorEditor: FC<Props> = ({
     }
   }, [newProject]);
 
+  // Update social links for existing projects
+  const updateLinks = async () => {
+    if (newProject || !projectID) return; // Only for existing projects
+
+    const projectNumID = Number(projectID);
+    
+    try {
+      // Get current socials from database
+      const currentSocialsResponse = await getProjectSocials(projectNumID);
+      const currentSocials = currentSocialsResponse.data || [];
+      
+      // Process each social in the modified project
+      for (const social of modifiedProject?.projectSocials || []) {
+        if (!social.url || !social.websiteId || social.websiteId === 0) continue; // Skip empty/invalid socials
+        
+        // Check if this social already exists
+        const existingSocial = currentSocials.find(s => s.websiteId === social.websiteId);
+        
+        if (existingSocial) {
+          // Update existing social if URL changed
+          if (existingSocial.url !== social.url) {
+            await updateProjectSocial(projectNumID, social.websiteId, { url: social.url });
+          }
+        } else {
+          // Create new social
+          await addProjectSocial(projectNumID, { websiteId: social.websiteId, url: social.url });
+        }
+      }
+      
+      // Delete socials that were removed
+      const modifiedSocialIds = (modifiedProject?.projectSocials || [])
+        .filter(s => s.url && s.websiteId && s.websiteId !== 0)
+        .map(s => s.websiteId);
+      
+      for (const currentSocial of currentSocials) {
+        if (!modifiedSocialIds.includes(currentSocial.websiteId)) {
+          await deleteProjectSocial(projectNumID, currentSocial.websiteId);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating social links:', error);
+      setErrorLinks('Error updating social links. Please try again.');
+    }
+  };
+
   //Save project editor changes
   const saveProject = async (newData: PendingProject) => {
     console.log(newData);
@@ -162,7 +202,7 @@ export const ProjectCreatorEditor: FC<Props> = ({
     setFailCheck(false);
 
     // save if on link tab
-    if (currentTab === 4) updateLinks();
+    if (currentTab === 4) await updateLinks();
 
     //Error Handling
     if (errorAddMember !== "" || errorAddPosition !== "" || errorLinks !== "") {
@@ -202,35 +242,22 @@ export const ProjectCreatorEditor: FC<Props> = ({
     try {
       // NEW PROJECT
       if (newProject && user) {
-        const resp = await createNewProject(
-          user.userId,
-          modifiedProject.title,
-          modifiedProject.hook,
-          modifiedProject.description,
-          modifiedProject.purpose,
-          modifiedProject.status,
-          modifiedProject.audience,
-          modifiedProject.projectTypes,
-          modifiedProject.tags,
-          modifiedProject.jobs,
-          modifiedProject.members,
-          modifiedProject.socials
-        );
-        const newProjectID = resp.data?.projectId;
-        if (!newProjectID) return;
+        // const resp = await createNewProject(modifiedProject as CreateProjectInput);
+        // const newProjectID = resp.data?.projectId;
+        // if (!newProjectID) return;
 
         // Upload images
-        await Promise.all(
-          modifiedProject.images.map((image) =>
-            addPic(newProjectID, image.file, image.position)
-          )
-        );
+      //   await Promise.all(
+      //     modifiedProject.images.map((image) =>
+      //       addPic(newProjectID, image.file, image.position)
+      //     )
+      //   );
 
-        if (modifiedProject.thumbnailFile) {
-          await updateThumbnail(newProjectID, modifiedProject.thumbnailFile);
-        }
+      //   if (modifiedProject.thumbnailFile) {
+      //     await updateThumbnail(newProjectID, modifiedProject.thumbnailFile);
+      //   }
 
-        setProjectData(modifiedProject);
+      //   setProjectData(modifiedProject as ProjectDetail);
       }
 
       // EXISTING PROJECT
@@ -270,39 +297,39 @@ export const ProjectCreatorEditor: FC<Props> = ({
   };
  
   // Update links, avoid links tab glitch
-  const updateLinks = () => {
-    const newSocials: { id: number, url: string}[] = [];
-    const parentDiv = document.querySelector("#project-editor-link-list");
+  // const updateLinks = () => {
+  //   const newSocials: { id: number, url: string}[] = [];
+  //   const parentDiv = document.querySelector("#project-editor-link-list");
 
-    parentDiv?.childNodes.forEach(element => {
-      if (element === parentDiv.lastElementChild) {
-        return;
-      }
+  //   parentDiv?.childNodes.forEach(element => {
+  //     if (element === parentDiv.lastElementChild) {
+  //       return;
+  //     }
 
-      const dropdown = (element as HTMLElement).querySelector('select');
-      const input = (element as HTMLElement).querySelector('input');
+  //     const dropdown = (element as HTMLElement).querySelector('select');
+  //     const input = (element as HTMLElement).querySelector('input');
 
-      const id = Number(dropdown?.options[dropdown?.selectedIndex].dataset.id);
-      const url = input?.value;
+  //     const id = Number(dropdown?.options[dropdown?.selectedIndex].dataset.id);
+  //     const url = input?.value;
 
-      if (!id && !url) {
-        return;
-      }
+  //     if (!id && !url) {
+  //       return;
+  //     }
 
-      if (isNaN(id) || id === -1) {
-        setErrorLinks('Select a website in the dropdown');
-        return;
-      }
-      if (!url) {
-        setErrorLinks('Enter a URL');
-        return;
-      }
+  //     if (isNaN(id) || id === -1) {
+  //       setErrorLinks('Select a website in the dropdown');
+  //       return;
+  //     }
+  //     if (!url) {
+  //       setErrorLinks('Enter a URL');
+  //       return;
+  //     }
 
-      newSocials.push({id: id, url: url});
-      setErrorLinks('');
-     })
-     setModifiedProject({...modifiedProject, socials: newSocials})
-  }
+  //     newSocials.push({id: id, url: url});
+  //     setErrorLinks('');
+  //    })
+  //    setModifiedProject({...modifiedProject, socials: newSocials})
+  // }
 
   const updatePendingProject = (updatedPendingProject: PendingProject) => {
     setModifiedProject(updatedPendingProject);
@@ -453,3 +480,4 @@ export const ProjectCreatorEditor: FC<Props> = ({
     </Popup>
   );
 };
+

@@ -28,7 +28,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
   // State variables for modals
   // const [showAvatarModal, setShowAvatarModal] = useState(false);
-  // const [showSkillsModal, setShowSkillsModal] = useState(false);
+  const [showSkillsModal, setShowSkillsModal] = useState(false);
   // const [showProficienciesModal, setShowProficienciesModal] = useState(false);
   // const [showInterestsModal, setShowInterestsModal] = useState(false);
   const [showCompleteProfileModal, setShowCompleteProfileModal] = useState(false);

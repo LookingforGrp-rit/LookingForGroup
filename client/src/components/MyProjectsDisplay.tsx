@@ -1,4 +1,3 @@
-import React from 'react';
 import { ProjectCard } from './ProjectCard';
 import { profiles } from '../constants/fakeData'; // FIXME: use data in db
 import { projects } from '../constants/fakeData'; // FIXME: use data in db

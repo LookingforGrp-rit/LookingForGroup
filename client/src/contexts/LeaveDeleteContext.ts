@@ -4,7 +4,7 @@ type LeaveDeleteContextProps = {
   isOwner: boolean;
   projId: number,
   userId: number,
-  reloadProjects: Function,
+  reloadProjects: () => void,
 };
 
 export const LeaveDeleteContext = createContext<LeaveDeleteContextProps>({

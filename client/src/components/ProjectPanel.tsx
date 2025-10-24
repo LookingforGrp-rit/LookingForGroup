@@ -1,14 +1,14 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
-import { sendDelete, sendPost } from '../functions/fetch';
-import { addProjectFollowing, deleteProjectFollowing } from '../api/users.ts';
+import { addProjectFollowing, deleteProjectFollowing, getCurrentAccount, getProjectFollowing } from '../api/users.ts';
 
 //import shares types
 import usePreloadedImage from '../functions/imageLoad.tsx';
-import { ProjectWithFollowers, ProjectTag, ProjectGenres } from '@looking-for-group/shared';
-import * as React from 'react';
+import { ProjectWithFollowers, ProjectMedium, Tag } from '@looking-for-group/shared';
+import React from 'react';
+import { getByID } from '../api/projects.ts';
 
 //Component that will contain info about a project, used in the discovery page
 //Smaller and more concise than ProjectCard.tsx
@@ -18,19 +18,18 @@ import * as React from 'react';
 
 //backend base url for getting images
 
-
 interface ProjectPanelProps {
   project: ProjectWithFollowers;
-  userId: number;
 }
 
-export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
+export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const navigate = useNavigate();
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectId}`;
 
+  const [userId, setUserId] = useState<number>();
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
-  //const [isFollowing, setFollowing] = useState(project.followers.isFollowing);
-  const [isFollowing, setFollowing] = useState(project.followers?.isFollowing ?? false);
+  const [isFollowing, setFollowing] = useState(false);
+  const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
 
   // Formats follow-count based on Figma design. Returns a string
   const formatFollowCount = (followers: number): string => {
@@ -58,29 +57,60 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
         return 'grey';
     }
   };
+  //checking function for if the current user is following a project
+const checkFollow = useCallback(async () => {
+  if(userId){
+  const followings = (await getProjectFollowing(userId)).data?.projects;
 
-  const handleFollowClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  let isFollow = false;
+
+  if(followings !== undefined){
+  for (const follower of followings){
+    isFollow = (follower.project.projectId === project.projectId);
+    if(isFollow) break;
+  }
+  }
+  setFollowing(isFollow);
+  return isFollow;
+
+  }
+}, [project, userId]);
+useEffect(() => {
+  const getProjectData = async () => {
+    //get our current user for use later
+    const userResp = await getCurrentAccount();
+    if(userResp.data) setUserId(userResp.data.userId);
+    
+    //get the project itself
+    const projectResp = await getByID(projectId);
+    if (projectResp.data) { 
+      setFollowCount(projectResp.data.followers.count);
+      checkFollow();
+    }
+  };
+    getProjectData();
+}, [projectId, userId, checkFollow])
+
+
+  const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
     if (!userId || userId === 0) {
       navigate(paths.routes.LOGIN);
       return;
     }
+    const toggleFollow = !await checkFollow();
+    setFollowing(toggleFollow);
 
-    if(!isFollowing) {
-      addProjectFollowing(project.projectId).then(res => {
-        if (res.status === 200) {
+    if(toggleFollow) {
+      await addProjectFollowing(project.projectId);
           setFollowing(true);
           setFollowCount(followCount + 1);
-        }
-      });
+        
     } else { 
-      deleteProjectFollowing(project.projectId).then(res => {
-        if (res.status === 200) {
+      await deleteProjectFollowing(project.projectId);
           setFollowing(false);
           setFollowCount(followCount - 1);
-        }
-      });
     }
   };
 
@@ -117,14 +147,13 @@ export const ProjectPanel = ({ project, userId }: ProjectPanelProps) => {
           </div>
         </div>
         <div id="project-panel-tags">
-          {project.projectTypes?.map((genre: ProjectGenres) => (
-            <div className='skill-tag-label label-blue' key={genre.typeId}>
-              {genre.label}
+          {project.mediums.map((medium: ProjectMedium) => (
+            <div className='skill-tag-label label-blue' key={medium.mediumId}>
+              {medium.label}
             </div>
           ))}
-          {project.tags?.sort((a: ProjectTag, b: ProjectTag) => a.position - b.position)
-            .slice(0, 3)
-            .map((tag: ProjectTag) => {
+          {project.tags?.slice(0, 3)
+            .map((tag: Tag) => {
               return (
                 <div className={`skill-tag-label label-${getTagCategory(tag.type)}`} key={tag.tagId}>
                   {tag.label}

@@ -457,6 +457,22 @@ Discover and Meet page style rules
 }
 
 /*tag rules may be used for buttons elsewhere, but will stay here for the time being*/
+/* Container for draggable tag button */
+.tag-draggable {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+
+  svg:hover {
+    cursor: grab;
+  }
+  /* Mouse-down */
+  svg:hover:active {
+    cursor: grabbing;
+  }
+}
+
 .tag-button {
   display: flex;
   flex-direction: row;
@@ -465,11 +481,16 @@ Discover and Meet page style rules
 
   border-radius: 30px;
   border: none;
-  height: 28px;
+  min-height: 28px;
+  height: fit-content;
+  width: max-content;
   padding: 0 17px; 
   font-size: medium;
-  /* margin: 0 4px; */
   flex-shrink: 0;
+  text-align: left;
+  p {
+    margin: 0px;
+  }
 }
 
 /* selected tags */

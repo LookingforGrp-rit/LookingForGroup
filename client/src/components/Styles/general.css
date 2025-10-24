@@ -1483,6 +1483,7 @@ Select style rules
 .placeholder {
   color: var(--neutral-gray);
   font-style: italic;
+  text-align: left;
 }
 
 /*

@@ -1,11 +1,12 @@
 // --- Imports ---
-import { useRef } from "react";
+import { useEffect, useState, useRef } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { PopupButton } from "../../Popup";
 import {
   ProjectPurpose,
   ProjectStatus,
 } from "@looking-for-group/shared";
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { PopupButton } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../../types/types";
@@ -39,6 +40,7 @@ const statusOptions = [
   "Post-Production",
   "Complete",
 ];
+import { ProjectDetail } from "@looking-for-group/shared";
 
 // Delay function until user stops typing to prevent rapid text input bugs
 const keyboardDebounce = <T extends (...args: any[]) => any>(
@@ -48,7 +50,7 @@ const keyboardDebounce = <T extends (...args: any[]) => any>(
   let timeout: NodeJS.Timeout;
   return (...args: Parameters<T>) => {
     clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), delay);
+    timeout = setTimeout(() => func(arg), delay);
   };
 };
 
@@ -157,7 +159,7 @@ export const GeneralTab = ({
                 });
               }
             }}
-            options={statusOptions.map((option) => {
+            options={Object.values(ProjectStatusEnums).map((option) => {
               return {
                 markup: <>{option}</>,
                 value: option,
@@ -184,7 +186,7 @@ export const GeneralTab = ({
             callback={(e) => {
               const purpose = (
                 e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
-              ).value?.toString();
+              ).value as ProjectPurpose;
 
               if (purpose && purposeOptions.includes(purpose.toString())) {
                 projectAfterGeneralChanges = {
@@ -204,7 +206,7 @@ export const GeneralTab = ({
                 });
               }
             }}
-            options={purposeOptions.map((option) => {
+            options={Object.values(ProjectPurposeEnums).map((option) => {
               return {
                 markup: <>{option}</>,
                 value: option,

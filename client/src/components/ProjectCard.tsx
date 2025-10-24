@@ -39,14 +39,14 @@ This component is not necessarily the final version and doesn't match the visual
 export const ProjectCard = ({ project }: { project: ProjectDetail }) => {
   // Updates the url to point toward the project being clicked
   const navigate = useNavigate();
-  const pathQuery = `?projID=${project._id}`;
+  const pathQuery = `?projID=${project.projectId}`;
   return (
     <div className="discover-card">
-      <img id="discover-card-profile-picture" src={profilePicture} alt={project.name} />
+      <img id="discover-card-profile-picture" src={profilePicture} alt={project.title} />
       <div id="discover-card-body">
         {/* When the title is clicked it navigates to the project page */}
         <h2 id="discover-card-name" onClick={() => navigate(paths.routes.PROJECT + pathQuery)}>
-          {project.name}
+          {project.title}
         </h2>
         <p id="discover-card-description">{project.description}</p>
         <div id="discover-card-tag-wrapper">
@@ -56,7 +56,7 @@ export const ProjectCard = ({ project }: { project: ProjectDetail }) => {
         </div>
         {/* The needed roles are pulled from an array in fakeData.ts and are mapped along with the needed amounts */}
         <p id="discover-card-needed-roles">
-          <b>Looking for:</b> {project.neededRoles.map((r) => `${r.Role}(${r.amount})`).join(', ')}
+          <b>Looking for:</b> {project.jobs.map((job) => `${job.role}(${job.availability})`).join(', ')}
         </p>
       </div>
     </div>

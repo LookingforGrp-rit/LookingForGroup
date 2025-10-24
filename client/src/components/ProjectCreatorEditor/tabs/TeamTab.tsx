@@ -656,6 +656,7 @@ export const TeamTab = ({
                   ? allRoles.find(({ roleId }) => roleId === currentRole)!.label // TODO will this definitely really truly always exist?
                   : ""
             }
+            type="input"
           />
           <SelectOptions
             callback={(e) => {

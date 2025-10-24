@@ -10,6 +10,10 @@ import { projectDataManager } from "../../../api/data-managers/project-data-mana
 import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
 import { FileImage } from "../../FileImage";
 import placeholder from "../../../images/project_temp.png";
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+
+//backend base url for getting images
+
 
 // --- Default Project ---
 // const defaultProject: ProjectDetail = {

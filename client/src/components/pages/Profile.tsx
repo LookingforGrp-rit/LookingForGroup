@@ -30,7 +30,6 @@ type Project = ProjectPreview;
 
 // Stores if profile is loaded from server and if it's user's respectively
 // const [profileLoaded, setProfileLoaded] = useState(false);
-let userID: number;
 
 
 const Profile = () => {
@@ -48,6 +47,7 @@ const Profile = () => {
   const [isUsersProfile, setIsUsersProfile] = useState<boolean>(false);
 
   const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
+  const [userID, setUserID] = useState<number>(0);
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
 
@@ -67,7 +67,6 @@ const Profile = () => {
   // --------------------
 
   //a direct check to backend for determining whether or not a user is followed
-  //it's a function so i can use it for other things
 const checkFollow = useCallback(async () => {
   const followings = (await getUserFollowing(userID)).data?.users;
 
@@ -75,12 +74,13 @@ const checkFollow = useCallback(async () => {
 
   if(followings !== undefined){ //if they have no follows then obviously they can't be following the guy we're looking at
   for (const follower of followings){
-    isFollowing = (follower.user.userId === parseInt(profileID));
+    isFollowing = (follower.user.userId === parseInt(profileID))
+    if (isFollowing) break;
   }
   }
   setIsFollow(isFollowing);
   return isFollowing;
-}, [profileID])
+}, [profileID, userID])
 
   // 'Follow' button
   const followUser = async () => {
@@ -93,15 +93,15 @@ const checkFollow = useCallback(async () => {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
       //adds the user following
-    const toggleFollow = !await checkFollow();
-      console.log(toggleFollow)
+    const toggleFollow = !(await checkFollow());
     setIsFollow(toggleFollow);
       if (toggleFollow) {
-      const follow = await addUserFollowing(parseInt(profileID));
-      if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
-        followButton.innerText = "Following";
-      } else {
-      await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
+        const follow = await addUserFollowing(parseInt(profileID));
+        if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
+          followButton.innerText = "Following";
+      }
+      else {
+        await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
         followButton.innerText = "Follow";
       }
     }
@@ -135,7 +135,6 @@ const checkFollow = useCallback(async () => {
       const response = isUsersProfile ? await getProjectsByUser() : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };          // IMPLEMENT PROJECT GETTING
       const data = response.data;
       
-      console.log(response);
 
       // Only update if there's data
       if (data) {
@@ -154,14 +153,10 @@ const checkFollow = useCallback(async () => {
   // Gets the profile data
   useEffect(() => {
     const getProfileData = async () => {
-      // Get the profileID to pull data for whoever's profile it is
+      // Get the userID for our current user
       const response = await getCurrentAccount()
-        console.log(response)
-      if (response.data) {
-        userID = response.data.userId;
-      }
+      if (response.data) setUserID(response.data.userId);
       setIsUsersProfile(userID.toString() === profileID);
-      console.log(isUsersProfile)
 
       try {
         const { data } = await getUsersById(profileID);
@@ -182,7 +177,7 @@ const checkFollow = useCallback(async () => {
       }
     };
     getProfileData();
-  }, [getProfileProjectData, checkFollow, isUsersProfile, profileID]);
+  }, [getProfileProjectData, checkFollow, isUsersProfile, profileID, userID]);
 
   // --------------------
   // Components

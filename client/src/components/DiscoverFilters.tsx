@@ -129,9 +129,11 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   }, [dataLoaded]);
 
   // Function called when a tag is clicked, adds/removes tag to list of filters
-  const toggleTag = (tag: Tag) => {
+  const toggleTag = (event: any, tag: Tag) => {
     let newActiveTags: Tag[];
-    
+    const button = event.currentTarget;
+    button.classList.toggle('discover-tag-filter-selected');
+
     if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
       newActiveTags = activeTagFilters.filter(t => t.label !== tag.label || t.type !== tag.type);
     } else { 
@@ -257,7 +259,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
               <button key={`${type}-${label}`}
                 className="discover-tag-filter"
                 data-type={type}
-                onClick={() => toggleTag(tagObj)}>
+                onClick={(e) => toggleTag(e, tagObj)}>
                 {label}
               </button>
             )
