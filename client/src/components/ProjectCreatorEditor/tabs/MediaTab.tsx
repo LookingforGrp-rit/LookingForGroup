@@ -1,65 +1,80 @@
 // --- Imports ---
-import { useCallback, useEffect, useState } from "react";
-import { addPic, deletePic, updateProject } from "../../../api/projects";
-import { CreateProjectImageInput, ProjectDetail, ProjectImage, UserPreview } from "@looking-for-group/shared";
+import { useCallback } from "react";
+import {
+  CreateProjectImageInput,
+  ProjectImage,
+} from "@looking-for-group/shared";
 import { PopupButton } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
-import { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared/enums";
+import { projectDataManager } from "../../../api/data-managers/project-data-manager";
+import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
+import { FileImage } from "../../FileImage";
+import placeholder from "../../../images/project_temp.png";
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 
 //backend base url for getting images
 
 
 // --- Default Project ---
-const defaultProject: ProjectDetail = {
-  audience: "",
-  description: "",
-  hook: "",
-  projectImages: [],
-  mediums: [],
-  jobs: [],
-  members: [],
-  projectId: -1,
-  purpose: "Personal" as ProjectPurpose,
-  projectSocials: [],
-  status: "Planning" as ProjectStatus,
-  tags: [],
-  thumbnail: "",
-  title: "",
-  owner: {} as UserPreview,
-  createdAt: Date.prototype, 
-  updatedAt: Date.prototype,
-  apiUrl: ''
-};
+// const defaultProject: ProjectDetail = {
+//   audience: "",
+//   description: "",
+//   hook: "",
+//   projectImages: [],
+//   mediums: [],
+//   jobs: [],
+//   members: [],
+//   projectId: -1,
+//   purpose: "Personal",
+//   projectSocials: [],
+//   status: "Planning",
+//   tags: [],
+//   thumbnail: "",
+//   title: "",
+//   owner: {} as UserPreview,
+//   createdAt: Date.prototype,
+//   updatedAt: Date.prototype,
+//   apiUrl: ''
+// };
+
+let projectAfterMediaChanges: PendingProject;
+
+let localIdIncrement = 0;
 
 // --- Variables ---
 type MediaTabProps = {
-  projectData?: ProjectDetail;
-  setProjectData?: (data: ProjectDetail) => void;
+  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  projectData: PendingProject;
   saveProject?: () => void;
+  updatePendingProject: (updatedPendingProject: PendingProject) => void;
   failCheck: boolean;
 };
 
 // --- Component ---
 export const MediaTab = ({
-  projectData = defaultProject,
-  setProjectData = () => {},
+  dataManager,
+  projectData,
   saveProject = () => {},
+  updatePendingProject,
   failCheck,
 }: MediaTabProps) => {
   // --- Hooks ---
   // tracking project modifications
-  const [modifiedProject, setModifiedProject] =
-    useState<ProjectDetail>(projectData);
+  // const [projectAfterMediaChanges, setModifiedProject] =
+  //   useState<ProjectDetail>(projectData);
 
-  // Update data when data is changed
-  useEffect(() => {
-    setModifiedProject(projectData);
-  }, [projectData]);
+  // // Update data when data is changed
+  // useEffect(() => {
+  //   setModifiedProject(projectData);
+  // }, [projectData]);
 
-  // Update parent state when data is changed
-  useEffect(() => {
-    setProjectData(modifiedProject);
-  }, [modifiedProject, setProjectData]);
+  // // Update parent state when data is changed
+  // useEffect(() => {
+  //   setProjectData(projectAfterMediaChanges);
+  // }, [projectAfterMediaChanges, setProjectData]);
+
+  projectAfterMediaChanges = structuredClone(projectData);
+  const projectId = projectData.projectId!;
 
   // Handle image upload
   const handleImageUpload = useCallback(async () => {
@@ -72,69 +87,137 @@ export const MediaTab = ({
     const file = imageUploader.files[0];
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
 
-    if (!modifiedProject.projectId) return;
+    if (!projectId) return;
 
     // Uploading image to backend
     try {
       const fullImg = {
         image: file,
-        altText: imageUploader.alt //it looks like this is where the text would go?
+        // altText: imageUploader.alt, //it looks like this is where the text would go?
+        altText: "A project image", // FIXME there is no way for users to enter alt text
       } as CreateProjectImageInput;
-      const response = await addPic(modifiedProject.projectId, fullImg);
-      if (response.status === 200 && response.data) {
-        const newImage: ProjectImage = response.data;
 
-        setModifiedProject({
-          ...modifiedProject,
-          projectImages: [...modifiedProject.projectImages, newImage],
-        });
-      }
+      console.log(fullImg);
+
+      const localId = ++localIdIncrement;
+
+      dataManager.createImage({
+        id: {
+          value: localId,
+          type: "local",
+        },
+        data: fullImg,
+      });
+
+      projectAfterMediaChanges = {
+        ...projectAfterMediaChanges,
+        projectImages: [
+          ...projectAfterMediaChanges.projectImages,
+          {
+            localId,
+            ...fullImg,
+          },
+        ],
+      };
+
+      updatePendingProject(projectAfterMediaChanges);
     } catch (err) {
       console.error(err);
     }
 
     imageUploader.value = "";
-  }, [modifiedProject]);
+  }, [dataManager, projectId, updatePendingProject]);
 
   // Handle new thumbnail
   const handleThumbnailChange = useCallback(
-    async (image: string) => { //updateProject has to take a file
-      if (!modifiedProject.projectId) return;
-      const imageFile = fetch(image) as unknown as File;
-      try {
-        await updateProject(modifiedProject.projectId, { thumbnail: imageFile }); //updates project with new thumbnail
-        setModifiedProject(modifiedProject); //sets modifiedProject to the project that now has the new thumbnail
-      } catch (err) {
-        console.error(err);
+    async (projectImage: ProjectImage | PendingProjectImage) => {
+      //updateProject has to take a file
+      if (!projectId) return;
+      let imageFile: File;
+      if ((projectImage as ProjectImage).imageId) {
+        const response = await fetch((projectImage as ProjectImage).image);
+        if (!response.ok) return;
+
+        const blob = await response.blob();
+        imageFile = new File([blob], projectImage.image as string);
+      } else {
+        if ((projectImage as PendingProjectImage).image === null) return;
+        imageFile = projectImage.image as File;
       }
+
+      dataManager.updateFields({
+        id: {
+          value: projectId,
+          type: "canon",
+        },
+        data: {
+          thumbnail: imageFile,
+        },
+      });
+
+      projectAfterMediaChanges = {
+        ...projectAfterMediaChanges,
+        thumbnail: {
+          localId:
+            (projectImage as PendingProjectImage).localId ?? ++localIdIncrement,
+          image: imageFile,
+          altText: "project thumbnail",
+        },
+      };
+
+      updatePendingProject(projectAfterMediaChanges);
     },
-    [modifiedProject]
+    [dataManager, projectId, updatePendingProject]
   );
 
   // Handle image deletion
   const handleImageDelete = useCallback(
-    async (image: ProjectImage) => {
-      if (!modifiedProject.projectId) return;
+    async (projectImage: ProjectImage | PendingProjectImage) => {
+      if (!projectId) return;
 
-      const response = await deletePic(
-        modifiedProject.projectId,
-        image.imageId
-      );
-      if (response.error) {
-        console.error("Error deleting image", response.error);
+      // delete server image
+      if ((projectImage as ProjectImage).imageId) {
+        dataManager.deleteImage({
+          id: {
+            value: (projectImage as ProjectImage).imageId,
+            type: "canon",
+          },
+          data: null,
+        });
+
+        projectAfterMediaChanges.projectImages =
+          projectAfterMediaChanges.projectImages.filter(
+            (image) =>
+              (image as ProjectImage).imageId !==
+              (projectImage as ProjectImage).imageId
+          );
+
+        updatePendingProject(projectAfterMediaChanges);
         return;
       }
 
-      setModifiedProject({
-        ...modifiedProject,
-        projectImages: modifiedProject.projectImages.filter((i) => i !== image),
-        thumbnail:
-          modifiedProject.thumbnail === image.image
-            ? ""
-            : modifiedProject.thumbnail,
-      });
+      // delete local image
+      if ((projectImage as PendingProjectImage).localId) {
+        dataManager.deleteImage({
+          id: {
+            value: (projectImage as PendingProjectImage).localId!,
+            type: "local",
+          },
+          data: null,
+        });
+
+        projectAfterMediaChanges.projectImages =
+          projectAfterMediaChanges.projectImages.filter(
+            (image) =>
+              (image as PendingProjectImage).localId !==
+              (projectImage as PendingProjectImage).localId
+          );
+
+        updatePendingProject(projectAfterMediaChanges);
+        return;
+      }
     },
-    [modifiedProject]
+    [dataManager, projectId, updatePendingProject]
   );
 
   // --- Complete component ---
@@ -146,14 +229,43 @@ export const MediaTab = ({
         the main thumbnail on the project's discover card.
       </div>
       <div id="project-editor-image-ui">
-        {modifiedProject.projectImages?.map((image) => {
-          const src = image.image.startsWith("blob")
-            ? image.image
-            : `images/projects/${image.image}`;
+        {projectAfterMediaChanges.projectImages?.map((projectImage) => {
+          let image;
+          if (!projectImage.image) {
+            image = <></>;
+          } else if ((projectImage as ProjectImage).imageId) {
+            image = (
+              <img
+                src={(projectImage as ProjectImage).image}
+                alt={(projectImage as ProjectImage).altText}
+                onError={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = placeholder;
+                }}
+              />
+            );
+          } else {
+            image = (
+              <FileImage
+                file={(projectImage as PendingProjectImage).image!}
+                alt={
+                  (projectImage as PendingProjectImage).altText ??
+                  "new project image"
+                }
+              />
+            );
+          }
+
           return (
-            <div className="project-editor-image-container" key={image.image}>
-              <img src={src} alt="project images" />
-              {modifiedProject.thumbnail === image.image && (
+            <div
+              className="project-editor-image-container"
+              key={
+                (projectImage as ProjectImage).imageId ??
+                "pending-" + (projectImage as PendingProjectImage).localId
+              }
+            >
+              {image}
+              {projectAfterMediaChanges.thumbnail === projectImage.image && (
                 <img
                   src="/images/icons/star-filled.svg"
                   alt="star"
@@ -163,20 +275,25 @@ export const MediaTab = ({
               <div className="project-image-hover">
                 <button
                   id={
-                    modifiedProject.thumbnail === image.image
+                    projectAfterMediaChanges.thumbnail === projectImage.image
                       ? "selected-thumbnail"
                       : ""
                   }
                   className={
-                    modifiedProject.thumbnail === image.image
+                    projectAfterMediaChanges.thumbnail === projectImage.image
                       ? "star-filled"
                       : "star"
                   }
-                  onClick={() => handleThumbnailChange(image.image)}
+                  onClick={() => handleThumbnailChange(projectImage)}
                 >
                   <img
                     src={
-                      modifiedProject.thumbnail === image.image
+                      projectAfterMediaChanges.thumbnail ===
+                        projectImage.image ||
+                      (
+                        projectAfterMediaChanges.thumbnail as PendingProjectImage
+                      )?.localId ===
+                        (projectImage as PendingProjectImage)?.localId
                         ? "/images/icons/star-filled.svg"
                         : "/images/icons/star.svg"
                     }
@@ -185,7 +302,7 @@ export const MediaTab = ({
                 </button>
                 <button
                   className="delete-image"
-                  onClick={() => handleImageDelete(image)}
+                  onClick={() => handleImageDelete(projectImage)}
                 >
                   <img src="/images/icons/delete-black.svg" alt="trash"></img>
                 </button>

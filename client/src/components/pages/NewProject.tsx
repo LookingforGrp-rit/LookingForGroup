@@ -126,7 +126,7 @@ useEffect(() => {
     user &&
     displayedProject?.members.some(
       (member) =>
-        member.role.label === "Owner" && member.user.userId === user.userId
+        displayedProject.owner.userId === member.user.userId
     ) ? (
       <>
         {
@@ -394,7 +394,7 @@ useEffect(() => {
 
                       <div id="positions-popup-info">
                         <div id="positions-popup-info-title">
-                          {displayedProject.jobs[viewedPosition].role.label ??
+                          {displayedProject.jobs[viewedPosition]?.role?.label ??
                             undefined}
                         </div>
                         <div id="positions-popup-info-description">

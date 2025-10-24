@@ -23,8 +23,8 @@ import type {
   AddUserMajorInput,
   MyMajor,
   UserFollowsList,
-  ProjectFollowsList,
   ProjectDetail,
+  ProjectFollowsList,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */

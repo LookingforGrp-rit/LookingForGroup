@@ -390,7 +390,7 @@ export const deleteProjectTag = async (
   projectID: number,
   tagId: number
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${projectID}/tags${tagId}`;
+  const apiURL = `/projects/${projectID}/tags/${tagId}`;
   const response = await DELETE(apiURL);
 
   if (response.error)
@@ -436,7 +436,7 @@ export const deleteProjectMedium = async (
   projectID: number,
   mediumId: number
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${projectID}/mediums${mediumId}`;
+  const apiURL = `/projects/${projectID}/mediums/${mediumId}`;
   const response = await DELETE(apiURL);
 
   if (response.error)
