@@ -1,5 +1,5 @@
 // --- Imports ---
-import { useEffect, useState, useRef } from "react";
+// import { useEffect, useState, useRef } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import {
   ProjectPurpose,
@@ -12,47 +12,19 @@ import { projectDataManager } from "../../../api/data-managers/project-data-mana
 import { PendingProject } from "../../../../types/types";
 
 // --- Variables ---
-// Default project value
-// const defaultProject: PendingProject = {
-//   _id: "",
-//   audience: "",
-//   description: "",
-//   hook: "",
-//   images: [],
-//   jobs: [],
-//   members: [],
-//   projectTypes: [],
-//   purpose: "",
-//   socials: [],
-//   status: "",
-//   tags: [],
-//   thumbnail: "",
-//   title: "",
-// };
-
 let projectAfterGeneralChanges: PendingProject;
 
-// Project purpose and status options
-const purposeOptions = ["Personal", "Portfolio Piece", "Academic", "Co-op"];
-const statusOptions = [
-  "Planning",
-  "Development",
-  "Post-Production",
-  "Complete",
-];
-import { ProjectDetail } from "@looking-for-group/shared";
-
-// Delay function until user stops typing to prevent rapid text input bugs
-const keyboardDebounce = <T extends (...args: any[]) => any>(
-  func: T,
-  delay: number
-) => {
-  let timeout: NodeJS.Timeout;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(arg), delay);
-  };
-};
+// // Delay function until user stops typing to prevent rapid text input bugs TODO: is this needed? not used
+// const keyboardDebounce = <T extends (...args: unknown[]) => unknown>(
+//   func: T,
+//   delay: number
+// ) => {
+//   let timeout: NodeJS.Timeout;
+//   return (...args: Parameters<T>) => {
+//     clearTimeout(timeout);
+//     timeout = setTimeout(() => func(args), delay);
+//   };
+// };
 
 type GeneralTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
@@ -71,24 +43,20 @@ export const GeneralTab = ({
   updatePendingProject = () => {},
   failCheck,
 }: GeneralTabProps) => {
-  // --- Hooks ---
-  // tracking project modifications
-  // const [modifiedProject, setModifiedProject] = useState<PendingProject>(
-  //   projectData
-  // );
-  projectAfterGeneralChanges = structuredClone(projectData);
 
+  projectAfterGeneralChanges = structuredClone(projectData);
+  
   const projectId = projectData.projectId!;
 
-  // Textbox input callback: useRef to avoid unintended reset bugs
-  const debouncedUpdatePendingProject = useRef(
-    keyboardDebounce<(updatedPendingProject: PendingProject) => void>(
-      (updatedPendingProject: PendingProject) => {
-        updatePendingProject(updatedPendingProject);
-      },
-      300
-    )
-  ).current;
+  // // Textbox input callback: useRef to avoid unintended reset bugs TODO: is this needed? not used
+  // const debouncedUpdatePendingProject = useRef(
+  //   keyboardDebounce<(updatedPendingProject: PendingProject) => void>(
+  //     (updatedPendingProject: PendingProject) => {
+  //       updatePendingProject(updatedPendingProject);
+  //     },
+  //     300
+  //   )
+  // ).current;
 
   // // Update data when data is changed
   // useEffect(() => {
@@ -141,7 +109,7 @@ export const GeneralTab = ({
                 e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
               ).value?.toString();
 
-              if (status && statusOptions.includes(status.toString())) {
+              if (status && Object.values(ProjectStatusEnums).includes(status as ProjectStatusEnums)) {
                 projectAfterGeneralChanges = {
                   ...projectAfterGeneralChanges,
                   status: status as ProjectStatus,
@@ -188,7 +156,7 @@ export const GeneralTab = ({
                 e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
               ).value as ProjectPurpose;
 
-              if (purpose && purposeOptions.includes(purpose.toString())) {
+              if (purpose && Object.values(ProjectPurposeEnums).includes(purpose as ProjectPurposeEnums)) {
                 projectAfterGeneralChanges = {
                   ...projectAfterGeneralChanges,
                   purpose: purpose as ProjectPurpose,

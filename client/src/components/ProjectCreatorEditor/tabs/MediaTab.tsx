@@ -10,32 +10,6 @@ import { projectDataManager } from "../../../api/data-managers/project-data-mana
 import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
 import { FileImage } from "../../FileImage";
 import placeholder from "../../../images/project_temp.png";
-import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
-
-//backend base url for getting images
-
-
-// --- Default Project ---
-// const defaultProject: ProjectDetail = {
-//   audience: "",
-//   description: "",
-//   hook: "",
-//   projectImages: [],
-//   mediums: [],
-//   jobs: [],
-//   members: [],
-//   projectId: -1,
-//   purpose: "Personal",
-//   projectSocials: [],
-//   status: "Planning",
-//   tags: [],
-//   thumbnail: "",
-//   title: "",
-//   owner: {} as UserPreview,
-//   createdAt: Date.prototype,
-//   updatedAt: Date.prototype,
-//   apiUrl: ''
-// };
 
 let projectAfterMediaChanges: PendingProject;
 

@@ -28,23 +28,6 @@ interface Props {
 
 let localId = 0;
 
-// // default value for project data
-// const emptyProject: PendingProject = {
-//   audience: '',
-//   description: '',
-//   hook: '',
-//   projectImages: [],
-//   jobs: [],
-//   members: [],
-//   mediums: [],
-//   purpose: null,
-//   projectSocials: [],
-//   status: null,
-//   tags: [],
-//   thumbnail: '',
-//   title: '',
-// };
-
 let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
 
 /**

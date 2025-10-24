@@ -6,10 +6,10 @@ import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { current } from "@reduxjs/toolkit";
+// import { current } from "@reduxjs/toolkit";
 import {
   getJobTitles,
-  getUsers,
+  getUsers,                            
   getUsersById,
   getUserByUsername,
 } from "../../../api/users";
@@ -1219,21 +1219,7 @@ export const TeamTab = ({
         </Popup>
       </div>
     ),
-    [
-      allRoles,
-      errorAddMember,
-      handleNewMember,
-      handleSearch,
-      handleUserSelect,
-      modifiedProject,
-      newMember,
-      /*permissions,*/ searchBarKey,
-      searchQuery,
-      searchResults.data,
-      searchableUsers,
-      selectKey,
-      successAddMember,
-    ]
+    [allRoles, errorAddMember, handleNewMember, handleSearch, handleUserSelect, modifiedProject, newMember, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
   );
   const openPositionsContent: JSX.Element = useMemo(
     () => (
