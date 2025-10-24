@@ -183,11 +183,11 @@ export const TeamTab = ({
       try {
         const response = await getUsers();
 
-        setAllUsers(response.data!);
+        if(response.data) setAllUsers(response.data);
 
         // list of users to search. users searchable by first name, last name, or username
         const searchableUsers = await Promise.all(
-          response.data.map(async (user: User) => {
+          response.data!.map(async (user: UserPreview) => {
             // get make searchable user
             const filteredUser = {
               username: user.username,
@@ -196,7 +196,7 @@ export const TeamTab = ({
             };
             return filteredUser;
           })
-        );
+        ) as UserPreview[];
 
         if (searchableUsers === undefined) {
           return;
@@ -243,7 +243,7 @@ export const TeamTab = ({
   const getProjectJob = useCallback(
     (id: number) => {
       return modifiedProject.jobs.find(
-        (job: { titleId: number }) => job.titleId === id
+        (job: ProjectJob) => job.jobId === id
       );
     },
     [modifiedProject.jobs]
@@ -271,8 +271,11 @@ export const TeamTab = ({
     };
 
     // check if member is already in project
+    //backend has something for this but it requires the object to be created
+    //which at this point why wouldn't we just be creating this here
+    //if it's invalid read the error we give you and give em that
     const isMember = modifiedProject.members.find(
-      ({ user }) => user.userId === user.userId
+      ({ user }) => user.userId === member.user.userId
     );
     if (isMember) {
       return errorWarning(
@@ -302,7 +305,7 @@ export const TeamTab = ({
     }
 
     // Match this user with all users to get profile image
-    const matchedUser = allUsers.find((u) => u.userId === member.userId);
+    const matchedUser = allUsers.find((u) => u.userId === member.user.userId);
     member.profileImage = matchedUser ? matchedUser.profileImage : "";
 
     // check if member has name
@@ -313,7 +316,7 @@ export const TeamTab = ({
     } else {
       // prompt user of successfully added member
       setSuccessAddMember(true);
-      setErrorAddMember(
+      setErrorAddMember( //why is this set as an error
         `${member.firstName} ${member.lastName} added to team!`
       );
 
@@ -359,7 +362,7 @@ export const TeamTab = ({
         profileImage: matchedUser.profileImage,
         jobTitle: "", // Placeholder value
         userId: matchedUser.userId,
-      };
+      } as ProjectMember;
 
       // set new member
       setNewMember(mem);
@@ -663,8 +666,7 @@ export const TeamTab = ({
               if (selectedTitle) {
                 setCurrentJob({
                   ...currentJob,
-                  titleId: selectedTitle.titleId,
-                  jobTitle: selectedTitle.label,
+                  roleId: selectedTitle.roleId
                 });
               }
             }}
@@ -994,11 +996,7 @@ export const TeamTab = ({
                         }}
                       />
                       <div className="project-editor-project-member-name">
-                        {memberUser.firstName && memberUser.lastName
-                          ? `${memberUser.firstName} ${memberUser.lastName}`
-                          : memberUser.userId === 0 // FIXME this cant possibly be right
-                            ? "You"
-                            : ""}
+                        {`${memberUser.firstName} ${memberUser.lastName}`}
                       </div>
                     </div>
                     <div id="project-team-add-member-role">
@@ -1017,7 +1015,7 @@ export const TeamTab = ({
                             ).value;
                           }}
                           options={allRoles.map(
-                            (job: { titleId: number; label: string }) => {
+                            (job: { roleId: number; label: string }) => {
                               return {
                                 markup: <>{job.label}</>,
                                 value: job.label,
@@ -1178,7 +1176,7 @@ export const TeamTab = ({
                 <SelectButton placeholder="Select" initialVal="" className="" />
                 <SelectOptions
                   callback={(e) => {
-                    setNewMember({ ...newMember, jobTitle: e.target.value });
+                    setNewMember({ ...newMember, role: e.target.value });
                   }}
                   options={allRoles.map(
                     (job: { titleId: number; label: string }) => {
