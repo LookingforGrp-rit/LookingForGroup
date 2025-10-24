@@ -2,9 +2,9 @@
 import { useEffect, useState } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton } from "../../Popup";
-import { ProjectDetail, Social } from "@looking-for-group/shared";
+import { ProjectDetail, Social, UserDetail } from "@looking-for-group/shared";
 import { Input } from "../../Input";
-import { getSocials } from "../../../api/users";
+import { getSocials, getUsersById } from "../../../api/users";
 import { ThemeIcon } from "../../ThemeIcon";
 
 // --- Variables ---
@@ -33,6 +33,8 @@ export const LinksTab = ({
   const [allSocials, setAllSocials] = useState<Social[]>([]);
   // sets error when adding a link to the project
   const [error] = useState('');
+  // project owner details with social links
+  const [projectOwner, setProjectOwner] = useState<UserDetail | null>(null);
 
   // Update data when data is changed
   useEffect(() => {
@@ -68,13 +70,73 @@ export const LinksTab = ({
     getAllSocials();
   }, []);
 
+  // Fetch project owner details to get their social links
+  useEffect(() => {
+    const fetchProjectOwner = async () => {
+      if (projectData?.owner?.userId) {
+        try {
+          const response = await getUsersById(projectData.owner.userId.toString());
+          if (response?.data) {
+            setProjectOwner(response.data);
+          }
+        } catch (err) {
+          console.error("Error fetching project owner details:", err);
+        }
+      }
+    };
+    fetchProjectOwner();
+  }, [projectData?.owner?.userId]);
+
   // --- Complete component ---
   return (
     // TODO: refactor styles for project and profile editor
     <div id="editor-links">
-      <div className="editor-header">Social Links</div>
+      {/* Contact Information Section */}
+      {projectOwner && (
+        <div id="editor-contact-info">
+          <div className="editor-header">Contact Project Owner</div>
+          <div className="editor-extra-info">
+            Connect with {projectOwner.firstName} {projectOwner.lastName} through their social profiles.
+          </div>
+          
+          {/* User Social Links */}
+          {projectOwner.socials && projectOwner.socials.length > 0 ? (
+            <div className="contact-socials-grid">
+              {projectOwner.socials.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-social-link"
+                  title={`Contact via ${social.label}`}
+                >
+                  <ThemeIcon
+                    width={20}
+                    height={20}
+                    id={
+                      social.label === 'Other' ? 'link' :
+                      social.label === 'Twitter' ? 'x' :
+                      social.label.toLowerCase()
+                    }
+                    className="mono-fill"
+                    ariaLabel={social.label}
+                  />
+                  <span>{social.label}</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="no-contact-info">
+              No contact information available for this project owner.
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="editor-header">Project Social Links</div>
       <div className="editor-extra-info">
-        Provide the links to pages you wish to include on your page.
+        Provide the links to pages you wish to include on your project page.
       </div>
       <div className='error'>{error}</div>
 
@@ -86,23 +148,7 @@ export const LinksTab = ({
             <Select>
               <SelectButton
                 placeholder='Select'
-                initialVal={
-                  social.label !== '' && <>
-                    <ThemeIcon
-                      width={20}
-                      height={20}
-                      id={
-                        social.label === 'Other' ? 'link' :
-                        // TODO: revisit twitter/x label
-                        social.label === 'Twitter' ? 'x' :
-                        social.label.toLowerCase()
-                      }
-                      className={'mono-fill'}
-                      ariaLabel={social.label}
-                    />
-                    {social.label}
-                  </>
-                }
+                initialVal={social.label !== '' ? social.label : undefined}
                 className='link-select'
                 type={"input"}
               />
