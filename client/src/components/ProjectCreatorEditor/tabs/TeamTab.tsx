@@ -9,7 +9,7 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 // import { current } from "@reduxjs/toolkit";
 import {
   getJobTitles,
-  getUsers,                            
+  getUsers,
   getUsersById,
   getUserByUsername,
 } from "../../../api/users";
@@ -25,38 +25,43 @@ import {
   JobCompensation,
   Role,
   CreateProjectJobInput,
+  CreateProjectMemberInput,
 } from "@looking-for-group/shared";
-import { Fillable } from "@looking-for-group/client";
+import {
+  Fillable,
+  Pending,
+  PendingProject,
+  PendingProjectMember,
+} from "@looking-for-group/client";
+import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 
 //backend base url for getting images
 
-
 // --- Variables ---
 // Default project value
-// const emptyMember: ProjectMember = {
-//   user: {
-//     userId: -1,
-//     firstName: '',
-//     lastName: '',
-//     username: '',
-//     profileImage: null,
-//     apiUrl: ''
-//   },
-//   role: { roleId: 0, label: '' },
-//   memberSince: new Date(),
-//   apiUrl: ''
+// const emptyMember: PendingProjectMember = {
+//   user: null,
+//   role: null,
+//   localId: null
 // };
 
-const emptyJob: Fillable<CreateProjectJobInput> = {
+type UserSearchableFields = Pick<
+  UserPreview,
+  "firstName" | "lastName" | "username"
+>;
+
+const emptyJob: Pending<ProjectJob> = {
   availability: null,
-  duration: null,
-  location: null,
   compensation: null,
-  roleId: null,
-  contactUserId: null,
+  contact: null,
   description: "",
+  duration: null,
+  localId: null,
+  location: null,
+  role: null,
 };
 
+// TODO i assume these can be replaced with the shared enums now
 // Job detail options (according to documentation enums)
 const availabilityOptions = ["FullTime", "PartTime", "Flexible"];
 const durationOptions = ["ShortTerm", "LongTerm"];
@@ -64,34 +69,46 @@ const locationOptions = ["OnSite", "Remote", "Hybrid"];
 const compensationOptions = ["Unpaid", "Paid"];
 // const permissionOptions = ['Project Member', 'Project Manager', 'Project Owner'];
 
+let projectAfterTeamChanges: PendingProject;
+let localIdIncrement = 0;
+
 type TeamTabProps = {
-  projectData: ProjectDetail;
+  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  projectData: PendingProject;
   setProjectData: (data: ProjectDetail) => void;
   setErrorMember: (error: string) => void;
   setErrorPosition: (error: string) => void;
   // permissions: number;
   saveProject: () => void;
+  updatePendingProject: (updatedPendingProject: PendingProject) => void;
   failCheck: boolean;
 };
 
 // --- Component ---
 export const TeamTab = ({
+  dataManager,
   projectData,
   setProjectData,
   setErrorMember,
   setErrorPosition,
-  /*permissions,*/ saveProject,
+  /*permissions,*/
+  saveProject,
+  updatePendingProject,
   failCheck,
 }: TeamTabProps) => {
+  projectAfterTeamChanges = structuredClone(projectData);
+
   // --- Hooks ---
   // tracking project modifications
-  const [modifiedProject, setModifiedProject] =
-    useState<ProjectDetail>(projectData);
+  // const [modifiedProject, setModifiedProject] =
+  //   useState<ProjectDetail>(projectData);
 
   // for complete list of...
   const [allRoles, setAllRoles] = useState<Role[]>([]);
   const [allUsers, setAllUsers] = useState<UserPreview[]>([]);
-  const [searchableUsers, setSearchableUsers] = useState<UserPreview[]>([]);
+  const [searchableUsers, setSearchableUsers] = useState<
+    UserSearchableFields[]
+  >([]);
 
   // HTML contents
   // const [teamTabContent, setTeamTabContent] = useState(<></>);
@@ -104,19 +121,22 @@ export const TeamTab = ({
   const [currentRole, setCurrentRole] = useState(0);
 
   // tracking edits for...
-  const [currentMember, setCurrentMember] = useState<ProjectMember>();
-  const [currentJob, setCurrentJob] =
-    useState<Fillable<CreateProjectJobInput>>();
-  const [currentlyEditingJobId, setCurrentlyEditingJobId] = useState<number | null>();
+  const [currentMember, setCurrentMember] = useState<PendingProjectMember>();
+  const [currentJob, setCurrentJob] = useState<
+    ProjectJob | Pending<ProjectJob>
+  >();
+  const [currentlyEditingJobId, setCurrentlyEditingJobId] = useState<
+    number | null
+  >();
 
   // store new member data to save later
-  const [newMember, setNewMember] = useState<ProjectMember>();
+  const [newMember, setNewMember] = useState<PendingProjectMember>();
 
   // tracking whether position view is in edit mode or not
   const [editMode, setEditMode] = useState(false);
 
   // tracking if the user is making a new position (after pressing Add Position button)
-  const [newPosition, setNewPosition] = useState(false);
+  const [isCreatingNewPosition, setIsCreatingNewPosition] = useState(false);
 
   // determine if a popup should close after press (PopupButton)
   const [closePopup, setClosePopup] = useState(false);
@@ -140,15 +160,15 @@ export const TeamTab = ({
   //   setPositionWindowContent(positionViewWindow);
   // }, []);
 
-  // Update data when data is changed
-  useEffect(() => {
-    setModifiedProject(projectData);
-  }, [projectData]);
+  // // Update data when data is changed
+  // useEffect(() => {
+  //   setModifiedProject(projectData);
+  // }, [projectData]);
 
-  // Update parent state when data is changed
-  useEffect(() => {
-    setProjectData(modifiedProject);
-  }, [modifiedProject, setProjectData]);
+  // // Update parent state when data is changed
+  // useEffect(() => {
+  //   setProjectData(modifiedProject);
+  // }, [modifiedProject, setProjectData]);
 
   // Update parent state with error message
   useEffect(() => {
@@ -160,7 +180,7 @@ export const TeamTab = ({
 
   // Get job list if allRoles is empty
   useEffect(() => {
-    const getJobsList = async () => {
+    const getRolesList = async () => {
       const response = await getJobTitles();
       if (response.data) {
         setAllRoles(response.data);
@@ -169,11 +189,11 @@ export const TeamTab = ({
           (role) => role.label === "Member"
         );
         if (memberRole) emptyJob.roleId = memberRole.roleId;
-        if (!currentJob) setCurrentJob({...emptyJob});
+        // if (!currentJob) setCurrentJob({ ...emptyJob });
       }
     };
     if (allRoles.length === 0) {
-      getJobsList();
+      getRolesList();
     }
   }, [allRoles, currentJob]);
 
@@ -183,10 +203,11 @@ export const TeamTab = ({
       try {
         const response = await getUsers();
 
-        if(response.data) setAllUsers(response.data);
+        if (response.data) setAllUsers(response.data);
 
+        // FIXME why is this async?
         // list of users to search. users searchable by first name, last name, or username
-        const searchableUsers = await Promise.all(
+        const searchableUsers = (await Promise.all(
           response.data!.map(async (user: UserPreview) => {
             // get make searchable user
             const filteredUser = {
@@ -196,7 +217,7 @@ export const TeamTab = ({
             };
             return filteredUser;
           })
-        ) as UserPreview[];
+        )) as UserSearchableFields[];
 
         if (searchableUsers === undefined) {
           return;
@@ -240,21 +261,26 @@ export const TeamTab = ({
 
   // --- Data retrieval ---
   // Get project job info
-  const getProjectJob = useCallback(
-    (id: number) => {
-      return modifiedProject.jobs.find(
-        (job: ProjectJob) => job.jobId === id
-      );
-    },
-    [modifiedProject.jobs]
-  );
+  const getProjectJob = useCallback((id: number) => {
+    return projectAfterTeamChanges.jobs.find(
+      (job: ProjectJob | Pending<ProjectJob>) =>
+        ("jobId" in job && (job as ProjectJob).jobId === id) ||
+        ("localId" in job && (job as Pending<ProjectJob>).localId === id)
+    );
+  }, []);
 
   // --- Member handlers ---
   // Error checks for adding a new member
   const handleNewMember = useCallback(() => {
     setClosePopup(false);
 
-    const member = newMember;
+    const member = newMember; // FIXME what's this for?
+
+    if (!member || !newMember) {
+      setSuccessAddMember(false);
+      setErrorAddMember("Missing new member!");
+      return false;
+    }
 
     // reset searchbar and dropdowns
     const resetFields = () => {
@@ -271,42 +297,57 @@ export const TeamTab = ({
     };
 
     // check if member is already in project
-    //backend has something for this but it requires the object to be created
-    //which at this point why wouldn't we just be creating this here
-    //if it's invalid read the error we give you and give em that
-    const isMember = modifiedProject.members.find(
-      ({ user }) => user.userId === member.user.userId
-    );
-    if (isMember) {
-      return errorWarning(
-        `${newMember.user.firstName} ${newMember.user.lastName} is already on the team`
-      );
+    // backend has something for this but it requires the object to be created
+    // which at this point why wouldn't we just be creating this here
+    // if it's invalid read the error we give you and give em that
+    // const isMember = modifiedProject.members.find(
+    //   ({ user }) => user.userId === member.user.userId
+    // );
+    // if (isMember) {
+    //   return errorWarning(
+    //     `${newMember.user.firstName} ${newMember.user.lastName} is already on the team`
+    //   );
+    // }
+
+    // get user
+    if (newMember.user === null) {
+      return errorWarning("Missing user!");
     }
 
     // get name
-    if (!newMember.firstName || !newMember.lastName) {
+    if (!newMember.user.firstName || !newMember.user.lastName) {
       return errorWarning("Can't find user");
     }
 
-    // get job title
-    if (!newMember.jobTitle) {
-      // try to get job title from role selection
-      const role = document.querySelector<HTMLSelectElement>(
+    // get role
+    if (!newMember.role) {
+      // try to get role from role selection
+      const roleSelectElement = document.querySelector<HTMLSelectElement>(
         "#project-team-add-member-role-select"
       );
-      if (role && role.value !== "Select") {
-        newMember.jobTitle = role.value;
+      if (roleSelectElement && roleSelectElement.value !== "Select") {
+        const roleObject = allRoles.find(
+          (role) => role.label === roleSelectElement.value
+        );
+        if (roleObject) {
+          newMember.role = {
+            ...roleObject,
+          };
+        }
       } else {
         setSuccessAddMember(false);
-        setErrorAddMember("Select a role");
+        setErrorAddMember("Select a role"); // TODO could also just default to Member role
         setSelectKey((prev) => prev + 1);
         return false;
       }
     }
 
+    // FIXME why do we suddenly switch from `newMember` to `member` here?
     // Match this user with all users to get profile image
-    const matchedUser = allUsers.find((u) => u.userId === member.user.userId);
-    member.profileImage = matchedUser ? matchedUser.profileImage : "";
+    const matchedUser = allUsers.find(
+      (user) => user.userId === member.user.userId
+    );
+    member.user.profileImage = matchedUser ? matchedUser.profileImage : "";
 
     // check if member has name
     if (!member.firstName || !member.lastName) {
@@ -316,10 +357,12 @@ export const TeamTab = ({
     } else {
       // prompt user of successfully added member
       setSuccessAddMember(true);
-      setErrorAddMember( //why is this set as an error
-        `${member.firstName} ${member.lastName} added to team!`
+      setErrorAddMember(
+        // FIXME why is this set as an error
+        `${member.user.firstName} ${member.user.lastName} added to team!`
       );
 
+      // FIXME what is the delay for?
       // reset prompt to clear
       setTimeout(() => {
         setErrorAddMember("");
@@ -329,48 +372,72 @@ export const TeamTab = ({
       // close popup
       setClosePopup(true);
       // add member
-      modifiedProject.members.push(member);
+
+      const thisMemberLocalId = ++localIdIncrement;
+
+      dataManager.createMember({
+        id: {
+          value: thisMemberLocalId,
+          type: "local",
+        },
+        data: {
+          userId: newMember.user.userId,
+          roleId: newMember.role?.roleId,
+        },
+      });
+
+      const localProjectMember: PendingProjectMember = {
+        user: newMember.user,
+        role: {},
+        localId: thisMemberLocalId,
+      };
+
+      projectAfterTeamChanges.members.push();
       resetFields();
       return true;
     }
-  }, [allUsers, modifiedProject.members, newMember]);
+  }, [allRoles, allUsers, dataManager, newMember]);
 
   // Handle search results
+  // FIXME does this need to be a 2D array?
   const handleSearch = useCallback((results: UserPreview[][]) => {
     setSearchResults(results[0] || []);
   }, []);
 
   // Handle clicking on a member in the search dropdown
   const handleUserSelect = useCallback(
-    async (user: UserPreview) => {
+    async (selectedUser: UserPreview) => {
       // reset error
       setErrorAddMember("");
 
       // set text input
-      setSearchQuery(`${user.firstName} ${user.lastName} (${user.username})`);
+      setSearchQuery(
+        `${selectedUser.firstName} ${selectedUser.lastName} (${selectedUser.username})`
+      );
 
       // get matching user data from user id
-      const matchedUser = allUsers.find((u) => u.userId === user.userId);
+      const matchedUser = allUsers.find(
+        (user) => user.userId === selectedUser.userId
+      );
       if (!matchedUser) {
         setErrorAddMember("User not found");
         return;
       }
 
-      const mem = {
-        firstName: matchedUser.firstName,
-        lastName: matchedUser.lastName,
-        profileImage: matchedUser.profileImage,
-        jobTitle: "", // Placeholder value
-        userId: matchedUser.userId,
-      } as ProjectMember;
-
       // set new member
-      setNewMember(mem);
+      setNewMember({
+        role: null,
+        localId: null,
+        ...newMember,
+        user: {
+          ...matchedUser,
+        },
+      });
 
       // clear search results
       setSearchResults([]);
     },
-    [allUsers]
+    [allUsers, newMember]
   );
 
   // Resets Add Member name field, role/permission dropdowns
@@ -385,11 +452,11 @@ export const TeamTab = ({
   // update position edit window for creating a new position
   const addPositionCallback = useCallback(() => {
     // going back to previous state (cancel button)
-    if (newPosition || editMode) {
-      // no longer new position
-      setNewPosition(false);
-      // clear temp job
-      setCurrentJob(emptyJob);
+    if (isCreatingNewPosition || editMode) {
+      // we are no longer creating a new position
+      setIsCreatingNewPosition(false);
+      // reset the pending job
+      setCurrentJob({ ...emptyJob });
       // return to selected role
       const positions = document.querySelectorAll(".positions-popup-list-item");
       for (const p of positions) {
@@ -407,9 +474,9 @@ export const TeamTab = ({
     // opening add position
     else {
       // empty input fields
-      setNewPosition(true);
+      setIsCreatingNewPosition(true);
       // clear selected role
-      setCurrentJob(emptyJob);
+      setCurrentJob({ ...emptyJob });
       const activePosition = document.querySelector(
         "#team-positions-active-button"
       );
@@ -419,17 +486,55 @@ export const TeamTab = ({
       setEditMode(true);
     }
     setErrorAddPosition("");
-  }, [currentRole, editMode, newPosition]);
+  }, [currentRole, editMode, isCreatingNewPosition]);
 
   // Remove position listing
   const deletePosition = useCallback(() => {
-    // filter out position
-    const updatedJobs = modifiedProject.jobs.filter(
-      ({ role: { roleId } }) => roleId !== currentRole
+    const jobToBeDeleted = projectAfterTeamChanges.jobs.find(
+      ({ role: { roleId } }) => roleId === currentRole
     );
+    if (
+      jobToBeDeleted &&
+      ((jobToBeDeleted as ProjectJob).jobId ||
+        (jobToBeDeleted as Pending<ProjectJob>).localId)
+    ) {
+      if ("jobId" in jobToBeDeleted) {
+        dataManager.deleteJob({
+          id: {
+            type: "canon",
+            value: jobToBeDeleted.jobId,
+          },
+          data: null,
+        });
+      } else {
+        dataManager.deleteJob({
+          id: {
+            type: "local",
+            value: jobToBeDeleted.localId!,
+          },
+          data: null,
+        });
+      }
+
+      projectAfterTeamChanges = {
+        ...projectAfterTeamChanges,
+        jobs: [
+          ...projectAfterTeamChanges.jobs.filter(
+            ({ role: { roleId } }) => roleId !== currentRole
+          ),
+        ],
+      };
+
+      updatePendingProject(projectAfterTeamChanges);
+    }
+
+    // filter out position
+    // const updatedJobs = projectAfterTeamChanges.jobs.filter(
+    //   ({ role: { roleId } }) => roleId !== currentRole
+    // );
 
     // update jobs
-    setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
+    // setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
 
     // reset current position
     const buttonDiv = document.querySelector(".team-positions-button");
@@ -438,19 +543,20 @@ export const TeamTab = ({
       defaultButton!.id = "team-positions-active-button"; // explicit because check is passed in the if statement
       setCurrentRole(Number(defaultButton!.dataset.id));
     }
-  }, [currentRole, modifiedProject]);
+  }, [currentRole, dataManager, updatePendingProject]);
 
   //Save current inputs in position editing window
   const savePosition = useCallback(() => {
+    const jobInput: CreateProjectJobInput
+
     // check if all values present
     if (
-      currentJob.jobId ||
-      currentJob.role.label === '' ||
-      currentJob.description === '' ||
-      currentJob.availability === '' ||
-      currentJob.location === '' ||
-      currentJob.duration === '' ||
-      currentJob.compensation === ''
+      currentJob?.role?.roleId === null ||
+      currentJob?.description === null ||
+      currentJob?.availability === "" ||
+      currentJob?.location === "" ||
+      currentJob?.duration === "" ||
+      currentJob?.compensation === ""
     ) {
       // set error
       setErrorAddPosition("All fields are required");
@@ -459,10 +565,9 @@ export const TeamTab = ({
 
     // check if same position is present
     // TODO projects can't have two leads? two devs? two artists? etc..
-    const existingJob = modifiedProject.jobs.find(
+    const existingJob = projectAfterTeamChanges.jobs.find(
       (job) =>
-        job.role.roleId === currentJob?.roleId &&
-        job.jobId !== currentJob.jobId
+        job.role.roleId === currentJob?.roleId && job.jobId !== currentJob.jobId
     );
     if (existingJob) {
       setErrorAddPosition("Job already exists");
@@ -470,26 +575,26 @@ export const TeamTab = ({
     }
 
     // if new position, add to job list
-    if (newPosition) {
-      setModifiedProject({
-        ...modifiedProject,
-        jobs: [...modifiedProject.jobs, currentJob],
-      });
+    if (isCreatingNewPosition) {
+      // setModifiedProject({
+      //   ...modifiedProject,
+      //   jobs: [...modifiedProject.jobs, currentJob],
+      // });
     } else {
       // find matching position
-      const updatedJobs = modifiedProject.jobs.map((j) =>
+      const updatedJobs = projectAfterTeamChanges.jobs.map((j) =>
         j.jobId === currentJob.jobId ? { ...j, ...currentJob } : j
       );
-      setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
+      // setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
     }
     setErrorAddPosition("");
-    setNewPosition(false);
+    setIsCreatingNewPosition(false);
     // setPositionWindowContent(positionViewWindow);
     setEditMode(false);
 
     // set current position to saved position
     setCurrentRole(currentJob.jobId);
-  }, [currentJob, modifiedProject, newPosition]);
+  }, [currentJob, isCreatingNewPosition]);
 
   // --- Content variables ---
   // Open position display
@@ -499,7 +604,7 @@ export const TeamTab = ({
         className="edit-project-member-button"
         onClick={() => {
           setCurrentJob(getProjectJob(currentRole) || emptyJob);
-          setCurrentlyEditingJobId(getProjectJob(currentRole)?.jobId ?? null);
+          // setCurrentlyEditingJobId(getProjectJob(currentRole)?.jobId ?? null);
           setEditMode(true);
         }}
       >
@@ -511,7 +616,9 @@ export const TeamTab = ({
           ariaLabel={"edit"}
         />
       </button>
-      <div className="positions-popup-info-title">{getProjectJob(currentRole)?.role.label}</div>
+      <div className="positions-popup-info-title">
+        {getProjectJob(currentRole)?.role.label}
+      </div>
       <div className="positions-popup-info-description">
         <div id="position-description-content">
           {getProjectJob(currentRole)?.description}
@@ -538,8 +645,8 @@ export const TeamTab = ({
               <img src="/assets/creditProfiles/JF.png" alt="" />
               Lily Carter
             </span> */}
-            {modifiedProject.members.map(({ user }) => {
-              if (user.userId === modifiedProject.owner.userId) {
+            {projectAfterTeamChanges.members.map(({ user }) => {
+              if (user?.userId === projectAfterTeamChanges.owner.userId) {
                 return (
                   <span key={user.userId} id="position-contact-link">
                     <img
@@ -585,7 +692,7 @@ export const TeamTab = ({
           >
             Are you sure you want to delete{" "}
             <span className="project-info-highlight">
-              {getProjectJob(currentRole)?.jobTitle}
+              {getProjectJob(currentRole)?.role.label}
             </span>{" "}
             from the project? This action cannot be undone.
           </div>
@@ -607,8 +714,8 @@ export const TeamTab = ({
   );
 
   // Find selected members
-  const selectedMember = modifiedProject.members.find(
-    ({ user }) => user.userId === modifiedProject.owner.userId
+  const selectedMember = projectAfterTeamChanges.members.find(
+    ({ user }) => user?.userId === projectAfterTeamChanges.owner.userId
   );
 
   // Edit open position or creating new position
@@ -628,13 +735,13 @@ export const TeamTab = ({
               });
           }}
         >
-          <option disabled selected={newPosition}>
+          <option disabled selected={isCreatingNewPosition}>
             Select
           </option>
           {allRoles.map((job: { titleId: number; label: string }) => (
             <option
               key={job.titleId}
-              selected={newPosition ? false : job.titleId === currentRole}
+              selected={isCreatingNewPosition ? false : job.titleId === currentRole}
               onClick={() => {
                 const updatedJobs = modifiedProject.jobs.map((j) =>
                   j.titleId === job.titleId ? { ...j, jobTitle: job.label } : j
@@ -648,9 +755,9 @@ export const TeamTab = ({
         </select> */}
         <Select>
           <SelectButton
-            placeholder={newPosition ? "Select" : ""}
+            placeholder={isCreatingNewPosition ? "Select" : ""}
             initialVal={
-              newPosition
+              isCreatingNewPosition
                 ? ""
                 : allRoles.length > 0 && currentRole
                   ? allRoles.find(({ roleId }) => roleId === currentRole)!.label // TODO will this definitely really truly always exist?
@@ -667,7 +774,7 @@ export const TeamTab = ({
               if (selectedTitle) {
                 setCurrentJob({
                   ...currentJob,
-                  roleId: selectedTitle.roleId
+                  roleId: selectedTitle.roleId,
                 });
               }
             }}
@@ -704,10 +811,14 @@ export const TeamTab = ({
         <textarea
           value={currentJob?.description ?? ""}
           onChange={(e) =>
-            setCurrentJob({ ...currentJob, description: e.target.value })
+            setCurrentJob({
+              ...emptyJob,
+              ...currentJob,
+              description: e.target.value,
+            })
           }
         >
-          {newPosition ? "" : getProjectJob(currentRole)?.description}
+          {isCreatingNewPosition ? "" : getProjectJob(currentRole)?.description}
         </textarea>
       </div>
 
@@ -718,7 +829,7 @@ export const TeamTab = ({
             className="edit-position-availability"
             onChange={(e) => setCurrentJob({ ...currentJob, availability: e.target.value })}
           >
-            <option disabled selected={newPosition}>
+            <option disabled selected={isCreatingNewPosition}>
               Select
             </option>
             {availabilityOptions.map((o) => (
@@ -734,21 +845,25 @@ export const TeamTab = ({
             <SelectButton
               placeholder="Select"
               initialVal={
-                newPosition
+                isCreatingNewPosition
                   ? ""
-                  : currentRole
-                    ? getProjectJob(currentRole)?.availability
-                    : ""
+                  : (getProjectJob(currentRole)?.availability ?? "")
               }
+              // FIXME missing type property
             />
             <SelectOptions
               callback={(e) =>
-                setCurrentJob({ ...currentJob, availability: e.target.value })
+                setCurrentJob({
+                  ...emptyJob,
+                  ...currentJob,
+                  availability: (e.target as HTMLButtonElement)
+                    .value as JobAvailability,
+                })
               }
-              options={availabilityOptions.map((o) => {
+              options={availabilityOptions.map((option) => {
                 return {
-                  markup: <>{o}</>,
-                  value: o,
+                  markup: <>{option}</>,
+                  value: option,
                   disabled: false,
                 };
               })}
@@ -759,7 +874,7 @@ export const TeamTab = ({
             className="edit-position-location"
             onChange={(e) => setCurrentJob({ ...currentJob, location: e.target.value })}
           >
-            <option disabled selected={newPosition}>
+            <option disabled selected={isCreatingNewPosition}>
               Select
             </option>
             {locationOptions.map((o) => (
@@ -774,16 +889,20 @@ export const TeamTab = ({
             <SelectButton
               placeholder="Select"
               initialVal={
-                newPosition
+                isCreatingNewPosition
                   ? ""
-                  : currentRole
-                    ? getProjectJob(currentRole)?.location
-                    : ""
+                  : (getProjectJob(currentRole)?.location ?? "")
               }
+              // FIXME missing type property
             />
             <SelectOptions
               callback={(e) =>
-                setCurrentJob({ ...currentJob, location: e.target.value })
+                setCurrentJob({
+                  ...emptyJob,
+                  ...currentJob,
+                  location: (e.target as HTMLButtonElement)
+                    .value as JobLocation,
+                })
               }
               options={locationOptions.map((option) => {
                 return {
@@ -801,41 +920,53 @@ export const TeamTab = ({
               className="edit-position-contact"
               placeholder="Select"
               initialVal={
-                selectedMember
+                selectedMember?.user
                   ? `${selectedMember.user.firstName} ${selectedMember.user.lastName}`
                   : ""
               }
+              // FIXME missing type property
             />
             <SelectOptions
               className="edit-position-contact"
               callback={(e) => {
-                const selectedId = parseInt(e.target.value);
-                setModifiedProject((prev) => ({ ...prev, userId: selectedId }));
+                const selectedId = parseInt(
+                  (e.target as HTMLButtonElement).value
+                );
+                setCurrentJob({
+                  ...emptyJob,
+                  ...currentJob,
+                  contact:
+                    allUsers.find(({ userId }) => userId === selectedId) ??
+                    null,
+                });
               }}
-              options={modifiedProject.members.map(({ user }) => ({
-                markup: (
-                  <>
-                    <img
-                      className="project-member-image"
-                      src={user.profileImage ?? profileImage}
-                      alt="profile"
-                      title={"Profile picture"}
-                      // Cannot use usePreloadedImage function because this is in a callback
-                      onError={(e) => {
-                        const profileImg = e.target as HTMLImageElement;
-                        profileImg.src = profileImage;
-                      }}
-                    />
-                    <div className="project-editor-project-member-info">
-                      <div className="project-editor-project-member-name">
-                        {user.firstName} {user.lastName}
+              options={projectAfterTeamChanges.members
+                .filter((member) => member.user !== null)
+                .map(({ user }) => ({
+                  markup: (
+                    <>
+                      <img
+                        className="project-member-image"
+                        src={user!.profileImage ?? profileImage}
+                        alt="profile"
+                        title={"Profile picture"}
+                        // Cannot use usePreloadedImage function because this is in a callback
+                        onError={(e) => {
+                          const profileImageElement =
+                            e.target as HTMLImageElement;
+                          profileImageElement.src = profileImage;
+                        }}
+                      />
+                      <div className="project-editor-project-member-info">
+                        <div className="project-editor-project-member-name">
+                          {user!.firstName} {user!.lastName}
+                        </div>
                       </div>
-                    </div>
-                  </>
-                ),
-                value: user.userId.toString(),
-                disabled: false,
-              }))}
+                    </>
+                  ),
+                  value: user!.userId.toString(),
+                  disabled: false,
+                }))}
             />
           </Select>
         </div>
@@ -845,7 +976,7 @@ export const TeamTab = ({
             className="edit-position-duration"
             onChange={(e) => setCurrentJob({ ...currentJob, duration: e.target.value })}
           >
-            <option disabled selected={newPosition}>
+            <option disabled selected={isCreatingNewPosition}>
               Select
             </option>
             {durationOptions.map((o) => (
@@ -860,21 +991,25 @@ export const TeamTab = ({
             <SelectButton
               placeholder="Select"
               initialVal={
-                newPosition
+                isCreatingNewPosition
                   ? ""
-                  : currentRole
-                    ? getProjectJob(currentRole)?.duration
-                    : ""
+                  : (getProjectJob(currentRole)?.duration ?? "")
               }
+              // FIXME missing type property
             />
             <SelectOptions
               callback={(e) =>
-                setCurrentJob({ ...currentJob, duration: e.target.value })
+                setCurrentJob({
+                  ...emptyJob,
+                  ...currentJob,
+                  duration: (e.target as HTMLButtonElement)
+                    .value as JobDuration,
+                })
               }
-              options={durationOptions.map((o) => {
+              options={durationOptions.map((option) => {
                 return {
-                  markup: <>{o}</>,
-                  value: o,
+                  markup: <>{option}</>,
+                  value: option,
                   disabled: false,
                 };
               })}
@@ -885,12 +1020,12 @@ export const TeamTab = ({
             className="edit-position-compensation"
             onChange={(e) => setCurrentJob({ ...currentJob, compensation: e.target.value })}
           >
-            <option disabled selected={newPosition}>
+            <option disabled selected={isCreatingNewPosition}>
               Select
             </option>
             {compensationOptions.map((o) => (
               <option
-                selected={newPosition ? false : getProjectJob(currentRole)?.compensation === o}
+                selected={isCreatingNewPosition ? false : getProjectJob(currentRole)?.compensation === o}
               >
                 {o}
               </option>
@@ -900,21 +1035,24 @@ export const TeamTab = ({
             <SelectButton
               placeholder="Select"
               initialVal={
-                newPosition
+                isCreatingNewPosition
                   ? ""
-                  : currentRole
-                    ? getProjectJob(currentRole)?.compensation
-                    : ""
+                  : (getProjectJob(currentRole)?.compensation ?? "")
               }
+              // FIXME missing type property
             />
             <SelectOptions
               callback={(e) =>
-                setCurrentJob({ ...currentJob, compensation: e.target.value })
+                setCurrentJob({
+                  ...emptyJob,
+                  ...currentJob,
+                  compensation: (e.target as HTMLButtonElement).value as JobCompensation,
+                })
               }
-              options={compensationOptions.map((o) => {
+              options={compensationOptions.map((option) => {
                 return {
-                  markup: <>{o}</>,
-                  value: o,
+                  markup: <>{option}</>,
+                  value: option,
                   disabled: false,
                 };
               })}
@@ -934,7 +1072,7 @@ export const TeamTab = ({
     () => (
       <div id="project-editor-project-members">
         {/* List out project members */}
-        {modifiedProject.members.map((member) => {
+        {projectAfterTeamChanges.members.map((member) => {
           const memberUser = member.user;
 
           return (
@@ -1058,7 +1196,7 @@ export const TeamTab = ({
                           // update members
                           const updatedMember = member;
 
-                          const members = modifiedProject.members.map(
+                          const members = projectAfterTeamChanges.members.map(
                             (oldMember) =>
                               oldMember.user.userId ===
                               updatedMember.user.userId
@@ -1066,7 +1204,7 @@ export const TeamTab = ({
                                 : oldMember
                           );
 
-                          setModifiedProject({ ...modifiedProject, members });
+                          // setModifiedProject({ ...modifiedProject, members });
                         }}
                       >
                         Save
@@ -1219,7 +1357,20 @@ export const TeamTab = ({
         </Popup>
       </div>
     ),
-    [allRoles, errorAddMember, handleNewMember, handleSearch, handleUserSelect, modifiedProject, newMember, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
+    [
+      allRoles,
+      errorAddMember,
+      handleNewMember,
+      handleSearch,
+      handleUserSelect,
+      newMember,
+      searchBarKey,
+      searchQuery,
+      searchResults,
+      searchableUsers,
+      selectKey,
+      successAddMember,
+    ]
   );
   const openPositionsContent: JSX.Element = useMemo(
     () => (
@@ -1227,7 +1378,7 @@ export const TeamTab = ({
         <div className="positions-popup-list">
           <div id="team-positions-popup-list-header">Open Positions</div>
           <div id="team-positions-popup-list-buttons">
-            {modifiedProject.jobs?.map(({ role: { roleId } }) => (
+            {projectAfterTeamChanges.jobs?.map(({ role: { roleId } }) => (
               <div key={roleId} className="team-positions-button">
                 <img src="/images/icons/drag.png" alt="positions" />
                 <button
@@ -1244,7 +1395,7 @@ export const TeamTab = ({
               <button
                 onClick={() => {
                   if (!editMode) {
-                    setNewPosition(true);
+                    setIsCreatingNewPosition(true);
                     addPositionCallback();
                   }
                 }}
@@ -1264,7 +1415,7 @@ export const TeamTab = ({
         </div>
       </div>
     ),
-    [addPositionCallback, editMode, modifiedProject.jobs, positionWindow]
+    [addPositionCallback, editMode, positionWindow]
   );
 
   // Set content depending on what tab is selected
@@ -1411,13 +1562,13 @@ export const TeamTab = ({
 //             });
 //         }}
 //       >
-//         <option disabled selected={newPosition}>
+//         <option disabled selected={isCreatingNewPosition}>
 //           Select
 //         </option>
 //         {allRoles.map((job: { titleId: number; label: string }) => (
 //           <option
 //             key={job.titleId}
-//             selected={newPosition ? false : job.titleId === currentRole}
+//             selected={isCreatingNewPosition ? false : job.titleId === currentRole}
 //             onClick={() => {
 //               const updatedJobs = modifiedProject.jobs.map((j) =>
 //                 j.titleId === job.titleId ? { ...j, jobTitle: job.label } : j
@@ -1453,7 +1604,7 @@ export const TeamTab = ({
 //       <textarea
 //         onChange={(e) => setCurrentJob({ ...currentJob, description: e.target.value })}
 //       >
-//         {newPosition ? '' : getProjectJob(currentRole).description}
+//         {isCreatingNewPosition ? '' : getProjectJob(currentRole).description}
 //       </textarea>
 //     </div>
 
@@ -1464,13 +1615,13 @@ export const TeamTab = ({
 //           className="edit-position-availability"
 //           onChange={(e) => setCurrentJob({ ...currentJob, availability: e.target.value })}
 //         >
-//           <option disabled selected={newPosition}>
+//           <option disabled selected={isCreatingNewPosition}>
 //             Select
 //           </option>
 //           {availabilityOptions.map((o) => (
 //             <option
 //               key={o}
-//               selected={newPosition ? false : getProjectJob(currentRole).availability === o}
+//               selected={isCreatingNewPosition ? false : getProjectJob(currentRole).availability === o}
 //             >
 //               {o}
 //             </option>
@@ -1481,12 +1632,12 @@ export const TeamTab = ({
 //           className="edit-position-location"
 //           onChange={(e) => setCurrentJob({ ...currentJob, location: e.target.value })}
 //         >
-//           <option disabled selected={newPosition}>
+//           <option disabled selected={isCreatingNewPosition}>
 //             Select
 //           </option>
 //           {locationOptions.map((o) => (
 //             <option
-//               selected={newPosition ? false : getProjectJob(currentRole).location === o}
+//               selected={isCreatingNewPosition ? false : getProjectJob(currentRole).location === o}
 //             >
 //               {o}
 //             </option>
@@ -1501,12 +1652,12 @@ export const TeamTab = ({
 //           className="edit-position-duration"
 //           onChange={(e) => setCurrentJob({ ...currentJob, duration: e.target.value })}
 //         >
-//           <option disabled selected={newPosition}>
+//           <option disabled selected={isCreatingNewPosition}>
 //             Select
 //           </option>
 //           {durationOptions.map((o) => (
 //             <option
-//               selected={newPosition ? false : getProjectJob(currentRole).duration === o}
+//               selected={isCreatingNewPosition ? false : getProjectJob(currentRole).duration === o}
 //             >
 //               {o}
 //             </option>
@@ -1517,12 +1668,12 @@ export const TeamTab = ({
 //           className="edit-position-compensation"
 //           onChange={(e) => setCurrentJob({ ...currentJob, compensation: e.target.value })}
 //         >
-//           <option disabled selected={newPosition}>
+//           <option disabled selected={isCreatingNewPosition}>
 //             Select
 //           </option>
 //           {compensationOptions.map((o) => (
 //             <option
-//               selected={newPosition ? false : getProjectJob(currentRole).compensation === o}
+//               selected={isCreatingNewPosition ? false : getProjectJob(currentRole).compensation === o}
 //             >
 //               {o}
 //             </option>
@@ -1531,4 +1682,4 @@ export const TeamTab = ({
 //       </div>
 //     </div>
 //   </>
-// ), [addPositionCallback, allRoles, currentJob, currentRole, errorAddPosition, getProjectJob, modifiedProject, newPosition, savePosition]);
+// ), [addPositionCallback, allRoles, currentJob, currentRole, errorAddPosition, getProjectJob, modifiedProject, isCreatingNewPosition, savePosition]);

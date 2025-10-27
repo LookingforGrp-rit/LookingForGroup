@@ -424,6 +424,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 />
               ) : currentTab === 3 ? (
                 <TeamTab
+                  dataManager={dataManager}
+                  updatePendingProject={updatePendingProject}
                   isNewProject={newProject}
                   projectData={modifiedProject}
                   setProjectData={setModifiedProject}

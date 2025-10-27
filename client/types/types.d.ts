@@ -26,7 +26,7 @@ import {
  */
 export type Fillable<T> = {
   [attr in keyof T]: T[attr] extends object
-    ? Fillable<T[attr]>
+    ? Fillable<T[attr]> | null
     : T[attr] | null;
 };
 
@@ -82,7 +82,8 @@ interface PendingProjectImage extends Pending<ProjectImage> {
 }
 
 interface PendingProjectMember extends Pending<ProjectMember> {
-  user: Pending<UserPreview>;
+  user: UserPreview | null;
+  role: Role | null;
 }
 
 type PendingProjectTag = Omit<ProjectTag, "apiUrl">;
