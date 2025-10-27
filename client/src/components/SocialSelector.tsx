@@ -13,7 +13,7 @@ const [socials, setSocials] = useState<Social[]>([]);
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchSocials();
-      setSocials(data);
+      if(data.data) setSocials(data.data);
     };
     fetchData();
   }, []);

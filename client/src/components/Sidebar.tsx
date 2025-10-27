@@ -7,8 +7,7 @@ import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
 //user utils
 import { getCurrentUsername } from "../api/users.ts";
-import { ThemeIconNew } from "./ThemeIconNew.tsx";
-import { UserPreview, UserDetail } from "@looking-for-group/shared";
+import { UserDetail } from "@looking-for-group/shared";
 
 //Style changes to do:
 //Remove blue background image, replace with single color (or gradient?)

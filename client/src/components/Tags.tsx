@@ -1,10 +1,9 @@
 /*component used for things like project tags or user skills */
 /*can send in an extra classname for extra customizability*/
 
-import { ReactNode } from 'react';
 
 interface TagsProps {
-  children: ReactNode;
+  children: string;
   className?: string;
 }
 

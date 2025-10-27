@@ -26,8 +26,12 @@ import type {
   UpdateProjectJobInput,
 } from "@looking-for-group/shared";
 
-/* PROJECT CRUD */
+//const navigate = useNavigate();
+//i want to redirect to login right in here if the status returns 401 unauthorized
+//so the individual components wouldn't have to check for that each time
+//but i can't call useNavigate in here
 
+/* PROJECT CRUD */
 /**
  * Creates a new project and adds it to the database. All params default to null.
  * @param projectData - the data with which to create the project
@@ -42,11 +46,9 @@ export const createNewProject = async (
   for (const [name, value] of Object.entries(projectData)) {
     if (value !== null) form.append(name, value);
   }
-
   const response = await POST(apiURL, form);
 
-  if (response.error)
-    console.log("Error creating new project:", response.error);
+
   return response as ApiResponse<ProjectDetail>;
 };
 

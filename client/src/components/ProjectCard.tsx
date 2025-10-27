@@ -1,12 +1,8 @@
-import React from 'react';
 import { Tags } from './Tags';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 
 import profilePicture from '../images/blue_frog.png';
-import followPicture from '../images/heart.png';
-
-import { projects } from '../constants/fakeData';
 
 import { ProjectDetail } from '@looking-for-group/shared';
 
@@ -50,9 +46,9 @@ export const ProjectCard = ({ project }: { project: ProjectDetail }) => {
         </h2>
         <p id="discover-card-description">{project.description}</p>
         <div id="discover-card-tag-wrapper">
-          <Tags>{project.tags[0]}</Tags>
-          <Tags>{project.tags[1]}</Tags>
-          <Tags>{project.tags[2]}</Tags>
+          <Tags>{project.tags[0].label}</Tags>
+          <Tags>{project.tags[1].label}</Tags>
+          <Tags>{project.tags[2].label}</Tags>
         </div>
         {/* The needed roles are pulled from an array in fakeData.ts and are mapped along with the needed amounts */}
         <p id="discover-card-needed-roles">

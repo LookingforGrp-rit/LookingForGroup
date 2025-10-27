@@ -66,22 +66,22 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   const getData = async () => {
     try {
       const response = category === 'projects' ? await getTags() : await getSkills();
-      const data: Skill[] = response.data;
+      const data: unknown[] = response.data as unknown[];
 
       // Need to also pull from majors and job_titles tables
       if (category === 'profiles') {
         // Get job titles and append it to full data
         const jobTitles = await getJobTitles();
-        jobTitles.data.forEach((job: Role) => data.push({ label: job.label, type: 'Role' }));
+        jobTitles.data?.forEach((job: Role) => data?.push({ label: job.label, type: 'Role' })); //does it need the types
 
         // Get majors and append it to full data
         const majors = await getMajors();
-        majors.data.forEach((major: Major) => data.push({ label: major.label, type: 'Major' }));
+        majors.data?.forEach((major: Major) => data?.push({ label: major.label, type: 'Major' }));
 
       } else if (category === 'projects') {
         // Pull Project Types and append it to full data
         const projectTypes = await getProjectTypes();
-        projectTypes.data.forEach((proj: Medium) => data.push({ label: proj.label, type: 'Project Type' }));
+        projectTypes.data?.forEach((proj: Medium) => data?.push({ label: proj.label, type: 'Project Type' }));
       }
 
       // Construct the finalized version of the data to be moved into filterPopupTabs
@@ -106,7 +106,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         Major: 'Major',
         };
 
-      data.forEach((tag: Tag) => {
+      data?.forEach((tag: Tag) => {
         const filterTag: Tag = { ...tag };
         const mappedType = typeMap[tag.type] || tag.type;
 

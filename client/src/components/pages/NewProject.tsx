@@ -132,7 +132,7 @@ useEffect(() => {
         {
           <>
             <ProjectCreatorEditor
-              newProject={true}
+              newProject={false}
               /*permissions={userPerms}*/ user={user}
             />
           </>

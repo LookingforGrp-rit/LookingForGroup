@@ -72,9 +72,10 @@ export const TagFilter = ({ projectFilter, setUseState }) => {
           //Update their displays to match
           const tagElement = document.getElementById(`tag-id-${result}`);
           console.log(tagElement);
-          tagElement
-            ? tagElement.classList.toggle('tag-filter-selected')
-            : console.log('error updating display');
+
+          if(tagElement) tagElement.classList.toggle('tag-filter-selected');
+          else console.log('error updating display');
+
         }
       }
     }, 1);

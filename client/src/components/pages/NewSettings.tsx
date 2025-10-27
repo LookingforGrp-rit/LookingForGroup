@@ -4,13 +4,14 @@ import { Popup, PopupButton, PopupContent } from '../Popup';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
-import { useId, useState, useContext, useLayoutEffect } from 'react';
+import { useState, useContext, useLayoutEffect } from 'react';
 import { Header } from '../Header';
 import CreditsFooter from '../CreditsFooter';
 import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
-import { getUserByEmail, getUserByUsername, getCurrentUsername } from '../../api/users';
+import { getUserByEmail, getUserByUsername, getCurrentUsername, getCurrentAccount } from '../../api/users';
+import { MePrivate } from '@looking-for-group/shared';
 
 // Take the user ID and delete it
 const deleteAccountPressed = async () => {
@@ -27,7 +28,7 @@ const Settings = () => {
   // --------------------
   // Variables regarding pulling user data
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [userInfo, setUserInfo] = useState(undefined);
+  const [userInfo, setUserInfo] = useState<MePrivate>();
 
   const navigate = useNavigate();
 
@@ -54,9 +55,9 @@ const Settings = () => {
 
     // User is logged in, pull their data
     if (authData.status === 200) {
-      const data = await getAccountInformation(authData.data);
-      if (data.status === 200 && data.data[0] !== undefined) {
-        setUserInfo(data.data[0]);
+      const acc = await getCurrentAccount();
+      if (acc.data) {
+        setUserInfo(acc.data);
       }
     }
 
@@ -83,7 +84,7 @@ const Settings = () => {
   const [password, setPassword] = useState('');
 
   const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
-  const url = `/api/users/${userInfo.userId}/${typeToChange}`;
+  const url = `/api/users/${userInfo?.userId}/${typeToChange}`;
   const response =  sendPut(url, apiParams, onSuccess);            // FIXME: possible break
 
 
@@ -133,13 +134,13 @@ const Settings = () => {
               return;
             }
 
-            const onSuccess = (status) => {
+            const onSuccess = () => {
               // setSuccess(`Your ${type.toLowerCase()} has been updated!`);
               location.reload();
             };
 
             const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
-            const url = `/api/users/${userInfo.user_id}/${typeToChange}`;
+            const url = `/api/users/${userInfo?.userId}/${typeToChange}`;
 
             // Include password in apiParams when sending request
             const response = await sendPut(url, { ...apiParams, password }, onSuccess);

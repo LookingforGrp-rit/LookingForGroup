@@ -369,7 +369,6 @@ const checkFollow = useCallback(async () => {
               category={"projects"}
               itemList={displayedProjects}
               itemAddInterval={25}
-              userId={userID}
             />
           ) : (
             <div>No projects to display</div>

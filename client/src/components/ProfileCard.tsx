@@ -1,12 +1,11 @@
-import React from 'react';
 import { Tags } from './Tags';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 
 import profilePicture from '../images/blue_frog.png';
-import followPicture from '../images/heart.png';
+//import followPicture from '../images/heart.png';
 
-import { projects } from '../constants/fakeData'; // FIXME: use data in db
+//import { projects } from '../constants/fakeData'; // FIXME: use data in db
 import usePreloadedImage from '../functions/imageLoad';
 
 import { MeDetail } from '@looking-for-group/shared';
