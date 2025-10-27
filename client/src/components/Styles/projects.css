@@ -669,6 +669,7 @@ Project Creator and Editor style rules
   object-position: center;
   max-height: inherit;
   border-radius: 10px;
+  width: 100%;
 }
 
 .project-editor-image-container:hover .project-image-hover {
