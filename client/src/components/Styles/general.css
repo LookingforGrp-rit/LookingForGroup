@@ -1780,6 +1780,7 @@ Theme Icons style rules
 /* Monochrome SVGs */
 [data-theme="light"] .mono-stroke use,
 [data-theme="dark"] button.active .mono-stroke use,
+[data-theme="dark"] .mono-stroke-invert use,
 /* Where is this used? */
 .theme-light .svg-color-icon {
   stroke: black;
@@ -1787,6 +1788,7 @@ Theme Icons style rules
 
 [data-theme="dark"] .mono-stroke use,
 [data-theme="light"] button.active .mono-stroke use,
+[data-theme="light"] .mono-stroke-invert use,
 /* Where is this used? */
 .theme-dark .svg-color-icon {
   stroke: white;
@@ -1837,6 +1839,21 @@ Theme Icons style rules
 }
 .filled-heart > use {
   fill: #F14F76;
+}
+
+/* Star SVG (Following icon and Thumbnail indicator) */
+.star {
+  top: 9px;
+  right: 9px;
+}
+
+.empty-star > use {
+  fill: none;
+  stroke: var(--invert-text);
+}
+.filled-star > use {
+  fill: var(--invert-text);
+  stroke: var(--invert-text);
 }
 
 /* Fallback using CSS media queries */
