@@ -547,7 +547,7 @@ export const TeamTab = ({
 
   //Save current inputs in position editing window
   const savePosition = useCallback(() => {
-    const jobInput: CreateProjectJobInput
+    // const jobInput: CreateProjectJobInput //TODO: use or remove
 
     // check if all values present
     if (
