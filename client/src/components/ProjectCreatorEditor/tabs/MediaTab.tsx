@@ -10,12 +10,12 @@ import { projectDataManager } from "../../../api/data-managers/project-data-mana
 import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
 import { FileImage } from "../../FileImage";
 import placeholder from "../../../images/project_temp.png";
+import { ThemeIcon } from "../../ThemeIcon";
 
 let projectAfterMediaChanges: PendingProject;
 
 let localIdIncrement = 0;
 
-// --- Variables ---
 type MediaTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
@@ -32,20 +32,6 @@ export const MediaTab = ({
   updatePendingProject,
   failCheck,
 }: MediaTabProps) => {
-  // --- Hooks ---
-  // tracking project modifications
-  // const [projectAfterMediaChanges, setModifiedProject] =
-  //   useState<ProjectDetail>(projectData);
-
-  // // Update data when data is changed
-  // useEffect(() => {
-  //   setModifiedProject(projectData);
-  // }, [projectData]);
-
-  // // Update parent state when data is changed
-  // useEffect(() => {
-  //   setProjectData(projectAfterMediaChanges);
-  // }, [projectAfterMediaChanges, setProjectData]);
 
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
@@ -67,8 +53,7 @@ export const MediaTab = ({
     try {
       const fullImg = {
         image: file,
-        // altText: imageUploader.alt, //it looks like this is where the text would go?
-        altText: "A project image", // FIXME there is no way for users to enter alt text
+        altText: "", // FIXME: there is no way for users to enter alt text
       } as CreateProjectImageInput;
 
       console.log(fullImg);
@@ -95,6 +80,31 @@ export const MediaTab = ({
       };
 
       updatePendingProject(projectAfterMediaChanges);
+
+      // If only image, set as thumbnail
+      if (projectAfterMediaChanges.projectImages.length === 1) {
+        console.log('setting only image as thumbnail');
+        // Update dataManager
+        dataManager.updateFields({
+          id: {
+            value: projectId,
+            type: "canon",
+          },
+          data: {
+            thumbnail: fullImg.image,
+          }
+        });
+        // Update project data
+        projectAfterMediaChanges = {
+          ...projectAfterMediaChanges,
+          thumbnail: {
+            localId: 1,
+            image: fullImg.image,
+            altText: "project thumbnail",
+          },
+        };
+
+      }
     } catch (err) {
       console.error(err);
     }
@@ -105,6 +115,11 @@ export const MediaTab = ({
   // Handle new thumbnail
   const handleThumbnailChange = useCallback(
     async (projectImage: ProjectImage | PendingProjectImage) => {
+      // FIXME: check that is passed before this method is referenced need to be fixed.
+      // It does not accurately compare the stored thumbnail and the selected image
+      
+      console.log('handling thumbnail change');
+
       //updateProject has to take a file
       if (!projectId) return;
       let imageFile: File;
@@ -203,12 +218,16 @@ export const MediaTab = ({
         the main thumbnail on the project's discover card.
       </div>
       <div id="project-editor-image-ui">
-        {projectAfterMediaChanges.projectImages?.map((projectImage) => {
-          let image;
-          if (!projectImage.image) {
-            image = <></>;
-          } else if ((projectImage as ProjectImage).imageId) {
-            image = (
+        {projectAfterMediaChanges.projectImages?.map((projectImage) => (
+          <div
+            className="project-editor-image-container"
+            key={
+              (projectImage as ProjectImage).imageId ??
+              "pending-" + (projectImage as PendingProjectImage).localId
+            }
+          >
+            {/* Present image from database or local storage */}
+            {(projectImage as ProjectImage).imageId ? (
               <img
                 src={(projectImage as ProjectImage).image}
                 alt={(projectImage as ProjectImage).altText}
@@ -217,77 +236,67 @@ export const MediaTab = ({
                   profileImg.src = placeholder;
                 }}
               />
-            );
-          } else {
-            image = (
+            ) : (
               <FileImage
                 file={(projectImage as PendingProjectImage).image!}
                 alt={
                   (projectImage as PendingProjectImage).altText ??
-                  "new project image"
+                  ""
                 }
               />
-            );
-          }
+            )}
 
-          return (
-            <div
-              className="project-editor-image-container"
-              key={
-                (projectImage as ProjectImage).imageId ??
-                "pending-" + (projectImage as PendingProjectImage).localId
-              }
-            >
-              {image}
-              {projectAfterMediaChanges.thumbnail === projectImage.image && (
-                <img
-                  src="/images/icons/star-filled.svg"
-                  alt="star"
-                  className="star-filled"
-                ></img>
-              )}
-              <div className="project-image-hover">
-                <button
-                  id={
-                    projectAfterMediaChanges.thumbnail === projectImage.image
-                      ? "selected-thumbnail"
-                      : ""
-                  }
-                  className={
-                    projectAfterMediaChanges.thumbnail === projectImage.image
-                      ? "star-filled"
-                      : "star"
-                  }
+            {/* Add thumbnail star if it is a thumbnail */}
+            {projectAfterMediaChanges.thumbnail === projectImage.image && (
+              <ThemeIcon
+                id="star"
+                className="star filled-star"
+                width={26}
+                height={26}
+                ariaLabel="star"
+              />
+            )}
+
+            {/* Hover element */}
+            <div className="project-image-hover">
+              {projectAfterMediaChanges.thumbnail === projectImage.image ?
+                <ThemeIcon
+                  id="star"
+                  className="star filled-star"
+                  width={26}
+                  height={26}
+                  ariaLabel="thumbnail"
+                /> :
+                <ThemeIcon
+                  id="star"
+                  className="star empty-star"
+                  width={26}
+                  height={26}
+                  ariaLabel="change thumbnail"
                   onClick={() => handleThumbnailChange(projectImage)}
-                >
-                  <img
-                    src={
-                      projectAfterMediaChanges.thumbnail ===
-                        projectImage.image ||
-                      (
-                        projectAfterMediaChanges.thumbnail as PendingProjectImage
-                      )?.localId ===
-                        (projectImage as PendingProjectImage)?.localId
-                        ? "/images/icons/star-filled.svg"
-                        : "/images/icons/star.svg"
-                    }
-                    alt="star"
-                  ></img>
-                </button>
-                <button
-                  className="delete-image"
-                  onClick={() => handleImageDelete(projectImage)}
-                >
-                  <img src="/images/icons/delete-black.svg" alt="trash"></img>
-                </button>
-              </div>
+                />
+              }
+
+              {/* Delete icon */}
+              <ThemeIcon
+                id="trash"
+                className="mono-stroke-invert delete-image"
+                width={22}
+                height={22}
+                ariaLabel="delete"
+                onClick={() => handleImageDelete(projectImage)}
+              />
             </div>
-          );
-        })}
+          </div>
+        ))}
+
+        {/* Image uploader */}
         <div id="project-editor-add-image">
           <ProjectImageUploader onFileSelected={handleImageUpload} />
         </div>
       </div>
+
+      {/* Save button */}
       <div id="general-save-info">
         <PopupButton
           buttonId="project-editor-save"
