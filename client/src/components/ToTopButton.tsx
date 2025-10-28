@@ -35,12 +35,12 @@ const ToTopButton = () => {
       <button
         className="to-top-button"
         onClick={() => scrollToTop(document.querySelector('.page') as HTMLElement | null)}
-        style={{ display: visible ? 'inline' : 'none' }}
+        style={{ display: visible ? 'inline' : 'none', scale: -1 }}
       >
         <ThemeIcon
           id={'dropdown-arrow'}
           width={15}
-          height={12}
+          height={10}
           className={'color-fill'}
           ariaLabel={'dropdown arrow'}
         />

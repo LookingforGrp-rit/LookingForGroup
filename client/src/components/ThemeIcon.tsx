@@ -8,6 +8,7 @@ type ThemeIconProps = {
   width?: number;
   height?: number;
   id?: string;
+  scale?: number; //literally just for this to top button
   className?: string;
   ariaLabel?: string;
   onClick?: React.MouseEventHandler<SVGSVGElement>;
@@ -29,6 +30,7 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
   width = 0,
   height = 0,
   id = '',
+  scale = 1,
   className = '',
   ariaLabel = '',
   onClick = () => {}
@@ -39,6 +41,7 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
       width={width}
       height={height}
       id={id}
+      scale={scale}
       className={className}
       onClick={onClick}
       aria-label={ariaLabel}
