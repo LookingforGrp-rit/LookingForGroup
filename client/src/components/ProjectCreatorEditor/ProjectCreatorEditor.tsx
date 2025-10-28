@@ -109,26 +109,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       };
       createProject();
       return;
-      
-      // const initProject = async () => {
-      //   const project: ProjectDetail = { ...emptyProject };
-      //   try {
-      //     const response = await getUsersById(user.userId.toString());
-      //     // Add creator as Project Lead
-      //     const member = {
-      //       firstName: user.firstName,
-      //       lastName: user.lastName,
-      //       jobTitle: "Project Lead",
-      //       profileImage: response.data?.profileImage || "",
-      //       userId: user.userId,
-      //     };
-      //     project.members = [member];
-      //   } catch (error) {
-      //     console.error(error);
-      //   }
-      //   setModifiedProject(project);
-      // };
-      // initProject();
     }
   }, [newProject]);
 

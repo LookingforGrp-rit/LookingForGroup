@@ -357,6 +357,13 @@ Project Creator and Editor style rules
   font-weight: 700;
 }
 
+#project-editor-save:hover {
+  color: var(--create-text) !important;
+  background-color: var(--create-bg) !important;
+  filter: drop-shadow(0px 5px 3px var(--shadow-color));
+  transition: 0.25s;
+}
+
 .save-error-msg, .save-error-msg-general {
   display: none;
   margin: auto;
@@ -1199,7 +1206,7 @@ Project Creator and Editor style rules
   color: var(--invert-text);
   font-size: 2ch;
   width: max-content;
-  margin: auto;
+  margin: auto min(1vw, 10px);
   font-weight: 700;
 }
 

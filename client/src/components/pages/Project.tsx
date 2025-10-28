@@ -31,6 +31,8 @@ import { projects, /*posts,*/ profiles } from '../../constants/fakeData'; // FIX
 
 // No data is passed in through props
 
+
+
 // The 'select' element is for testing different projects with this layout, it should not be included in the final product
 const Project = () => {
   window.scrollTo(0, 0);
@@ -160,11 +162,12 @@ const Project = () => {
       </div>
       <hr />
 
-      <div id="project-posts">
+      {/*posts aren't in yet, commenting this out*/}
+      {/* <div id="project-posts">
         {projectData.posts.map((postNum: number) => {
           return <ProjectPost postID={posts[postNum]._id} key={keys[2]++} />;
         })}
-      </div>
+      </div> */}
 
       <PagePopup
         width={'80vw'}
