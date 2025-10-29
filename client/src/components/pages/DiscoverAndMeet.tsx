@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -193,33 +193,33 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     setDataLoaded(true);
   };
 
-  if (!dataLoaded) {
+  useEffect(() => {
     getData();
-  }
+  }, []);
 
   // Updates filtered project list with new search info
-  const searchItems = (searchResults: Item[]) => { 
-    // Clear list before handling search
-    tempItemList = [];
+  const searchItems = useCallback((searchResults: any[][]) => { 
+    if (!searchResults || !Array.isArray(searchResults)) return;
 
-    for (const result of searchResults) {
-      for (const item of itemSearchData) {
-        if (result === item) {
-          tempItemList.push(fullItemList[itemSearchData.indexOf(item)]);
-          continue;
-        }
+    // Flatten the nested arrays
+    const flatResults = searchResults.flat();
+    const matches: Item[] = [];
+
+    for (const result of flatResults) {
+      const resultName = result?.name || result?.username || result?.value || '';
+      if (!resultName) continue;
+
+      const matchIndex = itemSearchData.findIndex(
+        (item) => item.name === resultName || item.username === resultName
+      );
+
+      if (matchIndex !== -1 && fullItemList[matchIndex]) {
+        matches.push(fullItemList[matchIndex]);
       }
     }
 
-    // If no items were found
-    if (tempItemList.length === 0) {
-      setFilteredItemList([]); // Clear the displayed list
-      console.log('No matching items found.');
-    } else {
-      // setFilteredItemList(tempItemList);
-      updateItemList([]); // Don't check for tags after searching
-    }
-  };
+    setFilteredItemList(matches.length ? matches : []);
+  }, [itemSearchData, fullItemList]);
 
   // Updates filtered project list with new tag info
   const updateItemList = (activeTagFilters: Tag[]) => {
