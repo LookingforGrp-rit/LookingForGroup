@@ -1700,7 +1700,7 @@ Image Carousel style rules
 
   img {
     width: 20px;
-    rotate: 180deg;
+    transform: rotate(180deg);
   }
 }
 
