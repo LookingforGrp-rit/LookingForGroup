@@ -1,4 +1,4 @@
-import { useEffect, useState, FC, Dispatch, SetStateAction } from "react";
+import { useState, FC, Dispatch, SetStateAction } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -18,6 +18,7 @@ import {
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../types/types";
 import { MePrivate, ProjectWithFollowers, } from '@looking-for-group/shared';
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   newProject: boolean;
@@ -45,6 +46,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // --- Hooks ---
   // stores user data
+
+  const navigate = useNavigate();
   const [user, setUser] = useState<MePrivate | null>(null);
 
   // store project data
@@ -67,10 +70,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   //State variable for error message
   const [message, setMessage] = useState("");
 
-  // Load existing project
-  useEffect(() => {
+  const createOrEdit = async () => {
     if (!newProject && projectID) {
-      const loadProject = async () => {
+  // Load existing project
         try {
           // const response = await getByID(Number(projectID));
           // if (!response.data) return;
@@ -84,34 +86,32 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         } catch (err) {
           console.error("Error loading existing project:", err);
         }
-      };
-      loadProject();
     }
-  }, [newProject, projectID]);
-
+  //TODO: delete the created by clicking this button if the window is closed/the page is refreshed/they close without saving
+  //better yet give them a prompt if they wanna close without saving or do any of those
+    else if (newProject) {
   // Setup default project for creation
-  useEffect(() => {
-    setErrorLinks("");
-    if (newProject) {
-      const createProject = async () => {
         try {
           const response = await createNewProject({ title: "My Project" });
           if (!response.error && response.data) {
             dataManager = await projectDataManager(response.data.projectId);
 
+            console.log(dataManager)
             const data = dataManager.getSavedProject();
 
+            
             setProjectData(data);
             setModifiedProject(data);
           }
         } catch (err) {
           console.error("Error creating new project:", err);
         }
-      };
-      createProject();
-      return;
     }
-  }, [newProject]);
+  }
+
+  //this isn't running fast enough
+  //i need it to run and initialize the data before general tab is loaded
+  buttonCallback = createOrEdit;
 
   // Update social links for existing projects
   const updateLinks = async () => {
@@ -159,8 +159,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   };
 
   //Save project editor changes
-  const saveProject = async (newData: PendingProject) => {
-    console.log(newData);
+  //TODO: give user a prompt before they save their project
+  //or some feedback of any kind
+  const saveProject = async () => {
 
     // default to no errors
     setFailCheck(false);
@@ -204,6 +205,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     }
 
     try {
+        await dataManager.saveChanges();
+        setProjectData(dataManager.getSavedProject());
       // NEW PROJECT
       if (newProject && user) {
         // const resp = await createNewProject(modifiedProject as CreateProjectInput);
@@ -222,6 +225,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       //   }
 
       //   setProjectData(modifiedProject as ProjectDetail);
+      console.log("did you even run")
+      navigate(`${projectData?.apiUrl}`);
       }
 
       // EXISTING PROJECT
@@ -252,11 +257,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         // await updateProject(projectNumID, modifiedProject);
         // setProjectData(modifiedProject);
 
-        await dataManager.saveChanges();
-        setProjectData(dataManager.getSavedProject());
         if(updateDisplayedProject) updateDisplayedProject(dataManager.getSavedProject());
       }
+        console.log(dataManager)
     } catch (err) {
+        console.log("hi...?")
       console.error(err);
     }
   };
@@ -377,7 +382,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
             </div>
 
             <div id="project-editor-content">
-              {currentTab === 0 ? (
+              {projectData && modifiedProject ? ( currentTab === 0 ? (
                 <GeneralTab
                   dataManager={dataManager}
                   projectData={modifiedProject}
@@ -424,6 +429,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                   setErrorLinks={setErrorLinks}
                 />
               ) : (
+                <></>
+              ) ) : (
                 <></>
               )}
             </div>

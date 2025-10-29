@@ -41,7 +41,7 @@ export const PopupButton = ({
   children,
   buttonId = '',
   className = '',
-  callback = () => { },
+  callback = async () => { },
   doNotClose = () => false,
 }: {
   children: ReactNode;

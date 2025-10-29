@@ -19,7 +19,7 @@ let localIdIncrement = 0;
 type MediaTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
-  saveProject?: () => void;
+  saveProject?: () => Promise<void>;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   failCheck: boolean;
 };
@@ -28,7 +28,7 @@ type MediaTabProps = {
 export const MediaTab = ({
   dataManager,
   projectData,
-  saveProject = () => {},
+  saveProject,
   updatePendingProject,
   failCheck,
 }: MediaTabProps) => {

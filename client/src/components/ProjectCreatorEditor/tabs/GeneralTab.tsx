@@ -30,7 +30,7 @@ type GeneralTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   // setProjectData?: (data: ProjectDetail) => void;
-  saveProject?: () => void;
+  saveProject?: () => Promise<void>;
   updatePendingProject?: (updatedPendingProject: PendingProject) => void;
   failCheck: boolean;
 };
@@ -39,7 +39,7 @@ type GeneralTabProps = {
 export const GeneralTab = ({
   dataManager,
   projectData,
-  saveProject = () => {},
+  saveProject = async () => {},
   updatePendingProject = () => {},
   failCheck,
 }: GeneralTabProps) => {
