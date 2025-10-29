@@ -160,6 +160,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   //Save project editor changes
   //TODO: give user a prompt before they save their project
+  //and then redirect them to the project page if the project is new
   //or some feedback of any kind
   const saveProject = async () => {
 

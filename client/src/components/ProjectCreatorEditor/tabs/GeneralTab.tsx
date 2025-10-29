@@ -3,9 +3,8 @@
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import {
   ProjectPurpose,
-  ProjectStatus,
 } from "@looking-for-group/shared";
-import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { PopupButton } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
@@ -107,9 +106,9 @@ export const GeneralTab = ({
             callback={(e) => {
               const status = (
                 e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
-              ).value?.toString();
+              ).value as ProjectStatus;
 
-              if (status && Object.values(ProjectStatusEnums).includes(status as ProjectStatusEnums)) {
+              if (status && Object.keys(ProjectStatusEnums).includes(status as ProjectStatusEnums)) {
                 projectAfterGeneralChanges = {
                   ...projectAfterGeneralChanges,
                   status: status as ProjectStatus,
@@ -122,12 +121,12 @@ export const GeneralTab = ({
                     type: "canon",
                   },
                   data: {
-                    status: status as ProjectStatus,
+                    status: ProjectStatusEnums[status] as ProjectStatus,
                   },
                 });
               }
             }}
-            options={Object.values(ProjectStatusEnums).map((option) => {
+            options={Object.keys(ProjectStatusEnums).map((option) => {
               return {
                 markup: <>{option}</>,
                 value: option,
@@ -156,7 +155,7 @@ export const GeneralTab = ({
                 e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
               ).value as ProjectPurpose;
 
-              if (purpose && Object.values(ProjectPurposeEnums).includes(purpose as ProjectPurposeEnums)) {
+              if (purpose && Object.keys(ProjectPurposeEnums).includes(purpose as ProjectPurposeEnums)) {
                 projectAfterGeneralChanges = {
                   ...projectAfterGeneralChanges,
                   purpose: purpose as ProjectPurpose,
@@ -169,12 +168,12 @@ export const GeneralTab = ({
                     type: "canon",
                   },
                   data: {
-                    purpose: purpose as ProjectPurpose,
+                    purpose: ProjectPurposeEnums[purpose] as ProjectPurpose,
                   },
                 });
               }
             }}
-            options={Object.values(ProjectPurposeEnums).map((option) => {
+            options={Object.keys(ProjectPurposeEnums).map((option) => {
               return {
                 markup: <>{option}</>,
                 value: option,
