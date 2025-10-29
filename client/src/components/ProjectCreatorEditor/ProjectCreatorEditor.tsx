@@ -1,4 +1,4 @@
-import { useEffect, useState, FC } from "react";
+import { useEffect, useState, FC, Dispatch, SetStateAction } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -17,12 +17,13 @@ import {
 
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../types/types";
-import { MePrivate, ProjectDetail, } from '@looking-for-group/shared';
+import { MePrivate, ProjectWithFollowers, } from '@looking-for-group/shared';
 
 interface Props {
   newProject: boolean;
   buttonCallback?: () => void;
   user?: MePrivate;
+  updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>
   // permissions?: number;
 }
 
@@ -37,7 +38,7 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
  *
  * @returns React component Popup
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, /*permissions*/ }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, updateDisplayedProject/*permissions*/ }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const projectID = urlParams.get("projectID");
@@ -47,7 +48,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const [user, setUser] = useState<MePrivate | null>(null);
 
   // store project data
-  const [projectData, setProjectData] = useState<ProjectDetail>();
+  const [projectData, setProjectData] = useState<ProjectWithFollowers>();
 
   // tracking temporary project changes before committing to a save
   const [modifiedProject, setModifiedProject] = useState<PendingProject>();
@@ -253,6 +254,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
         await dataManager.saveChanges();
         setProjectData(dataManager.getSavedProject());
+        if(updateDisplayedProject) updateDisplayedProject(dataManager.getSavedProject());
       }
     } catch (err) {
       console.error(err);

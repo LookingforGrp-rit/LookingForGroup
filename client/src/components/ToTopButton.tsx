@@ -35,7 +35,7 @@ const ToTopButton = () => {
       <button
         className="to-top-button"
         onClick={() => scrollToTop(document.querySelector('.page') as HTMLElement | null)}
-        style={{ display: visible ? 'inline' : 'none', scale: -1 }}
+        style={{ display: visible ? 'inline' : 'none' }}
       >
         <ThemeIcon
           id={'dropdown-arrow'}
