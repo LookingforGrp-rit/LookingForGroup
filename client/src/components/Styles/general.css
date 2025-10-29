@@ -1698,10 +1698,6 @@ Image Carousel style rules
 
   animation: fadeIn 0.15s ease-in-out;
 
-  img {
-    width: 20px;
-    transform: rotate(180deg);
-  }
 }
 
 .to-top-button:hover {
