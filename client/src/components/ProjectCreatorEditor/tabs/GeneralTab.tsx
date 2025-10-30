@@ -265,7 +265,7 @@ export const GeneralTab = ({
         <PopupButton
           buttonId="project-editor-save"
           callback={saveProject}
-          doNotClose={() => !failCheck}
+          doNotClose={() => failCheck}
         >
           Save Changes
         </PopupButton>

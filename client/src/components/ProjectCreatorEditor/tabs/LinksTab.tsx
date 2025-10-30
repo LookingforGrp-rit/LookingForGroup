@@ -6,10 +6,11 @@ import { ProjectDetail, Social, UserDetail } from "@looking-for-group/shared";
 import { Input } from "../../Input";
 import { getSocials, getUsersById } from "../../../api/users";
 import { ThemeIcon } from "../../ThemeIcon";
+import { PendingProject } from "../../../../types/types";
 
 // --- Variables ---
 type LinksTabProps = {
-  projectData?: ProjectDetail;
+  projectData?: PendingProject;
   setProjectData?: (data: ProjectDetail) => void;
   setErrorLinks?: (error: string) => void;
   saveProject?: () => void;
@@ -28,7 +29,7 @@ export const LinksTab = ({
 }: LinksTabProps) => {
   // --- Hooks --- 
   // tracking project modifications
-  const [modifiedProject, setModifiedProject] = useState<ProjectDetail>(projectData || {} as ProjectDetail);
+  const [modifiedProject, setModifiedProject] = useState<PendingProject>(projectData || {} as PendingProject);
   // complete list of socials
   const [allSocials, setAllSocials] = useState<Social[]>([]);
   // sets error when adding a link to the project
@@ -38,12 +39,12 @@ export const LinksTab = ({
 
   // Update data when data is changed
   useEffect(() => {
-    setModifiedProject(projectData || {} as ProjectDetail);
+    setModifiedProject(projectData || {} as PendingProject);
   }, [projectData]);
 
   // Update parent state with new project data
   useEffect(() => {
-    setProjectData(modifiedProject);
+    setProjectData(modifiedProject as ProjectDetail);
   }, [modifiedProject, setProjectData]);
 
   // Update parent state with error message
@@ -148,7 +149,7 @@ export const LinksTab = ({
             <Select>
               <SelectButton
                 placeholder='Select'
-                initialVal={social.label !== '' ? social.label : undefined}
+                initialVal={social.label ? social.label : undefined}
                 className='link-select'
                 type={"input"}
               />
@@ -190,7 +191,7 @@ export const LinksTab = ({
             <Input
               type="link"
               placeholder="URL"
-              value={social.url}
+              value={social.url ? social.url : ''}
               onChange={(e) => {
                 // TODO: Implement some sort of security check for URLs.
                 // Could be as simple as checking the URL matches the social media
@@ -223,7 +224,7 @@ export const LinksTab = ({
         </div>
       </div>
       <div id="link-save-info">
-        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
+        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => failCheck}>
           Save Changes
         </PopupButton>
       </div>

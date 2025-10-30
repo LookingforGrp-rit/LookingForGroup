@@ -345,12 +345,12 @@ export const TeamTab = ({
     // FIXME why do we suddenly switch from `newMember` to `member` here?
     // Match this user with all users to get profile image
     const matchedUser = allUsers.find(
-      (user) => user.userId === member.user.userId
+      (user) => user.userId === member.user?.userId
     );
-    member.user.profileImage = matchedUser ? matchedUser.profileImage : "";
+    if(member.user) member.user.profileImage = matchedUser ? matchedUser.profileImage : "";
 
     // check if member has name
-    if (!member.firstName || !member.lastName) {
+    if (!member.user?.firstName || !member.user?.lastName) {
       setSuccessAddMember(false);
       setErrorAddMember("Member needs a first and last name");
       return false;
@@ -491,7 +491,7 @@ export const TeamTab = ({
   // Remove position listing
   const deletePosition = useCallback(() => {
     const jobToBeDeleted = projectAfterTeamChanges.jobs.find(
-      ({ role: { roleId } }) => roleId === currentRole
+      ({ role }) => role?.roleId === currentRole
     );
     if (
       jobToBeDeleted &&
@@ -520,7 +520,7 @@ export const TeamTab = ({
         ...projectAfterTeamChanges,
         jobs: [
           ...projectAfterTeamChanges.jobs.filter(
-            ({ role: { roleId } }) => roleId !== currentRole
+            ({ role }) => role?.roleId !== currentRole
           ),
         ],
       };
@@ -553,10 +553,10 @@ export const TeamTab = ({
     if (
       currentJob?.role?.roleId === null ||
       currentJob?.description === null ||
-      currentJob?.availability === "" ||
-      currentJob?.location === "" ||
-      currentJob?.duration === "" ||
-      currentJob?.compensation === ""
+      currentJob?.availability === null ||
+      currentJob?.location === null ||
+      currentJob?.duration === null ||
+      currentJob?.compensation === null
     ) {
       // set error
       setErrorAddPosition("All fields are required");
@@ -567,7 +567,7 @@ export const TeamTab = ({
     // TODO projects can't have two leads? two devs? two artists? etc..
     const existingJob = projectAfterTeamChanges.jobs.find(
       (job) =>
-        job.role.roleId === currentJob?.roleId && job.jobId !== currentJob.jobId
+        job.role?.roleId === currentJob?.role?.roleId && job.jobId !== currentJob.jobId
     );
     if (existingJob) {
       setErrorAddPosition("Job already exists");
@@ -1456,7 +1456,7 @@ export const TeamTab = ({
         <PopupButton
           buttonId="project-editor-save"
           callback={saveProject}
-          doNotClose={() => !failCheck}
+          doNotClose={() => failCheck}
         >
           Save Changes
         </PopupButton>

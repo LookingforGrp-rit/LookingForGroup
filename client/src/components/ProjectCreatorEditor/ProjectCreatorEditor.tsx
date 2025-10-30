@@ -6,6 +6,7 @@ import { LinksTab } from "./tabs/LinksTab";
 import { TeamTab } from "./tabs/TeamTab";
 import { TagsTab } from "./tabs/TagsTab";
 import { ThemeIcon } from "../ThemeIcon";
+import * as paths from '../../constants/routes';
 import {
   createNewProject,
   getProjectSocials,
@@ -17,18 +18,15 @@ import {
 
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../types/types";
-import { MePrivate, ProjectWithFollowers, } from '@looking-for-group/shared';
+import { ProjectWithFollowers, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 interface Props {
   newProject: boolean;
   buttonCallback?: () => void;
-  user?: MePrivate;
   updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>
   // permissions?: number;
 }
-
-let localId = 0;
 
 let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
 
@@ -48,7 +46,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   // stores user data
 
   const navigate = useNavigate();
-  const [user, setUser] = useState<MePrivate | null>(null);
 
   // store project data
   const [projectData, setProjectData] = useState<ProjectWithFollowers>();
@@ -80,14 +77,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           dataManager = await projectDataManager(Number(projectID));
 
           const data = dataManager.getSavedProject();
-          // data.userId = user?.userId; // why would this be needed?
           setProjectData(data);
           setModifiedProject(data);
         } catch (err) {
           console.error("Error loading existing project:", err);
         }
     }
-  //TODO: delete the created by clicking this button if the window is closed/the page is refreshed/they close without saving
+  //TODO: delete the project created by clicking this button if the window is closed/the page is refreshed/they close without saving
   //better yet give them a prompt if they wanna close without saving or do any of those
     else if (newProject) {
   // Setup default project for creation
@@ -102,6 +98,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
             
             setProjectData(data);
             setModifiedProject(data);
+            navigate(`${paths.routes.NEWPROJECT}?projectID=${data?.projectId}`);
           }
         } catch (err) {
           console.error("Error creating new project:", err);
@@ -109,8 +106,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     }
   }
 
-  //this isn't running fast enough
-  //i need it to run and initialize the data before general tab is loaded
   buttonCallback = createOrEdit;
 
   // Update social links for existing projects
@@ -165,7 +160,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const saveProject = async () => {
 
     // default to no errors
-    setFailCheck(false);
+    setFailCheck(false); //CAN YOU LIKE ACTUALLY BE USEFUL PLEASE
 
     // save if on link tab
     if (currentTab === 4) await updateLinks();
@@ -184,6 +179,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     ) {
       const errorText = document.getElementById("invalid-input-error");
       setMessage("*Fill out all required info under General before saving!*");
+      setFailCheck(true);
 
       if (errorText) {
         errorText.style.display = "block";
@@ -198,6 +194,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     ) {
       const errorText = document.getElementById("invalid-input-error");
       setMessage("*Choose a project type and tag under Tags before saving!*");
+      setFailCheck(true);
 
       if (errorText) {
         errorText.style.display = "block";
@@ -208,27 +205,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     try {
         await dataManager.saveChanges();
         setProjectData(dataManager.getSavedProject());
-      // NEW PROJECT
-      if (newProject && user) {
-        // const resp = await createNewProject(modifiedProject as CreateProjectInput);
-        // const newProjectID = resp.data?.projectId;
-        // if (!newProjectID) return;
-
-        // Upload images
-      //   await Promise.all(
-      //     modifiedProject.images.map((image) =>
-      //       addPic(newProjectID, image.file, image.position)
-      //     )
-      //   );
-
-      //   if (modifiedProject.thumbnailFile) {
-      //     await updateThumbnail(newProjectID, modifiedProject.thumbnailFile);
-      //   }
-
-      //   setProjectData(modifiedProject as ProjectDetail);
-      console.log("did you even run")
-      navigate(`${projectData?.apiUrl}`);
-      }
 
       // EXISTING PROJECT
       if (!newProject && projectID) {
@@ -260,6 +236,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
         if(updateDisplayedProject) updateDisplayedProject(dataManager.getSavedProject());
       }
+      window.location.reload();
         console.log(dataManager)
     } catch (err) {
         console.log("hi...?")
@@ -414,13 +391,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 <TeamTab
                   dataManager={dataManager}
                   updatePendingProject={updatePendingProject}
-                  isNewProject={newProject}
+                  saveProject={saveProject}
                   projectData={modifiedProject}
                   setProjectData={setModifiedProject}
                   setErrorMember={setErrorAddMember}
-                  setErrorPosition={
-                    setErrorAddPosition
-                  } /*permissions={permissions}*/
+                  setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
+                  failCheck={failCheck}
                 />
               ) : currentTab === 4 ? (
                 <LinksTab
@@ -428,6 +404,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                   projectData={modifiedProject}
                   setProjectData={setModifiedProject}
                   setErrorLinks={setErrorLinks}
+                  failCheck={failCheck}
                 />
               ) : (
                 <></>

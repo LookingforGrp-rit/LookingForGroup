@@ -3451,6 +3451,10 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--primary-color);
   text-align: left;
+  width: 150px;
+  text-wrap-mode: nowrap;
+  overflow: clip;
+  text-overflow: ellipsis;
   font-size: 16px;
   font-family: Inter;
   font-weight: bold;

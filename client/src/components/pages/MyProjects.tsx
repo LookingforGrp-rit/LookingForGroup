@@ -13,18 +13,16 @@ import { Select, SelectButton, SelectOptions } from '../Select';
 import { LeaveDeleteContext } from '../../contexts/LeaveDeleteContext';
 
 import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEditor';
-//import user from '../Sidebar'; // For use with project creation button
 
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
-import { MePrivate, ProjectDetail} from '@looking-for-group/shared';
+import { ProjectDetail} from '@looking-for-group/shared';
 
 const MyProjects = () => {
 
   const navigate = useNavigate();
 
   // Taken from Sidebar.tsx
-  const [userData, setUserData] = useState<MePrivate>();
 
   // const [UID, setUID] = useState(profiles[0]._id);
   // const [activePage, setActivePage] = useState(0);
@@ -61,7 +59,6 @@ const MyProjects = () => {
 
       // User is logged in, pull their data
       if (res.data) {
-        setUserData(res.data) //i think this is useless actually
         setLoggedIn(res.data.userId);
         const projectsRes = await getProjectsByUser();
 
@@ -520,7 +517,7 @@ const MyProjects = () => {
             </button>
           </>
         ) : (<div className="my-projects-create-btn">
-          <ProjectCreatorEditor newProject={createError} buttonCallback={getUserProjects} user={userData} />
+          <ProjectCreatorEditor newProject={createError} buttonCallback={getUserProjects} />
         </div>)
         }
 

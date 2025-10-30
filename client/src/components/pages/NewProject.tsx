@@ -134,7 +134,7 @@ useEffect(() => {
             <ProjectCreatorEditor
               newProject={false}
               updateDisplayedProject={setDisplayedProject}
-              /*permissions={userPerms}*/ user={user}
+              /*permissions={userPerms}*/
             />
           </>
         }
