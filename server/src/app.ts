@@ -2,6 +2,7 @@ import SwaggerParser from '@apidevtools/swagger-parser';
 import express, { type Request, type Response } from 'express';
 import morgan from 'morgan';
 import envConfig from '#config/env.ts';
+import authRouter from '#routes/auth.ts'; //for shibboleth
 import datasetsRouter from '#routes/datasets.ts';
 import imagesRouter from '#routes/images.ts';
 import meRouter from '#routes/me.ts';
@@ -27,6 +28,7 @@ app.use('/users', usersRouter);
 app.use('/projects', projectsRouter);
 app.use('/me', meRouter);
 app.use('/images', imagesRouter);
+app.use('/auth', authRouter);
 
 app.get('', (_req: Request, res: Response) => {
   res.json({ message: 'You Reached The Looking For Group API' });
