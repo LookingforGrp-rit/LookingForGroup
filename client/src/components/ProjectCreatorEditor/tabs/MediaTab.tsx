@@ -135,7 +135,7 @@ export const MediaTab = ({
   }, []);
 
   // Handle image upload
-  const handleImageUpload = useCallback(() => {
+  const handleImageUpload = useCallback(async () => {
     // Get image in input element
     const imageUploader = document.getElementById(
       "image-uploader"
@@ -146,6 +146,26 @@ export const MediaTab = ({
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
 
     if (!projectId) return;
+
+    // Check if it is a duplicate image
+    for (const image of projectAfterMediaChanges.projectImages) {
+      if (typeof image.image === 'string') {
+        // convert to file
+        const imageFile = await stringToFile(image.image);
+        // compare
+        console.log('comparing File from string and File', imageFile, file);
+        if (file.name === imageFile.name && file.size === imageFile.size && file.webkitRelativePath === imageFile.webkitRelativePath) {
+          // TODO: add error to show users cannot add duplicate imag
+          return;
+        }
+      } else {
+        console.log('comparing File and File', image.image, file);
+        if (file.name === image.image?.name && file.size === image.image?.size && file.webkitRelativePath === image.image?.webkitRelativePath) {
+          // TODO: add error to show users cannot add duplicate image
+          return;
+        }
+      }
+    }
 
     // Uploading image to backend
     try {
