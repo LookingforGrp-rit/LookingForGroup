@@ -85,7 +85,7 @@ export const MediaTab = ({
       }
 
       // set comparison array
-      if (comparedIndices.length === 0) await updateComparisonArray();
+      if (comparedIndices.length === 0 && projectAfterMediaChanges.projectImages.length !== 0) await updateComparisonArray();
     }
     initializeImages();
   });
@@ -219,7 +219,7 @@ export const MediaTab = ({
       }
 
       // update comparison array
-      updateComparisonArray();
+      if (projectAfterMediaChanges.projectImages.length !== 0) updateComparisonArray();
     } catch (err) {
       console.error(err);
     }
