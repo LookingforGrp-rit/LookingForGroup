@@ -1,5 +1,5 @@
 // --- Imports ---
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   CreateProjectImageInput,
   ProjectImage,
@@ -24,6 +24,18 @@ type MediaTabProps = {
   failCheck: boolean;
 };
 
+// Convert string to File
+const stringToFile = async (s: string) => {
+
+  // Note: This seems imperfect. lastModified value might get changed
+  // which affects the entire comparison of File to File. The checks later
+  // go around this limitation. 
+
+  const fileResponse = await fetch(s);
+  const fileBlob = await fileResponse.blob();
+  return new File([fileBlob], s, { type: fileBlob.type });
+}
+
 // --- Component ---
 export const MediaTab = ({
   dataManager,
@@ -33,11 +45,97 @@ export const MediaTab = ({
   failCheck,
 }: MediaTabProps) => {
 
+  // An array for tracking the comparison of images and the thumbnail
+  // Without this, thumbnail status cannot be checked synchronously
+  const [comparedIndices, setComparedIndices] = useState<boolean[]>([]);
+
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
 
+  // Initial load
+  useEffect(() => {
+    const initializeImages = async () => {
+      // if only one image or no thumbnail, set thumbnail
+      if ((projectAfterMediaChanges.projectImages.length === 1 && projectAfterMediaChanges.projectImages[0].image) || !projectAfterMediaChanges.thumbnail) {
+        // if image is a string, create file
+        if (typeof projectAfterMediaChanges.projectImages[0].image === 'string') {
+          const file = await stringToFile(projectAfterMediaChanges.projectImages[0].image);
+
+          // set thumbnail
+          projectAfterMediaChanges = {
+            ...projectAfterMediaChanges,
+            thumbnail: {
+              localId: 1,
+              image: file,
+              altText: "project thumbnail",
+            },
+          }
+        }
+        else {
+          // set thumbnail
+          projectAfterMediaChanges = {
+            ...projectAfterMediaChanges,
+            thumbnail: {
+              localId: 1,
+              image: projectAfterMediaChanges.projectImages[0].image,
+              altText: "project thumbnail",
+            },
+          }
+        }
+      }
+
+      // set comparison array
+      if (comparedIndices.length === 0) await updateComparisonArray();
+    }
+    initializeImages();
+  });
+
+  // Compare thumbnail and an image
+  const compareWithThumbnail = async (image: ProjectImage | PendingProjectImage) => {
+    // separate variable for readability
+    const thumbnail = projectAfterMediaChanges.thumbnail;
+    if (!thumbnail) {
+      return false;
+    }
+
+    // lastModified prop has a slight discrepancy which likely relies on load time.
+    // Will check all props except lastModified for equivalency where a File type is involved.
+
+    // thumbnail: string
+    if (typeof thumbnail === 'string') {
+      // image: string
+      if (typeof image.image === 'string') {
+        return thumbnail === image.image;
+      }
+      // image: File
+      const response = await stringToFile(thumbnail);
+      return response.name === image.image?.name && response.webkitRelativePath === image.image?.webkitRelativePath && response.size === image.image?.size;
+    }
+    // thumbnail: File
+    // image: string
+    if (typeof image.image === 'string') {
+      const response = await stringToFile(image.image);
+      return response.name === thumbnail.image?.name && response.webkitRelativePath === thumbnail.image?.webkitRelativePath && response.size === thumbnail.image?.size;
+    }
+    // both are Files
+    return image.image?.name === thumbnail.image?.name && image.image?.webkitRelativePath === thumbnail.image?.webkitRelativePath && image.image?.size === thumbnail.image?.size;
+  }
+
+  // Handle compared indices on image array update
+  const updateComparisonArray = useCallback(async () => {
+    // set comparison array
+    const getComparedIndices = async () => {
+      const comparisonPromise = projectAfterMediaChanges.projectImages.map(async (image) => {
+        return await compareWithThumbnail(image);
+      });
+
+      setComparedIndices(await Promise.all(comparisonPromise));
+    }
+    await getComparedIndices();
+  }, []);
+
   // Handle image upload
-  const handleImageUpload = useCallback(async () => {
+  const handleImageUpload = useCallback(() => {
     // Get image in input element
     const imageUploader = document.getElementById(
       "image-uploader"
@@ -55,8 +153,6 @@ export const MediaTab = ({
         image: file,
         altText: "", // FIXME: there is no way for users to enter alt text
       } as CreateProjectImageInput;
-
-      console.log(fullImg);
 
       const localId = ++localIdIncrement;
 
@@ -83,7 +179,6 @@ export const MediaTab = ({
 
       // If only image, set as thumbnail
       if (projectAfterMediaChanges.projectImages.length === 1) {
-        console.log('setting only image as thumbnail');
         // Update dataManager
         dataManager.updateFields({
           id: {
@@ -103,35 +198,31 @@ export const MediaTab = ({
             altText: "project thumbnail",
           },
         };
-
       }
+
+      // update comparison array
+      updateComparisonArray();
     } catch (err) {
       console.error(err);
     }
 
     imageUploader.value = "";
-  }, [dataManager, projectId, updatePendingProject]);
+  }, [dataManager, updateComparisonArray, projectId, updatePendingProject]);
 
   // Handle new thumbnail
   const handleThumbnailChange = useCallback(
     async (projectImage: ProjectImage | PendingProjectImage) => {
-      // FIXME: check that is passed before this method is referenced need to be fixed.
-      // It does not accurately compare the stored thumbnail and the selected image
-      
-      console.log('handling thumbnail change');
-
-      //updateProject has to take a file
       if (!projectId) return;
+      
+      // updateProject has to take a file
       let imageFile: File;
-      if ((projectImage as ProjectImage).imageId) {
-        const response = await fetch((projectImage as ProjectImage).image);
-        if (!response.ok) return;
-
-        const blob = await response.blob();
-        imageFile = new File([blob], projectImage.image as string);
+      // if string, get file
+      if (typeof projectImage.image === 'string') {
+        const response = await stringToFile(projectImage.image);
+        imageFile = response;
       } else {
-        if ((projectImage as PendingProjectImage).image === null) return;
-        imageFile = projectImage.image as File;
+        if (!projectImage.image) return;
+        imageFile = projectImage.image;
       }
 
       dataManager.updateFields({
@@ -155,14 +246,25 @@ export const MediaTab = ({
       };
 
       updatePendingProject(projectAfterMediaChanges);
+
+      // update comparison array
+      updateComparisonArray();
     },
-    [dataManager, projectId, updatePendingProject]
+    [dataManager, projectId, updateComparisonArray, updatePendingProject]
   );
 
   // Handle image deletion
   const handleImageDelete = useCallback(
     async (projectImage: ProjectImage | PendingProjectImage) => {
       if (!projectId) return;
+
+      let updateThumbnail = false;
+
+      // check if image is thumbnail
+      if (comparedIndices[projectAfterMediaChanges.projectImages.findIndex((image) => image === projectImage)]) {
+        // update after image is deleted and projectImages is updated
+        updateThumbnail = true;
+      }
 
       // delete server image
       if ((projectImage as ProjectImage).imageId) {
@@ -180,13 +282,10 @@ export const MediaTab = ({
               (image as ProjectImage).imageId !==
               (projectImage as ProjectImage).imageId
           );
-
-        updatePendingProject(projectAfterMediaChanges);
-        return;
       }
 
       // delete local image
-      if ((projectImage as PendingProjectImage).localId) {
+      else {
         dataManager.deleteImage({
           id: {
             value: (projectImage as PendingProjectImage).localId!,
@@ -201,12 +300,70 @@ export const MediaTab = ({
               (image as PendingProjectImage).localId !==
               (projectImage as PendingProjectImage).localId
           );
-
-        updatePendingProject(projectAfterMediaChanges);
-        return;
       }
+
+      // update thumbnail if there is an image to set it to
+      if (updateThumbnail && projectAfterMediaChanges.projectImages.length >= 1) {
+
+        // Handle string type
+        if (typeof projectAfterMediaChanges.projectImages[0].image === 'string') {
+          // if image is a string, make it a file
+          const image = await stringToFile(projectAfterMediaChanges.projectImages[0].image);
+
+          // Update dataManager
+          dataManager.updateFields({
+            id: {
+              value: projectId,
+              type: "canon",
+            },
+            data: {
+              thumbnail: image,
+            }
+          });
+
+          // Update project data
+          projectAfterMediaChanges = {
+            ...projectAfterMediaChanges,
+            thumbnail: {
+              localId: 1,
+              image: image,
+              altText: "project thumbnail",
+            },
+          };
+        }
+
+        // Handle File type
+        else {
+          const image = projectAfterMediaChanges.projectImages[0].image as File;
+
+          // Update dataManager
+          dataManager.updateFields({
+            id: {
+              value: projectId,
+              type: "canon",
+            },
+            data: {
+              thumbnail: image,
+            }
+          });
+
+          // Update project data
+          projectAfterMediaChanges = {
+            ...projectAfterMediaChanges,
+            thumbnail: {
+              localId: 1,
+              image: image,
+              altText: "project thumbnail",
+            },
+          };
+        }  
+      }
+
+      // update hooks
+      updatePendingProject(projectAfterMediaChanges);
+      if (projectAfterMediaChanges.projectImages.length !== 0) updateComparisonArray();
     },
-    [dataManager, projectId, updatePendingProject]
+    [comparedIndices, dataManager, projectId, updateComparisonArray, updatePendingProject]
   );
 
   // --- Complete component ---
@@ -218,7 +375,7 @@ export const MediaTab = ({
         the main thumbnail on the project's discover card.
       </div>
       <div id="project-editor-image-ui">
-        {projectAfterMediaChanges.projectImages?.map((projectImage) => (
+        {projectAfterMediaChanges.projectImages?.map((projectImage, index) => (
           <div
             className="project-editor-image-container"
             key={
@@ -247,7 +404,7 @@ export const MediaTab = ({
             )}
 
             {/* Add thumbnail star if it is a thumbnail */}
-            {projectAfterMediaChanges.thumbnail === projectImage.image && (
+            {comparedIndices[index] && (
               <ThemeIcon
                 id="star"
                 className="star filled-star"
@@ -259,7 +416,7 @@ export const MediaTab = ({
 
             {/* Hover element */}
             <div className="project-image-hover">
-              {projectAfterMediaChanges.thumbnail === projectImage.image ?
+              {comparedIndices[index] ?
                 <ThemeIcon
                   id="star"
                   className="star filled-star"

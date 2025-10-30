@@ -1840,16 +1840,25 @@ Theme Icons style rules
 /* Star SVG (Following icon and Thumbnail indicator) */
 .star {
   top: 9px;
-  right: 9px;
 }
 
 .empty-star > use {
   fill: none;
   stroke: var(--invert-text);
 }
-.filled-star > use {
+.project-image-hover > .filled-star > use,
+.star:hover > use {
   fill: var(--invert-text);
   stroke: var(--invert-text);
+}
+
+/* Only have shadow on image itself,  */
+:not(.project-image-hover) > .filled-star {
+  filter: drop-shadow(0px 0px 10px rgb(0, 0, 0, 0.75));
+}
+.filled-star > use {
+  fill: var(--main-text);
+  stroke: var(--main-text);
 }
 
 /* Fallback using CSS media queries */
