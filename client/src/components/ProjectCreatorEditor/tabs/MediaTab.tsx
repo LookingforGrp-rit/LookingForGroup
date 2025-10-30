@@ -153,13 +153,11 @@ export const MediaTab = ({
         // convert to file
         const imageFile = await stringToFile(image.image);
         // compare
-        console.log('comparing File from string and File', imageFile, file);
         if (file.name === imageFile.name && file.size === imageFile.size && file.webkitRelativePath === imageFile.webkitRelativePath) {
           // TODO: add error to show users cannot add duplicate imag
           return;
         }
       } else {
-        console.log('comparing File and File', image.image, file);
         if (file.name === image.image?.name && file.size === image.image?.size && file.webkitRelativePath === image.image?.webkitRelativePath) {
           // TODO: add error to show users cannot add duplicate image
           return;
