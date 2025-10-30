@@ -380,7 +380,7 @@ Project Creator and Editor style rules
   margin: 35px 56px 26px 55px;
 }
 
-#project-editor-content label,
+#project-editor-content label:not(#drop-area),
 #project-team-add-member-title,
 #team-add-member-cancel-button,
 #project-team-edit-member-title,

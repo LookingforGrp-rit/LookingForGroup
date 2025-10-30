@@ -46,16 +46,15 @@ const ImageUploader = ({
     const input = inputRef.current;
     if (!input) return;
 
-    input.addEventListener('change', handleImgChange);
     return () => input.removeEventListener('change', handleImgChange);
-  }, [keepImage, handleImgChange, onFileSelected]);
+  }, [handleImgChange]);
 
   const profileVariant = (
     <></>
   );
 
   const projectVariant = (
-    <div id="drop-area">
+    <label htmlFor="image-uploader" id="drop-area">
       <input
         type="file"
         name="image"
@@ -63,7 +62,7 @@ const ImageUploader = ({
         multiple accept=".png, .jpg"
         ref={inputRef}
         onChange={handleImgChange}
-        // hidden
+        hidden
       />
       <div id="img-view" className="project-uploader">
         {/* Color style of SVG handled by fill property */}
@@ -73,7 +72,7 @@ const ImageUploader = ({
         <p className="project-editor-extra-info">Drop your image here, or <span id="browse-link">browse</span></p>
         <p className="project-editor-extra-info">Supports: JPEG, PNG</p>
       </div>
-    </div>
+    </label>
   );
 
   return type === 'profile' ? profileVariant : projectVariant;
