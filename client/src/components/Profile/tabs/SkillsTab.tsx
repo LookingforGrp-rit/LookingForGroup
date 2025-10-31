@@ -138,7 +138,7 @@ export const SkillsTab = (props: { profile: MeDetail }) => {
             type: type,
             label: skill,
             position: 0, //this isn't over, position parameter.
-            proficiency: "Novice" as SkillProficiency,
+            proficiency: "Novice" as SkillProficiency, //we'll get to this later
             apiUrl: ''
           } 
         ]
@@ -163,7 +163,7 @@ export const SkillsTab = (props: { profile: MeDetail }) => {
       .map((s) => (
         <button key={s.label} className={`tag-button tag-button-${getSkillColor(s.type)}-selected`} onClick={(e) => handleSkillSelect(e)}>
           <i className="fa fa-close"></i>
-          &nbsp;{s.label}
+          <p>&nbsp;{s.label}</p>
         </button>
       ))
   }, [modifiedProfile.skills, handleSkillSelect]);
@@ -195,7 +195,7 @@ export const SkillsTab = (props: { profile: MeDetail }) => {
                     : 'fa fa-plus'
                 }
               ></i>
-              &nbsp;{t.label}
+              <p>&nbsp;{t.label}</p>
             </button>
           );
         })
@@ -260,7 +260,7 @@ export const SkillsTab = (props: { profile: MeDetail }) => {
                   : 'fa fa-plus'
               }
             ></i>
-            &nbsp;{s.label}
+            <p>&nbsp;{s.label}</p>
           </button>
         ));
     }
@@ -308,9 +308,9 @@ export const SkillsTab = (props: { profile: MeDetail }) => {
         <div className="project-editor-extra-info">
           Drag and drop to reorder
         </div>
+          <hr id="selected-tag-divider" />
         <div id="project-editor-selected-tags-container">
           {/* TODO: Separate top 2 skills from others with hr element */}
-          <hr id="selected-tag-divider" />
           {loadProfileSkills}
         </div>
       </div>

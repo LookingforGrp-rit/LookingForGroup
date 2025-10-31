@@ -785,12 +785,13 @@ Project Creator and Editor style rules
 
 #project-editor-selected-tags-container {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 15px;
-  height: 100%;
-  max-height: 352px;
+  height: 80px;
+  max-height: 80px;
   overflow-y: scroll;
 }
 

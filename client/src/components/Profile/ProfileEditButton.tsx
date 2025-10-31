@@ -508,7 +508,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
       for (let i = 0; i < currentSkills.length; i++) {
         if (
           currentSkills[i].type == newSkill.type &&
-          currentSkills[i].skill == newSkill.skill
+          currentSkills[i].label == newSkill.label
         ) {
           found = true;
         }
@@ -826,7 +826,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                       skillId: skillItem.skillId,
                       type: skillItem.type,
                       label: skillItem.label,
-                      proficiency: skillItem.proficiency,
+                      proficiency: "Novice", //it's just a placeholder for now we'll figure it out
                       position: currentSkills.length + 1,
                     });
                   }}
@@ -1176,8 +1176,8 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     }
   };
 
-  const createSkillsList = (): Pick<UserSkill, "id" | "position">[] =>
-    currentSkills.map((skill) => ({ id: skill.id, position: skill.position }));
+  const createSkillsList = (): Pick<UserSkill, "skillId" | "position">[] =>
+    currentSkills.map((skill) => ({ id: skill.skillId, position: skill.position }));
 
   const createLinksList = (): Pick<MySocial, "id" | "url">[] =>
     currentLinks

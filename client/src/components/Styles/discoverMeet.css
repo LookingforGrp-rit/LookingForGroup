@@ -491,6 +491,9 @@ Discover and Meet page style rules
   p {
     margin: 0px;
   }
+  i {
+    width: 14px;
+  }
 }
 
 /* selected tags */
