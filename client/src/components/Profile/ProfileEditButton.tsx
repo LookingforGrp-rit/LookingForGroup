@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, JSX } from "react";
 import { PagePopup, openClosePopup } from "../PagePopup";
 import {
   getJobTitles,
@@ -7,7 +7,6 @@ import {
   getSocials as fetchSocials,
   editUser,
   updateProjectVisibility,
-  getVisibleProjects as fetchProjects,
   getVisibleProjects,
   getProjectsByUser,
 } from "../../api/users";
@@ -20,6 +19,9 @@ import {
   Major,
   ProjectPreview,
   Social,
+  MyMajor,
+  AcademicYear,
+  Skill,
 } from "@looking-for-group/shared";
 
 interface ProfileEditButtonProps {
@@ -72,21 +74,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     setCurrentPFPLink(`images/profiles/${user.profileImage}`);
   }, [user.profileImage]);
 
-  const [currentEditData, setCurrentEditData] = useState<EditProfileData>({
-    firstName: user.firstName ?? "",
-    lastName: user.lastName ?? "",
-    headline: user.headline ?? "",
-    pronouns: user.pronouns ?? "",
-    title: user.title ?? "",
-    majors: user.majors ?? [],
-    academicYear: user.academicYear ?? "",
-    location: user.location ?? "",
-    funFact: user.funFact ?? "",
-    bio: user.bio ?? "",
-    projects: user.projects ?? [],
-    skills: user.skills ?? [],
-    socials: user.socials ?? [],
-  });
+  const [currentEditData, setCurrentEditData] = useState<EditProfileData>(user as EditProfileData);
 
   const getOrdinal = (index: number) => {
     if (index === 1) {
@@ -162,7 +150,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             <img
               className="edit-region-photo photo"
               src={currentPFPLink}
-              alt={`${currentFirstName}'s Profile Pic`}
+              alt={`${user.firstName}'s Profile Pic`}
             ></img>
             <div className="edit-region-button-div photo">
               <form className="edit-region-button-wrapper photo">
@@ -269,7 +257,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
               onChange={(e) => {
                 setCurrentEditData({
                   ...currentEditData,
-                  majors: [e.target.value],
+                  majors: [e.target.value as unknown as MyMajor],
                 });
               }}
             >
@@ -295,7 +283,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
               onChange={(e) => {
                 setCurrentEditData({
                   ...currentEditData,
-                  academicYear: e.target.value,
+                  academicYear: e.target.value as unknown as AcademicYear,
                 });
               }}
             >
@@ -341,7 +329,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
               }}
             ></textarea>
             <span className="word-limit-label quote">
-              {currentEditData.headline.length} / 100
+              {currentEditData.headline?.length} / 100
             </span>
           </div>
         </div>
@@ -365,7 +353,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
               }}
             ></textarea>
             <span className="word-limit-label fact">
-              {currentEditData.funFact.length} / 100
+              {currentEditData.funFact?.length} / 100
             </span>
           </div>
         </div>
@@ -389,7 +377,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
               }}
             ></textarea>
             <span className="word-limit-label you">
-              {currentEditData.bio.length} / 600
+              {currentEditData.bio?.length} / 600
             </span>
           </div>
         </div>
@@ -567,23 +555,15 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     if (index + 1 === newPos || index + 1 === newPos - 1) {
       setCurrentSkills(currentSkills);
     } else {
+      currentSkills[index].position++; //the position parameter.
       const tempList = [
-        {
-          id: currentSkills[index].id,
-          type: currentSkills[index].type,
-          skill: currentSkills[index].skill,
-          position: newPos,
-        },
+        currentSkills[index],
       ];
       for (let i = 0; i < currentSkills.length; i++) {
         if (i != index) {
           if (currentSkills[i].position >= newPos) {
-            tempList.push({
-              id: currentSkills[i].id,
-              type: currentSkills[i].type,
-              skill: currentSkills[i].skill,
-              position: currentSkills[i].position + 1,
-            });
+            currentSkills[i].position++;
+            tempList.push(currentSkills[i]);
           } else {
             tempList.push(currentSkills[i]);
           }
@@ -646,7 +626,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     ></span>
   );
   for (let i = 0; i < currentSkills.length; i++) {
-    if (currentSkills[i].skill != "") {
+    if (currentSkills[i].label != "") {
       // Skill
       let chosenClass = "skill-item chosen";
       chosenClass += ` ${currentSkills[i].type.toLowerCase().substring(0, 4)}`;
@@ -670,7 +650,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
             >
               X
             </button>
-            {currentSkills[i].skill}
+            {currentSkills[i].label}
           </span>
         </div>
       );
@@ -701,17 +681,20 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
   );
 
   const [currentSearch, setCurrentSearch] = useState("");
-  const [skillsList, setSkillsList] = useState<UserSkill[]>();
+  const [skillsList, setSkillsList] = useState<Skill[]>();
 
-  const getSkillsList = async (type: string) => {
+  const getSkillsList = async (type: string) => { //filters the skills properly
+      const response = await getSkills();
+      if(response.data){
+      let finalList = response.data;
     if (
       type.toLowerCase() === "developer" ||
       type.toLowerCase() === "designer" ||
       type.toLowerCase() === "soft"
     ) {
-      const response = await getSkillsByType(type);
+      finalList = response.data?.filter((skill) => skill.type === type)
       setSkillsList(
-        response.data.toSorted((a, b) => {
+        finalList.sort((a: Skill, b: Skill) => {
           if (a.label.toLowerCase() < b.label.toLowerCase()) {
             return -1;
           }
@@ -721,11 +704,8 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
           return 0;
         })
       );
-    } else {
-      const response = await getSkills();
-      if (response.data) {
-        setSkillsList(response.data);
-      }
+    }
+    setSkillsList(finalList);
     }
   };
 
@@ -799,7 +779,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                 let skillClass = `skill-item-button ${skillItem.type.toLowerCase().substring(0, 4)}`;
                 let found = false;
                 for (let i = 0; i < currentSkills.length; i++) {
-                  if (currentSkills[i].skill == skillItem.label) {
+                  if (currentSkills[i].label == skillItem.label) {
                     found = true;
                   }
                 }
@@ -811,12 +791,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                   <button
                     className={skillClass}
                     onClick={(e) => {
-                      addToSkillsList({
-                        id: skillItem.skill_id,
-                        type: skillItem.type,
-                        skill: skillItem.label,
-                        position: currentSkills.length + 1,
-                      });
+                      addToSkillsList(skillItem);
                     }}
                   >
                     {found ? "✓" : "+"}&nbsp;&nbsp;&nbsp;{skillItem.label}
@@ -835,7 +810,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
               let skillClass = `skill-item-button ${skillItem.type.toLowerCase().substring(0, 4)}`;
               let found = false;
               for (let i = 0; i < currentSkills.length; i++) {
-                if (currentSkills[i].skill == skillItem.label) {
+                if (currentSkills[i].label == skillItem.label) {
                   found = true;
                 }
               }
@@ -848,9 +823,10 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                   className={skillClass}
                   onClick={(e) => {
                     addToSkillsList({
-                      id: skillItem.skill_id,
+                      skillId: skillItem.skillId,
                       type: skillItem.type,
-                      skill: skillItem.label,
+                      label: skillItem.label,
+                      proficiency: skillItem.proficiency,
                       position: currentSkills.length + 1,
                     });
                   }}
@@ -924,43 +900,33 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
     switch (websiteName.toLowerCase()) {
       case "instagram":
         return <>&#xf16d;</>;
-        break;
 
       case "x":
         return <>&#xe61b;</>;
-        break;
 
       case "facebook":
         return <>&#xf39e;</>;
-        break;
 
       case "discord":
         return <>&#xf392;</>;
-        break;
 
       case "bluesky":
         return <>&#xe671;</>;
-        break;
 
       case "linkedin":
         return <>&#xf08c;</>;
-        break;
 
       case "youtube":
         return <>&#xf167;</>;
-        break;
 
       case "steam":
         return <>&#xf1b6;</>;
-        break;
 
       case "itch":
         return <>&#xf83a;</>;
-        break;
 
       case "other":
         return <>&#xf0c1;</>;
-        break;
     }
   };
 

@@ -5,8 +5,8 @@
   */
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { SearchBar } from '../../SearchBar';
-import { ProfileData } from '../ProfileEditPopup';
 import { getSkills } from '../../../api/users';
+import { MeDetail } from '@looking-for-group/shared';
 
 interface Tag {
   tag_id: number;
@@ -28,14 +28,14 @@ const getTagColor = (type: string) => {
   }
 }
 
-export const SkillsTab = (props: { profile: ProfileData }) => {
+export const SkillsTab = (props: { profile: MeDetail }) => {
   // States
-  const [modifiedProfile, setModifiedProfile] = useState<ProfileData>(props.profile);
+  const [modifiedProfile, setModifiedProfile] = useState<MeDetail>(props.profile);
   const [allSkills, setAllSkills] = useState<Tag[]>([]);
   // Tracks which tab we are currently on
   const [currentTagsTab, setCurrentTagsTab] = useState(0);
   // filtered results from tag search bar
-  const [searchedTags, setSearchedTags] = useState<(Tag | ProfileData)[]>([]);
+  const [searchedTags, setSearchedTags] = useState<(Tag | MeDetail)[]>([]);
 
   // Update data when data is changed
   useEffect(() => {

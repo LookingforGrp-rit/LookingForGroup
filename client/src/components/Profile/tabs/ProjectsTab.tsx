@@ -1,7 +1,5 @@
 import { useState, useEffect } from 'react';
-import { sendPut } from '../../../functions/fetch';
-import { getByID } from '../../../api/projects';
-import { getCurrentUsername, getProjectsByUser } from '../../../api/users';
+import { getProjectsByUser } from '../../../api/users';
 import { ProjectPreview } from '@looking-for-group/shared';
 
 // let userProjects : [];
@@ -15,7 +13,7 @@ const ProjectTile = (props: {index: string}) => {
     );
 }
 
-export const ProjectsTab = () => {
+export const ProjectsTab = (profile) => {
     const [userProjects, setUserProjects] = useState<ProjectPreview[]>([]);
     useEffect(() => {
         // Load in userProfile and then the projects
