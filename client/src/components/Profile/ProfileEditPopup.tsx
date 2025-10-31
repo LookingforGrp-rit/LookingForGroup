@@ -55,7 +55,7 @@ export const ProfileEditPopup = () => {
   const saveImage = async () => {
     if (!selectedImageFile) return;
 
-    await editUser({ profileImage: selectedImageFile }); //no longer exists, wrapped into updateUser
+    await editUser({ profileImage: selectedImageFile });
   };
 
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {

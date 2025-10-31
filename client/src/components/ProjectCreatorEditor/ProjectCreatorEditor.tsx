@@ -165,7 +165,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
     //Error Handling
     if (errorAddMember !== "" || errorAddPosition !== "" || errorLinks !== "") {
-      setFailCheck(true);
+      await setFailCheck(true);
       return;
     }
     //pops up error text if required fields in general haven't been filled out
@@ -177,7 +177,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     ) {
       const errorText = document.getElementById("invalid-input-error");
       setMessage("*Fill out all required info under General before saving!*");
-      setFailCheck(true);
+      await setFailCheck(true);
 
       if (errorText) {
         errorText.style.display = "block";
@@ -192,7 +192,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     ) {
       const errorText = document.getElementById("invalid-input-error");
       setMessage("*Choose a project type and tag under Tags before saving!*");
-      setFailCheck(true);
+      await setFailCheck(true);
 
       if (errorText) {
         errorText.style.display = "block";
