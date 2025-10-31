@@ -665,20 +665,20 @@ Project Creator and Editor style rules
   border: 2px solid white;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
-}
 
-.project-editor-image-container button {
-  padding: 0px;
-}
+  button {
+    padding: 0px;
+  }
 
-.project-editor-image-container img {
-  object-fit: cover;
-  object-position: center;
-  max-height: inherit;
-  border-radius: 10px;
-  width: 100%;
+  img {
+    object-fit: cover;
+    object-position: center;
+    max-height: inherit;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+  }
 }
-
 .project-editor-image-container:hover .project-image-hover {
   opacity: 1;
 }
