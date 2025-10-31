@@ -63,7 +63,6 @@ function App() {
           {/* <Route path={paths.routes.MESSAGES} element={<Messages />} /> */}
           <Route path={paths.routes.MYPROJECTS} element={<MyProjects />} />
           <Route path={paths.routes.PROFILE} element={<Profile />} />
-          {/* <Route path={paths.routes.NEWPROFILE} element={<Profile />} /> */}
           <Route path={paths.routes.PROJECT} element={<Project />} />
           <Route path={paths.routes.NEWPROJECT} element={<NewProject />} />
           <Route path={paths.routes.CREATEPROJECT} element={<CreateProject />} />

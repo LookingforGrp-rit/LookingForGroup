@@ -1,6 +1,5 @@
 import profilePlaceholder from '../../icons/profile-user.png';
 import { useNavigate } from 'react-router-dom';
-// import { profiles } from '../../constants/fakeData' // FIXME: use user data in db
 import * as paths from '../../constants/routes';
 
 //This component is used in the project page of the site
@@ -10,25 +9,22 @@ import * as paths from '../../constants/routes';
 
 //Takes in a name and role value as props, which should be the project member's name and their role in the relevant project
 
-export const ProjectMember = (props) => {
+export const ProjectMember = (props: { memberId: string; name?: string; role?: string; avatarUrl?: string }) => {
   const navigate = useNavigate();
 
-  // find profile from username
+  const { memberId, name, role, avatarUrl } = props;
 
-  let profile = profiles.find((p) => p._id === props.memberId);
-  if (profile === undefined) {
-    profile = profiles[0];
-  }
-  const pathQuery = `?userID=${profile._id}`;
+  // Build query string using the provided memberId
+  const pathQuery = `?userID=${memberId}`;
 
   return (
-    <div className="project-member" onClick={() => navigate(paths.routes.NEWPROFILE + pathQuery)}>
+    <div className="project-member" onClick={() => navigate(paths.routes.PROFILE + pathQuery)}>
       {/* Get image of profile and use preloader function in functions/imageLoad.tsx */}
-      <img src={profilePlaceholder} alt="profile" />
-      <h2 className="member-name" onClick={() => (window.location.href = 'profile')}>
-        {profile.name}
+      <img src={avatarUrl || profilePlaceholder} alt="profile" />
+      <h2 className="member-name" onClick={() => navigate(paths.routes.PROFILE + pathQuery)}>
+        {name || 'User'}
       </h2>
-      <div className="member-role">{props.role}</div>
+      <div className="member-role">{role}</div>
     </div>
   );
 };
