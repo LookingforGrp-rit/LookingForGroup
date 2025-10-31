@@ -13,7 +13,7 @@ const ProjectTile = (props: {index: number, data: ProjectPreview}) => {
     );
 }
 
-export const ProjectsTab = (profile) => {
+export const ProjectsTab = () => {
     const [userProjects, setUserProjects] = useState<ProjectPreview[]>([]);
     useEffect(() => {
         // Load in userProfile and then the projects

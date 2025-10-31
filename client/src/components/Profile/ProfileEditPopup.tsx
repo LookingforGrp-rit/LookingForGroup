@@ -162,7 +162,7 @@ export const ProfileEditPopup = () => {
           />
         );
       case 1:
-        return <ProjectsTab profile={profile} />;
+        return <ProjectsTab/>;
       case 2:
         return <SkillsTab profile={profile} />;
       case 3:
