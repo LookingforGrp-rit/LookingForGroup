@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getThumbnailService from '#services/projects/images/get-proj-images.ts';
+import getThumbnailService from '#services/projects/thumbnail/get-thumbnail.ts';
 
 //gets the thumbnail of a project
 const getThumbnail = async (req: Request, res: Response): Promise<void> => {
