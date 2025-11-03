@@ -18,20 +18,16 @@ const getThumbnailService = async (projectId: number): Promise<ProjectImage | Ge
       return 'NOT_FOUND';
     }
 
-    const thumb = await prisma.projects.findUnique({
-      //get the thumbnail
-      where: { projectId },
-      include: {
-        projectImages: {
-          where: { imageId: project.thumbnail },
-          select: ProjectImageSelector,
-        },
-      },
+    //get the thumbnail
+    const thumb = await prisma.projectImages.findUnique({
+      where: { imageId: project.thumbnail },
+      select: ProjectImageSelector,
     });
+    console.log(thumb);
 
     if (!thumb) return 'NOT_FOUND'; //literally impossible to land here because of how i'm doing this but uhhhhhh redundancy right
 
-    return transformProjectImage(projectId, thumb.projectImages[project.thumbnail]);
+    return transformProjectImage(projectId, thumb);
   } catch (e) {
     console.error(`Error in getThumbnailService: ${JSON.stringify(e)}`);
 

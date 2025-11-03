@@ -1585,7 +1585,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-    post:
+    put:
       summary: Updates a thumbnail
       tags:
         - Projects
@@ -1607,7 +1607,7 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
               type: object
               properties:
@@ -1639,7 +1639,7 @@ paths:
 
     delete:
       summary: Remove a project's thumbnail
-      description: Removes a project's thumbnailb the project's ID. This does NOT delete the project image itself.
+      description: Removes a project's thumbnail by the project's ID. This does NOT delete the project image itself.
       tags:
         - Projects
       security:

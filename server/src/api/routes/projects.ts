@@ -30,13 +30,7 @@ export const authenticated = (
 router.get('/', PROJECT.getProjects);
 
 //Create a new project
-router.post(
-  '/',
-  requiresLogin,
-  injectCurrentUser,
-  upload.single('thumbnail'),
-  authenticated(PROJECT.createProject),
-);
+router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
 
 //Get a specific project
 router.get('/:id', PROJECT.getProjectByID);
@@ -51,7 +45,6 @@ router.patch(
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
-  upload.single('thumbnail'),
   authenticated(PROJECT.updateProject),
 );
 
@@ -120,8 +113,10 @@ router.put(
 router.get('/:id/thumbnail', projectExistsAt('path', 'id'), PROJECT.getThumbnail);
 
 //Updates a project's thumbnail
-router.post(
+router.put(
   '/:id/thumbnail',
+  requiresLogin,
+  injectCurrentUser,
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.updateThumbnail,
@@ -130,9 +125,11 @@ router.post(
 //Deletes a project's thumbnail
 router.delete(
   '/:id/thumbnail',
+  requiresLogin,
+  injectCurrentUser,
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
-  PROJECT.removeThumbnail,
+  authenticated(PROJECT.removeThumbnail),
 );
 
 // MEDIUMS ROUTES
