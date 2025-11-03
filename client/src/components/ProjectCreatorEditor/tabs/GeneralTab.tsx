@@ -3,8 +3,9 @@
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import {
   ProjectPurpose,
+  ProjectStatus
 } from "@looking-for-group/shared";
-import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { PopupButton } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
@@ -98,7 +99,11 @@ export const GeneralTab = ({
         <Select>
           <SelectButton
             placeholder="Select"
-            initialVal={projectAfterGeneralChanges.status || ""}
+            initialVal={
+              projectAfterGeneralChanges.status ?
+                ProjectStatusEnums[projectAfterGeneralChanges.status] :
+                ""
+            }
             className="project-editor-input-item"
             type={"input"}
           />
@@ -106,14 +111,16 @@ export const GeneralTab = ({
             callback={(e) => {
               const status = (
                 e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
-              ).value as ProjectStatus;
+              ).value as ProjectStatusEnums;
 
-              if (status && Object.keys(ProjectStatusEnums).includes(status as ProjectStatusEnums)) {
+              if (status && Object.values(ProjectStatusEnums).includes(status as ProjectStatusEnums)) {
                 projectAfterGeneralChanges = {
                   ...projectAfterGeneralChanges,
                   status: status as ProjectStatus,
                 };
                 updatePendingProject(projectAfterGeneralChanges);
+
+                const key = Object.keys(ProjectStatusEnums).find(key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === status)
 
                 dataManager.updateFields({
                   id: {
@@ -121,12 +128,12 @@ export const GeneralTab = ({
                     type: "canon",
                   },
                   data: {
-                    status: ProjectStatusEnums[status] as ProjectStatus,
+                    status: key as ProjectStatus,
                   },
                 });
               }
             }}
-            options={Object.keys(ProjectStatusEnums).map((option) => {
+            options={Object.values(ProjectStatusEnums).map((option) => {
               return {
                 markup: <>{option}</>,
                 value: option,
@@ -145,7 +152,11 @@ export const GeneralTab = ({
         <Select>
           <SelectButton
             placeholder="Select"
-            initialVal={projectAfterGeneralChanges.purpose || ""}
+            initialVal={
+              projectAfterGeneralChanges.purpose ?
+                ProjectPurposeEnums[projectAfterGeneralChanges.purpose] :
+                ""
+            }
             className="project-editor-input-item"
             type={"input"}
           />
@@ -153,14 +164,16 @@ export const GeneralTab = ({
             callback={(e) => {
               const purpose = (
                 e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
-              ).value as ProjectPurpose;
+              ).value as ProjectPurposeEnums;
 
-              if (purpose && Object.keys(ProjectPurposeEnums).includes(purpose as ProjectPurposeEnums)) {
+              if (purpose && Object.values(ProjectPurposeEnums).includes(purpose as ProjectPurposeEnums)) {
                 projectAfterGeneralChanges = {
                   ...projectAfterGeneralChanges,
                   purpose: purpose as ProjectPurpose,
                 };
                 updatePendingProject(projectAfterGeneralChanges);
+
+                const key = Object.keys(ProjectPurposeEnums).find(key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === purpose)
 
                 dataManager.updateFields({
                   id: {
@@ -168,12 +181,12 @@ export const GeneralTab = ({
                     type: "canon",
                   },
                   data: {
-                    purpose: ProjectPurposeEnums[purpose] as ProjectPurpose,
+                    purpose: key as ProjectPurpose,
                   },
                 });
               }
             }}
-            options={Object.keys(ProjectPurposeEnums).map((option) => {
+            options={Object.values(ProjectPurposeEnums).map((option) => {
               return {
                 markup: <>{option}</>,
                 value: option,
