@@ -39,14 +39,14 @@ export enum SkillProficiency {
 };
 export enum ProjectPurpose {
   Personal = "Personal",
-  "Portfolio Piece" = "PortfolioPiece",
+  PortfolioPiece = "Portfolio Piece",
   Academic = "Academic",
-  "Co-op" = "CoOp"
+  CoOp = "Co-op"
 };
 export enum ProjectStatus {
   Planning = "Planning",
   Development = "Development",
-  "Post-Production" = "PostProduction",
+  PostProduction = "Post-Production",
   Complete = "Complete"
 }
 export enum JobAvailability {
