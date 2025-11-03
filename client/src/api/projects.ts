@@ -171,6 +171,53 @@ export const addPic = async (
   return response as ApiResponse<ProjectImage>;
 };
 
+
+// Get project thumbnail
+/**
+ * @param projectID - ID of the project
+ */
+export const getThumbnail = async (
+  projectID: number
+): Promise<ApiResponse<ProjectImage>> => {
+  const apiURL = `/projects/${projectID}/thumbnail`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getThumbnail: ${response.error}`);
+  return response;
+};
+
+// Update project thumbnail
+/**
+ * @param projectID - ID of the project
+ * @param thumbnail - ID of the project image to use as the thumbnail
+ */
+export const updateThumbnail = async (
+  projectID: number,
+  thumbnail: number
+): Promise<ApiResponse<ProjectImage>> => {
+  const apiURL = `/projects/${projectID}/thumbnail`;
+  const response = await POST(apiURL, {thumbnail: thumbnail});
+
+  if (response.error) console.log(`Error in updateThumbnail: ${response.error}`);
+  return response as ApiResponse<ProjectImage>;
+};
+
+/**
+ * Removes the thumbnail from a project (does not delete the project image associated with it)
+ * @param projectID - ID of the target project
+ * @returns Response status
+ */
+export const removeThumbnail = async (
+  projectID: number
+): Promise<ApiResponse<null>> => {
+
+  const apiURL = `/projects/${projectID}/thumbnail`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in rmeoveThumbnail: ${response.error}`);
+  return response as ApiResponse<null>;
+};
+
 /**
  * Updates position order of a project's carousel pictures
  * @param projectID - ID of the target project
@@ -552,6 +599,9 @@ export default {
   deleteMember,
   getProjectSocials,
   addProjectSocial,
+  getThumbnail,
+  updateThumbnail,
+  removeThumbnail,
   updateProjectSocial,
   deleteProjectSocial,
   getProjectTags,

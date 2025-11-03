@@ -61,6 +61,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
       setMajorsList(response.data as Major[]);
     }
   };
+  
 
   useEffect(() => {
     getJobTitlesData();
@@ -438,7 +439,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
         <div className="edit-region-input projects">
           {userProjects !== undefined && shownProjects !== undefined
             ? userProjects.map((project) => {
-                if (project.thumbnail === null || project.thumbnail == "") {
+                if (project.thumbnail === null) {
                   return (
                     <div className="list-project">
                       <div className="inner-list-project">{project.title}</div>

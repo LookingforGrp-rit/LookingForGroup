@@ -8,7 +8,7 @@ import { addProjectFollowing, deleteProjectFollowing, getCurrentAccount, getProj
 import usePreloadedImage from '../functions/imageLoad.tsx';
 import { ProjectWithFollowers, ProjectMedium, Tag } from '@looking-for-group/shared';
 import React from 'react';
-import { getByID } from '../api/projects.ts';
+import { getByID, getThumbnail } from '../api/projects.ts';
 
 //Component that will contain info about a project, used in the discovery page
 //Smaller and more concise than ProjectCard.tsx
@@ -29,6 +29,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const [userId, setUserId] = useState<number>();
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
   const [isFollowing, setFollowing] = useState(false);
+  const [thumbnail, setThumbnail] = useState<string>('') //a consequence of not making the thumbnail into an image relation...
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
 
   // Formats follow-count based on Figma design. Returns a string
@@ -88,6 +89,11 @@ useEffect(() => {
       checkFollow();
     }
   };
+    const fetchThumbnail = async () => {
+      const response = await getThumbnail(projectId);
+      if (response.data) setThumbnail(response.data.image);
+    };
+    fetchThumbnail();
     getProjectData();
 }, [projectId, userId, checkFollow])
 
@@ -118,7 +124,7 @@ useEffect(() => {
     // <div className={'project-panel'} style={{ width: width }}>
     <div className={'project-panel'}>
       <img
-        src={usePreloadedImage(`images/thumbnails/${project.thumbnail}`, placeholderThumbnail)}
+        src={usePreloadedImage(`images/thumbnails/${thumbnail}`, placeholderThumbnail)}
         alt={'project image'}
       />
       <div
@@ -127,7 +133,7 @@ useEffect(() => {
       // style={rightAlign ? { width: width, right: 0 } : { width: width }}
       >
         <img
-          src={usePreloadedImage(`images/thumbnails/${project.thumbnail}`, placeholderThumbnail)}
+          src={usePreloadedImage(`images/thumbnails/${thumbnail}`, placeholderThumbnail)}
           alt={'project image'}
         />
         {/* <h2>{project.title}</h2> */}

@@ -1,11 +1,11 @@
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { PagePopup } from './PagePopup';
-import { deleteProject} from '../api/projects';
+import { deleteProject, getThumbnail} from '../api/projects';
 import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 
@@ -24,20 +24,15 @@ const MyProjectsDisplayGrid = ({ projectData } : {projectData: ProjectDetail}) =
   const [showResult, setShowResult] = useState(false);
   const [requestType, setRequestType] = useState<'delete' | 'leave'>('delete');
   const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
+  const [thumbnail, setThumbnail] = useState<string>('');
 
-  // Fetches the status of a project via projects.ts
-  //doesn't show in the grid, no need for it here
-  // useEffect(() => {
-  // const fetchStatus = async () => {
-  //   const response = await getByID(projectData.projectId);
-  //   if (response.data) {
-  //     setStatus(response.data.status);
-  //   } else {
-  //     setStatus('Error loading status');
-  //   }
-  // };
-  // fetchStatus();
-  // })
+  useEffect(() => {
+  const fetchThumbnail = async () => {
+    const response = await getThumbnail(projectData.projectId);
+    if (response.data) setThumbnail(response.data.image);
+  };
+  fetchThumbnail();
+  })
 
   const toggleOptions = () => setOptionsShown(!optionsShown);
 
@@ -63,8 +58,8 @@ const MyProjectsDisplayGrid = ({ projectData } : {projectData: ProjectDetail}) =
       {/* Thumbnail */}
       <img
         className="grid-card-image"
-        src={(projectData.thumbnail)
-          ? `images/thumbnails/${projectData.thumbnail}`
+        src={(thumbnail)
+          ? `images/thumbnails/${thumbnail}`
           : `/assets/project_temp-DoyePTay.png`
         }
         alt={`${projectData.title} Thumbnail`}
