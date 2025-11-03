@@ -104,7 +104,7 @@ router.delete(
   PROJECT.removeImage,
 );
 //Reorders a project's images
-//is this really even needed...
+//curse you position parameter...
 router.put(
   '/:id/images/reorder',
   requiresLogin,
@@ -112,6 +112,32 @@ router.put(
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.reorderImages,
+);
+
+// THUMBNAIL ROUTES
+
+//Gets a project's thumbnail
+router.get('/:id/thumbnail', projectExistsAt('path', 'id'), PROJECT.getThumbnail);
+
+//Updates a project's thumbnail
+router.post(
+  '/:id/thumbnail',
+  projectExistsAt('path', 'id'),
+  projectAttributeExistsAt(
+    'image',
+    { type: 'path', key: 'id' },
+    { type: 'body', key: 'thumbnail' },
+  ),
+  authenticated(requiresProjectOwner),
+  PROJECT.updateThumbnail,
+);
+
+//Deletes a project's thumbnail
+router.delete(
+  '/:id/thumbnail',
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.updateThumbnail,
 );
 
 // MEDIUMS ROUTES

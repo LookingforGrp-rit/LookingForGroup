@@ -5,9 +5,9 @@ import updateThumbnailService from '#services/projects/thumbnail/update-thumbnai
 //updates the thumbnail param of a project to contain an existing project image
 const updateThumbnail = async (req: Request, res: Response): Promise<void> => {
   const projectId = parseInt(req.params.id);
-  const imageId = parseInt(req.params.imageId);
+  const thumbId = (req.body as { thumbnail: number }).thumbnail; //this should work right
 
-  const result = await updateThumbnailService(projectId, imageId);
+  const result = await updateThumbnailService(projectId, thumbId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import getThumbnailService from '#services/projects/images/get-proj-images.ts';
 
 //gets the thumbnail of a project
-const getThumbnailController = async (req: Request, res: Response): Promise<void> => {
+const getThumbnail = async (req: Request, res: Response): Promise<void> => {
   const projID = parseInt(req.params.id);
 
   const result = await getThumbnailService(projID);
@@ -36,4 +36,4 @@ const getThumbnailController = async (req: Request, res: Response): Promise<void
   res.status(200).json(resBody);
 };
 
-export default getThumbnailController;
+export default getThumbnail;

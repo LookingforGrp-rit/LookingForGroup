@@ -3,7 +3,7 @@ import type { Request, Response } from 'express';
 import { removeThumbnailService } from '#services/projects/thumbnail/remove-thumbnail.ts';
 
 //removes an image from a project
-const deleteThumbnail = async (req: Request, res: Response) => {
+const removeThumbnail = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
 
   const result = await removeThumbnailService(projectId);
@@ -35,4 +35,4 @@ const deleteThumbnail = async (req: Request, res: Response) => {
   res.status(200).json(resBody);
 };
 
-export default deleteThumbnail;
+export default removeThumbnail;
