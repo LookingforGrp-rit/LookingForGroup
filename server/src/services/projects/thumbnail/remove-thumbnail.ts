@@ -17,7 +17,7 @@ export const removeThumbnailService = async (
       },
     });
 
-    if (!project || !project.thumbnail) return 'NOT_FOUND';
+    if (!project || !project.thumbnailId) return 'NOT_FOUND';
 
     //you can delete the thumbnail itself through the remove image service already so
     //i think here it makes sense to just have this deselect it w/o actually removing the image
@@ -27,7 +27,11 @@ export const removeThumbnailService = async (
         projectId,
       },
       data: {
-        thumbnail: null,
+        thumbnail: {
+          disconnect: {
+            imageId: project.thumbnailId,
+          },
+        },
       },
     });
 

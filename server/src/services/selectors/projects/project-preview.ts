@@ -9,6 +9,7 @@ export const ProjectPreviewSelector = Object.freeze({
     select: UserPreviewSelector,
   },
   thumbnail: true,
+  thumbnailId: true,
   userId: true,
   mediums: {
     select: ProjectMediumSelector,

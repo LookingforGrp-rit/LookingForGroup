@@ -397,7 +397,8 @@ export interface ProjectPreview {
   title: string;
   hook: string;
   owner: UserPreview;
-  thumbnail: number | null;
+  thumbnail: ProjectImage | null; 
+  thumbnailId: number,
   mediums: ProjectMedium[];
   apiUrl: string;
 }
@@ -469,7 +470,7 @@ export type AddUserMajorInput = Pick<Major, "majorId">;
 export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
     Pick<ProjectDetail, "hook" | "description" | "status" | "audience" | "purpose">
-  > & { thumbnail?: File };
+  >;
 export type UpdateProjectInput = Partial<CreateProjectInput>;
 
 export type CreateProjectImageInput = Pick<ProjectImage, "altText"> & {

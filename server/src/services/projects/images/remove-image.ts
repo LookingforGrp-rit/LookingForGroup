@@ -11,23 +11,27 @@ export const removeImageService = async (
   imageId: number,
 ): Promise<RemoveImageServiceSuccess | RemoveImageServiceError> => {
   try {
-    //it now nulls the thumbnail param if the thumbnail is selected for deletion here
-    const projectThumb = await prisma.projects.findUnique({
+    const project = await prisma.projects.findUnique({
       where: {
         projectId,
       },
-      select: {
-        thumbnail: true,
-      },
     });
 
-    if (!projectThumb) return 'NOT_FOUND';
-    if (projectThumb.thumbnail === imageId) {
+    if (!project) return 'NOT_FOUND';
+
+    //now disconnects the thumbnail param if the thumbnail is selected for deletion here
+    if (project.thumbnailId === imageId) {
       await prisma.projects.update({
         where: {
           projectId,
         },
-        data: { thumbnail: null },
+        data: {
+          thumbnail: {
+            disconnect: {
+              imageId,
+            },
+          },
+        },
       });
     }
 

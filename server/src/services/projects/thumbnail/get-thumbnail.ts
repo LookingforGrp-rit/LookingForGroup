@@ -8,24 +8,25 @@ type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
 const getThumbnailService = async (projectId: number): Promise<ProjectImage | GetServiceError> => {
   try {
+    //get the project (i need to do this separately for the project image selector)
     const project = await prisma.projects.findUnique({
-      //get the project (i need it for the thumbnail id)
       where: { projectId },
+      include: {
+        thumbnail: true,
+      },
     });
 
-    if (!project || !project.thumbnail) {
-      //check if it has a thumbnail (or if said project exists)
+    if (!project || !project.thumbnailId) {
       return 'NOT_FOUND';
     }
 
     //get the thumbnail
     const thumb = await prisma.projectImages.findUnique({
-      where: { imageId: project.thumbnail },
+      where: { imageId: project.thumbnailId },
       select: ProjectImageSelector,
     });
-    console.log(thumb);
 
-    if (!thumb) return 'NOT_FOUND'; //literally impossible to land here because of how i'm doing this but uhhhhhh redundancy right
+    if (!thumb) return 'NOT_FOUND'; //logically impossible to land here because of how i'm doing this but it complains when i axe it so
 
     return transformProjectImage(projectId, thumb);
   } catch (e) {
