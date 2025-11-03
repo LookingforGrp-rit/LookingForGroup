@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import { Header } from '../Header';
 import { members } from '../../constants/lfgmembers';
 
@@ -8,41 +8,24 @@ const Credits = () => {
   // displayed data based on filter/search query
   const [filteredMembersList, setFilteredMembersList] = useState(members);
 
-  // Need this for searching
-  let tempMembersList = members;
-
-  // List that holds trimmed data for searching. Empty before fullItemList is initialized
-  const [membersSearchData, setMembersSearchData] = useState(members);
-
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
-  const dataSet = useMemo(() => {
-    return [{ data: membersSearchData }];
-  }, [membersSearchData]);
+  const dataSet = useMemo(() => [{ data: members }], []);
 
   // Updates filtered members list with new search info
-  const searchMembers = (searchResults) => {
-    // Clear list before handling search
-    tempMembersList = [];
+  const searchMembers = useCallback((searchResults: any[][]) => {
+    if (!searchResults || !Array.isArray(searchResults)) return;
+    
+    // Flatten the nested arrays
+    const flattened = searchResults.flat();
 
-    //runs through each member to see if any match the search term
-    for (const result of searchResults[0]) {
-      for (const member of membersSearchData) {
-        if (result === member) {
-          //if match is found, pushes that member to the temp member list
-          tempMembersList.push(members[membersSearchData.indexOf(member)]);
-          continue;
-        }
-      }
-    }
-
-    // If no items were found, 
-    if (tempMembersList.length === 0) {
-      setFilteredMembersList([]); // Clear the displayed list
-      console.log('No matching items found.');
-    } else {
-      setFilteredMembersList(tempMembersList);
-    }
-  };
+    // Prevent unnecessary state updates if results haven't changed
+    setFilteredMembersList((prev) => {
+      const prevNames = prev.map((m) => m.name).join(',');
+      const newNames = flattened.map((m) => m.name).join(',');
+      if (prevNames === newNames) return prev;
+      return flattened;
+    });
+  }, []);
 
   return (
     <div className="page" id="my-projects">
