@@ -113,7 +113,7 @@ model Projects {
   title             String              @db.VarChar(150)
   hook              String              @default("") @db.VarChar(200)
   description       String              @default("") @db.VarChar(2000)
-  thumbnail         String?             @db.VarChar(100)
+  thumbnail         Int?
   purpose           ProjectsPurpose?
   status            ProjectsStatus      @default(Planning)
   audience          String              @default("") @db.VarChar(300)

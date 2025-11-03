@@ -83,9 +83,6 @@ components:
           type: string
         hook:
           type: string
-        thumbnail:
-          type: string
-          format: binary
       required:
         - title
 
@@ -102,9 +99,6 @@ components:
           type: string
         hook:
           type: string
-        thumbnail:
-          type: string
-          format: binary
 
     CreateProjectImageInput:
       type: object

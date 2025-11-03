@@ -397,7 +397,7 @@ export interface ProjectPreview {
   title: string;
   hook: string;
   owner: UserPreview;
-  thumbnail: string | null;
+  thumbnail: number | null;
   mediums: ProjectMedium[];
   apiUrl: string;
 }

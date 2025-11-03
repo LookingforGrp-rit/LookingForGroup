@@ -30,13 +30,7 @@ export const authenticated = (
 router.get('/', PROJECT.getProjects);
 
 //Create a new project
-router.post(
-  '/',
-  requiresLogin,
-  injectCurrentUser,
-  upload.single('thumbnail'),
-  authenticated(PROJECT.createProject),
-);
+router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
 
 //Get a specific project
 router.get('/:id', PROJECT.getProjectByID);
@@ -51,7 +45,6 @@ router.patch(
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
-  upload.single('thumbnail'),
   authenticated(PROJECT.updateProject),
 );
 
@@ -104,7 +97,7 @@ router.delete(
   PROJECT.removeImage,
 );
 //Reorders a project's images
-//is this really even needed...
+//position parameter...
 router.put(
   '/:id/images/reorder',
   requiresLogin,
@@ -112,6 +105,31 @@ router.put(
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.reorderImages,
+);
+
+// THUMBNAIL ROUTES
+
+//Gets a project's thumbnail
+router.get('/:id/thumbnail', projectExistsAt('path', 'id'), PROJECT.getThumbnail);
+
+//Updates a project's thumbnail
+router.put(
+  '/:id/thumbnail',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.updateThumbnail,
+);
+
+//Deletes a project's thumbnail
+router.delete(
+  '/:id/thumbnail',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  authenticated(PROJECT.removeThumbnail),
 );
 
 // MEDIUMS ROUTES
