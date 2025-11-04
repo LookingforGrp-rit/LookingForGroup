@@ -198,6 +198,7 @@ export const MediaTab = ({
       // If only image, set as thumbnail
       if (projectAfterMediaChanges.projectImages.length === 1) {
         // Update dataManager
+        //the data manager must be updated to incorporate new thumbnail stuff
         dataManager.updateFields({
           id: {
             value: projectId,
@@ -233,6 +234,9 @@ export const MediaTab = ({
       if (!projectId) return;
       
       // updateProject has to take a file
+      //this is no longer handled by updateProject, and the file is not needed
+      //...but the project image has to exist in order for the thumbnail to be updated/created
+      //and not the pending project image either the actual project image, because thumbnail is assigned based on the id
       let imageFile: File;
       // if string, get file
       if (typeof projectImage.image === 'string') {

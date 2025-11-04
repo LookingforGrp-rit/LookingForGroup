@@ -491,6 +491,9 @@ export type UpdateProjectMemberInput = Partial<
 
 export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url">;
 export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url">>;
+export type UpdateProjectThumbnailInput = {
+  thumbnail: ProjectImage
+}
 
 export type AddProjectTagsInput = Pick<ProjectTag, "tagId">;
 

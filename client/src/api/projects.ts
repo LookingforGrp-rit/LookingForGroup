@@ -24,6 +24,7 @@ import type {
   ProjectJob,
   CreateProjectJobInput,
   UpdateProjectJobInput,
+  UpdateProjectThumbnailInput,
 } from "@looking-for-group/shared";
 
 //const navigate = useNavigate();
@@ -193,10 +194,10 @@ export const getThumbnail = async (
  */
 export const updateThumbnail = async (
   projectID: number,
-  thumbnail: number
+  thumbnail: UpdateProjectThumbnailInput
 ): Promise<ApiResponse<ProjectImage>> => {
   const apiURL = `/projects/${projectID}/thumbnail`;
-  const response = await POST(apiURL, {thumbnail: thumbnail});
+  const response = await POST(apiURL, thumbnail);
 
   if (response.error) console.log(`Error in updateThumbnail: ${response.error}`);
   return response as ApiResponse<ProjectImage>;
