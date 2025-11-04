@@ -5,7 +5,7 @@ import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
-import { getByID,  deleteProject, getThumbnail } from '../api/projects';
+import { getByID,  deleteProject } from '../api/projects';
 import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 
@@ -25,7 +25,6 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   const [showResult, setShowResult] = useState(false);
   const [requestType, setRequestType] = useState<'delete' | 'leave'>('delete');
   const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
-  const [thumbnail, setThumbnail] = useState<string>('');
 
   // Fetches project status and project thumbnail
 
@@ -38,12 +37,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
       setStatus('Error loading status');
     }
   };
-    const fetchThumbnail = async () => {
-      const response = await getThumbnail(projectData.projectId);
-      if (response.data) setThumbnail(response.data.image)
-    };
     fetchStatus();
-    fetchThumbnail();
   })
 
   //this doesn't look used and idk what it's meant to be used for
@@ -81,8 +75,8 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
       <div className="list-card-section1">
         <img
           className="list-card-image"
-          src={thumbnail
-            ? `images/thumbnails/${thumbnail}`
+          src={projectData.thumbnail?.image
+            ? `${projectData.thumbnail?.image}`
             : `/assets/project_temp-DoyePTay.png`
           }
           alt={`${projectData.title} Thumbnail`}

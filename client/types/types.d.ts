@@ -91,7 +91,7 @@ type PendingProjectTag = Omit<ProjectTag, "apiUrl">;
 type PendingProjectMedium = Omit<ProjectMedium, "apiUrl">;
 
 interface PendingProject extends Omit<Pending<ProjectDetail>, "localId"> {
-  thumbnail: string | null | PendingProjectImage;
+  thumbnail: PendingProjectImage | null;
   tags: (ProjectTag | PendingProjectTag)[];
   projectImages: (ProjectImage | PendingProjectImage)[];
   projectSocials: (ProjectSocial | Pending<ProjectSocial>)[];

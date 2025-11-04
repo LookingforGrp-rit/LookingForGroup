@@ -439,7 +439,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
         <div className="edit-region-input projects">
           {userProjects !== undefined && shownProjects !== undefined
             ? userProjects.map((project) => {
-                if (project.thumbnail === null) {
+                if (!project.thumbnail) {
                   return (
                     <div className="list-project">
                       <div className="inner-list-project">{project.title}</div>
@@ -460,7 +460,7 @@ const EditButton: React.FC<ProfileEditButtonProps> = ({ user }) => {
                     </div>
                   );
                 } else {
-                  const projectURL = `images/thumbnails/${project.thumbnail}`;
+                  const projectURL = `${project.thumbnail.image}`;
                   return (
                     <div className="list-project">
                       <div className="inner-list-project">

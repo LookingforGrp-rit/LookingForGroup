@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { PagePopup } from './PagePopup';
-import { deleteProject, getThumbnail} from '../api/projects';
+import { deleteProject } from '../api/projects';
 import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 
@@ -24,15 +24,7 @@ const MyProjectsDisplayGrid = ({ projectData } : {projectData: ProjectDetail}) =
   const [showResult, setShowResult] = useState(false);
   const [requestType, setRequestType] = useState<'delete' | 'leave'>('delete');
   const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
-  const [thumbnail, setThumbnail] = useState<string>('');
 
-  useEffect(() => {
-  const fetchThumbnail = async () => {
-    const response = await getThumbnail(projectData.projectId);
-    if (response.data) setThumbnail(response.data.image);
-  };
-  fetchThumbnail();
-  })
 
   const toggleOptions = () => setOptionsShown(!optionsShown);
 
@@ -58,8 +50,8 @@ const MyProjectsDisplayGrid = ({ projectData } : {projectData: ProjectDetail}) =
       {/* Thumbnail */}
       <img
         className="grid-card-image"
-        src={(thumbnail)
-          ? `images/thumbnails/${thumbnail}`
+        src={projectData.thumbnail?.image
+          ? `${projectData.thumbnail?.image}`
           : `/assets/project_temp-DoyePTay.png`
         }
         alt={`${projectData.title} Thumbnail`}

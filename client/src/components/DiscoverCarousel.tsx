@@ -1,12 +1,10 @@
 import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./ImageCarouselNew";
 import * as paths from '../constants/routes';
-import placeholderThumbnail from '../images/project_temp.png';
-import usePreloadedImage from "../functions/imageLoad";
 import { ProjectWithFollowers } from "@looking-for-group/shared";
 
 
 export const DiscoverCarousel = ({ dataList = [] }) => {
-    const projectImg = usePreloadedImage(`images/thumbnails/`, placeholderThumbnail);
+    //const projectImg = usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail);
 
     // Creates HTML elements from data, passed into the carousel
     const carouselContents = dataList.map((project: ProjectWithFollowers) => {
@@ -14,7 +12,7 @@ export const DiscoverCarousel = ({ dataList = [] }) => {
             <>
                 <div className='discover-project-image'>
                 <img
-                    src={projectImg}
+                    src={project.thumbnail?.image}
                     alt={'project image'}
                 />
                 </div>

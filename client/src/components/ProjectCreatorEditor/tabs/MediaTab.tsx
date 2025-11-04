@@ -102,7 +102,7 @@ export const MediaTab = ({
     // Will check all props except lastModified for equivalency where a File type is involved.
 
     // thumbnail: string
-    if (typeof thumbnail === 'string') {
+    if (typeof thumbnail === 'string') { //thumbnail is never a string now
       // image: string
       if (typeof image.image === 'string') {
         return thumbnail === image.image;

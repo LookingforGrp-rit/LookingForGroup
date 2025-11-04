@@ -7,7 +7,7 @@ import { ProjectPreview } from '@looking-for-group/shared';
 const ProjectTile = (props: {index: number, data: ProjectPreview}) => {
     return (
         <div className='projectTile' id={props.index.toString()}>
-            <img src={props.data.thumbnail!} alt="" />
+            <img src={props.data.thumbnail?.image} alt="" />
             {<p>{props.data.title}</p>}
         </div>
     );

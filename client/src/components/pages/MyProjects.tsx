@@ -62,8 +62,9 @@ const MyProjects = () => {
         setLoggedIn(res.data.userId);
         const projectsRes = await getProjectsByUser();
 
-        console.log(projectsRes.data)
         if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
+        
+        console.log(projectsRes.data);
         
       } else {
         //guest
