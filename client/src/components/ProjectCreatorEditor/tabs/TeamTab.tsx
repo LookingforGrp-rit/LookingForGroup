@@ -127,12 +127,6 @@ export const TeamTab = ({
   const [currentJob, setCurrentJob] = useState<
     ProjectJob | Pending<ProjectJob>
   >();
-  const [currentlyEditingJobId, setCurrentlyEditingJobId] = useState<
-    number | null
-  >();
-
-  // store new member data to save later
-  const [newMember, setNewMember] = useState<PendingProjectMember>();
 
   // tracking whether position view is in edit mode or not
   const [editMode, setEditMode] = useState(false);
@@ -408,7 +402,7 @@ export const TeamTab = ({
       resetFields();
       return true;
     }
-  }, [allRoles, allUsers, dataManager, newMember]);
+  }, [allRoles, allUsers, currentMember, dataManager]);
 
   // Handle search results
   // FIXME does this need to be a 2D array?
@@ -448,7 +442,7 @@ export const TeamTab = ({
       // clear search results
       setSearchResults([]);
     },
-    [allUsers, newMember]
+    [allUsers, currentMember]
   );
 
   // Resets Add Member name field, role/permission dropdowns
@@ -575,6 +569,7 @@ export const TeamTab = ({
       ) {
         // set error
         setErrorAddPosition("All fields are required");
+        console.log(currentJob);
         return;
       }
 
@@ -887,7 +882,7 @@ export const TeamTab = ({
         </Select>
         <div id="edit-position-buttons">
           <div id="edit-position-button-pair">
-            <button onClick={savePosition} id="position-edit-save">
+            <button type="button" onClick={savePosition} id="position-edit-save">
               Save
             </button>
             <button
@@ -1040,6 +1035,7 @@ export const TeamTab = ({
               }}
               options={projectAfterTeamChanges.members
                 .filter((member) => member.user !== null)
+                .filter((member) => member.role.label === "Owner") // TODO change when perms exist
                 .map(({ user }) => ({
                   markup: (
                     <>
@@ -1527,7 +1523,7 @@ export const TeamTab = ({
                 buttonId="team-add-member-add-button"
                 callback={() => {
                   const memberAdded = handleNewMember();
-                  return memberAdded; // #FIXME what is this for
+                  return memberAdded; // FIXME what is this for
                 }}
                 doNotClose={(prev) => !prev}
               >
@@ -1536,7 +1532,7 @@ export const TeamTab = ({
               <PopupButton
                 buttonId="team-add-member-cancel-button"
                 callback={() => {
-                  setNewMember(emptyMember);
+                  setCurrentMember(emptyMember);
                   setErrorAddMember("");
                   handlePopupReset();
                 }}
@@ -1551,11 +1547,12 @@ export const TeamTab = ({
     ),
     [
       allRoles,
+      currentMember,
+      dataManager,
       errorAddMember,
       handleNewMember,
       handleSearch,
       handleUserSelect,
-      newMember,
       searchBarKey,
       searchQuery,
       searchResults,
@@ -1570,16 +1567,26 @@ export const TeamTab = ({
         <div className="positions-popup-list">
           <div id="team-positions-popup-list-header">Open Positions</div>
           <div id="team-positions-popup-list-buttons">
-            {projectAfterTeamChanges.jobs?.map(({ role: { roleId } }) => (
-              <div key={roleId} className="team-positions-button">
+            {projectAfterTeamChanges.jobs?.map((job) => (
+              <div
+                key={
+                  "jobId" in job ? job.jobId + "-canon" : job.localId + "-local"
+                }
+                className="team-positions-button"
+              >
                 <img src="/images/icons/drag.png" alt="positions" />
                 <button
                   className="positions-popup-list-item"
                   id=""
-                  data-id={roleId}
-                  onClick={() => (!editMode ? setCurrentRole(roleId) : {})}
+                  data-id={"jobId" in job ? job.jobId : job.localId}
+                  onClick={() => {
+                    if (!editMode) {
+                      if ("jobId" in job) setCurrentRole(job.jobId);
+                      else setCurrentRole(job.localId!);
+                    }
+                  }}
                 >
-                  {roleId}
+                  {job.role?.label ?? "Member"}
                 </button>
               </div>
             ))}
