@@ -7,8 +7,8 @@ import { PanelBox } from '../PanelBox';
 import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { devSkills, desSkills } from '../../constants/tags';
-import { getProjects } from '../../api/projects';
-import { getUsers } from '../../api/users';
+import { getProjects, getByID } from '../../api/projects';
+import { getUsers, getUsersById } from '../../api/users';
 import { Tag, Skill, UserPreview, ProjectPreview } from '@looking-for-group/shared';
 
 //import api utils
@@ -222,142 +222,89 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   }, [itemSearchData, fullItemList]);
 
   // Updates filtered project list with new tag info
-  const updateItemList = (activeTagFilters: Tag[]) => {
-    let tagFilteredList = tempItemList.filter((item) => {
-      let tagFilterCheck = true;
+  const updateItemList = async (activeTagFilters: Tag[]) => {
+    
+    // Get project and user info to match with tags
+    const items = await Promise.all(
+      tempItemList.map(async (item) => {
+        if (category === 'projects') {
+          const projectData = await getByID(item.projectId);
+          return { ...item, projectData };
+        }
+        else {
+        const userData = await getUsersById(item.userId);
+        return { ...item, userData };
+        }
+      })
+    )
 
+    let tagFilteredList = items.filter((item) => {     
+     if (activeTagFilters.length === 0) return true;
+     let matchesAny = false;
       for (const tag of activeTagFilters) {
         if (category === 'projects') {
           // Check project type by name since IDs are not unique relative to tags
-          if (tag.type === 'Project Type') {
-            if (item.project_types) {
-              const projectTypes = item.project_types.map((tag) => tag.project_type.toLowerCase());
-
-              if (!projectTypes.includes(tag.label.toLowerCase())) {
-                tagFilterCheck = false;
-                break;
-              }
-            } else {
-              tagFilterCheck = false;
-              break;
+          // Project Type tag
+          if (tag.type === 'Project Type' && Array.isArray(item.projectData.data.mediums)) {
+              const projectTypes = item.projectData.data.mediums.map((t) => t.toLowerCase());
+              if (projectTypes.includes(tag.label.toLowerCase())) {
+                matchesAny = true;
+            } 
+          }
+          // Purpose tag 
+          else if (tag.type === 'Purpose' && item.projectData.data.purpose) {
+            const projectPurpose = item.projectData.data.purpose.toLowerCase();
+            if (projectPurpose.includes(tag.label.toLowerCase())) {
+              matchesAny = true;
             }
           }
+          // Tag check can be done by ID: Genre
+         else if (tag.tagId && item.projectData.data.tags) {
+              const tagIDs = item.projectData.data.tags.map((t) => t.tagId);
 
-          // Tag check can be done by ID
-          if (tag.tagId) {
-            if (item.tags) {
-              const tagIDs = item.tags.map((tag) => tag.tagId);
-
-              if (!tagIDs.includes(tag.tagId)) {
-                tagFilterCheck = false;
-                break;
+              if (tagIDs.includes(tag.tagId)) {
+                matchesAny = true;
               }
-            } else {
-              tagFilterCheck = false;
-              break;
-            }
           }
-        } else {
+      } else {
           // Check for tag label Developer
-          if (tag.label === 'Developer') {
-            if (item.skills) {
-              // Get all skills from users
-              const userSkills = item.skills.map((skill) => skill?.label.toLowerCase?.())
-                .filter((label) => typeof label === 'string');
-
-              // Check if skills match developer skills
-              const matched = devSkills.some((dev) => userSkills.includes(dev.toLowerCase().trim()));
-
-              if (!matched) {
-                // No match: exclude from results
-                tagFilterCheck = false;
-                break;
-              }
-            }
-            else {
-              // No skills: exclude from results
-              tagFilterCheck = false;
-              break;
-            }
+          if (tag.label === 'Developer' && item.developer) {
+             matchesAny = true;
           }
-          // Check for specific skills
-          else if (tag.type === 'Developer Skill' || tag.type === 'Designer Skill' || tag.type === 'Soft Skill') {
-            const userSkills = item.skills?.map((s) => s?.label.toLowerCase())
+          // // Check for specific skills
+          else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft') {
+            const userSkills = item.userData.data.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-            const matched = userSkills?.includes(tag.label.toLowerCase());
-
-            if (!matched) {
-              // No match: exclude from results
-              tagFilterCheck = false;
-              break;
+            if (userSkills.includes(tag.label.toLowerCase().trim())) {
+              matchesAny = true;
             }
-          }
+        }
           // Check for tag label Designer
-          else if (tag.label === 'Designer') {
-            if (item.skills) {
-              // Get all skills from user
-              const userSkills = item.skills.map((skill) => skill?.label.toLowerCase?.())
-                .filter((label) => typeof label === 'string');
-
-              // Check if skills match designer skills
-              const matched = desSkills.some((des) => userSkills.includes(des.toLowerCase()));
-
-              if (!matched) {
-                // No match: exclude from results
-                tagFilterCheck = false;
-                break;
-              }
-            } else {
-              // No match: exclude from results
-              tagFilterCheck = false;
-              break;
-            }
+          else if (tag.label === 'Designer' && item.designer) {
+              matchesAny = true;
           }
+          else if (tag.label === 'Other' && !item.designer && !item.developer) {
+            matchesAny = true;
+          } 
           // Check role and major by name since IDs are not unique relative to tags
           //i think i'm beginning to understand
           //did the old team combine all the separate kinds of designations (roles, majors, skills, etc) into just "tags"?
           //which is why all of these are expected to be types that come from a Tag[]?
           //what do i do about that... it sounds like this would have to fundamentally be changed to work with the new system
-          else if (tag.type === 'Role') { 
-            if (item.job_title) {
-              if (item.job_title.toLowerCase() !== tag.label.toLowerCase()) {
-                tagFilterCheck = false;
-                break;
+          else if (tag.type === 'Role' && item.job_title) { 
+              if (item.job_title.toLowerCase() === tag.label.toLowerCase()) {
+                matchesAny = true;
               }
-            } else {
-              tagFilterCheck = false;
-              break;
-            }
-          } else if (tag.type === 'Major') {
-            if (item.major) {
-              if (item.major.toLowerCase() !== tag.label.toLowerCase()) {
-                tagFilterCheck = false;
-                break;
+          } else if (tag.type === 'Major' && item.major) {
+              if (item.major.toLowerCase() === tag.label.toLowerCase()) {
+                matchesAny = true;
               }
-            } else {
-              tagFilterCheck = false;
-              break;
-            }
-          } else if (tag.tagId) {
-            // Skill check can be done by ID
-            if (item.skills) {
-              const skillIDs = item.skills.map((skill) => skill.skillId);
-
-              if (!skillIDs.includes(tag.tagId)) {
-                tagFilterCheck = false;
-                break;
-              }
-            } else {
-              tagFilterCheck = false;
-              break;
-            }
-          }
-        }
+          } 
       }
 
-      return tagFilterCheck;
-    });
+      return matchesAny;
+    }});
 
     // If no tags are currently selected, render all projects
     // !! Needs to be skipped if searchbar has any input !!
