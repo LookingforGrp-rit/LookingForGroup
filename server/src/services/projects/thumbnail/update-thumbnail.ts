@@ -25,11 +25,17 @@ const updateThumbnailService = async (
     if (!image) return 'NOT_FOUND';
 
     await prisma.projects.update({
-      //sets it as the thumbnail
+      //set it as the thumbnail
       where: {
         projectId,
       },
-      data: { thumbnail: imageId },
+      data: {
+        thumbnail: {
+          connect: {
+            imageId: image.imageId,
+          },
+        },
+      },
     });
 
     return transformProjectImage(image.projectId, image);
