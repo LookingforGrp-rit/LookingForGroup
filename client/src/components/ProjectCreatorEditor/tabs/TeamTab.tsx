@@ -39,8 +39,6 @@ import {
 } from "@looking-for-group/client";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 
-//backend base url for getting images
-
 // --- Variables ---
 // Default project value
 //TODO: remove need for this, pending can handle empty values
@@ -130,7 +128,7 @@ export const TeamTab = ({
   const [closePopup, setClosePopup] = useState(false);
 
   // store search results
-  const [searchResults, setSearchResults] = useState<UserPreview[]>([]);
+  const [searchResults, setSearchResults] = useState<Partial<UserPreview>[]>([]);
 
   // errors/successful messages
   const [errorAddMember, setErrorAddMember] = useState("");
@@ -386,9 +384,12 @@ export const TeamTab = ({
 
   // Handle search results
   // FIXME does this need to be a 2D array?
-  const handleSearch = useCallback((results: UserPreview[][]) => {
-    setSearchResults(results[0] || []);
-  }, []);
+  const handleSearch = useCallback((results: Partial<UserPreview>[][]) => {
+    // Update search results only if a change has been made
+    if (!searchResults.every((val, index) => val === results[index])) {
+      setSearchResults(results[0] || []);
+    }
+  }, [searchResults]);
 
   // Handle clicking on a member in the search dropdown
   const handleUserSelect = useCallback(
@@ -1404,7 +1405,7 @@ export const TeamTab = ({
                       key={searchBarKey}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      dataSets={[searchableUsers]}
+                      dataSets={ [{ data: searchableUsers }] }
                       onSearch={(results) =>
                         handleSearch(results as UserPreview[][])
                       }
@@ -1418,7 +1419,7 @@ export const TeamTab = ({
                           className={`user-search-item 
                             ${index === 0 ? "top" : ""}
                             ${index === searchResults.length - 1 ? "bottom" : ""}`}
-                          callback={() => handleUserSelect(user)}
+                          callback={() => user && handleUserSelect(user as UserPreview)}
                         >
                           <p className="user-search-name">
                             {user.firstName} {user.lastName}
@@ -1531,7 +1532,7 @@ export const TeamTab = ({
         </div>
       </div>
     ),
-    [addPositionCallback, editMode, positionWindow]
+    [addPositionCallback, editMode, positionWindow, teamChanges.jobs]
   );
 
   // Set content depending on what tab is selected
