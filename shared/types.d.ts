@@ -58,7 +58,7 @@ export interface FilterRequest extends Request {
 }
 
 export interface GetProjectsRequest extends AuthenticatedRequest {
-  visibiility: "all" | "public" | "private";
+  visibility: "all" | "public" | "private";
   owner: "all" | "me";
 }
 
