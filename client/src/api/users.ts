@@ -52,7 +52,7 @@ export const getCurrentUsername = async (): Promise<ApiResponse> => {
   const apiURL = `/me`;
   const response = await GET(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return {
     status: response.status,
     data:
@@ -75,7 +75,7 @@ export const getUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
   const response = await GET(apiURL);
   //TODO: revisit this to make it include filters
   //but filters are a stretch goal anyway so it's not too important
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -90,7 +90,7 @@ export const getUsersById = async (
   const apiURL = `/users/${id}`;
   const response = await GET(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -99,7 +99,7 @@ export const getCurrentAccount = async (): Promise<ApiResponse<MePrivate>> => {
   const apiURL = `/me`;
   const response = await GET(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -129,7 +129,7 @@ export const deleteUser = async (): Promise<ApiResponse> => {
   const apiURL = `/me`;
   const response = await DELETE(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -148,7 +148,7 @@ export const getUserByUsername = async (
   const url = `/users/search-username/${username}`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -163,7 +163,7 @@ export const getUserByEmail = async (
   const url = `/users/search-email/${email}`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -180,7 +180,7 @@ export const getUserFollowing = async (
   const url = `/users/${id}/followings/people`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -191,7 +191,7 @@ export const getUserFollowers = async (id: number): Promise<ApiResponse> => {
   const url = `/users/${id}/followers`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -208,7 +208,7 @@ export const addUserFollowing = async (
 
   if (response.error)
     console.log(`Error in addUserFollowing: ${response.error}`);
-  console.log(response);
+  //console.log(response);
   return response as ApiResponse<UserFollowing>;
 };
 
@@ -220,7 +220,7 @@ export const deleteUserFollowing = async (id: number) => {
   const url = `/me/followings/people/${id}`;
   const response = await DELETE(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -233,7 +233,7 @@ export const getProjectsByUser = async (): Promise<
   const url = `/me/projects`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -248,7 +248,7 @@ export const getVisibleProjects = async (
   const url = `/users/${userId}/projects`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -267,8 +267,8 @@ export const updateProjectVisibility = async (
   const response = await PUT(url, visData);
 
   if (response.error)
-    console.log(`Error in updateProjectVisibility: ${response.error}`);
-  console.log(response);
+    //console.log(`Error in updateProjectVisibility: ${response.error}`);
+  //console.log(response);
   return response;
 };
 
@@ -281,8 +281,8 @@ export const leaveProject = async (projectID: number) => {
   const url = `me/projects/${projectID}/leave`;
   const response = await DELETE(url);
 
-  if (response.error) console.log(`Error in leaveProject: ${response.error}`);
-  console.log(response);
+  if (response.error) //console.log(`Error in leaveProject: ${response.error}`);
+  //console.log(response);
   return response;
 };
 
@@ -297,7 +297,7 @@ export const getProjectFollowing = async (
   const url = `/users/${userId}/followings/projects`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -314,7 +314,7 @@ export const addProjectFollowing = async (
 
   if (response.error)
     console.log(`Error in addProjectFollowing: ${response.error}`);
-  console.log(response);
+  //console.log(response);
   return response as ApiResponse<ProjectFollowing>;
 };
 
@@ -329,7 +329,7 @@ export const deleteProjectFollowing = async (
   const url = `/me/followings/projects/${projectId}`;
   const response = await DELETE(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -338,7 +338,7 @@ export const getUserSocials = async (): Promise<ApiResponse<MySocial[]>> => {
   const url = `/me/socials`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -353,7 +353,7 @@ export const addUserSocial = async (
   const response = await POST(apiURL, socialData);
 
   if (response.error) console.log(`Error in addUserSocial: ${response.error}`);
-  console.log(response);
+  //console.log(response);
   return response as ApiResponse<MySocial>;
 };
 
@@ -371,7 +371,7 @@ export const updateUserSocial = async (
 
   if (response.error)
     console.log(`Error in updateUserSocial: ${response.error}`);
-  console.log(response);
+  //console.log(response);
   return response as ApiResponse<MySocial>;
 };
 
@@ -385,7 +385,7 @@ export const deleteUserSocial = async (
   const url = `/me/socials/${websiteId}`;
   const response = await DELETE(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -394,7 +394,7 @@ export const getUserSkills = async (): Promise<ApiResponse<MySkill[]>> => {
   const url = `/me/skills`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -409,7 +409,7 @@ export const addUserSkill = async (
   const response = await POST(url, skillData);
 
   if (response.error) console.log(`Error in addUserSkill: ${response.error}`);
-  console.log(response);
+  //console.log(response);
   return response as ApiResponse<MySkill>;
 };
 
@@ -427,7 +427,7 @@ export const updateUserSkill = async (
 
   if (response.error)
     console.log(`Error in updateUserSkill: ${response.error}`);
-  console.log(response);
+  //console.log(response);
   return response as ApiResponse<MySkill>;
 };
 
@@ -441,7 +441,7 @@ export const deleteUserSkill = async (
   const url = `/me/skills/${skillId}`;
   const response = await DELETE(url);
 
-  console.log(response);
+  //console.log(response);
   return response as ApiResponse<null>;
 };
 
@@ -450,7 +450,7 @@ export const getUserMajors = async (): Promise<ApiResponse<MyMajor[]>> => {
   const url = `/me/majors`;
   const response = await GET(url);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -462,7 +462,7 @@ export const addUserMajor = async (
   const response = await POST(url, majorData);
 
   if (response.error) console.log(`Error in addUserMajor: ${response.error}`);
-  console.log(response);
+  //console.log(response);
   return response as ApiResponse<MyMajor>;
 };
 
@@ -476,7 +476,7 @@ export const deleteUserMajor = async (
   const url = `/me/majors/${majorId}`;
   const response = await DELETE(url);
 
-  console.log(response);
+  //console.log(response);
   return response as ApiResponse<null>;
 };
 
@@ -489,7 +489,7 @@ export const getMajors = async (): Promise<ApiResponse<Major[]>> => {
   const apiURL = `/datasets/majors`;
   const response = await GET(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -500,7 +500,7 @@ export const getJobTitles = async (): Promise<ApiResponse<Role[]>> => {
   const apiURL = `/datasets/roles`;
   const response = await GET(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -511,7 +511,7 @@ export const getProjectTypes = async (): Promise<ApiResponse<Medium[]>> => {
   const apiURL = `/datasets/mediums`;
   const response = await GET(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -522,7 +522,7 @@ export const getSkills = async (): Promise<ApiResponse<Skill[]>> => {
   const apiURL = `/datasets/skills`;
   const response = await GET(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -533,7 +533,7 @@ export const getTags = async (): Promise<ApiResponse<Tag[]>> => {
   const apiURL = `/datasets/tags`;
   const response = await GET(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
@@ -544,7 +544,7 @@ export const getSocials = async (): Promise<ApiResponse<Social[]>> => {
   const apiURL = `/datasets/socials`;
   const response = await GET(apiURL);
 
-  console.log(response);
+  //console.log(response);
   return response;
 };
 
