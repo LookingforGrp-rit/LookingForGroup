@@ -9,13 +9,10 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 import {
   getJobTitles,
   getUsers,
-  getUsersById,
-  getUserByUsername,
 } from "../../../api/users";
 import {
   ProjectDetail,
   ProjectJob,
-  User,
   UserPreview,
   ProjectMember,
   JobAvailability,
@@ -23,8 +20,6 @@ import {
   JobLocation,
   JobCompensation,
   Role,
-  CreateProjectJobInput,
-  CreateProjectMemberInput,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -81,7 +76,6 @@ type TeamTabProps = {
 export const TeamTab = ({
   dataManager,
   projectData,
-  setProjectData,
   setErrorMember,
   setErrorPosition,
   /*permissions,*/
@@ -171,7 +165,7 @@ export const TeamTab = ({
     if (allRoles.length === 0) {
       getRolesList();
     }
-  }, [allRoles, currentJob]);
+  }, [allRoles]);
 
   // Get user list if allUsers is empty
   useEffect(() => {
@@ -978,13 +972,15 @@ export const TeamTab = ({
               type="input"
             />
             <SelectOptions
-              callback={(e) =>
+              callback={(e) =>{
+                const key = Object.keys(JobAvailabilityEnums).find((key) => JobAvailabilityEnums[key as keyof typeof JobAvailabilityEnums] === (e.target as HTMLButtonElement).value)
+                
                 setCurrentJob({
                   ...emptyJob,
                   ...currentJob,
-                  availability: (e.target as HTMLButtonElement)
-                    .value as JobAvailability,
+                  availability: key as JobAvailability,
                 })
+              }
               }
               options={Object.values(JobAvailabilityEnums).map((option) => {
                 return {
@@ -1023,13 +1019,15 @@ export const TeamTab = ({
               type="input"
             />
             <SelectOptions
-              callback={(e) =>
+              callback={(e) => {
+                const key = Object.keys(JobLocationEnums).find((key) => JobLocationEnums[key as keyof typeof JobLocationEnums] === (e.target as HTMLButtonElement).value)
+
                 setCurrentJob({
                   ...emptyJob,
                   ...currentJob,
-                  location: (e.target as HTMLButtonElement)
-                    .value as JobLocation,
+                  location: key as JobLocation,
                 })
+              }
               }
               options={Object.values(JobLocationEnums).map((option) => {
                 return {
@@ -1069,7 +1067,7 @@ export const TeamTab = ({
               }}
               options={projectAfterTeamChanges.members
                 .filter((member) => member.user !== null)
-                .filter((member) => member.role.label === "Owner") // TODO change when perms exist
+                .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
                 .map(({ user }) => ({
                   markup: (
                     <>
@@ -1127,13 +1125,15 @@ export const TeamTab = ({
               type="input"
             />
             <SelectOptions
-              callback={(e) =>
+              callback={(e) =>{
+                const key = Object.keys(JobDurationEnums).find((key) => JobDurationEnums[key as keyof typeof JobDurationEnums] === (e.target as HTMLButtonElement).value)
+                
                 setCurrentJob({
                   ...emptyJob,
                   ...currentJob,
-                  duration: (e.target as HTMLButtonElement)
-                    .value as JobDuration,
+                  duration: key as JobDuration,
                 })
+              }
               }
               options={Object.values(JobDurationEnums).map((option) => {
                 return {
@@ -1172,13 +1172,15 @@ export const TeamTab = ({
               type="input"
             />
             <SelectOptions
-              callback={(e) =>
+              callback={(e) =>{
+                const key = Object.keys(JobCompensationEnums).find((key) => JobCompensationEnums[key as keyof typeof JobCompensationEnums] === (e.target as HTMLButtonElement).value)
+                
                 setCurrentJob({
                   ...emptyJob,
                   ...currentJob,
-                  compensation: (e.target as HTMLButtonElement)
-                    .value as JobCompensation,
+                  compensation: key as JobCompensation,
                 })
+              }
               }
               options={Object.values(JobCompensationEnums).map((option) => {
                 return {
@@ -1272,7 +1274,7 @@ export const TeamTab = ({
                     <Select>
                       <SelectButton
                         placeholder=""
-                        initialVal={member.role.label}
+                        initialVal={member.role?.label}
                         className=""
                         type="dropdown"
                       />
@@ -1318,7 +1320,7 @@ export const TeamTab = ({
                             value: currentMember.user?.userId,
                           },
                           data: {
-                            roleId: currentMember.role.roleId,
+                            roleId: currentMember.role?.roleId,
                           },
                         });
 
@@ -1327,18 +1329,13 @@ export const TeamTab = ({
                           ...previous,
                           members: previous.members.map((member) => {
                             // if this member matches the updated member
-                            if (
-                              currentMember.user?.userId === member.user?.userId
-                            ) {
+                            if (currentMember.user?.userId === member.user?.userId) {
                               // update role
                               return {
                                 ...member,
                                 role:
-                                  currentMember.role ??
-                                  allRoles.find(
-                                    (role) => role.label === "Member"
-                                  ),
-                              };
+                                  currentMember.role,
+                              } as PendingProjectMember;
                             } else {
                               // if it doesn't match, do nothing to the member
                               return member;

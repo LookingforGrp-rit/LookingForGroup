@@ -19,6 +19,7 @@ import {
   ProjectMember,
   UserPreview,
   UpdateProjectThumbnailInput,
+  Role
 } from "@looking-for-group/shared";
 
 /**

@@ -287,7 +287,6 @@ export const MediaTab = ({
       let updateThumbnail = false;
 
       // check if image is thumbnail
-      //there's a much easier way to do this now
       if (comparedIndices[projectAfterMediaChanges.projectImages.findIndex((image) => image === projectImage)]) {
         // update after image is deleted and projectImages is updated
         updateThumbnail = true;
