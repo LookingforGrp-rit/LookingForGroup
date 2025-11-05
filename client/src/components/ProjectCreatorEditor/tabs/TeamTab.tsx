@@ -416,7 +416,11 @@ export const TeamTab = ({
       setErrorAddMember("");
 
       // check if user exists on the projects
-      if (projectAfterTeamChanges.members.find((m) => m.user?.username === selectedUser.username)) {
+      if (
+        projectAfterTeamChanges.members.find(
+          (m) => m.user?.username === selectedUser.username
+        )
+      ) {
         setErrorAddMember("User is already on the team");
         return;
       }
@@ -1390,6 +1394,17 @@ export const TeamTab = ({
                                   data: null,
                                 });
                               }
+
+                              setProjectAfterTeamChanges((previous) => ({
+                                ...previous,
+                                members: [
+                                  ...previous.members.filter(
+                                    (member) =>
+                                      member.user?.userId !==
+                                      currentMember.user?.userId
+                                  ),
+                                ],
+                              }));
                             }}
                           >
                             Delete
@@ -1430,9 +1445,7 @@ export const TeamTab = ({
         <Popup>
           <PopupButton
             buttonId="project-editor-add-member"
-            callback={() =>
-              setCurrentMember(undefined)
-            }
+            callback={() => setCurrentMember(undefined)}
           >
             <ThemeIcon
               id="add-person"
