@@ -386,8 +386,8 @@ export const TeamTab = ({
   // FIXME does this need to be a 2D array?
   const handleSearch = useCallback((results: Partial<UserPreview>[][]) => {
     // Update search results only if a change has been made
-    if (!searchResults.every((val, index) => val === results[index])) {
-      setSearchResults(results[0] || []);
+    if (JSON.stringify(searchResults) !== JSON.stringify(results[0])) {
+      setSearchResults(results[0]);
     }
   }, [searchResults]);
 
@@ -1150,7 +1150,7 @@ export const TeamTab = ({
             <div className="project-editor-project-member-info">
               <div className="project-editor-project-member-name">
                 {/* TODO add current user */}
-                {member.user?.firstName && member.user?.lastName}
+                {member.user?.firstName} {member.user?.lastName}
               </div>
               <div className="project-editor-project-member-role project-editor-extra-info">
                 {(member.role as Role).label}
@@ -1214,8 +1214,6 @@ export const TeamTab = ({
                             ...currentMember!, // on edit button click, currentMember is defined
                             role: role as Role
                           });
-
-                          console.log('current member updated', currentMember);
                         }}
                         options={allRoles.map(
                           (role) => {
@@ -1406,9 +1404,9 @@ export const TeamTab = ({
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       dataSets={ [{ data: searchableUsers }] }
-                      onSearch={(results) =>
-                        handleSearch(results as UserPreview[][])
-                      }
+                      onSearch={(results) => {
+                        handleSearch(results as UserPreview[][]);
+                      }}
                     ></SearchBar>
                   </DropdownButton>
                   <DropdownContent>
@@ -1416,7 +1414,7 @@ export const TeamTab = ({
                       {searchResults.map((user, index) => (
                         <DropdownButton
                           key={user.userId}
-                          className={`user-search-item 
+                          className={`user-search-item
                             ${index === 0 ? "top" : ""}
                             ${index === searchResults.length - 1 ? "bottom" : ""}`}
                           callback={() => user && handleUserSelect(user as UserPreview)}
