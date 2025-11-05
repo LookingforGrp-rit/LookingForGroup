@@ -37,5 +37,5 @@ export const getImage = async (req: Request, res: Response): Promise<void> => {
     return;
   }
 
-  res.redirect(301, result.location);
+  res.redirect(302, result.location);
 };

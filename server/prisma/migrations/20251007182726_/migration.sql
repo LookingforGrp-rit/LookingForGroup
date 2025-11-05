@@ -96,7 +96,7 @@ CREATE TABLE `projects` (
     `title` VARCHAR(150) NOT NULL,
     `hook` VARCHAR(200) NOT NULL DEFAULT '',
     `description` VARCHAR(2000) NOT NULL DEFAULT '',
-    `thumbnail` VARCHAR(100) NULL,
+    `thumbnail_id` INTEGER NULL,
     `purpose` ENUM('Personal', 'Portfolio Piece', 'Academic', 'Co-op') NULL,
     `status` ENUM('Planning', 'Development', 'Post-Production', 'Complete') NOT NULL DEFAULT 'Planning',
     `audience` VARCHAR(300) NOT NULL DEFAULT '',

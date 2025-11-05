@@ -85,12 +85,13 @@ model ProjectFollowings {
 }
 
 model ProjectImages {
-  imageId   Int      @id @default(autoincrement()) @map("image_id")
-  image     String   @db.VarChar(100)
-  altText   String   @db.VarChar(150)
-  position  Int
-  projectId Int      @map("project_id")
-  projects  Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_images_projects")
+  imageId     Int       @id @default(autoincrement()) @map("image_id")
+  image       String    @db.VarChar(100)
+  altText     String    @db.VarChar(150)
+  position    Int
+  projectId   Int       @map("project_id")
+  projects    Projects  @relation("ProjectImages", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_images_projects")
+  isThumbFor  Projects? 
 
   @@index([projectId], map: "FK_project_images_projects")
   @@map("project_images")
@@ -113,7 +114,8 @@ model Projects {
   title             String              @db.VarChar(150)
   hook              String              @default("") @db.VarChar(200)
   description       String              @default("") @db.VarChar(2000)
-  thumbnail         String?             @db.VarChar(100)
+  thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
+  thumbnailId       Int?                @map("thumbnail_id") @unique
   purpose           ProjectsPurpose?
   status            ProjectsStatus      @default(Planning)
   audience          String              @default("") @db.VarChar(300)
@@ -123,7 +125,7 @@ model Projects {
   jobs              Jobs[]
   members           Members[]
   projectFollowings ProjectFollowings[]
-  projectImages     ProjectImages[]
+  projectImages     ProjectImages[]     @relation("ProjectImages")
   projectSocials    ProjectSocials[]
   mediums           Mediums[]
   tags              Tags[]

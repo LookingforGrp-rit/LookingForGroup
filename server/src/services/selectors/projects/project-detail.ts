@@ -1,4 +1,3 @@
-import { UserPreviewSelector } from '../users/user-preview.ts';
 import { ProjectImageSelector } from './parts/project-image.ts';
 import { ProjectJobSelector } from './parts/project-job.ts';
 import { ProjectMemberSelector } from './parts/project-member.ts';
@@ -12,9 +11,6 @@ export const ProjectDetailSelector = Object.freeze({
   purpose: true,
   status: true,
   audience: true,
-  users: {
-    select: UserPreviewSelector,
-  },
   createdAt: true,
   updatedAt: true,
   tags: {

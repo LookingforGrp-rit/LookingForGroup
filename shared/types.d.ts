@@ -384,7 +384,6 @@ export interface ProjectDetail extends ProjectPreview {
   audience: string;
   createdAt: Date;
   updatedAt: Date;
-  owner: UserPreview;
   tags: Tag[];
   projectImages: ProjectImage[];
   projectSocials: ProjectSocial[];
@@ -397,7 +396,9 @@ export interface ProjectPreview {
   projectId: number;
   title: string;
   hook: string;
-  thumbnail: string | null;
+  owner: UserPreview;
+  thumbnail: ProjectImage | null; 
+  thumbnailId: number,
   mediums: ProjectMedium[];
   apiUrl: string;
 }
@@ -469,7 +470,7 @@ export type AddUserMajorInput = Pick<Major, "majorId">;
 export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
     Pick<ProjectDetail, "hook" | "description" | "status" | "audience" | "purpose">
-  > & { thumbnail?: File };
+  >;
 export type UpdateProjectInput = Partial<CreateProjectInput>;
 
 export type CreateProjectImageInput = Pick<ProjectImage, "altText"> & {

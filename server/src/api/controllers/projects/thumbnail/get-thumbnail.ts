@@ -1,13 +1,12 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { removeImageService } from '#services/projects/images/remove-image.ts';
+import getThumbnailService from '#services/projects/thumbnail/get-thumbnail.ts';
 
-//removes an image from a project
-const removeImageController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
-  const imageId = parseInt(req.params.imageId);
+//gets the thumbnail of a project
+const getThumbnail = async (req: Request, res: Response): Promise<void> => {
+  const projID = parseInt(req.params.id);
 
-  const result = await removeImageService(projectId, imageId);
+  const result = await getThumbnailService(projID);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -22,13 +21,14 @@ const removeImageController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Image not found',
+      error: 'Thumbnail not found',
       data: null,
     };
     res.status(404).json(resBody);
     return;
   }
-  const resBody: ApiResponse = {
+
+  const resBody: ApiResponse<typeof result> = {
     status: 200,
     error: null,
     data: result,
@@ -36,4 +36,4 @@ const removeImageController = async (req: Request, res: Response) => {
   res.status(200).json(resBody);
 };
 
-export default removeImageController;
+export default getThumbnail;
