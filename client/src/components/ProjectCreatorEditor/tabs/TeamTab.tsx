@@ -181,19 +181,16 @@ export const TeamTab = ({
 
         if (response.data) setAllUsers(response.data);
 
-        // FIXME why is this async?
         // list of users to search. users searchable by first name, last name, or username
-        const searchableUsers = (await Promise.all(
-          response.data!.map(async (user: UserPreview) => {
-            // get make searchable user
-            const filteredUser = {
-              username: user.username,
-              firstName: user.firstName,
-              lastName: user.lastName,
-            };
-            return filteredUser;
-          })
-        )) as UserSearchableFields[];
+        const searchableUsers = response.data?.map((user: UserPreview) => {
+          // get make searchable user
+          const filteredUser = {
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          };
+          return filteredUser;
+        }) as UserSearchableFields[];
 
         if (searchableUsers === undefined) {
           return;
@@ -418,15 +415,22 @@ export const TeamTab = ({
       // reset error
       setErrorAddMember("");
 
+      // check if user exists on the projects
+      if (projectAfterTeamChanges.members.find((m) => m.user?.username === selectedUser.username)) {
+        setErrorAddMember("User is already on the team");
+        return;
+      }
+
       // set text input
       setSearchQuery(
         `${selectedUser.firstName} ${selectedUser.lastName} (${selectedUser.username})`
       );
 
-      // get matching user data from user id
+      // get matching user data from username (only unique prop in search results)
       const matchedUser = allUsers.find(
-        (user) => user.userId === selectedUser.userId
+        (user) => user.username === selectedUser.username
       );
+
       if (!matchedUser) {
         setErrorAddMember("User not found");
         return;
@@ -1282,8 +1286,6 @@ export const TeamTab = ({
                             ...currentMember!, // on edit button click, currentMember is defined
                             role: role as Role,
                           });
-
-                          console.log("current member updated", currentMember);
                         }}
                         options={allRoles.map((role) => {
                           return {
@@ -1428,9 +1430,9 @@ export const TeamTab = ({
         <Popup>
           <PopupButton
             buttonId="project-editor-add-member"
-            callback={() => {
-              setCurrentMember({ ...emptyMember });
-            }}
+            callback={() =>
+              setCurrentMember(undefined)
+            }
           >
             <ThemeIcon
               id="add-person"
