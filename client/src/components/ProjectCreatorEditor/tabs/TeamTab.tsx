@@ -108,15 +108,11 @@ export const TeamTab = ({
   // tracking which team tab is currently being viewed: 0 - current team, 1 - open positions
   const [currentTeamTab, setCurrentTeamTab] = useState(0);
 
-  // tracking which role is being viewed out of all open positions: value is project jobId
-  // TODO: merge functionality with currentlyEditingJob
-  const [currentlyViewedJobId, setCurrentlyViewedJobId] = useState(0);
-
   // tracking edits for...
   const [currentMember, setCurrentMember] = useState<
     ProjectMember | PendingProjectMember
   >();
-  const [currentlyEditingJob, setCurrentlyEditingJob] = useState<
+  const [currentJob, setCurrentJob] = useState<
     ProjectJob | Pending<ProjectJob>
   >();
 
@@ -169,13 +165,13 @@ export const TeamTab = ({
           (role) => role.label === "Member"
         );
         if (memberRole) emptyJob.role = memberRole;
-        // if (!currentlyEditingJob) setCurrentlyEditingJob({ ...emptyJob });
+        // if (!currentJob) setCurrentJob({ ...emptyJob });
       }
     };
     if (allRoles.length === 0) {
       getRolesList();
     }
-  }, [allRoles, currentlyEditingJob]);
+  }, [allRoles, currentJob]);
 
   // Get user list if allUsers is empty
   useEffect(() => {
@@ -215,29 +211,43 @@ export const TeamTab = ({
   // Assign active buttons in Open Positions
   const isTeamTabOpen = currentTeamTab === 1;
   useEffect(() => {
-    // add id of selected button
-    const assigningButton = document.querySelector(
-      `button[data-id="${currentlyViewedJobId}"]`
+    if (!currentJob) return setCurrentJob(projectAfterTeamChanges.jobs[0]);
+
+    const currentJobId =
+      "localId" in currentJob ? currentJob.localId : currentJob.jobId;
+    const currentJobIdType = "localId" in currentJob ? "local" : "canon";
+
+    // update active button
+    const activeJobButton = document.querySelector(
+      `button[data-id="${currentJobId}"][data-id-type="${currentJobIdType}"]`
     );
-    if (assigningButton) {
-      // remove id of old button
-      const oldButton = document.querySelector("#team-positions-active-button");
-      if (oldButton) {
-        oldButton.id = "";
+    if (activeJobButton) {
+      // unselect old button
+      const lastActiveJobButton = document.querySelector(
+        "#team-positions-active-button"
+      );
+      if (lastActiveJobButton) {
+        lastActiveJobButton.id = "";
       }
-      assigningButton.id = "team-positions-active-button";
+      activeJobButton.id = "team-positions-active-button";
       return;
     }
 
-    // neither button present, assign default
-    const buttonDiv = document.querySelector(".team-positions-button");
-
-    if (buttonDiv && buttonDiv.querySelector("button")) {
-      const defaultButton = buttonDiv.querySelector("button");
-      defaultButton!.id = "team-positions-active-button"; // explicit because check is passed in the if statement
-      setCurrentlyViewedJobId(Number(defaultButton!.dataset.id));
+    // no button for current job
+    if (isCreatingNewPosition) {
+      // unselect old button
+      const lastActiveJobButton = document.querySelector(
+        "#team-positions-active-button"
+      );
+      if (lastActiveJobButton) {
+        lastActiveJobButton.id = "";
+      }
+      return;
     }
-  }, [currentlyViewedJobId, isTeamTabOpen]);
+
+    if (projectAfterTeamChanges.jobs[0] !== currentJob)
+      setCurrentJob(projectAfterTeamChanges.jobs[0]);
+  }, [currentJob, isTeamTabOpen, projectAfterTeamChanges.jobs]);
 
   // --- Data retrieval ---
   // Get project job info using role id to compare
@@ -392,12 +402,15 @@ export const TeamTab = ({
 
   // Handle search results
   // FIXME does this need to be a 2D array?
-  const handleSearch = useCallback((results: Partial<UserPreview>[][]) => {
-    // Update search results only if a change has been made
-    if (JSON.stringify(searchResults) !== JSON.stringify(results[0])) {
-      setSearchResults(results[0]);
-    }
-  }, [searchResults]);
+  const handleSearch = useCallback(
+    (results: Partial<UserPreview>[][]) => {
+      // Update search results only if a change has been made
+      if (JSON.stringify(searchResults) !== JSON.stringify(results[0])) {
+        setSearchResults(results[0]);
+      }
+    },
+    [searchResults]
+  );
 
   // Handle clicking on a member in the search dropdown
   const handleUserSelect = useCallback(
@@ -450,17 +463,18 @@ export const TeamTab = ({
       // we are no longer creating a new position
       setIsCreatingNewPosition(false);
       // reset the pending job
-      setCurrentlyEditingJob({ ...emptyJob });
+      setCurrentJob(undefined);
       // return to selected role
-      const positions = document.querySelectorAll(".positions-popup-list-item");
-      for (const p of positions) {
-        const dataId = p.getAttribute("data-id");
-        if (dataId && parseInt(dataId) === currentlyViewedJobId) {
-          // found matching id, set element as active
-          p.id = "team-positions-active-button";
-          break;
-        }
-      }
+
+      // const positions = document.querySelectorAll(".positions-popup-list-item");
+      // for (const p of positions) {
+      //   const dataId = p.getAttribute("data-id");
+      //   if (dataId && parseInt(dataId) === currentlyViewedJobId) {
+      //     // found matching id, set element as active
+      //     p.id = "team-positions-active-button";
+      //     break;
+      //   }
+      // }
       // change to position view window
       // setPositionWindowContent(positionViewWindow);
       setEditMode(false);
@@ -470,7 +484,7 @@ export const TeamTab = ({
       // empty input fields
       setIsCreatingNewPosition(true);
       // clear selected role
-      setCurrentlyEditingJob({ ...emptyJob });
+      setCurrentJob({ ...emptyJob });
       const activePosition = document.querySelector(
         "#team-positions-active-button"
       );
@@ -480,25 +494,20 @@ export const TeamTab = ({
       setEditMode(true);
     }
     setErrorAddPosition("");
-  }, [currentlyViewedJobId, editMode, isCreatingNewPosition]);
+  }, [editMode, isCreatingNewPosition]);
 
   // Remove position listing
   const deletePosition = useCallback(() => {
-    const jobToBeDeleted = projectAfterTeamChanges.jobs.find(
-      (job) =>
-        (job as ProjectJob).jobId === currentlyViewedJobId ||
-        (job as Pending<ProjectJob>).localId === currentlyViewedJobId
-    );
     if (
-      jobToBeDeleted &&
-      ((jobToBeDeleted as ProjectJob).jobId ||
-        (jobToBeDeleted as Pending<ProjectJob>).localId)
+      currentJob &&
+      ((currentJob as ProjectJob).jobId ||
+        (currentJob as Pending<ProjectJob>).localId)
     ) {
-      if ("jobId" in jobToBeDeleted) {
+      if ("jobId" in currentJob) {
         dataManager.deleteJob({
           id: {
             type: "canon",
-            value: jobToBeDeleted.jobId,
+            value: currentJob.jobId,
           },
           data: null,
         });
@@ -506,7 +515,7 @@ export const TeamTab = ({
         dataManager.deleteJob({
           id: {
             type: "local",
-            value: jobToBeDeleted.localId!,
+            value: currentJob.localId!,
           },
           data: null,
         });
@@ -518,8 +527,10 @@ export const TeamTab = ({
           ...previous.jobs.filter(
             (job) =>
               !(
-                (job as ProjectJob).jobId === currentlyViewedJobId &&
-                (job as Pending<ProjectJob>).localId === currentlyViewedJobId
+                ("jobId" in currentJob &&
+                  (job as ProjectJob).jobId === currentJob.jobId) ||
+                ("localId" in currentJob &&
+                  (job as Pending<ProjectJob>).localId === currentJob.localId)
               )
           ),
         ],
@@ -537,22 +548,19 @@ export const TeamTab = ({
     // setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
 
     // reset current position
-    const buttonDiv = document.querySelector(".team-positions-button");
-    if (buttonDiv && buttonDiv.querySelector("button")) {
-      const defaultButton = buttonDiv.querySelector("button");
-      defaultButton!.id = "team-positions-active-button"; // explicit because check is passed in the if statement
-      setCurrentlyViewedJobId(Number(defaultButton!.dataset.id));
-    }
-  }, [
-    currentlyViewedJobId,
-    dataManager,
-    projectAfterTeamChanges,
-    updatePendingProject,
-  ]);
+    // const buttonDiv = document.querySelector(".team-positions-button");
+    // if (buttonDiv && buttonDiv.querySelector("button")) {
+    //   const defaultButton = buttonDiv.querySelector("button");
+    //   defaultButton!.id = "team-positions-active-button"; // explicit because check is passed in the if statement
+    //   setCurrentlyViewedJobId(Number(defaultButton!.dataset.id));
+    // }
+
+    setCurrentJob(undefined);
+  }, [currentJob, dataManager, projectAfterTeamChanges, updatePendingProject]);
 
   //Save current inputs in position editing window
   const savePosition = useCallback(() => {
-    if (!currentlyEditingJob) {
+    if (!currentJob) {
       setErrorAddPosition("No job to save!");
       return;
     }
@@ -560,16 +568,16 @@ export const TeamTab = ({
     // job hasn't been created yet, this is a new job
     if (isCreatingNewPosition) {
       if (
-        isNullOrUndefined(currentlyEditingJob.role?.roleId) ||
-        isNullOrUndefined(currentlyEditingJob.availability) ||
-        isNullOrUndefined(currentlyEditingJob.location) ||
-        isNullOrUndefined(currentlyEditingJob.duration) ||
-        isNullOrUndefined(currentlyEditingJob.compensation) ||
-        isNullOrUndefined(currentlyEditingJob.contact?.userId)
+        isNullOrUndefined(currentJob.role?.roleId) ||
+        isNullOrUndefined(currentJob.availability) ||
+        isNullOrUndefined(currentJob.location) ||
+        isNullOrUndefined(currentJob.duration) ||
+        isNullOrUndefined(currentJob.compensation) ||
+        isNullOrUndefined(currentJob.contact?.userId)
       ) {
         // set error
         setErrorAddPosition("All fields are required");
-        console.log(currentlyEditingJob);
+        console.log(currentJob);
         return;
       }
 
@@ -581,13 +589,13 @@ export const TeamTab = ({
           type: "local",
         },
         data: {
-          availability: currentlyEditingJob.availability,
-          compensation: currentlyEditingJob.compensation,
-          contactUserId: currentlyEditingJob.contact.userId,
-          duration: currentlyEditingJob.duration,
-          location: currentlyEditingJob.location,
-          roleId: currentlyEditingJob.role.roleId,
-          description: currentlyEditingJob.description ?? undefined,
+          availability: currentJob.availability,
+          compensation: currentJob.compensation,
+          contactUserId: currentJob.contact.userId,
+          duration: currentJob.duration,
+          location: currentJob.location,
+          roleId: currentJob.role.roleId,
+          description: currentJob.description ?? undefined,
         },
       });
 
@@ -597,37 +605,48 @@ export const TeamTab = ({
           ...previous.jobs,
           {
             localId,
-            availability: currentlyEditingJob.availability,
-            compensation: currentlyEditingJob.compensation,
-            contact: currentlyEditingJob.contact,
-            description: currentlyEditingJob.description ?? "",
-            duration: currentlyEditingJob.duration,
-            location: currentlyEditingJob.location,
-            role: currentlyEditingJob.role,
+            availability: currentJob.availability,
+            compensation: currentJob.compensation,
+            contact: currentJob.contact,
+            description: currentJob.description ?? "",
+            duration: currentJob.duration,
+            location: currentJob.location,
+            role: currentJob.role,
           },
         ],
       }));
 
       updatePendingProject(projectAfterTeamChanges);
 
-      setCurrentlyViewedJobId(localId);
+      setEditMode(false);
+      setIsCreatingNewPosition(false);
+      setCurrentJob({
+        localId,
+        availability: currentJob.availability,
+        compensation: currentJob.compensation,
+        contact: currentJob.contact,
+        description: currentJob.description ?? "",
+        duration: currentJob.duration,
+        location: currentJob.location,
+        role: currentJob.role,
+      });
 
       return;
     }
 
     dataManager.updateJob({
       id: {
-        value: (currentlyEditingJob as ProjectJob).jobId,
+        value: (currentJob as ProjectJob).jobId,
         type: "canon",
       },
       data: {
-        availability: currentlyEditingJob.availability ?? undefined,
-        compensation: currentlyEditingJob.compensation ?? undefined,
-        contactUserId: currentlyEditingJob.contact?.userId ?? undefined,
-        description: currentlyEditingJob.description ?? undefined,
-        duration: currentlyEditingJob.duration ?? undefined,
-        location: currentlyEditingJob.location ?? undefined,
-        roleId: currentlyEditingJob.role?.roleId ?? undefined,
+        availability: currentJob.availability ?? undefined,
+        compensation: currentJob.compensation ?? undefined,
+        contactUserId: currentJob.contact?.userId ?? undefined,
+        description: currentJob.description ?? undefined,
+        duration: currentJob.duration ?? undefined,
+        location: currentJob.location ?? undefined,
+        roleId: currentJob.role?.roleId ?? undefined,
       },
     });
 
@@ -636,34 +655,34 @@ export const TeamTab = ({
       jobs: [
         ...previous.jobs.filter(
           (job) =>
-            (job as ProjectJob).jobId !==
-            (currentlyEditingJob as ProjectJob).jobId
+            (job as ProjectJob).jobId !== (currentJob as ProjectJob).jobId
         ),
         {
-          jobId: (currentlyEditingJob as ProjectJob).jobId,
-          availability: (currentlyEditingJob as ProjectJob).availability,
-          compensation: (currentlyEditingJob as ProjectJob).compensation,
-          contact: (currentlyEditingJob as ProjectJob).contact,
-          description: (currentlyEditingJob as ProjectJob).description ?? "",
-          duration: (currentlyEditingJob as ProjectJob).duration,
-          location: (currentlyEditingJob as ProjectJob).location,
-          role: (currentlyEditingJob as ProjectJob).role,
-          apiUrl: (currentlyEditingJob as ProjectJob).apiUrl,
-          createdAt: (currentlyEditingJob as ProjectJob).createdAt,
-          updatedAt: (currentlyEditingJob as ProjectJob).updatedAt,
+          jobId: (currentJob as ProjectJob).jobId,
+          availability: (currentJob as ProjectJob).availability,
+          compensation: (currentJob as ProjectJob).compensation,
+          contact: (currentJob as ProjectJob).contact,
+          description: (currentJob as ProjectJob).description ?? "",
+          duration: (currentJob as ProjectJob).duration,
+          location: (currentJob as ProjectJob).location,
+          role: (currentJob as ProjectJob).role,
+          apiUrl: (currentJob as ProjectJob).apiUrl,
+          createdAt: (currentJob as ProjectJob).createdAt,
+          updatedAt: (currentJob as ProjectJob).updatedAt,
         },
       ],
     }));
 
-    updatePendingProject(projectAfterTeamChanges);
+    setErrorAddPosition("");
+    setEditMode(false);
 
-    setCurrentlyViewedJobId((currentlyEditingJob as ProjectJob).jobId);
+    updatePendingProject(projectAfterTeamChanges);
 
     // // check if same position is present
     // // TODO projects can't have two leads? two devs? two artists? etc..
     // const existingJob = projectAfterTeamChanges.jobs.find(
     //   (job) =>
-    //     job.role.roleId === currentlyEditingJob?.roleId && job.jobId !== currentlyEditingJob.jobId
+    //     job.role.roleId === currentJob?.roleId && job.jobId !== currentJob.jobId
     // );
     // if (existingJob) {
     //   setErrorAddPosition("Job already exists");
@@ -674,24 +693,21 @@ export const TeamTab = ({
     // if (isCreatingNewPosition) {
     //   // setModifiedProject({
     //   //   ...modifiedProject,
-    //   //   jobs: [...modifiedProject.jobs, currentlyEditingJob],
+    //   //   jobs: [...modifiedProject.jobs, currentJob],
     //   // });
     // } else {
     //   // find matching position
     //   const updatedJobs = projectAfterTeamChanges.jobs.map((j) =>
-    //     j.jobId === currentlyEditingJob.jobId ? { ...j, ...currentlyEditingJob } : j
+    //     j.jobId === currentJob.jobId ? { ...j, ...currentJob } : j
     //   );
     // setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
     // }
-    setErrorAddPosition("");
-    setIsCreatingNewPosition(false);
     // setPositionWindowContent(positionViewWindow);
-    setEditMode(false);
 
     // set current position to saved position
-    // setCurrentlyViewedJobId((currentlyEditingJob as ProjectJob).jobId || (currentlyEditingJob as Pending<ProjectJob>).localId);
+    // setCurrentlyViewedJobId((currentJob as ProjectJob).jobId || (currentJob as Pending<ProjectJob>).localId);
   }, [
-    currentlyEditingJob,
+    currentJob,
     dataManager,
     isCreatingNewPosition,
     projectAfterTeamChanges,
@@ -705,9 +721,7 @@ export const TeamTab = ({
       <button
         className="edit-project-member-button"
         onClick={() => {
-          setCurrentlyEditingJob(
-            getProjectJob(currentlyEditingJob?.role?.roleId as number)
-          );
+          setCurrentJob(getProjectJob(currentJob?.role?.roleId as number));
           setEditMode(true);
         }}
       >
@@ -720,30 +734,22 @@ export const TeamTab = ({
         />
       </button>
       <div className="positions-popup-info-title">
-        {getProjectJob(currentlyEditingJob?.role?.roleId as number)?.role
-          ?.label ?? "Member"}
+        {currentJob?.role?.label ?? "Member"}
       </div>
       <div className="positions-popup-info-description">
         <div id="position-description-content">
-          {getProjectJob(currentlyEditingJob?.role?.roleId as number)
-            ?.description ?? ""}
+          {currentJob?.description ?? ""}
         </div>
       </div>
       <div id="open-position-details">
         <div id="open-position-details-left">
           <div id="position-availability">
             <span className="position-detail-indicator">Availability: </span>
-            {
-              getProjectJob(currentlyEditingJob?.role?.roleId as number)
-                ?.availability
-            }
+            {currentJob?.availability}
           </div>
           <div id="position-location">
             <span className="position-detail-indicator">Location: </span>
-            {
-              getProjectJob(currentlyEditingJob?.role?.roleId as number)
-                ?.location
-            }
+            {currentJob?.location}
           </div>
           <div id="open-position-contact">
             <span className="position-detail-indicator">Contact: </span>
@@ -773,17 +779,11 @@ export const TeamTab = ({
         <div id="open-position-details-right">
           <div id="position-duration">
             <span className="position-detail-indicator">Duration: </span>
-            {
-              getProjectJob(currentlyEditingJob?.role?.roleId as number)
-                ?.duration
-            }
+            {currentJob?.duration}
           </div>
           <div id="position-compensation">
             <span className="position-detail-indicator">Compensation: </span>
-            {
-              getProjectJob(currentlyEditingJob?.role?.roleId as number)
-                ?.compensation
-            }
+            {currentJob?.compensation}
           </div>
         </div>
       </div>
@@ -799,8 +799,8 @@ export const TeamTab = ({
           >
             Are you sure you want to delete{" "}
             <span className="project-info-highlight">
-              {getProjectJob(currentlyEditingJob?.role?.roleId as number)?.role
-                ?.label ?? "Member"}
+              {getProjectJob(currentJob?.role?.roleId as number)?.role?.label ??
+                "Member"}
             </span>{" "}
             from the project? This action cannot be undone.
           </div>
@@ -836,8 +836,8 @@ export const TeamTab = ({
           onChange={(e) => {
             const selectedRole = allRoles.find((j) => j.label === e.target.value);
             if (selectedRole)
-              setCurrentlyEditingJob({
-                ...currentlyEditingJob,
+              setCurrentJob({
+                ...currentJob,
                 titleId: selectedRole.titleId,
                 jobTitle: selectedRole.label,
               });
@@ -868,7 +868,7 @@ export const TeamTab = ({
               isCreatingNewPosition
                 ? ""
                 : (allRoles.find(
-                    ({ roleId }) => roleId === currentlyViewedJobId // FIXME this doesn't work and can't until currentlyViewed and currentlyEditing are merged
+                    ({ roleId }) => roleId === currentJob?.role?.roleId
                   )?.label ?? "Member")
             }
             type="input"
@@ -880,9 +880,9 @@ export const TeamTab = ({
               );
 
               if (selectedRole) {
-                setCurrentlyEditingJob({
+                setCurrentJob({
                   ...emptyJob,
-                  ...currentlyEditingJob,
+                  ...currentJob,
                   role: {
                     ...selectedRole,
                   },
@@ -924,19 +924,18 @@ export const TeamTab = ({
       <div id="edit-position-description">
         <label>Role Description*</label>
         <textarea
-          value={currentlyEditingJob?.description ?? ""}
+          value={currentJob?.description ?? ""}
           onChange={(e) =>
-            setCurrentlyEditingJob({
+            setCurrentJob({
               ...emptyJob,
-              ...currentlyEditingJob,
+              ...currentJob,
               description: e.target.value,
             })
           }
         >
           {isCreatingNewPosition
             ? ""
-            : getProjectJob(currentlyEditingJob?.role?.roleId as number)
-                ?.description}
+            : getProjectJob(currentJob?.role?.roleId as number)?.description}
         </textarea>
       </div>
 
@@ -945,7 +944,7 @@ export const TeamTab = ({
           <label className="edit-position-availability">Availability</label>
           {/* <select
             className="edit-position-availability"
-            onChange={(e) => setCurrentlyEditingJob({ ...currentlyEditingJob, availability: e.target.value })}
+            onChange={(e) => setCurrentJob({ ...currentJob, availability: e.target.value })}
           >
             <option disabled selected={isCreatingNewPosition}>
               Select
@@ -965,16 +964,16 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentlyEditingJob?.role?.roleId as number)
+                  : (getProjectJob(currentJob?.role?.roleId as number)
                       ?.availability ?? "")
               }
               type="input"
             />
             <SelectOptions
               callback={(e) =>
-                setCurrentlyEditingJob({
+                setCurrentJob({
                   ...emptyJob,
-                  ...currentlyEditingJob,
+                  ...currentJob,
                   availability: (e.target as HTMLButtonElement)
                     .value as JobAvailability,
                 })
@@ -991,7 +990,7 @@ export const TeamTab = ({
           <label className="edit-position-location">Location</label>
           {/* <select
             className="edit-position-location"
-            onChange={(e) => setCurrentlyEditingJob({ ...currentlyEditingJob, location: e.target.value })}
+            onChange={(e) => setCurrentJob({ ...currentJob, location: e.target.value })}
           >
             <option disabled selected={isCreatingNewPosition}>
               Select
@@ -1010,16 +1009,16 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentlyEditingJob?.role?.roleId as number)
+                  : (getProjectJob(currentJob?.role?.roleId as number)
                       ?.location ?? "")
               }
               type="input"
             />
             <SelectOptions
               callback={(e) =>
-                setCurrentlyEditingJob({
+                setCurrentJob({
                   ...emptyJob,
-                  ...currentlyEditingJob,
+                  ...currentJob,
                   location: (e.target as HTMLButtonElement)
                     .value as JobLocation,
                 })
@@ -1050,11 +1049,11 @@ export const TeamTab = ({
               className="edit-position-contact"
               callback={(e) => {
                 const selectedId = parseInt(
-                  (e.target as HTMLButtonElement).value
+                  (e.currentTarget as HTMLButtonElement).value
                 );
-                setCurrentlyEditingJob({
+                setCurrentJob({
                   ...emptyJob,
-                  ...currentlyEditingJob,
+                  ...currentJob,
                   contact:
                     allUsers.find(({ userId }) => userId === selectedId) ??
                     null,
@@ -1095,7 +1094,7 @@ export const TeamTab = ({
           <label className="edit-position-duration">Duration</label>
           {/* <select
             className="edit-position-duration"
-            onChange={(e) => setCurrentlyEditingJob({ ...currentlyEditingJob, duration: e.target.value })}
+            onChange={(e) => setCurrentJob({ ...currentJob, duration: e.target.value })}
           >
             <option disabled selected={isCreatingNewPosition}>
               Select
@@ -1114,16 +1113,16 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentlyEditingJob?.role?.roleId as number)
+                  : (getProjectJob(currentJob?.role?.roleId as number)
                       ?.duration ?? "")
               }
               type="input"
             />
             <SelectOptions
               callback={(e) =>
-                setCurrentlyEditingJob({
+                setCurrentJob({
                   ...emptyJob,
-                  ...currentlyEditingJob,
+                  ...currentJob,
                   duration: (e.target as HTMLButtonElement)
                     .value as JobDuration,
                 })
@@ -1140,7 +1139,7 @@ export const TeamTab = ({
           <label className="edit-position-compensation">Compensation</label>
           {/* <select
             className="edit-position-compensation"
-            onChange={(e) => setCurrentlyEditingJob({ ...currentlyEditingJob, compensation: e.target.value })}
+            onChange={(e) => setCurrentJob({ ...currentJob, compensation: e.target.value })}
           >
             <option disabled selected={isCreatingNewPosition}>
               Select
@@ -1159,16 +1158,16 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentlyEditingJob?.role?.roleId as number)
+                  : (getProjectJob(currentJob?.role?.roleId as number)
                       ?.compensation ?? "")
               }
               type="input"
             />
             <SelectOptions
               callback={(e) =>
-                setCurrentlyEditingJob({
+                setCurrentJob({
                   ...emptyJob,
-                  ...currentlyEditingJob,
+                  ...currentJob,
                   compensation: (e.target as HTMLButtonElement)
                     .value as JobCompensation,
                 })
@@ -1459,7 +1458,7 @@ export const TeamTab = ({
                       key={searchBarKey}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      dataSets={ [{ data: searchableUsers }] }
+                      dataSets={[{ data: searchableUsers }]}
                       onSearch={(results) => {
                         handleSearch(results as UserPreview[][]);
                       }}
@@ -1574,10 +1573,10 @@ export const TeamTab = ({
                   className="positions-popup-list-item"
                   id=""
                   data-id={"jobId" in job ? job.jobId : job.localId}
+                  data-id-type={"jobId" in job ? "canon" : "local"}
                   onClick={() => {
                     if (!editMode) {
-                      if ("jobId" in job) setCurrentlyViewedJobId(job.jobId);
-                      else setCurrentlyViewedJobId(job.localId!);
+                      setCurrentJob(job);
                     }
                   }}
                 >
@@ -1674,7 +1673,7 @@ export const TeamTab = ({
 //     <button
 //       className="edit-project-member-button"
 //       onClick={() => {
-//         setCurrentlyEditingJob(getProjectJob(currentlyViewedJobId));
+//         setCurrentJob(getProjectJob(currentlyViewedJobId));
 //         setPositionWindowContent(positionEditWindow);
 //         setEditMode(true);
 //       }}
@@ -1754,8 +1753,8 @@ export const TeamTab = ({
 //         onChange={(e) => {
 //           const selectedRole = allRoles.find((j) => j.label === e.target.value);
 //           if (selectedRole)
-//             setCurrentlyEditingJob({
-//               ...currentlyEditingJob,
+//             setCurrentJob({
+//               ...currentJob,
 //               titleId: selectedRole.titleId,
 //               jobTitle: selectedRole.label,
 //             });
@@ -1801,7 +1800,7 @@ export const TeamTab = ({
 //     <div id="edit-position-description">
 //       <label>Role Description*</label>
 //       <textarea
-//         onChange={(e) => setCurrentlyEditingJob({ ...currentlyEditingJob, description: e.target.value })}
+//         onChange={(e) => setCurrentJob({ ...currentJob, description: e.target.value })}
 //       >
 //         {isCreatingNewPosition ? '' : getProjectJob(currentlyViewedJobId).description}
 //       </textarea>
@@ -1812,7 +1811,7 @@ export const TeamTab = ({
 //         <label className="edit-position-availability">Availability</label>
 //         <select
 //           className="edit-position-availability"
-//           onChange={(e) => setCurrentlyEditingJob({ ...currentlyEditingJob, availability: e.target.value })}
+//           onChange={(e) => setCurrentJob({ ...currentJob, availability: e.target.value })}
 //         >
 //           <option disabled selected={isCreatingNewPosition}>
 //             Select
@@ -1829,7 +1828,7 @@ export const TeamTab = ({
 //         <label className="edit-position-location">Location</label>
 //         <select
 //           className="edit-position-location"
-//           onChange={(e) => setCurrentlyEditingJob({ ...currentlyEditingJob, location: e.target.value })}
+//           onChange={(e) => setCurrentJob({ ...currentJob, location: e.target.value })}
 //         >
 //           <option disabled selected={isCreatingNewPosition}>
 //             Select
@@ -1849,7 +1848,7 @@ export const TeamTab = ({
 //         <label className="edit-position-duration">Duration</label>
 //         <select
 //           className="edit-position-duration"
-//           onChange={(e) => setCurrentlyEditingJob({ ...currentlyEditingJob, duration: e.target.value })}
+//           onChange={(e) => setCurrentJob({ ...currentJob, duration: e.target.value })}
 //         >
 //           <option disabled selected={isCreatingNewPosition}>
 //             Select
@@ -1865,7 +1864,7 @@ export const TeamTab = ({
 //         <label className="edit-position-compensation">Compensation</label>
 //         <select
 //           className="edit-position-compensation"
-//           onChange={(e) => setCurrentlyEditingJob({ ...currentlyEditingJob, compensation: e.target.value })}
+//           onChange={(e) => setCurrentJob({ ...currentJob, compensation: e.target.value })}
 //         >
 //           <option disabled selected={isCreatingNewPosition}>
 //             Select
@@ -1881,4 +1880,4 @@ export const TeamTab = ({
 //       </div>
 //     </div>
 //   </>
-// ), [addPositionCallback, allRoles, currentlyEditingJob, currentlyViewedJobId, errorAddPosition, getProjectJob, modifiedProject, isCreatingNewPosition, savePosition]);
+// ), [addPositionCallback, allRoles, currentJob, currentlyViewedJobId, errorAddPosition, getProjectJob, modifiedProject, isCreatingNewPosition, savePosition]);
