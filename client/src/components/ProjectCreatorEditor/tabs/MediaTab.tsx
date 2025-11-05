@@ -169,7 +169,7 @@ export const MediaTab = ({
     try {
       const fullImg = {
         image: file,
-        altText: "", // FIXME: there is no way for users to enter alt text
+        altText: "project image", // FIXME: there is no way for users to enter alt text
       } as CreateProjectImageInput;
 
       const localId = ++localIdIncrement;
