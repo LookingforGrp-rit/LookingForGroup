@@ -177,7 +177,7 @@ export const addPic = async (
 /**
  * @param projectID - ID of the project
  */
-export const getThumbnail = async (
+export const getThumb = async (
   projectID: number
 ): Promise<ApiResponse<ProjectImage>> => {
   const apiURL = `/projects/${projectID}/thumbnail`;
@@ -192,7 +192,7 @@ export const getThumbnail = async (
  * @param projectID - ID of the project
  * @param thumbnail - ID of the project image to use as the thumbnail
  */
-export const updateThumbnail = async (
+export const updateThumb = async (
   projectID: number,
   thumbnail: UpdateProjectThumbnailInput
 ): Promise<ApiResponse<ProjectImage>> => {
@@ -208,14 +208,14 @@ export const updateThumbnail = async (
  * @param projectID - ID of the target project
  * @returns Response status
  */
-export const removeThumbnail = async (
+export const removeThumb = async (
   projectID: number
 ): Promise<ApiResponse<null>> => {
 
   const apiURL = `/projects/${projectID}/thumbnail`;
   const response = await DELETE(apiURL);
 
-  if (response.error) console.log(`Error in rmeoveThumbnail: ${response.error}`);
+  if (response.error) console.log(`Error in rmeoveThumb: ${response.error}`);
   return response as ApiResponse<null>;
 };
 
@@ -600,9 +600,9 @@ export default {
   deleteMember,
   getProjectSocials,
   addProjectSocial,
-  getThumbnail,
-  updateThumbnail,
-  removeThumbnail,
+  getThumb,
+  updateThumb,
+  removeThumb,
   updateProjectSocial,
   deleteProjectSocial,
   getProjectTags,

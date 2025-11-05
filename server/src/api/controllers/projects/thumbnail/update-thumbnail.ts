@@ -6,7 +6,7 @@ import updateThumbnailService from '#services/projects/thumbnail/update-thumbnai
 const updateThumbnail = async (req: Request, res: Response): Promise<void> => {
   console.log(req.body);
   const projectId = parseInt(req.params.id);
-  const thumbId = (req.body as UpdateProjectThumbnailInput).thumbnail.imageId; //this should work right
+  const thumbId = (req.body as UpdateProjectThumbnailInput).thumbnail; //this should work right
 
   const result = await updateThumbnailService(projectId, thumbId);
 

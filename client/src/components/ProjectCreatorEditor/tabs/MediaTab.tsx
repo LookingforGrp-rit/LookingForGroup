@@ -196,26 +196,27 @@ export const MediaTab = ({
       updatePendingProject(projectAfterMediaChanges);
 
       // If only image, set as thumbnail
+      //this will always be localId, it's using the recently created image
       if (projectAfterMediaChanges.projectImages.length === 1) {
         // Update dataManager
-        //the data manager must be updated to incorporate new thumbnail stuff
-        dataManager.updateFields({
+        const thumbObj = {
+            localId: 1,
+            image: fullImg.image,
+            altText: "project thumbnail",
+        } as PendingProjectImage;
+        dataManager.updateThumbnail({
           id: {
             value: projectId,
             type: "canon",
           },
           data: {
-            thumbnail: fullImg.image,
+            thumbnail: thumbObj.localId ?? ++localIdIncrement
           }
         });
         // Update project data
         projectAfterMediaChanges = {
           ...projectAfterMediaChanges,
-          thumbnail: {
-            localId: 1,
-            image: fullImg.image,
-            altText: "project thumbnail",
-          },
+          thumbnail: thumbObj,
         };
       }
 
@@ -233,39 +234,42 @@ export const MediaTab = ({
     async (projectImage: ProjectImage | PendingProjectImage) => {
       if (!projectId) return;
       
-      // updateProject has to take a file
-      //this is no longer handled by updateProject, and the file is not needed
-      //...but the project image has to exist in order for the thumbnail to be updated/created
-      //and not the pending project image either the actual project image, because thumbnail is assigned based on the id
-      let imageFile: File;
-      // if string, get file
-      if (typeof projectImage.image === 'string') {
-        const response = await stringToFile(projectImage.image);
-        imageFile = response;
-      } else {
-        if (!projectImage.image) return;
-        imageFile = projectImage.image;
-      }
 
-      dataManager.updateFields({
+      //pendingprojectimage uses a file, projectimage uses a string
+      //so this exists to get the different pieces of the projectImage
+      const thumbId = typeof projectImage.image === 'string'  
+          ? (projectImage as ProjectImage).imageId 
+          : (projectImage as PendingProjectImage).localId ?? ++localIdIncrement;
+
+      dataManager.updateThumbnail({
         id: {
           value: projectId,
           type: "canon",
         },
-        data: {
-          thumbnail: imageFile,
+        data: { 
+          thumbnail: thumbId
         },
       });
 
+      //if it's pending, make it a pending image
+      if (typeof projectImage.image === 'string'){
+      const imageFile = await stringToFile(projectImage.image);
       projectAfterMediaChanges = {
         ...projectAfterMediaChanges,
         thumbnail: {
-          localId:
-            (projectImage as PendingProjectImage).localId ?? ++localIdIncrement,
+          localId: thumbId,
           image: imageFile,
           altText: "project thumbnail",
         },
-      };
+      }
+      }
+      //if it's not, set it as the image itself
+      else {
+        projectAfterMediaChanges = {
+          ...projectAfterMediaChanges,
+          thumbnail: projectImage
+        }
+      }
 
       updatePendingProject(projectAfterMediaChanges);
 
@@ -283,6 +287,7 @@ export const MediaTab = ({
       let updateThumbnail = false;
 
       // check if image is thumbnail
+      //there's a much easier way to do this now
       if (comparedIndices[projectAfterMediaChanges.projectImages.findIndex((image) => image === projectImage)]) {
         // update after image is deleted and projectImages is updated
         updateThumbnail = true;
@@ -329,43 +334,40 @@ export const MediaTab = ({
 
         // Handle string type
         if (typeof projectAfterMediaChanges.projectImages[0].image === 'string') {
-          // if image is a string, make it a file
-          const image = await stringToFile(projectAfterMediaChanges.projectImages[0].image);
+          const image = projectAfterMediaChanges.projectImages[0];
+          const thumbId = (projectAfterMediaChanges.projectImages[0] as ProjectImage).imageId
 
           // Update dataManager
-          dataManager.updateFields({
+          dataManager.updateThumbnail({
             id: {
               value: projectId,
               type: "canon",
             },
             data: {
-              thumbnail: image,
+              thumbnail: thumbId,
             }
           });
 
           // Update project data
           projectAfterMediaChanges = {
             ...projectAfterMediaChanges,
-            thumbnail: {
-              localId: 1,
-              image: image,
-              altText: "project thumbnail",
-            },
+            thumbnail: image,
           };
         }
 
         // Handle File type
         else {
           const image = projectAfterMediaChanges.projectImages[0].image as File;
+          const thumbId = (projectImage as PendingProjectImage).localId ?? ++localIdIncrement
 
           // Update dataManager
-          dataManager.updateFields({
+          dataManager.updateThumbnail({
             id: {
               value: projectId,
               type: "canon",
             },
             data: {
-              thumbnail: image,
+              thumbnail: thumbId,
             }
           });
 
@@ -373,7 +375,7 @@ export const MediaTab = ({
           projectAfterMediaChanges = {
             ...projectAfterMediaChanges,
             thumbnail: {
-              localId: 1,
+              localId: thumbId,
               image: image,
               altText: "project thumbnail",
             },

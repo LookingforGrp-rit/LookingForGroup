@@ -12,6 +12,7 @@ import {
   UpdateProjectJobInput,
   UpdateProjectMemberInput,
   UpdateProjectSocialInput,
+  UpdateProjectThumbnailInput,
 } from "@looking-for-group/shared";
 import {
   addMember,
@@ -32,6 +33,7 @@ import {
   updateProject,
   updateProjectJob,
   updateProjectSocial,
+  updateThumb,
 } from "../projects";
 import {
   CRUDRequest,
@@ -68,6 +70,13 @@ export const projectDataManager = async (projectId: number) => {
             value: projectId,
           },
           data: {},
+        },
+        thumbnail: {
+          id: {
+            type: 'canon',
+            value: projectId
+          },
+          data: {} as UpdateProjectThumbnailInput
         },
         projectImages: [],
         projectSocials: [],
@@ -119,12 +128,6 @@ export const projectDataManager = async (projectId: number) => {
     let errorMessage = "";
 
     try {
-      await saveUpdates(changes.update);
-    } catch (error) {
-      errorMessage += (error as Error).message;
-    }
-
-    try {
       await saveDeletes(changes.delete);
     } catch (error) {
       errorMessage += (error as Error).message;
@@ -132,6 +135,12 @@ export const projectDataManager = async (projectId: number) => {
 
     try {
       await saveCreates(changes.create);
+    } catch (error) {
+      errorMessage += (error as Error).message;
+    }
+
+    try {
+      await saveUpdates(changes.update);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
@@ -183,6 +192,16 @@ export const projectDataManager = async (projectId: number) => {
         "Updating project image",
         updates.projectImages,
         ({ id, data }) => updatePic(projectId, id.value, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    try {
+      await runAndCollectErrors<UpdateProjectThumbnailInput>(
+        "Updating project thumbnail",
+        [updates.thumbnail],
+        ({ id, data }) => updateThumb(id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -546,6 +565,15 @@ export const projectDataManager = async (projectId: number) => {
     ];
   };
 
+  const updateThumbnail = (thumbnail: CRUDRequest<UpdateProjectThumbnailInput>) => {
+    changes.update.thumbnail = {
+      id: thumbnail.id,
+      data: {
+        thumbnail: thumbnail.data.thumbnail //lol...
+      }
+    }
+  }
+
   const updateMember = (member: CRUDRequest<UpdateProjectMemberInput>) => {
     let existingMemberUpdate = changes.update.members.find(
       ({ id }) => id.value === member.id.value && id.type === member.id.type
@@ -752,6 +780,7 @@ export const projectDataManager = async (projectId: number) => {
     updateSocial,
     updateJob,
     updateMember,
+    updateThumbnail,
     deleteTag,
     deleteImage,
     deleteSocial,

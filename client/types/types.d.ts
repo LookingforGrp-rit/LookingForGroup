@@ -18,6 +18,7 @@ import {
   ProjectMedium,
   ProjectMember,
   UserPreview,
+  UpdateProjectThumbnailInput,
 } from "@looking-for-group/shared";
 
 /**
@@ -47,6 +48,7 @@ interface ProjectChangesCreates {
 
 interface ProjectChangesUpdates {
   fields: CRUDRequest<UpdateProjectInput>;
+  thumbnail: CRUDRequest<UpdateProjectThumbnailInput>,
   projectImages: CRUDRequest<UpdateProjectImageInput>[];
   projectSocials: CRUDRequest<UpdateProjectSocialInput>[];
   jobs: CRUDRequest<UpdateProjectJobInput>[];
@@ -91,7 +93,7 @@ type PendingProjectTag = Omit<ProjectTag, "apiUrl">;
 type PendingProjectMedium = Omit<ProjectMedium, "apiUrl">;
 
 interface PendingProject extends Omit<Pending<ProjectDetail>, "localId"> {
-  thumbnail: PendingProjectImage | null;
+  thumbnail: ProjectImage | PendingProjectImage | null;
   tags: (ProjectTag | PendingProjectTag)[];
   projectImages: (ProjectImage | PendingProjectImage)[];
   projectSocials: (ProjectSocial | Pending<ProjectSocial>)[];
