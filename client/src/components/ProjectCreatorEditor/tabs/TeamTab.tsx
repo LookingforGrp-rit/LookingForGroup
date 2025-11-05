@@ -30,7 +30,7 @@ import {
   JobAvailability as JobAvailabilityEnums,
   JobDuration as JobDurationEnums,
   JobLocation as JobLocationEnums,
-  JobCompensation as JobCompensationEnums
+  JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 import {
   Pending,
@@ -41,7 +41,6 @@ import { projectDataManager } from "../../../api/data-managers/project-data-mana
 
 // --- Variables ---
 // Default project value
-//TODO: remove need for this, pending can handle empty values
 const emptyMember: PendingProjectMember = {
   user: null,
   role: null,
@@ -53,7 +52,6 @@ type UserSearchableFields = Pick<
   "firstName" | "lastName" | "username"
 >;
 
-//TODO: remove need for this, pending can handle empty values
 const emptyJob: Pending<ProjectJob> = {
   availability: null,
   compensation: null,
@@ -95,10 +93,13 @@ export const TeamTab = ({
   // for complete list of...
   const [allRoles, setAllRoles] = useState<Role[]>([]);
   const [allUsers, setAllUsers] = useState<UserPreview[]>([]);
-  const [searchableUsers, setSearchableUsers] = useState<UserSearchableFields[]>([]);
+  const [searchableUsers, setSearchableUsers] = useState<
+    UserSearchableFields[]
+  >([]);
 
   // tracking team changes
-  const [teamChanges, setTeamChanges] = useState<PendingProject>(structuredClone(projectData));
+  const [projectAfterTeamChanges, setProjectAfterTeamChanges] =
+    useState<PendingProject>(structuredClone(projectData));
 
   // HTML contents (needed if using commented out block at end of file)
   // const [teamTabContent, setTeamTabContent] = useState(<></>);
@@ -107,16 +108,13 @@ export const TeamTab = ({
   // tracking which team tab is currently being viewed: 0 - current team, 1 - open positions
   const [currentTeamTab, setCurrentTeamTab] = useState(0);
 
-  // tracking which role is being viewed out of all open positions: value is project jobId
-  // TODO: merge functionality with currentJob
-  const [currentRole, setCurrentRole] = useState(0);
-
   // tracking edits for...
-  const [currentMember, setCurrentMember] = useState<ProjectMember | PendingProjectMember>(); // current team tab
-  const [currentJob, setCurrentJob] = useState<ProjectJob | Pending<ProjectJob>>(); // open positions tab
-
-  // store new member data to save later
-  const [newMember, setNewMember] = useState<PendingProjectMember>();
+  const [currentMember, setCurrentMember] = useState<
+    ProjectMember | PendingProjectMember
+  >();
+  const [currentJob, setCurrentJob] = useState<
+    ProjectJob | Pending<ProjectJob>
+  >();
 
   // tracking whether position view is in edit mode or not
   const [editMode, setEditMode] = useState(false);
@@ -128,7 +126,9 @@ export const TeamTab = ({
   const [closePopup, setClosePopup] = useState(false);
 
   // store search results
-  const [searchResults, setSearchResults] = useState<Partial<UserPreview>[]>([]);
+  const [searchResults, setSearchResults] = useState<Partial<UserPreview>[]>(
+    []
+  );
 
   // errors/successful messages
   const [errorAddMember, setErrorAddMember] = useState("");
@@ -181,19 +181,16 @@ export const TeamTab = ({
 
         if (response.data) setAllUsers(response.data);
 
-        // FIXME why is this async?
         // list of users to search. users searchable by first name, last name, or username
-        const searchableUsers = (await Promise.all(
-          response.data!.map(async (user: UserPreview) => {
-            // get make searchable user
-            const filteredUser = {
-              username: user.username,
-              firstName: user.firstName,
-              lastName: user.lastName,
-            };
-            return filteredUser;
-          })
-        )) as UserSearchableFields[];
+        const searchableUsers = response.data?.map((user: UserPreview) => {
+          // get make searchable user
+          const filteredUser = {
+            username: user.username,
+            firstName: user.firstName,
+            lastName: user.lastName,
+          };
+          return filteredUser;
+        }) as UserSearchableFields[];
 
         if (searchableUsers === undefined) {
           return;
@@ -211,42 +208,60 @@ export const TeamTab = ({
   // Assign active buttons in Open Positions
   const isTeamTabOpen = currentTeamTab === 1;
   useEffect(() => {
-    // add id of selected button
-    const assigningButton = document.querySelector(
-      `button[data-id="${currentRole}"]`
+    if (!currentJob) return setCurrentJob(projectAfterTeamChanges.jobs[0]);
+
+    const currentJobId =
+      "localId" in currentJob ? currentJob.localId : currentJob.jobId;
+    const currentJobIdType = "localId" in currentJob ? "local" : "canon";
+
+    // update active button
+    const activeJobButton = document.querySelector(
+      `button[data-id="${currentJobId}"][data-id-type="${currentJobIdType}"]`
     );
-    if (assigningButton) {
-      // remove id of old button
-      const oldButton = document.querySelector("#team-positions-active-button");
-      if (oldButton) {
-        oldButton.id = "";
+    if (activeJobButton) {
+      // unselect old button
+      const lastActiveJobButton = document.querySelector(
+        "#team-positions-active-button"
+      );
+      if (lastActiveJobButton) {
+        lastActiveJobButton.id = "";
       }
-      assigningButton.id = "team-positions-active-button";
+      activeJobButton.id = "team-positions-active-button";
       return;
     }
 
-    // neither button present, assign default
-    const buttonDiv = document.querySelector(".team-positions-button");
-
-    if (buttonDiv && buttonDiv.querySelector("button")) {
-      const defaultButton = buttonDiv.querySelector("button");
-      defaultButton!.id = "team-positions-active-button"; // explicit because check is passed in the if statement
-      setCurrentRole(Number(defaultButton!.dataset.id));
+    // no button for current job
+    if (isCreatingNewPosition) {
+      // unselect old button
+      const lastActiveJobButton = document.querySelector(
+        "#team-positions-active-button"
+      );
+      if (lastActiveJobButton) {
+        lastActiveJobButton.id = "";
+      }
+      return;
     }
-  }, [currentRole, isTeamTabOpen]);
+
+    if (projectAfterTeamChanges.jobs[0] !== currentJob)
+      setCurrentJob(projectAfterTeamChanges.jobs[0]);
+  }, [currentJob, isTeamTabOpen, projectAfterTeamChanges.jobs]);
 
   // --- Data retrieval ---
   // Get project job info using role id to compare
-  const getProjectJob = useCallback((roleId: number) => {
-    return teamChanges.jobs.find((j) => j.role?.roleId === roleId);
+  const getProjectJob = useCallback(
+    (id: number) => {
+      // return projectAfterTeamChanges.jobs.find(
+      //   (job) => job.role?.roleId === roleId
+      // );
 
-    // TODO: delete this comment
-    // return projectAfterTeamChanges.jobs.find(
-    //   (job: ProjectJob | Pending<ProjectJob>) =>
-    //     ("jobId" in job && (job as ProjectJob).jobId === id) ||
-    //     ("localId" in job && (job as Pending<ProjectJob>).localId === id)
-    // );
-  }, [teamChanges.jobs]);
+      return projectAfterTeamChanges.jobs.find(
+        (job: ProjectJob | Pending<ProjectJob>) =>
+          ("jobId" in job && (job as ProjectJob).jobId === id) ||
+          ("localId" in job && (job as Pending<ProjectJob>).localId === id)
+      );
+    },
+    [projectAfterTeamChanges.jobs]
+  );
 
   // --- Member handlers ---
   // Error checks for adding a new member
@@ -262,7 +277,7 @@ export const TeamTab = ({
     // reset searchbar and dropdowns
     const resetFields = () => {
       setSearchQuery("");
-      setSelectKey((prev) => prev + 1);
+      setSelectKey((previous) => previous + 1);
     };
 
     // notify user of error, reset fields
@@ -314,7 +329,7 @@ export const TeamTab = ({
       } else {
         setSuccessAddMember(false);
         setErrorAddMember("Select a role"); // TODO could also just default to Member role
-        setSelectKey((prev) => prev + 1);
+        setSelectKey((previous) => previous + 1);
         return false;
       }
     }
@@ -371,10 +386,10 @@ export const TeamTab = ({
         localId: thisMemberLocalId,
       };
 
-      setTeamChanges(prev => ({
-        ...prev,
-        members: [...prev.members, localProjectMember]
-      }))
+      setProjectAfterTeamChanges((previous) => ({
+        ...previous,
+        members: [...previous.members, localProjectMember],
+      }));
 
       setCurrentMember(emptyMember);
       resetFields();
@@ -384,12 +399,15 @@ export const TeamTab = ({
 
   // Handle search results
   // FIXME does this need to be a 2D array?
-  const handleSearch = useCallback((results: Partial<UserPreview>[][]) => {
-    // Update search results only if a change has been made
-    if (!searchResults.every((val, index) => val === results[index])) {
-      setSearchResults(results[0] || []);
-    }
-  }, [searchResults]);
+  const handleSearch = useCallback(
+    (results: Partial<UserPreview>[][]) => {
+      // Update search results only if a change has been made
+      if (JSON.stringify(searchResults) !== JSON.stringify(results[0])) {
+        setSearchResults(results[0]);
+      }
+    },
+    [searchResults]
+  );
 
   // Handle clicking on a member in the search dropdown
   const handleUserSelect = useCallback(
@@ -397,15 +415,26 @@ export const TeamTab = ({
       // reset error
       setErrorAddMember("");
 
+      // check if user exists on the projects
+      if (
+        projectAfterTeamChanges.members.find(
+          (m) => m.user?.username === selectedUser.username
+        )
+      ) {
+        setErrorAddMember("User is already on the team");
+        return;
+      }
+
       // set text input
       setSearchQuery(
         `${selectedUser.firstName} ${selectedUser.lastName} (${selectedUser.username})`
       );
 
-      // get matching user data from user id
+      // get matching user data from username (only unique prop in search results)
       const matchedUser = allUsers.find(
-        (user) => user.userId === selectedUser.userId
+        (user) => user.username === selectedUser.username
       );
+
       if (!matchedUser) {
         setErrorAddMember("User not found");
         return;
@@ -429,30 +458,31 @@ export const TeamTab = ({
   // Resets Add Member name field, role/permission dropdowns
   const handlePopupReset = () => {
     setSearchQuery("");
-    setSearchBarKey((prev) => prev + 1);
-    setSelectKey((prev) => prev + 1);
+    setSearchBarKey((previous) => previous + 1);
+    setSelectKey((previous) => previous + 1);
     setClosePopup(false);
   };
 
   // --- Position handlers ---
   // update position edit window for creating a new position
   const addPositionCallback = useCallback(() => {
-    // going back to previous state (cancel button)
+    // going back to previousious state (cancel button)
     if (isCreatingNewPosition || editMode) {
       // we are no longer creating a new position
       setIsCreatingNewPosition(false);
       // reset the pending job
-      setCurrentJob({ ...emptyJob });
+      setCurrentJob(undefined);
       // return to selected role
-      const positions = document.querySelectorAll(".positions-popup-list-item");
-      for (const p of positions) {
-        const dataId = p.getAttribute("data-id");
-        if (dataId && parseInt(dataId) === currentRole) {
-          // found matching id, set element as active
-          p.id = "team-positions-active-button";
-          break;
-        }
-      }
+
+      // const positions = document.querySelectorAll(".positions-popup-list-item");
+      // for (const p of positions) {
+      //   const dataId = p.getAttribute("data-id");
+      //   if (dataId && parseInt(dataId) === currentlyViewedJobId) {
+      //     // found matching id, set element as active
+      //     p.id = "team-positions-active-button";
+      //     break;
+      //   }
+      // }
       // change to position view window
       // setPositionWindowContent(positionViewWindow);
       setEditMode(false);
@@ -472,23 +502,20 @@ export const TeamTab = ({
       setEditMode(true);
     }
     setErrorAddPosition("");
-  }, [currentRole, editMode, isCreatingNewPosition]);
+  }, [editMode, isCreatingNewPosition]);
 
   // Remove position listing
   const deletePosition = useCallback(() => {
-    const jobToBeDeleted = teamChanges.jobs.find(
-      ({ role }) => role?.roleId === currentRole
-    );
     if (
-      jobToBeDeleted &&
-      ((jobToBeDeleted as ProjectJob).jobId ||
-        (jobToBeDeleted as Pending<ProjectJob>).localId)
+      currentJob &&
+      ((currentJob as ProjectJob).jobId ||
+        (currentJob as Pending<ProjectJob>).localId)
     ) {
-      if ("jobId" in jobToBeDeleted) {
+      if ("jobId" in currentJob) {
         dataManager.deleteJob({
           id: {
             type: "canon",
-            value: jobToBeDeleted.jobId,
+            value: currentJob.jobId,
           },
           data: null,
         });
@@ -496,38 +523,48 @@ export const TeamTab = ({
         dataManager.deleteJob({
           id: {
             type: "local",
-            value: jobToBeDeleted.localId!,
+            value: currentJob.localId!,
           },
           data: null,
         });
       }
 
-      setTeamChanges(prev => ({
-        ...prev,
+      setProjectAfterTeamChanges((previous) => ({
+        ...previous,
         jobs: [
-          ...prev.jobs.filter(({role}) => role?.roleId !== currentRole)
-        ]
-      }))
+          ...previous.jobs.filter(
+            (job) =>
+              !(
+                ("jobId" in currentJob &&
+                  (job as ProjectJob).jobId === currentJob.jobId) ||
+                ("localId" in currentJob &&
+                  (job as Pending<ProjectJob>).localId === currentJob.localId)
+              )
+          ),
+        ],
+      }));
 
-      updatePendingProject(teamChanges);
+      updatePendingProject(projectAfterTeamChanges);
     }
 
     // filter out position
     // const updatedJobs = projectAfterTeamChanges.jobs.filter(
-    //   ({ role: { roleId } }) => roleId !== currentRole
+    //   ({ role: { roleId } }) => roleId !== currentlyViewedJobId
     // );
 
     // update jobs
     // setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
 
     // reset current position
-    const buttonDiv = document.querySelector(".team-positions-button");
-    if (buttonDiv && buttonDiv.querySelector("button")) {
-      const defaultButton = buttonDiv.querySelector("button");
-      defaultButton!.id = "team-positions-active-button"; // explicit because check is passed in the if statement
-      setCurrentRole(Number(defaultButton!.dataset.id));
-    }
-  }, [currentRole, dataManager, teamChanges, updatePendingProject]);
+    // const buttonDiv = document.querySelector(".team-positions-button");
+    // if (buttonDiv && buttonDiv.querySelector("button")) {
+    //   const defaultButton = buttonDiv.querySelector("button");
+    //   defaultButton!.id = "team-positions-active-button"; // explicit because check is passed in the if statement
+    //   setCurrentlyViewedJobId(Number(defaultButton!.dataset.id));
+    // }
+
+    setCurrentJob(undefined);
+  }, [currentJob, dataManager, projectAfterTeamChanges, updatePendingProject]);
 
   //Save current inputs in position editing window
   const savePosition = useCallback(() => {
@@ -548,6 +585,7 @@ export const TeamTab = ({
       ) {
         // set error
         setErrorAddPosition("All fields are required");
+        console.log(currentJob);
         return;
       }
 
@@ -569,10 +607,10 @@ export const TeamTab = ({
         },
       });
 
-      setTeamChanges(prev => ({
-        ...prev,
+      setProjectAfterTeamChanges((previous) => ({
+        ...previous,
         jobs: [
-          ...prev.jobs,
+          ...previous.jobs,
           {
             localId,
             availability: currentJob.availability,
@@ -582,13 +620,24 @@ export const TeamTab = ({
             duration: currentJob.duration,
             location: currentJob.location,
             role: currentJob.role,
-          }
-        ]
+          },
+        ],
       }));
 
-      updatePendingProject(teamChanges);
+      updatePendingProject(projectAfterTeamChanges);
 
-      setCurrentRole(localId);
+      setEditMode(false);
+      setIsCreatingNewPosition(false);
+      setCurrentJob({
+        localId,
+        availability: currentJob.availability,
+        compensation: currentJob.compensation,
+        contact: currentJob.contact,
+        description: currentJob.description ?? "",
+        duration: currentJob.duration,
+        location: currentJob.location,
+        role: currentJob.role,
+      });
 
       return;
     }
@@ -609,10 +658,13 @@ export const TeamTab = ({
       },
     });
 
-    setTeamChanges(prev => ({
-      ...prev,
+    setProjectAfterTeamChanges((previous) => ({
+      ...previous,
       jobs: [
-        ...prev.jobs.filter((job) => (job as ProjectJob).jobId !== (currentJob as ProjectJob).jobId),
+        ...previous.jobs.filter(
+          (job) =>
+            (job as ProjectJob).jobId !== (currentJob as ProjectJob).jobId
+        ),
         {
           jobId: (currentJob as ProjectJob).jobId,
           availability: (currentJob as ProjectJob).availability,
@@ -626,12 +678,13 @@ export const TeamTab = ({
           createdAt: (currentJob as ProjectJob).createdAt,
           updatedAt: (currentJob as ProjectJob).updatedAt,
         },
-      ]
-    }))
+      ],
+    }));
 
-    updatePendingProject(teamChanges);
+    setErrorAddPosition("");
+    setEditMode(false);
 
-    setCurrentRole((currentJob as ProjectJob).jobId);
+    updatePendingProject(projectAfterTeamChanges);
 
     // // check if same position is present
     // // TODO projects can't have two leads? two devs? two artists? etc..
@@ -657,14 +710,17 @@ export const TeamTab = ({
     //   );
     // setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
     // }
-    setErrorAddPosition("");
-    setIsCreatingNewPosition(false);
     // setPositionWindowContent(positionViewWindow);
-    setEditMode(false);
 
     // set current position to saved position
-    // setCurrentRole((currentJob as ProjectJob).jobId || (currentJob as Pending<ProjectJob>).localId);
-  }, [currentJob, dataManager, isCreatingNewPosition, teamChanges, updatePendingProject]);
+    // setCurrentlyViewedJobId((currentJob as ProjectJob).jobId || (currentJob as Pending<ProjectJob>).localId);
+  }, [
+    currentJob,
+    dataManager,
+    isCreatingNewPosition,
+    projectAfterTeamChanges,
+    updatePendingProject,
+  ]);
 
   // --- Content variables ---
   // Open position display
@@ -686,22 +742,22 @@ export const TeamTab = ({
         />
       </button>
       <div className="positions-popup-info-title">
-        {getProjectJob(currentJob?.role?.roleId as number)?.role?.label ?? "Member"}
+        {currentJob?.role?.label ?? "Member"}
       </div>
       <div className="positions-popup-info-description">
         <div id="position-description-content">
-          {getProjectJob(currentJob?.role?.roleId as number)?.description ?? ""}
+          {currentJob?.description ?? ""}
         </div>
       </div>
       <div id="open-position-details">
         <div id="open-position-details-left">
           <div id="position-availability">
             <span className="position-detail-indicator">Availability: </span>
-            {getProjectJob(currentJob?.role?.roleId as number)?.availability}
+            {currentJob?.availability}
           </div>
           <div id="position-location">
             <span className="position-detail-indicator">Location: </span>
-            {getProjectJob(currentJob?.role?.roleId as number)?.location}
+            {currentJob?.location}
           </div>
           <div id="open-position-contact">
             <span className="position-detail-indicator">Contact: </span>
@@ -712,7 +768,9 @@ export const TeamTab = ({
             >
               <img
                 className="project-member-image"
-                src={teamChanges.owner?.profileImage ?? profileImage}
+                src={
+                  projectAfterTeamChanges.owner?.profileImage ?? profileImage
+                }
                 alt="profile picture"
                 onError={(e) => {
                   // default profile picture if user image doesn't load
@@ -721,18 +779,19 @@ export const TeamTab = ({
                   profileImg.src = profileImage;
                 }}
               />
-              {teamChanges.owner?.firstName} {teamChanges.owner?.lastName}
+              {projectAfterTeamChanges.owner?.firstName}{" "}
+              {projectAfterTeamChanges.owner?.lastName}
             </div>
           </div>
         </div>
         <div id="open-position-details-right">
           <div id="position-duration">
             <span className="position-detail-indicator">Duration: </span>
-            {getProjectJob(currentJob?.role?.roleId as number)?.duration}
+            {currentJob?.duration}
           </div>
           <div id="position-compensation">
             <span className="position-detail-indicator">Compensation: </span>
-            {getProjectJob(currentJob?.role?.roleId as number)?.compensation}
+            {currentJob?.compensation}
           </div>
         </div>
       </div>
@@ -748,7 +807,8 @@ export const TeamTab = ({
           >
             Are you sure you want to delete{" "}
             <span className="project-info-highlight">
-              {getProjectJob(currentJob?.role?.roleId as number)?.role?.label ?? "Member"}
+              {getProjectJob(currentJob?.role?.roleId as number)?.role?.label ??
+                "Member"}
             </span>{" "}
             from the project? This action cannot be undone.
           </div>
@@ -770,8 +830,8 @@ export const TeamTab = ({
   );
 
   // Find selected members
-  const selectedMember = teamChanges.members.find(
-    ({ user }) => user?.userId === teamChanges.owner?.userId
+  const selectedMember = projectAfterTeamChanges.members.find(
+    ({ user }) => user?.userId === projectAfterTeamChanges.owner?.userId
   );
 
   // Edit open position or creating new position
@@ -780,7 +840,7 @@ export const TeamTab = ({
       <div id="edit-position-role">
         <label>Role*</label>
         {/* <select
-          key={currentRole}
+          key={currentlyViewedJobId}
           onChange={(e) => {
             const selectedRole = allRoles.find((j) => j.label === e.target.value);
             if (selectedRole)
@@ -797,7 +857,7 @@ export const TeamTab = ({
           {allRoles.map((job: { titleId: number; label: string }) => (
             <option
               key={job.titleId}
-              selected={isCreatingNewPosition ? false : job.titleId === currentRole}
+              selected={isCreatingNewPosition ? false : job.titleId === currentlyViewedJobId}
               onClick={() => {
                 const updatedJobs = modifiedProject.jobs.map((j) =>
                   j.titleId === job.titleId ? { ...j, jobTitle: job.label } : j
@@ -815,8 +875,9 @@ export const TeamTab = ({
             initialVal={
               isCreatingNewPosition
                 ? ""
-                : (allRoles.find(({ roleId }) => roleId === currentRole)
-                    ?.label ?? "Member")
+                : (allRoles.find(
+                    ({ roleId }) => roleId === currentJob?.role?.roleId
+                  )?.label ?? "Member")
             }
             type="input"
           />
@@ -847,7 +908,11 @@ export const TeamTab = ({
         </Select>
         <div id="edit-position-buttons">
           <div id="edit-position-button-pair">
-            <button onClick={savePosition} id="position-edit-save">
+            <button
+              type="button"
+              onClick={savePosition}
+              id="position-edit-save"
+            >
               Save
             </button>
             <button
@@ -876,7 +941,9 @@ export const TeamTab = ({
             })
           }
         >
-          {isCreatingNewPosition ? "" : getProjectJob(currentJob?.role?.roleId as number)?.description}
+          {isCreatingNewPosition
+            ? ""
+            : getProjectJob(currentJob?.role?.roleId as number)?.description}
         </textarea>
       </div>
 
@@ -893,7 +960,7 @@ export const TeamTab = ({
             {availabilityOptions.map((o) => (
               <option
                 key={o}
-                selected={getProjectJob(currentRole)?.availability === o}
+                selected={getProjectJob(currentlyViewedJobId)?.availability === o}
               >
                 {o}
               </option>
@@ -905,7 +972,8 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number)?.availability ?? "")
+                  : (getProjectJob(currentJob?.role?.roleId as number)
+                      ?.availability ?? "")
               }
               type="input"
             />
@@ -937,7 +1005,7 @@ export const TeamTab = ({
             </option>
             {locationOptions.map((o) => (
               <option
-                selected={getProjectJob(currentRole)?.location === o}
+                selected={getProjectJob(currentlyViewedJobId)?.location === o}
               >
                 {o}
               </option>
@@ -949,7 +1017,8 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number)?.location ?? "")
+                  : (getProjectJob(currentJob?.role?.roleId as number)
+                      ?.location ?? "")
               }
               type="input"
             />
@@ -988,7 +1057,7 @@ export const TeamTab = ({
               className="edit-position-contact"
               callback={(e) => {
                 const selectedId = parseInt(
-                  (e.target as HTMLButtonElement).value
+                  (e.currentTarget as HTMLButtonElement).value
                 );
                 setCurrentJob({
                   ...emptyJob,
@@ -998,8 +1067,9 @@ export const TeamTab = ({
                     null,
                 });
               }}
-              options={teamChanges.members
+              options={projectAfterTeamChanges.members
                 .filter((member) => member.user !== null)
+                .filter((member) => member.role.label === "Owner") // TODO change when perms exist
                 .map(({ user }) => ({
                   markup: (
                     <>
@@ -1039,7 +1109,7 @@ export const TeamTab = ({
             </option>
             {durationOptions.map((o) => (
               <option
-                selected={getProjectJob(currentRole)?.duration === o}
+                selected={getProjectJob(currentlyViewedJobId)?.duration === o}
               >
                 {o}
               </option>
@@ -1051,7 +1121,8 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number)?.duration ?? "")
+                  : (getProjectJob(currentJob?.role?.roleId as number)
+                      ?.duration ?? "")
               }
               type="input"
             />
@@ -1083,7 +1154,7 @@ export const TeamTab = ({
             </option>
             {compensationOptions.map((o) => (
               <option
-                selected={isCreatingNewPosition ? false : getProjectJob(currentRole)?.compensation === o}
+                selected={isCreatingNewPosition ? false : getProjectJob(currentlyViewedJobId)?.compensation === o}
               >
                 {o}
               </option>
@@ -1095,7 +1166,8 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number)?.compensation ?? "")
+                  : (getProjectJob(currentJob?.role?.roleId as number)
+                      ?.compensation ?? "")
               }
               type="input"
             />
@@ -1131,7 +1203,7 @@ export const TeamTab = ({
     () => (
       <div id="project-editor-project-members">
         {/* List out project members */}
-        {teamChanges.members.map((member) => (
+        {projectAfterTeamChanges.members.map((member) => (
           <div
             key={member.user?.userId}
             className="project-editor-project-member"
@@ -1150,7 +1222,7 @@ export const TeamTab = ({
             <div className="project-editor-project-member-info">
               <div className="project-editor-project-member-name">
                 {/* TODO add current user */}
-                {member.user?.firstName && member.user?.lastName}
+                {member.user?.firstName} {member.user?.lastName}
               </div>
               <div className="project-editor-project-member-role project-editor-extra-info">
                 {(member.role as Role).label}
@@ -1207,25 +1279,25 @@ export const TeamTab = ({
                       <SelectOptions
                         callback={(e) => {
                           // get role with matching name (for id)
-                          const role = allRoles.find((role) => role.label === (e.target as HTMLSelectElement).value);
+                          const role = allRoles.find(
+                            (role) =>
+                              role.label ===
+                              (e.target as HTMLSelectElement).value
+                          );
 
                           // update current member
                           setCurrentMember({
                             ...currentMember!, // on edit button click, currentMember is defined
-                            role: role as Role
+                            role: role as Role,
                           });
-
-                          console.log('current member updated', currentMember);
                         }}
-                        options={allRoles.map(
-                          (role) => {
-                            return {
-                              markup: <>{role.label}</>,
-                              value: role.label,
-                              disabled: false,
-                            };
-                          }
-                        )}
+                        options={allRoles.map((role) => {
+                          return {
+                            markup: <>{role.label}</>,
+                            value: role.label,
+                            disabled: false,
+                          };
+                        })}
                       />
                     </Select>
                   </div>
@@ -1241,7 +1313,8 @@ export const TeamTab = ({
                         // update member in data manager
                         dataManager.updateMember({
                           id: {
-                            type: ("localId" in currentMember) ? "local" : "canon",
+                            type:
+                              "localId" in currentMember ? "local" : "canon",
                             value: currentMember.user?.userId,
                           },
                           data: {
@@ -1250,40 +1323,28 @@ export const TeamTab = ({
                         });
 
                         // update team changes array
-                        setTeamChanges( prev => ({
-                          ...prev,
-                          members: prev.members.map((member) => {
+                        setProjectAfterTeamChanges((previous) => ({
+                          ...previous,
+                          members: previous.members.map((member) => {
                             // if this member matches the updated member
-                            if (currentMember.user?.userId === member.user?.userId) {
+                            if (
+                              currentMember.user?.userId === member.user?.userId
+                            ) {
                               // update role
                               return {
                                 ...member,
-                                role: currentMember.role
-                              }
+                                role:
+                                  currentMember.role ??
+                                  allRoles.find(
+                                    (role) => role.label === "Member"
+                                  ),
+                              };
                             } else {
                               // if it doesn't match, do nothing to the member
                               return member;
                             }
                           }),
                         }));
-                        //   ...projectAfterTeamChanges,
-                        //   members: [
-                        //     TODO: is this needed?
-                        //     ...projectAfterTeamChanges.members.filter(
-                        //       (member) =>
-                        //         member.user?.userId !=
-                        //         currentMember.user?.userId
-                        //     ),
-                        //     {
-                        //       ...currentMember,
-                        //       role:
-                        //         currentMember.role ??
-                        //         allRoles.find(
-                        //           (role) => role.label === "Member"
-                        //         ),
-                        //     },
-                        //   ],
-                        // };
                       }}
                     >
                       Save
@@ -1314,8 +1375,7 @@ export const TeamTab = ({
                             onClick={() => {
                               // TODO error messages
                               if (!currentMember) return;
-                              if (isNullOrUndefined(currentMember.user))
-                                return;
+                              if (isNullOrUndefined(currentMember.user)) return;
 
                               if ("localId" in currentMember) {
                                 dataManager.deleteMember({
@@ -1334,6 +1394,17 @@ export const TeamTab = ({
                                   data: null,
                                 });
                               }
+
+                              setProjectAfterTeamChanges((previous) => ({
+                                ...previous,
+                                members: [
+                                  ...previous.members.filter(
+                                    (member) =>
+                                      member.user?.userId !==
+                                      currentMember.user?.userId
+                                  ),
+                                ],
+                              }));
                             }}
                           >
                             Delete
@@ -1355,10 +1426,9 @@ export const TeamTab = ({
                     className="button-reset"
                     callback={() => {
                       setCurrentMember(
-                        teamChanges.members.find(
+                        projectAfterTeamChanges.members.find(
                           (member) =>
-                            member.user?.userId ===
-                            currentMember?.user?.userId
+                            member.user?.userId === currentMember?.user?.userId
                         )
                       );
                     }}
@@ -1375,9 +1445,7 @@ export const TeamTab = ({
         <Popup>
           <PopupButton
             buttonId="project-editor-add-member"
-            callback={() => {
-              setCurrentMember({ ...emptyMember });
-            }}
+            callback={() => setCurrentMember(undefined)}
           >
             <ThemeIcon
               id="add-person"
@@ -1405,10 +1473,10 @@ export const TeamTab = ({
                       key={searchBarKey}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      dataSets={ [{ data: searchableUsers }] }
-                      onSearch={(results) =>
-                        handleSearch(results as UserPreview[][])
-                      }
+                      dataSets={[{ data: searchableUsers }]}
+                      onSearch={(results) => {
+                        handleSearch(results as UserPreview[][]);
+                      }}
                     ></SearchBar>
                   </DropdownButton>
                   <DropdownContent>
@@ -1416,10 +1484,12 @@ export const TeamTab = ({
                       {searchResults.map((user, index) => (
                         <DropdownButton
                           key={user.userId}
-                          className={`user-search-item 
+                          className={`user-search-item
                             ${index === 0 ? "top" : ""}
                             ${index === searchResults.length - 1 ? "bottom" : ""}`}
-                          callback={() => user && handleUserSelect(user as UserPreview)}
+                          callback={() =>
+                            user && handleUserSelect(user as UserPreview)
+                          }
                         >
                           <p className="user-search-name">
                             {user.firstName} {user.lastName}
@@ -1435,11 +1505,7 @@ export const TeamTab = ({
               </div>
               <label id="project-team-add-member-role">Role</label>
               <Select key={selectKey}>
-                <SelectButton
-                  placeholder="Select"
-                  initialVal=""
-                  type="input"
-                />
+                <SelectButton placeholder="Select" initialVal="" type="input" />
                 <SelectOptions
                   callback={(e) => {
                     setCurrentMember({
@@ -1467,14 +1533,14 @@ export const TeamTab = ({
               <PopupButton
                 buttonId="team-add-member-add-button"
                 callback={() => handleNewMember()}
-                doNotClose={(prev) => !prev}
+                doNotClose={(previous) => !previous}
               >
                 Add
               </PopupButton>
               <PopupButton
                 buttonId="team-add-member-cancel-button"
                 callback={() => {
-                  setNewMember(emptyMember);
+                  setCurrentMember(emptyMember);
                   setErrorAddMember("");
                   handlePopupReset();
                 }}
@@ -1487,7 +1553,22 @@ export const TeamTab = ({
         </Popup>
       </div>
     ),
-    [allRoles, currentMember, dataManager, errorAddMember, handleNewMember, handleSearch, handleUserSelect, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember, teamChanges.members]
+    [
+      allRoles,
+      currentMember,
+      dataManager,
+      errorAddMember,
+      handleNewMember,
+      handleSearch,
+      handleUserSelect,
+      projectAfterTeamChanges.members,
+      searchBarKey,
+      searchQuery,
+      searchResults,
+      searchableUsers,
+      selectKey,
+      successAddMember,
+    ]
   );
   const openPositionsContent: JSX.Element = useMemo(
     () => (
@@ -1495,16 +1576,26 @@ export const TeamTab = ({
         <div className="positions-popup-list">
           <div id="team-positions-popup-list-header">Open Positions</div>
           <div id="team-positions-popup-list-buttons">
-            {teamChanges.jobs?.map((role) => (
-              <div key={role.role?.roleId} className="team-positions-button">
+            {projectAfterTeamChanges.jobs?.map((job) => (
+              <div
+                key={
+                  "jobId" in job ? job.jobId + "-canon" : job.localId + "-local"
+                }
+                className="team-positions-button"
+              >
                 <img src="/images/icons/drag.png" alt="positions" />
                 <button
                   className="positions-popup-list-item"
                   id=""
-                  data-id={role.role?.roleId}
-                  onClick={() => (!editMode ? setCurrentRole(role.role?.roleId as number) : {})}
+                  data-id={"jobId" in job ? job.jobId : job.localId}
+                  data-id-type={"jobId" in job ? "canon" : "local"}
+                  onClick={() => {
+                    if (!editMode) {
+                      setCurrentJob(job);
+                    }
+                  }}
                 >
-                  {role.role?.roleId}
+                  {job.role?.label ?? "Member"}
                 </button>
               </div>
             ))}
@@ -1532,7 +1623,12 @@ export const TeamTab = ({
         </div>
       </div>
     ),
-    [addPositionCallback, editMode, positionWindow, teamChanges.jobs]
+    [
+      addPositionCallback,
+      editMode,
+      positionWindow,
+      projectAfterTeamChanges.jobs,
+    ]
   );
 
   // Set content depending on what tab is selected
@@ -1592,26 +1688,26 @@ export const TeamTab = ({
 //     <button
 //       className="edit-project-member-button"
 //       onClick={() => {
-//         setCurrentJob(getProjectJob(currentRole));
+//         setCurrentJob(getProjectJob(currentlyViewedJobId));
 //         setPositionWindowContent(positionEditWindow);
 //         setEditMode(true);
 //       }}
 //     >
 //       <img className="edit-project-member-icon" src="/images/icons/pencil.png" alt="" />
 //     </button>
-//     <div className="positions-popup-info-title">{getProjectJob(currentRole).jobTitle}</div>
+//     <div className="positions-popup-info-title">{getProjectJob(currentlyViewedJobId).jobTitle}</div>
 //     <div className="positions-popup-info-description">
-//       <div id="position-description-content">{getProjectJob(currentRole).description}</div>
+//       <div id="position-description-content">{getProjectJob(currentlyViewedJobId).description}</div>
 //     </div>
 //     <div id="open-position-details">
 //       <div id="open-position-details-left">
 //         <div id="position-availability">
 //           <span className="position-detail-indicator">Availability: </span>
-//           {getProjectJob(currentRole).availability}
+//           {getProjectJob(currentlyViewedJobId).availability}
 //         </div>
 //         <div id="position-location">
 //           <span className="position-detail-indicator">Location: </span>
-//           {getProjectJob(currentRole).location}
+//           {getProjectJob(currentlyViewedJobId).location}
 //         </div>
 //         <div id="open-position-contact">
 //           <span className="position-detail-indicator">Contact: </span>
@@ -1630,11 +1726,11 @@ export const TeamTab = ({
 //       <div id="open-position-details-right">
 //         <div id="position-duration">
 //           <span className="position-detail-indicator">Duration: </span>
-//           {getProjectJob(currentRole).duration}
+//           {getProjectJob(currentlyViewedJobId).duration}
 //         </div>
 //         <div id="position-compensation">
 //           <span className="position-detail-indicator">Compensation: </span>
-//           {getProjectJob(currentRole).compensation}
+//           {getProjectJob(currentlyViewedJobId).compensation}
 //         </div>
 //       </div>
 //     </div>
@@ -1647,7 +1743,7 @@ export const TeamTab = ({
 //         <div id="project-team-delete-member-text" className="project-editor-extra-info">
 //           Are you sure you want to delete{' '}
 //           <span className="project-info-highlight">
-//             {getProjectJob(currentRole).jobTitle}
+//             {getProjectJob(currentlyViewedJobId).jobTitle}
 //           </span>{' '}
 //           from the project? This action cannot be undone.
 //         </div>
@@ -1661,14 +1757,14 @@ export const TeamTab = ({
 //       </PopupContent>
 //     </Popup>
 //   </>
-// ), [currentRole, deletePosition, getProjectJob, positionEditWindow]);
+// ), [currentlyViewedJobId, deletePosition, getProjectJob, positionEditWindow]);
 // const positionEditWindow = useMemo(() => (
 //   <>
 //     <div id="edit-position-role">
 //       {/* TODO: add place for error message (setErrorAddPosition) */}
 //       <label>Role*</label>
 //       <select
-//         key={currentRole}
+//         key={currentlyViewedJobId}
 //         onChange={(e) => {
 //           const selectedRole = allRoles.find((j) => j.label === e.target.value);
 //           if (selectedRole)
@@ -1685,7 +1781,7 @@ export const TeamTab = ({
 //         {allRoles.map((job: { titleId: number; label: string }) => (
 //           <option
 //             key={job.titleId}
-//             selected={isCreatingNewPosition ? false : job.titleId === currentRole}
+//             selected={isCreatingNewPosition ? false : job.titleId === currentlyViewedJobId}
 //             onClick={() => {
 //               const updatedJobs = modifiedProject.jobs.map((j) =>
 //                 j.titleId === job.titleId ? { ...j, jobTitle: job.label } : j
@@ -1721,7 +1817,7 @@ export const TeamTab = ({
 //       <textarea
 //         onChange={(e) => setCurrentJob({ ...currentJob, description: e.target.value })}
 //       >
-//         {isCreatingNewPosition ? '' : getProjectJob(currentRole).description}
+//         {isCreatingNewPosition ? '' : getProjectJob(currentlyViewedJobId).description}
 //       </textarea>
 //     </div>
 
@@ -1738,7 +1834,7 @@ export const TeamTab = ({
 //           {availabilityOptions.map((o) => (
 //             <option
 //               key={o}
-//               selected={isCreatingNewPosition ? false : getProjectJob(currentRole).availability === o}
+//               selected={isCreatingNewPosition ? false : getProjectJob(currentlyViewedJobId).availability === o}
 //             >
 //               {o}
 //             </option>
@@ -1754,7 +1850,7 @@ export const TeamTab = ({
 //           </option>
 //           {locationOptions.map((o) => (
 //             <option
-//               selected={isCreatingNewPosition ? false : getProjectJob(currentRole).location === o}
+//               selected={isCreatingNewPosition ? false : getProjectJob(currentlyViewedJobId).location === o}
 //             >
 //               {o}
 //             </option>
@@ -1774,7 +1870,7 @@ export const TeamTab = ({
 //           </option>
 //           {durationOptions.map((o) => (
 //             <option
-//               selected={isCreatingNewPosition ? false : getProjectJob(currentRole).duration === o}
+//               selected={isCreatingNewPosition ? false : getProjectJob(currentlyViewedJobId).duration === o}
 //             >
 //               {o}
 //             </option>
@@ -1790,7 +1886,7 @@ export const TeamTab = ({
 //           </option>
 //           {compensationOptions.map((o) => (
 //             <option
-//               selected={isCreatingNewPosition ? false : getProjectJob(currentRole).compensation === o}
+//               selected={isCreatingNewPosition ? false : getProjectJob(currentlyViewedJobId).compensation === o}
 //             >
 //               {o}
 //             </option>
@@ -1799,4 +1895,4 @@ export const TeamTab = ({
 //       </div>
 //     </div>
 //   </>
-// ), [addPositionCallback, allRoles, currentJob, currentRole, errorAddPosition, getProjectJob, modifiedProject, isCreatingNewPosition, savePosition]);
+// ), [addPositionCallback, allRoles, currentJob, currentlyViewedJobId, errorAddPosition, getProjectJob, modifiedProject, isCreatingNewPosition, savePosition]);
