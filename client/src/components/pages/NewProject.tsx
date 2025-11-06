@@ -344,7 +344,7 @@ useEffect(() => {
 
   return (
     <div className="page">
-      <Header dataSets={{ data: [] }} onSearch={() => {}} />
+      <Header dataSets={{ data: [] }} onSearch={() => {}} hideSearchBar={true}/>
 
       {displayedProject === undefined ? (
         loadingProject
