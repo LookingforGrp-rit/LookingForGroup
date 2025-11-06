@@ -238,7 +238,7 @@ export const TeamTab = ({
 
     if (projectAfterTeamChanges.jobs[0] !== currentJob)
       setCurrentJob(projectAfterTeamChanges.jobs[0]);
-  }, [currentJob, isTeamTabOpen, projectAfterTeamChanges.jobs]);
+  }, [currentJob, isCreatingNewPosition, isTeamTabOpen, projectAfterTeamChanges.jobs]);
 
   // --- Data retrieval ---
   // Get project job info using role id to compare
@@ -446,7 +446,7 @@ export const TeamTab = ({
       // clear search results
       setSearchResults([]);
     },
-    [allUsers, currentMember]
+    [allUsers, currentMember, projectAfterTeamChanges.members]
   );
 
   // Resets Add Member name field, role/permission dropdowns
@@ -460,7 +460,7 @@ export const TeamTab = ({
   // --- Position handlers ---
   // update position edit window for creating a new position
   const addPositionCallback = useCallback(() => {
-    // going back to previousious state (cancel button)
+    // going back to previous state (cancel button)
     if (isCreatingNewPosition || editMode) {
       // we are no longer creating a new position
       setIsCreatingNewPosition(false);
@@ -1305,6 +1305,7 @@ export const TeamTab = ({
                   </div>
                   {/* Action buttons */}
                   <div className="project-editor-button-pair">
+                    {/* Save Button */}
                     <PopupButton
                       buttonId="team-edit-member-save-button"
                       callback={() => {
@@ -1367,12 +1368,17 @@ export const TeamTab = ({
                           from the project? This action cannot be undone.
                         </div>
                         <div className="project-editor-button-pair">
-                          <button
+                          <PopupButton
                             className="delete-button"
-                            onClick={() => {
-                              // TODO error messages
-                              if (!currentMember) return;
-                              if (isNullOrUndefined(currentMember.user)) return;
+                            callback={() => {
+                              if (!currentMember) {
+                                // TODO: error message here
+                                return;
+                              };
+                              if (isNullOrUndefined(currentMember.user)) {
+                                // TODO: error message here
+                                return;
+                              };
 
                               if ("localId" in currentMember) {
                                 dataManager.deleteMember({
@@ -1405,7 +1411,7 @@ export const TeamTab = ({
                             }}
                           >
                             Delete
-                          </button>
+                          </PopupButton>
                           <PopupButton
                             buttonId="team-delete-member-cancel-button"
                             className="button-reset"
@@ -1530,7 +1536,7 @@ export const TeamTab = ({
               <PopupButton
                 buttonId="team-add-member-add-button"
                 callback={() => handleNewMember()}
-                doNotClose={(previous) => !previous}
+                doNotClose={() => !closePopup}
               >
                 Add
               </PopupButton>
@@ -1550,22 +1556,7 @@ export const TeamTab = ({
         </Popup>
       </div>
     ),
-    [
-      allRoles,
-      currentMember,
-      dataManager,
-      errorAddMember,
-      handleNewMember,
-      handleSearch,
-      handleUserSelect,
-      projectAfterTeamChanges.members,
-      searchBarKey,
-      searchQuery,
-      searchResults,
-      searchableUsers,
-      selectKey,
-      successAddMember,
-    ]
+    [allRoles, closePopup, currentMember, dataManager, errorAddMember, handleNewMember, handleSearch, handleUserSelect, projectAfterTeamChanges.members, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
   );
   const openPositionsContent: JSX.Element = useMemo(
     () => (
