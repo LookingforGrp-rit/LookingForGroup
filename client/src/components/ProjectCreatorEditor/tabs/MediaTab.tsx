@@ -47,7 +47,8 @@ export const MediaTab = ({
 
   // An array for tracking the comparison of images and the thumbnail
   // Without this, thumbnail status cannot be checked synchronously
-  //but now it can! because i've put the entire project image into the thumbnail you can just check that
+  //but now it can! because i've put the entire project image into the thumbnail you can just check that directly
+  //no more roundabout silliness
   //const [comparedIndices, setComparedIndices] = useState<boolean[]>([]);
 
   projectAfterMediaChanges = structuredClone(projectData);
@@ -260,7 +261,9 @@ export const MediaTab = ({
       let updateThumbnail = false;
 
       // check if image is thumbnail
-      if (projectAfterMediaChanges.thumbnail === projectImage) {
+      if (projectAfterMediaChanges.thumbnail === projectImage || 
+        ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
+      ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId)) {
         // update after image is deleted and projectImages is updated
         updateThumbnail = true;
       }
