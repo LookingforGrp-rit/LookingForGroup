@@ -190,25 +190,13 @@ export const MediaTab = ({
       
 
       const thumbId = typeof projectImage.image === 'string'  
-          ? (projectImage as ProjectImage).imageId 
-          : (projectImage as PendingProjectImage).localId ?? ++localIdIncrement;
-
-      dataManager.updateThumbnail({
-        id: {
-          value: projectId,
-          type: "canon",
-        },
-        data: { 
-          thumbnail: thumbId
-        },
-      });
+          ? (projectImage as ProjectImage).imageId //canon id since the project image already exists
+          : (projectImage as PendingProjectImage).localId ?? ++localIdIncrement; //pending project id for new images
 
       //pendingprojectimage uses a file, projectimage uses a string
       //so this exists to get the different pieces of the projectImage 
       //if it's a string, make it a project image
       if (typeof projectImage.image === 'string'){
-      const thumbId = (projectImage as ProjectImage).imageId; //canon id essentially since the project already exists
-      
       
       dataManager.updateThumbnail({
         id: {
@@ -223,7 +211,6 @@ export const MediaTab = ({
           ...projectAfterMediaChanges,
           thumbnail: projectImage
         }
-
       }
       //if it's not, set it as the canon project image
       else {
@@ -248,7 +235,6 @@ export const MediaTab = ({
       }
 
       updatePendingProject(projectAfterMediaChanges);
-
     },
     [dataManager, projectId, updatePendingProject]
   );
@@ -402,7 +388,8 @@ export const MediaTab = ({
             )}
 
             {/* Add thumbnail star if it is a thumbnail */}
-            {projectImage === projectAfterMediaChanges.thumbnail && (
+            {/* it checks against the image itself now */}
+            {projectAfterMediaChanges.thumbnail?.image === projectImage.image && (
               <ThemeIcon
                 id="star"
                 className="star filled-star"
@@ -414,7 +401,9 @@ export const MediaTab = ({
 
             {/* Hover element */}
             <div className="project-image-hover">
-              {projectImage === projectAfterMediaChanges.thumbnail ?
+              {projectAfterMediaChanges.thumbnail === projectImage || 
+        ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
+      ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId) ?
                 <ThemeIcon
                   id="star"
                   className="star filled-star"
