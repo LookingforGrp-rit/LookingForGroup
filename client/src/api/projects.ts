@@ -107,8 +107,6 @@ export const updateProject = async (
 ): Promise<ApiResponse<ProjectDetail>> => {
   const apiURL = `/projects/${projectID}`;
 
-  console.log(projectData);
-
   const response = await PATCH(apiURL, projectData);
   if (response.error) console.log(`Error in updateProject: ${response.error}`);
   return response as ApiResponse<ProjectDetail>;
