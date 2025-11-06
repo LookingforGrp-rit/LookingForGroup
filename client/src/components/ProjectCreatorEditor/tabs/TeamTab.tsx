@@ -238,22 +238,15 @@ export const TeamTab = ({
 
     if (projectAfterTeamChanges.jobs[0] !== currentJob)
       setCurrentJob(projectAfterTeamChanges.jobs[0]);
-  }, [currentJob, isTeamTabOpen, projectAfterTeamChanges.jobs]);
+  }, [currentJob, isCreatingNewPosition, isTeamTabOpen, projectAfterTeamChanges.jobs]);
 
   // --- Data retrieval ---
-  // Get project job info using role id to compare
-  const getProjectJob = useCallback(
-    (id: number) => {
-      // return projectAfterTeamChanges.jobs.find(
-      //   (job) => job.role?.roleId === roleId
-      // );
-
-      return projectAfterTeamChanges.jobs.find(
-        (job: ProjectJob | Pending<ProjectJob>) =>
-          ("jobId" in job && (job as ProjectJob).jobId === id) ||
-          ("localId" in job && (job as Pending<ProjectJob>).localId === id)
-      );
-    },
+  // Get project job info using role label to compare
+  // jobId and roleId mismatch: checks for matching role since we are keeping role labels unique (used to be jobId)
+  const getProjectJob = useCallback((label: string) => {
+    return projectAfterTeamChanges.jobs.find((j) =>
+      j.role?.label === label
+    )},
     [projectAfterTeamChanges.jobs]
   );
 
@@ -446,7 +439,7 @@ export const TeamTab = ({
       // clear search results
       setSearchResults([]);
     },
-    [allUsers, currentMember]
+    [allUsers, currentMember, projectAfterTeamChanges.members]
   );
 
   // Resets Add Member name field, role/permission dropdowns
@@ -460,7 +453,7 @@ export const TeamTab = ({
   // --- Position handlers ---
   // update position edit window for creating a new position
   const addPositionCallback = useCallback(() => {
-    // going back to previousious state (cancel button)
+    // going back to previous state (cancel button)
     if (isCreatingNewPosition || editMode) {
       // we are no longer creating a new position
       setIsCreatingNewPosition(false);
@@ -747,11 +740,11 @@ export const TeamTab = ({
         <div id="open-position-details-left">
           <div id="position-availability">
             <span className="position-detail-indicator">Availability: </span>
-            {currentJob?.availability}
+            {(currentJob && currentJob?.availability) && JobAvailabilityEnums[currentJob.availability]}
           </div>
           <div id="position-location">
             <span className="position-detail-indicator">Location: </span>
-            {currentJob?.location}
+            {(currentJob && currentJob?.location) && JobLocationEnums[currentJob.location]}
           </div>
           <div id="open-position-contact">
             <span className="position-detail-indicator">Contact: </span>
@@ -781,11 +774,11 @@ export const TeamTab = ({
         <div id="open-position-details-right">
           <div id="position-duration">
             <span className="position-detail-indicator">Duration: </span>
-            {currentJob?.duration}
+            {(currentJob && currentJob?.duration) && JobDurationEnums[currentJob.duration]}
           </div>
           <div id="position-compensation">
             <span className="position-detail-indicator">Compensation: </span>
-            {currentJob?.compensation}
+            {(currentJob && currentJob?.compensation) && JobCompensationEnums[currentJob.compensation]}
           </div>
         </div>
       </div>
@@ -833,36 +826,6 @@ export const TeamTab = ({
     <>
       <div id="edit-position-role">
         <label>Role*</label>
-        {/* <select
-          key={currentlyViewedJobId}
-          onChange={(e) => {
-            const selectedRole = allRoles.find((j) => j.label === e.target.value);
-            if (selectedRole)
-              setCurrentJob({
-                ...currentJob,
-                titleId: selectedRole.titleId,
-                jobTitle: selectedRole.label,
-              });
-          }}
-        >
-          <option disabled selected={isCreatingNewPosition}>
-            Select
-          </option>
-          {allRoles.map((job: { titleId: number; label: string }) => (
-            <option
-              key={job.titleId}
-              selected={isCreatingNewPosition ? false : job.titleId === currentlyViewedJobId}
-              onClick={() => {
-                const updatedJobs = modifiedProject.jobs.map((j) =>
-                  j.titleId === job.titleId ? { ...j, jobTitle: job.label } : j
-                );
-                setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
-              }}
-            >
-              {job.label}
-            </option>
-          ))}
-        </select> */}
         <Select>
           <SelectButton
             placeholder={isCreatingNewPosition ? "Select" : ""}
@@ -944,37 +907,23 @@ export const TeamTab = ({
       <div id="edit-position-details">
         <div id="edit-position-details-left">
           <label className="edit-position-availability">Availability</label>
-          {/* <select
-            className="edit-position-availability"
-            onChange={(e) => setCurrentJob({ ...currentJob, availability: e.target.value })}
-          >
-            <option disabled selected={isCreatingNewPosition}>
-              Select
-            </option>
-            {availabilityOptions.map((o) => (
-              <option
-                key={o}
-                selected={getProjectJob(currentlyViewedJobId)?.availability === o}
-              >
-                {o}
-              </option>
-            ))}
-          </select> */}
           <Select>
             <SelectButton
               placeholder="Select"
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number)
-                      ?.availability ?? "")
+                  : (getProjectJob(currentJob?.role?.label as string) && getProjectJob(currentJob?.role?.label as string)?.availability)
+                      ? JobAvailabilityEnums[getProjectJob(currentJob?.role?.label as string)!.availability!] // explicit because its checked for before
+                      : ''
               }
               type="input"
             />
             <SelectOptions
               callback={(e) =>{
-                const key = Object.keys(JobAvailabilityEnums).find((key) => JobAvailabilityEnums[key as keyof typeof JobAvailabilityEnums] === (e.target as HTMLButtonElement).value)
-                
+                const key = Object.keys(JobAvailabilityEnums).find((key) => 
+                  JobAvailabilityEnums[key as keyof typeof JobAvailabilityEnums] === (e.target as HTMLButtonElement).value);
+
                 setCurrentJob({
                   ...emptyJob,
                   ...currentJob,
@@ -992,29 +941,15 @@ export const TeamTab = ({
             />
           </Select>
           <label className="edit-position-location">Location</label>
-          {/* <select
-            className="edit-position-location"
-            onChange={(e) => setCurrentJob({ ...currentJob, location: e.target.value })}
-          >
-            <option disabled selected={isCreatingNewPosition}>
-              Select
-            </option>
-            {locationOptions.map((o) => (
-              <option
-                selected={getProjectJob(currentlyViewedJobId)?.location === o}
-              >
-                {o}
-              </option>
-            ))}
-          </select> */}
           <Select>
             <SelectButton
               placeholder="Select"
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number)
-                      ?.location ?? "")
+                  : (getProjectJob(currentJob?.role?.label as string) && getProjectJob(currentJob?.role?.label as string)?.location)
+                      ? JobLocationEnums[getProjectJob(currentJob?.role?.label as string)!.location!] // explicit because its checked for before
+                      : ''
               }
               type="input"
             />
@@ -1098,29 +1033,15 @@ export const TeamTab = ({
         </div>
         <div id="edit-position-details-right">
           <label className="edit-position-duration">Duration</label>
-          {/* <select
-            className="edit-position-duration"
-            onChange={(e) => setCurrentJob({ ...currentJob, duration: e.target.value })}
-          >
-            <option disabled selected={isCreatingNewPosition}>
-              Select
-            </option>
-            {durationOptions.map((o) => (
-              <option
-                selected={getProjectJob(currentlyViewedJobId)?.duration === o}
-              >
-                {o}
-              </option>
-            ))}
-          </select> */}
           <Select>
             <SelectButton
               placeholder="Select"
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number)
-                      ?.duration ?? "")
+                  : (getProjectJob(currentJob?.role?.label as string) && getProjectJob(currentJob?.role?.label as string)?.duration)
+                      ? JobDurationEnums[getProjectJob(currentJob?.role?.label as string)!.duration!] // explicit because its checked for before
+                      : ''
               }
               type="input"
             />
@@ -1145,29 +1066,15 @@ export const TeamTab = ({
             />
           </Select>
           <label className="edit-position-compensation">Compensation</label>
-          {/* <select
-            className="edit-position-compensation"
-            onChange={(e) => setCurrentJob({ ...currentJob, compensation: e.target.value })}
-          >
-            <option disabled selected={isCreatingNewPosition}>
-              Select
-            </option>
-            {compensationOptions.map((o) => (
-              <option
-                selected={isCreatingNewPosition ? false : getProjectJob(currentlyViewedJobId)?.compensation === o}
-              >
-                {o}
-              </option>
-            ))}
-          </select> */}
           <Select>
             <SelectButton
               placeholder="Select"
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number)
-                      ?.compensation ?? "")
+                  : (getProjectJob(currentJob?.role?.label as string) && getProjectJob(currentJob?.role?.label as string)?.compensation)
+                      ? JobCompensationEnums[getProjectJob(currentJob?.role?.label as string)!.compensation!] // explicit because its checked for before
+                      : ''
               }
               type="input"
             />
@@ -1305,6 +1212,7 @@ export const TeamTab = ({
                   </div>
                   {/* Action buttons */}
                   <div className="project-editor-button-pair">
+                    {/* Save Button */}
                     <PopupButton
                       buttonId="team-edit-member-save-button"
                       callback={() => {
@@ -1367,12 +1275,17 @@ export const TeamTab = ({
                           from the project? This action cannot be undone.
                         </div>
                         <div className="project-editor-button-pair">
-                          <button
+                          <PopupButton
                             className="delete-button"
-                            onClick={() => {
-                              // TODO error messages
-                              if (!currentMember) return;
-                              if (isNullOrUndefined(currentMember.user)) return;
+                            callback={() => {
+                              if (!currentMember) {
+                                // TODO: error message here
+                                return;
+                              };
+                              if (isNullOrUndefined(currentMember.user)) {
+                                // TODO: error message here
+                                return;
+                              };
 
                               if ("localId" in currentMember) {
                                 dataManager.deleteMember({
@@ -1405,7 +1318,7 @@ export const TeamTab = ({
                             }}
                           >
                             Delete
-                          </button>
+                          </PopupButton>
                           <PopupButton
                             buttonId="team-delete-member-cancel-button"
                             className="button-reset"
@@ -1530,7 +1443,7 @@ export const TeamTab = ({
               <PopupButton
                 buttonId="team-add-member-add-button"
                 callback={() => handleNewMember()}
-                doNotClose={(previous) => !previous}
+                doNotClose={() => !closePopup}
               >
                 Add
               </PopupButton>
@@ -1550,22 +1463,7 @@ export const TeamTab = ({
         </Popup>
       </div>
     ),
-    [
-      allRoles,
-      currentMember,
-      dataManager,
-      errorAddMember,
-      handleNewMember,
-      handleSearch,
-      handleUserSelect,
-      projectAfterTeamChanges.members,
-      searchBarKey,
-      searchQuery,
-      searchResults,
-      searchableUsers,
-      selectKey,
-      successAddMember,
-    ]
+    [allRoles, closePopup, currentMember, dataManager, errorAddMember, handleNewMember, handleSearch, handleUserSelect, projectAfterTeamChanges.members, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
   );
   const openPositionsContent: JSX.Element = useMemo(
     () => (

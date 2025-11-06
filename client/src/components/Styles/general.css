@@ -1388,6 +1388,7 @@ Select style rules
 .select-container {
   position: relative;
   width: 100%;
+  border-radius: 10px;
 }
 
 /* Universal styles for Select component */
@@ -1399,7 +1400,7 @@ Select style rules
   width: 100%;
   height: 45px;
   padding: 15px 15px;
-  border: 1px solid #2B2939;
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   font-size: 15px;
 }
