@@ -230,7 +230,13 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<CreateProjectImageInput>(
         "Creating project image",
         creates.projectImages,
-        ({ data }) => addPic(projectId, data)
+        async ({ id, data }) => { //all this is for thumbnail stuff
+          const realImage = await addPic(projectId, data); 
+          if(id.value === changes.update.thumbnail.data.thumbnail && realImage.data){
+            changes.update.thumbnail.data.thumbnail = realImage.data.imageId;
+          }
+          return realImage;
+        }
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -569,7 +575,7 @@ export const projectDataManager = async (projectId: number) => {
     changes.update.thumbnail = {
       id: thumbnail.id,
       data: {
-        thumbnail: thumbnail.data.thumbnail //lol...
+        thumbnail: thumbnail.data.thumbnail //a thumbnail data sandwich
       }
     }
   }

@@ -235,9 +235,6 @@ export const MediaTab = ({
       }
 
       updatePendingProject(projectAfterMediaChanges);
-
-      console.log(projectImage.image)
-      console.log(projectAfterMediaChanges.thumbnail?.image)
     },
     [dataManager, projectId, updatePendingProject]
   );
