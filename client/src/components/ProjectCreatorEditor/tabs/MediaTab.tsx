@@ -1,5 +1,5 @@
 // --- Imports ---
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect } from "react";
 import {
   CreateProjectImageInput,
   ProjectImage,
@@ -47,7 +47,8 @@ export const MediaTab = ({
 
   // An array for tracking the comparison of images and the thumbnail
   // Without this, thumbnail status cannot be checked synchronously
-  const [comparedIndices, setComparedIndices] = useState<boolean[]>([]);
+  //but now it can! because i've put the entire project image into the thumbnail you can just check that
+  //const [comparedIndices, setComparedIndices] = useState<boolean[]>([]);
 
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
@@ -84,55 +85,9 @@ export const MediaTab = ({
         }
       }
 
-      // set comparison array
-      if (comparedIndices.length === 0 && projectAfterMediaChanges.projectImages.length !== 0) await updateComparisonArray();
     }
     initializeImages();
   });
-
-  // Compare thumbnail and an image
-  const compareWithThumbnail = async (image: ProjectImage | PendingProjectImage) => {
-    // separate variable for readability
-    const thumbnail = projectAfterMediaChanges.thumbnail;
-    if (!thumbnail) {
-      return false;
-    }
-
-    // lastModified prop has a slight discrepancy which likely relies on load time.
-    // Will check all props except lastModified for equivalency where a File type is involved.
-
-    // thumbnail: string
-    if (typeof thumbnail === 'string') { //thumbnail is never a string now
-      // image: string
-      if (typeof image.image === 'string') {
-        return thumbnail === image.image;
-      }
-      // image: File
-      const response = await stringToFile(thumbnail);
-      return response.name === image.image?.name && response.webkitRelativePath === image.image?.webkitRelativePath && response.size === image.image?.size;
-    }
-    // thumbnail: File
-    // image: string
-    if (typeof image.image === 'string') {
-      const response = await stringToFile(image.image);
-      return response.name === thumbnail.image?.name && response.webkitRelativePath === thumbnail.image?.webkitRelativePath && response.size === thumbnail.image?.size;
-    }
-    // both are Files
-    return image.image?.name === thumbnail.image?.name && image.image?.webkitRelativePath === thumbnail.image?.webkitRelativePath && image.image?.size === thumbnail.image?.size;
-  }
-
-  // Handle compared indices on image array update
-  const updateComparisonArray = useCallback(async () => {
-    // set comparison array
-    const getComparedIndices = async () => {
-      const comparisonPromise = projectAfterMediaChanges.projectImages.map(async (image) => {
-        return await compareWithThumbnail(image);
-      });
-
-      setComparedIndices(await Promise.all(comparisonPromise));
-    }
-    await getComparedIndices();
-  }, []);
 
   // Handle image upload
   const handleImageUpload = useCallback(async () => {
@@ -220,14 +175,12 @@ export const MediaTab = ({
         };
       }
 
-      // update comparison array
-      if (projectAfterMediaChanges.projectImages.length !== 0) updateComparisonArray();
     } catch (err) {
       console.error(err);
     }
 
     imageUploader.value = "";
-  }, [dataManager, updateComparisonArray, projectId, updatePendingProject]);
+  }, [dataManager, projectId, updatePendingProject]);
 
   // Handle new thumbnail
   const handleThumbnailChange = useCallback(
@@ -235,8 +188,6 @@ export const MediaTab = ({
       if (!projectId) return;
       
 
-      //pendingprojectimage uses a file, projectimage uses a string
-      //so this exists to get the different pieces of the projectImage
       const thumbId = typeof projectImage.image === 'string'  
           ? (projectImage as ProjectImage).imageId 
           : (projectImage as PendingProjectImage).localId ?? ++localIdIncrement;
@@ -251,9 +202,40 @@ export const MediaTab = ({
         },
       });
 
-      //if it's pending, make it a pending image
+      //pendingprojectimage uses a file, projectimage uses a string
+      //so this exists to get the different pieces of the projectImage 
+      //if it's a string, make it a project image
       if (typeof projectImage.image === 'string'){
-      const imageFile = await stringToFile(projectImage.image);
+      const thumbId = (projectImage as ProjectImage).imageId; //canon id essentially since the project already exists
+      
+      
+      dataManager.updateThumbnail({
+        id: {
+          value: projectId,
+          type: "canon",
+        },
+        data: { 
+          thumbnail: thumbId
+        },
+      });
+        projectAfterMediaChanges = {
+          ...projectAfterMediaChanges,
+          thumbnail: projectImage
+        }
+
+      }
+      //if it's not, set it as the canon project image
+      else {
+        const imageFile = projectImage.image;
+      dataManager.updateThumbnail({
+        id: {
+          value: projectId,
+          type: "canon",
+        },
+        data: { 
+          thumbnail: thumbId
+        },
+      });
       projectAfterMediaChanges = {
         ...projectAfterMediaChanges,
         thumbnail: {
@@ -263,20 +245,11 @@ export const MediaTab = ({
         },
       }
       }
-      //if it's not, set it as the image itself
-      else {
-        projectAfterMediaChanges = {
-          ...projectAfterMediaChanges,
-          thumbnail: projectImage
-        }
-      }
 
       updatePendingProject(projectAfterMediaChanges);
 
-      // update comparison array
-      updateComparisonArray();
     },
-    [dataManager, projectId, updateComparisonArray, updatePendingProject]
+    [dataManager, projectId, updatePendingProject]
   );
 
   // Handle image deletion
@@ -287,7 +260,7 @@ export const MediaTab = ({
       let updateThumbnail = false;
 
       // check if image is thumbnail
-      if (comparedIndices[projectAfterMediaChanges.projectImages.findIndex((image) => image === projectImage)]) {
+      if (projectAfterMediaChanges.thumbnail === projectImage) {
         // update after image is deleted and projectImages is updated
         updateThumbnail = true;
       }
@@ -384,9 +357,8 @@ export const MediaTab = ({
 
       // update hooks
       updatePendingProject(projectAfterMediaChanges);
-      if (projectAfterMediaChanges.projectImages.length !== 0) updateComparisonArray();
     },
-    [comparedIndices, dataManager, projectId, updateComparisonArray, updatePendingProject]
+    [dataManager, projectId, updatePendingProject]
   );
 
   // --- Complete component ---
@@ -398,7 +370,7 @@ export const MediaTab = ({
         the main thumbnail on the project's discover card.
       </div>
       <div id="project-editor-image-ui">
-        {projectAfterMediaChanges.projectImages?.map((projectImage, index) => (
+        {projectAfterMediaChanges.projectImages?.map((projectImage) => (
           <div
             className="project-editor-image-container"
             key={
@@ -427,7 +399,7 @@ export const MediaTab = ({
             )}
 
             {/* Add thumbnail star if it is a thumbnail */}
-            {comparedIndices[index] && (
+            {projectImage === projectAfterMediaChanges.thumbnail && (
               <ThemeIcon
                 id="star"
                 className="star filled-star"
@@ -439,7 +411,7 @@ export const MediaTab = ({
 
             {/* Hover element */}
             <div className="project-image-hover">
-              {comparedIndices[index] ?
+              {projectImage === projectAfterMediaChanges.thumbnail ?
                 <ThemeIcon
                   id="star"
                   className="star filled-star"

@@ -197,7 +197,7 @@ export const updateThumb = async (
   thumbnail: UpdateProjectThumbnailInput
 ): Promise<ApiResponse<ProjectImage>> => {
   const apiURL = `/projects/${projectID}/thumbnail`;
-  const response = await POST(apiURL, thumbnail);
+  const response = await PUT(apiURL, thumbnail);
 
   if (response.error) console.log(`Error in updateThumbnail: ${response.error}`);
   return response as ApiResponse<ProjectImage>;
