@@ -1,4 +1,4 @@
-import { memo, FC, ChangeEvent, useState, useLayoutEffect, useCallback } from 'react';
+import { memo, FC, ChangeEvent, useState, useCallback, useEffect } from 'react';
 
 interface DataSet {
   data: unknown[];
@@ -64,11 +64,12 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     onSearch(filteredResults);
   }, [dataSets, onSearch]);
 
-  useLayoutEffect(() => {
-    if (query !== '') {
+  useEffect(() => {
+    // Only triggers on condition dataset changes & query is not empty
+    if (query.trim() !== '') {
       handleSearch(query.toLowerCase());
     }
-  }, [dataSets, handleSearch, query]);
+  }, [dataSets]);
 
   return (
     <div className="search-wrapper">

@@ -1,6 +1,6 @@
 // import { MyProjectsDisplay } from "../MyProjectsDisplay";
 // import { profiles } from "../../constants/fakeData";
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
@@ -40,6 +40,7 @@ const MyProjects = () => {
   // - a-z
   // - z-a
   const [projectsList, setProjectsList] = useState<ProjectDetail[]>([]);
+  const [filteredProjects, setFilteredProjects] = useState<ProjectDetail[]>([]);
   const [currentSearch, setCurrentSearch] = useState('');
   // const [bannerImage, setBannerImage] = useState(require("../../images/projects_header_light.png"));
 
@@ -64,7 +65,7 @@ const MyProjects = () => {
 
         if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
         
-        console.log(projectsRes.data);
+        //console.log(projectsRes.data);
         
       } else {
         //guest
@@ -216,12 +217,13 @@ const MyProjects = () => {
       <>
         <div className='my-projects-grid'>
           {userProjects.map(project => {
-            console.log(project)
+            //console.log(project)
             // Check if user is the owner of this project
             const isOwner = (project.owner.userId === loggedIn);
 
             return (
               <LeaveDeleteContext.Provider
+                key={project.projectId}
                 value={{
                   isOwner,
                   projId: project.projectId,
@@ -259,6 +261,7 @@ const MyProjects = () => {
 
             return (
               <LeaveDeleteContext.Provider
+                key={project.projectId}
                 value={{
                   isOwner,
                   projId: project.projectId,
@@ -332,6 +335,15 @@ const MyProjects = () => {
   //   );
   // }
 
+  const projectDataSet = useMemo(() => [{ data: projectsList }], [projectsList]);
+
+  const handleSearch = (results: unknown[][]) => {
+    // results[0] is the filtered array
+    setFilteredProjects(results[0] as ProjectDetail[]);
+  };
+
+  const projectsToDisplay = currentSearch.trim() !== '' ? filteredProjects : projectsList;
+
   return (
     <div className="page" id="my-projects">
       {/* Top Bar */}
@@ -349,7 +361,12 @@ const MyProjects = () => {
                     <i className="fa-solid fa-caret-down"></i>
                 </div> */}
       {/* </div> */}
-      <Header dataSets={[{ projectsList }]} onSearch={setCurrentSearch} />
+      <Header 
+        dataSets={projectDataSet} 
+        onSearch={handleSearch} 
+        value={currentSearch}
+        onChange={(e) => setCurrentSearch(e.target.value)}
+      />
 
       {/* Banner */}
     <div className="projects-banner-outer">
@@ -571,7 +588,7 @@ const MyProjects = () => {
               <p>You have no projects, you're not logged in!</p>
             </div>
           ) : (
-            <ProjectListSection userProjects={projectsList as ProjectDetail[]} />
+            <ProjectListSection userProjects={projectsToDisplay} />
           )
         )}
       </div>
