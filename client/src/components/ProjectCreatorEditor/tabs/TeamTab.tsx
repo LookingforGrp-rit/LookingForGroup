@@ -241,11 +241,11 @@ export const TeamTab = ({
   }, [currentJob, isCreatingNewPosition, isTeamTabOpen, projectAfterTeamChanges.jobs]);
 
   // --- Data retrieval ---
-  // Get project job info using role label to compare
+  // Get project job info using role id to compare
   // jobId and roleId mismatch: checks for matching role since we are keeping role labels unique (used to be jobId)
-  const getProjectJob = useCallback((label: string) => {
+  const getProjectJob = useCallback((id: number) => {
     return projectAfterTeamChanges.jobs.find((j) =>
-      j.role?.label === label
+      j.role?.roleId === id
     )},
     [projectAfterTeamChanges.jobs]
   );
@@ -673,34 +673,7 @@ export const TeamTab = ({
 
     updatePendingProject(projectAfterTeamChanges);
 
-    // // check if same position is present
-    // // TODO projects can't have two leads? two devs? two artists? etc..
-    // const existingJob = projectAfterTeamChanges.jobs.find(
-    //   (job) =>
-    //     job.role.roleId === currentJob?.roleId && job.jobId !== currentJob.jobId
-    // );
-    // if (existingJob) {
-    //   setErrorAddPosition("Job already exists");
-    //   return;
-    // }
-
-    // if new position, add to job list
-    // if (isCreatingNewPosition) {
-    //   // setModifiedProject({
-    //   //   ...modifiedProject,
-    //   //   jobs: [...modifiedProject.jobs, currentJob],
-    //   // });
-    // } else {
-    //   // find matching position
-    //   const updatedJobs = projectAfterTeamChanges.jobs.map((j) =>
-    //     j.jobId === currentJob.jobId ? { ...j, ...currentJob } : j
-    //   );
-    // setModifiedProject({ ...modifiedProject, jobs: updatedJobs });
-    // }
-    // setPositionWindowContent(positionViewWindow);
-
-    // set current position to saved position
-    // setCurrentlyViewedJobId((currentJob as ProjectJob).jobId || (currentJob as Pending<ProjectJob>).localId);
+    console.log('job saved', projectAfterTeamChanges.jobs);
   }, [
     currentJob,
     dataManager,
@@ -913,8 +886,8 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.label as string) && getProjectJob(currentJob?.role?.label as string)?.availability)
-                      ? JobAvailabilityEnums[getProjectJob(currentJob?.role?.label as string)!.availability!] // explicit because its checked for before
+                  : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.availability)
+                      ? JobAvailabilityEnums[getProjectJob(currentJob?.role?.roleId as number)!.availability!] // explicit because its checked for before
                       : ''
               }
               type="input"
@@ -947,8 +920,8 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.label as string) && getProjectJob(currentJob?.role?.label as string)?.location)
-                      ? JobLocationEnums[getProjectJob(currentJob?.role?.label as string)!.location!] // explicit because its checked for before
+                  : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.location)
+                      ? JobLocationEnums[getProjectJob(currentJob?.role?.roleId as number)!.location!] // explicit because its checked for before
                       : ''
               }
               type="input"
@@ -1039,8 +1012,8 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.label as string) && getProjectJob(currentJob?.role?.label as string)?.duration)
-                      ? JobDurationEnums[getProjectJob(currentJob?.role?.label as string)!.duration!] // explicit because its checked for before
+                  : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.duration)
+                      ? JobDurationEnums[getProjectJob(currentJob?.role?.roleId as number)!.duration!] // explicit because its checked for before
                       : ''
               }
               type="input"
@@ -1072,8 +1045,8 @@ export const TeamTab = ({
               initialVal={
                 isCreatingNewPosition
                   ? ""
-                  : (getProjectJob(currentJob?.role?.label as string) && getProjectJob(currentJob?.role?.label as string)?.compensation)
-                      ? JobCompensationEnums[getProjectJob(currentJob?.role?.label as string)!.compensation!] // explicit because its checked for before
+                  : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.compensation)
+                      ? JobCompensationEnums[getProjectJob(currentJob?.role?.roleId as number)!.compensation!] // explicit because its checked for before
                       : ''
               }
               type="input"
