@@ -1347,6 +1347,10 @@ Project Creator and Editor style rules
   justify-content: space-between;
   gap: 17px;
 }
+#edit-position-details > #edit-position-details-left > label,
+#edit-position-details > #edit-position-details-right > label {
+  font-size: 16px;
+}
 
 #edit-position-details-left {
   display: grid;

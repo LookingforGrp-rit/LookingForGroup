@@ -40,7 +40,7 @@ const setUpInputs = async (profileData: ProfileData) => {
   pairInputToData('firstName', profileData.firstName);
   pairInputToData('lastName', profileData.lastName);
   pairInputToData('pronouns', profileData.pronouns);
-  pairInputToData('jobTitle', roles.find((r: any) => r.label === profileData.jobTitle).title_id);
+  // pairInputToData('jobTitle', roles.find((r: any) => r.label === profileData.jobTitle).title_id);
   pairInputToData('major', majors.find((r: any) => r.label === profileData.major).major_id);
   pairInputToData('academicYear', profileData.academic_year);
   pairInputToData('location', profileData.location);
