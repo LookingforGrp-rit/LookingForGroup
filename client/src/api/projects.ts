@@ -107,12 +107,7 @@ export const updateProject = async (
 ): Promise<ApiResponse<ProjectDetail>> => {
   const apiURL = `/projects/${projectID}`;
 
-  const form = new FormData();
-  for (const [name, value] of Object.entries(projectData)) {
-    if (value !== null) form.append(name, value);
-  }
-
-  const response = await PATCH(apiURL, form);
+  const response = await PATCH(apiURL, projectData);
   if (response.error) console.log(`Error in updateProject: ${response.error}`);
   return response as ApiResponse<ProjectDetail>;
 };

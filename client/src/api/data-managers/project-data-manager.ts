@@ -201,7 +201,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<UpdateProjectThumbnailInput>(
         "Updating project thumbnail",
         [updates.thumbnail],
-        ({ id, data }) => updateThumb(id.value, data)
+        ({ data }) => updateThumb(projectId, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -232,7 +232,10 @@ export const projectDataManager = async (projectId: number) => {
         creates.projectImages,
         async ({ id, data }) => { //all this is for thumbnail stuff
           const realImage = await addPic(projectId, data); 
-          if(id.value === changes.update.thumbnail.data.thumbnail && realImage.data){
+          if(realImage.data && 
+            changes.update.thumbnail.data && 
+            id.value === changes.update.thumbnail.data.thumbnail){
+              console.log("WE SHOULD NEVER GET HERE.")
             changes.update.thumbnail.data.thumbnail = realImage.data.imageId;
           }
           return realImage;
@@ -381,12 +384,14 @@ export const projectDataManager = async (projectId: number) => {
 
     // TODO can be ran simultaneously if saving takes too long
     for (const request of requests) {
+      if(Object.keys(request.data as object).length > 0){ //please only run if you actually have data
       const response = await action(request);
       const succeeded = !response.error;
       statuses.push({
         id: request.id.value,
         succeeded,
       });
+      }
     }
 
     const errors = getErrorIds(statuses);
