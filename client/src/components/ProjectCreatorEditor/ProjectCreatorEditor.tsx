@@ -400,6 +400,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 <LinksTab
                   isNewProject={newProject}
                   projectData={modifiedProject}
+                  saveProject={saveProject}
                   setProjectData={setModifiedProject}
                   setErrorLinks={setErrorLinks}
                   failCheck={failCheck}

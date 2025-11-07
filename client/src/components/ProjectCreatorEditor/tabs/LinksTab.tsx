@@ -58,15 +58,15 @@ export const LinksTab = ({
       const response = await getSocials();
 
       // Reorder so 'Other' is last
-      if (response?.data) {
+      if (response.data) {
         const otherIndex = response.data.findIndex(s => s.label === 'Other');
         if (otherIndex > -1) {
           const other = response.data.splice(otherIndex, 1)[0];
           response.data.push(other);
         }
+      setAllSocials(response.data);
       }
 
-      setAllSocials(response.data!);
     };
     getAllSocials();
   }, []);
