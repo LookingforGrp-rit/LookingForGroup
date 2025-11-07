@@ -24,6 +24,7 @@ import type {
   ProjectJob,
   CreateProjectJobInput,
   UpdateProjectJobInput,
+  UpdateProjectThumbnailInput,
 } from "@looking-for-group/shared";
 
 //const navigate = useNavigate();
@@ -106,12 +107,7 @@ export const updateProject = async (
 ): Promise<ApiResponse<ProjectDetail>> => {
   const apiURL = `/projects/${projectID}`;
 
-  const form = new FormData();
-  for (const [name, value] of Object.entries(projectData)) {
-    if (value !== null) form.append(name, value);
-  }
-
-  const response = await PATCH(apiURL, form);
+  const response = await PATCH(apiURL, projectData);
   if (response.error) console.log(`Error in updateProject: ${response.error}`);
   return response as ApiResponse<ProjectDetail>;
 };
@@ -169,6 +165,53 @@ export const addPic = async (
 
   if (response.error) console.log(`Error in addPic: ${response.error}`);
   return response as ApiResponse<ProjectImage>;
+};
+
+
+// Get project thumbnail
+/**
+ * @param projectID - ID of the project
+ */
+export const getThumb = async (
+  projectID: number
+): Promise<ApiResponse<ProjectImage>> => {
+  const apiURL = `/projects/${projectID}/thumbnail`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getThumbnail: ${response.error}`);
+  return response;
+};
+
+// Update project thumbnail
+/**
+ * @param projectID - ID of the project
+ * @param thumbnail - ID of the project image to use as the thumbnail
+ */
+export const updateThumb = async (
+  projectID: number,
+  thumbnail: UpdateProjectThumbnailInput
+): Promise<ApiResponse<ProjectImage>> => {
+  const apiURL = `/projects/${projectID}/thumbnail`;
+  const response = await PUT(apiURL, thumbnail);
+
+  if (response.error) console.log(`Error in updateThumbnail: ${response.error}`);
+  return response as ApiResponse<ProjectImage>;
+};
+
+/**
+ * Removes the thumbnail from a project (does not delete the project image associated with it)
+ * @param projectID - ID of the target project
+ * @returns Response status
+ */
+export const removeThumb = async (
+  projectID: number
+): Promise<ApiResponse<null>> => {
+
+  const apiURL = `/projects/${projectID}/thumbnail`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in rmeoveThumb: ${response.error}`);
+  return response as ApiResponse<null>;
 };
 
 /**
@@ -552,6 +595,9 @@ export default {
   deleteMember,
   getProjectSocials,
   addProjectSocial,
+  getThumb,
+  updateThumb,
+  removeThumb,
   updateProjectSocial,
   deleteProjectSocial,
   getProjectTags,

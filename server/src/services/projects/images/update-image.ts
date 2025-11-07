@@ -16,7 +16,8 @@ const updateImageService = async (
     const image = await prisma.projectImages.findUnique({ where: { imageId: imageId } });
     if (!image) return 'NOT_FOUND';
 
-    if (image.image) {
+    if (image.image && updates.image) {
+      //NEW: you can now update the alt text without destroying the image
       await deleteImageService(image.image);
     }
 

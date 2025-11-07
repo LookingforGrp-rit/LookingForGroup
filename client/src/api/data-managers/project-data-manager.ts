@@ -12,6 +12,7 @@ import {
   UpdateProjectJobInput,
   UpdateProjectMemberInput,
   UpdateProjectSocialInput,
+  UpdateProjectThumbnailInput,
 } from "@looking-for-group/shared";
 import {
   addMember,
@@ -32,6 +33,7 @@ import {
   updateProject,
   updateProjectJob,
   updateProjectSocial,
+  updateThumb,
 } from "../projects";
 import {
   CRUDRequest,
@@ -68,6 +70,13 @@ export const projectDataManager = async (projectId: number) => {
             value: projectId,
           },
           data: {},
+        },
+        thumbnail: {
+          id: {
+            type: 'canon',
+            value: projectId
+          },
+          data: {} as UpdateProjectThumbnailInput
         },
         projectImages: [],
         projectSocials: [],
@@ -119,12 +128,6 @@ export const projectDataManager = async (projectId: number) => {
     let errorMessage = "";
 
     try {
-      await saveUpdates(changes.update);
-    } catch (error) {
-      errorMessage += (error as Error).message;
-    }
-
-    try {
       await saveDeletes(changes.delete);
     } catch (error) {
       errorMessage += (error as Error).message;
@@ -132,6 +135,12 @@ export const projectDataManager = async (projectId: number) => {
 
     try {
       await saveCreates(changes.create);
+    } catch (error) {
+      errorMessage += (error as Error).message;
+    }
+
+    try {
+      await saveUpdates(changes.update);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
@@ -189,6 +198,16 @@ export const projectDataManager = async (projectId: number) => {
     }
 
     try {
+      await runAndCollectErrors<UpdateProjectThumbnailInput>(
+        "Updating project thumbnail",
+        [updates.thumbnail],
+        ({ data }) => updateThumb(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    try {
       await runAndCollectErrors<UpdateProjectSocialInput>(
         "Updating project social",
         updates.projectSocials,
@@ -211,7 +230,16 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<CreateProjectImageInput>(
         "Creating project image",
         creates.projectImages,
-        ({ data }) => addPic(projectId, data)
+        async ({ id, data }) => { //all this is for thumbnail stuff
+          const realImage = await addPic(projectId, data); 
+          if(realImage.data && 
+            changes.update.thumbnail.data && 
+            id.value === changes.update.thumbnail.data.thumbnail){
+              console.log("WE SHOULD NEVER GET HERE.")
+            changes.update.thumbnail.data.thumbnail = realImage.data.imageId;
+          }
+          return realImage;
+        }
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -356,12 +384,14 @@ export const projectDataManager = async (projectId: number) => {
 
     // TODO can be ran simultaneously if saving takes too long
     for (const request of requests) {
+      if(Object.keys(request.data as object).length > 0){ //please only run if you actually have data
       const response = await action(request);
       const succeeded = !response.error;
       statuses.push({
         id: request.id.value,
         succeeded,
       });
+      }
     }
 
     const errors = getErrorIds(statuses);
@@ -545,6 +575,15 @@ export const projectDataManager = async (projectId: number) => {
       existingJobUpdate,
     ];
   };
+
+  const updateThumbnail = (thumbnail: CRUDRequest<UpdateProjectThumbnailInput>) => {
+    changes.update.thumbnail = {
+      id: thumbnail.id,
+      data: {
+        thumbnail: thumbnail.data.thumbnail //a thumbnail data sandwich
+      }
+    }
+  }
 
   const updateMember = (member: CRUDRequest<UpdateProjectMemberInput>) => {
     let existingMemberUpdate = changes.update.members.find(
@@ -752,6 +791,7 @@ export const projectDataManager = async (projectId: number) => {
     updateSocial,
     updateJob,
     updateMember,
+    updateThumbnail,
     deleteTag,
     deleteImage,
     deleteSocial,

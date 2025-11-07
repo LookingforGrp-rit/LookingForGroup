@@ -1,26 +1,21 @@
 /*
-  This class is copied from tagsTab in the ProjectCreatorEditor tabs
+  This class is copied from skillsTab in the ProjectCreatorEditor tabs
   Currently, this tab does not work
   Feel free to replace this entire file, or try and debug the code
   */
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { SearchBar } from '../../SearchBar';
-import { ProfileData } from '../ProfileEditPopup';
 import { getSkills } from '../../../api/users';
+import { MeDetail, Skill, SkillProficiency, SkillType } from '@looking-for-group/shared';
 
-interface Tag {
-  tag_id: number;
-  label: string;
-  type: string;
-}
 
-const tagTabs = ['Developer Skills', 'Design Skills', 'Soft Skills'];
+const skillTabs = ['Developer Skills', 'Design Skills', 'Soft Skills'];
 
-const getTagColor = (type: string) => {
-  // Returns the tage color based on what skill it is
-  if (type === 'Developer Skill') {
+const getSkillColor = (type: string) => {
+  // Returns the skille color based on what skill it is
+  if (type === 'Developer') {
     return 'yellow';
-  } else if (type === 'Designer Skill') {
+  } else if (type === 'Designer') {
     return 'red';
   } else {
     // Soft Skill
@@ -28,14 +23,14 @@ const getTagColor = (type: string) => {
   }
 }
 
-export const SkillsTab = (props: { profile: ProfileData }) => {
+export const SkillsTab = (props: { profile: MeDetail }) => {
   // States
-  const [modifiedProfile, setModifiedProfile] = useState<ProfileData>(props.profile);
-  const [allSkills, setAllSkills] = useState<Tag[]>([]);
+  const [modifiedProfile, setModifiedProfile] = useState<MeDetail>(props.profile);
+  const [allSkills, setAllSkills] = useState<Skill[]>([]);
   // Tracks which tab we are currently on
-  const [currentTagsTab, setCurrentTagsTab] = useState(0);
-  // filtered results from tag search bar
-  const [searchedTags, setSearchedTags] = useState<(Tag | ProfileData)[]>([]);
+  const [currentSkillsTab, setCurrentSkillsTab] = useState(0);
+  // filtered results from skill search bar
+  const [searchedSkills, setSearchedSkills] = useState<(Skill)[]>([]);
 
   // Update data when data is changed
   useEffect(() => {
@@ -47,7 +42,7 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
     const fetchSkills = async () => {
         const response = await getSkills();
 
-        if (response.data === undefined) {
+        if (response.data === undefined || !response.data) {
           return;
         }
         setAllSkills(response.data);
@@ -57,175 +52,171 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
     }
   }, [allSkills]);
 
-  // Update tags shown for search bar
+  // Update skills shown for search bar
   const currentDataSet = useMemo(() => {
-    switch (currentTagsTab) {
+    switch (currentSkillsTab) {
       case 0:
-        return [{ data: allSkills.filter((s) => s.type === 'Developer Skill') }];
+        return [{ data: allSkills.filter((s) => s.type === 'Developer') }];
       case 1:
-        return [{ data: allSkills.filter((s) => s.type === 'Designer Skill') }];
+        return [{ data: allSkills.filter((s) => s.type === 'Designer') }];
       case 2:
-        return [{ data: allSkills.filter((s) => s.type === 'Soft Skill') }];
+        return [{ data: allSkills.filter((s) => s.type === 'Soft') }];
       default:
         return [{ data: [] }];
     }
-  }, [currentTagsTab, allSkills]);
+  }, [currentSkillsTab, allSkills]);
 
-  // Reset tag list on tab change to default list
+  // Reset skill list on tab change to default list
   useEffect(() => {
-    const defaultTags = currentDataSet[0]?.data ?? [];
-    setSearchedTags(defaultTags);
-  }, [currentTagsTab, currentDataSet])
+    const defaultSkills = currentDataSet[0]?.data ?? [];
+    setSearchedSkills(defaultSkills);
+  }, [currentSkillsTab, currentDataSet])
 
-  // Find if a tag is present on the project
-  const isTagSelected = useCallback((id: number, label: string, tab: number = -1) => {
+  // Find if a skill is present on the project
+  const isSkillSelected = useCallback((id: number, label: string, tab: number = -1) => {
     const skills = modifiedProfile?.skills ?? [];
 
     // Developer Skills
     if (tab === 0) {
-      return skills.some(t => t.id === id && t.tag === label) ?
+      return skills.some(t => t.skillId === id && t.label === label) ?
         'selected' : 'unselected';
     }
     // Designer Skills
     if (tab === 1) {
-      return skills.some(t => t.id === id && t.tag === label) ?
+      return skills.some(t => t.skillId === id && t.label === label) ?
         'selected' : 'unselected';
     }
     // Soft Skills
     if (tab === 2) {
-      return skills.some(t => t.id === id && t.tag === label) ?
+      return skills.some(t => t.skillId === id && t.label === label) ?
         'selected' : 'unselected';
     }
     return 'unselected';
   }, [modifiedProfile]);
 
-  const handleTagSelect = useCallback((e: any) => {
+  const handleSkillSelect = useCallback((e: any) => {
     // prevent page from immediately re-rendering
     e.preventDefault();
 
-    // trim whitespace to get tag name
+    // trim whitespace to get skill name
     // take closest button to allow click on icon
     const button = e.target.closest('button');
-    const tag: string = button.innerText.trim();
+    const skill: string = button.innerText.trim();
 
-    // if tag is unselected
+    // if skill is unselected
     if (button.className.includes('unselected')) {
-      // get tag id and type according to type of tag
+      // get skill id and type according to type of skill
       let id: number = -1;
-      let type: string = '';
+      let type: SkillType = 'Developer';
 
       if (button.className.includes('yellow')) { // developer skills
-        id = allSkills.find((s) => s.type === 'Developer Skill' && s.label === tag)?.tag_id ?? -1;
-        type = 'Developer Skill';
+        id = allSkills.find((s) => s.type === 'Developer' && s.label === skill)?.skillId ?? -1;
+        type = 'Developer';
       }
       else if (button.className.includes('red')) { // designer skills
-        id = allSkills.find((s) => s.type === 'Designer Skill' && s.label === tag)?.tag_id ?? -1;
-        type = 'Designer Skill';
+        id = allSkills.find((s) => s.type === 'Designer' && s.label === skill)?.skillId ?? -1;
+        type = 'Designer';
       }
       else if (button.className.includes('purple')) { // soft skills
-        id = allSkills.find((s) => s.type === 'Soft Skill' && s.label === tag)?.tag_id ?? -1;
-        type = 'Soft Skill';
+        id = allSkills.find((s) => s.type === 'Soft' && s.label === skill)?.skillId ?? -1;
+        type = 'Soft';
       }
 
-      // error check: no tag found
+      // error check: no skill found
       if (id === -1) {
         return;
       }
+      //we have to implement proficiency
 
-      // Update selected tags with new ones
+      // Update selected skills with new ones
       setModifiedProfile((prev) => ({
         ...prev,
         skills: [
           ...(prev.skills ?? []),
           {
-            id: id,
-            position: prev.skills?.length ?? 0,
-            tag: tag,
-            skill: tag,
-            type: type
-          }
+            skillId: id,
+            type: type,
+            label: skill,
+            position: 0, //this isn't over, position parameter.
+            proficiency: "Novice" as SkillProficiency, //we'll get to this later
+            apiUrl: ''
+          } 
         ]
       }));
 
     }
-    // if tag is selected
+    // if skill is selected
     else {
       // remove skill from project
       setModifiedProfile({
         ...modifiedProfile,
-        skills: (modifiedProfile.skills ?? []).filter((s) => s.skill !== tag),
-        project_types: (modifiedProfile.project_types ?? []).filter((t) => t.project_type !== tag),
-        tags: (modifiedProfile.tags ?? []).filter((t) => t.tag !== tag)
+        skills: (modifiedProfile.skills ?? []).filter((s) => s.label !== skill),
       });
     }
   }, [allSkills, modifiedProfile]);
 
   // Load projects
-  const loadProfileTags = useMemo(() => {
+  const loadProfileSkills = useMemo(() => {
     if (!modifiedProfile?.skills) return [];
 
     return modifiedProfile.skills
       .map((s) => (
-        <button key={s.skill} className={`tag-button tag-button-${getTagColor(s.type)}-selected`} onClick={(e) => handleTagSelect(e)}>
+        <button key={s.label} className={`tag-button tag-button-${getSkillColor(s.type)}-selected`} onClick={(e) => handleSkillSelect(e)}>
           <i className="fa fa-close"></i>
-          &nbsp;{s.skill}
+          <p>&nbsp;{s.label}</p>
         </button>
       ))
-  }, [modifiedProfile.skills, handleTagSelect]);
+  }, [modifiedProfile.skills, handleSkillSelect]);
 
-  // Create element for each tag
-  const renderTags = useCallback(() => {
-    // no search item, render all tags
-    if (searchedTags && searchedTags.length !== 0) {
+  // Create element for each skill
+  const renderSkills = useCallback(() => {
+    // no search item, render all skills
+    if (searchedSkills && searchedSkills.length !== 0) {
       return (
-        searchedTags.map(t => {
-          // get id according to type of tag
-          let id: number = -1; // bad default value
-          if ('tag_id' in t) {
-            id = t.tag_id;
-          } else if ('type_id' in t) {
-            id = t.type_id;
-          }
+        searchedSkills.map(t => {
+          // get id according to type of skill
+          //???
+          const id: number = t.skillId;
 
           return (
             <button
               key={id}
-              className={`tag-button tag-button-${'type' in t ? getTagColor(t.type) : 'blue'}-${isTagSelected(
+              className={`tag-button tag-button-${'type' in t ? getSkillColor(t.type) : 'blue'}-${isSkillSelected(
                 id,
                 t.label,
-                currentTagsTab
+                currentSkillsTab
               )}`}
-              onClick={(e) => handleTagSelect(e)}
+              onClick={(e) => handleSkillSelect(e)}
             >
               <i
                 className={
-                  isTagSelected(id, t.label, currentTagsTab) === 'selected'
+                  isSkillSelected(id, t.label, currentSkillsTab) === 'selected'
                     ? 'fa fa-close'
                     : 'fa fa-plus'
                 }
               ></i>
-              &nbsp;{t.label}
+              <p>&nbsp;{t.label}</p>
             </button>
           );
         })
       )
     }
-    else if (searchedTags && searchedTags.length === 0) {
+    else if (searchedSkills && searchedSkills.length === 0) {
       return <div className="no-results-message">No results found!</div>;
     }
     // Developer Skill
-    if (currentTagsTab === 0) {
+    if (currentSkillsTab === 0) {
       return allSkills
-        .filter((s) => s.type === 'Developer Skill')
+        .filter((s) => s.type === 'Developer')
         .map((s) => (
           <button
-            key={s.tag_id}
-            className={`tag-button tag-button-yellow-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
-            onClick={(e) => handleTagSelect(e)}
+            key={s.skillId}
+            className={`tag-button tag-button-yellow-${isSkillSelected(s.skillId, s.label, currentSkillsTab)}`}
+            onClick={(e) => handleSkillSelect(e)}
           >
             <i
               className={
-                isTagSelected(s.tag_id, s.label, currentTagsTab) === 'selected'
+                isSkillSelected(s.skillId, s.label, currentSkillsTab) === 'selected'
                   ? 'fa fa-close'
                   : 'fa fa-plus'
               }
@@ -233,18 +224,18 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
             &nbsp;{s.label}
           </button>
         ));
-    } else if (currentTagsTab === 1) {
+    } else if (currentSkillsTab === 1) {
       return allSkills
-        .filter((s) => s.type === 'Designer Skill')
+        .filter((s) => s.type === 'Designer')
         .map((s) => (
           <button
-            key={s.tag_id}
-            className={`tag-button tag-button-red-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
-            onClick={(e) => handleTagSelect(e)}
+            key={s.skillId}
+            className={`tag-button tag-button-red-${isSkillSelected(s.skillId, s.label, currentSkillsTab)}`}
+            onClick={(e) => handleSkillSelect(e)}
           >
             <i
               className={
-                isTagSelected(s.tag_id, s.label, currentTagsTab) === 'selected'
+                isSkillSelected(s.skillId, s.label, currentSkillsTab) === 'selected'
                   ? 'fa fa-close'
                   : 'fa fa-plus'
               }
@@ -255,51 +246,51 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
     }
     else {
       return allSkills
-        .filter((s) => s.type === 'Soft Skill')
+        .filter((s) => s.type === 'Soft')
         .map((s) => (
           <button
-            key={s.tag_id}
-            className={`tag-button tag-button-purple-${isTagSelected(s.tag_id, s.label, currentTagsTab)}`}
-            onClick={(e) => handleTagSelect(e)}
+            key={s.skillId}
+            className={`tag-button tag-button-purple-${isSkillSelected(s.skillId, s.label, currentSkillsTab)}`}
+            onClick={(e) => handleSkillSelect(e)}
           >
             <i
               className={
-                isTagSelected(s.tag_id, s.label, currentTagsTab) === 'selected'
+                isSkillSelected(s.skillId, s.label, currentSkillsTab) === 'selected'
                   ? 'fa fa-close'
                   : 'fa fa-plus'
               }
             ></i>
-            &nbsp;{s.label}
+            <p>&nbsp;{s.label}</p>
           </button>
         ));
     }
-  }, [searchedTags, currentTagsTab, allSkills, isTagSelected, handleTagSelect]);
+  }, [searchedSkills, currentSkillsTab, allSkills, isSkillSelected, handleSkillSelect]);
 
-  const handleSearch = useCallback((results: (Tag | ProfileData)[][]) => {
+  const handleSearch = useCallback((results: (Skill)[][]) => {
     // setSearchResults(results);
     console.log('handling search');
     console.log('results', results);
     // show no results
     if (!results || results.length === 0 || results[0].length === 0) {
       console.log('no results or current data set');
-      setSearchedTags([]);
+      setSearchedSkills([]);
     }
     else {
-      setSearchedTags(results[0]);
+      setSearchedSkills(results[0]);
     }
   }, []);
 
   // Components
-  const TagSearchTabs = () => {
-    const tabs = tagTabs.map((tag, i) => {
+  const SkillSearchTabs = () => {
+    const tabs = skillTabs.map((skill, i) => {
       return (
         <button
-          key={tag}
+          key={skill}
           type="button"
-          onClick={() => setCurrentTagsTab(i)}
-          className={`button-reset project-editor-tag-search-tab ${currentTagsTab === i ? 'tag-search-tab-active' : ''}`}
+          onClick={() => setCurrentSkillsTab(i)}
+          className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ? 'tag-search-tab-active' : ''}`}
         >
-          {tag}
+          {skill}
         </button>
       );
     })
@@ -311,26 +302,26 @@ export const SkillsTab = (props: { profile: ProfileData }) => {
   };
 
   return (
-    <div id="profile-editor-skills">
+    <div id="profile-editor-tags">
       <div id="project-editor-selected-tags">
-        <div className="project-editor-section-header">Selected Tags</div>
+        <div className="project-editor-section-header">Selected Skills</div>
         <div className="project-editor-extra-info">
           Drag and drop to reorder
         </div>
-        <div id="project-editor-selected-tags-container">
-          {/* TODO: Separate top 2 tags from others with hr element */}
           <hr id="selected-tag-divider" />
-          {loadProfileTags}
+        <div id="project-editor-selected-tags-container">
+          {/* TODO: Separate top 2 skills from others with hr element */}
+          {loadProfileSkills}
         </div>
       </div>
 
       <div id="project-editor-tag-search">
-        <SearchBar key={currentTagsTab} dataSets={currentDataSet} onSearch={(results) => handleSearch(results)} />
+        <SearchBar key={currentSkillsTab} dataSets={currentDataSet} onSearch={(results) => handleSearch(results as unknown[][] as Skill[][])} />
         <div id="project-editor-tag-wrapper">
-          <TagSearchTabs />
+          <SkillSearchTabs />
           <hr id="tag-search-divider" />
         </div>
-        <div id="project-editor-tag-search-container">{renderTags()}</div>
+        <div id="project-editor-tag-search-container">{renderSkills()}</div>
       </div>
     </div>
   );

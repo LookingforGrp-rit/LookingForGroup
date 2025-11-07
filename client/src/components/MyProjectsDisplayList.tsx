@@ -26,7 +26,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   const [requestType, setRequestType] = useState<'delete' | 'leave'>('delete');
   const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
 
-  // Fetches project status
+  // Fetches project status and project thumbnail
 
   useEffect(() => {
   const fetchStatus = async () => {
@@ -39,7 +39,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   };
     fetchStatus();
   })
-    
+
   //this doesn't look used and idk what it's meant to be used for
   //it looks like it's supposed to be a toggle for when you press a button but idk which button that would be
   //i'll just leave it alone for now
@@ -75,8 +75,8 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
       <div className="list-card-section1">
         <img
           className="list-card-image"
-          src={projectData.thumbnail
-            ? `images/thumbnails/${projectData.thumbnail}`
+          src={projectData.thumbnail?.image
+            ? `${projectData.thumbnail?.image}`
             : `/assets/project_temp-DoyePTay.png`
           }
           alt={`${projectData.title} Thumbnail`}

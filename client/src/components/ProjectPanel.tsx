@@ -118,7 +118,7 @@ useEffect(() => {
     // <div className={'project-panel'} style={{ width: width }}>
     <div className={'project-panel'}>
       <img
-        src={usePreloadedImage(project.thumbnail ?? placeholderThumbnail, placeholderThumbnail)}
+        src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
         alt={'project image'}
       />
       <div
@@ -127,7 +127,7 @@ useEffect(() => {
       // style={rightAlign ? { width: width, right: 0 } : { width: width }}
       >
         <img
-          src={usePreloadedImage(project.thumbnail ?? placeholderThumbnail, placeholderThumbnail)}
+          src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
           alt={'project image'}
         />
         {/* <h2>{project.title}</h2> */}

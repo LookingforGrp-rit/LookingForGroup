@@ -1,16 +1,14 @@
 import { useState, useEffect } from 'react';
-import { sendPut } from '../../../functions/fetch';
-import { getByID } from '../../../api/projects';
-import { getCurrentUsername, getProjectsByUser } from '../../../api/users';
+import { getProjectsByUser } from '../../../api/users';
 import { ProjectPreview } from '@looking-for-group/shared';
 
 // let userProjects : [];
 
-const ProjectTile = (props: {index: string}) => {
+const ProjectTile = (props: {index: number, data: ProjectPreview}) => {
     return (
-        <div className='projectTile' id={props.index}>
-            {/* <p>{props.data.title}</p> */}
-            <p>This is project #{props.index}</p>
+        <div className='projectTile' id={props.index.toString()}>
+            <img src={props.data.thumbnail?.image} alt="" />
+            {<p>{props.data.title}</p>}
         </div>
     );
 }

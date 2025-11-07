@@ -17,13 +17,11 @@ import { getCurrentUsername, getUsersById } from "../../api/users";
 
 import {
   MeDetail,
-  MySkill,
   UpdateUserInput,
-  UserSocial,
 } from "@looking-for-group/shared";
 
 // The profile to view is independent upon the site's state changes
-const pageTabs = ["About", "Projects", "Skills", "Interests", "Links"];
+const pageTabs = ["About", "Projects", "Skills", "Links"];
 
 export const ProfileEditPopup = () => {
   // The profile to view is independent upon the site's state changes
@@ -46,7 +44,7 @@ export const ProfileEditPopup = () => {
       console.log("ProfileEditPopup - User profile data:", response.data);
       //console.log('ProfileEditPopup - User interests from API:', response.data?.skills);
 
-      setProfile(response.data as MeDetail);
+      await setProfile(response.data as MeDetail);
     };
     setUpProfileData();
   }, []);
@@ -55,7 +53,7 @@ export const ProfileEditPopup = () => {
   const saveImage = async () => {
     if (!selectedImageFile) return;
 
-    await editUser({ profileImage: selectedImageFile }); //no longer exists, wrapped into updateUser
+    await editUser({ profileImage: selectedImageFile });
   };
 
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -142,7 +140,7 @@ export const ProfileEditPopup = () => {
           }
         }
       });
-    }, []);
+    });
 
     // Highlight the first tab button
     const firstTab = document.querySelector(`#profile-tab-${pageTabs[0]}`);
@@ -150,9 +148,6 @@ export const ProfileEditPopup = () => {
       firstTab.classList.add("project-editor-tab-active");
     }
   }, []);
-
-  // Fix the switchTab function
-  const switchTab = (index: number) => setCurrentTab(index);
 
   // Component to organize the main tab content
   const renderTabContent = () => {
@@ -167,12 +162,10 @@ export const ProfileEditPopup = () => {
           />
         );
       case 1:
-        return <ProjectsTab profile={profile} />;
+        return <ProjectsTab/>;
       case 2:
         return <SkillsTab profile={profile} />;
       case 3:
-        return <InterestTab profile={profile} />;
-      case 4:
         return <LinksTab profile={profile} />;
       default:
         return null;

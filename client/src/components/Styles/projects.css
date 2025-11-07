@@ -785,12 +785,13 @@ Project Creator and Editor style rules
 
 #project-editor-selected-tags-container {
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
+  flex-direction: row;
+  justify-content: flex-start;
+  flex-wrap: wrap;
   gap: 8px;
   margin-top: 15px;
-  height: 100%;
-  max-height: 352px;
+  height: 80px;
+  max-height: 80px;
   overflow-y: scroll;
 }
 
@@ -1333,10 +1334,10 @@ Project Creator and Editor style rules
   align-self: stretch;
 }
 
-#edit-position-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+#edit-position-button-pair {
+  display: flex;  
+  flex-direction: row;
+  gap: 10px;
   align-items: center;
 }
 
@@ -2791,6 +2792,10 @@ Project Carousel style rules
 #positions-popup-list-edit {
   background-color: transparent;
   box-shadow: none;
+
+  .select-container {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  }
 }
 
 #project-team-open-positions-popup>.positions-popup-list {
@@ -2817,6 +2822,7 @@ Project Carousel style rules
 .team-positions-button {
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 5px;
   height: 28px;
 }
@@ -2831,7 +2837,7 @@ Project Carousel style rules
   border: none;
 }
 
-.add-item-button * {
+#team-positions-popup-list-buttons .add-item-button * {
   font-size: 16px;
   color: var(--neutral-gray);
 }

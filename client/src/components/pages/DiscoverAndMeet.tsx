@@ -245,8 +245,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         if (category === 'projects') {
           // Check project type by name since IDs are not unique relative to tags
           // Project Type tag
-          if (tag.type === 'Project Type' && Array.isArray(item.projectData.data.mediums)) {
-              const projectTypes = item.projectData.data.mediums.map((t) => t.toLowerCase());
+          if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
+              const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
               if (projectTypes.includes(tag.label.toLowerCase())) {
                 matchesAny = true;
             } 
