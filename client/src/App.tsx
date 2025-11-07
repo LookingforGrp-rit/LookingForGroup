@@ -8,7 +8,7 @@ import Login from './components/pages/Login';
 import SignUp from './components/pages/Signup';
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
-import Home from './components/pages/Home';
+// import Home from './components/pages/Home';
 // import Messages from './components/pages/Messages';
 import MyProjects from './components/pages/MyProjects';
 import Profile from './components/pages/Profile';
