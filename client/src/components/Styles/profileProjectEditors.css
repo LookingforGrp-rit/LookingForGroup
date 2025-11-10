@@ -29,7 +29,7 @@
 #editor-contact-info {
   margin-bottom: 30px;
   padding: 20px;
-  background-color: var(--background-secondary);
+  background-color: var(--bg-color, #f8f9fa);
   border-radius: 8px;
   border: 1px solid var(--border-color);
 }
@@ -46,8 +46,8 @@
   align-items: center;
   gap: 10px;
   padding: 12px 16px;
-  background-color: var(--background-primary);
-  border: 1px solid var(--border-color);
+  background-color: var(--header-color, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
   border-radius: 6px;
   text-decoration: none;
   color: var(--text-primary, #333333);
