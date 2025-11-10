@@ -173,6 +173,7 @@ projectAfterLinkChanges = structuredClone(projectData);
                     data: tempSocials[index] as AddProjectSocialInput
                   })
                   }
+                  //ok i should only do this when i input the url, i shouldn't add it if it has no url
 
                   projectAfterLinkChanges = {
                     ...projectAfterLinkChanges,
@@ -214,6 +215,8 @@ projectAfterLinkChanges = structuredClone(projectData);
                 // Could be as simple as checking the URL matches the social media
                 // But since 'Other' is an option, might be good to just find some
                 // external list of suspicious sites and make sure it's not one of those.
+                
+                //i'm gonna do the base url check but not the other thingy right now
                 const tempSocials = [...projectAfterLinkChanges.projectSocials];
                 tempSocials[index].url = e.target.value;
                 updatePendingProject({ ...projectAfterLinkChanges, projectSocials: tempSocials });
@@ -224,17 +227,20 @@ projectAfterLinkChanges = structuredClone(projectData);
         ))}
         <div id="add-link-container">
           <button id="profile-editor-add-link"
-            onClick={() => {
-              updatePendingProject({
-                ...projectAfterLinkChanges,
-                projectSocials: [...projectAfterLinkChanges.projectSocials || [], {
-                  label: '',
-                  url: '',
-                  apiUrl: "",
-                  websiteId: 0
-                }]
-              });
-            }}>
+          //GET OUT
+          //(i'll get to you later)
+            // onClick={() => {
+            //   updatePendingProject({
+            //     ...projectAfterLinkChanges,
+            //     projectSocials: [...projectAfterLinkChanges.projectSocials || [], {
+            //       label: '',
+            //       url: '',
+            //       apiUrl: "",
+            //       websiteId: 0
+            //     }]
+            //   });
+            // }}
+            >
             <i className="fa fa-plus" />
             <p>Add social profile</p>
           </button>

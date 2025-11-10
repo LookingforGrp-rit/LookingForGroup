@@ -11,9 +11,10 @@ const sampleSocials = prisma.socials.findMany({
 type SocialsGetPayload = Awaited<typeof sampleSocials>[number];
 
 //map to shared type
-export const transformSocial = ({ websiteId, label }: SocialsGetPayload): Social => {
+export const transformSocial = ({ websiteId, label, baseUrl }: SocialsGetPayload): Social => {
   return {
     websiteId,
     label,
+    baseUrl,
   };
 };
