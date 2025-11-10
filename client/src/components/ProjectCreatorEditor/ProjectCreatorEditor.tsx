@@ -398,10 +398,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 />
               ) : currentTab === 4 ? (
                 <LinksTab
+                  dataManager={dataManager}
                   isNewProject={newProject}
                   projectData={modifiedProject}
                   saveProject={saveProject}
-                  setProjectData={setModifiedProject}
+                  updatePendingProject={updatePendingProject}
                   setErrorLinks={setErrorLinks}
                   failCheck={failCheck}
                 />

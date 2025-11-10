@@ -85,7 +85,6 @@ export const MediaTab = ({
           }
         }
       }
-
     }
     initializeImages();
   });
