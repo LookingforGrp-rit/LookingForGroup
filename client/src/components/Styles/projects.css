@@ -917,7 +917,6 @@ Project Creator and Editor style rules
 }
 
 .project-member-image {
-  border: 2px solid #fff;
   border-radius: 100%;
   width: 74px;
   height: 74px;
@@ -929,6 +928,11 @@ Project Creator and Editor style rules
   font-weight: 700;
   overflow-wrap: break-word;
   word-break: break-word;
+}
+
+/* Hover style for dropdown */
+.edit-position-contact:hover.select-option .project-editor-project-member-name {
+  color: var(--invert-text);
 }
 
 .project-editor-project-member-info {
@@ -1393,14 +1397,28 @@ button.edit-position-contact {
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 3px;
+  padding: 15px;
   cursor: default;
+}
+.select-option.edit-position-contact {
+  display: flex;
+  gap: 5px;
+  padding: 5px 15px;
 }
 
 button.edit-position-contact .project-member-image {
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--border-color);
+  width: 32px;
+  height: 32px;
+}
+
+/* Selected contact in edit position */
+.edit-position-contact .value {
+  display: flex;
+  gap: 5px;
+}
+
+.value .project-editor-project-member-name {
+  font-size: 14px;
 }
 
 #edit-position-details-right {
@@ -2972,6 +2990,7 @@ Project Carousel style rules
   align-items: center;
   gap: 5px;
   font-style: normal;
+  font-size: 14px;
   transition: background-color 0.1s;
 }
 
