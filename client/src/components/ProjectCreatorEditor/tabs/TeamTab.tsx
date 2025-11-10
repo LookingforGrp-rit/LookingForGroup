@@ -202,6 +202,7 @@ export const TeamTab = ({
   // Assign active buttons in Open Positions
   const isTeamTabOpen = currentTeamTab === 1;
   useEffect(() => {
+    // show first job in view by default
     if (!currentJob) return setCurrentJob(projectAfterTeamChanges.jobs[0]);
 
     const currentJobId =
@@ -235,9 +236,6 @@ export const TeamTab = ({
       }
       return;
     }
-
-    if (projectAfterTeamChanges.jobs[0] !== currentJob)
-      setCurrentJob(projectAfterTeamChanges.jobs[0]);
   }, [currentJob, isCreatingNewPosition, isTeamTabOpen, projectAfterTeamChanges.jobs]);
 
   // --- Data retrieval ---
@@ -572,7 +570,6 @@ export const TeamTab = ({
       ) {
         // set error
         setErrorAddPosition("All fields are required");
-        console.log(currentJob);
         return;
       }
 
@@ -672,8 +669,6 @@ export const TeamTab = ({
     setEditMode(false);
 
     updatePendingProject(projectAfterTeamChanges);
-
-    console.log('job saved', projectAfterTeamChanges.jobs);
   }, [
     currentJob,
     dataManager,
@@ -685,6 +680,14 @@ export const TeamTab = ({
   // --- Content variables ---
   // Open position display
   const positionViewWindow = (
+    projectAfterTeamChanges.jobs.length === 0 ? 
+    // No positions to view
+    <>
+      <div className="positions-popup-info-title">
+        No open positions
+      </div>
+    </> :
+    // Positions to view
     <>
       <button
         className="edit-project-member-button"
@@ -1454,7 +1457,6 @@ export const TeamTab = ({
                 <img src="/images/icons/drag.png" alt="positions" />
                 <button
                   className="positions-popup-list-item"
-                  id=""
                   data-id={"jobId" in job ? job.jobId : job.localId}
                   data-id-type={"jobId" in job ? "canon" : "local"}
                   onClick={() => {
