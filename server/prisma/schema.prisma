@@ -138,7 +138,6 @@ model Projects {
 model Socials {
   websiteId      Int              @id @default(autoincrement()) @map("website_id")
   label          String           @unique @db.VarChar(50)
-  baseUrl        String           @map("base_url") @db.VarChar(50)
   projectSocials ProjectSocials[]
   userSocials    UserSocials[]
 

@@ -91,7 +91,6 @@ export interface Tag {
 export interface Social {
   websiteId: number;
   label: string;
-  baseUrl: string
 }
 
 export interface Skill {

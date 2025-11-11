@@ -43,10 +43,6 @@ projectAfterLinkChanges = structuredClone(projectData);
   // project owner details with social links
   const [projectOwner, setProjectOwner] = useState<UserDetail | null>(null);
 
-  // Update data when data is changed
-  useEffect(() => {
-    updatePendingProject(projectAfterLinkChanges || {} as PendingProject);
-  }, [updatePendingProject]);
 
 
   // Update parent state with error message
@@ -227,19 +223,17 @@ projectAfterLinkChanges = structuredClone(projectData);
         ))}
         <div id="add-link-container">
           <button id="profile-editor-add-link"
-          //GET OUT
-          //(i'll get to you later)
-            // onClick={() => {
-            //   updatePendingProject({
-            //     ...projectAfterLinkChanges,
-            //     projectSocials: [...projectAfterLinkChanges.projectSocials || [], {
-            //       label: '',
-            //       url: '',
-            //       apiUrl: "",
-            //       websiteId: 0
-            //     }]
-            //   });
-            // }}
+            onClick={() => {
+              updatePendingProject({
+                ...projectAfterLinkChanges,
+                projectSocials: [...projectAfterLinkChanges.projectSocials || [], {
+                  label: '',
+                  url: '',
+                  apiUrl: "",
+                  websiteId: 0
+                }]
+              });
+            }}
             >
             <i className="fa fa-plus" />
             <p>Add social profile</p>

@@ -67,3 +67,15 @@ export enum JobCompensation {
   Unpaid = "Unpaid",
   Paid = "Paid"
 };
+export enum BaseSocialUrl {
+  "Instagram" = 'https://instagram.com/',
+  'Twitter' = 'https://x.com/',
+  'Facebook' = 'https://facebook.com/',
+  'Discord' = 'https://discord.gg/',
+  'Bluesky' = 'https://bsky.app/profile/',
+  'LinkedIn' = 'https://linkedin.com/in/',
+  'YouTube' = 'https://youtube.com/@',
+  'Steam' = 'https://store.steampowered.com/',
+  'Itch' = 'https://itch.io/',
+  'Other' = 'https://example.com'
+}

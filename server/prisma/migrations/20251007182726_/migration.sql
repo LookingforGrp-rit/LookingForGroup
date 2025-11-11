@@ -112,7 +112,6 @@ CREATE TABLE `projects` (
 CREATE TABLE `socials` (
     `website_id` INTEGER NOT NULL AUTO_INCREMENT,
     `label` VARCHAR(50) NOT NULL,
-    `base_url` VARCHAR(50) NOT NULL,
 
     UNIQUE INDEX `socials_label_key`(`label`),
     PRIMARY KEY (`website_id`)
@@ -365,7 +364,7 @@ UNLOCK TABLES;
 LOCK TABLES `socials` WRITE;
 TRUNCATE TABLE `socials`;
 /*!40000 ALTER TABLE `socials` DISABLE KEYS */;
-INSERT INTO `socials` VALUES (1,'Instagram','instagram.com'),(2,'Twitter','x.com'),(3,'Facebook','facebook.com'),(4,'Discord','discord.gg'),(5,'Bluesky','bsky.social'),(6,'LinkedIn','linkedin.com'),(7,'YouTube','youtube.com'),(8,'Steam','steampowered.com'),(9,'Itch','itch.io'),(10,'Other','.com');
+INSERT INTO `socials` VALUES (1,'Instagram'),(2,'Twitter'),(3,'Facebook'),(4,'Discord'),(5,'Bluesky'),(6,'LinkedIn'),(7,'YouTube'),(8,'Steam'),(9,'Itch'),(10,'Other');
 /*!40000 ALTER TABLE `socials` ENABLE KEYS */;
 UNLOCK TABLES;
 
