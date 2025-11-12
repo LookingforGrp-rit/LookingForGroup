@@ -8,6 +8,7 @@ import { getSocials, getUsersById } from "../../../api/users";
 import { ThemeIcon } from "../../ThemeIcon";
 import { PendingProject } from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
+import { BaseSocialUrl } from "@looking-for-group/shared/enums";
 
 // --- Variables ---
 type LinksTabProps = {
@@ -205,14 +206,13 @@ projectAfterLinkChanges = structuredClone(projectData);
             <Input
               type="link"
               placeholder="URL"
-              value={social.url ? social.url : ''}
+              value={social.url ? social.url : BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}
               onChange={(e) => {
                 // TODO: Implement some sort of security check for URLs.
                 // Could be as simple as checking the URL matches the social media
                 // But since 'Other' is an option, might be good to just find some
                 // external list of suspicious sites and make sure it's not one of those.
                 
-                //i'm gonna do the base url check but not the other thingy right now
                 const tempSocials = [...projectAfterLinkChanges.projectSocials];
                 tempSocials[index].url = e.target.value;
                 updatePendingProject({ ...projectAfterLinkChanges, projectSocials: tempSocials });
