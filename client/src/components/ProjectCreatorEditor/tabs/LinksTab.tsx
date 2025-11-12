@@ -21,6 +21,7 @@ type LinksTabProps = {
   isNewProject?: boolean;
 }
 
+let localIdIncrement = 0;
 let projectAfterLinkChanges: PendingProject;
 
 // --- Component ---
@@ -160,7 +161,7 @@ projectAfterLinkChanges = structuredClone(projectData);
                   const tempSocials = projectAfterLinkChanges.projectSocials;
                   tempSocials[index].label = selectedLabel;
                   tempSocials[index].websiteId = selectedSocial?.websiteId || 0;
-                  if(selectedSocial){
+                  if(selectedSocial && "localId" in social){ //so it only tries to add newly added ones
 
                   dataManager.addSocial({
                     id: {
@@ -169,13 +170,12 @@ projectAfterLinkChanges = structuredClone(projectData);
                     },
                     data: tempSocials[index] as AddProjectSocialInput
                   })
-                  }
-                  //ok i should only do this when i input the url, i shouldn't add it if it has no url
-
                   projectAfterLinkChanges = {
                     ...projectAfterLinkChanges,
                     projectSocials: tempSocials
                   }
+                  }
+
                   updatePendingProject(projectAfterLinkChanges);
                 }}
                 options={allSocials ? allSocials.map(website => {
@@ -215,6 +215,29 @@ projectAfterLinkChanges = structuredClone(projectData);
                 
                 const tempSocials = [...projectAfterLinkChanges.projectSocials];
                 tempSocials[index].url = e.target.value;
+
+                if("localId" in social){
+                dataManager.updateSocial({
+                  id: {
+                    type: "local",
+                    value: social.localId ?? ++localIdIncrement
+                  },
+                  data: {
+                    url: tempSocials[index].url
+                  }
+                })
+                }
+                else{
+                dataManager.updateSocial({
+                  id: {
+                    type: "canon",
+                    value: social.websiteId
+                  },
+                  data: {
+                    url: tempSocials[index].url
+                  }
+                })
+                }
                 updatePendingProject({ ...projectAfterLinkChanges, projectSocials: tempSocials });
               }}
               onClick={(e) => {(e.target as HTMLElement).closest('.editor-link-item')?.remove();}}
