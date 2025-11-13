@@ -84,10 +84,6 @@ const checkFollow = useCallback(async () => {
 
   // 'Follow' button
   const followUser = async () => {
-    const followButton = document.getElementById(
-      "profile-follow-button"
-    ) as HTMLButtonElement;
-
 
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
@@ -98,11 +94,9 @@ const checkFollow = useCallback(async () => {
       if (toggleFollow) {
         const follow = await addUserFollowing(parseInt(profileID));
         if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
-          followButton.innerText = "Following";
       }
       else {
         await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
-        followButton.innerText = "Follow";
       }
     }
   };
@@ -195,7 +189,7 @@ const checkFollow = useCallback(async () => {
             }}
           >
             <ThemeIcon
-              id={link.label}
+              id={link.label.toLowerCase()}
               width={25}
               height={25}
               className={"color-fill"}
@@ -215,9 +209,21 @@ const checkFollow = useCallback(async () => {
       {/* Or, show follow and options buttons */}
       {/*must change state based on follow status*/}
       {isFollow ? (
-        <button id={'profile-follow-button'} className="user-followed" style={{backgroundColor: "orange"}} onClick={() => followUser()}>Following</button>
+        <ThemeIcon
+          width={28}
+          height={25}
+          id={"heart-filled"}
+          ariaLabel="following"
+          onClick={() => followUser()}
+        />
       ) : (
-        <button id={'profile-follow-button'} className="user-not-followed" onClick={() => followUser()}>Follow</button>
+        <ThemeIcon
+          width={28}
+          height={25}
+          id={"heart-empty"}
+          ariaLabel="following"
+          onClick={() => followUser()}
+        />
       )}
       
       {/* TODO: Implement Share, Block, and Report functionality */}

@@ -1835,14 +1835,6 @@ Theme Icons style rules
   fill: var(--modal-gradient-start);
 }
 
-/* Heart SVG */
-.empty-heart > use {
-  fill: white;
-}
-.filled-heart > use {
-  fill: #F14F76;
-}
-
 /* Star SVG (Following icon and Thumbnail indicator) */
 .star {
   top: 9px;

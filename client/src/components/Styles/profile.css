@@ -1097,6 +1097,7 @@ New Profile page style rules
           display: flex;
           justify-content: flex-end;
           align-items: center;
+          gap: 7px;
           overflow-wrap: break-word;
           word-break: break-word;
           width: fit-content;
@@ -1186,39 +1187,6 @@ New Profile page style rules
   #profile-names {
     flex-direction: column;
     align-items: center;
-  }
-}
-
-#profile-follow-button {
-  justify-self: right;
-  box-sizing: border-box;
-  background-color: var(--primary-color);
-  border: 0px;
-  border-radius: 55px;
-  min-width: fit-content;
-  color: var(--invert-text);
-  /* padding: 12px 17px; */
-  text-align: center;
-  /* font-size: 24px; */
-  font-weight: bold;
-  /* line-height: 28px; */
-  letter-spacing: 0%;
-  /* width: 145px; */
-
-  top: -10% !important;
-  padding: 12px 17px !important;
-  font-size: 20px !important;
-}
-#profile-follow-button:hover{
-  color: var(--create-text) !important;
-  background-color: var(--create-bg) !important;
-  filter: drop-shadow(0px 5px 3px var(--shadow-color));
-  transition: 0.25s;
-}
-
-@media only screen and (max-width: 1250px) {
-  #profile-follow-button {
-    justify-self: center;
   }
 }
 
@@ -1434,15 +1402,12 @@ New Profile page style rules
   grid-area: buttons;
   display: flex;
   align-items: center;
-  /*height:calc(100% - 40px);*/
   height: 100%;
-  /* padding:20px 0; */
-  gap: 9px;
+  gap: 7px;
 }
 
 #about-me-buttons.about-me-buttons-minimal {
   justify-content: flex-end;
-  gap: 7px;
 }
 
 @media only screen and (max-width: 1200px) {
@@ -1453,33 +1418,23 @@ New Profile page style rules
 
 #about-me-buttons>button {
   border: none;
-  border-radius: 30px;
-  background-color: rgba(0, 0, 0, 0);
-  height: 100%;
-  font-weight: bold;
-  font-size: 1.8ch;
+  background-color: transparent;
+  padding: 0;
 
-  img {
+  svg {
     /* vertical-align:bottom actually vertically centers these icons within their buttons! */
     vertical-align: bottom;
   }
 }
 
-#about-me-buttons>.dropdown-container>button {
-  border: none;
-  border-radius: 30px;
-  background-color: rgba(0, 0, 0, 0);
-  height: 100%;
-  font-weight: bold;
-  font-size: 1.8ch;
-  padding-top: 0;
-  padding-bottom: 0;
+#profile-buttons > * {
+  cursor: pointer;
 }
 
-/* ????? why was this here??? */
-/* #about-me-buttons button > img {
-  margin-top: 3px;
-} */
+#profile-buttons > .dropdown-container > button {
+  border: none;
+  background: transparent;
+}
 
 #about-me-buttons button:hover {
   background-color: var(--bg-color);
@@ -1496,15 +1451,6 @@ New Profile page style rules
   border-radius: 30px;
   height: 100%;
   width: 120px;
-}
-
-/* 
-#edit-profile-button:hover {
-  background-color: var(--purple);
-} */
-
-#about-me-buttons img {
-  height: 32px;
 }
 
 #profile-menu-dropdown {
