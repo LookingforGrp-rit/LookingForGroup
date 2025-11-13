@@ -378,6 +378,10 @@ Project Creator and Editor style rules
 #project-editor-content {
   flex-grow: 1;
   margin: 35px 56px 26px 55px;
+
+  > * {
+    max-height: 710px;
+  }
 }
 
 #project-editor-content label:not(#drop-area),
@@ -608,6 +612,7 @@ Project Creator and Editor style rules
   border-radius: 10px;
   grid-area: search;
   min-width: 150px;
+  max-height: 628px;
 }
 
 #project-editor-tag-search-container {
@@ -616,7 +621,7 @@ Project Creator and Editor style rules
   justify-content: flex-start;
   gap: 10px;
   /*For scrolling*/
-  max-height: 482px;
+  max-height: 472px;
   overflow-y: auto;
 }
 
@@ -744,11 +749,12 @@ Project Creator and Editor style rules
   display: grid;
   grid-template:
     'type search' auto 
-    'select search' 1fr
+    'select search' 1fr 
     'save save' auto /
     1fr 2fr;
   gap: 20px;
   height: 100%;
+  align-items: stretch;
 }
 
 #tags-save-info {
@@ -770,6 +776,7 @@ Project Creator and Editor style rules
   display: flex;
   flex-direction: column; 
   gap: 15px;
+  max-height: 107px;
 }
 
 #project-editor-selected-tags {
@@ -785,13 +792,13 @@ Project Creator and Editor style rules
 
 #project-editor-selected-tags-container {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: flex-start;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 8px;
   margin-top: 15px;
-  height: 80px;
-  max-height: 80px;
+  /* height: 80px; */
+  /* max-height: 80px; */
   overflow-y: scroll;
 }
 
@@ -802,14 +809,14 @@ Project Creator and Editor style rules
   align-items: flex-start;
   gap: 8px;
   overflow-y: scroll;
-  max-height: 66px;
+  max-height: 28px;
 }
 
 #project-editor-type-tags,
 #project-editor-selected-tags,
 #project-editor-tag-search {
   background-color: var(--bg-color);
-  /* box-shadow: 0 0 3px var(--gray); */
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
   border-radius: 8px;
 }
 
