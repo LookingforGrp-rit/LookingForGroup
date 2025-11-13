@@ -149,7 +149,21 @@ projectAfterLinkChanges = structuredClone(projectData);
             <Select>
               <SelectButton
                 placeholder='Select'
-                initialVal={social.label ? social.label : undefined}
+                initialVal={social.label ? 
+                      <ThemeIcon
+                        width={20}
+                        height={20}
+                        id={
+                          social.label === 'Other' ? 'link' :
+                          // TODO: revisit twitter/x label
+                          social.label === 'Twitter' ? 'x' :
+                          social.label.toLowerCase()
+                        }
+                        className={'mono-fill'}
+                        ariaLabel={social.label}
+                      /> as unknown as string
+                  
+                  : undefined}
                 className='link-select'
                 type={"input"}
               />
@@ -203,10 +217,11 @@ projectAfterLinkChanges = structuredClone(projectData);
               />
             </Select>
             {/* Social URL input */}
+            <div id="base-url">{BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}</div>
             <Input
               type="link"
-              placeholder="URL"
-              value={social.url ? social.url : BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}
+              placeholder="Username"
+              value={social.url ? social.url.substring(BaseSocialUrl[social.label as keyof typeof BaseSocialUrl].length) : ''}
               onChange={(e) => {
                 // TODO: Implement some sort of security check for URLs.
                 // Could be as simple as checking the URL matches the social media
@@ -214,7 +229,7 @@ projectAfterLinkChanges = structuredClone(projectData);
                 // external list of suspicious sites and make sure it's not one of those.
                 
                 const tempSocials = [...projectAfterLinkChanges.projectSocials];
-                tempSocials[index].url = e.target.value;
+                tempSocials[index].url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] + e.target.value;
 
                 if("localId" in social){
                 dataManager.updateSocial({
