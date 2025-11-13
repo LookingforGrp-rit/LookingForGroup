@@ -426,7 +426,7 @@ export const TagsTab = ({
             <button
               key={medium.mediumId}
               className={`tag-button tag-button-blue-selected`}
-              onClick={() => handleTagSelect(medium.mediumId)}
+              onClick={() => handleMediumSelect(medium.mediumId)}
             >
               <i className="fa fa-close"></i>
               <p>{medium.label}</p>
