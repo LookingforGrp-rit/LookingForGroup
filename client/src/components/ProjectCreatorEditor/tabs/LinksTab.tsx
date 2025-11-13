@@ -255,7 +255,25 @@ projectAfterLinkChanges = structuredClone(projectData);
                 }
                 updatePendingProject({ ...projectAfterLinkChanges, projectSocials: tempSocials });
               }}
-              onClick={(e) => {(e.target as HTMLElement).closest('.editor-link-item')?.remove();}}
+              onClick={() => {
+                if(!("localId" in social)){
+
+                dataManager.deleteSocial({
+                  id: {
+                    type: 'canon',
+                    value: social.websiteId
+                  },
+                  data: null
+                });
+                projectAfterLinkChanges.projectSocials = 
+                  projectAfterLinkChanges.projectSocials.filter(
+                            (soc) =>
+                              social.websiteId !==
+                              soc.websiteId
+                          ); //get it outta here
+                updatePendingProject(projectAfterLinkChanges)
+                }
+              }}
             />
           </div>
         ))}
