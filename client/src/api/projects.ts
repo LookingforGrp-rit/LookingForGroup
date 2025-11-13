@@ -372,7 +372,7 @@ export const updateProjectSocial = async (
   socialData: UpdateProjectSocialInput
 ): Promise<ApiResponse<ProjectSocial>> => {
   const apiURL = `/projects/${projectID}/socials/${websiteId}`;
-  const response = await PUT(apiURL, socialData);
+  const response = await PATCH(apiURL, socialData);
 
   if (response.error)
     console.log(`Error in updateProjectSocial: ${response.error}`);

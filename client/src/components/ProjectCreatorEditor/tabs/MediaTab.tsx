@@ -85,7 +85,6 @@ export const MediaTab = ({
           }
         }
       }
-
     }
     initializeImages();
   });
@@ -125,7 +124,7 @@ export const MediaTab = ({
     try {
       const fullImg = {
         image: file,
-        altText: "project image", // FIXME: there is no way for users to enter alt text
+        altText: "project image", //does this imageUploader.alt thing work how i expect it to //it did not!
       } as CreateProjectImageInput;
 
       const localId = ++localIdIncrement;
@@ -156,9 +155,9 @@ export const MediaTab = ({
       if (projectAfterMediaChanges.projectImages.length === 1) {
         // Update dataManager
         const thumbObj = {
-            localId: 1,
+            localId: ++localIdIncrement,
             image: fullImg.image,
-            altText: "project thumbnail",
+            altText: fullImg.altText,
         } as PendingProjectImage;
         dataManager.updateThumbnail({
           id: {

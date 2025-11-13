@@ -206,38 +206,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
       // EXISTING PROJECT
       if (!newProject && projectID) {
-        // const projectNumID = Number(projectID);
-        // const picsResp = await getPics(projectNumID);
-        // const dbImages = picsResp.data || [];
-
-        // const imagesToDelete = dbImages.filter(img => !modifiedProject.images.find(i => i.image === img.image));
-        // await Promise.all(imagesToDelete.map(img => deletePic(projectNumID, img.image)));
-
-        // await Promise.all(
-        //   modifiedProject.images.map(img => {
-        //     if (!dbImages.find(db => db.image === img.image)) return addPic(projectNumID, img.file, img.position);
-        //     return Promise.resolve();
-        //   })
-        // );
-
-        // await updatePicPositions(
-        //   projectNumID,
-        //   modifiedProject.images.map(i => ({ id: i.id!, position: i.position }))
-        // );
-
-        // if (modifiedProject.thumbnailFile && modifiedProject.thumbnail !== projectData.thumbnail) {
-        //   await updateThumbnail(projectNumID, modifiedProject.thumbnailFile);
-        // }
-
-        // await updateProject(projectNumID, modifiedProject);
-        // setProjectData(modifiedProject);
 
         if(updateDisplayedProject) updateDisplayedProject(dataManager.getSavedProject());
       }
       window.location.reload();
-        console.log(dataManager)
     } catch (err) {
-        console.log("hi...?")
       console.error(err);
     }
   };
@@ -398,9 +371,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 />
               ) : currentTab === 4 ? (
                 <LinksTab
+                  dataManager={dataManager}
                   isNewProject={newProject}
                   projectData={modifiedProject}
-                  setProjectData={setModifiedProject}
+                  saveProject={saveProject}
+                  updatePendingProject={updatePendingProject}
                   setErrorLinks={setErrorLinks}
                   failCheck={failCheck}
                 />

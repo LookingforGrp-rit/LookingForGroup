@@ -31,7 +31,7 @@
   padding: 20px;
   background-color: var(--bg-color, #f8f9fa);
   border-radius: 8px;
-  border: 1px solid var(--border-color, #e0e0e0);
+  border: 1px solid var(--border-color);
 }
 
 .contact-socials-grid {
@@ -55,7 +55,7 @@
 }
 
 .contact-social-link:hover {
-  background-color: var(--background-hover, #f0f0f0);
+  background-color: var(--background-hover);
   border-color: var(--primary-color);
   transform: translateY(-1px);
 }
