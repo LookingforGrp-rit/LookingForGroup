@@ -264,100 +264,106 @@ const checkFollow = useCallback(async () => {
 
       {/* Checks if we have profile data to use, then determines what to render */}
       <div id="profile-page-content">
-        {/* New profile display using css grid, will contain all info except for projects */}
-        <div id="profile-information-grid">
-          <img
-            src={usePreloadedImage(`images/profiles/${displayedProfile?.profileImage}`, profilePicture)}
-            id="profile-image"
-            alt="profile image"
-            onError={(e) => {
-              const profileImg = e.target as HTMLImageElement;
-              profileImg.src = profilePicture;
-            }}
-          />
-
-          <div id="profile-bio">{displayedProfile?.headline}</div>
-
-          <div id="profile-info-name">
-            <span id="profile-fullname">
-              {displayedProfile?.firstName} {displayedProfile?.lastName}
-            </span>
-            @{displayedProfile?.username}
-          </div>
-
-          <div id="profile-info-buttons">{aboutMeButtons}</div>
-
-          <div id="profile-info-extras">
-            <div className="profile-extra">
-              <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
-              {displayedProfile?.title}
-            </div>
-            <div className="profile-extra">
-              <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
-              {displayedProfile?.majors?.join(", ")} {displayedProfile?.academicYear}
-            </div>
-            <div className="profile-extra">
-              <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
-              {displayedProfile?.location}
-            </div>
-            <div className="profile-extra">
-              <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
-              {displayedProfile?.pronouns}
-            </div>
-            {/* Only show mentor status if user is a mentor */}
-            {displayedProfile?.mentor && 
-              <div className="profile-extra">
-                <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
-                Mentor
-              </div>
-            }
-          </div>
-
-          <div id="profile-info-description">{displayedProfile?.bio}</div>
-
-          <div id="profile-info-funfact">
-            <span id="fun-fact-start">
-              {displayedProfile?.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
-            </span>
-            {displayedProfile?.funFact}
-          </div>
-          {/* <div id="profile-info-interest">
-            <ProfileInterests
-              user={{ interests: displayedProfile.interests || [] }}
-              isUsersProfile={isUsersProfile}
+        <div id="profile-hero">
+          <div id="profile-img-container">
+            <img
+              src={usePreloadedImage(`images/profiles/${displayedProfile?.profileImage}`, profilePicture)}
+              id="profile-image"
+              alt="profile image"
+              onError={(e) => {
+                const profileImg = e.target as HTMLImageElement;
+                profileImg.src = profilePicture;
+              }}
             />
-          </div> */}
+            <div id="profile-bio">{displayedProfile?.headline}</div>
+          </div>
 
-          <div id="profile-info-skills">
-            {displayedProfile?.skills !== undefined && (
-              /* Will take in a list of tags the user has selected, then */
-              /* use a map function to generate tags to fill this div */
-              displayedProfile?.skills.map((tag) => {
-                let category: string;
-                switch (tag.type) {
-                  case "Designer":
-                    category = "red";
-                    break;
-                  case "Developer":
-                    category = "yellow";
-                    break;
-                  case "Soft":
-                    category = "purple";
-                    break;
-                  default:
-                    category = "grey";
-                }
+          <div id="profile-info">
+            <div id="profile-info-text">
+              <div id="profile-top-row">
+                <div id="profile-names">
+                  <p id="profile-fullname">
+                    {displayedProfile?.firstName} {displayedProfile?.lastName}
+                  </p>
+                  <p id="profile-username">
+                    @{displayedProfile?.username}
+                  </p>
+                </div>
+                <div id="profile-buttons">{aboutMeButtons}</div>
+              </div>
 
-                return (
-                  <div
-                    key={`${tag.skillId}`}
-                    className={`skill-tag-label label-${category}`}
-                  >
-                    {tag.label}
+              <div id="profile-extras">
+                <div className="profile-extra">
+                  <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
+                  {displayedProfile?.title}
+                </div>
+                <div className="profile-extra">
+                  <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
+                  {displayedProfile?.majors?.join(", ")} {displayedProfile?.academicYear}
+                </div>
+                <div className="profile-extra">
+                  <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
+                  {displayedProfile?.location}
+                </div>
+                <div className="profile-extra">
+                  <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+                  {displayedProfile?.pronouns}
+                </div>
+                {/* Only show mentor status if user is a mentor */}
+                {displayedProfile?.mentor && 
+                  <div className="profile-extra">
+                    <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
+                    Mentor
                   </div>
-                );
-              })
-            )}
+                }
+              </div>
+
+              <div id="profile-description">{displayedProfile?.bio}</div>
+
+              <div id="profile-funfact">
+                <span id="funfact-start">
+                  {displayedProfile?.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
+                </span>
+                {displayedProfile?.funFact}
+              </div>
+              {/* <div id="profile-interest">
+                <ProfileInterests
+                  user={{ interests: displayedProfile.interests || [] }}
+                  isUsersProfile={isUsersProfile}
+                />
+              </div> */}
+            </div>
+
+            <div id="profile-skills">
+              {displayedProfile?.skills !== undefined && (
+                /* Will take in a list of tags the user has selected, then */
+                /* use a map function to generate tags to fill this div */
+                displayedProfile?.skills.map((tag) => {
+                  let category: string;
+                  switch (tag.type) {
+                    case "Designer":
+                      category = "red";
+                      break;
+                    case "Developer":
+                      category = "yellow";
+                      break;
+                    case "Soft":
+                      category = "purple";
+                      break;
+                    default:
+                      category = "grey";
+                  }
+                  return (
+                    <div
+                      key={`${tag.skillId}`}
+                      className={`skill-tag-label label-${category}`}
+                    >
+                      {tag.label}
+                    </div>
+                  );
+                })
+              )}
+            </div>
           </div>
         </div>
 
