@@ -384,7 +384,7 @@ export const projectDataManager = async (projectId: number) => {
 
     // TODO can be ran simultaneously if saving takes too long
     for (const request of requests) {
-      if(Object.keys(request.data as object).length > 0){ //please only run if you actually have data
+      if(request.data && Object.keys(request.data as object).length > 0){ //please only run if you actually have data
       const response = await action(request);
       const succeeded = !response.error;
       statuses.push({
