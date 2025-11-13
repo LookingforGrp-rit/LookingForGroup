@@ -71,11 +71,23 @@ export enum BaseSocialUrl {
   "Instagram" = 'https://instagram.com/',
   'Twitter' = 'https://x.com/',
   'Facebook' = 'https://facebook.com/',
-  'Discord' = 'https://discord.gg/',
+  'Discord' = '',
   'Bluesky' = 'https://bsky.app/profile/',
   'LinkedIn' = 'https://linkedin.com/in/',
-  'YouTube' = 'https://youtube.com/@',
-  'Steam' = 'https://store.steampowered.com/',
-  'Itch' = 'https://itch.io/',
-  'Other' = 'https://example.com'
+  'YouTube' = '',
+  'Steam' = '',
+  'Itch' = '',
+  'Other' = ''
+}
+export interface BaseUrlValidation { //a surprise tool that'll help us later
+  Instagram: 'https://instagram.com/',
+  Twitter: 'https://x.com/',
+  Facebook: 'https://facebook.com/',
+  Discord: 'https://discord.gg/',
+  Bluesky: 'https://bsky.app/profile/',
+  LinkedIn: 'https://linkedin.com/in/',
+  YouTube: 'https://youtube.com/' | 'youtu.be',
+  Steam: 'https://steamcommunity.com/' | 'https://store.steampowered.com/app/',
+  Itch: '.itch.io',
+  Other: 'https://' //idk what imma do with this but for now we'll just make sure it's a working link (TERRIBLE! AWFUL IDEA!)
 }
