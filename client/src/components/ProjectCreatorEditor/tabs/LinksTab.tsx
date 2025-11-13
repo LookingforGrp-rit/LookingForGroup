@@ -144,6 +144,7 @@ projectAfterLinkChanges = structuredClone(projectData);
       <div id="editor-link-list">
         {/* Social URL inputs */}
         { projectAfterLinkChanges.projectSocials && projectAfterLinkChanges.projectSocials.map((social, index) => (
+          
           <div className="editor-link-item" key={index}>
             {/* Social type dropdown */}
             <Select>
@@ -220,7 +221,7 @@ projectAfterLinkChanges = structuredClone(projectData);
             <div id="base-url">{BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}</div>
             <Input
               type="link"
-              placeholder="Username"
+              placeholder={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' ? "URL" : 'Username'}
               value={social.url ? social.url.substring(BaseSocialUrl[social.label as keyof typeof BaseSocialUrl].length) : ''}
               onChange={(e) => {
                 // TODO: Implement some sort of security check for URLs.
@@ -228,6 +229,7 @@ projectAfterLinkChanges = structuredClone(projectData);
                 // But since 'Other' is an option, might be good to just find some
                 // external list of suspicious sites and make sure it's not one of those.
                 
+                //almost forgot about validation
                 const tempSocials = [...projectAfterLinkChanges.projectSocials];
                 tempSocials[index].url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] + e.target.value;
 
