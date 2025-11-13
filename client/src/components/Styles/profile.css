@@ -1019,42 +1019,155 @@ New Profile page style rules
   margin: 0 50px;
 }
 
-#profile-information-grid {
-  display: grid;
-  grid-template:
-    'image name buttons buttons' auto
-    'image extra extra extra' auto
-    'image desc desc desc' auto
-    'image fact fact fact' auto
-    'bio skills skills follow' auto /
-    300px 1fr auto;
-  background-color: var(--header-color);
+#profile-hero {
+  display: flex;
+  padding: 22px 25px 26px 26px;
+  background: var(--header-color);
   border-radius: 10px;
-  padding: 22px 25px 25px 26px;
-  gap: 10px;
-  color: var(--main-text);
-  max-width: 100%;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
+  gap: 26px;
+  height: min-content;
 
-/* Profile view responsiveness */
-@media only screen and (max-width: 1250px) {
-  #profile-information-grid {
-    display: grid;
-    grid-template:
-      'image' auto
-      'name' auto
-      'buttons' auto
-      'extra' auto
-      'desc' auto
-      'fact' auto
-      'bio' auto
-      'skills' auto
-      'follow' auto / 1fr;
-    justify-items: center;
+  /* Left-most flexbox */
+  > #profile-img-container {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+
+    > #profile-image {
+      width: 280px;
+      height: 280px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid white;
+    }
+
+    > #profile-bio {
+      font-style: italic;
+      font-size: 12px;
+      color: var(--neutral-gray);
+      width: 280px;
+      overflow-wrap: break-word;
+      word-break: break-word;
+      text-align: center;
+    }
+  }
+
+  /* Right-most flexbox */
+  > #profile-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     width: 100%;
-    max-width: 90%;
+
+    > #profile-info-text {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      > #profile-top-row {
+        display: flex;
+        justify-content: space-between;
+
+        > #profile-names {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+
+          > #profile-fullname {
+            color: var(--primary-color);
+            font-size: 32px;
+            font-weight: bold;
+            font-style: normal;
+            text-align: left;
+            margin: 0;
+            width: fit-content;
+            text-wrap: wrap;
+          }
+
+          > #profile-username {
+            color: var(--neutral-gray);
+            font-size: 20px;
+            font-style: italic;
+            font-weight: 400;
+            margin: 0;
+          }
+        }
+
+        > #profile-buttons {
+          display: flex;
+          justify-content: flex-end;
+          align-items: center;
+          overflow-wrap: break-word;
+          word-break: break-word;
+          width: fit-content;
+          justify-self: end;
+          align-self: start;
+
+          #project-info-edit {
+            padding: 10px;
+            font-size: 20px;
+          }
+        }
+
+      }
+
+      > #profile-extras {
+        font-size: 16px;
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: start;
+        gap: 20px;
+        overflow-wrap: break-word;
+        word-break: break-word;
+
+        .profile-extra {
+          display: flex;
+          align-items: center;
+          font-style: italic;
+          gap: 10px;
+        }
+      }
+
+      > #profile-description {
+        font-size: 16px;
+        text-align: left;
+        max-width: 100%;
+        overflow-wrap: break-word;
+        word-break: break-word;
+      }
+
+      > #profile-funfact {
+        color: var(--neutral-gray);
+        font-size: 14px;
+        text-align: left;
+        margin-top: auto;
+        font-style: italic;
+        overflow-wrap: break-word;
+        word-break: break-word;
+
+        > #funfact-start {
+          color: var(--primary-color);
+          font-weight: bold;
+          margin-right: 5px;
+        }
+      }
+
+      > #profile-interests {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        padding: 10px;
+        background-color: var(--bg-secondary);
+        border-radius: 8px;
+      }
+    }
+
+    > #profile-skills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
   }
 }
 
@@ -1069,50 +1182,20 @@ New Profile page style rules
   color: var(--primary-color);
 }
 
-#profile-image {
-  width: 280px;
-  height: 280px;
-  grid-area: image;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 2px solid white;
-}
-
-#profile-bio {
-  grid-area: bio;
-  font-style: italic;
-  color: var(--main-text);
-  width: 280px;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-#profile-info-name {
-  grid-area: name;
-  display: flex;
-  flex-direction: column;
-  font-style: italic;
-  font-size: 2ch;
-  color: var(--darkGray);
-  gap: 10px;
-  text-align: left;
-  min-width: 275px;
-}
-
 @media only screen and (max-width: 1250px) {
-  #profile-info-name {
+  #profile-names {
+    flex-direction: column;
     align-items: center;
   }
 }
 
 #profile-follow-button {
   justify-self: right;
-  grid-area: follow;
   box-sizing: border-box;
   background-color: var(--primary-color);
   border: 0px;
   border-radius: 55px;
-  width: fit-content !important;
+  min-width: fit-content;
   color: var(--invert-text);
   /* padding: 12px 17px; */
   text-align: center;
@@ -1139,106 +1222,10 @@ New Profile page style rules
   }
 }
 
-#profile-fullname {
-  color: var(--primary-color);
-  font-size: 32px;
-  font-weight: bold;
-  font-style: normal;
-  text-align: left;
-}
-
-#profile-info-buttons {
-  grid-area: buttons;
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-  overflow-wrap: break-word;
-  word-break: break-word;
-  width: fit-content;
-  justify-self: end;
-  align-self: start;
-
-  #project-info-edit {
-    padding: 10px;
-    font-size: 20px;
-  }
-}
-
 @media only screen and (max-width: 1250px) {
-  #profile-info-buttons {
+  #profile-buttons {
     justify-self: center;
   }
-}
-
-#profile-info-extras {
-  font-size: 16px;
-  grid-area: extra;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: start;
-  gap: 20px;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-.profile-extra {
-  display: flex;
-  align-items: center;
-  font-style: italic;
-  gap: 10px;
-}
-
-.profile-extra>img {
-  height: 24px;
-  object-fit: contain;
-}
-
-#profile-info-description {
-  grid-area: desc;
-  text-align: left;
-  max-width: 100%;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-#profile-info-funfact {
-  grid-area: fact;
-  text-align: left;
-  margin-top: auto;
-  font-style: italic;
-  overflow-wrap: break-word;
-  word-break: break-word;
-}
-
-#fun-fact-start {
-  color: var(--primary-color);
-  font-weight: bold;
-  margin-right: 5px;
-}
-
-#profile-info-interests {
-  grid-area: interests;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  padding: 10px;
-  background-color: var(--bg-secondary);
-  border-radius: 8px;
-}
-
-#profile-info-skills {
-  grid-area: skills;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-
-.info-extra-image {
-  width: 26px;
-  height: 26px;
-  object-fit: contain;
-  margin-right: 10px;
 }
 
 .interests-selection {
