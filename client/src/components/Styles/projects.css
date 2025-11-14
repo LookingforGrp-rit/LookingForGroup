@@ -3403,6 +3403,17 @@ My projects page style rules
   transition: 0.2s;
 }
 
+.my-projects-create-btn > #project-info-create {
+  gap: 14px;
+  p {
+    color: var(--invert-text);
+  }
+  
+  .color-fill > use {
+    fill: var(--invert-text);
+  }
+}
+
 .page#my-projects hr {
   box-sizing: border-box;
   border-color: var(--header-color);

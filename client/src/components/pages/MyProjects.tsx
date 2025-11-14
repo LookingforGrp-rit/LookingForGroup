@@ -534,7 +534,8 @@ const MyProjects = () => {
             </button>
           </>
         ) : (<div className="my-projects-create-btn">
-          <ProjectCreatorEditor newProject={createError} buttonCallback={getUserProjects} />
+          {/* New Project always true here because it should prompt to create a project */}
+          <ProjectCreatorEditor newProject={true} buttonCallback={getUserProjects} />
         </div>)
         }
 
