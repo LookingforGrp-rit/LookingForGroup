@@ -1,4 +1,3 @@
-// import { MyProjectsDisplay } from "../MyProjectsDisplay";
 // import { profiles } from "../../constants/fakeData";
 import { useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';

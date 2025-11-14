@@ -12,8 +12,6 @@ import { getByID } from '../api/projects.ts';
 import { ThemeIcon } from './ThemeIcon.tsx';
 
 //Component that will contain info about a project, used in the discovery page
-//Smaller and more concise than ProjectCard.tsx
-
 //Takes in a 'project' value which contains info on the project it will display
 //Also takes in width (the width of this panel), and rightAlign, which determines which side the hover panel aligns with
 

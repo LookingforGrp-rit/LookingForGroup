@@ -99,7 +99,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
 });
 
 // import React, { useState, useCallback } from 'react';
-// import { ProjectCard } from './ProjectCard';
+// import { ProjectCard } from './ProjectCard'; // This has been replaced with ProjectPanel
 
 // export const SearchBar = ({ dataSets, onSearch }) => {
 //   let result;
