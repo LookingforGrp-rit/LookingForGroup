@@ -230,6 +230,12 @@ section {
   box-shadow: 10px 10px 5px lightblue;
 }
 
+/* Content areas to take up entire height of viewport
+   to push the Footer to the bottom */
+.my-projects-grid, #discover-panel-box {
+  min-height: 50vh;
+}
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
