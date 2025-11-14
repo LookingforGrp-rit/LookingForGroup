@@ -325,6 +325,7 @@ export const projectDataManager = async (projectId: number) => {
     }
 
     try {
+    console.log(deletes.members)
       await runAndCollectErrors<null>(
         "Deleting project member",
         deletes.members,
@@ -384,7 +385,8 @@ export const projectDataManager = async (projectId: number) => {
 
     // TODO can be ran simultaneously if saving takes too long
     for (const request of requests) {
-      if(request.data && Object.keys(request.data as object).length > 0){ //please only run if you actually have data
+      //unbelievable thumbnail-specific check
+      if(!(actionLabel === "Updating project thumbnail" && request.data)){
       const response = await action(request);
       const succeeded = !response.error;
       statuses.push({

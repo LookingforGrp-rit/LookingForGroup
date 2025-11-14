@@ -340,7 +340,7 @@ export const TeamTab = ({
         `${currentMember.user.firstName} ${currentMember.user.lastName} added to team!`
       );
 
-      // FIXME what is the delay for?
+      // FIXME what is the delay for? //it's the visualeffect for the error text
       // reset prompt to clear
       setTimeout(() => {
         setErrorAddMember("");
@@ -351,11 +351,11 @@ export const TeamTab = ({
       setClosePopup(true);
       // add member
 
-      const thisMemberLocalId = ++localIdIncrement;
+      if("localId" in currentMember) (currentMember as PendingProjectMember).localId = ++localIdIncrement;
 
       dataManager.createMember({
         id: {
-          value: thisMemberLocalId,
+          value: (currentMember as PendingProjectMember).localId ?? ++localIdIncrement,
           type: "local",
         },
         data: {
@@ -367,16 +367,17 @@ export const TeamTab = ({
       const localProjectMember: PendingProjectMember = {
         user: currentMember.user,
         role: currentMember.role,
-        localId: thisMemberLocalId,
+        localId: (currentMember as PendingProjectMember).localId ?? ++localIdIncrement,
       };
 
       projectAfterTeamChanges.members = [...projectAfterTeamChanges.members, localProjectMember]
+      updatePendingProject(projectAfterTeamChanges)
 
       setCurrentMember(emptyMember);
       resetFields();
       return true;
     }
-  }, [allRoles, allUsers, currentMember, projectAfterTeamChanges, dataManager]);
+  }, [allRoles, allUsers, currentMember, projectAfterTeamChanges, dataManager, updatePendingProject]);
 
   // Handle search results
   // FIXME does this need to be a 2D array?
@@ -1230,6 +1231,7 @@ export const TeamTab = ({
                                       member.user?.userId !==
                                       currentMember.user?.userId
                                   )
+                                  updatePendingProject(projectAfterTeamChanges)
                             }}
                           >
                             Delete
@@ -1378,7 +1380,7 @@ export const TeamTab = ({
         </Popup>
       </div>
     ),
-    [allRoles, closePopup, currentMember, dataManager, errorAddMember, handleNewMember, projectAfterTeamChanges, handleSearch, handleUserSelect, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
+    [allRoles, closePopup, currentMember, dataManager, errorAddMember, updatePendingProject, handleNewMember, projectAfterTeamChanges, handleSearch, handleUserSelect, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
   );
   const openPositionsContent: JSX.Element = useMemo(
     () => (

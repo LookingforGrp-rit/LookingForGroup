@@ -209,7 +209,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
         if(updateDisplayedProject) updateDisplayedProject(dataManager.getSavedProject());
       }
-      window.location.reload();
+      //window.location.reload();
     } catch (err) {
       console.error(err);
     }
