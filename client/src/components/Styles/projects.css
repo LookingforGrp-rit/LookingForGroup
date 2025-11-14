@@ -134,25 +134,11 @@ Project Panel component style rules
         color: #f14f76;
       }
 
-      .follow-icon {
-        border: none;
-        background: none;
-        outline: none;
-        transition: 0.2s;
-        height: fit-content;
-        font-size: 25px;
-        padding: 0;
+      #heart-empty {
+        stroke: #F14F76;
       }
 
-      .follow-icon.following {
-        color: #F14F76;
-
-        .fa-heart {
-          color: #f14f76 !important;
-        }
-      }
-
-      .follow-icon:hover {
+      #heart-empty:hover, #heart-filled:hover {
         transform: scale(1.2);
       }
     }
@@ -2641,28 +2627,6 @@ Project Carousel style rules
 
   .follow-amt.following {
     color: #f14f76;
-  }
-
-  .follow-icon {
-    border: none;
-    background: none;
-    outline: none;
-    transition: 0.2s;
-    height: fit-content;
-    font-size: 25px;
-    padding: 0;
-  }
-
-  .follow-icon.following {
-    color: #f14f76;
-
-    .fa-heart {
-      color: #f14f76 !important;
-    }
-  }
-
-  .follow-icon:hover {
-    transform: scale(1.2);
   }
 
   .project-info-dropdown-btn {

@@ -81,6 +81,7 @@ Profile Panel component style rules
 }
 
 .profile-panel-hover {
+  position: relative;
   border-radius: 10px;
   background-color: var(--panel-hover);
   color: var(--invert-text);
@@ -100,6 +101,18 @@ Profile Panel component style rules
   text-align: left;
   padding: 20px;
   overflow: auto;
+
+  #heart-empty, #heart-filled {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+  }
+  #heart-empty {
+    stroke: var(--invert-text);
+  }
+  #heart-filled {
+    fill: #F14F76;
+  }
 }
 
 .profile-panel-hover-item {
@@ -1105,8 +1118,12 @@ New Profile page style rules
           align-self: start;
 
           #project-info-edit {
-            padding: 10px;
+            padding: 10px;  
             font-size: 20px;
+          }
+
+          #heart-empty {
+            stroke: #F14F76;
           }
         }
 

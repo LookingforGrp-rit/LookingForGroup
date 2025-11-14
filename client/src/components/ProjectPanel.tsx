@@ -9,14 +9,13 @@ import usePreloadedImage from '../functions/imageLoad.tsx';
 import { ProjectWithFollowers, ProjectMedium, Tag } from '@looking-for-group/shared';
 import React from 'react';
 import { getByID } from '../api/projects.ts';
+import { ThemeIcon } from './ThemeIcon.tsx';
 
 //Component that will contain info about a project, used in the discovery page
 //Smaller and more concise than ProjectCard.tsx
 
 //Takes in a 'project' value which contains info on the project it will display
 //Also takes in width (the width of this panel), and rightAlign, which determines which side the hover panel aligns with
-
-//backend base url for getting images
 
 interface ProjectPanelProps {
   project: ProjectWithFollowers;
@@ -57,40 +56,41 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
         return 'grey';
     }
   };
+
   //checking function for if the current user is following a project
-const checkFollow = useCallback(async () => {
-  if(userId){
-  const followings = (await getProjectFollowing(userId)).data?.projects;
+  const checkFollow = useCallback(async () => {
+    if(userId){
+    const followings = (await getProjectFollowing(userId)).data?.projects;
 
-  let isFollow = false;
+    let isFollow = false;
 
-  if(followings !== undefined){
-  for (const follower of followings){
-    isFollow = (follower.project.projectId === project.projectId);
-    if(isFollow) break;
-  }
-  }
-  setFollowing(isFollow);
-  return isFollow;
-
-  }
-}, [project, userId]);
-useEffect(() => {
-  const getProjectData = async () => {
-    //get our current user for use later
-    const userResp = await getCurrentAccount();
-    if(userResp.data) setUserId(userResp.data.userId);
-    
-    //get the project itself
-    const projectResp = await getByID(projectId);
-    if (projectResp.data) { 
-      setFollowCount(projectResp.data.followers.count);
-      checkFollow();
+    if(followings !== undefined){
+    for (const follower of followings){
+      isFollow = (follower.project.projectId === project.projectId);
+      if(isFollow) break;
     }
-  };
-    getProjectData();
-}, [projectId, userId, checkFollow])
+    }
+    setFollowing(isFollow);
+    return isFollow;
 
+    }
+  }, [project, userId]);
+
+  useEffect(() => {
+    const getProjectData = async () => {
+      //get our current user for use later
+      const userResp = await getCurrentAccount();
+      if(userResp.data) setUserId(userResp.data.userId);
+      
+      //get the project itself
+      const projectResp = await getByID(projectId);
+      if (projectResp.data) { 
+        setFollowCount(projectResp.data.followers.count);
+        checkFollow();
+      }
+    };
+      getProjectData();
+  }, [projectId, userId, checkFollow])
 
   const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
@@ -115,7 +115,6 @@ useEffect(() => {
   };
 
   return (
-    // <div className={'project-panel'} style={{ width: width }}>
     <div className={'project-panel'}>
       <img
         src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
@@ -137,13 +136,25 @@ useEffect(() => {
             <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
               {formatFollowCount(followCount)}
             </p>
-            <button
-              className={`follow-icon ${isFollowing ? 'following' : ''}`}
-              onClick={handleFollowClick}
-              title={isFollowing ? "Unfollow" : "Follow"}
-            >
-              <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>
-            </button>
+            {isFollowing ? (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-filled"}
+                ariaLabel="following"
+                onClick={(e) => handleFollowClick(e)}
+              />
+            ) : (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-empty"}
+                ariaLabel="following"
+                onClick={(e) => handleFollowClick(e)}
+              />
+            )}
+              {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>
+            </button> */}
           </div>
         </div>
         <div id="project-panel-tags">

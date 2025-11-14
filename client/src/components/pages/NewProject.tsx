@@ -140,20 +140,30 @@ useEffect(() => {
         }
       </>
     ) : user ? (
+      // FIXME: doensn't appear if not logged in
       <>
         {/* Heart icon, with number indicating follows */}
         <div className="project-info-followers">
           <p className={`follow-amt ${isFollowing ? "following" : ""}`}>
             {formatFollowCount(followCount)}
           </p>
-          <button
-            className={`follow-icon ${isFollowing ? "following" : ""}`}
-            onClick={followProject}
-          >
-            <i
-              className={`fa-solid fa-heart ${isFollowing ? "following" : ""}`}
-            ></i>
-          </button>
+          {isFollowing ? (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-filled"}
+              ariaLabel="following"
+              onClick={followProject}
+            />
+          ) : (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-empty"}
+              ariaLabel="following"
+              onClick={followProject}
+            />
+          )}
         </div>
         {/* Share, leave, and report dropdown */}
         <Dropdown>
