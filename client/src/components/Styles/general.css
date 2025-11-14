@@ -1178,19 +1178,38 @@ Header style rules
   border: none;
   padding: 10px;
   /* color: var(--primary-color); */
+  hr {
+    border: 0;
+    height: 2px;
+    background: var(--header-color);
+  }
 }
 
-#header-profile-user {
+#header-profile-dropdown > #header-profile-user {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 14px;
   font-size: 16px;
-}
 
-#header-profile-email {
-  font-style: italic;
-  font-size: smaller;
-  color: var(--main-text);
+  > #header-profile-user-info {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    text-align: left;
+
+    #header-profile-username {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin: 0;
+    }
+    #header-profile-email {
+      font-style: italic;
+      font-size: 12px;
+      color: var(--main-text);
+      margin: 0;
+    }
+  }
 }
 
 #header-profile-dropdown img {

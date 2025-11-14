@@ -156,10 +156,10 @@ export const Header = ({ dataSets, onSearch, value, onChange, hideSearchBar = fa
                 {/* (Blank) Profile Icon */}
                 <button id="header-profile-user">
                   <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
-                  <div>
-                    {username}
+                  <div id="header-profile-user-info">
+                    <p id="header-profile-username">{username}</p>
                     <br />
-                    <span id="header-profile-email">{email}</span>
+                    <p id="header-profile-email">{email}</p>
                   </div>
                 </button>
 
@@ -201,10 +201,10 @@ export const Header = ({ dataSets, onSearch, value, onChange, hideSearchBar = fa
                   ) : (
                     <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
                   )}
-                  <div>
-                    {username}
+                  <div id="header-profile-user-info">
+                    <p id="header-profile-username">{username}</p>
                     <br />
-                    <span id="header-profile-email">{email}</span>
+                    <p id="header-profile-email">{email}</p>
                   </div>
                 </button>
 
