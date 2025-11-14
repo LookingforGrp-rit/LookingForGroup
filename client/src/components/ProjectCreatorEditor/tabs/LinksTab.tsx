@@ -18,7 +18,6 @@ type LinksTabProps = {
   setErrorLinks?: (error: string) => void;
   saveProject?: () => void;
   failCheck: boolean;
-  isNewProject?: boolean;
 }
 
 let localIdIncrement = 0;
@@ -32,7 +31,6 @@ export const LinksTab = ({
   setErrorLinks = () => {},
   saveProject = () => {},
   failCheck,
-  //isNewProject = false
 }: LinksTabProps) => {
 
 projectAfterLinkChanges = structuredClone(projectData);

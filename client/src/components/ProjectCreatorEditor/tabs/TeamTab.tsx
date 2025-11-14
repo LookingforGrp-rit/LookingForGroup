@@ -11,7 +11,6 @@ import {
   getUsers,
 } from "../../../api/users";
 import {
-  ProjectDetail,
   ProjectJob,
   UserPreview,
   ProjectMember,
@@ -36,7 +35,7 @@ import { projectDataManager } from "../../../api/data-managers/project-data-mana
 
 // --- Variables ---
 // Default project value
-//wait why are the placeholders still there
+//wait why are the placeholders still here
 const emptyMember: PendingProjectMember = {
   user: null,
   role: null,
@@ -64,7 +63,7 @@ let localIdIncrement = 0;
 type TeamTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
-  setProjectData: (data: ProjectDetail) => void;
+  //setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
   setErrorMember: (error: string) => void;
   setErrorPosition: (error: string) => void;
   // permissions: number;
@@ -93,8 +92,8 @@ export const TeamTab = ({
   >([]);
 
   // tracking team changes
-  const [projectAfterTeamChanges, setProjectAfterTeamChanges] =
-    useState<PendingProject>(structuredClone(projectData));
+  let projectAfterTeamChanges: PendingProject; 
+  projectAfterTeamChanges = structuredClone(projectData);
 
   // HTML contents (needed if using commented out block at end of file)
   // const [teamTabContent, setTeamTabContent] = useState(<></>);
@@ -372,10 +371,10 @@ export const TeamTab = ({
         localId: thisMemberLocalId,
       };
 
-      setProjectAfterTeamChanges((previous) => ({
-        ...previous,
-        members: [...previous.members, localProjectMember],
-      }));
+      projectAfterTeamChanges = {
+        ...projectAfterTeamChanges,
+        members: [...projectAfterTeamChanges.members, localProjectMember],
+      };
 
       setCurrentMember(emptyMember);
       resetFields();
@@ -515,20 +514,10 @@ export const TeamTab = ({
         });
       }
 
-      setProjectAfterTeamChanges((previous) => ({
-        ...previous,
-        jobs: [
-          ...previous.jobs.filter(
-            (job) =>
-              !(
-                ("jobId" in currentJob &&
-                  (job as ProjectJob).jobId === currentJob.jobId) ||
-                ("localId" in currentJob &&
-                  (job as Pending<ProjectJob>).localId === currentJob.localId)
-              )
-          ),
-        ],
-      }));
+      projectAfterTeamChanges.jobs = projectAfterTeamChanges.jobs.filter((job) => 
+        ("jobId" in currentJob && "jobId" in job && job.jobId !== currentJob.jobId) ||
+        ("localId" in currentJob && "localId" in job && job.localId !== currentJob.localId)
+      )
 
       updatePendingProject(projectAfterTeamChanges);
     }
@@ -592,22 +581,13 @@ export const TeamTab = ({
         },
       });
 
-      setProjectAfterTeamChanges((previous) => ({
-        ...previous,
-        jobs: [
-          ...previous.jobs,
-          {
-            localId,
-            availability: currentJob.availability,
-            compensation: currentJob.compensation,
-            contact: currentJob.contact,
-            description: currentJob.description ?? "",
-            duration: currentJob.duration,
-            location: currentJob.location,
-            role: currentJob.role,
-          },
-        ],
-      }));
+      projectAfterTeamChanges.jobs = [
+        ...projectAfterTeamChanges.jobs,
+        {
+          ...currentJob as Pending<ProjectJob>,
+          localId
+        }
+      ]
 
       updatePendingProject(projectAfterTeamChanges);
 
@@ -643,28 +623,14 @@ export const TeamTab = ({
       },
     });
 
-    setProjectAfterTeamChanges((previous) => ({
-      ...previous,
-      jobs: [
-        ...previous.jobs.filter(
+    projectAfterTeamChanges.jobs = [
+        ...projectAfterTeamChanges.jobs.filter(
           (job) =>
             (job as ProjectJob).jobId !== (currentJob as ProjectJob).jobId
         ),
-        {
-          jobId: (currentJob as ProjectJob).jobId,
-          availability: (currentJob as ProjectJob).availability,
-          compensation: (currentJob as ProjectJob).compensation,
-          contact: (currentJob as ProjectJob).contact,
-          description: (currentJob as ProjectJob).description ?? "",
-          duration: (currentJob as ProjectJob).duration,
-          location: (currentJob as ProjectJob).location,
-          role: (currentJob as ProjectJob).role,
-          apiUrl: (currentJob as ProjectJob).apiUrl,
-          createdAt: (currentJob as ProjectJob).createdAt,
-          updatedAt: (currentJob as ProjectJob).updatedAt,
-        },
-      ],
-    }));
+        currentJob as ProjectJob,
+      ]
+    
 
     setErrorAddPosition("");
     setEditMode(false);
@@ -1210,9 +1176,8 @@ export const TeamTab = ({
                         });
 
                         // update team changes array
-                        setProjectAfterTeamChanges((previous) => ({
-                          ...previous,
-                          members: previous.members.map((member) => {
+                        projectAfterTeamChanges.members = 
+                          projectAfterTeamChanges.members.map((member) => {
                             // if this member matches the updated member
                             if (currentMember.user?.userId === member.user?.userId) {
                               // update role
@@ -1225,8 +1190,7 @@ export const TeamTab = ({
                               // if it doesn't match, do nothing to the member
                               return member;
                             }
-                          }),
-                        }));
+                          })
                       }}
                     >
                       Save
@@ -1281,17 +1245,12 @@ export const TeamTab = ({
                                   data: null,
                                 });
                               }
-
-                              setProjectAfterTeamChanges((previous) => ({
-                                ...previous,
-                                members: [
-                                  ...previous.members.filter(
+                              projectAfterTeamChanges.members =
+                              projectAfterTeamChanges.members.filter(
                                     (member) =>
                                       member.user?.userId !==
                                       currentMember.user?.userId
-                                  ),
-                                ],
-                              }));
+                                  )
                             }}
                           >
                             Delete

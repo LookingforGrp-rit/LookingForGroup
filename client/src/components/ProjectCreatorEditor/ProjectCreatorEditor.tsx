@@ -335,7 +335,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 <GeneralTab
                   dataManager={dataManager}
                   projectData={modifiedProject}
-                  // setProjectData={setModifiedProject}
                   updatePendingProject={updatePendingProject}
                   saveProject={saveProject}
                   failCheck={failCheck}
@@ -344,7 +343,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 <MediaTab
                   dataManager={dataManager}
                   projectData={modifiedProject}
-                  // setProjectData={setModifiedProject}
                   updatePendingProject={updatePendingProject}
                   saveProject={saveProject}
                   failCheck={failCheck}
@@ -353,7 +351,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 <TagsTab
                   dataManager={dataManager}
                   projectData={modifiedProject}
-                  // setProjectData={setModifiedProject}
                   updatePendingProject={updatePendingProject}
                   saveProject={saveProject}
                   failCheck={failCheck}
@@ -364,7 +361,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                   updatePendingProject={updatePendingProject}
                   saveProject={saveProject}
                   projectData={modifiedProject}
-                  setProjectData={setModifiedProject}
                   setErrorMember={setErrorAddMember}
                   setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
                   failCheck={failCheck}
@@ -372,7 +368,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               ) : currentTab === 4 ? (
                 <LinksTab
                   dataManager={dataManager}
-                  isNewProject={newProject}
                   projectData={modifiedProject}
                   saveProject={saveProject}
                   updatePendingProject={updatePendingProject}
