@@ -36,6 +36,7 @@ import { projectDataManager } from "../../../api/data-managers/project-data-mana
 
 // --- Variables ---
 // Default project value
+//wait why are the placeholders still there
 const emptyMember: PendingProjectMember = {
   user: null,
   role: null,
