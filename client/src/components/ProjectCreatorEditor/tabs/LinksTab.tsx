@@ -150,7 +150,8 @@ projectAfterLinkChanges = structuredClone(projectData);
             <Select>
               <SelectButton
                 placeholder='Select'
-                initialVal={social.label ? 
+                initialVal={social.label ? //silence linter, it works how it should
+                  <>
                       <ThemeIcon
                         width={20}
                         height={20}
@@ -162,8 +163,9 @@ projectAfterLinkChanges = structuredClone(projectData);
                         }
                         className={'mono-fill'}
                         ariaLabel={social.label}
-                      /> as unknown as string
-                  
+                      />
+                      {social.label}
+                  </> as unknown as string //this is how i've silenced the linter
                   : undefined}
                 className='link-select'
                 type={"input"}
@@ -214,6 +216,8 @@ projectAfterLinkChanges = structuredClone(projectData);
                     value: website.label,
                     disabled: false,
                   };
+
+                  
                 }) : []}
               />
             </Select>
