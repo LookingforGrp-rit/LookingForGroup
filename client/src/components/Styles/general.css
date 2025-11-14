@@ -709,6 +709,7 @@ Sidebar Nav style rules
   color: var(--create-bg);
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
   transition: 0.25s;
+  border: 2px solid var(--create-bg);
 
   svg {
     filter: invert(1) saturate(0) brightness(0.5);
