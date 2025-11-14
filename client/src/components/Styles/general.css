@@ -283,25 +283,6 @@ Card component style rules
   }
 }
 
-#discover-card-body {
-  margin-left: 10%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  grid-template-rows: 10% 50% 30% 10%;
-  font-size: 0.8rem;
-}
-
-/*make them grow and shrink with the window */
-#discover-card-body>* {
-  flex: 1;
-}
-
-#message-card #discover-card-body {
-  margin-top: 0%;
-  padding-bottom: 5%;
-}
-
 #profile-project-body {
   display: flex;
   flex-flow: row wrap;
@@ -333,7 +314,6 @@ Card component style rules
 }
 
 /*profile picture rules-----------------------------------------------------*/
-#discover-card-profile-picture,
 #profile-project-profile-picture,
 #endorsement-profile-picture {
   width: 100%;
@@ -349,42 +329,9 @@ Card component style rules
   width: 60%;
 }
 
-#message-card #discover-card-profile-picture {
-  width: 110%;
-  margin-top: 15%;
-}
-
 /*text rules---------------------------------------------------------------*/
-#discover-card-name {
-  text-align: center;
-  margin-bottom: 0;
-}
-
-#message-card #discover-card-name {
-  text-align: left;
-}
-
-#discover-card-name:hover,
 #profile-project-name:hover {
   text-decoration: underline;
-}
-
-#discover-card-description {
-  margin-top: 0;
-  max-width: 450px;
-}
-
-#discover-card-tag-wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  gap: 4px;
-  max-width: 450px;
-}
-
-#discover-card-pronouns {
-  margin-top: 0%;
-  text-align: center;
 }
 
 /*
