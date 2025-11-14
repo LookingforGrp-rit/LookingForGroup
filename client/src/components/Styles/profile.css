@@ -11,9 +11,8 @@ Profile Panel component style rules
 .profile-panel-box {
   display: flex;
   flex-wrap: wrap;
-  justify-content: space-evenly;
+  justify-content: center;
   gap: 20px;
-  /* margin: 0 50px 50px 50px; */
 }
 
 .profile-column {
@@ -28,7 +27,6 @@ Profile Panel component style rules
   border: none;
   border-radius: 10px;
   background-color: var(--header-color);
-  margin-bottom: 20px;
   position: relative;
   display: flex;
   flex-direction: column;

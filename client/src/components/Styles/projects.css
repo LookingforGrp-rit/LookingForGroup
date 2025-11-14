@@ -9,6 +9,7 @@ Project Panel component style rules
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-content: start;
   gap: 20px;
   width: 100%;
   /* keep panels below searchbar */
