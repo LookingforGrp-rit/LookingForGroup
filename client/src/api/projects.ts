@@ -528,7 +528,7 @@ export const updateProjectJob = async (
   jobData: UpdateProjectJobInput
 ): Promise<ApiResponse<ProjectJob>> => {
   const apiURL = `/projects/${projectID}/jobs/${jobId}`;
-  const response = await PUT(apiURL, jobData);
+  const response = await PATCH(apiURL, jobData);
 
   if (response.error)
     console.log(`Error in updateProjectJob: ${response.error}`);

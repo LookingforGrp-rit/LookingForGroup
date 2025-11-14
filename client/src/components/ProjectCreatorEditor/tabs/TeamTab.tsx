@@ -540,7 +540,8 @@ export const TeamTab = ({
   //Save current inputs in position editing window
   //what is this and when is it called
   const savePosition = useCallback(() => {
-    (currentJob as Pending<ProjectJob>).localId = ++localIdIncrement
+    console.log(isCreatingNewPosition);
+    (currentJob as Pending<ProjectJob>).localId = ++localIdIncrement;
 
     if (!currentJob) {
       setErrorAddPosition("No job to save!");
