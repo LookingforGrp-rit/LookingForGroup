@@ -92,8 +92,7 @@ export const TeamTab = ({
   >([]);
 
   // tracking team changes
-  let projectAfterTeamChanges: PendingProject; 
-  projectAfterTeamChanges = structuredClone(projectData);
+  const projectAfterTeamChanges: PendingProject = structuredClone(projectData);
 
   // HTML contents (needed if using commented out block at end of file)
   // const [teamTabContent, setTeamTabContent] = useState(<></>);
@@ -371,16 +370,13 @@ export const TeamTab = ({
         localId: thisMemberLocalId,
       };
 
-      projectAfterTeamChanges = {
-        ...projectAfterTeamChanges,
-        members: [...projectAfterTeamChanges.members, localProjectMember],
-      };
+      projectAfterTeamChanges.members = [...projectAfterTeamChanges.members, localProjectMember]
 
       setCurrentMember(emptyMember);
       resetFields();
       return true;
     }
-  }, [allRoles, allUsers, currentMember, dataManager]);
+  }, [allRoles, allUsers, currentMember, projectAfterTeamChanges, dataManager]);
 
   // Handle search results
   // FIXME does this need to be a 2D array?
@@ -542,7 +538,10 @@ export const TeamTab = ({
   }, [currentJob, dataManager, projectAfterTeamChanges, updatePendingProject]);
 
   //Save current inputs in position editing window
+  //what is this and when is it called
   const savePosition = useCallback(() => {
+    (currentJob as Pending<ProjectJob>).localId = ++localIdIncrement
+
     if (!currentJob) {
       setErrorAddPosition("No job to save!");
       return;
@@ -563,11 +562,10 @@ export const TeamTab = ({
         return;
       }
 
-      const localId = ++localIdIncrement;
 
       dataManager.createJob({
         id: {
-          value: localId,
+          value: (currentJob as Pending<ProjectJob>).localId ?? ++localIdIncrement,
           type: "local",
         },
         data: {
@@ -583,26 +581,15 @@ export const TeamTab = ({
 
       projectAfterTeamChanges.jobs = [
         ...projectAfterTeamChanges.jobs,
-        {
-          ...currentJob as Pending<ProjectJob>,
-          localId
-        }
+        currentJob as Pending<ProjectJob>
       ]
-
+      
       updatePendingProject(projectAfterTeamChanges);
 
       setEditMode(false);
       setIsCreatingNewPosition(false);
-      setCurrentJob({
-        localId,
-        availability: currentJob.availability,
-        compensation: currentJob.compensation,
-        contact: currentJob.contact,
-        description: currentJob.description ?? "",
-        duration: currentJob.duration,
-        location: currentJob.location,
-        role: currentJob.role,
-      });
+      setCurrentJob(currentJob);
+      console.log(projectAfterTeamChanges.jobs) //it's there! why isn't it updating?
 
       return;
     }
@@ -759,10 +746,6 @@ export const TeamTab = ({
     </>
   );
 
-  // Find selected members
-  const selectedMember = projectAfterTeamChanges.members.find(
-    ({ user }) => user?.userId === projectAfterTeamChanges.owner?.userId
-  );
 
   // Edit open position or creating new position
   const positionEditWindow = (
@@ -922,11 +905,6 @@ export const TeamTab = ({
             <SelectButton
               className="edit-position-contact"
               placeholder="Select"
-              initialVal={
-                selectedMember?.user
-                  ? `${selectedMember.user.firstName} ${selectedMember.user.lastName}`
-                  : ""
-              }
               type="input"
             />
             <SelectOptions
@@ -1399,7 +1377,7 @@ export const TeamTab = ({
         </Popup>
       </div>
     ),
-    [allRoles, closePopup, currentMember, dataManager, errorAddMember, handleNewMember, handleSearch, handleUserSelect, projectAfterTeamChanges.members, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
+    [allRoles, closePopup, currentMember, dataManager, errorAddMember, handleNewMember, projectAfterTeamChanges, handleSearch, handleUserSelect, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
   );
   const openPositionsContent: JSX.Element = useMemo(
     () => (
