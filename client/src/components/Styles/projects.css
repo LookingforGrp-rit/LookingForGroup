@@ -1282,7 +1282,6 @@ Project Creator and Editor style rules
 
 #team-positions-popup-list-buttons button,
 #position-edit-save {
-  background-color: transparent;
   border: none;
   border-radius: 30px;
   padding: 0 17px;
@@ -2724,9 +2723,10 @@ Project Carousel style rules
   border-radius: 10px;
   font-style: normal;
   display: grid;
-  height: 100%;
-  width: 40vw;
-  max-width: 1000px;
+  width: 1121px;
+  max-width: 1121px;
+  height: 849px;
+  max-height: 849px;
   gap: 30px;
   padding: 70px;
   padding-top: 20px;
@@ -2736,14 +2736,14 @@ Project Carousel style rules
     'list info' auto
     'close close' 50px /
     300px auto;
-}
 
-.positions-popup-content {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 30px;
-  margin-left: 50%;
+  #project-team-open-positions-popup {
+    margin-top: 0;
+  }
+
+  .positions-popup-info-title {
+    margin: 0px;
+  }
 }
 
 #positions-popup-header {
@@ -2784,13 +2784,6 @@ Project Carousel style rules
   width: 100%;
 }
 
-#positions-popup-list-header {
-  margin: 20px 0 20px;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--primary-color);
-}
-
 #positions-popup-list-buttons {
   display: flex;
   flex-direction: column;
@@ -2823,7 +2816,7 @@ Project Carousel style rules
 
 .positions-popup-list-item {
   width: max-content;
-  background-color: var(--header-color) !important;
+  background-color: var(--header-color);
   color: var(--main-text);
   border: none;
   border-radius: 50px;
@@ -2838,14 +2831,31 @@ Project Carousel style rules
 }
 
 .positions-popup-list-item:hover,
-.positions-popup-list-item-active {
+button#positions-popup-list-item-active {
   background-color: var(--primary-color);
   color: var(--invert-text);
   cursor: pointer;
   font-weight: 700;
 }
 
-.positions-popup-info {
+.positions-popup-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--bg-color);
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+  width: 100%;
+
+  > .positions-popup-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+#project-editor-team-content .positions-popup-info {
   grid-area: info;
   display: flex;
   flex-direction: column;
@@ -2859,11 +2869,6 @@ Project Carousel style rules
 }
 
 @media only screen and (max-width: 1000px) {
-  .positions-popup-content {
-    flex-direction: column;
-    margin-left: 10px;
-    width: 30vw;
-  }
 
   #project-open-positions-popup {
     overflow-y: auto;
@@ -2894,10 +2899,6 @@ Project Carousel style rules
   color: var(--primary-color);
   font-weight: 700;
   margin-bottom: 10px;
-}
-
-#position-description-content {
-  margin: 0 20px;
 }
 
 #position-details {
@@ -2931,7 +2932,7 @@ Project Carousel style rules
   height: 50px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   font-style: italic;
   color: var(--neutral-gray);
 }
