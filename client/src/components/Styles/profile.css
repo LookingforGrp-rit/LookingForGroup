@@ -1503,9 +1503,9 @@ New Profile page style rules
   background-color: var(--header-color) !important;
 }
 
-#profile-menu-report {
+#profile-menu-report, #profile-menu-block {
   color: var(--error-delete-color);
-
+  fill: var(--error-delete-color);
   .fa-solid {
     color: var(--error-delete-color);
   }

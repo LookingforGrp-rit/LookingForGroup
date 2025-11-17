@@ -237,8 +237,11 @@ const checkFollow = useCallback(async () => {
               <ThemeIcon id={'share'} width={27} height={27} className={'mono-fill'} ariaLabel={'Share'}/>
               Share
             </button>
-            <button className="profile-menu-dropdown-button">
-              <ThemeIcon id={'cancel'} width={27} height={27} className={'mono-fill'} ariaLabel={'Block'}/>
+            <button
+              className="profile-menu-dropdown-button"
+              id="profile-menu-block"
+            >
+              <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'}/>
               Block
             </button>
             <button
