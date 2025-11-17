@@ -1469,39 +1469,36 @@ New Profile page style rules
 }
 
 #profile-menu-dropdown {
+  display: flex;
+  flex-direction: column;
   text-align: left;
-  /* padding: 8px; */
   margin-top: 10px;
   /* width: 165px;
   height: 200px; */
   border-radius: 10px;
   background-color: var(--dropdown-color);
-  box-shadow: 0px 0px 10px 0px var(--shadow-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
   border: none;
-  padding: 10px;
+  padding: 15px;
   white-space: nowrap;
+  cursor: default;
 }
 
 .profile-menu-dropdown-button {
-  /* font-weight: normal !important;
-  border-radius: 5px !important;
-  margin: 4px 0 4px;
-  width: 100%;
-  text-align: left; */
-  font-weight: normal !important;
+  font-size: 16px;
   background: none;
   display: flex;
   width: 100%;
   border-radius: 10px;
-  gap: 10px;
+  gap: 17px;
   align-items: center;
   margin: 0;
   flex-shrink: 0;
   color: var(--main-text);
   border: none;
-  height: 25px;
+  padding-top: 7px;
+  padding-bottom: 7px;
 }
-
 .profile-menu-dropdown-button:hover {
   background-color: var(--header-color) !important;
 }
