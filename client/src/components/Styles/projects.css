@@ -2616,6 +2616,13 @@ Project Carousel style rules
     flex-direction: row;
     align-items: center;
     gap: 8px;
+
+    #heart-empty {
+      stroke: #f14f76;
+    }
+    #heart-filled {
+      fill: #f14f76;
+    }
   }
 
   .follow-amt {
@@ -2648,34 +2655,7 @@ Project Carousel style rules
     background-color: var(--border-color);
   }
 
-  #project-info-dropdown {
-    text-align: left;
-    margin-top: 10px;
-    border-radius: 10px;
-    background-color: var(--dropdown-color);
-    box-shadow: 0 0 10px 0 var(--shadow-color);
-    border: none;
-    padding: 10px;
-  }
-
-  .project-info-dropdown-option {
-    font-weight: 400 !important;
-    background: none;
-    display: flex;
-    width: 100%;
-    border-radius: 10px;
-    gap: 10px;
-    align-items: center;
-    margin: 0;
-    flex-shrink: 0;
-    color: var(--main-text);
-    border: none;
-    height: 25px;
-  }
-
-  .project-info-dropdown-option:hover {
-    background-color: var(--header-color) !important;
-  }
+  /* Dropdown option styles in profile.css (shared styles) */
 
   #project-info-report {
     color: var(--error-delete-color);

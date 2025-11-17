@@ -92,7 +92,6 @@ useEffect(() => {
   // const usersProject = true;
 
   // Formats follow-count based on Figma design. Returns a string
-  // Formats follow-count based on Figma design. Returns a string
   const formatFollowCount = (followers: number): string => {
     if (followers >= 1000) {
       const multOfHundred = (followers % 100) === 0;
@@ -103,20 +102,21 @@ useEffect(() => {
   };
 
   const followProject = (async () => {
+    // Follow icon is only present if user is logged in.
+    // If keeping this layout, this check may be redundant.
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     }
     else{
-    const toggleFollow = !await checkFollow();
-    setFollowing(toggleFollow);
-      if (toggleFollow) {
-      await addProjectFollowing(projectID);
-        setFollowCount(followCount + 1);
-    } else {
-      await deleteProjectFollowing(projectID);
-        setFollowCount(followCount - 1);
-    }
-
+      const toggleFollow = !await checkFollow();
+      setFollowing(toggleFollow);
+        if (toggleFollow) {
+        await addProjectFollowing(projectID);
+          setFollowCount(followCount + 1);
+      } else {
+        await deleteProjectFollowing(projectID);
+          setFollowCount(followCount - 1);
+      }
     }
   })
 
@@ -139,8 +139,7 @@ useEffect(() => {
           </>
         }
       </>
-    ) : user ? (
-      // FIXME: doensn't appear if not logged in
+    ) : user && (
       <>
         {/* Heart icon, with number indicating follows */}
         <div className="project-info-followers">
@@ -168,23 +167,32 @@ useEffect(() => {
         {/* Share, leave, and report dropdown */}
         <Dropdown>
           <DropdownButton className="project-info-dropdown-btn">
-            •••
+            <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div id="project-info-dropdown">
-              {/* TO-DO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
+              {/* TODO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
               <button className="project-info-dropdown-option">
-                <i className="fa-solid fa-share"></i>
+                <ThemeIcon
+                  id={"share"}
+                  width={27}
+                  height={27}
+                  ariaLabel={"Share project"}
+                  className="mono-fill"
+                />
                 Share
               </button>
               {/* Only be able to leave if you're a member of the project */}
               {/* {userPerms === 0 ? ( */}
               <Popup>
                 <PopupButton className="project-info-dropdown-option">
-                  <i
-                    className="fa-solid fa-arrow-right-from-bracket"
-                    style={{ fontStyle: "normal", transform: "rotate(180deg)" }}
-                  ></i>
+                  <ThemeIcon
+                    id={"logout"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
                   Leave
                 </PopupButton>
                 <PopupContent>
@@ -206,9 +214,6 @@ useEffect(() => {
                   </div>
                 </PopupContent>
               </Popup>
-              {/* ) : (
-                      <></>
-                    )} */}
               <button
                 className="project-info-dropdown-option"
                 id="project-info-report"
@@ -225,8 +230,6 @@ useEffect(() => {
           </DropdownContent>
         </Dropdown>
       </>
-    ) : (
-      <></>
     );
 
   //Lists of users who have worked on this project

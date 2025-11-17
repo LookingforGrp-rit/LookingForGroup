@@ -1468,7 +1468,7 @@ New Profile page style rules
   width: 120px;
 }
 
-#profile-menu-dropdown {
+#profile-menu-dropdown, #project-info-dropdown {
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -1484,7 +1484,7 @@ New Profile page style rules
   cursor: default;
 }
 
-.profile-menu-dropdown-button {
+.profile-menu-dropdown-button, .project-info-dropdown-option {
   font-size: 16px;
   background: none;
   display: flex;
@@ -1499,7 +1499,7 @@ New Profile page style rules
   padding-top: 7px;
   padding-bottom: 7px;
 }
-.profile-menu-dropdown-button:hover {
+.profile-menu-dropdown-button:hover, .project-info-dropdown-option:hover {
   background-color: var(--header-color) !important;
 }
 
