@@ -497,13 +497,9 @@ useEffect(() => {
                 {projectLead?.firstName} {projectLead?.lastName}
               </span>
               <br />
-              Creation date
-              <span className="project-info-highlight">
-                {" "}
-                {new Date(
-                  displayedProject.createdAt.toString()
-                ).toLocaleDateString()}
-              </span>
+              {new Date(
+                displayedProject.createdAt.toString()
+              ).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
             </div>
             <div id="project-tags">
               {
