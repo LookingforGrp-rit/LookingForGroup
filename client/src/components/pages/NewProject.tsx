@@ -17,6 +17,12 @@ import {
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
+import {
+  JobAvailability as JobAvailabilityEnums,
+  JobDuration as JobDurationEnums,
+  JobLocation as JobLocationEnums,
+  JobCompensation as JobCompensationEnums,
+} from "@looking-for-group/shared/enums";
 
 //TODO
 //✅ Have team member listings link to their respective profiles
@@ -430,16 +436,13 @@ useEffect(() => {
                               <span className="position-detail-indicator">
                                 Availability:{" "}
                               </span>
-                              {
-                                displayedProject.jobs[viewedPosition]
-                                  ?.availability
-                              }
+                              {JobAvailabilityEnums[displayedProject.jobs[viewedPosition].availability]}
                             </div>
                             <div id="position-location">
                               <span className="position-detail-indicator">
                                 Location:{" "}
                               </span>
-                              {displayedProject.jobs[viewedPosition]?.location}
+                              {JobLocationEnums[displayedProject.jobs[viewedPosition].location]}
                             </div>
                           </div>
 
@@ -448,16 +451,13 @@ useEffect(() => {
                               <span className="position-detail-indicator">
                                 Duration:{" "}
                               </span>
-                              {displayedProject.jobs[viewedPosition]?.duration}
+                              {JobDurationEnums[displayedProject.jobs[viewedPosition].duration]}
                             </div>
                             <div id="position-compensation">
                               <span className="position-detail-indicator">
                                 Compensation:{" "}
                               </span>
-                              {
-                                displayedProject.jobs[viewedPosition]
-                                  ?.compensation
-                              }
+                              {JobCompensationEnums[displayedProject.jobs[viewedPosition].compensation]}
                             </div>
                           </div>
                         </div>
