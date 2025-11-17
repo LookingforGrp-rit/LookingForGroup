@@ -258,7 +258,7 @@ export const deletePic = async (
 /* MEMBERS */
 
 /**
- * Gets all the members in a project [GET MEMBERS ISN'T ON THIS BRANCH YET]
+ * Gets all the members in a project
  * @param projectID - ID of the target project
  * @returns Response status
  */

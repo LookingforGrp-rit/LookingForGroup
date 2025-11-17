@@ -6,7 +6,6 @@ import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
 import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
-import { devSkills, desSkills } from '../../constants/tags';
 import { getProjects, getByID } from '../../api/projects';
 import { getUsers, getUsersById } from '../../api/users';
 import { Tag, Skill, UserPreview, ProjectPreview } from '@looking-for-group/shared';
@@ -27,6 +26,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     project_type: string;
   }
 
+  //what is this
   interface Item {
     tags?: Tag[];
     title?: string;
@@ -106,7 +106,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [filteredItemList, setFilteredItemList] = useState<Item[]>([]);
 
   // Need this for searching
-  let tempItemList: Item[] = fullItemList;
+  const tempItemList: Item[] = fullItemList;
 
   // List that holds trimmed data for searching. Empty before fullItemList is initialized
   const [itemSearchData, setItemSearchData] = useState<Item[]>([]);
@@ -149,21 +149,24 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     The function also handles errors and updates the state with the fetched data.
     It uses the getAuth function to get the user ID for follow functionality.
   */
+
+  useEffect(() => {
   const getData = async () => {
     // Get user profile
     await getAuth();
 
     try {
       const response = (category == 'projects') ? await getProjects() : await getUsers();
-
+      console.log(response);
+      
       const data = await response;
       console.log('data.data', data.data);
 
       // Don't assign if there's no array returned
       console.log(data.data == null);
       if (data.data !== null) {
-        setFullItemList(data.data);
-        setFilteredItemList(data.data);
+        setFullItemList(data.data!);
+        setFilteredItemList(data.data!);
         setItemSearchData(
 
           // loop through JSON, get data based on category
@@ -192,8 +195,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
     setDataLoaded(true);
   };
-
-  useEffect(() => {
     getData();
   }, []);
 
