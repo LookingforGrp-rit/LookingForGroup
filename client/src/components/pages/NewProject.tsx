@@ -17,6 +17,12 @@ import {
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
+import {
+  JobAvailability as JobAvailabilityEnums,
+  JobDuration as JobDurationEnums,
+  JobLocation as JobLocationEnums,
+  JobCompensation as JobCompensationEnums,
+} from "@looking-for-group/shared/enums";
 
 //TODO
 //✅ Have team member listings link to their respective profiles
@@ -388,88 +394,93 @@ useEffect(() => {
                   <div id="project-open-positions-popup">
                     <div id="positions-popup-header">Join The Team</div>
 
-                    <div className="positions-popup-content">
+                    {/* Left Container */}
+                    <div id="project-team-open-positions-popup">
                       <div className="positions-popup-list">
-                        <div id="positions-popup-list-header">
-                          Open Positions
-                        </div>
-                        <div id="positions-popup-list-buttons">
-                          {displayedProject.jobs?.map((job, index) => (
+                        <p className="positions-popup-info-title">Open Positions</p>
+                        <div id="team-positions-popup-list-buttons">
+                        {
+                          displayedProject.jobs?.map((job, index) => (
                             <button
-                              className={`positions-popup-list-item ${index === viewedPosition ? "positions-popup-list-item-active" : ""}`}
+                              className={`positions-popup-list-item`}
+                              id={index === viewedPosition ? "positions-popup-list-item-active" : ""}
                               onClick={() => setViewedPosition(index)}
                               key={index}
                             >
                               {job.role.label}
                             </button>
                           ))}
-                        </div>
+                          </div>
                       </div>
-
-                      <div id="positions-popup-info">
-                        <div id="positions-popup-info-title">
+                    </div>
+                    
+                    {/* Right Container */}
+                    <div className="positions-popup-info-wrapper">
+                      <div className="positions-popup-info">
+                        <div className="positions-popup-info-title">
                           {displayedProject.jobs[viewedPosition]?.role?.label ??
                             undefined}
                         </div>
-                        <div id="positions-popup-info-description">
-                          <div id="position-description-header">
-                            What we are looking for:
+
+                        <div id="position-description-header">
+                          What we are looking for:
+                        </div>
+
+                        <div id="position-description-content" className="positions-popup-info-description">
+                          {displayedProject.jobs[viewedPosition]?.description}
+                        </div>
+
+                        <div id="open-position-details">
+                          <div id="open-position-details-left">
+                            <div id="position-availability">
+                              <span className="position-detail-indicator">
+                                Availability:{" "}
+                              </span>
+                              {JobAvailabilityEnums[displayedProject.jobs[viewedPosition].availability]}
+                            </div>
+                            <div id="position-location">
+                              <span className="position-detail-indicator">
+                                Location:{" "}
+                              </span>
+                              {JobLocationEnums[displayedProject.jobs[viewedPosition].location]}
+                            </div>
                           </div>
-                          <div id="position-description-content">
-                            {displayedProject.jobs[viewedPosition]?.description}
+
+                          <div id="open-position-details-right">
+                            <div id="position-duration">
+                              <span className="position-detail-indicator">
+                                Duration:{" "}
+                              </span>
+                              {JobDurationEnums[displayedProject.jobs[viewedPosition].duration]}
+                            </div>
+                            <div id="position-compensation">
+                              <span className="position-detail-indicator">
+                                Compensation:{" "}
+                              </span>
+                              {JobCompensationEnums[displayedProject.jobs[viewedPosition].compensation]}
+                            </div>
                           </div>
                         </div>
-                        <div id="position-details">
-                          <div id="position-availability">
-                            <span className="position-detail-indicator">
-                              Availability:{" "}
-                            </span>
-                            {
-                              displayedProject.jobs[viewedPosition]
-                                ?.availability
-                            }
-                          </div>
-                          <div id="position-duration">
-                            <span className="position-detail-indicator">
-                              Duration:{" "}
-                            </span>
-                            {displayedProject.jobs[viewedPosition]?.duration}
-                          </div>
-                          <div id="position-location">
-                            <span className="position-detail-indicator">
-                              Location:{" "}
-                            </span>
-                            {displayedProject.jobs[viewedPosition]?.location}
-                          </div>
-                          <div id="position-compensation">
-                            <span className="position-detail-indicator">
-                              Compensation:{" "}
-                            </span>
-                            {
-                              displayedProject.jobs[viewedPosition]
-                                ?.compensation
-                            }
-                          </div>
-                        </div>
-                        <div id="position-contact">
-                          If interested, please contact:{" "}
-                          <span
-                            onClick={() =>
-                              navigate(
-                                `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
-                              )
-                            }
-                            id="position-contact-link"
-                          >
-                            {/* {FIXME: get project lead profile image in a different way} */}
-                            {/* <img src={(projectLead?.profile_image) 
-                            ? `images/profiles/${projectLead?.profile_image}` 
-                            : profilePicture} 
-                          /> */}
-                            {projectLead?.firstName}{" "}
-                            {projectLead?.lastName}
-                          </span>
-                        </div>
+                      </div>
+
+                      <div id="position-contact">
+                        If interested, please contact:{" "}
+                        <span
+                          onClick={() =>
+                            navigate(
+                              `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
+                            )
+                          }
+                          id="position-contact-link"
+                        >
+                          {/* {FIXME: get project lead profile image in a different way} */}
+                          {/* <img src={(projectLead?.profile_image) 
+                          ? `images/profiles/${projectLead?.profile_image}` 
+                          : profilePicture} 
+                        /> */}
+                          {projectLead?.firstName}{" "}
+                          {projectLead?.lastName}
+                        </span>
                       </div>
                     </div>
 
@@ -486,13 +497,9 @@ useEffect(() => {
                 {projectLead?.firstName} {projectLead?.lastName}
               </span>
               <br />
-              Creation date
-              <span className="project-info-highlight">
-                {" "}
-                {new Date(
-                  displayedProject.createdAt.toString()
-                ).toLocaleDateString()}
-              </span>
+              {new Date(
+                displayedProject.createdAt.toString()
+              ).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
             </div>
             <div id="project-tags">
               {
@@ -545,12 +552,12 @@ useEffect(() => {
 
           <div id="project-people">
             <div id="project-people-tabs">
-              <button
+              <div // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
                 className={`project-people-tab ${peopleContent}`}
                 //onClick={() => setDisplayedPeople("People")} wow this button is now useless
               >
                 The Team
-              </button>
+              </div>
               {/* If contributors are added as a site feature, use the commented code below */}
               {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
             </div>

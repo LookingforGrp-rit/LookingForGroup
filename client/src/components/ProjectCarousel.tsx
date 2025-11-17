@@ -25,12 +25,14 @@ export const ProjectCarousel = ({ project }: { project: ProjectDetail }) => {
                 <div className='carousel-row'>
                     <CarouselButton 
                         direction='left'
-                        className='project-carousel-btn' 
+                        className='project-carousel-btn'
+                        size='small'
                     />
                     <CarouselTabs className='project-carousel-tabs'></CarouselTabs>
                     <CarouselButton 
                         direction='right'
-                        className='project-carousel-btn' 
+                        className='project-carousel-btn'
+                        size='small'
                     />
                 </div>
             </div>

@@ -16,14 +16,22 @@ const CarouselContext = createContext<{
     dataList: [],
 });
 
-
-// Creates a button to navigate forward or backward in carousel order
+/**
+ * Creates a button to navigate forward or backward in carousel order
+ * 
+ * @param direction 'left' or 'right' to indicate button direction
+ * @param className optional additional class names
+ * @param size 'small' for DiscoverCarousel, 'large' for ProjectCarousel 
+ * @returns A button to move the carousel in the direction specified
+ */
 export const CarouselButton = ({
     direction,
     className = '',
+    size = 'large',
 }: {
     direction: 'left' | 'right';
     className?: string;
+    size: 'small' | 'large';
 }) => {
     const { currentIndex, handleIndexChange } = useContext(CarouselContext);
     const directionNum = direction === 'left' ? -1 : 1;
@@ -33,7 +41,13 @@ export const CarouselButton = ({
             className={`${className} carousel-btn-${direction}`}
             onClick={() => handleIndexChange(currentIndex + directionNum)}
         >
-            <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={direction === 'left' ? 'Previous Image' : 'Next Image'}/>
+            <ThemeIcon
+                id={size === 'small' ? 'dropdown-arrow' : 'carousel-arrow'}
+                width={size === 'small' ? 17 : 24}
+                height={size === 'small' ? 18 : 68}
+                className={'color-fill'}
+                ariaLabel={direction === 'left' ? 'Previous Image' : 'Next Image'}
+            />
         </button>
     );
 };
