@@ -42,15 +42,7 @@ export const createNewProject = async (
   projectData: CreateProjectInput
 ): Promise<ApiResponse<ProjectDetail>> => {
   const apiURL = `/projects`;
-  /*
-  const form = new FormData();
-
-  for (const [name, value] of Object.entries(projectData)) {
-    if (value !== null) form.append(name, value);
-  }
-  */
   const response = await POST(apiURL, projectData);
-
 
   return response as ApiResponse<ProjectDetail>;
 };
