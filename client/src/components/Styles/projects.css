@@ -3083,10 +3083,11 @@ button#positions-popup-list-item-active {
   font-weight: 700;
 }
 
-.project-people-tab:hover,
+/* TODO: restore styles when "The Team" is a button again (regards Contributor functionality) */
+/* .project-people-tab:hover,
 .project-people-tab-active {
   cursor: pointer;
-}
+} */
 
 #project-open-positions {
   grid-area: positions;

@@ -552,12 +552,12 @@ useEffect(() => {
 
           <div id="project-people">
             <div id="project-people-tabs">
-              <button
+              <div // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
                 className={`project-people-tab ${peopleContent}`}
                 //onClick={() => setDisplayedPeople("People")} wow this button is now useless
               >
                 The Team
-              </button>
+              </div>
               {/* If contributors are added as a site feature, use the commented code below */}
               {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
             </div>
