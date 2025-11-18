@@ -222,11 +222,11 @@ export interface UserPreview {
   title: string;
   funFact: string;
   location: string;
+  majors: Major[];
 }
 
 //show only non-sensitive data
 export interface UserDetail extends UserPreview {
-  majors: Major[];
   academicYear: AcademicYear | null;
   bio: string;
   projects: UserMember[];

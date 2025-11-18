@@ -19,4 +19,5 @@ export const UserPreviewSelector = Object.freeze({
   title: true,
   headline: true,
   location: true,
+  majors: true,
 });
