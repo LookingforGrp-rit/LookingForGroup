@@ -7,9 +7,10 @@ import { Input } from '../../Input';
 
 interface LinksTabProps {
   profile: MeDetail;
+  setProfile: React.Dispatch<React.SetStateAction<MeDetail>>
 }
 
-export const LinksTab: React.FC<LinksTabProps> = ({ profile }) => {
+export const LinksTab: React.FC<LinksTabProps> = ({ profile, setProfile }) => {
   const [socials, setSocials] = useState<UserSocial[]>(profile.socials || []);
 
   // complete list of socials
@@ -34,22 +35,13 @@ export const LinksTab: React.FC<LinksTabProps> = ({ profile }) => {
     getAllSocials();
   }, []);
 
-  // Get user's socials
+  
   useEffect(() => {
-    const loadSocials = async () => {
-      if (socials && socials.length > 0) return;
-
-      // Pick which socials to use based on type
-      const userID = await getCurrentUsername();
-
-      const response = await getUsersById(userID.toString());
-      if (response?.data?.socials) {
-        setSocials(response.data.socials);
-      }
-    };
-    loadSocials();
-
-  }, [socials]);
+  setProfile(prev => ({
+    ...prev,
+    socials: socials
+  }));
+}, [socials]);
 
   // Tab Component ----------------------
   return (

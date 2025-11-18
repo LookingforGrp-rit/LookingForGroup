@@ -14,6 +14,8 @@ textarea {
   width: 90vw;
   max-width: 1120px;
   height: calc(90vh - 200px);
+  max-height: 100%;
+  overflow: scroll;
   /* Comment height for the pop-up to stretch to any size,
    Dynamic sizing  */
   padding: 50px;
@@ -41,6 +43,7 @@ textarea {
   flex-wrap: wrap;
   justify-content: space-around;
   margin: 0 20px;
+  padding-bottom: 15px;
 }
 
 .project-editor-tab {
@@ -64,22 +67,29 @@ textarea {
 }
 
 #profile-editor-save {
-  position: absolute;
+  position: static;
   bottom: 25px;
   right: 50%;
-  transform: translateX(50%);
+  transform: translateX(10%);
 
   width: max-content;
 
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
-  font-size: 2ch;
+  font-size: 1.2rem;
   font-weight: 700;
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
   margin: auto;
   cursor: pointer;
+  margin-top: 5vh;
+}
+
+@media only screen and (max-width: 750px) and (min-width: 700px) {
+ #profile-editor-save {
+  margin-top: 20vh;
+ }
 }
 
 .error-message {

@@ -20,7 +20,7 @@ export const RoleSelector = () => {
   return (
     <>
     <LabelInputBox
-      label={'Year'}
+      label={'Role'}
       inputType={'none'}
     >
       <Select>

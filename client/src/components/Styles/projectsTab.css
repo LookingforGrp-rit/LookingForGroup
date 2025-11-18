@@ -16,6 +16,7 @@
 
 #profile-editor-projects {
     overflow-y: auto;
+    font-size: 1rem;
 }
 
 .no-projects-text {

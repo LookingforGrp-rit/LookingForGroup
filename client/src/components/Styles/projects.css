@@ -296,6 +296,8 @@ Project Creator and Editor style rules
   border: none;
   border-radius: 10px;
   color: var(--main-text);
+  max-height: 100%;
+  overflow: scroll;
 }
 
 @media (min-width: 1172px) {
@@ -317,7 +319,7 @@ Project Creator and Editor style rules
   padding: 10px 20px;
   background-color: rgba(0, 0, 0, 0) !important;
   color: var(--main-text);
-  font-size: 2ch;
+  font-size: 1.2rem;
   font-weight: 500;
 }
  
@@ -424,7 +426,7 @@ Project Creator and Editor style rules
 
 .project-editor-extra-info {
   font-style: italic;
-  font-size: 1.4ch;
+  font-size: 0.8rem;
   color: var(--neutral-gray);
 }
 
@@ -809,7 +811,7 @@ Project Creator and Editor style rules
 
 .project-editor-section-header {
   color: var(--primary-color);
-  font-size: 2ch;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -826,6 +828,7 @@ Project Creator and Editor style rules
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
     flex-direction: column;
+    padding-left: 30%;
   }
 }
 
