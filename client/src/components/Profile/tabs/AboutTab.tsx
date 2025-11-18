@@ -8,6 +8,7 @@ import usePreloadedImage from '../../../functions/imageLoad';
 import { Select, SelectButton, SelectOptions } from '../../Select';
 import { Input } from '../../Input';
 import LabelInputBox from '../../LabelInputBox';
+import { MeDetail } from '@looking-for-group/shared';
 
 //backend base url for getting images
 
@@ -70,9 +71,10 @@ const TextArea = (props: {
 };
 
 // Main Component
-export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
+export const AboutTab = ({profile, selectedImageFile, setProfile, setSelectedImageFile}: {
   profile: ProfileData; 
   selectedImageFile: File | null;
+  setProfile: React.Dispatch<React.SetStateAction<MeDetail>>
   setSelectedImageFile: (file: File) => void;
 }) => {
 
@@ -117,16 +119,22 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
             label={'First Name*'}
             inputType={'single'}
             maxLength={50}
+            value={profile.firstName}
+            onChange={(e) => setProfile(prev => ({ ...prev, firstName: e.target.value }))}
           />
           <LabelInputBox
             label={'Last Name*'}
             inputType={'single'}
             maxLength={50}
+            value={profile.lastName}
+            onChange={(e) => setProfile(prev => ({ ...prev, lastName: e.target.value }))}
           />
           <LabelInputBox
             label={'Pronouns'}
             inputType={'single'}
             maxLength={25}
+            value={profile.pronouns}
+            onChange={(e) => setProfile(prev => ({ ...prev, pronouns: e.target.value }))}
           />
         </div>
 
@@ -141,7 +149,7 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
             <Select>
               <SelectButton
                 placeholder="Select"
-                initialVal={profile.academicYear && profile.academicYear}
+                initialVal={profile.academicYear}
                 callback={(e) => { e.preventDefault(); } }
                 type={'input'}
               />
@@ -177,6 +185,8 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
           <LabelInputBox
             label={'Location'}
             inputType={'single'}
+            value={profile.location}
+            onChange={(e) => setProfile(prev => ({ ...prev, location: e.target.value }))}
           />
 
           <LabelInputBox
@@ -213,6 +223,8 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
           labelInfo='Write a fun and catchy phrase that captures your unique personality!'
           inputType={'multi'}
           maxLength={100}
+          value={profile.headline}
+          onChange={(e) => setProfile(prev => ({ ...prev, headline: e.target.value }))}
         />
 
         <LabelInputBox
@@ -220,6 +232,8 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
           labelInfo='Share a fun fact about yourself that will surprise others!'
           inputType={'multi'}
           maxLength={100}
+          value={profile.funFact}
+          onChange={(e) => setProfile(prev => ({ ...prev, funFact: e.target.value }))}
         />
       </div>
 
@@ -229,6 +243,8 @@ export const AboutTab = ({profile, selectedImageFile, setSelectedImageFile}: {
         labelInfo='Share a brief overview of who you are, your interests, and what drives you!'
         inputType={'multi'}
         maxLength={600}
+        value={profile.bio}
+        onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
         id={'edit-profile-section-3'}
       />
     </div>
