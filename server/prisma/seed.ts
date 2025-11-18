@@ -52,53 +52,68 @@ async function main() {
   //     ],
   // });
 
-  //Users
-  await prisma.users.createMany({
-    data: [
-      {
-        username: 'mhr2964',
-        ritEmail: 'mhr2964@rit.edu',
-        firstName: 'Michael',
-        lastName: 'Robinson',
-        headline: 'Hello world',
-        pronouns: 'they/them',
-        title: 'Student',
-        location: 'Rochester, NY',
-        funFact: 'Loves Prisma',
-        bio: 'This is an example user.',
-        universityId: '11111111',
-        academicYear: 'Freshman',
-      },
-      {
-        username: 'anw7643',
-        ritEmail: 'anw7643@rit.edu',
-        firstName: 'Ashley',
-        lastName: 'Whigam',
-        headline: 'Hello world',
-        pronouns: 'they/them',
-        title: 'Student',
-        location: 'Rochester, NY',
-        funFact: 'Loves cheez-its',
-        bio: 'This is an example user.',
-        universityId: '222222222',
-        academicYear: 'Freshman',
-      },
-      {
-        username: 'swc3333',
-        ritEmail: 'swc3333@rit.edu',
-        firstName: 'Stephen',
-        lastName: 'Curry',
-        headline: 'Hello world',
-        pronouns: 'they/them',
-        title: 'Student',
-        location: 'Rochester, NY',
-        funFact: 'Loves shooting',
-        bio: 'This is an example user.',
-        universityId: '33333333',
-        academicYear: 'Senior',
-      },
-    ],
-  });
+    //Users
+    //separating these out so the majors can be created
+    //since createMany doesn't handle relations
+    await prisma.users.create({
+        data: {
+                username: 'mhr2964',
+                ritEmail: 'mhr2964@rit.edu',
+                firstName: 'Michael',
+                lastName: 'Robinson',
+                headline: 'Hello world',
+                pronouns: 'they/them',
+                title: 'Student',
+                location: 'Rochester, NY',
+                funFact: 'Loves Prisma',
+                bio: 'This is an example user.',
+                universityId: '11111111',
+                academicYear: 'Freshman',
+                majors: {
+                    connect: [{ majorId: 1 }]
+                }
+            }
+    })
+    await prisma.users.create({
+        data: 
+            {
+                username: 'anw7643',
+                ritEmail: 'anw7643@rit.edu',
+                firstName: 'Ashley',
+                lastName: 'Whigam',
+                headline: 'Hello world',
+                pronouns: 'they/them',
+                title: 'Student',
+                location: 'Rochester, NY',
+                funFact: 'Loves cheez-its',
+                bio: 'This is an example user.',
+                universityId: '222222222',
+                academicYear: 'Freshman',
+                majors: {
+                    connect: [{ majorId: 4 }]
+                }
+            },
+    })
+    await prisma.users.create({
+        data: 
+            {
+                username: 'swc3333',
+                ritEmail: 'swc3333@rit.edu',
+                firstName: 'Stephen',
+                lastName: 'Curry',
+                headline: 'Hello world',
+                pronouns: 'they/them',
+                title: 'Student',
+                location: 'Rochester, NY',
+                funFact: 'Loves shooting',
+                bio: 'This is an example user.',
+                universityId: '33333333',
+                academicYear: 'Senior',
+                majors: {
+                    connect: [{ majorId: 7 }]
+                }
+            },
+    })
 
   //Projects
   await prisma.projects.createMany({
