@@ -90,7 +90,7 @@ async function main() {
                 universityId: '222222222',
                 academicYear: 'Freshman',
                 majors: {
-                    connect: [{ majorId: 4 }]
+                    connect: [{ majorId: 4 }, { majorId: 5 }]
                 }
             },
     })

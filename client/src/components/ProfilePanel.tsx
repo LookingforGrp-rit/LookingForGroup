@@ -12,7 +12,8 @@ interface ProfilePanelProps {
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   const navigate = useNavigate();
   const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
-
+  const majorsArr = profileData.majors?.map((maj) => maj.label);
+  
   return (
     <div className={'profile-panel'}>
       <img
@@ -22,7 +23,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
       <h2>
         {profileData.firstName} {profileData.lastName}
       </h2>
-      <h3>{profileData.majors?.join(', ') || ''}</h3>
+      <h3>{majorsArr.join(', ') || ''}</h3>
       <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
 
       <div className={'profile-panel-hover'} onClick={() => navigate(profileURL)}>

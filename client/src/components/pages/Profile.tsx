@@ -56,6 +56,8 @@ const Profile = () => {
   // Projects displayed for searches
   const [displayedProjects, setDisplayedProjects] = useState<ProjectPreview[]>([]);
 
+  const [majorsArr, setMajorsArr] = useState<string[]>([]);
+
   const projectSearchData = fullProjectList?.map(
     (project: Project) => {
       return { name: project.title, description: project.hook };
@@ -158,6 +160,7 @@ const checkFollow = useCallback(async () => {
         // Only run this if profile data exists for user
         if (data) {
           setDisplayedProfile(data);
+          setMajorsArr(data.majors.map((maj) => maj.label));
           await getProfileProjectData();
           checkFollow();
         }
@@ -307,7 +310,7 @@ const checkFollow = useCallback(async () => {
                 </div>
                 <div className="profile-extra">
                   <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
-                  {displayedProfile?.majors?.join(", ")} {displayedProfile?.academicYear}
+                  {majorsArr.join(", ")} {displayedProfile?.academicYear}
                 </div>
                 <div className="profile-extra">
                   <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
