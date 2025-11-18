@@ -157,6 +157,7 @@ export const ProfileEditPopup = () => {
         return (
           <AboutTab
             profile={profile}
+            setProfile={setProfile}
             selectedImageFile={selectedImageFile}
             setSelectedImageFile={setSelectedImageFile}
           />
@@ -164,9 +165,9 @@ export const ProfileEditPopup = () => {
       case 1:
         return <ProjectsTab/>;
       case 2:
-        return <SkillsTab profile={profile} />;
+        return <SkillsTab profile={profile} setProfile={setProfile}/>;
       case 3:
-        return <LinksTab profile={profile} />;
+        return <LinksTab profile={profile} setProfile={setProfile}/>;
       default:
         return null;
     }

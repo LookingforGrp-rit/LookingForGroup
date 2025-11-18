@@ -23,19 +23,15 @@ const getSkillColor = (type: string) => {
   }
 }
 
-export const SkillsTab = (props: { profile: MeDetail }) => {
+export const SkillsTab = ({
+  profile, setProfile}: 
+  {profile: MeDetail; setProfile: React.Dispatch<React.SetStateAction<MeDetail>>}) => {
   // States
-  const [modifiedProfile, setModifiedProfile] = useState<MeDetail>(props.profile);
   const [allSkills, setAllSkills] = useState<Skill[]>([]);
   // Tracks which tab we are currently on
   const [currentSkillsTab, setCurrentSkillsTab] = useState(0);
   // filtered results from skill search bar
   const [searchedSkills, setSearchedSkills] = useState<(Skill)[]>([]);
-
-  // Update data when data is changed
-  useEffect(() => {
-    setModifiedProfile(props.profile);
-  }, [props.profile]);
 
   // load skills
   useEffect(() => {
@@ -74,7 +70,7 @@ export const SkillsTab = (props: { profile: MeDetail }) => {
 
   // Find if a skill is present on the project
   const isSkillSelected = useCallback((id: number, label: string, tab: number = -1) => {
-    const skills = modifiedProfile?.skills ?? [];
+    const skills = profile?.skills ?? [];
 
     // Developer Skills
     if (tab === 0) {
@@ -92,7 +88,7 @@ export const SkillsTab = (props: { profile: MeDetail }) => {
         'selected' : 'unselected';
     }
     return 'unselected';
-  }, [modifiedProfile]);
+  }, [profile]);
 
   const handleSkillSelect = useCallback((e: any) => {
     // prevent page from immediately re-rendering
@@ -129,7 +125,7 @@ export const SkillsTab = (props: { profile: MeDetail }) => {
       //we have to implement proficiency
 
       // Update selected skills with new ones
-      setModifiedProfile((prev) => ({
+      setProfile((prev) => ({
         ...prev,
         skills: [
           ...(prev.skills ?? []),
@@ -148,25 +144,25 @@ export const SkillsTab = (props: { profile: MeDetail }) => {
     // if skill is selected
     else {
       // remove skill from project
-      setModifiedProfile({
-        ...modifiedProfile,
-        skills: (modifiedProfile.skills ?? []).filter((s) => s.label !== skill),
-      });
+      setProfile((prev) => ({
+        ...prev,
+        skills: (prev.skills ?? []).filter((s) => s.label !== skill),
+      }));
     }
-  }, [allSkills, modifiedProfile]);
+  }, [allSkills, profile]);
 
   // Load projects
   const loadProfileSkills = useMemo(() => {
-    if (!modifiedProfile?.skills) return [];
+    if (!profile?.skills) return [];
 
-    return modifiedProfile.skills
+    return profile.skills
       .map((s) => (
         <button key={s.label} className={`tag-button tag-button-${getSkillColor(s.type)}-selected`} onClick={(e) => handleSkillSelect(e)}>
           <i className="fa fa-close"></i>
           <p>&nbsp;{s.label}</p>
         </button>
       ))
-  }, [modifiedProfile.skills, handleSkillSelect]);
+  }, [profile.skills, handleSkillSelect]);
 
   // Create element for each skill
   const renderSkills = useCallback(() => {

@@ -296,6 +296,8 @@ Project Creator and Editor style rules
   border: none;
   border-radius: 10px;
   color: var(--main-text);
+  max-height: 100%;
+  overflow: scroll;
 }
 
 @media (min-width: 1172px) {
@@ -317,7 +319,7 @@ Project Creator and Editor style rules
   padding: 10px 20px;
   background-color: rgba(0, 0, 0, 0) !important;
   color: var(--main-text);
-  font-size: 2ch;
+  font-size: 1.2rem;
   font-weight: 500;
 }
  
@@ -424,7 +426,7 @@ Project Creator and Editor style rules
 
 .project-editor-extra-info {
   font-style: italic;
-  font-size: 1.4ch;
+  font-size: 0.8rem;
   color: var(--neutral-gray);
 }
 
@@ -809,7 +811,7 @@ Project Creator and Editor style rules
 
 .project-editor-section-header {
   color: var(--primary-color);
-  font-size: 2ch;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -826,6 +828,7 @@ Project Creator and Editor style rules
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
     flex-direction: column;
+    padding-left: 30%;
   }
 }
 
@@ -1561,6 +1564,7 @@ Project page style rules
 #project-tags {
   grid-area: tags;
   display: flex;
+  justify-content: end;
   gap: 10px;
   margin-top: 10px;
 }
@@ -2515,9 +2519,18 @@ Project Carousel style rules
   grid-area: carousel;
   display: flex;
   flex-direction: column;
+  position: relative;
 
   .carousel-contents {
     /* height: 370px; */
+    width: 100%;
+  }
+
+  /* Button container */
+  .carousel-row {
+    position: absolute;
+    height: 17px;
+    bottom: -22px; /* Height + 5px displacement */
     width: 100%;
   }
 
@@ -2727,9 +2740,9 @@ Project Carousel style rules
   height: 849px;
   max-height: 849px;
   gap: 30px;
-  padding: 70px;
-  padding-top: 20px;
-  border-radius: 4px;
+  padding: 28px 59px 21px 59px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
   grid-template:
     'header header' 50px
     'list info' auto
@@ -2761,7 +2774,7 @@ Project Carousel style rules
   grid-area: list;
   text-align: center;
   background-color: var(--bg-color);
-  /* box-shadow: 0 0 10px #BBBBBB; */
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
   border-radius: 10px;
   flex: 0 381px;
   padding: 20px;
@@ -2845,7 +2858,6 @@ button#positions-popup-list-item-active {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   padding: 20px;
-  width: 100%;
 
   > .positions-popup-info {
     display: flex;
@@ -2897,7 +2909,6 @@ button#positions-popup-list-item-active {
 #position-contact-link {
   color: var(--primary-color);
   font-weight: 700;
-  margin-bottom: 10px;
 }
 
 #position-details {
@@ -3105,7 +3116,7 @@ button#positions-popup-list-item-active {
 #project-open-positions-list {
   display: flex;
   flex-flow: wrap;
-  justify-content: center;
+  justify-content: start;
   gap: 10px;
   margin: 10px 0;
 }
