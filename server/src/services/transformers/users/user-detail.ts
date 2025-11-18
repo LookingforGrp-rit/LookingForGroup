@@ -20,13 +20,8 @@ type UsersGetPayload = Awaited<typeof sampleUsers>[number];
 export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
   return {
     ...transformUserToPreview(user),
-    headline: user.headline,
-    pronouns: user.pronouns,
     bio: user.bio,
     academicYear: user.academicYear,
-    location: user.location,
-    funFact: user.funFact,
-    title: user.title,
     majors: user.majors.map(transformMajor),
     skills: user.userSkills.map(
       ({ position, proficiency, skills }): UserSkill => ({

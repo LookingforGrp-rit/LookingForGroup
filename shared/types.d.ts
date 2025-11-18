@@ -217,17 +217,17 @@ export interface UserPreview {
   designer: boolean;
   developer: boolean;
   apiUrl: string;
+  headline: string;
+  pronouns: string;
+  title: string;
+  funFact: string;
+  location: string;
 }
 
 //show only non-sensitive data
 export interface UserDetail extends UserPreview {
-  headline: string;
-  pronouns: string;
-  title: string;
   majors: Major[];
   academicYear: AcademicYear | null;
-  location: string;
-  funFact: string;
   bio: string;
   projects: UserMember[];
   skills: UserSkill[];
