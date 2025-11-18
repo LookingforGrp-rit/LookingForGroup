@@ -3,6 +3,9 @@ import { SearchBar } from '../SearchBar';
 import { projects, profiles } from '../../constants/fakeData'; // FIXME: use data in db
 import { useState } from 'react';
 
+// TODO: this file is old and not used. Has good information regarding past designs and intended userflow, so keep until this is
+// properly documented and can be implemented in the future
+
 //This component is used in the project member view of the Project page
 //Contains the layout of the 'Member' tab in the project settings menu
 //There is a button that should allow for inviting users to become project members assuming they are an admin or similar

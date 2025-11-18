@@ -69,40 +69,40 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   const createOrEdit = async () => {
     if (!newProject && projectID) {
-  // Load existing project
-        try {
-          // const response = await getByID(Number(projectID));
-          // if (!response.data) return;
+    // Load existing project
+      try {
+        // const response = await getByID(Number(projectID));
+        // if (!response.data) return;
 
-          dataManager = await projectDataManager(Number(projectID));
+        dataManager = await projectDataManager(Number(projectID));
 
+        const data = dataManager.getSavedProject();
+        setProjectData(data);
+        setModifiedProject(data);
+      } catch (err) {
+        console.error("Error loading existing project:", err);
+      }
+    }
+    //TODO: delete the project created by clicking this button if the window is closed/the page is refreshed/they close without saving
+    //better yet give them a prompt if they wanna close without saving or do any of those
+    else if (newProject) {
+    // Setup default project for creation
+      try {
+        const response = await createNewProject({ title: "My Project" });
+        if (!response.error && response.data) {
+          dataManager = await projectDataManager(response.data.projectId);
+
+          console.log(dataManager)
           const data = dataManager.getSavedProject();
+
+          
           setProjectData(data);
           setModifiedProject(data);
-        } catch (err) {
-          console.error("Error loading existing project:", err);
+          navigate(`${paths.routes.NEWPROJECT}?projectID=${data?.projectId}`);
         }
-    }
-  //TODO: delete the project created by clicking this button if the window is closed/the page is refreshed/they close without saving
-  //better yet give them a prompt if they wanna close without saving or do any of those
-    else if (newProject) {
-  // Setup default project for creation
-        try {
-          const response = await createNewProject({ title: "My Project" });
-          if (!response.error && response.data) {
-            dataManager = await projectDataManager(response.data.projectId);
-
-            console.log(dataManager)
-            const data = dataManager.getSavedProject();
-
-            
-            setProjectData(data);
-            setModifiedProject(data);
-            navigate(`${paths.routes.NEWPROJECT}?projectID=${data?.projectId}`);
-          }
-        } catch (err) {
-          console.error("Error creating new project:", err);
-        }
+      } catch (err) {
+        console.error("Error creating new project:", err);
+      }
     }
   }
 

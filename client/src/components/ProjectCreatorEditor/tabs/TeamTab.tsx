@@ -336,12 +336,10 @@ export const TeamTab = ({
       // prompt user of successfully added member
       setSuccessAddMember(true);
       setErrorAddMember(
-        // FIXME why is this set as an error
         `${currentMember.user.firstName} ${currentMember.user.lastName} added to team!`
       );
 
-      // FIXME what is the delay for? //it's the visualeffect for the error text
-      // reset prompt to clear
+      // reset prompt to clear visual effect of error text
       setTimeout(() => {
         setErrorAddMember("");
         setSuccessAddMember(false);
@@ -1053,7 +1051,6 @@ export const TeamTab = ({
             />
             <div className="project-editor-project-member-info">
               <div className="project-editor-project-member-name">
-                {/* TODO add current user */}
                 {member.user?.firstName} {member.user?.lastName}
               </div>
               <div className="project-editor-project-member-role project-editor-extra-info">

@@ -88,7 +88,6 @@ projectAfterLinkChanges = structuredClone(projectData);
 
   // --- Complete component ---
   return (
-    // TODO: refactor styles for project and profile editor
     <div id="editor-links">
       {/* Contact Information Section */}
       {projectOwner && (

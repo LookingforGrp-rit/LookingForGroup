@@ -1,6 +1,9 @@
 import { projects } from '../../constants/fakeData'; // FIXME: use project data in db
 import * as paths from '../../constants/routes';
 
+// TODO: this file is old and not used. Has good information regarding past designs and intended userflow, so keep until this is
+// properly documented and can be implemented in the future
+
 //Folder containing various functions that are used in the Project page
 //Used to simplify amount of code used in Project.tsx, ProjectInfo.tsx, and ProjectInfoMember.tsx
 

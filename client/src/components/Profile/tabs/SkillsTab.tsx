@@ -306,7 +306,7 @@ export const SkillsTab = ({
         </div>
           <hr id="selected-tag-divider" />
         <div id="project-editor-selected-tags-container">
-          {/* TODO: Separate top 2 skills from others with hr element */}
+          {/* TODO: Separate top 2 skills from others with hr element, see Project editor links tab for implementation */}
           {loadProfileSkills}
         </div>
       </div>

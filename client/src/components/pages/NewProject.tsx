@@ -24,11 +24,6 @@ import {
   JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 
-//TODO
-//✅ Have team member listings link to their respective profiles
-//Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
-
-
 //Main component for the project page
 const NewProject = () => {
   //Navigation hook
