@@ -8,7 +8,7 @@ import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
 import { getUsers, getUsersById } from '../../api/users';
-import { Tag, Skill, UserPreview, ProjectPreview, UserDetail } from '@looking-for-group/shared';
+import { Tag, Skill, UserPreview, ProjectPreview } from '@looking-for-group/shared';
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'

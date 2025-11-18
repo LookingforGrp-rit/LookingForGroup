@@ -3,10 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
 import usePreloadedImage from '../functions/imageLoad';
-import { UserDetail } from '@looking-for-group/shared';
+import { UserPreview } from '@looking-for-group/shared';
 
 interface ProfilePanelProps {
-  profileData: UserDetail;
+  profileData: UserPreview;
 }
 
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
