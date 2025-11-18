@@ -1,7 +1,6 @@
 import type { UserDetail, UserSkill, UserSocial } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { UserDetailSelector } from '#services/selectors/users/user-detail.ts';
-import { transformMajor } from '../datasets/major.ts';
 import { transformSkill } from '../datasets/skill.ts';
 import { transformSocial } from '../datasets/social.ts';
 import { transformProjectToPreview } from '../projects/project-preview.ts';
@@ -22,7 +21,6 @@ export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
     ...transformUserToPreview(user),
     bio: user.bio,
     academicYear: user.academicYear,
-    majors: user.majors.map(transformMajor),
     skills: user.userSkills.map(
       ({ position, proficiency, skills }): UserSkill => ({
         ...transformSkill(skills),
