@@ -159,37 +159,19 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       
       const data = await response;
 
-      let newData: ProjectPreview[] | UserDetail[] = [];
-
-      // Get user detail for Profile Panels
-      if (data.data && category === 'profiles') {
-        const detailedUsers = await Promise.all(
-          (data.data as UserPreview[]).map(async (user: UserPreview) => {
-            const userDetails = await getUsersById(user.userId.toString());
-            return userDetails.data;
-          })
-        );
-        
-        newData = detailedUsers as UserDetail[];
-      }
-
-      if (data.data && category === 'projects') {
-        newData = data.data as ProjectPreview[];
-      }
-
       // Don't assign if there's no array returned
-      if (newData) {
-        setFullItemList(newData);
-        setFilteredItemList(newData);
+      if (data.data) {
+        setFullItemList(data.data);
+        setFilteredItemList(data.data);
         setItemSearchData(
 
           // loop through JSON, get data based on category
-          newData.map((item) => {
+          data.data.map((item) => {
             if (category === 'projects') {
               const project = item as ProjectPreview;
               return { name: project.title, description: project.hook };
             } else {
-              const user = item as UserDetail;
+              const user = item as UserPreview;
               return {
                 name: `${user.firstName} ${user.lastName}`,
                 username: user.username,
@@ -303,10 +285,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             matchesAny = true;
           } 
           // Check role and major by name since IDs are not unique relative to tags
-          //i think i'm beginning to understand
-          //did the old team combine all the separate kinds of designations (roles, majors, skills, etc) into just "tags"?
-          //which is why all of these are expected to be types that come from a Tag[]?
-          //what do i do about that... it sounds like this would have to fundamentally be changed to work with the new system
           else if (tag.type === 'Role' && item.job_title) { 
               if (item.job_title.toLowerCase() === tag.label.toLowerCase()) {
                 matchesAny = true;
