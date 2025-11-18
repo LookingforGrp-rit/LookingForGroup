@@ -154,7 +154,6 @@ const checkFollow = useCallback(async () => {
 
       try {
         const { data } = await getUsersById(profileID);
-        console.log('user data', data);
 
         // Only run this if profile data exists for user
         if (data) {

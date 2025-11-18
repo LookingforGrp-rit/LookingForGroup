@@ -6,10 +6,9 @@ import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
 import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
-import { devSkills, desSkills } from '../../constants/tags';
 import { getProjects, getByID } from '../../api/projects';
 import { getUsers, getUsersById } from '../../api/users';
-import { Tag, Skill, UserPreview, ProjectPreview } from '@looking-for-group/shared';
+import { Tag, Skill, UserPreview, ProjectPreview, UserDetail } from '@looking-for-group/shared';
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'
@@ -126,10 +125,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
   // Helper functions
   // --------------------
-
-    const getAuth = async () => {
+  const getAuth = async () => {
     const res = await getCurrentUsername();
-
 
     if (res.status === 200 && res.data?.username) {
       setUserId(res.data.username)
@@ -157,22 +154,38 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       const response = (category == 'projects') ? await getProjects() : await getUsers();
 
       const data = await response;
-      console.log('data.data', data.data);
+
+      let newData: ProjectPreview[] | UserDetail[] = [];
+
+      // Get user detail for Profile Panels
+      if (data.data && category === 'profiles') {
+        const detailedUsers = await Promise.all(
+          (data.data as UserPreview[]).map(async (user: UserPreview) => {
+            const userDetails = await getUsersById(user.userId.toString());
+            return userDetails.data;
+          })
+        );
+        
+        newData = detailedUsers as UserDetail[];
+      }
+
+      if (data.data && category === 'projects') {
+        newData = data.data as ProjectPreview[];
+      }
 
       // Don't assign if there's no array returned
-      console.log(data.data == null);
-      if (data.data !== null) {
-        setFullItemList(data.data);
-        setFilteredItemList(data.data);
+      if (newData) {
+        setFullItemList(newData);
+        setFilteredItemList(newData);
         setItemSearchData(
 
           // loop through JSON, get data based on category
-          data.data.map((item) => {
+          newData.map((item) => {
             if (category === 'projects') {
               const project = item as ProjectPreview;
               return { name: project.title, description: project.hook };
             } else {
-              const user = item as UserPreview;
+              const user = item as UserDetail;
               return {
                 name: `${user.firstName} ${user.lastName}`,
                 username: user.username,
@@ -337,7 +350,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         {(!dataLoaded && filteredItemList.length === 0) ? (
           <div className='spinning-loader'></div>
         ) : (
-          <PanelBox category={category} itemList={filteredItemList} itemAddInterval={25} userId={Number(userId)} />
+          <PanelBox category={category} itemList={filteredItemList} itemAddInterval={25} />
         )}
       </div>
       <CreditsFooter />
