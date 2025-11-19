@@ -358,10 +358,14 @@ Project Creator and Editor style rules
   margin: auto;
 }
 
-.save-error-msg p, .save-error-msg-general p {
+.save-error-msg p, .save-error-msg-general p, #invalid-input-error p {
   margin: 0 0 1.5% 0;
   font-size: 18px;
   color: red;
+}
+
+#invalid-input-error {
+  padding: 10px;
 }
 
 #project-editor-content {
