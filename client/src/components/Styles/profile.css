@@ -1078,6 +1078,7 @@ New Profile page style rules
       > #profile-top-row {
         display: flex;
         justify-content: space-between;
+        align-items: center;
 
         > #profile-names {
           display: flex;
@@ -1112,13 +1113,6 @@ New Profile page style rules
           overflow-wrap: break-word;
           word-break: break-word;
           width: fit-content;
-          justify-self: end;
-          align-self: start;
-
-          #project-info-edit {
-            padding: 10px;  
-            font-size: 20px;
-          }
 
           #heart-empty {
             stroke: #F14F76;

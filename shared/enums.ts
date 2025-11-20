@@ -45,7 +45,7 @@ export enum ProjectPurpose {
 };
 export enum ProjectStatus {
   Planning = "Planning",
-  Development = "Development",
+  Development = "In Development",
   PostProduction = "Post-Production",
   Complete = "Complete"
 }
