@@ -313,7 +313,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   return (
     <div className="page">
       {/* Search bar and profile/notification buttons */}
-      <Header dataSets={dataSet} onSearch={searchItems} />
+      <Header dataSets={dataSet} onSearch={searchItems} value={undefined} onChange={undefined} />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 

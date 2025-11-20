@@ -85,7 +85,7 @@ export const getUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
  * @returns result - JSONified data of specified user.
  */
 export const getUsersById = async (
-  id: string
+  id: number
 ): Promise<ApiResponse<UserDetail>> => {
   const apiURL = `/users/${id}`;
   const response = await GET(apiURL);

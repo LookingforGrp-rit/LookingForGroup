@@ -4,16 +4,38 @@ import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
 import usePreloadedImage from '../functions/imageLoad';
 import { UserPreview } from '@looking-for-group/shared';
+import { useEffect, useState } from 'react';
+import { getCurrentAccount, getUsersById } from '../api/users';
 
 interface ProfilePanelProps {
   profileData: UserPreview;
 }
 
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
+  const [userId, setUserId] = useState<number>();
+
   const navigate = useNavigate();
   const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
   const majorsArr = profileData.majors?.map((maj) => maj.label);
   
+    useEffect(() => {
+      const getCurrentUserData = async () => {
+        //get our current user for use later
+        const userResp = await getCurrentAccount();
+        if(userResp.data) setUserId(userResp.data.userId);
+        
+        //get the other user (again...) so we have their followers
+        //easiest way to do this would be to just put the followers into the userPreview
+        //so lemme go do that
+        
+        const otherUserResp = await getUsersById(profileData.userId);
+        if (otherUserResp.data) { 
+          otherUserResp.data.followers
+        }
+      };
+        getCurrentUserData();
+    }, [profileData.userId])
+    
   return (
     <div className={'profile-panel'}>
       <img
