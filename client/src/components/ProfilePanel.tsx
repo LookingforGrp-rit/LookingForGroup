@@ -22,14 +22,14 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   const [isFollow, setIsFollow] = useState<boolean>(false);
     useEffect(() => {
       const getFollowData = async () => {
-        //get our current user for use later
+        //get our current user so we can check their follow status
         const userResp = await getCurrentAccount();
         if(userResp.data) setUserId(userResp.data.userId);
         
-        //get the other user (again...) so we have their followers
+        //get the displayed user (again...) so we have their followers
         //because followers are currently not in the profileData
         //easiest way to do this would be to just put the followers into the userPreview...
-        //...but that turned out to be way too much trouble than what it was worth
+        //...but that turned out to be way too much trouble than what it was worth so i'm doing this instead
         const otherUserResp = await getUsersById(profileData.userId);
         if (otherUserResp.data) { 
           otherUserResp.data.followers.users.map((user) => {
