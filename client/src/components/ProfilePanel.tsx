@@ -12,29 +12,37 @@ interface ProfilePanelProps {
 }
 
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
-  const [userId, setUserId] = useState<number>();
 
   const navigate = useNavigate();
   const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
   const majorsArr = profileData.majors?.map((maj) => maj.label);
   
+  //follow stuff
+  const [userId, setUserId] = useState<number>();
+  const [isFollow, setIsFollow] = useState<boolean>(false);
     useEffect(() => {
-      const getCurrentUserData = async () => {
+      const getFollowData = async () => {
         //get our current user for use later
         const userResp = await getCurrentAccount();
         if(userResp.data) setUserId(userResp.data.userId);
         
         //get the other user (again...) so we have their followers
-        //easiest way to do this would be to just put the followers into the userPreview
-        //so lemme go do that
-        
+        //because followers are currently not in the profileData
+        //easiest way to do this would be to just put the followers into the userPreview...
+        //...but that turned out to be way too much trouble than what it was worth
         const otherUserResp = await getUsersById(profileData.userId);
         if (otherUserResp.data) { 
-          otherUserResp.data.followers
+          otherUserResp.data.followers.users.map((user) => {
+            if(user.user.userId === userId) {
+              setIsFollow(true);
+              return;
+            }
+          })
+          
         }
       };
-        getCurrentUserData();
-    }, [profileData.userId])
+        getFollowData();
+    }, [profileData.userId, userId])
     
   return (
     <div className={'profile-panel'}>
@@ -50,22 +58,18 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
 
       <div className={'profile-panel-hover'} onClick={() => navigate(profileURL)}>
 
-        {/* Heart to follow */}
-        {/* TODO: if user is following */}
-        {/* <ThemeIcon
+        {isFollow ? <ThemeIcon
           width={30}
           height={27}
           id={"heart-filled"}
           ariaLabel="unfollow profile"
-        /> */}
-
-        {/* TODO: if user is not following */}
-        <ThemeIcon
+        />
+        : <ThemeIcon
           width={30}
           height={27}
           id={"heart-empty"}
           ariaLabel="follow profile"
-        />
+        />}
         
         {/* List of items */}
         <div className={'profile-panel-hover-item'}>
