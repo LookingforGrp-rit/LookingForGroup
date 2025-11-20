@@ -22,6 +22,7 @@ import {
   JobDuration as JobDurationEnums,
   JobLocation as JobLocationEnums,
   JobCompensation as JobCompensationEnums,
+  ProjectStatus as ProjectStatusEnums
 } from "@looking-for-group/shared/enums";
 
 //Main component for the project page
@@ -371,130 +372,134 @@ useEffect(() => {
           <ProjectCarousel project={displayedProject}></ProjectCarousel>
 
           <div id="project-info-panel">
-            <div id="project-info-header">
-              <div id="project-title">{displayedProject.title}</div>
-              <div id="project-info-buttons">{buttonContent}</div>
-            </div>
-            <div id="project-hook">{displayedProject.hook}</div>
-            <div id="project-status">
-              Status:{" "}
-              <span className="project-info-highlight">
-                {displayedProject.status}{" "}
-              </span>
-              <Popup>
-                <PopupButton buttonId="project-open-positions-button">
-                  Open Positions
-                </PopupButton>
-                <PopupContent>
-                  <div id="project-open-positions-popup">
-                    <div id="positions-popup-header">Join The Team</div>
+            <div id="project-info-top">
+              <div id="project-info-header">
+                <div id="project-title">{displayedProject.title}</div>
+                <div id="project-info-buttons">{buttonContent}</div>
+              </div>
+              <div id="project-hook">{displayedProject.hook}</div>
+              <div id="project-status">
+                <p>
+                  Status:{" "}
+                  <span className="project-info-highlight">
+                    {ProjectStatusEnums[displayedProject.status]}
+                  </span>
+                </p>
+                <Popup>
+                  <PopupButton buttonId="project-open-positions-button">
+                    Open Positions
+                  </PopupButton>
+                  <PopupContent>
+                    <div id="project-open-positions-popup">
+                      <div id="positions-popup-header">Join The Team</div>
 
-                    {/* Left Container */}
-                    <div id="project-team-open-positions-popup">
-                      <div className="positions-popup-list">
-                        <p className="positions-popup-info-title">Open Positions</p>
-                        <div id="team-positions-popup-list-buttons">
-                        {
-                          displayedProject.jobs?.map((job, index) => (
-                            <button
-                              className={`positions-popup-list-item`}
-                              id={index === viewedPosition ? "positions-popup-list-item-active" : ""}
-                              onClick={() => setViewedPosition(index)}
-                              key={index}
-                            >
-                              {job.role.label}
-                            </button>
-                          ))}
-                          </div>
+                      {/* Left Container */}
+                      <div id="project-team-open-positions-popup">
+                        <div className="positions-popup-list">
+                          <p className="positions-popup-info-title">Open Positions</p>
+                          <div id="team-positions-popup-list-buttons">
+                          {
+                            displayedProject.jobs?.map((job, index) => (
+                              <button
+                                className={`positions-popup-list-item`}
+                                id={index === viewedPosition ? "positions-popup-list-item-active" : ""}
+                                onClick={() => setViewedPosition(index)}
+                                key={index}
+                              >
+                                {job.role.label}
+                              </button>
+                            ))}
+                            </div>
+                        </div>
                       </div>
+                      
+                      {/* Right Container */}
+                      <div className="positions-popup-info-wrapper">
+                        <div className="positions-popup-info">
+                          <div className="positions-popup-info-title">
+                            {displayedProject.jobs[viewedPosition]?.role?.label ??
+                              undefined}
+                          </div>
+
+                          <div id="position-description-header">
+                            What we are looking for:
+                          </div>
+
+                          <div id="position-description-content" className="positions-popup-info-description">
+                            {displayedProject.jobs[viewedPosition]?.description}
+                          </div>
+
+                          <div id="open-position-details">
+                            <div id="open-position-details-left">
+                              <div id="position-availability">
+                                <span className="position-detail-indicator">
+                                  Availability:{" "}
+                                </span>
+                                {JobAvailabilityEnums[displayedProject.jobs[viewedPosition].availability]}
+                              </div>
+                              <div id="position-location">
+                                <span className="position-detail-indicator">
+                                  Location:{" "}
+                                </span>
+                                {JobLocationEnums[displayedProject.jobs[viewedPosition].location]}
+                              </div>
+                            </div>
+
+                            <div id="open-position-details-right">
+                              <div id="position-duration">
+                                <span className="position-detail-indicator">
+                                  Duration:{" "}
+                                </span>
+                                {JobDurationEnums[displayedProject.jobs[viewedPosition].duration]}
+                              </div>
+                              <div id="position-compensation">
+                                <span className="position-detail-indicator">
+                                  Compensation:{" "}
+                                </span>
+                                {JobCompensationEnums[displayedProject.jobs[viewedPosition].compensation]}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div id="position-contact">
+                          If interested, please contact:{" "}
+                          <span
+                            onClick={() =>
+                              navigate(
+                                `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
+                              )
+                            }
+                            id="position-contact-link"
+                          >
+                            {/* {FIXME: get project lead profile image in a different way} */}
+                            {/* <img src={(projectLead?.profile_image) 
+                            ? `images/profiles/${projectLead?.profile_image}` 
+                            : profilePicture} 
+                          /> */}
+                            {projectLead?.firstName}{" "}
+                            {projectLead?.lastName}
+                          </span>
+                        </div>
+                      </div>
+
+                      <PopupButton buttonId="positions-popup-close">
+                        Close
+                      </PopupButton>
                     </div>
-                    
-                    {/* Right Container */}
-                    <div className="positions-popup-info-wrapper">
-                      <div className="positions-popup-info">
-                        <div className="positions-popup-info-title">
-                          {displayedProject.jobs[viewedPosition]?.role?.label ??
-                            undefined}
-                        </div>
-
-                        <div id="position-description-header">
-                          What we are looking for:
-                        </div>
-
-                        <div id="position-description-content" className="positions-popup-info-description">
-                          {displayedProject.jobs[viewedPosition]?.description}
-                        </div>
-
-                        <div id="open-position-details">
-                          <div id="open-position-details-left">
-                            <div id="position-availability">
-                              <span className="position-detail-indicator">
-                                Availability:{" "}
-                              </span>
-                              {JobAvailabilityEnums[displayedProject.jobs[viewedPosition].availability]}
-                            </div>
-                            <div id="position-location">
-                              <span className="position-detail-indicator">
-                                Location:{" "}
-                              </span>
-                              {JobLocationEnums[displayedProject.jobs[viewedPosition].location]}
-                            </div>
-                          </div>
-
-                          <div id="open-position-details-right">
-                            <div id="position-duration">
-                              <span className="position-detail-indicator">
-                                Duration:{" "}
-                              </span>
-                              {JobDurationEnums[displayedProject.jobs[viewedPosition].duration]}
-                            </div>
-                            <div id="position-compensation">
-                              <span className="position-detail-indicator">
-                                Compensation:{" "}
-                              </span>
-                              {JobCompensationEnums[displayedProject.jobs[viewedPosition].compensation]}
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-
-                      <div id="position-contact">
-                        If interested, please contact:{" "}
-                        <span
-                          onClick={() =>
-                            navigate(
-                              `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
-                            )
-                          }
-                          id="position-contact-link"
-                        >
-                          {/* {FIXME: get project lead profile image in a different way} */}
-                          {/* <img src={(projectLead?.profile_image) 
-                          ? `images/profiles/${projectLead?.profile_image}` 
-                          : profilePicture} 
-                        /> */}
-                          {projectLead?.firstName}{" "}
-                          {projectLead?.lastName}
-                        </span>
-                      </div>
-                    </div>
-
-                    <PopupButton buttonId="positions-popup-close">
-                      Close
-                    </PopupButton>
-                  </div>
-                </PopupContent>
-              </Popup>
-            </div>
-            <div id="project-creation">
-              Created by: {" "}
-              <span className="project-info-highlight">
-                {projectLead?.firstName} {projectLead?.lastName}
-              </span>
-              <br />
-              {new Date(
-                displayedProject.createdAt.toString()
-              ).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                  </PopupContent>
+                </Popup>
+              </div>
+              <div id="project-creation">
+                Created by: {" "}
+                <span className="project-info-highlight">
+                  {projectLead?.firstName} {projectLead?.lastName}
+                </span>
+                <br />
+                {new Date(
+                  displayedProject.createdAt.toString()
+                ).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+              </div>
             </div>
             <div id="project-tags">
               {

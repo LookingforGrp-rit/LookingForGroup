@@ -2522,10 +2522,19 @@ Project Carousel style rules
   grid-area: info;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
   padding: 20px;
+
+  #project-info-top {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 5px;
+  }
 }
 
 .project-info-highlight {
@@ -2538,10 +2547,9 @@ Project Carousel style rules
 }
 
 #project-title {
-  font-size: 3.5ch;
+  font-size: 32px;
   font-weight: 700;
   color: var(--primary-color);
-  margin: 0 0 10px;
 }
 
 #project-info-buttons {
@@ -2639,30 +2647,41 @@ Project Carousel style rules
   outline: none !important;
 }
 
-#project-hook,
-#project-status,
-#project-creation {
-  margin: 10px 0;
-}
-
 #project-hook {
   flex-grow: 1;
 }
 
 #project-status {
-  font-style: italic;
-  color: var(--darkGray);
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+
+  p {
+    color: var(--neutral-gray);
+    margin: 0;
+    font-style: italic;
+  }
 }
 
-#project-open-positions-button {
+#project-info-edit,
+#project-open-positions-button,
+.project-people-tab,
+#project-open-positions-header {
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
   color: var(--invert-text);
   font-size: 16px;
   font-weight: 700;
-  padding: 10px 20px;
-  margin-top: 10px;
+  line-height: 150%;
+  padding: 4px 16px;
+  width: fit-content;
+}
+#project-open-positions-header {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #project-open-positions-popup {
@@ -3018,16 +3037,6 @@ button#positions-popup-list-item-active {
   gap: 10px;
 }
 
-.project-people-tab {
-  border: none;
-  border-radius: 30px;
-  background-color: var(--primary-color);
-  color: var(--invert-text);
-  font-size: 16px;
-  padding: 5px 10px;
-  font-weight: 700;
-}
-
 /* TODO: restore styles when "The Team" is a button again (regards Contributor functionality) */
 /* .project-people-tab:hover,
 .project-people-tab-active {
@@ -3036,16 +3045,6 @@ button#positions-popup-list-item-active {
 
 #project-open-positions {
   grid-area: positions;
-}
-
-#project-open-positions-header {
-  background-color: var(--primary-color);
-  color: var(--invert-text);
-  font-weight: 700;
-  padding: 5px 20px;
-  border-radius: 30px;
-  width: fit-content;
-  margin: 0 auto;
 }
 
 #project-open-positions-list {
