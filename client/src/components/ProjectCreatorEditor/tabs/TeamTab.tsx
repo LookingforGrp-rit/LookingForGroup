@@ -714,8 +714,12 @@ export const TeamTab = ({
       </div>
       <Popup>
         <PopupButton className="delete-position-button button-reset">
-          {/* TODO: make this themeicon */}
-          <img src="/images/icons/delete-red.svg" alt="trash can" />
+          <ThemeIcon
+            id="trash"
+            width={21}
+            height={21}
+            ariaLabel="Delete position"
+          />
         </PopupButton>
         <PopupContent useClose={false}>
           <div id="project-team-delete-member-title">Delete Position</div>

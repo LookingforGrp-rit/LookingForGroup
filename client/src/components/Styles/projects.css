@@ -1272,6 +1272,10 @@ Project Creator and Editor style rules
   position: absolute;
   bottom: 20px;
   right: 20px;
+
+  #trash {
+    stroke: #FF3859;
+  }
 }
 
 #team-positions-popup-list-buttons {

@@ -80,7 +80,7 @@ const MyProjectsDisplayGrid = ({ projectData } : {projectData: ProjectDetail}) =
                       ariaLabel={"Leave project"}
                       className="mono-fill"
                     />
-                  &nbsp; Leave Project
+                  Leave Project
                 </PopupButton>
                 <PopupContent>
                   <div className='small-popup'>
@@ -109,7 +109,7 @@ const MyProjectsDisplayGrid = ({ projectData } : {projectData: ProjectDetail}) =
                       height={21}
                       ariaLabel="Delete project"
                     />
-                    &nbsp; Delete Project
+                    Delete Project
                   </PopupButton>
                   <PopupContent>
                     <div className='small-popup'>
