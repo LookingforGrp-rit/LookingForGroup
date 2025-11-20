@@ -8,6 +8,7 @@ import { PagePopup } from './PagePopup';
 import { deleteProject } from '../api/projects';
 import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
+import { ThemeIcon } from './ThemeIcon';
 
 //backend base url for getting images
 
@@ -16,7 +17,6 @@ const MyProjectsDisplayGrid = ({ projectData } : {projectData: ProjectDetail}) =
   //Navigation hook
   const navigate = useNavigate();
   const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
-  //what is reloadProjects for?
 
   //const [status, setStatus] = useState<string>();
   const [optionsShown, setOptionsShown] = useState(false);
@@ -58,74 +58,81 @@ const MyProjectsDisplayGrid = ({ projectData } : {projectData: ProjectDetail}) =
         onClick={() => navigate(projectURL)}
       ></img>
 
-      {/* Title */}
-      <div className="grid-card-title" onClick={() => navigate(projectURL)}>
-        {projectData.title}
-      </div>
+      <div className='grid-card-details'>
+        {/* Title */}
+        <div className="grid-card-title" onClick={() => navigate(projectURL)}>
+          {projectData.title}
+        </div>
 
-      {/* Options */}
-      <Dropdown>
-        <DropdownButton buttonId="grid-card-options-button">•••</DropdownButton>
-        <DropdownContent rightAlign={true}>
-          <div className={`grid-card-options-list ${optionsShown ? 'show' : ''}`}>
-            <Popup>
-              <PopupButton className='card-leave-button'>
-                <i
-                  className='fa-solid fa-arrow-right-from-bracket'
-                  style={{ fontStyle: 'normal', transform: 'rotate(180deg)' }}
-                ></i>
-                &nbsp; Leave Project
-              </PopupButton>
-              <PopupContent>
-                <div className='small-popup'>
-                  <h3>Leave Project</h3>
-                  <p className='confirm-msg'>
-                    Are you sure you want to leave this project? You won't be able
-                    to rejoin unless you're re-added by a project member.
-                  </p>
-                  <div className='confirm-deny-btns'>
-                    <PopupButton
-                      className='confirm-btn'
-                      callback={handleLeaveProject}>
-                        Confirm
-                    </PopupButton>
-                    <PopupButton className='deny-btn'>Cancel</PopupButton>
-                  </div>
-                </div>
-              </PopupContent>
-            </Popup>
-            {(isOwner) ? (
+        {/* Options */}
+        <Dropdown>
+          <DropdownButton buttonId="grid-card-options-button">
+            <ThemeIcon id={'menu'} width={15} height={3} className={'mono-fill dropdown-menu'} ariaLabel={'More options'}/>
+          </DropdownButton>
+          <DropdownContent rightAlign={true}>
+            <div className={`card-options-list ${optionsShown ? 'show' : ''}`}>
               <Popup>
-                <PopupButton className='card-delete-button'>
-                  <i
-                    className='fa-solid fa-trash-can'
-                    style={{ fontStyle: 'normal', color: 'var(--error-delete-color)' }}
-                  ></i>
-                  &nbsp; Delete Project
+                <PopupButton className='card-leave-button'>
+                  <ThemeIcon
+                      id={"logout"}
+                      width={21}
+                      height={21}
+                      ariaLabel={"Leave project"}
+                      className="mono-fill"
+                    />
+                  &nbsp; Leave Project
                 </PopupButton>
                 <PopupContent>
                   <div className='small-popup'>
                     <h3>Leave Project</h3>
                     <p className='confirm-msg'>
-                      Are you sure you want to delete this project? This action cannot be undone.
+                      Are you sure you want to leave <span className="project-info-highlight">{projectData.title}</span>? You won't be able
+                      to rejoin unless you're re-added by a project member.
                     </p>
                     <div className='confirm-deny-btns'>
                       <PopupButton
                         className='confirm-btn'
-                        callback={handleDeleteProject}>
-                          Confirm
+                        callback={handleLeaveProject}>
+                          Leave
                       </PopupButton>
                       <PopupButton className='deny-btn'>Cancel</PopupButton>
                     </div>
                   </div>
                 </PopupContent>
               </Popup>
-            ) : (
-              <></>
-            )}
-          </div>
-        </DropdownContent>
-      </Dropdown>
+              {(isOwner) && (
+                <Popup>
+                  <PopupButton className='card-delete-button'>
+                    <ThemeIcon
+                      id="trash"
+                      width={21}
+                      height={21}
+                      ariaLabel="Delete project"
+                    />
+                    &nbsp; Delete Project
+                  </PopupButton>
+                  <PopupContent>
+                    <div className='small-popup'>
+                      <h3>Leave Project</h3>
+                      <p className='confirm-msg'>
+                        Are you sure you want to delete <span className="project-info-highlight">{projectData.title}</span>? This action cannot be undone.
+                      </p>
+                      <div className='confirm-deny-btns'>
+                        <PopupButton
+                          className='confirm-btn delete-button'
+                          callback={handleDeleteProject}>
+                            Delete
+                        </PopupButton>
+                        <PopupButton className='deny-btn'>Cancel</PopupButton>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
+              )}
+            </div>
+          </DropdownContent>
+        </Dropdown>
+      </div>
 
       {/* Leave/Delete result popup */}
       <PagePopup

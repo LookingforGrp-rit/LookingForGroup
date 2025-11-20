@@ -232,7 +232,7 @@ section {
 
 /* Content areas to take up entire height of viewport
    to push the Footer to the bottom */
-.my-projects-grid, #discover-panel-box {
+.my-projects-grid, .my-projects-list, #discover-panel-box {
   min-height: 50vh;
 }
 
@@ -1438,18 +1438,17 @@ Select style rules
 .select-option:hover {
   background-color: var(--primary-color);
   color: var(--invert-text);
-
-  .fa,
-  .fa-solid,
-  .fa-regular,
-  .fa-brands {
-    color: var(--invert-text) !important;
+  
+  .mono-stroke use {
+    /* Important overrides theme specificity */
+    stroke: var(--invert-text) !important;
+  }
+  .mono-fill use {
+    /* Important overrides theme specificity */
+    fill: var(--invert-text) !important;
   }
 }
-.select-option:hover use {
-  /* Important overrides theme specificity */
-  fill: var(--invert-text) !important;
-}
+
 .select-option.top {
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;

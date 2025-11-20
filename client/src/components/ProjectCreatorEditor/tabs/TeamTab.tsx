@@ -714,6 +714,7 @@ export const TeamTab = ({
       </div>
       <Popup>
         <PopupButton className="delete-position-button button-reset">
+          {/* TODO: make this themeicon */}
           <img src="/images/icons/delete-red.svg" alt="trash can" />
         </PopupButton>
         <PopupContent useClose={false}>
