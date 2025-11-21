@@ -241,13 +241,15 @@ export const ProfileEditPopup = () => {
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
       <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
         <form
-          id="profile-creator-editor"
+          id="project-creator-editor"
           onSubmit={onSaveClicked}
           encType="multipart/form-data"
         >
-          <div id="profile-editor-tabs">{editorTabs}</div>
-          {renderTabContent()}
-          <input type="submit" id="profile-editor-save" value="Save Changes" />
+          <div id="project-editor-tabs">{editorTabs}</div>
+          <div id="project-editor-content">
+            {renderTabContent()}
+          </div>
+          <input type="submit" id="project-editor-save" value="Save Changes" />
           {errorVisible && (
             <div id="invalid-input-error" className="error-message">
               <p>*Fill out all required fields before saving!*</p>

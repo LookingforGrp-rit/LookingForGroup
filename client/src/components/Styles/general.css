@@ -855,14 +855,9 @@ Page popup style rules
   padding: 8px 18px 0px 0px;
 }
 
-.popup-close.popup-close-edit {
-  right: -4%;
-}
-
 @media screen and (max-width: 1180px) {
   .popup-close, .popup-close.popup-close-edit {
     margin: 0 8px 0 0 !important;
-    right: 1%;
   }
 }
 

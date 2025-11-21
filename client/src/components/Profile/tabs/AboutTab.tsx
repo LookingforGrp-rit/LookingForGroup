@@ -237,7 +237,6 @@ export const AboutTab = ({profile, selectedImageFile, setProfile, setSelectedIma
         />
       </div>
 
-      {/* Only item in edit-profile-section-3, so no wrapper */}
       <LabelInputBox
         label={'About Me*'}
         labelInfo='Share a brief overview of who you are, your interests, and what drives you!'

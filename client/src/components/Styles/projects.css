@@ -340,10 +340,12 @@ Project Creator and Editor style rules
   padding: 10px 20px;
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
-  font-size: 2ch;
+  font-size: 20px;
   width: max-content;
   margin: auto;
   font-weight: 700;
+  margin-top: 37px;
+  margin-bottom: 28px;
 }
 
 #project-editor-save:hover {
@@ -370,7 +372,7 @@ Project Creator and Editor style rules
 
 #project-editor-content {
   flex-grow: 1;
-  margin: 35px 56px 26px 55px;
+  margin: 35px 56px 0 55px;
 
   > * {
     max-height: 710px;
@@ -430,7 +432,7 @@ Project Creator and Editor style rules
 
 .project-editor-extra-info {
   font-style: italic;
-  font-size: 0.8rem;
+  font-size: 14px;
   color: var(--neutral-gray);
 }
 
@@ -455,7 +457,6 @@ Project Creator and Editor style rules
   grid-area: save;
   display: flex;
   flex-direction: column;
-  margin-top: 10px;
 }
 
 @media only screen and (max-width: 799px) {
@@ -815,7 +816,7 @@ Project Creator and Editor style rules
 
 .project-editor-section-header {
   color: var(--primary-color);
-  font-size: 1rem;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -823,10 +824,6 @@ Project Creator and Editor style rules
 #project-editor-team-tabs {
   display: flex;
   justify-content: space-between;
-}
-
-#project-editor-tag-search-tabs {
-  overflow-x: auto;
 }
 
 @media only screen and (max-width: 799px) {
@@ -842,9 +839,12 @@ Project Creator and Editor style rules
   }
 }
 
-#project-editor-team-tabs {
-  gap: 50px;
+
+#project-editor-team-tabs,
+#project-editor-tag-search-tabs {
+  gap: 38px;
   justify-content: center;
+  overflow-x: auto;
 }
 
 .project-editor-tag-search-tab {
