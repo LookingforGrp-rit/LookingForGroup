@@ -63,6 +63,7 @@
     align-items: center;
   
     border: 2px dashed #424242;
+    border-radius: 10px;
     gap: 10px;
     width: 100%;
     height: auto;

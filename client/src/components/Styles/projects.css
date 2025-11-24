@@ -379,7 +379,7 @@ Project Creator and Editor style rules
   }
 }
 
-#project-editor-content label:not(#drop-area),
+#project-editor-content label:not(.drop-area),
 #project-team-add-member-title,
 #team-add-member-cancel-button,
 #project-team-edit-member-title,
@@ -388,7 +388,7 @@ Project Creator and Editor style rules
 #team-delete-member-cancel-button {
   color: var(--primary-color);
   background-color: transparent;
-  font-size: 2ch;
+  font-size: 20px;
   font-weight: 700;
   border: none;
 }
@@ -413,7 +413,7 @@ Project Creator and Editor style rules
   flex-grow: 1;
   background-color: var(--bg-color);
   color: var(--main-text);
-  font-size: 1.6ch;
+  font-size: 15px;
   outline: none;
 }
 

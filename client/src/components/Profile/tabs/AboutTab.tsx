@@ -104,8 +104,9 @@ export const AboutTab = ({profile, selectedImageFile, setProfile, setSelectedIma
 
   // Set new image when one is picked from uploader
   const handleFileSelected = (file: File) => {
-  setSelectedImageFile(file);
-};
+    console.log('got uploaded file', file);  
+    setSelectedImageFile(file);
+  };
 
   return (
     <div id="profile-editor-about" className="edit-profile-body about">
