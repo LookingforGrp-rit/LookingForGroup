@@ -383,6 +383,7 @@ const MyProjects = () => {
         {/* Filters */}
         <div className="my-projects-filters">
           {/* TODO: keep this button? or add other filters (like Owned and Joined) */}
+          {/* this button does nothing currently i think we should trash it */}
           {/* All Projects Button */}
           <button className="my-projects-all-projects-button" onClick={() => { }}>
             All Projects

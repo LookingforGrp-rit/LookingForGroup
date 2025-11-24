@@ -359,7 +359,7 @@ useEffect(() => {
 
   return (
     <div className="page">
-      <Header dataSets={{ data: [] }} onSearch={() => {}} hideSearchBar={true}/>
+      <Header dataSets={{ data: [] }} onSearch={() => { } } hideSearchBar={true} value={undefined} onChange={undefined}/>
 
       {displayedProject === undefined ? (
         loadingProject
@@ -435,13 +435,13 @@ useEffect(() => {
                                 <span className="position-detail-indicator">
                                   Availability:{" "}
                                 </span>
-                                {JobAvailabilityEnums[displayedProject.jobs[viewedPosition].availability]}
+                                {JobAvailabilityEnums[displayedProject.jobs[viewedPosition]?.availability] }
                               </div>
                               <div id="position-location">
                                 <span className="position-detail-indicator">
                                   Location:{" "}
                                 </span>
-                                {JobLocationEnums[displayedProject.jobs[viewedPosition].location]}
+                                {JobLocationEnums[displayedProject.jobs[viewedPosition]?.location]}
                               </div>
                             </div>
 
@@ -450,13 +450,13 @@ useEffect(() => {
                                 <span className="position-detail-indicator">
                                   Duration:{" "}
                                 </span>
-                                {JobDurationEnums[displayedProject.jobs[viewedPosition].duration]}
+                                {JobDurationEnums[displayedProject.jobs[viewedPosition]?.duration]}
                               </div>
                               <div id="position-compensation">
                                 <span className="position-detail-indicator">
                                   Compensation:{" "}
                                 </span>
-                                {JobCompensationEnums[displayedProject.jobs[viewedPosition].compensation]}
+                                {JobCompensationEnums[displayedProject.jobs[viewedPosition]?.compensation]}
                               </div>
                             </div>
                           </div>
