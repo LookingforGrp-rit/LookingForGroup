@@ -32,6 +32,7 @@ import {
   PendingProjectMember,
 } from "@looking-for-group/client";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
+import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 
 // --- Variables ---
 // Default project value
@@ -509,12 +510,15 @@ export const TeamTab = ({
         });
       }
 
-      projectAfterTeamChanges.jobs = projectAfterTeamChanges.jobs.filter((job) => 
-        ("jobId" in currentJob && "jobId" in job && job.jobId !== currentJob.jobId) ||
-        ("localId" in currentJob && "localId" in job && job.localId !== currentJob.localId)
-      )
+      const updatedProject = {
+        ...projectAfterTeamChanges,
+        jobs: projectAfterTeamChanges.jobs.filter((job) =>
+          ("jobId" in currentJob && "jobId" in job && job.jobId !== currentJob.jobId) ||
+          ("localId" in currentJob && "localId" in job && job.jobId !== currentJob.localId)
+        )
+      };
 
-      updatePendingProject(projectAfterTeamChanges);
+      updatePendingProject(updatedProject);
     }
 
     // filter out position
