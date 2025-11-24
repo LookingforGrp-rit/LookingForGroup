@@ -6,7 +6,6 @@ import { LinksTab } from "./tabs/LinksTab";
 import { TeamTab } from "./tabs/TeamTab";
 import { TagsTab } from "./tabs/TagsTab";
 import { ThemeIcon } from "../ThemeIcon";
-import * as paths from '../../constants/routes';
 import {
   createNewProject,
   getProjectSocials,
@@ -19,7 +18,6 @@ import {
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../types/types";
 import { ProjectWithFollowers, } from '@looking-for-group/shared';
-import { useNavigate } from "react-router-dom";
 
 interface Props {
   newProject: boolean;
@@ -44,8 +42,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // --- Hooks ---
   // stores user data
-
-  const navigate = useNavigate();
 
   // store project data
   const [projectData, setProjectData] = useState<ProjectWithFollowers>();
@@ -94,11 +90,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
           console.log(dataManager)
           const data = dataManager.getSavedProject();
-
           
           setProjectData(data);
           setModifiedProject(data);
-          navigate(`${paths.routes.NEWPROJECT}?projectID=${data?.projectId}`);
         }
       } catch (err) {
         console.error("Error creating new project:", err);

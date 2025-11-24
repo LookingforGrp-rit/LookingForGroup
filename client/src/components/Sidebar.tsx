@@ -14,7 +14,7 @@ import { UserDetail } from "@looking-for-group/shared";
 //Change shape of active buttons to be more rounded
 //Remove notification button
 
-const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
+const SideBar = () => {
   const [width, setWidth] = React.useState(window.innerWidth);
   const breakpoint = useSelector((state: any) => state.page.MOBILE_BREAKPOINT);
 

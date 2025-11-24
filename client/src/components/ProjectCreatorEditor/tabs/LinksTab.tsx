@@ -2,11 +2,11 @@
 import { useEffect, useState } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton } from "../../Popup";
-import { AddProjectSocialInput, Social, UserDetail } from "@looking-for-group/shared";
+import { AddProjectSocialInput, ProjectSocial, Social, UserDetail } from "@looking-for-group/shared";
 import { Input } from "../../Input";
 import { getSocials, getUsersById } from "../../../api/users";
 import { ThemeIcon } from "../../ThemeIcon";
-import { PendingProject } from "../../../../types/types";
+import { Pending, PendingProject } from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { BaseSocialUrl } from "@looking-for-group/shared/enums";
 
@@ -43,8 +43,6 @@ projectAfterLinkChanges = structuredClone(projectData);
   // project owner details with social links
   const [projectOwner, setProjectOwner] = useState<UserDetail | null>(null);
 
-
-
   // Update parent state with error message
   useEffect(() => {
     setErrorLinks(error);
@@ -74,7 +72,7 @@ projectAfterLinkChanges = structuredClone(projectData);
     const fetchProjectOwner = async () => {
       if (projectData?.owner?.userId) {
         try {
-          const response = await getUsersById(projectData.owner.userId.toString());
+          const response = await getUsersById(projectData.owner.userId);
           if (response?.data) {
             setProjectOwner(response.data);
           }
@@ -175,12 +173,13 @@ projectAfterLinkChanges = structuredClone(projectData);
                   const tempSocials = projectAfterLinkChanges.projectSocials;
                   tempSocials[index].label = selectedLabel;
                   tempSocials[index].websiteId = selectedSocial?.websiteId || 0;
+                  (tempSocials[index] as Pending<ProjectSocial>).localId = ++localIdIncrement; //lol it never had a local id
                   if(selectedSocial && "localId" in social){ //so it only tries to add newly added ones
 
                   dataManager.addSocial({
                     id: {
-                      value: selectedSocial?.websiteId,
-                      type: 'canon'
+                      value: (tempSocials[index] as Pending<ProjectSocial>).localId ?? ++localIdIncrement,
+                      type: 'local'
                     },
                     data: tempSocials[index] as AddProjectSocialInput
                   })
@@ -235,14 +234,12 @@ projectAfterLinkChanges = structuredClone(projectData);
                 tempSocials[index].url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] + e.target.value;
 
                 if("localId" in social){
-                dataManager.updateSocial({
+                dataManager.addSocial({
                   id: {
                     type: "local",
                     value: social.localId ?? ++localIdIncrement
                   },
-                  data: {
-                    url: tempSocials[index].url
-                  }
+                  data: tempSocials[index] as AddProjectSocialInput
                 })
                 }
                 else{

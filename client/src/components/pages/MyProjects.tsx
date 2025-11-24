@@ -1,6 +1,5 @@
 // import { profiles } from "../../constants/fakeData";
 import { useState, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
@@ -19,7 +18,7 @@ import { ProjectDetail} from '@looking-for-group/shared';
 
 const MyProjects = () => {
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   // Taken from Sidebar.tsx
 
@@ -484,7 +483,7 @@ const MyProjects = () => {
 
           {/*Create Project Button*/}
           <div className="my-projects-create-btn">
-            <ProjectCreatorEditor newProject={true} buttonCallback={loggedIn ? getUserProjects : () => navigate('/login')} />
+            <ProjectCreatorEditor newProject={true}/>
           </div>
         </div>
       </div>
