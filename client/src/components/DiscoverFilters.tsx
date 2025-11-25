@@ -402,7 +402,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                           }}
                         >
                           <i className="fa fa-close"></i>
-                          &nbsp;{tag.tag.label}
+                          <p>{tag.tag.label}</p>
                         </button>
                       ))}
                     </div>
@@ -490,7 +490,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                 }}
               >
                 <i className='fa fa-close'></i>
-                &nbsp;{filter.tag.label}
+                <p>{filter.tag.label}</p>
               </button>
             );
           })}
