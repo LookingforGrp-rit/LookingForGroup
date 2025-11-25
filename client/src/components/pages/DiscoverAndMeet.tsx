@@ -8,7 +8,7 @@ import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
 import { getUsers, getUsersById } from '../../api/users';
-import { Tag, Skill, UserPreview, ProjectPreview, UserDetail } from '@looking-for-group/shared';
+import { Tag, Skill, UserPreview, ProjectPreview } from '@looking-for-group/shared';
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'
@@ -26,6 +26,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     project_type: string;
   }
 
+  //what is this
   interface Item {
     tags?: Tag[];
     title?: string;
@@ -105,7 +106,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [filteredItemList, setFilteredItemList] = useState<Item[]>([]);
 
   // Need this for searching
-  let tempItemList: Item[] = fullItemList;
+  const tempItemList: Item[] = fullItemList;
 
   // List that holds trimmed data for searching. Empty before fullItemList is initialized
   const [itemSearchData, setItemSearchData] = useState<Item[]>([]);
@@ -146,46 +147,31 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     The function also handles errors and updates the state with the fetched data.
     It uses the getAuth function to get the user ID for follow functionality.
   */
+
+  useEffect(() => {
   const getData = async () => {
     // Get user profile
     await getAuth();
 
     try {
       const response = (category == 'projects') ? await getProjects() : await getUsers();
-
+      console.log(response);
+      
       const data = await response;
 
-      let newData: ProjectPreview[] | UserDetail[] = [];
-
-      // Get user detail for Profile Panels
-      if (data.data && category === 'profiles') {
-        const detailedUsers = await Promise.all(
-          (data.data as UserPreview[]).map(async (user: UserPreview) => {
-            const userDetails = await getUsersById(user.userId.toString());
-            return userDetails.data;
-          })
-        );
-        
-        newData = detailedUsers as UserDetail[];
-      }
-
-      if (data.data && category === 'projects') {
-        newData = data.data as ProjectPreview[];
-      }
-
       // Don't assign if there's no array returned
-      if (newData) {
-        setFullItemList(newData);
-        setFilteredItemList(newData);
+      if (data.data) {
+        setFullItemList(data.data);
+        setFilteredItemList(data.data);
         setItemSearchData(
 
           // loop through JSON, get data based on category
-          newData.map((item) => {
+          data.data.map((item) => {
             if (category === 'projects') {
               const project = item as ProjectPreview;
               return { name: project.title, description: project.hook };
             } else {
-              const user = item as UserDetail;
+              const user = item as UserPreview;
               return {
                 name: `${user.firstName} ${user.lastName}`,
                 username: user.username,
@@ -205,8 +191,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
     setDataLoaded(true);
   };
-
-  useEffect(() => {
     getData();
   }, []);
 
@@ -301,10 +285,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             matchesAny = true;
           } 
           // Check role and major by name since IDs are not unique relative to tags
-          //i think i'm beginning to understand
-          //did the old team combine all the separate kinds of designations (roles, majors, skills, etc) into just "tags"?
-          //which is why all of these are expected to be types that come from a Tag[]?
-          //what do i do about that... it sounds like this would have to fundamentally be changed to work with the new system
           else if (tag.type === 'Role' && item.job_title) { 
               if (item.job_title.toLowerCase() === tag.label.toLowerCase()) {
                 matchesAny = true;
@@ -333,7 +313,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   return (
     <div className="page">
       {/* Search bar and profile/notification buttons */}
-      <Header dataSets={dataSet} onSearch={searchItems} />
+      <Header dataSets={dataSet} onSearch={searchItems} value={undefined} onChange={undefined} />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 

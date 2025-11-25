@@ -1,10 +1,10 @@
 // --- Imports ---
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState, useContext } from "react";
 import {
   CreateProjectImageInput,
   ProjectImage,
 } from "@looking-for-group/shared";
-import { PopupButton } from "../../Popup";
+import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
@@ -50,6 +50,10 @@ export const MediaTab = ({
   //but now it can! because i've put the entire project image into the thumbnail you can just check that directly
   //no more roundabout silliness
   //const [comparedIndices, setComparedIndices] = useState<boolean[]>([]);
+
+  const [imageError, setImageError] = useState<string | null>(null);
+
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
@@ -109,16 +113,20 @@ export const MediaTab = ({
         const imageFile = await stringToFile(image.image);
         // compare
         if (file.name === imageFile.name && file.size === imageFile.size && file.webkitRelativePath === imageFile.webkitRelativePath) {
-          // TODO: add error to show users cannot add duplicate imag
+          // TODO: add error to show users cannot add duplicate image
+          setImageError("*Sorry, no duplicate images here!*")
           return;
         }
       } else {
         if (file.name === image.image?.name && file.size === image.image?.size && file.webkitRelativePath === image.image?.webkitRelativePath) {
           // TODO: add error to show users cannot add duplicate image
+           setImageError("*Sorry, no duplicate images here!*")
           return;
         }
       }
     }
+
+    setImageError(null);
 
     // Uploading image to backend
     try {
@@ -357,6 +365,14 @@ export const MediaTab = ({
         Upload images that showcase your project. Select one image to be used as
         the main thumbnail on the project's discover card.
       </div>
+
+      {/* Display warning upon duplicate image */}
+      {imageError && (
+        <div id="invalid-input-error">
+          <p>{imageError}</p>
+        </div>
+      )}
+
       <div id="project-editor-image-ui">
         {projectAfterMediaChanges.projectImages?.map((projectImage) => (
           <div
@@ -441,13 +457,25 @@ export const MediaTab = ({
 
       {/* Save button */}
       <div id="general-save-info">
-        <PopupButton
-          buttonId="project-editor-save"
-          callback={saveProject}
-          doNotClose={() => failCheck}
-        >
-          Save Changes
-        </PopupButton>
+              <Popup>
+                <PopupButton
+                  buttonId="project-editor-save"
+                  doNotClose={() => failCheck}
+                >
+                  Save Changes
+                </PopupButton>
+                  <PopupContent useClose={false}>
+                    <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                  <div id="confirm-editor-save">
+                 <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                   Confirm
+                 </PopupButton>
+                 <PopupButton buttonId="team-edit-member-cancel-button" >
+                   Cancel
+                 </PopupButton>
+                 </div>
+                  </PopupContent>
+              </Popup>
       </div>
     </div>
   );

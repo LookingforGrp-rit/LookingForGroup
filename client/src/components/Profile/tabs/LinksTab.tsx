@@ -1,20 +1,27 @@
 import React, { useState, useEffect } from 'react';
-import { getCurrentUsername, getUsersById, getSocials } from '../../../api/users';
+import { getUsersById, getSocials } from '../../../api/users';
 import { UserSocial, Social, MeDetail } from '@looking-for-group/shared';
+import { getByID } from '../../../api/projects';
 import { Select, SelectButton, SelectOptions } from '../../Select';
 import { ThemeIcon } from '../../ThemeIcon';
 import { Input } from '../../Input';
 
 interface LinksTabProps {
   profile: MeDetail;
-  setProfile: React.Dispatch<React.SetStateAction<MeDetail>>
+  setProfile: React.Dispatch<React.SetStateAction<MeDetail>>;
+  // optional: when provided, component will show read-only project socials (and owner contact)
+  projectId?: number;
 }
 
-export const LinksTab: React.FC<LinksTabProps> = ({ profile, setProfile }) => {
+export const LinksTab: React.FC<LinksTabProps> = ({ profile, setProfile, projectId }) => {
   const [socials, setSocials] = useState<UserSocial[]>(profile.socials || []);
 
   // complete list of socials
   const [allSocials, setAllSocials] = useState<Social[]>([]);
+
+  // If projectId is provided, we'll fetch project owner & project socials
+  const [projectOwner, setProjectOwner] = useState<any | null>(null);
+  const [projectSocials, setProjectSocials] = useState<any[]>([]);
 
   // Get social option data
   useEffect(() => {
@@ -35,6 +42,39 @@ export const LinksTab: React.FC<LinksTabProps> = ({ profile, setProfile }) => {
     getAllSocials();
   }, []);
 
+  // If a projectId was passed in use it to fetch project info (owner + socials)
+  useEffect(() => {
+    const fetchProject = async () => {
+      if (!projectId) return;
+      try {
+        const resp = await getByID(projectId);
+        if (resp?.data) {
+          const proj = resp.data as any;
+          // project owner might be included on the project object
+          if (proj.owner) {
+            // if owner is a full user object use it, otherwise try to fetch by id
+            if (proj.owner.userId && proj.owner.firstName) {
+              setProjectOwner(proj.owner);
+            } else if (proj.owner.userId) {
+              try {
+                const ownerResp = await getUsersById(proj.owner.userId.toString());
+                if (ownerResp?.data) setProjectOwner(ownerResp.data);
+              } catch (e) {
+                console.error('Error fetching project owner details:', e);
+              }
+            }
+          }
+
+          // project socials
+          if (proj.socials) setProjectSocials(proj.socials);
+        }
+      } catch (err) {
+        console.error('Error fetching project details:', err);
+      }
+    };
+    fetchProject();
+  }, [projectId]);
+
   
   useEffect(() => {
   setProfile(prev => ({
@@ -44,6 +84,88 @@ export const LinksTab: React.FC<LinksTabProps> = ({ profile, setProfile }) => {
 }, [socials]);
 
   // Tab Component ----------------------
+  // If projectId is provided, render read-only project socials + owner contact
+  if (projectId) {
+    return (
+      <div id="editor-links">
+        {projectOwner && (
+          <div id="editor-contact-info">
+            <div className="editor-header">Contact Project Owner</div>
+            <div className="editor-extra-info">
+              Connect with {projectOwner.firstName} {projectOwner.lastName} through their social profiles.
+            </div>
+
+                {projectOwner.socials && projectOwner.socials.length > 0 ? (
+              <div className="contact-socials-grid">
+                {projectOwner.socials.map((social: { label: string; url: string }, index: number) => (
+                  <a
+                    key={index}
+                    href={social.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="contact-social-link"
+                    title={`Contact via ${social.label}`}
+                  >
+                    <ThemeIcon
+                      width={20}
+                      height={20}
+                      id={
+                        social.label === 'Other' ? 'link' :
+                        social.label === 'Twitter' ? 'x' :
+                        social.label.toLowerCase()
+                      }
+                      className="mono-fill"
+                      ariaLabel={social.label}
+                    />
+                    <span>{social.label}</span>
+                  </a>
+                ))}
+              </div>
+            ) : (
+              <div className="no-contact-info">No contact information available for this project owner.</div>
+            )}
+          </div>
+        )}
+
+        <div className="editor-header">Project Social Links</div>
+        <div className="editor-extra-info">Provide the links to pages you wish to include on the project page.</div>
+
+        <div id="editor-link-list">
+          {projectSocials && projectSocials.length > 0 ? (
+            <div className="contact-socials-grid">
+              {projectSocials.map((social: { label: string; url: string }, idx: number) => (
+                <a
+                  key={idx}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-social-link"
+                  title={`Visit ${social.label}`}
+                >
+                  <ThemeIcon
+                    width={20}
+                    height={20}
+                    id={
+                      social.label === 'Other' ? 'link' :
+                      social.label === 'Twitter' ? 'x' :
+                      social.label.toLowerCase()
+                    }
+                    className="mono-fill"
+                    ariaLabel={social.label}
+                  />
+                  <span>{social.label}</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="no-contact-info">No social links available for this project.</div>
+          )}
+        </div>
+      </div>
+    );
+  }
+
+  // Otherwise render the editable profile socials UI
   return (
     <div id="editor-links">
       <div className="editor-header">Social Links</div>
@@ -61,21 +183,23 @@ export const LinksTab: React.FC<LinksTabProps> = ({ profile, setProfile }) => {
               <SelectButton
                 placeholder='Select'
                 initialVal={
-                  social.label !== '' && <>
-                    <ThemeIcon
-                      width={20}
-                      height={20}
-                      id={
-                        social.label === 'Other' ? 'link' :
-                        // TODO: revisit twitter/x label
-                        social.label === 'Twitter' ? 'x' :
-                        social.label.toLowerCase()
-                      }
-                      className={'mono-fill'}
-                      ariaLabel={social.label}
-                    />
-                    {social.label}
-                  </>
+                  social.label !== '' ? (
+                    <>
+                      <ThemeIcon
+                        width={20}
+                        height={20}
+                        id={
+                          social.label === 'Other' ? 'link' :
+                          // TODO: revisit twitter/x label
+                          social.label === 'Twitter' ? 'x' :
+                          social.label.toLowerCase()
+                        }
+                        className={'mono-fill'}
+                        ariaLabel={social.label}
+                      />
+                      {social.label}
+                    </>
+                  ) as unknown as string : undefined
                 }
                 className='link-select'
                 type={"input"}

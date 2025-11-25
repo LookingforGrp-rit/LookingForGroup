@@ -8,6 +8,7 @@ import { PagePopup } from './PagePopup';
 import { getByID,  deleteProject } from '../api/projects';
 import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
+import { ThemeIcon } from './ThemeIcon';
 
 //backend base url for getting images
 
@@ -96,59 +97,68 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
 
       {/* Options */}
       <Dropdown>
-        <DropdownButton buttonId="list-card-options-button">•••</DropdownButton>
+        <DropdownButton buttonId="list-card-options-button">
+          <ThemeIcon id={'menu'} width={25} height={5} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
+        </DropdownButton>
         <DropdownContent rightAlign={true}>
-          <div className={`list-card-options-list show`}>
+          <div className={`card-options-list ${optionsShown ? 'show' : ''}`}>
             <Popup>
               <PopupButton className='card-leave-button'>
-                <i
-                  className='fa-solid fa-arrow-right-from-bracket'
-                  style={{ fontStyle: 'normal', transform: 'rotate(180deg)' }}
-                ></i>
-                &nbsp; Leave Project
+                <ThemeIcon
+                  id={"logout"}
+                  width={21}
+                  height={21}
+                  ariaLabel={"Leave project"}
+                  className="mono-fill"
+                />
+                Leave Project
               </PopupButton>
               <PopupContent>
                 <div className='small-popup'>
                   <h3>Leave Project</h3>
                   <p className='confirm-msg'>
-                    Are you sure you want to leave this project? You won't be able
+                    Are you sure you want to leave <span className="project-info-highlight">{projectData.title}</span>? You won't be able
                     to rejoin unless you're re-added by a project member.
                   </p>
                   <div className='confirm-deny-btns'>
-                    <PopupButton className='confirm-btn' callback={handleLeaveProject}>
-                      Confirm
+                    <PopupButton
+                      className='confirm-btn'
+                      callback={handleLeaveProject}>
+                        Leave
                     </PopupButton>
                     <PopupButton className='deny-btn'>Cancel</PopupButton>
                   </div>
                 </div>
               </PopupContent>
             </Popup>
-            {(isOwner) ? (
+            {(isOwner) && (
               <Popup>
                 <PopupButton className='card-delete-button'>
-                  <i
-                    className='fa-solid fa-trash-can'
-                    style={{ fontStyle: 'normal', color: 'var(--error-delete-color)' }}
-                  ></i>
-                  &nbsp; Delete Project
+                  <ThemeIcon
+                    id="trash"
+                    width={21}
+                    height={21}
+                    ariaLabel="Delete project"
+                  />
+                  Delete Project
                 </PopupButton>
                 <PopupContent>
                   <div className='small-popup'>
                     <h3>Delete Project</h3>
                     <p className='confirm-msg'>
-                      Are you sure you want to delete this project? This action cannot be undone.
+                      Are you sure you want to delete <span className="project-info-highlight">{projectData.title}</span>? This action cannot be undone.
                     </p>
                     <div className='confirm-deny-btns'>
-                      <PopupButton className='confirm-btn' callback={handleDeleteProject}>
-                        Confirm
+                      <PopupButton
+                        className='confirm-btn delete-button'
+                        callback={handleDeleteProject}>
+                          Delete
                       </PopupButton>
                       <PopupButton className='deny-btn'>Cancel</PopupButton>
                     </div>
                   </div>
                 </PopupContent>
               </Popup>
-            ) : (
-              <></>
             )}
           </div>
         </DropdownContent>

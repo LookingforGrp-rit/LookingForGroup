@@ -9,6 +9,9 @@ import { projects } from '../../constants/fakeData'; // FIXME: use data in db
 import profilePlaceholder from '../../icons/profile-user.png';
 import { ThemeIcon } from '../ThemeIcon';
 
+// TODO: this file is old and not used. Has good information regarding past designs and intended userflow, so keep until this is
+// properly documented and can be implemented in the future
+
 // Page header that displays for users that are members of the project
 // Includes options to access project settings, leave the project, and edit what is displayed in the 'looking for' window
 // May need further variants depending on whether the user is a regular member, an admin, or the owner

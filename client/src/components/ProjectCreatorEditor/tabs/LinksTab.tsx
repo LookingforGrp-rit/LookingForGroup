@@ -1,7 +1,7 @@
 // --- Imports ---
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { PopupButton } from "../../Popup";
+import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { AddProjectSocialInput, Social, UserDetail } from "@looking-for-group/shared";
 import { Input } from "../../Input";
 import { getSocials, getUsersById } from "../../../api/users";
@@ -42,6 +42,8 @@ projectAfterLinkChanges = structuredClone(projectData);
   const [error] = useState('');
   // project owner details with social links
   const [projectOwner, setProjectOwner] = useState<UserDetail | null>(null);
+
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
 
 
@@ -88,7 +90,6 @@ projectAfterLinkChanges = structuredClone(projectData);
 
   // --- Complete component ---
   return (
-    // TODO: refactor styles for project and profile editor
     <div id="editor-links">
       {/* Contact Information Section */}
       {projectOwner && (
@@ -301,9 +302,25 @@ projectAfterLinkChanges = structuredClone(projectData);
         </div>
       </div>
       <div id="link-save-info">
-        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => failCheck}>
-          Save Changes
-        </PopupButton>
+              <Popup>
+                <PopupButton
+                  buttonId="project-editor-save"
+                  doNotClose={() => failCheck}
+                >
+                  Save Changes
+                </PopupButton>
+                  <PopupContent useClose={false}>
+                    <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                  <div id="confirm-editor-save">
+                 <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                   Confirm
+                 </PopupButton>
+                 <PopupButton buttonId="team-edit-member-cancel-button" >
+                   Cancel
+                 </PopupButton>
+                 </div>
+                  </PopupContent>
+              </Popup>
       </div>
     </div>
   );

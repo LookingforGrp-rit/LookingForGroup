@@ -1078,6 +1078,7 @@ New Profile page style rules
       > #profile-top-row {
         display: flex;
         justify-content: space-between;
+        align-items: center;
 
         > #profile-names {
           display: flex;
@@ -1112,13 +1113,6 @@ New Profile page style rules
           overflow-wrap: break-word;
           word-break: break-word;
           width: fit-content;
-          justify-self: end;
-          align-self: start;
-
-          #project-info-edit {
-            padding: 10px;  
-            font-size: 20px;
-          }
 
           #heart-empty {
             stroke: #F14F76;
@@ -1306,22 +1300,6 @@ New Profile page style rules
   width: 100%;
 }
 
-/* Fix overlap issues */
-#profile-editor-content {
-  position: relative;
-}
-
-#profile-editor-content>div {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-}
-
-#profile-editor-content>div:not(.hidden) {
-  position: relative;
-}
-
 /* #profile-discover-column {
   min-width: 350px;
   padding:50px 50px 50px 0;
@@ -1440,10 +1418,6 @@ New Profile page style rules
     /* vertical-align:bottom actually vertically centers these icons within their buttons! */
     vertical-align: bottom;
   }
-}
-
-#profile-buttons > * {
-  cursor: pointer;
 }
 
 #profile-buttons > .dropdown-container > button {

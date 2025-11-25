@@ -1,6 +1,6 @@
 // --- Imports ---
-import { JSX, useCallback, useEffect, useMemo, useState } from "react";
-import { Popup, PopupButton, PopupContent } from "../../Popup";
+import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
+import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
 import profileImage from "../../../images/blue_frog.png";
 import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
@@ -32,6 +32,7 @@ import {
   PendingProjectMember,
 } from "@looking-for-group/client";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
+import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 
 // --- Variables ---
 // Default project value
@@ -138,6 +139,8 @@ export const TeamTab = ({
   const isNullOrUndefined = (value: unknown | null | undefined) => {
     return value === null || value === undefined;
   };
+
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   // Update parent state with error message
   useEffect(() => {
@@ -336,12 +339,10 @@ export const TeamTab = ({
       // prompt user of successfully added member
       setSuccessAddMember(true);
       setErrorAddMember(
-        // FIXME why is this set as an error
         `${currentMember.user.firstName} ${currentMember.user.lastName} added to team!`
       );
 
-      // FIXME what is the delay for? //it's the visualeffect for the error text
-      // reset prompt to clear
+      // reset prompt to clear visual effect of error text
       setTimeout(() => {
         setErrorAddMember("");
         setSuccessAddMember(false);
@@ -511,12 +512,15 @@ export const TeamTab = ({
         });
       }
 
-      projectAfterTeamChanges.jobs = projectAfterTeamChanges.jobs.filter((job) => 
-        ("jobId" in currentJob && "jobId" in job && job.jobId !== currentJob.jobId) ||
-        ("localId" in currentJob && "localId" in job && job.localId !== currentJob.localId)
-      )
+      const updatedProject = {
+        ...projectAfterTeamChanges,
+        jobs: projectAfterTeamChanges.jobs.filter((job) =>
+          ("jobId" in currentJob && "jobId" in job && job.jobId !== currentJob.jobId) ||
+          ("localId" in currentJob && "localId" in job && job.jobId !== currentJob.localId)
+        )
+      };
 
-      updatePendingProject(projectAfterTeamChanges);
+      updatePendingProject(updatedProject);
     }
 
     // filter out position
@@ -716,7 +720,12 @@ export const TeamTab = ({
       </div>
       <Popup>
         <PopupButton className="delete-position-button button-reset">
-          <img src="/images/icons/delete-red.svg" alt="trash can" />
+          <ThemeIcon
+            id="trash"
+            width={21}
+            height={21}
+            ariaLabel="Delete position"
+          />
         </PopupButton>
         <PopupContent useClose={false}>
           <div id="project-team-delete-member-title">Delete Position</div>
@@ -1053,7 +1062,6 @@ export const TeamTab = ({
             />
             <div className="project-editor-project-member-info">
               <div className="project-editor-project-member-name">
-                {/* TODO add current user */}
                 {member.user?.firstName} {member.user?.lastName}
               </div>
               <div className="project-editor-project-member-role project-editor-extra-info">
@@ -1477,13 +1485,25 @@ export const TeamTab = ({
       <div id="project-editor-team-content">{teamTabContent}</div>
 
       <div id="team-save-info">
+       <Popup>
         <PopupButton
           buttonId="project-editor-save"
-          callback={saveProject}
           doNotClose={() => failCheck}
         >
           Save Changes
         </PopupButton>
+          <PopupContent useClose={false}>
+            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+          <div id="confirm-editor-save">
+         <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+           Confirm
+         </PopupButton>
+         <PopupButton buttonId="team-edit-member-cancel-button" >
+           Cancel
+         </PopupButton>
+         </div>
+          </PopupContent>
+      </Popup>
       </div>
     </div>
   );

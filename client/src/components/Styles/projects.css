@@ -358,22 +358,26 @@ Project Creator and Editor style rules
   margin: auto;
 }
 
-.save-error-msg p, .save-error-msg-general p {
+.save-error-msg p, .save-error-msg-general p, #invalid-input-error p {
   margin: 0 0 1.5% 0;
   font-size: 18px;
   color: red;
 }
 
+#invalid-input-error {
+  padding: 10px;
+}
+
 #project-editor-content {
   flex-grow: 1;
-  margin: 35px 56px 26px 55px;
+  margin: 35px 56px 0 55px;
 
   > * {
     max-height: 710px;
   }
 }
 
-#project-editor-content label:not(#drop-area),
+#project-editor-content label:not(.drop-area),
 #project-team-add-member-title,
 #team-add-member-cancel-button,
 #project-team-edit-member-title,
@@ -382,7 +386,7 @@ Project Creator and Editor style rules
 #team-delete-member-cancel-button {
   color: var(--primary-color);
   background-color: transparent;
-  font-size: 2ch;
+  font-size: 20px;
   font-weight: 700;
   border: none;
 }
@@ -407,7 +411,7 @@ Project Creator and Editor style rules
   flex-grow: 1;
   background-color: var(--bg-color);
   color: var(--main-text);
-  font-size: 1.6ch;
+  font-size: 15px;
   outline: none;
 }
 
@@ -426,7 +430,7 @@ Project Creator and Editor style rules
 
 .project-editor-extra-info {
   font-style: italic;
-  font-size: 0.8rem;
+  font-size: 14px;
   color: var(--neutral-gray);
 }
 
@@ -811,7 +815,7 @@ Project Creator and Editor style rules
 
 .project-editor-section-header {
   color: var(--primary-color);
-  font-size: 1rem;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -838,8 +842,10 @@ Project Creator and Editor style rules
   }
 }
 
-#project-editor-team-tabs {
-  gap: 50px;
+
+#project-editor-team-tabs,
+#project-editor-tag-search-tabs {
+  gap: 38px;
   justify-content: center;
 }
 
@@ -884,6 +890,18 @@ Project Creator and Editor style rules
   display: flex;
   align-items: center;
   margin-top: auto;
+}
+
+#confirm-editor-save {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding-bottom: 20px;
+}
+
+#confirm-editor-save-text {
+  padding: 50px;
+  font-size: 20px;
 }
 
 #project-editor-project-members {
@@ -2698,7 +2716,7 @@ Project Carousel style rules
   background-color: var(--create-bg) !important;
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
   transition: 0.25s;
-}
+} */
 
 #project-info-edit:focus-visible{
   outline: none !important;

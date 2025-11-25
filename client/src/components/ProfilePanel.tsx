@@ -3,16 +3,47 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
 import usePreloadedImage from '../functions/imageLoad';
-import { MeDetail } from '@looking-for-group/shared';
+import { UserPreview } from '@looking-for-group/shared';
+import { useEffect, useState } from 'react';
+import { getCurrentAccount, getUsersById } from '../api/users';
 
 interface ProfilePanelProps {
-  profileData: MeDetail;
+  profileData: UserPreview;
 }
 
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
+
   const navigate = useNavigate();
   const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
-
+  const majorsArr = profileData.majors?.map((maj) => maj.label);
+  
+  //follow stuff
+  const [userId, setUserId] = useState<number>();
+  const [isFollow, setIsFollow] = useState<boolean>(false);
+    useEffect(() => {
+      const getFollowData = async () => {
+        //get our current user so we can check their follow status
+        const userResp = await getCurrentAccount();
+        if(userResp.data) setUserId(userResp.data.userId);
+        
+        //get the displayed user (again...) so we have their followers
+        //because followers are currently not in the profileData
+        //easiest way to do this would be to just put the followers into the userPreview...
+        //...but that turned out to be way too much trouble than what it was worth so i'm doing this instead
+        const otherUserResp = await getUsersById(profileData.userId);
+        if (otherUserResp.data) { 
+          otherUserResp.data.followers.users.map((user) => {
+            if(user.user.userId === userId) {
+              setIsFollow(true);
+              return;
+            }
+          })
+          
+        }
+      };
+        getFollowData();
+    }, [profileData.userId, userId])
+    
   return (
     <div className={'profile-panel'}>
       <img
@@ -22,27 +53,23 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
       <h2>
         {profileData.firstName} {profileData.lastName}
       </h2>
-      <h3>{profileData.majors?.join(', ') || ''}</h3>
+      <h3>{majorsArr.join(', ') || ''}</h3>
       <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
 
       <div className={'profile-panel-hover'} onClick={() => navigate(profileURL)}>
 
-        {/* Heart to follow */}
-        {/* TODO: if user is following */}
-        {/* <ThemeIcon
+        {isFollow ? <ThemeIcon
           width={30}
           height={27}
           id={"heart-filled"}
           ariaLabel="unfollow profile"
-        /> */}
-
-        {/* TODO: if user is not following */}
-        <ThemeIcon
+        />
+        : <ThemeIcon
           width={30}
           height={27}
           id={"heart-empty"}
           ariaLabel="follow profile"
-        />
+        />}
         
         {/* List of items */}
         <div className={'profile-panel-hover-item'}>
