@@ -1,9 +1,9 @@
 // --- Imports ---
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getProjectTypes, getTags } from "../../../api/users";
 import { Tag, Medium, TagType} from "@looking-for-group/shared";
-import { PopupButton } from "../../Popup";
+import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { PendingProject} from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 
@@ -67,6 +67,8 @@ export const TagsTab = ({
 
   //filtered results from tag search bar
   const [searchedTags, setSearchedTags] = useState<unknown[]>([]);
+
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   // Get full lists of mediums, tags
   useEffect(() => {
@@ -562,13 +564,25 @@ export const TagsTab = ({
         <div id="invalid-input-error" className={"save-error-msg-general"}>
           <p>*Fill out all required info before saving!*</p>
         </div>
+        <Popup>
         <PopupButton
           buttonId="project-editor-save"
-          callback={saveProject}
           doNotClose={() => failCheck}
         >
           Save Changes
         </PopupButton>
+          <PopupContent useClose={false}>
+            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+          <div id="confirm-editor-save">
+         <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+           Confirm
+         </PopupButton>
+         <PopupButton buttonId="team-edit-member-cancel-button" >
+           Cancel
+         </PopupButton>
+         </div>
+          </PopupContent>
+      </Popup>
       </div>
     </div>
   );

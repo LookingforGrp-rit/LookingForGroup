@@ -31,7 +31,7 @@ interface PopupContextType {
 }
 
 //Create context to be used throughout component on popup's visibility state
-const PopupContext = createContext<PopupContextType>({
+export const PopupContext = createContext<PopupContextType>({
   open: false,
   setOpen: () => { },
 });
@@ -43,18 +43,21 @@ export const PopupButton = ({
   className = '',
   callback = async () => { },
   doNotClose = () => false,
+  closeParent,
 }: {
   children: ReactNode;
   buttonId?: string;
   className?: string;
   callback?: () => void;
   doNotClose?: () => boolean;
+  closeParent?: () => void;
 }) => {
   const { open, setOpen } = useContext(PopupContext);
 
   const toggleOpen = () => {
     callback();
     setOpen(!open);
+    if (closeParent) closeParent();
   };
 
   if (doNotClose()) {
