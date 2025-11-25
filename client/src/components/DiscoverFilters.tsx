@@ -380,7 +380,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                                   : 'fa fa-plus'
                               }
                             ></i>
-                            &nbsp;{tag.label}
+                            <p>{tag.label}</p>
                           </button>
                         ))
                       )}
