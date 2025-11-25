@@ -1,10 +1,10 @@
 // --- Imports ---
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useContext } from "react";
 import {
   CreateProjectImageInput,
   ProjectImage,
 } from "@looking-for-group/shared";
-import { PopupButton } from "../../Popup";
+import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
@@ -52,6 +52,8 @@ export const MediaTab = ({
   //const [comparedIndices, setComparedIndices] = useState<boolean[]>([]);
 
   const [imageError, setImageError] = useState<string | null>(null);
+
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
@@ -455,13 +457,25 @@ export const MediaTab = ({
 
       {/* Save button */}
       <div id="general-save-info">
-        <PopupButton
-          buttonId="project-editor-save"
-          callback={saveProject}
-          doNotClose={() => failCheck}
-        >
-          Save Changes
-        </PopupButton>
+              <Popup>
+                <PopupButton
+                  buttonId="project-editor-save"
+                  doNotClose={() => failCheck}
+                >
+                  Save Changes
+                </PopupButton>
+                  <PopupContent useClose={false}>
+                    <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                  <div id="confirm-editor-save">
+                 <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                   Confirm
+                 </PopupButton>
+                 <PopupButton buttonId="team-edit-member-cancel-button" >
+                   Cancel
+                 </PopupButton>
+                 </div>
+                  </PopupContent>
+              </Popup>
       </div>
     </div>
   );

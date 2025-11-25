@@ -6,10 +6,11 @@ import {
   ProjectStatus
 } from "@looking-for-group/shared";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
-import { PopupButton } from '../../Popup';
+import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../../types/types";
+import { useContext } from "react";
 
 // --- Variables ---
 let projectAfterGeneralChanges: PendingProject;
@@ -47,6 +48,8 @@ export const GeneralTab = ({
   projectAfterGeneralChanges = structuredClone(projectData);
   
   const projectId = projectData.projectId!;
+
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   // // Textbox input callback: useRef to avoid unintended reset bugs TODO: is this needed? not used
   // const debouncedUpdatePendingProject = useRef(
@@ -275,13 +278,25 @@ export const GeneralTab = ({
         <div id="invalid-input-error" className={"save-error-msg-general"}>
           <p>*Fill out all required info before saving!*</p>
         </div>
-        <PopupButton
-          buttonId="project-editor-save"
-          callback={saveProject}
-          doNotClose={() => failCheck}
-        >
-          Save Changes
-        </PopupButton>
+              <Popup>
+                <PopupButton
+                  buttonId="project-editor-save"
+                  doNotClose={() => failCheck}
+                >
+                  Save Changes
+                </PopupButton>
+                  <PopupContent useClose={false}>
+                    <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                  <div id="confirm-editor-save">
+                 <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                   Confirm
+                 </PopupButton>
+                 <PopupButton buttonId="team-edit-member-cancel-button" >
+                   Cancel
+                 </PopupButton>
+                 </div>
+                  </PopupContent>
+              </Popup>
       </div>
     </div>
   );

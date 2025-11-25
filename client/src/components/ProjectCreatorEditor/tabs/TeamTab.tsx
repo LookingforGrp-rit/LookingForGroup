@@ -1,6 +1,6 @@
 // --- Imports ---
-import { JSX, useCallback, useEffect, useMemo, useState } from "react";
-import { Popup, PopupButton, PopupContent } from "../../Popup";
+import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
+import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
 import profileImage from "../../../images/blue_frog.png";
 import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
@@ -139,6 +139,8 @@ export const TeamTab = ({
   const isNullOrUndefined = (value: unknown | null | undefined) => {
     return value === null || value === undefined;
   };
+
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   // Update parent state with error message
   useEffect(() => {
@@ -1483,13 +1485,25 @@ export const TeamTab = ({
       <div id="project-editor-team-content">{teamTabContent}</div>
 
       <div id="team-save-info">
+       <Popup>
         <PopupButton
           buttonId="project-editor-save"
-          callback={saveProject}
           doNotClose={() => failCheck}
         >
           Save Changes
         </PopupButton>
+          <PopupContent useClose={false}>
+            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+          <div id="confirm-editor-save">
+         <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+           Confirm
+         </PopupButton>
+         <PopupButton buttonId="team-edit-member-cancel-button" >
+           Cancel
+         </PopupButton>
+         </div>
+          </PopupContent>
+      </Popup>
       </div>
     </div>
   );

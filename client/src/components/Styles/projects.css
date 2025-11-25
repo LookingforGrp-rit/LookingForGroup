@@ -340,12 +340,10 @@ Project Creator and Editor style rules
   padding: 10px 20px;
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
-  font-size: 20px;
+  font-size: 2ch;
   width: max-content;
   margin: auto;
   font-weight: 700;
-  margin-top: 37px;
-  margin-bottom: 28px;
 }
 
 #project-editor-save:hover {
@@ -457,6 +455,7 @@ Project Creator and Editor style rules
   grid-area: save;
   display: flex;
   flex-direction: column;
+  margin-top: 10px;
 }
 
 @media only screen and (max-width: 799px) {
@@ -826,6 +825,10 @@ Project Creator and Editor style rules
   justify-content: space-between;
 }
 
+#project-editor-tag-search-tabs {
+  overflow-x: auto;
+}
+
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
     flex-direction: column;
@@ -844,7 +847,6 @@ Project Creator and Editor style rules
 #project-editor-tag-search-tabs {
   gap: 38px;
   justify-content: center;
-  overflow-x: auto;
 }
 
 .project-editor-tag-search-tab {
@@ -888,6 +890,18 @@ Project Creator and Editor style rules
   display: flex;
   align-items: center;
   margin-top: auto;
+}
+
+#confirm-editor-save {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding-bottom: 20px;
+}
+
+#confirm-editor-save-text {
+  padding: 50px;
+  font-size: 20px;
 }
 
 #project-editor-project-members {
@@ -1212,6 +1226,7 @@ Project Creator and Editor style rules
   color: var(--invert-text);
   font-size: 2ch;
   width: max-content;
+  margin: auto min(1vw, 10px);
   font-weight: 700;
 }
 
@@ -1272,10 +1287,6 @@ Project Creator and Editor style rules
   position: absolute;
   bottom: 20px;
   right: 20px;
-
-  #trash {
-    stroke: #FF3859;
-  }
 }
 
 #team-positions-popup-list-buttons {
@@ -1947,6 +1958,78 @@ used to help wrap the lines around the word 'Members'*/
   font-weight: bolder;
 }
 
+/*rules used for the delete button & its relevant popup*/
+.deleteProject {
+  background: white;
+}
+
+.delete-popup-content {
+  color: var(--neutral-gray, #636363);
+  text-align: center;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: normal;
+  color: #271d66;
+  font-family: Inter;
+  font-size: 16px;
+  font-style: italic;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.delete-popup-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.project-delete-final {
+  display: flex;
+  width: 106px;
+  height: 40px;
+  padding: 0px 17px;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  border-radius: 55px;
+  background: #ff3859;
+  color: #f4f4f4;
+  text-align: center;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 28px;
+  /* 140% */
+}
+
+.project-delete-cancel {
+  background-color: transparent;
+  color: #271d66;
+  color: (--primary-color, red);
+  padding: 8px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  text-align: center;
+  font-family: Inter;
+  font-size: 20px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+}
+
+.project-delete-final:hover {
+  background-color: darkred;
+}
+
+.project-delete-cancel:hover {
+  background-color: darkgray;
+}
+
 /*rules for the area containing actual settings*/
 #settings-content {
   margin: 0 15%;
@@ -2522,19 +2605,10 @@ Project Carousel style rules
   grid-area: info;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 5px;
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
   padding: 20px;
-
-  #project-info-top {
-    display: flex;
-    flex-direction: column;
-    justify-content: start;
-    gap: 5px;
-  }
 }
 
 .project-info-highlight {
@@ -2543,20 +2617,22 @@ Project Carousel style rules
 
 #project-info-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
 
 #project-title {
-  font-size: 32px;
+  font-size: 3.5ch;
   font-weight: 700;
   color: var(--primary-color);
+  margin: 0 0 10px;
 }
 
 #project-info-buttons {
   display: flex;
   height: 28px;
+  margin-left: auto;
   align-items: center;
+  margin-bottom: 10px;
   /* For alignment with Project Title */
   gap: 7px;
 
@@ -2624,7 +2700,18 @@ Project Carousel style rules
   height: 25px;
 } */
 
-/* #project-info-edit:hover {
+#project-info-edit {
+  font-size: 1.8ch;
+  border: none;
+  border-radius: 30px;
+  background-color: var(--primary-color) !important;
+  color: var(--invert-text);
+  padding: 5px 20px;
+  width: 150px;
+  font-weight: 700;
+}
+
+#project-info-edit:hover {
   color: var(--create-text) !important;
   background-color: var(--create-bg) !important;
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
@@ -2635,41 +2722,30 @@ Project Carousel style rules
   outline: none !important;
 }
 
+#project-hook,
+#project-status,
+#project-creation {
+  margin: 10px 0;
+}
+
 #project-hook {
   flex-grow: 1;
 }
 
 #project-status {
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  align-items: center;
-  gap: 10px;
-
-  p {
-    color: var(--neutral-gray);
-    margin: 0;
-    font-style: italic;
-  }
+  font-style: italic;
+  color: var(--darkGray);
 }
 
-#project-info-edit,
-#project-open-positions-button,
-.project-people-tab,
-#project-open-positions-header {
+#project-open-positions-button {
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
   color: var(--invert-text);
   font-size: 16px;
   font-weight: 700;
-  line-height: 150%;
-  padding: 4px 16px;
-  width: fit-content;
-}
-#project-open-positions-header {
-  margin-left: auto;
-  margin-right: auto;
+  padding: 10px 20px;
+  margin-top: 10px;
 }
 
 #project-open-positions-popup {
@@ -3025,6 +3101,16 @@ button#positions-popup-list-item-active {
   gap: 10px;
 }
 
+.project-people-tab {
+  border: none;
+  border-radius: 30px;
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+  font-size: 16px;
+  padding: 5px 10px;
+  font-weight: 700;
+}
+
 /* TODO: restore styles when "The Team" is a button again (regards Contributor functionality) */
 /* .project-people-tab:hover,
 .project-people-tab-active {
@@ -3033,6 +3119,16 @@ button#positions-popup-list-item-active {
 
 #project-open-positions {
   grid-area: positions;
+}
+
+#project-open-positions-header {
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+  font-weight: 700;
+  padding: 5px 20px;
+  border-radius: 30px;
+  width: fit-content;
+  margin: 0 auto;
 }
 
 #project-open-positions-list {
@@ -3133,53 +3229,110 @@ My projects page style rules
   padding-left: 60px;
   padding-right: 64px;
 
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-
-  #project-info-create {
-    height: 40px;
-  }
+  display: grid;
+  grid-template-columns: auto;
+  grid-template-rows: auto auto auto auto;
+  column-gap: 1.46%;
+  row-gap: 2.92%;
+  margin-bottom: 5.92%;
 }
 
-/* @media (min-width: 420px) {
+@media (min-width: 420px) {
   .my-projects-header-row {
     grid-template-columns: auto max-content;
     grid-template-rows: auto max-content;
     margin-bottom: 0%;
   }
-} */
+}
 
-/* @media (min-width: 525px) {
+@media (min-width: 525px) {
   .my-projects-header-row {
     grid-template-columns: auto max-content max-content;
     grid-template-rows: auto;
     margin-bottom: 0%;
   }
-} */
+}
 
-/* @media ((min-width: 665px) and (max-width: 799px)) or (min-width: 885px) {
+@media ((min-width: 665px) and (max-width: 799px)) or (min-width: 885px) {
   .my-projects-header-row {
     grid-template-columns: auto max-content max-content max-content;
     margin-bottom: 0%;
   }
-} */
+}
 
-.my-projects-action-buttons {
+.my-projects-sort-list {
+  box-sizing: border-box;
+  background-color: var(--header-color);
+  border: 0px;
+  /* border-right: 15px solid var(--header-color); */
+  border-radius: 10px;
+  padding: 13.5px 15px;
+  color: var(--main-text);
+  font-size: 16px;
+  font-family: Inter, FontAwesome;
+  line-height: normal;
+  letter-spacing: 0%;
+  width: 160px;
   display: flex;
   flex-direction: row;
-  width: max-content;
-  gap: 15px;
-  align-items: center;
+  gap: 10px;
+  position: relative;
 
-  .arrow-az {
-    transform: rotate(180deg);
+  /* Placeholder text */
+  .sort-by {
+    color: var(--neutral-gray);
   }
 }
 
-#my-projects-sort-btn {
-  width: 160px;
+.my-projects-sort-list-dropdown {
+  box-sizing: border-box;
+  background-color: var(--dropdown-color);
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 var(--shadow-color);
+  display: flex;
+  flex-direction: column;
+  margin-top: 10px;
+
+  .my-projects-sort-list-btn {
+    background: none;
+    color: inherit;
+    border: none;
+    padding: 10px 15px;
+    font: inherit;
+    cursor: pointer;
+    outline: inherit;
+    width: 165px;
+    height: 40px;
+
+    gap: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  .my-projects-sort-list-btn.top {
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+
+  .my-projects-sort-list-btn.bottom {
+    border-bottom-left-radius: 10px;
+    border-bottom-right-radius: 10px;
+  }
+
+  .my-projects-sort-list-btn:hover {
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+
+    .fa-solid {
+      color: var(--invert-text) !important;
+    }
+  }
+}
+
+#my-projects-sort-btn:hover {
+  background-color: var(--invert-text);
+  box-shadow: 0 0 5px 0 var(--primary-color);
 }
 
 .my-projects-display-switch {
@@ -3217,15 +3370,13 @@ My projects page style rules
   background-color: var(--primary-color);
   color: var(--main-text);
 }
-.my-projects-display-switch .display-switch-option:not(#selected) i {
-  color: var(--primary-color);
-}
 
 .my-projects-display-switch .display-switch-option#selected .fa-solid {
   color: var(--invert-text);
 }
 
 .my-projects-all-projects-button,
+.my-projects-new-project-button,
 .my-projects-create-btn>button {
   box-sizing: border-box;
   width: fit-content;
@@ -3256,6 +3407,7 @@ My projects page style rules
 }
 
 .my-projects-all-projects-button:hover,
+.my-projects-new-project-button:hover,
 .my-projects-create-btn>button:hover {
   transform: scale(1.1);
   transition: 0.2s;
@@ -3302,10 +3454,11 @@ My projects page style rules
   width: fit-content;
   height: fit-content;
 
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  align-content: start;
+  display: grid;
+  grid-template-areas:
+    'image image'
+    'title options';
+  row-gap: 5px;
 }
 
 .grid-card-image {
@@ -3320,19 +3473,15 @@ My projects page style rules
   cursor: pointer;
 }
 
-.grid-card-details {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-}
-
 .grid-card-title {
+  grid-area: title;
   box-sizing: border-box;
   color: var(--primary-color);
   text-align: left;
   width: 150px;
-  text-wrap: wrap;
+  text-wrap-mode: nowrap;
+  overflow: clip;
+  text-overflow: ellipsis;
   font-size: 16px;
   font-family: Inter;
   font-weight: bold;
@@ -3353,7 +3502,8 @@ My projects page style rules
 }
 
 .dropdown-container:has(#grid-card-options-button) {
-  align-self: start;
+  grid-area: options;
+  margin: 0 0 auto auto;
 }
 
 .grid-card-options-button,
@@ -3364,6 +3514,7 @@ My projects page style rules
   border-radius: 20px;
   color: var(--main-text);
   margin: 0px;
+  /* padding: 0px; */
   text-align: right;
   font-size: 12px;
   font-family: Inter;
@@ -3376,39 +3527,25 @@ My projects page style rules
   background-color: var(--border-color);
 }
 
-.dropdown:has(.card-options-list) {
+.dropdown:has(.grid-card-options-list) {
   box-sizing: border-box;
   border: 0px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }
 
-.card-options-list {
-  position: absolute;
-  right: 0;
+.grid-card-options-list {
   box-sizing: border-box;
   background-color: var(--dropdown-color);
   border: 0px;
   border-radius: 10px;
-  width: 154px;
+  width: max-content;
   height: fit-content;
-  padding: 15px;
+  padding: 10px 10px;
   z-index: 1;
 
   display: flex;
   flex-direction: column;
-  gap: 10px;
-
-  button {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0;
-
-    #trash use {
-      stroke: #FF3859;
-    }
-  }
 }
 
 .my-projects-list {
@@ -3424,45 +3561,30 @@ My projects page style rules
 
 .my-projects-list-header {
   box-sizing: border-box;
-  margin: 0 64px 0 60px;
-  padding-right: 80px;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  padding-left: 60px;
+  padding-right: 64px;
 
-  display: flex;
-  flex-direction: row;
-  justify-content: start;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: 54% 27% auto 6.8%;
 }
 
 .project-header-label {
   color: var(--primary-color);
   text-align: left;
-  font-size: 20px;
+  font-size: 18px;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
 }
-.project-header-label.title {
-  max-width: 610px;
-  width: 610px;
-}
-.project-header-label.date {
-  text-align: right;
-  flex-grow: 1;
-}
 
 .my-project-list-card {
   box-sizing: border-box;
 
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-
-  .dropdown-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
+  display: grid;
+  grid-template-columns: 54.4% 27.6% auto 6.8%;
 }
 
 .my-project-list-card {
@@ -3472,25 +3594,23 @@ My projects page style rules
   border-radius: 10px;
   height: fit-content;
   padding: 10px 20px 10px 10px;
-  font-size: 20px;
 }
 
 .list-card-section1 {
   box-sizing: border-box;
-  width: 600px;
 
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 20px;
+  column-gap: 20px;
 }
 
 .list-card-image {
   box-sizing: border-box;
   border: 0px;
   border-radius: 10px;
-  width: 160px;
-  height: 80px;
+  width: 150px;
+  height: 70px;
   object-fit: cover;
   cursor: pointer;
 }
@@ -3499,13 +3619,12 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--primary-color);
   text-align: left;
-  font-size: 20px;
+  font-size: 18px;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
   cursor: pointer;
-  width: 100%;
 }
 
 .list-card-title:hover {
@@ -3516,7 +3635,7 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main-text);
   text-align: left;
-  font-size: 20px;
+  font-size: 16px;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
@@ -3530,36 +3649,66 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main--text);
   text-align: right;
-  font-size: 20px;
+  font-size: 16px;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
   letter-spacing: 0%;
 
   display: flex;
-  justify-content: end;
   align-items: center;
-  flex-grow: 1;
 }
 
-#list-card-options-button {
+.list-card-options {
   position: relative;
+  text-align: left;
+
+  display: inline-block;
+}
+
+.list-card-options-button,
+#list-card-options-button {
   box-sizing: border-box;
   background-color: #00000000;
   border: 0px;
   border-radius: 0px;
   color: var(--primary-color);
-  height: min-content;
-  padding: 0;
-  margin-left: 10px;
+  margin-top: 20px;
+  margin-left: 20px;
+  padding: 0px;
+  text-align: center;
+  font-size: 18px;
+  font-family: Inter;
+  font-weight: normal;
+  line-height: 28px;
+  letter-spacing: 2px;
+}
+
+.dropdown:has(.list-card-options-list) {
+  box-sizing: border-box;
+  border: 0px;
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px var(--shadow-color);
+}
+
+.list-card-options-list {
+  box-sizing: border-box;
+  background-color: var(--bg-color);
+  border: 0px;
+  border-radius: 10px;
+  width: max-content;
+  height: fit-content;
+  padding: 10px;
+  z-index: 1;
 
   display: flex;
-  align-items: center;
-
-  svg {
-    padding: 11.5px 7.5px;
-  }
+  flex-direction: column;
 }
+
+/* .list-card-options-list.show {
+  display: flex;
+  flex-direction: column;
+} */
 
 .card-leave-button,
 .card-delete-button {
@@ -3570,9 +3719,8 @@ My projects page style rules
   margin: 0px;
   padding: 5px 5px;
   text-align: left;
-  font-family: Inter;
+  font-family: Inter, FontAwesome;
   transition: background-color 0.2s;
-  font-size: 14px;
 }
 
 .card-delete-button {
@@ -3585,7 +3733,8 @@ My projects page style rules
   transition: background-color 0.2s;
 }
 
-.card-options-list .small-popup {
+.grid-card-options-list .small-popup,
+.list-card-options-list .small-popup {
   h3 {
     font-size: 20px;
     font-weight: 700;
@@ -3606,13 +3755,20 @@ My projects page style rules
     margin: 0 0 15px 0;
     color: var(--neutral-gray);
     font-style: italic;
-    text-align: center;
-    font-size: 16px;
+
+    span {
+      color: var(--neutral-gray);
+      font-style: italic;
+    }
   }
 
   .confirm-deny-btns {
     display: flex;
     flex-direction: row;
+
+    button {
+      margin: 5px;
+    }
   }
 
   .confirm-btn {
@@ -3621,10 +3777,9 @@ My projects page style rules
     box-shadow: none;
     font-size: 20px;
     font-weight: 700;
-    line-height: 28px;
     color: var(--invert-text);
     background-color: var(--primary-color);
-    padding: 6px 24px;
+    padding: 10px 17px;
     border-radius: 55px;
     min-width: 106px;
     width: fit-content;
@@ -3641,19 +3796,16 @@ My projects page style rules
     box-shadow: none;
     font-size: 20px;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--main-text);
     min-width: 106px;
     width: fit-content;
     border-radius: 55px;
-    padding-left: 19px;
-    padding-right: 19px;
-
   }
 
-  /* .deny-btn:hover {
+  .deny-btn:hover {
     background-color: var(--neutral-gray);
     color: var(--invert-text);
-  } */
+  }
 }
 
 #popup-result .small-popup {
