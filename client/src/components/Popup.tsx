@@ -1,4 +1,4 @@
-import { useState, createContext, useContext, ReactNode, useRef, useEffect } from 'react';
+import { useState, createContext, useContext, ReactNode, useRef, useEffect, useCallback } from 'react';
 import close from '../icons/cancel.png';
 //This is a reusable component that can be used to make popup windows on pages
 
@@ -50,7 +50,7 @@ export const PopupButton = ({
   className?: string;
   callback?: () => void;
   doNotClose?: () => boolean;
-  closeParent?: () => void;
+  closeParent?: () => void
 }) => {
   const { open, setOpen } = useContext(PopupContext);
 
@@ -79,7 +79,7 @@ export const PopupButton = ({
 export const PopupContent = ({
   children,
   useClose = true,
-  callback = () => { },
+  callback = async () => { },
   profilePopup = false,
 }: {
   children: ReactNode;
@@ -90,10 +90,10 @@ export const PopupContent = ({
   const { open, setOpen } = useContext(PopupContext);
   const popupRef = useRef(null);
 
-  const closePopup = () => {
+  const closePopup = useCallback(() => {
     callback();
     setOpen(false);
-  };
+  }, [callback, setOpen]);
 
   // Close on Escape
   useEffect(() => {
@@ -102,7 +102,7 @@ export const PopupContent = ({
     };
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [closePopup]);
 
   // Close on click outside
   useEffect(() => {
@@ -114,7 +114,7 @@ export const PopupContent = ({
     };
     document.addEventListener('mouseup', handleClickOutside);
     return () => document.removeEventListener('mouseup', handleClickOutside);
-  }, []);
+  }, [closePopup]);
 
   // Close on browser button click
   useEffect(() => {
@@ -132,7 +132,7 @@ export const PopupContent = ({
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [open]);
+  }, [open, closePopup]);
 
   if (!open) return null;
 

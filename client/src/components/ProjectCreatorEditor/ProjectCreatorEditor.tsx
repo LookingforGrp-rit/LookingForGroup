@@ -13,6 +13,7 @@ import {
   updateProjectSocial,
   addProjectSocial,
   deleteProjectSocial,
+  deleteProject,
 } from "../../api/projects";
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
@@ -82,8 +83,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         console.error("Error loading existing project:", err);
       }
     }
-    //TODO: delete the default project that was just created if the window is closed/the page is refreshed/they close without saving
-    //better yet give them a prompt if they wanna close without saving or do any of those
     else if (newProject) {
     // Setup default project for creation
       try {
@@ -91,11 +90,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         if (!response.error && response.data) {
           dataManager = await projectDataManager(response.data.projectId);
 
-          console.log(dataManager)
           const data = dataManager.getSavedProject();
           
           setProjectData(data);
           setModifiedProject(data);
+          console.log(projectData);
         }
       } catch (err) {
         console.error("Error creating new project:", err);
@@ -149,6 +148,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       setErrorLinks('Error updating social links. Please try again.');
     }
   };
+
+  //this deletes the newly created project when the create window is manually closed
+  //this is called below as the PopupContent's callback function (that only calls when it's closed so should it just be called onClose?)
+  //TODO: update this to show a close without saving prompt
+  const closeWithoutSaving = async () => {
+    if(projectData && newProject) await deleteProject(projectData?.projectId)
+  }
 
   //Save project editor changes
   const saveProject = async () => {
@@ -271,7 +277,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       )}
       {
         // loggedIn ? (
-        <PopupContent>
+        <PopupContent
+        callback={closeWithoutSaving}> {/* TODO: update this call to */}
+          
           <div id="project-creator-editor">
             <div id="project-editor-tabs">
               <button
