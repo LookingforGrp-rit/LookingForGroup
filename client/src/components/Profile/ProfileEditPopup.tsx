@@ -249,7 +249,7 @@ export const ProfileEditPopup = () => {
           <div id="project-editor-content">
             {renderTabContent()}
           </div>
-          <input type="submit" id="project-editor-save" value="Save Changes" />
+          <input type="submit" id="project-editor-save" className="profile-editor-save" value="Save Changes" />
           {errorVisible && (
             <div id="invalid-input-error" className="error-message">
               <p>*Fill out all required fields before saving!*</p>

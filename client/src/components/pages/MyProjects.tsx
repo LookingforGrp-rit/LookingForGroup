@@ -344,20 +344,6 @@ const MyProjects = () => {
   return (
     <div className="page" id="my-projects">
       {/* Top Bar */}
-      {/* <div className="my-projects-top-bar"> */}
-      {/* Search Bar */}
-      {/* <div className="my-projects-search">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" className="my-projects-searchbar"
-                        value={currentSearch} onChange={(e) => {setCurrentSearch(e.target.value)}} placeholder="Search"></input>
-                </div> */}
-
-      {/* Profile */}
-      {/* <div className="my-projects-profile">
-                    <i className="fa-solid fa-circle-user"></i>
-                    <i className="fa-solid fa-caret-down"></i>
-                </div> */}
-      {/* </div> */}
       <Header 
         dataSets={projectDataSet} 
         onSearch={handleSearch} 

@@ -342,16 +342,22 @@ Project Creator and Editor style rules
   color: var(--invert-text);
   font-size: 2ch;
   width: max-content;
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
   font-weight: 700;
+  cursor: pointer;
+}
+.profile-editor-save {
+  margin-top: 37px;
+  margin-bottom: 28px;
 }
 
-#project-editor-save:hover {
+/* #project-editor-save:hover {
   color: var(--create-text) !important;
   background-color: var(--create-bg) !important;
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
   transition: 0.25s;
-}
+} */
 
 .save-error-msg, .save-error-msg-general {
   display: none;
@@ -1287,6 +1293,10 @@ Project Creator and Editor style rules
   position: absolute;
   bottom: 20px;
   right: 20px;
+
+  #trash {
+    stroke: #FF3859;
+  }
 }
 
 #team-positions-popup-list-buttons {
@@ -2605,34 +2615,43 @@ Project Carousel style rules
   grid-area: info;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
   padding: 20px;
+
+  #project-info-top {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 5px;
+  }
 }
 
 .project-info-highlight {
-  color: var(--primary-color);
+  /* Highlight should be prioritized in all contexts.
+    Important used to override other specificities that would need more redundancy to override. */
+  color: var(--primary-color) !important;
 }
 
 #project-info-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
 #project-title {
-  font-size: 3.5ch;
+  font-size: 32px;
   font-weight: 700;
   color: var(--primary-color);
-  margin: 0 0 10px;
 }
 
 #project-info-buttons {
   display: flex;
-  height: 28px;
   margin-left: auto;
   align-items: center;
-  margin-bottom: 10px;
   /* For alignment with Project Title */
   gap: 7px;
 
@@ -2695,23 +2714,18 @@ Project Carousel style rules
   }
 }
 
-/* #project-info-buttons img {
-  width: 25px;
-  height: 25px;
-} */
-
 #project-info-edit {
-  font-size: 1.8ch;
+  font-size: 16px;
   border: none;
   border-radius: 30px;
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
-  padding: 5px 20px;
-  width: 150px;
+  padding: 4px 16px;
+  line-height: 150%;
   font-weight: 700;
 }
 
-#project-info-edit:hover {
+/* #project-info-edit:hover {
   color: var(--create-text) !important;
   background-color: var(--create-bg) !important;
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
@@ -2722,30 +2736,41 @@ Project Carousel style rules
   outline: none !important;
 }
 
-#project-hook,
-#project-status,
-#project-creation {
-  margin: 10px 0;
-}
-
 #project-hook {
   flex-grow: 1;
 }
 
 #project-status {
-  font-style: italic;
-  color: var(--darkGray);
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+
+  p {
+    color: var(--neutral-gray);
+    margin: 0;
+    font-style: italic;
+  }
 }
 
-#project-open-positions-button {
+#project-info-edit,
+#project-open-positions-button,
+.project-people-tab,
+#project-open-positions-header {
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
   color: var(--invert-text);
   font-size: 16px;
   font-weight: 700;
-  padding: 10px 20px;
-  margin-top: 10px;
+  line-height: 150%;
+  padding: 4px 16px;
+  width: fit-content;
+}
+#project-open-position-header {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #project-open-positions-popup {
@@ -3101,16 +3126,6 @@ button#positions-popup-list-item-active {
   gap: 10px;
 }
 
-.project-people-tab {
-  border: none;
-  border-radius: 30px;
-  background-color: var(--primary-color);
-  color: var(--invert-text);
-  font-size: 16px;
-  padding: 5px 10px;
-  font-weight: 700;
-}
-
 /* TODO: restore styles when "The Team" is a button again (regards Contributor functionality) */
 /* .project-people-tab:hover,
 .project-people-tab-active {
@@ -3119,16 +3134,6 @@ button#positions-popup-list-item-active {
 
 #project-open-positions {
   grid-area: positions;
-}
-
-#project-open-positions-header {
-  background-color: var(--primary-color);
-  color: var(--invert-text);
-  font-weight: 700;
-  padding: 5px 20px;
-  border-radius: 30px;
-  width: fit-content;
-  margin: 0 auto;
 }
 
 #project-open-positions-list {
@@ -3200,44 +3205,28 @@ My projects page style rules
   margin-bottom: 30px;
 }
 
-/* .my-projects-profile {
-  box-sizing: border-box;
-  background-color: #ececf7;
-  border: 0px;
-  border-radius: 36px;
-  color: #271d66;
-  padding: 5px;
-
-  display: flex;
-  align-items: center;
-  gap: 5px;
-} */
-
-/* .my-projects-profile .fa-solid.fa-circle-user {
-  box-sizing: border-box;
-  font-size: 30px;
-}
-
-.my-projects-profile .fa-solid.fa-caret-down {
-  box-sizing: border-box;
-  font-size: 20px;
-} */
-
 .my-projects-header-row {
   box-sizing: border-box;
   width: 100%;
   padding-left: 60px;
   padding-right: 64px;
 
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: auto auto auto auto;
-  column-gap: 1.46%;
-  row-gap: 2.92%;
-  margin-bottom: 5.92%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  #project-info-create {
+    height: 40px;
+  }
+
+  #my-projects-sort-btn {
+    width: 160px;
+  }
 }
 
-@media (min-width: 420px) {
+/* Not using former grid layout, so this is commented */
+/* @media (min-width: 420px) {
   .my-projects-header-row {
     grid-template-columns: auto max-content;
     grid-template-rows: auto max-content;
@@ -3258,89 +3247,31 @@ My projects page style rules
     grid-template-columns: auto max-content max-content max-content;
     margin-bottom: 0%;
   }
-}
+} */
 
-.my-projects-sort-list {
-  box-sizing: border-box;
-  background-color: var(--header-color);
-  border: 0px;
-  /* border-right: 15px solid var(--header-color); */
-  border-radius: 10px;
-  padding: 13.5px 15px;
-  color: var(--main-text);
-  font-size: 16px;
-  font-family: Inter, FontAwesome;
-  line-height: normal;
-  letter-spacing: 0%;
-  width: 160px;
+.my-projects-action-buttons {
   display: flex;
   flex-direction: row;
-  gap: 10px;
-  position: relative;
+  width: max-content;
+  gap: 15px;
+  align-items: center;
 
-  /* Placeholder text */
-  .sort-by {
-    color: var(--neutral-gray);
+  .arrow-az {
+    transform: rotate(180deg);
   }
 }
 
-.my-projects-sort-list-dropdown {
-  box-sizing: border-box;
-  background-color: var(--dropdown-color);
-  border-radius: 10px;
-  box-shadow: 0 0 10px 0 var(--shadow-color);
-  display: flex;
-  flex-direction: column;
-  margin-top: 10px;
-
-  .my-projects-sort-list-btn {
-    background: none;
-    color: inherit;
-    border: none;
-    padding: 10px 15px;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-    width: 165px;
-    height: 40px;
-
-    gap: 15px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .my-projects-sort-list-btn.top {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
-
-  .my-projects-sort-list-btn.bottom {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-  }
-
-  .my-projects-sort-list-btn:hover {
-    background-color: var(--primary-color);
-    color: var(--invert-text);
-
-    .fa-solid {
-      color: var(--invert-text) !important;
-    }
-  }
-}
-
-#my-projects-sort-btn:hover {
+/* #my-projects-sort-btn:hover {
   background-color: var(--invert-text);
   box-shadow: 0 0 5px 0 var(--primary-color);
-}
+} */
 
 .my-projects-display-switch {
   box-sizing: border-box;
   background-color: var(--header-color);
   border: 0px;
   border-radius: 100px;
-  padding: 4px;
+  padding: 2px;
   cursor: pointer;
 
   display: flex;
@@ -3352,13 +3283,16 @@ My projects page style rules
   background-color: #00000000;
   border: 0px;
   border-radius: 100px;
-  width: 44px;
-  height: 44px;
-  color: var(--primary-color);
+  width: 41px;
+  height: 41px;
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  i {
+    color: var(--primary-color);
+  }
 }
 
 .my-projects-display-switch .display-switch-option:hover {
@@ -3368,16 +3302,13 @@ My projects page style rules
 
 .my-projects-display-switch .display-switch-option#selected {
   background-color: var(--primary-color);
-  color: var(--main-text);
-}
 
-.my-projects-display-switch .display-switch-option#selected .fa-solid {
-  color: var(--invert-text);
+  i {
+    color: var(--invert-text);
+  }
 }
-
 .my-projects-all-projects-button,
-.my-projects-new-project-button,
-.my-projects-create-btn>button {
+.my-projects-create-btn > button {
   box-sizing: border-box;
   width: fit-content;
   background-color: var(--primary-color);
@@ -3407,7 +3338,6 @@ My projects page style rules
 }
 
 .my-projects-all-projects-button:hover,
-.my-projects-new-project-button:hover,
 .my-projects-create-btn>button:hover {
   transform: scale(1.1);
   transition: 0.2s;
@@ -3454,11 +3384,10 @@ My projects page style rules
   width: fit-content;
   height: fit-content;
 
-  display: grid;
-  grid-template-areas:
-    'image image'
-    'title options';
-  row-gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-content: start;
 }
 
 .grid-card-image {
@@ -3473,15 +3402,19 @@ My projects page style rules
   cursor: pointer;
 }
 
+.grid-card-details {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .grid-card-title {
-  grid-area: title;
   box-sizing: border-box;
   color: var(--primary-color);
   text-align: left;
   width: 150px;
-  text-wrap-mode: nowrap;
-  overflow: clip;
-  text-overflow: ellipsis;
+  text-wrap: wrap;
   font-size: 16px;
   font-family: Inter;
   font-weight: bold;
@@ -3502,8 +3435,7 @@ My projects page style rules
 }
 
 .dropdown-container:has(#grid-card-options-button) {
-  grid-area: options;
-  margin: 0 0 auto auto;
+  align-self: stretch;
 }
 
 .grid-card-options-button,
@@ -3514,7 +3446,6 @@ My projects page style rules
   border-radius: 20px;
   color: var(--main-text);
   margin: 0px;
-  /* padding: 0px; */
   text-align: right;
   font-size: 12px;
   font-family: Inter;
@@ -3527,25 +3458,39 @@ My projects page style rules
   background-color: var(--border-color);
 }
 
-.dropdown:has(.grid-card-options-list) {
+.dropdown:has(.card-options-list) {
   box-sizing: border-box;
   border: 0px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }
 
-.grid-card-options-list {
+.card-options-list {
+  position: absolute;
+  right: 0;
   box-sizing: border-box;
   background-color: var(--dropdown-color);
   border: 0px;
   border-radius: 10px;
-  width: max-content;
+  width: 154px;
   height: fit-content;
-  padding: 10px 10px;
+  padding: 15px;
   z-index: 1;
 
   display: flex;
   flex-direction: column;
+  gap: 10px;
+
+  button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+
+    #trash {
+      stroke: #ff3859;
+    }
+  }
 }
 
 .my-projects-list {
@@ -3561,56 +3506,70 @@ My projects page style rules
 
 .my-projects-list-header {
   box-sizing: border-box;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-left: 60px;
-  padding-right: 64px;
+  margin: 0 64px 10px 60px;
+  padding-right: 80px;
 
-  display: grid;
-  grid-template-columns: 54% 27% auto 6.8%;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  gap: 10px;
 }
 
 .project-header-label {
   color: var(--primary-color);
   text-align: left;
-  font-size: 18px;
+  font-size: 20px;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
 }
-
-.my-project-list-card {
-  box-sizing: border-box;
-
-  display: grid;
-  grid-template-columns: 54.4% 27.6% auto 6.8%;
+.project-header-label.title {
+  max-width: 610px;
+  width: 100%;
+}
+.project-header-label.date {
+  text-align: right;
+  flex-grow: 1;
 }
 
 .my-project-list-card {
   box-sizing: border-box;
   background-color: var(--header-color);
+
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+
   border: 0px;
   border-radius: 10px;
   height: fit-content;
   padding: 10px 20px 10px 10px;
+  font-size: 20px;
+
+  .dropdown-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
 }
 
 .list-card-section1 {
   box-sizing: border-box;
+  width: 600px;
 
   display: flex;
   flex-direction: row;
   align-items: center;
-  column-gap: 20px;
+  gap: 20px;
 }
 
 .list-card-image {
   box-sizing: border-box;
   border: 0px;
   border-radius: 10px;
-  width: 150px;
-  height: 70px;
+  width: 160px;
+  height: 80px;
   object-fit: cover;
   cursor: pointer;
 }
@@ -3619,12 +3578,13 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--primary-color);
   text-align: left;
-  font-size: 18px;
+  font-size: 20px;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
   cursor: pointer;
+  width: 100%;
 }
 
 .list-card-title:hover {
@@ -3635,7 +3595,7 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main-text);
   text-align: left;
-  font-size: 16px;
+  font-size: 20px;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
@@ -3649,77 +3609,47 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main--text);
   text-align: right;
-  font-size: 16px;
+  font-size: 20px;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
   letter-spacing: 0%;
 
   display: flex;
+  justify-content: end;
   align-items: center;
+  flex-grow: 1;
 }
 
-.list-card-options {
-  position: relative;
-  text-align: left;
 
-  display: inline-block;
-}
-
-.list-card-options-button,
 #list-card-options-button {
+  position: relative;
   box-sizing: border-box;
-  background-color: #00000000;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
   border: 0px;
   border-radius: 0px;
   color: var(--primary-color);
-  margin-top: 20px;
-  margin-left: 20px;
+  height: min-content;
+  margin-left: 10px;
   padding: 0px;
-  text-align: center;
-  font-size: 18px;
-  font-family: Inter;
-  font-weight: normal;
-  line-height: 28px;
-  letter-spacing: 2px;
+
+  svg {
+    padding: 11.5px 7.5px;
+  }
 }
-
-.dropdown:has(.list-card-options-list) {
-  box-sizing: border-box;
-  border: 0px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px 0px var(--shadow-color);
-}
-
-.list-card-options-list {
-  box-sizing: border-box;
-  background-color: var(--bg-color);
-  border: 0px;
-  border-radius: 10px;
-  width: max-content;
-  height: fit-content;
-  padding: 10px;
-  z-index: 1;
-
-  display: flex;
-  flex-direction: column;
-}
-
-/* .list-card-options-list.show {
-  display: flex;
-  flex-direction: column;
-} */
 
 .card-leave-button,
 .card-delete-button {
   box-sizing: border-box;
-  background-color: #00000000;
+  background-color: transparent;
   border: 0px;
   border-radius: 10px;
   margin: 0px;
   padding: 5px 5px;
   text-align: left;
-  font-family: Inter, FontAwesome;
+  font-family: Inter;
   transition: background-color 0.2s;
 }
 
@@ -3733,8 +3663,9 @@ My projects page style rules
   transition: background-color 0.2s;
 }
 
-.grid-card-options-list .small-popup,
-.list-card-options-list .small-popup {
+.card-options-list .small-popup {
+  text-align: center;
+
   h3 {
     font-size: 20px;
     font-weight: 700;
@@ -3755,6 +3686,7 @@ My projects page style rules
     margin: 0 0 15px 0;
     color: var(--neutral-gray);
     font-style: italic;
+    font-size: 16px;
 
     span {
       color: var(--neutral-gray);
@@ -3765,10 +3697,6 @@ My projects page style rules
   .confirm-deny-btns {
     display: flex;
     flex-direction: row;
-
-    button {
-      margin: 5px;
-    }
   }
 
   .confirm-btn {
@@ -3777,9 +3705,10 @@ My projects page style rules
     box-shadow: none;
     font-size: 20px;
     font-weight: 700;
+    line-height: 28px;
     color: var(--invert-text);
     background-color: var(--primary-color);
-    padding: 10px 17px;
+    padding: 6px 24px;
     border-radius: 55px;
     min-width: 106px;
     width: fit-content;
@@ -3796,16 +3725,18 @@ My projects page style rules
     box-shadow: none;
     font-size: 20px;
     font-weight: 700;
-    color: var(--main-text);
+    color: var(--primary-color);
     min-width: 106px;
     width: fit-content;
     border-radius: 55px;
+    padding-left: 19px;
+    padding-right: 19px;
   }
 
-  .deny-btn:hover {
+  /* .deny-btn:hover {
     background-color: var(--neutral-gray);
     color: var(--invert-text);
-  }
+  } */
 }
 
 #popup-result .small-popup {
