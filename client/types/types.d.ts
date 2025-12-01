@@ -19,7 +19,13 @@ import {
   ProjectMember,
   UserPreview,
   UpdateProjectThumbnailInput,
-  Role
+  Role,
+  AddUserMajorInput,
+  AddUserSkillsInput,
+  AddUserSocialInput,
+  UpdateUserInput,
+  UpdateUserSocialInput,
+  UpdateUserSkillInput
 } from "@looking-for-group/shared";
 
 /**
@@ -32,7 +38,24 @@ export type Fillable<T> = {
     : T[attr] | null;
 };
 
-export interface ProjectChanges {
+type Id = {
+  id: {
+    type: "canon" | "local";
+    value: number;
+  };
+};
+type CRUDRequest<T> = Id & { data: T };
+
+type Pending<T> = Fillable<
+  Omit<
+    T,
+    "apiUrl" | "createdAt" | "updatedAt" | "memberSince" | "imageId" | "jobId"
+  >
+> & { localId: number | null };
+
+// PROFILE CHANGES
+
+interface ProjectChanges {
   create: ProjectChangesCreates;
   update: ProjectChangesUpdates;
   delete: ProjectChangesDeletes;
@@ -65,21 +88,6 @@ interface ProjectChangesDeletes {
   mediums: CRUDRequest<null>[];
 }
 
-type Id = {
-  id: {
-    type: "canon" | "local";
-    value: number;
-  };
-};
-type CRUDRequest<T> = Id & { data: T };
-
-type Pending<T> = Fillable<
-  Omit<
-    T,
-    "apiUrl" | "createdAt" | "updatedAt" | "memberSince" | "imageId" | "jobId"
-  >
-> & { localId: number | null };
-
 interface PendingProjectImage extends Pending<ProjectImage> {
   image: File | null;
 }
@@ -101,4 +109,30 @@ interface PendingProject extends Omit<Pending<ProjectDetail>, "localId"> {
   jobs: (ProjectJob | Pending<ProjectJob>)[];
   members: (ProjectMember | PendingProjectMember)[];
   mediums: (ProjectMedium | PendingProjectMedium)[];
+}
+
+// USER CHANGES
+
+interface UserChanges {
+  create: UserChangesCreates;
+  update: UserChangesUpdates;
+  delete: UserChangesDeletes;
+};
+
+interface UserChangesCreates {
+  majors: CRUDRequest<AddUserMajorInput>[];
+  skills: CRUDRequest<AddUserSkillsInput>[];
+  socials: CrudRequest<AddUserSocialInput>[];
+}
+
+interface UserChangesUpdates {
+  fields: CRUDRequest<UpdateUserInput>;
+  skills: CRUDRequest<UpdateUserSkillInput>[];
+  socials: CRUDRequest<UpdateUserSocialInput>[];
+}
+
+interface UserChangesDeletes {
+  majors: CRUDRequest<null>[];
+  skills: CRUDRequest<null>[];
+  socials: CRUDRequest<null>[];
 }
