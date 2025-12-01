@@ -6,6 +6,7 @@ import { LinksTab } from "./tabs/LinksTab";
 import { TeamTab } from "./tabs/TeamTab";
 import { TagsTab } from "./tabs/TagsTab";
 import { ThemeIcon } from "../ThemeIcon";
+import * as paths from '../../constants/routes';
 import {
   createNewProject,
   getProjectSocials,
@@ -18,6 +19,7 @@ import {
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../types/types";
 import { ProjectWithFollowers, } from '@looking-for-group/shared';
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   newProject: boolean;
@@ -38,6 +40,7 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
 export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, updateDisplayedProject/*permissions*/ }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
+  const navigate = useNavigate();
   const projectID = urlParams.get("projectID");
 
   // --- Hooks ---
@@ -202,6 +205,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
         if(updateDisplayedProject) updateDisplayedProject(dataManager.getSavedProject());
       }
+      navigate(`${paths.routes.NEWPROJECT}?projectID=${dataManager.getSavedProject().projectId}`)
     } catch (err) {
       console.error(err);
     }
