@@ -9,6 +9,7 @@ import { getByID,  deleteProject } from '../api/projects';
 import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 import { ThemeIcon } from './ThemeIcon';
+import { ProjectStatus as ProjectStatusEnums } from '@looking-for-group/shared/enums';
 
 //backend base url for getting images
 
@@ -33,7 +34,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   const fetchStatus = async () => {
     const response = await getByID(projectData.projectId);
     if(response.data) {
-      setStatus(response.data.status);
+      setStatus(ProjectStatusEnums[response.data.status]);
     } else {
       setStatus('Error loading status');
     }
