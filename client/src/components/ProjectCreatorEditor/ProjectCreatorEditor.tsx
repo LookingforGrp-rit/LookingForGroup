@@ -79,7 +79,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         console.error("Error loading existing project:", err);
       }
     }
-    //TODO: delete the project created by clicking this button if the window is closed/the page is refreshed/they close without saving
+    //TODO: delete the default project that was just created if the window is closed/the page is refreshed/they close without saving
     //better yet give them a prompt if they wanna close without saving or do any of those
     else if (newProject) {
     // Setup default project for creation
@@ -148,7 +148,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   };
 
   //Save project editor changes
-  //TODO: give user a prompt before they save their project
   const saveProject = async () => {
 
     // default to no errors

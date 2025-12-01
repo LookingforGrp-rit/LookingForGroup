@@ -2,7 +2,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
-import { AddProjectSocialInput, Social, UserDetail } from "@looking-for-group/shared";
+import { AddProjectSocialInput, ProjectSocial, Social, UserDetail } from "@looking-for-group/shared";
 import { Input } from "../../Input";
 import { getSocials, getUsersById } from "../../../api/users";
 import { ThemeIcon } from "../../ThemeIcon";
