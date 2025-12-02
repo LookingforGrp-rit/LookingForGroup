@@ -25,7 +25,12 @@ import {
   AddUserSocialInput,
   UpdateUserInput,
   UpdateUserSocialInput,
-  UpdateUserSkillInput
+  UpdateUserSkillInput,
+  MePrivate,
+  AcademicYear,
+  MyMember,
+  MySkill,
+  MeDetail,
 } from "@looking-for-group/shared";
 
 /**
@@ -72,7 +77,7 @@ interface ProjectChangesCreates {
 
 interface ProjectChangesUpdates {
   fields: CRUDRequest<UpdateProjectInput>;
-  thumbnail: CRUDRequest<UpdateProjectThumbnailInput>,
+  thumbnail: CRUDRequest<UpdateProjectThumbnailInput>;
   projectImages: CRUDRequest<UpdateProjectImageInput>[];
   projectSocials: CRUDRequest<UpdateProjectSocialInput>[];
   jobs: CRUDRequest<UpdateProjectJobInput>[];
@@ -117,7 +122,7 @@ interface UserChanges {
   create: UserChangesCreates;
   update: UserChangesUpdates;
   delete: UserChangesDeletes;
-};
+}
 
 interface UserChangesCreates {
   majors: CRUDRequest<AddUserMajorInput>[];
@@ -135,4 +140,31 @@ interface UserChangesDeletes {
   majors: CRUDRequest<null>[];
   skills: CRUDRequest<null>[];
   socials: CRUDRequest<null>[];
+}
+
+type PendingProfileImage = File;
+
+interface PendingMajor extends Exclude<MyMajor, "apiUrl" | "majorId"> {
+  localId: string;
+};
+
+interface PendingUserSkill extends Exclude<MySkill, "apiUrl" | "skillId"> {
+  localId: string;
+}
+
+interface PendingUserSocial extends Exclude<MySocial, "apiUrl" | "websiteId"> {
+  localId: string;
+}
+
+interface PendingUserMember extends Exclude<MyMember, "apiUrl"> {
+  localId: string;
+}
+
+interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
+  profileImage: string | null | PendingProfileImage;
+  majors: (MyMajor | PendingMajor)[];
+  academicYear: AcademicYear | null;
+  projects: (MyMember | PendingUserMember)[];
+  skills: (MySkill | PendingUserSkill)[];
+  socials: (MySocial | PendingUserSocial)[];
 }
