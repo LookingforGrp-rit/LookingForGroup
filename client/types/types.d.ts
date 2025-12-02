@@ -26,7 +26,6 @@ import {
   UpdateUserInput,
   UpdateUserSocialInput,
   UpdateUserSkillInput,
-  MePrivate,
   AcademicYear,
   MyMember,
   MySkill,
