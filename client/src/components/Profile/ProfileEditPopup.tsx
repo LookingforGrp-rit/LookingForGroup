@@ -25,7 +25,7 @@ import { PendingUserProfile } from "../../../types/types";
 
 // The profile to view is independent upon the site's state changes
 const pageTabs = ["About", "Projects", "Skills", "Links"];
-let dataManager;
+let dataManager: Awaited<ReturnType<typeof userDataManager>>;
 
 export const ProfileEditPopup = () => {
   // Holds new profile image if one is selected
