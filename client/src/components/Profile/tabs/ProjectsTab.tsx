@@ -6,6 +6,8 @@ import {
 } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
+import usePreloadedImage from "../../../functions/imageLoad";
+import placeholderThumbnail from '../../../images/project_temp.png';
 
 // TODO add visibility toggle
 const ProjectTile = ({
@@ -18,7 +20,7 @@ const ProjectTile = ({
   return (
     <div className="projectTile" id={`project-tile-${projectData.projectId}`}>
       <img
-        src={projectData.thumbnail?.image}
+        src={usePreloadedImage(projectData.thumbnail?.image || placeholderThumbnail, placeholderThumbnail)}
         alt={
           projectData.thumbnail?.altText || `Thumbnail for ${projectData.title}`
         }
@@ -82,6 +84,7 @@ export const ProjectsTab = ({
           profile.projects.map(({ project }: { project: ProjectPreview }) => (
             <ProjectTile
               projectData={project}
+              key={`project-${project.projectId}`}
               onVisibilityChanged={(visibility: Visibility) =>
                 onProjectVisibilityChanged(project.projectId, visibility)
               }

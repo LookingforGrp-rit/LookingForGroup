@@ -7,12 +7,8 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import {
-  MeDetail,
-  MePrivate,
   MySkill,
   Skill,
-  SkillProficiency,
-  SkillType,
 } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
