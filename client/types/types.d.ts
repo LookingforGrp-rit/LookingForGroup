@@ -58,7 +58,7 @@ type Pending<T> = Fillable<
   >
 > & { localId: number | null };
 
-// PROFILE CHANGES
+// PROJECT CHANGES
 
 interface ProjectChanges {
   create: ProjectChangesCreates;

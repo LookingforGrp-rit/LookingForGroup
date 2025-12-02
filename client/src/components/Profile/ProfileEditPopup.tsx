@@ -61,12 +61,6 @@ export const ProfileEditPopup = () => {
   }, []);
 
   // TODO move to about tab
-  // Send selected image to server for save
-  const saveImage = async () => {
-    if (!selectedImageFile) return;
-
-    await editUser({ profileImage: selectedImageFile });
-  };
 
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevents any default calls

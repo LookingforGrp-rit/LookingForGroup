@@ -45,8 +45,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const projectID = urlParams.get("projectID");
 
   // --- Hooks ---
-  // stores user data
-
+   
   // store project data
   const [projectData, setProjectData] = useState<ProjectWithFollowers>();
 

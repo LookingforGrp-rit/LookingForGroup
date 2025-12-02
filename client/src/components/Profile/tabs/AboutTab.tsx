@@ -1,118 +1,88 @@
-import { useState, useEffect } from 'react';
-import { ProfileData } from '../ProfileEditPopup';
-import { RoleSelector } from '../../RoleSelector';
+import { useState, useEffect, SetStateAction, Dispatch } from 'react';
 import { MajorSelector } from '../../MajorSelector';
-import { ImageUploader, ProfileImageUploader } from '../../ImageUploader';
-import { getMajors, getJobTitles } from "../../../api/users";
+import { ProfileImageUploader } from '../../ImageUploader';
 import usePreloadedImage from '../../../functions/imageLoad';
 import { Select, SelectButton, SelectOptions } from '../../Select';
-import { Input } from '../../Input';
 import LabelInputBox from '../../LabelInputBox';
-import { MeDetail } from '@looking-for-group/shared';
+import { PendingUserProfile } from '../../../../types/types';
+import { userDataManager } from '../../../api/data-managers/user-data-manager';
+import { AcademicYear } from '@looking-for-group/shared/enums';
+import { Major, Role } from '@looking-for-group/shared';
+import { getJobTitles, getMajors } from '../../../api/users';
 
-//backend base url for getting images
+let profileAfterAboutChanges: PendingUserProfile;
 
 
-// Methods
-const setUpInputs = async (profileData: ProfileData) => {
-  console.log(profileData);
-
-  // Obtain roles and majors to obtain the proper label for the Role Selector and Major Selector
-  let roles: any, majors: any;
-  const getRolesAndMajors = async () => {
-    const roleResponse = await getJobTitles();
-    const majorResponse = await getMajors();
-
-    roles = roleResponse.data;
-    majors = majorResponse.data;
-  };
-
-  // Used to avoid repetition and map values onto element IDs.
-  const pairInputToData = (input: string, data: any) => {
-    const inputElement = document.getElementById(`profile-editor-${input}`) as HTMLInputElement;
-    if (inputElement) {
-      inputElement.value = data;
-    }
-  };
-
-  // Obtain information
-  await getRolesAndMajors();
-  // Pair information
-  pairInputToData('firstName', profileData.firstName);
-  pairInputToData('lastName', profileData.lastName);
-  pairInputToData('pronouns', profileData.pronouns);
-  // pairInputToData('jobTitle', roles.find((r: any) => r.label === profileData.jobTitle).title_id);
-  pairInputToData('major', majors.find((r: any) => r.label === profileData.major).major_id);
-  pairInputToData('academicYear', profileData.academic_year);
-  pairInputToData('location', profileData.location);
-  pairInputToData('headline', profileData.headline);
-  pairInputToData('funFact', profileData.fun_fact);
-  pairInputToData('bio', profileData.bio);
-  // Load in the profile picture
-  <ProfileImageUploader initialImageUrl={`images/profiles/${profileData.profile_image}`} />
+type AboutTabProps = {
+  dataManager: Awaited<ReturnType<typeof userDataManager>>;
+  profile: PendingUserProfile;
+  saveProfile?: () => Promise<void>;
+  updatePendingProfile?: (updatedPendingrProfile: PendingUserProfile) => void;
+  failCheck?: boolean;
+  selectedImageFile: File | null;
+  setSelectedImageFile: Dispatch<SetStateAction<File | null>>
 };
 
-// Components
-const TextArea = (props: {
-  title: string;
-  description: string;
-  count: number;
-  maxLength: number;
-  id: string;
-}) => {
-  
-  return (
-    <div className="editor-input-item editor-input-textarea">
-      <label>{props.title}</label>
-      <div className="project-editor-extra-info">{props.description}</div>
-      <Input type="multi" maxLength={props.maxLength} />
-    </div>
-  );
-};
 
 // Main Component
-export const AboutTab = ({profile, selectedImageFile, setProfile, setSelectedImageFile}: {
-  profile: ProfileData; 
-  selectedImageFile: File | null;
-  setProfile: React.Dispatch<React.SetStateAction<MeDetail>>
-  setSelectedImageFile: (file: File) => void;
-}) => {
+export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile = async () => {}, updatePendingProfile = () => {}, failCheck}: AboutTabProps) => {
+
+  profileAfterAboutChanges = structuredClone(profile);
+
+  const userId = profile.userId!;
+  // Holds new profile image if one is selected
 
   // Preview URL for profile image
-  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`images/profiles/${profile.profile_image}`, "../../../images/blue_frog.png"));
+  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`images/profiles/${profile.profileImage}`, "../../../images/blue_frog.png"));
 
-  // Effects
-  // Set up profile input on first load
+  //getting the full lists of roles & majors
+  const [roles, setRoles] = useState<Role[]>([]);
+  const [majors, setMajors] = useState<Major[]>([]);
+
   useEffect(() => {
-    const setUp = async () => {
-      await setUpInputs(profile);
+    const fetchRoles = async () => {
+      const response = await getJobTitles();
+      const roles: Role[] = response?.data ?? [];
+      setRoles(roles);
     };
-    setUp();
-  }, [profile]);
-
-  // Update preview image when selected image changes
+    fetchRoles();
+  }, []);
   useEffect(() => {
-  if (selectedImageFile) {
-    const imgLink = URL.createObjectURL(selectedImageFile);
-    setPreviewUrl(imgLink);
-    return () => URL.revokeObjectURL(imgLink);
-  } else {
-    // Maintain original preview URL
-    setPreviewUrl(previewUrl);
-  }
-}, [selectedImageFile, profile.profile_image, previewUrl]);
+    const fetchMajors = async () => {
+      const response = await getMajors();
+      setMajors(response?.data ?? []);
+    };
+    fetchMajors();
+  }, []);
+  // Update preview image when selected image changes
+//   useEffect(() => {
+//   if (selectedImageFile) {
+//     const imgLink = URL.createObjectURL(selectedImageFile);
+//     setPreviewUrl(imgLink);
+//     return () => URL.revokeObjectURL(imgLink);
+//   } else {
+//     // Maintain original preview URL
+//     setPreviewUrl(previewUrl);
+//   }
+// }, [selectedImageFile, profileData.profileImage, previewUrl]);
 
-  // Set new image when one is picked from uploader
-  const handleFileSelected = (file: File) => {
-    console.log('got uploaded file', file);  
-    setSelectedImageFile(file);
-  };
+//   // Set new image when one is picked from uploader
+//   const handleFileSelected = (file: File) => {
+//     console.log('got uploaded file', file);  
+//     setSelectedImageFile(file);
+//   };
+  // Send selected image to server for save
+  // const saveImage = async () => {
+  //   if (!selectedImageFile) return;
+
+  //   await editUser({ profileImage: selectedImageFile });
+  // };
 
   return (
     <div id="profile-editor-about" className="edit-profile-body about">
       <div id="edit-profile-section-1">
         <div id="profile-editor-add-image" className="edit-profile-image">
-          <ProfileImageUploader initialImageUrl={previewUrl} onFileSelected={handleFileSelected} />
+          <ProfileImageUploader initialImageUrl={previewUrl}/>
         </div>
 
         <div className="about-row row-1">
@@ -121,27 +91,116 @@ export const AboutTab = ({profile, selectedImageFile, setProfile, setSelectedIma
             inputType={'single'}
             maxLength={50}
             value={profile.firstName}
-            onChange={(e) => setProfile(prev => ({ ...prev, firstName: e.target.value }))}
+            onChange={(e) => {
+              const firstName = e.target.value;
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, firstName};
+              updatePendingProfile(profileAfterAboutChanges);
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon',
+                },
+                data: { firstName }
+              })
+            }}
           />
           <LabelInputBox
             label={'Last Name*'}
             inputType={'single'}
             maxLength={50}
             value={profile.lastName}
-            onChange={(e) => setProfile(prev => ({ ...prev, lastName: e.target.value }))}
+            onChange={(e) => {
+              const lastName = e.target.value;
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, lastName};
+              updatePendingProfile(profileAfterAboutChanges);
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon',
+                },
+                data: { lastName }
+              })
+            }}
           />
           <LabelInputBox
             label={'Pronouns'}
             inputType={'single'}
             maxLength={25}
             value={profile.pronouns}
-            onChange={(e) => setProfile(prev => ({ ...prev, pronouns: e.target.value }))}
+            onChange={(e) => {
+              const pronouns = e.target.value;
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, pronouns};
+              updatePendingProfile(profileAfterAboutChanges);
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon',
+                },
+                data: { pronouns }
+              })
+            }}
           />
         </div>
 
         <div className="about-row row-2">
-          {<RoleSelector />}
-          {<MajorSelector />}
+          {
+    <LabelInputBox
+      label={'Title'}
+      inputType={'none'}
+    >
+      <Select>
+        <SelectButton
+          placeholder="Select"
+          initialVal={''}
+          type={'input'}
+        />
+        <SelectOptions
+          callback={(e) => { 
+            const title = (e.target as HTMLButtonElement).value
+
+            profileAfterAboutChanges = {
+              ...profileAfterAboutChanges,
+              title
+            }
+            updatePendingProfile(profileAfterAboutChanges)
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon',
+                },
+                data: { title }
+              })
+           }}
+          options={roles.map(r => ({
+          value: r.label,
+          markup: <>{r.label}</>,
+          disabled: false
+          }))}
+        />
+      </Select>
+    </LabelInputBox>}
+          {
+    <LabelInputBox
+      label={'Major'}
+      inputType={'none'}
+    >
+      <Select>
+        <SelectButton
+          placeholder='Select'
+          initialVal={''}
+          callback={(e) => { e.preventDefault(); }}
+          type={'input'}
+        />
+        <SelectOptions
+          callback={(e) => { e.preventDefault(); }}
+          options={majors.map(m => ({
+          value: m.label,
+          markup: <>{m.label}</>,
+          disabled: false
+          }))}
+        />
+      </Select>
+    </LabelInputBox>}
 
           <LabelInputBox
             label={'Year'}
@@ -150,33 +209,38 @@ export const AboutTab = ({profile, selectedImageFile, setProfile, setSelectedIma
             <Select>
               <SelectButton
                 placeholder="Select"
-                initialVal={profile.academicYear}
-                callback={(e) => { e.preventDefault(); } }
+                initialVal={profile.academicYear ? profile.academicYear : ""}
                 type={'input'}
               />
               <SelectOptions
-                callback={(e) => {e.preventDefault();}}
-                options={[{
-                  value: 'Freshman',
-                  markup: <>Freshman</>,
-                  disabled: false
-                }, {
-                  value: 'Sophomore',
-                  markup: <>Sophomore</>,
-                  disabled: false
-                }, {
-                  value: 'Junior',
-                  markup: <>Junior</>,
-                  disabled: false
-                }, {
-                  value: 'Senior',
-                  markup: <>Senior</>,
-                  disabled: false
-                }, {
-                  value: 'Graduate',
-                  markup: <>Graduate</>,
-                  disabled: false
-                }]}
+                callback={(e) => {
+                  const year = (
+                e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
+              ).value as AcademicYear;
+
+              profileAfterAboutChanges = {
+                ...profileAfterAboutChanges,
+                academicYear: year as AcademicYear
+              }
+              updatePendingProfile(profileAfterAboutChanges);
+
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon'
+                },
+                data: {
+                  academicYear: year as AcademicYear
+                }
+              })
+                }}
+                options={Object.values(AcademicYear).map((yr) => {
+                  return {
+                    value: yr,
+                    markup: <>{yr}</>,
+                    disabled: false
+                  };
+                })}
               />
             </Select>
           </LabelInputBox>
@@ -187,7 +251,18 @@ export const AboutTab = ({profile, selectedImageFile, setProfile, setSelectedIma
             label={'Location'}
             inputType={'single'}
             value={profile.location}
-            onChange={(e) => setProfile(prev => ({ ...prev, location: e.target.value }))}
+            onChange={(e) => {
+              const location = e.target.value;
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, location};
+              updatePendingProfile(profileAfterAboutChanges);
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon',
+                },
+                data: { location }
+              })
+            }}
           />
 
           <LabelInputBox
