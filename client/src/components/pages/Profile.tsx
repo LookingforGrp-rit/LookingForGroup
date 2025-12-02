@@ -155,7 +155,7 @@ const checkFollow = useCallback(async () => {
       setIsUsersProfile(userID.toString() === profileID);
 
       try {
-        const { data } = await getUsersById(profileID);
+        const { data } = await getUsersById(Number(profileID));
 
         // Only run this if profile data exists for user
         if (data) {
@@ -266,11 +266,12 @@ const checkFollow = useCallback(async () => {
   // --------------------
   return (
     <div className="page">
-      {/* Should probably use the search bar for projects I guess? */}
       <Header
         dataSets={{ data: fullProjectList }}
         onSearch={searchProjects}
         hideSearchBar={true}
+        value={null}
+        onChange={() => {}}
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
