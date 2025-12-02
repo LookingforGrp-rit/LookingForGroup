@@ -32,10 +32,6 @@ export const ProfileEditPopup = () => {
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
-  const [canonicalProfile, setCanonicalProfile] = useState<MePrivate>();
-  
-  // TODO this actually needs to sit in the Profile.tsx file so that updates propogate up to the main page.
-  // Alternatively, it can be removed entirely.
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
 
   const updatePendingProfile = (profileData: PendingUserProfile) => {
@@ -54,8 +50,7 @@ export const ProfileEditPopup = () => {
         throw "error getting current user " + getUser.error;
       }
 
-      setCanonicalProfile(getUser.data);
-      setModifiedProfile(getUser.data);
+      setModifiedProfile(structuredClone(getUser.data));
       dataManager = await userDataManager();
 
       // console.log("ProfileEditPopup - Raw API response:", response.data);
@@ -77,7 +72,7 @@ export const ProfileEditPopup = () => {
     e.preventDefault(); // prevents any default calls
 
     try {
-      dataManager.saveChanges();
+      await dataManager.saveChanges();
       setErrorVisible(false);
       window.location.reload(); // reload page
     } catch (e) {
@@ -116,12 +111,12 @@ export const ProfileEditPopup = () => {
 
   // Component to organize the main tab content
   const renderTabContent = () => {
-    if (!canonicalProfile) return <p>Loading...</p>;
+    if (!modifiedProfile) return <p>Loading...</p>;
     switch (currentTab) {
       case 0:
         return (
           <AboutTab
-            profile={canonicalProfile}
+            profile={modifiedProfile}
             dataManager={dataManager}
             updatePendingProfile={updatePendingProfile}
             selectedImageFile={selectedImageFile}
@@ -131,7 +126,7 @@ export const ProfileEditPopup = () => {
       case 1:
         return (
           <ProjectsTab
-            profile={canonicalProfile}
+            profile={modifiedProfile}
             dataManager={dataManager}
             updatePendingProfile={updatePendingProfile}
           />
@@ -139,7 +134,7 @@ export const ProfileEditPopup = () => {
       case 2:
         return (
           <SkillsTab
-            profile={canonicalProfile}
+            profile={modifiedProfile}
             dataManager={dataManager}
             updatePendingProfile={updatePendingProfile}
           />
@@ -147,7 +142,7 @@ export const ProfileEditPopup = () => {
       case 3:
         return (
           <LinksTab
-            profile={canonicalProfile}
+            profile={modifiedProfile}
             dataManager={dataManager}
             updatePendingProfile={updatePendingProfile}
           />
