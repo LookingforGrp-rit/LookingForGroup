@@ -22,7 +22,7 @@ import {
   JobDuration as JobDurationEnums,
   JobLocation as JobLocationEnums,
   JobCompensation as JobCompensationEnums,
-  ProjectStatus as ProjectStatusEnums
+  ProjectStatus as ProjectStatusEnums,
 } from "@looking-for-group/shared/enums";
 
 //Main component for the project page
@@ -40,7 +40,8 @@ const NewProject = () => {
 
   const [user, setUser] = useState<MePrivate | null>();
   const [userID, setUserID] = useState<number>(0);
-  const [displayedProject, setDisplayedProject] = useState<ProjectWithFollowers>();
+  const [displayedProject, setDisplayedProject] =
+    useState<ProjectWithFollowers>();
 
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
@@ -50,86 +51,79 @@ const NewProject = () => {
   // FETCHING PROJECTS DATA
 
   //Function used to get project data
-  
-  
+
   //checking function for if the current user is following a project
-const checkFollow = useCallback(async () => {
-  const followings = (await getProjectFollowing(userID)).data?.projects;
+  const checkFollow = useCallback(async () => {
+    const followings = (await getProjectFollowing(userID)).data?.projects;
 
-  let isFollow = false;
+    let isFollow = false;
 
-  if(followings !== undefined){
-  for (const follower of followings){
-    isFollow = (follower.project.projectId === projectID);
-    if(isFollow) break;
-  }
-  }
-  setFollowing(isFollow);
-  return isFollow;
-}, [projectID, userID]);
-
-useEffect(() => {
-  const getProjectData = async () => {
-    //get our current user for use later
-    const userResp = await getCurrentAccount();
-    if(userResp.data) { 
-      setUser(userResp.data);
-      setUserID(userResp.data.userId)
+    if (followings !== undefined) {
+      for (const follower of followings) {
+        isFollow = follower.project.projectId === projectID;
+        if (isFollow) break;
+      }
     }
+    setFollowing(isFollow);
+    return isFollow;
+  }, [projectID, userID]);
 
-    //get the project itself
-    const projectResp = await getByID(projectID);
-    if (projectResp.data) { 
-      setDisplayedProject(projectResp.data)
-      checkFollow();
-      setFollowCount(projectResp.data.followers.count);
-    }
-  };
+  useEffect(() => {
+    const getProjectData = async () => {
+      //get our current user for use later
+      const userResp = await getCurrentAccount();
+      if (userResp.data) {
+        setUser(userResp.data);
+        setUserID(userResp.data.userId);
+      }
+
+      //get the project itself
+      const projectResp = await getByID(projectID);
+      if (projectResp.data) {
+        setDisplayedProject(projectResp.data);
+        checkFollow();
+        setFollowCount(projectResp.data.followers.count);
+      }
+    };
     getProjectData();
-}, [projectID, checkFollow])
+  }, [projectID, checkFollow]);
 
-  
-    //Checks to see whether or not the current user is the maker/owner of the project being displayed
-    //oh do i need this too
+  //Checks to see whether or not the current user is the maker/owner of the project being displayed
+  //oh do i need this too
   // const usersProject = true;
 
   // Formats follow-count based on Figma design. Returns a string
   const formatFollowCount = (followers: number): string => {
     if (followers >= 1000) {
-      const multOfHundred = (followers % 100) === 0;
+      const multOfHundred = followers % 100 === 0;
       const formattedNum = (followers / 1000).toFixed(1);
-      return `${formattedNum}K ${multOfHundred ? '+' : ''}`;
+      return `${formattedNum}K ${multOfHundred ? "+" : ""}`;
     }
     return `${followers}`;
   };
 
-  const followProject = (async () => {
+  const followProject = async () => {
     // Follow icon is only present if user is logged in.
     // If keeping this layout, this check may be redundant.
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
-    }
-    else{
-      const toggleFollow = !await checkFollow();
+    } else {
+      const toggleFollow = !(await checkFollow());
       setFollowing(toggleFollow);
-        if (toggleFollow) {
+      if (toggleFollow) {
         await addProjectFollowing(projectID);
-          setFollowCount(followCount + 1);
+        setFollowCount(followCount + 1);
       } else {
         await deleteProjectFollowing(projectID);
-          setFollowCount(followCount - 1);
+        setFollowCount(followCount - 1);
       }
     }
-  })
+  };
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
   const buttonContent =
-    user &&
-    displayedProject?.members.some(
-      (member) =>
-        displayedProject.owner.userId === member.user.userId
-    ) ? (
+    user && displayedProject?.owner.userId === user.userId ? (
       <>
         {
           <>
@@ -141,97 +135,106 @@ useEffect(() => {
           </>
         }
       </>
-    ) : user && (
-      <>
-        {/* Heart icon, with number indicating follows */}
-        <div className="project-info-followers">
-          <p className={`follow-amt ${isFollowing ? "following" : ""}`}>
-            {formatFollowCount(followCount)}
-          </p>
-          {isFollowing ? (
-            <ThemeIcon
-              width={28}
-              height={25}
-              id={"heart-filled"}
-              ariaLabel="following"
-              onClick={followProject}
-            />
-          ) : (
-            <ThemeIcon
-              width={28}
-              height={25}
-              id={"heart-empty"}
-              ariaLabel="following"
-              onClick={followProject}
-            />
-          )}
-        </div>
-        {/* Share, leave, and report dropdown */}
-        <Dropdown>
-          <DropdownButton className="project-info-dropdown-btn">
-            <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
-          </DropdownButton>
-          <DropdownContent rightAlign={true}>
-            <div id="project-info-dropdown">
-              {/* TODO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
-              <button className="project-info-dropdown-option">
-                <ThemeIcon
-                  id={"share"}
-                  width={27}
-                  height={27}
-                  ariaLabel={"Share project"}
-                  className="mono-fill"
-                />
-                Share
-              </button>
-              {/* Only be able to leave if you're a member of the project */}
-              {/* {userPerms === 0 ? ( */}
-              <Popup>
-                <PopupButton className="project-info-dropdown-option">
+    ) : (
+      user && (
+        <>
+          {/* Heart icon, with number indicating follows */}
+          <div className="project-info-followers">
+            <p className={`follow-amt ${isFollowing ? "following" : ""}`}>
+              {formatFollowCount(followCount)}
+            </p>
+            {isFollowing ? (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-filled"}
+                ariaLabel="following"
+                onClick={followProject}
+              />
+            ) : (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-empty"}
+                ariaLabel="following"
+                onClick={followProject}
+              />
+            )}
+          </div>
+          {/* Share, leave, and report dropdown */}
+          <Dropdown>
+            <DropdownButton className="project-info-dropdown-btn">
+              <ThemeIcon
+                id={"menu"}
+                width={25}
+                height={25}
+                className={"color-fill dropdown-menu"}
+                ariaLabel={"More options"}
+              />
+            </DropdownButton>
+            <DropdownContent rightAlign={true}>
+              <div id="project-info-dropdown">
+                {/* TODO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
+                <button className="project-info-dropdown-option">
                   <ThemeIcon
-                    id={"logout"}
+                    id={"share"}
                     width={27}
                     height={27}
-                    ariaLabel={"Leave project"}
+                    ariaLabel={"Share project"}
                     className="mono-fill"
                   />
-                  Leave
-                </PopupButton>
-                <PopupContent>
-                  <div className="small-popup">
-                    <h3>Leave Project</h3>
-                    <p className="confirm-msg">
-                      Are you sure you want to leave this project? You won't be
-                      able to rejoin unless you're re-added by a project member.
-                    </p>
-                    <div className="confirm-deny-btns">
-                      <PopupButton
-                        className="confirm-btn"
-                        callback={leaveProject}
-                      >
-                        Confirm
-                      </PopupButton>
-                      <PopupButton className="deny-btn">Cancel</PopupButton>
+                  Share
+                </button>
+                {/* Only be able to leave if you're a member of the project */}
+                {/* {userPerms === 0 ? ( */}
+                <Popup>
+                  <PopupButton className="project-info-dropdown-option">
+                    <ThemeIcon
+                      id={"logout"}
+                      width={27}
+                      height={27}
+                      ariaLabel={"Leave project"}
+                      className="mono-fill"
+                    />
+                    Leave
+                  </PopupButton>
+                  <PopupContent>
+                    <div className="small-popup">
+                      <h3>Leave Project</h3>
+                      <p className="confirm-msg">
+                        Are you sure you want to leave this project? You won't
+                        be able to rejoin unless you're re-added by a project
+                        member.
+                      </p>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          className="confirm-btn"
+                          callback={leaveProject}
+                        >
+                          Confirm
+                        </PopupButton>
+                        <PopupButton className="deny-btn">Cancel</PopupButton>
+                      </div>
                     </div>
-                  </div>
-                </PopupContent>
-              </Popup>
-              <button
-                className="project-info-dropdown-option"
-                id="project-info-report"
-              >
-                <ThemeIcon
-                  id={"warning"}
-                  width={27}
-                  height={27}
-                  ariaLabel={"Report"}
-                />
-                Report
-              </button>
-            </div>
-          </DropdownContent>
-        </Dropdown>
-      </>
+                  </PopupContent>
+                </Popup>
+                <button
+                  className="project-info-dropdown-option"
+                  id="project-info-report"
+                >
+                  <ThemeIcon
+                    id={"warning"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"Report"}
+                  />
+                  Report
+                </button>
+              </div>
+            </DropdownContent>
+          </Dropdown>
+        </>
+      )
     );
 
   //Lists of users who have worked on this project
@@ -359,7 +362,13 @@ useEffect(() => {
 
   return (
     <div className="page">
-      <Header dataSets={{ data: [] }} onSearch={() => { } } hideSearchBar={true} value={undefined} onChange={undefined}/>
+      <Header
+        dataSets={{ data: [] }}
+        onSearch={() => {}}
+        hideSearchBar={true}
+        value={undefined}
+        onChange={undefined}
+      />
 
       {displayedProject === undefined ? (
         loadingProject
@@ -396,36 +405,44 @@ useEffect(() => {
                       {/* Left Container */}
                       <div id="project-team-open-positions-popup">
                         <div className="positions-popup-list">
-                          <p className="positions-popup-info-title">Open Positions</p>
+                          <p className="positions-popup-info-title">
+                            Open Positions
+                          </p>
                           <div id="team-positions-popup-list-buttons">
-                          {
-                            displayedProject.jobs?.map((job, index) => (
+                            {displayedProject.jobs?.map((job, index) => (
                               <button
                                 className={`positions-popup-list-item`}
-                                id={index === viewedPosition ? "positions-popup-list-item-active" : ""}
+                                id={
+                                  index === viewedPosition
+                                    ? "positions-popup-list-item-active"
+                                    : ""
+                                }
                                 onClick={() => setViewedPosition(index)}
                                 key={index}
                               >
                                 {job.role.label}
                               </button>
                             ))}
-                            </div>
+                          </div>
                         </div>
                       </div>
-                      
+
                       {/* Right Container */}
                       <div className="positions-popup-info-wrapper">
                         <div className="positions-popup-info">
                           <div className="positions-popup-info-title">
-                            {displayedProject.jobs[viewedPosition]?.role?.label ??
-                              undefined}
+                            {displayedProject.jobs[viewedPosition]?.role
+                              ?.label ?? undefined}
                           </div>
 
                           <div id="position-description-header">
                             What we are looking for:
                           </div>
 
-                          <div id="position-description-content" className="positions-popup-info-description">
+                          <div
+                            id="position-description-content"
+                            className="positions-popup-info-description"
+                          >
                             {displayedProject.jobs[viewedPosition]?.description}
                           </div>
 
@@ -435,13 +452,23 @@ useEffect(() => {
                                 <span className="position-detail-indicator">
                                   Availability:{" "}
                                 </span>
-                                {JobAvailabilityEnums[displayedProject.jobs[viewedPosition]?.availability] }
+                                {
+                                  JobAvailabilityEnums[
+                                    displayedProject.jobs[viewedPosition]
+                                      ?.availability
+                                  ]
+                                }
                               </div>
                               <div id="position-location">
                                 <span className="position-detail-indicator">
                                   Location:{" "}
                                 </span>
-                                {JobLocationEnums[displayedProject.jobs[viewedPosition]?.location]}
+                                {
+                                  JobLocationEnums[
+                                    displayedProject.jobs[viewedPosition]
+                                      ?.location
+                                  ]
+                                }
                               </div>
                             </div>
 
@@ -450,13 +477,23 @@ useEffect(() => {
                                 <span className="position-detail-indicator">
                                   Duration:{" "}
                                 </span>
-                                {JobDurationEnums[displayedProject.jobs[viewedPosition]?.duration]}
+                                {
+                                  JobDurationEnums[
+                                    displayedProject.jobs[viewedPosition]
+                                      ?.duration
+                                  ]
+                                }
                               </div>
                               <div id="position-compensation">
                                 <span className="position-detail-indicator">
                                   Compensation:{" "}
                                 </span>
-                                {JobCompensationEnums[displayedProject.jobs[viewedPosition]?.compensation]}
+                                {
+                                  JobCompensationEnums[
+                                    displayedProject.jobs[viewedPosition]
+                                      ?.compensation
+                                  ]
+                                }
                               </div>
                             </div>
                           </div>
@@ -477,8 +514,7 @@ useEffect(() => {
                             ? `images/profiles/${projectLead?.profile_image}` 
                             : profilePicture} 
                           /> */}
-                            {projectLead?.firstName}{" "}
-                            {projectLead?.lastName}
+                            {projectLead?.firstName} {projectLead?.lastName}
                           </span>
                         </div>
                       </div>
@@ -491,14 +527,18 @@ useEffect(() => {
                 </Popup>
               </div>
               <div id="project-creation">
-                Created by: {" "}
+                Created by:{" "}
                 <span className="project-info-highlight">
                   {projectLead?.firstName} {projectLead?.lastName}
                 </span>
                 <br />
                 {new Date(
                   displayedProject.createdAt.toString()
-                ).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" })}
+                ).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
               </div>
             </div>
             <div id="project-tags">
@@ -545,24 +585,26 @@ useEffect(() => {
             <div id="project-overview-links-section">
               Keep up with us!
               <div id="project-overview-links">
-                {
-                  displayedProject.projectSocials.map((social, index) => (
-                    <button
-                      key={index}
-                      onClick={() => {
-                        window.open(social.url, "_blank");
-                      }}
-                    >
-                      <ThemeIcon
-                        id={social.label === "Other" ? "link" : social.label.toLowerCase()}
-                        width={25}
-                        height={25}
-                        className={"color-fill"}
-                        ariaLabel={social.label}
-                      />
-                    </button>
-                  ))
-                }
+                {displayedProject.projectSocials.map((social, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      window.open(social.url, "_blank");
+                    }}
+                  >
+                    <ThemeIcon
+                      id={
+                        social.label === "Other"
+                          ? "link"
+                          : social.label.toLowerCase()
+                      }
+                      width={25}
+                      height={25}
+                      className={"color-fill"}
+                      ariaLabel={social.label}
+                    />
+                  </button>
+                ))}
               </div>
             </div>
           </div>
