@@ -3066,9 +3066,27 @@ button#positions-popup-list-item-active {
 }
 
 #project-overview-links-section {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  justify-content: start;
   color: var(--primary-color);
   font-style: italic;
+  font-size: 20px;
   margin: 15px 0;
+
+  #project-overview-links {
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+
+    button {
+      background-color: transparent;
+      border: none;
+      padding: 0;
+    }
+  }
 }
 
 #project-people {

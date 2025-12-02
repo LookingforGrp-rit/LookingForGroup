@@ -268,7 +268,7 @@ FIXME: make all viewboxes the same ratio (where icons are in similar places, inc
   </symbol>
 
   <!-- X (Social Media): Color fill -->
-  <symbol id="x" viewBox="0 0 20 20" fill="inherit">
+  <symbol id="twitter" viewBox="0 0 20 20" fill="inherit">
     <path d="M15.75 0.937134H18.8171L12.1171 8.61428L20 19.0628H13.8286L8.99143 12.7271L3.46286 19.0628H0.392857L7.55857 10.8486L0 0.938562H6.32857L10.6943 6.72856L15.75 0.937134ZM14.6714 17.2228H16.3714L5.4 2.68142H3.57714L14.6714 17.2228Z" fill="inherit "/>
   </symbol>
 

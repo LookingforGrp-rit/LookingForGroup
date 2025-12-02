@@ -116,7 +116,6 @@ projectAfterLinkChanges = structuredClone(projectData);
                     height={20}
                     id={
                       social.label === 'Other' ? 'link' :
-                      social.label === 'Twitter' ? 'x' :
                       social.label.toLowerCase()
                     }
                     className="mono-fill"
@@ -156,8 +155,6 @@ projectAfterLinkChanges = structuredClone(projectData);
                         height={20}
                         id={
                           social.label === 'Other' ? 'link' :
-                          // TODO: revisit twitter/x label
-                          social.label === 'Twitter' ? 'x' :
                           social.label.toLowerCase()
                         }
                         className={'mono-fill'}
@@ -204,8 +201,6 @@ projectAfterLinkChanges = structuredClone(projectData);
                         height={20}
                         id={
                           website.label === 'Other' ? 'link' :
-                          // TODO: revisit twitter/x label
-                          website.label === 'Twitter' ? 'x' :
                           website.label.toLowerCase()
                         }
                         className={'mono-fill'}
