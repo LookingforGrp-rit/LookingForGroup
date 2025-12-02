@@ -25,6 +25,8 @@ import type {
   UserFollowsList,
   ProjectDetail,
   ProjectFollowsList,
+  UpdateUserProjectVisibilityInput,
+  MyMember,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -260,16 +262,15 @@ export const getVisibleProjects = async (
  */
 export const updateProjectVisibility = async (
   projectID: number,
-  _visibility: string
-) => {
+  visibility: UpdateUserProjectVisibilityInput
+): Promise<ApiResponse<MyMember>> => {
   const url = `me/projects/${projectID}/visibility`;
-  const visData = { visibility: _visibility }; //it's expecting this
-  const response = await PUT(url, visData);
+  const response = await PUT(url, visibility);
 
-  if (response.error)
+  // if (response.error)
     //console.log(`Error in updateProjectVisibility: ${response.error}`);
   //console.log(response);
-  return response;
+  return response as ApiResponse<MyMember>;
 };
 
 /**

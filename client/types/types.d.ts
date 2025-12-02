@@ -26,11 +26,11 @@ import {
   UpdateUserInput,
   UpdateUserSocialInput,
   UpdateUserSkillInput,
-  MePrivate,
   AcademicYear,
   MyMember,
   MySkill,
   MeDetail,
+  UpdateUserProjectVisibilityInput,
 } from "@looking-for-group/shared";
 
 /**
@@ -134,6 +134,7 @@ interface UserChangesUpdates {
   fields: CRUDRequest<UpdateUserInput>;
   skills: CRUDRequest<UpdateUserSkillInput>[];
   socials: CRUDRequest<UpdateUserSocialInput>[];
+  projectVisibilities: CRUDRequest<UpdateUserProjectVisibilityInput>[];
 }
 
 interface UserChangesDeletes {

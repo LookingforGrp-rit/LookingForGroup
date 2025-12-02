@@ -5,6 +5,7 @@ import {
   ApiResponse,
   MePrivate,
   UpdateUserInput,
+  UpdateUserProjectVisibilityInput,
   UpdateUserSkillInput,
   UpdateUserSocialInput,
 } from "@looking-for-group/shared";
@@ -24,6 +25,7 @@ import {
   deleteUserSocial,
   editUser,
   getCurrentAccount,
+  updateProjectVisibility as APIUpdateProjectVisibility,
   updateUserSkill,
   updateUserSocial,
 } from "../users";
@@ -56,6 +58,7 @@ export const userDataManager = async () => {
         },
         skills: [],
         socials: [],
+        projectVisibilities: [],
       },
       delete: {
         majors: [],
@@ -137,6 +140,18 @@ export const userDataManager = async () => {
     } catch (error) {
       errorMessage += (error as { message: string }).message;
     }
+
+    // project visibilities
+    try {
+      await runAndCollectErrors<UpdateUserProjectVisibilityInput>(
+        "Updating project visibility",
+        updates.projectVisibilities,
+        ({ id, data }) => APIUpdateProjectVisibility(id.value, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
 
     // skills
     try {
@@ -339,6 +354,32 @@ export const userDataManager = async () => {
     };
   };
 
+  // update project visibilities
+  const updateProjectVisibility = (visibility: CRUDRequest<UpdateUserProjectVisibilityInput>) => {
+    let existingVisibilityUpdate = changes.update.projectVisibilities.find(
+      ({ id }) => id.value === visibility.id.value && id.type === visibility.id.type
+    );
+
+    existingVisibilityUpdate = {
+      id: visibility.id,
+      data: {
+        ...existingVisibilityUpdate?.data,
+        ...visibility.data,
+      },
+    };
+
+    changes.update.projectVisibilities = [
+      ...changes.update.projectVisibilities.filter(
+        ({ id }) =>
+          !(
+            id.value == existingVisibilityUpdate.id.value &&
+            id.type == existingVisibilityUpdate.id.type
+          )
+      ),
+      existingVisibilityUpdate,
+    ];
+  };
+
   // update skills
   const updateSkill = (skill: CRUDRequest<UpdateUserSkillInput>) => {
     let existingSkillUpdate = changes.update.skills.find(
@@ -422,8 +463,7 @@ export const userDataManager = async () => {
       )
     ) {
       changes.update.skills = changes.update.skills.filter(
-        ({ id }) =>
-          !(id.value === skill.id.value && id.type === skill.id.type)
+        ({ id }) => !(id.value === skill.id.value && id.type === skill.id.type)
       );
     }
 
@@ -487,6 +527,7 @@ export const userDataManager = async () => {
     addSkill,
     addSocial,
     updateFields,
+    updateProjectVisibility,
     updateSkill,
     updateSocial,
     deleteMajor,
