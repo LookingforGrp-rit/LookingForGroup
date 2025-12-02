@@ -191,7 +191,7 @@ const checkFollow = useCallback(async () => {
             }}
           >
             <ThemeIcon
-              id={link.label.toLowerCase()}
+              id={link.label === "Other" ? "link" : link.label.toLowerCase()}
               width={25}
               height={25}
               className={"color-fill"}

@@ -33,6 +33,9 @@ export const ProfileEditPopup = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
   const [canonicalProfile, setCanonicalProfile] = useState<MePrivate>();
+  
+  // TODO this actually needs to sit in the Profile.tsx file so that updates propogate up to the main page.
+  // Alternatively, it can be removed entirely.
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
 
   const updatePendingProfile = (profileData: PendingUserProfile) => {
@@ -67,71 +70,18 @@ export const ProfileEditPopup = () => {
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevents any default calls
 
-    if (!canonicalProfile) return;
-
-    // Receive all inputted values
-    const getInputValue = (input: string) => {
-      const element = document.getElementById(
-        `profile-editor-${input}`
-      ) as HTMLInputElement;
-      return element?.value?.trim() || ""; // null
-    };
-
-    // required fields: ensure not just empty/spaces
-    const firstName = getInputValue("firstName");
-    const lastName = getInputValue("lastName");
-    const bio = getInputValue("bio");
-
-    // pop up error text if fields invalid
-    if (!firstName || !lastName || !bio) {
-      setErrorVisible(true);
-      return;
+    try {
+      dataManager.saveChanges();
+      setErrorVisible(false);
+      window.location.reload(); // reload page
+    } catch (e) {
+      // TODO handle error
+      console.error((e as Error).message);
     }
 
-    // TODO these can probably all be deleted
-    // Prepare these values for a POST/PUT request
-    const updatedProfile: MeDetail = {
-      ...profile!,
-      firstName,
-      lastName,
-      headline: getInputValue("headline"),
-      pronouns: getInputValue("pronouns"),
-      title: getInputValue("jobTitle"),
-      majors: profile.majors ?? [],
-      academicYear: getInputValue("academicYear") as MeDetail["academicYear"],
-      location: getInputValue("location"),
-      funFact: getInputValue("funFact"),
-      bio,
-      skills: profile.skills || [],
-      socials: profile.socials || [],
-    };
-    // console.log('Saving data...');
-    // console.log(dataToStore);
-
-    // TODO track majors, skills, and socials as they're added deleted or modified so that they can be updated using their respsective endpoints.
-    const updatedUserInput: UpdateUserInput = {
-      firstName,
-      lastName,
-      headline: getInputValue("headline"),
-      pronouns: getInputValue("pronouns"),
-      title: getInputValue("jobTitle"),
-      academicYear: getInputValue("academicYear") as MeDetail["academicYear"],
-      location: getInputValue("location"),
-      funFact: getInputValue("funFact"),
-      bio,
-    };
-
-    // TODO error check result
-    await editUser(updatedUserInput);
-    await saveImage();
-
-    setProfile(updatedProfile);
-    setErrorVisible(false);
-
-    window.location.reload(); // reload page
+    // probably not necessary
+    // window.location.reload(); // reload page
   };
-
-  // In your ProfileEditPopup.tsx file
 
   // useEffect to initialize the tabs
   useEffect(() => {

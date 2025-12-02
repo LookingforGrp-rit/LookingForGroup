@@ -26,7 +26,7 @@ const NotFoundPage = () => {
                         This is the Home button, because it will return users home once the Home page is up. It currently returns to Discover page
                     */}
                     <button className="" onClick={() => navigate(paths.routes.HOME)}>
-                        <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} /> {/*Home Button Icon*/}
+                        <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke-invert'} ariaLabel={'discover'} /> {/*Home Button Icon*/}
                         Home
                     </button>
 

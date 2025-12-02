@@ -39,6 +39,7 @@ export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
 export type JobDuration = "ShortTerm" | "LongTerm";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
+export type Visibility = "Public" | "Private";
 
 //API REQUEST
 
@@ -110,7 +111,7 @@ export interface Medium {
 export interface UserMember {
   project: ProjectPreview;
   role: Role;
-  visibility: "Public" | "Private";
+  visibility: Visibility;
   memberSince: Date;
   apiUrl: string;
 }
@@ -163,7 +164,7 @@ export type ProjectFollower = {
 export interface MyMember {
   project: ProjectPreview;
   role: Role;
-  visibility: "Public" | "Private";
+  visibility: Visibility;
   memberSince: Date;
   apiUrl: string;
 }
@@ -247,15 +248,6 @@ export interface User extends UserDetail {
   universityId: string;
   createdAt: Date;
   updatedAt: Date;
-}
-
-// Represents the member info for a project
-export interface UserMember {
-  project: ProjectPreview;
-  role: Role;
-  visibility: "Public" | "Private";
-  memberSince: Date;
-  apiUrl: string;
 }
 
 // ME
@@ -397,8 +389,8 @@ export interface ProjectPreview {
   title: string;
   hook: string;
   owner: UserPreview;
-  thumbnail: ProjectImage | null; 
-  thumbnailId: number,
+  thumbnail: ProjectImage | null;
+  thumbnailId: number;
   mediums: ProjectMedium[];
   apiUrl: string;
 }
@@ -466,10 +458,17 @@ export type UpdateUserSkillInput = Partial<
 
 export type AddUserMajorInput = Pick<Major, "majorId">;
 
+export type UpdateUserProjectVisibilityInput = {
+  visibility: Visibility;
+};
+
 // PROJECTS inputs
 export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
-    Pick<ProjectDetail, "hook" | "description" | "status" | "audience" | "purpose">
+    Pick<
+      ProjectDetail,
+      "hook" | "description" | "status" | "audience" | "purpose"
+    >
   >;
 export type UpdateProjectInput = Partial<CreateProjectInput>;
 
@@ -492,8 +491,8 @@ export type UpdateProjectMemberInput = Partial<
 export type AddProjectSocialInput = Pick<ProjectSocial, "websiteId" | "url">;
 export type UpdateProjectSocialInput = Partial<Pick<ProjectSocial, "url">>;
 export type UpdateProjectThumbnailInput = {
-  thumbnail: number
-}
+  thumbnail: number;
+};
 
 export type AddProjectTagsInput = Pick<ProjectTag, "tagId">;
 
