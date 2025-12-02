@@ -1,7 +1,7 @@
 // Utilities and React functions
 import { useState, useEffect } from "react";
 
-import { editUser } from "../../api/users";
+import { editUser, getCurrentAccount } from "../../api/users";
 
 // Components
 import { Popup, PopupButton, PopupContent } from "../Popup";
@@ -17,38 +17,52 @@ import { getCurrentUsername, getUsersById } from "../../api/users";
 
 import {
   MeDetail,
+  MePrivate,
   UpdateUserInput,
 } from "@looking-for-group/shared";
+import { userDataManager } from "../../api/data-managers/user-data-manager";
+import { PendingUserProfile } from "../../../types/types";
 
 // The profile to view is independent upon the site's state changes
 const pageTabs = ["About", "Projects", "Skills", "Links"];
+let dataManager;
 
 export const ProfileEditPopup = () => {
-  // The profile to view is independent upon the site's state changes
-  const [profile, setProfile] = useState<MeDetail | null>(null);
-
   // Holds new profile image if one is selected
   const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
+  const [canonicalProfile, setCanonicalProfile] = useState<MePrivate>();
+  const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
+
+  const updatePendingProfile = (profileData: PendingUserProfile) => {
+    setModifiedProfile(profileData);
+  };
 
   // Profile should be set up on intialization
   useEffect(() => {
     const setUpProfileData = async () => {
       // Pick which socials to use based on type
       // fetch for profile on ID
-      const userID = await getCurrentUsername();
-      const response = await getUsersById(userID.data?.userId);
 
-      console.log("ProfileEditPopup - Raw API response:", response.data);
-      console.log("ProfileEditPopup - User profile data:", response.data);
+      const getUser = await getCurrentAccount();
+      if (getUser.error || !getUser.data) {
+        // TODO do something with this error
+        throw "error getting current user " + getUser.error;
+      }
+
+      setCanonicalProfile(getUser.data);
+      setModifiedProfile(getUser.data);
+      dataManager = userDataManager();
+
+      // console.log("ProfileEditPopup - Raw API response:", response.data);
+      // console.log("ProfileEditPopup - User profile data:", response.data);
       //console.log('ProfileEditPopup - User interests from API:', response.data?.skills);
-
-      await setProfile(response.data as MeDetail);
     };
     setUpProfileData();
   }, []);
 
+  // TODO move to about tab
   // Send selected image to server for save
   const saveImage = async () => {
     if (!selectedImageFile) return;
@@ -59,7 +73,7 @@ export const ProfileEditPopup = () => {
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevents any default calls
 
-    if (!profile) return;
+    if (!canonicalProfile) return;
 
     // Receive all inputted values
     const getInputValue = (input: string) => {
@@ -80,6 +94,7 @@ export const ProfileEditPopup = () => {
       return;
     }
 
+    // TODO these can probably all be deleted
     // Prepare these values for a POST/PUT request
     const updatedProfile: MeDetail = {
       ...profile!,
@@ -151,23 +166,42 @@ export const ProfileEditPopup = () => {
 
   // Component to organize the main tab content
   const renderTabContent = () => {
-    if (!profile) return <p>Loading...</p>;
+    if (!canonicalProfile) return <p>Loading...</p>;
     switch (currentTab) {
       case 0:
         return (
           <AboutTab
-            profile={profile}
-            setProfile={setProfile}
+            profile={canonicalProfile}
+            dataManager={dataManager}
+            updatePendingProfile={updatePendingProfile}
             selectedImageFile={selectedImageFile}
             setSelectedImageFile={setSelectedImageFile}
           />
         );
       case 1:
-        return <ProjectsTab/>;
+        return (
+          <ProjectsTab
+            profile={canonicalProfile}
+            dataManager={dataManager}
+            updatePendingProfile={updatePendingProfile}
+          />
+        );
       case 2:
-        return <SkillsTab profile={profile} setProfile={setProfile}/>;
+        return (
+          <SkillsTab
+            profile={canonicalProfile}
+            dataManager={dataManager}
+            updatePendingProfile={updatePendingProfile}
+          />
+        );
       case 3:
-        return <LinksTab profile={profile} setProfile={setProfile}/>;
+        return (
+          <LinksTab
+            profile={canonicalProfile}
+            dataManager={dataManager}
+            updatePendingProfile={updatePendingProfile}
+          />
+        );
       default:
         return null;
     }
@@ -246,10 +280,13 @@ export const ProfileEditPopup = () => {
           encType="multipart/form-data"
         >
           <div id="project-editor-tabs">{editorTabs}</div>
-          <div id="project-editor-content">
-            {renderTabContent()}
-          </div>
-          <input type="submit" id="project-editor-save" className="profile-editor-save" value="Save Changes" />
+          <div id="project-editor-content">{renderTabContent()}</div>
+          <input
+            type="submit"
+            id="project-editor-save"
+            className="profile-editor-save"
+            value="Save Changes"
+          />
           {errorVisible && (
             <div id="invalid-input-error" className="error-message">
               <p>*Fill out all required fields before saving!*</p>
