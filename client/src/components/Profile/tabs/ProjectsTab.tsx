@@ -8,8 +8,8 @@ import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 import usePreloadedImage from "../../../functions/imageLoad";
 import placeholderThumbnail from '../../../images/project_temp.png';
+import { ThemeIcon } from "../../ThemeIcon";
 
-// TODO add visibility toggle
 const ProjectTile = ({
   projectData,
   onVisibilityChanged,
@@ -18,14 +18,32 @@ const ProjectTile = ({
   onVisibilityChanged: (visibility: Visibility) => void;
 }) => {
   return (
-    <div className="projectTile" id={`project-tile-${projectData.projectId}`}>
+    <div className="projectTile" key={projectData.projectId}>
       <img
         src={usePreloadedImage(projectData.thumbnail?.image || placeholderThumbnail, placeholderThumbnail)}
         alt={
           projectData.thumbnail?.altText || `Thumbnail for ${projectData.title}`
         }
       />
-      {<p>{projectData.title}</p>}
+      // TODO: use visibility here
+      {/* isVisible && <div className='image-overlay'/> */}
+      <button
+        className="project-visibility-button"
+        onClick={(e) => {
+          e.preventDefault();
+          // TODO: pass visibility parameter here
+          // onVisibilityChanged;
+        }}
+      >
+        <ThemeIcon
+          id={"eye"} // TODO: use eye-line if not visible (add check)
+          width={19}
+          height={13} // TODO: if eye-line, should be 18
+          className={'mono-fill-invert'}
+          ariaLabel={'Toggle visibility'}
+        />
+      </button>
+      {/* {<p>{projectData.title}</p>} */}
     </div>
   );
 };
