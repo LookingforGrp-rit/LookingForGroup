@@ -1,7 +1,7 @@
 // Utilities and React functions
 import { useState, useEffect } from "react";
 
-import { editUser, getCurrentAccount } from "../../api/users";
+import { getCurrentAccount } from "../../api/users";
 
 // Components
 import { Popup, PopupButton, PopupContent } from "../Popup";
@@ -11,15 +11,6 @@ import { AboutTab } from "./tabs/AboutTab";
 import { LinksTab } from "./tabs/LinksTab";
 import { ProjectsTab } from "./tabs/ProjectsTab";
 import { SkillsTab } from "./tabs/SkillsTab";
-// import { InterestTab } from './tabs/InterestTab';
-// import { interests } from '../../constants/interests';
-import { getCurrentUsername, getUsersById } from "../../api/users";
-
-import {
-  MeDetail,
-  MePrivate,
-  UpdateUserInput,
-} from "@looking-for-group/shared";
 import { userDataManager } from "../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../types/types";
 
@@ -28,8 +19,6 @@ const pageTabs = ["About", "Projects", "Skills", "Links"];
 let dataManager: Awaited<ReturnType<typeof userDataManager>>;
 
 export const ProfileEditPopup = () => {
-  // Holds new profile image if one is selected
-  const [selectedImageFile, setSelectedImageFile] = useState<File | null>(null);
   const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
@@ -60,7 +49,6 @@ export const ProfileEditPopup = () => {
     setUpProfileData();
   }, []);
 
-  // TODO move to about tab
 
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevents any default calls
@@ -113,8 +101,6 @@ export const ProfileEditPopup = () => {
             profile={modifiedProfile}
             dataManager={dataManager}
             updatePendingProfile={updatePendingProfile}
-            selectedImageFile={selectedImageFile}
-            setSelectedImageFile={setSelectedImageFile}
           />
         );
       case 1:

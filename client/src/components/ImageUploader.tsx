@@ -30,6 +30,7 @@ const ImageUploader = ({
   // Ref for reading selected files
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+
   // Validate file type and handle image input change
   const handleImgChange = useCallback(() => {
     const file = inputRef.current?.files?.[0];
@@ -44,6 +45,7 @@ const ImageUploader = ({
 
   // On file input change, handle image selection 
   useEffect(() => {
+    
     const input = inputRef.current;
     if (!input) return;
 
@@ -52,7 +54,7 @@ const ImageUploader = ({
 
   const profileVariant = (
     <label htmlFor="image-uploader" id="profile-image-uploader" className="drop-area">
-      <input type="file" name="image" id="image-uploader" accept="image/png, image/jpg" onChange={handleImgChange} hidden />
+      <input type="file" name="image" id="image-uploader" accept="image/png, image/jpg" ref={inputRef} onChange={handleImgChange} hidden />
       {initialImageUrl ?
         <div id="img-view">
           <img

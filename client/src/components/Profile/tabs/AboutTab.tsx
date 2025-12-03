@@ -1,4 +1,4 @@
-import { useState, useEffect, SetStateAction, Dispatch } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { ProfileImageUploader } from '../../ImageUploader';
 import usePreloadedImage from '../../../functions/imageLoad';
 import { Select, SelectButton, SelectOptions } from '../../Select';
@@ -17,13 +17,11 @@ type AboutTabProps = {
   profile: PendingUserProfile;
   updatePendingProfile?: (updatedPendingrProfile: PendingUserProfile) => void;
   failCheck?: boolean;
-  selectedImageFile: File | null;
-  setSelectedImageFile: Dispatch<SetStateAction<File | null>>
 };
 
 
 // Main Component
-export const AboutTab = ({dataManager, profile, selectedImageFile = async () => {}, updatePendingProfile = () => {}, failCheck}: AboutTabProps) => {
+export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}, failCheck}: AboutTabProps) => {
 
   profileAfterAboutChanges = structuredClone(profile);
 
@@ -31,7 +29,9 @@ export const AboutTab = ({dataManager, profile, selectedImageFile = async () => 
   // Holds new profile image if one is selected
 
   // Preview URL for profile image
-  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`images/profiles/${profile.profileImage}`, "../../../images/blue_frog.png"));
+  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`images/profiles/${profile.profileImage}`, "/src/images/blue_frog.png"));
+
+  const [selectedImageFile, setSelectedImageFile] = useState<File>();
 
   //getting the full lists of roles & majors
   const [roles, setRoles] = useState<Role[]>([]);
@@ -52,35 +52,36 @@ export const AboutTab = ({dataManager, profile, selectedImageFile = async () => 
     };
     fetchMajors();
   }, []);
-  // Update preview image when selected image changes
-//   useEffect(() => {
-//   if (selectedImageFile) {
-//     const imgLink = URL.createObjectURL(selectedImageFile);
-//     setPreviewUrl(imgLink);
-//     return () => URL.revokeObjectURL(imgLink);
-//   } else {
-//     // Maintain original preview URL
-//     setPreviewUrl(previewUrl);
-//   }
-// }, [selectedImageFile, profileData.profileImage, previewUrl]);
 
-//   // Set new image when one is picked from uploader
-//   const handleFileSelected = (file: File) => {
-//     console.log('got uploaded file', file);  
-//     setSelectedImageFile(file);
-//   };
-  // Send selected image to server for save
-  // const saveImage = async () => {
-  //   if (!selectedImageFile) return;
 
-  //   await editUser({ profileImage: selectedImageFile });
-  // };
+
+ // Set new image when one is picked from uploader
+ const handleFileSelected = useCallback(async () => {
+  console.log("just making sure this is running") //it's not!
+  //get the image uploader element
+    const imageUploader = document.getElementById(
+      "image-uploader"
+    ) as HTMLInputElement;
+    
+    if (!imageUploader?.files?.length) return;
+
+    //get the image itself (there will always be only one)
+    const file = imageUploader.files[0];
+    if (!["image/jpeg", "image/png"].includes(file.type)) return;
+
+    //and we got it! we'll do things with it after i verify that this is happening
+   console.log('got uploaded file', file);  
+   setSelectedImageFile(file);
+     const imgLink = URL.createObjectURL(file);
+     setPreviewUrl(imgLink);
+ }, []);
+   //Send selected image to server for save
 
   return (
     <div id="profile-editor-about" className="edit-profile-body about">
       <div id="edit-profile-section-1">
         <div id="profile-editor-add-image" className="edit-profile-image">
-          <ProfileImageUploader initialImageUrl={previewUrl}/>
+          <ProfileImageUploader onFileSelected={handleFileSelected}/>
         </div>
 
         <div className="about-row row-1">
