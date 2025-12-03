@@ -1,5 +1,4 @@
 import { useState, useEffect, SetStateAction, Dispatch } from 'react';
-import { MajorSelector } from '../../MajorSelector';
 import { ProfileImageUploader } from '../../ImageUploader';
 import usePreloadedImage from '../../../functions/imageLoad';
 import { Select, SelectButton, SelectOptions } from '../../Select';
@@ -16,7 +15,6 @@ let profileAfterAboutChanges: PendingUserProfile;
 type AboutTabProps = {
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   profile: PendingUserProfile;
-  saveProfile?: () => Promise<void>;
   updatePendingProfile?: (updatedPendingrProfile: PendingUserProfile) => void;
   failCheck?: boolean;
   selectedImageFile: File | null;
@@ -25,7 +23,7 @@ type AboutTabProps = {
 
 
 // Main Component
-export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile = async () => {}, updatePendingProfile = () => {}, failCheck}: AboutTabProps) => {
+export const AboutTab = ({dataManager, profile, selectedImageFile = async () => {}, updatePendingProfile = () => {}, failCheck}: AboutTabProps) => {
 
   profileAfterAboutChanges = structuredClone(profile);
 
@@ -150,8 +148,9 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
     >
       <Select>
         <SelectButton
-          placeholder="Select"
-          initialVal={''}
+          placeholder={"Select"}
+          initialVal={profile.title ?? ""}
+          callback={(e) => e.preventDefault()}
           type={'input'}
         />
         <SelectOptions
@@ -180,6 +179,7 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
       </Select>
     </LabelInputBox>}
           {
+    //major (will need a ui change to accept multiple majors)
     <LabelInputBox
       label={'Major'}
       inputType={'none'}
@@ -188,7 +188,7 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
         <SelectButton
           placeholder='Select'
           initialVal={''}
-          callback={(e) => { e.preventDefault(); }}
+          callback={(e) => e.preventDefault()}
           type={'input'}
         />
         <SelectOptions
@@ -210,6 +210,7 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
               <SelectButton
                 placeholder="Select"
                 initialVal={profile.academicYear ? profile.academicYear : ""}
+                callback={(e) => e.preventDefault()}
                 type={'input'}
               />
               <SelectOptions
@@ -271,6 +272,7 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
               <SelectButton
                 placeholder="Select"
                 initialVal={profile.mentor === true ? 'Mentor' : 'Not a mentor'}
+                callback={(e) => e.preventDefault()}
                 type={'input'}
               />
               <SelectOptions
@@ -311,7 +313,18 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
           inputType={'multi'}
           maxLength={100}
           value={profile.headline}
-          onChange={(e) => setProfile(prev => ({ ...prev, headline: e.target.value }))}
+          onChange={(e) => {
+              const headline = e.target.value;
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, headline};
+              updatePendingProfile(profileAfterAboutChanges);
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon',
+                },
+                data: { headline }
+              })
+          }}
         />
 
         <LabelInputBox
@@ -320,7 +333,18 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
           inputType={'multi'}
           maxLength={100}
           value={profile.funFact}
-          onChange={(e) => setProfile(prev => ({ ...prev, funFact: e.target.value }))}
+          onChange={(e) => {
+              const funFact = e.target.value;
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, funFact};
+              updatePendingProfile(profileAfterAboutChanges);
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon',
+                },
+                data: { funFact }
+              })
+          }}
         />
       </div>
 
@@ -330,7 +354,19 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
         inputType={'multi'}
         maxLength={600}
         value={profile.bio}
-        onChange={(e) => setProfile(prev => ({ ...prev, bio: e.target.value }))}
+        onChange={(e) => {
+          
+              const bio = e.target.value;
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, bio};
+              updatePendingProfile(profileAfterAboutChanges);
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon',
+                },
+                data: { bio }
+              })
+        }}
         id={'edit-profile-section-3'}
       />
     </div>
