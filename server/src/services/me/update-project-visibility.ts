@@ -37,16 +37,6 @@ export const updateProjectVisibility = async (
       return transformMyMember(existingMember);
     }
 
-    // Check if user is the project owner - owners cannot leave their own projects
-    const project = await prisma.projects.findUnique({
-      where: { projectId },
-      select: { userId: true },
-    });
-
-    if (!project) {
-      return 'NOT_FOUND';
-    }
-
     // Update the member's visibility
     const updatedMember = await prisma.members.update({
       where: {
@@ -63,7 +53,7 @@ export const updateProjectVisibility = async (
 
     return transformMyMember(updatedMember);
   } catch (error) {
-    console.error('Error in updateProfileVisibilityService:', error);
+    console.error('Error in updateProjectVisibilityService:', error);
 
     if (error instanceof Object && 'code' in error) {
       if (error.code === 'P2025') {

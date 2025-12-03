@@ -214,9 +214,7 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
               />
               <SelectOptions
                 callback={(e) => {
-                  const year = (
-                e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
-              ).value as AcademicYear;
+                  const year = (e.target as HTMLButtonElement).value as AcademicYear;
 
               profileAfterAboutChanges = {
                 ...profileAfterAboutChanges,
@@ -273,11 +271,24 @@ export const AboutTab = ({dataManager, profile, selectedImageFile, saveProfile =
               <SelectButton
                 placeholder="Select"
                 initialVal={profile.mentor === true ? 'Mentor' : 'Not a mentor'}
-                callback={(e) => { e.preventDefault(); } }
                 type={'input'}
               />
               <SelectOptions
-                callback={(e) => {e.preventDefault();}}
+                callback={(e) => {
+                  //true if it's mentor, false if it's anythin else
+                const mentor = ((e.target as HTMLButtonElement).value === "Mentor");
+                console.log(mentor)
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, mentor};
+              updatePendingProfile(profileAfterAboutChanges);
+              dataManager.updateFields({
+                id: {
+                  value: userId,
+                  type: 'canon',
+                },
+                data: { mentor: `${mentor}` } //annoying that it's a string but go off ig
+              })
+                  
+                }}
                 options={[{
                   value: 'Not a mentor',
                   markup: <>Not a mentor</>,
