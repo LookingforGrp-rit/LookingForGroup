@@ -47,7 +47,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   return (
     <div className={'profile-panel'}>
       <img
-        src={usePreloadedImage(`images/profiles/${profileData.profileImage}`, profilePicture)}
+        src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt='profile image'
       />
       <h2>

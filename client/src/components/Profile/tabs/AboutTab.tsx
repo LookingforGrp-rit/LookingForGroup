@@ -29,7 +29,7 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {},
   // Holds new profile image if one is selected
 
   // Preview URL for profile image
-  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`images/profiles/${profile.profileImage}`, "/src/images/blue_frog.png"));
+  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`${profile.profileImage}`, "/src/images/blue_frog.png"));
 
   const [selectedImageFile, setSelectedImageFile] = useState<File>();
 
@@ -55,6 +55,8 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {},
 
 
 
+
+
  // Set new image when one is picked from uploader
  const handleFileSelected = useCallback(async () => {
   console.log("just making sure this is running") //it's not!
@@ -74,8 +76,23 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {},
    setSelectedImageFile(file);
      const imgLink = URL.createObjectURL(file);
      setPreviewUrl(imgLink);
- }, []);
-   //Send selected image to server for save
+
+     dataManager.updateFields({
+      id: {
+        value: userId,
+        type: 'canon'
+      },
+      data: {
+        profileImage: file
+      }
+     })
+
+     profileAfterAboutChanges = {
+      ...profileAfterAboutChanges,
+      profileImage: file
+     }
+     updatePendingProfile(profileAfterAboutChanges)
+ }, [dataManager, updatePendingProfile, userId]);
 
   return (
     <div id="profile-editor-about" className="edit-profile-body about">

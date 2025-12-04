@@ -123,14 +123,14 @@ export const Header = ({ dataSets, onSearch, value, onChange, hideSearchBar = fa
           <DropdownButton buttonId="profile-btn">
             {(profileImg) ? (
               <img
-                src={`images/profiles/${profileImg}`}
+                src={`${profileImg}`}
                 id={'profile-img-icon'}
                 className={'rounded'}
                 title={'Profile picture'}
                 // Cannot use usePreloadedImage function because this is in a callback
                 onLoad={(e) => {
                   const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = `images/profiles/${profileImg}`;
+                  profileImg.src = `${profileImg}`;
                 }}
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
@@ -185,13 +185,13 @@ export const Header = ({ dataSets, onSearch, value, onChange, hideSearchBar = fa
                 <button onClick={() => handleProfileAccess()} id="header-profile-user">
                   {(profileImg) ? (
                     <img
-                      src={`images/profiles/${profileImg}`}
+                      src={`${profileImg}`}
                       className={'rounded'}
                       alt={'profile'}
                       // Cannot use usePreloadedImage function because this is in a callback
                       onLoad={(e) => {
                         const profileImg = e.target as HTMLImageElement;
-                        profileImg.src = `images/profiles/${profileImg}`;
+                        profileImg.src = `${profileImg}`;
                       }}
                       onError={(e) => {
                         const profileImg = e.target as HTMLImageElement;

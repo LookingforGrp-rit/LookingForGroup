@@ -279,7 +279,7 @@ const checkFollow = useCallback(async () => {
         <div id="profile-hero">
           <div id="profile-img-container">
             <img
-              src={usePreloadedImage(`images/profiles/${displayedProfile?.profileImage}`, profilePicture)}
+              src={usePreloadedImage(`${displayedProfile?.profileImage}`, profilePicture)}
               id="profile-image"
               alt="profile image"
               onError={(e) => {
