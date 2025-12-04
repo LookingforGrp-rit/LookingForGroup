@@ -1,5 +1,6 @@
 // --- Imports ---
 import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
+import { useNavigate } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
 import profileImage from "../../../images/blue_frog.png";
 import { SearchBar } from "../../SearchBar";
@@ -9,6 +10,7 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 import {
   getJobTitles,
   getUsers,
+  getUsersById
 } from "../../../api/users";
 import {
   ProjectJob,
@@ -33,6 +35,7 @@ import {
 } from "@looking-for-group/client";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
+import * as paths from '../../../constants/routes'
 
 // --- Variables ---
 // Default project value
@@ -135,12 +138,19 @@ export const TeamTab = ({
   const [selectKey, setSelectKey] = useState(0);
   // const [permissionSelectKey, setPermissionSelectKey] = useState(0);
 
+  // selected contact name after saving local position
+  const [contactName, setContactName] = useState("");
+
+
   // check if a value is null or undefined
   const isNullOrUndefined = (value: unknown | null | undefined) => {
     return value === null || value === undefined;
   };
 
+  const navigate = useNavigate();
+
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
+  const { setOpen } = useContext(PopupContext);
 
   // Update parent state with error message
   useEffect(() => {
@@ -239,6 +249,18 @@ export const TeamTab = ({
       return;
     }
   }, [currentJob, isCreatingNewPosition, isTeamTabOpen, projectAfterTeamChanges.jobs]);
+
+  // Load correct contact name in open positions
+  useEffect(() => {
+    const loadName = async () => {
+    if (!currentJob?.contact?.userId) return;
+
+    const user = await getUsersById(currentJob.contact.userId);
+    setContactName(`${user.data?.firstName} ${user.data?.lastName}`);
+  };
+
+  loadName();
+}, [currentJob?.contact?.userId]);
 
   // --- Data retrieval ---
   // Get project job info using role id to compare
@@ -687,7 +709,11 @@ export const TeamTab = ({
             {/* FIXME: Contact is owner until change contact is implemented */}
             <div
               id="position-contact-link"
-              onClick={() => {}} // TODO: link to owner's profile
+              onClick={() => {
+                // Link to profile, close popup
+                navigate(`${paths.routes.PROFILE}?userID=${currentJob?.contact?.userId}`);
+                setOpen(false);
+              }} 
             >
               <img
                 className="project-member-image"
@@ -702,8 +728,7 @@ export const TeamTab = ({
                   profileImg.src = profileImage;
                 }}
               />
-              {projectAfterTeamChanges.owner?.firstName}{" "}
-              {projectAfterTeamChanges.owner?.lastName}
+              <span>{contactName}</span>
             </div>
           </div>
         </div>
@@ -934,7 +959,7 @@ export const TeamTab = ({
               }}
               options={projectAfterTeamChanges.members
                 .filter((member) => member.user !== null)
-                .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
+                // .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
                 .map(({ user }) => ({
                   markup: (
                     <>
