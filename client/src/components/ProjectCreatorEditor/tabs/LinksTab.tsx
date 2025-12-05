@@ -216,7 +216,10 @@ projectAfterLinkChanges = structuredClone(projectData);
                 }) : []}
               />
             </Select>
-            {/* Social URL input */}
+            {/* Social URL input 
+              /* NOTICE: there is a bit of a bug here 
+              /* if you type in the url field before selecting a media label, it won't take your input
+              /* (this is a temporary fix because it would've crashed otherwise)*/}
             <div id="base-url">{BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}</div>
             <Input
               type="link"
@@ -228,7 +231,7 @@ projectAfterLinkChanges = structuredClone(projectData);
                 // But since 'Other' is an option, might be good to just find some
                 // external list of suspicious sites and make sure it's not one of those.
                 
-                //almost forgot about validation
+
                 const tempSocials = [...projectAfterLinkChanges.projectSocials];
                 tempSocials[index].url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] + e.target.value;
 
