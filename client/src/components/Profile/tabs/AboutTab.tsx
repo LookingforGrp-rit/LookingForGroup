@@ -46,12 +46,12 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
       const response = await getMajors();
       setMajors(response?.data ?? []);
     };
-    const refreshPfp = () => {
+    const initializePfp = () => {
       setPreviewUrl(profile.profileImage as string)
     }
     fetchMajors();
     fetchRoles();
-    refreshPfp();
+    initializePfp();
   }, [profile.profileImage]);
   useEffect(() => {
   }, []);

@@ -61,7 +61,7 @@ export const Input: React.FC<CustomInputProps> = ({
     return (
       <div className="input-link-wrapper">
         <input
-          type="text"
+          type="url"
           placeholder="URL"
           className="input"
           onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}

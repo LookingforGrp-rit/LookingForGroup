@@ -220,8 +220,8 @@ projectAfterLinkChanges = structuredClone(projectData);
             <div id="base-url">{BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}</div>
             <Input
               type="link"
-              placeholder={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' ? "URL" : 'Username'}
-              value={social.url ? social.url.substring(BaseSocialUrl[social.label as keyof typeof BaseSocialUrl].length) : ''}
+              placeholder={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "URL" : 'Username'}
+              value={social.url && social.label ? social.url.substring(BaseSocialUrl[social.label as keyof typeof BaseSocialUrl].length) : ''}
               onChange={(e) => {
                 // TODO: Implement some sort of security check for URLs.
                 // Could be as simple as checking the URL matches the social media
