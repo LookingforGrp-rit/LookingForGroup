@@ -16,12 +16,11 @@ type AboutTabProps = {
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   profile: PendingUserProfile;
   updatePendingProfile?: (updatedPendingrProfile: PendingUserProfile) => void;
-  failCheck?: boolean;
 };
 
 
 // Main Component
-export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}, failCheck}: AboutTabProps) => {
+export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}: AboutTabProps) => {
 
   profileAfterAboutChanges = structuredClone(profile);
 
@@ -43,19 +42,19 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {},
       const roles: Role[] = response?.data ?? [];
       setRoles(roles);
     };
-    fetchRoles();
-  }, []);
-  useEffect(() => {
     const fetchMajors = async () => {
       const response = await getMajors();
       setMajors(response?.data ?? []);
     };
+    const refreshPfp = () => {
+      setPreviewUrl(profile.profileImage as string)
+    }
     fetchMajors();
+    fetchRoles();
+    refreshPfp();
+  }, [profile.profileImage]);
+  useEffect(() => {
   }, []);
-
-
-
-
 
  // Set new image when one is picked from uploader
  const handleFileSelected = useCallback(async () => {
@@ -71,11 +70,10 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {},
     const file = imageUploader.files[0];
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
 
-    //and we got it! we'll do things with it after i verify that this is happening
-   console.log('got uploaded file', file);  
+    //and we got it!
    setSelectedImageFile(file);
      const imgLink = URL.createObjectURL(file);
-     setPreviewUrl(imgLink);
+     setPreviewUrl(imgLink.substring(5, imgLink.length));
 
      dataManager.updateFields({
       id: {
@@ -98,7 +96,11 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {},
     <div id="profile-editor-about" className="edit-profile-body about">
       <div id="edit-profile-section-1">
         <div id="profile-editor-add-image" className="edit-profile-image">
-          <ProfileImageUploader onFileSelected={handleFileSelected}/>
+          <ProfileImageUploader 
+          onFileSelected={handleFileSelected}
+          initialImageUrl={previewUrl}
+          initialImageFile={selectedImageFile}
+          />
         </div>
 
         <div className="about-row row-1">

@@ -1,8 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
+import { FileImage } from './FileImage';
 //import { sendPost } from '../functions/fetch'; //Not fixing, is this something to be implemented later?
 
 interface ImageUploaderProps {
   initialImageUrl?: string;
+  initialImageFile?: File;
   keepImage?: boolean;
   onFileSelected?: (file: File) => void;
   type?: 'profile' | 'project';
@@ -23,6 +25,7 @@ const ProjectImageUploader = (props: ImageUploaderProps) => {
 
 const ImageUploader = ({
   initialImageUrl = '',
+  initialImageFile,
   keepImage = true,
   onFileSelected = () => {},
   type
@@ -55,7 +58,19 @@ const ImageUploader = ({
   const profileVariant = (
     <label htmlFor="image-uploader" id="profile-image-uploader" className="drop-area">
       <input type="file" name="image" id="image-uploader" accept="image/png, image/jpg" ref={inputRef} onChange={handleImgChange} hidden />
-      {initialImageUrl ?
+      {initialImageFile ?
+        <div id="img-view">
+          <FileImage
+            file={initialImageFile}
+            alt="profile picture"
+          />
+          <img
+            src="/assets/upload_image.png"
+            alt="upload image"
+            className="camera-button"
+          />
+        </div> : 
+        initialImageUrl ?
         <div id="img-view">
           <img
             src={initialImageUrl}
