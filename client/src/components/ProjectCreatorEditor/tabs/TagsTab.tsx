@@ -6,6 +6,10 @@ import { Tag, Medium, TagType} from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { PendingProject} from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
+import { ThemeIcon } from "../../ThemeIcon";
+import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableTag } from "./SortableItem";
 
 // --- Constant ---
 const TAG_COLORS: Record<TagType | string, string> = {
@@ -69,6 +73,36 @@ export const TagsTab = ({
   const [searchedTags, setSearchedTags] = useState<unknown[]>([]);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
+
+  // Event handlers for Sortable tags
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  /**
+   * Handles tag drop to either keep tag in place or move it along array.
+   * @param e Event with comparison and item data.
+   */
+  const handleDragEnd = (e: DragEndEvent) => {
+    // Get ids of elements to be swapped
+    const {active, over} = e;
+    if (!over) return;
+    if (active.id !== over.id) {
+      // Get indicies to swap
+      const oldIndex = items.indexOf(active.id.toString());
+      const newIndex = items.indexOf(over.id.toString());
+
+      // TODO: update tags accordingly
+
+      // Demo array on how it works:
+      setItems(arrayMove(items, oldIndex, newIndex));
+    }
+  }
+  // TODO: remove after finishing Sortable list
+  const [items, setItems] = useState(['1', '2', '3']);
 
   // Get full lists of mediums, tags
   useEffect(() => {
@@ -403,7 +437,6 @@ export const TagsTab = ({
   // Update shown tags according to search results
   const handleSearch = useCallback((results: unknown[][]) => {
     // setSearchResults(results);
-    console.log('search results', results);
     if (results.length === 0 && currentDataSet.length !== 0) {
       // no results or current data set
       setSearchedTags([]);
@@ -443,11 +476,19 @@ export const TagsTab = ({
           Drag and drop to reorder. The first 2 tags will be displayed on your
           project's discover card.
         </div>
-        {projectAfterTagsChanges.tags.length === 0 ? (
+        {projectAfterTagsChanges.tags.length === 0 && (
           <div className="error">*At least 1 tag is required</div>
-        ) : (
-          <></>
         )}
+
+        {/* TODO: implement sortable tags
+          * Below is a demo proving functionality
+         */}
+        {/* <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <SortableContext items={items} strategy={verticalListSortingStrategy}>
+            {items.map(id => <SortableTag key={id} id={id} />)}
+          </SortableContext>
+        </DndContext> */}
+
         <div id="project-editor-selected-tags-container">
           {
             (() => {
@@ -456,14 +497,14 @@ export const TagsTab = ({
                 <>
                   {tags.slice(0, 2).map((t) => (
                     <div className='tag-draggable' draggable="true">
-                      {/* TODO: implement dragging tags to reorder and backend functionality to track position
+                      {/* TODO: implement dragging tags to reorder and backend functionality to track position */}
                       <ThemeIcon
                         width={21}
                         height={21}
                         id={'drag'}
                         ariaLabel="drag"
                         onClick={() => {console.log('clicked draggable tag icon')}}
-                      /> */}
+                      /> 
                       <button
                         key={t.tagId}
                         className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
@@ -477,14 +518,14 @@ export const TagsTab = ({
                   <hr id="selected-tag-divider" />
                   {tags.slice(2).map((t) => (
                     <div className='tag-draggable' draggable="true">
-                      {/* TODO: implement dragging tags to reorder and backend functionality to track position
+                      {/* TODO: implement dragging tags to reorder and backend functionality to track position */}
                       <ThemeIcon
                         width={21}
                         height={21}
                         id={'drag'}
                         ariaLabel="drag"
                         onClick={() => {console.log('clicked draggable tag icon')}}
-                      /> */}
+                      />
                       <button
                         key={t.tagId}
                         className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
