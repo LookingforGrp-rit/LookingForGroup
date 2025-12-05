@@ -220,7 +220,7 @@ projectAfterLinkChanges = structuredClone(projectData);
               /* (this is a temporary fix because it would've crashed otherwise)*/}
             <div id="base-url">{BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}</div>
             <Input
-              type="link"
+              type={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "link" : "single"}
               placeholder={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "URL" : 'Username'}
               value={social.url && social.label ? social.url.substring(BaseSocialUrl[social.label as keyof typeof BaseSocialUrl].length) : ''}
               onChange={(e) => {
