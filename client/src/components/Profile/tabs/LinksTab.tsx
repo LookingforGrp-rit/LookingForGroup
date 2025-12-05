@@ -1,37 +1,38 @@
 import React, { useState, useEffect } from "react";
-import { getUsersById, getSocials } from "../../../api/users";
+import { getSocials } from "../../../api/users";
 import {
-  UserSocial,
   Social,
-  MeDetail,
-  MePrivate,
+  AddUserSocialInput
 } from "@looking-for-group/shared";
-import { getByID } from "../../../api/projects";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Input } from "../../Input";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
-import { PendingUserProfile } from "../../../../types/types";
+import { PendingUserProfile, PendingUserSocial } from "../../../../types/types";
+import { BaseSocialUrl } from "@looking-for-group/shared/enums";
 
+
+//will be extremely similar if not identical to project profiles
 interface LinksTabProps {
-  profile: MePrivate;
+  profile: PendingUserProfile;
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   updatePendingProfile: (profileData: PendingUserProfile) => void;
 }
+
+let localIdIncrement = 0;
+let profileAfterLinkChanges: PendingUserProfile;
 
 export const LinksTab: React.FC<LinksTabProps> = ({
   profile,
   dataManager,
   updatePendingProfile,
 }) => {
-  const [socials, setSocials] = useState<UserSocial[]>(profile.socials || []);
+
+  profileAfterLinkChanges = structuredClone(profile);
 
   // complete list of socials
   const [allSocials, setAllSocials] = useState<Social[]>([]);
 
-  // // If projectId is provided, we'll fetch project owner & project socials
-  // const [projectOwner, setProjectOwner] = useState<any | null>(null);
-  // const [projectSocials, setProjectSocials] = useState<any[]>([]);
 
   // Get social option data
   useEffect(() => {
@@ -39,151 +40,19 @@ export const LinksTab: React.FC<LinksTabProps> = ({
       const response = await getSocials();
 
       // Reorder so 'Other' is last
-      if (response?.data) {
-        const otherIndex = response.data.findIndex((s) => s.label === "Other");
+      if (response.data) {
+        const otherIndex = response.data.findIndex(s => s.label === 'Other');
         if (otherIndex > -1) {
           const other = response.data.splice(otherIndex, 1)[0];
           response.data.push(other);
         }
+      setAllSocials(response.data);
       }
 
-      setAllSocials(response.data!);
     };
     getAllSocials();
   }, []);
 
-  // If a projectId was passed in use it to fetch project info (owner + socials)
-  // useEffect(() => {
-  //   const fetchProject = async () => {
-  //     if (!projectId) return;
-  //     try {
-  //       const resp = await getByID(projectId);
-  //       if (resp?.data) {
-  //         const proj = resp.data as any;
-  //         // project owner might be included on the project object
-  //         if (proj.owner) {
-  //           // if owner is a full user object use it, otherwise try to fetch by id
-  //           if (proj.owner.userId && proj.owner.firstName) {
-  //             setProjectOwner(proj.owner);
-  //           } else if (proj.owner.userId) {
-  //             try {
-  //               const ownerResp = await getUsersById(proj.owner.userId.toString());
-  //               if (ownerResp?.data) setProjectOwner(ownerResp.data);
-  //             } catch (e) {
-  //               console.error('Error fetching project owner details:', e);
-  //             }
-  //           }
-  //         }
-
-  //         // project socials
-  //         if (proj.socials) setProjectSocials(proj.socials);
-  //       }
-  //     } catch (err) {
-  //       console.error('Error fetching project details:', err);
-  //     }
-  //   };
-  //   fetchProject();
-  // }, [projectId]);
-
-  // useEffect(() => {
-  // setProfile(prev => ({
-  //   ...prev,
-  //   socials: socials
-  // }));
-  // }, [socials]);
-
-  // // Tab Component ----------------------
-  // // If projectId is provided, render read-only project socials + owner contact
-  // if (projectId) {
-  //   return (
-  //     <div id="editor-links">
-  //       {projectOwner && (
-  //         <div id="editor-contact-info">
-  //           <div className="editor-header">Contact Project Owner</div>
-  //           <div className="editor-extra-info">
-  //             Connect with {projectOwner.firstName} {projectOwner.lastName}{" "}
-  //             through their social profiles.
-  //           </div>
-
-  //           {projectOwner.socials && projectOwner.socials.length > 0 ? (
-  //             <div className="contact-socials-grid">
-  //               {projectOwner.socials.map(
-  //                 (social: { label: string; url: string }, index: number) => (
-  //                   <a
-  //                     key={index}
-  //                     href={social.url}
-  //                     target="_blank"
-  //                     rel="noopener noreferrer"
-  //                     className="contact-social-link"
-  //                     title={`Contact via ${social.label}`}
-  //                   >
-  //                     <ThemeIcon
-  //                       width={20}
-  //                       height={20}
-  //                       id={
-  //                         social.label === "Other"
-  //                           ? "link"
-  //                           : social.label.toLowerCase()
-  //                       }
-  //                       className="mono-fill"
-  //                       ariaLabel={social.label}
-  //                     />
-  //                     <span>{social.label}</span>
-  //                   </a>
-  //                 )
-  //               )}
-  //             </div>
-  //           ) : (
-  //             <div className="no-contact-info">
-  //               No contact information available for this project owner.
-  //             </div>
-  //           )}
-  //         </div>
-  //       )}
-
-  //       <div className="editor-header">Project Social Links</div>
-  //       <div className="editor-extra-info">
-  //         Provide the links to pages you wish to include on the project page.
-  //       </div>
-
-  //       <div id="editor-link-list">
-  //         {projectSocials && projectSocials.length > 0 ? (
-  //           <div className="contact-socials-grid">
-  //             {projectSocials.map(
-  //               (social: { label: string; url: string }, idx: number) => (
-  //                 <a
-  //                   key={idx}
-  //                   href={social.url}
-  //                   target="_blank"
-  //                   rel="noopener noreferrer"
-  //                   className="contact-social-link"
-  //                   title={`Visit ${social.label}`}
-  //                 >
-  //                   <ThemeIcon
-  //                     width={20}
-  //                     height={20}
-  //                     id={
-  //                       social.label === "Other"
-  //                         ? "link"
-  //                         : social.label.toLowerCase()
-  //                     }
-  //                     className="mono-fill"
-  //                     ariaLabel={social.label}
-  //                   />
-  //                   <span>{social.label}</span>
-  //                 </a>
-  //               )
-  //             )}
-  //           </div>
-  //         ) : (
-  //           <div className="no-contact-info">
-  //             No social links available for this project.
-  //           </div>
-  //         )}
-  //       </div>
-  //     </div>
-  //   );
-  // }
 
   // Otherwise render the editable profile socials UI
   return (
@@ -196,16 +65,16 @@ export const LinksTab: React.FC<LinksTabProps> = ({
 
       <div id="editor-link-list">
         {/* Social URL inputs */}
-        {socials &&
-          socials.map((social, index) => (
+        {profileAfterLinkChanges.socials &&
+          profileAfterLinkChanges.socials.map((social, index) => (
             <div className="editor-link-item" key={index}>
               {/* Social type dropdown */}
               <Select>
                 <SelectButton
                   placeholder="Select"
                   initialVal={
-                    social.label !== ""
-                      ? ((
+                    social.label
+                      ? (
                           <>
                             <ThemeIcon
                               width={20}
@@ -220,9 +89,8 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                             />
                             {social.label}
                           </>
-                        ) as unknown as string)
-                      : undefined
-                  }
+                        ) as unknown as string
+                      : undefined}
                   className="link-select"
                   type={"input"}
                   callback={(e) => {
@@ -231,12 +99,28 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                 />
                 <SelectOptions
                   callback={(e) => {
-                    e.preventDefault();
-                    const tempSocials = [...socials];
-                    tempSocials[index].label = (
-                      e.target as HTMLInputElement
-                    ).value;
-                    setSocials(tempSocials);
+                  const selectedLabel = (e.target as HTMLInputElement).value;
+                  const selectedSocial = allSocials.find(s => s.label === selectedLabel);
+                  
+                  const tempSocials = profileAfterLinkChanges.socials;
+                  tempSocials[index].label = selectedLabel;
+                  tempSocials[index].websiteId = selectedSocial?.websiteId || 0;
+                  (tempSocials[index] as PendingUserSocial).localId = ++localIdIncrement; //lol it never had a local id
+                  if(selectedSocial && "localId" in social){ //so it only tries to add newly added ones
+
+                  dataManager.addSocial({
+                    id: {
+                      value: (tempSocials[index] as PendingUserSocial).localId ?? ++localIdIncrement,
+                      type: 'local'
+                    },
+                    data: tempSocials[index] as AddUserSocialInput
+                  })
+                  profileAfterLinkChanges = {
+                    ...profileAfterLinkChanges,
+                    socials: tempSocials
+                  }
+                  }
+                  updatePendingProfile(profileAfterLinkChanges);
                   }}
                   options={
                     allSocials
@@ -266,43 +150,80 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                   }
                 />
               </Select>
-              {/* Social URL input */}
+              {/* Social URL input 
+              /* NOTICE: there is a bit of a bug here 
+              /* if you type in the url field before selecting a media label, it won't take your input
+              /* (this is a temporary fix because it would've crashed otherwise)*/}
+              <div id="base-url">{BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}</div>
               <Input
                 type="link"
-                placeholder="URL"
-                value={social.url}
+                placeholder={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "URL" : 'Username'}
+                value={social.url && social.label ? social.url.substring(BaseSocialUrl[social.label as keyof typeof BaseSocialUrl].length) : ''}
                 onChange={(e) => {
-                  e.preventDefault();
                   // TODO: Implement some sort of security check for URLs.
                   // Could be as simple as checking the URL matches the social media
                   // But since 'Other' is an option, might be good to just find some
                   // external list of suspicious sites and make sure it's not one of those.
-                  const tempSocials = [...socials];
-                  tempSocials[index].url = (e.target as HTMLInputElement).value;
-                  setSocials(tempSocials);
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  (e.target as HTMLElement)
-                    .closest(".editor-link-item")
-                    ?.remove();
-                }}
+                  const tempSocials = profileAfterLinkChanges.socials;
+                  tempSocials[index].url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] + e.target.value;
+
+                if("localId" in social){
+                dataManager.addSocial({
+                  id: {
+                    type: "local",
+                    value: social.localId ?? ++localIdIncrement
+                  },
+                  data: tempSocials[index] as AddUserSocialInput
+                })
+                }
+                else{
+                dataManager.updateSocial({
+                  id: {
+                    type: "canon",
+                    value: social.websiteId
+                  },
+                  data: {
+                    url: tempSocials[index].url
+                  }
+                })
+                }
+                updatePendingProfile({ ...profileAfterLinkChanges, socials: tempSocials });
+              }}
+              onClick={() => {
+                if(!("localId" in social)){
+
+                dataManager.deleteSocial({
+                  id: {
+                    type: 'canon',
+                    value: social.websiteId
+                  },
+                  data: null
+                });
+                profileAfterLinkChanges.socials = 
+                  profileAfterLinkChanges.socials.filter(
+                            (soc) =>
+                              social.websiteId !==
+                              soc.websiteId
+                          ); //get it outta here
+                updatePendingProfile(profileAfterLinkChanges)
+                }
+              }}
               />
             </div>
           ))}
         <div id="add-link-container">
           <button
             id="profile-editor-add-link"
-            onClick={(e) => {
-              e.preventDefault();
-              setSocials([
-                ...socials,
-                {
-                  label: "",
-                  url: "",
-                  websiteId: 0,
-                },
-              ]);
+            onClick={() => {
+              updatePendingProfile({
+                ...profileAfterLinkChanges,
+                socials: [...profileAfterLinkChanges.socials || [], {
+                  label: '',
+                  url: '',
+                  apiUrl: "",
+                  websiteId: 0
+                }]
+              });
             }}
           >
             <i className="fa fa-plus" />

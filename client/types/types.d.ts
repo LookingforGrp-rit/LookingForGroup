@@ -154,7 +154,7 @@ interface PendingUserSkill extends Exclude<MySkill, "apiUrl" | "skillId"> {
 }
 
 interface PendingUserSocial extends Exclude<MySocial, "apiUrl" | "websiteId"> {
-  localId: string;
+  localId: number;
 }
 
 interface PendingUserMember extends Exclude<MyMember, "apiUrl"> {

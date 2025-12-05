@@ -45,8 +45,6 @@ projectAfterLinkChanges = structuredClone(projectData);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
-
-
   // Update parent state with error message
   useEffect(() => {
     setErrorLinks(error);
@@ -230,9 +228,7 @@ projectAfterLinkChanges = structuredClone(projectData);
                 // Could be as simple as checking the URL matches the social media
                 // But since 'Other' is an option, might be good to just find some
                 // external list of suspicious sites and make sure it's not one of those.
-                
-
-                const tempSocials = [...projectAfterLinkChanges.projectSocials];
+                const tempSocials = projectAfterLinkChanges.projectSocials;
                 tempSocials[index].url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] + e.target.value;
 
                 if("localId" in social){
