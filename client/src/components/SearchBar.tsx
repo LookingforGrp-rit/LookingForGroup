@@ -65,11 +65,8 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
   }, [dataSets, onSearch]);
 
   useEffect(() => {
-    // Only triggers on condition dataset changes & query is not empty
-    if (query.trim() !== '') {
-      handleSearch(query.toLowerCase());
-    }
-  }, [dataSets]);
+    handleSearch(query.toLowerCase());
+  }, [dataSets, query]);
 
   return (
     <div className="search-wrapper">

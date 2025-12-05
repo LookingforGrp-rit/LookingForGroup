@@ -303,7 +303,26 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     // !! Needs to be skipped if searchbar has any input !!
     if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
       tagFilteredList = JSON.parse(JSON.stringify(fullItemList));
+
+      const mappedAll = fullItemList.map(item =>
+        category === 'projects'
+          ? { name: item.title, description: item.hook }
+          : { name: `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim(), username: item.username }
+      );
+      setItemSearchData(mappedAll);
     }
+
+    const mappedSearchData = tagFilteredList.map((item) => {
+      if (category === 'projects') {
+        return { name: item.title, description: item.hook };
+      } else {
+        return {
+          name: `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim(),
+          username: item.username,
+        };
+      }
+    });
+    setItemSearchData(mappedSearchData);
 
     // Set displayed projects
     setFilteredItemList(tagFilteredList);
