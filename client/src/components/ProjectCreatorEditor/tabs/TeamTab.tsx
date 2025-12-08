@@ -337,7 +337,7 @@ export const TeamTab = ({
         }
       } else {
         setSuccessAddMember(false);
-        setErrorAddMember("Select a role"); // TODO could also just default to Member role
+        setErrorAddMember("Select a role"); // TODO default to Member role instead
         setSelectKey((previous) => previous + 1);
         return false;
       }
