@@ -2,6 +2,10 @@ import { useMemo, useState, useCallback } from 'react';
 import { Header } from '../Header';
 import { members } from '../../constants/lfgmembers';
 
+/**
+ * Credits Page. List of all original team members for the project.
+ * @returns JSX Element
+ */
 const Credits = () => {
   //SEARCHBAR FUNCTIONALITY
 

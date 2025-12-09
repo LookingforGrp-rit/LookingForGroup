@@ -10,6 +10,11 @@ type LoginResponse = {
   message?: string;
 };
 
+/**
+ * Login page to enter credentials and authenticate. Contains input for username,
+ * email, and password and buttons for login and forgot password.
+ * @returns JSX Element
+ */
 const Login: React.FC = () => {
   const navigate = useNavigate(); // Hook for navigation
   const location = useLocation(); // Hook to access the current location
@@ -21,12 +26,16 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
-  // Function to handle the login button click
+  /**
+   * Validates user inputs, sends login requests to the server API, and handles authentication
+   * responses. Displays error messages for invalid inputs or failed authentication attempts.
+   * @returns false if an error occurred.
+   */
   const handleLogin = async () => {
     // Check if the loginInput and password are not empty
     if (loginInput === '' || password === '') {
       setError('Please fill in all information');
-      return;
+      return false;
     }
 
     // Check if the login credentials are associated with an account
@@ -40,16 +49,16 @@ const Login: React.FC = () => {
             sendPost('/api/login', { loginInput, password }, (response: LoginResponse) => {
               if (response.error) {
                 setError(response.error);
-                return;
+                return false;
               }
               // Success message
               setError('Logging in');
             });
-            return; // Prevent executing additional code after login attempt
+            return true; // Prevent executing additional code after login attempt
           } catch (err) {
             setError('An error occurred during login');
             console.log(err);
-            return;
+            return false;
           }
         }
       } catch (err) {
@@ -67,16 +76,16 @@ const Login: React.FC = () => {
           sendPost('/api/login', { loginInput, password }, (response: LoginResponse) => {
             if (response.error) {
               setError(response.error);
-              return;
+              return false;
             }
             // Success message
             setError('Logging in');
           });
-          return; // Prevent executing additional code after login attempt
+          return true; // Prevent executing additional code after login attempt
         } catch (err) {
           setError('An error occurred during login');
           console.log(err);
-          return;
+          return false;
         }
       }
     } catch (err) {
@@ -110,7 +119,9 @@ const Login: React.FC = () => {
     // }
   };
 
-  // Function to handle the forgot pass button click
+  /**
+   * Clears any error messages and navigates the user to the Forgot Password page.
+   */
   const handleForgotPass = () => {
     // remove error message
     setError('');
@@ -120,7 +131,10 @@ const Login: React.FC = () => {
     navigate(paths.routes.FORGOTPASSWORD, { state: { from } });
   };
 
-  // Function to handle Enter key press
+  /**
+   * Triggers the login function when the Enter key is pressed while focus is in the form.
+   * @param e Event
+   */
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
       handleLogin();

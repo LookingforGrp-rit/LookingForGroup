@@ -9,6 +9,10 @@ import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
+/**
+ * Settings page. Creates the User Interface for the Settings by displaying account information and buttons for editing
+ * @returns JSX Element
+ */
 const Settings = () => {
   // state variables
   const [activeTab, setActiveTab] = useState('general');
@@ -28,7 +32,7 @@ const Settings = () => {
 
           Tabs 
 
-          *************************************************************/}
+        *************************************************************/}
         <div className="settings-page-tabs">
           <div
             className={`settings-page-tab-links ${activeTab === 'general' ? 'settings-page-active-link' : ''}`}

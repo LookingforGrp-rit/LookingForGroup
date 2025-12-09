@@ -19,6 +19,10 @@ const deleteAccountPressed = async () => {
   await deleteUser();
 };
 
+/**
+ * Settings page. Renders the settings page interface with options for updating user account information, appearance preferences, and account settings
+ * @returns JSX Element
+ */
 const Settings = () => {
   // --------------------
   // Global variables
@@ -41,10 +45,12 @@ const Settings = () => {
   // Helper functions
   // --------------------
 
-  // Function needed to check password!
-  // Function needed to check field validity (e.g. is this actually an email?)
+  // TODO: Function needed to check password!
+  // TODO: Function needed to check field validity (e.g. is this actually an email?)
 
-  // Checks if user is logged in and pulls all relevant data
+  /**
+   * Checks if user is logged in and pulls all relevant data
+   */
   const getUserData = async () => {
     // authentication
     const acc = await getCurrentAccount();
@@ -69,83 +75,95 @@ const Settings = () => {
   // --------------------
   // Components:
   // --------------------
-
-  // Confirmation for changed settings
+  /**
+   * Component that displays confirmation dialog when changing username, email, or password
+   * @param type Indicated what is bring changed: username, primary email, or password.
+   * @param prev Previous value
+   * @param cur New value
+   * @param apiParams Objects with parameters for API call
+   * @param setError Function to set error message in parent component
+   * @param setSuccess Function to set success message in parent component
+   * @returns 
+   */
   const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess } : 
     {type: string, prev: string, cur: string, apiParams: JsonData, setError: React.Dispatch<SetStateAction<string>>, setSuccess: React.Dispatch<SetStateAction<string>>}) => {
-  //const [password, setPassword] = useState('');
+    //const [password, setPassword] = useState('');
 
+    // git merge 07/24/2025: Yevhenii Shyshko
+    // possible last three lines need to be deleted
+    return (
+      <div className="small-popup">
+        <h3>Confirm {type}{type === 'Phone' ? ' Number' : ''} Change</h3>
+        <p className="confirm-msg">
+          Are you sure you want to change your {type.toLowerCase()}
+          {type === 'Phone' ? (<span> number</span>) : (<></>)}
+          {prev !== '' ? (
+            <span>
+              &#32;{' '}from{' '}
+              <span className="confirm-change-item">{type === 'Username' ? `@${prev}` : prev}</span>
+            </span>
+          ) : (<></>)}
+          {cur !== '' ? (
+            <span>
+              &#32;{' '}to{' '}
+              <span className="confirm-change-item">{type === 'Username' ? `@${cur}` : cur}</span>
+            </span>
+          ) : (<></>)}
+          ?
+        </p>
 
+        {/* Password confirmation input (we don't have passwords) */}
+        {/* <div className="input-group">
+          <label htmlFor="password">Enter your password to confirm:</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="confirm-password-input"
+            placeholder="Password"
+          />
+        </div> */}
 
-  // git merge 07/24/2025: Yevhenii Shyshko
-  // possible last three lines need to be deleted
-  return (
-    <div className="small-popup">
-      <h3>Confirm {type}{type === 'Phone' ? ' Number' : ''} Change</h3>
-      <p className="confirm-msg">
-        Are you sure you want to change your {type.toLowerCase()}
-        {type === 'Phone' ? (<span> number</span>) : (<></>)}
-        {prev !== '' ? (
-          <span>
-            &#32;{' '}from{' '}
-            <span className="confirm-change-item">{type === 'Username' ? `@${prev}` : prev}</span>
-          </span>
-        ) : (<></>)}
-        {cur !== '' ? (
-          <span>
-            &#32;{' '}to{' '}
-            <span className="confirm-change-item">{type === 'Username' ? `@${cur}` : cur}</span>
-          </span>
-        ) : (<></>)}
-        ?
-      </p>
+        <div className="confirm-deny-btns">
+          <PopupButton
+            className="confirm-btn"
+            callback={async () => {
+              // If password is empty, show error and abort submission
+              // if (!password.trim()) {
+              //   setError('Password is required to confirm this change.');
+              //   return;
+              // }
 
-      {/* Password confirmation input (we don't have passwords) */}
-      {/* <div className="input-group">
-        <label htmlFor="password">Enter your password to confirm:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="confirm-password-input"
-          placeholder="Password"
-        />
-      </div> */}
+              const onSuccess = () => {
+                setSuccess(`Your ${type.toLowerCase()} has been updated!`);
+                location.reload();
+              };
 
-      <div className="confirm-deny-btns">
-        <PopupButton
-          className="confirm-btn"
-          callback={async () => {
-            // If password is empty, show error and abort submission
-            // if (!password.trim()) {
-            //   setError('Password is required to confirm this change.');
-            //   return;
-            // }
+              //this sendPut is only being annoying tbh
+              const response = await editUser(apiParams);
 
-            const onSuccess = () => {
-              setSuccess(`Your ${type.toLowerCase()} has been updated!`);
-              location.reload();
-            };
+              // If it returns back with an error, display it on parent popup
+              if (response !== undefined && response.error) {
+                setError(response.error);
+              }
+              else if(response.data) onSuccess();
+            }}
+          >
+            Submit
+          </PopupButton>
 
-            //this sendPut is only being annoying tbh
-            const response = await editUser(apiParams);
-
-            // If it returns back with an error, display it on parent popup
-            if (response !== undefined && response.error) {
-              setError(response.error);
-            }
-            else if(response.data) onSuccess();
-          }}
-        >
-          Submit
-        </PopupButton>
-
-        <PopupButton className="deny-btn">Cancel</PopupButton>
+          <PopupButton className="deny-btn">Cancel</PopupButton>
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  };
+
+  /**
+   * Form component for editing account information based on the provided type
+   * @param type Indicates which form to display: username, primary email, or password.
+   * @returns JSX Element
+   */
   // User form for changing username/password/email
   const ChangeForm = ({ type } : {type: string}) => {
     // Variables
@@ -414,11 +432,10 @@ const Settings = () => {
     );
   };
 
-
-  // Makes request to API to update user's visibility
-  // Visibility num corresponds to private vs public
-  // 0 - private
-  // 1 - public
+  /**
+   * Updates account visibility setting.
+   * @param visibilityNum Visibilty setting: 0 for private, 1 for public.
+   */
   // const updateVisibility = async (visibilityNum) => {
   //   // Don't run if the value hasn't changed
   //   if (visibilityNum !== userInfo.visibility) {

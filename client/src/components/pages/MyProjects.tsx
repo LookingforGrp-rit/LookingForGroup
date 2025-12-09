@@ -16,6 +16,10 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
 import { ProjectDetail} from '@looking-for-group/shared';
 
+/**
+ * My Projects page. Creates a customizable page that showcases the user's projects.
+ * @returns JSX Element
+ */
 const MyProjects = () => {
 
   //const navigate = useNavigate();
@@ -27,19 +31,21 @@ const MyProjects = () => {
 
   // const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
 
+  // Type of display used. Can be grid or list
   const [displayMode, setDisplayMode] = useState('grid');
-  // Can be:
-  // - grid
-  // - list
+
+  // Type of sort for items. Can be newest, oldest, A-Z, or Z-A
   const [sortMethod, setSortMethod] = useState('newest');
-  // Can be:
-  // - newest
-  // - oldest
-  // - a-z
-  // - z-a
+  
+  // List of user's projects
   const [projectsList, setProjectsList] = useState<ProjectDetail[]>([]);
+
+  // Projects filtered by search
   const [filteredProjects, setFilteredProjects] = useState<ProjectDetail[]>([]);
+
+  // Current search query
   const [currentSearch, setCurrentSearch] = useState('');
+
   // const [bannerImage, setBannerImage] = useState(require("../../images/projects_header_light.png"));
 
   // Here to prevent reloading data after every re-render
@@ -51,7 +57,9 @@ const MyProjects = () => {
   // --------------------
   // Helper functions
   // --------------------
-  // Checks if user is logged in and pulls all relevant data
+  /**
+   * Checks if user is logged in and pulls all relevant data
+   */
   const getUserProjects = async () => {
     try {
       const res = await getCurrentUsername();
@@ -136,19 +144,28 @@ const MyProjects = () => {
   //         setProjectsList(tempList);
   //     }
   // }
-
-  // Compare words: check if the snippet is found in the title
-  const checkIfAnyWordStartsWith = (title: string, snippit: string) => {
+  
+  /**
+   * Checks if any word in "title" starts with "snippet", and returns that answer as a boolean.
+   * @param title Project title
+   * @param snippet Beginning letters to search for
+   * @returns true if title starts with snippet
+   */
+  const checkIfAnyWordStartsWith = (title: string, snippet: string) => {
     const words = title.split(' ');
     for (let i = 0; i < words.length; i++) {
-      if (words[i].substring(0, snippit.length) == snippit) {
+      if (words[i].substring(0, snippet.length) == snippet) {
         return true;
       }
     }
     return false;
   };
 
-  // Sort projects: variety of methods
+  /**
+   * Sorts the projects by the current sort method
+   * @param projects Projects to sort
+   * @returns Sorted array of projects
+   */
   const sortProjects = (projects: ProjectDetail[]) => {
     if (projects !== undefined) {
       const tempList = new Array(0);
@@ -200,7 +217,9 @@ const MyProjects = () => {
     }
   };
 
-  // Set the display mode: list or grid
+  /**
+   * Toggles display mode between "list" and "grid"
+   */
   const toggleDisplayMode = () => {
     if (displayMode === 'grid') {
       setDisplayMode('list');
@@ -209,7 +228,11 @@ const MyProjects = () => {
     }
   };
 
-  // Projects in grid display
+  /**
+   * Creates a grid that showcases the user's current projects.
+   * @param userProjects Projects to display
+   * @returns JSX Element
+   */
   const GridDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => { //it's a parameter here but a property down there
     return (
       <>
@@ -239,7 +262,11 @@ const MyProjects = () => {
     );
   };
 
-  // Projects in list display
+  /**
+   * Creates a list that showcases the user's current projects.
+   * @param userProjects Projects to display 
+   * @returns JSX Element
+   */
   const ListDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => {
     return (
       <>
@@ -276,7 +303,11 @@ const MyProjects = () => {
     );
   };
 
-  // Return sorted projects either in Grid or List mode
+  /**
+   * Sorts the projects based on whether the user has selected "grid" or "list." Defaults to "list" view.
+   * @param userProjects Projects to display 
+   * @returns GridDisplay or ListDisplay components. Nothing if there is an error.
+   */
   const ProjectListSection = ({userProjects} : {userProjects: ProjectDetail[]}) => {
     // Sort projects based on the method selected
     const sortedProjects = sortProjects(userProjects) as ProjectDetail[];
@@ -333,6 +364,10 @@ const MyProjects = () => {
 
   const projectDataSet = useMemo(() => [{ data: projectsList }], [projectsList]);
 
+  /**
+   * Updates the projects shown with the search results.
+   * @param results Search results
+   */
   const handleSearch = (results: unknown[][]) => {
     // results[0] is the filtered array
     setFilteredProjects(results[0] as ProjectDetail[]);
