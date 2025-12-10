@@ -13,14 +13,36 @@ import { ProjectStatus as ProjectStatusEnums } from '@looking-for-group/shared/e
 
 //backend base url for getting images
 
-
+/**
+ * MyProjectsDisplayList renders a single project as a list item for the "My Projects" page.
+ * 
+ * Features:
+ * - Displays project thumbnail, title, creation date, and current status.
+ * - Allows project members and owners to access additional options via a dropdown menu:
+ *   - Leave project (all members)
+ *   - Delete project (project owner only)
+ * - Confirmation popups are shown for leaving or deleting a project.
+ * - Displays a result popup showing success or error messages from API requests.
+ * - Automatically fetches the current project status when the component mounts.
+ * Functionality:
+ * - Clicking the thumbnail or title navigates to the project's page.
+ * - Dropdown menu uses Popup components for confirmation dialogs.
+ * - PagePopup shows success/error messages after API requests (leave/delete).
+ * - Uses LeaveDeleteContext to access project ID, ownership status, and reload projects after actions.
+ * - Formats creation date into DD/MM/YYYY format.
+ * 
+ * @param projectData - Detailed information about the project (from the backend API)
+ * @returns {JSX.Element} The project list card element.
+ */
 const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) => {
   // Navigation hook
   const navigate = useNavigate();
 
   const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
 
+  // Project status fetched from API
   const [status, setStatus] = useState<string>();
+  // Dropdown visibility toggle
   const [optionsShown, setOptionsShown] = useState(false);
 
   // State variable for displaying output of API request, whether success or failure
@@ -50,6 +72,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   //Constructs url linking to relevant project page
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
 
+  // Handles leaving the project
   const handleLeaveProject = async () => {
     const response = await leaveProject(projId);
     setRequestType('leave');
@@ -57,6 +80,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     setShowResult(true);
   };
 
+  // Handles deleting the project (owner only)
   const handleDeleteProject = async () => {
     const response = await deleteProject(projId);
     setRequestType('delete');
@@ -64,6 +88,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     setShowResult(true);
   };
 
+  //Converts ISO date string to DD/MM/YYYY format
   const formatDate = (dateStr: string) => {
     if (!dateStr) return 'No data';
     const [date] = dateStr.split('T');

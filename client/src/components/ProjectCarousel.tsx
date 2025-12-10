@@ -2,8 +2,21 @@ import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./Image
 import placeholderThumbnail from '../images/project_temp.png'; // if this gets used, use preloader function in /functions/imageLoad.tsx
 import { ProjectDetail } from '@looking-for-group/shared';
 
+/**
+ * Displays a carousel of project images.
+ * Uses project-specific images if available, otherwise falls back to a placeholder thumbnail.
+ * Provides navigation buttons and tabs to switch between images.
+ *
+ * @param project - ProjectDetail object containing project information and images
+ * @returns JSX element rendering a carousel for the project
+ */
 export const ProjectCarousel = ({ project }: { project: ProjectDetail }) => {
-    // If no images exist, just use the thumbnail
+    /**
+     * carouselContents
+     * Array of JSX <img> elements to display in the carousel.
+     * - Falls back to a default placeholder if project has no images.
+     * - Each <img> element has an onError handler to swap to a placeholder if the image fails to load.
+     */
     const carouselContents = (!project.projectImages || project.projectImages.length === 0)
     ? [<img src={`/assets/project_temp-DoyePTay.png`} />]
     : project.projectImages.map((imageData) => (

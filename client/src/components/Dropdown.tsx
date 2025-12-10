@@ -26,31 +26,46 @@ import { DropdownContext } from '../contexts/DropdownContext';
 //This is meant to help prevent dropdowns from going off the screen, but it can just be used for styling too.
 //I thought about making it do this dynamically, but chose this route as it:
 //1. was easier to implement, 2. is less code intensive, and 3. I trust the team to know how to use it like this
+
+// --------------------
+// Type definitions
+// --------------------
 type DropdownButtonProps = {
-  children: React.ReactNode;
-  buttonId?: string;
-  callback?: Function;
-  className?: string;
+  children: React.ReactNode; // Content inside the button
+  buttonId?: string; // Optional HTML id
+  callback?: Function; // Optional function executed before toggling
+  className?: string; // Optional CSS class
 };
 
 type DropdownContentProps = {
-  children: React.ReactNode;
-  rightAlign?: boolean;
+  children: React.ReactNode; // Content inside the dropdown panel
+  rightAlign?: boolean; // Align dropdown to right edge if true
 };
 
 type DropdownProps = {
-  children: React.ReactNode;
+  children: React.ReactNode; // Nested DropdownButton and DropdownContent
 };
 
-//Button component that will open/close dropdown
+/**
+ * Button component used to open or close a dropdown. Intended to be placed
+ * inside a parent <Dropdown> component, where it automatically interacts
+ * with shared open-state via DropdownContext.
+ *
+ * @param children - Content to display inside the button.
+ * @param buttonId - Optional HTML id applied to the button.
+ * @param callback - Optional function invoked before toggling.
+ * @param className - Optional CSS class for custom styling.
+ * @returns A clickable button that toggles the dropdown open state.
+ */
 export const DropdownButton: React.FC<DropdownButtonProps> = ({ 
   children, 
   buttonId = '', 
   className = '', 
   callback = (e) => {} 
 }) => {
-  const { open, setOpen } = useContext(DropdownContext);
+  const { open, setOpen } = useContext(DropdownContext); // Shared open/close state
 
+  // Toggle the open state
   const toggleOpen = () => {
     setOpen(!open);
   };
@@ -64,19 +79,27 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
 
   return (
     <button id={buttonId} className={className} onClick={(e) => {
-      callback(e);
-      toggleOpen();
+      callback(e); // Run optional callback
+      toggleOpen(); // Toggle dropdown open/close
     }}>
       {children}
     </button>
   );
 };
 
+/**
+ * Wrapper for the content displayed inside a dropdown. Visibility is controlled
+ * by DropdownContext, and the content is only rendered when the dropdown is open.
+
+ * @param children - The dropdown’s rendered content.
+ * @param rightAlign - If true, aligns content to the right edge.
+ * @returns  The dropdown panel, or an empty fragment when closed.
+ */
 export const DropdownContent: React.FC<DropdownContentProps> = ({
   children,
   rightAlign = false,
 }) => {
-  const { open } = useContext(DropdownContext);
+  const { open } = useContext(DropdownContext); // Access open state
 
   // useEffect(() => {
   //   if (open) {
@@ -85,6 +108,7 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
   //   }
   // }, [open]);
 
+  // Conditional right alignment
   if (open) {
     if (!rightAlign) {
       return <div className="dropdown">{children}</div>;
@@ -100,10 +124,17 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
   }
 };
 
-//Full dropdown component
+/**
+ * Parent component that provides shared open/close state for a dropdown.
+ * Wraps both a <DropdownButton> and <DropdownContent>, manages click-outside
+ * closing behavior, and exposes state through DropdownContext.
+ *
+ * @param children - Nested DropdownButton and DropdownContent elements.
+ * @returns A fully functional dropdown container with context provider.
+ */
 export const Dropdown: React.FC<DropdownProps> = ({ children }) => {
-  const [open, setOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false); // Local state to track open/close
+  const dropdownRef = useRef<HTMLDivElement>(null); // Ref to container for click-outside detection
 
   // Close dropdown if clicked outside
   useEffect(() => {

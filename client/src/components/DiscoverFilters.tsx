@@ -22,24 +22,50 @@ interface EnabledFilter {
   color: string;
 }
 
+/**
+ * Provides an interactive filtering system for the Discover and Meet pages.
+ * Displays a horizontal list of quick-filter tags and a popup containing
+ * advanced category-based filters, search functionality, and batch selection.
+ * Selected filters are applied to the parent component via `updateItemList`,
+ * and visual state is synchronized across the quick tags and popup.
+ *
+ * The component loads all available tags dynamically depending on whether
+ * the current page is showing projects or profiles. It automatically groups
+ * these tags into filter tabs, handles searching within categories, and
+ * manages UI behaviors such as scroll buttons, selection highlighting,
+ * and responsive resizing.
+ *
+ * @param category Determines which dataset to load and how filters are structured.
+ * @param updateItemList Callback triggered whenever the active filter list changes.  
+ * Receives the final set of applied Tag objects.
+ * @returns A fully interactive filter bar and popup system,
+ * providing tag selection, searching, category tabs, and applied-filter display.
+ */
 export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, updateItemList }) => {
 
   // --------------------
   // Global variables
   // --------------------
-  // Important for ensuring data has properly loaded
+  // Whether all data (tags, skills, majors, etc.) has been loaded
   const [dataLoaded, setDataLoaded] = useState(false);
+  // All tags currently available in the active filter tab
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
+  // Tags currently filtered via search input
   const [searchedTags, setSearchedTags] = useState<{ tags: [], color: string }>({ tags: [], color: 'grey' });
+  // Tags that are selected in the popup before applying
   const [enabledFilters, setEnabledFilters] = useState<EnabledFilter[]>([]);
+  // Filters that have been applied and are displayed under the quick filter tags
   const [appliedFiltersDisplay, setAppliedFiltersDisplay] = useState<EnabledFilter[]>([]);
+  // List of tags currently active for filtering in the parent dataset
   const [activeTagFilters, setActiveTagFilters] = useState<Tag[]>([]);
+  // Whether the "Applied Filters" section should display under the quick tags
   const [displayFiltersText, setDisplayFiltersText] = useState(false);
 
 
   // Formatted for SearchBar dataSets prop
   const [dataSet, setDataSet] = useState([{ data: currentTags }]);
 
+  // Horizontal quick filter tags, changes based on category
   const tagList = category === 'projects' ? tags : peopleTags;
 
   // List of tabs for the filter popup to use, changes for discover/meet page
@@ -58,11 +84,17 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   //         { categoryTags: tags.tags, categoryName: 'Role', color: 'grey' },
   //         { categoryTags: tags.tags, categoryName: 'Major', color: 'orange' },
   //       ];
+  // Tabs shown in the popup, dynamically created after fetching data
   const [filterPopupTabs, setFilterPopupTabs] = useState<FilterTab[]>([]);
 
   // --------------------
   // Helper functions
   // --------------------
+  /**
+   * Fetches all necessary tags and skills from the API.
+   * Organizes them into tabs for the popup based on `category`.
+   * Also fetches supplementary data for profiles (majors, job titles) or projects (project types).
+   */
   const getData = async () => {
     try {
       const response = category === 'projects' ? await getTags() : await getSkills();
@@ -124,11 +156,17 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     setDataLoaded(true);
   };
 
+  // Trigger initial data fetch
   useEffect(() => {
     if (!dataLoaded) getData();
   }, [dataLoaded]);
 
-  // Function called when a tag is clicked, adds/removes tag to list of filters
+  /**
+   * Toggles a tag's selection in the horizontal quick filter.
+   * Updates visual selection and parent dataset.
+   * @param event Click event
+   * @param tag Tag object clicked
+   */
   const toggleTag = (event: any, tag: Tag) => {
     let newActiveTags: Tag[];
     const button = event.currentTarget;
@@ -144,7 +182,10 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     updateItemList(newActiveTags);
   };
 
-  // Scrolls the list of tag filters right or left
+  /**
+   * Scrolls horizontal tag list left or right.
+   * Hides or shows scroll buttons depending on edge conditions.
+   */
   const scrollTags = (direction: string) => {
     // Check if left or right button was clicked
     const tagFilterElement = document.getElementById('discover-tag-filters');
@@ -180,7 +221,9 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     }
   };
 
-  // Ensures that scroll buttons show and hide when they're supposed to on-resize
+  /**
+   * Recalculates visibility of scroll buttons on resize.
+   */
   const resizeTagFilter = () => {
     const tagFilterElement = document.getElementById('discover-tag-filters')!;
     const leftScroll = document.getElementById('filters-left-scroll')!;
@@ -216,12 +259,16 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Checks if enabledFilters contains a particular tag
+  /**
+   * Checks if a tag is currently enabled in the popup filters.
+   */
   const isTagEnabled = (tag: Tag, color: string) => {
     return enabledFilters.findIndex(f => f.tag.label === tag.label && f.color === color);
   };
 
-  // Setup filter tabs when popup is opened
+  /**
+   * Initializes popup filters to the first tab.
+   */
   const setupFilters = () => {
     // Defaults to the first available tab
     if (filterPopupTabs.length > 0) {

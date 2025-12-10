@@ -14,9 +14,18 @@ import { UserDetail } from "@looking-for-group/shared";
 //Change shape of active buttons to be more rounded
 //Remove notification button
 
+/**
+ * SideBar
+ * Renders the main sidebar for the application, handling both mobile and desktop layouts.
+ * Displays navigation buttons (Discover, Meet, My Projects, Profile) and a "Create" project button.
+ * Manages active button highlighting, responsive layout, and navigation.
+ * Fetches current user data to determine access to project creation.
+ * 
+ * @returns JSX element representing the sidebar
+ */
 const SideBar = () => {
-  const [width, setWidth] = React.useState(window.innerWidth);
-  const breakpoint = useSelector((state: any) => state.page.MOBILE_BREAKPOINT);
+  const [width, setWidth] = React.useState(window.innerWidth); // Current window width
+  const breakpoint = useSelector((state: any) => state.page.MOBILE_BREAKPOINT); // Mobile breakpoint
 
   // const [headerText, setHeaderText] = useState('Group'); // State to manage the h1 text
   const navigate = useNavigate(); // Hook for navigation
@@ -117,6 +126,10 @@ const SideBar = () => {
   // Store user data, if authenticated
   const [userData, setUserData] = useState<UserDetail>();
 
+  /**
+   * Fetches the current authenticated user and sets user data.
+   * Updates `createError` depending on authentication status.
+   */
   const getAuth = async () => {
     // Is user authenticated?
     // Get auth
@@ -145,13 +158,21 @@ const SideBar = () => {
     }
   };
 
-  // Function to handle the button clicks and update the h1 text
+  /**
+   * Handles updating the active page and navigation.
+   *
+   * @param text - Name of the page (e.g., "Discover")
+   * @param path - URL path to navigate to (e.g., "/discover")
+   */
   const handleTextChange = (text: string, path: string) => {
     // setHeaderText(text);
     setActivePage(text);
     navigate(path); // Navigate to the specified path
   };
 
+  /**
+   * Handles window resize events and updates width state.
+   */
   useEffect(() => {
     const handleResize = () => setWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);

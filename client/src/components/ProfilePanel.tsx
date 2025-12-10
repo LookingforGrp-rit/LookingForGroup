@@ -11,15 +11,36 @@ interface ProfilePanelProps {
   profileData: UserPreview;
 }
 
+/**
+ * ProfilePanel
+ * Displays a user's profile information in a panel format with hover details.
+ * Shows profile image, name, majors, headline, and hover overlay with additional info.
+ * Handles follow status for the current user and navigates to the full profile page on click.
+ *
+ * @param profileData - UserPreview object containing basic user info (name, image, title, location, pronouns, fun fact, etc.)
+ * @returns JSX element representing a user profile panel
+ */
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
 
   const navigate = useNavigate();
   const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
+  // Array of major labels extracted from profileData
   const majorsArr = profileData.majors?.map((maj) => maj.label);
   
   //follow stuff
+  // Current logged-in user id
   const [userId, setUserId] = useState<number>();
+  // Whether the current user follows the displayed user
   const [isFollow, setIsFollow] = useState<boolean>(false);
+  /**
+   * useEffect to fetch follow information:
+   * 1. Retrieves current user ID
+   * 2. Retrieves full profile of the displayed user to access followers
+   * 3. Sets `isFollow` to true if current user is in followers list
+   * 
+   * Dependency on profileData.userId ensures refresh when panel shows a different user.
+   * Dependency on userId ensures we check follow status after current user ID is fetched.
+   */
     useEffect(() => {
       const getFollowData = async () => {
         //get our current user so we can check their follow status

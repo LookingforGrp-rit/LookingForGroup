@@ -14,6 +14,25 @@ import usePreloadedImage from "../functions/imageLoad";
 
 //backend base url for getting images
 
+/**
+ * MyProjectsDisplayGrid renders a single project card in a grid layout for the "My Projects" page.
+ * 
+ * Features:
+ * - Displays the project thumbnail and title.
+ * - Allows project owners or members to access additional options via a dropdown menu:
+ *   - Leave project (all members)
+ *   - Delete project (project owner only)
+ * - Confirmation popups are shown for leaving or deleting a project.
+ * - Displays a result popup showing success or error messages from API requests.
+ * Functionality:
+ * - Clicking the thumbnail or title navigates to the project's page.
+ * - Dropdown menu uses Popup components for confirmation dialogs.
+ * - PagePopup shows success/error messages after API requests (leave/delete).
+ * - Interacts with LeaveDeleteContext for project ID, ownership, and reloading projects after actions.
+ *
+ * @param projectData - Detailed information about the project (from the backend API)
+ * @returns The project card element.
+ */
 const MyProjectsDisplayGrid = ({
   projectData,
 }: {
@@ -21,6 +40,7 @@ const MyProjectsDisplayGrid = ({
 }) => {
   //Navigation hook
   const navigate = useNavigate();
+  // Context providing project ID, ownership status, and reload function
   const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
 
   //const [status, setStatus] = useState<string>();
@@ -34,11 +54,21 @@ const MyProjectsDisplayGrid = ({
     error: "Not initialized",
   });
 
+  /**
+   * toggleOptions
+   * - Toggles the visibility of the dropdown menu for project actions.
+   * - Updates the optionsShown state.
+   */
   const toggleOptions = () => setOptionsShown(!optionsShown);
 
   //Constructs url linking to relevant project page
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
 
+  /**
+   * handleLeaveProject
+   * - Sends an API request for the current user to leave the project.
+   * - Updates state variables to show the result popup with the response.
+   */
   const handleLeaveProject = async () => {
     const response = await leaveProject(projId);
     setRequestType("leave");
@@ -46,6 +76,12 @@ const MyProjectsDisplayGrid = ({
     setShowResult(true);
   };
 
+  /**
+   * handleDeleteProject
+   * - Sends an API request to delete the project.
+   * - Updates state variables to show the result popup with the response.
+   * - Only available if the current user is the project owner.
+   */
   const handleDeleteProject = async () => {
     const response = await deleteProject(projId);
     setRequestType("delete");

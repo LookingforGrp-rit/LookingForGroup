@@ -33,10 +33,12 @@ import { Dispatch,ReactNode, SetStateAction } from 'react';
 //currently unused due to issues with sidebar layering
 // let scrollLock = false;
 
-//A function used to open and/or close a popup
-//Must be able to call within the page itself for the user to access the popup
-
-//state & setState - useState variable & its set function holding a boolean controlling the visibility of the popup
+/**
+ * Toggles the visibility of a popup by updating its boolean state.
+ *
+ * @param state - Current visibility state of the popup.
+ * @param setState - State setter function from useState controlling the popup.
+ */
 export const openClosePopup = (
   state: boolean,
   setState: Dispatch<SetStateAction<boolean>>
@@ -55,21 +57,26 @@ interface PagePopupProps {
   onClose?: () => void;
 }
 
-//Main component of PagePopup, which is exported from this file
-//Passes in 8 values: children, width, height, popupId, zIndex, show, setShow
-
-//children - the actual content of the popup, passed in as if it were acting as the content of an element
-//  ( ex. <PagePopup>This would be passed in as 'children' in the popup!</PagePopup> )
-//width - the width of the popup window; numbers passed in will serve as pixel measurements
-//  To pass in specific css values, use a string with the appropriate unit (ex. '80vw', '50%')
-//height - the height of the popup window; functions similarly to width ^
-//popupId - the ID of a specific instance of a popup, should ideally be set as a number for easier coding
-//  Used when calling openClosePopup to identify which specific popup to interact with
-//zIndex - the zIndex layer of the popup, used to tell which layer the popup should appear on
-//  Should be at least 2 to ensure it overlays the side menu
-//  If multiple popups are being used on a page, use this to differentiate their layers
-//show - the useState variable determining whether the popup is visible or not
-//setShow - the function that sets the previously mentioned useState variable
+/**
+ * PagePopup component renders a reusable, centered popup window on the page.
+ * 
+ * Features:
+ * - Locks background scrolling when open (if implemented).
+ * - Adjustable width, height, and z-index.
+ * - Always includes a close button in the top-right corner.
+ * - Can contain any ReactNode content passed as children.
+ * - Visibility is controlled via useState (`show` and `setShow` props).
+ * 
+ * @param children - Content inside the popup.
+ * @param width - Width of the popup (pixels if number, or CSS unit if string).
+ * @param height - Height of the popup (pixels if number, or CSS unit if string).
+ * @param popupId - Unique identifier for the popup instance.
+ * @param zIndex - Layer order for the popup; higher numbers overlay lower ones.
+ * @param show - State variable controlling popup visibility.
+ * @param setShow - Setter function for the visibility state.
+ * @param onClose - Optional callback invoked when the popup is closed.
+ * @returns The popup element if `show` is true; otherwise, null.
+ */
 export const PagePopup = ({
   children,
   width,
