@@ -43,7 +43,16 @@ import {
   ProjectChangesUpdates,
 } from "../../../types/types";
 
+/**
+ * The Data Manager holds all information about a project before it is updated on the server.
+ * @param projectId The database id of the project whose data is being changed.
+ * @returns Methods for editing a project.
+ */
 export const projectDataManager = async (projectId: number) => {
+  /**
+   * Pulls all project data from the server.
+   * @returns The downloaded project
+   */
   const downloadProject = async () => {
     const projectResponse = await getByID(projectId);
     if (projectResponse.error || !projectResponse.data) {
@@ -53,6 +62,10 @@ export const projectDataManager = async (projectId: number) => {
     return projectResponse.data;
   };
 
+  /**
+   * Creates a new blank object for storing future changes.
+   * @returns A {@link ProjectChanges} object with no changes.
+   */
   const getEmptyChanges = () => {
     const emptyChanges: ProjectChanges = {
       create: {
@@ -73,10 +86,10 @@ export const projectDataManager = async (projectId: number) => {
         },
         thumbnail: {
           id: {
-            type: 'canon',
-            value: projectId
+            type: "canon",
+            value: projectId,
           },
-          data: {} as UpdateProjectThumbnailInput
+          data: {} as UpdateProjectThumbnailInput,
         },
         projectImages: [],
         projectSocials: [],
@@ -96,56 +109,86 @@ export const projectDataManager = async (projectId: number) => {
     return emptyChanges;
   };
 
+  /**
+   * the project in its current canonical state.
+   */
   let savedProject: ProjectWithFollowers = await downloadProject();
+
+  /**
+   * the changes we are about to apply to the project.
+   */
   let changes: ProjectChanges = getEmptyChanges();
+
+  /**
+   * For each change, did it succeed on the server side?
+   */
   type SuccessArray = {
+    /**
+     * The canon or local id of a change
+     */
     id: number;
+
+    /**
+     * Was it successfully executed on the server?
+     */
     succeeded: boolean;
   }[];
 
   /**
-   * Pulls project from the server and loads it into savedProject
+   * Pulls project from the server and loads it into {@link savedProject}
    */
   const reloadSavedProject = async () => {
     savedProject = await downloadProject();
   };
 
+  /**
+   * Accessor method for the {@link savedProject} object.
+   * @returns The project data.
+   */
   const getSavedProject = () => savedProject;
 
   /**
-   * Resets changes object to empty
+   * Resets {@link changes} object to empty
    */
   const resetChanges = () => {
     changes = getEmptyChanges();
   };
 
   /**
-   * Uploads changes to the server, reloads the savedProject, and clears the changes object
-   * @throws {Error} Throws an error if any change failed. Includes the failed changes.
+   * Uploads changes to the server, reloads the {@link savedProject}, and clears the {@link changes} object.
+   * Attempts all changes, even if some error.
+   * @throws Throws an error if any change failed. Error message includes the failed changes.
+   * Failed changes do not return to the {@link changes} object.
    */
   const saveChanges = async () => {
     console.log(changes);
     let errorMessage = "";
 
+    // first delete all existing resources
     try {
       await saveDeletes(changes.delete);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
 
+    // then create any new resources
     try {
       await saveCreates(changes.create);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
 
+    // then perform updates on new and existing resources
     try {
       await saveUpdates(changes.update);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
 
+    // fetch new canonical data
     await reloadSavedProject();
+
+    // clear changes object
     resetChanges();
 
     if (errorMessage != "") {
@@ -153,10 +196,14 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
-  // used by saveChanges
+  /**
+   * Used by {@link saveChanges}. Performs all updates.
+   * @param updates All the updates to be executed
+   */
   const saveUpdates = async (updates: ProjectChangesUpdates) => {
     let errorMessage = "";
 
+    // project fields
     try {
       await runAndCollectErrors<UpdateProjectInput>(
         "Updating project",
@@ -167,6 +214,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project jobs
     try {
       await runAndCollectErrors<UpdateProjectJobInput>(
         "Updating project job",
@@ -177,6 +225,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project members
     try {
       await runAndCollectErrors<UpdateProjectMemberInput>(
         "Updating project member",
@@ -187,6 +236,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project images
     try {
       await runAndCollectErrors<UpdateProjectImageInput>(
         "Updating project image",
@@ -197,6 +247,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project thumbnails
     try {
       await runAndCollectErrors<UpdateProjectThumbnailInput>(
         "Updating project thumbnail",
@@ -207,6 +258,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project socials
     try {
       await runAndCollectErrors<UpdateProjectSocialInput>(
         "Updating project social",
@@ -222,20 +274,27 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
-  // used by saveChanges
+  /**
+   * Used by {@link saveChanges}. Performs all creates.
+   * @param creates All the resources to be created
+   */
   const saveCreates = async (creates: ProjectChangesCreates) => {
     let errorMessage = "";
 
+    // project images
     try {
       await runAndCollectErrors<CreateProjectImageInput>(
         "Creating project image",
         creates.projectImages,
-        async ({ id, data }) => { //all this is for thumbnail stuff
-          const realImage = await addPic(projectId, data); 
-          if(realImage.data && 
-            changes.update.thumbnail.data && 
-            id.value === changes.update.thumbnail.data.thumbnail){
-              console.log("WE SHOULD NEVER GET HERE.")
+        async ({ id, data }) => {
+          //all this is for thumbnail stuff
+          const realImage = await addPic(projectId, data);
+          if (
+            realImage.data &&
+            changes.update.thumbnail.data &&
+            id.value === changes.update.thumbnail.data.thumbnail
+          ) {
+            console.log("WE SHOULD NEVER GET HERE.");
             changes.update.thumbnail.data.thumbnail = realImage.data.imageId;
           }
           return realImage;
@@ -245,6 +304,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project jobs
     try {
       await runAndCollectErrors<CreateProjectJobInput>(
         "Creating project job",
@@ -255,6 +315,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project members
     try {
       await runAndCollectErrors<CreateProjectMemberInput>(
         "Creating project member",
@@ -265,6 +326,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project mediums
     try {
       await runAndCollectErrors<AddProjectMediumsInput>(
         "Adding project medium",
@@ -275,6 +337,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project tags
     try {
       await runAndCollectErrors<AddProjectTagsInput>(
         "Adding project tag",
@@ -285,6 +348,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project socials
     try {
       await runAndCollectErrors<AddProjectSocialInput>(
         "Adding project social",
@@ -300,10 +364,14 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
-  // used by saveChanges
+  /**
+   * Used by {@link saveChanges}. Performs all deletes.
+   * @param deletes All the resources to be deleted
+   */
   const saveDeletes = async (deletes: ProjectChangesDeletes) => {
     let errorMessage = "";
 
+    // project jobs
     try {
       await runAndCollectErrors<null>(
         "Deleting project job",
@@ -314,6 +382,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project mediums
     try {
       await runAndCollectErrors<null>(
         "Deleting project medium",
@@ -324,8 +393,9 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project members
     try {
-    console.log(deletes.members)
+      console.log(deletes.members);
       await runAndCollectErrors<null>(
         "Deleting project member",
         deletes.members,
@@ -335,6 +405,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project images
     try {
       await runAndCollectErrors<null>(
         "Deleting project image",
@@ -345,6 +416,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project socials
     try {
       await runAndCollectErrors<null>(
         "Deleting project social",
@@ -355,6 +427,7 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project tags
     try {
       await runAndCollectErrors<null>(
         "Deleting project tag",
@@ -370,12 +443,24 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
-  const getErrorIds = (statuses: SuccessArray): (number | string)[] => {
+  /**
+   * Collects the ids of all the changes that failed on the server.
+   * @param statuses Did this change succeed on the server?
+   * @returns the ids of each failed change
+   */
+  const getErrorIds = (statuses: SuccessArray): number[] => {
     return statuses
       .filter(({ succeeded }) => succeeded === false)
       .map(({ id }) => id);
   };
 
+  /**
+   * Runs each request for a given action, even if some fail.
+   * @param actionLabel Name of the action, such as "Updating project image..."
+   * @param requests The API request data
+   * @param action The API function that calls the endpoint using the request data
+   * @throws Throws an error if any change failed
+   */
   async function runAndCollectErrors<T>(
     actionLabel: string,
     requests: CRUDRequest<T>[],
@@ -384,15 +469,16 @@ export const projectDataManager = async (projectId: number) => {
     const statuses: SuccessArray = [];
 
     // TODO can be ran simultaneously if saving takes too long
+    // we haven't found this to be a problem.
     for (const request of requests) {
       //unbelievable thumbnail-specific check
-      if(!(actionLabel === "Updating project thumbnail" && request.data)){
-      const response = await action(request);
-      const succeeded = !response.error;
-      statuses.push({
-        id: request.id.value,
-        succeeded,
-      });
+      if (!(actionLabel === "Updating project thumbnail" && request.data)) {
+        const response = await action(request);
+        const succeeded = !response.error;
+        statuses.push({
+          id: request.id.value,
+          succeeded,
+        });
       }
     }
 
@@ -404,6 +490,10 @@ export const projectDataManager = async (projectId: number) => {
     }
   }
 
+  /**
+   * Adds a new tag to the project
+   * @param tag The tag to be added
+   */
   const addTag = (tag: CRUDRequest<AddProjectTagsInput>) => {
     if (changes.create.tags.some(({ id }) => id.value === tag.id.value)) {
       changes.create.tags = [
@@ -416,6 +506,10 @@ export const projectDataManager = async (projectId: number) => {
     changes.create.tags.push(tag);
   };
 
+  /**
+   * Adds a new medium to the project
+   * @param medium The medium to be added
+   */
   const addMedium = (medium: CRUDRequest<AddProjectMediumsInput>) => {
     if (changes.create.mediums.some(({ id }) => id.value === medium.id.value)) {
       changes.create.mediums = [
@@ -430,6 +524,10 @@ export const projectDataManager = async (projectId: number) => {
     changes.create.mediums.push(medium);
   };
 
+  /**
+   * Adds a new social to the project
+   * @param social The social to be added
+   */
   const addSocial = (social: CRUDRequest<AddProjectSocialInput>) => {
     if (
       changes.create.projectSocials.some(
@@ -448,6 +546,10 @@ export const projectDataManager = async (projectId: number) => {
     changes.create.projectSocials.push(social);
   };
 
+  /**
+   * Uploads a new image to the project
+   * @param image The image data
+   */
   const createImage = (image: CRUDRequest<CreateProjectImageInput>) => {
     if (
       changes.create.projectImages.some(({ id }) => id.value === image.id.value)
@@ -464,6 +566,10 @@ export const projectDataManager = async (projectId: number) => {
     changes.create.projectImages.push(image);
   };
 
+  /**
+   * Adds a new member to a project
+   * @param member The member to be added
+   */
   const createMember = (member: CRUDRequest<CreateProjectMemberInput>) => {
     if (changes.create.members.some(({ id }) => id.value === member.id.value)) {
       changes.create.members = [
@@ -478,6 +584,10 @@ export const projectDataManager = async (projectId: number) => {
     changes.create.members.push(member);
   };
 
+  /**
+   * Creates a new job and adds it to the project
+   * @param job The job to be created
+   */
   const createJob = (job: CRUDRequest<CreateProjectJobInput>) => {
     if (changes.create.jobs.some(({ id }) => id.value === job.id.value)) {
       changes.create.jobs = [
@@ -490,6 +600,10 @@ export const projectDataManager = async (projectId: number) => {
     changes.create.jobs.push(job);
   };
 
+  /**
+   * Updates the basic attributes of a project
+   * @param fields The fields to be updated and their updates
+   */
   const updateFields = (fields: CRUDRequest<UpdateProjectInput>) => {
     changes.update.fields = {
       id: {
@@ -503,6 +617,10 @@ export const projectDataManager = async (projectId: number) => {
     };
   };
 
+  /**
+   * Updates an existing image of a project
+   * @param image The image to be updated and its new data
+   */
   const updateImage = (image: CRUDRequest<UpdateProjectImageInput>) => {
     let existingImageUpdate = changes.update.projectImages.find(
       ({ id }) => id.value === image.id.value && id.type === image.id.type
@@ -528,6 +646,10 @@ export const projectDataManager = async (projectId: number) => {
     ];
   };
 
+  /**
+   * Updates an existing social of a project
+   * @param social The social to be updated and its new data
+   */
   const updateSocial = (social: CRUDRequest<UpdateProjectSocialInput>) => {
     let existingSocialUpdate = changes.update.projectSocials.find(
       ({ id }) => id.value === social.id.value && id.type === social.id.type
@@ -553,6 +675,10 @@ export const projectDataManager = async (projectId: number) => {
     ];
   };
 
+  /**
+   * Updates an existing job of a project
+   * @param job The job to be updated and its new data
+   */
   const updateJob = (job: CRUDRequest<UpdateProjectJobInput>) => {
     let existingJobUpdate = changes.update.jobs.find(
       ({ id }) => id.value === job.id.value && id.type === job.id.type
@@ -578,15 +704,25 @@ export const projectDataManager = async (projectId: number) => {
     ];
   };
 
-  const updateThumbnail = (thumbnail: CRUDRequest<UpdateProjectThumbnailInput>) => {
+  /**
+   * Updates the thumbnail of a project
+   * @param thumbnail The new data
+   */
+  const updateThumbnail = (
+    thumbnail: CRUDRequest<UpdateProjectThumbnailInput>
+  ) => {
     changes.update.thumbnail = {
       id: thumbnail.id,
       data: {
-        thumbnail: thumbnail.data.thumbnail //a thumbnail data sandwich
-      }
-    }
-  }
+        thumbnail: thumbnail.data.thumbnail, //a thumbnail data sandwich
+      },
+    };
+  };
 
+  /**
+   * Updates an existing member of a project
+   * @param member The member to be updated and its new data
+   */
   const updateMember = (member: CRUDRequest<UpdateProjectMemberInput>) => {
     let existingMemberUpdate = changes.update.members.find(
       ({ id }) => id.value === member.id.value && id.type === member.id.type
@@ -612,6 +748,10 @@ export const projectDataManager = async (projectId: number) => {
     ];
   };
 
+  /**
+   * Deletes an existing tag of a project
+   * @param tag The tag to be deleted
+   */
   const deleteTag = (tag: CRUDRequest<null>) => {
     // if we were gonna create this tag, don't
     if (changes.create.tags.some(({ id }) => id.value === tag.id.value)) {
@@ -627,6 +767,10 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
+  /**
+   * Deletes an existing image of a project
+   * @param image The image to delete
+   */
   const deleteImage = (image: CRUDRequest<null>) => {
     // if we were gonna update this image, don't
     if (
@@ -661,6 +805,10 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
+  /**
+   * Deletes an existing social of a project
+   * @param social The social to delete
+   */
   const deleteSocial = (social: CRUDRequest<null>) => {
     // if we were gonna update this social, don't
     if (
@@ -698,6 +846,10 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
+  /**
+   * Deletes an existing job of a project
+   * @param job The job to delete
+   */
   const deleteJob = (job: CRUDRequest<null>) => {
     // if we were gonna update this job, don't
     if (
@@ -730,6 +882,10 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
+  /**
+   * Removes an existing member of a project
+   * @param member The member to delete
+   */
   const deleteMember = (member: CRUDRequest<null>) => {
     // if we were gonna update this member, don't
     if (
@@ -763,6 +919,10 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
+  /**
+   * Removes an existing medium from a project
+   * @param medium The medium to delete
+   */
   const deleteMedium = (medium: CRUDRequest<null>) => {
     // if we were gonna add this medium, don't
     if (changes.create.mediums.some(({ id }) => id.value === medium.id.value)) {
