@@ -22,9 +22,17 @@ interface LinksTabProps {
 let localIdIncrement = 0;
 let profileAfterLinkChanges: PendingUserProfile;
 
+/**
+ * Profile Links tab. Displays editable social links UI.
+ * It fetches user data on load, allows adding/removing/editing of links, and syncs changes with the state for re-rendering.
+ * @param dataManager Handles data changes to save changes later.
+ * @param profile Temporary profile data.
+ * @param updatePendingProfile Updates profile data.
+ * @returns JSX Element
+ */
 export const LinksTab: React.FC<LinksTabProps> = ({
-  profile,
   dataManager,
+  profile,
   updatePendingProfile,
 }) => {
 

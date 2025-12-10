@@ -15,6 +15,11 @@ import { PendingUserProfile } from "../../../../types/types";
 
 const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills"];
 
+/**
+ * Handles coloring skills according to their type.
+ * @param type The type of skill: Developer, Designer, or Soft skill.
+ * @returns String of the color the type corresponds to.
+ */
 const getSkillColor = (type: string) => {
   // Returns the skille color based on what skill it is
   if (type === "Developer") {
@@ -33,9 +38,17 @@ interface SkillsTabProps {
   updatePendingProfile: (profileData: PendingUserProfile) => void;
 }
 
+/**
+ * Profile Skills Tab. Displays selected skill tags with drag and drop instructions.
+ * Shows the search bar for filtering skills, category tabs, and the skill tag buttons.
+ * @param dataManager Handles data changes to save changes later.
+ * @param profile Temporary profile data.
+ * @param updatePendingProfile Updates profile data.
+ * @returns JSX Element
+ */
 export const SkillsTab = ({
-  profile,
   dataManager,
+  profile,
   updatePendingProfile,
 }: SkillsTabProps) => {
   // States
@@ -80,7 +93,10 @@ export const SkillsTab = ({
     setSearchedSkills(defaultSkills);
   }, [currentSkillsTab, currentDataSet]);
 
-  // Find if a skill is present on the project
+  /**
+   * Finds if a skill is present on the project
+   * @returns string of status: "selected" or "unselected."
+   */
   const isSkillSelected = useCallback(
     (id: number) => {
       const skills: MySkill[] = profile.skills;
@@ -161,6 +177,9 @@ export const SkillsTab = ({
   //   [allSkills, profile]
   // );
 
+  /**
+   * Toggles a skill as selected or unselected
+   */
   const handleSkillToggle = useCallback(
     (skillId: number) => {
       const isSelected = isSkillSelected(skillId) === "selected";
@@ -214,7 +233,10 @@ export const SkillsTab = ({
     [allSkills, dataManager, isSkillSelected, profile, updatePendingProfile]
   );
 
-  // Load projects
+  /**
+   * Renders selected profile skills.
+   * @returns JSX Element
+   */
   const loadProfileSkills = useMemo(() => {
     if (!profile?.skills) return [];
 
@@ -231,7 +253,11 @@ export const SkillsTab = ({
     ));
   }, [profile.skills, handleSkillToggle]);
 
-  // Create element for each skill
+  /**
+   * Renders skill tags as clickable buttons based on the active tab and search results.
+   * Each tag button shows a plus or lose icon depending on selection status and is colored based on skill type.
+   * @returns JSX Element
+   */
   const renderSkills = useCallback(() => {
     // no search item, render all skills
     if (searchedSkills && searchedSkills.length !== 0) {
@@ -327,6 +353,10 @@ export const SkillsTab = ({
     allSkills,
   ]);
 
+  /**
+   * Updates the searchedTags stat based on search results from the SearchBar.
+   * If no results, resets to showing all tags in the current tab.
+   */
   const handleSearch = useCallback((results: Skill[][]) => {
     // setSearchResults(results);
     console.log("handling search");
@@ -341,6 +371,10 @@ export const SkillsTab = ({
   }, []);
 
   // Components
+  /**
+   * Renders the tab buttons to switch between three skills: Developer, Design, and Soft skills
+   * @returns JSX Element
+   */
   const SkillSearchTabs = () => {
     const tabs = skillTabs.map((skill, i) => {
       return (

@@ -31,7 +31,10 @@ type Project = ProjectPreview;
 // Stores if profile is loaded from server and if it's user's respectively
 // const [profileLoaded, setProfileLoaded] = useState(false);
 
-
+/**
+ * Profile page with user information collected from profileID.
+ * @returns JSX Element
+ */
 const Profile = () => {
   // --------------------
   // Global variables
@@ -67,24 +70,28 @@ const Profile = () => {
   // --------------------
   // Helper functions
   // --------------------
+  /**
+   * Checks if the user is following this user
+   * @returns true if following
+   */
+  const checkFollow = useCallback(async () => {
+    const followings = (await getUserFollowing(userID)).data?.users;
 
-  //a direct check to backend for determining whether or not a user is followed
-const checkFollow = useCallback(async () => {
-  const followings = (await getUserFollowing(userID)).data?.users;
+    let isFollowing = false;
 
-  let isFollowing = false;
+    if(followings !== undefined){ //if they have no follows then obviously they can't be following the guy we're looking at
+    for (const follower of followings){
+      isFollowing = (follower.user.userId === parseInt(profileID))
+      if (isFollowing) break;
+    }
+    }
+    setIsFollow(isFollowing);
+    return isFollowing;
+  }, [profileID, userID])
 
-  if(followings !== undefined){ //if they have no follows then obviously they can't be following the guy we're looking at
-  for (const follower of followings){
-    isFollowing = (follower.user.userId === parseInt(profileID))
-    if (isFollowing) break;
-  }
-  }
-  setIsFollow(isFollowing);
-  return isFollowing;
-}, [profileID, userID])
-
-  // 'Follow' button
+  /**
+   * Toggles following the user.
+   */
   const followUser = async () => {
 
     if (!loggedIn) {
@@ -103,7 +110,10 @@ const checkFollow = useCallback(async () => {
     }
   };
 
-  // Search bar doesn't really have a use, so might as well use it for projects
+  /**
+   * Updates the displayed projects based on the search results.
+   * @param searchResults Filtered projects based on the search query.
+   */
   const searchProjects = (searchResults: string[]) => {
     const tempProjList: Project[] = [];
 
@@ -125,12 +135,13 @@ const checkFollow = useCallback(async () => {
     }
   };
 
-
+  /**
+   * Gets the user's projects to display.
+   */
   const getProfileProjectData = useCallback(async () => {
     try {
-      const response = isUsersProfile ? await getProjectsByUser() : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] };          // IMPLEMENT PROJECT GETTING
+      const response = isUsersProfile ? await getProjectsByUser() : await getVisibleProjects(Number(profileID)) as { data: ProjectPreview[] }; //TODO: IMPLEMENT PROJECT GETTING
       const data = response.data;
-      
 
       // Only update if there's data
       if (data) {

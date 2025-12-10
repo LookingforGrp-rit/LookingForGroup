@@ -12,18 +12,24 @@ import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
 import { getUserByEmail, getUserByUsername } from '../../api/users';
 
+/**
+ * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
+ * @param profileImage Uploaded profile image to use for user creation.
+ * @param setProfileImage Sets the profile image variable
+ * @returns JSX Element
+ */
 const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation
 
   // State variables
-  const [firstName, setFirstName] = useState(''); // State variable for the user's first name
-  const [lastName, setLastName] = useState(''); // State variable for the user's last
+  const [firstName, setFirstName] = useState(''); // User's first name
+  const [lastName, setLastName] = useState(''); // User's last name
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState(''); // second password input to check if they match
-  const [message, setMessage] = useState(''); // State variable for messages
-  const [passwordMessage, setPasswordMessage] = useState(''); // State variable for password requirements
+  const [confirm, setConfirm] = useState(''); // Second password input to check if they match
+  const [message, setMessage] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState(''); // Password requirements
   const [showPassword, setShowPassword] = useState(false);
 
   // State variables for modals
@@ -58,7 +64,10 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     profileImage: profileImage, // if they upload their own image
   };
 
-  // Function to handle the login button click
+  /**
+   * Goes through the various fields, verifies whether user input is valid, and sends it to the server.
+   * @returns False if invalid
+   */
   const handleSignup = async () => {
     // Check if any of the fields are empty
     if (
@@ -140,7 +149,11 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     }
   };
 
-  // Function to handle password validation
+  /**
+   * Checks password validity
+   * @param pass Password
+   * @returns String message of remaining requirements to be met
+   */
   const validatePassword = (pass) => {
     // Don't check password if there's nothing there
     if (pass === '') {
@@ -183,7 +196,10 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     return passMsg;
   };
 
-  // Function to handle Enter key press
+  /**
+   * Handles Enter key presses
+   * @param e Keyboard Event
+   */
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
       handleSignup();
@@ -204,9 +220,9 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         />
         {/*************************************************************
 
-                    Signup Form inputs
+          Signup Form inputs
 
-                *************************************************************/}
+        *************************************************************/}
         <div className="signup-form column">
 
           <h2>Sign Up</h2>
@@ -301,17 +317,17 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
           {/*************************************************************
 
-                        Modals for the sign up process
+            Modals for the sign up process
 
-                    *************************************************************/}
+          *************************************************************/}
 
           {/* <ChooseProficiencies
-                        onNext={() => { setShowProficienciesModal(false); setShowSkillsModal(true); }}
-                        onBack={() => { setShowProficienciesModal(false); }}
-                        show={showProficienciesModal}
-                        selectedProficiencies={selectedProficiencies}
-                        setSelectedProficiencies={setSelectedProficiencies}
-                    /> */}
+            onNext={() => { setShowProficienciesModal(false); setShowSkillsModal(true); }}
+            onBack={() => { setShowProficienciesModal(false); }}
+            show={showProficienciesModal}
+            selectedProficiencies={selectedProficiencies}
+            setSelectedProficiencies={setSelectedProficiencies}
+          /> */}
 
           <ChooseSkills
             onNext={() => {
@@ -403,9 +419,9 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         </div>
         {/*************************************************************
 
-                    Welcome Directory
+          Welcome Directory
 
-                *************************************************************/}
+        *************************************************************/}
         <div className="directory column">
           {/* <h1>Welcome!</h1>
                     <p>Already have an account?</p> */}
@@ -419,7 +435,5 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     </div>
   );
 };
-
-// helper function to check for existing username
 
 export default SignUp;

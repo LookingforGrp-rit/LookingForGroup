@@ -9,6 +9,11 @@ import usePreloadedImage from "../../../functions/imageLoad";
 import placeholderThumbnail from '../../../images/project_temp.png';
 import { ThemeIcon } from "../../ThemeIcon";
 
+/**
+ * Component for each project to display within the Profile Projects tab. Appears as a tile.
+ * @param projectData A single project's data.
+ * @returns JSX Element
+ */
 const ProjectTile = ({
   projectData,
   onVisibilityChanged,
@@ -53,11 +58,24 @@ type ProjectsTabProps = {
   updatePendingProfile: (profileData: PendingUserProfile) => void;
 };
 
+/**
+ * Profile Projects tab. Tab for displaying the projects that the user is currently a part of, rendering each project as "ProjectTiles" to display.
+ * @param dataManager Handles data changes to save changes later.
+ * @param profile Temporary profile data.
+ * @param updatePendingProfile Updates profile data.
+ * @returns JSX Element
+ */
 export const ProjectsTab = ({
-  profile,
   dataManager,
+  profile,
   updatePendingProfile,
 }: ProjectsTabProps) => {
+
+  /**
+   * Changes the visibility of a project.
+   * @param projectId Project ID of the project that is affected.
+   * @param newVisibility Visibility to set the project to.
+   */
   const onProjectVisibilityChanged = (
     projectId: number,
     newVisibility: Visibility

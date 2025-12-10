@@ -15,14 +15,13 @@ interface EmailConfirmationProps {
   reloadResponseData?: number | string | boolean;
 }
 
-/*
-This component handles the email confirmation process for user account activation.
-It extracts a token from the URL, sends it to the server for verification,
-displays the appropriate confirmation message, and automatically redirects
-the user to the home page after 5 seconds.
-*/
+/**
+ * Account Activation Page. Responsible for verifying and checking the validity of the email in creating the account.
+ * @param props 
+ * @returns 
+ */
 const EmailConfirmation = (props: EmailConfirmationProps) => {
-  // THINGS TO DO:
+  // TODO:
   // Add Page Components (info box stating email is confirmed) x
   // Style page to match Figma (both light and dark modes)
   // Auto redirect to discover page (as well as link to discover page if redirect doesn't work) x
