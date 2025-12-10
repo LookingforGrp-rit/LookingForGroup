@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getService from '#services/datasets/get-majors.ts';
 
+//GET api/datasets/majors
 const getMajorsController = async (_request: Request, response: Response): Promise<void> => {
   const result = await getService();
 

@@ -9,13 +9,25 @@ IDs are ordered alphabetically.
 - Format
 Name (Description): Class(es)
 
-- Styles
+- Styles (class name)
 Stroke: only applies stroke
+(...-stroke)
+
 Fill: only applies fill
+(...-fill)
+
 Mono: black or white
+(mono-[stroke/fill])
+
 Color: primary-color variable
+(color-[stroke/fill])
+
 Header: header-color variable
+(header-color-[stroke/fill])
+
 Gradient: modal-gradient-start variable
+(gradient-color-[stroke/fill])
+
 NA: Not applicable. Does not change with theme or has its own styles.
 
 Note: Social media icons are color for only the Profile and Project pages. The dropdown uses Font Awesome icons instead.

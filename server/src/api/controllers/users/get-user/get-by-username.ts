@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { getUserByUsernameService } from '#services/users/get-user/get-by-username.ts';
 
+//GET api/users/search-username/{username}
 //get the user by the username
 export const getUserByUsername = async (req: Request, res: Response): Promise<void> => {
   const result = await getUserByUsernameService(req.params.username);

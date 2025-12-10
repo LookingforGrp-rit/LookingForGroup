@@ -17,6 +17,12 @@ type DiscoverAndMeetProps = {
   category: 'projects' | 'profiles';
 };
 
+/**
+ * Page template for the Discover and Meet pages. Sets up the functionality
+ * for the filters and user profiles for discover and meet pages.
+ * @param category "projects" for Discover, "profiles" for Meet
+ * @returns JSX Element
+ */
 const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // Should probably move Interfaces to separate file to prevent duplicates
   // --------------------
@@ -58,8 +64,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
                 alt={'banner image'}
               />
               {/* <div>
-                            <span className='profile-hero-highlight'>Explore profiles</span> to see each other's personality, expertise, and project history.
-                            </div> */}
+                <span className='profile-hero-highlight'>Explore profiles</span> to see each other's personality, expertise, and project history.
+              </div> */}
             </div>
 
             <div id="profile-hero-blurb-2" className="profile-hero-blurb">
@@ -71,10 +77,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
                 alt={'banner image'}
               />
               {/* <div className="panel-text">
-                            Find someone interesting? <span className='profile-hero-highlight'>Send a message!</span><br/>
-                            <div id='spacer'></div>
-                            <span className='profile-hero-highlight'>Introduce yourself</span>, share project ideas, and show interest in working together!
-                            </div> */}
+                Find someone interesting? <span className='profile-hero-highlight'>Send a message!</span><br/>
+                <div id='spacer'></div>
+                <span className='profile-hero-highlight'>Introduce yourself</span>, share project ideas, and show interest in working together!
+              </div> */}
             </div>
 
             <div id="profile-hero-blurb-3" className="profile-hero-blurb">
@@ -85,9 +91,9 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
                 alt={'banner image'}
               />
               {/* <div>
-                            Keep your profile up to date with your skills, project preferences, and interests to 
-                            <span className='profile-hero-highlight'> find your group!</span>
-                            </div> */}
+                Keep your profile up to date with your skills, project preferences, and interests to 
+                <span className='profile-hero-highlight'> find your group!</span>
+              </div> */}
             </div>
           </div>
         </div>
@@ -112,7 +118,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [itemSearchData, setItemSearchData] = useState<Item[]>([]);
 
   // Stores userId for ability to follow users/projects
-    const [userId, setUserId] = useState<string>('guest');
+  const [userId, setUserId] = useState<string>('guest');
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const dataSet = useMemo(() => {
@@ -126,6 +132,11 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
   // Helper functions
   // --------------------
+
+  /**
+   * Gets the user's profile by authenticateing the
+   * data before setting the user's ID
+   */
   const getAuth = async () => {
     const res = await getCurrentUsername();
 
@@ -147,54 +158,56 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     The function also handles errors and updates the state with the fetched data.
     It uses the getAuth function to get the user ID for follow functionality.
   */
-
   useEffect(() => {
-  const getData = async () => {
-    // Get user profile
-    await getAuth();
+    const getData = async () => {
+      // Get user profile
+      await getAuth();
 
-    try {
-      const response = (category == 'projects') ? await getProjects() : await getUsers();
-      console.log(response);
-      
-      const data = await response;
+      try {
+        const response = (category == 'projects') ? await getProjects() : await getUsers();
+        console.log(response);
+        
+        const data = await response;
 
-      // Don't assign if there's no array returned
-      if (data.data) {
-        setFullItemList(data.data);
-        setFilteredItemList(data.data);
-        setItemSearchData(
+        // Don't assign if there's no array returned
+        if (data.data) {
+          setFullItemList(data.data);
+          setFilteredItemList(data.data);
+          setItemSearchData(
 
-          // loop through JSON, get data based on category
-          data.data.map((item) => {
-            if (category === 'projects') {
-              const project = item as ProjectPreview;
-              return { name: project.title, description: project.hook };
-            } else {
-              const user = item as UserPreview;
-              return {
-                name: `${user.firstName} ${user.lastName}`,
-                username: user.username,
-                //bio: user.bio, //bios are in UserDetail, not in UserPreview. plus why would you need bios fo this little blurb anyway
-              };
-            }
-          })
-        );
+            // loop through JSON, get data based on category
+            data.data.map((item) => {
+              if (category === 'projects') {
+                const project = item as ProjectPreview;
+                return { name: project.title, description: project.hook };
+              } else {
+                const user = item as UserPreview;
+                return {
+                  name: `${user.firstName} ${user.lastName}`,
+                  username: user.username,
+                  //bio: user.bio, //bios are in UserDetail, not in UserPreview. plus why would you need bios fo this little blurb anyway
+                };
+              }
+            })
+          );
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        } else {
+          console.log(`Unknown error: ${error}`);
+        }
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.log(`Unknown error: ${error}`);
-      }
-    }
 
-    setDataLoaded(true);
-  };
+      setDataLoaded(true);
+    };
     getData();
   }, []);
 
-  // Updates filtered project list with new search info
+  /**
+   * Updates the filtered project list with new search information
+   * @param searchResults
+   */
   const searchItems = useCallback((searchResults: any[][]) => { 
     if (!searchResults || !Array.isArray(searchResults)) return;
 
@@ -218,7 +231,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     setFilteredItemList(matches.length ? matches : []);
   }, [itemSearchData, fullItemList]);
 
-  // Updates filtered project list with new tag info
+  /**
+   * Changes what items are shown to the user whenever a filter has been added or changed
+   * @param activeTagFilters Tags that are shown to the user now
+   */
   const updateItemList = async (activeTagFilters: Tag[]) => {
     
     // Get project and user info to match with tags
@@ -337,10 +353,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       {heroContent}
 
       {/* Contains tag filters & button to access more filters 
-                When page loads, determine if project tags or profile tags should be used
-                Clicking a tag filter adds it to a list & updates panel display based on that list
-                Changes to filters via filter menu are only applied after a confirmation
-            */}
+          When page loads, determine if project tags or profile tags should be used
+          Clicking a tag filter adds it to a list & updates panel display based on that list
+          Changes to filters via filter menu are only applied after a confirmation
+      */}
       <DiscoverFilters category={category} updateItemList={updateItemList} />
 
       {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}

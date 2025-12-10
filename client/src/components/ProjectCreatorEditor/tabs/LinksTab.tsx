@@ -23,6 +23,19 @@ type LinksTabProps = {
 let localIdIncrement = 0;
 let projectAfterLinkChanges: PendingProject;
 
+/**
+ * The LinksTab component allows users to view, add, update, and remove social media links associated with a project. 
+ * It supports dynamic selection from a predefined list of social platforms and entry of corresponding URLs. 
+ * It synchronizes changes with the parent component and reports validation errors as needed.
+ * @param dataManager data manager 
+ * @param projectData current project data
+ * @param updatePendingProject set modified project
+ * @param setErrorLinks set error message for links validation
+ * @param saveProject save project changes
+ * @param failCheck indicates if data validation has failed 
+ * @returns JSX Element - Renders the Social Links tab UI, handles social input logic, synchronizes from data with parent state
+ */
+
 // --- Component ---
 export const LinksTab = ({
   dataManager,
@@ -36,9 +49,9 @@ export const LinksTab = ({
 projectAfterLinkChanges = structuredClone(projectData);
 
   // --- Hooks --- 
-  // complete list of socials
+  // List of available social platforms fetched from the backend
   const [allSocials, setAllSocials] = useState<Social[]>([]);
-  // sets error when adding a link to the project
+  // Tracks input validation or other link
   const [error] = useState('');
   // project owner details with social links
   const [projectOwner, setProjectOwner] = useState<UserDetail | null>(null);

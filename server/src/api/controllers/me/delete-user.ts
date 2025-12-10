@@ -2,7 +2,10 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { deleteUserService } from '#services/me/delete-user.ts';
 
+//DELETE api/me
 //delete your own account
+//not for general user deletion, you can only delete an account if you're signed in as it
+//...maybe we should've had one for general user deletion too?
 export const deleteUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const result = await deleteUserService(req.currentUser);
 

@@ -35,6 +35,17 @@ type GeneralTabProps = {
   failCheck: boolean;
 };
 
+/**
+ * This file creates the page for editing information about the user’s project such as the project’s 
+ * description and the desired audience.
+ * @param dataManager data manager 
+ * @param projectData current project data
+ * @param saveProject save project changes
+ * @param updatePendingProject set modified project
+ * @param failCheck indicates if data validation has failed
+ * @returns JSX for Project Creator/editor tab - builds the page for project creation/editing
+ */
+
 // --- Component ---
 export const GeneralTab = ({
   dataManager,

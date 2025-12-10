@@ -278,13 +278,13 @@ export const updateProjectVisibility = async (
  * @param projectID - ID of the project you're leaving
  * @return 201 if successful, 400 if not
  */
-export const leaveProject = async (projectID: number) => {
+export const leaveProject = async (projectID: number): Promise<ApiResponse<null>> => {
   const url = `me/projects/${projectID}/leave`;
   const response = await DELETE(url);
 
-  if (response.error) //console.log(`Error in leaveProject: ${response.error}`);
+  // if (response.error) //console.log(`Error in leaveProject: ${response.error}`);
   //console.log(response);
-  return response;
+  return response as ApiResponse<null>;
 };
 
 /**

@@ -4,6 +4,7 @@ import type { Prisma } from '#prisma-models/index.js';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import addImageService from '#services/projects/images/add-image.ts';
 
+//POST api/projects/{id}/images
 //adds an image to the project
 const addImageController = async (req: Request, res: Response) => {
   if (!(req.body as { altText: string }).altText) {

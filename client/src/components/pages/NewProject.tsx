@@ -26,6 +26,10 @@ import {
 } from "@looking-for-group/shared/enums";
 
 //Main component for the project page
+/**
+ * Project page. Renders the project page with all project details, team member information, and available positions.
+ * @returns JSX Element
+ */
 const NewProject = () => {
   //Navigation hook
   const navigate = useNavigate();
@@ -46,13 +50,10 @@ const NewProject = () => {
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
 
-  // API FUNCTIONS (/PROJECTS/)
-
-  // FETCHING PROJECTS DATA
-
-  //Function used to get project data
-
-  //checking function for if the current user is following a project
+  /**
+   * Checks in the current user is following a project
+   * @returns true if user is following the project
+   */
   const checkFollow = useCallback(async () => {
     const followings = (await getProjectFollowing(userID)).data?.projects;
 
@@ -68,6 +69,7 @@ const NewProject = () => {
     return isFollow;
   }, [projectID, userID]);
 
+  // Sets state variables
   useEffect(() => {
     const getProjectData = async () => {
       //get our current user for use later
@@ -92,7 +94,11 @@ const NewProject = () => {
   //oh do i need this too
   // const usersProject = true;
 
-  // Formats follow-count based on Figma design. Returns a string
+  /**
+   * Formats the number of followers for display, converting large numbers to K format (e.g., 1.2K).
+   * @param followers Total followers of the project
+   * @returns String to display
+   */
   const formatFollowCount = (followers: number): string => {
     if (followers >= 1000) {
       const multOfHundred = followers % 100 === 0;
@@ -102,6 +108,9 @@ const NewProject = () => {
     return `${followers}`;
   };
 
+  /**
+   * Follows a project and adds to the following count of the project.
+   */
   const followProject = async () => {
     // Follow icon is only present if user is logged in.
     // If keeping this layout, this check may be redundant.
@@ -342,6 +351,10 @@ const NewProject = () => {
   //     <div>There are no other contributors right now.</div>
   //   );
 
+  /**
+   * Sets the viewed position and triggers the popup to display the selected open position details.
+   * @param positionNumber The position to open the popup to
+   */
   const openPositionListing = (positionNumber: number) => {
     //Set state to position being clicked
     //Call Popup open function from other button
@@ -583,29 +596,35 @@ const NewProject = () => {
             </div>
             <div>{displayedProject.audience}</div>
             <div id="project-overview-links-section">
-              Keep up with us!
-              <div id="project-overview-links">
-                {displayedProject.projectSocials.map((social, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      window.open(social.url, "_blank");
-                    }}
-                  >
-                    <ThemeIcon
-                      id={
-                        social.label === "Other"
-                          ? "link"
-                          : social.label.toLowerCase()
-                      }
-                      width={25}
-                      height={25}
-                      className={"color-fill"}
-                      ariaLabel={social.label}
-                    />
-                  </button>
-                ))}
-              </div>
+              {displayedProject.projectSocials.length > 0 ? (
+                <>
+                  Keep up with us!
+                  <div id="project-overview-links">
+                    {displayedProject.projectSocials.map((social, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          window.open(social.url, "_blank");
+                        }}
+                      >
+                        <ThemeIcon
+                          id={
+                            social.label === "Other"
+                              ? "link"
+                              : social.label.toLowerCase()
+                          }
+                          width={25}
+                          height={25}
+                          className={"color-fill"}
+                          ariaLabel={social.label}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p>No contacts yet</p>
+              )}
             </div>
           </div>
 

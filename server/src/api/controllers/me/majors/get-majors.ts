@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import getUserMajorsService from '#services/me/majors/get-majors.ts';
 
+//GET api/me/majors
 //get majors on user profile
 export const getUserMajors = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const result = await getUserMajorsService(req.currentUser);

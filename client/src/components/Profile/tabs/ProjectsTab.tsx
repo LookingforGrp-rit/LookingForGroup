@@ -1,5 +1,4 @@
 import {
-  MePrivate,
   MyMember,
   ProjectPreview,
   Visibility,
@@ -7,40 +6,49 @@ import {
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 import usePreloadedImage from "../../../functions/imageLoad";
-import placeholderThumbnail from '../../../images/project_temp.png';
+import placeholderThumbnail from "../../../images/project_temp.png";
 import { ThemeIcon } from "../../ThemeIcon";
 
+/**
+ * Component for each project to display within the Profile Projects tab. Appears as a tile.
+ * @param projectData A single project's data.
+ * @returns JSX Element
+ */
 const ProjectTile = ({
-  projectData,
-  onVisibilityChanged,
+  membershipData,
+  onVisibilityToggled,
 }: {
-  projectData: ProjectPreview;
-  onVisibilityChanged: (visibility: Visibility) => void;
+  membershipData: MyMember;
+  onVisibilityToggled: () => void;
 }) => {
+  const projectData = membershipData.project;
+
   return (
     <div className="projectTile" key={projectData.projectId}>
       <img
-        src={usePreloadedImage(projectData.thumbnail?.image || placeholderThumbnail, placeholderThumbnail)}
+        src={usePreloadedImage(
+          projectData.thumbnail?.image || placeholderThumbnail,
+          placeholderThumbnail
+        )}
         alt={
           projectData.thumbnail?.altText || `Thumbnail for ${projectData.title}`
         }
       />
-      // TODO: use visibility here
+      {/*TODO: use visibility here*/}
       {/* isVisible && <div className='image-overlay'/> */}
       <button
         className="project-visibility-button"
         onClick={(e) => {
           e.preventDefault();
-          // TODO: pass visibility parameter here
-          // onVisibilityChanged;
+          onVisibilityToggled();
         }}
       >
         <ThemeIcon
-          id={"eye"} // TODO: use eye-line if not visible (add check)
+          id={membershipData.visibility === "Public" ? "eye" : "eye-line"}
           width={19}
-          height={13} // TODO: if eye-line, should be 18
-          className={'mono-fill-invert'}
-          ariaLabel={'Toggle visibility'}
+          height={membershipData.visibility === "Public" ? 13 : 18}
+          className={"mono-fill-invert"}
+          ariaLabel={"Toggle visibility"}
         />
       </button>
       {/* {<p>{projectData.title}</p>} */}
@@ -49,16 +57,29 @@ const ProjectTile = ({
 };
 
 type ProjectsTabProps = {
-  profile: MePrivate;
+  profile: PendingUserProfile;
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   updatePendingProfile: (profileData: PendingUserProfile) => void;
 };
 
+/**
+ * Profile Projects tab. Tab for displaying the projects that the user is currently a part of, rendering each project as "ProjectTiles" to display.
+ * @param dataManager Handles data changes to save changes later.
+ * @param profile Temporary profile data.
+ * @param updatePendingProfile Updates profile data.
+ * @returns JSX Element
+ */
 export const ProjectsTab = ({
-  profile,
   dataManager,
+  profile,
   updatePendingProfile,
 }: ProjectsTabProps) => {
+
+  /**
+   * Changes the visibility of a project.
+   * @param projectId Project ID of the project that is affected.
+   * @param newVisibility Visibility to set the project to.
+   */
   const onProjectVisibilityChanged = (
     projectId: number,
     newVisibility: Visibility
@@ -99,12 +120,15 @@ export const ProjectsTab = ({
       </div>
       <div id="profile-editor-project-selection">
         {profile.projects.length > 0 ? (
-          profile.projects.map(({ project }: { project: ProjectPreview }) => (
+          profile.projects.map((membership: MyMember) => (
             <ProjectTile
-              projectData={project}
-              key={`project-${project.projectId}`}
-              onVisibilityChanged={(visibility: Visibility) =>
-                onProjectVisibilityChanged(project.projectId, visibility)
+              membershipData={membership}
+              key={`project-${membership.project.projectId}`}
+              onVisibilityToggled={() =>
+                onProjectVisibilityChanged(
+                  membership.project.projectId,
+                  membership.visibility === "Public" ? "Private" : "Public"
+                )
               }
             />
           ))

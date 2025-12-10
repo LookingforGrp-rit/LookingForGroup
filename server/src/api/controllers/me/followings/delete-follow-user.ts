@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { deleteUserFollowService } from '#services/me/followings/delete-follow-user.ts';
 
+//DELETE api/me/followings/people/{id}
 // delete a user from follow list
 export const deleteUserFollowing = async (
   req: AuthenticatedRequest,

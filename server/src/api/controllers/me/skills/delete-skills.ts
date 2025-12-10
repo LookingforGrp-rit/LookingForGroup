@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { deleteSkillService } from '#services/me/skills/delete-skills.ts';
 
+//DELETE api/me/skills/{id}
 //delete a skill from user profile
 export const deleteSkill = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //the one you're deleting

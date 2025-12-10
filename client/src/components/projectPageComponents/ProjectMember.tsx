@@ -2,13 +2,13 @@ import profilePlaceholder from '../../icons/profile-user.png';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 
-//This component is used in the project page of the site
-//Renders an instance of a single profile of a project member
-//Includes their profile picture, their name, and their role on the current project
-//Clicking on this component should redirect the user to the relevant profile page of the member clicked
-
-//Takes in a name and role value as props, which should be the project member's name and their role in the relevant project
-
+/**
+ * This component renders an instance of a single profile for a project member. 
+ * This includes their profile picture, name, and role in the project. 
+ * On click here will redirect the user to the profile page of the member clicked.
+ * @param props - member ID, member name, member role, avatarURL
+ * @returns HTML - Renders a clickable member card showing profile information and will redirect to a member’s profile on click
+ */
 export const ProjectMember = (props: { memberId: string; name?: string; role?: string; avatarUrl?: string }) => {
   const navigate = useNavigate();
 

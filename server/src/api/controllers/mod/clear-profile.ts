@@ -14,7 +14,9 @@ interface ClearUserInfo {
   profileImage?: string;
 }
 
-//clear a selected user profile
+//PATCH api/mod/clear-profile/{id}
+//clear a selected user profile (moderator action)
+//in case someone has an inappropriate profile you can use this to clear it
 export const clearProfile = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const clearing = {
     firstName: 'David',

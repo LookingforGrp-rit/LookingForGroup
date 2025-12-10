@@ -7,6 +7,9 @@ type LeaveDeleteContextProps = {
   reloadProjects: () => void,
 };
 
+/**
+ * Determine what options show on projects on the My Projects page.
+ */
 export const LeaveDeleteContext = createContext<LeaveDeleteContextProps>({
   isOwner: false,
   projId: 0,

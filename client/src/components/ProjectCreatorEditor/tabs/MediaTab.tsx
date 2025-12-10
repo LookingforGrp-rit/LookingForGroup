@@ -36,6 +36,17 @@ const stringToFile = async (s: string) => {
   return new File([fileBlob], s, { type: fileBlob.type });
 }
 
+/**
+ * Allows users to add and drop media images to display for their project, 
+ * as well as displays various other attributes for the project.
+ * @param dataManager data manager
+ * @param projectData current project data
+ * @param saveProject save project changes
+ * @param updatePendingProject set modified project
+ * @param failCheck indicates if data validation has failed 
+ * @returns JSX Element - Main component that renders media tab interface
+ */
+
 // --- Component ---
 export const MediaTab = ({
   dataManager,
@@ -93,7 +104,7 @@ export const MediaTab = ({
     initializeImages();
   });
 
-  // Handle image upload
+  // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async () => {
     // Get image in input element
     const imageUploader = document.getElementById(
@@ -190,7 +201,7 @@ export const MediaTab = ({
     imageUploader.value = "";
   }, [dataManager, projectId, updatePendingProject]);
 
-  // Handle new thumbnail
+  // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
     async (projectImage: ProjectImage | PendingProjectImage) => {
       if (!projectId) return;
@@ -246,7 +257,7 @@ export const MediaTab = ({
     [dataManager, projectId, updatePendingProject]
   );
 
-  // Handle image deletion
+  // Removes image from page
   const handleImageDelete = useCallback(
     async (projectImage: ProjectImage | PendingProjectImage) => {
       if (!projectId) return;

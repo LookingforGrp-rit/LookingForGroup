@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 
-//
-// Get Started component
-// choose to start a new project or join an existing project
-//
+/**
+ * Interface for users getting started providing a simple user interface for 
+ * signing up and getting started with making projects on the website.
+ * @param show Boolean for modal display (get)
+ * @param onBack Callback for back button
+ * @param onCreateProject Callback for create button
+ * @param onJoinProject Callback for join button
+ * @returns modal markup render if show is true
+ */
 const GetStarted = ({ show, onBack, onCreateProject, onJoinProject }) => {
-  // if the modal is not shown, return null
+  // Returns modal markup when true, null if not true
   if (!show) {
     return null;
   }

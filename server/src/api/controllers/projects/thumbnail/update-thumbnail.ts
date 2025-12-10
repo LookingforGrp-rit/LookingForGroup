@@ -2,6 +2,7 @@ import type { ApiResponse, UpdateProjectThumbnailInput } from '@looking-for-grou
 import type { Request, Response } from 'express';
 import updateThumbnailService from '#services/projects/thumbnail/update-thumbnail.ts';
 
+//PUT api/projects/{id}/thumbnail
 //updates the thumbnail param of a project to contain an existing project image
 const updateThumbnail = async (req: Request, res: Response): Promise<void> => {
   console.log(req.body);

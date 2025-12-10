@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { removeImageService } from '#services/projects/images/remove-image.ts';
 
+//DELETE api/projects/{id}/images{imageId}
 //removes an image from a project
 const removeImageController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);

@@ -6,6 +6,7 @@ import type {
 import type { Response } from 'express';
 import createProjectService from '#services/projects/create-proj.ts';
 
+//POST api/projects
 //creates a project
 const createProjectController = async (req: AuthenticatedRequest, res: Response) => {
   const inputData: Omit<CreateProjectInput, 'thumbnail'> = req.body as Omit<

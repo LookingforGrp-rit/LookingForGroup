@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { getUserProjectsService } from '#services/users/get-user-proj.ts';
 
+//GET api/users/{id}/projects
 // gets the projects of another user to view
 export const getOtherUserProjects = async (req: Request, res: Response): Promise<void> => {
   //current user ID

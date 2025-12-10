@@ -1,3 +1,5 @@
+/* Styles for the links tab in the profile editor */
+
 #profile-editor-links {
   display: flex;
   flex-direction: column;

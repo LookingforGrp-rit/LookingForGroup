@@ -11,15 +11,19 @@ import { getJobTitles, getMajors } from '../../../api/users';
 
 let profileAfterAboutChanges: PendingUserProfile;
 
-
 type AboutTabProps = {
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   profile: PendingUserProfile;
   updatePendingProfile?: (updatedPendingrProfile: PendingUserProfile) => void;
 };
 
-
-// Main Component
+/**
+ * Profile About Tab. Set up the main interface for the about tab page and populate its default values while also permitting for inputs to edit the user's information.
+ * @param dataManager Handles data changes to save changes later.
+ * @param profile Temporary profile data.
+ * @param updatePendingProfile Updates profile data.
+ * @returns JSX Element
+ */
 export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}: AboutTabProps) => {
 
   profileAfterAboutChanges = structuredClone(profile);
@@ -53,17 +57,17 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
     fetchRoles();
     initializePfp();
   }, [profile.profileImage]);
-  useEffect(() => {
-  }, []);
 
- // Set new image when one is picked from uploader
- const handleFileSelected = useCallback(async () => {
-  console.log("just making sure this is running") //it's not!
-  //get the image uploader element
+  /**
+   * Saves the uploaded image to the profile.
+   */
+  const handleFileSelected = useCallback(async () => {
+    console.log("just making sure this is running") //it's not!
+    //get the image uploader element
     const imageUploader = document.getElementById(
       "image-uploader"
     ) as HTMLInputElement;
-    
+  
     if (!imageUploader?.files?.length) return;
 
     //get the image itself (there will always be only one)
@@ -71,11 +75,11 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
 
     //and we got it!
-   setSelectedImageFile(file);
-     const imgLink = URL.createObjectURL(file);
-     setPreviewUrl(imgLink.substring(5, imgLink.length));
+    setSelectedImageFile(file);
+    const imgLink = URL.createObjectURL(file);
+    setPreviewUrl(imgLink.substring(5, imgLink.length));
 
-     dataManager.updateFields({
+    dataManager.updateFields({
       id: {
         value: userId,
         type: 'canon'
@@ -83,14 +87,14 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
       data: {
         profileImage: file
       }
-     })
+    })
 
-     profileAfterAboutChanges = {
+    profileAfterAboutChanges = {
       ...profileAfterAboutChanges,
       profileImage: file
-     }
-     updatePendingProfile(profileAfterAboutChanges)
- }, [dataManager, updatePendingProfile, userId]);
+    }
+    updatePendingProfile(profileAfterAboutChanges)
+  }, [dataManager, updatePendingProfile, userId]);
 
   return (
     <div id="profile-editor-about" className="edit-profile-body about">

@@ -1,3 +1,5 @@
+/* Contains styles rules for the project tab in the profile editor*/
+
 #profile-editor-project-selection {
     display: grid;
     margin: 1rem 0;

@@ -4,8 +4,10 @@ import { useState } from 'react';
 import { Header } from '../Header';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 
-
-
+/**
+ * Not Found (404) page. Changes the page to a Not Found page if the prop isn't found or is invalid
+ * @returns JSX Element with link to Home (Discover) page
+ */
 const NotFoundPage = () => {
     const [projectsList, setProjectsList] = useState();
     const [currentSearch, setCurrentSearch] = useState('');

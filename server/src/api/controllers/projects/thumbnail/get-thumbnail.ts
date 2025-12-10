@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getThumbnailService from '#services/projects/thumbnail/get-thumbnail.ts';
 
+//GET api/projects/{id}/thumbnail
 //gets the thumbnail of a project
 const getThumbnail = async (req: Request, res: Response): Promise<void> => {
   const projID = parseInt(req.params.id);

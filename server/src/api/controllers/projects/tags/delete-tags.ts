@@ -2,7 +2,8 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteTagsService } from '#services/projects/tags/delete-tags.ts';
 
-//deletes multiple tags from a project
+//DELETE api/projects/{id}/tags/{tagId}
+//deletes a tag from a project
 const deleteTagsController = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const tag = parseInt(req.params.tagId);

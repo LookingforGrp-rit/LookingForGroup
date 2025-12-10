@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { getMyProjectsService } from '#services/me/get-my-proj.ts';
 
+//GET api/me/projects
 //get projects user owns/is a member of
 export const getMyProjects = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const visibility = req.query.visibility as 'all' | 'public' | 'private' | undefined;

@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteProjectService } from '#services/projects/delete-proj.ts';
 
+//DELETE api/projcets/{id}
 //deletes a project
 const deleteProjectController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);

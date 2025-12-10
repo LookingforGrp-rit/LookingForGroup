@@ -19,7 +19,6 @@ export type AcademicYear =
   | "Junior"
   | "Senior"
   | "Graduate";
-export type Visibility = 0 | 1;
 export type SkillProficiency =
   | "Novice"
   | "Intermediate"

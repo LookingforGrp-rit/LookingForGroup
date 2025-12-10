@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { updateProjectSocialService } from '#services/projects/socials/update-proj-social.ts';
 
+//PATCH api/projects/{id}/socials/{socialId}
 //updates a social associated with a project
 export const updateProjectSocial = async (req: Request, res: Response): Promise<void> => {
   const social = req.params.url;

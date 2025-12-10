@@ -267,7 +267,7 @@ router.post(
 
 // JOBS ROUTES
 
-// creates a new project job
+// gets all of a project's jobs
 router.get('/:id/jobs', projectExistsAt('path', 'id'), PROJECT.getJobsController);
 // creates a new project job
 router.post(

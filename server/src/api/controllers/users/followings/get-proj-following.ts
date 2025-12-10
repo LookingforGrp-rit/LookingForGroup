@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { getProjectFollowingService } from '#services/users/followings/get-proj-following.ts';
 
+//GET api/users/{id}/followings/projects
 // gets the projects a user is following
 export const getProjectsFollowing = async (req: Request, res: Response): Promise<void> => {
   //user ID

@@ -18,11 +18,19 @@ import { PendingUserProfile } from "../../../types/types";
 const pageTabs = ["About", "Projects", "Skills", "Links"];
 let dataManager: Awaited<ReturnType<typeof userDataManager>>;
 
+/**
+ * Profile Edit button. Handles changing tabs.
+ * @returns JSX Element
+ */
 export const ProfileEditPopup = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
 
+  /**
+   * Updates the temporary profile data.
+   * @param profileData The user's profile data.
+   */
   const updatePendingProfile = (profileData: PendingUserProfile) => {
     setModifiedProfile(profileData);
   };
@@ -49,7 +57,10 @@ export const ProfileEditPopup = () => {
     setUpProfileData();
   }, []);
 
-
+  /**
+   * Receives changed/inputted information and stores it. Reloads page with new information.
+   * @param e Event
+   */
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevents any default calls
 
@@ -91,7 +102,10 @@ export const ProfileEditPopup = () => {
     }
   }, []);
 
-  // Component to organize the main tab content
+  /**
+   * Component to organize the main tab content and handle switching tabs.
+   * @returns JSX Element of the appropriate tab.
+   */
   const renderTabContent = () => {
     if (!modifiedProfile) return <p>Loading...</p>;
     switch (currentTab) {
@@ -147,54 +161,6 @@ export const ProfileEditPopup = () => {
     </button>
   ));
 
-  // Method to switch between tabs
-  /*const switchTab = (tabIndex: number) => {
-    // This method toggles the visibility for the previous tab and then the selected tab
-    // First toggle visibility for the previous tab
-    const previousTabIndex = pageTabs[currentTab].toLowerCase();
-    const prevElement = document.querySelector(`#profile-editor-${previousTabIndex}`);
-    const prevTab = document.querySelector(`#profile-tab-${pageTabs[currentTab]}`);
-    if (prevElement) {
-      prevElement.classList.toggle('hidden');
-    }
-    if (prevTab) {
-      prevTab.classList.toggle('project-editor-tab-active');
-    }
-
-    // Update Current Tab
-    currentTab = tabIndex;
-
-    // Get current tab
-    let currentElement;
-    const currTab = document.querySelector(`#profile-tab-${pageTabs[currentTab]}`);
-    switch (pageTabs[currentTab]) {
-      case 'About':
-        currentElement = document.querySelector(`#profile-editor-about`);
-        break;
-      case 'Projects':
-        currentElement = document.querySelector(`#profile-editor-projects`);
-        break;
-      case 'Skills':
-        currentElement = document.querySelector(`#profile-editor-skills`);
-        break;
-      case 'Interests':
-        currentElement = document.querySelector(`#profile-editor-interests`);
-        break;
-      case 'Links':
-        currentElement = document.querySelector(`#profile-editor-links`);
-        break;
-      default:
-        currentElement = document.querySelector(`#profile-editor-about`);
-        break;
-    }
-    // Toggle current tab's visibility
-    if (currentElement) {
-      currentElement.classList.toggle('hidden');
-    }
-    if (currTab) {
-      currTab.classList.toggle('project-editor-tab-active');
-    }
-  };*/
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
