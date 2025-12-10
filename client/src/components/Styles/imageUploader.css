@@ -1,4 +1,8 @@
-/* IMAGE UPLOADER */
+/*
+    Styles for the image uploader component.
+    It is used for uploading project images and
+    profile images.
+*/
 #img-view {
     position: relative;
     display: flex;

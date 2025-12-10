@@ -1,7 +1,9 @@
 /*
-Table of Contents
-General Style rules
-Component Style rules
+  General style rules that are applied across all pages.
+
+  Table of Contents:
+  General Style rules
+  Component Style rules
     -Card components
     -Tags
     -Button components
@@ -18,9 +20,9 @@ Component Style rules
     -Scroll to top
     -Theme Icons
 
-see: pages.css for the rules that format the page itself
-     index.css for fonts
-     makeAvatar.css for avatar creation
+  see: pages.css for the rules that format the page itself
+    index.css for fonts
+    makeAvatar.css for avatar creation
 */
 
 /*

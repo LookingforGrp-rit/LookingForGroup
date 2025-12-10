@@ -1,9 +1,21 @@
+/*
+  Styles for displaying profiles
+
+  1. Profile Panel component
+  2. Profile page
+  3. New Profile page
+
+  NOTE: The "New Profile" page has been removed for the Profile page,
+    but styles may be reused.
+*/
+
 @import url('profileEditor.css');
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
 Profile Panel component style rules
+- Card that appears on the discover page
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
