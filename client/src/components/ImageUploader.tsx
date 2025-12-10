@@ -3,10 +3,15 @@ import { FileImage } from './FileImage';
 //import { sendPost } from '../functions/fetch'; //Not fixing, is this something to be implemented later?
 
 interface ImageUploaderProps {
+  // URL of an existing image to display initially
   initialImageUrl?: string;
+  // Image file to display initially
   initialImageFile?: File;
+  // If true, only allow image files
   keepImage?: boolean;
+  // Callback triggered when the user selects a valid file
   onFileSelected?: (file: File) => void;
+  // Determines styling and behavior 
   type?: 'profile' | 'project';
 }
 
@@ -23,6 +28,17 @@ const ProjectImageUploader = (props: ImageUploaderProps) => {
   return <ImageUploader {...props} type='project' />;
 };
 
+
+/**
+ * ImageUploader handles file selection for images.
+ * 
+ * @param initialImageUrl - URL of the initial image to display
+ * @param initialImageFile - File object to display initially
+ * @param keepImage - whether to accept only certain file types
+ * @param onFileSelected - callback for when a file is selected
+ * @param type - determines styling
+ * @returns Renders the file input and preview interface
+ */
 const ImageUploader = ({
   initialImageUrl = '',
   initialImageFile,
@@ -35,6 +51,7 @@ const ImageUploader = ({
 
 
   // Validate file type and handle image input change
+  // If keepImage is true, only allows PNG/JPEG
   const handleImgChange = useCallback(() => {
     const file = inputRef.current?.files?.[0];
     if (!file) return;
@@ -46,7 +63,7 @@ const ImageUploader = ({
     }
   }, [keepImage, onFileSelected]);
 
-  // On file input change, handle image selection 
+  // Effect for cleanup if needed; currently just removes event listeners 
   useEffect(() => {
     
     const input = inputRef.current;

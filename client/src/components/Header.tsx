@@ -14,17 +14,30 @@ import { getCurrentUsername } from '../api/users.ts';
 
 //Header component to be used in pages
 
+//Track user login state globally
 export let loggedIn = false;
-
-//dataSets - list of data for the searchbar to use
-//onSearch - function for the searchbar to run when searching
-//These are directly used in the searchbar of this component, and funciton identically so
 
 //to-do: allow click function of searchbar to be re-defineable
 //Add functions to buttons (profile/settings = navigate to those pages; light mode: toggle light/dark mode)
 //(logout = logout the user and send them to home page or equivalent)
 
+/**
+ * Top-level navigation and utility bar displayed across pages. 
+ * Provides search functionality, profile access, theme switching, 
+ * and user-specific dropdown actions. When authenticated, the header 
+ * displays the user’s profile image, username, and navigation options; 
+ * otherwise it shows guest controls and a login button.
+ *
+ * @param dataSets - Data passed into the search bar for filtering and suggestions.
+ * @param onSearch - Executed when the search bar submits a query.
+ * @param value - Current search bar input value.
+ * @param onChange - Change handler for updating the search input value.
+ * @param props.hideSearchBar- If true, disables rendering of the search bar.
+ * @returns A fully featured header containing the search bar, 
+ * user dropdown menu, theme toggle, and navigation controls.
+ */
 export const Header = ({ dataSets, onSearch, value, onChange, hideSearchBar = false }) => {
+  // User info state
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState(null);
   const [profileImg, setProfileImg] = useState<string>('');
@@ -39,6 +52,7 @@ export const Header = ({ dataSets, onSearch, value, onChange, hideSearchBar = fa
 
   const navigate = useNavigate(); // Hook for navigation
 
+  // Fetch current user info on mount
   useEffect(() => {
     const fetchUsername = async () => {
       try {
@@ -67,12 +81,14 @@ export const Header = ({ dataSets, onSearch, value, onChange, hideSearchBar = fa
     fetchUsername();
   }, []);
 
+  // Navigate to a page and optionally update sidebar (if implemented)
   const handlePageChange = (path: string) => {
     //Have code to update sidebar display (unsure of how to do this yet)
     //Navigate to desired page
     navigate(path);
   };
 
+  // Navigate to the current user's profile
   const handleProfileAccess = async () => {
     // navigate to Profile, attach userID
     const res = await getCurrentUsername();
@@ -85,6 +101,7 @@ export const Header = ({ dataSets, onSearch, value, onChange, hideSearchBar = fa
     }
   };
 
+  // Toggle between light and dark mode
   const switchTheme = () => {
     setModeToggle(theme === 'dark' ? 'Dark Mode' : 'Light Mode');
     setTheme(theme === 'dark' ? 'light' : 'dark');

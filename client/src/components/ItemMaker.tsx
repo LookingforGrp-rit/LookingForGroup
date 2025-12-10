@@ -5,16 +5,34 @@ import React, { useState } from 'react';
 import { hardSkills } from '../constants/skills';
 
 interface ItemMakerProps {
+  // Determines input mode for either dropdown selection or freeform text input
   type: 'role' | 'tag';
+  // Callback that receives the current array of items whenever it changes
   grabber: (items: string[]) => void;
 }
 
+/**
+ * Creates and manages a dynamic list of string items from user input.
+ * Can handle either predefined roles (dropdown) or freeform tags (text input).
+ * 
+ * @param type Determines input mode: 'role' for dropdown selection, 'tag' for freeform text
+ * @param grabber Callback function that receives the updated array of items whenever it changes
+ * @returns A JSX element containing the input, Add/Clear buttons, and the current list of items
+ */
 export const ItemMaker = ({ type, grabber }: ItemMakerProps) => {
+  // Currently selected item in the input 
   const [item, setItem] = useState('Full-stack Development');
+  // Array of added string items
   const [arr, setArr] = useState<string[]>([]);
+  // JSX element displaying the list of items; rebuilt on every add/delete
  const [listObj, setObj] = useState<React.ReactElement>(<div></div>);
 
-  // Determined by "type" to provide either text or dropdown
+  /**
+   * Generates the input element depending on the type:
+   * - 'role': dropdown populated from `hardSkills`
+   * - 'tag': freeform text input
+   * Updates `item` state on change.
+   */
    const createInput = () => {
     if (type === 'role') {
       return (
@@ -44,8 +62,12 @@ export const ItemMaker = ({ type, grabber }: ItemMakerProps) => {
     }
   };
 
-  // Deletes the item from the array, and then sets the object with the new array
-  // Does not work properly, deletes multiple items at once
+  /**
+   * Removes the target item from the array and rebuilds the JSX list.
+   * If multiple entries have the same string, all will be removed.
+   *
+   * @param targetItem The item string to remove
+   */
    const deleteItem = (targetItem: string) => {
     const filtered = arr.filter((i) => i !== targetItem);
     setArr(filtered);

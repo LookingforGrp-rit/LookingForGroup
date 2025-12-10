@@ -5,37 +5,37 @@ import { ThemeIcon } from "./ThemeIcon";
 // Interfaces
 // --------------------
 type SelectContextProps = {
-    open: boolean;
-    value: ReactElement | null;
-    setOpen: (open: boolean) => void;
-    setValue: (value: ReactElement) => void;
-    type: 'input' | 'dropdown';
+    open: boolean; // Whether the dropdown is currently open
+    value: ReactElement | null; // Currently selected value (JSX element)
+    setOpen: (open: boolean) => void; // Setter for open state
+    setValue: (value: ReactElement) => void; // Setter for selected value
+    type: 'input' | 'dropdown'; // Type of select for styling purposes
 }
 
 type SelectButtonProps = {
-    placeholder: string;
-    initialVal?: string | boolean;
-    buttonId?: string;
-    className?: string;
-    type: 'input' | 'dropdown';
-    callback?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    placeholder: string; // Text to show when no value is selected
+    initialVal?: string | boolean; // Default value if none selected
+    buttonId?: string; // Optional HTML id
+    className?: string; // Optional additional CSS classes
+    type: 'input' | 'dropdown'; // Determines button style
+    callback?: (e: React.MouseEvent<HTMLButtonElement>) => void; // Optional onClick
 }
 
 type SelectOptions = {
-    markup: ReactElement;
-    value: string;
-    disabled: boolean;
+    markup: ReactElement; // JSX content to display for this option
+    value: string; // Internal value identifier
+    disabled: boolean; // Whether option is clickable
 }
 
 type SelectOptionsProps = {
-    options: Array<SelectOptions>;
-    className?: string;
-    rightAlign?: boolean;
-    callback?: (e: React.MouseEvent<HTMLButtonElement>) => void;
+    options: Array<SelectOptions>; // List of dropdown options
+    className?: string; // Optional additional CSS classes
+    rightAlign?: boolean; // If true, dropdown aligns to the right
+    callback?: (e: React.MouseEvent<HTMLButtonElement>) => void; // Optional option click callback
 }
 
 type SelectProps = {
-    children: React.ReactNode;
+    children: React.ReactNode; // Usually a SelectButton and SelectOptions
 };
 
 // --------------------
@@ -52,7 +52,19 @@ export const SelectContext = createContext<SelectContextProps>({
 // --------------------
 // Components
 // --------------------
-// Button component
+/**
+ * SelectButton
+ * Button that displays the current selected value or placeholder.
+ * Toggles the dropdown open/closed on click.
+ * 
+ * @param placeholder: Text shown when no value is selected
+ * @param initialVal: Default value if no selection has been made
+ * @param buttonId: Optional HTML id for the button
+ * @param className: Additional classes for styling
+ * @param type: 'input' | 'dropdown' to style button appropriately
+ * @param callback: Optional function triggered on click
+ * @returns JSX button element for selecting a value
+ */
 export const SelectButton: React.FC<SelectButtonProps> = ({
     placeholder = '',
     initialVal = '',
@@ -91,6 +103,17 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
     );
 };
 
+/**
+ * SelectOptions
+ * Renders the dropdown options when the select is open.
+ * Clicking an option sets the selected value and closes the dropdown.
+ * 
+ * @param options: Array of objects containing markup, value, and disabled state
+ * @param className: Optional additional CSS classes
+ * @param rightAlign: Boolean to right-align the dropdown
+ * @param callback: Optional function triggered when an option is clicked
+ * @returns JSX element containing the list of selectable options (or empty fragment if closed)
+ */
 export const SelectOptions: React.FC<SelectOptionsProps> = ({
     options,
     className = '',
@@ -108,7 +131,7 @@ export const SelectOptions: React.FC<SelectOptionsProps> = ({
                 {/* Using index as key is usually bad, but order is not changing here */}
                 {options.map((option, index) =>
                     <button
-                        key={`${index}-${option.value}`}
+                        key={`${index}-${option.value}`} // Safe key because options order is static
                         value={option.value}
                         disabled={option.disabled}
                         className={
@@ -130,6 +153,14 @@ export const SelectOptions: React.FC<SelectOptionsProps> = ({
     return <></>;
 }
 
+/**
+ * Select
+ * Wrapper component that provides context for dropdowns or input-style selects.
+ * Handles open/close state and clicks outside the component to close the dropdown.
+ * 
+ * @param children: React nodes, usually a SelectButton and SelectOptions
+ * @returns JSX element containing the select context provider and children
+ */
 export const Select: React.FC<SelectProps> = ({ children }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [value, setValue] = useState<ReactElement | null>(null);

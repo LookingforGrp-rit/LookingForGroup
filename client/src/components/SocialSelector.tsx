@@ -3,13 +3,26 @@ import { getSocials as fetchSocials } from '../api/users';
 import type { Social } from '@looking-for-group/shared';
 
 interface SocialSelectorProps {
-  value: number;
-  onChange: React.ChangeEventHandler<HTMLSelectElement>;
+  value: number; // Currently selected social media website ID
+  onChange: React.ChangeEventHandler<HTMLSelectElement>; // Change handler called when the user selects a new option
 }
 
+/**
+ * Renders a dropdown menu for selecting a social media platform.
+ * Fetches available socials from the API on mount and populates the select options.
+ *
+ * @param value - Currently selected social website ID
+ * @param onChange - Change handler called when the user selects a new option
+ * @returns JSX element containing a select dropdown of social platforms
+ */
 export const SocialSelector = ({ value, onChange}: SocialSelectorProps): JSX.Element => {
-const [socials, setSocials] = useState<Social[]>([]);
+  // Stores the list of social platforms fetched from the API
+  const [socials, setSocials] = useState<Social[]>([]);
 
+  /**
+   * Fetches the list of social platforms on component mount.
+   * Updates the `socials` state with the fetched data.
+   */
   useEffect(() => {
     const fetchData = async () => {
       const data = await fetchSocials();

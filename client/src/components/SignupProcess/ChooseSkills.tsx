@@ -6,9 +6,16 @@ import { hardSkills, softSkills, proficiencies } from '../../constants/skills';
 //combined into one list
 const skills = hardSkills.concat(softSkills.concat(proficiencies));
 
-//
-// Choose top 5 skills component
-//
+/**
+ * This component allows the user to toggle skills to be added to their profile. 
+ * They can be added or deleted from the player’s current skills with a maximum of 5.
+ * @param show Determines if the modal is visible
+ * @param onNext Callback for next button
+ * @param onBack Callback for back button
+ * @param selectedSkills List of skills currently selected by the user
+ * @param mode Whether the page is in “sign up” mode or “edit profile” mode
+ * @returns render of the part of the profile page which displays the user’s skills.
+ */
 const ChooseSkills = ({
   show,
   onNext,
@@ -18,7 +25,8 @@ const ChooseSkills = ({
   mode,
   onClose,
 }) => {
-  // Function to handle the skill selection
+  // If a skill is selected, this function checks if it’s already in the selected skill array. 
+  // If it is, it removes it; otherwise, adds it to the array if there are less than 5 skills in the array.
   const handleSkillSelect = (skill) => {
     // get the skill that was selected
     const selected = skill.target.innerHTML;

@@ -6,7 +6,7 @@ import {
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 import usePreloadedImage from "../../../functions/imageLoad";
-import placeholderThumbnail from '../../../images/project_temp.png';
+import placeholderThumbnail from "../../../images/project_temp.png";
 import { ThemeIcon } from "../../ThemeIcon";
 
 /**
@@ -15,16 +15,21 @@ import { ThemeIcon } from "../../ThemeIcon";
  * @returns JSX Element
  */
 const ProjectTile = ({
-  projectData,
-  onVisibilityChanged,
+  membershipData,
+  onVisibilityToggled,
 }: {
-  projectData: ProjectPreview;
-  onVisibilityChanged: (visibility: Visibility) => void;
+  membershipData: MyMember;
+  onVisibilityToggled: () => void;
 }) => {
+  const projectData = membershipData.project;
+
   return (
     <div className="projectTile" key={projectData.projectId}>
       <img
-        src={usePreloadedImage(projectData.thumbnail?.image || placeholderThumbnail, placeholderThumbnail)}
+        src={usePreloadedImage(
+          projectData.thumbnail?.image || placeholderThumbnail,
+          placeholderThumbnail
+        )}
         alt={
           projectData.thumbnail?.altText || `Thumbnail for ${projectData.title}`
         }
@@ -35,16 +40,15 @@ const ProjectTile = ({
         className="project-visibility-button"
         onClick={(e) => {
           e.preventDefault();
-          // TODO: pass visibility parameter here
-          // onVisibilityChanged;
+          onVisibilityToggled();
         }}
       >
         <ThemeIcon
-          id={"eye"} // TODO: use eye-line if not visible (add check)
+          id={membershipData.visibility === "Public" ? "eye" : "eye-line"}
           width={19}
-          height={13} // TODO: if eye-line, should be 18
-          className={'mono-fill-invert'}
-          ariaLabel={'Toggle visibility'}
+          height={membershipData.visibility === "Public" ? 13 : 18}
+          className={"mono-fill-invert"}
+          ariaLabel={"Toggle visibility"}
         />
       </button>
       {/* {<p>{projectData.title}</p>} */}
@@ -116,12 +120,15 @@ export const ProjectsTab = ({
       </div>
       <div id="profile-editor-project-selection">
         {profile.projects.length > 0 ? (
-          profile.projects.map(({ project }: { project: ProjectPreview }) => (
+          profile.projects.map((membership: MyMember) => (
             <ProjectTile
-              projectData={project}
-              key={`project-${project.projectId}`}
-              onVisibilityChanged={(visibility: Visibility) =>
-                onProjectVisibilityChanged(project.projectId, visibility)
+              membershipData={membership}
+              key={`project-${membership.project.projectId}`}
+              onVisibilityToggled={() =>
+                onProjectVisibilityChanged(
+                  membership.project.projectId,
+                  membership.visibility === "Public" ? "Private" : "Public"
+                )
               }
             />
           ))

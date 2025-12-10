@@ -596,29 +596,35 @@ const NewProject = () => {
             </div>
             <div>{displayedProject.audience}</div>
             <div id="project-overview-links-section">
-              Keep up with us!
-              <div id="project-overview-links">
-                {displayedProject.projectSocials.map((social, index) => (
-                  <button
-                    key={index}
-                    onClick={() => {
-                      window.open(social.url, "_blank");
-                    }}
-                  >
-                    <ThemeIcon
-                      id={
-                        social.label === "Other"
-                          ? "link"
-                          : social.label.toLowerCase()
-                      }
-                      width={25}
-                      height={25}
-                      className={"color-fill"}
-                      ariaLabel={social.label}
-                    />
-                  </button>
-                ))}
-              </div>
+              {displayedProject.projectSocials.length > 0 ? (
+                <>
+                  Keep up with us!
+                  <div id="project-overview-links">
+                    {displayedProject.projectSocials.map((social, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          window.open(social.url, "_blank");
+                        }}
+                      >
+                        <ThemeIcon
+                          id={
+                            social.label === "Other"
+                              ? "link"
+                              : social.label.toLowerCase()
+                          }
+                          width={25}
+                          height={25}
+                          className={"color-fill"}
+                          ariaLabel={social.label}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p>No contacts yet</p>
+              )}
             </div>
           </div>
 

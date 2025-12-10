@@ -30,7 +30,15 @@ import {
   updateUserSocial,
 } from "../users";
 
+/**
+ * The Data Manager holds all information about a user before it is updated on the server.
+ * @returns Methods for editing a user.
+ */
 export const userDataManager = async () => {
+  /**
+   * Pulls all user data from the server.
+   * @returns The downloaded user
+   */
   const downloadUser = async () => {
     const projectResponse = await getCurrentAccount();
     if (projectResponse.error || !projectResponse.data) {
@@ -40,6 +48,10 @@ export const userDataManager = async () => {
     return projectResponse.data;
   };
 
+  /**
+   * Creates a new blank object for storing future changes.
+   * @returns A {@link UserChanges} object with no changes.
+   */
   const getEmptyChanges = async () => {
     const savedUser = await downloadUser();
     const emptyChanges: UserChanges = {
@@ -84,41 +96,53 @@ export const userDataManager = async () => {
     savedUser = await downloadUser();
   };
 
+  /**
+   * Accessor method for the {@link savedUser} object.
+   * @returns The user data.
+   */
   const getSavedUser = () => savedUser;
 
   /**
-   * Resets changes object to empty
+   * Resets {@link changes} object to empty
    */
   const resetChanges = async () => {
     changes = await getEmptyChanges();
   };
 
   /**
-   * Uploads changes to the server, reloads the savedUser, and clears the changes object
-   * @throws {Error} Throws an error if any change failed. Includes the failed changes.
+   * Uploads changes to the server, reloads the {@link savedUser}, and clears the {@link changes} object.
+   * Attempts all changes, even if some error.
+   * @throws Throws an error if any change failed. Error message includes the failed changes.
+   * Failed changes do not return to the {@link changes} object.
    */
   const saveChanges = async () => {
     let errorMessage = "";
 
+    // first delete all existing resources
     try {
       await saveDeletes(changes.delete);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
 
+    // then create any new resources
     try {
       await saveCreates(changes.create);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
 
+    // then perform updates on new and existing resources
     try {
       await saveUpdates(changes.update);
     } catch (error) {
       errorMessage += (error as Error).message;
     }
 
+    // fetch new canonical data
     await reloadSavedUser();
+
+    // clear changes object
     await resetChanges();
 
     if (errorMessage != "") {
@@ -126,7 +150,10 @@ export const userDataManager = async () => {
     }
   };
 
-  // used by saveChanges
+  /**
+   * Used by {@link saveChanges}. Performs all updates.
+   * @param updates All the updates to be executed
+   */
   const saveUpdates = async (updates: UserChangesUpdates) => {
     let errorMessage = "";
 
@@ -151,7 +178,6 @@ export const userDataManager = async () => {
     } catch (error) {
       errorMessage += (error as { message: string }).message;
     }
-
 
     // skills
     try {
@@ -180,7 +206,10 @@ export const userDataManager = async () => {
     }
   };
 
-  // used by saveChanges
+  /**
+   * Used by {@link saveChanges}. Performs all creates.
+   * @param creates All the resources to be created
+   */
   const saveCreates = async (creates: UserChangesCreates) => {
     let errorMessage = "";
 
@@ -222,7 +251,10 @@ export const userDataManager = async () => {
     }
   };
 
-  // used by saveChanges
+  /**
+   * Used by {@link saveChanges}. Performs all deletes.
+   * @param deletes All the resources to be deleted
+   */
   const saveDeletes = async (deletes: UserChangesDeletes) => {
     let errorMessage = "";
 
@@ -264,12 +296,24 @@ export const userDataManager = async () => {
     }
   };
 
+  /**
+   * Collects the ids of all the changes that failed on the server.
+   * @param statuses Did this change succeed on the server?
+   * @returns the ids of each failed change
+   */
   const getErrorIds = (statuses: SuccessArray): (number | string)[] => {
     return statuses
       .filter(({ succeeded }) => succeeded === false)
       .map(({ id }) => id);
   };
 
+  /**
+   * Runs each request for a given action, even if some fail.
+   * @param actionLabel Name of the action, such as "Updating user social..."
+   * @param requests The API request data
+   * @param action The API function that calls the endpoint using the request data
+   * @throws Throws an error if any change failed
+   */
   async function runAndCollectErrors<T>(
     actionLabel: string,
     requests: CRUDRequest<T>[],
@@ -278,6 +322,7 @@ export const userDataManager = async () => {
     const statuses: SuccessArray = [];
 
     // TODO can be ran simultaneously if saving takes too long
+    // we haven't found this to be a problem.
     for (const request of requests) {
       const response = await action(request);
       const succeeded = !response.error;
@@ -295,7 +340,10 @@ export const userDataManager = async () => {
     }
   }
 
-  // add majors
+  /**
+   * Adds a new major to a user
+   * @param major The major to be added
+   */
   const addMajor = (major: CRUDRequest<AddUserMajorInput>) => {
     if (changes.create.majors.some(({ id }) => id.value === major.id.value)) {
       changes.create.majors = [
@@ -310,7 +358,10 @@ export const userDataManager = async () => {
     changes.create.majors.push(major);
   };
 
-  // add skills
+  /**
+   * Adds a new skill to a user
+   * @param skill The skill to be added
+   */
   const addSkill = (skill: CRUDRequest<AddUserSkillsInput>) => {
     if (changes.create.skills.some(({ id }) => id.value === skill.id.value)) {
       changes.create.skills = [
@@ -325,7 +376,10 @@ export const userDataManager = async () => {
     changes.create.skills.push(skill);
   };
 
-  // add socials
+  /**
+   * Adds a new social link to a user
+   * @param social The social to be added
+   */
   const addSocial = (social: CRUDRequest<AddUserSocialInput>) => {
     if (changes.create.socials.some(({ id }) => id.value === social.id.value)) {
       changes.create.socials = [
@@ -340,7 +394,10 @@ export const userDataManager = async () => {
     changes.create.socials.push(social);
   };
 
-  // update fields
+  /**
+   * Updates the basic info for a user
+   * @param fields The fields and their updated values
+   */
   const updateFields = (fields: CRUDRequest<UpdateUserInput>) => {
     changes.update.fields = {
       id: {
@@ -354,10 +411,16 @@ export const userDataManager = async () => {
     };
   };
 
-  // update project visibilities
-  const updateProjectVisibility = (visibility: CRUDRequest<UpdateUserProjectVisibilityInput>) => {
+  /**
+   * Update whether a project is hidden on a user's profile
+   * @param visibility The project to be changed and its new visibility
+   */
+  const updateProjectVisibility = (
+    visibility: CRUDRequest<UpdateUserProjectVisibilityInput>
+  ) => {
     let existingVisibilityUpdate = changes.update.projectVisibilities.find(
-      ({ id }) => id.value === visibility.id.value && id.type === visibility.id.type
+      ({ id }) =>
+        id.value === visibility.id.value && id.type === visibility.id.type
     );
 
     existingVisibilityUpdate = {
@@ -380,7 +443,10 @@ export const userDataManager = async () => {
     ];
   };
 
-  // update skills
+  /**
+   * Updates an existing skill of a user
+   * @param skill The skill to be updated and its new data
+   */
   const updateSkill = (skill: CRUDRequest<UpdateUserSkillInput>) => {
     let existingSkillUpdate = changes.update.skills.find(
       ({ id }) => id.value === skill.id.value && id.type === skill.id.type
@@ -406,7 +472,10 @@ export const userDataManager = async () => {
     ];
   };
 
-  // update socials
+  /**
+   * Updates an existing social for a user
+   * @param social The social to be updated and its new data
+   */
   const updateSocial = (social: CRUDRequest<UpdateUserSocialInput>) => {
     let existingSocialUpdate = changes.update.socials.find(
       ({ id }) => id.value === social.id.value && id.type === social.id.type
@@ -432,7 +501,10 @@ export const userDataManager = async () => {
     ];
   };
 
-  // delete majors
+  /**
+   * Removes an existing major from a user
+   * @param major The major to be removed
+   */
   const deleteMajor = (major: CRUDRequest<null>) => {
     // if we were gonna create this major, don't
     if (
@@ -454,7 +526,10 @@ export const userDataManager = async () => {
     }
   };
 
-  // delete skills
+  /**
+   * Deletes an existing skill from a user
+   * @param skill The skill to be deleted
+   */
   const deleteSkill = (skill: CRUDRequest<null>) => {
     // if we were gonna update this skill, don't
     if (
@@ -487,7 +562,10 @@ export const userDataManager = async () => {
     }
   };
 
-  // delete socials
+  /**
+   * Deletes an existing social from a user
+   * @param social The social to be deleted
+   */
   const deleteSocial = (social: CRUDRequest<null>) => {
     // if we were gonna update this social, don't
     if (

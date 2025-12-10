@@ -32,11 +32,10 @@ interface Props {
 let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
 
 /**
- * This component should allow for either editing existing projects or creating new projects entirely,
- * accessed via the ‘edit project’ button on project pages or the ‘create’ button on the sidebar,
- * respectively.
- *
- * @returns React component Popup
+ * This component enables both creating new projects and editing existing ones. 
+ * It provides a tabbed interface for managing different aspects of a project, including general information, media, tags, team members, and social links. 
+ * The component is accessed via either the 'edit project' button on project pages or the 'create' button in the sidebar.
+ * @returns React component Popup - Renders a modal for creating or editing projects
  */
 export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, updateDisplayedProject/*permissions*/ }) => {
   //Get project ID from search parameters
@@ -46,21 +45,23 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // --- Hooks ---
    
-  // store project data
+  // Stores current project data: represents actual data from the server
   const [projectData, setProjectData] = useState<ProjectWithFollowers>();
 
-  // tracking temporary project changes before committing to a save
+  // Tracks temporary project data changes before saving: compared against projectData
   const [modifiedProject, setModifiedProject] = useState<PendingProject>();
 
-  // check whether or not the data in the popup is valid
+  // Indicates if the data validation has failed: prevents saving when invalid
   const [failCheck, setFailCheck] = useState(false);
 
-  // for current tab: 0 - general, 1 - Media, 2 - tags, 3 - team, 4 - links
+  // Tracks which tab is currently active: 0 - general, 1 - Media, 2 - tags, 3 - team, 4 - links
   const [currentTab, setCurrentTab] = useState(0);
 
-  // Errors
+  // Error message for member validation (used in TeamTab)
   const [errorAddMember, setErrorAddMember] = useState("");
+  // Error message for position addition (used in TeamTab)
   const [errorAddPosition, setErrorAddPosition] = useState("");
+  // Error message for Links validation (used in LinksTab)
   const [errorLinks, setErrorLinks] = useState("");
 
   //State variable for error message
@@ -103,7 +104,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   buttonCallback = createOrEdit;
 
-  // Update social links for existing projects
+  /**
+   * Collects and validates all link information from the LinksTab
+   * Updates the modifiedProject state with valid link data
+   * Sets error messages for invalid link data
+   * @returns void
+   */
   const updateLinks = async () => {
     if (newProject || !projectID) return; // Only for existing projects
 
@@ -155,7 +161,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     if(projectData && newProject) await deleteProject(projectData?.projectId)
   }
 
-  //Save project editor changes
+  /**
+   * Handles saving project changes to the server, validates input data before saving
+   * For existing projects: updates thumbnails, images, positions, and project information
+   * For new projects: creates the project and adds images and thumbnails
+   * Handles errors during the save process
+   * @returns Promise<void>
+   */
   const saveProject = async () => {
 
     // default to no errors

@@ -19,16 +19,34 @@ interface ProjectPanelProps {
   project: ProjectWithFollowers;
 }
 
+/**
+ * Displays a preview panel for a project, used in discovery pages.
+ * Shows project thumbnail, title, follow count, and top tags/mediums.
+ * Allows users to follow/unfollow the project and navigate to the full project page.
+ *
+ * @param project - ProjectWithFollowers object containing project info, thumbnail, tags, and follower data
+ * @returns JSX element rendering a clickable project preview panel with follow functionality
+ */
 export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const navigate = useNavigate();
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectId}`;
 
+  // Current user ID (for follow logic)
   const [userId, setUserId] = useState<number>();
+  // Local state for follow count and current user's follow status
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
   const [isFollowing, setFollowing] = useState(false);
+  // Avoid looping useEffect by separating projectId
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
 
-  // Formats follow-count based on Figma design. Returns a string
+  /**
+   * Formats the follow count for display
+   * - Uses "K" notation for thousands
+   * - Appends '+' if number is an exact multiple of 100
+   *
+   * @param followers - number of followers
+   * @returns formatted string for UI
+   */
   const formatFollowCount = (followers: number): string => {
     if (followers >= 1000) {
       const multOfHundred = (followers % 100) === 0;
@@ -38,7 +56,12 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
     return `${followers}`;
   };
 
-  // Maps the tag type with associated color
+  /**
+   * Maps tag type to a CSS color class for labels
+   *
+   * @param type - tag type string
+   * @returns color name string used for CSS class
+   */
   const getTagCategory = (type: string) => {
     switch(type) {
       case 'Designer Skill':
@@ -55,7 +78,13 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
     }
   };
 
-  //checking function for if the current user is following a project
+  /**
+   * Checks whether the current user is following this project
+   * - Uses `getProjectFollowing` API
+   * - Updates `isFollowing` state
+   *
+   * @returns boolean indicating follow status
+   */
   const checkFollow = useCallback(async () => {
     if(userId){
     const followings = (await getProjectFollowing(userId)).data?.projects;
@@ -74,6 +103,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
     }
   }, [project, userId]);
 
+  // Fetch current user ID and up-to-date project follower info
   useEffect(() => {
     const getProjectData = async () => {
       //get our current user for use later
@@ -90,6 +120,12 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
       getProjectData();
   }, [projectId, userId, checkFollow])
 
+  /**
+   * Handles click on the follow/unfollow button
+   * - Stops propagation to prevent navigating to project page
+   * - Redirects to login if user is not logged in
+   * - Updates local follow state and server via API
+   */
   const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 

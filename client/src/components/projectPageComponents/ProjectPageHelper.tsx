@@ -11,18 +11,14 @@ import * as paths from '../../constants/routes';
 // This is because many of them would involve having to write/read from a completed database, which is not implemented yet
 // Not all placeholders may be necessary in the final product, but they can act as a guideline for the needed functionality
 
-//Adds/removes currently viewed project to the user's followed projects
-//Will require current user id & project id
-//Should only be accessible to non-project members
+// Placeholder for code that would allow the user to follow a given project
 const followProject = () => {
   console.log('This will let the user follow this project');
   //Get current user id (need session info)
   //Add project id to user's followed project list (need relevant data location)
 };
 
-//Adds/removes current user to the list of people interested in joining the current project
-//Will require current user id & project id
-//Should only be accessible to non-project members
+// Placeholder that adds user to a list of interested developers to the project
 const addInterested = () => {
   console.log('This will add the current user to the list of people interested');
   //Get current user id (need session info)
@@ -30,8 +26,7 @@ const addInterested = () => {
   //Add user to project's list of interested people (need relevant data location)
 };
 
-//Lets the user create a new post for the project
-//Should only be accessible to project members and/or admins
+// Placeholder that allows for the member to create a post for the project for other members to view.
 const makeProjectPost = () => {
   console.log('This will let the member create a new project post');
   //Open window or page for making project post
@@ -44,7 +39,7 @@ const makeProjectPost = () => {
 //   console.log("This will take the user into the project's virtual space");
 // };
 
-//Lets the user block this project, preventing it from appearing for them
+// Placeholder to allow the user to add the project to their block list so they can no longer see it.
 //Should only be accessible to non-project members
 // const blockProject = () => {
 //   console.log('This will allow a user to block the current project');
@@ -52,7 +47,7 @@ const makeProjectPost = () => {
 //   //Add project to user's block projects list
 // };
 
-//Lets the user open a report popup, which can then be used to report an inappropriate project to site admins
+// Placeholder to allow the user to report a project for possible infringement issues, perhaps with name or if it's a ghost project or scam.
 //Should only be accessible to non-project members
 // const reportProject = () => {
 //   console.log('This will let the user report the project to moderators');
@@ -68,8 +63,7 @@ const leaveProject = () => {
   //remove user from project members list
 };
 
-//Checks the number of members in the project & returns it for displaying in the header
-//If the number of members is higher than certain numbers, it will be abbreviated
+// Creates a count of the number of members as well as functionality which abbreviates it into smaller numbers eg. 150k, 4m
 const createMemberCount = (projectData) => {
   if (projectData.members.length >= 1000) {
     if (projectData.members.length >= 1000000) {
@@ -90,9 +84,7 @@ const toggleOptionDisplay = () => {
   popup ? popup.classList.toggle('show') : console.log('element not found');
 };
 
-//Removes project from database and redirects user
-//Ensure that all other functions come before the redirect function, as changing pages may stop the funciton
-//Should only be accessible to the project's creator
+// Placeholder used to delete the project, should only be accessible to the projects creator
 const deleteProject = (callback) => {
   //Delete project from database
   //Error caused by typescript, code still runs correctly

@@ -36,7 +36,18 @@ export const PopupContext = createContext<PopupContextType>({
   setOpen: () => { },
 });
 
-//Button component that will open/close the popup
+/**
+ * PopupButton
+ * Button component to open/close a popup or run a custom callback.
+ *
+ * @param children — content of the button
+ * @param buttonId — optional id for the button
+ * @param className — optional CSS class
+ * @param callback — function to run on click
+ * @param doNotClose — if true, button does not toggle popup
+ * @param closeParent — optional function to close parent popup
+ * @returns JSX.Element button
+ */
 export const PopupButton = ({
   children,
   buttonId = '',
@@ -60,6 +71,7 @@ export const PopupButton = ({
     if (closeParent) closeParent();
   };
 
+  // If button should not close the popup, just execute callback 
   if (doNotClose()) {
     return (
       <button id={buttonId} className={className} onClick={callback}>
@@ -75,7 +87,17 @@ export const PopupButton = ({
   );
 };
 
-//Main content of the popup
+/**
+ * PopupContent
+ * Container for the popup's main content.
+ * Handles closing on Escape key, clicking outside, or browser back navigation.
+ *
+ * @param children — popup content
+ * @param useClose — show close button (default true)
+ * @param callback — function to run on closing
+ * @param profilePopup — variant style for profile popups
+ * @returns JSX.Element | null popup overlay and content
+ */
 export const PopupContent = ({
   children,
   useClose = true,
@@ -90,12 +112,13 @@ export const PopupContent = ({
   const { open, setOpen } = useContext(PopupContext);
   const popupRef = useRef(null);
 
+  // Close the popup and execute optional callback
   const closePopup = useCallback(() => {
     callback();
     setOpen(false);
   }, [callback, setOpen]);
 
-  // Close on Escape
+  // Close on Escape key press
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') closePopup();
@@ -104,7 +127,7 @@ export const PopupContent = ({
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [closePopup]);
 
-  // Close on click outside
+  // Close on clicking outside of popup
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       const refNode = popupRef.current as Node | null;
@@ -166,7 +189,13 @@ export const PopupContent = ({
   }
 };
 
-//Full popup component
+/**
+ * Popup
+ * Wraps the popup system and provides context for open/close state.
+ *
+ * @param children— the content inside the popup context
+ * @returns JSX.Element that provides popup context to children
+ */
 export const Popup = ({ children }: { children: ReactNode }) => {
   const [open, setOpen] = useState(false);
 
