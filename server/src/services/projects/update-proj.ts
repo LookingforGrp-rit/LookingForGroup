@@ -6,6 +6,7 @@ import { transformProjectToDetail } from '#services/transformers/projects/projec
 
 type UpdateProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//PATCH api/projects/{id}
 const updateProjectService = async (
   projectId: number,
   updates: Omit<UpdateProjectInput, 'thumbnail'>,

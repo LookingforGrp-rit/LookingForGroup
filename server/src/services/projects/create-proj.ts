@@ -7,6 +7,7 @@ import addMemberService from './members/add-member.ts';
 
 type CreateProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//POST api/projects
 const createProjectService = async (
   data: Omit<CreateProjectInput, 'thumbnail'>,
   userId: number,

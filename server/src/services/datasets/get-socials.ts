@@ -6,6 +6,7 @@ import type { Social } from '../../../../shared/types.ts';
 
 type GetSocialsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
+//GET api/datasets/socials
 const getSocialsService = async (): Promise<Social[] | GetSocialsServiceError> => {
   try {
     const socials = await prisma.socials.findMany({

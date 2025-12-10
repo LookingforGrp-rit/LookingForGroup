@@ -6,6 +6,7 @@ import type { Skill } from '../../../../shared/types.ts';
 
 type GetSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
+//GET api/datasets/skills
 const getSkillsService = async (): Promise<Skill[] | GetSkillsServiceError> => {
   try {
     const skills = await prisma.skills.findMany({

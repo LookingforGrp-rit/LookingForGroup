@@ -6,6 +6,8 @@ import { transformMyMajor } from '#services/transformers/me/parts/my-major.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/me/majors
+//get a user's majors
 const getUserMajorsService = async (userId: number): Promise<MyMajor[] | GetServiceError> => {
   try {
     const result = await prisma.users.findUnique({

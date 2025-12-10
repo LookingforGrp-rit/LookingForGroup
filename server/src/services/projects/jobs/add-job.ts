@@ -22,6 +22,7 @@ export type JobInput = {
   description: string;
 };
 
+//POST api/projects/{id}/jobs
 const addJobService = async (
   projectId: number,
   data: JobInput,

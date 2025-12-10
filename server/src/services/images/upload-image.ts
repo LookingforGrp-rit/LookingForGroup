@@ -8,6 +8,8 @@ import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type UploadImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONTENT_TOO_LARGE'>;
 
+//POST api/images
+//not routed, only used for testing
 export const uploadImageService = async (
   buffer: Buffer,
   filename: string,

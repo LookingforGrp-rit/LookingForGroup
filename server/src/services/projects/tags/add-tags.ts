@@ -6,6 +6,8 @@ import { transformProjectTag } from '#services/transformers/projects/parts/proje
 
 type AddTagsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
+//POST api/projects/{id}/tags
+//add a tag
 const addTagsService = async (
   projectId: number,
   tag: AddProjectTagsInput,

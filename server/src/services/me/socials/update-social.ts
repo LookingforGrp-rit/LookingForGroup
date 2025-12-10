@@ -6,6 +6,7 @@ import { transformMySocial } from '#services/transformers/me/parts/my-social.ts'
 
 type UpdateSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//PATCH api/me/socials/{websiteId}
 export const updateSocialService = async (
   data: UpdateUserSocialInput & { websiteId: number },
   userId: number,

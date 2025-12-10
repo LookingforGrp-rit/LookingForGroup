@@ -6,6 +6,7 @@ import { transformMySocial } from '#services/transformers/me/parts/my-social.ts'
 
 type AddSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//POST api/me/socials
 export const addSocialService = async (
   data: AddUserSocialInput,
   userId: number,

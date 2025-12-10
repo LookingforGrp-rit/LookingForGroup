@@ -4,6 +4,7 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type DeleteUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteUserServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
+//DELETE api/me
 export const deleteUserService = async (
   userId: number,
 ): Promise<DeleteUserServiceError | DeleteUserServiceSuccess> => {

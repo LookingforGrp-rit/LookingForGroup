@@ -6,6 +6,7 @@ import { transformMeToPrivate } from '#services/transformers/me/me-private.ts';
 
 type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/me
 //can show sensitive data
 export const getUserAccountService = async (
   userId: number,

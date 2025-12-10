@@ -6,6 +6,7 @@ import { transformProjectSocial } from '#services/transformers/projects/parts/pr
 
 type AddProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
+//POST api/projects/{id}/socials
 export const addProjectSocialService = async (
   data: AddProjectSocialInput,
   projectId: number,

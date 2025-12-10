@@ -4,7 +4,10 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type DeleteMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteMediumsServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
-//delete a medium
+//DELETE api/projects/{id}/mediums/{mediumId}
+//projects do not have unique mediums, unlike project socials
+//the projects and mediums are connected with a relation in the database
+//this disconnects that relation by updating the project
 export const deleteMediumsService = async (
   projectId: number,
   mediumId: number,

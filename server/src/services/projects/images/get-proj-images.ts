@@ -6,6 +6,7 @@ import { transformProjectImage } from '#services/transformers/projects/parts/pro
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/projects/{id}/images
 const getProjectImagesService = async (
   projectId: number,
 ): Promise<ProjectImage[] | GetServiceError> => {

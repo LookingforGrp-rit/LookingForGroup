@@ -6,6 +6,7 @@ import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
 type UpdateSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
+//PATCH api/me/skills/{id}
 const updateSkillsService = async (
   userId: number,
   skillId: number,
@@ -21,7 +22,7 @@ const updateSkillsService = async (
         },
       },
       data: {
-        ...(data.proficiency !== undefined && { proficiency: data.proficiency }),
+        ...(data.proficiency !== undefined && { proficiency: data.proficiency }), //this is currently defaulting to novice, but it can handle different changes to it
         ...(data.position !== undefined && { position: data.position }), //maybe it will find use someday
       },
       select: MySkillSelector,

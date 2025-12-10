@@ -5,8 +5,9 @@ import { getUserByShibService } from '#services/me/get-user-shib.ts';
 
 //GET api/me/get-username
 //get username by shibboleth
-//this probably won't be used unless you can find a way to integrate shibboleth
-//we have some code for implementing shibboleth but weren't able to get the things we needed for it
+//this probably won't be used
+//we have some code for implementing shibboleth but we weren't allowed to use it
+//and we were working on an alternative for user sign in
 export const getUsernameByShib = async (
   req: AuthenticatedRequest,
   res: Response,

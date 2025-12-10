@@ -6,6 +6,7 @@ import { transformProjectToPreview } from '#services/transformers/projects/proje
 
 type AddFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
+//POST api/me/followings/projects/{id}
 export const addProjectFollowingService = async (
   userId: number,
   projectId: number,

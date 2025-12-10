@@ -6,6 +6,7 @@ import { transformProjectToDetail } from '#services/transformers/projects/projec
 
 type GetProjectsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/me/projects
 export const getMyProjectsService = async (
   userId: number,
   visibility?: 'all' | 'public' | 'private',

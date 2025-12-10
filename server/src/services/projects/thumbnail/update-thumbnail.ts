@@ -6,6 +6,7 @@ import { transformProjectImage } from '#services/transformers/projects/parts/pro
 
 type UpdateThumbnailServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//PUT api/projects/{id}/thumbnail
 const updateThumbnailService = async (
   projectId: number,
   imageId: number,

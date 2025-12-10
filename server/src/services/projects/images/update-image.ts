@@ -8,6 +8,7 @@ import { transformProjectImage } from '#services/transformers/projects/parts/pro
 
 type UpdateImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//PATCH api/projects/{id}/images/{imageId}
 const updateImageService = async (
   imageId: number,
   updates: Prisma.ProjectImagesUpdateInput,
@@ -17,7 +18,6 @@ const updateImageService = async (
     if (!image) return 'NOT_FOUND';
 
     if (image.image && updates.image) {
-      //NEW: you can now update the alt text without destroying the image
       await deleteImageService(image.image);
     }
 

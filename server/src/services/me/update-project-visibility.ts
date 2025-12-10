@@ -9,8 +9,8 @@ type UpdateProjectVisibilityServiceError = ServiceErrorSubset<
 >;
 
 /**
- * Allows a user to leave a project by updating their profile visibility to private
- * This is different from deleting a member (which only project owners can do)
+ * PUT api/me/projects/{id}/visibility
+ * Allows a user to hide a project on their profile by updating their profile visibility to private
  */
 export const updateProjectVisibility = async (
   projectId: number,

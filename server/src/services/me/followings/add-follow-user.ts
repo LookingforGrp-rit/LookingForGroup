@@ -8,6 +8,7 @@ type AddFollowServiceError = ServiceErrorSubset<
   'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT' | 'FORBIDDEN'
 >;
 
+//POST api/me/followings/people/{id}
 export const addUserFollowingService = async (
   senderId: number,
   receiverId: number,

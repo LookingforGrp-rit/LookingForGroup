@@ -4,12 +4,16 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type DeleteMajorServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteMajorServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
-//delete a medium
+//DELETE api/me/majors/{id}
+//deletes a major from a user
 export const deleteMajorService = async (
   userId: number,
   majorId: number,
 ): Promise<DeleteMajorServiceSuccess | DeleteMajorServiceError> => {
   try {
+    //users do not have unique majors, unlike user skills
+    //the users and majors are connected with a relation in the database
+    //this disconnects that relation by updating the user
     await prisma.users.update({
       where: {
         userId: userId,

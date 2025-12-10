@@ -7,6 +7,7 @@ import { transformProjectMember } from '#services/transformers/projects/parts/pr
 
 type UpdateMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//PATCH api/projects/{id}/members/{userId}
 const updateMemberService = async (
   projectId_userId: Prisma.MembersProjectIdUserIdCompoundUniqueInput,
   updates: Prisma.MembersUpdateInput,

@@ -5,7 +5,8 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type RemoveImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type RemoveImageServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
-//delete a member
+//DELETE api/projects/{id}/images/{imageId}
+//delete a project image
 export const removeImageService = async (
   projectId: number,
   imageId: number,

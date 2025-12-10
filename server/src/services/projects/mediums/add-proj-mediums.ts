@@ -6,6 +6,10 @@ import { transformProjectMedium } from '#services/transformers/projects/parts/pr
 
 type AddMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
+//POST api/projects/{id}/mediums
+//projects do not have unique mediums, unlike project socials
+//the projects and mediums are connected with a relation in the database
+//this connects that relation by updating the project
 const addMediumsService = async (
   projectId: number,
   data: AddProjectMediumsInput,

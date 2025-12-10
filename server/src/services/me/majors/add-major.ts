@@ -7,11 +7,15 @@ import { transformMyMajor } from '#services/transformers/me/parts/my-major.ts';
 type AddUserMajorServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type MajorWithUserId = AddUserMajorInput & { userId: number };
 
+//POST api/me/majors
+//adds a major to a user
 const addUserMajorService = async (
   data: MajorWithUserId,
 ): Promise<MyMajor[] | AddUserMajorServiceError> => {
   try {
-    //creates the major
+    //users do not have unique majors, unlike user skills
+    //the users and majors are connected with a relation in the database
+    //this connects that relation by updating the user
     const result = await prisma.users.update({
       where: {
         userId: data.userId,

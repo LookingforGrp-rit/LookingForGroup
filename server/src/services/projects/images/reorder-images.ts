@@ -10,6 +10,10 @@ type ImageOrder = {
   imageOrder?: number[];
 };
 
+//PUT api/projects/{id}/images/reorder
+//currently unused/not implemented, but it's intended for the project carousel
+//ImageOrder is an array of each project image's imageId, ordered how the user wishes
+//and those are used to set each image's position parameter, which is currently unused
 const reorderImagesService = async (
   projectId: number,
   imageOrder: ImageOrder,
@@ -17,6 +21,7 @@ const reorderImagesService = async (
   try {
     const order = imageOrder.imageOrder;
 
+    //loops through image ids and sets position param of each image based on its index
     if (order) {
       for (let i = 0; i < order.length; i++) {
         const curImg = await prisma.projectImages.findFirst({

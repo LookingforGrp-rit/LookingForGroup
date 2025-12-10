@@ -7,6 +7,7 @@ import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 type AddSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type SkillWithUserId = AddUserSkillsInput & { userId: number };
 
+//POST api/me/skills
 const addSkillService = async (data: SkillWithUserId): Promise<MySkill | AddSkillServiceError> => {
   try {
     //creates the skill

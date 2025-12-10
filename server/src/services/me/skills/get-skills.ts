@@ -6,6 +6,7 @@ import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
 type GetSkillsError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/me/skills
 export const getSkillsService = async (userId: number): Promise<MySkill[] | GetSkillsError> => {
   try {
     //all their skills

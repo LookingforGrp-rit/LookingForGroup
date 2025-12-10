@@ -6,6 +6,7 @@ import { transformProjectTag } from '#services/transformers/projects/parts/proje
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/projects/{id}/tags
 const getProjectTagsService = async (
   projectId: number,
 ): Promise<ProjectTag[] | GetServiceError> => {
