@@ -1,5 +1,4 @@
 import {
-  MePrivate,
   MyMember,
   ProjectPreview,
   Visibility,
@@ -25,7 +24,7 @@ const ProjectTile = ({
           projectData.thumbnail?.altText || `Thumbnail for ${projectData.title}`
         }
       />
-      // TODO: use visibility here
+      {/*TODO: use visibility here*/}
       {/* isVisible && <div className='image-overlay'/> */}
       <button
         className="project-visibility-button"
@@ -49,7 +48,7 @@ const ProjectTile = ({
 };
 
 type ProjectsTabProps = {
-  profile: MePrivate;
+  profile: PendingUserProfile;
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   updatePendingProfile: (profileData: PendingUserProfile) => void;
 };

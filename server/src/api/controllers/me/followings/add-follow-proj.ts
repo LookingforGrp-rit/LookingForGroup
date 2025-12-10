@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { addProjectFollowingService } from '#services/me/followings/add-follow-proj.ts';
 
+//POST api/me/followings/projects/{id}
 //add project to follow list
 export const addProjectFollowing = async (
   req: AuthenticatedRequest,

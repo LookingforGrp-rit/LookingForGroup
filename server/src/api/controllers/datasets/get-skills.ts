@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getService from '#services/datasets/get-skills.ts';
 
+//GET api/datasets/skills
 const getSkillsController = async (_request: Request, response: Response): Promise<void> => {
   const result = await getService();
 

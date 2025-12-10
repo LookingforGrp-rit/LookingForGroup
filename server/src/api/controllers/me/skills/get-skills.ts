@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { getSkillsService } from '#services/me/skills/get-skills.ts';
 
+//GET api/me/skills
 //get skills on user profile
 export const getSkills = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const result = await getSkillsService(req.currentUser);

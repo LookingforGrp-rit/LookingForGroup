@@ -6,6 +6,7 @@ import type {
 import type { Response } from 'express';
 import addUserMajorService from '#services/me/majors/add-major.ts';
 
+//POST api/me/majors
 //add a major to user profile
 const addUserMajor = async (req: AuthenticatedRequest, res: Response) => {
   const data: AddUserMajorInput = req.body as AddUserMajorInput;
