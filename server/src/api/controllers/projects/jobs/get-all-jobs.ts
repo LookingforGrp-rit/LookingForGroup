@@ -2,6 +2,8 @@ import type { ApiResponse, ProjectJob } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getJobService from '#services/projects/jobs/get-all-jobs.ts';
 
+//GET api/projects/{id}/jobs
+//gets a project's jobs
 const getJobsController = async (req: Request, res: Response): Promise<void> => {
   const projectId = parseInt(req.params.id);
 

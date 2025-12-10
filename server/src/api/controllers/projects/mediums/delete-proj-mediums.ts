@@ -2,7 +2,8 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { deleteMediumsService } from '#services/projects/mediums/delete-proj-mediums.ts';
 
-//deletes multiple mediums
+//DELETE api/projects/{id}/mediums/{mediumId}
+//delete a medium from a project
 const deleteMediumsController = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const medium = parseInt(req.params.mediumId);

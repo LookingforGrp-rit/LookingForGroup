@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { getUserByIdService } from '#services/users/get-user/get-by-id.ts';
 
+//GET api/users/{id}
 //get user by id
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
   const id = parseInt(req.params.id);

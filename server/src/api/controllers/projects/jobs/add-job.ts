@@ -13,10 +13,16 @@ const validDurations: JobDuration[] = ['ShortTerm', 'LongTerm'];
 const validLocations: JobLocation[] = ['OnSite', 'Remote', 'Hybrid'];
 const validCompensations: JobCompensation[] = ['Unpaid', 'Paid'];
 
+/*NOTE: jobs are more like listings
+  users can post jobs to their projects to let other users know who they're looking for
+  i only say this because the wording confused me initially
+*/
 const validateEnum = <T extends string>(value: unknown, validValues: readonly T[]): value is T => {
   return typeof value === 'string' && validValues.includes(value as T);
 };
 
+//job validator
+//makes sure all the data that's passed in is of the right type
 const validateJobData = (data: unknown): data is JobInput => {
   if (!data || typeof data !== 'object') return false;
   const d = data as Record<string, unknown>;
@@ -32,6 +38,8 @@ const validateJobData = (data: unknown): data is JobInput => {
   );
 };
 
+//POST api/projects/{id}/jobs
+//adds a job to a project
 const addJobController = async (req: Request<{ id: string }>, res: Response) => {
   const projectId = parseInt(req.params.id);
 

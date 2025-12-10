@@ -9,6 +9,7 @@ import {
 import envConfig from '#config/env.ts';
 import createUserService from '#services/users/create-user.ts';
 
+//POST api/users
 //creates a user
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   let uid = req.headers[uidHeaderKey] as string;

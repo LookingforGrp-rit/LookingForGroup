@@ -2,6 +2,7 @@ import type { AuthenticatedRequest, UpdateProjectInput } from '@looking-for-grou
 import type { Response } from 'express';
 import updateProjectService from '#services/projects/update-proj.ts';
 
+//PATCH api/projects/{id}
 //updates a project's info
 const updateProjectsController = async (
   req: AuthenticatedRequest,

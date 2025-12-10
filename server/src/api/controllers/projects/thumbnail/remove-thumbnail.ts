@@ -2,7 +2,13 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { removeThumbnailService } from '#services/projects/thumbnail/remove-thumbnail.ts';
 
-//removes an image from a project
+//POST api/projects/{id}/thumbnail
+//removes the thumbnail from a project
+//this does not remove the associated project image from the database, there's a separate route for that
+//that route will automatically handle disconnecting the thumbnail image if it's selected for deletion
+//all this does is disconnect the thumbnail image from its status as thumbnail
+//in case you wanted to just not have one for whatever reason
+//you liked the frogs and wanted to keep them i guess
 const removeThumbnail = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
 

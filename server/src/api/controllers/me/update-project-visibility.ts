@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import { updateProjectVisibility } from '#services/me/update-project-visibility.ts';
 
 /**
- * Handles PUT /me/projects/:id/visibility requests
+ * Handles PUT api/me/projects/:id/visibility requests
  * Allows authenticated users to update their project visibility
  * Does NOT update the entire project's visibility, only toggles whether or not it's seen on the user's account
  */

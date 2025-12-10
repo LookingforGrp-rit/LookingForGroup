@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getMembersService from '#services/projects/members/get-members.ts';
 
+//GET api/projects/{id}/members
 //gets the members associated with a project
 const getMembers = async (req: Request, res: Response): Promise<void> => {
   const projID = parseInt(req.params.id);

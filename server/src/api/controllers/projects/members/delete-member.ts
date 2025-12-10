@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { deleteMemberService } from '#services/projects/members/delete-member.ts';
 
+//DELETE api/projects/{id}/members/{userId}
 //deletes a member from a project
 const deleteMemberController = async (req: AuthenticatedRequest, res: Response) => {
   const projectId = parseInt(req.params.id);

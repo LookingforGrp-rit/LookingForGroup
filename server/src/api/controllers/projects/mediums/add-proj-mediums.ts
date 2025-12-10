@@ -2,7 +2,8 @@ import type { AddProjectMediumsInput, ApiResponse } from '@looking-for-group/sha
 import type { Request, Response } from 'express';
 import addMediumsService from '#services/projects/mediums/add-proj-mediums.ts';
 
-//adds multiple mediums to the project
+//POST api/projects/{id}/mediums
+//add a medium to the project
 const addMediumsController = async (req: Request, res: Response) => {
   const id = parseInt(req.params.id);
   const data: AddProjectMediumsInput = req.body as AddProjectMediumsInput;

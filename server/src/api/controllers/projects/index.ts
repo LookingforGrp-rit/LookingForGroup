@@ -31,6 +31,9 @@ import removeThumbnail from './thumbnail/remove-thumbnail.ts';
 import updateThumbnail from './thumbnail/update-thumbnail.ts';
 import updateProject from './update-project.ts';
 
+//index file for all project routes
+//no other route group has this
+
 export default {
   getJobsController,
   addJobController,
