@@ -43,7 +43,7 @@ export type Visibility = "Public" | "Private";
 //API REQUEST
 
 /**
- * A that has been made by an authenticated user.
+ * A request that has been made by an authenticated user.
  * Used for routes that make changes to a logged-in user
  */
 export interface AuthenticatedRequest extends Request {
