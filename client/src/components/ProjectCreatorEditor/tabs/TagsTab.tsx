@@ -46,6 +46,24 @@ type TagsTabProps = {
   failCheck: boolean;
 };
 
+/**
+ * The TagsTab component handles project tag management in a React application. 
+ * It allows users to select and manage multiple categories of tags for their projects, 
+ * including project types, genres, and various skills (developer, designer, soft skills). 
+ * The component provides search functionality, visual feedback for selected tags, and organizes tags into separate tabs by category.
+ * @param dataManager data manager 
+ * @param projectData current project data
+ * @param saveProject save project changes
+ * @param updatePendingProject set modified project
+ * @param failCheck indicates if data validation has failed 
+ * @returns JSX Element - Main component that renders the project tag management interface
+ */
+
+// Component Structure: 
+// Project Type section - Displays selected project types
+// Selected Tags section - Displays all selected tags with reordering capability
+// Tag Search section - Includes search bar and category tabs for finding and selecting tags
+
 // --- Component ---
 export const TagsTab = ({
   dataManager,
@@ -59,17 +77,18 @@ export const TagsTab = ({
 
 
   //  --- Hooks ---
-  // Complete list of...
+  // Complete list of available mediums from API
   const [allMediums, setAllMediums] = useState<Medium[]>([]);
+  // Complete list of available tags from API
   const [allTags, setAllTags] = useState<Tag[]>([]);
 
   // sets error when adding a link to the project
   // const [error, setError] = useState('');
 
-  //tracking which tab of tags is currently viewed: 0 - medium, 1 - genre, 2 - dev skills, 3 - design skills, 4 - soft skills
+  // Tracks which category tab is currently viewed: 0 - medium, 1 - genre, 2 - dev skills, 3 - design skills, 4 - soft skills
   const [currentTagsTab, setCurrentTagsTab] = useState(0);
 
-  //filtered results from tag search bar
+  // Filtered results from tag search bar
   const [searchedTags, setSearchedTags] = useState<unknown[]>([]);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
@@ -103,6 +122,12 @@ export const TagsTab = ({
   }
   // TODO: remove after finishing Sortable list
   const [items, setItems] = useState(['1', '2', '3']);
+
+  // EFFECTS:
+  // This component has several useEffect hooks that:
+  // - Update the local state when project data changes
+  // - Update the parent component when local state changes
+  // - Fetch project types, tags, and skills from the API when the component mounts
 
   // Get full lists of mediums, tags
   useEffect(() => {
@@ -155,10 +180,11 @@ export const TagsTab = ({
     setSearchedTags(defaultTags);
   }, [currentTagsTab, currentDataSet])
 
-  // Gets color associated with tag type
+  // Helper function that returns an appropriate CSS color class name based on the tag type
   const getTagColor = (type: TagType | string) => TAG_COLORS[type];
 
-  // Find if a tag is present on the project
+  // Determines if a specific tag is already selected for the current project. 
+  // Returns "selected" or "unselected" string for use in CSS classes.
   const isTagSelected = useCallback(
     (id: number, label: string, tab: number = -1) => {
       switch (tab){
@@ -232,6 +258,7 @@ export const TagsTab = ({
     [allMediums, dataManager, updatePendingProject]
   );
 
+  // Event handler for when a tag is clicked. Toggles the tag's selected state and updates the project data accordingly.
   const handleTagSelect = useCallback(
     (tagId: number) => {
       const selected = projectAfterTagsChanges.tags.some(
@@ -275,7 +302,7 @@ export const TagsTab = ({
     [allTags, dataManager, updatePendingProject]
   );
 
-  // Create element for each tag
+  // Creates button elements for all available tags in the current category tab, with appropriate styling for selected/unselected states.
   const renderTags = useCallback(() => {
     // no search item, render all tags
     if (searchedTags && searchedTags.length !== 0) {
@@ -434,7 +461,7 @@ export const TagsTab = ({
     allMediums,
   ]);
 
-  // Update shown tags according to search results
+  // Callback for the SearchBar component that updates the displayed tags based on search results.
   const handleSearch = useCallback((results: unknown[][]) => {
     // setSearchResults(results);
     if (results.length === 0 && currentDataSet.length !== 0) {

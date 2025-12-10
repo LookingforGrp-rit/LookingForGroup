@@ -40,6 +40,8 @@ import * as paths from '../../../constants/routes'
 // --- Variables ---
 // Default project value
 //wait why are the placeholders still here
+
+// Empty member object template used when adding new members.
 const emptyMember: PendingProjectMember = {
   user: null,
   role: null,
@@ -51,6 +53,7 @@ type UserSearchableFields = Pick<
   "firstName" | "lastName" | "username"
 >;
 
+// Empty job position template used when creating new positions.
 const emptyJob: Pending<ProjectJob> = {
   availability: null,
   compensation: null,
@@ -76,7 +79,20 @@ type TeamTabProps = {
   failCheck: boolean;
 };
 
-// --- Component ---
+
+/**
+ * The TeamTab component manages two primary views: the current team members and open positions for a project. 
+ * It provides interfaces for adding, editing, and removing team members, as well as creating and managing job positions. 
+ * The component includes robust search functionality for finding users to add to the team and detailed permission controls.
+ * @param dataManager data manager
+ * @param projectData current project data
+ * @param setErrorMember error message for member validation
+ * @param setErrorPostiion error message for position addition
+ * @param saveProject save project changes
+ * @param updatePendingProject set modified project
+ * @param failCheck indicates if data validation has failed
+ * @returns JSX Element - Main component that manages team members and open positions for a project
+ */
 export const TeamTab = ({
   dataManager,
   projectData,
@@ -88,9 +104,11 @@ export const TeamTab = ({
   failCheck,
 }: TeamTabProps) => {
   // --- Hooks ---
-  // for complete list of...
+  // State for storing all available roles from the API.
   const [allRoles, setAllRoles] = useState<Role[]>([]);
+  // State for storing all available users from the API.
   const [allUsers, setAllUsers] = useState<UserPreview[]>([]);
+  // State for tracking users that can be searched.
   const [searchableUsers, setSearchableUsers] = useState<
     UserSearchableFields[]
   >([]);
@@ -102,32 +120,33 @@ export const TeamTab = ({
   // const [teamTabContent, setTeamTabContent] = useState(<></>);
   // const [positionWindowContent, setPositionWindowContent] = useState(<></>);
 
-  // tracking which team tab is currently being viewed: 0 - current team, 1 - open positions
+  // State tracking which team tab is active: 0 - current team, 1 - open positions
   const [currentTeamTab, setCurrentTeamTab] = useState(0);
 
-  // tracking edits for...
+  // State for the team member currently being edited.
   const [currentMember, setCurrentMember] = useState<
     ProjectMember | PendingProjectMember
   >();
+  // State tracking which job position is currently selected.
   const [currentJob, setCurrentJob] = useState<
     ProjectJob | Pending<ProjectJob>
   >();
 
-  // tracking whether position view is in edit mode or not
+  // State indicating whether position editing is active
   const [editMode, setEditMode] = useState(false);
 
-  // tracking if the user is making a new position (after pressing Add Position button)
+  // State indicating whether a new position is being created.
   const [isCreatingNewPosition, setIsCreatingNewPosition] = useState(false);
 
-  // determine if a popup should close after press (PopupButton)
+  // State controlling whether a popup should close
   const [closePopup, setClosePopup] = useState(false);
 
-  // store search results
+  // State for storing user search results
   const [searchResults, setSearchResults] = useState<Partial<UserPreview>[]>(
     []
   );
 
-  // errors/successful messages
+  // State for error/successful messages
   const [errorAddMember, setErrorAddMember] = useState("");
   const [errorAddPosition, setErrorAddPosition] = useState("");
   const [successAddMember, setSuccessAddMember] = useState(false);
@@ -263,8 +282,12 @@ export const TeamTab = ({
 }, [currentJob?.contact?.userId]);
 
   // --- Data retrieval ---
-  // Get project job info using role id to compare
-  // jobId and roleId mismatch: checks for matching role since we are keeping role labels unique (used to be jobId)
+  /**
+   * Helper function that retrieves a job position by its ID from the modified project.
+   * jobId and roleId mismatch: checks for matching role since we are keeping role labels unique (used to be jobId)
+   * @param id - ID from modified project
+   * @returns job object or undefined
+   */
   const getProjectJob = useCallback((id: number) => {
     return projectAfterTeamChanges.jobs.find((j) =>
       j.role?.roleId === id
@@ -273,7 +296,10 @@ export const TeamTab = ({
   );
 
   // --- Member handlers ---
-  // Error checks for adding a new member
+  /**
+   * Validates and adds a new member to the project team after performing error checks.
+   * @returns void 
+   */
   const handleNewMember = useCallback(() => {
     setClosePopup(false);
 
@@ -402,7 +428,11 @@ export const TeamTab = ({
     }
   }, [allRoles, allUsers, currentMember, projectAfterTeamChanges, dataManager, updatePendingProject]);
 
-  // Handle search results
+  /**
+   * Processes search results for users and updates the searchResults state.
+   * @param results User results
+   * @returns void
+   */
   // FIXME does this need to be a 2D array?
   const handleSearch = useCallback(
     (results: Partial<UserPreview>[][]) => {
@@ -414,7 +444,11 @@ export const TeamTab = ({
     [searchResults]
   );
 
-  // Handle clicking on a member in the search dropdown
+  /**
+   * Handles the selection of a user from search results and prepares them for addition to the team.
+   * @param selectedUser selected user 
+   * @returns Promise<void>
+   */
   const handleUserSelect = useCallback(
     async (selectedUser: UserPreview) => {
       // reset error
@@ -469,7 +503,10 @@ export const TeamTab = ({
   };
 
   // --- Position handlers ---
-  // update position edit window for creating a new position
+  /**
+   * Toggles between adding a new position and canceling the operation.
+   * @returns void
+   */
   const addPositionCallback = useCallback(() => {
     // going back to previous state (cancel button)
     if (isCreatingNewPosition || editMode) {
@@ -509,7 +546,10 @@ export const TeamTab = ({
     setErrorAddPosition("");
   }, [editMode, isCreatingNewPosition]);
 
-  // Remove position listing
+  /**
+   * Removes the currently selected position from the project.
+   * @returns void
+   */
   const deletePosition = useCallback(() => {
     if (
       currentJob &&
@@ -564,7 +604,10 @@ export const TeamTab = ({
     setCurrentJob(undefined);
   }, [currentJob, dataManager, projectAfterTeamChanges, updatePendingProject]);
 
-  //Save current inputs in position editing window
+  /**
+   * Validates and saves position data, updating the project's job listings.
+   * @returns void
+   */
   //what is this and when is it called
   const savePosition = useCallback(() => {
     console.log(isCreatingNewPosition);
@@ -660,7 +703,7 @@ export const TeamTab = ({
   ]);
 
   // --- Content variables ---
-  // Open position display
+  // JSX content for viewing position details.
   const positionViewWindow = (
     projectAfterTeamChanges.jobs.length === 0 ? 
     // No positions to view
@@ -782,8 +825,7 @@ export const TeamTab = ({
     </>
   );
 
-
-  // Edit open position or creating new position
+  // JSX content for editing position details.
   const positionEditWindow = (
     <>
       <div id="edit-position-role">
@@ -1064,7 +1106,7 @@ export const TeamTab = ({
   const positionWindow =
     editMode === true ? positionEditWindow : positionViewWindow;
 
-  // teamTabContent is one of these
+  // Renders the current team members interface with member cards and edit functionality.
   const currentTeamContent: JSX.Element = useMemo(
     () => (
       <div id="project-editor-project-members">
@@ -1415,6 +1457,7 @@ export const TeamTab = ({
     ),
     [allRoles, closePopup, currentMember, dataManager, errorAddMember, updatePendingProject, handleNewMember, projectAfterTeamChanges, handleSearch, handleUserSelect, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
   );
+  // Renders the open positions interface with job listings and position editing functionality.
   const openPositionsContent: JSX.Element = useMemo(
     () => (
       <div id="project-team-open-positions-popup">

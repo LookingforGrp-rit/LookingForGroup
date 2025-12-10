@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from 'react';
 
-//
-// Complete profile component
-//
+/**
+ * This component renders on screen the ability to complete their profile 
+ * during the sign-up phase of creating their account.
+ * @param show Determines if the modal is visible
+ * @param onNext Callback for next button
+ * @param onBack Callback for back button
+ * @param userInfo user information
+ * @param bio current user bio 
+ * @param pronouns user pronouns
+ * @param setBio set user bio 
+ * @param setPronouns set user pronouns
+ * @param profileImage user profile image 
+ * @param setProfileImage set user profile image
+ * @returns HTML - user can implement their bio, pronouns, profile image upload, button to use avatar, 
+ * and navigation buttons like “Back” and “Next”.
+ */
 const CompleteProfile = ({
   show,
   onNext,
@@ -20,16 +33,17 @@ const CompleteProfile = ({
   // matches the colors in the design/background
   const tagColors = ['#9FACFF', '#97E5AB', '#99E6EA', '#F18067', '#239EF7'];
 
-  // set the bio and pronouns when the user types in the input boxes
+  // Utilizes an imported function for setting the bio of a profile
   const handleBioChange = (e) => {
     setBio(e.target.value);
   };
 
+  // Utilizes an imported function for setting the pronouns of a profile
   const handlePronounsChange = (e) => {
     setPronouns(e.target.value);
   };
 
-  // if the user uploads a file, set the profile image to the uploaded file
+  // Loads and utilizes an imported function for setting a profile picture 
   const handleUploadPfp = (e) => {
     console.log('uploading pfp');
 
@@ -45,7 +59,7 @@ const CompleteProfile = ({
     }
   };
 
-  // if the user chooses to use their avatar, set the profile image to the avatar
+  // Utilizes an imported function for setting a customizable avatar as their profile image
   // const handleUseAvatar = () => {
   //   setProfileImage(avatarImage);
   // };
