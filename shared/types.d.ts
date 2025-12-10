@@ -46,22 +46,6 @@ export interface AuthenticatedRequest extends Request {
   currentUser: number;
 }
 
-export interface FilterRequest extends Request {
-  strictness: "any" | "all";
-  mentor?: boolean;
-  designer?: boolean;
-  developer?: boolean;
-  skills?: number[];
-  majors?: number[];
-  academicYear?: string[];
-  socials?: number[];
-}
-
-export interface GetProjectsRequest extends AuthenticatedRequest {
-  visibility: "all" | "public" | "private";
-  owner: "all" | "me";
-}
-
 //API RESPONSE
 
 export interface ApiResponse<_data = any> {
