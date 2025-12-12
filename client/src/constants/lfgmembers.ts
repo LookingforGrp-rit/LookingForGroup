@@ -22,7 +22,7 @@ export const members = [
     },
     {
         'name': 'Corie Beale',
-        'role': 'Full Stack Developer',
+        'role': 'Project Lead/Full Stack Developer',
         'photo': '/assets/creditProfiles/CB.png'
     },
     {
@@ -51,7 +51,7 @@ export const members = [
         'photo': '/assets/creditProfiles/KA.png'
     },
     {
-        'name': 'Trevor  Dunn',
+        'name': 'Trevor Dunn',
         'role': 'UI/UX Designer',
         'photo': '/assets/creditProfiles/TD.png'
     },
@@ -205,6 +205,11 @@ export const members = [
         'role': 'Web Developer',
         'photo': '/assets/creditProfiles/Base.png'
     },
+	{
+        'name': 'Nicholas Lang',
+        'role': 'Full Stack Developer',
+        'photo': '/assets/creditProfiles/Base.png'
+    },
     {
         'name': 'Samera Vilinskis',
         'role': 'Web Developer',
@@ -232,7 +237,7 @@ export const members = [
     },
     {
         'name': 'Wilson Xia',
-        'role': 'Web Developer',
+        'role': 'Full Stack Developer',
         'photo': '/assets/creditProfiles/Base.png'
     },
     {
