@@ -836,7 +836,7 @@ paths:
           schema:
             type: integer
           required: false
-          description: The project ID of the project being left
+          description: The ID of the project
       requestBody:
         required: true
         content:
