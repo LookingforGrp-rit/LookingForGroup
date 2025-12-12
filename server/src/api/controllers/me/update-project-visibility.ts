@@ -4,7 +4,7 @@ import { updateProjectVisibility } from '#services/me/update-project-visibility.
 
 /**
  * Handles PUT api/me/projects/:id/visibility requests
- * Allows authenticated users to update their project visibility
+ * Allows authenticated users to update their project's visibility on their profile
  * Does NOT update the entire project's visibility, only toggles whether or not it's seen on the user's account
  */
 const updateProjectVisibilityController = async (req: AuthenticatedRequest, res: Response) => {
