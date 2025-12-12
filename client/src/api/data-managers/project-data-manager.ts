@@ -294,7 +294,6 @@ export const projectDataManager = async (projectId: number) => {
             changes.update.thumbnail.data &&
             id.value === changes.update.thumbnail.data.thumbnail
           ) {
-            console.log("WE SHOULD NEVER GET HERE.");
             changes.update.thumbnail.data.thumbnail = realImage.data.imageId;
           }
           return realImage;
