@@ -2,10 +2,11 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { removeImageService } from '#services/projects/images/remove-image.ts';
 
-//removes an image frmo a project
+//DELETE api/projects/{id}/images{imageId}
+//removes an image from a project
 const removeImageController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
-  const imageId = parseInt(req.params.picId);
+  const imageId = parseInt(req.params.imageId);
 
   const result = await removeImageService(projectId, imageId);
 
@@ -25,7 +26,7 @@ const removeImageController = async (req: Request, res: Response) => {
       error: 'Image not found',
       data: null,
     };
-    res.status(500).json(resBody);
+    res.status(404).json(resBody);
     return;
   }
   const resBody: ApiResponse = {

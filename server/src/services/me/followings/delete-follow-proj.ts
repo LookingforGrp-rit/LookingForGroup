@@ -4,6 +4,7 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type DeleteFollowServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type DeleteFollowServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
+//DELETE api/me/followings/projects/{id}
 //delete a project following
 export const deleteProjectFollowService = async (
   userId: number,

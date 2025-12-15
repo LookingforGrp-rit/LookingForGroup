@@ -4,6 +4,7 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type DeleteSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteSkillServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
+//DELETE api/me/skills/{id}
 export const deleteSkillService = async (
   skillId: number,
   userId: number,

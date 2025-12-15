@@ -5,6 +5,7 @@ import { updateUserInfoService } from '#services/me/update-info.ts';
 
 type RequestBody = Partial<Omit<UpdateUserInput, 'profileImage'>>;
 
+//PATCH api/me
 //update user info
 export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const body = req.body as RequestBody;

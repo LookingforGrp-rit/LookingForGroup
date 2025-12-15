@@ -7,6 +7,7 @@ import { transformMeToPrivate } from '#services/transformers/me/me-private.ts';
 
 type UpdateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//PATCH api/me
 // updatable fields only
 type UpdateUserServiceParameters = Partial<
   Omit<UpdateUserInput, 'profileImage' | 'mentor' | 'visibility'> & {

@@ -6,6 +6,7 @@ import { transformProjectMember } from '#services/transformers/projects/parts/pr
 
 type AddMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
+//POST api/projects/{id}/members
 const addMemberService = async (
   projectId: number,
   data: CreateProjectMemberInput,

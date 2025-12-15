@@ -4,6 +4,7 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type DeleteJobServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteJobServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
+//DELETE api/projects/{id}/jobs/{jobId}
 const deleteJobService = async (
   projectId: number,
   jobId: number,

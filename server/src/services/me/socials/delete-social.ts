@@ -4,6 +4,7 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type DeleteSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteSocialServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
+//DELETE api/me/socials/{websiteId}
 export const deleteSocialService = async (
   websiteId: number,
   userId: number,

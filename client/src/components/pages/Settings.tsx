@@ -1,16 +1,18 @@
-import '../Styles/pages.css';
-
 import React, { useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
-import VolumeSettings from '../SettingsPageComponents/VolumeSetting';
-import NotificationSettings from '../SettingsPageComponents/NotificationSetting';
+// import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
+// import VolumeSettings from '../SettingsPageComponents/VolumeSetting';
+// import NotificationSettings from '../SettingsPageComponents/NotificationSetting';
 import ProfileVisibilitySetting from '../SettingsPageComponents/ProfileVisibilitySetting';
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
+/**
+ * Settings page. Creates the User Interface for the Settings by displaying account information and buttons for editing
+ * @returns JSX Element
+ */
 const Settings = () => {
   // state variables
   const [activeTab, setActiveTab] = useState('general');
@@ -30,7 +32,7 @@ const Settings = () => {
 
           Tabs 
 
-          *************************************************************/}
+        *************************************************************/}
         <div className="settings-page-tabs">
           <div
             className={`settings-page-tab-links ${activeTab === 'general' ? 'settings-page-active-link' : ''}`}
@@ -68,7 +70,7 @@ const Settings = () => {
           id="general"
         >
           <div className="setting-in-page">
-            <h3>My Avatar</h3>
+            {/*<h3>My Avatar</h3>*/}
             <div className="setting-content">
               {/* <div className="displayProfilePic">
                 <img src={avatarImage} alt="Profile Pic" />
@@ -163,7 +165,7 @@ const Settings = () => {
             </div>
           </div>
 
-          <VolumeSettings />
+          {/* <VolumeSettings /> */}
 
           <div id="setting-spacer"></div>
         </div>

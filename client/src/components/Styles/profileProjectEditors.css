@@ -1,0 +1,107 @@
+/* Shared styles between the Project Creator/Editor and the Profile Editor */
+
+/* Text styles */
+.editor-header {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.editor-extra-info {
+  font-size: 14px;
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+/* Links tab */
+/* Master container (including header and subtext) */
+#editor-links {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+  #editor-links > label {
+    margin-bottom: 3px;
+  }
+  #editor-links > .editor-extra-info {
+    margin-bottom: 15px;
+  }
+
+/* Contact Information Section */
+#editor-contact-info {
+  margin-bottom: 30px;
+  padding: 20px;
+  background-color: var(--bg-color, #f8f9fa);
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+}
+
+.contact-socials-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.contact-social-link {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background-color: var(--header-color, #ffffff);
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 6px;
+  text-decoration: none;
+  color: var(--text-primary, #333333);
+  transition: all 0.2s ease;
+}
+
+.contact-social-link:hover {
+  background-color: var(--background-hover);
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+}
+
+.contact-social-link span {
+  font-weight: 500;
+  font-size: 14px;
+}
+
+.no-contact-info {
+  margin-top: 15px;
+  padding: 20px;
+  text-align: center;
+  color: var(--neutral-gray);
+  font-style: italic;
+  background-color: var(--background-primary, #ffffff);
+  border: 1px dashed var(--border-color, #e0e0e0);
+  border-radius: 6px;
+}
+
+/* Container for link inputs */
+#editor-link-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+/* Container for Select and Input components */
+.editor-link-item {
+  display: flex;
+  gap: 8px;
+  justify-items: center;
+  /* align-items: flex-start; */
+  align-self: stretch;
+}
+  /* Select component wrapper */
+  .editor-link-item > .select-container {
+    width: 100%;
+    max-width: 166px;
+  }
+
+  /* Container for content of Select component */
+  .editor-link-item .value {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }

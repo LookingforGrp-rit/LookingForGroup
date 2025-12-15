@@ -6,6 +6,7 @@ import type {
 import type { Response } from 'express';
 import addSkillService from '#services/me/skills/add-skills.ts';
 
+//POST api/me/skills
 //add a skill to user profile
 const addSkill = async (req: AuthenticatedRequest, res: Response) => {
   const data: AddUserSkillsInput = req.body as AddUserSkillsInput;

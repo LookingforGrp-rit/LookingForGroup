@@ -22,6 +22,8 @@ const isFileExists = async (key: string): Promise<boolean> => {
   }
 };
 
+//DELETE api/images/{image}
+//not routed, only used for testing
 export const deleteImageService = async (
   location: string,
 ): Promise<undefined | UploadImageServiceError> => {

@@ -3,15 +3,19 @@ import * as projectPageHelper from './ProjectPageHelper';
 import { Tags } from '../Tags';
 import { ThemeIcon } from '../ThemeIcon';
 
-// Page header that displays for users that are not members of the project
-// Includes options to follow, block, report, or show interest in joining the project
-// When loading page, should check to see if the current user is part of the loaded project to determine which header to load
+/**
+ * ProjectInfo is a React component that displays project information for non-member users. 
+ * It shows project details including the project picture, title, creator, tags, status, member count, and a preview of project members. 
+ * It also provides interactive buttons for following, blocking, reporting, and showing interest in joining the project. 
+ * This component is designed to be shown when the user viewing the page is not part of the project team.
+ * @param props - projectData, projectOwner are passed through
+ * @returns React component 
+ */
 
 // *** Separate component that should be moved to another file in the future ***
 // Could also move some comments into html of component
-
-// projectData is passed in through props, containing data on the project
 export const ProjectInfo = (props) => {
+  // key - Counter used to generate unique React keys for mapped elements. Incremented for each role in the project listings
   let key = 0; //key is not required for functionality, but react will give an error without it when using the .map function later
   return (
     <div id="project-info">
@@ -52,14 +56,14 @@ export const ProjectInfo = (props) => {
             >
               <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'...'}/>
             </button>
-            <div id="more-options-popup" className="hide">
+            {/* <div id="more-options-popup" className="hide">
               <button className="white-button" onClick={projectPageHelper.blockProject}>
                 Block
               </button>
               <button className="white-button" onClick={projectPageHelper.reportProject}>
                 Report
               </button>
-            </div>
+            </div> */}
           </div>
         </div>
       </div>

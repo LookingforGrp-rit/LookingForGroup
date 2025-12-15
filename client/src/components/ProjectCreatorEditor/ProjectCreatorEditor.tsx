@@ -1,522 +1,418 @@
-//Styles
-import '../Styles/discoverMeet.css';
-import '../Styles/general.css';
-import '../Styles/imageUploader.css'
-import '../Styles/notification.css';
-import '../Styles/projects.css';
-import '../Styles/pages.css';
-
-import { useEffect, useState, FC } from 'react';
-import { Popup, PopupButton, PopupContent } from '../Popup';
-import { GeneralTab } from './tabs/GeneralTab';
-import { MediaTab } from './tabs/MediaTab';
-import { LinksTab } from './tabs/LinksTab';
-import { TeamTab } from './tabs/TeamTab';
-import { TagsTab } from './tabs/TagsTab';
-import { ThemeIcon } from '../ThemeIcon';
-import { loggedIn } from '../Header';
+import { useState, FC, Dispatch, SetStateAction } from "react";
+import { Popup, PopupButton, PopupContent } from "../Popup";
+import { GeneralTab } from "./tabs/GeneralTab";
+import { MediaTab } from "./tabs/MediaTab";
+import { LinksTab } from "./tabs/LinksTab";
+import { TeamTab } from "./tabs/TeamTab";
+import { TagsTab } from "./tabs/TagsTab";
+import { ThemeIcon } from "../ThemeIcon";
+import * as paths from '../../constants/routes';
+import {
+  createNewProject,
+  getProjectSocials,
+  updateProjectSocial,
+  addProjectSocial,
+  deleteProjectSocial,
+  deleteProject,
+} from "../../api/projects";
 // import { showPopup } from '../Sidebar';  // No longer exists?
 
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
-
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number }[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string }[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string }[];
-  thumbnail: string;
-  title: string;
-  userId?: number;
-}
-
-interface User {
-  firstName: string,
-  lastName: string,
-  username: string,
-  primaryEmail: string,
-  userId: number
-}
+import { projectDataManager } from "../../api/data-managers/project-data-manager";
+import { PendingProject } from "../../../types/types";
+import { ProjectWithFollowers, } from '@looking-for-group/shared';
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   newProject: boolean;
   buttonCallback?: () => void;
-  user?: User;
-  permissions?: number;
+  updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>
+  // permissions?: number;
 }
 
-// default value for project data
-const emptyProject: ProjectData = {
-  audience: '',
-  description: '',
-  hook: '',
-  images: [],
-  jobs: [],
-  members: [],
-  projectTypes: [],
-  purpose: '',
-  socials: [],
-  status: '',
-  tags: [],
-  thumbnail: '',
-  title: '',
-};
+let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
 
 /**
- * This component should allow for either editing existing projects or creating new projects entirely,
- * accessed via the ‘edit project’ button on project pages or the ‘create’ button on the sidebar,
- * respectively.
- * 
- * @returns React component Popup
+ * This component enables both creating new projects and editing existing ones. 
+ * It provides a tabbed interface for managing different aspects of a project, including general information, media, tags, team members, and social links. 
+ * The component is accessed via either the 'edit project' button on project pages or the 'create' button in the sidebar.
+ * @returns React component Popup - Renders a modal for creating or editing projects
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, user, permissions }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, updateDisplayedProject/*permissions*/ }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
-  const projectID = urlParams.get('projectID');
+  const navigate = useNavigate();
+  const projectID = urlParams.get("projectID");
 
   // --- Hooks ---
-  // store project data
-  const [projectData, setProjectData] = useState(emptyProject);
+   
+  // Stores current project data: represents actual data from the server
+  const [projectData, setProjectData] = useState<ProjectWithFollowers>();
 
-  // tracking temporary project changes before committing to a save
-  const [modifiedProject, setModifiedProject] = useState(emptyProject);
+  // Tracks temporary project data changes before saving: compared against projectData
+  const [modifiedProject, setModifiedProject] = useState<PendingProject>();
 
-  // check whether or not the data in the popup is valid
+  // Indicates if the data validation has failed: prevents saving when invalid
   const [failCheck, setFailCheck] = useState(false);
 
-  // for current tab: 0 - general, 1 - Media, 2 - tags, 3 - team, 4 - links
+  // Tracks which tab is currently active: 0 - general, 1 - Media, 2 - tags, 3 - team, 4 - links
   const [currentTab, setCurrentTab] = useState(0);
 
-  // Errors
-  const [errorAddMember, setErrorAddMember] = useState('');
-  const [errorAddPosition, setErrorAddPosition] = useState('');
-  const [errorLinks, setErrorLinks] = useState('');
+  // Error message for member validation (used in TeamTab)
+  const [errorAddMember, setErrorAddMember] = useState("");
+  // Error message for position addition (used in TeamTab)
+  const [errorAddPosition, setErrorAddPosition] = useState("");
+  // Error message for Links validation (used in LinksTab)
+  const [errorLinks, setErrorLinks] = useState("");
 
   //State variable for error message
-  const [message, setMessage] = useState('')
+  const [message, setMessage] = useState("");
 
-  // Get project data on projectID change
-  useEffect(() => {
+  const createOrEdit = async () => {
     if (!newProject && projectID) {
-      const getProjectData = async () => {
-        const url = `/api/projects/${projectID}`;
-        try {
-          const response = await fetch(url);
+    // Load existing project
+      try {
+        // const response = await getByID(Number(projectID));
+        // if (!response.data) return;
 
-          const projectResponse = await response.json();
-          const projectData = projectResponse.data[0];
+        dataManager = await projectDataManager(Number(projectID));
 
-          if (projectData === undefined) {
-            return;
-          }
-
-          projectData.userId = user?.userId;
-
-          // save project data
-          setProjectData(projectData);
-          setModifiedProject(projectData);
-        } catch (error) {
-          console.error(error);
-        }
-      };
-      getProjectData();
+        const data = dataManager.getSavedProject();
+        setProjectData(data);
+        setModifiedProject(data);
+      } catch (err) {
+        console.error("Error loading existing project:", err);
+      }
     }
-  }, [newProject, projectID, user]);
+    else if (newProject) {
+    // Setup default project for creation
+      try {
+        const response = await createNewProject({ title: "My Project" });
+        if (!response.error && response.data) {
+          dataManager = await projectDataManager(response.data.projectId);
 
-  // Handle events for tab switch
-  useEffect(() => {
-    // reset link error
-    setErrorLinks('');
-    if (newProject) {
-      const makeDefaultProjectData = async () => {
-        // adjust default and set as project data
-        const projectData = emptyProject;
-        projectData.userId = user?.userId;
-
-        // Get user profile image
-        try {
-          const response = await fetch(`/api/users/${user?.userId}`);
-          const userResponse = await response.json();
-          const data = userResponse.data[0];
+          const data = dataManager.getSavedProject();
           
+          setProjectData(data);
+          setModifiedProject(data);
+          console.log(projectData);
+        }
+      } catch (err) {
+        console.error("Error creating new project:", err);
+      }
+    }
+  }
 
-          // Add creator as Project Lead
-          const member = {
-            firstName: user?.firstName || '',
-            lastName: user?.lastName || '',
-            jobTitle: 'Project Lead',
-            titleId: 73,
-            profileImage: data?.profileImage || '',
-            userId: user?.userId || 0
-          };
+  buttonCallback = createOrEdit;
 
-          projectData.members = [member];
+  /**
+   * Collects and validates all link information from the LinksTab
+   * Updates the modifiedProject state with valid link data
+   * Sets error messages for invalid link data
+   * @returns void
+   */
+  const updateLinks = async () => {
+    if (newProject || !projectID) return; // Only for existing projects
 
-          // Save to temp project
-          setModifiedProject(projectData);
-
-        } catch (error) {
-          console.error(error);
+    const projectNumID = Number(projectID);
+    
+    try {
+      // Get current socials from database
+      const currentSocialsResponse = await getProjectSocials(projectNumID);
+      const currentSocials = currentSocialsResponse.data || [];
+      
+      // Process each social in the modified project
+      for (const social of modifiedProject?.projectSocials || []) {
+        if (!social.url || !social.websiteId || social.websiteId === 0) continue; // Skip empty/invalid socials
+        
+        // Check if this social already exists
+        const existingSocial = currentSocials.find(s => s.websiteId === social.websiteId);
+        
+        if (existingSocial) {
+          // Update existing social if URL changed
+          if (existingSocial.url !== social.url) {
+            await updateProjectSocial(projectNumID, social.websiteId, { url: social.url });
+          }
+        } else {
+          // Create new social
+          await addProjectSocial(projectNumID, { websiteId: social.websiteId, url: social.url });
         }
       }
-      makeDefaultProjectData();
+      
+      // Delete socials that were removed
+      const modifiedSocialIds = (modifiedProject?.projectSocials || [])
+        .filter(s => s.url && s.websiteId && s.websiteId !== 0)
+        .map(s => s.websiteId);
+      
+      for (const currentSocial of currentSocials) {
+        if (!modifiedSocialIds.includes(currentSocial.websiteId)) {
+          await deleteProjectSocial(projectNumID, currentSocial.websiteId);
+        }
+      }
+    } catch (error) {
+      console.error('Error updating social links:', error);
+      setErrorLinks('Error updating social links. Please try again.');
     }
-  }, [currentTab, newProject, user]);
+  };
 
-  //Save project editor changes
+  //this deletes the newly created project when the create window is manually closed
+  //this is called below as the PopupContent's callback function (that only calls when it's closed so should it just be called onClose?)
+  //TODO: update this to show a close without saving prompt
+  const closeWithoutSaving = async () => {
+    if(projectData && newProject) await deleteProject(projectData?.projectId)
+  }
+
+  /**
+   * Handles saving project changes to the server, validates input data before saving
+   * For existing projects: updates thumbnails, images, positions, and project information
+   * For new projects: creates the project and adds images and thumbnails
+   * Handles errors during the save process
+   * @returns Promise<void>
+   */
   const saveProject = async () => {
+
     // default to no errors
-    setFailCheck(false);
+    setFailCheck(false); 
 
     // save if on link tab
-    if (currentTab === 4) updateLinks();
+    if (currentTab === 4) await updateLinks();
 
     //Error Handling
-    if (errorAddMember !== '' ||
-      errorAddPosition !== '' ||
-      errorLinks !== '') {
-      setFailCheck(true);
+    if (errorAddMember !== "" || errorAddPosition !== "" || errorLinks !== "") {
+      await setFailCheck(true);
       return;
     }
     //pops up error text if required fields in general haven't been filled out
-    if (!modifiedProject.title || !modifiedProject.description || !modifiedProject.status || !modifiedProject.hook) {
-      const errorText = document.getElementById('invalid-input-error');
-      setMessage('*Fill out all required info under General before saving!*');
+    if (
+      !modifiedProject?.title ||
+      !modifiedProject.description ||
+      !modifiedProject.status ||
+      !modifiedProject.hook
+    ) {
+      const errorText = document.getElementById("invalid-input-error");
+      setMessage("*Fill out all required info under General before saving!*");
+      await setFailCheck(true);
 
       if (errorText) {
-        errorText.style.display = 'block'
+        errorText.style.display = "block";
       }
       return;
     }
 
     //pops up error text if no tags have been chosen
-    if (modifiedProject.tags.length == 0 || modifiedProject.projectTypes.length == 0) {
-      const errorText = document.getElementById('invalid-input-error');
-      setMessage('*Choose a project type and tag under Tags before saving!*');
+    if (
+      modifiedProject.tags.length == 0 ||
+      modifiedProject.mediums.length == 0
+    ) {
+      const errorText = document.getElementById("invalid-input-error");
+      setMessage("*Choose a project type and tag under Tags before saving!*");
+      await setFailCheck(true);
 
       if (errorText) {
-        errorText.style.display = 'block'
+        errorText.style.display = "block";
       }
       return;
     }
 
-    // --- Creator ---
-    if (newProject) {
-      try {
-        // Record information from inputs
+    try {
+        await dataManager.saveChanges();
+        setProjectData(dataManager.getSavedProject());
+
+      // EXISTING PROJECT
+      if (!newProject && projectID) {
+
+        if(updateDisplayedProject) updateDisplayedProject(dataManager.getSavedProject());
       }
-      catch (error) {
-        console.error(error);
-        return false;
-      }
-    }
-
-    // --- Editor ---
-    if (!newProject) {
-      try {
-        // Update images
-        let dbImages: Image[] = [];
-        // Get images on database
-        const picturesResponse = await fetch(`/api/projects/${projectID}/pictures`);
-        const imagesResponse = await picturesResponse.json();
-        const imageData = imagesResponse.data;
-
-        // add images to reference later
-        dbImages = imageData;
-
-        // Compare new images to database to find images to delete
-        const imagesToDelete: Image[] = dbImages.filter(
-          image => !modifiedProject.images.find(newImage => newImage.image === image.image)
-        );
-
-        // Delete images
-        await Promise.all(
-          imagesToDelete.map(async (image) => {
-            // remove image from database
-            await fetch(`/api/projects/${projectID}/pictures`, {
-              method: 'DELETE',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ image: image.image })
-            });
-          })
-        );
-
-        // Add new images to database
-        // Wrap upload in promise
-        const uploadImages = modifiedProject.images.map(async (image) => {
-          if (!dbImages.find((dbImage) => dbImage.image === image.image)) {
-            // file must be new: recreate file
-            const fileResponse = await fetch(image.image);
-            const fileBlob = await fileResponse.blob();
-            const file = new File([fileBlob], image.image, { type: fileBlob.type });
-
-            // create form data to send
-            const formData = new FormData();
-            formData.append('image', file);
-            formData.append('position', image.position.toString());
-
-            // add image to database
-            await fetch(`/api/projects/${projectID}/pictures`, {
-              method: 'POST',
-              body: formData
-            });
-          }
-        });
-
-        // Wait for all images to upload
-        await Promise.all(uploadImages);
-
-        // Reestablish image positions
-        await fetch(`/api/projects/${projectID}/pictures`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ images: modifiedProject.images })
-        });
-
-        // Compare thumbnail
-        if (modifiedProject.thumbnail !== projectData.thumbnail) {
-          // get thumbnail
-          const thumbnailResponse = await fetch(`${API_BASE}/images/projects/${modifiedProject.thumbnail}`);
-
-          // create file
-          const thumbnailBlob = await thumbnailResponse.blob();
-          const thumbnailFile = new File([thumbnailBlob], modifiedProject.thumbnail, { type: "image/png" }); // type is valid if its added to modifiedProject
-
-          const formData = new FormData();
-          formData.append('image', thumbnailFile);
-
-          // update thumbnail
-          await fetch(`/api/projects/${projectID}/thumbnail`, {
-            method: 'PUT',
-            body: formData
-          });
-        }
-
-        // Send PUT request for general project info
-        await fetch(`/api/projects/${projectID}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(modifiedProject),
-        });
-
-        setProjectData(modifiedProject);
-
-      } catch (error) {
-        console.error(error);
-        return false;
-      }
-    }
-    // Creator
-    else {
-      try {
-        // Send POST request for general project info
-        await fetch(`/api/projects`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(modifiedProject),
-        });
-
-        setProjectData(modifiedProject);
-
-        // Add images, if any
-        modifiedProject.images.map(async (image) => {
-          // file must be new: recreate file
-          const fileResponse = await fetch(image.image);
-          const fileBlob = await fileResponse.blob();
-          const file = new File([fileBlob], image.image, { type: fileBlob.type });
-
-          // create form data to send
-          const formData = new FormData();
-          formData.append('image', file);
-          formData.append('position', image.position.toString());
-
-          // add image to database
-          await fetch(`/api/projects/${projectID}/pictures`, {
-            method: 'POST',
-            body: formData
-          });
-        });
-
-        // Update thumbnail if a thumbnail is set
-        if (modifiedProject.thumbnail !== '') {
-          // get thumbnail
-          const thumbnailResponse = await fetch(`${API_BASE}/images/projects/${modifiedProject.thumbnail}`);
-
-          // create file
-          const thumbnailBlob = await thumbnailResponse.blob();
-          const thumbnailFile = new File([thumbnailBlob], modifiedProject.thumbnail, { type: "image/png" }); // type is valid if its added to modifiedProject
-
-          const formData = new FormData();
-          formData.append('image', thumbnailFile);
-
-          // update thumbnail
-          await fetch(`/api/projects/${projectID}/thumbnail`, {
-            method: 'PUT',
-            body: formData
-          });
-        }
-
-      } catch (error) {
-        console.error(error);
-        return false;
-      }
+      navigate(`${paths.routes.NEWPROJECT}?projectID=${dataManager.getSavedProject().projectId}`)
+    } catch (err) {
+      console.error(err);
     }
   };
+ 
+  // Update links, avoid links tab glitch
+  // const updateLinks = () => {
+  //   const newSocials: { id: number, url: string}[] = [];
+  //   const parentDiv = document.querySelector("#project-editor-link-list");
 
-  // Save links to modifiedProject
-  const updateLinks = () => {
-    // temp social links
-    const newSocials: { id: number, url: string }[] = [];
+  //   parentDiv?.childNodes.forEach(element => {
+  //     if (element === parentDiv.lastElementChild) {
+  //       return;
+  //     }
 
-    // get parent element
-    const parentDiv = document.querySelector('#project-editor-link-list');
+  //     const dropdown = (element as HTMLElement).querySelector('select');
+  //     const input = (element as HTMLElement).querySelector('input');
 
-    // iterate through children
-    parentDiv?.childNodes.forEach(element => {
-      // skip element if its the last (add button)
-      if (element === parentDiv.lastElementChild) {
-        return;
-      }
+  //     const id = Number(dropdown?.options[dropdown?.selectedIndex].dataset.id);
+  //     const url = input?.value;
 
-      // get dropdown and input
-      const dropdown = (element as HTMLElement).querySelector('select');
-      const input = (element as HTMLElement).querySelector('input');
+  //     if (!id && !url) {
+  //       return;
+  //     }
 
-      // get values
-      const id = Number(dropdown?.options[dropdown?.selectedIndex].dataset.id);
-      const url = input?.value;
+  //     if (isNaN(id) || id === -1) {
+  //       setErrorLinks('Select a website in the dropdown');
+  //       return;
+  //     }
+  //     if (!url) {
+  //       setErrorLinks('Enter a URL');
+  //       return;
+  //     }
 
-      // if no values at all, ignore and remove
-      if (!id && !url) {
-        return;
-      }
-      // check for valid id
-      if (isNaN(id) || id === -1) {
-        setErrorLinks('Select a website in the dropdown');
-        return;
-      }
-      if (!url) {
-        setErrorLinks('Enter a URL');
-        return;
-      }
+  //     newSocials.push({id: id, url: url});
+  //     setErrorLinks('');
+  //    })
+  //    setModifiedProject({...modifiedProject, socials: newSocials})
+  // }
 
-      // add to list
-      newSocials.push({ id: id, url: url });
-
-      // remove error
-      setErrorLinks('');
-    });
-
-    // update socials
-    setModifiedProject({ ...modifiedProject, socials: newSocials });
-  };
+  const updatePendingProject = (updatedPendingProject: PendingProject) => {
+    setModifiedProject(updatedPendingProject);
+  }
 
   return (
     <Popup>
+      {newProject ? (
+        <PopupButton callback={buttonCallback} buttonId="project-info-create">
+          {" "}
+          <ThemeIcon
+            id={"create"}
+            width={25}
+            height={25}
+            className={"color-fill"}
+            ariaLabel={"create"}
+          />{" "}
+          <p>Create</p>{" "}
+        </PopupButton>
+      ) : (
+        <PopupButton callback={buttonCallback} buttonId="project-info-edit">
+          Edit Project
+        </PopupButton>
+      )}
       {
-        newProject ? (
-          <PopupButton callback={buttonCallback} buttonId='project-info-create' > <ThemeIcon id={'create'} width={25} height={25} className={'color-fill'} ariaLabel={'create'}/> <p>Create</p> </PopupButton>
-        ) : (
-          <PopupButton callback={buttonCallback} buttonId="project-info-edit">Edit Project</PopupButton>
-        )
-      }
-      {
-        loggedIn ? (
-          <PopupContent>
-            <div id="project-creator-editor">
-              <div id="project-editor-tabs">
-                <button id="general-tab"
-                  onClick={() => {
-                    if (currentTab === 4) updateLinks();
-                    setCurrentTab(0);
-                  }}
-                  className={`project-editor-tab ${currentTab === 0 ? 'project-editor-tab-active' : ''}`}
-                >
-                  General
-                </button>
-                <button id="media-tab"
-                  onClick={() => {
-                    if (currentTab === 4) updateLinks();
-                    setCurrentTab(1);
-                  }}
-                  className={`project-editor-tab ${currentTab === 1 ? 'project-editor-tab-active' : ''}`}
-                >
-                  Media
-                </button>
-                <button id="tags-tab"
-                  onClick={() => {
-                    if (currentTab === 4) updateLinks();
-                    setCurrentTab(2);
-                  }}
-                  className={`project-editor-tab ${currentTab === 2 ? 'project-editor-tab-active' : ''}`}
-                >
-                  Tags
-                </button>
-                <button id='team-tab'
-                  onClick={() => {
-                    if (currentTab === 4) updateLinks();
-                    setCurrentTab(3);
-                  }}
-                  className={`project-editor-tab ${currentTab === 3 ? 'project-editor-tab-active' : ''}`}
-                >
-                  Team
-                </button>
-                <button id='links-tab'
-                  onClick={() => {
-                    if (currentTab === 4) updateLinks();
-                    setCurrentTab(4);
-                  }}
-                  className={`project-editor-tab ${currentTab === 4 ? 'project-editor-tab-active' : ''}`}
-                >
-                  Links
-                </button>
-              </div>
-
-              <div id="project-editor-content">
-                {
-                  currentTab === 0 ? <GeneralTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
-                    currentTab === 1 ? <MediaTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
-                      currentTab === 2 ? <TagsTab projectData={modifiedProject} setProjectData={setModifiedProject} saveProject={saveProject} failCheck={failCheck} /> :
-                        currentTab === 3 ? <TeamTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorMember={setErrorAddMember} setErrorPosition={setErrorAddPosition} permissions={permissions} /> :
-                          currentTab === 4 ? <LinksTab isNewProject={newProject} projectData={modifiedProject} setProjectData={setModifiedProject} setErrorLinks={setErrorLinks} /> :
-                            <></>
-                }
-              </div>
-              {/* Responsiveness fix: General Tab has its own button/error text for layout change */}
-              {currentTab !== 0 ? <div id="invalid-input-error" className={"save-error-msg"}>
-                <p>{message}</p>
-              </div> : <></>}
+        // loggedIn ? (
+        <PopupContent
+        callback={closeWithoutSaving}> {/* TODO: update this call to */}
+          
+          <div id="project-creator-editor">
+            <div id="project-editor-tabs">
+              <button
+                id="general-tab"
+                onClick={() => {
+                  if (currentTab === 4) updateLinks();
+                  setCurrentTab(0);
+                }}
+                className={`project-editor-tab ${currentTab === 0 ? "project-editor-tab-active" : ""}`}
+              >
+                General
+              </button>
+              <button
+                id="media-tab"
+                onClick={() => {
+                  if (currentTab === 4) updateLinks();
+                  setCurrentTab(1);
+                }}
+                className={`project-editor-tab ${currentTab === 1 ? "project-editor-tab-active" : ""}`}
+              >
+                Media
+              </button>
+              <button
+                id="tags-tab"
+                onClick={() => {
+                  if (currentTab === 4) updateLinks();
+                  setCurrentTab(2);
+                }}
+                className={`project-editor-tab ${currentTab === 2 ? "project-editor-tab-active" : ""}`}
+              >
+                Tags
+              </button>
+              <button
+                id="team-tab"
+                onClick={() => {
+                  if (currentTab === 4) updateLinks();
+                  setCurrentTab(3);
+                }}
+                className={`project-editor-tab ${currentTab === 3 ? "project-editor-tab-active" : ""}`}
+              >
+                Team
+              </button>
+              <button
+                id="links-tab"
+                onClick={() => {
+                  if (currentTab === 4) updateLinks();
+                  setCurrentTab(4);
+                }}
+                className={`project-editor-tab ${currentTab === 4 ? "project-editor-tab-active" : ""}`}
+              >
+                Links
+              </button>
             </div>
-          </PopupContent>
-        ) : (
-          // Placeholder to prevent mass error
-          <div>
 
+            <div id="project-editor-content">
+              {projectData && modifiedProject ? ( currentTab === 0 ? (
+                <GeneralTab
+                  dataManager={dataManager}
+                  projectData={modifiedProject}
+                  updatePendingProject={updatePendingProject}
+                  saveProject={saveProject}
+                  failCheck={failCheck}
+                />
+              ) : currentTab === 1 ? (
+                <MediaTab
+                  dataManager={dataManager}
+                  projectData={modifiedProject}
+                  updatePendingProject={updatePendingProject}
+                  saveProject={saveProject}
+                  failCheck={failCheck}
+                />
+              ) : currentTab === 2 ? (
+                <TagsTab
+                  dataManager={dataManager}
+                  projectData={modifiedProject}
+                  updatePendingProject={updatePendingProject}
+                  saveProject={saveProject}
+                  failCheck={failCheck}
+                />
+              ) : currentTab === 3 ? (
+                <TeamTab
+                  dataManager={dataManager}
+                  updatePendingProject={updatePendingProject}
+                  saveProject={saveProject}
+                  projectData={modifiedProject}
+                  setErrorMember={setErrorAddMember}
+                  setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
+                  failCheck={failCheck}
+                />
+              ) : currentTab === 4 ? (
+                <LinksTab
+                  dataManager={dataManager}
+                  projectData={modifiedProject}
+                  saveProject={saveProject}
+                  updatePendingProject={updatePendingProject}
+                  setErrorLinks={setErrorLinks}
+                  failCheck={failCheck}
+                />
+              ) : (
+                <></>
+              ) ) : (
+                <></>
+              )}
+            </div>
+            {/* Responsiveness fix: General Tab has its own button/error text for layout change */}
+            {currentTab !== 0 ? (
+              <div id="invalid-input-error" className={"save-error-msg"}>
+                <p>{message}</p>
+              </div>
+            ) : (
+              <></>
+            )}
           </div>
-        )
+        </PopupContent>
+        // ) : (
+        // Placeholder to prevent mass error
+        // <div>
+
+        // </div>
+        // )
       }
     </Popup>
   );
 };
+

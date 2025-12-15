@@ -7,6 +7,7 @@ import { transformProjectJob } from '#services/transformers/projects/parts/proje
 
 type UpdateJobServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//PATCH api/projects/{id}/jobs/{jobId}
 const updateJobService = async (
   projectId: number,
   jobId: number,

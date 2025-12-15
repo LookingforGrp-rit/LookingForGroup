@@ -6,6 +6,7 @@ import { transformProjectToWithFollowers } from '#services/transformers/projects
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/projects/{id}
 const getProjectByIdService = async (
   projectId: number,
 ): Promise<ProjectWithFollowers | GetServiceError> => {

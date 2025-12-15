@@ -6,6 +6,7 @@ import { transformProjectToPreview } from '#services/transformers/projects/proje
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
+//GET api/projects
 const getProjectsService = async (): Promise<ProjectPreview[] | GetServiceError> => {
   try {
     const result = await prisma.projects.findMany({

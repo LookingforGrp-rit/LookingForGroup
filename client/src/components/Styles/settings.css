@@ -1,3 +1,5 @@
+/* Contains overall style rules for the settings page and popups */
+
 /* import */
 @import 'deleteUser.css';
 /*
@@ -296,7 +298,11 @@ input:checked+.slider:before {
     display: flex;
     flex-direction: row;
     margin: 0px min(8.47vw, 128px) 0px min(3.17vw, 48px);
-    justify-content: space-between;
+    justify-content: flex-start;
+  }
+  
+  .settings-column {
+    margin: 0px min(1vw, 20px)
   }
 
   @media (max-width: 1100px) {

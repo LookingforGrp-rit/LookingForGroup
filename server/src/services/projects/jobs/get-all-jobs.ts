@@ -6,6 +6,7 @@ import { transformProjectJob } from '#services/transformers/projects/parts/proje
 
 type GetJobServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/projects/{id}/jobs
 const getJobsService = async (projectId: number): Promise<ProjectJob[] | GetJobServiceError> => {
   try {
     const jobs = await prisma.jobs.findMany({

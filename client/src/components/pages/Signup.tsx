@@ -1,11 +1,10 @@
-import '../Styles/pages.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
+// import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
 import ChooseSkills from '../SignupProcess/ChooseSkills';
 // import ChooseProficiencies from "../SignupProcess/ChooseProficiencies";
-import ChooseInterests from '../SignupProcess/ChooseInterests';
+// import ChooseInterests from '../SignupProcess/ChooseInterests';
 import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { sendPost } from '../../functions/fetch';
@@ -13,25 +12,31 @@ import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
 import { getUserByEmail, getUserByUsername } from '../../api/users';
 
-const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) => {
+/**
+ * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
+ * @param profileImage Uploaded profile image to use for user creation.
+ * @param setProfileImage Sets the profile image variable
+ * @returns JSX Element
+ */
+const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation
 
   // State variables
-  const [firstName, setFirstName] = useState(''); // State variable for the user's first name
-  const [lastName, setLastName] = useState(''); // State variable for the user's last
+  const [firstName, setFirstName] = useState(''); // User's first name
+  const [lastName, setLastName] = useState(''); // User's last name
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState(''); // second password input to check if they match
-  const [message, setMessage] = useState(''); // State variable for messages
-  const [passwordMessage, setPasswordMessage] = useState(''); // State variable for password requirements
+  const [confirm, setConfirm] = useState(''); // Second password input to check if they match
+  const [message, setMessage] = useState('');
+  const [passwordMessage, setPasswordMessage] = useState(''); // Password requirements
   const [showPassword, setShowPassword] = useState(false);
 
   // State variables for modals
-  const [showAvatarModal, setShowAvatarModal] = useState(false);
+  // const [showAvatarModal, setShowAvatarModal] = useState(false);
   const [showSkillsModal, setShowSkillsModal] = useState(false);
   // const [showProficienciesModal, setShowProficienciesModal] = useState(false);
-  const [showInterestsModal, setShowInterestsModal] = useState(false);
+  // const [showInterestsModal, setShowInterestsModal] = useState(false);
   const [showCompleteProfileModal, setShowCompleteProfileModal] = useState(false);
   const [showGetStartedModal, setShowGetStartedModal] = useState(false);
 
@@ -39,7 +44,7 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
   // to remeber the user's choices when they go back and forth between modals
   // const [selectedProficiencies, setSelectedProficiencies] = useState<string[]>([]); // State variable for the selected proficiencies
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]); // State variable for the selected skills
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
+  // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
   const [bio, setBio] = useState(''); // State variable for the user's bio
 
@@ -52,14 +57,17 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     password: password,
     // proficiencies: selectedProficiencies,
     skills: selectedSkills,
-    interests: selectedInterests,
+    // interests: selectedInterests,
     pronouns: pronouns,
     bio: bio,
-    avatarImage: avatarImage,
+    // avatarImage: avatarImage,
     profileImage: profileImage, // if they upload their own image
   };
 
-  // Function to handle the login button click
+  /**
+   * Goes through the various fields, verifies whether user input is valid, and sends it to the server.
+   * @returns False if invalid
+   */
   const handleSignup = async () => {
     // Check if any of the fields are empty
     if (
@@ -78,7 +86,7 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     try {
       const data = await getUserByUsername(username);
       // if there is a result, a match is found
-      if (data.data.length > 0) {
+      if (data) {
         setMessage('Username already in use');
         return false;
       }
@@ -101,10 +109,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
 
     // check if the email is in use
     try {
-      const data = getUserByEmail(email);
+      const data = await getUserByEmail(email);
       
       // if there is a result, a match is found
-      if (data.data.length > 0) {
+      if (data) {
         setMessage('Email already in use');
         return false;
       }
@@ -129,25 +137,23 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     else {
       setMessage('Please wait...');
       // Send info to begin account activation
-      await fetch('/api/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          confirm: confirm,
-          firstName: firstName,
-          lastName: lastName,
-          username: username,
-        }),
+      await signUp({
+        email: email,
+        password: password,
+        confirm: confirm,
+        firstName: firstName,
+        lastName: lastName,
+        username: username,
       });
       setMessage('An account activation email has been sent');
     }
   };
 
-  // Function to handle password validation
+  /**
+   * Checks password validity
+   * @param pass Password
+   * @returns String message of remaining requirements to be met
+   */
   const validatePassword = (pass) => {
     // Don't check password if there's nothing there
     if (pass === '') {
@@ -190,7 +196,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     return passMsg;
   };
 
-  // Function to handle Enter key press
+  /**
+   * Handles Enter key presses
+   * @param e Keyboard Event
+   */
   const handleKeyPress = (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === 'Enter') {
       handleSignup();
@@ -211,9 +220,9 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
         />
         {/*************************************************************
 
-                    Signup Form inputs
+          Signup Form inputs
 
-                *************************************************************/}
+        *************************************************************/}
         <div className="signup-form column">
 
           <h2>Sign Up</h2>
@@ -308,22 +317,22 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
 
           {/*************************************************************
 
-                        Modals for the sign up process
+            Modals for the sign up process
 
-                    *************************************************************/}
+          *************************************************************/}
 
           {/* <ChooseProficiencies
-                        onNext={() => { setShowProficienciesModal(false); setShowSkillsModal(true); }}
-                        onBack={() => { setShowProficienciesModal(false); }}
-                        show={showProficienciesModal}
-                        selectedProficiencies={selectedProficiencies}
-                        setSelectedProficiencies={setSelectedProficiencies}
-                    /> */}
+            onNext={() => { setShowProficienciesModal(false); setShowSkillsModal(true); }}
+            onBack={() => { setShowProficienciesModal(false); }}
+            show={showProficienciesModal}
+            selectedProficiencies={selectedProficiencies}
+            setSelectedProficiencies={setSelectedProficiencies}
+          /> */}
 
           <ChooseSkills
             onNext={() => {
               setShowSkillsModal(false);
-              setShowInterestsModal(true);
+              // setShowInterestsModal(true);
             }}
             onBack={() => {
               setShowSkillsModal(false);
@@ -337,10 +346,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
             }}
           />
 
-          <ChooseInterests
+          {/* <ChooseInterests
             onNext={() => {
               setShowInterestsModal(false);
-              setShowAvatarModal(true);
+              // setShowAvatarModal(true);
             }}
             onBack={() => {
               setShowInterestsModal(false);
@@ -353,9 +362,9 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
             onClose={() => {
               setShowInterestsModal(false);
             }}
-          />
+          /> */}
 
-          <MakeAvatarModal
+          {/* <MakeAvatarModal
             mode="signup"
             onBack={() => {
               setShowAvatarModal(false);
@@ -370,7 +379,7 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
               setShowAvatarModal(false);
             }}
             setAvatarImage={setAvatarImage}
-          />
+          /> */}
 
           <CompleteProfile
             onNext={() => {
@@ -379,10 +388,10 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
             }}
             onBack={() => {
               setShowCompleteProfileModal(false);
-              setShowAvatarModal(true);
+              // setShowAvatarModal(true);
             }}
             show={showCompleteProfileModal}
-            avatarImage={avatarImage}
+            // avatarImage={avatarImage}
             userInfo={userInfo}
             bio={bio}
             pronouns={pronouns}
@@ -410,9 +419,9 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
         </div>
         {/*************************************************************
 
-                    Welcome Directory
+          Welcome Directory
 
-                *************************************************************/}
+        *************************************************************/}
         <div className="directory column">
           {/* <h1>Welcome!</h1>
                     <p>Already have an account?</p> */}
@@ -426,7 +435,5 @@ const SignUp = ({ setAvatarImage, avatarImage, profileImage, setProfileImage }) 
     </div>
   );
 };
-
-// helper function to check for existing username
 
 export default SignUp;

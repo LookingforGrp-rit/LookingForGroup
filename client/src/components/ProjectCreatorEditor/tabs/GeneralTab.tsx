@@ -1,229 +1,312 @@
 // --- Imports ---
-import { useEffect, useState, useRef } from "react";
-import { ThemeIcon } from "../../ThemeIcon";
+// import { useEffect, useState, useRef } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { PopupButton } from '../../Popup';
-
-
-// --- Interfaces ---
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number}[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string}[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string}[];
-  thumbnail: string;
-  title: string;
-  userId?: number;
-}
+import {
+  ProjectPurpose,
+  ProjectStatus
+} from "@looking-for-group/shared";
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
+import LabelInputBox from "../../LabelInputBox";
+import { projectDataManager } from "../../../api/data-managers/project-data-manager";
+import { PendingProject } from "../../../../types/types";
+import { useContext } from "react";
 
 // --- Variables ---
-// Default project value
-const defaultProject: ProjectData = {
-  audience: '',
-  description: '',
-  hook: '',
-  images: [],
-  jobs: [],
-  members: [],
-  projectId: -1,
-  projectTypes: [],
-  purpose: '',
-  socials: [],
-  status: '',
-  tags: [],
-  thumbnail: '',
-  title: '',
-};
+let projectAfterGeneralChanges: PendingProject;
 
-// Project purpose and status options
-const purposeOptions = ['Personal', 'Portfolio Piece', 'Academic', 'Co-op'];
-const statusOptions = ['Planning', 'Development', 'Post-Production', 'Complete'];
-
-// Delay function until user stops typing to prevent rapid text input bugs
-const keyboardDebounce = (func: any, delay: any) => {
-  let timeout: any;
-  return (...args: any) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), delay);
-  };
-};
+// // Delay function until user stops typing to prevent rapid text input bugs TODO: is this needed? not used
+// const keyboardDebounce = <T extends (...args: unknown[]) => unknown>(
+//   func: T,
+//   delay: number
+// ) => {
+//   let timeout: NodeJS.Timeout;
+//   return (...args: Parameters<T>) => {
+//     clearTimeout(timeout);
+//     timeout = setTimeout(() => func(args), delay);
+//   };
+// };
 
 type GeneralTabProps = {
-  projectData?: ProjectData;
-  setProjectData?: (data: ProjectData) => void;
-  saveProject?: () => void;
+  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  projectData: PendingProject;
+  saveProject?: () => Promise<void>;
+  updatePendingProject?: (updatedPendingProject: PendingProject) => void;
   failCheck: boolean;
-}
+};
+
+/**
+ * This file creates the page for editing information about the user’s project such as the project’s 
+ * description and the desired audience.
+ * @param dataManager data manager 
+ * @param projectData current project data
+ * @param saveProject save project changes
+ * @param updatePendingProject set modified project
+ * @param failCheck indicates if data validation has failed
+ * @returns JSX for Project Creator/editor tab - builds the page for project creation/editing
+ */
 
 // --- Component ---
 export const GeneralTab = ({
-  projectData = defaultProject,
-  setProjectData = () => {},
-  saveProject = () => {},
-  failCheck
+  dataManager,
+  projectData,
+  saveProject = async () => {},
+  updatePendingProject = () => {},
+  failCheck,
 }: GeneralTabProps) => {
 
-  // --- Hooks ---
-  // tracking project modifications
-  const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
+  projectAfterGeneralChanges = structuredClone(projectData);
+  
+  const projectId = projectData.projectId!;
 
-  // Textbox input callback: useRef to avoid unintended reset bugs
-  const debounce = useRef(keyboardDebounce((updatedProject) => {
-    setProjectData(updatedProject);
-  }, 300)).current;
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
-  // Update data when data is changed
-  useEffect(() => {
-    setModifiedProject(projectData);
-  }, [projectData]);
+  // // Textbox input callback: useRef to avoid unintended reset bugs TODO: is this needed? not used
+  // const debouncedUpdatePendingProject = useRef(
+  //   keyboardDebounce<(updatedPendingProject: PendingProject) => void>(
+  //     (updatedPendingProject: PendingProject) => {
+  //       updatePendingProject(updatedPendingProject);
+  //     },
+  //     300
+  //   )
+  // ).current;
+
+  // // Update data when data is changed
+  // useEffect(() => {
+  //   setModifiedProject(projectData);
+  // }, [projectData]);
 
   // Update parent state when data is changed
-  useEffect(() => {
-    // delay with setTimeout() used to fix input glitch bug
-    debounce(modifiedProject)
-  }, [debounce, modifiedProject, setProjectData]);
+  // useEffect(() => {
+  //   // delay with setTimeout() used to fix input glitch bug
+  //   debounce(modifiedProject);
+  // }, [debounce, modifiedProject, setProjectData]);
 
   // --- Complete component ---
   return (
     <div id="project-editor-general">
-      <div id="project-editor-title-input" className="project-editor-input-item">
-        <label htmlFor="title">Title*</label>
-        <input
-          id="title"
-          type="text"
-          className="title-input"
-          value={modifiedProject.title}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, title: e.target.value });
-          }}
-        />
-      </div>
+      <LabelInputBox
+        label={"Title*"}
+        inputType={"single"}
+        id="project-editor-title-input"
+        value={projectAfterGeneralChanges.title || ""}
+        onChange={(e) => {
+          const title = e.target.value;
+          projectAfterGeneralChanges = { ...projectAfterGeneralChanges, title };
+          updatePendingProject(projectAfterGeneralChanges);
+          dataManager.updateFields({
+            id: {
+              value: projectId,
+              type: "canon",
+            },
+            data: { title },
+          });
+        }}
+      />
 
-      <div id="project-editor-status-input" className="project-editor-input-item">
-        <label htmlFor="status">Status*</label>
+      <LabelInputBox
+        label={"Status*"}
+        inputType={"none"}
+        id="project-editor-status-input"
+      >
         <Select>
-          <SelectButton 
-            placeholder='Select'
-            initialVal={modifiedProject.status || ''}
-            className='project-editor-input-item'
+          <SelectButton
+            placeholder="Select"
+            initialVal={
+              projectAfterGeneralChanges.status ?
+                ProjectStatusEnums[projectAfterGeneralChanges.status] :
+                ""
+            }
+            className="project-editor-input-item"
+            type={"input"}
           />
-          <SelectOptions 
+          <SelectOptions
             callback={(e) => {
-              setModifiedProject({ ...modifiedProject, status: e.target.value });
+              const status = (
+                e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
+              ).value as ProjectStatusEnums;
+
+              if (status && Object.values(ProjectStatusEnums).includes(status as ProjectStatusEnums)) {
+                projectAfterGeneralChanges = {
+                  ...projectAfterGeneralChanges,
+                  status: status as ProjectStatus,
+                };
+                updatePendingProject(projectAfterGeneralChanges);
+
+                const key = Object.keys(ProjectStatusEnums).find(key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === status)
+
+                dataManager.updateFields({
+                  id: {
+                    value: projectId,
+                    type: "canon",
+                  },
+                  data: {
+                    status: key as ProjectStatus,
+                  },
+                });
+              }
             }}
-            options={statusOptions.map((o) => {
+            options={Object.values(ProjectStatusEnums).map((option) => {
               return {
-                markup: <>{o}</>,
-                value: o,
+                markup: <>{option}</>,
+                value: option,
                 disabled: false,
               };
             })}
           />
         </Select>
-      </div>
+      </LabelInputBox>
 
-      <div id="project-editor-purpose-input" className="project-editor-input-item">
-        <label htmlFor="purpose">Purpose</label>
+      <LabelInputBox
+        label={"Purpose"}
+        inputType={"none"}
+        id="project-editor-purpose-input"
+      >
         <Select>
-          <SelectButton 
-            placeholder='Select'
-            initialVal={modifiedProject.purpose || ''}
-            className='project-editor-input-item'
+          <SelectButton
+            placeholder="Select"
+            initialVal={
+              projectAfterGeneralChanges.purpose ?
+                ProjectPurposeEnums[projectAfterGeneralChanges.purpose] :
+                ""
+            }
+            className="project-editor-input-item"
+            type={"input"}
           />
-          <SelectOptions 
+          <SelectOptions
             callback={(e) => {
-              setModifiedProject({ ...modifiedProject, purpose: e.target.value });
+              const purpose = (
+                e.target as React.ButtonHTMLAttributes<HTMLButtonElement>
+              ).value as ProjectPurposeEnums;
+
+              if (purpose && Object.values(ProjectPurposeEnums).includes(purpose as ProjectPurposeEnums)) {
+                projectAfterGeneralChanges = {
+                  ...projectAfterGeneralChanges,
+                  purpose: purpose as ProjectPurpose,
+                };
+                updatePendingProject(projectAfterGeneralChanges);
+
+                const key = Object.keys(ProjectPurposeEnums).find(key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === purpose)
+
+                dataManager.updateFields({
+                  id: {
+                    value: projectId,
+                    type: "canon",
+                  },
+                  data: {
+                    purpose: key as ProjectPurpose,
+                  },
+                });
+              }
             }}
-            options={purposeOptions.map((o) => {
+            options={Object.values(ProjectPurposeEnums).map((option) => {
               return {
-                markup: <>{o}</>,
-                value: o,
+                markup: <>{option}</>,
+                value: option,
                 disabled: false,
               };
             })}
           />
         </Select>
-      </div>
+      </LabelInputBox>
 
-      <div id="project-editor-audience-input" className="project-editor-input-item">
-        <label htmlFor="audience">Target Audience</label>
-        <div className="project-editor-extra-info">
-          Define who this project is intended for--consider age group, interest, industry, or
-          specific user needs.
-        </div>
-        <span className="character-count">
-          {modifiedProject.audience ? modifiedProject.audience.length : '0'}/100
-        </span>{' '}
-        <textarea
-          id="audience"
-          maxLength={100}
-          value={modifiedProject.audience}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, audience: e.target.value });
-          }}
-        />
-      </div>
+      <LabelInputBox
+        label={"Target Audience"}
+        labelInfo="Define who this project is intended for--consider age group, interest, industry, or specific user needs."
+        inputType={"multi"}
+        id={"project-editor-audience-input"}
+        maxLength={100}
+        value={projectAfterGeneralChanges.audience || ""}
+        onChange={(e) => {
+          const audience = e.target.value;
+          projectAfterGeneralChanges = {
+            ...projectAfterGeneralChanges,
+            audience,
+          };
+          updatePendingProject(projectAfterGeneralChanges);
 
-      <div id="project-editor-description-input" className="project-editor-input-item">
-        <label htmlFor="short-description">Short Description*</label>
-        <div className="project-editor-extra-info">
-          Share a brief summary of your project. This will be displayed in your project's
-          discover card.
-        </div>
-        <span className="character-count">
-          {modifiedProject.hook ? modifiedProject.hook.length : '0'}/300
-        </span>{' '}
-        <textarea
-          id="short-description"
-          maxLength={300}
-          value={modifiedProject.hook}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, hook: e.target.value });
-          }}
-        />
-      </div>
+          dataManager.updateFields({
+            id: {
+              value: projectId,
+              type: "canon",
+            },
+            data: { audience },
+          });
+        }}
+      />
 
-      <div id="project-editor-long-description-input" className="project-editor-input-item">
-        <label htmlFor="long-description">About This Project*</label>
-        <div className="project-editor-extra-info">
-          Use this space to go into detail about your project! Feel free to share it's
+      <LabelInputBox
+        label={"Short Description*"}
+        labelInfo="Share a brief summary of your project. This will be displayed in your project's discover card."
+        inputType={"multi"}
+        id={"project-editor-description-input"}
+        maxLength={300}
+        value={projectAfterGeneralChanges.hook || ""}
+        onChange={(e) => {
+          const hook = e.target.value;
+          projectAfterGeneralChanges = { ...projectAfterGeneralChanges, hook };
+          updatePendingProject(projectAfterGeneralChanges);
+
+          dataManager.updateFields({
+            id: {
+              value: projectId,
+              type: "canon",
+            },
+            data: { hook },
+          });
+        }}
+      />
+
+      <LabelInputBox
+        label={"About This Project*"}
+        labelInfo="Use this space to go into detail about your project! Feel free to share it's
           inspirations and goals, outline key features, and describe this impact you hope it
-          brings to others.
-        </div>
-        <span className="character-count">
-          {modifiedProject.description ? modifiedProject.description.length : '0'}/2000
-        </span>{' '}
-        <textarea
-          id="long-description"
-          maxLength={2000}
-          value={modifiedProject.description}
-          onChange={(e) => {
-            setModifiedProject({ ...modifiedProject, description: e.target.value });
-          }}
-        />
-      </div>
-    
+          brings to others."
+        inputType={"multi"}
+        id={"project-editor-long-description-input"}
+        maxLength={2000}
+        value={projectAfterGeneralChanges.description || ""}
+        onChange={(e) => {
+          const description = e.target.value;
+          projectAfterGeneralChanges = {
+            ...projectAfterGeneralChanges,
+            description,
+          };
+          updatePendingProject(projectAfterGeneralChanges);
+
+          dataManager.updateFields({
+            id: {
+              value: projectId,
+              type: "canon",
+            },
+            data: { description },
+          });
+        }}
+      />
+
       <div id="general-save-info">
-      <div id="invalid-input-error" className={"save-error-msg-general"}>
-         <p>*Fill out all required info before saving!*</p>
-      </div>
-        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
-          Save Changes
-        </PopupButton>
+        <div id="invalid-input-error" className={"save-error-msg-general"}>
+          <p>*Fill out all required info before saving!*</p>
+        </div>
+              <Popup>
+                <PopupButton
+                  buttonId="project-editor-save"
+                  doNotClose={() => failCheck}
+                >
+                  Save Changes
+                </PopupButton>
+                  <PopupContent useClose={false}>
+                    <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                  <div id="confirm-editor-save">
+                 <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                   Confirm
+                 </PopupButton>
+                 <PopupButton buttonId="team-edit-member-cancel-button" >
+                   Cancel
+                 </PopupButton>
+                 </div>
+                  </PopupContent>
+              </Popup>
       </div>
     </div>
   );

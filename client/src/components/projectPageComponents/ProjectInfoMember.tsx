@@ -9,10 +9,18 @@ import { projects } from '../../constants/fakeData'; // FIXME: use data in db
 import profilePlaceholder from '../../icons/profile-user.png';
 import { ThemeIcon } from '../ThemeIcon';
 
-// Page header that displays for users that are members of the project
-// Includes options to access project settings, leave the project, and edit what is displayed in the 'looking for' window
-// May need further variants depending on whether the user is a regular member, an admin, or the owner
-// When loading page, should check to see if the current user is part of the loaded project to determine which header to load
+// TODO: this file is old and not used. Has good information regarding past designs and intended userflow, so keep until this is
+// properly documented and can be implemented in the future
+
+/**
+ * ProjectInfoMember is a React component that displays project information for users who are members of the project. 
+ * It provides functionality for project management, including project settings, role management, and member administration. 
+ * Unlike the non-member ProjectInfo component, this version includes options to access project settings, leave the project, 
+ * edit roles, enter the virtual space, and create new posts. 
+ * The component is designed to show different controls based on whether the user is a regular member, an admin, or the project owner.
+ * @param props Props passed in - projectData
+ * @returns React component - renders project information panel
+ */
 
 // To-do: add new header layout elements to this component
 // Settings are not functioning correctly, needs to be checked out
@@ -24,15 +32,20 @@ import { ThemeIcon } from '../ThemeIcon';
 export const ProjectInfoMember = (props) => {
   const navigate = useNavigate(); // Hook for navigation
 
+  // key - Counter used to generate unique React keys for role listings in the main component
+  // key2 - Counter used to generate unique React keys for roles in the edit roles interface
   let key = 0; //key is not required for functionality, but react will give an error without it when using the .map function later
   let key2 = 0;
 
   //UseState variables used alongside popup components
+  // showPopup1 - Controls the visibility of the project settings popup (useState, setShowPopup1)
+  // showPopup2 - Controls the visibility of the delete project confirmation popup (useState, setShowPopup2)
+  // showPopup 3 - Controls the visibility of the edit roles popup (useState, setShowPopup3)
   const [showPopup1, setShowPopup1] = useState(false);
   const [showPopup2, setShowPopup2] = useState(false);
   const [showPopup3, setShowPopup3] = useState(false);
 
-  // default settings for loaded project
+  // defaultSettings - Stores the original project settings
   let defaultSettings: {
     projectName: string;
     projectMembers: { userID: number; admin: boolean; owner: boolean; role: string }[];
@@ -40,14 +53,16 @@ export const ProjectInfoMember = (props) => {
     projectName: '',
     projectMembers: [],
   };
+  // defaultRoleSettings - Stores the original role settings
   let defaultRoleSettings: { Role: string; amount: number; description: string }[];
 
-  // temporary settings, holds changes to settings
+  // tempSettings - Temporary storage for project settings being edited
+  // tempRoleSettings - Temporary storage for role settings being edited
   // If settings window is closed, this should be reset using defaultSettings
   let tempSettings;
   let tempRoleSettings;
 
-  // used with settings, identifies which tab user is currently on
+  // currentTab - Tracks which settings tab is currently active
   let currentTab = 'general';
 
   //Pass project settings into variables for use in settings tabs
@@ -65,8 +80,7 @@ export const ProjectInfoMember = (props) => {
   //'setting' indicates what setting is being modified
   // 0 - member role; 1 - toggle admin; 2 - toggle mentor(?); 3 - remove member; 4 - undo remove member;
   //'memberId' indicates which member to change via their id
-  //'roleName' holds whatever new role name will be used if 'setting' is 0
-  //nothing needs to be passed into 'rolename' if 'setting' is anything other than 0
+  //'roleName': optional parameter used when setting = 0 to specify the new role
   const updateMemberSettings = (setting, memberId, roleName = undefined) => {
     const editingMember: { userID: number; admin: boolean; owner: boolean; role: string } =
       tempSettings.projectMembers.find((member) => member.userID === Number(memberId));
@@ -153,7 +167,9 @@ export const ProjectInfoMember = (props) => {
   //Used to track the indexes of deleted roles
   let deletedRoleIndexList: number[] = [];
 
-  //Opens settings and resets any setting inputs from previous opening
+  // Opens settings and resets any setting inputs from previous opening
+  // Creates a deep copy of defaultSettings to temporary settings
+  // Resets the tab content based on currentTab value
   const openSettings = () => {
     tempSettings = JSON.parse(JSON.stringify(defaultSettings)); //Json manipulation here is to help create a deep copy of the settings object
     if (currentTab === 'general') {
@@ -186,6 +202,7 @@ export const ProjectInfoMember = (props) => {
   };
 
   //Updates tempSettings with any inputted setting changes, called when switching tabs or when saving settings
+  // Currently only updates project name if on the general tab
   const updateSettings = () => {
     if (currentTab === 'general') {
       const nameInput = document.getElementById('name-edit');
@@ -193,8 +210,12 @@ export const ProjectInfoMember = (props) => {
     }
   };
 
-  //Closes settings window and saves changed settings
-  //Will require code to take the input from settings and write to the database
+  /* Calls updateSettings to ensure latest changes are captured
+  Updates the project in the projects array with the new settings
+  Updates defaultSettings to reflect the new saved state
+  Calls the callback function to refresh the project data display 
+  Closes the settings popup
+  */
   const saveSettings = () => {
     updateSettings();
     const currentProject = projects.find((p) => p._id === Number(props.projectData._id));
@@ -210,8 +231,10 @@ export const ProjectInfoMember = (props) => {
     openClosePopup(showPopup1, setShowPopup1);
   };
 
-  //Called when a tab is changed in the settings window
-  //tab - a string value denoting which tab is being switched to.
+  // Switches between different tabs in the settings window
+  // Updates currentTab and tabContent based on the selected tab
+  // Applies CSS classes to visually indicate the active tab
+  // Calls updateSettings to save any changes before switching tabs
   const changeTabs = (tab) => {
     //Depending on tab selected, switches settings content to that tab, while also applying styling rules to
     //the relevant tabs themselves
@@ -239,8 +262,9 @@ export const ProjectInfoMember = (props) => {
     }
   };
 
-  //Called when 'add role' is pressed in edit roles interface
-  //Adds a role to tempRoleSettings
+  // Adds a new role to tempRoleSettings based on input field values
+  // Validates that all required fields have values
+  // Updates the currentlyNeededRoles state to refresh the role list display
   const addRole = () => {
     //get input values
     const nameInput = document.getElementById('role-name-input-box').value;
@@ -265,8 +289,8 @@ export const ProjectInfoMember = (props) => {
     setTimeout(() => setCurrentlyNeededRoles(tempRoleSettings), 1);
   };
 
-  //Called when a delete button is clicked on the role list
-  //Adds the index of the role to an list of indexes that will be deleted upon saving
+  // Marks a role for deletion by adding its index to deletedRoleIndexList
+  // Does not immediately remove the role, only marks it for removal when saving
   const removeRole = (roleIndex) => {
     deletedRoleIndexList.push(roleIndex);
   };
@@ -311,14 +335,15 @@ export const ProjectInfoMember = (props) => {
     openClosePopup(showPopup3, setShowPopup3);
   };
 
-  //Reloads roles on edit roles interface
+  // Resets the role editing interface to show the current defaultRoleSettings
+  // Clears and then repopulates currentlyNeededRoles with default values
   const resetEditRoles = () => {
     setCurrentlyNeededRoles([]);
     setTimeout(() => setCurrentlyNeededRoles(defaultRoleSettings), 1);
   };
 
-  //uses resetEditRoles & opens edit roles interface
-  //Mainly for using both in a single onClick function
+  // Calls resetEditRoles to ensure the interface shows current data
+  // Opens the edit roles popup
   const openEditRoles = () => {
     resetEditRoles();
     openClosePopup(showPopup3, setShowPopup3);
@@ -357,13 +382,13 @@ export const ProjectInfoMember = (props) => {
       <p id="project-desc">{props.projectData.description}</p>
 
       <div id="member-buttons">
-        <button
+        {/* <button
           id="virtual-space-entrance"
           className="white-button"
           onClick={projectPageHelper.enterVirtualSpace}
         >
           Enter virtual space
-        </button>
+        </button> */}
         <button
           id="make-post-button"
           className="white-button"

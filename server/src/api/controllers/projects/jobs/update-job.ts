@@ -10,6 +10,8 @@ import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
 import updateJobService from '#services/projects/jobs/update-job.ts';
 
+//PATCH api/projects/{id}/jobs/{jobId}
+//updates a project's job
 const updateJobController = async (req: Request, res: Response): Promise<void> => {
   const projectId = parseInt(req.params.id);
   const jobId = parseInt(req.params.jobId);

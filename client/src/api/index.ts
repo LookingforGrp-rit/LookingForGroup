@@ -18,7 +18,10 @@ const getBaseUrl = (): string => {
 //Basic GET function for utilities
 export const GET = async (apiURL: string): Promise<ApiResponse> => {
   try {
-    const response = await fetch(getBaseUrl() + apiURL, {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
       method: "GET",
       credentials: "include",
     });
@@ -28,29 +31,20 @@ export const GET = async (apiURL: string): Promise<ApiResponse> => {
     //check if response is JSON
     if (contentType.includes("application/json")) {
       //return if json
-      const obj = await response.json();
-
-      if (response.ok) {
-        return { data: obj.data, status: response.status };
-      } else {
-        console.log(obj.error);
-        return {
-          error: obj.error || "Network response was not ok",
-          status: response.status,
-        };
-      }
+      return await response.json();
     } else {
       //handle HTML error pages
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
+        data: null,
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
-        status: 400,
+        status: response.status,
       };
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error("GET error", error);
-    return { error: error.message || "Unknown error", status: 500 };
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -59,12 +53,17 @@ export const POST = async (
   apiURL: string,
   newData: object
 ): Promise<ApiResponse<unknown>> => {
+  const isFormData = newData instanceof FormData;
+
   try {
-    const response = await fetch(getBaseUrl() + apiURL, {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(newData),
+      body: isFormData ? newData : JSON.stringify(newData),
     });
 
     const contentType = response.headers.get("content-type") || "";
@@ -72,29 +71,20 @@ export const POST = async (
     //check if response is JSON
     if (contentType.includes("application/json")) {
       //return if json
-      const obj = await response.json();
-
-      if (response.ok) {
-        return { data: obj.data, status: response.status };
-      } else {
-        console.log(obj.error);
-        return {
-          error: obj.error || "Network response was not ok",
-          status: response.status,
-        };
-      }
+      return await response.json();
     } else {
       //handle HTML error pages
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
+        data: null,
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
-        status: 400,
+        status: response.status,
       };
     }
-  } catch (error: any) {
-    console.error("POST error:", error);
-    return { error: error.message || "Unknown error", status: 400 };
+  } catch (error: unknown) {
+    console.error("GET error", error);
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -103,12 +93,17 @@ export const PUT = async (
   apiURL: string,
   newData: object
 ): Promise<ApiResponse<unknown>> => {
+  const isFormData = newData instanceof FormData;
+
   try {
-    const response = await fetch(getBaseUrl() + apiURL, {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
       method: "PUT",
-      headers: { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(newData),
+      body: isFormData ? newData : JSON.stringify(newData),
     });
 
     const contentType = response.headers.get("content-type") || "";
@@ -116,29 +111,20 @@ export const PUT = async (
     //check if response is JSON
     if (contentType.includes("application/json")) {
       //return if json
-      const obj = await response.json();
-
-      if (response.ok) {
-        return { data: obj.data, status: response.status };
-      } else {
-        console.log(obj.error);
-        return {
-          error: obj.error || "Network response was not ok",
-          status: response.status,
-        };
-      }
+      return await response.json();
     } else {
       //handle HTML error pages
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
+        data: null,
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
-        status: 400,
+        status: response.status,
       };
     }
-  } catch (error: any) {
-    console.error("POST error:", error);
-    return { error: error.message || "Unknown error", status: 400 };
+  } catch (error: unknown) {
+    console.error("GET error", error);
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
 
@@ -147,12 +133,17 @@ export const DELETE = async (
   apiURL: string,
   data: object = {}
 ): Promise<ApiResponse<unknown>> => {
+  const isFormData = data instanceof FormData;
+
   try {
-    const response = await fetch(getBaseUrl() + apiURL, {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
       method: "DELETE",
-      headers: { "Content-Type": "application/json" },
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
       credentials: "include",
-      body: JSON.stringify(data),
+      body: isFormData ? data : JSON.stringify(data),
     });
 
     const contentType = response.headers.get("content-type") || "";
@@ -160,31 +151,63 @@ export const DELETE = async (
     //check if response is JSON
     if (contentType.includes("application/json")) {
       //return if json
-      const obj = await response.json();
-
-      if (response.ok) {
-        return { data: obj.data, status: response.status };
-      } else {
-        console.log(obj.error);
-        return {
-          error: obj.error || "Network response was not ok",
-          status: response.status,
-        };
-      }
+      return await response.json();
     } else {
       //handle HTML error pages
       const html = await response.text();
       console.error("Expected json but got:", html);
       return {
+        data: null,
         error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
-        status: 400,
+        status: response.status,
       };
     }
-  } catch (error: any) {
-    console.error("POST error:", error);
-    return { error: error.message || "Unknown error", status: 400 };
+  } catch (error: unknown) {
+    console.error("GET error", error);
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
   }
 };
+
+//Basic PATCH function
+export const PATCH = async (
+  apiURL: string,
+  newData: object
+): Promise<ApiResponse<unknown>> => {
+  const isFormData = newData instanceof FormData;
+
+  try {
+    let url = getBaseUrl() + apiURL;
+    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+
+    const response = await fetch(url, {
+      method: "PATCH",
+      headers: isFormData ? undefined : { "Content-Type": "application/json" },
+      credentials: "include",
+      body: isFormData ? newData : JSON.stringify(newData),
+    });
+
+    const contentType = response.headers.get("content-type") || "";
+
+    //check if response is JSON
+    if (contentType.includes("application/json")) {
+      //return if json
+      return await response.json();
+    } else {
+      //handle HTML error pages
+      const html = await response.text();
+      console.error("Expected json but got:", html);
+      return {
+        data: null,
+        error: "Received HTML reponse instead of JSON (Likely broken endpoint)",
+        status: response.status,
+      };
+    }
+  } catch (error: unknown) {
+    console.error("GET error", error);
+    return { data: null, error: (error as TypeError).message || "Unknown error", status: 500 };
+  }
+};
+
 
 //jsonify the data
 function jsonify<_data = unknown>(
@@ -206,5 +229,6 @@ export default {
   POST,
   PUT,
   DELETE,
+  PATCH,
   jsonify,
 };

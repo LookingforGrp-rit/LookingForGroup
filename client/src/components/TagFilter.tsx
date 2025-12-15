@@ -20,9 +20,15 @@ import { softSkills, hardSkills, proficiencies } from '../constants/skills';
 //Placing it inside causes it to be reset whenever 'setUseState' in 'filter' is run
 const selectedTags: string[] = [];
 
-//props used:
-//projectFilter - boolean, if true this filters projects, if false this filters profiles
-//setUseState - useState function to set states using filtered datasets
+/**
+ * Component for filtering projects or profiles using a list of tags.
+ * Displays a search bar to filter tags and allows selecting multiple tags.
+ * Selected tags can be used to filter datasets passed via the `setUseState` function.
+ *
+ * @param projectFilter - Boolean indicating whether to filter projects (true) or profiles (false)
+ * @param setUseState - useState setter function to update the filtered dataset
+ * @returns JSX element rendering the tag filter interface, including a search bar, tag list, and filter button
+ */
 export const TagFilter = ({ projectFilter, setUseState }) => {
   //Determine what we are filtering for; this tells what set of tags to use
   //create empty tag array to be filled based on this
@@ -72,9 +78,10 @@ export const TagFilter = ({ projectFilter, setUseState }) => {
           //Update their displays to match
           const tagElement = document.getElementById(`tag-id-${result}`);
           console.log(tagElement);
-          tagElement
-            ? tagElement.classList.toggle('tag-filter-selected')
-            : console.log('error updating display');
+
+          if(tagElement) tagElement.classList.toggle('tag-filter-selected');
+          else console.log('error updating display');
+
         }
       }
     }, 1);

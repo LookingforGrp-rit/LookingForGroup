@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { getSocialsService } from '#services/me/socials/get-socials.ts';
 
+//GET api/me/socials
 //get socials on user profile
 export const getSocials = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const result = await getSocialsService(req.currentUser);

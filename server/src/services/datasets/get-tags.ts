@@ -6,6 +6,7 @@ import type { Tag } from '../../../../shared/types.ts';
 
 type GetTagsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
+//GET api/datasets/tags
 const getTagsService = async (): Promise<Tag[] | GetTagsServiceError> => {
   try {
     const tags = await prisma.tags.findMany({

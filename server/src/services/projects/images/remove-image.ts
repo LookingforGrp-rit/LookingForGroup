@@ -5,16 +5,41 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type RemoveImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type RemoveImageServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
-//delete a member
+//DELETE api/projects/{id}/images/{imageId}
+//delete a project image
 export const removeImageService = async (
   projectId: number,
   imageId: number,
 ): Promise<RemoveImageServiceSuccess | RemoveImageServiceError> => {
   try {
+    const project = await prisma.projects.findUnique({
+      where: {
+        projectId,
+      },
+    });
+
+    if (!project) return 'NOT_FOUND';
+
+    //now disconnects the thumbnail param if the thumbnail is selected for deletion here
+    if (project.thumbnailId === imageId) {
+      await prisma.projects.update({
+        where: {
+          projectId,
+        },
+        data: {
+          thumbnail: {
+            disconnect: {
+              imageId,
+            },
+          },
+        },
+      });
+    }
+
     const deletedImage = await prisma.projectImages.delete({
       where: {
-        projectId: projectId,
-        imageId: imageId,
+        projectId,
+        imageId,
       },
     });
 

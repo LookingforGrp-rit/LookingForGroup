@@ -5,8 +5,8 @@ type LeaveProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND
 type LeaveProjectServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
 /**
- * Allows a user to leave a project by updating their profile visibility to private
- * This is different from deleting a member (which only project owners can do)
+ * DELETE api/me/projects/{id}/leave
+ * Allows a user to leave a project by removing themselves as a member
  */
 export const leaveProjectService = async (
   projectId: number,
@@ -27,7 +27,7 @@ export const leaveProjectService = async (
       return 'FORBIDDEN';
     }
 
-    // Update the member's visibility to private to indicate they've left
+    // Reemove the member from the project
     await prisma.members.delete({
       where: {
         projectId_userId: {

@@ -1,16 +1,3 @@
-//Styles
-import './Styles/credits.css';
-import './Styles/discoverMeet.css';
-import './Styles/emailConfirmation.css';
-import './Styles/general.css';
-import './Styles/loginSignup.css';
-import './Styles/messages.css';
-import './Styles/notification.css';
-import './Styles/profile.css';
-import './Styles/projects.css';
-import './Styles/settings.css';
-import './Styles/pages.css';
-
 import { SearchBar } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { useNavigate } from 'react-router-dom';
@@ -25,22 +12,32 @@ import profilePicture from '../images/blue_frog.png';
 //user utils
 import { getCurrentUsername } from '../api/users.ts';
 
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
-
 //Header component to be used in pages
 
+//Track user login state globally
 export let loggedIn = false;
-
-//dataSets - list of data for the searchbar to use
-//onSearch - function for the searchbar to run when searching
-//These are directly used in the searchbar of this component, and funciton identically so
 
 //to-do: allow click function of searchbar to be re-defineable
 //Add functions to buttons (profile/settings = navigate to those pages; light mode: toggle light/dark mode)
 //(logout = logout the user and send them to home page or equivalent)
 
-export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
+/**
+ * Top-level navigation and utility bar displayed across pages. 
+ * Provides search functionality, profile access, theme switching, 
+ * and user-specific dropdown actions. When authenticated, the header 
+ * displays the user’s profile image, username, and navigation options; 
+ * otherwise it shows guest controls and a login button.
+ *
+ * @param dataSets - Data passed into the search bar for filtering and suggestions.
+ * @param onSearch - Executed when the search bar submits a query.
+ * @param value - Current search bar input value.
+ * @param onChange - Change handler for updating the search input value.
+ * @param props.hideSearchBar- If true, disables rendering of the search bar.
+ * @returns A fully featured header containing the search bar, 
+ * user dropdown menu, theme toggle, and navigation controls.
+ */
+export const Header = ({ dataSets, onSearch, value, onChange, hideSearchBar = false }) => {
+  // User info state
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState(null);
   const [profileImg, setProfileImg] = useState<string>('');
@@ -55,6 +52,7 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
 
   const navigate = useNavigate(); // Hook for navigation
 
+  // Fetch current user info on mount
   useEffect(() => {
     const fetchUsername = async () => {
       try {
@@ -66,14 +64,14 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
           setEmail(res.data.email ?? null);
           setProfileImg(res.data.profileImage ?? '');
         } else {
-          loggedIn == false;
+          loggedIn = false;
           setUsername('Guest');
           setEmail(null);
           setProfileImg('');
         }
       } catch (err) {
         console.log('Error fetching username: ' + err);
-        loggedIn == false;
+        loggedIn = false;
         setUsername('Guest');
         setEmail(null);
         setProfileImg('');
@@ -83,17 +81,19 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
     fetchUsername();
   }, []);
 
-  const handlePageChange = (path) => {
+  // Navigate to a page and optionally update sidebar (if implemented)
+  const handlePageChange = (path: string) => {
     //Have code to update sidebar display (unsure of how to do this yet)
     //Navigate to desired page
     navigate(path);
   };
 
+  // Navigate to the current user's profile
   const handleProfileAccess = async () => {
     // navigate to Profile, attach userID
     const res = await getCurrentUsername();
-    const username = res.data.username;
-    navigate(`${paths.routes.NEWPROFILE}?userID=${username}`);
+    const userId = res.data.userId;
+    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
 
     // Collapse the dropwdown if coming from another user's page
     if (window.location.href.includes("profile")) {
@@ -101,6 +101,7 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
     }
   };
 
+  // Toggle between light and dark mode
   const switchTheme = () => {
     setModeToggle(theme === 'dark' ? 'Dark Mode' : 'Light Mode');
     setTheme(theme === 'dark' ? 'light' : 'dark');
@@ -111,7 +112,12 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
       {/* Conditional rendering for search bar */}
       {(!hideSearchBar) && (
         <div id="header-searchbar">
-          <SearchBar dataSets={dataSets} onSearch={onSearch} />
+          <SearchBar 
+            dataSets={dataSets} 
+            onSearch={onSearch}
+            value={value}
+            onChange={onChange}
+          />
         </div>
       )}
       <div id="header-buttons">
@@ -134,14 +140,14 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
           <DropdownButton buttonId="profile-btn">
             {(profileImg) ? (
               <img
-                src={`${API_BASE}/images/profiles/${profileImg}`}
+                src={`${profileImg}`}
                 id={'profile-img-icon'}
                 className={'rounded'}
                 title={'Profile picture'}
                 // Cannot use usePreloadedImage function because this is in a callback
                 onLoad={(e) => {
                   const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                  profileImg.src = `${profileImg}`;
                 }}
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
@@ -167,10 +173,10 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 {/* (Blank) Profile Icon */}
                 <button id="header-profile-user">
                   <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
-                  <div>
-                    {username}
+                  <div id="header-profile-user-info">
+                    <p id="header-profile-username">{username}</p>
                     <br />
-                    <span id="header-profile-email">{email}</span>
+                    <p id="header-profile-email">{email}</p>
                   </div>
                 </button>
 
@@ -196,13 +202,13 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                 <button onClick={() => handleProfileAccess()} id="header-profile-user">
                   {(profileImg) ? (
                     <img
-                      src={`${API_BASE}/images/profiles/${profileImg}`}
+                      src={`${profileImg}`}
                       className={'rounded'}
                       alt={'profile'}
                       // Cannot use usePreloadedImage function because this is in a callback
                       onLoad={(e) => {
                         const profileImg = e.target as HTMLImageElement;
-                        profileImg.src = `${API_BASE}/images/profiles/${profileImg}`;
+                        profileImg.src = `${profileImg}`;
                       }}
                       onError={(e) => {
                         const profileImg = e.target as HTMLImageElement;
@@ -212,10 +218,10 @@ export const Header = ({ dataSets, onSearch, hideSearchBar = false }) => {
                   ) : (
                     <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
                   )}
-                  <div>
-                    {username}
+                  <div id="header-profile-user-info">
+                    <p id="header-profile-username">{username}</p>
                     <br />
-                    <span id="header-profile-email">{email}</span>
+                    <p id="header-profile-email">{email}</p>
                   </div>
                 </button>
 

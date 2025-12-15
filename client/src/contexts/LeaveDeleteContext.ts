@@ -4,9 +4,12 @@ type LeaveDeleteContextProps = {
   isOwner: boolean;
   projId: number,
   userId: number,
-  reloadProjects: Function,
+  reloadProjects: () => void,
 };
 
+/**
+ * Determine what options show on projects on the My Projects page.
+ */
 export const LeaveDeleteContext = createContext<LeaveDeleteContextProps>({
   isOwner: false,
   projId: 0,

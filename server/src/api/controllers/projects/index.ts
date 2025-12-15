@@ -26,7 +26,13 @@ import { updateProjectSocial } from './socials/update-proj-social.ts';
 import addTags from './tags/add-tags.ts';
 import deleteTags from './tags/delete-tags.ts';
 import getTags from './tags/get-proj-tags.ts';
+import getThumbnail from './thumbnail/get-thumbnail.ts';
+import removeThumbnail from './thumbnail/remove-thumbnail.ts';
+import updateThumbnail from './thumbnail/update-thumbnail.ts';
 import updateProject from './update-project.ts';
+
+//index file for all project routes
+//no other route group has this
 
 export default {
   getJobsController,
@@ -39,6 +45,9 @@ export default {
   getProjectImages,
   createProject,
   addImage,
+  getThumbnail,
+  removeThumbnail,
+  updateThumbnail,
   addMember,
   addTags,
   updateProject,

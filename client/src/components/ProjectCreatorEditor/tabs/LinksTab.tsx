@@ -1,328 +1,332 @@
 // --- Imports ---
-import { useEffect, useState } from "react";
+import { useEffect, useState, useContext } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { PopupButton } from "../../Popup";
-
-
-// --- Interfaces ---
-interface Image {
-  id: number;
-  image: string;
-  position: number;
-  file: File
-}
-
-interface ProjectData {
-  audience: string;
-  description: string;
-  hook: string;
-  images: Image[];
-  jobs: { titleId: number; jobTitle: string; description: string; availability: string; location: string; duration: string; compensation: string; }[];
-  members: { firstName: string, lastName: string, jobTitle: string, profileImage: string, userId: number }[];
-  projectId?: number;
-  projectTypes: { id: number, projectType: string }[];
-  purpose: string;
-  socials: { id: number, url: string }[];
-  status: string;
-  tags: { id: number, position: number, tag: string, type: string }[];
-  thumbnail: string;
-  title: string;
-  userId?: number;
-}
-
-interface Social {
-  websiteId: number;
-  label: string;
-}
+import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
+import { AddProjectSocialInput, ProjectSocial, Social, UserDetail } from "@looking-for-group/shared";
+import { Input } from "../../Input";
+import { getSocials, getUsersById } from "../../../api/users";
+import { ThemeIcon } from "../../ThemeIcon";
+import { Pending, PendingProject } from "../../../../types/types";
+import { projectDataManager } from "../../../api/data-managers/project-data-manager";
+import { BaseSocialUrl } from "@looking-for-group/shared/enums";
 
 // --- Variables ---
-// Default project value
-const defaultProject: ProjectData = {
-  audience: '',
-  description: '',
-  hook: '',
-  images: [],
-  jobs: [],
-  members: [],
-  projectId: -1,
-  projectTypes: [],
-  purpose: '',
-  socials: [],
-  status: '',
-  tags: [],
-  thumbnail: '',
-  title: '',
-};
-
 type LinksTabProps = {
-  projectData?: ProjectData;
-  setProjectData?: (data: ProjectData) => void;
+  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  projectData: PendingProject;
+  updatePendingProject: (updatedPendingProject: PendingProject) => void;
   setErrorLinks?: (error: string) => void;
   saveProject?: () => void;
   failCheck: boolean;
 }
 
+let localIdIncrement = 0;
+let projectAfterLinkChanges: PendingProject;
+
+/**
+ * The LinksTab component allows users to view, add, update, and remove social media links associated with a project. 
+ * It supports dynamic selection from a predefined list of social platforms and entry of corresponding URLs. 
+ * It synchronizes changes with the parent component and reports validation errors as needed.
+ * @param dataManager data manager 
+ * @param projectData current project data
+ * @param updatePendingProject set modified project
+ * @param setErrorLinks set error message for links validation
+ * @param saveProject save project changes
+ * @param failCheck indicates if data validation has failed 
+ * @returns JSX Element - Renders the Social Links tab UI, handles social input logic, synchronizes from data with parent state
+ */
+
 // --- Component ---
 export const LinksTab = ({
-  projectData = defaultProject,
-  setProjectData = () => {},
+  dataManager,
+  projectData,
+  updatePendingProject,
   setErrorLinks = () => {},
   saveProject = () => {},
-  failCheck
+  failCheck,
 }: LinksTabProps) => {
 
-  // Icon failure to load by default fix
-  const iconCheck = document.getElementsByClassName("project-link-select");
-  for (const i of iconCheck) {
-    const val = i.getElementsByClassName("value")[0];
-    if (!val.querySelector("i")) {
-      // Handling sites with uniquely named icons
-      if (val.innerText === "Other") { // Other
-        val.innerHTML = '<i class="fa-solid fa-link"></i>' + val.innerHTML;
-      }
-      else if (val.innerText === "X") { // Twitter
-        val.innerHTML = '<i class="fa-brands fa-x-twitter"></i>' + val.innerHTML;
-      }
-      else if (val.innerText === "Itch") { // Itch
-        val.innerHTML = '<i class="fa-brands fa-itch-io"></i>' + val.innerHTML;
-      }
-      else { // All ordinarily named site icons
-        val.innerHTML = `<i class="fa-brands fa-${val.innerText.toLowerCase()}"></i>` + val.innerHTML;
-      }
-    }
-  }
+projectAfterLinkChanges = structuredClone(projectData);
 
   // --- Hooks --- 
-  // tracking project modifications
-  const [modifiedProject, setModifiedProject] = useState<ProjectData>(projectData);
-  // complete list of socials
+  // List of available social platforms fetched from the backend
   const [allSocials, setAllSocials] = useState<Social[]>([]);
-  // sets error when adding a link to the project
-  const [error, setError] = useState('');
+  // Tracks input validation or other link
+  const [error] = useState('');
+  // project owner details with social links
+  const [projectOwner, setProjectOwner] = useState<UserDetail | null>(null);
 
-  // Update data when data is changed
-  useEffect(() => {
-    setModifiedProject(projectData);
-  }, [projectData]);
-
-  // Update parent state with new project data
-  useEffect(() => {
-    setProjectData(modifiedProject);
-  }, [modifiedProject, setProjectData]);
+  const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   // Update parent state with error message
   useEffect(() => {
     setErrorLinks(error);
   }, [error, setErrorLinks]);
 
-  // Get socials if allSocials is empty
+  // Get social option data
   useEffect(() => {
-    const getSocials = async () => {
-      const url = `/api/datasets/socials`;
+    const getAllSocials = async () => {
+      const response = await getSocials();
 
-      try {
-        const response = await fetch(url);
-
-        const socials = await response.json();
-        const socialsData = socials.data;
-
-        if (socialsData === undefined) {
-          return;
+      // Reorder so 'Other' is last
+      if (response.data) {
+        const otherIndex = response.data.findIndex(s => s.label === 'Other');
+        if (otherIndex > -1) {
+          const other = response.data.splice(otherIndex, 1)[0];
+          response.data.push(other);
         }
-        setAllSocials(socialsData);
+      setAllSocials(response.data);
+      }
 
-      } catch (error) {
-        console.error((error as Error).message);
+    };
+    getAllSocials();
+  }, []);
+
+  // Fetch project owner details to get their social links
+  useEffect(() => {
+    const fetchProjectOwner = async () => {
+      if (projectData?.owner?.userId) {
+        try {
+          const response = await getUsersById(projectData.owner.userId);
+          if (response?.data) {
+            setProjectOwner(response.data);
+          }
+        } catch (err) {
+          console.error("Error fetching project owner details:", err);
+        }
       }
     };
-    if (allSocials.length === 0) {
-      getSocials();
-    }
-  }, [allSocials]);
-
-  // --- Methods ---
-  // Add a link entry
-  // TO-DO: Replace this function with something using State variables
-  const addLinkInput = () => {
-    // find parent div
-    const linkListDiv = document.querySelector("#project-editor-link-list");
-    if (linkListDiv) {
-      // parent div
-      const linkItemDiv = document.createElement('div');
-      linkItemDiv.className = 'project-editor-link-item';
-
-      // dropdown
-      const dropdown = document.createElement('select');
-      // default option
-      const defaultOption = document.createElement('option');
-      defaultOption.disabled = true;
-      defaultOption.selected = true;
-      defaultOption.text = 'Select';
-      dropdown.appendChild(defaultOption);
-      // add list of options
-      for (const s of allSocials) {
-        const option = document.createElement('option');
-        option.value = s.label;
-        option.text = s.label;
-        option.dataset.id = s.websiteId.toString();
-        dropdown.appendChild(option);
-      }
-
-      // input wrapper
-      const linkInputWrapper = document.createElement('div');
-      linkInputWrapper.className = 'project-link-input-wrapper';
-
-      // URL input
-      const input = document.createElement('input');
-      input.type = 'url';
-      input.placeholder = 'URL';
-
-      // remove link button
-      const button = document.createElement('button');
-      button.className = 'remove-link-button';
-      button.innerHTML = '<i class="fa-solid fa-minus"></i>';
-      button.onclick = (e) => {
-        const wrapper = e.currentTarget.closest('.project-editor-link-item');
-        if (wrapper) {
-          wrapper.remove();
-        }
-      };
-
-      // build element
-      linkInputWrapper.appendChild(input);
-      linkInputWrapper.appendChild(button);
-      linkItemDiv.appendChild(dropdown);
-      linkItemDiv.appendChild(linkInputWrapper);
-      linkListDiv.insertBefore(linkItemDiv, linkListDiv.lastElementChild);
-    }
-  };
+    fetchProjectOwner();
+  }, [projectData?.owner?.userId]);
 
   // --- Complete component ---
   return (
-    <div id="project-editor-links">
-      <label>Social Links</label>
-      <div className="project-editor-extra-info">
-        Provide the links to pages you wish to include on your page.
+    <div id="editor-links">
+      {/* Contact Information Section */}
+      {projectOwner && (
+        <div id="editor-contact-info">
+          <div className="editor-header">Contact Project Owner</div>
+          <div className="editor-extra-info">
+            Connect with {projectOwner.firstName} {projectOwner.lastName} through their social profiles.
+          </div>
+          
+          {/* User Social Links */}
+          {projectOwner.socials && projectOwner.socials.length > 0 ? (
+            <div className="contact-socials-grid">
+              {projectOwner.socials.map((social, index) => (
+                <a
+                  key={index}
+                  href={social.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="contact-social-link"
+                  title={`Contact via ${social.label}`}
+                >
+                  <ThemeIcon
+                    width={20}
+                    height={20}
+                    id={
+                      social.label === 'Other' ? 'link' :
+                      social.label.toLowerCase()
+                    }
+                    className="mono-fill"
+                    ariaLabel={social.label}
+                  />
+                  <span>{social.label}</span>
+                </a>
+              ))}
+            </div>
+          ) : (
+            <div className="no-contact-info">
+              No contact information available for this project owner.
+            </div>
+          )}
+        </div>
+      )}
+
+      <div className="editor-header">Project Social Links</div>
+      <div className="editor-extra-info">
+        Provide the links to pages you wish to include on your project page.
       </div>
       <div className='error'>{error}</div>
 
-      <div id="project-editor-link-list">
-        {
-          modifiedProject.socials ? modifiedProject.socials.map((social, index) => {
-            return (
-              <div className="project-editor-link-item" key={`social.id-${index}`}>
-                <div className='project-link-select-wrapper'>
-                  <Select>
-                    {/* FIXME: does not default to "Select" value */}
-                    <SelectButton
-                      placeholder='Select'
-                      initialVal={social.website}
-                      className='project-link-select'
-                    />
-                    <SelectOptions
-                      callback={(e) => {
-                        if (allSocials) {
-                          // FIXME: implement website name (id?) in project socials type
-                          // Create a copy of the current social, and change it
-                          const tempSocials = modifiedProject.socials;
-                          tempSocials[index].website = e.target.value;
-
-                          // Find the correct id and assign it
-                          for (let i = 0; i < allSocials.length; i++) {
-                            if (e.target.value === allSocials[i].label) {
-                              tempSocials[index].id = allSocials[i].websiteId;
-                              break;
-                            }
-                          }
-
-                          setModifiedProject({ ...modifiedProject, socials: tempSocials });
+      <div id="editor-link-list">
+        {/* Social URL inputs */}
+        { projectAfterLinkChanges.projectSocials && projectAfterLinkChanges.projectSocials.map((social, index) => (
+          
+          <div className="editor-link-item" key={index}>
+            {/* Social type dropdown */}
+            <Select>
+              <SelectButton
+                placeholder='Select'
+                initialVal={social.label ? //silence linter, it works how it should
+                  <>
+                      <ThemeIcon
+                        width={20}
+                        height={20}
+                        id={
+                          social.label === 'Other' ? 'link' :
+                          social.label.toLowerCase()
                         }
-                      }}
-                      options={allSocials ? allSocials.map(website => {
-                        return {
-                          markup: <>
-                            {website.label === 'Other' ? (
-                              <i className='fa-solid fa-link'></i>
-                            ) : (
-                              // Itch and Twitter have uniquely named FA icons that cannot be handled the same as the others
-                              <i className={`fa-brands ${(website.label === 'Itch' ? 'fa-itch-io' : (website.label === 'X') ? 'fa-x-twitter' : `fa-${website.label.toLowerCase()}`)}`}></i>
-                            )}
-                            {website.label}
-                          </>,
-                          value: website.label,
-                          disabled: false,
-                        };
-                      }) : []}
-                    />
-                  </Select>
-                </div>
-                <div className='project-link-input-wrapper'>
-                  {/* FIXME: handle onChange to allow for editing input */}
-                  <input
-                    type="text"
-                    placeholder="URL"
-                    value={social.url}
-                    onChange={(e) => {
-                      // TO-DO: Implement some sort of security check for URLs.
-                      // Could be as simple as checking the URL matches the social media
-                      // But since 'Other' is an option, might be good to just find some
-                      // external list of suspicious sites and make sure it's not one of those.
-                      const tempSocials = modifiedProject.socials;
-                      tempSocials[index].url = e.target.value;
-                      setModifiedProject({ ...modifiedProject, socials: tempSocials });
-                      console.log(tempSocials);
-                    }}
-                  />
-                  <button
-                    className='remove-link-button'
-                    onClick={ () => {
-                      // Remove element from modified socials array
-                      console.log(index);
-                      const tempSocials = [
-                        ...modifiedProject.socials.slice(0, index),
-                        ...modifiedProject.socials.slice(index + 1)
-                      ];
-                      setModifiedProject({ ...modifiedProject, socials: tempSocials });
-                      console.log(tempSocials);
-                    }}
-                    title="Remove link"
-                  >
-                    <i className="fa-solid fa-minus"></i>
-                  </button>
-                </div>
-              </div>
-            );
-          }) : ''
-        }
+                        className={'mono-fill'}
+                        ariaLabel={social.label}
+                      />
+                      {social.label}
+                  </> as unknown as string //this is how i've silenced the linter
+                  : undefined}
+                className='link-select'
+                type={"input"}
+              />
+              <SelectOptions
+                callback={(e) => {
+                  const selectedLabel = (e.target as HTMLInputElement).value;
+                  const selectedSocial = allSocials.find(s => s.label === selectedLabel);
+                  
+                  const tempSocials = projectAfterLinkChanges.projectSocials;
+                  tempSocials[index].label = selectedLabel;
+                  tempSocials[index].websiteId = selectedSocial?.websiteId || 0;
+                  (tempSocials[index] as Pending<ProjectSocial>).localId = ++localIdIncrement; //lol it never had a local id
+                  if(selectedSocial && "localId" in social){ //so it only tries to add newly added ones
+
+                  dataManager.addSocial({
+                    id: {
+                      value: (tempSocials[index] as Pending<ProjectSocial>).localId ?? ++localIdIncrement,
+                      type: 'local'
+                    },
+                    data: tempSocials[index] as AddProjectSocialInput
+                  })
+                  projectAfterLinkChanges = {
+                    ...projectAfterLinkChanges,
+                    projectSocials: tempSocials
+                  }
+                  }
+
+                  updatePendingProject(projectAfterLinkChanges);
+                }}
+                options={allSocials ? allSocials.map(website => {
+                  return {
+                    markup:
+                    <>
+                      <ThemeIcon
+                        width={20}
+                        height={20}
+                        id={
+                          website.label === 'Other' ? 'link' :
+                          website.label.toLowerCase()
+                        }
+                        className={'mono-fill'}
+                        ariaLabel={website.label}
+                      />
+                      {website.label}
+                    </>,
+                    value: website.label,
+                    disabled: false,
+                  };
+
+                  
+                }) : []}
+              />
+            </Select>
+            {/* Social URL input 
+              /* NOTICE: there is a bit of a bug here 
+              /* if you type in the url field before selecting a media label, it won't take your input
+              /* (this is a temporary fix because it would've crashed otherwise)*/}
+            <div id="base-url">{BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}</div>
+            <Input
+              type={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "link" : "single"}
+              placeholder={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "URL" : 'Username'}
+              value={social.url && social.label ? social.url.substring(BaseSocialUrl[social.label as keyof typeof BaseSocialUrl].length) : ''}
+              onChange={(e) => {
+                // TODO: Implement some sort of security check for URLs.
+                // Could be as simple as checking the URL matches the social media
+                // But since 'Other' is an option, might be good to just find some
+                // external list of suspicious sites and make sure it's not one of those.
+                const tempSocials = projectAfterLinkChanges.projectSocials;
+                tempSocials[index].url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] + e.target.value;
+
+                if("localId" in social){
+                dataManager.addSocial({
+                  id: {
+                    type: "local",
+                    value: social.localId ?? ++localIdIncrement
+                  },
+                  data: tempSocials[index] as AddProjectSocialInput
+                })
+                }
+                else{
+                dataManager.updateSocial({
+                  id: {
+                    type: "canon",
+                    value: social.websiteId
+                  },
+                  data: {
+                    url: tempSocials[index].url
+                  }
+                })
+                }
+                updatePendingProject({ ...projectAfterLinkChanges, projectSocials: tempSocials });
+              }}
+              onClick={() => {
+                if(!("localId" in social)){
+
+                dataManager.deleteSocial({
+                  id: {
+                    type: 'canon',
+                    value: social.websiteId
+                  },
+                  data: null
+                });
+                projectAfterLinkChanges.projectSocials = 
+                  projectAfterLinkChanges.projectSocials.filter(
+                            (soc) =>
+                              social.websiteId !==
+                              soc.websiteId
+                          ); //get it outta here
+                updatePendingProject(projectAfterLinkChanges)
+                }
+              }}
+            />
+          </div>
+        ))}
         <div id="add-link-container">
           <button id="profile-editor-add-link"
             onClick={() => {
-              //addLinkInput();
-              let tempSocials = modifiedProject.socials;
-
-              // Create the socials array if it doesn't exist already
-              if (!tempSocials) {
-                tempSocials = [];
-              }
-
-              //FIXME: implement website name (id?) in project socials type
-              tempSocials.push({
-                id: 1,
-                website: 'Instagram',
-                url: '',
+              updatePendingProject({
+                ...projectAfterLinkChanges,
+                projectSocials: [...projectAfterLinkChanges.projectSocials || [], {
+                  label: '',
+                  url: '',
+                  apiUrl: "",
+                  websiteId: 0
+                }]
               });
-
-              setModifiedProject({ ...modifiedProject, socials: tempSocials });
-            }}>
+            }}
+            >
             <i className="fa fa-plus" />
             <p>Add social profile</p>
           </button>
         </div>
       </div>
       <div id="link-save-info">
-        <PopupButton buttonId="project-editor-save" callback={saveProject} doNotClose={() => !failCheck}>
-          Save Changes
-        </PopupButton>
+              <Popup>
+                <PopupButton
+                  buttonId="project-editor-save"
+                  doNotClose={() => failCheck}
+                >
+                  Save Changes
+                </PopupButton>
+                  <PopupContent useClose={false}>
+                    <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+                  <div id="confirm-editor-save">
+                 <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                   Confirm
+                 </PopupButton>
+                 <PopupButton buttonId="team-edit-member-cancel-button" >
+                   Cancel
+                 </PopupButton>
+                 </div>
+                  </PopupContent>
+              </Popup>
       </div>
     </div>
   );

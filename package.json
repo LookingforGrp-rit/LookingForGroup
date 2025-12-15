@@ -16,7 +16,7 @@
     "compose:down": "npx dotenv -- docker compose --file=./containers/docker-compose.yml down -v",
     "compose:stop": "npx dotenv -- docker compose --file=./containers/docker-compose.yml stop",
     "prisma:pull": "npx dotenv -- cross-env DATABASE_URL='mysql://$DB_USER:$DB_PASS@$DB_HOST:3306/$DB_NAME' npx prisma db pull --schema=server/prisma/schema.prisma",
-    "prisma:reset": "npx dotenv -- cross-env DATABASE_URL='mysql://$DB_USER:$DB_PASS@$DB_HOST:3306/$DB_NAME' npx prisma migrate reset --schema server/prisma",
+    "prisma:reset": "npx dotenv -- cross-env DATABASE_URL='mysql://$DB_USER:$DB_PASS@$DB_HOST:3306/$DB_NAME' npx prisma migrate reset --schema server/prisma --force",
     "prisma:generate": "npx prisma generate --schema=server/prisma/schema.prisma",
     "build:client": "npm run build --workspace=client",
     "dev": "concurrently \"npm run dev --workspace=client\" \"npm run dev --workspace=server\"",
@@ -43,6 +43,8 @@
     "seed": "tsx server/prisma/seed.ts"
   },
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
     "tsx": "^4.20.5"
   }
 }

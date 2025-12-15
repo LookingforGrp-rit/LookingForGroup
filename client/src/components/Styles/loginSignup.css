@@ -1,4 +1,10 @@
 /*
+  Styles for the login and signup pages.
+
+  1. Overall page styles
+  2. Signup process modal
+/*
+
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
 Login and Signup page style rules
@@ -82,7 +88,6 @@ Login and Signup page style rules
 .login-form h2,
 .signup-form h2 {
   font-size: 24px;
-  margin-bottom: 20px;
   font-weight: 600;
   color: var(--primary-color);
 }
@@ -478,7 +483,7 @@ Signup process modal style rules
   width: 164px;
   height: 164px;
   position: fixed;
-  display: hidden;
+  display: none;
   transition: 0.2s;
 
   button,
@@ -680,12 +685,12 @@ Signup process modal style rules
   }
 }
 
-#backPage-arrow {
+#back {
   position: absolute;
-  height: 20px;
   top: 20px;
   left: 20px;
   cursor: pointer;
+  z-index: 1;
 }
 
 @media screen and (max-width: 1020px) {

@@ -1,21 +1,62 @@
+/* Contains styles rules for the project tab in the profile editor*/
+
 #profile-editor-project-selection {
     display: grid;
     margin: 1rem 0;
-    width: auto;
-    /* width: 90%; */
+    width: 100%;
     height: auto;
     grid-template-columns: 1fr 1fr 1fr 1fr;
-    gap: 1rem;
+    gap: 20px 16px;
 }
 
 .projectTile {
-    border-radius: 15px;
+    position: relative;
     aspect-ratio: 1 / 1;
-    border: solid 2px white;
+    box-sizing: border-box;
+    overflow: hidden;
+
+    img {
+        box-sizing: border-box;
+        border-radius: 10px;
+        border: solid 2px white;
+        aspect-ratio: 1 / 1;
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .image-overlay {
+        box-sizing: border-box;
+        border-radius: 10px;
+        border: solid 2px white;
+        background-color: rgba(0, 0, 0, 0.6);
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    .project-visibility-button {
+        position: absolute;
+        bottom: 9px;
+        right: 11.5px;
+        border: none;
+        padding: 0;
+        background-color: var(--primary-color);
+        width: 30px;
+        height: 30px;
+        border-radius: 30px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
 }
 
 #profile-editor-projects {
-    overflow-y: auto;
+    height: 100%;
+    font-size: 1rem;
 }
 
 .no-projects-text {

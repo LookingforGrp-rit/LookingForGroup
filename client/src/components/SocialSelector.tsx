@@ -1,60 +1,48 @@
-//Styles
-import './Styles/credits.css';
-import './Styles/discoverMeet.css';
-import './Styles/emailConfirmation.css';
-import './Styles/general.css';
-import './Styles/loginSignup.css';
-import './Styles/messages.css';
-import './Styles/notification.css';
-import './Styles/profile.css';
-import './Styles/projects.css';
-import './Styles/settings.css';
-import './Styles/pages.css';
-import '../../public/FontAwesome/css/brands.css';
-
-import { useState, useEffect } from 'react';
-import { JSX } from 'react';
-
-interface Social {
-  id: string | number;
-  label: string;
-}
+import { JSX, useState, useEffect } from 'react';
+import { getSocials as fetchSocials } from '../api/users'; 
+import type { Social } from '@looking-for-group/shared';
 
 interface SocialSelectorProps {
-  value: string | number;
-  onChange: React.ChangeEventHandler<HTMLSelectElement>;
+  value: number; // Currently selected social media website ID
+  onChange: React.ChangeEventHandler<HTMLSelectElement>; // Change handler called when the user selects a new option
 }
 
-const getSocials = async (): Promise<Social[]> => {
-  // TODO: create error handling, try catch block
-  const response = await fetch('/api/datasets/socials');
-  const { data } = await response.json();
-  return data;
-};
+/**
+ * Renders a dropdown menu for selecting a social media platform.
+ * Fetches available socials from the API on mount and populates the select options.
+ *
+ * @param value - Currently selected social website ID
+ * @param onChange - Change handler called when the user selects a new option
+ * @returns JSX element containing a select dropdown of social platforms
+ */
+export const SocialSelector = ({ value, onChange}: SocialSelectorProps): JSX.Element => {
+  // Stores the list of social platforms fetched from the API
+  const [socials, setSocials] = useState<Social[]>([]);
 
-export const SocialSelector: React.FC<SocialSelectorProps> = (props) => {
-const [options, setOptions] = useState<JSX.Element[] | null>(null);
-
+  /**
+   * Fetches the list of social platforms on component mount.
+   * Updates the `socials` state with the fetched data.
+   */
   useEffect(() => {
-    const setUpSocialSelector = async () => {
-      const socials = await getSocials();
-      const selectorOptions = socials.map((social, i) => {
-        if(`${props.value}` === `${i}`) {
-          console.log('Social Website:');
-          console.log(social.label.toLowerCase());
-          
-          return <option value={social.id} key={`${social.id}-${social.label}`} selected>{/*<i className={`fa-brands fa-${social.label.toLowerCase()}`}></i>*/}{social.label}</option>;
-        }
-        return <option value={social.id} key={`${social.id}-${social.label}`}>{/*<i className={`fa-brands fa-${social.label.toLowerCase()}`}></i>*/}{social.label}</option>;
-      });
-      setOptions(selectorOptions);
+    const fetchData = async () => {
+      const data = await fetchSocials();
+      if(data.data) setSocials(data.data);
     };
-    setUpSocialSelector();
+    fetchData();
   }, []);
 
   return (
     <div className="editor-input-item">
-      <select id="profile-editor-social" onChange={props.onChange}>{options}</select>
+      <select id="profile-editor-social" onChange={onChange}>
+        {socials.map((social) => (
+          <option
+            key={`${social.websiteId}-${social.label}`}
+            value={social.websiteId}
+          >
+            {social.label}
+          </option>
+        ))}
+      </select>
     </div>
   );
 };

@@ -1,35 +1,35 @@
-import '../Styles/pages.css';
-
 import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
-import { sendPost, fetchUserID, sendDelete, sendPut } from '../../functions/fetch';
+//import { sendPost, sendDelete, sendPut } from '../../functions/fetch';
 import { Popup, PopupButton, PopupContent } from '../Popup';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
-import { useId, useState, useContext, useLayoutEffect } from 'react';
+import { useState, useContext, SetStateAction } from 'react';
 import { Header } from '../Header';
 import CreditsFooter from '../CreditsFooter';
-import PasswordValidator from 'password-validator';
+//import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
-import { getUserByEmail, getUserByUsername, getAccountInformation } from '../../api/users';
+import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser } from '../../api/users';
+import { MePrivate, UpdateUserInput } from '@looking-for-group/shared';
+type JsonData = Record<string, unknown>;
 
 // Take the user ID and delete it
 const deleteAccountPressed = async () => {
-  // console.log('Delete Pressed!');
-  const userID = await fetchUserID();
-  await sendDelete(`/api/users/${userID}`, async () => {
-    await sendPost('/api/logout');
-  });
+  await deleteUser();
 };
 
+/**
+ * Settings page. Renders the settings page interface with options for updating user account information, appearance preferences, and account settings
+ * @returns JSX Element
+ */
 const Settings = () => {
   // --------------------
   // Global variables
   // --------------------
   // Variables regarding pulling user data
   const [dataLoaded, setDataLoaded] = useState(false);
-  const [userInfo, setUserInfo] = useState(undefined);
+  const [userInfo, setUserInfo] = useState<MePrivate>();
 
   const navigate = useNavigate();
 
@@ -45,20 +45,17 @@ const Settings = () => {
   // Helper functions
   // --------------------
 
-  // Function needed to check password!
-  // Function needed to check field validity (e.g. is this actually an email?)
+  // TODO: Function needed to check password!
+  // TODO: Function needed to check field validity (e.g. is this actually an email?)
 
-  // Checks if user is logged in and pulls all relevant data
+  /**
+   * Checks if user is logged in and pulls all relevant data
+   */
   const getUserData = async () => {
-    const authResponse = await fetch('/api/auth');
-    const authData = await authResponse.json();
-
-    // User is logged in, pull their data
-    if (authData.status === 200) {
-      const data = await getAccountInformation(authData.data);
-      if (data.status === 200 && data.data[0] !== undefined) {
-        setUserInfo(data.data[0]);
-      }
+    // authentication
+    const acc = await getCurrentAccount();
+    if ( !acc.error && acc.data) {
+      setUserInfo(acc.data);
     }
 
     // Don't call API again even if user isn't logged in
@@ -78,89 +75,97 @@ const Settings = () => {
   // --------------------
   // Components:
   // --------------------
+  /**
+   * Component that displays confirmation dialog when changing username, email, or password
+   * @param type Indicated what is bring changed: username, primary email, or password.
+   * @param prev Previous value
+   * @param cur New value
+   * @param apiParams Objects with parameters for API call
+   * @param setError Function to set error message in parent component
+   * @param setSuccess Function to set success message in parent component
+   * @returns 
+   */
+  const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess } : 
+    {type: string, prev: string, cur: string, apiParams: JsonData, setError: React.Dispatch<SetStateAction<string>>, setSuccess: React.Dispatch<SetStateAction<string>>}) => {
+    //const [password, setPassword] = useState('');
 
-  // Confirmation for changed settings
-const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }) => {
-  const [password, setPassword] = useState('');
+    // git merge 07/24/2025: Yevhenii Shyshko
+    // possible last three lines need to be deleted
+    return (
+      <div className="small-popup">
+        <h3>Confirm {type}{type === 'Phone' ? ' Number' : ''} Change</h3>
+        <p className="confirm-msg">
+          Are you sure you want to change your {type.toLowerCase()}
+          {type === 'Phone' ? (<span> number</span>) : (<></>)}
+          {prev !== '' ? (
+            <span>
+              &#32;{' '}from{' '}
+              <span className="confirm-change-item">{type === 'Username' ? `@${prev}` : prev}</span>
+            </span>
+          ) : (<></>)}
+          {cur !== '' ? (
+            <span>
+              &#32;{' '}to{' '}
+              <span className="confirm-change-item">{type === 'Username' ? `@${cur}` : cur}</span>
+            </span>
+          ) : (<></>)}
+          ?
+        </p>
 
-              const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
-              const url = `/api/users/${userInfo.userId}/${typeToChange}`;
-              const response =  sendPut(url, apiParams, onSuccess);            // possible break
+        {/* Password confirmation input (we don't have passwords) */}
+        {/* <div className="input-group">
+          <label htmlFor="password">Enter your password to confirm:</label>
+          <input
+            type="password"
+            id="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="confirm-password-input"
+            placeholder="Password"
+          />
+        </div> */}
 
+        <div className="confirm-deny-btns">
+          <PopupButton
+            className="confirm-btn"
+            callback={async () => {
+              // If password is empty, show error and abort submission
+              // if (!password.trim()) {
+              //   setError('Password is required to confirm this change.');
+              //   return;
+              // }
 
-  // git merge 07/24/2025: Yevhenii Shyshko
-  // possible last three lines need to be deleted
-  return (
-    <div className="small-popup">
-      <h3>Confirm {type}{type === 'Phone' ? ' Number' : ''} Change</h3>
-      <p className="confirm-msg">
-        Are you sure you want to change your {type.toLowerCase()}
-        {type === 'Phone' ? (<span> number</span>) : (<></>)}
-        {prev !== '' ? (
-          <span>
-            &#32;{' '}from{' '}
-            <span className="confirm-change-item">{type === 'Username' ? `@${prev}` : prev}</span>
-          </span>
-        ) : (<></>)}
-        {cur !== '' ? (
-          <span>
-            &#32;{' '}to{' '}
-            <span className="confirm-change-item">{type === 'Username' ? `@${cur}` : cur}</span>
-          </span>
-        ) : (<></>)}
-        ?
-      </p>
+              const onSuccess = () => {
+                setSuccess(`Your ${type.toLowerCase()} has been updated!`);
+                location.reload();
+              };
 
-      {/* Password confirmation input */}
-      <div className="input-group">
-        <label htmlFor="password">Enter your password to confirm:</label>
-        <input
-          type="password"
-          id="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="confirm-password-input"
-          placeholder="Password"
-        />
+              //this sendPut is only being annoying tbh
+              const response = await editUser(apiParams);
+
+              // If it returns back with an error, display it on parent popup
+              if (response !== undefined && response.error) {
+                setError(response.error);
+              }
+              else if(response.data) onSuccess();
+            }}
+          >
+            Submit
+          </PopupButton>
+
+          <PopupButton className="deny-btn">Cancel</PopupButton>
+        </div>
       </div>
+    );
+  };
 
-      <div className="confirm-deny-btns">
-        <PopupButton
-          className="confirm-btn"
-          callback={async () => {
-            // If password is empty, show error and abort submission
-            if (!password.trim()) {
-              setError('Password is required to confirm this change.');
-              return;
-            }
-
-            const onSuccess = (status) => {
-              // setSuccess(`Your ${type.toLowerCase()} has been updated!`);
-              location.reload();
-            };
-
-            const typeToChange = type === 'Primary Email' ? 'email' : type.toLowerCase();
-            const url = `/api/users/${userInfo.user_id}/${typeToChange}`;
-
-            // Include password in apiParams when sending request
-            const response = await sendPut(url, { ...apiParams, password }, onSuccess);
-
-            // If it returns back with an error, display it on parent popup
-            if (response !== undefined && response.error) {
-              setError(response.error);
-            }
-          }}
-        >
-          Submit
-        </PopupButton>
-
-        <PopupButton className="deny-btn">Cancel</PopupButton>
-      </div>
-    </div>
-  );
-};
+  /**
+   * Form component for editing account information based on the provided type
+   * @param type Indicates which form to display: username, primary email, or password.
+   * @returns JSX Element
+   */
   // User form for changing username/password/email
-  const ChangeForm = ({ type }) => {
+  const ChangeForm = ({ type } : {type: string}) => {
     // Variables
     const [errorMsg, setError] = useState('');
     const [successMsg, setSuccess] = useState('');
@@ -169,65 +174,68 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
     // Latter two fields do not change in name
     const [firstParam, setFirstParam] = useState('');
     const [confirm, setConfirm] = useState('');
-    const [password, setPassword] = useState('');
+    //const [password, setPassword] = useState('');
 
     // Check password qualtiy, if attempting to change password
-    const PasswordChecker = ({ pass }) => {
-      const [missingReqs, setMissingReqs] = useState([]);
+    //no passwords
+    // const PasswordChecker = ({ pass }) => {
+    //   const [missingReqs, setMissingReqs] = useState([]);
 
-      const schema = new PasswordValidator();
-      schema
-        .is()
-        .min(8, '8 or more characters')
-        .is()
-        .max(20, 'Must be 20 characters or fewer')
-        .has()
-        .uppercase(1, 'An uppercase letter')
-        .has()
-        .lowercase(1, 'A lowercase letter')
-        .has()
-        .digits(1, 'A number')
-        .has()
-        .symbols(1, 'A symbol')
-        .has()
-        .not()
-        .spaces(1, 'May not contain any spaces')
-        .has()
-        .not('[^\x00-\x7F]+', 'May only use ASCII characters');
+    //   const schema = new PasswordValidator();
+    //   schema
+    //     .is()
+    //     .min(8, '8 or more characters')
+    //     .is()
+    //     .max(20, 'Must be 20 characters or fewer')
+    //     .has()
+    //     .uppercase(1, 'An uppercase letter')
+    //     .has()
+    //     .lowercase(1, 'A lowercase letter')
+    //     .has()
+    //     .digits(1, 'A number')
+    //     .has()
+    //     .symbols(1, 'A symbol')
+    //     .has()
+    //     .not()
+    //     .spaces(1, 'May not contain any spaces')
+    //     .has()
+    //     .not('[^\x00-\x7F]+', 'May only use ASCII characters');
 
-      useLayoutEffect(() => {
-        const output = schema.validate(pass, { details: true });
-        setMissingReqs(output);
-      }, [pass]);
+    //   useLayoutEffect(() => {
+    //     const output = schema.validate(pass, { details: true });
+    //     setMissingReqs(output);
+    //   }, [pass]);
 
-      if (missingReqs.length === 0) {
-        return <></>;
-      } else {
-        return (
-          <div className="pass-reqs">
-            <h4>Password Requirements</h4>
-            <ul>
-              {missingReqs.map((req) => {
-                return <li>{req.message}</li>;
-              })}
-            </ul>
-          </div>
-        );
-      }
-    };
+    //   if (missingReqs.length === 0) {
+    //     return <></>;
+    //   } else {
+    //     return (
+    //       <div className="pass-reqs">
+    //         <h4>Password Requirements</h4>
+    //         <ul>
+    //           {missingReqs.map((req) => {
+    //             return <li>{req.message}</li>;
+    //           })}
+    //         </ul>
+    //       </div>
+    //     );
+    //   }
+    // };
 
     // Set up params to be correctly passed into API
-    let apiParams = { confirm, password };
+    const apiParams: UpdateUserInput = {} as UpdateUserInput;
     switch (type) {
-      case 'Username':
-        apiParams['username'] = firstParam;
-        break;
-      case 'Primary Email':
-        apiParams['email'] = firstParam;
-        break;
-      case 'Password':
-        apiParams['newPassword'] = firstParam;
-        break;
+      // case 'Username':
+      //   apiParams['username'] = firstParam;
+      //   break;
+      // case 'Primary Email':
+      //   apiParams['email'] = firstParam;
+      //   break;
+      // case 'Password':
+      //   apiParams['newPassword'] = firstParam;
+      //   break;
+      case 'Phone':
+        apiParams['phoneNumber'] = firstParam;
     }
 
     return (
@@ -241,15 +249,18 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
             if (type !== 'Password') {
               // Create deep copy of object, make changes, then call state update
               const tempInfo = { ...userInfo };
-              tempInfo[type.replace(' ', '_').toLowerCase()] = firstParam;
+              
+              tempInfo[type.replace(' ').toLowerCase() as string] = firstParam;
+              
 
               setUserInfo(tempInfo);
+              //this isn't really needed but i'm gonna leave it anyway
             }
           }
         }}
       >
         <h3>Edit {type}{type === 'Phone' ? ' Number' : ''}</h3>
-        {type === 'Password' ? <PasswordChecker pass={firstParam} /> : <></>}
+        {/*type === 'Password' ? <PasswordChecker pass={firstParam} /> : <></>*/}
         <div className="error">{errorMsg}</div>
         {errorMsg === '' && successMsg !== '' ? <div className="success">{successMsg}</div> : <></>}
         <hr />
@@ -271,22 +282,23 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                   }
 
                   // Email format validation
-                  if (type === 'Primary Email') {
-                    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    if (!emailRegex.test(value)) {
-                      setError('*Please enter a valid email address.');
-                      return;
-                    }
-                  }
+                  // if (type === 'Primary Email') {
+                  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  //   if (!emailRegex.test(value)) {
+                  //     setError('*Please enter a valid email address.');
+                  //     return;
+                  //   }
+                  // }
 
                   // Username format validation
-                  if (type === 'Username') {
-                    const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-                    if (!usernameRegex.test(value)) {
-                      setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
-                      return;
-                    }
-                  }
+                  //we don't have usernames anymore
+                  // if (type === 'Username') {
+                  //   const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+                  //   if (!usernameRegex.test(value)) {
+                  //     setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
+                  //     return;
+                  //   }
+                  // }
 
                   // Phone number format validation
                   if (type === 'Phone') {
@@ -302,21 +314,22 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                 onBlur={async () => {
                   // TO-DO: Check if already in use if username
                   // or primary email address. Excludes password
+                  //don't actually todo this these are not used anymore
                   
-                    if (type === 'Primary Email') {
-                      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                      if (!emailRegex.test(firstParam)) {
-                        setError('*Please enter a valid email address.');
-                        return;
-                      }
-                    }
-                    if (type === 'Username') {
-                      const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-                      if (!usernameRegex.test(firstParam)) {
-                        setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
-                        return;
-                      }
-                    }
+                    // if (type === 'Primary Email') {
+                    //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                    //   if (!emailRegex.test(firstParam)) {
+                    //     setError('*Please enter a valid email address.');
+                    //     return;
+                    //   }
+                    // }
+                    // if (type === 'Username') {
+                    //   const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+                    //   if (!usernameRegex.test(firstParam)) {
+                    //     setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
+                    //     return;
+                    //   }
+                    // }
                     if (type === 'Phone') {
                       const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
                       if (!phoneRegex.test(firstParam)) {
@@ -328,9 +341,9 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                     if (type !== 'Password') {
                     let data;
                     if (type ==='Username')   data = await getUserByUsername(firstParam);
-                    else                      data = await getUserByEmail(firstParam);
+                    if(type === 'Email')      data = await getUserByEmail(firstParam);
 
-                    if (data.length > 0) {
+                    if (data?.data) {
                       setError(`*${type} is already in use.`);
                     }
                   }
@@ -358,8 +371,8 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
               />
             </form>
           </div>
-          <div className="input-container">
-            {/* autoComplete to prevent browser autofill */}
+          {/* <div className="input-container">
+            { autoComplete to prevent browser autofill }
             <form autoComplete="off">
               <input
                 placeholder="Current password"
@@ -367,7 +380,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                 onChange={(e) => setPassword(e.target.value)}
               />
             </form>
-          </div>
+          </div> */}
         </div>
         <div className="confirm-deny-btns">
           {/*Enabling the confirmation button:*/}
@@ -404,7 +417,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
               <PopupContent>
                 <ConfirmChange
                   type={type}
-                  prev={type === 'Username' ? userInfo.username : ''}
+                  prev={type === 'Username' ? userInfo!.username : ''}
                   cur={type !== 'Password' ? firstParam : ''}
                   apiParams={apiParams}
                   setError={setError}
@@ -419,11 +432,10 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
     );
   };
 
-
-  // Makes request to API to update user's visibility
-  // Visibility num corresponds to private vs public
-  // 0 - private
-  // 1 - public
+  /**
+   * Updates account visibility setting.
+   * @param visibilityNum Visibilty setting: 0 for private, 1 for public.
+   */
   // const updateVisibility = async (visibilityNum) => {
   //   // Don't run if the value hasn't changed
   //   if (visibilityNum !== userInfo.visibility) {
@@ -457,7 +469,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
       <div id="settings-page">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h1 className="page-title">Settings</h1>
-          <Header hideSearchBar />
+          <Header dataSets={[]} onSearch={() => {}} hideSearchBar />
         </div>
         <hr />
         {userInfo === undefined ? (
@@ -466,7 +478,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
           <div>
             {/* Top Row: Personal and Email Settings */}
             <div className="settings-row">
-              {/* Personal Settings */}
+              {/* Personal Settings 
               <div className="settings-column">
                 <h2 className="settings-header">Personal</h2>
                 <div className="subsection">
@@ -503,10 +515,10 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                     </Popup>
                   </div>
                 </div>
-              </div>
+              </div> */}
               {/* Email Settings */}
               <div className="settings-column">
-                <h2 className="settings-header">Emails</h2>
+                <h2 className="settings-header">Email</h2>
                 <div className="subsection">
                   <label htmlFor="option-rit-email">RIT Email</label>
                   <div className="input-container disabled">
@@ -567,7 +579,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                       <div id="options-theme-dropdown">
                         <DropdownButton
                           className="options-dropdown-button start"
-                          callback={(e) => {
+                          callback={(e: { target: { innerText: SetStateAction<string>; }; }) => {
                             setTheme('light');
                             setThemeOption(e.target.innerText);
                           }}
@@ -577,7 +589,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                         </DropdownButton>
                         <DropdownButton
                           className="options-dropdown-button"
-                          callback={(e) => {
+                          callback={(e: { target: { innerText: SetStateAction<string>; }; }) => {
                             setTheme('dark');
                             setThemeOption(e.target.innerText);
                           }}
@@ -587,7 +599,7 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                         </DropdownButton>
                         <DropdownButton
                           className="options-dropdown-button end"
-                          callback={(e) => {
+                          callback={(e: { target: { innerText: SetStateAction<string>; }; }) => {
                             // Checks for system theme preference
                             if (
                               window.matchMedia &&
@@ -659,6 +671,9 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                     </DropdownContent>
                   </Dropdown>
                 </div> */}
+              </div>
+            </div>
+              <div className="settings-row">
                 {/* Account Deletion */}
                 <div className="subsection">
                   <Popup>
@@ -680,7 +695,6 @@ const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSucc
                   </Popup>
                 </div>
               </div>
-            </div>
           </div>
         )}
       </div>

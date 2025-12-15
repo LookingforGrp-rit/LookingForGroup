@@ -1,7 +1,9 @@
 /*
-Table of Contents
-General Style rules
-Component Style rules
+  General style rules that are applied across all pages.
+
+  Table of Contents:
+  General Style rules
+  Component Style rules
     -Card components
     -Tags
     -Button components
@@ -10,15 +12,17 @@ Component Style rules
     -Header
     -Search
     -Dropdown
-    - Select
+    -Select
+    -Input
     -Scrollbar
     -Tag Filter
     -Image carousel
     -Scroll to top
+    -Theme Icons
 
-see: pages.css for the rules that format the page itself
-     index.css for fonts
-     makeAvatar.css for avatar creation
+  see: pages.css for the rules that format the page itself
+    index.css for fonts
+    makeAvatar.css for avatar creation
 */
 
 /*
@@ -68,7 +72,7 @@ General style rules
 
   /* tags */
   --tag-red-selected: #ffa0b0;
-  --tag-orange-selected: #ffa381;
+  --tag-orange-selected: #ffa281;
   --tag-yellow-selected: #ffcf8b;
   --tag-green-selected: #bed9aa;
   --tag-blue-selected: #b0dcee;
@@ -84,7 +88,7 @@ General style rules
   --tag-grey-unselected: #0e0e0e;
 
   --tag-red-unselected-border: #ffa0b0;
-  --tag-orange-unselected-border: #ffa381;
+  --tag-orange-unselected-border: #ffa281;
   --tag-yellow-unselected-border: #ffcf8b;
   --tag-green-unselected-border: #bed9aa;
   --tag-blue-unselected-border: #b0dcee;
@@ -94,7 +98,7 @@ General style rules
   --tag-text-selected: black;
 
   --tag-text-unselected-red: #ffa0b0;
-  --tag-text-unselected-orange: #ffa381;
+  --tag-text-unselected-orange: #ffa281;
   --tag-text-unselected-yellow: #ffcf8b;
   --tag-text-unselected-green: #bed9aa;
   --tag-text-unselected-blue: #b0dcee;
@@ -140,7 +144,7 @@ General style rules
 
   /* tags */
   --tag-red-selected: #ffa0b0;
-  --tag-orange-selected: #ffa381;
+  --tag-orange-selected: #ffa281;
   --tag-yellow-selected: #ffcf8b;
   --tag-green-selected: #bed9aa;
   --tag-blue-selected: #b0dcee;
@@ -228,6 +232,12 @@ section {
   box-shadow: 10px 10px 5px lightblue;
 }
 
+/* Content areas to take up entire height of viewport
+   to push the Footer to the bottom */
+.my-projects-grid, .my-projects-list, #discover-panel-box {
+  min-height: 50vh;
+}
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -281,25 +291,6 @@ Card component style rules
   }
 }
 
-#discover-card-body {
-  margin-left: 10%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-evenly;
-  grid-template-rows: 10% 50% 30% 10%;
-  font-size: 0.8rem;
-}
-
-/*make them grow and shrink with the window */
-#discover-card-body>* {
-  flex: 1;
-}
-
-#message-card #discover-card-body {
-  margin-top: 0%;
-  padding-bottom: 5%;
-}
-
 #profile-project-body {
   display: flex;
   flex-flow: row wrap;
@@ -331,7 +322,6 @@ Card component style rules
 }
 
 /*profile picture rules-----------------------------------------------------*/
-#discover-card-profile-picture,
 #profile-project-profile-picture,
 #endorsement-profile-picture {
   width: 100%;
@@ -347,42 +337,9 @@ Card component style rules
   width: 60%;
 }
 
-#message-card #discover-card-profile-picture {
-  width: 110%;
-  margin-top: 15%;
-}
-
 /*text rules---------------------------------------------------------------*/
-#discover-card-name {
-  text-align: center;
-  margin-bottom: 0;
-}
-
-#message-card #discover-card-name {
-  text-align: left;
-}
-
-#discover-card-name:hover,
 #profile-project-name:hover {
   text-decoration: underline;
-}
-
-#discover-card-description {
-  margin-top: 0;
-  max-width: 450px;
-}
-
-#discover-card-tag-wrapper {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
-  gap: 4px;
-  max-width: 450px;
-}
-
-#discover-card-pronouns {
-  margin-top: 0%;
-  text-align: center;
 }
 
 /*
@@ -707,9 +664,15 @@ Sidebar Nav style rules
   color: var(--create-bg);
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
   transition: 0.25s;
+  border: 2px solid var(--create-bg);
 
-  img {
-    filter: invert(1) saturate(0) brightness(2);
+  svg {
+    filter: invert(1) saturate(0) brightness(0.5);
+    transition: 0.25s;
+  }
+  p {
+    color: var(--create-bg);
+    transition: 0.25s;
   }
 }
 
@@ -894,14 +857,9 @@ Page popup style rules
   padding: 8px 18px 0px 0px;
 }
 
-.popup-close.popup-close-edit {
-  right: -4%;
-}
-
 @media screen and (max-width: 1180px) {
   .popup-close, .popup-close.popup-close-edit {
     margin: 0 8px 0 0 !important;
-    right: 1%;
   }
 }
 
@@ -1217,19 +1175,38 @@ Header style rules
   border: none;
   padding: 10px;
   /* color: var(--primary-color); */
+  hr {
+    border: 0;
+    height: 2px;
+    background: var(--header-color);
+  }
 }
 
-#header-profile-user {
+#header-profile-dropdown > #header-profile-user {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  justify-content: center;
+  gap: 14px;
   font-size: 16px;
-}
 
-#header-profile-email {
-  font-style: italic;
-  font-size: smaller;
-  color: var(--main-text);
+  > #header-profile-user-info {
+    display: flex;
+    flex-direction: column;
+    width: fit-content;
+    text-align: left;
+
+    #header-profile-username {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin: 0;
+    }
+    #header-profile-email {
+      font-style: italic;
+      font-size: 12px;
+      color: var(--main-text);
+      margin: 0;
+    }
+  }
 }
 
 #header-profile-dropdown img {
@@ -1381,9 +1358,45 @@ Select style rules
 .select-container {
   position: relative;
   width: 100%;
+  border-radius: 10px;
 }
 
+/* Universal styles for Select component */
 .select {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  height: 45px;
+  padding: 15px 15px;
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  font-size: 15px;
+}
+.select::placeholder {
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+/* Determines background color for Select component */
+.select-button-dropdown {
+  background-color: var(--header-color);
+}
+.select-button-input {
+  background-color: var(--bg-color);
+}
+
+/* Arrow icon orientation */
+.select-button-arrow {
+  transform: scale(1, 1);
+}
+.select-button-arrow.opened {
+  transform: scale(1, -1);
+}
+
+/* Container for Select options */
+.select-options {
   width: 100%;
   border-radius: 10px;
   position: absolute;
@@ -1394,46 +1407,10 @@ Select style rules
   /* Limit height to ten items, maybe less */
   max-height: 450px;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
-.select-button {
-  min-width: 166px;
-  min-height: 45px;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  border: none;
-  border-radius: 10px;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  background-color: var(--header-color);
-  padding: 15px 15px;
-  font-size: 15px;
-
-  .value {
-    display: flex;
-    flex-direction: row;
-    gap: 15px;
-    align-items: center;
-  }
-
-  .placeholder {
-    color: var(--neutral-gray);
-    font-style: italic;
-  }
-}
-
-.select-button-arrow {
-  width: 12px;
-  height: 8px;
-  transform: scale(1, 1);
-}
-
-.select-button-arrow.opened {
-  transform: scale(1, -1);
-}
-
+/* Individual options for Select component */
 .select-option {
   min-width: 166px;
   min-height: 45px;
@@ -1447,24 +1424,25 @@ Select style rules
   flex-direction: row;
   align-items: center;
   cursor: pointer;
-  gap: 15px;
+  gap: 8px;
+  text-align: left;
 }
-
 .select-option:disabled {
   background-color: var(--tag-grey-unselected);
   color: var(--neutral-gray);
   cursor: not-allowed;
 }
-
 .select-option:hover {
   background-color: var(--primary-color);
   color: var(--invert-text);
-
-  .fa,
-  .fa-solid,
-  .fa-regular,
-  .fa-brands {
-    color: var(--invert-text) !important;
+  
+  .mono-stroke use {
+    /* Important overrides theme specificity */
+    stroke: var(--invert-text) !important;
+  }
+  .mono-fill use {
+    /* Important overrides theme specificity */
+    fill: var(--invert-text) !important;
   }
 }
 
@@ -1472,11 +1450,111 @@ Select style rules
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
-
 .select-option.bottom {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
+
+.placeholder {
+  color: var(--neutral-gray);
+  font-style: italic;
+  text-align: left;
+}
+
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+------------------------------------------------------------------------------------------------
+Input style rules
+------------------------------------------------------------------------------------------------
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
+*/
+
+/* Universal styling for all input types */
+.input {
+  min-height: 45px;
+  font-size: 15px;
+  padding-left: 15px;
+  background: var(--bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  flex-grow: 1;
+}
+.input::placeholder {
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+/* Container for textarea and character count */
+.input-multiline-container {
+  display: flex;
+  flex-grow: 1;
+}
+
+/* Paired with character limit */
+.input-multiline {
+  padding: 15px;
+}
+
+/* Link wrapper */
+.input-link-wrapper {
+  position: relative;
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
+/* Link input remove button */
+.input-link-remove {
+  position: absolute;
+  width: 23px;
+  height: 23px;
+  right: 12px;
+  background-color: var(--primary-color);
+  border: none;
+  border-radius: 50%;
+  transition: .15s;
+
+  >.fa-minus {
+    color: var(--invert-text);
+  }
+}
+.input-link-remove:hover {
+  background-color: var(--error-delete-color) !important;
+  cursor: pointer;
+}
+
+/* Combo box label */
+.input-combo-label {
+  color: var(--primary-color);
+  font-size: 20px;
+  font-weight: 600;
+}
+
+/* Details underneath label */
+.label-info {
+  font-size: 14px;
+  color: var(--neutral-gray);
+  font-style: italic;
+  margin-top: 2px;
+}
+
+.label-input-box {
+  display: flex;
+  flex-direction: column;
+
+  .input, .select {
+    margin-top: 10px;
+  }
+}
+.label-input-box textarea {
+  flex: 1 1 auto;
+}
+
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1595,10 +1673,6 @@ Image Carousel style rules
 
   animation: fadeIn 0.15s ease-in-out;
 
-  img {
-    width: 20px;
-    rotate: 180deg;
-  }
 }
 
 .to-top-button:hover {
@@ -1677,6 +1751,7 @@ Theme Icons style rules
 /* Monochrome SVGs */
 [data-theme="light"] .mono-stroke use,
 [data-theme="dark"] button.active .mono-stroke use,
+[data-theme="dark"] .mono-stroke-invert use,
 /* Where is this used? */
 .theme-light .svg-color-icon {
   stroke: black;
@@ -1684,6 +1759,7 @@ Theme Icons style rules
 
 [data-theme="dark"] .mono-stroke use,
 [data-theme="light"] button.active .mono-stroke use,
+[data-theme="light"] .mono-stroke-invert use,
 /* Where is this used? */
 .theme-dark .svg-color-icon {
   stroke: white;
@@ -1728,11 +1804,28 @@ Theme Icons style rules
   fill: var(--modal-gradient-start);
 }
 
-.empty-heart > use {
-  fill: white;
+/* Star SVG (Following icon and Thumbnail indicator) */
+.star {
+  top: 9px;
 }
-.filled-heart > use {
-  fill: #F14F76;
+
+.empty-star > use {
+  fill: none;
+  stroke: var(--invert-text);
+}
+.project-image-hover > .filled-star > use,
+.star:hover > use {
+  fill: var(--invert-text);
+  stroke: var(--invert-text);
+}
+
+/* Only have shadow on image itself,  */
+:not(.project-image-hover) > .filled-star {
+  filter: drop-shadow(0px 0px 10px rgb(0, 0, 0, 0.75));
+}
+.filled-star > use {
+  fill: var(--main-text);
+  stroke: var(--main-text);
 }
 
 /* Fallback using CSS media queries */

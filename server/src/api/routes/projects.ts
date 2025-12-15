@@ -30,19 +30,13 @@ export const authenticated = (
 router.get('/', PROJECT.getProjects);
 
 //Create a new project
-router.post(
-  '/',
-  requiresLogin,
-  injectCurrentUser,
-  upload.single('thumbnail'),
-  authenticated(PROJECT.createProject),
-);
+router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
 
 //Get a specific project
 router.get('/:id', PROJECT.getProjectByID);
 
 //Get a specific project's members
-router.get('/:id', projectExistsAt('path', 'id'), PROJECT.getMembers);
+router.get('/:id/members', projectExistsAt('path', 'id'), PROJECT.getMembers);
 
 //Edits a project through a specific id
 router.patch(
@@ -51,7 +45,6 @@ router.patch(
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
-  upload.single('thumbnail'),
   authenticated(PROJECT.updateProject),
 );
 
@@ -104,7 +97,7 @@ router.delete(
   PROJECT.removeImage,
 );
 //Reorders a project's images
-//is this really even needed...
+//position parameter...
 router.put(
   '/:id/images/reorder',
   requiresLogin,
@@ -112,6 +105,31 @@ router.put(
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.reorderImages,
+);
+
+// THUMBNAIL ROUTES
+
+//Gets a project's thumbnail
+router.get('/:id/thumbnail', projectExistsAt('path', 'id'), PROJECT.getThumbnail);
+
+//Updates a project's thumbnail
+router.put(
+  '/:id/thumbnail',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.updateThumbnail,
+);
+
+//Deletes a project's thumbnail
+router.delete(
+  '/:id/thumbnail',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  authenticated(PROJECT.removeThumbnail),
 );
 
 // MEDIUMS ROUTES
@@ -242,14 +260,14 @@ router.post(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
-  attributeExistsAt('tag', 'path', 'tagId'),
+  attributeExistsAt('tag', 'body', 'tagId'),
   authenticated(requiresProjectOwner),
   PROJECT.addTags,
 );
 
 // JOBS ROUTES
 
-// creates a new project job
+// gets all of a project's jobs
 router.get('/:id/jobs', projectExistsAt('path', 'id'), PROJECT.getJobsController);
 // creates a new project job
 router.post(

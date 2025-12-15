@@ -1,51 +1,51 @@
-import '../Styles/pages.css';
-import '../Styles/projects.css';
-import '../Styles/general.css'
-
-// import { MyProjectsDisplay } from "../MyProjectsDisplay";
 // import { profiles } from "../../constants/fakeData";
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useState, useMemo } from 'react';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
 import MyProjectsDisplayList from '../MyProjectsDisplayList';
 import MyProjectsDisplayGrid from '../MyProjectsDisplayGrid';
 import { Header } from '../Header';
-import { ThemeImage } from '../ThemeIcon';
+import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import { Select, SelectButton, SelectOptions } from '../Select';
 import { LeaveDeleteContext } from '../../contexts/LeaveDeleteContext';
 
 import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEditor';
-import { User } from '../Sidebar'; // For use with project creation button
 
 //import api utils
-import { getCurrentUsername } from '../../api/users.ts'
+import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
+import { ProjectDetail} from '@looking-for-group/shared';
 
+/**
+ * My Projects page. Creates a customizable page that showcases the user's projects.
+ * @returns JSX Element
+ */
 const MyProjects = () => {
 
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
 
   // Taken from Sidebar.tsx
-  const [userData, setUserData] = useState<User>();
 
   // const [UID, setUID] = useState(profiles[0]._id);
   // const [activePage, setActivePage] = useState(0);
 
   // const [isDeletePopupOpen, setIsDeletePopupOpen] = useState(false);
 
+  // Type of display used. Can be grid or list
   const [displayMode, setDisplayMode] = useState('grid');
-  // Can be:
-  // - grid
-  // - list
+
+  // Type of sort for items. Can be newest, oldest, A-Z, or Z-A
   const [sortMethod, setSortMethod] = useState('newest');
-  // Can be:
-  // - newest
-  // - oldest
-  // - a-z
-  // - z-a
-  const [projectsList, setProjectsList] = useState();
+  
+  // List of user's projects
+  const [projectsList, setProjectsList] = useState<ProjectDetail[]>([]);
+
+  // Projects filtered by search
+  const [filteredProjects, setFilteredProjects] = useState<ProjectDetail[]>([]);
+
+  // Current search query
   const [currentSearch, setCurrentSearch] = useState('');
+
   // const [bannerImage, setBannerImage] = useState(require("../../images/projects_header_light.png"));
 
   // Here to prevent reloading data after every re-render
@@ -57,22 +57,22 @@ const MyProjects = () => {
   // --------------------
   // Helper functions
   // --------------------
-  // Checks if user is logged in and pulls all relevant data
+  /**
+   * Checks if user is logged in and pulls all relevant data
+   */
   const getUserProjects = async () => {
     try {
       const res = await getCurrentUsername();
 
-
       // User is logged in, pull their data
-      if (res.status === 200 && res.data?.username && res.data.user_id) {
+      if (res.data) {
         setLoggedIn(res.data.userId);
-        const projectsURL = `/api/users/${res.data.userId}/projects`;
-        const projectsRes = await fetch(projectsURL);
-        const data = await projectsRes.json();
+        const projectsRes = await getProjectsByUser();
 
-        if ((data.status === 200) && (data.data[0] !== undefined)) {
-          setProjectsList(data.data);
-        }
+        if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
+        
+        //console.log(projectsRes.data);
+        
       } else {
         //guest
         setLoggedIn(0);
@@ -144,20 +144,29 @@ const MyProjects = () => {
   //         setProjectsList(tempList);
   //     }
   // }
-
-  // Compare words: check if the snippet is found in the title
-  const checkIfAnyWordStartsWith = (title: string, snippit: string) => {
+  
+  /**
+   * Checks if any word in "title" starts with "snippet", and returns that answer as a boolean.
+   * @param title Project title
+   * @param snippet Beginning letters to search for
+   * @returns true if title starts with snippet
+   */
+  const checkIfAnyWordStartsWith = (title: string, snippet: string) => {
     const words = title.split(' ');
     for (let i = 0; i < words.length; i++) {
-      if (words[i].substring(0, snippit.length) == snippit) {
+      if (words[i].substring(0, snippet.length) == snippet) {
         return true;
       }
     }
     return false;
   };
 
-  // Sort projects: variety of methods
-  const sortProjects = (projects) => {
+  /**
+   * Sorts the projects by the current sort method
+   * @param projects Projects to sort
+   * @returns Sorted array of projects
+   */
+  const sortProjects = (projects: ProjectDetail[]) => {
     if (projects !== undefined) {
       const tempList = new Array(0);
 
@@ -183,36 +192,34 @@ const MyProjects = () => {
       // Sort depending on type selected by user. Default is Newest -> Oldest
       switch (sortMethod) {
         case 'oldest':
-          return tempList.toSorted((a, b) => {
-            const aTime = new Date(a.created_at).getTime();
-            const bTime = new Date(b.created_at).getTime();
+          return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
+            const aTime = new Date(a.createdAt).getTime();
+            const bTime = new Date(b.createdAt).getTime();
             return bTime - aTime;
           });
-          break;
 
         case 'a-z':
-          return tempList.toSorted((a, b) =>
+          return tempList.sort((a: ProjectDetail, b: ProjectDetail) =>
             a.title.toLowerCase().localeCompare(b.title.toLowerCase())
           );
-          break;
 
         case 'z-a':
-          return tempList.toSorted((a, b) =>
+          return tempList.sort((a: ProjectDetail, b: ProjectDetail) =>
             b.title.toLowerCase().localeCompare(a.title.toLowerCase())
           );
-          break;
         default:
-          return tempList.toSorted((a, b) => {
-            const aTime = new Date(a.created_at).getTime();
-            const bTime = new Date(b.created_at).getTime();
+          return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
+            const aTime = new Date(a.createdAt).getTime();
+            const bTime = new Date(b.createdAt).getTime();
             return aTime - bTime;
           });
-          break;
       }
     }
   };
 
-  // Set the display mode: list or grid
+  /**
+   * Toggles display mode between "list" and "grid"
+   */
   const toggleDisplayMode = () => {
     if (displayMode === 'grid') {
       setDisplayMode('list');
@@ -221,17 +228,22 @@ const MyProjects = () => {
     }
   };
 
-  // Projects in grid display
-  const GridDisplay = ({ userProjects }) => {
+  /**
+   * Creates a grid that showcases the user's current projects.
+   * @param userProjects Projects to display
+   * @returns JSX Element
+   */
+  const GridDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => { //it's a parameter here but a property down there
     return (
       <>
         <div className='my-projects-grid'>
           {userProjects.map(project => {
             // Check if user is the owner of this project
-            const isOwner = (project.userId === loggedIn);
+            const isOwner = (project.owner.userId === loggedIn);
 
             return (
               <LeaveDeleteContext.Provider
+                key={project.projectId}
                 value={{
                   isOwner,
                   projId: project.projectId,
@@ -250,8 +262,12 @@ const MyProjects = () => {
     );
   };
 
-  // Projects in list display
-  const ListDisplay = ({ userProjects }) => {
+  /**
+   * Creates a list that showcases the user's current projects.
+   * @param userProjects Projects to display 
+   * @returns JSX Element
+   */
+  const ListDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => {
     return (
       <>
         {/* Projects List header */}
@@ -259,16 +275,16 @@ const MyProjects = () => {
           <div className="project-header-label title">Project Title</div>
           <div className="project-header-label status">Status</div>
           <div className="project-header-label date">Date Created</div>
-          <div className="project-header-label options"></div>
         </div>
 
         <div className='my-projects-list'>
           {userProjects.map(project => {
             // Check if user is the owner of this project
-            const isOwner = (project.userId === loggedIn);
+            const isOwner = (project.owner.userId === loggedIn);
 
             return (
               <LeaveDeleteContext.Provider
+                key={project.projectId}
                 value={{
                   isOwner,
                   projId: project.projectId,
@@ -287,10 +303,14 @@ const MyProjects = () => {
     );
   };
 
-  // Return sorted projects either in Grid or List mode
-  const ProjectListSection = ({ userProjects }) => {
+  /**
+   * Sorts the projects based on whether the user has selected "grid" or "list." Defaults to "list" view.
+   * @param userProjects Projects to display 
+   * @returns GridDisplay or ListDisplay components. Nothing if there is an error.
+   */
+  const ProjectListSection = ({userProjects} : {userProjects: ProjectDetail[]}) => {
     // Sort projects based on the method selected
-    const sortedProjects = sortProjects(userProjects);
+    const sortedProjects = sortProjects(userProjects) as ProjectDetail[];
 
     if (sortedProjects) {
       if (displayMode === 'grid') {
@@ -342,24 +362,28 @@ const MyProjects = () => {
   //   );
   // }
 
+  const projectDataSet = useMemo(() => [{ data: projectsList }], [projectsList]);
+
+  /**
+   * Updates the projects shown with the search results.
+   * @param results Search results
+   */
+  const handleSearch = (results: unknown[][]) => {
+    // results[0] is the filtered array
+    setFilteredProjects(results[0] as ProjectDetail[]);
+  };
+
+  const projectsToDisplay = currentSearch.trim() !== '' ? filteredProjects : projectsList;
+
   return (
     <div className="page" id="my-projects">
       {/* Top Bar */}
-      {/* <div className="my-projects-top-bar"> */}
-      {/* Search Bar */}
-      {/* <div className="my-projects-search">
-                    <i className="fa-solid fa-magnifying-glass"></i>
-                    <input type="text" className="my-projects-searchbar"
-                        value={currentSearch} onChange={(e) => {setCurrentSearch(e.target.value)}} placeholder="Search"></input>
-                </div> */}
-
-      {/* Profile */}
-      {/* <div className="my-projects-profile">
-                    <i className="fa-solid fa-circle-user"></i>
-                    <i className="fa-solid fa-caret-down"></i>
-                </div> */}
-      {/* </div> */}
-      <Header dataSets={[{ projectsList }]} onSearch={setCurrentSearch} />
+      <Header 
+        dataSets={projectDataSet} 
+        onSearch={handleSearch} 
+        value={currentSearch}
+        onChange={(e) => setCurrentSearch(e.target.value)}
+      />
 
       {/* Banner */}
     <div className="projects-banner-outer">
@@ -375,191 +399,114 @@ const MyProjects = () => {
 
       {/* Header */}
       <div className="my-projects-header-row">
-        {/* All Projects Button */}
-        <button className="my-projects-all-projects-button" onClick={(e) => { }}>
-          All Projects
-        </button>
 
-        {/* Sort By Drop Down */}
-        <Select>
-          <SelectButton
-            placeholder='Sort by'
-            initialVal=''
-            buttonId='my-projects-sort-btn'
-          />
-          <SelectOptions
-            callback={(e) => setSortMethod(e.target.value)}
-            options={[
-              {
-                markup: <><i className="fa-solid fa-arrow-down-short-wide"></i>Newest</>,
-                value: 'newest',
-                disabled: false,
-              },
-              {
-                markup: <><i className="fa-solid fa-arrow-down-wide-short"></i>Oldest</>,
-                value: 'oldest',
-                disabled: false,
-              },
-              {
-                markup: <><i className="fa-solid fa-arrow-down-a-z"></i>A-Z</>,
-                value: 'a-z',
-                disabled: false,
-              },
-              {
-                markup: <><i className="fa-solid fa-arrow-down-z-a"></i>Z-A</>,
-                value: 'z-a',
-                disabled: false,
-              },
-            ]}
-          />
-        </Select>
-
-        {/* <Dropdown>
-          <DropdownButton className='my-projects-sort-list'>
-            {sortMethodHTML}
-            <i
-              className="fa-solid fa-angle-down"
-              style={{
-                position: 'absolute',
-                right: '15px',
-                bottom: '15px',
-              }}
-            ></i>
-          </DropdownButton>
-          <DropdownContent>
-            <div className='my-projects-sort-list-dropdown'>
-              <button
-                className='my-projects-sort-list-btn top'
-                value={'newest'}
-                onClick={(e) => {
-                  setSortMethod(e.target.value);
-                  setSortMethodHTML(
-                    <>
-                      <i className={e.target.firstChild.className}></i>
-                      {e.target.innerText}
-                    </>
-                  );
-                }}
-              >
-                <i className="fa-solid fa-arrow-down-short-wide"></i>Newest
-              </button>
-              <button
-                className='my-projects-sort-list-btn'
-                value={'oldest'}
-                onClick={(e) => {
-                  setSortMethod(e.target.value);
-                  setSortMethodHTML(
-                    <>
-                      <i className={e.target.firstChild.className}></i>
-                      {e.target.innerText}
-                    </>
-                  );
-                }}
-              >
-                <i className="fa-solid fa-arrow-down-wide-short"></i>Oldest
-              </button>
-              <button
-                className='my-projects-sort-list-btn'
-                value={'a-z'}
-                onClick={(e) => {
-                  setSortMethod(e.target.value);
-                  setSortMethodHTML(
-                    <>
-                      <i className={e.target.firstChild.className}></i>
-                      {e.target.innerText}
-                    </>
-                  );
-                }}
-              >
-                <i className="fa-solid fa-arrow-down-a-z"></i>A-Z
-              </button>
-              <button
-                className='my-projects-sort-list-btn bottom'
-                value={'z-a'}
-                onClick={(e) => {
-                  setSortMethod(e.target.value);
-                  setSortMethodHTML(
-                    <>
-                      <i className={e.target.firstChild.className}></i>
-                      {e.target.innerText}
-                    </>
-                  );
-                }}
-              >
-                <i className="fa-solid fa-arrow-down-z-a"></i>Z-A
-              </button>
-            </div>
-          </DropdownContent>
-        </Dropdown> */}
-
-        {/* Display Switch */}
-        <div
-          className="my-projects-display-switch"
-          onClick={() => {
-            toggleDisplayMode();
-          }}
-        >
-          <div className="display-switch-option list" id={displayMode === 'list' ? 'selected' : ''}>
-            <i className="fa-solid fa-bars"></i>
-          </div>
-          <div className="display-switch-option grid" id={displayMode === 'grid' ? 'selected' : ''}>
-            <i className="fa-solid fa-border-all"></i>
-          </div>
+        {/* Filters */}
+        <div className="my-projects-filters">
+          {/* TODO: keep this button? or add other filters (like Owned and Joined) */}
+          {/* this button does nothing currently i think we should trash it */}
+          {/* All Projects Button */}
+          <button className="my-projects-all-projects-button" onClick={() => { }}>
+            All Projects
+          </button>
         </div>
 
-        {/*Create Project Button*/}
-        {/* All of the following options end up replacing the button with the ProjectCreatorEditor button -
-        this is because that component always creates a SPECIFIC button, and cannot be hooked up to ANY button.
-        Right now, teams have been told to avoid touching that file.*/}
+        {/* Buttons */}
+        <div className="my-projects-action-buttons">
+          {/* Sort By Drop Down */}
+          <Select>
+            <SelectButton
+              placeholder='Sort by'
+              initialVal=''
+              buttonId='my-projects-sort-btn'
+              type='dropdown'
+            />
+            <SelectOptions
+              callback={(e) => setSortMethod((e.target as HTMLButtonElement).value)}
+              options={[
+                {
+                  markup:
+                  <>
+                    <ThemeIcon
+                      id="clock"
+                      width={18}
+                      height={18}
+                      className="mono-stroke"
+                      ariaLabel="Sort by newest"
+                    />
+                    Newest
+                  </>,
+                  value: 'newest',
+                  disabled: false,
+                },
+                {
+                  markup:
+                  <>
+                    <ThemeIcon
+                      id="clock"
+                      width={18}
+                      height={18}
+                      className="mono-stroke"
+                      ariaLabel="Sort by oldest"
+                    />
+                    Oldest
+                  </>,
+                  value: 'oldest',
+                  disabled: false,
+                },
+                {
+                  markup:
+                  <>
+                    <ThemeIcon
+                      id="direction-arrow"
+                      width={18}
+                      height={18}
+                      className="mono-stroke arrow-az"
+                      ariaLabel="Sort A-Z"
+                    />
+                    A-Z
+                  </>,
+                  value: 'a-z',
+                  disabled: false,
+                },
+                {
+                  markup:
+                  <>
+                    <ThemeIcon
+                      id="direction-arrow"
+                      width={18}
+                      height={18}
+                      className="mono-stroke arrow-za"
+                      ariaLabel="Sort Z-A"
+                    />
+                    Z-A
+                  </>,
+                  value: 'z-a',
+                  disabled: false,
+                },
+              ]}
+            />
+          </Select>
 
-        {/*Create New Project button - Implementation 0 - Currently, the button is set to always appear, non-functional. */}
-        {/*<>
-          <button className="my-projects-new-project-button">
-            + New Project
-          </button>
-        </>*/}
+          {/* Display Switch */}
+          <div
+            className="my-projects-display-switch"
+            onClick={() => {
+              toggleDisplayMode();
+            }}
+          >
+            <div className="display-switch-option list" id={displayMode === 'list' ? 'selected' : ''}>
+              <i className="fa-solid fa-bars fa-lg"></i>
+            </div>
+            <div className="display-switch-option grid" id={displayMode === 'grid' ? 'selected' : ''}>
+              <i className="fa-solid fa-border-all fa-xl"></i>
+            </div>
+          </div>
 
-        {/*/*Create New Project button - Implementation 1 - Redirects user when not logged in.*/}
-        {!loggedIn ? (
-          <>
-            <button className="my-projects-new-project-button" onClick={() => navigate('/login')}>
-              + New Project
-            </button>
-          </>
-        ) : (<div className="my-projects-create-btn">
-          <ProjectCreatorEditor newProject={createError} buttonCallback={getUserProjects} user={userData} />
-        </div>)
-        }
-
-        {/*Create Project Button - Implementation 2 - Only works if user is logged in. No error message is displayed for logged out users.*/}
-        {/*!loggedIn ? (
-          <>
-            <button className="my-projects-new-project-button" onClick={() => {
-              console.log("read me if you're not logged in");
-            }}>
-              + New Project
-            </button>
-          </>
-        ) : <ProjectCreatorEditor newProject={true} buttonCallback={getUserProjects} user={userData} />
-        */}
-
-        {/*Create Project Button - Implementation 3 - Only APPEARS if user is logged in.*/}
-        {/*loggedIn ? (
-          <>
-            <button className="my-projects-new-project-button" onClick={() => {
-              <ProjectCreatorEditor newProject={true} buttonCallback={getUserProjects} user={userData} />
-            }}>
-              + New Project
-            </button>
-          </>
-        ) : <> </>/* Do nothing */
-        }
-
-
-        {/* <button className="delete" onClick={() => setIsDeletePopupOpen(true)}>
-          -Delete Project test
-        </button>
-        <DeleteProjectPopup show={isDeletePopupOpen} setShow={setIsDeletePopupOpen} /> */}
+          {/*Create Project Button*/}
+          <div className="my-projects-create-btn">
+            <ProjectCreatorEditor newProject={true}/>
+          </div>
+        </div>
       </div>
 
       <hr />
@@ -580,7 +527,7 @@ const MyProjects = () => {
               <p>You have no projects, you're not logged in!</p>
             </div>
           ) : (
-            <ProjectListSection userProjects={projectsList} />
+            <ProjectListSection userProjects={projectsToDisplay} />
           )
         )}
       </div>

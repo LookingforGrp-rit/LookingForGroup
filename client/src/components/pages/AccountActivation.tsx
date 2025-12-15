@@ -1,16 +1,3 @@
-//Styles
-import '../Styles/credits.css';
-import '../Styles/discoverMeet.css';
-import '../Styles/emailConfirmation.css';
-import '../Styles/general.css';
-import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
-import '../Styles/profile.css';
-import '../Styles/projects.css';
-import '../Styles/settings.css';
-import '../Styles/pages.css';
-
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
@@ -28,14 +15,13 @@ interface EmailConfirmationProps {
   reloadResponseData?: number | string | boolean;
 }
 
-/*
-This component handles the email confirmation process for user account activation.
-It extracts a token from the URL, sends it to the server for verification,
-displays the appropriate confirmation message, and automatically redirects
-the user to the home page after 5 seconds.
-*/
+/**
+ * Account Activation Page. Responsible for verifying and checking the validity of the email in creating the account.
+ * @param props 
+ * @returns 
+ */
 const EmailConfirmation = (props: EmailConfirmationProps) => {
-  // THINGS TO DO:
+  // TODO:
   // Add Page Components (info box stating email is confirmed) x
   // Style page to match Figma (both light and dark modes)
   // Auto redirect to discover page (as well as link to discover page if redirect doesn't work) x
@@ -80,15 +66,14 @@ const EmailConfirmation = (props: EmailConfirmationProps) => {
   useEffect(() => {
     const getUserCreationStatus = async () => {
       // Construct the URL to fetch the user creation status
-      const url = `/api/signup/${path.substring(path.lastIndexOf('/') + 1, path.length)}`;
+      const token = path.substring(path.lastIndexOf('/') + 1, path.length);
       try {
-        const response = await fetch(url);
-        const data: ResponseData = await response.json();
-        console.log(`Status: ${data.status}`);
-        if (data.error) {
-          console.log(`Error: ${data.error}`);
+        const response = await signupWithToken(token);
+        console.log(`Status: ${response.status}`);
+        if (response.error) {
+          console.log(`Error: ${response.error}`);
         }
-        setResponseData(data);
+        setResponseData(response.data);
       } catch (err) {
         console.error(err);
       }

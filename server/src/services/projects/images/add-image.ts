@@ -7,6 +7,8 @@ import { transformProjectImage } from '#services/transformers/projects/parts/pro
 
 type AddImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
+//POST api/projects/{id}/images
+//adds an image to a project
 const addImageService = async (
   data: Prisma.ProjectImagesCreateInput,
 ): Promise<ProjectImage | AddImageServiceError> => {

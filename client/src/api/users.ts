@@ -1,52 +1,48 @@
-import { GET, POST, PUT, DELETE } from "./index";
+import { GET, POST, PUT, DELETE, PATCH } from "./index";
 import type {
   ApiResponse,
-  User,
   UserPreview,
+  UserDetail,
+  ProjectPreview,
+  ProjectFollowing,
+  UserFollowing,
+  MePrivate,
+  MySocial,
+  MySkill,
+  Major,
+  Skill,
+  Role,
+  Medium,
+  Tag,
+  Social,
+  UpdateUserInput,
+  AddUserSocialInput,
+  UpdateUserSocialInput,
+  AddUserSkillsInput,
+  UpdateUserSkillInput,
+  AddUserMajorInput,
+  MyMajor,
+  UserFollowsList,
+  ProjectDetail,
+  ProjectFollowsList,
+  UpdateUserProjectVisibilityInput,
+  MyMember,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
 
-//This probably with change with shibbolth???
+//This probably will change with shibboleth???
 /**
- * Creates a new user, and adds them to the signups table. All data params default to null.
- * NOT GOING TO NEED THIS WITH SHIBBOLETH
- * @param token - from url, security token
- * @param email - get signup email if the token is valid. Checks if a user with that email already exists.
+ * Creates a new user
  * @param userData - data for creating a user
  * @returns status - 200 if valid, 400 if not
  */
 export const createNewUser = async (
-  token: string,
-  email: string,
   userData: UserPreview
 ): Promise<ApiResponse> => {
-  //check if token is valid
-  const apiURL = `/signup/${token}`;
+  const apiURL = "/users";
 
-  //token validation
-  const tokenRes = await GET(apiURL);
-  if (tokenRes.status === 400) {
-    console.log("Token does not exist.");
-    return { status: 400, error: "Token does not exist." };
-  }
-
-  const userExist = await userInDatabase(email);
-  if (userExist) {
-    return {
-      status: 400,
-      error: "User is already in database.",
-    };
-  }
-
-  const response = await POST(apiURL, userData);
-  if (response.status === 400) {
-    console.log("Error creating a new user.");
-    return { status: 400, error: "Error creating a new user." };
-  }
-  console.log(`User ${email} created.`);
-  console.log(response);
-  return response;
+  return await POST(apiURL, userData);
 };
 
 /**
@@ -54,295 +50,92 @@ export const createNewUser = async (
  * @returns ApiResponse with username is logged in, 404 if guest
  */
 export const getCurrentUsername = async (): Promise<ApiResponse> => {
-  const apiURL = `/users/get-username`;
+  // const apiURL = `/me/get-username`;
+  const apiURL = `/me`;
+  const response = await GET(apiURL);
 
-  try {
-    //can maybe add custom headers here for dev mode
-    const response = await GET(apiURL);
-    return response;
-  } catch (e) {
-    console.log("Error fetching username by Shibboleth:", e);
-    return { status: 500, error: "Internal error" };
-  }
+  //console.log(response);
+  return {
+    status: response.status,
+    data:
+      response.status === 200
+        ? {
+            userId: (response.data as MePrivate).userId,
+            username: (response.data as MePrivate).username,
+          }
+        : null,
+    error: response.error,
+  };
 };
 
 /**
  * Gets all data on all public users. Does not return private ones
  * @returns result - JSONified data of all users, else if error, '400'.
  */
-export const getUsers = async (): Promise<ApiResponse> => {
+export const getUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
   const apiURL = `/users`;
   const response = await GET(apiURL);
+  //TODO: revisit this to make it include filters
+  //but filters are a stretch goal anyway so it's not too important
+  //console.log(response);
   return response;
 };
 
 /**
  * Gets all data on one specific user, specified by URL.
- * @param id - university id for user
+ * @param id - database id for user
  * @returns result - JSONified data of specified user.
  */
-export const getUsersById = async (id: string): Promise<ApiResponse> => {
+export const getUsersById = async (
+  id: number
+): Promise<ApiResponse<UserDetail>> => {
   const apiURL = `/users/${id}`;
   const response = await GET(apiURL);
+
+  //console.log(response);
+  return response;
+};
+
+//Gets the current user
+export const getCurrentAccount = async (): Promise<ApiResponse<MePrivate>> => {
+  const apiURL = `/me`;
+  const response = await GET(apiURL);
+
+  //console.log(response);
   return response;
 };
 
 /**
  * Edit information for one user, specified by URL.
- * @param id - user_id for user
- * @param data - mapped(eg {data1:'value1', data2:'value2'}) data to change for user
+ * @param userData - The data to change for the user
  * @returns response data
  */
 export const editUser = async (
-  id: number,
-  data: Partial<User>
-): Promise<ApiResponse> => {
-  const apiURL = `/users/${id}`;
-  const response = await PUT(apiURL, data);
+  userData: UpdateUserInput
+): Promise<ApiResponse<MePrivate>> => {
+  const apiURL = `/me`;
+  const form = new FormData();
+
+  for (const [name, value] of Object.entries(userData)) {
+    if (value !== null) form.append(name, value);
+  }
+
+  const response = await PATCH(apiURL, form);
+
+  if (response.error) console.log(`Error in editUser: ${response.error}`);
+  return response as ApiResponse<MePrivate>; //it would get mad at me if i didn't do this soooo
+};
+
+//Removes a user specified by URL.
+export const deleteUser = async (): Promise<ApiResponse> => {
+  const apiURL = `/me`;
+  const response = await DELETE(apiURL);
+
+  //console.log(response);
   return response;
 };
-
-/**
- * Removes a user specified by URL.
- * @param id - user_id to be deleted
- * @returns response data
- */
-export const deleteUser = async (id: number): Promise<ApiResponse> => {
-  const apiURL = `/users/${id}`;
-  return await DELETE(apiURL);
-};
-
-/* USER VERIFICATION */
-
-/**
- * Checks if a User is already within database through RIT email
- * @param email - RIT email, string
- * @returns result - boolean, true if they exist within database, false if not.
- */
-export const userInDatabase = async (email: string): Promise<boolean> => {
-  const apiURL = `/users/search-email/${email}`;
-  const response = await GET(apiURL);
-
-  if (response.status === 400) {
-    console.log("Error fetching email.");
-    return false;
-  } else {
-    if (!response.data) {
-      console.log(response.data);
-      return false;
-    }
-    console.log("User found with email", email);
-    return true;
-  }
-};
-
-//NEED TO DO//
-
-/* PROFILE MANAGMENT */
-
-/**
- * Update Profile Picture for a user's id.
- * @param id - int, the user_id to change
- * @param image - file, the picture to put into the user's profile
- * @return status, 200 if successful, 400 if not, and data. data=array[object] with the profile_image, string, name of the file
- */
-export const updateProfilePicture = async (
-  id: number,
-  image: File
-): Promise<ApiResponse> => {
-  const apiURL = `/users/${id}/profile-picture`;
-
-  const data = { image: image };
-  const response = await PUT(apiURL, data);
-  if (response.status === 400) {
-    console.log("error updating profile picture.");
-    return { status: 400, error: "Error updating profile picture." };
-  }
-  console.log("Updated Profile Picture for user.");
-  return response;
-};
-
-/**
- * Update email for a user
- * @param id = user_id for the profile wishing to change email.
- * @param _email - email to change to
- * @param _confirm_email - secondary entering of email to confirm
- * @param _password - the user's current password.
- * @returns response, 200 if valid, 400 if not, 401 if emails do not match.
- */
-export const updateEmail = async (
-  id: number,
-  _email: string,
-  _confirm_email: string,
-  _password: string
-): Promise<ApiResponse> => {
-  if (_email != _confirm_email) {
-    console.log("Not the same email, try again.");
-    return { status: 401, error: "Emails do not match" };
-  }
-  const apiURL = `/users/${id}/email`;
-  const data = {
-    email: _email,
-    confirm: _confirm_email,
-    password: _password,
-  };
-
-  const response = await PUT(apiURL, data);
-  if (response.status === 400) {
-    console.log("error updating email.");
-    return { status: 400, error: "Error updating email." };
-  }
-  console.log("Updated primary email for user.");
-
-  return response;
-};
-
-/**
- * Update username through id.
- * @param id
- * @param _username - username to change to
- * @param _confirm_user - secondary entering of username to confirm
- * @param _password - the user's current password.
- * @returns response, 200 if valid, 400 if not, 401 if users do not match.
- */
-export const updateUsername = async (
-  id: number,
-  _username: string,
-  _confirm_user: string,
-  _password: string
-): Promise<ApiResponse> => {
-  if (_username != _confirm_user) {
-    console.log("Usernames are not the same.");
-    return { status: 401, error: "Usernames are not the same." };
-  }
-  const apiURL = `/users/${id}/username`;
-  const data = {
-    username: _username,
-    confirm_user: _confirm_user,
-    password: _password,
-  };
-
-  const response = await PUT(apiURL, data);
-  if (response.status === 400) {
-    console.log("error updating username.");
-    return { status: 400, error: "Error updating username." };
-  }
-  console.log("Updated primary username for user.");
-  return { status: 400, data: response.data };
-};
-
-/**
- * NEEDS TO CHNAGE FOR SHIBBOLETH
- * Update Password for user specified with user_id
- * @param id = int, user id for the user wishing to change
- * @param _newPassword = string, new password
- * @param _password_confirm - string, confirm password to be the same as the new password
- * @param _password - string, user's current password
- * @param _token
- */
-// export const updatePassword = async (id: number, _newPassword: string, _password_confirm: string, _password: string, _token: string): Promise<ApiResponse> => {
-//     if (!_newPassword || !_password_confirm) {
-//         console.log('Missing passwords.');
-//         return { status: 400, error: 'Missing passwords.' };
-//     }
-//     if (_newPassword != _password_confirm) {
-//         console.log('Password and confirmation are not the same.');
-//         return { status: 400, error: 'Password and confirmation are not the same.' };
-//     }
-//     console.log('Token accepted, email verified.');
-
-//     //get email if token is valid
-//     let url = `${root}/resets/password/${_token}`;
-//     let authCheck = await GET(url);
-//     if (!authCheck.data.email) {
-//         console.log('Your token has expired.');
-//         return authCheck;
-//     }
-//     console.log('Token accepted, email verified.');
-
-//     //update user password
-//     url = `${root}/users/${id}/password`;
-//     const data = {
-//     };
-//     const response = await PUT(url, data);
-//     if (response.status === 400) {
-//         console.log('Error putting new password.');
-//         return { status: 400, error: response.error };
-//     }
-
-//     console.log('User password updated successfully.');
-//     return { status: 201, data: response.data };
-
-// }
-
-/**
- * Updates user visibility, between 0 (private) and 1 (public). just a switch.
- * @param id - user_id for the user
- * @returns 400 if error, 200 if valid
-//  */
-// export const updateUserVisibility = async (
-//   id: number
-// ): Promise<ApiResponse> => {
-//   const url = `/users/${id}`;
-//   const userResponse = await GET(url);
-//   if (userResponse.status !== 200) {
-//     return {
-//       status: 400,
-//       error: "Unable to fetch user data",
-//     };
-//   }
-
-//   const vis = userResponse.data.visibility;
-//   let data: { visibility: number };
-
-//   if (vis == 1) {
-//     data = {
-//       visibility: 0,
-//     };
-//   } else if (vis == 0) {
-//     data = {
-//       visibility: 1,
-//     };
-//   } else {
-//     return {
-//       status: 400,
-//       error: "Invalid visibility error.",
-//     };
-//   }
-//   const result = await editUser(id, data);
-//   if (result.status === 400) {
-//     console.log("Error editing user.");
-//     return { status: 400, error: "Error editing user." };
-//   }
-//   return {
-//     status: 200,
-//     error: null,
-//     data: result.data,
-//   };
-// };
 
 /* ACCOUNT INFO/ PASSWORD RESET*/
-
-/**
- * Get account information of a user through ID.
- * Invalid until we get shibboleth.
- * @param user_id - int, id of the user
- * @returns data - JSONified data from account information. 400 if not valid.
- */
-export const getAccountInformation = async (user_id: number) => {
-  const apiURL = `/users/${user_id}/account`;
-  const response = await GET(apiURL);
-  //console.log(response);
-  if (response.status === 401) {
-    //console.log(response.error);
-    return response;
-  }
-
-  //console.log("User account information recieved");
-  return response;
-};
-
-//requestPasswordReset
 
 /* LOOKUP USER */
 
@@ -350,24 +143,14 @@ export const getAccountInformation = async (user_id: number) => {
  * Get User by Username
  * @param username - Username of user to be recieved
  * @return data, list of 1 user, or 400 if not successful
- * DOES NOT NEED USERNAME, requires UID!
  */
-export const getUserByUsername = async (username: string) => {
+export const getUserByUsername = async (
+  username: string
+): Promise<ApiResponse<UserPreview>> => {
   const url = `/users/search-username/${username}`;
   const response = await GET(url);
-  console.log(response);
-  if (response.status === 400) {
-    console.log("Error getting user.");
-    return { status: 400, error: response.error };
-  }
 
-  //check if array is not empty
-  if (!response.data) {
-    console.log("No user found");
-    return { status: 404, error: response.error };
-  }
-
-  console.log("Data recieved.");
+  //console.log(response);
   return response;
 };
 
@@ -376,22 +159,13 @@ export const getUserByUsername = async (username: string) => {
  * @param email - email of user to be recieved
  * @return data, list of 1 user, or 400 if not successful
  */
-export const getUserByEmail = async (email: string) => {
+export const getUserByEmail = async (
+  email: string
+): Promise<ApiResponse<UserPreview>> => {
   const url = `/users/search-email/${email}`;
   const response = await GET(url);
 
-  if (response.status === 400) {
-    console.log("Error getting user.");
-    return { status: 400, error: response.error };
-  }
-
-  //check if array is not empty
-  if (!response.data) {
-    console.log("No user found");
-    return { status: 404, error: "No user found." };
-  }
-
-  console.log("Data recieved.");
+  //console.log(response);
   return response;
 };
 
@@ -402,160 +176,378 @@ export const getUserByEmail = async (email: string) => {
  * @param {number} id - id of the user that we are searching.
  * @returns array of users following, or 400 if unsuccessful.
  */
-export const getUserFollowing = async (id: number) => {
+export const getUserFollowing = async (
+  id: number
+): Promise<ApiResponse<UserFollowsList>> => {
   const url = `/users/${id}/followings/people`;
   const response = await GET(url);
-  if (response.status === 400) {
-    console.log("Error getting users.");
-    return { status: 400, error: response.error };
-  }
-  console.log("Data recieved.");
+
+  //console.log(response);
+  return response;
+};
+
+/** Get list of users that are following the specified user
+ * @param {number} id - id of the user that we are searching.
+ */
+export const getUserFollowers = async (id: number): Promise<ApiResponse> => {
+  const url = `/users/${id}/followers`;
+  const response = await GET(url);
+
+  //console.log(response);
   return response;
 };
 
 /**
  * Follow a person for a user.
- * @param {number} id - user's id
- * @param {number} followID - user to be followed.
+ * @param {number} userId - ID of the user being followed
  * @returns 201 if successful, 400 if not
  */
-export const addUserFollowing = async (id: number, followID: number) => {
-  const url = `/users/${id}/followings/people`;
-  const data = {
-    userId: followID,
-  };
-  const response = await POST(url, data);
-  if (response.status === 400) {
-    console.log("Error creating user following.");
-    return { status: 400, error: response.error };
-  }
-  console.log("Created user following.");
-  return { status: 201, data: response.data };
+export const addUserFollowing = async (
+  userId: number
+): Promise<ApiResponse<UserFollowing>> => {
+  const url = `/me/followings/people/${userId}`;
+  const response = await POST(url, {});
+
+  if (response.error)
+    console.log(`Error in addUserFollowing: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<UserFollowing>;
 };
 
 /**
  * Unfollow person for a user. Unauthorized until shibboleth.
- * @param {number} id - user id of the user.
- * @param {number} unfollowID - user id to be unfollowed.
+ * @param {number} userId - ID of the user being followed
  */
-export const deleteUserFollowing = async (id: number, unfollowID: number) => {
-  const url = `/users/${id}/followings/people`;
-  const data = {
-    userId: unfollowID,
-  };
-  const response = await DELETE(url, data);
+export const deleteUserFollowing = async (id: number) => {
+  const url = `/me/followings/people/${id}`;
+  const response = await DELETE(url);
 
-  if (response.status === 400) {
-    console.log("Error deleting user following.");
-    return { status: 400, error: response.error };
-  }
-  console.log("Deleted user following.");
-  return { status: 201, data: response.data };
+  //console.log(response);
+  return response;
 };
 
 /* PROJECT FOLLOWINGS/VISIBILITY */
 
-/**
- * Get all projects the user is a member of and has set to be public for the profile page
- * @param id - user to search
- * @return - array of projects, or 400 if unsuccessful.
- */
-export const getVisibleProjects = async (id: number) => {
-  const url = `/users/${id}/projects/profile`;
+//Get the current user's projects
+export const getProjectsByUser = async (): Promise<
+  ApiResponse<ProjectDetail[]>
+> => {
+  const url = `/me/projects`;
   const response = await GET(url);
-  if (response.status === 400) {
-    console.log("Error getting projects.");
-    return { status: 400, error: response.error };
-  }
-  console.log("Data recieved.");
+
+  //console.log(response);
   return response;
 };
 
 /**
- * Update the project visibility for a project a user is a member of. Invalid until shibboleth
- * @param userID - user's ID
- * @param projectID - Id of the project
+ * Get all projects the user is a member of and has set to be public for the profile page
+ * @param userId - user to search
+ * @return - array of projects, or 400 if unsuccessful.
+ */
+export const getVisibleProjects = async (
+  userId: number
+): Promise<ApiResponse<ProjectPreview[]>> => {
+  const url = `/users/${userId}/projects`;
+  const response = await GET(url);
+
+  //console.log(response);
+  return response;
+};
+
+/**
+ * Update project visibility for a project a user is a member of. Invalid until shibboleth
+ * @param projectID - ID of the project
  * @param _visibility - either "public" or "private", set visibility
  * @return 201 if successful, 400 if not
  */
 export const updateProjectVisibility = async (
-  userID: number,
   projectID: number,
-  _visibility: string
-) => {
-  const url = `/users/${userID}/projects/visibility`;
-  const data = {
-    projectId: projectID,
-    visibility: _visibility,
-  };
+  visibility: UpdateUserProjectVisibilityInput
+): Promise<ApiResponse<MyMember>> => {
+  const url = `me/projects/${projectID}/visibility`;
+  const response = await PUT(url, visibility);
 
-  const response = await PUT(url, data);
-  if (response.status === 400) {
-    console.log("Error editing projects.");
-    return { status: 400, error: response.error };
-  }
-  console.log("Data edited.");
-  return { status: 201, data: response.data };
+  // if (response.error)
+    //console.log(`Error in updateProjectVisibility: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<MyMember>;
+};
+
+/**
+ * Leaves a project a user is a member of
+ * @param projectID - ID of the project you're leaving
+ * @return 201 if successful, 400 if not
+ */
+export const leaveProject = async (projectID: number): Promise<ApiResponse<null>> => {
+  const url = `me/projects/${projectID}/leave`;
+  const response = await DELETE(url);
+
+  // if (response.error) //console.log(`Error in leaveProject: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<null>;
 };
 
 /**
  * Get projects the user is following.
- * @param id - ID of the user.
+ * @param userId - ID of the user.
  * @returns array of projects, or 400 if error.
  */
-export const getProjectFollowing = async (id: number) => {
-  const url = `/users/${id}/followings/projects`;
+export const getProjectFollowing = async (
+  userId: number
+): Promise<ApiResponse<ProjectFollowsList>> => {
+  const url = `/users/${userId}/followings/projects`;
   const response = await GET(url);
-  if (response.status === 400) {
-    console.log("Error getting projects.");
-    return { status: 400, error: response.error };
-  }
-  console.log("Data recieved.");
+
+  //console.log(response);
   return response;
 };
 
 /**
  * Follow a project for a user.
- * @param id - user ID trying to follow a project.
- * @param projectID - ID of the project trying to follow.
+ * @param projectId - ID of the project you're following
  * @returns 201 if successful, 400 if not.
  */
-export const addProjectFollowing = async (id: number, projectID: number) => {
-  const url = `/users/${id}/followings/projects`;
-  const data = {
-    projectId: projectID,
-  };
-  const response = await POST(url, data);
-  if (response.status === 400) {
-    console.log("Error creating project following, unauthorized.");
-    return { status: 400, error: response.error };
-  }
-  console.log("Created project following.");
-  return { status: 200, data: id };
+export const addProjectFollowing = async (
+  projectId: number
+): Promise<ApiResponse<ProjectFollowing>> => {
+  const url = `/me/followings/projects/${projectId}`;
+  const response = await POST(url, {});
+
+  if (response.error)
+    console.log(`Error in addProjectFollowing: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<ProjectFollowing>;
 };
 
 /**
  * Unfollow a project for a user.
- * @param id - user id
- * @param projID - project Id to be unfollowed.
- * @returns 201 if successful, 400 if not.
+ * @param projectId - ID of the project you're unfollowing
+ * @returns 200 if successful, 400 if not.
  */
-export const deleteProjectFollowing = async (id: number, projID: number) => {
-  const url = `/users/${id}/followings/projects/${projID}`;
+export const deleteProjectFollowing = async (
+  projectId: number
+): Promise<ApiResponse> => {
+  const url = `/me/followings/projects/${projectId}`;
   const response = await DELETE(url);
-  if (response.status === 400) {
-    console.log("Error deleting project following.");
-    return { status: 400, error: response.error };
-  }
-  console.log("Deleted project following.");
-  return { status: 201, data: response.data };
+
+  //console.log(response);
+  return response;
 };
 
-//getVisibleProjects
-//updateProjectVisibility
-//getProjectFollowing
-//addProjectFollowing
-//deleteProjectFollowing
+// Get socials for the current user based on ID.
+export const getUserSocials = async (): Promise<ApiResponse<MySocial[]>> => {
+  const url = `/me/socials`;
+  const response = await GET(url);
+
+  //console.log(response);
+  return response;
+};
+
+// Add socials for the current user by ID
+/**
+ * @param socialData - Data used to add the social
+ */
+export const addUserSocial = async (
+  socialData: AddUserSocialInput
+): Promise<ApiResponse<MySocial>> => {
+  const apiURL = `/me/socials`;
+  const response = await POST(apiURL, socialData);
+
+  if (response.error) console.log(`Error in addUserSocial: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<MySocial>;
+};
+
+// Update socials specified by the current user
+/**
+ * @param websiteId - ID of the social to be updated
+ * @param socialData - Data used to update the social
+ */
+export const updateUserSocial = async (
+  websiteId: number,
+  socialData: UpdateUserSocialInput
+): Promise<ApiResponse<MySocial>> => {
+  const apiURL = `/me/socials/${websiteId}`;
+  const response = await PATCH(apiURL, socialData);
+
+  if (response.error)
+    console.log(`Error in updateUserSocial: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<MySocial>;
+};
+
+// Delete user socials
+/**
+ * @param websiteId - ID of the social to be deleted
+ */
+export const deleteUserSocial = async (
+  websiteId: number
+): Promise<ApiResponse> => {
+  const url = `/me/socials/${websiteId}`;
+  const response = await DELETE(url);
+
+  //console.log(response);
+  return response;
+};
+
+// Get skills for the current user based on ID
+export const getUserSkills = async (): Promise<ApiResponse<MySkill[]>> => {
+  const url = `/me/skills`;
+  const response = await GET(url);
+
+  //console.log(response);
+  return response;
+};
+
+// Add a skill to the current user
+/**
+ * @param skillData - Data with which to add a skill
+ */
+export const addUserSkill = async (
+  skillData: AddUserSkillsInput
+): Promise<ApiResponse<MySkill>> => {
+  const url = `/me/skills`;
+  const response = await POST(url, skillData);
+
+  if (response.error) console.log(`Error in addUserSkill: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<MySkill>;
+};
+
+// Updates a user skill
+/**
+ * @param skillId - ID of the skill to be updated
+ * @param skillData - Data with which to update the skill
+ */
+export const updateUserSkill = async (
+  skillId: number,
+  skillData: UpdateUserSkillInput
+): Promise<ApiResponse<MySkill>> => {
+  const url = `/me/skills/${skillId}`;
+  const response = await PATCH(url, skillData);
+
+  if (response.error)
+    console.log(`Error in updateUserSkill: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<MySkill>;
+};
+
+// Delete a user skill
+/**
+ * @param skillId - ID of the skill
+ */
+export const deleteUserSkill = async (
+  skillId: number
+): Promise<ApiResponse<null>> => {
+  const url = `/me/skills/${skillId}`;
+  const response = await DELETE(url);
+
+  //console.log(response);
+  return response as ApiResponse<null>;
+};
+
+// Get majors for the current user based on ID
+export const getUserMajors = async (): Promise<ApiResponse<MyMajor[]>> => {
+  const url = `/me/majors`;
+  const response = await GET(url);
+
+  //console.log(response);
+  return response;
+};
+
+// Add a major to the current user
+export const addUserMajor = async (
+  majorData: AddUserMajorInput
+): Promise<ApiResponse<MyMajor>> => {
+  const url = `/me/majors`;
+  const response = await POST(url, majorData);
+
+  if (response.error) console.log(`Error in addUserMajor: ${response.error}`);
+  //console.log(response);
+  return response as ApiResponse<MyMajor>;
+};
+
+// Delete a user major
+/**
+ * @param majorId - ID of the major to be deleted
+ */
+export const deleteUserMajor = async (
+  majorId: number
+): Promise<ApiResponse<null>> => {
+  const url = `/me/majors/${majorId}`;
+  const response = await DELETE(url);
+
+  //console.log(response);
+  return response as ApiResponse<null>;
+};
+
+/* DATASETS */
+
+/**
+ * Retrieves list of majors.
+ */
+export const getMajors = async (): Promise<ApiResponse<Major[]>> => {
+  const apiURL = `/datasets/majors`;
+  const response = await GET(apiURL);
+
+  //console.log(response);
+  return response;
+};
+
+/**
+ * Gets list of job titles.
+ */
+export const getJobTitles = async (): Promise<ApiResponse<Role[]>> => {
+  const apiURL = `/datasets/roles`;
+  const response = await GET(apiURL);
+
+  //console.log(response);
+  return response;
+};
+
+/**
+ * Retrieves list of project types.
+ */
+export const getProjectTypes = async (): Promise<ApiResponse<Medium[]>> => {
+  const apiURL = `/datasets/mediums`;
+  const response = await GET(apiURL);
+
+  //console.log(response);
+  return response;
+};
+
+/**
+ * Gets list of skills.
+ */
+export const getSkills = async (): Promise<ApiResponse<Skill[]>> => {
+  const apiURL = `/datasets/skills`;
+  const response = await GET(apiURL);
+
+  //console.log(response);
+  return response;
+};
+
+/**
+ * Retrieves list of tags.
+ */
+export const getTags = async (): Promise<ApiResponse<Tag[]>> => {
+  const apiURL = `/datasets/tags`;
+  const response = await GET(apiURL);
+
+  //console.log(response);
+  return response;
+};
+
+/**
+ * Gets list of socials links.
+ */
+export const getSocials = async (): Promise<ApiResponse<Social[]>> => {
+  const apiURL = `/datasets/socials`;
+  const response = await GET(apiURL);
+
+  //console.log(response);
+  return response;
+};
 
 export default {
   createNewUser,
@@ -563,22 +555,35 @@ export default {
   getUsersById,
   editUser,
   deleteUser,
-  userInDatabase,
-  updateProfilePicture,
-  getAccountInformation,
-  updateEmail,
-  updateUsername,
-  //updatePassword,
-  // updateUserVisibility,
-  // requestPasswordReset,
   getUserByUsername,
   getUserByEmail,
   getUserFollowing,
+  getUserFollowers,
   addUserFollowing,
   deleteUserFollowing,
+  getProjectsByUser,
   getVisibleProjects,
   updateProjectVisibility,
+  leaveProject,
   getProjectFollowing,
   addProjectFollowing,
   deleteProjectFollowing,
+  getUserSocials,
+  addUserSocial,
+  updateUserSocial,
+  deleteUserSocial,
+  getUserSkills,
+  addUserSkill,
+  updateUserSkill,
+  deleteUserSkill,
+  getUserMajors,
+  addUserMajor,
+  deleteUserMajor,
+  getMajors,
+  getJobTitles,
+  getProjectTypes,
+  getSkills,
+  getTags,
+  getSocials,
+  getCurrentAccount,
 };

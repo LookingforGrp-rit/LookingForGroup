@@ -3,73 +3,119 @@ import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
 import usePreloadedImage from '../functions/imageLoad';
-
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
-
-interface ProfileData {
-  userId: string;
-  profileImage?: string;
-  firstName: string;
-  lastName: string;
-  major: string;
-  headline: string;
-  jobTitle: string;
-  location: string;
-  pronouns: string;
-  funFact: string;
-}
+import { UserPreview } from '@looking-for-group/shared';
+import { useEffect, useState } from 'react';
+import { getCurrentAccount, getUsersById } from '../api/users';
 
 interface ProfilePanelProps {
-  profileData: ProfileData;
+  profileData: UserPreview;
 }
 
+/**
+ * ProfilePanel
+ * Displays a user's profile information in a panel format with hover details.
+ * Shows profile image, name, majors, headline, and hover overlay with additional info.
+ * Handles follow status for the current user and navigates to the full profile page on click.
+ *
+ * @param profileData - UserPreview object containing basic user info (name, image, title, location, pronouns, fun fact, etc.)
+ * @returns JSX element representing a user profile panel
+ */
 export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
-  const navigate = useNavigate();
-  const profileURL = `${paths.routes.NEWPROFILE}?userID=${profileData.userId}`;
 
+  const navigate = useNavigate();
+  const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
+  // Array of major labels extracted from profileData
+  const majorsArr = profileData.majors?.map((maj) => maj.label);
+  
+  //follow stuff
+  // Current logged-in user id
+  const [userId, setUserId] = useState<number>();
+  // Whether the current user follows the displayed user
+  const [isFollow, setIsFollow] = useState<boolean>(false);
+  /**
+   * useEffect to fetch follow information:
+   * 1. Retrieves current user ID
+   * 2. Retrieves full profile of the displayed user to access followers
+   * 3. Sets `isFollow` to true if current user is in followers list
+   * 
+   * Dependency on profileData.userId ensures refresh when panel shows a different user.
+   * Dependency on userId ensures we check follow status after current user ID is fetched.
+   */
+    useEffect(() => {
+      const getFollowData = async () => {
+        //get our current user so we can check their follow status
+        const userResp = await getCurrentAccount();
+        if(userResp.data) setUserId(userResp.data.userId);
+        
+        //get the displayed user (again...) so we have their followers
+        //because followers are currently not in the profileData
+        //easiest way to do this would be to just put the followers into the userPreview...
+        //...but that turned out to be way too much trouble than what it was worth so i'm doing this instead
+        const otherUserResp = await getUsersById(profileData.userId);
+        if (otherUserResp.data) { 
+          otherUserResp.data.followers.users.map((user) => {
+            if(user.user.userId === userId) {
+              setIsFollow(true);
+              return;
+            }
+          })
+          
+        }
+      };
+        getFollowData();
+    }, [profileData.userId, userId])
+    
   return (
     <div className={'profile-panel'}>
       <img
-        src={usePreloadedImage(`${API_BASE}/images/profiles/${profileData.profileImage}`, profilePicture)}
+        src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt='profile image'
-        // default profile picture if profile image doesn't load
-        onError={(e) => {
-          // might be handled by preloaded image function. TODO: test
-          const profileImg = e.target as HTMLImageElement;
-          profileImg.src = profilePicture;
-        }}
       />
       <h2>
         {profileData.firstName} {profileData.lastName}
       </h2>
-      <h3>{profileData.major}</h3>
-      <div id="quote">"{profileData.headline}"</div>
+      <h3>{majorsArr.join(', ') || ''}</h3>
+      <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
 
       <div className={'profile-panel-hover'} onClick={() => navigate(profileURL)}>
+
+        {isFollow ? <ThemeIcon
+          width={30}
+          height={27}
+          id={"heart-filled"}
+          ariaLabel="unfollow profile"
+        />
+        : <ThemeIcon
+          width={30}
+          height={27}
+          id={"heart-empty"}
+          ariaLabel="follow profile"
+        />}
+        
+        {/* List of items */}
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
             <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
           </div>
-          <p>{profileData.jobTitle}</p>
+          <p>{profileData.title ? profileData.title : 'None specified'}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
             <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'} />
           </div>
-          <p>{profileData.location}</p>
+          <p>{profileData.location ? profileData.location : 'None specified'}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
             <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
           </div>
-          <p>{profileData.pronouns}</p>
+          <p>{profileData.pronouns ? profileData.pronouns : 'None specified'}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
             <ThemeIcon id={'funfact'} width={24} height={24} className={'mono-stroke'} ariaLabel={'Fun Fact'} />
           </div>
-          <p>{profileData.funFact}</p>
+          <p>{profileData.funFact ? profileData.funFact : 'None specified'}</p>
         </div>
       </div>
     </div>

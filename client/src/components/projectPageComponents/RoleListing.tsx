@@ -1,12 +1,18 @@
-//Will return name, positions, & 3 buttons on a single line
-//Will also return description accessable via a dropdown menu (accessed via 1 of the buttons)
+
+/**
+ * This component will display a role entry in a project. This will show the role’s name, 
+ * amount of available positions, and a description that’s hidden via dropdown. 
+ * There is editing functionality and a toggle for deleting with the chance to undo that deletion.
+ * @param props Props passed in
+ * @returns HTML - particular role’s details and interactive buttons to change data within it.
+ */
 export const RoleListing = (props) => {
   //editMode - tells when this listing is currently being edited
   let editMode = false;
   //descHidden - tells whether or not the description is visible or not
   let descHidden = true;
 
-  //Opens/Closes the description
+  // Shows/Hides a role’s description or its editing features depending on the mode
   //i - the number index of this listing, used to open/close the correct description
   const toggleDescription = (i) => {
     descHidden = !descHidden;
@@ -23,15 +29,16 @@ export const RoleListing = (props) => {
     }
   };
 
-  //toggles the editing mode for a listing
+  // Switches between editing modes and updates visible user interaction elements
   //i - the number index of this listing, used to toggle editing mode on the correct listing
   const toggleEdit = (i) => {
     //toggle editMode
     editMode = !editMode;
 
     //assign elements to modify
-    //listParent - element containing name, amount of positions, & buttons
-    //desc - element containing description; descInput - element containing the edit input for description
+    // listParent - DOM node for listing a role
+    // desc - DOM node for role description
+    // descInput - DOM node for an editable description
     const listParent = document.getElementById('role-list-' + i);
     const desc = document.getElementById('role-desc-' + i);
     const descInput = document.getElementById('role-desc-edit-' + i);
@@ -55,8 +62,7 @@ export const RoleListing = (props) => {
     }
   };
 
-  //Removes a role from the list & adjusts display to cover said role
-  //Reveals an 'undo' button that undoes this
+  // Hides particular role then removes it
   const removeRole = (roleIndex) => {
     if (!descHidden) {
       const desc = document.getElementById('role-desc-' + roleIndex);
@@ -68,20 +74,21 @@ export const RoleListing = (props) => {
     props.removeRole(roleIndex);
   };
 
-  //Undoes a role deletion & reverts display
+  // Shows particular role then undoes removal
   const undoRemoveRole = (roleIndex) => {
     const cover = document.getElementById('role-cover-' + roleIndex);
     cover ? cover.classList.toggle('role-cover') : console.log('error');
     props.undoRemoveRole(roleIndex);
   };
 
-  //Called when a 'done' button is pressed, saves any changes made to a role's info based on inputs
-  //Changes are not finalized until 'save changes' is pressed & window is subsequently closed
-  //Again, errors here are due to typescript. code still functions as intended.
+  // Saves current changes from the user in editing and updates data based on these changes
   const doneEdit = (roleIndex) => {
     const listParent = document.getElementById('role-list-' + roleIndex);
 
     //contains the name, number of positions, & description of edited inputs
+    // roleName - The input value for an edited name
+    // roleNum - The input value for an edited number of positions
+    // roleDesc - The input value for descriptions
     let roleName, roleNum, roleDesc;
     roleName = listParent.querySelector('.role-list-name-edit-hide').value;
     roleNum = listParent.querySelector('.role-list-num-edit-hide').value;
@@ -98,7 +105,7 @@ export const RoleListing = (props) => {
     listParent.querySelector('.role-list-num').innerHTML = roleNum;
     document.getElementById('role-desc-' + roleIndex).innerHTML = roleDesc;
 
-    //Creates a roleObject to replace the current role data
+    // Object that encapsulates roleName, roleNum, and roleDesc
     const roleObject: { Role: string; amount: number; description: string } = {
       Role: roleName,
       amount: roleNum,

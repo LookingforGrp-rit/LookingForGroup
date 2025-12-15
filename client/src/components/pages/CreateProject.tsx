@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ItemMaker } from '../ItemMaker';
 
 //page to create a project
 //accessed from my projects
+
+/**
+ * Create Project page. Creates a page that will allow the user to add their project onto the website.
+ * Sets up variables for the project and adds in the html for the Create Project user interface
+ * @returns JSX Element
+ */
 const CreateProject = () => {
+  
+  // Project name
   const [pName, setName] = useState('');
+
+  // Project description
   const [pDesc, setDesc] = useState('');
+
+  // Project tags
   const [tags, setTags] = useState(['']);
+
+  // Project roles
   const [roles, setRoles] = useState(['']);
 
   const grabTags = (grabbedTags: string[]) => {

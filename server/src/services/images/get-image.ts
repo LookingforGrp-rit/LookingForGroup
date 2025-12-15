@@ -24,6 +24,7 @@ const isFileExists = async (key: string): Promise<boolean> => {
   }
 };
 
+//GET api/images/{image}
 export const getImageService = async (
   key: string,
 ): Promise<ImageUploadResult | GetImageServiceError> => {

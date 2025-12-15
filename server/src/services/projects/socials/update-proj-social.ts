@@ -6,6 +6,7 @@ import { transformProjectSocial } from '#services/transformers/projects/parts/pr
 
 type UpdateProjectSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//PATCH api/projects/{id}/socials/{websiteId}
 export const updateProjectSocialService = async (
   url: string,
   projectId: number,

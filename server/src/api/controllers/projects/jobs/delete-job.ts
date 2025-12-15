@@ -2,6 +2,8 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import deleteJobService from '#services/projects/jobs/delete-job.ts';
 
+//DELETE api/projects/{id}/jobs/{jobId}
+//deletes a job from a project
 const deleteJobController = async (req: Request, res: Response): Promise<void> => {
   const projectId = parseInt(req.params.id);
   const jobId = parseInt(req.params.jobId);

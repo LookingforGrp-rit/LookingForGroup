@@ -6,6 +6,7 @@ import { transformRole } from '#services/transformers/datasets/role.ts';
 
 type GetRolesServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
+//GET api/datasets/roles
 const getRolesService = async (): Promise<Role[] | GetRolesServiceError> => {
   try {
     const roles = await prisma.roles.findMany({

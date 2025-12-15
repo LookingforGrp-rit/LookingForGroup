@@ -1,3 +1,5 @@
+/* Contains style rules that handles the layout for the About tab of profile editor */
+
 .edit-profile-body.about {
     /* box-sizing: border-box; */
     /* height: calc(100% - 28px - 10px); */
@@ -7,7 +9,7 @@
     gap: 10px;
   }
   
-  .edit-profile-body.about .edit-profile-section-1 {
+  .edit-profile-body.about #edit-profile-section-1 {
     display: grid;
     grid-template-areas:
       'image row1'
@@ -16,10 +18,10 @@
     grid-template-columns: 25% auto;
     grid-template-rows: 1fr 1fr 1fr;
     column-gap: 20px;
-    /* row-gap: 10px; */
+    row-gap: 10px;
   }
   
-  .edit-profile-body.about .edit-profile-section-2 {
+  .edit-profile-body.about #edit-profile-section-2 {
     box-sizing: border-box;
     width: 100%;
     /* height: 100%; */
@@ -29,7 +31,7 @@
     column-gap: 10px;
   }
   
-  .edit-profile-body.about .edit-profile-section-3 {
+  .edit-profile-body.about #edit-profile-section-3 {
     /* box-sizing: border-box; */
     height: 100%;
     width: 100%;
@@ -63,14 +65,17 @@
     align-items: center;
   
     border: 2px dashed #424242;
+    border-radius: 10px;
     gap: 10px;
     width: 100%;
     height: auto;
   }
 
   #profile-editor-about {
-    overflow-y: auto;
-    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 13px;
+    height: 100%;
   }
 
   textarea, input, select {
@@ -85,10 +90,10 @@
     display: flex;
     flex-direction: column;
     gap: 24px;
-    padding: 0 5px;
+    padding: 0 10px;
   }
 
-  .edit-profile-section-1 {
+  #edit-profile-section-1 {
     display: flex !important;
     flex-direction: column;
     gap: 20px;
@@ -121,7 +126,7 @@
     width: 100%;
   }
 
-  .edit-profile-section-2 {
+  #edit-profile-section-2 {
     display: flex !important;
     flex-direction: row;
     gap: 20px;
@@ -144,7 +149,7 @@
     overflow-x: auto;
   }
 
-  .edit-profile-section-1 {
+  #edit-profile-section-1 {
     display: flex !important;
     flex-direction: column !important;
     align-items: baseline;
@@ -182,7 +187,7 @@
     gap: 10px;
   }
   
- .edit-profile-section-2 {
+ #edit-profile-section-2 {
     display: flex !important;
     flex-direction: column;
     align-items: center;

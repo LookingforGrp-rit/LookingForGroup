@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { deleteMajorService } from '#services/me/majors/delete-major.ts';
 
+//DELETE api/me/majors/{id}
 //delete a major from user profile
 export const deleteMajor = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //the one you're deleting

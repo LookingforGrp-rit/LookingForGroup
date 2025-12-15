@@ -1,369 +1,287 @@
-//Styles
-import '../Styles/credits.css';
-import '../Styles/discoverMeet.css';
-import '../Styles/emailConfirmation.css';
-import '../Styles/general.css';
-import '../Styles/loginSignup.css';
-import '../Styles/messages.css';
-import '../Styles/notification.css';
-import '../Styles/profile.css';
-import '../Styles/projects.css';
-import '../Styles/settings.css';
-import '../Styles/pages.css';
-
-import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import { Header } from '../Header';
-import { Dropdown, DropdownButton, DropdownContent } from '../Dropdown';
-import { Popup, PopupButton, PopupContent } from '../Popup';
-import { ImageCarousel } from '../ImageCarousel';
-import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEditor';
-import profilePicture from '../../images/blue_frog.png';
-import profileImage from '../../icons/profile-user.png';
-import { ProjectCarousel } from '../ProjectCarousel';
-import tallImage from '../../images/tall_img.png';
-import heart from '../../icons/heart.png';
-import * as paths from '../../constants/routes';
-import Project from './Project';
-import { ThemeIcon } from '../ThemeIcon';
-import { sendPost, sendDelete } from '../../functions/fetch';
-import { getByID } from '../../api/projects';
-import { getAccountInformation } from '../../api/users';
-import usePreloadedImage from '../../functions/imageLoad';
-
-//backend base url for getting images
-const API_BASE = `http://localhost:8081`;
-
-
-//To-do
-//Have team member listings link to their respective profiles
-//Ensure 'ProjectCreatorEditor' component is complete and works on this page for project editing (import found above)
-
-//TODO: remove after implementing database functionality
-//Variable used for checking whether or not we are running a server or not
-//Should be 'true' when using npm run server, 'false' when using npm run client
-const runningServer = true;
-
-//TODO: remove after implementing database functionality
-//A default set of project data for the component to use
-//use while running with npm run client
-const defaultProject = runningServer
-  ? undefined
-  : {
-    title: 'Title Here',
-    hook: 'Hook text Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-    description: 'Description text Lorem ipsum dolor sit amet consectetur adipisicing elit.',
-    purpose: 'Insert purpose here',
-    status: 'currentStatus',
-    audience: 'Insert target audience here',
-    project_types: [{ id: 1, project_type: 'Video Game' }],
-    tags: [
-      { id: 6, tag: 'Action', type: 'Creative', position: 1 },
-      { id: 40, tag: 'Rogue-Like', type: 'Games', position: 2 },
-      { id: 1, tag: 'Sci-Fi', type: 'Creative', position: 3 },
-    ],
-    jobs: [
-      {
-        duration: 'Short-term',
-        location: 'On-site',
-        title_id: 8,
-        job_title: 'Video Game Developer',
-        description: 'We are looking for game developers familiar with Unreal Engine 5',
-        availability: 'Full-time',
-        compensation: 'Paid',
-      },
-      {
-        duration: 'Long-term',
-        location: 'Remote',
-        title_id: 51,
-        job_title: '2D Artist',
-        description: 'We are looking for artists who know how to draw bees',
-        availability: 'Part-time',
-        compensation: 'Paid',
-      },
-    ],
-    members: [
-      { user_id: 1, job_title: 'Project Lead', first_name: 'Lily', last_name: 'Carter' },
-      { user_id: 2, job_title: '2D Artist', first_name: 'Maya', last_name: 'Bennett' },
-      { user_id: 3, job_title: 'Video Game Developer', first_name: 'Aiden', last_name: 'Brooks' },
-      { user_id: 4, job_title: 'Philosopher', first_name: 'Aris', last_name: 'Tottle' },
-      { user_id: 5, job_title: 'Impersonator', first_name: 'Imi', last_name: 'Tatter' },
-    ],
-    images: [
-      { id: 1, image: profilePicture, position: 1 },
-      { id: 2, image: tallImage, position: 2 },
-      { id: 3, image: heart, position: 3 },
-    ],
-  };
-
-function useProfileImage(user) {
-  return usePreloadedImage(`${API_BASE}/images/profiles/${user.profileImage}`, profilePicture);
-}
+import { useCallback, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Header, loggedIn } from "../Header";
+import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
+import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
+import { Popup, PopupButton, PopupContent } from "../Popup";
+import profileImage from "../../images/blue_frog.png";
+import { ProjectCarousel } from "../ProjectCarousel";
+import * as paths from "../../constants/routes";
+import { ThemeIcon } from "../ThemeIcon";
+import { getByID } from "../../api/projects";
+import {
+  getCurrentAccount,
+  deleteProjectFollowing,
+  addProjectFollowing,
+  getProjectFollowing,
+} from "../../api/users";
+import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
+import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
+import {
+  JobAvailability as JobAvailabilityEnums,
+  JobDuration as JobDurationEnums,
+  JobLocation as JobLocationEnums,
+  JobCompensation as JobCompensationEnums,
+  ProjectStatus as ProjectStatusEnums,
+} from "@looking-for-group/shared/enums";
 
 //Main component for the project page
+/**
+ * Project page. Renders the project page with all project details, team member information, and available positions.
+ * @returns JSX Element
+ */
 const NewProject = () => {
   //Navigation hook
   const navigate = useNavigate();
 
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
-  const projectID = urlParams.get('projectID');
+  const projectID: number = Number(urlParams.get("projectID"));
 
   //state variable used to check whether or not data was successfully obtained from database
-  const [failCheck, setFailCheck] = useState(false);
-
   // State variable used to determine permissions level, and if user should have edit access
-  const [userPerms, setUserPerms] = useState(-1);
+  // const [userPerms, setUserPerms] = useState(-1);
 
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<MePrivate | null>();
+  const [userID, setUserID] = useState<number>(0);
+  const [displayedProject, setDisplayedProject] =
+    useState<ProjectWithFollowers>();
 
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
 
-  //Function used to get project data
-  const getProjectData = async () => {
-    const url = `/api/projects/${projectID}`;
+  /**
+   * Checks in the current user is following a project
+   * @returns true if user is following the project
+   */
+  const checkFollow = useCallback(async () => {
+    const followings = (await getProjectFollowing(userID)).data?.projects;
 
-    try {
-      const projectData = await getByID(projectID);
+    let isFollow = false;
 
-      if (projectData.data[0] === undefined) {
-        setFailCheck(true);
-        return;
+    if (followings !== undefined) {
+      for (const follower of followings) {
+        isFollow = follower.project.projectId === projectID;
+        if (isFollow) break;
+      }
+    }
+    setFollowing(isFollow);
+    return isFollow;
+  }, [projectID, userID]);
+
+  // Sets state variables
+  useEffect(() => {
+    const getProjectData = async () => {
+      //get our current user for use later
+      const userResp = await getCurrentAccount();
+      if (userResp.data) {
+        setUser(userResp.data);
+        setUserID(userResp.data.userId);
       }
 
-      // Get user data and check if user is part of the project
-      const authRes = await fetch(`/api/auth`);
-      const authData = await authRes.json();
-
-      if (authData.data) {
-        const userData = await getAccountInformation(authData.data);
-
-        console.log('user')
-        console.log(userData.data);
-        setUser(userData.data[0]);
-        const projectMembers = projectData.data[0].members;
-
-        for (let i = 0; i < projectMembers.length; i++) {
-          if (projectMembers[i].user_id === authData.data) {
-            setUserPerms(projectMembers[i].permissions);
-            break;
-          }
-        }
-
-        // // Get all projects user is following to see if they follow this one
-        // const followRes = await fetch(`/api/users/${authData.data}/followings/projects`);
-        // const followData = await followRes.json();
-
-        // if (followData.data) {
-        //   const followedProjects = followData.data;
-
-        //   for (let i = 0; i < followedProjects.length; i++) {
-
-        //     if (parseInt(followedProjects[i].project_id) === parseInt(projectID)) {
-        //       setFollowing(true);
-        //       break;
-        //     }
-        //   }
-        // }
+      //get the project itself
+      const projectResp = await getByID(projectID);
+      if (projectResp.data) {
+        setDisplayedProject(projectResp.data);
+        checkFollow();
+        setFollowCount(projectResp.data.followers.count);
       }
+    };
+    getProjectData();
+  }, [projectID, checkFollow]);
 
-      // Log follower count, and determine if user is a follower
-      let followerNum = projectData.data[0].followers.length;
-      // Start displaying in X.X+ format if >= 1000
-      if (followerNum >= 1000) {
-        const multOfHundred = (followerNum % 100) === 0;
+  //Checks to see whether or not the current user is the maker/owner of the project being displayed
+  //oh do i need this too
+  // const usersProject = true;
 
-        followerNum /= 1000.0;
-        followerNum = followerNum.toFixed(1);
-        followerNum = `${followerNum}K ${multOfHundred ? '+' : ''}`;
+  /**
+   * Formats the number of followers for display, converting large numbers to K format (e.g., 1.2K).
+   * @param followers Total followers of the project
+   * @returns String to display
+   */
+  const formatFollowCount = (followers: number): string => {
+    if (followers >= 1000) {
+      const multOfHundred = followers % 100 === 0;
+      const formattedNum = (followers / 1000).toFixed(1);
+      return `${formattedNum}K ${multOfHundred ? "+" : ""}`;
+    }
+    return `${followers}`;
+  };
+
+  /**
+   * Follows a project and adds to the following count of the project.
+   */
+  const followProject = async () => {
+    // Follow icon is only present if user is logged in.
+    // If keeping this layout, this check may be redundant.
+    if (!loggedIn) {
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
+    } else {
+      const toggleFollow = !(await checkFollow());
+      setFollowing(toggleFollow);
+      if (toggleFollow) {
+        await addProjectFollowing(projectID);
+        setFollowCount(followCount + 1);
+      } else {
+        await deleteProjectFollowing(projectID);
+        setFollowCount(followCount - 1);
       }
-
-      setFollowCount(projectData.data[0].followers.count);
-      setFollowing(projectData.data[0].followers.isFollowing);
-      setDisplayedProject(projectData.data[0]);
-    } catch (error) {
-      console.error(error.message);
     }
   };
 
-  //State variable holding information on the project to be displayed
-  const [displayedProject, setDisplayedProject] = useState(defaultProject);
-
-  //Gets data from database on a specific project
-  if (displayedProject === undefined) {
-    getProjectData();
-  }
-
-  //Checks to see whether or not the current user is the maker/owner of the project being displayed
-  // const usersProject = true;
-
-  // Formats follow-count based on Figma design. Returns a string
-  const formatFollowCount = (followers) => {
-    let followerNum = followers;
-
-    // Start displaying in X.X+ format if >= 1000
-    if (followerNum >= 1000) {
-      const multOfHundred = (followerNum % 100) === 0;
-
-      followerNum /= 1000.0;
-      followerNum = followerNum.toFixed(1);
-      followerNum = `${followerNum}K ${multOfHundred ? '+' : ''}`;
-    }
-
-    return `${followerNum}`;
-  }
-
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
-  const buttonContent = (userPerms > 0) ? (
-    <>
-      {
+  const buttonContent =
+    user && displayedProject?.owner.userId === user.userId ? (
+      <>
+        {
+          <>
+            <ProjectCreatorEditor
+              newProject={false}
+              updateDisplayedProject={setDisplayedProject}
+              /*permissions={userPerms}*/
+            />
+          </>
+        }
+      </>
+    ) : (
+      user && (
         <>
-          <ProjectCreatorEditor newProject={false} permissions={userPerms} user={user} />
-        </>
-      }
-    </>
-  ) : (
-    <>
-      {
-        <>
-          {(user && user.userId !== 0) ? (
-            <>
-              { /* Heart icon, with number indicating follows */}
-              <div className='project-info-followers'>
-                <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
-                  {formatFollowCount(followCount)}
-                </p>
+          {/* Heart icon, with number indicating follows */}
+          <div className="project-info-followers">
+            <p className={`follow-amt ${isFollowing ? "following" : ""}`}>
+              {formatFollowCount(followCount)}
+            </p>
+            {isFollowing ? (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-filled"}
+                ariaLabel="following"
+                onClick={followProject}
+              />
+            ) : (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-empty"}
+                ariaLabel="following"
+                onClick={followProject}
+              />
+            )}
+          </div>
+          {/* Share, leave, and report dropdown */}
+          <Dropdown>
+            <DropdownButton className="project-info-dropdown-btn">
+              <ThemeIcon
+                id={"menu"}
+                width={25}
+                height={25}
+                className={"color-fill dropdown-menu"}
+                ariaLabel={"More options"}
+              />
+            </DropdownButton>
+            <DropdownContent rightAlign={true}>
+              <div id="project-info-dropdown">
+                {/* TODO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
+                <button className="project-info-dropdown-option">
+                  <ThemeIcon
+                    id={"share"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"Share project"}
+                    className="mono-fill"
+                  />
+                  Share
+                </button>
+                {/* Only be able to leave if you're a member of the project */}
+                {/* {userPerms === 0 ? ( */}
+                <Popup>
+                  <PopupButton className="project-info-dropdown-option">
+                    <ThemeIcon
+                      id={"logout"}
+                      width={27}
+                      height={27}
+                      ariaLabel={"Leave project"}
+                      className="mono-fill"
+                    />
+                    Leave
+                  </PopupButton>
+                  <PopupContent>
+                    <div className="small-popup">
+                      <h3>Leave Project</h3>
+                      <p className="confirm-msg">
+                        Are you sure you want to leave this project? You won't
+                        be able to rejoin unless you're re-added by a project
+                        member.
+                      </p>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          className="confirm-btn"
+                          callback={leaveProject}
+                        >
+                          Confirm
+                        </PopupButton>
+                        <PopupButton className="deny-btn">Cancel</PopupButton>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
                 <button
-                  className={`follow-icon ${isFollowing ? 'following' : ''}`}
-                  onClick={() => {
-                    let url = `/api/users/${user.userId}/followings/projects`;
-
-                    if (!isFollowing) {
-                      sendPost(url, { projectId: projectID }, () => {
-                        setFollowing(true);
-                        setFollowCount(followCount + 1);
-                      });
-                    } else {
-                      url += `/${projectID}`;
-                      sendDelete(url, () => {
-                        setFollowing(false);
-                        setFollowCount(followCount - 1);
-                      });
-                    }
-                  }}
+                  className="project-info-dropdown-option"
+                  id="project-info-report"
                 >
-                  <i
-                    className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}
-                  ></i>
+                  <ThemeIcon
+                    id={"warning"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"Report"}
+                  />
+                  Report
                 </button>
               </div>
-              { /* Share, leave, and report dropdown */}
-              <Dropdown>
-                <DropdownButton
-                  className='project-info-dropdown-btn'
-                >
-                  •••
-                </DropdownButton>
-                <DropdownContent rightAlign={true}>
-                  <div id="project-info-dropdown">
-                    { /* TO-DO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
-                    <button className="project-info-dropdown-option">
-                      <i className="fa-solid fa-share"></i>
-                      Share
-                    </button>
-                    { /* Only be able to leave if you're a member of the project */}
-                    {userPerms === 0 ? (
-                      <Popup>
-                        <PopupButton
-                          className='project-info-dropdown-option'
-                        >
-                          <i
-                            className='fa-solid fa-arrow-right-from-bracket'
-                            style={{ fontStyle: 'normal', transform: 'rotate(180deg)' }}
-                          ></i>
-                          Leave
-                        </PopupButton>
-                        <PopupContent>
-                          <div className='small-popup'>
-                            <h3>Leave Project</h3>
-                            <p className='confirm-msg'>
-                              Are you sure you want to leave this project? You won't be able
-                              to rejoin unless you're re-added by a project member.
-                            </p>
-                            <div className='confirm-deny-btns'>
-                              <PopupButton
-                                className='confirm-btn'
-                                callback={async () => {
-                                  const url = `/api/projects/${projectID}/members/${user.userId}`;
-
-                                  // For now, just reload the page. Ideally, there'd be something more
-                                  sendDelete(url, () => {
-                                    location.reload();
-                                  });
-                                }}
-                              >Confirm</PopupButton>
-                              <PopupButton className='deny-btn'>Cancel</PopupButton>
-                            </div>
-                          </div>
-                        </PopupContent>
-                      </Popup>
-                    ) : (
-                      <></>
-                    )}
-                    <button className="project-info-dropdown-option" id="project-info-report">
-                      <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
-                      Report
-                    </button>
-                  </div>
-                </DropdownContent>
-              </Dropdown>
-            </>
-          ) : (
-            <></>
-          )}
+            </DropdownContent>
+          </Dropdown>
         </>
-      }
-    </>
-  );
+      )
+    );
 
   //Lists of users who have worked on this project
   //Members - people who actively work on the project
   // const projectMembers = displayedProject === undefined ? [] : displayedProject.members;
-  const projectMembers = displayedProject?.members; //FIXME: add profile image data to display in HTML
+  const projectMembers = displayedProject?.members;
   //Contributors - people who have helped, but aren't actively working on the project
-  const projectContributors = [];
+  // const projectContributors = [];
   //People list holds whatever list is currently being displayed
   //const [peopleList, setPeopleList] = useState(displayedProject === undefined ? [] : displayedProject.members);
 
   //HTML containing info on the members of the project
+
   const peopleContent =
-    (projectMembers?.length && projectMembers.length > 0) ? (
+    projectMembers && projectMembers.length > 0 ? (
       <>
-        {projectMembers?.map((user) => {
+        {projectMembers?.map((member) => {
           // Don't show users that chose to hide themselves as a member of this project
           // if (user.visibility !== 'public') {         // changed from user.profile_visibility; possible break
           //   return (
           //     <></>
           //   );
           // }
+          const memberUser = member.user; //so i don't have to go user.user.userId or anything
 
           return (
             <div
-              key={user.userId}
+              key={memberUser.userId}
               className="project-contributor"
-              onClick={() => navigate(`${paths.routes.NEWPROFILE}?userID=${user.userId}`)}
+              onClick={() =>
+                navigate(`${paths.routes.PROFILE}?userID=${memberUser.userId}`)
+              }
             >
               <img
                 className="project-contributor-profile"
-                src={`${API_BASE}/images/profiles/${user.profileImage}`}
+                src={memberUser.profileImage ?? profileImage}
                 alt="contributor profile"
                 // Cannot use usePreloadedImage function because this is in a callback
-                onLoad={(e) => {
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = `${API_BASE}/images/profiles/${user.profileImage}`;
-                }}
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
                   profileImg.src = profileImage;
@@ -371,9 +289,9 @@ const NewProject = () => {
               />
               <div className="project-contributor-info">
                 <div className="team-member-name">
-                  {user.firstName} {user.lastName}
+                  {memberUser.firstName} {memberUser.lastName}
                 </div>
-                <div className="team-member-role">{user.jobTitle}</div>
+                <div className="team-member-role">{member.role.label}</div>
               </div>
             </div>
           );
@@ -385,47 +303,63 @@ const NewProject = () => {
 
   //FIXME: contributors are not implemented in the database or within the project editor: implement or remove feature
   //HTML containing info on people who have contributed to the project (not necessarily members)
-  const contributorContent =
-    projectContributors !== undefined ? (
-      projectContributors.length > 0 ? (
-        <>
-          {projectContributors.map((user) => {
-            const imgSrc = useProfileImage(user);
+  // const contributorContent =
+  //   projectContributors !== undefined ? (
+  //     projectContributors.length > 0 ? (
+  //       <>
+  //         {projectContributors.map((user) => {
+  //           const imgSrc = useProfileImage(user);
 
-            return (
-              <div
-                className="project-contributor"
-                onClick={() => navigate(`${paths.routes.NEWPROFILE}?userID=${user.userId}`)}
-              >
-                <img className="project-contributor-profile" src={imgSrc} alt="contributor profile" />
-                <div className="project-contributor-info">
-                  <div>
-                    {user.firstName} {user.lastName}
-                  </div>
-                  <div>{user.jobTitle}</div>
-                </div>
-              </div>
-            );
-          })}
-        </>
-      ) : (
-        <div>There are no other contributors right now.</div>
-      )
-    ) : (
-      <div>There are no other contributors right now.</div>
-    );
+  //           return (
+  //             <div
+  //               className="project-contributor"
+  //               onClick={() =>
+  //                 navigate(`${paths.routes.PROFILE}?userID=${user.userId}`)
+  //               }
+  //             >
+  //               <img
+  //                 className="project-contributor-profile"
+  //                 src={imgSrc}
+  //                 alt="contributor profile"
+  //               />
+  //               <div className="project-contributor-info">
+  //                 <div>
+  //                   {user.firstName} {user.lastName}
+  //                 </div>
+  //                 <div>{user.jobTitle}</div>
+  //               </div>
+  //             </div>
+  //           );
+  //         })}
+  //       </>
+  //     ) : (
+  //       <div>There are no other contributors right now.</div>
+  //     )
+  //   ) : (
+  //     <div>There are no other contributors right now.</div>
+  //   );
 
   //State variable that tracks whether project members or contributors will be displayed
-  const [displayedPeople, setDisplayedPeople] = useState('People');
+  //uncomment when contributors exist in the database
+  // const [displayedPeople, setDisplayedPeople] = useState("People");
 
   //Variable holding either 'peopleContent' or 'contributorContent', depending on 'displayedPeople' state (seen above)
-  const profileContent = displayedPeople === 'People' ? peopleContent : contributorContent;
+  // const profileContent =
+  //   displayedPeople === "People" ? (
+  //     peopleContent
+  //   ) : (
+  //     <div>There are no other contributors right now.</div>
+  //   );
 
+  /**
+   * Sets the viewed position and triggers the popup to display the selected open position details.
+   * @param positionNumber The position to open the popup to
+   */
   const openPositionListing = (positionNumber: number) => {
     //Set state to position being clicked
     //Call Popup open function from other button
     setViewedPosition(positionNumber);
-    const button = document.getElementById('project-open-positions-button');
+    const button = document.getElementById("project-open-positions-button");
     if (button) button.click();
   };
 
@@ -434,19 +368,20 @@ const NewProject = () => {
 
   //Find first member with the job title of 'Project Lead'
   //If no such member exists, use first member in project member list
-  const projectLead =
-    displayedProject === undefined
-      ? { user_id: 0, job_title: 'Default guy', first_name: 'user', last_name: 'name' }
-      : displayedProject.members.some((member) => member.job_title === 'Project Lead')
-        ? displayedProject.members.find((member) => member.job_title === 'Project Lead')
-        : displayedProject.members[0];
+  const projectLead = displayedProject?.owner;
 
   //Page layout for if project data hasn't been loaded yet
   const loadingProject = <>{<div>Loading project...</div>}</>;
 
   return (
     <div className="page">
-      <Header dataSets={{ data: [] }} onSearch={() => { }} />
+      <Header
+        dataSets={{ data: [] }}
+        onSearch={() => {}}
+        hideSearchBar={true}
+        value={undefined}
+        onChange={undefined}
+      />
 
       {displayedProject === undefined ? (
         loadingProject
@@ -459,91 +394,165 @@ const NewProject = () => {
           <ProjectCarousel project={displayedProject}></ProjectCarousel>
 
           <div id="project-info-panel">
-            <div id="project-info-header">
-              <div id="project-title">{displayedProject.title}</div>
-              <div id="project-info-buttons">{buttonContent}</div>
-            </div>
-            <div id="project-hook">{displayedProject.hook}</div>
-            <div id="project-status">
-              Status: <span className="project-info-highlight">{displayedProject.status} </span>
-              <Popup>
-                <PopupButton buttonId="project-open-positions-button">Open Positions</PopupButton>
-                <PopupContent>
-                  <div id="project-open-positions-popup">
-                    <div id="positions-popup-header">Join The Team</div>
+            <div id="project-info-top">
+              <div id="project-info-header">
+                <div id="project-title">{displayedProject.title}</div>
+                <div id="project-info-buttons">{buttonContent}</div>
+              </div>
+              <div id="project-hook">{displayedProject.hook}</div>
+              <div id="project-status">
+                <p>
+                  Status:{" "}
+                  <span className="project-info-highlight">
+                    {ProjectStatusEnums[displayedProject.status]}
+                  </span>
+                </p>
+                <Popup>
+                  <PopupButton buttonId="project-open-positions-button">
+                    Open Positions
+                  </PopupButton>
+                  <PopupContent>
+                    <div id="project-open-positions-popup">
+                      <div id="positions-popup-header">Join The Team</div>
 
-                   <div className="positions-popup-content">
-                    <div className="positions-popup-list">
-                      <div id="positions-popup-list-header">Open Positions</div>
-                      <div id="positions-popup-list-buttons">
-                        {displayedProject.jobs?.map((job, index) => (
-                          <button
-                            className={`positions-popup-list-item ${index === viewedPosition ? 'positions-popup-list-item-active' : ''}`}
-                            onClick={() => setViewedPosition(index)}
-                            key={index}
+                      {/* Left Container */}
+                      <div id="project-team-open-positions-popup">
+                        <div className="positions-popup-list">
+                          <p className="positions-popup-info-title">
+                            Open Positions
+                          </p>
+                          <div id="team-positions-popup-list-buttons">
+                            {displayedProject.jobs?.map((job, index) => (
+                              <button
+                                className={`positions-popup-list-item`}
+                                id={
+                                  index === viewedPosition
+                                    ? "positions-popup-list-item-active"
+                                    : ""
+                                }
+                                onClick={() => setViewedPosition(index)}
+                                key={index}
+                              >
+                                {job.role.label}
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Right Container */}
+                      <div className="positions-popup-info-wrapper">
+                        <div className="positions-popup-info">
+                          <div className="positions-popup-info-title">
+                            {displayedProject.jobs[viewedPosition]?.role
+                              ?.label ?? undefined}
+                          </div>
+
+                          <div id="position-description-header">
+                            What we are looking for:
+                          </div>
+
+                          <div
+                            id="position-description-content"
+                            className="positions-popup-info-description"
                           >
-                            {job?.job_title}
-                          </button>
-                        ))}
-                      </div>
-                    </div>
+                            {displayedProject.jobs[viewedPosition]?.description}
+                          </div>
 
-                    <div id="positions-popup-info">
-                      <div id="positions-popup-info-title">
-                        {displayedProject.jobs[viewedPosition]?.job_title ?? undefined}
-                      </div>
-                      <div id="positions-popup-info-description">
-                        <div id="position-description-header">What we are looking for:</div>
-                        <div id="position-description-content">
-                          {displayedProject.jobs[viewedPosition]?.description}
+                          <div id="open-position-details">
+                            <div id="open-position-details-left">
+                              <div id="position-availability">
+                                <span className="position-detail-indicator">
+                                  Availability:{" "}
+                                </span>
+                                {
+                                  JobAvailabilityEnums[
+                                    displayedProject.jobs[viewedPosition]
+                                      ?.availability
+                                  ]
+                                }
+                              </div>
+                              <div id="position-location">
+                                <span className="position-detail-indicator">
+                                  Location:{" "}
+                                </span>
+                                {
+                                  JobLocationEnums[
+                                    displayedProject.jobs[viewedPosition]
+                                      ?.location
+                                  ]
+                                }
+                              </div>
+                            </div>
+
+                            <div id="open-position-details-right">
+                              <div id="position-duration">
+                                <span className="position-detail-indicator">
+                                  Duration:{" "}
+                                </span>
+                                {
+                                  JobDurationEnums[
+                                    displayedProject.jobs[viewedPosition]
+                                      ?.duration
+                                  ]
+                                }
+                              </div>
+                              <div id="position-compensation">
+                                <span className="position-detail-indicator">
+                                  Compensation:{" "}
+                                </span>
+                                {
+                                  JobCompensationEnums[
+                                    displayedProject.jobs[viewedPosition]
+                                      ?.compensation
+                                  ]
+                                }
+                              </div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                      <div id="position-details">
-                        <div id="position-availability">
-                          <span className="position-detail-indicator">Availability: </span>
-                          {displayedProject.jobs[viewedPosition]?.availability}
-                        </div>
-                        <div id="position-duration">
-                          <span className="position-detail-indicator">Duration: </span>
-                          {displayedProject.jobs[viewedPosition]?.duration}
-                        </div>
-                        <div id="position-location">
-                          <span className="position-detail-indicator">Location: </span>
-                          {displayedProject.jobs[viewedPosition]?.location}
-                        </div>
-                        <div id="position-compensation">
-                          <span className="position-detail-indicator">Compensation: </span>
-                          {displayedProject.jobs[viewedPosition]?.compensation}
-                        </div>
-                      </div>
-                      <div id="position-contact">
-                        If interested, please contact:{' '}
-                        <span
-                          onClick={() =>
-                            navigate(`${paths.routes.NEWPROFILE}?userID=${projectLead?.user_id}`)
-                          }
-                          id="position-contact-link"
-                        >
-                          {/* {FIXME: get project lead profile image in a different way} */}
-                          {/* <img src={(projectLead?.profile_image) 
+
+                        <div id="position-contact">
+                          If interested, please contact:{" "}
+                          <span
+                            onClick={() =>
+                              navigate(
+                                `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
+                              )
+                            }
+                            id="position-contact-link"
+                          >
+                            {/* {FIXME: get project lead profile image in a different way} */}
+                            {/* <img src={(projectLead?.profile_image) 
                             ? `images/profiles/${projectLead?.profile_image}` 
                             : profilePicture} 
                           /> */}
-                          {projectLead?.first_name} {projectLead?.last_name}
-                        </span>
+                            {projectLead?.firstName} {projectLead?.lastName}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  </div>
 
-                    <PopupButton buttonId="positions-popup-close">Close</PopupButton>
-                  </div>
-                </PopupContent>
-              </Popup>
-            </div>
-            <div id="project-creation">
-              Created by: <span className="project-info-highlight">creator</span>
-              <br />
-              Creation date
+                      <PopupButton buttonId="positions-popup-close">
+                        Close
+                      </PopupButton>
+                    </div>
+                  </PopupContent>
+                </Popup>
+              </div>
+              <div id="project-creation">
+                Created by:{" "}
+                <span className="project-info-highlight">
+                  {projectLead?.firstName} {projectLead?.lastName}
+                </span>
+                <br />
+                {new Date(
+                  displayedProject.createdAt.toString()
+                ).toLocaleDateString("en-US", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
+                })}
+              </div>
             </div>
             <div id="project-tags">
               {
@@ -555,8 +564,11 @@ const NewProject = () => {
                   } */
                   if (index < 3) {
                     return (
-                      <div className={`project-tag-label label-green`} key={index}>
-                        {tag.tag}
+                      <div
+                        className={`project-tag-label label-green`}
+                        key={index}
+                      >
+                        {tag.label}
                       </div>
                     );
                   } else if (index === 3) {
@@ -579,28 +591,55 @@ const NewProject = () => {
           title and content can be assigned to similar elements */}
             <div className="project-overview-section-header">Purpose</div>
             <div>{displayedProject.purpose}</div>
-            <div className="project-overview-section-header">Target Audience</div>
+            <div className="project-overview-section-header">
+              Target Audience
+            </div>
             <div>{displayedProject.audience}</div>
             <div id="project-overview-links-section">
-              Keep up with us!
-              <div id="project-overview-links">
-                {/* Use function to insert various links here */}
-              </div>
+              {displayedProject.projectSocials.length > 0 ? (
+                <>
+                  Keep up with us!
+                  <div id="project-overview-links">
+                    {displayedProject.projectSocials.map((social, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          window.open(social.url, "_blank");
+                        }}
+                      >
+                        <ThemeIcon
+                          id={
+                            social.label === "Other"
+                              ? "link"
+                              : social.label.toLowerCase()
+                          }
+                          width={25}
+                          height={25}
+                          className={"color-fill"}
+                          ariaLabel={social.label}
+                        />
+                      </button>
+                    ))}
+                  </div>
+                </>
+              ) : (
+                <p>No contacts yet</p>
+              )}
             </div>
           </div>
 
           <div id="project-people">
             <div id="project-people-tabs">
-              <button
-                className={`project-people-tab ${displayedPeople === 'People' ? 'project-people-tab-active' : ''}`}
-                onClick={(e) => setDisplayedPeople('People')}
+              <div // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
+                className={`project-people-tab ${peopleContent}`}
+                //onClick={() => setDisplayedPeople("People")} wow this button is now useless
               >
                 The Team
-              </button>
+              </div>
               {/* If contributors are added as a site feature, use the commented code below */}
               {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
             </div>
-            <div id="project-people-content">{profileContent}</div>
+            <div id="project-people-content">{peopleContent}</div>
           </div>
 
           <div id="project-open-positions">
@@ -612,7 +651,7 @@ const NewProject = () => {
                   onClick={() => openPositionListing(index)}
                   key={index}
                 >
-                  {position.job_title}
+                  {position.role.label}
                 </button>
               ))}
             </div>

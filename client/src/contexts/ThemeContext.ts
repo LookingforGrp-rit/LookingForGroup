@@ -5,6 +5,9 @@ type ThemeContextProps = {
   setTheme: (theme: string) => void;
 };
 
+/**
+ * Tracks the current theme of the project: dark or light.
+ */
 export const ThemeContext = createContext<ThemeContextProps>({
   theme: 'dark',
   setTheme: () => {},

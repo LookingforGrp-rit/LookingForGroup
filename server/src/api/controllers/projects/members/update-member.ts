@@ -3,6 +3,8 @@ import type { Request, Response } from 'express';
 import type { Prisma } from '#prisma-models/index.js';
 import getService from '#services/projects/members/update-member.ts';
 
+//PATCH api/projects/{id}/members/{userId}
+//updates a project member
 const updateMemberController = async (req: Request, res: Response) => {
   const userIdReal = parseInt(req.params.userId);
   const projectIdReal = parseInt(req.params.id);

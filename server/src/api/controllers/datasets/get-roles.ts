@@ -2,6 +2,7 @@ import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import getRolesService from '#services/datasets/get-roles.ts';
 
+//GET api/datasets/roles
 const getRolesController = async (_request: Request, response: Response): Promise<void> => {
   const result = await getRolesService();
 

@@ -2,6 +2,7 @@ import type { ApiResponse, CreateProjectMemberInput } from '@looking-for-group/s
 import type { Request, Response } from 'express';
 import getService from '#services/projects/members/add-member.ts';
 
+//POST api/projects/{id}/members
 //adds a member to the project
 const addMemberController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);

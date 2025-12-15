@@ -1,0 +1,41 @@
+import type { ApiResponse, UpdateProjectThumbnailInput } from '@looking-for-group/shared';
+import type { Request, Response } from 'express';
+import updateThumbnailService from '#services/projects/thumbnail/update-thumbnail.ts';
+
+//PUT api/projects/{id}/thumbnail
+//updates the thumbnail param of a project to contain an existing project image
+const updateThumbnail = async (req: Request, res: Response): Promise<void> => {
+  console.log(req.body);
+  const projectId = parseInt(req.params.id);
+  const thumbId = (req.body as UpdateProjectThumbnailInput).thumbnail; //this should work right
+
+  const result = await updateThumbnailService(projectId, thumbId);
+
+  if (result === 'INTERNAL_ERROR') {
+    const resBody: ApiResponse = {
+      status: 500,
+      error: 'Internal Server Error',
+      data: null,
+    };
+    res.status(500).json(resBody);
+    return;
+  }
+
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Project image not found',
+      data: null,
+    };
+    res.status(404).json(resBody);
+    return;
+  }
+  const resBody: ApiResponse = {
+    status: 200,
+    error: null,
+    data: result,
+  };
+  res.status(200).json(resBody);
+};
+
+export default updateThumbnail;

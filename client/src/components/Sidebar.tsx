@@ -1,30 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { useSelector } from "react-redux";
-import Notifications from "./pages/Notifications";
+// import Notifications from "./pages/Notifications";
 import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
 //user utils
 import { getCurrentUsername } from "../api/users.ts";
-import { ThemeIconNew } from "./ThemeIconNew.tsx";
-
-export interface User {
-  firstName: string;
-  lastName: string;
-  username: string;
-  primaryEmail: string;
-  userId: number;
-}
+import { UserDetail } from "@looking-for-group/shared";
 
 //Style changes to do:
 //Remove blue background image, replace with single color (or gradient?)
 //Change shape of active buttons to be more rounded
 //Remove notification button
 
-const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
-  const [width, setWidth] = React.useState(window.innerWidth);
-  const breakpoint = useSelector((state: any) => state.page.MOBILE_BREAKPOINT);
+/**
+ * SideBar
+ * Renders the main sidebar for the application, handling both mobile and desktop layouts.
+ * Displays navigation buttons (Discover, Meet, My Projects, Profile) and a "Create" project button.
+ * Manages active button highlighting, responsive layout, and navigation.
+ * Fetches current user data to determine access to project creation.
+ * 
+ * @returns JSX element representing the sidebar
+ */
+const SideBar = () => {
+  const [width, setWidth] = React.useState(window.innerWidth); // Current window width
+  const breakpoint = useSelector((state: any) => state.page.MOBILE_BREAKPOINT); // Mobile breakpoint
 
   // const [headerText, setHeaderText] = useState('Group'); // State to manage the h1 text
   const navigate = useNavigate(); // Hook for navigation
@@ -61,9 +62,9 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
         .querySelector("#my-projects-sidebar-btn")
         ?.classList.add("active");
       break;
-    case "/newProfile":
+    case "/profile":
       // Only the mobile layout specifically displays the "own profile" sidebar button
-      // Default "newProfile" brings you to your own page
+      // Default "profile" brings you to your own page
       if (width < breakpoint && !window.location.href.includes("?")) {
         // Is it the mobile layout, and is it DEFINITELY your own page?
         startingPage = "My Profile";
@@ -117,14 +118,18 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
 
   const [activePage, setActivePage] = useState<string>(startingPage); // State to manage the active page [Discover, Meet, My Projects, Messages, Profile, Settings]
 
-  const [showNotifications, setShowNotifications] = useState<boolean>(false); // State to manage the notifications modal
+  // const [showNotifications, setShowNotifications] = useState<boolean>(false); // State to manage the notifications modal
 
   // Error to handle if Create button opens project creator
   const [createError, setCreateError] = useState<boolean>(true);
 
   // Store user data, if authenticated
-  const [userData, setUserData] = useState<User>();
+  const [userData, setUserData] = useState<UserDetail>();
 
+  /**
+   * Fetches the current authenticated user and sets user data.
+   * Updates `createError` depending on authentication status.
+   */
   const getAuth = async () => {
     // Is user authenticated?
     // Get auth
@@ -135,12 +140,10 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
         // Authenticated
         setCreateError(false);
 
-        const userInfo = {
-          firstName: res.data.firstName,
-          lastName: res.data.lastName,
-          username: res.data.username,
-          primaryEmail: res.data.primaryEmail,
-          userId: res.data.userId,
+        const userInfo: UserDetail = {
+          ...res.data,
+          following: res.data.following || { usersFollowing: { users: [], count: 0, apiUrl: "" }, projectsFollowing: { projects: [], count: 0, apiUrl: "" } },
+          followers: res.data.followers || { users: [], count: 0, apiUrl: "" },
         };
 
         setUserData(userInfo);
@@ -155,16 +158,26 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
     }
   };
 
-  // Function to handle the button clicks and update the h1 text
+  /**
+   * Handles updating the active page and navigation.
+   *
+   * @param text - Name of the page (e.g., "Discover")
+   * @param path - URL path to navigate to (e.g., "/discover")
+   */
   const handleTextChange = (text: string, path: string) => {
     // setHeaderText(text);
     setActivePage(text);
     navigate(path); // Navigate to the specified path
   };
 
-  React.useEffect(() => {
-    window.addEventListener("resize", () => setWidth(window.innerWidth));
-  });
+  /**
+   * Handles window resize events and updates width state.
+   */
+  useEffect(() => {
+    const handleResize = () => setWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   // Mobile layout
   if (width < breakpoint) {
@@ -214,7 +227,7 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
                     : "sidebar-btn"
                 }
                 onClick={() =>
-                  handleTextChange("My Profile", paths.routes.NEWPROFILE)
+                  handleTextChange("My Profile", paths.routes.PROFILE)
                 }
               >
                 <ThemeIcon id={'profile'} width={30} height={28.85} className={'mono-fill'} ariaLabel={'my profile'} />
@@ -299,19 +312,19 @@ const SideBar = ({ avatarImage, setAvatarImage, theme }) => {
 
         <div className="Create">
           <ProjectCreatorEditor
-            newProject={createError}
-            buttonCallback={getAuth}
-            user={userData}
+            newProject={true}
+            // buttonCallback={getAuth}
+            // user={userData}
           />
         </div>
       </div>
 
-      <Notifications
+      {/* <Notifications
         show={showNotifications}
         onClose={() => {
           setShowNotifications(false);
         }}
-      />
+      /> */}
     </div>
   );
 };

@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { addUserFollowingService } from '#services/me/followings/add-follow-user.ts';
 
+//POST api/me/followings/people/{id}
 //add user to follow list
 export const addUserFollowing = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const senderId = req.currentUser; //keeping this definition bc it has semantic meaning

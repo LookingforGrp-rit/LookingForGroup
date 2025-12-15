@@ -4,7 +4,8 @@ import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service
 type DeleteTagsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type DeleteTagsServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
 
-//delete however many tags
+//DELETE api/projects/{id}/tags/{tagId}
+//delete a tag
 export const deleteTagsService = async (
   projectId: number,
   tag: number,

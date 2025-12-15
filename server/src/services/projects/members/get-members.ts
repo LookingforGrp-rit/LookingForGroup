@@ -6,6 +6,7 @@ import { transformProjectMember } from '#services/transformers/projects/parts/pr
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/projects/{id}/members
 const getMembersService = async (projectId: number): Promise<ProjectMember[] | GetServiceError> => {
   try {
     const members = await prisma.members.findMany({

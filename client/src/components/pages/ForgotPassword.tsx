@@ -1,4 +1,3 @@
-import '../Styles/pages.css';
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
@@ -6,26 +5,36 @@ import { ThemeImage } from '../ThemeIcon';
 import { sendPost } from '../../functions/fetch.js';
 import { getUserByEmail } from '../../api/users.js';
 
+/**
+ * Forgot Password page. Creates a page that the user can go to when they have forgotten their password for their account
+ * @returns JSX Element
+ */
 const ForgotPassword: React.FC = () => {
-  const navigate = useNavigate(); // Hook for navigation
+  // Hooks for navigation
+  const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from;
 
   // State variables
   const [emailInput, setEmailInput] = useState('');
-  const [error, setError] = useState(''); // Error message for missing or incorrect information
 
-  // Function to handle the send button click
+  // Error message for missing or incorrect information
+  const [error, setError] = useState('');
+
+  /**
+   * Handles sending to and verifying emails with the server
+   * @returns false if unsuccessful, otherwise redirects to login page
+   */
   const handleSend = async () => {
     // Check if the emailInput and password are not empty
     if (emailInput === '') {
       setError('Please fill in all information');
-      return;
+      return false;
     }
     // if the email is not a valid email
     else if (!emailInput.includes('@')) {
       setError('Invalid email');
-      return;
+      return false;
     }
 
     try {
@@ -34,18 +43,18 @@ const ForgotPassword: React.FC = () => {
 
       if (!data) {
         setError('If that account exists, an email has been sent.');
-        return;
+        return false;
       } else {
         // Success message
         setError('Sending email...');
 
         // All checks passed, issue a password change request
-  const response = await sendPost('/api/resets/password', { email: emailInput }) as unknown as { error?: string; message?: string };
-if (response && response.error) {
-  setError(response.error);
-} else {
-  setError('Email sent');
-}
+        const response = await sendPost('/api/resets/password', { email: emailInput }) as unknown as { error?: string; message?: string };
+        if (response && response.error) {
+          setError(response.error);
+        } else {
+          setError('Email sent');
+        }
 
         // Navigate back to LOGIN
         navigate(paths.routes.LOGIN);
@@ -57,7 +66,9 @@ if (response && response.error) {
     }
   };
 
-  // Function to handle the forgot pass button click
+  /**
+   * Navigates page to login
+   */
   const handleBackToLogin = () => {
     // Navigate to the Forgot Password Page
     navigate(paths.routes.LOGIN, { state: { from } });

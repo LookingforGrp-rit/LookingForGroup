@@ -2,6 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import { getUserAccountService } from '#services/me/get-user-acc.ts';
 
+//GET api/me
 //get current user's account
 export const getAccount = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const result = await getUserAccountService(req.currentUser);

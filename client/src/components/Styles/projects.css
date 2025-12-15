@@ -1,4 +1,12 @@
 /*
+  Syles for project-related components, such as:
+  - Panels (on Discover page)
+  - Carousel
+  - Project page
+  - Project Creator and Editor
+*/
+
+/*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
 Project Panel component style rules
@@ -9,6 +17,7 @@ Project Panel component style rules
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
+  align-content: start;
   gap: 20px;
   width: 100%;
   /* keep panels below searchbar */
@@ -134,25 +143,11 @@ Project Panel component style rules
         color: #f14f76;
       }
 
-      .follow-icon {
-        border: none;
-        background: none;
-        outline: none;
-        transition: 0.2s;
-        height: fit-content;
-        font-size: 25px;
-        padding: 0;
+      #heart-empty {
+        stroke: #F14F76;
       }
 
-      .follow-icon.following {
-        color: #F14F76;
-
-        .fa-heart {
-          color: #f14f76 !important;
-        }
-      }
-
-      .follow-icon:hover {
+      #heart-empty:hover, #heart-filled:hover {
         transform: scale(1.2);
       }
     }
@@ -303,12 +298,14 @@ Project Creator and Editor style rules
 #project-creator-editor {
   display: flex;
   flex-direction: column;
+  max-width: 1121px;
   width: 100%;
-  max-width: 90vw;
-  height: calc(90vh - 100px);
+  height: 849px;
   border: none;
   border-radius: 10px;
   color: var(--main-text);
+  max-height: 100%;
+  overflow: scroll;
 }
 
 @media (min-width: 1172px) {
@@ -330,7 +327,7 @@ Project Creator and Editor style rules
   padding: 10px 20px;
   background-color: rgba(0, 0, 0, 0) !important;
   color: var(--main-text);
-  font-size: 2ch;
+  font-size: 1.2rem;
   font-weight: 500;
 }
  
@@ -351,29 +348,50 @@ Project Creator and Editor style rules
   padding: 10px 20px;
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
-  font-size: 2ch;
+  font-size: 20px;
   width: max-content;
-  margin: auto;
+  margin-left: auto;
+  margin-right: auto;
   font-weight: 700;
+  cursor: pointer;
 }
+.profile-editor-save {
+  margin-top: 37px;
+  margin-bottom: 28px;
+}
+
+/* #project-editor-save:hover {
+  color: var(--create-text) !important;
+  background-color: var(--create-bg) !important;
+  filter: drop-shadow(0px 5px 3px var(--shadow-color));
+  transition: 0.25s;
+} */
 
 .save-error-msg, .save-error-msg-general {
   display: none;
   margin: auto;
 }
 
-.save-error-msg p, .save-error-msg-general p {
+.save-error-msg p, .save-error-msg-general p, #invalid-input-error p {
   margin: 0 0 1.5% 0;
   font-size: 18px;
   color: red;
 }
 
-#project-editor-content {
-  flex-grow: 1;
-  margin: 35px 56px 26px 55px;
+#invalid-input-error {
+  padding: 10px;
 }
 
-#project-editor-content label,
+#project-editor-content {
+  flex-grow: 1;
+  margin: 35px 56px 0 55px;
+
+  > * {
+    max-height: 710px;
+  }
+}
+
+#project-editor-content label:not(.drop-area),
 #project-team-add-member-title,
 #team-add-member-cancel-button,
 #project-team-edit-member-title,
@@ -382,7 +400,7 @@ Project Creator and Editor style rules
 #team-delete-member-cancel-button {
   color: var(--primary-color);
   background-color: transparent;
-  font-size: 2ch;
+  font-size: 20px;
   font-weight: 700;
   border: none;
 }
@@ -393,37 +411,6 @@ Project Creator and Editor style rules
 }
 
 .italic {
-  font-style: italic;
-}
-
-.project-link-select-wrapper {
-  width: fit-content;
-}
-
-.project-link-select-wrapper .project-link-select {
-  background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
-}
-
-.project-link-input-wrapper {
-  position: relative;
-  width: 100%;
-  display: flex;
-  align-items: center;
-}
-.project-link-input-wrapper input {
-  border: 1px solid var(--border-color);
-  border-radius: 10px;
-  padding: 15px;
-  flex-grow: 1;
-  background-color: var(--bg-color);
-  color: var(--main-text);
-  font-size: 1.6ch;
-  outline: none;
-  min-height: 40px;
-}
-.project-link-input-wrapper input::placeholder {
-  color: var(--neutral-gray);
   font-style: italic;
 }
 
@@ -438,23 +425,13 @@ Project Creator and Editor style rules
   flex-grow: 1;
   background-color: var(--bg-color);
   color: var(--main-text);
-  font-size: 1.6ch;
+  font-size: 15px;
   outline: none;
 }
 
 #project-editor-content select {
   appearance: none;
   position: relative;
-}
-
-#project-editor-content .select-container {
-  width: auto;
-  flex-grow: 1;
-}
-
-#project-editor-content .select-button {
-  background-color: var(--bg-color);
-  border: 1px solid var(--border-color);
 }
 
 #project-editor-content .title-input {
@@ -467,7 +444,7 @@ Project Creator and Editor style rules
 
 .project-editor-extra-info {
   font-style: italic;
-  font-size: 1.4ch;
+  font-size: 14px;
   color: var(--neutral-gray);
 }
 
@@ -514,8 +491,6 @@ Project Creator and Editor style rules
 }
 
 .project-editor-input-item {
-  display: flex;
-  flex-direction: column;
   position: relative;
 
   input {
@@ -565,11 +540,6 @@ Project Creator and Editor style rules
 .project-editor-input-item>select>option:hover {
   background-color: var(--orange);
   color: var(--bg-color);
-}
-
-/* To fix unnecessary horizontal scrollbar */
-.select {
-  overflow-x: hidden;
 }
 
 .character-count {
@@ -649,6 +619,7 @@ Project Creator and Editor style rules
   border-radius: 10px;
   grid-area: search;
   min-width: 150px;
+  max-height: 628px;
 }
 
 #project-editor-tag-search-container {
@@ -657,7 +628,7 @@ Project Creator and Editor style rules
   justify-content: flex-start;
   gap: 10px;
   /*For scrolling*/
-  max-height: 482px;
+  max-height: 472px;
   overflow-y: auto;
 }
 
@@ -670,6 +641,7 @@ Project Creator and Editor style rules
 #tag-search-divider,
 #selected-tag-divider {
   height: 2px;
+  min-height: 2px;
   width: 100%;
   border: none; 
   background-color: var(--header-color);
@@ -705,19 +677,20 @@ Project Creator and Editor style rules
   border: 2px solid white;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.75);
-}
 
-.project-editor-image-container button {
-  padding: 0px;
-}
+  button {
+    padding: 0px;
+  }
 
-.project-editor-image-container img {
-  object-fit: cover;
-  object-position: center;
-  max-height: inherit;
-  border-radius: 10px;
+  img {
+    object-fit: cover;
+    object-position: center;
+    max-height: inherit;
+    border-radius: 10px;
+    width: 100%;
+    height: 100%;
+  }
 }
-
 .project-editor-image-container:hover .project-image-hover {
   opacity: 1;
 }
@@ -744,16 +717,6 @@ Project Creator and Editor style rules
   border: none;
   background: transparent;
   right: 9px;
-  width: 22px;
-  height: 22px;
-}
-
-#selected-thumbnail>img,
-.star>img,
-.star-filled>img,
-.delete-image>img {
-  width: 22px;
-  height: 22px;
 }
 
 #selected-thumbnail {
@@ -761,18 +724,7 @@ Project Creator and Editor style rules
   position: absolute;
   top: 9px;
   right: 9px;
-  height: 22px;
-  width: 22px;
   padding: 0px;
-}
-
-.star {
-  filter: var(--image-filter);
-}
-
-.star,
-.star-filled {
-  top: 9px;
 }
 
 .delete-image {
@@ -803,12 +755,13 @@ Project Creator and Editor style rules
 #project-editor-tags {
   display: grid;
   grid-template:
-    'type search' auto
-    'select search' 1fr
+    'type search' auto 
+    'select search' 1fr 
     'save save' auto /
     1fr 2fr;
   gap: 20px;
   height: 100%;
+  align-items: stretch;
 }
 
 #tags-save-info {
@@ -830,10 +783,14 @@ Project Creator and Editor style rules
   display: flex;
   flex-direction: column; 
   gap: 15px;
+  max-height: 107px;
 }
 
 #project-editor-selected-tags {
   grid-area: select;
+  display: flex;
+  flex-direction: column;
+  max-height: 485px;
   
   .error {
     margin-top: 15px;
@@ -842,10 +799,14 @@ Project Creator and Editor style rules
 
 #project-editor-selected-tags-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  align-items: flex-start;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: nowrap;
   gap: 8px;
+  margin-top: 15px;
+  /* height: 80px; */
+  /* max-height: 80px; */
+  overflow-y: scroll;
 }
 
 #project-editor-type-tags-container {
@@ -854,19 +815,21 @@ Project Creator and Editor style rules
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 8px;
+  overflow-y: scroll;
+  max-height: 28px;
 }
 
 #project-editor-type-tags,
 #project-editor-selected-tags,
 #project-editor-tag-search {
   background-color: var(--bg-color);
-  /* box-shadow: 0 0 3px var(--gray); */
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
   border-radius: 8px;
 }
 
 .project-editor-section-header {
   color: var(--primary-color);
-  font-size: 2ch;
+  font-size: 20px;
   font-weight: 700;
 }
 
@@ -883,6 +846,7 @@ Project Creator and Editor style rules
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
     flex-direction: column;
+    padding-left: 30%;
   }
 }
 
@@ -892,8 +856,10 @@ Project Creator and Editor style rules
   }
 }
 
-#project-editor-team-tabs {
-  gap: 50px;
+
+#project-editor-team-tabs,
+#project-editor-tag-search-tabs {
+  gap: 38px;
   justify-content: center;
 }
 
@@ -940,6 +906,18 @@ Project Creator and Editor style rules
   margin-top: auto;
 }
 
+#confirm-editor-save {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding-bottom: 20px;
+}
+
+#confirm-editor-save-text {
+  padding: 50px;
+  font-size: 20px;
+}
+
 #project-editor-project-members {
   display: flex;
   flex-wrap: wrap;
@@ -968,7 +946,6 @@ Project Creator and Editor style rules
 }
 
 .project-member-image {
-  border: 2px solid #fff;
   border-radius: 100%;
   width: 74px;
   height: 74px;
@@ -980,6 +957,11 @@ Project Creator and Editor style rules
   font-weight: 700;
   overflow-wrap: break-word;
   word-break: break-word;
+}
+
+/* Hover style for dropdown */
+.edit-position-contact:hover.select-option .project-editor-project-member-name {
+  color: var(--invert-text);
 }
 
 .project-editor-project-member-info {
@@ -1258,7 +1240,7 @@ Project Creator and Editor style rules
   color: var(--invert-text);
   font-size: 2ch;
   width: max-content;
-  margin: auto;
+  margin: auto min(1vw, 10px);
   font-weight: 700;
 }
 
@@ -1319,6 +1301,10 @@ Project Creator and Editor style rules
   position: absolute;
   bottom: 20px;
   right: 20px;
+
+  #trash {
+    stroke: #FF3859;
+  }
 }
 
 #team-positions-popup-list-buttons {
@@ -1335,7 +1321,6 @@ Project Creator and Editor style rules
 
 #team-positions-popup-list-buttons button,
 #position-edit-save {
-  background-color: transparent;
   border: none;
   border-radius: 30px;
   padding: 0 17px;
@@ -1385,10 +1370,10 @@ Project Creator and Editor style rules
   align-self: stretch;
 }
 
-#edit-position-buttons {
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
+#edit-position-button-pair {
+  display: flex;  
+  flex-direction: row;
+  gap: 10px;
   align-items: center;
 }
 
@@ -1397,6 +1382,10 @@ Project Creator and Editor style rules
   flex-direction: row;
   justify-content: space-between;
   gap: 17px;
+}
+#edit-position-details > #edit-position-details-left > label,
+#edit-position-details > #edit-position-details-right > label {
+  font-size: 16px;
 }
 
 #edit-position-details-left {
@@ -1440,14 +1429,28 @@ button.edit-position-contact {
   background-color: var(--bg-color);
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  padding: 3px;
+  padding: 15px;
   cursor: default;
+}
+.select-option.edit-position-contact {
+  display: flex;
+  gap: 5px;
+  padding: 5px 15px;
 }
 
 button.edit-position-contact .project-member-image {
-  width: 48px;
-  height: 48px;
-  border: 1px solid var(--border-color);
+  width: 32px;
+  height: 32px;
+}
+
+/* Selected contact in edit position */
+.edit-position-contact .value {
+  display: flex;
+  gap: 5px;
+}
+
+.value .project-editor-project-member-name {
+  font-size: 14px;
 }
 
 #edit-position-details-right {
@@ -1503,74 +1506,15 @@ select.edit-position-compensation {
 }
 
 /* Project Editor/Creator Links Tab */
-#project-editor-links {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-#project-editor-links > label {
-  margin-bottom: 3px;
-}
-
-#project-editor-links>.project-editor-extra-info {
-  margin-bottom: 15px;
-}
-
-#project-editor-link-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.project-editor-link-item {
-  display: flex;
-  gap: 8px;
-  justify-items: center;
-  /* align-items: flex-start; */
-  align-self: stretch;
-}
-
-.project-editor-link-item select {
-  max-width: 166px;
-  width: 100%;
-}
-
-.remove-link-button {
-  position: absolute;
-  width: 23px;
-  height: 23px;
-  right: 12px;
-  background-color: var(--primary-color);
-  border: none;
-  border-radius: 50%;
-  transition: .15s;
-}
-
 #link-save-info {
   display: flex;
   justify-content: center;
   margin-top: auto;
 }
 
-@media only screen and (max-width: 700px) {
-  .remove-link-button {
-    right: 20px;
-  }
-}
-
-@media only screen and (max-width: 450px) {
-  .project-editor-link-item {
-    flex-direction: column;
-  }
-}
-
-.remove-link-button>.fa-minus {
-  color: var(--invert-text);
-}
-
-.remove-link-button:hover {
-  background-color: var(--error-delete-color) !important;
+#base-url{
+  margin: auto;
+  text-wrap: nowrap;
 }
 
 /*
@@ -1656,6 +1600,7 @@ Project page style rules
 #project-tags {
   grid-area: tags;
   display: flex;
+  justify-content: end;
   gap: 10px;
   margin-top: 10px;
 }
@@ -2528,6 +2473,48 @@ plus a follow button & a more options button*/
   }
 }
 
+.create-post-popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: var(--bg-color, #fff);
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 20px 30px;
+  z-index: 1000;
+  width:400px;
+  max-width: 90%;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.create-post-popup input, .create-post-popup textarea {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  resize: vertical;
+  font-size: 14px;
+}
+
+.create-post-popup button {
+  align-self: flex-end;
+  padding: 8px 15px;
+  border: none;
+  border-radius: 6px;
+  background-color: orange;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.create-post-popup button:hover{
+  background-color: darkorange;
+}
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -2568,9 +2555,18 @@ Project Carousel style rules
   grid-area: carousel;
   display: flex;
   flex-direction: column;
+  position: relative;
 
   .carousel-contents {
     /* height: 370px; */
+    width: 100%;
+  }
+
+  /* Button container */
+  .carousel-row {
+    position: absolute;
+    height: 17px;
+    bottom: -22px; /* Height + 5px displacement */
     width: 100%;
   }
 
@@ -2588,13 +2584,7 @@ Project Carousel style rules
     height: fit-content;
     margin: 0;
     margin-top: 8px;
-
-    img {
-      width: 100%;
-      max-height: 17px;
-    }
   }
-
   .project-carousel-btn:hover {
     transition-duration: 0.2s;
 
@@ -2604,7 +2594,12 @@ Project Carousel style rules
   .carousel-btn-left {
     margin: 0;
     margin-top: 8px;
-    transform: rotateY(180deg);
+    transform: rotate(90deg);
+  }
+  .carousel-btn-right {
+    margin: 0;
+    margin-top: 8px;
+    transform: rotate(-90deg);
   }
 
   img {
@@ -2628,34 +2623,43 @@ Project Carousel style rules
   grid-area: info;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
+  gap: 5px;
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
   padding: 20px;
+
+  #project-info-top {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 5px;
+  }
 }
 
 .project-info-highlight {
-  color: var(--primary-color);
+  /* Highlight should be prioritized in all contexts.
+    Important used to override other specificities that would need more redundancy to override. */
+  color: var(--primary-color) !important;
 }
 
 #project-info-header {
   display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
 #project-title {
-  font-size: 3.5ch;
+  font-size: 32px;
   font-weight: 700;
   color: var(--primary-color);
-  margin: 0 0 10px;
 }
 
 #project-info-buttons {
   display: flex;
-  height: 28px;
   margin-left: auto;
   align-items: center;
-  margin-bottom: 10px;
   /* For alignment with Project Title */
   gap: 7px;
 
@@ -2668,6 +2672,13 @@ Project Carousel style rules
     flex-direction: row;
     align-items: center;
     gap: 8px;
+
+    #heart-empty {
+      stroke: #f14f76;
+    }
+    #heart-filled {
+      fill: #f14f76;
+    }
   }
 
   .follow-amt {
@@ -2680,28 +2691,6 @@ Project Carousel style rules
 
   .follow-amt.following {
     color: #f14f76;
-  }
-
-  .follow-icon {
-    border: none;
-    background: none;
-    outline: none;
-    transition: 0.2s;
-    height: fit-content;
-    font-size: 25px;
-    padding: 0;
-  }
-
-  .follow-icon.following {
-    color: #f14f76;
-
-    .fa-heart {
-      color: #f14f76 !important;
-    }
-  }
-
-  .follow-icon:hover {
-    transform: scale(1.2);
   }
 
   .project-info-dropdown-btn {
@@ -2722,34 +2711,7 @@ Project Carousel style rules
     background-color: var(--border-color);
   }
 
-  #project-info-dropdown {
-    text-align: left;
-    margin-top: 10px;
-    border-radius: 10px;
-    background-color: var(--dropdown-color);
-    box-shadow: 0 0 10px 0 var(--shadow-color);
-    border: none;
-    padding: 10px;
-  }
-
-  .project-info-dropdown-option {
-    font-weight: 400 !important;
-    background: none;
-    display: flex;
-    width: 100%;
-    border-radius: 10px;
-    gap: 10px;
-    align-items: center;
-    margin: 0;
-    flex-shrink: 0;
-    color: var(--main-text);
-    border: none;
-    height: 25px;
-  }
-
-  .project-info-dropdown-option:hover {
-    background-color: var(--header-color) !important;
-  }
+  /* Dropdown option styles in profile.css (shared styles) */
 
   #project-info-report {
     color: var(--error-delete-color);
@@ -2760,37 +2722,26 @@ Project Carousel style rules
   }
 }
 
-/* #project-info-buttons img {
-  width: 25px;
-  height: 25px;
-} */
-
 #project-info-edit {
-  font-size: 1.8ch;
+  font-size: 16px;
   border: none;
   border-radius: 30px;
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
-  padding: 5px 20px;
-  width: 150px;
+  padding: 4px 16px;
+  line-height: 150%;
   font-weight: 700;
 }
 
-#project-info-edit:hover {
+/* #project-info-edit:hover {
   color: var(--create-text) !important;
   background-color: var(--create-bg) !important;
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
   transition: 0.25s;
-}
+} */
 
 #project-info-edit:focus-visible{
   outline: none !important;
-}
-
-#project-hook,
-#project-status,
-#project-creation {
-  margin: 10px 0;
 }
 
 #project-hook {
@@ -2798,19 +2749,36 @@ Project Carousel style rules
 }
 
 #project-status {
-  font-style: italic;
-  color: var(--darkGray);
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  align-items: center;
+  gap: 10px;
+
+  p {
+    color: var(--neutral-gray);
+    margin: 0;
+    font-style: italic;
+  }
 }
 
-#project-open-positions-button {
+#project-info-edit,
+#project-open-positions-button,
+.project-people-tab,
+#project-open-positions-header {
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
   color: var(--invert-text);
   font-size: 16px;
   font-weight: 700;
-  padding: 10px 20px;
-  margin-top: 10px;
+  line-height: 150%;
+  padding: 4px 16px;
+  width: fit-content;
+}
+#project-open-position-header {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #project-open-positions-popup {
@@ -2818,26 +2786,27 @@ Project Carousel style rules
   border-radius: 10px;
   font-style: normal;
   display: grid;
-  height: 100%;
-  width: 40vw;
-  max-width: 1000px;
+  width: 1121px;
+  max-width: 1121px;
+  height: 849px;
+  max-height: 849px;
   gap: 30px;
-  padding: 70px;
-  padding-top: 20px;
-  border-radius: 4px;
+  padding: 28px 59px 21px 59px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
   grid-template:
     'header header' 50px
     'list info' auto
     'close close' 50px /
     300px auto;
-}
 
-.positions-popup-content {
-  display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
-  gap: 30px;
-  margin-left: 50%;
+  #project-team-open-positions-popup {
+    margin-top: 0;
+  }
+
+  .positions-popup-info-title {
+    margin: 0px;
+  }
 }
 
 #positions-popup-header {
@@ -2856,7 +2825,7 @@ Project Carousel style rules
   grid-area: list;
   text-align: center;
   background-color: var(--bg-color);
-  /* box-shadow: 0 0 10px #BBBBBB; */
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
   border-radius: 10px;
   flex: 0 381px;
   padding: 20px;
@@ -2865,6 +2834,10 @@ Project Carousel style rules
 #positions-popup-list-edit {
   background-color: transparent;
   box-shadow: none;
+
+  .select-container {
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  }
 }
 
 #project-team-open-positions-popup>.positions-popup-list {
@@ -2872,13 +2845,6 @@ Project Carousel style rules
   flex-direction: column;
   gap: 15px;
   width: 100%;
-}
-
-#positions-popup-list-header {
-  margin: 20px 0 20px;
-  font-size: 20px;
-  font-weight: 600;
-  color: var(--primary-color);
 }
 
 #positions-popup-list-buttons {
@@ -2891,6 +2857,7 @@ Project Carousel style rules
 .team-positions-button {
   display: flex;
   flex-direction: row;
+  align-items: center;
   gap: 5px;
   height: 28px;
 }
@@ -2905,14 +2872,14 @@ Project Carousel style rules
   border: none;
 }
 
-.add-item-button * {
+#team-positions-popup-list-buttons .add-item-button * {
   font-size: 16px;
   color: var(--neutral-gray);
 }
 
 .positions-popup-list-item {
   width: max-content;
-  background-color: var(--header-color) !important;
+  background-color: var(--header-color);
   color: var(--main-text);
   border: none;
   border-radius: 50px;
@@ -2927,14 +2894,30 @@ Project Carousel style rules
 }
 
 .positions-popup-list-item:hover,
-.positions-popup-list-item-active {
+button#positions-popup-list-item-active {
   background-color: var(--primary-color);
   color: var(--invert-text);
   cursor: pointer;
   font-weight: 700;
 }
 
-.positions-popup-info {
+.positions-popup-info-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background-color: var(--bg-color);
+  box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 20px;
+
+  > .positions-popup-info {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+#project-editor-team-content .positions-popup-info {
   grid-area: info;
   display: flex;
   flex-direction: column;
@@ -2948,11 +2931,6 @@ Project Carousel style rules
 }
 
 @media only screen and (max-width: 1000px) {
-  .positions-popup-content {
-    flex-direction: column;
-    margin-left: 10px;
-    width: 30vw;
-  }
 
   #project-open-positions-popup {
     overflow-y: auto;
@@ -2982,11 +2960,6 @@ Project Carousel style rules
 #position-contact-link {
   color: var(--primary-color);
   font-weight: 700;
-  margin-bottom: 10px;
-}
-
-#position-description-content {
-  margin: 0 20px;
 }
 
 #position-details {
@@ -3020,7 +2993,7 @@ Project Carousel style rules
   height: 50px;
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 5px;
   font-style: italic;
   color: var(--neutral-gray);
 }
@@ -3036,6 +3009,7 @@ Project Carousel style rules
   align-items: center;
   gap: 5px;
   font-style: normal;
+  font-size: 14px;
   transition: background-color 0.1s;
 }
 
@@ -3100,9 +3074,27 @@ Project Carousel style rules
 }
 
 #project-overview-links-section {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  align-items: center;
+  justify-content: start;
   color: var(--primary-color);
   font-style: italic;
+  font-size: 20px;
   margin: 15px 0;
+
+  #project-overview-links {
+    display: flex;
+    flex-direction: row;
+    gap: 7px;
+
+    button {
+      background-color: transparent;
+      border: none;
+      padding: 0;
+    }
+  }
 }
 
 #project-people {
@@ -3160,39 +3152,20 @@ Project Carousel style rules
   gap: 10px;
 }
 
-.project-people-tab {
-  border: none;
-  border-radius: 30px;
-  background-color: var(--primary-color);
-  color: var(--invert-text);
-  font-size: 16px;
-  padding: 5px 10px;
-  font-weight: 700;
-}
-
-.project-people-tab:hover,
+/* TODO: restore styles when "The Team" is a button again (regards Contributor functionality) */
+/* .project-people-tab:hover,
 .project-people-tab-active {
   cursor: pointer;
-}
+} */
 
 #project-open-positions {
   grid-area: positions;
 }
 
-#project-open-positions-header {
-  background-color: var(--primary-color);
-  color: var(--invert-text);
-  font-weight: 700;
-  padding: 5px 20px;
-  border-radius: 30px;
-  width: fit-content;
-  margin: 0 auto;
-}
-
 #project-open-positions-list {
   display: flex;
   flex-flow: wrap;
-  justify-content: center;
+  justify-content: start;
   gap: 10px;
   margin: 10px 0;
 }
@@ -3258,44 +3231,28 @@ My projects page style rules
   margin-bottom: 30px;
 }
 
-/* .my-projects-profile {
-  box-sizing: border-box;
-  background-color: #ececf7;
-  border: 0px;
-  border-radius: 36px;
-  color: #271d66;
-  padding: 5px;
-
-  display: flex;
-  align-items: center;
-  gap: 5px;
-} */
-
-/* .my-projects-profile .fa-solid.fa-circle-user {
-  box-sizing: border-box;
-  font-size: 30px;
-}
-
-.my-projects-profile .fa-solid.fa-caret-down {
-  box-sizing: border-box;
-  font-size: 20px;
-} */
-
 .my-projects-header-row {
   box-sizing: border-box;
   width: 100%;
   padding-left: 60px;
   padding-right: 64px;
 
-  display: grid;
-  grid-template-columns: auto;
-  grid-template-rows: auto auto auto auto;
-  column-gap: 1.46%;
-  row-gap: 2.92%;
-  margin-bottom: 5.92%;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+
+  #project-info-create {
+    height: 40px;
+  }
+
+  #my-projects-sort-btn {
+    width: 160px;
+  }
 }
 
-@media (min-width: 420px) {
+/* Not using former grid layout, so this is commented */
+/* @media (min-width: 420px) {
   .my-projects-header-row {
     grid-template-columns: auto max-content;
     grid-template-rows: auto max-content;
@@ -3316,89 +3273,31 @@ My projects page style rules
     grid-template-columns: auto max-content max-content max-content;
     margin-bottom: 0%;
   }
-}
+} */
 
-.my-projects-sort-list {
-  box-sizing: border-box;
-  background-color: var(--header-color);
-  border: 0px;
-  /* border-right: 15px solid var(--header-color); */
-  border-radius: 10px;
-  padding: 13.5px 15px;
-  color: var(--main-text);
-  font-size: 16px;
-  font-family: Inter, FontAwesome;
-  line-height: normal;
-  letter-spacing: 0%;
-  width: 160px;
+.my-projects-action-buttons {
   display: flex;
   flex-direction: row;
-  gap: 10px;
-  position: relative;
+  width: max-content;
+  gap: 15px;
+  align-items: center;
 
-  /* Placeholder text */
-  .sort-by {
-    color: var(--neutral-gray);
+  .arrow-az {
+    transform: rotate(180deg);
   }
 }
 
-.my-projects-sort-list-dropdown {
-  box-sizing: border-box;
-  background-color: var(--dropdown-color);
-  border-radius: 10px;
-  box-shadow: 0 0 10px 0 var(--shadow-color);
-  display: flex;
-  flex-direction: column;
-  margin-top: 10px;
-
-  .my-projects-sort-list-btn {
-    background: none;
-    color: inherit;
-    border: none;
-    padding: 10px 15px;
-    font: inherit;
-    cursor: pointer;
-    outline: inherit;
-    width: 165px;
-    height: 40px;
-
-    gap: 15px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-  }
-
-  .my-projects-sort-list-btn.top {
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
-
-  .my-projects-sort-list-btn.bottom {
-    border-bottom-left-radius: 10px;
-    border-bottom-right-radius: 10px;
-  }
-
-  .my-projects-sort-list-btn:hover {
-    background-color: var(--primary-color);
-    color: var(--invert-text);
-
-    .fa-solid {
-      color: var(--invert-text) !important;
-    }
-  }
-}
-
-#my-projects-sort-btn:hover {
+/* #my-projects-sort-btn:hover {
   background-color: var(--invert-text);
   box-shadow: 0 0 5px 0 var(--primary-color);
-}
+} */
 
 .my-projects-display-switch {
   box-sizing: border-box;
   background-color: var(--header-color);
   border: 0px;
   border-radius: 100px;
-  padding: 4px;
+  padding: 2px;
   cursor: pointer;
 
   display: flex;
@@ -3410,13 +3309,16 @@ My projects page style rules
   background-color: #00000000;
   border: 0px;
   border-radius: 100px;
-  width: 44px;
-  height: 44px;
-  color: var(--primary-color);
+  width: 41px;
+  height: 41px;
 
   display: flex;
   justify-content: center;
   align-items: center;
+
+  i {
+    color: var(--primary-color);
+  }
 }
 
 .my-projects-display-switch .display-switch-option:hover {
@@ -3426,16 +3328,13 @@ My projects page style rules
 
 .my-projects-display-switch .display-switch-option#selected {
   background-color: var(--primary-color);
-  color: var(--main-text);
-}
 
-.my-projects-display-switch .display-switch-option#selected .fa-solid {
-  color: var(--invert-text);
+  i {
+    color: var(--invert-text);
+  }
 }
-
 .my-projects-all-projects-button,
-.my-projects-new-project-button,
-.my-projects-create-btn>button {
+.my-projects-create-btn > button {
   box-sizing: border-box;
   width: fit-content;
   background-color: var(--primary-color);
@@ -3465,10 +3364,20 @@ My projects page style rules
 }
 
 .my-projects-all-projects-button:hover,
-.my-projects-new-project-button:hover,
 .my-projects-create-btn>button:hover {
   transform: scale(1.1);
   transition: 0.2s;
+}
+
+.my-projects-create-btn > #project-info-create {
+  gap: 14px;
+  p {
+    color: var(--invert-text);
+  }
+  
+  .color-fill > use {
+    fill: var(--invert-text);
+  }
 }
 
 .page#my-projects hr {
@@ -3501,11 +3410,10 @@ My projects page style rules
   width: fit-content;
   height: fit-content;
 
-  display: grid;
-  grid-template-areas:
-    'image image'
-    'title options';
-  row-gap: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-content: start;
 }
 
 .grid-card-image {
@@ -3520,11 +3428,19 @@ My projects page style rules
   cursor: pointer;
 }
 
+.grid-card-details {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .grid-card-title {
-  grid-area: title;
   box-sizing: border-box;
   color: var(--primary-color);
   text-align: left;
+  width: 150px;
+  text-wrap: wrap;
   font-size: 16px;
   font-family: Inter;
   font-weight: bold;
@@ -3545,8 +3461,7 @@ My projects page style rules
 }
 
 .dropdown-container:has(#grid-card-options-button) {
-  grid-area: options;
-  margin: 0 0 auto auto;
+  align-self: stretch;
 }
 
 .grid-card-options-button,
@@ -3557,7 +3472,6 @@ My projects page style rules
   border-radius: 20px;
   color: var(--main-text);
   margin: 0px;
-  /* padding: 0px; */
   text-align: right;
   font-size: 12px;
   font-family: Inter;
@@ -3570,25 +3484,39 @@ My projects page style rules
   background-color: var(--border-color);
 }
 
-.dropdown:has(.grid-card-options-list) {
+.dropdown:has(.card-options-list) {
   box-sizing: border-box;
   border: 0px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }
 
-.grid-card-options-list {
+.card-options-list {
+  position: absolute;
+  right: 0;
   box-sizing: border-box;
   background-color: var(--dropdown-color);
   border: 0px;
   border-radius: 10px;
-  width: max-content;
+  width: 154px;
   height: fit-content;
-  padding: 10px 10px;
+  padding: 15px;
   z-index: 1;
 
   display: flex;
   flex-direction: column;
+  gap: 10px;
+
+  button {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0;
+
+    #trash {
+      stroke: #ff3859;
+    }
+  }
 }
 
 .my-projects-list {
@@ -3604,56 +3532,70 @@ My projects page style rules
 
 .my-projects-list-header {
   box-sizing: border-box;
-  padding-top: 0px;
-  padding-bottom: 0px;
-  padding-left: 60px;
-  padding-right: 64px;
+  margin: 0 64px 10px 60px;
+  padding-right: 80px;
 
-  display: grid;
-  grid-template-columns: 54% 27% auto 6.8%;
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  gap: 10px;
 }
 
 .project-header-label {
   color: var(--primary-color);
   text-align: left;
-  font-size: 18px;
+  font-size: 20px;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
 }
-
-.my-project-list-card {
-  box-sizing: border-box;
-
-  display: grid;
-  grid-template-columns: 54.4% 27.6% auto 6.8%;
+.project-header-label.title {
+  max-width: 610px;
+  width: 100%;
+}
+.project-header-label.date {
+  text-align: right;
+  flex-grow: 1;
 }
 
 .my-project-list-card {
   box-sizing: border-box;
   background-color: var(--header-color);
+
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+
   border: 0px;
   border-radius: 10px;
   height: fit-content;
   padding: 10px 20px 10px 10px;
+  font-size: 20px;
+
+  .dropdown-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
 }
 
 .list-card-section1 {
   box-sizing: border-box;
+  width: 600px;
 
   display: flex;
   flex-direction: row;
   align-items: center;
-  column-gap: 20px;
+  gap: 20px;
 }
 
 .list-card-image {
   box-sizing: border-box;
   border: 0px;
   border-radius: 10px;
-  width: 150px;
-  height: 70px;
+  width: 160px;
+  height: 80px;
   object-fit: cover;
   cursor: pointer;
 }
@@ -3662,12 +3604,13 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--primary-color);
   text-align: left;
-  font-size: 18px;
+  font-size: 20px;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
   cursor: pointer;
+  width: 100%;
 }
 
 .list-card-title:hover {
@@ -3678,7 +3621,7 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main-text);
   text-align: left;
-  font-size: 16px;
+  font-size: 20px;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
@@ -3692,77 +3635,47 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main--text);
   text-align: right;
-  font-size: 16px;
+  font-size: 20px;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
   letter-spacing: 0%;
 
   display: flex;
+  justify-content: end;
   align-items: center;
+  flex-grow: 1;
 }
 
-.list-card-options {
-  position: relative;
-  text-align: left;
 
-  display: inline-block;
-}
-
-.list-card-options-button,
 #list-card-options-button {
+  position: relative;
   box-sizing: border-box;
-  background-color: #00000000;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
   border: 0px;
   border-radius: 0px;
   color: var(--primary-color);
-  margin-top: 20px;
-  margin-left: 20px;
+  height: min-content;
+  margin-left: 10px;
   padding: 0px;
-  text-align: center;
-  font-size: 18px;
-  font-family: Inter;
-  font-weight: normal;
-  line-height: 28px;
-  letter-spacing: 2px;
+
+  svg {
+    padding: 11.5px 7.5px;
+  }
 }
-
-.dropdown:has(.list-card-options-list) {
-  box-sizing: border-box;
-  border: 0px;
-  border-radius: 10px;
-  box-shadow: 0px 0px 10px 0px var(--shadow-color);
-}
-
-.list-card-options-list {
-  box-sizing: border-box;
-  background-color: var(--bg-color);
-  border: 0px;
-  border-radius: 10px;
-  width: max-content;
-  height: fit-content;
-  padding: 10px;
-  z-index: 1;
-
-  display: flex;
-  flex-direction: column;
-}
-
-/* .list-card-options-list.show {
-  display: flex;
-  flex-direction: column;
-} */
 
 .card-leave-button,
 .card-delete-button {
   box-sizing: border-box;
-  background-color: #00000000;
+  background-color: transparent;
   border: 0px;
   border-radius: 10px;
   margin: 0px;
   padding: 5px 5px;
   text-align: left;
-  font-family: Inter, FontAwesome;
+  font-family: Inter;
   transition: background-color 0.2s;
 }
 
@@ -3776,8 +3689,9 @@ My projects page style rules
   transition: background-color 0.2s;
 }
 
-.grid-card-options-list .small-popup,
-.list-card-options-list .small-popup {
+.card-options-list .small-popup {
+  text-align: center;
+
   h3 {
     font-size: 20px;
     font-weight: 700;
@@ -3798,6 +3712,7 @@ My projects page style rules
     margin: 0 0 15px 0;
     color: var(--neutral-gray);
     font-style: italic;
+    font-size: 16px;
 
     span {
       color: var(--neutral-gray);
@@ -3808,10 +3723,6 @@ My projects page style rules
   .confirm-deny-btns {
     display: flex;
     flex-direction: row;
-
-    button {
-      margin: 5px;
-    }
   }
 
   .confirm-btn {
@@ -3820,9 +3731,10 @@ My projects page style rules
     box-shadow: none;
     font-size: 20px;
     font-weight: 700;
+    line-height: 28px;
     color: var(--invert-text);
     background-color: var(--primary-color);
-    padding: 10px 17px;
+    padding: 6px 24px;
     border-radius: 55px;
     min-width: 106px;
     width: fit-content;
@@ -3839,16 +3751,18 @@ My projects page style rules
     box-shadow: none;
     font-size: 20px;
     font-weight: 700;
-    color: var(--main-text);
+    color: var(--primary-color);
     min-width: 106px;
     width: fit-content;
     border-radius: 55px;
+    padding-left: 19px;
+    padding-right: 19px;
   }
 
-  .deny-btn:hover {
+  /* .deny-btn:hover {
     background-color: var(--neutral-gray);
     color: var(--invert-text);
-  }
+  } */
 }
 
 #popup-result .small-popup {

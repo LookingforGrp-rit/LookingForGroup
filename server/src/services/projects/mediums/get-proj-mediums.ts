@@ -6,6 +6,7 @@ import { transformProjectMedium } from '#services/transformers/projects/parts/pr
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/projects/{id}/mediums
 const getProjectMediumsService = async (
   projectId: number,
 ): Promise<ProjectMedium[] | GetServiceError> => {

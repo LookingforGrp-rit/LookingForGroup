@@ -8,6 +8,7 @@ interface UpdateImageInfo {
   altText?: string;
 }
 
+//PATCH api/projects/{id}/images/{imageId}
 //updates an image in a project
 const updateImageController = async (req: Request, res: Response): Promise<void> => {
   const updates: UpdateImageInfo = req.body as UpdateImageInfo;

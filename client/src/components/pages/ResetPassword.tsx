@@ -1,11 +1,16 @@
-import '../Styles/pages.css';
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { handleError, sendPost, sendGet, hideError } from '../../functions/fetch';
 import passwordValidator from 'password-validator';
 
-const ResetPassword = ({}) => {
+/**
+ * Reset Password page. Renders a secure, interactive form that allows the user to input
+ * a new password, validate in real time, submit the new password
+ * with a reset token, and receive feedback as needed.
+ * @returns JSX Element
+ */
+const ResetPassword = () => {
   const navigate = useNavigate(); // Hook for navigation
   const location = useLocation();
 
@@ -15,12 +20,15 @@ const ResetPassword = ({}) => {
   const [error, setError] = useState(''); // Error message for missing or incorrect information
   const [passwordMsg, setPasswordMsg] = useState('');
 
-  // Function to handle the Set button click
+  /**
+   * Checks the logic for submitting a new password.
+   * @returns false if inputs are invalid
+   */
   const handleResetPassword = async () => {
     // Check if the loginInput and password are not empty
     if (passwordInput === '' || confirmInput === '') {
       setError('Please fill in all information');
-      return;
+      return false;
     }
 
     // Check if the password meets all requirements
@@ -31,7 +39,7 @@ const ResetPassword = ({}) => {
     // Check if the passwords match
     else if (passwordInput !== confirmInput) {
       setError('The passwords do not match');
-      return;
+      return false;
     } else {
       // Success message
       setError('Updating password...');
@@ -53,8 +61,13 @@ const ResetPassword = ({}) => {
     }
   };
 
-    // Don't check password if there's nothing there
+  /**
+   * Checks the password with particular validation.
+   * @param pass Password to validate.
+   * @returns String message of remaining requirements to be met. 
+   */
   const validatePassword = (pass) => {
+    // Don't check password if there's nothing there
     if (pass === '') {
       return '';
     }
@@ -95,7 +108,9 @@ const ResetPassword = ({}) => {
     return passMsg;
   };
 
-  // Function to handle the forgot pass button click
+  /**
+   * Navigates the user to the login page.
+   */
   /*const handleBackToLogin = () => {
     // Navigate to the Forgot Password Page
     navigate(-1);

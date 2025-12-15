@@ -6,6 +6,7 @@ import { transformProjectSocial } from '#services/transformers/projects/parts/pr
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
+//GET api/projects/{id}/socials
 const getProjectSocialsService = async (
   projectId: number,
 ): Promise<ProjectSocial[] | GetServiceError> => {

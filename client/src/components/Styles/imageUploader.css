@@ -1,5 +1,10 @@
-/* IMAGE UPLOADER */
+/*
+    Styles for the image uploader component.
+    It is used for uploading project images and
+    profile images.
+*/
 #img-view {
+    position: relative;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -7,9 +12,10 @@
     text-align: center;
     background-position: center;
     background-size: cover;
+    height: 100%;
 }
 
-.project-uploader {
+#project-image-uploader #img-view {
     width: 323px;
     height: 182px;
     gap: 10px;
@@ -33,8 +39,16 @@
     color: var(--primary-color);
 }
 
-#drop-area {
+.drop-area {
     height: 100%;
     width: 100%;
     cursor: pointer;
+}
+
+.camera-button {
+    width: 30px;
+    height: 27px;
+    position: absolute;
+    bottom: 9px;
+    right: 9px;
 }

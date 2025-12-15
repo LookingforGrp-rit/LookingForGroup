@@ -6,6 +6,7 @@ import type {
 import type { Response } from 'express';
 import { addSocialService } from '#services/me/socials/add-social.ts';
 
+//POST api/me/socials
 //add social to user profile
 export const addSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const social: AddUserSocialInput = req.body as AddUserSocialInput;

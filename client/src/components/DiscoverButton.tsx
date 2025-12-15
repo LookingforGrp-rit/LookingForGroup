@@ -1,12 +1,22 @@
 import { useState, useEffect } from 'react';
 
-//used on the discover page to choose between people and projects
+/**
+ * Button component used on the Discover page to toggle between
+ * viewing "People" and "Projects." Its visual state changes based 
+ * on whether it is currently active.
+ *
+ * @param children - The label or content displayed inside the button.
+ * @param isActive - Determines whether the button should appear active.
+ * @param onClick - Click handler for when the button is selected.
+ * @returns A styled button whose appearance updates based on activity state.
+ */
 export const DiscoverButton = ({ children, isActive, onClick }) => {
+  // State to manage the button's CSS class
   const [buttonClassName, setButtonClassName] = useState(
     isActive ? 'discover-button-active' : 'discover-button-inactive'
   );
 
-  // useEffect to update button class name based on isActive prop
+  // Update the button's class wehenever the active state changes
   useEffect(() => {
     if (isActive) {
       setButtonClassName('discover-button-active');
