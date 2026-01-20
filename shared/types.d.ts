@@ -40,6 +40,12 @@ export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
 export type Visibility = "Public" | "Private";
 
+// Structures for type management
+export interface Dictionary<T> {
+	[key : string]: T;
+}
+
+
 //API REQUEST
 
 /**

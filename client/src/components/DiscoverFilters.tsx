@@ -4,7 +4,7 @@ import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
 import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
-import { Tag, Skill, Role, Major, Medium } from '@looking-for-group/shared';
+import { Tag, Dictionary, Role, Major, Medium } from '@looking-for-group/shared';
 
 interface DiscoverFiltersProps {
   category: 'projects' | 'profiles';
@@ -51,7 +51,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   // All tags currently available in the active filter tab
   const [currentTags, setCurrentTags] = useState<Tag[]>([]);
   // Tags currently filtered via search input
-  const [searchedTags, setSearchedTags] = useState<{ tags: [], color: string }>({ tags: [], color: 'grey' });
+  const [searchedTags, setSearchedTags] = useState<{ tags: Tag[], color: string }>({ tags: [], color: 'grey' });
   // Tags that are selected in the popup before applying
   const [enabledFilters, setEnabledFilters] = useState<EnabledFilter[]>([]);
   // Filters that have been applied and are displayed under the quick filter tags
@@ -121,7 +121,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
       Object.values(tabs).forEach((tab: any) => tab.categoryTags = tab.categoryTags || []);
  
       // Map tag types to correct tab categories
-      const typeMap = category === 'projects' ? {
+      const typeMap : Dictionary<string> = category === 'projects' ? {
         Games: 'Genre',
         Multimedia: 'Genre',
         Music: 'Genre',
@@ -138,7 +138,9 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         Major: 'Major',
         };
 
-      data?.forEach((tag: Tag) => {
+      const tag_data : Tag[] = data as Tag[];
+
+      tag_data?.forEach((tag: Tag) => {
         const filterTag: Tag = { ...tag };
         const mappedType = typeMap[tag.type] || tag.type;
 
@@ -296,7 +298,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         >
           <i className="fa fa-caret-left"></i>
         </button>
-        <div id="discover-tag-filters" onResize={resizeTagFilter}>
+        <div id="discover-tag-filters" /*onResize={resizeTagFilter}*/>
           { /* make each tag button have proper label & type */}
           {tagList.map(tagLabel => {
             const label = tagLabel === 'Developers' ? 'Developer' : tagLabel === 'Designers' ? 'Designer' : tagLabel;
@@ -338,7 +340,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                     <SearchBar
                       dataSets={dataSet}
                       onSearch={(results) => {
-                        setSearchedTags({ tags: results[0], color: searchedTags.color });
+                        setSearchedTags({ tags: results[0] as Tag[], color: searchedTags.color });
                       }}
                     ></SearchBar>
                     <div id="filter-tabs">
@@ -382,10 +384,10 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                               if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
                                 // Remove all other tags of the same type except the one selected
                                 const filterTags = document.querySelector('#filter-tags')!;
-                                const tagList = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`);
+                                const tagList : HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
 
                                 for (let i = 0; i < tagList.length; i++) {
-                                  const tagObj = { label: tagList[i].innerText.trim(), type: tag.type };
+                                  const tagObj : Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
                                   const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
 
                                   if (tagList[i].innerText.trim() !== tag.label) {
@@ -441,7 +443,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                         <button
                           key={`${tag.tag.label}-${tag.color}`}
                           className={`tag-button tag-button-${tag.color}-selected`}
-                          onClick={(e) => {
+                          onClick={(_e) => {
                             // Remove tag from list of enabled filters, re-rendering component
                             setEnabledFilters(
                               enabledFilters.toSpliced(isTagEnabled(tag.tag, tag.color), 1)
@@ -519,7 +521,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
               <button
                 key={filter.tag.label}
                 className={`tag-button tag-button-${filter.color}-selected`}
-                onClick={(e) => {
+                onClick={(_e) => {
 
                   // Remove tag from list of enabled filters, re-rendering component
                   const tempList = appliedFiltersDisplay.toSpliced(index, 1);
