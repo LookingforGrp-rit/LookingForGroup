@@ -246,7 +246,7 @@ export const ImageCarousel = ({
     case 'Discover':
       return DiscoverCarousel;
     default:
-      console.log('Something went wrong, make sure carouselType is correct');
+      console.log('Error: Something went wrong, make sure carouselType is correct');
       return ProjectImageCarousel;
   }
 };

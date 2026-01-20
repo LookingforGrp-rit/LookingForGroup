@@ -520,7 +520,6 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                 key={filter.tag.label}
                 className={`tag-button tag-button-${filter.color}-selected`}
                 onClick={(e) => {
-                  console.log('clicked!');
 
                   // Remove tag from list of enabled filters, re-rendering component
                   const tempList = appliedFiltersDisplay.toSpliced(index, 1);
