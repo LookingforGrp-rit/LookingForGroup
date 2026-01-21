@@ -21,13 +21,13 @@ export let loggedIn = false;
 //Add functions to buttons (profile/settings = navigate to those pages; light mode: toggle light/dark mode)
 //(logout = logout the user and send them to home page or equivalent)
 
-interface HeaderProps {
+type HeaderProps = {
   dataSets : DataSet[];
   onSearch : (results : unknown[][]) => void;
-  value : string;
-  onChange : React.ChangeEventHandler;
-  hideSearchBar : boolean;
-}
+  value? : string;
+  onChange? : React.ChangeEventHandler;
+  hideSearchBar? : boolean;
+};
 
 /**
  * Top-level navigation and utility bar displayed across pages. 
@@ -44,7 +44,7 @@ interface HeaderProps {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value, onChange, hideSearchBar = false }) => {
+export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false }) => {
   // User info state
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState(null);

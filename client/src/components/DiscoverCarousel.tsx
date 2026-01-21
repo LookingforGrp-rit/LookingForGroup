@@ -3,6 +3,10 @@ import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { ProjectWithFollowers } from "@looking-for-group/shared";
 
+type DiscoverCarouselProps = {
+  dataList? : ProjectWithFollowers[]
+};
+
 /**
  * Carousel component used on the Discover page to showcase a list of projects.
  * Converts an array of project data into visual carousel slides, each displaying
@@ -11,7 +15,7 @@ import { ProjectWithFollowers } from "@looking-for-group/shared";
  * @param dataList - Array of project objects used to generate carousel items. Defaults to an empty array.
  * @returns A styled carousel populated with dynamically generated project slides.
  */
-export const DiscoverCarousel = ({ dataList = [] }) => {
+export const DiscoverCarousel : React.FC<DiscoverCarouselProps> = ({ dataList = [] }) => {
 
     // Generate the content slides for the carousel based on the project data
     const carouselContents = dataList.map((project: ProjectWithFollowers) => {

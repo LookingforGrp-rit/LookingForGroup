@@ -8,7 +8,7 @@ import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
 import { getUsers, getUsersById } from '../../api/users';
-import { Tag, Skill, UserPreview, ProjectPreview } from '@looking-for-group/shared';
+import { Tag, UserAndProjectInfo, UserPreview, ProjectPreview, ProjectWithFollowers} from '@looking-for-group/shared';
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'
@@ -24,29 +24,6 @@ type DiscoverAndMeetProps = {
  * @returns JSX Element
  */
 const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
-  // Should probably move Interfaces to separate file to prevent duplicates
-  // --------------------
-  // Interfaces
-  // --------------------
-  interface ProjectType {
-    project_type: string;
-  }
-
-  //what is this
-  interface Item {
-    tags?: Tag[];
-    title?: string;
-    hook?: string;
-    project_types?: ProjectType[];
-    job_title?: string;
-    major?: string;
-    skills?: Skill[];
-    first_name?: string;
-    last_name?: string;
-    username?: string;
-    bio?: string;
-  }
-
   // --------------------
   // Components
   // --------------------
@@ -108,17 +85,17 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [dataLoaded, setDataLoaded] = useState(false);
 
   // Full data and displayed data based on filter/search query
-  const [fullItemList, setFullItemList] = useState<Item[]>([]);
-  const [filteredItemList, setFilteredItemList] = useState<Item[]>([]);
+  const [fullItemList, setFullItemList] = useState<UserAndProjectInfo[]>([]);
+  const [filteredItemList, setFilteredItemList] = useState<UserAndProjectInfo[]>([]);
 
   // Need this for searching
-  const tempItemList: Item[] = fullItemList;
+  const tempItemList: UserAndProjectInfo[] = fullItemList;
 
   // List that holds trimmed data for searching. Empty before fullItemList is initialized
-  const [itemSearchData, setItemSearchData] = useState<Item[]>([]);
+  const [itemSearchData, setItemSearchData] = useState<UserAndProjectInfo[]>([]);
 
   // Stores userId for ability to follow users/projects
-  const [userId, setUserId] = useState<string>('guest');
+  const [_userId, setUserId] = useState<string>('guest');
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const dataSet = useMemo(() => {
@@ -127,7 +104,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
   // When passing in data for project carousel, just pass in first three projects
   const heroContent =
-    category === 'projects' ? <DiscoverCarousel dataList={fullItemList.slice(0, 3)} /> : profileHero;
+    category === 'projects' ? <DiscoverCarousel dataList={fullItemList.slice(0, 3) as ProjectWithFollowers[]} /> : profileHero;
 
   // --------------------
   // Helper functions
@@ -213,7 +190,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
     // Flatten the nested arrays
     const flatResults = searchResults.flat();
-    const matches: Item[] = [];
+    const matches: UserAndProjectInfo[] = [];
 
     for (const result of flatResults) {
       const resultName = result?.name || result?.username || result?.value || '';
@@ -241,11 +218,11 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     const items = await Promise.all(
       tempItemList.map(async (item) => {
         if (category === 'projects') {
-          const projectData = await getByID(item.projectId);
+          const projectData = await getByID(item.projectId as number);
           return { ...item, projectData };
         }
         else {
-        const userData = await getUsersById(item.userId);
+        const userData = await getUsersById(item.userId as number);
         return { ...item, userData };
         }
       })

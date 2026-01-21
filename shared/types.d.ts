@@ -45,6 +45,26 @@ export interface Dictionary<T> {
 	[key : string]: T;
 }
 
+interface ProjectType {
+  project_type: string;
+}
+
+export interface UserAndProjectInfo {
+  tags?: Tag[];
+  title?: string;
+  hook?: string;
+  project_types?: ProjectType[];
+  job_title?: string;
+  major?: string;
+  skills?: Skill[];
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  name?: string;
+  bio?: string;
+  projectId?: number;
+  userId?: number;
+}
 
 //API REQUEST
 
