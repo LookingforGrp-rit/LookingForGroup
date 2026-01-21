@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 
@@ -20,7 +20,7 @@ const CreditsFooter = () => {
   const [isCredits, setIsCredits] = useState(false);
 
   // Function to toggle Crdits page visibility and navigate to it
-  const toggleCredits = (isShown, path) => {
+  const toggleCredits = (isShown : boolean, path : string) => {
     setIsCredits(isShown);
     navigate(path); // Navigate to the specified path
   };

@@ -138,7 +138,7 @@ export const ImageCarousel = ({
                 <ThemeIcon id={'carousel-arrow'} width={24} height={68} className={'color-fill'} ariaLabel={'Previous Image'}/>
               </button>
               <div id="carousel-tabs">
-                {dataList.map((image, index) => {
+                {dataList.map((_image, index) => {
                   const className =
                     index === currentIndex ? 'carousel-tab carousel-tab-active' : 'carousel-tab';
                   return (
@@ -218,7 +218,7 @@ export const ImageCarousel = ({
 
             <div id="discover-carousel-tabs">
               <div id="carousel-tabs">
-                {dataList.map((image, index) => {
+                {dataList.map((_image, index) => {
                   const className =
                     index === currentIndex ? 'carousel-tab carousel-tab-active' : 'carousel-tab';
                   return (

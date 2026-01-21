@@ -44,7 +44,7 @@ const MyProjectsDisplayGrid = ({
   const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
 
   //const [status, setStatus] = useState<string>();
-  const [optionsShown, setOptionsShown] = useState(false);
+  const [optionsShown, _setOptionsShown] = useState(false);
   // State variable for displaying output of API request, whether success or failure
   const [showResult, setShowResult] = useState(false);
   const [requestType, setRequestType] = useState<"delete" | "leave">("delete");
@@ -59,7 +59,7 @@ const MyProjectsDisplayGrid = ({
    * - Toggles the visibility of the dropdown menu for project actions.
    * - Updates the optionsShown state.
    */
-  const toggleOptions = () => setOptionsShown(!optionsShown);
+  //const toggleOptions = () => setOptionsShown(!optionsShown);
 
   //Constructs url linking to relevant project page
   const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
