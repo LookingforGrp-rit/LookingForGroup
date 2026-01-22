@@ -1,7 +1,7 @@
 import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, ChangeEvent } from 'react';
 import * as paths from '../constants/routes';
 import { sendPost } from '../functions/fetch';
 import { ThemeIcon } from './ThemeIcon';
@@ -25,7 +25,7 @@ type HeaderProps = {
   dataSets : DataSet[];
   onSearch : (results : unknown[][]) => void;
   value? : string;
-  onChange? : React.ChangeEventHandler;
+  onChange? : (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar? : boolean;
 };
 
