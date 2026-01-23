@@ -1,10 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import { MouseEventHandler } from 'react';
 import { hardSkills, softSkills, proficiencies } from '../../constants/skills';
 
 // list of skills to choose from
 // technologies, arts, tools, and soft skills
 //combined into one list
 const skills = hardSkills.concat(softSkills.concat(proficiencies));
+
+interface ChooseSkillsProps {
+  show : boolean;
+  onNext : MouseEventHandler<HTMLButtonElement>;
+  onBack : MouseEventHandler<HTMLButtonElement>;
+  selectedSkills : string[];
+  setSelectedSkills : React.Dispatch<React.SetStateAction<string[]>>;
+  mode : string;
+}
 
 /**
  * This component allows the user to toggle skills to be added to their profile. 
@@ -16,20 +25,19 @@ const skills = hardSkills.concat(softSkills.concat(proficiencies));
  * @param mode Whether the page is in “sign up” mode or “edit profile” mode
  * @returns render of the part of the profile page which displays the user’s skills.
  */
-const ChooseSkills = ({
+const ChooseSkills : React.FC<ChooseSkillsProps> = ({
   show,
   onNext,
   onBack,
   selectedSkills,
   setSelectedSkills,
-  mode,
-  onClose,
+  mode
 }) => {
   // If a skill is selected, this function checks if it’s already in the selected skill array. 
   // If it is, it removes it; otherwise, adds it to the array if there are less than 5 skills in the array.
-  const handleSkillSelect = (skill) => {
+  const handleSkillSelect = (skill : React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
     // get the skill that was selected
-    const selected = skill.target.innerHTML;
+    const selected = (skill.target as Element).innerHTML;
 
     // if the skill is already selected, remove it from the selectedSkills array
     if (selectedSkills.includes(selected)) {

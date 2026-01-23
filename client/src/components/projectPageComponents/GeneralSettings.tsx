@@ -11,10 +11,15 @@ import profilePlaceholder from '../../icons/profile-user.png';
 //  made within this tab if they weren't saved. Ideally, this shouldn't happen unless the entire settings
 //  window is closed without saving.
 
+interface GeneralSettingsProps {
+  projectId : number;
+  tempSettings : any;
+}
+
 // projectId is passed through props, which is used to ensure correct data is pulled
 // tempSettings is also pulled, containing the current settings inputs
 
-export const GeneralSettings = (props) => {
+export const GeneralSettings : React.FC<GeneralSettingsProps> = (props) => {
   return (
     <div id="general-settings">
       {/* Get image of profile and use preloader function in functions/imageLoad.tsx */}
