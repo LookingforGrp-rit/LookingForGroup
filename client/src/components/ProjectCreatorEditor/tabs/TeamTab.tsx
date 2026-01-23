@@ -34,7 +34,7 @@ import {
   PendingProjectMember,
 } from "@looking-for-group/client";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
-import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
+//import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
 
 // --- Variables ---
@@ -551,12 +551,11 @@ export const TeamTab = ({
    * @returns void
    */
   const deletePosition = useCallback(() => {
-    if (
-      currentJob &&
-      ((currentJob as ProjectJob).jobId ||
-        (currentJob as Pending<ProjectJob>).localId)
-    ) {
+    if (currentJob && ((currentJob as ProjectJob).jobId || (currentJob as Pending<ProjectJob>).localId)) {
+      //let isLocal : bool = true;
+
       if ("jobId" in currentJob) {
+        //isLocal = false;
         dataManager.deleteJob({
           id: {
             type: "canon",
@@ -578,7 +577,7 @@ export const TeamTab = ({
         ...projectAfterTeamChanges,
         jobs: projectAfterTeamChanges.jobs.filter((job) =>
           ("jobId" in currentJob && "jobId" in job && job.jobId !== currentJob.jobId) ||
-          ("localId" in currentJob && "localId" in job && job.jobId !== currentJob.localId)
+          ("localId" in currentJob && "localId" in job && job.localId !== currentJob.localId)
         )
       };
 
