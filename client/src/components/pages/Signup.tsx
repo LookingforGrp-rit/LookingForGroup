@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 // import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
@@ -7,7 +7,6 @@ import ChooseSkills from '../SignupProcess/ChooseSkills';
 // import ChooseInterests from '../SignupProcess/ChooseInterests';
 import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
-import { sendPost } from '../../functions/fetch';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
 import { getUserByEmail, getUserByUsername } from '../../api/users';
@@ -154,7 +153,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    * @param pass Password
    * @returns String message of remaining requirements to be met
    */
-  const validatePassword = (pass) => {
+  const validatePassword = (pass : string) => {
     // Don't check password if there's nothing there
     if (pass === '') {
       return '';
@@ -180,16 +179,22 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
       .has()
       .not('[^\x00-\x7F]+', 'have no non-ASCII characters');
 
-    const output = schema.validate(pass, { details: true });
+    const output : boolean | any[] = schema.validate(pass, { details: true });
     let passMsg = '';
 
-    if (output.length > 0) {
+	  if (output == false) {
+      return '';
+	  }
+
+    const result : any[] = output as any[];
+
+    if (result.length > 0) {
       passMsg += `Password must `;
 
-      for (let i = 0; i < output.length - 1; i++) {
-        passMsg += `${output[i].message}, `;
+      for (let i = 0; i < result.length - 1; i++) {
+        passMsg += `${result[i].message}, `;
       }
-      passMsg += `${output.length > 1 ? 'and ' : ''}${output[output.length - 1].message}.`;
+      passMsg += `${result.length > 1 ? 'and ' : ''}${result[result.length - 1].message}.`;
     }
 
     console.log(passMsg);
