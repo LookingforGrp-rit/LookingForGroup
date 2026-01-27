@@ -47,13 +47,7 @@ const ResetPassword = () => {
       const token = path.substring(path.lastIndexOf('/') + 1, path.length);
       const data = { password: passwordInput, confirm: confirmInput };
       console.log(data);
-      const response = await sendPost(`/api/resets/password/${token}`, data);
-      if (response.error) {
-        setError(response.error);
-      } else {
-        // Success message
-        setError('Logging in');
-      }
+      await sendPost(`/api/resets/password/${token}`, data);
 
       // Navigate to the home page
       // navigate(paths.routes.HOME);

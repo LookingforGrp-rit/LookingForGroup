@@ -136,6 +136,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     else {
       setMessage('Please wait...');
       // Send info to begin account activation
+      /*
       await signUp({
         email: email,
         password: password,
@@ -144,6 +145,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         lastName: lastName,
         username: username,
       });
+      */
       setMessage('An account activation email has been sent');
     }
   };
