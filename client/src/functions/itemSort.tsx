@@ -1,6 +1,6 @@
 import { projects, profiles } from '../constants/fakeData';
 // import { interests } from '../constants/interests';
-import { softSkills, hardSkills, proficiencies } from '../constants/skills';
+//import { softSkills, hardSkills, proficiencies } from '../constants/skills';
 
 //Interest & skill imports are currently unused, but may become relevant later in development
 //This file will hold code that will allow sorting and filtering projects & people via tags

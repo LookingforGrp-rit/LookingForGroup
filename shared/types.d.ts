@@ -9,10 +9,13 @@ export type TagType =
   | "Multimedia"
   | "Music"
   | "Other"
-  | "Developer Skill"
-  | "Designer Skill"
-  | "Soft Skill"
-  | "Purpose";
+  | "Developer"
+  | "Designer"
+  | "Soft"
+  | "Purpose"
+  | "Project Type"
+  | "Role"
+  | "Major";
 export type AcademicYear =
   | "Freshman"
   | "Sophomore"
@@ -99,6 +102,15 @@ export interface ApiResponse<_data = any> {
    */
   // TODO either remove nullable or optional
   data?: _data | null;
+}
+
+export interface UserIdentifiers {
+  userId : number,
+  username : string,
+}
+
+export interface UsernameResponse extends ApiResponse {
+  data?: UserIdentifiers;
 }
 
 // DATASETS
