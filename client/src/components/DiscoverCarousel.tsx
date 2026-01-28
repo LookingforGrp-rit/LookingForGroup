@@ -22,16 +22,20 @@ export const DiscoverCarousel : React.FC<DiscoverCarouselProps> = ({ dataList = 
         return (
             <>
                 <div className='discover-project-image'>
-                <img
+                <a href={`${paths.routes.NEWPROJECT}?projectID=${project.projectId}`}>
+                  <img
                     src={project.thumbnail?.image ?? placeholderThumbnail}
                     alt={'project image'}
-                />
+                  />
+                </a>
                 </div>
                 <div className='discover-project-about'>
-                    <h2>{project.title}</h2>
+                    <a className='discover-link' href={`${paths.routes.NEWPROJECT}?projectID=${project.projectId}`}>
+                      <h2>{project.title}</h2>
+                    </a>
                     <p>{project.hook}</p>
                     <a 
-                        className='learn-more'
+                        className='discover-link learn-more'
                         href={`${paths.routes.NEWPROJECT}?projectID=${project.projectId}`}
                     >Learn more -&gt;</a>
                 </div>
