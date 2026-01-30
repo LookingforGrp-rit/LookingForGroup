@@ -1,4 +1,5 @@
 import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./ImageCarouselNew";
+import { Tags } from "./Tags";
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { ProjectWithFollowers } from "@looking-for-group/shared";
@@ -34,10 +35,69 @@ export const DiscoverCarousel : React.FC<DiscoverCarouselProps> = ({ dataList = 
                       <h2>{project.title}</h2>
                     </a>
                     <p>{project.hook}</p>
+                    <div className="project-tags">
+                      {
+                        //If more tag types are usable, use commented code for cases
+                        //Also, check to see how many additional tags a project has
+                        (project.tags) ?
+                        project.tags.map((tag, index) => {
+                          /* let category : string;
+                          switch (tag.type) {
+                          } */
+                          let tag_color : string = "label-green";
+                          switch(tag.type) {
+                            case "Creative"    :
+                              tag_color = "label-green";
+                              break;
+                            case "Technical"   :
+                              tag_color = "label-blue";
+                              break;
+                            case "Games"       :
+                              tag_color = "label-purple";
+                              break;
+                            case "Multimedia"  :
+                              tag_color = "label-blue";
+                              break;
+                            case "Music"       :
+                              tag_color = "label-orange";
+                              break;
+                            case "Other"       :
+                              tag_color = "label-yellow";
+                              break;
+                            default:
+                              tag_color = "label-grey";
+                              break;
+                          }
+
+                          if (index < 3) {
+                            return (
+                              <Tags
+                                className={`project-tag-label carousel-tag ` + tag_color}
+                                key={index}
+                              >
+                                {tag.label}
+                              </Tags>
+                            );
+                          } else if (index === 3) {
+                            return (
+                              <Tags
+                                className={`project-tag-label carousel-tag label-grey`}
+                                key={index}
+                              >
+                                {"+" + (project.tags.length - 3).toString()}
+                              </Tags>
+                            );
+                          }
+                        })
+                        :
+                        <></>
+                      }
+                  </div>
                     <a 
                         className='discover-link learn-more'
                         href={`${paths.routes.NEWPROJECT}?projectID=${project.projectId}`}
                     >Learn more -&gt;</a>
+                    
                 </div>
             </>
         );

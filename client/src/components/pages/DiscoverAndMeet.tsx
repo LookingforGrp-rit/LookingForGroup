@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -8,7 +8,8 @@ import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
 import { getUsers, getUsersById } from '../../api/users';
-import { ApiResponse, Tag, UserPreview, ProjectPreview, 
+import { ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
+    StructuredUserInfo, UserPreview, ProjectPreview, 
     UserDetail, ProjectWithFollowers } from '@looking-for-group/shared';
 
 //import api utils
@@ -86,26 +87,27 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [dataLoaded, setDataLoaded] = useState(false);
 
   // Full data and displayed data based on filter/search query
-  //const [fullItemList, setFullItemList] = useState<UserAndProjectInfo[]>([]);
-  //const [filteredItemList, setFilteredItemList] = useState<UserAndProjectInfo[]>([]);
-  
   const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
+  const [projectCache, setProjectCache] = useState<NumberDictionary<StructuredProjectInfo>>({});
+  const [fetchedProjects, setFetchedProjects] = useState<boolean>(false);
+
   const [filteredProjectList, setFilteredProjectList] = useState<ProjectPreview[]>([]);
 
   const [fullUserList, setFullUserList] = useState<UserPreview[]>([]);
+  const [userCache, setUserCache] = useState<NumberDictionary<StructuredUserInfo>>({});
+  const [fetchedUsers, setFetchedUsers] = useState<boolean>(false);
+
   const [filteredUserList, setFilteredUserList] = useState<UserPreview[]>([]);
-
-
-  // Need this for searching ?? why in
-  //const tempItemList: UserAndProjectInfo[] = fullItemList;
 
   // List that holds trimmed data for searching. Empty before fullItemList is initialized
   //const [itemSearchData, setItemSearchData] = useState<UserAndProjectInfo[]>([]);
   const [projectSearchData, setProjectSearchData] = useState<ProjectPreview[]>([]);
   const [userSearchData, setUserSearchData] = useState<UserPreview[]>([]);
 
+  const [heroProjectList, setHeroProjectList] = useState<ProjectWithFollowers[]>([]);
+
   // Stores userId for ability to follow users/projects
-  const [_userId, setUserId] = useState<string>('guest');
+  const [userId, setUserId] = useState<string>('');
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
@@ -115,10 +117,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     return [{ data: userSearchData }];
   }, [userSearchData]);
 
-  // When passing in data for project carousel, just pass in first three projects
+  // When passing in data for project carousel, pass in the first three projects after getting their details
   const heroContent =
-    category === 'projects' ? <DiscoverCarousel dataList={fullProjectList.slice(0, 3) as ProjectWithFollowers[]} /> : profileHero;
-
+    category === 'projects' ? <DiscoverCarousel dataList={heroProjectList} /> : profileHero;
+  
   // --------------------
   // Helper functions
   // --------------------
@@ -128,29 +130,45 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
    * data before setting the user's ID
    */
   const getAuth = async () => {
+    if (userId != "") {
+      return;
+    }
+
     const res = await getCurrentUsername();
 
-    if (res.status === 200 && res.data?.username) {
+    if (res.status === 200 && res.data?.username && userId == "") {
       setUserId(res.data.username)
     } else {
       setUserId('guest');
     }
   }
 
-  // Limits React state update warning
-  useEffect(() => {
-    getAuth();
-  }, []);
-
   // Set the necessary data for project mode
   const setupProjectData = (projects : ApiResponse<ProjectPreview[]>) : void => {
     if (!projects.data) {
       return;
     }
+
+    const newProjectCache = projectCache;
+    for (let project of projects.data) {
+
+      const cachedProject = newProjectCache[project.projectId];
+      if (!cachedProject) {
+        newProjectCache[project.projectId] = { preview: project };
+      }
+      else {
+        cachedProject.preview = project;
+      }
+    
+    }
+
     setFullProjectList(projects.data);
     setFilteredProjectList(projects.data);
 
     setProjectSearchData(projects.data);
+    
+    getShowcaseDetails(projects.data, newProjectCache);
+    setProjectCache(newProjectCache);
   };
 
   // Set the necessary data for user mode
@@ -158,6 +176,21 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     if (!users.data) {
       return;
     }
+
+    const newUserCache = userCache;
+    for (let user of users.data) {
+
+      const cachedUser = newUserCache[user.userId];
+      if (!cachedUser) {
+        newUserCache[user.userId] = { preview: user };
+      }
+      else {
+        cachedUser.preview = user;
+      }
+    
+    }
+    setUserCache(newUserCache);
+
     setFullUserList(users.data);
     setFilteredUserList(users.data);
 
@@ -170,23 +203,34 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     The function also handles errors and updates the state with the fetched data.
     It uses the getAuth function to get the user ID for follow functionality.
   */
-  useEffect(() => {
-    const getData = async () => {
+    const getData = async (force : boolean = false) => {
+      // Early escape
+      if (fetchedProjects && fetchedUsers && !force) {
+        return;
+      }
+
       // Get user profile
       await getAuth();
 
       try {
         if(category == 'projects') {
-          const projectResponse = await getProjects();
-          const projects = await projectResponse;
+          if (!fetchedProjects || force) {
+            setFetchedProjects(true);
 
-          setupProjectData(projects);
+            const projectResponse = await getProjects();
+            const projects = await projectResponse;
+
+            setupProjectData(projects);
+          }
         }
         else {
-          const userResponse = await getUsers();
-          const users = await userResponse;
+          if (!fetchedUsers || force) {
+            setFetchedUsers(true);
+            const userResponse = await getUsers();
+            const users = await userResponse;
 
-          setupUserData(users);
+            setupUserData(users);
+          }
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -198,8 +242,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
       setDataLoaded(true);
     };
-    getData();
-  }, []);
+
+  useMemo(() => getData(), []);
 
   /**
    * Updates the filtered project list with new search information
@@ -265,27 +309,52 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     }
     return updateUserList(activeTagFilters);
   };
+
+  // Update the showcased projects after getting more info from the server
+  const getShowcaseDetails = async (projectList : ProjectPreview[], usedCache : NumberDictionary<StructuredProjectInfo>) => {
+    const focusProjectDetailsList : ProjectWithFollowers[] = [];
+    for (let projectPreview of projectList.slice(0, 3)) {
+      if (usedCache[projectPreview.projectId].full != undefined) {
+        continue;
+      }
+
+      const projectRequest : ApiResponse<ProjectWithFollowers> = await getByID(projectPreview.projectId);
+
+      if (projectRequest.data) {
+        focusProjectDetailsList.push(projectRequest.data);
+        usedCache[projectPreview.projectId].full = projectRequest.data;
+      } else {
+        console.error("Error getting project data from " + projectPreview.projectId);
+        return {} as ProjectWithFollowers;
+      }
+    }
+    
+    setHeroProjectList(focusProjectDetailsList);
+  }
   
   /**
    * Changes what projects are shown to the user whenever a filter has been added or changed
    * @param activeTagFilters Tags that are shown to the user now
    */
   const updateProjectList = async (activeTagFilters: Tag[]) => {
-    
     const projectList = fullProjectList;
 
     // Get project and user info to match with tags
-    const items : ProjectWithFollowers[] = await Promise.all(
-      projectList.map(async (item) => {
-        const projectData = await getByID(item.projectId as number);
-        if (projectData.data) {
-          return projectData.data;
-        } else {
-          console.error("Error getting project data from " + item.projectId);
-          return {} as ProjectWithFollowers;
-        }
-      })
-    );
+    const items : ProjectWithFollowers[] = [];
+    for (let item of projectList) {
+      if (projectCache[item.projectId].full != undefined) {
+        items.push(projectCache[item.projectId].full as ProjectWithFollowers);
+        return;
+      }
+
+      const projectData = await getByID(item.projectId);
+      if (projectData.data) {
+        items.push(projectData.data);
+        projectCache[item.projectId].full = projectData.data;
+      } else {
+        console.error("Error getting project data from " + item.projectId);
+      }
+    }
 
     let tagFilteredList = items.filter((item) => {
      if (activeTagFilters.length === 0) return true;
@@ -340,20 +409,23 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
    */
   const updateUserList = async (activeTagFilters: Tag[]) => {
     const userList = fullUserList;
+    
+    // Get user info to match with tags
+    const items : UserDetail[] = [];
+    for (let item of userList) {
+      if (userCache[item.userId].detail != undefined) {
+        items.push(userCache[item.userId].detail as UserDetail);
+        return;
+      }
 
-    // Get project and user info to match with tags
-    const items : UserDetail[] = await Promise.all(
-      userList.map(async (item) => {
-        const userData = await getUsersById(item.userId);
-        if (userData.data) {
-          return userData.data;
-        }
-        else {
-          console.error("Error getting user data for " + item.userId);
-          return {} as UserDetail;
-        }
-      })
-    );
+      const userData = await getUsersById(item.userId);
+      if (userData.data) {
+        items.push(userData.data);
+        userCache[item.userId].detail = userData.data;
+      } else {
+        console.error("Error getting user data for " + item.userId);
+      }
+    }
 
     let tagFilteredList = items.filter((item) => {
       if (activeTagFilters.length === 0) return true;
@@ -364,7 +436,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         if (tag.label === 'Developer' && item.developer) {
           matchesAny = true;
         }
-        // // Check for specific skills
+        // Check for specific skills
         else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft') {
           const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
@@ -416,7 +488,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     if(!dataLoaded && filteredProjectList.length === 0) {
       discoverPanelContents = (<div className='spinning-loader'></div>);
     }
-    
+
     discoverPanelContents = (<PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} />);
   } else {
     if(!dataLoaded && filteredUserList.length === 0) {

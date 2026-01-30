@@ -878,6 +878,18 @@ Discover image carousel style rules
   }
 }
 
+.project-tags {
+  grid-area: tags;
+  display: flex;
+  justify-content: start;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.carousel-tag p {
+  color: var(--invert-text);
+}
+
 .discover-carousel-tabs {
   display: flex;
   align-items: center;

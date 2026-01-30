@@ -4,7 +4,7 @@ import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
 import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
-import { Tag, Dictionary, Role, Major, Medium } from '@looking-for-group/shared';
+import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
 
 interface DiscoverFiltersProps {
   category: 'projects' | 'profiles';
@@ -121,7 +121,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
       Object.values(tabs).forEach((tab: any) => tab.categoryTags = tab.categoryTags || []);
  
       // Map tag types to correct tab categories
-      const typeMap : Dictionary<string> = category === 'projects' ? {
+      const typeMap : StringDictionary<string> = category === 'projects' ? {
         Games: 'Genre',
         Multimedia: 'Genre',
         Music: 'Genre',
@@ -303,7 +303,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
           {tagList.map(tagLabel => {
             const label = tagLabel === 'Developers' ? 'Developer' : tagLabel === 'Designers' ? 'Designer' : tagLabel;
             const type = category === 'projects' ? 'Project Type' : tagLabel === 'Other' ? 'Major' : 'Role';
-            const tagObj: Tag = { label, type };
+            const tagObj: Tag = { tagId: 0, label, type };
             return (
               <button key={`${type}-${label}`}
                 className="discover-tag-filter"
