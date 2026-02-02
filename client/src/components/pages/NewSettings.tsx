@@ -246,13 +246,13 @@ const Settings = () => {
             setSuccess('');
 
             // Update userInfo properly
-            if (type !== 'Password') {
+            const cleaned_type : string = type.replace(' ', '').toLowerCase();
+            if (cleaned_type != 'password') {
               // Create deep copy of object, make changes, then call state update
-              const tempInfo = { ...userInfo };
+              const tempInfo : MePrivate = JSON.parse(JSON.stringify(userInfo));
               
-              tempInfo[type.replace(' ').toLowerCase() as string] = firstParam;
+              tempInfo[cleaned_type] = firstParam;
               
-
               setUserInfo(tempInfo);
               //this isn't really needed but i'm gonna leave it anyway
             }

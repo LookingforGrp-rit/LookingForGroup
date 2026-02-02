@@ -7,9 +7,9 @@ import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { PendingProject} from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { ThemeIcon } from "../../ThemeIcon";
-import { closestCenter, DndContext, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { SortableTag } from "./SortableItem";
+//import { KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+//import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
+//import { SortableTag } from "./SortableItem";
 
 // --- Constant ---
 const TAG_COLORS: Record<TagType | string, string> = {
@@ -94,17 +94,20 @@ export const TagsTab = ({
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   // Event handlers for Sortable tags
+ /* 
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+  */
 
   /**
    * Handles tag drop to either keep tag in place or move it along array.
    * @param e Event with comparison and item data.
    */
+  /*
   const handleDragEnd = (e: DragEndEvent) => {
     // Get ids of elements to be swapped
     const {active, over} = e;
@@ -120,8 +123,10 @@ export const TagsTab = ({
       setItems(arrayMove(items, oldIndex, newIndex));
     }
   }
+  */
+
   // TODO: remove after finishing Sortable list
-  const [items, setItems] = useState(['1', '2', '3']);
+  const [_items, _setItems] = useState(['1', '2', '3']);
 
   // EFFECTS:
   // This component has several useEffect hooks that:

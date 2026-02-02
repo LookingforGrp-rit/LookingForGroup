@@ -5,9 +5,10 @@ import { useSelector } from "react-redux";
 // import Notifications from "./pages/Notifications";
 import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
+
 //user utils
-import { getCurrentUsername } from "../api/users.ts";
-import { UserDetail } from "@looking-for-group/shared";
+//import { getCurrentUsername } from "../api/users.ts";
+//import { UserDetail } from "@looking-for-group/shared";
 
 //Style changes to do:
 //Remove blue background image, replace with single color (or gradient?)
@@ -120,16 +121,18 @@ const SideBar = () => {
 
   // const [showNotifications, setShowNotifications] = useState<boolean>(false); // State to manage the notifications modal
 
+  // #TOFIX
   // Error to handle if Create button opens project creator
-  const [createError, setCreateError] = useState<boolean>(true);
+  //const [createError, setCreateError] = useState<boolean>(true);
 
   // Store user data, if authenticated
-  const [userData, setUserData] = useState<UserDetail>();
+  //const [userData, setUserData] = useState<UserDetail>();
 
   /**
    * Fetches the current authenticated user and sets user data.
    * Updates `createError` depending on authentication status.
-   */
+  */
+ /*
   const getAuth = async () => {
     // Is user authenticated?
     // Get auth
@@ -157,6 +160,7 @@ const SideBar = () => {
       console.error(err);
     }
   };
+  */
 
   /**
    * Handles updating the active page and navigation.

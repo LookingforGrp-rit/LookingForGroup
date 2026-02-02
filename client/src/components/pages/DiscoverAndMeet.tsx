@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useCallback } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -8,7 +8,9 @@ import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
 import { getUsers, getUsersById } from '../../api/users';
-import { Tag, Skill, UserPreview, ProjectPreview } from '@looking-for-group/shared';
+import { ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
+    StructuredUserInfo, UserPreview, ProjectPreview, 
+    UserDetail, ProjectWithFollowers } from '@looking-for-group/shared';
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'
@@ -24,29 +26,6 @@ type DiscoverAndMeetProps = {
  * @returns JSX Element
  */
 const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
-  // Should probably move Interfaces to separate file to prevent duplicates
-  // --------------------
-  // Interfaces
-  // --------------------
-  interface ProjectType {
-    project_type: string;
-  }
-
-  //what is this
-  interface Item {
-    tags?: Tag[];
-    title?: string;
-    hook?: string;
-    project_types?: ProjectType[];
-    job_title?: string;
-    major?: string;
-    skills?: Skill[];
-    first_name?: string;
-    last_name?: string;
-    username?: string;
-    bio?: string;
-  }
-
   // --------------------
   // Components
   // --------------------
@@ -108,27 +87,40 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [dataLoaded, setDataLoaded] = useState(false);
 
   // Full data and displayed data based on filter/search query
-  const [fullItemList, setFullItemList] = useState<Item[]>([]);
-  const [filteredItemList, setFilteredItemList] = useState<Item[]>([]);
+  const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
+  const [projectCache, setProjectCache] = useState<NumberDictionary<StructuredProjectInfo>>({});
+  const [fetchedProjects, setFetchedProjects] = useState<boolean>(false);
 
-  // Need this for searching
-  const tempItemList: Item[] = fullItemList;
+  const [filteredProjectList, setFilteredProjectList] = useState<ProjectPreview[]>([]);
+
+  const [fullUserList, setFullUserList] = useState<UserPreview[]>([]);
+  const [userCache, setUserCache] = useState<NumberDictionary<StructuredUserInfo>>({});
+  const [fetchedUsers, setFetchedUsers] = useState<boolean>(false);
+
+  const [filteredUserList, setFilteredUserList] = useState<UserPreview[]>([]);
 
   // List that holds trimmed data for searching. Empty before fullItemList is initialized
-  const [itemSearchData, setItemSearchData] = useState<Item[]>([]);
+  //const [itemSearchData, setItemSearchData] = useState<UserAndProjectInfo[]>([]);
+  const [projectSearchData, setProjectSearchData] = useState<ProjectPreview[]>([]);
+  const [userSearchData, setUserSearchData] = useState<UserPreview[]>([]);
+
+  const [heroProjectList, setHeroProjectList] = useState<ProjectWithFollowers[]>([]);
 
   // Stores userId for ability to follow users/projects
-  const [userId, setUserId] = useState<string>('guest');
+  const [userId, setUserId] = useState<string>('');
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
-  const dataSet = useMemo(() => {
-    return [{ data: itemSearchData }];
-  }, [itemSearchData]);
+  const projectDataSet = useMemo(() => {
+    return [{ data: projectSearchData }];
+  }, [projectSearchData]);
+  const userDataSet = useMemo(() => {
+    return [{ data: userSearchData }];
+  }, [userSearchData]);
 
-  // When passing in data for project carousel, just pass in first three projects
+  // When passing in data for project carousel, pass in the first three projects after getting their details
   const heroContent =
-    category === 'projects' ? <DiscoverCarousel dataList={fullItemList.slice(0, 3)} /> : profileHero;
-
+    category === 'projects' ? <DiscoverCarousel dataList={heroProjectList} /> : profileHero;
+  
   // --------------------
   // Helper functions
   // --------------------
@@ -138,19 +130,72 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
    * data before setting the user's ID
    */
   const getAuth = async () => {
+    if (userId != "") {
+      return;
+    }
+
     const res = await getCurrentUsername();
 
-    if (res.status === 200 && res.data?.username) {
+    if (res.status === 200 && res.data?.username && userId == "") {
       setUserId(res.data.username)
     } else {
       setUserId('guest');
     }
   }
 
-  // Limits React state update warning
-  useEffect(() => {
-    getAuth();
-  }, []);
+  // Set the necessary data for project mode
+  const setupProjectData = (projects : ApiResponse<ProjectPreview[]>) : void => {
+    if (!projects.data) {
+      return;
+    }
+
+    const newProjectCache = projectCache;
+    for (let project of projects.data) {
+
+      const cachedProject = newProjectCache[project.projectId];
+      if (!cachedProject) {
+        newProjectCache[project.projectId] = { preview: project };
+      }
+      else {
+        cachedProject.preview = project;
+      }
+    
+    }
+
+    setFullProjectList(projects.data);
+    setFilteredProjectList(projects.data);
+
+    setProjectSearchData(projects.data);
+    
+    getShowcaseDetails(projects.data, newProjectCache);
+    setProjectCache(newProjectCache);
+  };
+
+  // Set the necessary data for user mode
+  const setupUserData = (users : ApiResponse<UserPreview[]>) : void => {
+    if (!users.data) {
+      return;
+    }
+
+    const newUserCache = userCache;
+    for (let user of users.data) {
+
+      const cachedUser = newUserCache[user.userId];
+      if (!cachedUser) {
+        newUserCache[user.userId] = { preview: user };
+      }
+      else {
+        cachedUser.preview = user;
+      }
+    
+    }
+    setUserCache(newUserCache);
+
+    setFullUserList(users.data);
+    setFilteredUserList(users.data);
+
+    setUserSearchData(users.data);
+  };
 
   /*
     Fetches data from the server to populate the discover page.
@@ -158,38 +203,34 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     The function also handles errors and updates the state with the fetched data.
     It uses the getAuth function to get the user ID for follow functionality.
   */
-  useEffect(() => {
-    const getData = async () => {
+    const getData = async (force : boolean = false) => {
+      // Early escape
+      if (fetchedProjects && fetchedUsers && !force) {
+        return;
+      }
+
       // Get user profile
       await getAuth();
 
       try {
-        const response = (category == 'projects') ? await getProjects() : await getUsers();
-        console.log(response);
-        
-        const data = await response;
+        if(category == 'projects') {
+          if (!fetchedProjects || force) {
+            setFetchedProjects(true);
 
-        // Don't assign if there's no array returned
-        if (data.data) {
-          setFullItemList(data.data);
-          setFilteredItemList(data.data);
-          setItemSearchData(
+            const projectResponse = await getProjects();
+            const projects = await projectResponse;
 
-            // loop through JSON, get data based on category
-            data.data.map((item) => {
-              if (category === 'projects') {
-                const project = item as ProjectPreview;
-                return { name: project.title, description: project.hook };
-              } else {
-                const user = item as UserPreview;
-                return {
-                  name: `${user.firstName} ${user.lastName}`,
-                  username: user.username,
-                  //bio: user.bio, //bios are in UserDetail, not in UserPreview. plus why would you need bios fo this little blurb anyway
-                };
-              }
-            })
-          );
+            setupProjectData(projects);
+          }
+        }
+        else {
+          if (!fetchedUsers || force) {
+            setFetchedUsers(true);
+            const userResponse = await getUsers();
+            const users = await userResponse;
+
+            setupUserData(users);
+          }
         }
       } catch (error) {
         if (error instanceof Error) {
@@ -201,172 +242,284 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
       setDataLoaded(true);
     };
-    getData();
-  }, []);
+
+  useMemo(() => getData(), []);
 
   /**
    * Updates the filtered project list with new search information
    * @param searchResults
    */
-  const searchItems = useCallback((searchResults: any[][]) => { 
+  const searchProjects = useCallback((searchResults: any[][]) => { 
     if (!searchResults || !Array.isArray(searchResults)) return;
 
     // Flatten the nested arrays
     const flatResults = searchResults.flat();
-    const matches: Item[] = [];
+    const matches: ProjectPreview[] = [];
 
     for (const result of flatResults) {
-      const resultName = result?.name || result?.username || result?.value || '';
+      const resultName = result?.title || result?.name || result?.value || '';
       if (!resultName) continue;
 
-      const matchIndex = itemSearchData.findIndex(
-        (item) => item.name === resultName || item.username === resultName
+      const matchIndex = projectSearchData.findIndex(
+        (item) => item.title === resultName
       );
 
-      if (matchIndex !== -1 && fullItemList[matchIndex]) {
-        matches.push(fullItemList[matchIndex]);
+      if (matchIndex !== -1 && fullProjectList[matchIndex]) {
+        matches.push(fullProjectList[matchIndex]);
       }
     }
+    
+    setFilteredProjectList(matches);
+  }, [projectSearchData, fullProjectList]);
 
-    setFilteredItemList(matches.length ? matches : []);
-  }, [itemSearchData, fullItemList]);
+  /**
+   * Updates the filtered project list with new search information
+   * @param searchResults
+   */
+  const searchUsers = useCallback((searchResults: any[][]) => { 
+    if (!searchResults || !Array.isArray(searchResults)) return;
+
+    // Flatten the nested arrays
+    const flatResults = searchResults.flat();
+    const matches: UserPreview[] = [];
+
+    for (const result of flatResults) {
+      const resultName = result?.username || result?.value || '';
+      if (!resultName) continue;
+
+      const matchIndex = userSearchData.findIndex(
+        (item) => item.username === resultName
+      );
+
+      if (matchIndex !== -1 && fullUserList[matchIndex]) {
+        matches.push(fullUserList[matchIndex]);
+      }
+    }
+    
+    setFilteredUserList(matches);
+  }, [userSearchData, fullUserList]);
 
   /**
    * Changes what items are shown to the user whenever a filter has been added or changed
    * @param activeTagFilters Tags that are shown to the user now
    */
   const updateItemList = async (activeTagFilters: Tag[]) => {
-    
-    // Get project and user info to match with tags
-    const items = await Promise.all(
-      tempItemList.map(async (item) => {
-        if (category === 'projects') {
-          const projectData = await getByID(item.projectId);
-          return { ...item, projectData };
-        }
-        else {
-        const userData = await getUsersById(item.userId);
-        return { ...item, userData };
-        }
-      })
-    )
+    if (category == 'projects') {
+      return updateProjectList(activeTagFilters);
+    }
+    return updateUserList(activeTagFilters);
+  };
 
-    let tagFilteredList = items.filter((item) => {     
+  // Update the showcased projects after getting more info from the server
+  const getShowcaseDetails = async (projectList : ProjectPreview[], usedCache : NumberDictionary<StructuredProjectInfo>) => {
+    const focusProjectDetailsList : ProjectWithFollowers[] = [];
+    for (let projectPreview of projectList.slice(0, 3)) {
+      if (usedCache[projectPreview.projectId].full != undefined) {
+        continue;
+      }
+
+      const projectRequest : ApiResponse<ProjectWithFollowers> = await getByID(projectPreview.projectId);
+
+      if (projectRequest.data) {
+        focusProjectDetailsList.push(projectRequest.data);
+        usedCache[projectPreview.projectId].full = projectRequest.data;
+      } else {
+        console.error("Error getting project data from " + projectPreview.projectId);
+        return {} as ProjectWithFollowers;
+      }
+    }
+    
+    setHeroProjectList(focusProjectDetailsList);
+  }
+  
+  /**
+   * Changes what projects are shown to the user whenever a filter has been added or changed
+   * @param activeTagFilters Tags that are shown to the user now
+   */
+  const updateProjectList = async (activeTagFilters: Tag[]) => {
+    const projectList = fullProjectList;
+
+    // Get project and user info to match with tags
+    const items : ProjectWithFollowers[] = [];
+    for (let item of projectList) {
+      if (projectCache[item.projectId].full != undefined) {
+        items.push(projectCache[item.projectId].full as ProjectWithFollowers);
+        return;
+      }
+
+      const projectData = await getByID(item.projectId);
+      if (projectData.data) {
+        items.push(projectData.data);
+        projectCache[item.projectId].full = projectData.data;
+      } else {
+        console.error("Error getting project data from " + item.projectId);
+      }
+    }
+
+    let tagFilteredList = items.filter((item) => {
      if (activeTagFilters.length === 0) return true;
      let matchesAny = false;
       for (const tag of activeTagFilters) {
-        if (category === 'projects') {
-          // Check project type by name since IDs are not unique relative to tags
-          // Project Type tag
-          if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
-              const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
-              if (projectTypes.includes(tag.label.toLowerCase())) {
-                matchesAny = true;
-            } 
-          }
-          // Purpose tag 
-          else if (tag.type === 'Purpose' && item.projectData.data.purpose) {
-            const projectPurpose = item.projectData.data.purpose.toLowerCase();
-            if (projectPurpose.includes(tag.label.toLowerCase())) {
+        // Check project type by name since IDs are not unique relative to tags
+        // Project Type tag
+        if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
+            const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
+            if (projectTypes.includes(tag.label.toLowerCase())) {
               matchesAny = true;
-            }
+          } 
+        }
+        // Purpose tag 
+        else if (tag.type === 'Purpose' && item.purpose) {
+          const projectPurpose = item.purpose.toLowerCase();
+          if (projectPurpose.includes(tag.label.toLowerCase())) {
+            matchesAny = true;
           }
-          // Tag check can be done by ID: Genre
-         else if (tag.tagId && item.projectData.data.tags) {
-              const tagIDs = item.projectData.data.tags.map((t) => t.tagId);
-
-              if (tagIDs.includes(tag.tagId)) {
-                matchesAny = true;
-              }
-          }
-      } else {
-          // Check for tag label Developer
-          if (tag.label === 'Developer' && item.developer) {
-             matchesAny = true;
-          }
-          // // Check for specific skills
-          else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft') {
-            const userSkills = item.userData.data.skills?.map((s) => s?.label?.toLowerCase())
-            .filter((s) => typeof s === 'string');
-
-            if (userSkills.includes(tag.label.toLowerCase().trim())) {
+        }
+        // Tag check can be done by ID: Genre
+        else if (tag.tagId && item.tags) {
+            const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
+        
+            if (tagIDs.includes(tag.tagId)) {
               matchesAny = true;
             }
         }
-          // Check for tag label Designer
-          else if (tag.label === 'Designer' && item.designer) {
-              matchesAny = true;
-          }
-          else if (tag.label === 'Other' && !item.designer && !item.developer) {
-            matchesAny = true;
-          } 
-          // Check role and major by name since IDs are not unique relative to tags
-          else if (tag.type === 'Role' && item.job_title) { 
-              if (item.job_title.toLowerCase() === tag.label.toLowerCase()) {
-                matchesAny = true;
-              }
-          } else if (tag.type === 'Major' && item.major) {
-              if (item.major.toLowerCase() === tag.label.toLowerCase()) {
-                matchesAny = true;
-              }
-          } 
-      }
-
+      
       return matchesAny;
     }});
 
     // If no tags are currently selected, render all projects
     // !! Needs to be skipped if searchbar has any input !!
     if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
-      tagFilteredList = JSON.parse(JSON.stringify(fullItemList));
+      tagFilteredList = JSON.parse(JSON.stringify(fullProjectList));
 
-      const mappedAll = fullItemList.map(item =>
-        category === 'projects'
-          ? { name: item.title, description: item.hook }
-          : { name: `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim(), username: item.username }
-      );
-      setItemSearchData(mappedAll);
+      setProjectSearchData(fullProjectList);
+      setFilteredProjectList(fullProjectList);
+      return;
     }
-
-    const mappedSearchData = tagFilteredList.map((item) => {
-      if (category === 'projects') {
-        return { name: item.title, description: item.hook };
-      } else {
-        return {
-          name: `${item.first_name ?? ''} ${item.last_name ?? ''}`.trim(),
-          username: item.username,
-        };
-      }
-    });
-    setItemSearchData(mappedSearchData);
+    
+    setProjectSearchData(tagFilteredList);
 
     // Set displayed projects
-    setFilteredItemList(tagFilteredList);
+    setFilteredProjectList(tagFilteredList);
   };
+
+  /**
+   * Changes what items are shown to the user whenever a filter has been added or changed
+   * @param activeTagFilters Tags that are shown to the user now
+   */
+  const updateUserList = async (activeTagFilters: Tag[]) => {
+    const userList = fullUserList;
+    
+    // Get user info to match with tags
+    const items : UserDetail[] = [];
+    for (let item of userList) {
+      if (userCache[item.userId].detail != undefined) {
+        items.push(userCache[item.userId].detail as UserDetail);
+        return;
+      }
+
+      const userData = await getUsersById(item.userId);
+      if (userData.data) {
+        items.push(userData.data);
+        userCache[item.userId].detail = userData.data;
+      } else {
+        console.error("Error getting user data for " + item.userId);
+      }
+    }
+
+    let tagFilteredList = items.filter((item) => {
+      if (activeTagFilters.length === 0) return true;
+      let matchesAny = false;
+      
+      for (const tag of activeTagFilters) {
+        // Check for tag label Developer
+        if (tag.label === 'Developer' && item.developer) {
+          matchesAny = true;
+        }
+        // Check for specific skills
+        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft') {
+          const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
+            .filter((s) => typeof s === 'string');
+            
+          if (userSkills.includes(tag.label.toLowerCase().trim())) {
+            matchesAny = true;
+          }
+        }
+        else if (tag.label === 'Designer' && item.designer) {
+            matchesAny = true;
+        }
+        else if (tag.label === 'Other' && !item.designer && !item.developer) {
+          matchesAny = true;
+        } 
+        // Check role and major by name since IDs are not unique relative to tags
+        /* These appear to be unused
+        else if (tag.type === 'Role' && item.job_title) { 
+            if (item.job_title.toLowerCase() === tag.label.toLowerCase()) {
+              matchesAny = true;
+            }
+        } else if (tag.type === 'Major' && item.major) {
+            if (item.major.toLowerCase() === tag.label.toLowerCase()) {
+              matchesAny = true;
+            }
+        }
+        */
+        return matchesAny;
+      }
+    });
+
+    // If no tags are currently selected, render all projects
+    // !! Needs to be skipped if searchbar has any input !!
+    if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
+      tagFilteredList = JSON.parse(JSON.stringify(fullUserList));
+
+      setUserSearchData(fullUserList);
+      setFilteredUserList(fullUserList);
+      return;
+    }
+
+    setUserSearchData(tagFilteredList);
+
+    // Set displayed projects
+    setFilteredUserList(tagFilteredList);
+  };
+
+  let discoverPanelContents : React.ReactElement;
+  if (category == 'projects') {
+    if(!dataLoaded && filteredProjectList.length === 0) {
+      discoverPanelContents = (<div className='spinning-loader'></div>);
+    }
+
+    discoverPanelContents = (<PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} />);
+  } else {
+    if(!dataLoaded && filteredUserList.length === 0) {
+      discoverPanelContents = (<div className='spinning-loader'></div>);
+    }
+    
+    discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} />);
+  }
 
   // Main render function
   return (
     <div className="page">
       {/* Search bar and profile/notification buttons */}
-      <Header dataSets={dataSet} onSearch={searchItems} value={undefined} onChange={undefined} />
+      <Header dataSets={ category == 'projects' ? projectDataSet : userDataSet }
+          onSearch={ category == 'projects' ? searchProjects : searchUsers }
+          value={undefined} onChange={undefined} />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 
-      {/* Contains tag filters & button to access more filters 
-          When page loads, determine if project tags or profile tags should be used
-          Clicking a tag filter adds it to a list & updates panel display based on that list
-          Changes to filters via filter menu are only applied after a confirmation
+      {/* 
+        Contains tag filters & button to access more filters 
+        When page loads, determine if project tags or profile tags should be used
+        Clicking a tag filter adds it to a list & updates panel display based on that list
+        Changes to filters via filter menu are only applied after a confirmation
       */}
       <DiscoverFilters category={category} updateItemList={updateItemList} />
 
       {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
       <div id="discover-panel-box">
         {/* If filteredItemList isn't done loading, display a loading bar */}
-        {(!dataLoaded && filteredItemList.length === 0) ? (
-          <div className='spinning-loader'></div>
-        ) : (
-          <PanelBox category={category} itemList={filteredItemList} itemAddInterval={25} />
-        )}
+        { discoverPanelContents }
       </div>
       <CreditsFooter />
       <ToTopButton />

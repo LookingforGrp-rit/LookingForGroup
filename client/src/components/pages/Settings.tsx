@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
+import { useState, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 // import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
 // import VolumeSettings from '../SettingsPageComponents/VolumeSetting';
-// import NotificationSettings from '../SettingsPageComponents/NotificationSetting';
 import ProfileVisibilitySetting from '../SettingsPageComponents/ProfileVisibilitySetting';
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
@@ -130,8 +129,6 @@ const Settings = () => {
               </select>
             </div>
           </div>
-
-          <NotificationSettings />
 
           <div className="setting-in-page">
             <h3>

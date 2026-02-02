@@ -1,10 +1,7 @@
 // --- Imports ---
 // import { useEffect, useState, useRef } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import {
-  ProjectPurpose,
-  ProjectStatus
-} from "@looking-for-group/shared";
+import { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";

@@ -3,7 +3,7 @@ import './components/Styles/master.css';
 // Components and pages
 import { Route, Routes } from 'react-router-dom';
 import * as paths from './constants/routes';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Login from './components/pages/Login';
 import SignUp from './components/pages/Signup';
 import ForgotPassword from './components/pages/ForgotPassword';
@@ -14,13 +14,13 @@ import Profile from './components/pages/Profile';
 import NewProject from './components/pages/NewProject';
 // import ProjectPostPage from './components/pages/ProjectPostPage';
 import { Discover, Meet } from './components/pages/DiscoverAndMeet';
-import Settings from './components/pages/Settings';
+//import Settings from './components/pages/Settings'; -- Commented in clean up 26-20-01 
 import NewSettings from './components/pages/NewSettings';
 import NotFound from './components/pages/NotFound';
 import SideBar from './components/Sidebar';
 // import MessageHistory from './components/pages/MessageHistory';
 import CreateProject from './components/pages/CreateProject';
-import CreditsFooter from './components/CreditsFooter';
+//import CreditsFooter from './components/CreditsFooter';  -- Commented in clean up 26-20-01 
 import Credits from './components/pages/CreditsPage';
 import AccountActivation from './components/pages/AccountActivation';
 import { ThemeContext } from './contexts/ThemeContext';
@@ -28,7 +28,7 @@ import { ThemeContext } from './contexts/ThemeContext';
 import uselocalstorage from 'use-local-storage';
 
 function App() {
-  const [avatarImage, setAvatarImage] = useState('images/tempProfilePic.png');
+  //const [avatarImage, setAvatarImage] = useState('images/tempProfilePic.png'); -- Commented in clean up 26-20-01 
   const [profileImage, setProfileImage] = useState('');
 
   // https://css-tricks.com/easy-dark-mode-and-multiple-color-themes-in-react/
@@ -38,7 +38,7 @@ function App() {
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       <div className="App" data-theme={theme}>
-        <SideBar avatarImage={avatarImage} setAvatarImage={setAvatarImage} theme={theme} />
+        <SideBar /*avatarImage={avatarImage} setAvatarImage={setAvatarImage} theme={theme}  -- Commented in clean up 26-20-01 */ />
         <Routes>
           <Route path={paths.routes.DEFAULT} element={<Discover />} />
           <Route path={paths.routes.LOGIN} element={<Login />} />

@@ -167,7 +167,6 @@ const Login: React.FC = () => {
                 window.history.back(); // This line is a temp implementation, because navigate(from) does not always work
                 // navigate(from);
               } else { // Go to home (Discover) otherwise
-                console.log("defaulting to home")
                 navigate(paths.routes.HOME);
               }
             }}

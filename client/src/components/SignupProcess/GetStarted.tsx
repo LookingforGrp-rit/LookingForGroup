@@ -1,4 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { MouseEventHandler } from 'react';
+
+interface GetStartedProps {
+  show : boolean;
+  onBack : MouseEventHandler<HTMLButtonElement>;
+  onCreateProject : MouseEventHandler<HTMLButtonElement>;
+  onJoinProject : MouseEventHandler<HTMLButtonElement>;
+}
 
 /**
  * Interface for users getting started providing a simple user interface for 
@@ -9,7 +16,7 @@ import React, { useState, useEffect } from 'react';
  * @param onJoinProject Callback for join button
  * @returns modal markup render if show is true
  */
-const GetStarted = ({ show, onBack, onCreateProject, onJoinProject }) => {
+const GetStarted : React.FC<GetStartedProps> = ({ show, onBack, onCreateProject, onJoinProject }) => {
   // Returns modal markup when true, null if not true
   if (!show) {
     return null;
