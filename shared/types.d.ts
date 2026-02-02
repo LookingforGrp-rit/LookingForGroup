@@ -44,12 +44,29 @@ export type JobCompensation = "Unpaid" | "Paid";
 export type Visibility = "Public" | "Private";
 
 // Structures for type management
-export interface Dictionary<T> {
+export interface StringDictionary<T> {
 	[key : string]: T;
+}
+
+export interface NumberDictionary<T> {
+  [key : number] : T;
 }
 
 interface ProjectType {
   project_type: string;
+}
+
+export type ProjectInfoStage = "Preview" | "Detail" | "Full";
+
+export interface StructuredProjectInfo {
+  preview? : ProjectPreview;
+  detail? : ProjectDetail;
+  full? : ProjectWithFollowers;
+}
+
+export interface StructuredUserInfo {
+  preview? : UserPreview;
+  detail? : UserDetail;
 }
 
 export interface UserAndProjectInfo {

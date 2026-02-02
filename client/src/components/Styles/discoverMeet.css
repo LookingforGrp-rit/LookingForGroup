@@ -856,23 +856,38 @@ Discover image carousel style rules
     font-weight: 400;
   }
 
-  .learn-more {
-    font-size: 18px;
-    font-weight: 700;
+  .discover-link {
     color: var(--primary-color);
     background: none;
     box-shadow: none;
+    text-decoration: none;
+  }
+
+  .discover-link:hover {
+    text-decoration: underline;
+  }
+
+  .learn-more {
+    font-size: 18px;
+    font-weight: 700;
     border: none;
     padding: 0px;
     position: absolute;
     right: min(26px, calc(100vw * (26 / 1512)));
     bottom: 23px;
-    text-decoration: none;
   }
+}
 
-  .learn-more:hover {
-    text-decoration: underline;
-  }
+.project-tags {
+  grid-area: tags;
+  display: flex;
+  justify-content: start;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.carousel-tag p {
+  color: var(--invert-text);
 }
 
 .discover-carousel-tabs {
