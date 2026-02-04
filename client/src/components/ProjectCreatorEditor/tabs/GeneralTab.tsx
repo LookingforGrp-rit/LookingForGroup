@@ -6,7 +6,7 @@ import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../../types/types";
-import { useState, useContext, useMemo } from "react";
+import { useContext } from "react";
 
 // --- Variables ---
 let projectAfterGeneralChanges: PendingProject;
@@ -28,6 +28,7 @@ type GeneralTabProps = {
   projectData: PendingProject;
   saveProject?: () => Promise<void>;
   updatePendingProject?: (updatedPendingProject: PendingProject) => void;
+  saveable : boolean;
   failCheck: boolean;
 };
 
@@ -48,6 +49,7 @@ export const GeneralTab = ({
   projectData,
   saveProject = async () => {},
   updatePendingProject = () => {},
+  saveable,
   failCheck,
 }: GeneralTabProps) => {
 
@@ -56,32 +58,6 @@ export const GeneralTab = ({
   const projectId = projectData.projectId!;
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
-
-  const [validTitle, setValidTitle] = useState(false);
-  const [validDescription, setValidDescription] = useState(false);
-  const [validAbout, setValidAbout] = useState(false);
-
-  let saveable = false;
-  if (validTitle) {
-    if (validDescription) {
-      if (validAbout) {
-        saveable = true;
-      }
-    }
-  }
-
-  // Calculate if the project is valid when created
-  useMemo(() => {
-    if (projectData.title != "") {
-      setValidTitle(true);
-    }
-    if (projectData.hook != "") {
-      setValidDescription(true);
-    }
-    if (projectData.description != "") {
-      setValidAbout(true);
-    }
-  }, []);
 
   // // Textbox input callback: useRef to avoid unintended reset bugs TODO: is this needed? not used
   // const debouncedUpdatePendingProject = useRef(
@@ -118,10 +94,8 @@ export const GeneralTab = ({
           updatePendingProject(projectAfterGeneralChanges);
 
           if (title == "") {
-            setValidTitle(false);
             return;
           }
-          setValidTitle(true);
 
           dataManager.updateFields({
             id: {
@@ -277,10 +251,8 @@ export const GeneralTab = ({
           updatePendingProject(projectAfterGeneralChanges);
 
           if (hook == "") {
-            setValidDescription(false);
             return;
           }
-          setValidDescription(true);
 
           dataManager.updateFields({
             id: {
@@ -307,10 +279,8 @@ export const GeneralTab = ({
           updatePendingProject(projectAfterGeneralChanges);
 
           if (description == "") {
-            setValidAbout(false);
             return;
           }
-          setValidAbout(true);
 
           dataManager.updateFields({
             id: {
@@ -321,7 +291,6 @@ export const GeneralTab = ({
           });
         }}
       />
-
       <div id="general-save-info">
         { saveable ? 
           <Popup>
@@ -345,10 +314,11 @@ export const GeneralTab = ({
           </Popup>
         :
           <div id="invalid-input-error" className={"save-error-msg-general"}>
-          <p>*Fill out all required info before saving!*</p>
-        </div>
-        }
+            <p>*Fill out all required info before saving!*</p>
+          </div>
+      }
       </div>
+      
     </div>
   );
 };

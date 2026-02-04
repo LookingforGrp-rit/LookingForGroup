@@ -1,4 +1,4 @@
-import { useState, useRef, FC, Dispatch, SetStateAction } from "react";
+import { useState, FC, Dispatch, SetStateAction } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -76,6 +76,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   // If this is set to true, the "Save Changes" button appears in every tab
   const [saveable, setSaveable] = useState(false);
 
+  // Check if the current project can be saved
+  let valid = false;
+  if (modifiedProject?.title != "") {
+    if (modifiedProject?.hook != "") {
+      if (modifiedProject?.description != "") {
+        valid = true;
+      }
+    }
+  }
+  if (valid != saveable) {
+    setSaveable(valid);
+  }
 
   // Submit the form to save or create the project
   const createOrEdit = async () => {
@@ -329,6 +341,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 projectData={modifiedProject}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
+                saveable={saveable}
                 failCheck={failCheck}
               />
             ) : currentTab === 1 ? (
@@ -337,6 +350,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 projectData={modifiedProject}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
+                saveable={saveable}
                 failCheck={failCheck}
               />
             ) : currentTab === 2 ? (
@@ -345,6 +359,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 projectData={modifiedProject}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
+                saveable={saveable}
                 failCheck={failCheck}
               />
             ) : currentTab === 3 ? (
@@ -355,6 +370,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 projectData={modifiedProject}
                 setErrorMember={setErrorAddMember}
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
+                saveable={saveable}
                 failCheck={failCheck}
               />
             ) : currentTab === 4 ? (
@@ -364,6 +380,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 saveProject={saveProject}
                 updatePendingProject={updatePendingProject}
                 setErrorLinks={setErrorLinks}
+                saveable={saveable}
                 failCheck={failCheck}
               />
             ) : (
