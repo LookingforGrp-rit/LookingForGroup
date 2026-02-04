@@ -1,4 +1,4 @@
-import { useState, FC, Dispatch, SetStateAction } from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -15,16 +15,21 @@ import {
   deleteProjectSocial,
   deleteProject,
 } from "../../api/projects";
-// import { showPopup } from '../Sidebar';  // No longer exists?
 
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../types/types";
 import { ProjectWithFollowers, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
+// NO COMMENTS FOR WHAT THESE ARE??????
 interface Props {
+  // If this project already exists to be edited or if it's being created
   newProject: boolean;
+
+  // Not a real property, set to a variable to a function in the code
   buttonCallback?: () => void;
+
+  // Unused property, don't know why it's here
   updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>
   // permissions?: number;
 }
@@ -37,7 +42,7 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
  * The component is accessed via either the 'edit project' button on project pages or the 'create' button in the sidebar.
  * @returns React component Popup - Renders a modal for creating or editing projects
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, updateDisplayedProject/*permissions*/ }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, updateDisplayedProject }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const navigate = useNavigate();
@@ -67,6 +72,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   //State variable for error message
   const [message, setMessage] = useState("");
 
+  // Tracker that checks if the project is currently saveable.
+  // If this is set to true, the "Save Changes" button appears in every tab
+  const [saveable, setSaveable] = useState(false);
+
+
+  // Submit the form to save or create the project
   const createOrEdit = async () => {
     if (!newProject && projectID) {
     // Load existing project
@@ -158,9 +169,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   //this is called below as the PopupContent's callback function (that only calls when it's closed so should it just be called onClose?)
   //TODO: update this to show a close without saving prompt
   const closeWithoutSaving = async () => {
+    // Why is this here? If it's a new project then it won't be on the API anyway
     if(projectData && newProject) await deleteProject(projectData?.projectId)
   }
 
+
+  // Isn't this what createoredit is supposed to do? it never calls this though
   /**
    * Handles saving project changes to the server, validates input data before saving
    * For existing projects: updates thumbnails, images, positions, and project information
@@ -227,41 +241,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       console.error(err);
     }
   };
- 
-  // Update links, avoid links tab glitch
-  // const updateLinks = () => {
-  //   const newSocials: { id: number, url: string}[] = [];
-  //   const parentDiv = document.querySelector("#project-editor-link-list");
-
-  //   parentDiv?.childNodes.forEach(element => {
-  //     if (element === parentDiv.lastElementChild) {
-  //       return;
-  //     }
-
-  //     const dropdown = (element as HTMLElement).querySelector('select');
-  //     const input = (element as HTMLElement).querySelector('input');
-
-  //     const id = Number(dropdown?.options[dropdown?.selectedIndex].dataset.id);
-  //     const url = input?.value;
-
-  //     if (!id && !url) {
-  //       return;
-  //     }
-
-  //     if (isNaN(id) || id === -1) {
-  //       setErrorLinks('Select a website in the dropdown');
-  //       return;
-  //     }
-  //     if (!url) {
-  //       setErrorLinks('Enter a URL');
-  //       return;
-  //     }
-
-  //     newSocials.push({id: id, url: url});
-  //     setErrorLinks('');
-  //    })
-  //    setModifiedProject({...modifiedProject, socials: newSocials})
-  // }
 
   const updatePendingProject = (updatedPendingProject: PendingProject) => {
     setModifiedProject(updatedPendingProject);
@@ -286,132 +265,124 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           Edit Project
         </PopupButton>
       )}
-      {
-        // loggedIn ? (
-        <PopupContent
-        callback={closeWithoutSaving}> {/* TODO: update this call to */}
-          
-          <div id="project-creator-editor">
-            <div id="project-editor-tabs">
-              <button
-                id="general-tab"
-                onClick={() => {
-                  if (currentTab === 4) updateLinks();
-                  setCurrentTab(0);
-                }}
-                className={`project-editor-tab ${currentTab === 0 ? "project-editor-tab-active" : ""}`}
-              >
-                General
-              </button>
-              <button
-                id="media-tab"
-                onClick={() => {
-                  if (currentTab === 4) updateLinks();
-                  setCurrentTab(1);
-                }}
-                className={`project-editor-tab ${currentTab === 1 ? "project-editor-tab-active" : ""}`}
-              >
-                Media
-              </button>
-              <button
-                id="tags-tab"
-                onClick={() => {
-                  if (currentTab === 4) updateLinks();
-                  setCurrentTab(2);
-                }}
-                className={`project-editor-tab ${currentTab === 2 ? "project-editor-tab-active" : ""}`}
-              >
-                Tags
-              </button>
-              <button
-                id="team-tab"
-                onClick={() => {
-                  if (currentTab === 4) updateLinks();
-                  setCurrentTab(3);
-                }}
-                className={`project-editor-tab ${currentTab === 3 ? "project-editor-tab-active" : ""}`}
-              >
-                Team
-              </button>
-              <button
-                id="links-tab"
-                onClick={() => {
-                  if (currentTab === 4) updateLinks();
-                  setCurrentTab(4);
-                }}
-                className={`project-editor-tab ${currentTab === 4 ? "project-editor-tab-active" : ""}`}
-              >
-                Links
-              </button>
-            </div>
 
-            <div id="project-editor-content">
-              {projectData && modifiedProject ? ( currentTab === 0 ? (
-                <GeneralTab
-                  dataManager={dataManager}
-                  projectData={modifiedProject}
-                  updatePendingProject={updatePendingProject}
-                  saveProject={saveProject}
-                  failCheck={failCheck}
-                />
-              ) : currentTab === 1 ? (
-                <MediaTab
-                  dataManager={dataManager}
-                  projectData={modifiedProject}
-                  updatePendingProject={updatePendingProject}
-                  saveProject={saveProject}
-                  failCheck={failCheck}
-                />
-              ) : currentTab === 2 ? (
-                <TagsTab
-                  dataManager={dataManager}
-                  projectData={modifiedProject}
-                  updatePendingProject={updatePendingProject}
-                  saveProject={saveProject}
-                  failCheck={failCheck}
-                />
-              ) : currentTab === 3 ? (
-                <TeamTab
-                  dataManager={dataManager}
-                  updatePendingProject={updatePendingProject}
-                  saveProject={saveProject}
-                  projectData={modifiedProject}
-                  setErrorMember={setErrorAddMember}
-                  setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
-                  failCheck={failCheck}
-                />
-              ) : currentTab === 4 ? (
-                <LinksTab
-                  dataManager={dataManager}
-                  projectData={modifiedProject}
-                  saveProject={saveProject}
-                  updatePendingProject={updatePendingProject}
-                  setErrorLinks={setErrorLinks}
-                  failCheck={failCheck}
-                />
-              ) : (
-                <></>
-              ) ) : (
-                <></>
-              )}
-            </div>
-            {/* Responsiveness fix: General Tab has its own button/error text for layout change */}
-            {currentTab !== 0 ? (
-              <div id="invalid-input-error" className={"save-error-msg"}>
-                <p>{message}</p>
-              </div>
+      <PopupContent callback={closeWithoutSaving}>
+        
+        <div id="project-creator-editor">
+          <div id="project-editor-tabs">
+            <button
+              id="general-tab"
+              onClick={() => {
+                if (currentTab === 4) updateLinks();
+                setCurrentTab(0);
+              }}
+              className={`project-editor-tab ${currentTab === 0 ? "project-editor-tab-active" : ""}`}
+            >
+              General
+            </button>
+            <button
+              id="media-tab"
+              onClick={() => {
+                if (currentTab === 4) updateLinks();
+                setCurrentTab(1);
+              }}
+              className={`project-editor-tab ${currentTab === 1 ? "project-editor-tab-active" : ""}`}
+            >
+              Media
+            </button>
+            <button
+              id="tags-tab"
+              onClick={() => {
+                if (currentTab === 4) updateLinks();
+                setCurrentTab(2);
+              }}
+              className={`project-editor-tab ${currentTab === 2 ? "project-editor-tab-active" : ""}`}
+            >
+              Tags
+            </button>
+            <button
+              id="team-tab"
+              onClick={() => {
+                if (currentTab === 4) updateLinks();
+                setCurrentTab(3);
+              }}
+              className={`project-editor-tab ${currentTab === 3 ? "project-editor-tab-active" : ""}`}
+            >
+              Team
+            </button>
+            <button
+              id="links-tab"
+              onClick={() => {
+                if (currentTab === 4) updateLinks();
+                setCurrentTab(4);
+              }}
+              className={`project-editor-tab ${currentTab === 4 ? "project-editor-tab-active" : ""}`}
+            >
+              Links
+            </button>
+          </div>
+              
+          <div id="project-editor-content">
+            {projectData && modifiedProject ? ( currentTab === 0 ? (
+              <GeneralTab
+                dataManager={dataManager}
+                projectData={modifiedProject}
+                updatePendingProject={updatePendingProject}
+                saveProject={saveProject}
+                failCheck={failCheck}
+              />
+            ) : currentTab === 1 ? (
+              <MediaTab
+                dataManager={dataManager}
+                projectData={modifiedProject}
+                updatePendingProject={updatePendingProject}
+                saveProject={saveProject}
+                failCheck={failCheck}
+              />
+            ) : currentTab === 2 ? (
+              <TagsTab
+                dataManager={dataManager}
+                projectData={modifiedProject}
+                updatePendingProject={updatePendingProject}
+                saveProject={saveProject}
+                failCheck={failCheck}
+              />
+            ) : currentTab === 3 ? (
+              <TeamTab
+                dataManager={dataManager}
+                updatePendingProject={updatePendingProject}
+                saveProject={saveProject}
+                projectData={modifiedProject}
+                setErrorMember={setErrorAddMember}
+                setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
+                failCheck={failCheck}
+              />
+            ) : currentTab === 4 ? (
+              <LinksTab
+                dataManager={dataManager}
+                projectData={modifiedProject}
+                saveProject={saveProject}
+                updatePendingProject={updatePendingProject}
+                setErrorLinks={setErrorLinks}
+                failCheck={failCheck}
+              />
             ) : (
+              <></>
+            ) ) : (
               <></>
             )}
           </div>
-        </PopupContent>
-        // ) : (
-        // Placeholder to prevent mass error
-        // <div>
+          {/* Responsiveness fix: General Tab has its own button/error text for layout change */}
+          {currentTab !== 0 ? (
+            <div id="invalid-input-error" className={"save-error-msg"}>
+              <p>{message}</p>
+            </div>
+          ) : (
+            <></>
+          )}
+        </div>
+      </PopupContent>
 
-        // </div>
-        // )
-      }
     </Popup>
   );
 };

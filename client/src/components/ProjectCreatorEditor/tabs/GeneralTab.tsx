@@ -1,5 +1,4 @@
 // --- Imports ---
-// import { useEffect, useState, useRef } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
@@ -7,7 +6,7 @@ import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../../types/types";
-import { useContext } from "react";
+import { useState, useContext, useMemo } from "react";
 
 // --- Variables ---
 let projectAfterGeneralChanges: PendingProject;
@@ -58,6 +57,32 @@ export const GeneralTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
+  const [validTitle, setValidTitle] = useState(false);
+  const [validDescription, setValidDescription] = useState(false);
+  const [validAbout, setValidAbout] = useState(false);
+
+  let saveable = false;
+  if (validTitle) {
+    if (validDescription) {
+      if (validAbout) {
+        saveable = true;
+      }
+    }
+  }
+
+  // Calculate if the project is valid when created
+  useMemo(() => {
+    if (projectData.title != "") {
+      setValidTitle(true);
+    }
+    if (projectData.hook != "") {
+      setValidDescription(true);
+    }
+    if (projectData.description != "") {
+      setValidAbout(true);
+    }
+  }, []);
+
   // // Textbox input callback: useRef to avoid unintended reset bugs TODO: is this needed? not used
   // const debouncedUpdatePendingProject = useRef(
   //   keyboardDebounce<(updatedPendingProject: PendingProject) => void>(
@@ -91,6 +116,13 @@ export const GeneralTab = ({
           const title = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, title };
           updatePendingProject(projectAfterGeneralChanges);
+
+          if (title == "") {
+            setValidTitle(false);
+            return;
+          }
+          setValidTitle(true);
+
           dataManager.updateFields({
             id: {
               value: projectId,
@@ -244,6 +276,12 @@ export const GeneralTab = ({
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, hook };
           updatePendingProject(projectAfterGeneralChanges);
 
+          if (hook == "") {
+            setValidDescription(false);
+            return;
+          }
+          setValidDescription(true);
+
           dataManager.updateFields({
             id: {
               value: projectId,
@@ -265,11 +303,14 @@ export const GeneralTab = ({
         value={projectAfterGeneralChanges.description || ""}
         onChange={(e) => {
           const description = e.target.value;
-          projectAfterGeneralChanges = {
-            ...projectAfterGeneralChanges,
-            description,
-          };
+          projectAfterGeneralChanges = { ...projectAfterGeneralChanges, description };
           updatePendingProject(projectAfterGeneralChanges);
+
+          if (description == "") {
+            setValidAbout(false);
+            return;
+          }
+          setValidAbout(true);
 
           dataManager.updateFields({
             id: {
@@ -282,28 +323,31 @@ export const GeneralTab = ({
       />
 
       <div id="general-save-info">
-        <div id="invalid-input-error" className={"save-error-msg-general"}>
+        { saveable ? 
+          <Popup>
+            <PopupButton
+              buttonId="project-editor-save"
+              doNotClose={() => failCheck}
+            >
+              Save Changes
+            </PopupButton>
+            <PopupContent useClose={false}>
+              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+              <div id="confirm-editor-save">
+                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                  Confirm
+                </PopupButton>
+                <PopupButton buttonId="team-edit-member-cancel-button" >
+                  Cancel
+                </PopupButton>
+              </div>
+            </PopupContent>
+          </Popup>
+        :
+          <div id="invalid-input-error" className={"save-error-msg-general"}>
           <p>*Fill out all required info before saving!*</p>
         </div>
-              <Popup>
-                <PopupButton
-                  buttonId="project-editor-save"
-                  doNotClose={() => failCheck}
-                >
-                  Save Changes
-                </PopupButton>
-                  <PopupContent useClose={false}>
-                    <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-                  <div id="confirm-editor-save">
-                 <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                   Confirm
-                 </PopupButton>
-                 <PopupButton buttonId="team-edit-member-cancel-button" >
-                   Cancel
-                 </PopupButton>
-                 </div>
-                  </PopupContent>
-              </Popup>
+        }
       </div>
     </div>
   );

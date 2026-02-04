@@ -1552,25 +1552,27 @@ export const TeamTab = ({
       <div id="project-editor-team-content">{teamTabContent}</div>
 
       <div id="team-save-info">
-       <Popup>
-        <PopupButton
-          buttonId="project-editor-save"
-          doNotClose={() => failCheck}
-        >
-          Save Changes
-        </PopupButton>
+       {/*
+        <Popup>
+          <PopupButton
+            buttonId="project-editor-save"
+            doNotClose={() => failCheck}
+          >
+            Save Changes
+          </PopupButton>
           <PopupContent useClose={false}>
             <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-          <div id="confirm-editor-save">
-         <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-           Confirm
-         </PopupButton>
-         <PopupButton buttonId="team-edit-member-cancel-button" >
-           Cancel
-         </PopupButton>
-         </div>
+            <div id="confirm-editor-save">
+              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                Confirm
+              </PopupButton>
+              <PopupButton buttonId="team-edit-member-cancel-button" >
+                Cancel
+              </PopupButton>
+            </div>
           </PopupContent>
-      </Popup>
+        </Popup>
+        */}
       </div>
     </div>
   );
