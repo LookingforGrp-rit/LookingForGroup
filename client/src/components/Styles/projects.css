@@ -89,10 +89,10 @@ Project Panel component style rules
   box-shadow: 2px 2px 10px 2px var(--shadow-color);
   color: var(--main-text);
   position: absolute;
-  height: 400px;
+  height: auto;
   /* min-width: 420px; */
   width: 100%;
-  top: -100px;
+  /*top: -100px;*/
   visibility: visible;
   transition: visibility 0.2s;
 
