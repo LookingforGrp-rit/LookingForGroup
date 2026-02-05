@@ -85,6 +85,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       }
     }
   }
+  if (modifiedProject?.tags.length == 0 || modifiedProject?.mediums.length == 0) {
+    valid = false;
+  }
   if (valid != saveable) {
     setSaveable(valid);
   }
@@ -240,13 +243,15 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     }
 
     try {
-        await dataManager.saveChanges();
-        setProjectData(dataManager.getSavedProject());
+      await dataManager.saveChanges();
+      setProjectData(dataManager.getSavedProject());
 
       // EXISTING PROJECT
       if (!newProject && projectID) {
 
-        if(updateDisplayedProject) updateDisplayedProject(dataManager.getSavedProject());
+        if(updateDisplayedProject) {
+          updateDisplayedProject(dataManager.getSavedProject());
+        }
       }
       navigate(`${paths.routes.NEWPROJECT}?projectID=${dataManager.getSavedProject().projectId}`)
     } catch (err) {
@@ -389,14 +394,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <></>
             )}
           </div>
-          {/* Responsiveness fix: General Tab has its own button/error text for layout change */}
-          {currentTab !== 0 ? (
+          {/* Responsiveness fix: General Tab has its own button/error text for layout change 
+            - This never actually displays anywhere, so I'm commenting it out
+          */}
+          {/*
+          currentTab !== 0 ? (
             <div id="invalid-input-error" className={"save-error-msg"}>
               <p>{message}</p>
             </div>
           ) : (
             <></>
-          )}
+          )
+          */}
         </div>
       </PopupContent>
 
