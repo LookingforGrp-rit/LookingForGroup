@@ -14,8 +14,8 @@ Project Panel component style rules
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
 .project-panel-box {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
   justify-content: space-between;
   align-content: start;
   gap: 20px;
@@ -26,7 +26,7 @@ Project Panel component style rules
 }
 
 .project-panel {
-  height: 200px;
+  height: auto;
   /* commenting max width out. 
   Forcing width may mess with rendering calculations, causing uneven/unaligned project panel rows.
   If max width is necessary, calculations need to be updated for it to work properly*/
@@ -35,7 +35,6 @@ Project Panel component style rules
   border-radius: 10px;
   background-color: var(--header-color);
   display: flex;
-  flex: 1 1 auto;
   position: relative;
 
   img {
