@@ -43,6 +43,7 @@ type TagsTabProps = {
   projectData: PendingProject;
   saveProject?: () => Promise<void>;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
+  saveable: boolean;
   failCheck: boolean;
 };
 
@@ -70,6 +71,7 @@ export const TagsTab = ({
   projectData,
   saveProject,
   updatePendingProject,
+  saveable,
   failCheck,
 }: TagsTabProps) => {
 
@@ -637,25 +639,29 @@ export const TagsTab = ({
         <div id="invalid-input-error" className={"save-error-msg-general"}>
           <p>*Fill out all required info before saving!*</p>
         </div>
-        <Popup>
-        <PopupButton
-          buttonId="project-editor-save"
-          doNotClose={() => failCheck}
-        >
-          Save Changes
-        </PopupButton>
-          <PopupContent useClose={false}>
-            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-          <div id="confirm-editor-save">
-         <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-           Confirm
-         </PopupButton>
-         <PopupButton buttonId="team-edit-member-cancel-button" >
-           Cancel
-         </PopupButton>
-         </div>
-          </PopupContent>
-      </Popup>
+        { saveable ?
+          <Popup>
+            <PopupButton
+              buttonId="project-editor-save"
+              doNotClose={() => failCheck}
+            >
+              Save Changes
+            </PopupButton>
+            <PopupContent useClose={false}>
+              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+              <div id="confirm-editor-save">
+                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                  Confirm
+                </PopupButton>
+                <PopupButton buttonId="team-edit-member-cancel-button" >
+                  Cancel
+                </PopupButton>
+              </div>
+            </PopupContent>
+          </Popup>
+        :
+          <></>
+        }
       </div>
     </div>
   );
