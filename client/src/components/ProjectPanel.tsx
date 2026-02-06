@@ -115,6 +115,10 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
       if (projectResp.data) { 
         setFollowCount(projectResp.data.followers.count);
         checkFollow();
+        if (project.title == "thumbnail") {
+          console.log("Thumbnail project's thumbnail:");
+          console.log(project.thumbnail);
+        }
       }
     };
       getProjectData();
