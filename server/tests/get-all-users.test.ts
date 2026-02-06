@@ -78,7 +78,7 @@ describe('test getAllUsersService', () => {
     (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
 
     const result = await getAllUsersService({ strictness: null });
-    console.log(result);
+    //console.log(result);
     expect(vi.mocked(prisma.users.findMany)).toHaveBeenCalled();
     expect(result).toEqual(mockPreviews);
   });
