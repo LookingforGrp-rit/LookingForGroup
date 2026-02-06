@@ -75,7 +75,7 @@ describe('test getAllUsersService', () => {
   });
 
   it('returns all users when no filters are provided', async () => {
-    vi.mocked(prisma.users.findMany).mockResolvedValue(mockUsers);
+    (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
 
     const result = await getAllUsersService({ strictness: null });
     console.log(result);
