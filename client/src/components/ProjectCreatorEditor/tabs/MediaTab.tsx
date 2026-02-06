@@ -170,8 +170,6 @@ export const MediaTab = ({
       // If only image, set as thumbnail
       //this will always be localId, it's using the recently created image
       if (!projectAfterMediaChanges.thumbnail || projectAfterMediaChanges.projectImages.length == 1) {
-        console.log("adding thumbnail to project");
-
         // Update dataManager
         const thumbObj = {
             localId: ++localIdIncrement,
@@ -184,7 +182,7 @@ export const MediaTab = ({
             type: "canon",
           },
           data: {
-            thumbnail: thumbObj.localId ?? ++localIdIncrement
+            thumbnail: thumbObj.localId as number
           }
         });
         // Update project data
