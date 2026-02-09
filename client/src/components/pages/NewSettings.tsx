@@ -251,7 +251,7 @@ const Settings = () => {
               // Create deep copy of object, make changes, then call state update
               const tempInfo : MePrivate = JSON.parse(JSON.stringify(userInfo));
               
-              tempInfo[cleaned_type] = firstParam;
+              //tempInfo[cleaned_type] = firstParam;
               
               setUserInfo(tempInfo);
               //this isn't really needed but i'm gonna leave it anyway
