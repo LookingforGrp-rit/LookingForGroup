@@ -176,7 +176,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
                 height={25}
                 id={"heart-filled"}
                 ariaLabel="following"
-                onClick={(e) => handleFollowClick(e)}
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
               />
             ) : (
               <ThemeIcon
@@ -184,7 +184,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
                 height={25}
                 id={"heart-empty"}
                 ariaLabel="following"
-                onClick={(e) => handleFollowClick(e)}
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
               />
             )}
               {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>

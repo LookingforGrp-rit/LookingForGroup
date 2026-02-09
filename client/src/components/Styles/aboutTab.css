@@ -69,6 +69,17 @@
     gap: 10px;
     width: 100%;
     height: auto;
+    aspect-ratio: 1 / 1;
+
+  }
+  
+  #img-view img:not(.camera-button){ /* images added to the image uploader besides the camera icon*/
+    object-fit: cover;
+    width: 320px;
+    height: 320px;
+
+    max-width: 100%;
+    max-height: 100%;
   }
 
   #profile-editor-about {
