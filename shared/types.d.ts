@@ -1275,3 +1275,18 @@ export type CreateProjectJobInput = Required<
  * Data required to update an existing job listing on a project
  */
 export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
+
+
+/**
+ * Data required to filter request
+ */
+export type FilterRequest = {
+  mentor?: boolean;
+  designer?: boolean;
+  developer?: boolean;
+  skills?: number[];
+  majors?: number[];
+  academicYear?: string[];
+  socials?: number[];
+  strictness?: 'any' | 'all';
+}
