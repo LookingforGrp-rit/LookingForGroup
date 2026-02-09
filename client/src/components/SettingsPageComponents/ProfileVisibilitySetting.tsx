@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+//import React, { useState, useEffect } from 'react';
 
 /**
  * This component allows the user to toggle what is shown on their user profile. 

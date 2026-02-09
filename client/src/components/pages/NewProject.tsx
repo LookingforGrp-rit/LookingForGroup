@@ -376,7 +376,7 @@ const NewProject = () => {
   return (
     <div className="page">
       <Header
-        dataSets={{ data: [] }}
+        dataSets={[{ data: [] }]}
         onSearch={() => {}}
         hideSearchBar={true}
         value={undefined}
