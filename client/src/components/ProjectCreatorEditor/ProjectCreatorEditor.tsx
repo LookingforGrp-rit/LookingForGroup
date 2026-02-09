@@ -242,9 +242,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       return;
     }
 
+    console.log("Created project thumbnail: ");
+    console.log(modifiedProject.thumbnail);
+
     try {
       await dataManager.saveChanges();
-      setProjectData(dataManager.getSavedProject());
 
       // EXISTING PROJECT
       if (!newProject && projectID) {
