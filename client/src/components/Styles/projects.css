@@ -91,6 +91,10 @@ Project Panel component style rules
   .project-panel > img {
     display: none;
   }
+
+  .project-panel-box {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }
 
 .project-panel-hover {
