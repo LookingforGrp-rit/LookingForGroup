@@ -336,6 +336,9 @@ const Settings = () => {
                         setError('*Please enter a valid phone number.');
                         return;
                       }
+                      else {
+                        // TODO: Insert the backend connection to change the user's phone number
+                      }
                     }
 
                     if (type !== 'Password') {
@@ -540,7 +543,7 @@ const Settings = () => {
                   <div className="input-container">
                     <input
                       id="option-primary-phone"
-                      placeholder={'111-111-1111'}
+                      placeholder={'123-123-1234'}
                       type="text"
                       disabled
                     />

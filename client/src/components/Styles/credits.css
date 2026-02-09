@@ -11,10 +11,16 @@ Credits link footer style rules
 */
 
 .FooterContainer {
+  display: flex;
+  position: sticky;
+  top: 96%;
+
   text-align: center;
-  align-content: center;
-  height: 100px;
+  justify-content: center;
+  align-items: center;
+  height: 50px;
   width: 100%;
+
   z-index: 1;
   background-color: var(--header-color);
 }
@@ -22,8 +28,9 @@ Credits link footer style rules
 .FooterContainer button {
   border: 0px;
   background: 0px;
-  font-size: 20px;
+  font-size: 18px;
   font-weight: bold;
+  margin: 2px;
 }
 
 .FooterContainer button:hover {
