@@ -1,7 +1,7 @@
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft";
+export type SkillType = "Developer" | "Designer" | "FArtist" | "Music" | "Soft";
 export type TagType =
   | "Creative"
   | "Technical"
@@ -1220,3 +1220,18 @@ export type CreateProjectJobInput = Required<
  * Data required to update an existing job listing on a project
  */
 export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
+
+
+/**
+ * Data required to filter request
+ */
+export type FilterRequest = {
+  mentor?: boolean;
+  designer?: boolean;
+  developer?: boolean;
+  skills?: number[];
+  majors?: number[];
+  academicYear?: string[];
+  socials?: number[];
+  strictness?: 'any' | 'all';
+}
