@@ -565,7 +565,7 @@ const Settings = () => {
                   <Dropdown>
                     <DropdownButton buttonId="options-theme-btn">
                       <div className="input-container">
-                        <input id="option-theme" placeholder={themeOption} type="text" disabled />
+                        <p id="option-theme">{themeOption}</p>
                         <ThemeIcon
                           id={'dropdown-arrow'}
                           width={15}
