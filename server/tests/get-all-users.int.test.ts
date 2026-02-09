@@ -5,7 +5,7 @@ import { expect, it } from 'vitest';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
 
 it('DEBUG: prints all users NO MOCKS! IF this doesnt work, database error.', async () => {
-  const result = await getAllUsersService({ strictness: null });
+  const result = await getAllUsersService({});
 
   //console.log('USERS FROM SERVICE:',result);
   expect(result.length).toBeGreaterThan(0);
@@ -14,7 +14,7 @@ it('DEBUG: prints all users NO MOCKS! IF this doesnt work, database error.', asy
 
 //test for each field we need.
 it('DEBUG: returns required preview fields, if we change user fields change this!', async () => {
-  const result = await getAllUsersService({ strictness: null });
+  const result = await getAllUsersService({});
 
   expect(Array.isArray(result)).toBe(true);
   expect(result.length).toBeGreaterThan(0);
