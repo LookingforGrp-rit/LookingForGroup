@@ -1,7 +1,7 @@
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "FArtist" | "Music" | "Soft";
+export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft";
 export type TagType =
   | "Creative"
   | "Technical"
