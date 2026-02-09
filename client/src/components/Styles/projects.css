@@ -36,7 +36,7 @@ Project Panel component style rules
   background-color: var(--header-color);
   display: flex;
   position: relative;
-  max-width: 800px;
+  max-width: 750px;
 
   img {
     /* using 'object-fit:cover' risks cutting off important parts of the image */
@@ -70,16 +70,26 @@ Project Panel component style rules
 
 /* IPAD/TABLET Hover support for touch-screen devices that specifically are not computers */
 @media only screen and (any-hover: none) {
-  .project-panel {
-    height: 400px;
 
+  /* In mobile version hover panel is always visible
+     position is static so the grid uses the size of the hover panel
+     original thumbnail image is hidden to avoid duplicate from hover panel*/
+  .project-panel {
+    height: auto;
+    display: grid;
+    flex-direction: column; 
+
+    
     .project-panel-hover {
       visibility: visible;
       opacity: 1;
-      box-shadow: none;
-      position: absolute;
-      top: 0;
+      position: static;
+      height:auto;
     }
+  }
+
+  .project-panel > img {
+    display: none;
   }
 }
 
