@@ -352,6 +352,18 @@ const NewProject = () => {
   //   );
 
   /**
+   * Opens the position details panel.
+   * NOTE: This should really be done differently, and the position details panel should really be separated
+   * into it's own component.
+   */
+  const openOpenPositionsPanel = () => {
+    const button = document.getElementById("project-open-positions-button");
+    if (button)  {
+      button.click();
+    }
+  };
+
+  /**
    * Sets the viewed position and triggers the popup to display the selected open position details.
    * @param positionNumber The position to open the popup to
    */
@@ -359,9 +371,9 @@ const NewProject = () => {
     //Set state to position being clicked
     //Call Popup open function from other button
     setViewedPosition(positionNumber);
-    const button = document.getElementById("project-open-positions-button");
-    if (button) button.click();
+    openOpenPositionsPanel();
   };
+
 
   //State variable used to track which position is currently being viewed in the popup
   const [viewedPosition, setViewedPosition] = useState(0);
@@ -643,7 +655,7 @@ const NewProject = () => {
           </div>
 
           <div id="project-open-positions">
-            <div id="project-open-positions-header">Open Positions</div>
+            <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
             <div id="project-open-positions-list">
               {displayedProject.jobs.map((position, index) => (
                 <button
