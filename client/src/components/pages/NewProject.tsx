@@ -411,15 +411,6 @@ const NewProject = () => {
                     {ProjectStatusEnums[displayedProject.status]}
                   </span>
                 </p>
-                <Popup>
-                  <PopupButton buttonId="project-open-positions-button">
-                    Open Positions
-                  </PopupButton>
-                  <PopupContent>
-                    <TeamPositionsPanel displayedProject={displayedProject}
-                        viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
-                  </PopupContent>
-                </Popup>
               </div>
               <div id="project-creation">
                 Created by:{" "}
@@ -435,8 +426,17 @@ const NewProject = () => {
                   day: "numeric",
                 })}
               </div>
+              <Popup>
+                <PopupButton buttonId="project-open-positions-button">
+                  Open Positions
+                </PopupButton>
+                <PopupContent>
+                  <TeamPositionsPanel displayedProject={displayedProject}
+                      viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
+                </PopupContent>
+              </Popup>
             </div>
-            <div id="project-tags">
+            <div id=" ">
               {
                 //If more tag types are usable, use commented code for cases
                 //Also, check to see how many additional tags a project has
@@ -525,7 +525,10 @@ const NewProject = () => {
           </div>
 
           <div id="project-open-positions">
-            <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
+            <div className="centerer">
+              <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
+            </div>
+            
             <div id="project-open-positions-list">
               {displayedProject.jobs.map((position, index) => (
                 <button
