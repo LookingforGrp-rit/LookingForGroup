@@ -436,7 +436,7 @@ const NewProject = () => {
                 </PopupContent>
               </Popup>
             </div>
-            <div id=" ">
+            <div id="project-tags">
               {
                 //If more tag types are usable, use commented code for cases
                 //Also, check to see how many additional tags a project has
