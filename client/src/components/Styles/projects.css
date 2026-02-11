@@ -301,6 +301,23 @@ Project image carousel style rules
   transform: rotateY(180deg);
 }
 
+@media only screen {
+  .discover-project-image{
+    height: auto;
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 600px){
+  .discover-project-about{
+    height: auto;
+    padding-top: 0px;
+
+    p{
+      display: none;
+    }
+  }
+}
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
