@@ -44,6 +44,7 @@ const NewProject = () => {
 
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
+  const [isMember, setIsMember] = useState(false);
   const [viewedPosition, setViewedPosition] = useState(0);
 
   /**
@@ -81,6 +82,16 @@ const NewProject = () => {
         setDisplayedProject(projectResp.data);
         checkFollow();
         setFollowCount(projectResp.data.followers.count);
+
+        if (userResp.data) {
+          for (let member of projectResp.data.members) {
+            if (member.user.userId === userResp.data.userId) {
+              setIsMember(true);
+              return;
+            }
+          }
+        }
+        
       }
     };
     getProjectData();
@@ -190,8 +201,9 @@ const NewProject = () => {
                   />
                   Share
                 </button>
+                
                 {/* Only be able to leave if you're a member of the project */}
-                {/* {userPerms === 0 ? ( */}
+                { isMember ? 
                 <Popup>
                   <PopupButton className="project-info-dropdown-option">
                     <ThemeIcon
@@ -222,7 +234,11 @@ const NewProject = () => {
                       </div>
                     </div>
                   </PopupContent>
-                </Popup>
+                </Popup> 
+                :
+                <></>
+                }
+                
                 <button
                   className="project-info-dropdown-option"
                   id="project-info-report"
