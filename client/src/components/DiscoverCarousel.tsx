@@ -1,5 +1,5 @@
 import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./ImageCarouselNew";
-import { Tags } from "./Tags";
+import { Tag } from "./Tag";
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { ProjectWithFollowers } from "@looking-for-group/shared";
@@ -71,21 +71,21 @@ export const DiscoverCarousel : React.FC<DiscoverCarouselProps> = ({ dataList = 
 
                           if (index < 3) {
                             return (
-                              <Tags
+                              <Tag
                                 className={`project-tag-label carousel-tag ` + tag_color}
                                 key={index}
                               >
                                 {tag.label}
-                              </Tags>
+                              </Tag>
                             );
                           } else if (index === 3) {
                             return (
-                              <Tags
+                              <Tag
                                 className={`project-tag-label carousel-tag label-grey`}
                                 key={index}
                               >
                                 {"+" + (project.tags.length - 3).toString()}
-                              </Tags>
+                              </Tag>
                             );
                           }
                         })
