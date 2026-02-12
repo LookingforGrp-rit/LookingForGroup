@@ -251,7 +251,7 @@ const Settings = () => {
               // Create deep copy of object, make changes, then call state update
               const tempInfo : MePrivate = JSON.parse(JSON.stringify(userInfo));
               
-              tempInfo[cleaned_type] = firstParam;
+              //tempInfo[cleaned_type] = firstParam;
               
               setUserInfo(tempInfo);
               //this isn't really needed but i'm gonna leave it anyway
@@ -335,6 +335,9 @@ const Settings = () => {
                       if (!phoneRegex.test(firstParam)) {
                         setError('*Please enter a valid phone number.');
                         return;
+                      }
+                      else {
+                        // TODO: Insert the backend connection to change the user's phone number
                       }
                     }
 
@@ -540,7 +543,7 @@ const Settings = () => {
                   <div className="input-container">
                     <input
                       id="option-primary-phone"
-                      placeholder={'111-111-1111'}
+                      placeholder={'123-123-1234'}
                       type="text"
                       disabled
                     />
@@ -565,7 +568,7 @@ const Settings = () => {
                   <Dropdown>
                     <DropdownButton buttonId="options-theme-btn">
                       <div className="input-container">
-                        <input id="option-theme" placeholder={themeOption} type="text" disabled />
+                        <p id="option-theme">{themeOption}</p>
                         <ThemeIcon
                           id={'dropdown-arrow'}
                           width={15}
