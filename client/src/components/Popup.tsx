@@ -135,8 +135,8 @@ export const PopupContent = ({
         closePopup();
       }
     };
-    document.addEventListener('mouseup', handleClickOutside);
-    return () => document.removeEventListener('mouseup', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [closePopup]);
 
   // Close on browser button click
