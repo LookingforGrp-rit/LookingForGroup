@@ -5,6 +5,7 @@ interface TagsProps {
   className?: string;
   onClick?: MouseEventHandler<HTMLButtonElement>;
   type?: string;
+  selected?: boolean;
 }
 
 /**
@@ -20,22 +21,30 @@ interface TagsProps {
  * 
  * @returns JSX element representing a styled tag
  */
-export const Tag = ({ children, className = '', type="", onClick }: TagsProps) => {
+export const Tag = ({ children, className = '', type = "", onClick, selected = false }: TagsProps) => {
   let color = "grey";
   switch (type) {
     case "medium":
       color = "blue";
       break;
-    case "genre":
+    
+    // The genre type is very split
+    case "creative":
+    case "technical":
+    case "games":
+    case "multimedia":
+    case "music":
+    case "other":
       color = "green";
       break;
-    case "developer skills":
+    
+    case "developer skill":
       color = "yellow";
       break;
-    case "designer skills":
-      color = "pink";
+    case "designer skill":
+      color = "red";
       break;
-    case "soft skills":
+    case "soft skill":
       color = "purple";
       break;
     
@@ -46,16 +55,22 @@ export const Tag = ({ children, className = '', type="", onClick }: TagsProps) =
       break;
   }
 
+  let tag_extra_classes = "";
+  if (!selected) {
+    tag_extra_classes += "tag-unselected";
+  }
+
+
   if (onClick != undefined) {
     return (
-    <button className={"tag tag-color-" + color + " " + className} onClick={onClick} >
+    <button className={"tag-button tag-" + color + " " + className + " " + tag_extra_classes} onClick={onClick} >
       {children}
     </button>
     );
   }
   
   return (
-    <div className={"tag tag-color-" + color + " " + className} >
+    <div className={"tag-button tag-label tag-" + color + " " + className + " " + tag_extra_classes} >
       {children}
     </div>
     );
