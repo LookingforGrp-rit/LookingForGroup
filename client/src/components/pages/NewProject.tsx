@@ -10,6 +10,7 @@ import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
 import { ThemeIcon } from "../ThemeIcon";
 import { getByID } from "../../api/projects";
+import { Tag as TagElement } from "../Tag";
 import {
   getCurrentAccount,
   deleteProjectFollowing,
@@ -462,18 +463,18 @@ const NewProject = () => {
                   } */
                   if (index < 3) {
                     return (
-                      <div
-                        className={`project-tag-label label-green`}
+                      <TagElement
+                        type={tag.type.toLowerCase()}
                         key={index}
                       >
-                        {tag.label}
-                      </div>
+                        <p>{tag.label}</p>
+                      </TagElement>
                     );
                   } else if (index === 3) {
                     return (
-                      <div className="project-tag-label label-grey" key={index}>
-                        +{displayedProject.tags.length - 3}
-                      </div>
+                      <TagElement key={index}>
+                        <p>+{displayedProject.tags.length - 3}</p>
+                      </TagElement>
                     );
                   }
                 })
