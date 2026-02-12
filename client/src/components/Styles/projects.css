@@ -14,8 +14,8 @@ Project Panel component style rules
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
 .project-panel-box {
-  display: flex;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
   justify-content: space-between;
   align-content: start;
   gap: 20px;
@@ -26,7 +26,7 @@ Project Panel component style rules
 }
 
 .project-panel {
-  height: 200px;
+  height: auto;
   /* commenting max width out. 
   Forcing width may mess with rendering calculations, causing uneven/unaligned project panel rows.
   If max width is necessary, calculations need to be updated for it to work properly*/
@@ -35,15 +35,15 @@ Project Panel component style rules
   border-radius: 10px;
   background-color: var(--header-color);
   display: flex;
-  flex: 1 1 auto;
   position: relative;
+  max-width: 750px;
 
   img {
     /* using 'object-fit:cover' risks cutting off important parts of the image */
     /* recommended using 'object-fit:contain' if image cutoff is undesired*/
     object-fit: cover;
-    max-height: 200px;
-    height: 100%;
+    /* max-height: 200px; */
+    height: auto;
     width: 100%;
     border-radius: 10px;
     align-self: center;
@@ -70,16 +70,30 @@ Project Panel component style rules
 
 /* IPAD/TABLET Hover support for touch-screen devices that specifically are not computers */
 @media only screen and (any-hover: none) {
-  .project-panel {
-    height: 400px;
 
+  /* In mobile version hover panel is always visible
+     position is static so the grid uses the size of the hover panel
+     original thumbnail image is hidden to avoid duplicate from hover panel*/
+  .project-panel {
+    height: auto;
+    display: grid;
+    flex-direction: column; 
+
+    
     .project-panel-hover {
       visibility: visible;
       opacity: 1;
-      box-shadow: none;
-      position: absolute;
-      top: 0;
+      position: static;
+      height:auto;
     }
+  }
+
+  .project-panel > img {
+    display: none;
+  }
+
+  .project-panel-box {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 
@@ -89,10 +103,10 @@ Project Panel component style rules
   box-shadow: 2px 2px 10px 2px var(--shadow-color);
   color: var(--main-text);
   position: absolute;
-  height: 400px;
+  height: auto;
   /* min-width: 420px; */
   width: 100%;
-  top: -100px;
+  /*top: -100px;*/
   visibility: visible;
   transition: visibility 0.2s;
 
@@ -106,7 +120,7 @@ Project Panel component style rules
 
   img {
     /* width: 100%; */
-    height: 180px;
+    height: auto;
     /* align-self: flex-start; */
     /* background-color: var(--primary-color); */
     border-radius: 10px 10px 0 0;
@@ -287,6 +301,23 @@ Project image carousel style rules
   transform: rotateY(180deg);
 }
 
+@media only screen {
+  .discover-project-image{
+    height: auto;
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 600px){
+  .discover-project-about{
+    height: auto;
+    padding-top: 0px;
+
+    p{
+      display: none;
+    }
+  }
+}
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
