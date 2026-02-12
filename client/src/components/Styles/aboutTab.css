@@ -112,10 +112,6 @@
     width: 100%;
   }
 
-  #profile-editor-funFact, #profile-editor-bio, #profile-editor-headline {
-    height: 100px;
-  }
-
   #profile-editor-add-image {
     max-width: 250px;
   }
@@ -168,14 +164,6 @@
     width: 100%;
     max-width: 100%;
     padding-left: 20%;
-  }
-
-  #profile-editor-bio {
-    height: 100px;
-  }
-
-  #profile-editor-funFact, #profile-editor-headline {
-    height: 70px;
   }
 
   #profile-editor-add-image {
