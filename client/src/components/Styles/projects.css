@@ -2666,6 +2666,7 @@ Project Carousel style rules
     flex-direction: column;
     justify-content: start;
     gap: 5px;
+    width: 100%;
   }
 }
 
@@ -2785,6 +2786,7 @@ Project Carousel style rules
   justify-content: start;
   align-items: center;
   gap: 10px;
+  width: 100%;
 
   p {
     color: var(--neutral-gray);
@@ -2810,6 +2812,21 @@ Project Carousel style rules
 #project-open-position-header {
   margin-left: auto;
   margin-right: auto;
+}
+
+#project-open-positions-button {
+  margin-top: 6px;
+}
+
+#align-end {
+  align-self: flex-end;
+}
+
+.centerer {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 }
 
 #project-open-positions-popup {
@@ -3134,7 +3151,9 @@ button#positions-popup-list-item-active {
 
 #project-people-content {
   display: flex;
+  justify-content: center;
   flex-flow: wrap;
+
   gap: 10px;
   margin-top: 10px;
 }
@@ -3196,9 +3215,10 @@ button#positions-popup-list-item-active {
 #project-open-positions-list {
   display: flex;
   flex-flow: wrap;
-  justify-content: start;
-  gap: 10px;
-  margin: 10px 0;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin: 10px 6px;
 }
 
 .label-position {

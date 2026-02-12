@@ -1,3 +1,4 @@
+/*
 import React, { useState, useEffect } from 'react';
 
 //--------------------------------------------------------------------
@@ -72,7 +73,7 @@ const ChooseProficiencies = ({
           <p>You can add more and edit later</p>
 
           <div id="proficiency-select">
-            {/* map through the proficiencies array and create a button for each proficiency */}
+            //{ map through the proficiencies array and create a button for each proficiency }
             {proficiencies.map((proficiency, index) => (
               <button
                 key={index}
@@ -108,3 +109,4 @@ const ChooseProficiencies = ({
 };
 
 export default ChooseProficiencies;
+*/

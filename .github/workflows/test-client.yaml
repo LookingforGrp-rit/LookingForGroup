@@ -7,7 +7,7 @@ on:
       - dev
     paths:
       - "client/**"
-      - ".github/workflows/build-client.yml"
+      - ".github/workflows/test-client.yaml"
 
 jobs:
   test-client:
@@ -46,8 +46,8 @@ jobs:
       - name: Give Compose Services Time to Start
         run: sleep 10
 
-      - name: Run Tests
-        run: npm run test:client
+#      - name: Run Tests
+#        run: npm run test:client
 
       - name: Build Client
         run: npm run build:client

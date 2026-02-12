@@ -2,6 +2,7 @@ import * as paths from "../../constants/routes";
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { Header } from '../Header';
+import { DataSet } from '../SearchBar';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 
 /**
@@ -9,12 +10,12 @@ import { ThemeIcon, ThemeImage } from '../ThemeIcon';
  * @returns JSX Element with link to Home (Discover) page
  */
 const NotFoundPage = () => {
-    const [projectsList, setProjectsList] = useState();
-    const [currentSearch, setCurrentSearch] = useState('');
+    const [projectsList, _setProjectsList] = useState([] as DataSet[]);
+	const currentSearch = (_results : unknown[][]) => void {};
     const navigate = useNavigate();
     return (
         <div className="page">
-            <Header dataSets={[{ projectsList }]} onSearch={setCurrentSearch} />
+            <Header dataSets={projectsList} onSearch={currentSearch} />
             <div className="error-box">
                 <ThemeImage
                     lightSrc={'assets/bannerImages/404_light.png'}

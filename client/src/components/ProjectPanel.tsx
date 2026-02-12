@@ -115,6 +115,10 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
       if (projectResp.data) { 
         setFollowCount(projectResp.data.followers.count);
         checkFollow();
+        if (project.title == "thumbnail") {
+          console.log("Thumbnail project's thumbnail:");
+          console.log(project.thumbnail);
+        }
       }
     };
       getProjectData();
@@ -176,7 +180,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
                 height={25}
                 id={"heart-filled"}
                 ariaLabel="following"
-                onClick={(e) => handleFollowClick(e)}
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
               />
             ) : (
               <ThemeIcon
@@ -184,7 +188,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
                 height={25}
                 id={"heart-empty"}
                 ariaLabel="following"
-                onClick={(e) => handleFollowClick(e)}
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
               />
             )}
               {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>

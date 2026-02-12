@@ -9,10 +9,13 @@ export type TagType =
   | "Multimedia"
   | "Music"
   | "Other"
-  | "Developer Skill"
-  | "Designer Skill"
-  | "Soft Skill"
-  | "Purpose";
+  | "Developer"
+  | "Designer"
+  | "Soft"
+  | "Purpose"
+  | "Project Type"
+  | "Role"
+  | "Major";
 export type AcademicYear =
   | "Freshman"
   | "Sophomore"
@@ -39,6 +42,49 @@ export type JobDuration = "ShortTerm" | "LongTerm";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
 export type Visibility = "Public" | "Private";
+
+// Structures for type management
+export interface StringDictionary<T> {
+	[key : string]: T;
+}
+
+export interface NumberDictionary<T> {
+  [key : number] : T;
+}
+
+interface ProjectType {
+  project_type: string;
+}
+
+export type ProjectInfoStage = "Preview" | "Detail" | "Full";
+
+export interface StructuredProjectInfo {
+  preview? : ProjectPreview;
+  detail? : ProjectDetail;
+  full? : ProjectWithFollowers;
+}
+
+export interface StructuredUserInfo {
+  preview? : UserPreview;
+  detail? : UserDetail;
+}
+
+export interface UserAndProjectInfo {
+  tags?: Tag[];
+  title?: string;
+  hook?: string;
+  project_types?: ProjectType[];
+  job_title?: string;
+  major?: string;
+  skills?: Skill[];
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  name?: string;
+  bio?: string;
+  projectId?: number;
+  userId?: number;
+}
 
 //API REQUEST
 
@@ -73,6 +119,15 @@ export interface ApiResponse<_data = any> {
    */
   // TODO either remove nullable or optional
   data?: _data | null;
+}
+
+export interface UserIdentifiers {
+  userId : number,
+  username : string,
+}
+
+export interface UsernameResponse extends ApiResponse {
+  data?: UserIdentifiers;
 }
 
 // DATASETS
@@ -1220,3 +1275,18 @@ export type CreateProjectJobInput = Required<
  * Data required to update an existing job listing on a project
  */
 export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
+
+
+/**
+ * Data required to filter request
+ */
+export type FilterRequest = {
+  mentor?: boolean;
+  designer?: boolean;
+  developer?: boolean;
+  skills?: number[];
+  majors?: number[];
+  academicYear?: string[];
+  socials?: number[];
+  strictness?: 'any' | 'all';
+}

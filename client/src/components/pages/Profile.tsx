@@ -114,7 +114,7 @@ const Profile = () => {
    * Updates the displayed projects based on the search results.
    * @param searchResults Filtered projects based on the search query.
    */
-  const searchProjects = (searchResults: string[]) => {
+  const searchProjects = (searchResults: unknown[][]) => {
     const tempProjList: Project[] = [];
 
     for (const result of searchResults[0]) {
@@ -278,10 +278,9 @@ const Profile = () => {
   return (
     <div className="page">
       <Header
-        dataSets={{ data: fullProjectList }}
+        dataSets={[{ data: fullProjectList }]}
         onSearch={searchProjects}
         hideSearchBar={true}
-        value={null}
         onChange={() => {}}
       />
 

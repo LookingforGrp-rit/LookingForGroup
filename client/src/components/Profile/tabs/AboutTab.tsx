@@ -62,7 +62,6 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
    * Saves the uploaded image to the profile.
    */
   const handleFileSelected = useCallback(async () => {
-    console.log("just making sure this is running") //it's not!
     //get the image uploader element
     const imageUploader = document.getElementById(
       "image-uploader"
