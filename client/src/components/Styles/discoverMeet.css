@@ -1,50 +1,14 @@
 /*
   Styles for the Discover and Meet pages and their components.
 
-  1. Overall page styles
-  2. Discover image carousel
+  1. Meet Page Hero
+  2. Discover and Meet Page Filter Tags
+  3. Discover Page Image Carousels
 */
 
-/*
-/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-------------------------------------------------------------------------------------------------
-Discover and Meet page style rules
-------------------------------------------------------------------------------------------------
-\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
-*/
-
-#discover-header {
-  display: grid;
-  align-items: center;
-  margin-right: 50px;
-  grid-template: 'search blank buttons' 70px / auto 1fr 140px;
-}
-
-#discover-searchbar {
-  grid-area: search;
-  height: auto;
-}
-
-#discover-header-buttons {
-  grid-area: buttons;
-}
-
-/*Arrangement of button sizes may need adjustment, current solution is too hard-coded*/
-#discover-header-buttons button {
-  background-color: var(--primary-color);
-  border-radius: 40px;
-  border: none;
-  margin-left: 10px;
-  height: auto;
-  width: auto;
-  padding-top: 4px;
-}
-
-#discover-header-buttons img {
-  filter: none;
-  height: auto;
-  margin: 2px;
-}
+/*------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------*/
+/*#region meet page hero*/
 
 #discover-hero {
   width: auto;
@@ -65,8 +29,7 @@ Discover and Meet page style rules
   }
 }
 
-#profile-hero,
-#project-hero {
+#profile-hero {
   display: grid;
   border-radius: 10px;
   font-size: 1vw;
@@ -74,8 +37,7 @@ Discover and Meet page style rules
   grid-template-areas: 'blurb1 blurb2 blurb3';
 }
 
-.profile-hero-blurb,
-.project-hero-blurb {
+.profile-hero-blurb {
   display: flex;
   position: relative;
   justify-content: center;
@@ -85,16 +47,14 @@ Discover and Meet page style rules
   overflow: hidden;
 }
 
-.profile-hero-blurb img,
-.project-hero-blurb img {
+.profile-hero-blurb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 @media only screen and (max-width: 1090px) {
-  #profile-hero,
-  #project-hero {
+  #profile-hero {
     display: flex;
     height: 53vw;
     width: 100%;
@@ -106,32 +66,27 @@ Discover and Meet page style rules
 }
 
 @media only screen and (max-width: 799px) and (min-width: 610px) {
-  .profile-hero-blurb img,
-  .project-hero-blurb img {
+  .profile-hero-blurb img {
     transform: translateY(40px);
   }
 
-  .profile-hero-blurb,
-  .project-hero-blurb {
+  .profile-hero-blurb {
     padding-bottom: 50px;
   }
 }
 
 @media only screen and (max-width: 610px) {
-  #profile-hero,
-  #project-hero {
+  #profile-hero {
     display: flex;
     height: 49vw;
     width: 100%;
   }
 
-  .profile-hero-blurb, 
-  .project-hero-blurb {
+  .profile-hero-blurb {
     width: 100%;
   }
 
-  .profile-hero-blurb img,
-  .project-hero-blurb img {
+  .profile-hero-blurb img {
     width: 100%;
   }
 
@@ -146,8 +101,7 @@ Discover and Meet page style rules
 
 }
 
-#profile-hero-blurb-1,
-#project-hero-blurb-1 {
+#profile-hero-blurb-1 {
   grid-area: blurb1;
   position: relative;
   width: 100%;
@@ -166,8 +120,7 @@ Discover and Meet page style rules
   }
 }
 
-#profile-hero-blurb-2,
-#project-hero-blurb-2 {
+#profile-hero-blurb-2 {
   grid-area: blurb2;
   position: relative;
 
@@ -201,8 +154,7 @@ Discover and Meet page style rules
   }
 }
 
-#profile-hero-blurb-3,
-#project-hero-blurb-3 {
+#profile-hero-blurb-3 {
   grid-area: blurb3;
   position: relative;
 
@@ -222,11 +174,17 @@ Discover and Meet page style rules
   }
 }
 
-.profile-hero-highlight,
-.project-hero-highlight {
+.profile-hero-highlight {
   font-weight: bold;
   color: var(--primary-color);
 }
+
+/*#endregion meet page hero */
+
+
+/*------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------*/
+/*#region tag styles*/
 
 #discover-filters {
   width: auto;
@@ -239,11 +197,6 @@ Discover and Meet page style rules
   overflow-x: scroll;
   scroll-behavior: smooth;
   scrollbar-width: none;
-}
-
-#discover-tag-filters-container {
-  width: calc(100% - 40px);
-  position: relative;
 }
 
 .filters-scroller {
@@ -341,124 +294,6 @@ Discover and Meet page style rules
   p {
     margin: 0;
   }
-}
-
-.filter-category {
-  display: flex;
-  flex-direction: column;
-  text-align: left;
-  height: auto;
-  min-height: 140px;
-}
-
-.filter-category hr {
-  width: 90%;
-}
-
-.filter-category h2 {
-  margin: 10px 0;
-}
-
-.filter-category .search-wrapper {
-  display: block;
-  margin: 0;
-}
-
-.filter-category .search-bar {
-  float: none;
-  width: min-content;
-  margin: 10px 0;
-}
-
-.filter-category-tags {
-  display: flex;
-  height: auto;
-  overflow: auto;
-  flex-flow: wrap;
-  gap: 8px 0;
-}
-
-#filter-popup-projects {
-  width: auto;
-  max-width: 900px;
-  height: 70vh;
-  max-height: 620px;
-  margin: 40px;
-  display: grid;
-  grid-template:
-    'categories' 1fr
-    'genres' 1fr
-    'misc' 1fr /
-    auto;
-  overflow: auto;
-}
-
-#filter-popup-categories {
-  grid-area: categories;
-}
-
-#filter-popup-genres {
-  grid-area: genres;
-}
-
-#filter-popup-misc {
-  grid-area: misc;
-}
-
-#filter-popup-profiles {
-  display: grid;
-  height: 70vh;
-  min-height: 420px;
-  max-height: 620px;
-  grid-template:
-    'devskills roles' 1fr
-    'devskills roles' 1fr
-    'devskills majors' 1fr
-    'desskills majors' 1fr
-    'desskills softskills' 1fr
-    'desskills softskills' 1fr /
-    auto auto;
-  gap: 10px;
-  margin: 0 10px;
-  overflow: auto;
-}
-
-#filter-popup-dev-skills {
-  grid-area: devskills;
-}
-
-#filter-popup-des-skills {
-  grid-area: desskills;
-}
-
-#filter-popup-roles {
-  grid-area: roles;
-}
-
-#filter-popup-majors {
-  grid-area: majors;
-}
-
-#filter-popup-soft-skills {
-  grid-area: softskills;
-}
-
-#filter-popup-profiles div {
-  width: auto;
-  max-width: 600px;
-}
-
-#filter-popup-apply {
-  height: 30px;
-  width: 80px;
-  margin: 10px auto;
-  display: block;
-  font-size: medium;
-  padding: 5px 10px;
-  background-color: var(--primary-color);
-  color: var(--main-text);
-  border: none;
-  border-radius: 30px;
 }
 
 /*tag rules may be used for buttons elsewhere, but will stay here for the time being*/
@@ -747,26 +582,11 @@ Discover and Meet page style rules
   transition: 0.2s;
 }
 
-/* .tag-button-selected {
-  filter: saturate(250%) contrast(120%);
-} */
+/*#endregion tag styles*/
 
-#discover-panel-box {
-  /* display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  grid-gap: 20px; */
-  /* margin: 0 calc(100vw * (65 / 1512)) 50px; */
-  margin: 0 50px 50px;
-  display: flex;
-  justify-content: center;
-}
-
-/*
-------------------------------------------------------------------------------------------------
-Discover image carousel style rules
-------------------------------------------------------------------------------------------------
-*/
+/*------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------*/
+/*#region image-carousel-style-rules*/
 
 .discover-carousel {
   margin: 0px 20px; /* TEMPORARY, should change after more styling is done */
@@ -941,4 +761,12 @@ Discover image carousel style rules
     height: auto;
     max-width: calc(100vw - 100px);
   }
+}
+
+/*#endregion image-carousel-style-rules*/
+
+#discover-panel-box {
+  margin: 0 50px 50px;
+  display: flex;
+  justify-content: center;
 }
