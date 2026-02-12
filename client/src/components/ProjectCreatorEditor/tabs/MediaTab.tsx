@@ -75,7 +75,7 @@ export const MediaTab = ({
   useEffect(() => {
     const initializeImages = async () => {
       // if only one image or no thumbnail, set thumbnail
-      if ((projectAfterMediaChanges.projectImages.length === 1 && projectAfterMediaChanges.projectImages[0].image) || !projectAfterMediaChanges.thumbnail) {
+      if (projectAfterMediaChanges.projectImages.length >= 1 && !projectAfterMediaChanges.thumbnail) {
         // if image is a string, create file
         if (typeof projectAfterMediaChanges.projectImages[0].image === 'string') {
           const file = await stringToFile(projectAfterMediaChanges.projectImages[0].image);
@@ -169,11 +169,9 @@ export const MediaTab = ({
         ],
       };
 
-      updatePendingProject(projectAfterMediaChanges);
-
       // If only image, set as thumbnail
       //this will always be localId, it's using the recently created image
-      if (projectAfterMediaChanges.projectImages.length === 1) {
+      if (!projectAfterMediaChanges.thumbnail || projectAfterMediaChanges.projectImages.length == 1) {
         // Update dataManager
         const thumbObj = {
             localId: ++localIdIncrement,
@@ -186,7 +184,7 @@ export const MediaTab = ({
             type: "canon",
           },
           data: {
-            thumbnail: thumbObj.localId ?? ++localIdIncrement
+            thumbnail: thumbObj.localId as number
           }
         });
         // Update project data
@@ -195,6 +193,7 @@ export const MediaTab = ({
           thumbnail: thumbObj,
         };
       }
+      updatePendingProject(projectAfterMediaChanges);
 
     } catch (err) {
       console.error(err);
