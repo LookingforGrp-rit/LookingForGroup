@@ -7,6 +7,7 @@ import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { PendingProject} from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { ThemeIcon } from "../../ThemeIcon";
+import { Tag as TagElement } from "../../Tag";
 //import { KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 //import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
 //import { SortableTag } from "./SortableItem";
@@ -328,32 +329,24 @@ export const TagsTab = ({
           return;
         }
 
+        const selected = isTagSelected(id, (tagOrMedium as Tag | Medium).label, currentTagsTab) === "selected";
+
         return (
-          <button
+          <TagElement
             key={id}
-            className={`tag-button tag-button-${isTag ? getTagColor((tagOrMedium as Tag).type) : "blue"}-${isTagSelected(
-              id,
-              isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label,
-              currentTagsTab
-            )}`}
+            type={isTag
+              ? (tagOrMedium as Tag).type.toLowerCase()
+              : "medium"}
             onClick={
               isTag
                 ? () => handleTagSelect((tagOrMedium as Tag).tagId)
                 : () => handleMediumSelect((tagOrMedium as Medium).mediumId)
             }
+            selected={selected}
           >
-            <i
-              className={
-                isTagSelected(
-                  id,
-                  isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label,
-                  currentTagsTab) === "selected" ?
-                    "fa fa-check" :
-                    "fa fa-plus"
-              }
-            ></i>
+            <i className={ selected ? "fa fa-check" : "fa fa-plus" }></i>
             <p>{isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label}</p>
-          </button>
+          </TagElement>
         );
       });
     } else if (searchedTags && searchedTags.length === 0) {
@@ -361,23 +354,25 @@ export const TagsTab = ({
     }
     // medium
     if (currentTagsTab === 0) {
-      return allMediums.map((medium) => (
-        <button
+      return allMediums.map((medium) => {
+        const selected = isTagSelected(medium.mediumId, medium.label, currentTagsTab) === "selected";
+
+        return <TagElement
           key={medium.mediumId}
-          className={`tag-button tag-button-blue-${isTagSelected(medium.mediumId, medium.label, currentTagsTab)}`}
+          type={"medium"}
           onClick={() => handleMediumSelect(medium.mediumId)}
+          selected={selected}
         >
           <i
             className={
-              isTagSelected(medium.mediumId, medium.label, currentTagsTab) ===
-              "selected"
+              selected
                 ? "fa fa-close"
                 : "fa fa-plus"
             }
           ></i>
           <p>{medium.label}</p>
-        </button>
-      ));
+        </TagElement>;
+    });
     } else if (currentTagsTab === 1) {
       return allTags
         .filter((tag) =>
@@ -385,79 +380,76 @@ export const TagsTab = ({
             tag.type
           )
         )
-        .map((genreTag) => (
-          <button
+        .map((genreTag) => {
+        const selected = isTagSelected(genreTag.tagId, genreTag.label, currentTagsTab) === "selected";
+        
+        return <TagElement
             key={genreTag.tagId}
-            className={`tag-button tag-button-green-${isTagSelected(genreTag.tagId, genreTag.label, currentTagsTab)}`}
+            type={"creative"}
+            selected={selected}
             onClick={() => handleTagSelect(genreTag.tagId)}
           >
             <i
               className={
-                isTagSelected(genreTag.tagId, genreTag.label, currentTagsTab) === "selected"
+                selected
                   ? "fa fa-close"
                   : "fa fa-plus"
               }
             ></i>
             <p>{genreTag.label}</p>
-          </button>
-        ));
+          </TagElement>;
+    });
     } else if (currentTagsTab === 2) {
       return allTags
         .filter((tag) => tag.type === "Developer Skill")
-        .map((developerSkillTag) => (
-          <button
+        .map((developerSkillTag) => {
+          const selected = isTagSelected(developerSkillTag.tagId, developerSkillTag.label, currentTagsTab) === "selected";
+          return <TagElement
             key={developerSkillTag.tagId}
-            className={`tag-button tag-button-yellow-${isTagSelected(developerSkillTag.tagId, developerSkillTag.label, currentTagsTab)}`}
+            type={"developer skill"}
+            selected={selected}
             onClick={() => handleTagSelect(developerSkillTag.tagId)}
           >
             <i
-              className={
-                isTagSelected(developerSkillTag.tagId, developerSkillTag.label, currentTagsTab) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
+              className={ selected ? "fa fa-close" : "fa fa-plus" }
             ></i>
             <p>{developerSkillTag.label}</p>
-          </button>
-        ));
+          </TagElement>;
+        });
     } else if (currentTagsTab === 3) {
       return allTags
         .filter((tag) => tag.type === "Designer Skill")
-        .map((designerSkillTag) => (
-          <button
+        .map((designerSkillTag) => {
+          const selected = isTagSelected(designerSkillTag.tagId, designerSkillTag.label, currentTagsTab) === "selected";
+          return <TagElement
             key={designerSkillTag.tagId}
-            className={`tag-button tag-button-red-${isTagSelected(designerSkillTag.tagId, designerSkillTag.label, currentTagsTab)}`}
+            type={"designer skill"}
+            selected={selected}
             onClick={() => handleTagSelect(designerSkillTag.tagId)}
           >
             <i
-              className={
-                isTagSelected(designerSkillTag.tagId, designerSkillTag.label, currentTagsTab) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
+              className={selected ? "fa fa-close" : "fa fa-plus"}
             ></i>
             <p>{designerSkillTag.label}</p>
-          </button>
-        ));
+          </TagElement>;
+        });
     }
     return allTags
       .filter((tag) => tag.type === "Soft Skill")
-      .map((softSkillTag) => (
-        <button
+      .map((softSkillTag) => {
+        const selected = isTagSelected(softSkillTag.tagId, softSkillTag.label, currentTagsTab) === "selected";
+        return <TagElement
           key={softSkillTag.tagId}
-          className={`tag-button tag-button-purple-${isTagSelected(softSkillTag.tagId, softSkillTag.label, currentTagsTab)}`}
+          type={"soft skill"}
+          selected={selected}
           onClick={() => handleTagSelect(softSkillTag.tagId)}
         >
           <i
-            className={
-              isTagSelected(softSkillTag.tagId, softSkillTag.label, currentTagsTab) === "selected"
-                ? "fa fa-close"
-                : "fa fa-plus"
-            }
+            className={selected ? "fa fa-close" : "fa fa-plus"}
           ></i>
           <p>{softSkillTag.label}</p>
-        </button>
-      ));
+        </TagElement>;
+      });
   }, [
     searchedTags,
     currentTagsTab,
@@ -492,14 +484,15 @@ export const TagsTab = ({
         )}
         <div id="project-editor-type-tags-container">
           {(projectAfterTagsChanges.mediums).map((medium) => (
-            <button
+            <TagElement
               key={medium.mediumId}
-              className={`tag-button tag-button-blue-selected`}
+              selected={true}
+              type={"medium"}
               onClick={() => handleMediumSelect(medium.mediumId)}
             >
               <i className="fa fa-close"></i>
               <p>{medium.label}</p>
-            </button>
+            </TagElement>
           ))}
         </div>
       </div>
@@ -529,8 +522,8 @@ export const TagsTab = ({
               const tags = projectAfterTagsChanges.tags ?? [];
               return (
                 <>
-                  {tags.slice(0, 2).map((t) => (
-                    <div className='tag-draggable' draggable="true">
+                  {tags.slice(0, 2).map((t) => {
+                    return <div className='tag-draggable' draggable="true">
                       {/* TODO: implement dragging tags to reorder and backend functionality to track position */}
                       <ThemeIcon
                         width={21}
@@ -539,16 +532,17 @@ export const TagsTab = ({
                         ariaLabel="drag"
                         onClick={() => {console.log('clicked draggable tag icon')}}
                       /> 
-                      <button
+                      <TagElement
                         key={t.tagId}
-                        className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
+                        selected={true}
+                        type={t.type.toLowerCase()}
                         onClick={() => handleTagSelect(t.tagId)}
                       >
                         <i className="fa fa-close"></i>
                         <p>{t.label}</p>
-                      </button>
-                    </div>
-                  ))}
+                      </TagElement>
+                    </div>;
+                  })}
                   <hr id="selected-tag-divider" />
                   {tags.slice(2).map((t) => (
                     <div className='tag-draggable' draggable="true">
@@ -560,14 +554,15 @@ export const TagsTab = ({
                         ariaLabel="drag"
                         onClick={() => {console.log('clicked draggable tag icon')}}
                       />
-                      <button
+                      <TagElement
                         key={t.tagId}
-                        className={`tag-button tag-button-${getTagColor(t.type)}-selected`}
+                        selected={true}
+                        type={t.type.toLowerCase()}
                         onClick={() => handleTagSelect(t.tagId)}
                       >
                         <i className="fa fa-close"></i>
                         <p>{t.label}</p>
-                      </button>
+                      </TagElement>
                     </div>
                   ))}
                 </>
