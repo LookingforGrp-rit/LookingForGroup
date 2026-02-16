@@ -3522,6 +3522,8 @@ My projects page style rules
   border: 0px;
   border-radius: 20px;
   color: var(--main-text);
+  padding: 0 10px;
+  padding-bottom: 5px;
   margin: 0px;
   text-align: right;
   font-size: 12px;
@@ -3719,6 +3721,11 @@ My projects page style rules
 
 .card-leave-button,
 .card-delete-button {
+  display:flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+
   box-sizing: border-box;
   background-color: transparent;
   border: 0px;
@@ -3728,6 +3735,12 @@ My projects page style rules
   text-align: left;
   font-family: Inter;
   transition: background-color 0.2s;
+}
+
+.card-leave-button p,
+.card-delete-button p {
+  flex-grow: 1;
+  margin: 0;
 }
 
 .card-delete-button {
