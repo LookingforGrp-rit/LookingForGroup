@@ -3729,9 +3729,9 @@ My projects page style rules
   box-sizing: border-box;
   background-color: transparent;
   border: 0px;
-  border-radius: 10px;
-  margin: 0px;
-  padding: 5px 5px;
+  border-radius: 4px;
+  margin: 0 2px;
+  padding: 10px;
   text-align: left;
   font-family: Inter;
   transition: background-color 0.2s;
@@ -3739,7 +3739,6 @@ My projects page style rules
 
 .card-leave-button p,
 .card-delete-button p {
-  flex-grow: 1;
   margin: 0;
 }
 
@@ -3749,7 +3748,7 @@ My projects page style rules
 
 .card-leave-button:hover,
 .card-delete-button:hover {
-  background-color: #00000040;
+  background-color: #ffffff40;
   transition: background-color 0.2s;
 }
 
