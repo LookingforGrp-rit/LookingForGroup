@@ -121,6 +121,16 @@ const MyProjectsDisplayGrid = ({
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div className={`card-options-list ${optionsShown ? "show" : ""}`}>
+              <button className="card-leave-button" onClick={() => navigate(projectURL)}>
+                  <ThemeIcon
+                    id={"pencil"}
+                    width={21}
+                    height={21}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
+                  Edit Project
+              </button>
               <Popup>
                 <PopupButton className="card-leave-button">
                   <ThemeIcon
