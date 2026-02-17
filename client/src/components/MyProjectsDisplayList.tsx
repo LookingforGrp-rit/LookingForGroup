@@ -102,6 +102,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     <div className="my-project-list-card">
       {/* Thumbnail and Title*/}
       <div className="list-card-section1">
+        {/*
         <img
           className="list-card-image"
           src={projectData.thumbnail?.image
@@ -110,7 +111,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
           }
           alt={`${projectData.title} Thumbnail`}
           onClick={() => navigate(projectURL)}
-        ></img>
+        ></img> */}
         <div
           className="list-card-title"
           onClick={() => navigate(projectURL)}
@@ -130,6 +131,16 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
         </DropdownButton>
         <DropdownContent rightAlign={true}>
           <div className={`card-options-list ${optionsShown ? 'show' : ''}`}>
+            <button className="card-leave-button" onClick={() => navigate(projectURL)}>
+                <ThemeIcon
+                  id={"pencil"}
+                  width={21}
+                  height={21}
+                  ariaLabel={"Leave project"}
+                  className="mono-fill"
+                />
+                Edit Project
+            </button>
             <Popup>
               <PopupButton className='card-leave-button'>
                 <ThemeIcon
