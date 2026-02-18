@@ -1,13 +1,20 @@
 /*
   Styles for the Discover and Meet pages and their components.
 
-  1. Meet Page Hero
-  2. Discover and Meet Page Filter Tags
-  3. Discover Page Image Carousels
+  1. Meet page hero banner
+  2. Discover page image carousel
+  3. discover page search filters and project tags
 */
 
-/*------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------*/
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+------------------------------------------------------------------------------------------------
+Meet page hero style rules
+- Responsible for the hero at the top of the meet page
+- #project-hero is currently unused but available if hero is added to banner on my projects page
+------------------------------------------------------------------------------------------------
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
 /*#region meet page hero*/
 
 #discover-hero {
@@ -29,7 +36,8 @@
   }
 }
 
-#profile-hero {
+#profile-hero,
+#project-hero {
   display: grid;
   border-radius: 10px;
   font-size: 1vw;
@@ -37,7 +45,8 @@
   grid-template-areas: 'blurb1 blurb2 blurb3';
 }
 
-.profile-hero-blurb {
+.profile-hero-blurb,
+.project-hero-blurb {
   display: flex;
   position: relative;
   justify-content: center;
@@ -47,14 +56,16 @@
   overflow: hidden;
 }
 
-.profile-hero-blurb img {
+.profile-hero-blurb img,
+.project-hero-blurb img {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
 @media only screen and (max-width: 1090px) {
-  #profile-hero {
+  #profile-hero,
+  #project-hero {
     display: flex;
     height: 53vw;
     width: 100%;
@@ -66,27 +77,32 @@
 }
 
 @media only screen and (max-width: 799px) and (min-width: 610px) {
-  .profile-hero-blurb img {
+  .profile-hero-blurb img,
+  .project-hero-blurb img {
     transform: translateY(40px);
   }
 
-  .profile-hero-blurb {
+  .profile-hero-blurb,
+  .project-hero-blurb {
     padding-bottom: 50px;
   }
 }
 
 @media only screen and (max-width: 610px) {
-  #profile-hero {
+  #profile-hero,
+  #project-hero {
     display: flex;
     height: 49vw;
     width: 100%;
   }
 
-  .profile-hero-blurb {
+  .profile-hero-blurb,
+  .project-hero-blurb {
     width: 100%;
   }
 
-  .profile-hero-blurb img {
+  .profile-hero-blurb img,
+  .project-hero-blurb img {
     width: 100%;
   }
 
@@ -101,7 +117,8 @@
 
 }
 
-#profile-hero-blurb-1 {
+#profile-hero-blurb-1,
+#project-hero-blurb-1 {
   grid-area: blurb1;
   position: relative;
   width: 100%;
@@ -120,7 +137,8 @@
   }
 }
 
-#profile-hero-blurb-2 {
+#profile-hero-blurb-2,
+#project-hero-blurb-2 {
   grid-area: blurb2;
   position: relative;
 
@@ -154,7 +172,8 @@
   }
 }
 
-#profile-hero-blurb-3 {
+#profile-hero-blurb-3,
+#project-hero-blurb-3 {
   grid-area: blurb3;
   position: relative;
 
@@ -174,16 +193,229 @@
   }
 }
 
-.profile-hero-highlight {
+.profile-hero-highlight,
+.project-hero-highlight {
   font-weight: bold;
   color: var(--primary-color);
 }
 
-/*#endregion meet page hero */
+/*#endregion */
+
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+------------------------------------------------------------------------------------------------
+Image carousel style rules
+- image carousel is at the top of discover page
+------------------------------------------------------------------------------------------------
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
+/*#region image carousel*/
+
+.discover-carousel {
+  margin: 0px 20px; /* TEMPORARY, should change after more styling is done */
+  display: flex;
+  flex-direction: column;
+}
+
+.carousel-row {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
+.discover-carousel-btn {
+  background: none;
+  box-shadow: none;
+  border: none;
+  margin-left: min(18px, calc(100vw * (18 / 1512)));
+  padding: 0px;
+  height: fit-content;
+
+  img {
+    width: 100%;
+    max-height: 68px;
+  }
+}
+
+.discover-carousel-btn:hover {
+  transition-duration: 0.2s;
+  scale: 1.1;
+
+  img {
+    max-height: calc(68px * 1.1);
+  }
+}
+
+.carousel-btn-left {
+  transform: rotateY(180deg);
+  margin-left: 0px;
+  margin-right: min(18px, calc(100vw * (18 / 1512)));
+}
+
+.carousel-contents {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow: hidden;
+  height: 375px;
+  border-radius: 10px;
+  background-color: var(--header-color);
+  max-width: calc(100vw - 320px); /* Should match up with everything else */
+}
+
+.discover-carousel-content {
+  display: flex;
+  flex-direction: row;
+  min-width: 100%;
+  height: 100%;
+  transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+
+.discover-project-image {
+  border-radius: 10px 0px 0px 10px;
+  width: 57.2%;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+}
+
+.discover-project-about {
+  border-radius: 0px 10px 10px 0px;
+  padding: 23px min(26px, calc(100vw * (26 / 1512)));
+  width: 42.8%;
+
+  h2 {
+    margin: 0 0 20px;
+    font-size: 32px;
+    font-weight: 700;
+    color: var(--primary-color);
+  }
+
+  p {
+    font-size: 18px;
+    font-weight: 400;
+  }
+
+  .discover-link {
+    color: var(--primary-color);
+    background: none;
+    box-shadow: none;
+    text-decoration: none;
+  }
+
+  .discover-link:hover {
+    text-decoration: underline;
+  }
+
+  .learn-more {
+    font-size: 18px;
+    font-weight: 700;
+    border: none;
+    padding: 0px;
+    position: absolute;
+    right: min(26px, calc(100vw * (26 / 1512)));
+    bottom: 23px;
+  }
+}
+
+.project-tags {
+  grid-area: tags;
+  display: flex;
+  justify-content: start;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.carousel-tag p {
+  color: var(--invert-text);
+}
+
+.discover-carousel-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 13px;
+}
+
+.carousel-tab {
+  border: none;
+  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  background-color: var(--header-color);
+}
+
+.carousel-tab:hover,
+.carousel-tab-active {
+  background-color: var(--primary-color);
+}
+
+@media screen and (max-width: 1020px) {
+  .carousel-contents {
+    height: auto;
+  }
+
+  .discover-carousel-content {
+    flex-direction: column;
+  }
+
+  .discover-project-image {
+    width: 100%;
+    height: 375px;
+  }
+
+  .discover-project-about {
+    padding: 23px max(16px, calc(100vw * (16 / 375)));
+    width: calc(100% - (max(16px, calc(100vw * (16 / 375))) * 2));
+    height: fit-content;
+
+    .learn-more {
+      right: max(16px, calc(100vw * (16 / 375)));
+    }
+  }
+}
+
+@media screen and (max-width: 799px) {
+  .carousel-contents {
+    height: auto;
+    max-width: calc(100vw - 100px);
+  }
+}
+
+@media only screen {
+  .discover-project-image{
+    height: auto;
+    width: 100%;
+  }
+}
+
+@media only screen and (max-width: 600px){
+  .discover-project-about{
+    height: auto;
+    padding-top: 0px;
+
+    p{
+      display: none;
+    }
+  }
+}
+
+/*#endregion*/
 
 
-/*------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------*/
+/*
+/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+------------------------------------------------------------------------------------------------
+Filters / Tags Style Rules
+- filter bar used at the top of discover page
+- tags used in edit project popup and more filters popup
+------------------------------------------------------------------------------------------------
+\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
+*/
 /*#region tag styles*/
 
 #discover-filters {
@@ -295,6 +527,8 @@
     margin: 0;
   }
 }
+
+
 
 /*tag rules may be used for buttons elsewhere, but will stay here for the time being*/
 /* Container for draggable tag button */
@@ -583,187 +817,6 @@
 }
 
 /*#endregion tag styles*/
-
-/*------------------------------------------------------------------------------------------------
-------------------------------------------------------------------------------------------------*/
-/*#region image-carousel-style-rules*/
-
-.discover-carousel {
-  margin: 0px 20px; /* TEMPORARY, should change after more styling is done */
-  display: flex;
-  flex-direction: column;
-}
-
-.carousel-row {
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-}
-
-.discover-carousel-btn {
-  background: none;
-  box-shadow: none;
-  border: none;
-  margin-left: min(18px, calc(100vw * (18 / 1512)));
-  padding: 0px;
-  height: fit-content;
-
-  img {
-    width: 100%;
-    max-height: 68px;
-  }
-}
-
-.discover-carousel-btn:hover {
-  transition-duration: 0.2s;
-  scale: 1.1;
-
-  img {
-    max-height: calc(68px * 1.1);
-  }
-}
-
-.carousel-btn-left {
-  transform: rotateY(180deg);
-  margin-left: 0px;
-  margin-right: min(18px, calc(100vw * (18 / 1512)));
-}
-
-.carousel-contents {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  height: 375px;
-  border-radius: 10px;
-  background-color: var(--header-color);
-  max-width: calc(100vw - 320px); /* Should match up with everything else */
-}
-
-.discover-carousel-content {
-  display: flex;
-  flex-direction: row;
-  min-width: 100%;
-  height: 100%;
-  transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
-}
-
-.discover-project-image {
-  border-radius: 10px 0px 0px 10px;
-  width: 57.2%;
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
-}
-
-.discover-project-about {
-  border-radius: 0px 10px 10px 0px;
-  padding: 23px min(26px, calc(100vw * (26 / 1512)));
-  width: 42.8%;
-
-  h2 {
-    margin: 0 0 20px;
-    font-size: 32px;
-    font-weight: 700;
-    color: var(--primary-color);
-  }
-
-  p {
-    font-size: 18px;
-    font-weight: 400;
-  }
-
-  .discover-link {
-    color: var(--primary-color);
-    background: none;
-    box-shadow: none;
-    text-decoration: none;
-  }
-
-  .discover-link:hover {
-    text-decoration: underline;
-  }
-
-  .learn-more {
-    font-size: 18px;
-    font-weight: 700;
-    border: none;
-    padding: 0px;
-    position: absolute;
-    right: min(26px, calc(100vw * (26 / 1512)));
-    bottom: 23px;
-  }
-}
-
-.project-tags {
-  grid-area: tags;
-  display: flex;
-  justify-content: start;
-  gap: 10px;
-  margin-top: 10px;
-}
-
-.carousel-tag p {
-  color: var(--invert-text);
-}
-
-.discover-carousel-tabs {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 13px;
-}
-
-.carousel-tab {
-  border: none;
-  border-radius: 50%;
-  width: 14px;
-  height: 14px;
-  background-color: var(--header-color);
-}
-
-.carousel-tab:hover,
-.carousel-tab-active {
-  background-color: var(--primary-color);
-}
-
-@media screen and (max-width: 1020px) {
-  .carousel-contents {
-    height: auto;
-  }
-
-  .discover-carousel-content {
-    flex-direction: column;
-  }
-
-  .discover-project-image {
-    width: 100%;
-    height: 375px;
-  }
-
-  .discover-project-about {
-    padding: 23px max(16px, calc(100vw * (16 / 375)));
-    width: calc(100% - (max(16px, calc(100vw * (16 / 375))) * 2));
-    height: fit-content;
-
-    .learn-more {
-      right: max(16px, calc(100vw * (16 / 375)));
-    }
-  }
-}
-
-@media screen and (max-width: 799px) {
-  .carousel-contents {
-    height: auto;
-    max-width: calc(100vw - 100px);
-  }
-}
-
-/*#endregion image-carousel-style-rules*/
 
 #discover-panel-box {
   margin: 0 50px 50px;

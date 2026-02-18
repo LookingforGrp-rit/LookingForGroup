@@ -1,9 +1,8 @@
 /*
   Syles for project-related components, such as:
   - Panels (on Discover page)
-  - Carousel
-  - Project page
   - Project Creator and Editor
+  - Project page
 */
 
 /*
@@ -13,6 +12,8 @@ Project Panel component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region project-panel */
+
 .project-panel-box {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -65,35 +66,6 @@ Project Panel component style rules
     visibility: visible;
     opacity: 1;
     cursor: pointer;
-  }
-}
-
-/* IPAD/TABLET Hover support for touch-screen devices that specifically are not computers */
-@media only screen and (any-hover: none) {
-
-  /* In mobile version hover panel is always visible
-     position is static so the grid uses the size of the hover panel
-     original thumbnail image is hidden to avoid duplicate from hover panel*/
-  .project-panel {
-    height: auto;
-    display: grid;
-    flex-direction: column; 
-
-    
-    .project-panel-hover {
-      visibility: visible;
-      opacity: 1;
-      position: static;
-      height:auto;
-    }
-  }
-
-  .project-panel > img {
-    display: none;
-  }
-
-  .project-panel-box {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 
@@ -211,113 +183,38 @@ Project Panel component style rules
   cursor: pointer;
 }
 
-/*
-------------------------------------------------------------------------------------------------
-Project image carousel style rules
-------------------------------------------------------------------------------------------------
-*/
+/* IPAD/TABLET Hover support for touch-screen devices that specifically are not computers */
+@media only screen and (any-hover: none) {
 
-#project-hero-bg1 {
-  width: 100%;
-  height: 100%;
-}
-
-#project-hero {
-  position: relative;
-  height: 100%;
-  border-radius: 10px;
-}
-
-#project-image-carousel-content {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  height: 100%;
-  border-radius: 10px;
-}
-
-.project-image-carousel-item {
-  background-color: var(--background-light);
-  width: 100%;
-  min-width: 100%;
-  transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
-}
-
-.project-image-carousel-image {
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
-}
-
-#project-image-carousel-buttons {
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  width: 100%;
-  transform: translateY(-50%);
-  z-index: 3;
-}
-
-#project-image-carousel-left,
-#project-image-carousel-right {
-  border: none;
-  width: 3vw;
-  max-width: 40px;
-  min-width: 20px;
-  height: 3vw;
-  max-height: 40px;
-  min-height: 20px;
-  padding: 0;
-  background-color: rgba(0, 0, 0, 0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#project-image-carousel-left {
-  position: absolute;
-  left: -40px;
-}
-
-#project-image-carousel-right {
-  position: absolute;
-  right: -40px;
-}
-
-#project-image-carousel-left img,
-#project-image-carousel-right img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  /*specific filters obtained through https://codepen.io/sosuke/pen/Pjoqqp */
-  /*filter:invert(78%) sepia(100%) saturate(2099%) hue-rotate(182deg) brightness(98%) contrast(106%);*/
-  /* filter: invert(10%) sepia(51%) saturate(3855%) hue-rotate(241deg) brightness(100%) contrast(98%); */
-}
-
-#project-image-carousel-left img {
-  transform: rotateY(180deg);
-}
-
-@media only screen {
-  .discover-project-image{
+  /* In mobile version hover panel is always visible
+     position is static so the grid uses the size of the hover panel
+     original thumbnail image is hidden to avoid duplicate from hover panel*/
+  .project-panel {
     height: auto;
-    width: 100%;
-  }
-}
+    display: grid;
+    flex-direction: column; 
 
-@media only screen and (max-width: 600px){
-  .discover-project-about{
-    height: auto;
-    padding-top: 0px;
-
-    p{
-      display: none;
+    
+    .project-panel-hover {
+      visibility: visible;
+      opacity: 1;
+      position: static;
+      height:auto;
     }
   }
+
+  .project-panel > img {
+    display: none;
+  }
+
+  .project-panel-box {
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
 }
+/* #endregion */
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -325,7 +222,7 @@ Project Creator and Editor style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
-
+/* #region project-editor*/
 #project-creator-editor {
   display: flex;
   flex-direction: column;
@@ -1548,6 +1445,10 @@ select.edit-position-compensation {
   text-wrap: nowrap;
 }
 
+/* #endregion */
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1555,12 +1456,7 @@ Project page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
-
-/*rules for the full page itself*/
-#project-page {
-  padding: 0px 15px;
-  width: calc(100% - 250px);
-}
+/* #region project-page */
 
 /*used for the header section of the page (with the project title, description & other options)*/
 #project-info {
@@ -2098,9 +1994,6 @@ used to help wrap the lines around the word 'Members'*/
 }
 
 @media only screen and (max-width: 800px) {
-  #project-page {
-    width: calc(100% - 30px);
-  }
 
   #project-info {
     display: grid;
@@ -2136,6 +2029,7 @@ used to help wrap the lines around the word 'Members'*/
     right: 16px;
   }
 }
+/* #endregion project-page */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -2144,6 +2038,7 @@ Project page general settings style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region general-settings-style-rules */
 
 /*rules  for the whole 'general settings' tab*/
 #general-settings {
@@ -2181,6 +2076,10 @@ Project page general settings style rules
   align-self: center;
 }
 
+/* #endregion */
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -2188,6 +2087,7 @@ Project page member settings style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region member settings */
 
 /*rules for the top section of the 'member settings' tab*/
 #member-settings-header {
@@ -2273,6 +2173,10 @@ Project page member settings style rules
   margin: 2.5% auto;
 }
 
+/*#endregion*/
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -2280,6 +2184,7 @@ Project page post style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region project page post */
 
 /*rules for the 'return' and 'to project' buttons*/
 #post-page-nav-buttons {
@@ -2546,6 +2451,10 @@ plus a follow button & a more options button*/
   background-color: darkorange;
 }
 
+/* #endregion */
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -2553,6 +2462,7 @@ New Project Page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region project page post */
 
 #project-page-content {
   display: grid;
@@ -2575,6 +2485,10 @@ New Project Page style rules
   }
 }
 
+/* #endregion*/
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -2582,6 +2496,8 @@ Project Carousel style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region project carousel */
+
 .project-carousel {
   grid-area: carousel;
   display: flex;
@@ -3228,6 +3144,9 @@ button#positions-popup-list-item-active {
   padding: 5px 10px;
   font-size: 16px;
 }
+/* #endregion*/
+
+
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -3235,7 +3154,8 @@ button#positions-popup-list-item-active {
 My projects page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
-*/
+*/ 
+/* #region my project page */
 
 @media only screen and (min-width: 800px) {
   .my-projects-banner {
@@ -3830,6 +3750,7 @@ My projects page style rules
   }
 }
 
+/* #endregion */
 
 
 /*
