@@ -1050,7 +1050,6 @@ New Profile page style rules
 
 #profile-hero {
   display: flex;
-  padding: 22px 25px 26px 26px;
   background: var(--header-color);
   border-radius: 10px;
   gap: 26px;

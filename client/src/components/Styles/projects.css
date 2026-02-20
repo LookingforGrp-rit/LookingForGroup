@@ -216,6 +216,9 @@ Project Panel component style rules
     display: none;
   }
 
+}
+
+@media only screen and (max-width: 700px){
   .project-panel-box {
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }

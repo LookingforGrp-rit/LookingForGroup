@@ -22,13 +22,9 @@ Meet page hero style rules
   margin: 0 50px;
   background-image: var(--hero-gradient);
   border-radius: 10px;
+  
 }
 
-@media only screen and (max-width: 799px) {
-  #discover-hero {
-    height: 25vw;
-  }
-}
 
 @media only screen and (max-width: 610px) {
   #discover-hero {
@@ -40,6 +36,7 @@ Meet page hero style rules
 #project-hero {
   display: grid;
   border-radius: 10px;
+  padding: 22px 25px 26px 26px;
   font-size: 1vw;
   grid-template-columns: repeat(3, 1fr);
   grid-template-areas: 'blurb1 blurb2 blurb3';
@@ -68,7 +65,7 @@ Meet page hero style rules
   #project-hero {
     display: flex;
     height: 53vw;
-    width: 100%;
+    width: auto;
   }
 
   #profile-hero-blurb-3 {
@@ -93,7 +90,8 @@ Meet page hero style rules
   #project-hero {
     display: flex;
     height: 49vw;
-    width: 100%;
+    width: auto;
+    padding: 0px;
   }
 
   .profile-hero-blurb,
@@ -386,6 +384,7 @@ Image carousel style rules
   }
 }
 
+/* mobile changes */
 @media only screen {
   .discover-project-image{
     height: auto;
@@ -393,12 +392,17 @@ Image carousel style rules
   }
 }
 
-@media only screen and (max-width: 600px){
+@media only screen and (max-width: 700px){
   .discover-project-about{
     height: auto;
     padding-top: 0px;
 
+    /*on smaller devices hide text and tags for discover carousel*/
     p{
+      display: none;
+    }
+
+    .project-tags{
       display: none;
     }
   }
