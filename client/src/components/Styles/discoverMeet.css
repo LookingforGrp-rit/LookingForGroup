@@ -818,8 +818,3 @@ Filters / Tags Style Rules
 
 /*#endregion tag styles*/
 
-#discover-panel-box {
-  margin: 0 50px 50px;
-  display: flex;
-  justify-content: center;
-}
