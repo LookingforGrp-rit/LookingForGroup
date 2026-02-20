@@ -15,7 +15,10 @@ export type TagType =
   | "Purpose"
   | "Project Type"
   | "Role"
-  | "Major";
+  | "Major"
+  | "Developer Skill"
+  | "Designer Skill"
+  | "Soft Skill";
 export type AcademicYear =
   | "Freshman"
   | "Sophomore"

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { addProjectFollowing, deleteProjectFollowing, getCurrentAccount, getProjectFollowing } from '../api/users.ts';
+import { Tag as TagElement } from './Tag';
 
 //import shares types
 import usePreloadedImage from '../functions/imageLoad.tsx';
@@ -54,28 +55,6 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
       return `${formattedNum}K ${multOfHundred ? '+' : ''}`;
     }
     return `${followers}`;
-  };
-
-  /**
-   * Maps tag type to a CSS color class for labels
-   *
-   * @param type - tag type string
-   * @returns color name string used for CSS class
-   */
-  const getTagCategory = (type: string) => {
-    switch(type) {
-      case 'Designer Skill':
-        return 'red';
-      case 'Developer Skill':
-        return 'yellow';
-      case 'Soft Skill':
-        return 'purple';
-      case 'Creative':
-      case 'Games':
-        return 'green';
-      default:
-        return 'grey';
-    }
   };
 
   /**
@@ -197,16 +176,16 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
         </div>
         <div id="project-panel-tags">
           {project.mediums.map((medium: ProjectMedium) => (
-            <div className='skill-tag-label label-blue' key={medium.mediumId}>
-              {medium.label}
-            </div>
+            <TagElement type="medium" key={medium.mediumId}>
+              <p>{medium.label}</p>
+            </TagElement>
           ))}
           {project.tags?.slice(0, 3)
             .map((tag: Tag) => {
               return (
-                <div className={`skill-tag-label label-${getTagCategory(tag.type)}`} key={tag.tagId}>
-                  {tag.label}
-                </div>
+                <TagElement type={tag.type.toLowerCase()} key={tag.tagId}>
+                  <p>{tag.label}</p>
+                </TagElement>
               );
           })}
         </div>
