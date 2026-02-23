@@ -72,7 +72,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   //const toggleOptions = () => setOptionsShown(!optionsShown); 
 
   //Constructs url linking to relevant project page
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
+  const projectURL = `${paths.routes.PROJECT}?projectID=${projectData.projectId}`;
 
   // Handles leaving the project
   const handleLeaveProject = async () => {
