@@ -26,7 +26,7 @@ import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/e
  * Project page. Renders the project page with all project details, team member information, and available positions.
  * @returns JSX Element
  */
-const NewProject = () => {
+const Project = () => {
   //Navigation hook
   const navigate = useNavigate();
 
@@ -564,4 +564,4 @@ const NewProject = () => {
   );
 };
 
-export default NewProject;
+export default Project;

@@ -62,7 +62,7 @@ const MyProjectsDisplayGrid = ({
   //const toggleOptions = () => setOptionsShown(!optionsShown);
 
   //Constructs url linking to relevant project page
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
+  const projectURL = `${paths.routes.PROJECT}?projectID=${projectData.projectId}`;
 
   /**
    * handleLeaveProject
