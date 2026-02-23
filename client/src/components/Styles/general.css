@@ -1120,9 +1120,8 @@ Header style rules
   grid-area: buttons;
   display: flex;
   justify-content: flex-end;
-  /* width: 140px; */
-  max-width: fit-content;
-  margin-left: 10px;
+  margin-left: 20px;
+  translate: -20px 0;
 }
 
 #header-buttons button {
@@ -1131,12 +1130,6 @@ Header style rules
   border: none;
   margin-left: 10px;
   height: 45px;
-  /* width: auto; */
-
-  /* margin-left:10px;
-    height:auto;
-    width:auto;
-    padding-top:4px; */
 }
 
 #notif-btn {
@@ -1177,12 +1170,6 @@ Header style rules
     margin-top: 5px;
   }
 }
-
-/* #header-buttons img {
-    filter:none;
-    height:auto;
-    margin:2px;
-} */
 
 #header-profile-dropdown {
   margin-top: 10px;
@@ -1253,12 +1240,6 @@ Header style rules
 
 #header-profile-dropdown button:hover {
   background-color: var(--header-color);
-}
-
-@media only screen and (max-width: 400px) {
-  #header {
-    width: 85%;
-  }
 }
 
 /* #endregion */

@@ -1593,12 +1593,6 @@ Project page style rules
   left: 40px;
 }
 
-/* #header-buttons {
-  display: flex;
-  align-items: center;
-  grid-area: buttons
-} */
-
 #follow-project {
   width: 100px;
   height: 40px;
