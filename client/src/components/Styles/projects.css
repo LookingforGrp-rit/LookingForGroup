@@ -3371,27 +3371,28 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: 100%;
+  width: auto;
   margin: 30px 0;
   padding-left: 60px;
   padding-right: 64px;
+  gap: 20px;
 
   display: flex;
-  gap: 20px;
   flex-wrap: wrap;
 }
 
 .my-project-grid-card {
-  box-sizing: border-box;
-  border: 0px;
-  border-radius: 0px;
-  width: fit-content;
-  height: fit-content;
-
   display: flex;
   flex-direction: column;
   gap: 5px;
   align-content: start;
+
+}
+
+@media only screen and (max-width: 768px) {
+  .my-projects-grid{
+      justify-content: center;
+  }
 }
 
 .grid-card-image {
