@@ -1,4 +1,4 @@
-import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./ImageCarouselNew";
+import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./ImageCarousel";
 import { Tag } from "./Tag";
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
