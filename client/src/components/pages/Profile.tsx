@@ -246,7 +246,9 @@ const Profile = () => {
         </DropdownButton>
         <DropdownContent rightAlign={true}>
           <div id="profile-menu-dropdown">
-            <button className="profile-menu-dropdown-button">
+            <button className="profile-menu-dropdown-button"
+                onClick={() =>navigator.clipboard.writeText(window.location.href)}
+                >
               <ThemeIcon id={'share'} width={27} height={27} className={'mono-fill'} ariaLabel={'Share'}/>
               Share
             </button>
