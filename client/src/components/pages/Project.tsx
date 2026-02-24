@@ -192,7 +192,9 @@ const Project = () => {
             <DropdownContent rightAlign={true}>
               <div id="project-info-dropdown">
                 {/* TODO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
-                <button className="project-info-dropdown-option">
+                <button className="project-info-dropdown-option"
+                    onClick={() =>navigator.clipboard.writeText(window.location.href)}
+                    >
                   <ThemeIcon
                     id={"share"}
                     width={27}
