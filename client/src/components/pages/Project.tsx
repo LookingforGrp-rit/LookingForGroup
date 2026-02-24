@@ -408,10 +408,6 @@ const Project = () => {
         loadingProject
       ) : (
         <div id="project-page-content">
-          {/* May need to adjust width/height styles to account for description/carousel sizes */}
-          {/* <div id="project-image-carousel">
-            <ImageCarousel carouselType="Project" dataList={displayedProject.images} />
-          </div> */}
           <ProjectCarousel project={displayedProject}></ProjectCarousel>
 
           <div id="project-info-panel">
