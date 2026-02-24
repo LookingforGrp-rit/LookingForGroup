@@ -38,7 +38,7 @@ const sendPost = async (
     },
     body: JSON.stringify(data),
   });
-  await responseHandler(response, handler);
+  return await responseHandler(response, handler);
 };
 
 /* Sends a PUT request to the server using fetch, converting the body into FormData,

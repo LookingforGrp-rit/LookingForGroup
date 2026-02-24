@@ -61,14 +61,14 @@ export const PopupButton = ({
   className?: string;
   callback?: () => void;
   doNotClose?: () => boolean;
-  closeParent?: () => void
+  closeParent?: (value : boolean) => void
 }) => {
   const { open, setOpen } = useContext(PopupContext);
 
   const toggleOpen = () => {
     callback();
     setOpen(!open);
-    if (closeParent) closeParent();
+    if (closeParent) closeParent(false);
   };
 
   // If button should not close the popup, just execute callback 
@@ -135,8 +135,8 @@ export const PopupContent = ({
         closePopup();
       }
     };
-    document.addEventListener('mouseup', handleClickOutside);
-    return () => document.removeEventListener('mouseup', handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, [closePopup]);
 
   // Close on browser button click

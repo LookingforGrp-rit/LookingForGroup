@@ -1,8 +1,4 @@
-import {
-  MyMember,
-  ProjectPreview,
-  Visibility,
-} from "@looking-for-group/shared";
+import { MyMember, Visibility } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 import usePreloadedImage from "../../../functions/imageLoad";

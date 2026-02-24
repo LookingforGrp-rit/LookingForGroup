@@ -344,7 +344,6 @@ input:checked+.slider:before {
   input {
     border: none;
     background-color: var(--header-color);
-    color: var(--neutral-gray);
     outline: none;
     width: 100%;
   }

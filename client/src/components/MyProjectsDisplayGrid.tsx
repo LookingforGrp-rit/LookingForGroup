@@ -44,7 +44,7 @@ const MyProjectsDisplayGrid = ({
   const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
 
   //const [status, setStatus] = useState<string>();
-  const [optionsShown, setOptionsShown] = useState(false);
+  const [optionsShown, _setOptionsShown] = useState(false);
   // State variable for displaying output of API request, whether success or failure
   const [showResult, setShowResult] = useState(false);
   const [requestType, setRequestType] = useState<"delete" | "leave">("delete");
@@ -59,10 +59,10 @@ const MyProjectsDisplayGrid = ({
    * - Toggles the visibility of the dropdown menu for project actions.
    * - Updates the optionsShown state.
    */
-  const toggleOptions = () => setOptionsShown(!optionsShown);
+  //const toggleOptions = () => setOptionsShown(!optionsShown);
 
   //Constructs url linking to relevant project page
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
+  const projectURL = `${paths.routes.PROJECT}?projectID=${projectData.projectId}`;
 
   /**
    * handleLeaveProject
@@ -121,6 +121,16 @@ const MyProjectsDisplayGrid = ({
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div className={`card-options-list ${optionsShown ? "show" : ""}`}>
+              <button className="card-leave-button" onClick={() => navigate(projectURL)}>
+                  <ThemeIcon
+                    id={"pencil"}
+                    width={21}
+                    height={21}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
+                  Edit Project
+              </button>
               <Popup>
                 <PopupButton className="card-leave-button">
                   <ThemeIcon

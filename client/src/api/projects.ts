@@ -318,7 +318,6 @@ export const deleteMember = async (
   projectID: number,
   userId: number
 ): Promise<ApiResponse<null>> => {
-  console.log("hi!")
   const apiURL = `/projects/${projectID}/members/${userId}`;
   const response = await DELETE(apiURL);
 

@@ -1,6 +1,6 @@
 import { memo, FC, ChangeEvent, useState, useCallback, useEffect } from 'react';
 
-interface DataSet {
+export interface DataSet {
   data: unknown[];
 }
 

@@ -5,6 +5,10 @@ import { SearchBar } from './SearchBar';
 import { interests } from '../constants/interests';
 import { softSkills, hardSkills, proficiencies } from '../constants/skills';
 
+// SPRING 26 NOTE: This component isn't used anywhere in the project.
+// There are a handful of errors with it, but it's unused, so ¯\_(ツ)_/¯
+
+
 //This component will contain a list of tag buttons that can be used to filter projects and profiles
 
 //Things to fix:

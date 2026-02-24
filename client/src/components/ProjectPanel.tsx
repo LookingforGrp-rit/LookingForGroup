@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { addProjectFollowing, deleteProjectFollowing, getCurrentAccount, getProjectFollowing } from '../api/users.ts';
+import { Tag as TagElement } from './Tag';
 
 //import shares types
 import usePreloadedImage from '../functions/imageLoad.tsx';
@@ -29,7 +30,7 @@ interface ProjectPanelProps {
  */
 export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const navigate = useNavigate();
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectId}`;
+  const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
 
   // Current user ID (for follow logic)
   const [userId, setUserId] = useState<number>();
@@ -54,28 +55,6 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
       return `${formattedNum}K ${multOfHundred ? '+' : ''}`;
     }
     return `${followers}`;
-  };
-
-  /**
-   * Maps tag type to a CSS color class for labels
-   *
-   * @param type - tag type string
-   * @returns color name string used for CSS class
-   */
-  const getTagCategory = (type: string) => {
-    switch(type) {
-      case 'Designer Skill':
-        return 'red';
-      case 'Developer Skill':
-        return 'yellow';
-      case 'Soft Skill':
-        return 'purple';
-      case 'Creative':
-      case 'Games':
-        return 'green';
-      default:
-        return 'grey';
-    }
   };
 
   /**
@@ -115,6 +94,10 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
       if (projectResp.data) { 
         setFollowCount(projectResp.data.followers.count);
         checkFollow();
+        if (project.title == "thumbnail") {
+          console.log("Thumbnail project's thumbnail:");
+          console.log(project.thumbnail);
+        }
       }
     };
       getProjectData();
@@ -176,7 +159,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
                 height={25}
                 id={"heart-filled"}
                 ariaLabel="following"
-                onClick={(e) => handleFollowClick(e)}
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
               />
             ) : (
               <ThemeIcon
@@ -184,7 +167,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
                 height={25}
                 id={"heart-empty"}
                 ariaLabel="following"
-                onClick={(e) => handleFollowClick(e)}
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
               />
             )}
               {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>
@@ -193,16 +176,16 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
         </div>
         <div id="project-panel-tags">
           {project.mediums.map((medium: ProjectMedium) => (
-            <div className='skill-tag-label label-blue' key={medium.mediumId}>
-              {medium.label}
-            </div>
+            <TagElement type="medium" key={medium.mediumId}>
+              <p>{medium.label}</p>
+            </TagElement>
           ))}
           {project.tags?.slice(0, 3)
             .map((tag: Tag) => {
               return (
-                <div className={`skill-tag-label label-${getTagCategory(tag.type)}`} key={tag.tagId}>
-                  {tag.label}
-                </div>
+                <TagElement type={tag.type.toLowerCase()} key={tag.tagId}>
+                  <p>{tag.label}</p>
+                </TagElement>
               );
           })}
         </div>

@@ -3,6 +3,7 @@ import type {
   ApiResponse,
   UserPreview,
   UserDetail,
+  UsernameResponse,
   ProjectPreview,
   ProjectFollowing,
   UserFollowing,
@@ -49,7 +50,7 @@ export const createNewUser = async (
  * Checks if the user is logged in (shibboleth) and returns username if they are
  * @returns ApiResponse with username is logged in, 404 if guest
  */
-export const getCurrentUsername = async (): Promise<ApiResponse> => {
+export const getCurrentUsername = async (): Promise<UsernameResponse> => {
   // const apiURL = `/me/get-username`;
   const apiURL = `/me`;
   const response = await GET(apiURL);
@@ -63,7 +64,7 @@ export const getCurrentUsername = async (): Promise<ApiResponse> => {
             userId: (response.data as MePrivate).userId,
             username: (response.data as MePrivate).username,
           }
-        : null,
+        : undefined,
     error: response.error,
   };
 };

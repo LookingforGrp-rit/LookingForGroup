@@ -1,6 +1,6 @@
 import profilePlaceholder from '../../icons/profile-user.png';
 import * as projectPageHelper from './ProjectPageHelper';
-import { Tags } from '../Tags';
+import { Tag } from '../Tag';
 import { ThemeIcon } from '../ThemeIcon';
 
 /**
@@ -26,8 +26,8 @@ export const ProjectInfo = (props) => {
         <h1 id="project-title">{props.projectData.name}</h1>
         <div id="project-owner">Created by: {props.projectOwner}</div>
         <div id="project-tags">
-          <Tags className="project-tag">{props.projectData.tags[0]}</Tags>
-          <Tags className="project-tag">{props.projectData.tags[1]}</Tags>
+          <Tag className="project-tag">{props.projectData.tags[0]}</Tag>
+          <Tag className="project-tag">{props.projectData.tags[1]}</Tag>
         </div>
         <div id="project-status">Status: Active</div>
         <div id="project-member-count">

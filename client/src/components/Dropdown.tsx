@@ -61,7 +61,7 @@ export const DropdownButton: React.FC<DropdownButtonProps> = ({
   children, 
   buttonId = '', 
   className = '', 
-  callback = (e) => {} 
+  callback = (_e : React.MouseEvent) => {} 
 }) => {
   const { open, setOpen } = useContext(DropdownContext); // Shared open/close state
 

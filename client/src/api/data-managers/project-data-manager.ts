@@ -187,6 +187,8 @@ export const projectDataManager = async (projectId: number) => {
 
     // fetch new canonical data
     await reloadSavedProject();
+    console.log("New data: ");
+    console.log(savedProject);
 
     // clear changes object
     resetChanges();
@@ -249,12 +251,15 @@ export const projectDataManager = async (projectId: number) => {
 
     // project thumbnails
     try {
+
       await runAndCollectErrors<UpdateProjectThumbnailInput>(
         "Updating project thumbnail",
         [updates.thumbnail],
         ({ data }) => updateThumb(projectId, data)
       );
+
     } catch (error) {
+      console.log("Failed to update thumbnail: " + (error as { message: string }).message);
       errorMessage += (error as { message: string }).message;
     }
 
@@ -470,15 +475,11 @@ export const projectDataManager = async (projectId: number) => {
     // TODO can be ran simultaneously if saving takes too long
     // we haven't found this to be a problem.
     for (const request of requests) {
-      //unbelievable thumbnail-specific check
-      if (!(actionLabel === "Updating project thumbnail" && request.data)) {
-        const response = await action(request);
-        const succeeded = !response.error;
-        statuses.push({
-          id: request.id.value,
-          succeeded,
-        });
-      }
+      const response = await action(request);
+      statuses.push({
+        id: request.id.value,
+        succeeded: !response.error,
+      });
     }
 
     const errors = getErrorIds(statuses);

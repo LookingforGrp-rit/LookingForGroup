@@ -1,4 +1,4 @@
-import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./ImageCarouselNew";
+import { CarouselButton, CarouselTabs, CarouselContent, Carousel } from "./ImageCarousel";
 import placeholderThumbnail from '../images/project_temp.png'; // if this gets used, use preloader function in /functions/imageLoad.tsx
 import { ProjectDetail } from '@looking-for-group/shared';
 

@@ -1,5 +1,5 @@
 // import { profiles } from "../../constants/fakeData";
-import { useState, useMemo } from 'react';
+import { useState, useMemo, ChangeEvent } from 'react';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
@@ -52,7 +52,7 @@ const MyProjects = () => {
   const [dataLoaded, setDataLoaded] = useState(false);
   const [loggedIn, setLoggedIn] = useState(0);
 
-  const [createError, setCreateError] = useState(false);
+  const [_createError, setCreateError] = useState(false);
 
   // --------------------
   // Helper functions
@@ -382,7 +382,7 @@ const MyProjects = () => {
         dataSets={projectDataSet} 
         onSearch={handleSearch} 
         value={currentSearch}
-        onChange={(e) => setCurrentSearch(e.target.value)}
+        onChange={(e : ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
       />
 
       {/* Banner */}

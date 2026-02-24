@@ -26,7 +26,7 @@ const EmailConfirmation = (props: EmailConfirmationProps) => {
   // Style page to match Figma (both light and dark modes)
   // Auto redirect to discover page (as well as link to discover page if redirect doesn't work) x
   // Include token in link as (react search parameter or query parameter) and work with database to verify users email (grab token and fetch to /api/signup/[insert token here]) x
-  const [responseData, setResponseData] = useState<ResponseData | undefined>(props.responseData);
+  const [responseData, _setResponseData] = useState<ResponseData | undefined>(props.responseData);
   const [counter, setCounter] = useState(5);
 
   //Gets current location
@@ -68,12 +68,14 @@ const EmailConfirmation = (props: EmailConfirmationProps) => {
       // Construct the URL to fetch the user creation status
       const token = path.substring(path.lastIndexOf('/') + 1, path.length);
       try {
-        const response = await signupWithToken(token);
+        // Commented out 1/21/2026 as signupWithToken isn't a function that exists
+        // const response = await signupWithToken(token);
+        const response : any = token;
         console.log(`Status: ${response.status}`);
         if (response.error) {
           console.log(`Error: ${response.error}`);
         }
-        setResponseData(response.data);
+        //setResponseData(response.data);
       } catch (err) {
         console.error(err);
       }

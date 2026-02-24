@@ -1,4 +1,30 @@
-import React, { useState, useEffect } from 'react';
+import { MouseEventHandler } from 'react';
+
+interface CompleteProfileProps {
+  show : boolean;
+  onNext : MouseEventHandler<HTMLButtonElement>;
+  onBack : MouseEventHandler<HTMLButtonElement>;
+  userInfo : {
+    firstName: string,
+    lastName: string,
+    email: string,
+    username: string,
+    password: string,
+    // proficiencies: selectedProficiencies,
+    skills: string[],
+    // interests: selectedInterests,
+    pronouns: string,
+    bio: string,
+    // avatarImage: avatarImage,
+    profileImage: any, // if they upload their own image
+  };
+  bio : string;
+  pronouns : string;
+  setBio : React.Dispatch<React.SetStateAction<string>>;
+  setPronouns : React.Dispatch<React.SetStateAction<string>>;
+  profileImage : any;
+  setProfileImage : any;
+}
 
 /**
  * This component renders on screen the ability to complete their profile 
@@ -16,7 +42,7 @@ import React, { useState, useEffect } from 'react';
  * @returns HTML - user can implement their bio, pronouns, profile image upload, button to use avatar, 
  * and navigation buttons like “Back” and “Next”.
  */
-const CompleteProfile = ({
+const CompleteProfile : React.FC<CompleteProfileProps> = ({
   show,
   onNext,
   onBack,
@@ -34,17 +60,17 @@ const CompleteProfile = ({
   const tagColors = ['#9FACFF', '#97E5AB', '#99E6EA', '#F18067', '#239EF7'];
 
   // Utilizes an imported function for setting the bio of a profile
-  const handleBioChange = (e) => {
+  const handleBioChange = (e : React.ChangeEvent<HTMLTextAreaElement>) => {
     setBio(e.target.value);
   };
 
   // Utilizes an imported function for setting the pronouns of a profile
-  const handlePronounsChange = (e) => {
+  const handlePronounsChange = (e : React.ChangeEvent<HTMLInputElement>) => {
     setPronouns(e.target.value);
   };
 
   // Loads and utilizes an imported function for setting a profile picture 
-  const handleUploadPfp = (e) => {
+  const handleUploadPfp = (e : React.ChangeEvent<HTMLInputElement>) => {
     console.log('uploading pfp');
 
     const target = e.target as HTMLInputElement;

@@ -34,7 +34,7 @@ import {
   PendingProjectMember,
 } from "@looking-for-group/client";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
-import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
+//import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
 
 // --- Variables ---
@@ -76,6 +76,7 @@ type TeamTabProps = {
   // permissions: number;
   saveProject: () => void;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
+  saveable : boolean;
   failCheck: boolean;
 };
 
@@ -101,6 +102,7 @@ export const TeamTab = ({
   /*permissions,*/
   saveProject,
   updatePendingProject,
+  saveable,
   failCheck,
 }: TeamTabProps) => {
   // --- Hooks ---
@@ -551,12 +553,11 @@ export const TeamTab = ({
    * @returns void
    */
   const deletePosition = useCallback(() => {
-    if (
-      currentJob &&
-      ((currentJob as ProjectJob).jobId ||
-        (currentJob as Pending<ProjectJob>).localId)
-    ) {
+    if (currentJob && ((currentJob as ProjectJob).jobId || (currentJob as Pending<ProjectJob>).localId)) {
+      //let isLocal : bool = true;
+
       if ("jobId" in currentJob) {
+        //isLocal = false;
         dataManager.deleteJob({
           id: {
             type: "canon",
@@ -578,7 +579,7 @@ export const TeamTab = ({
         ...projectAfterTeamChanges,
         jobs: projectAfterTeamChanges.jobs.filter((job) =>
           ("jobId" in currentJob && "jobId" in job && job.jobId !== currentJob.jobId) ||
-          ("localId" in currentJob && "localId" in job && job.jobId !== currentJob.localId)
+          ("localId" in currentJob && "localId" in job && job.localId !== currentJob.localId)
         )
       };
 
@@ -1553,25 +1554,29 @@ export const TeamTab = ({
       <div id="project-editor-team-content">{teamTabContent}</div>
 
       <div id="team-save-info">
-       <Popup>
-        <PopupButton
-          buttonId="project-editor-save"
-          doNotClose={() => failCheck}
-        >
-          Save Changes
-        </PopupButton>
-          <PopupContent useClose={false}>
-            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-          <div id="confirm-editor-save">
-         <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-           Confirm
-         </PopupButton>
-         <PopupButton buttonId="team-edit-member-cancel-button" >
-           Cancel
-         </PopupButton>
-         </div>
-          </PopupContent>
-      </Popup>
+       { saveable ?
+          <Popup>
+            <PopupButton
+              buttonId="project-editor-save"
+              doNotClose={() => failCheck}
+            >
+              Save Changes
+            </PopupButton>
+            <PopupContent useClose={false}>
+              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+              <div id="confirm-editor-save">
+                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                  Confirm
+                </PopupButton>
+                <PopupButton buttonId="team-edit-member-cancel-button" >
+                  Cancel
+                </PopupButton>
+              </div>
+            </PopupContent>
+          </Popup>
+        :
+          <></>
+        }
       </div>
     </div>
   );

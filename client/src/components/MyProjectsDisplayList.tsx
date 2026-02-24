@@ -43,7 +43,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   // Project status fetched from API
   const [status, setStatus] = useState<string>();
   // Dropdown visibility toggle
-  const [optionsShown, setOptionsShown] = useState(false);
+  const [optionsShown, _setOptionsShown] = useState(false);
 
   // State variable for displaying output of API request, whether success or failure
   const [showResult, setShowResult] = useState(false);
@@ -67,10 +67,12 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   //this doesn't look used and idk what it's meant to be used for
   //it looks like it's supposed to be a toggle for when you press a button but idk which button that would be
   //i'll just leave it alone for now
-  const toggleOptions = () => setOptionsShown(!optionsShown); 
+  // ---
+  // Well I'm not gonna leave it alone, this is getting commented. =P
+  //const toggleOptions = () => setOptionsShown(!optionsShown); 
 
   //Constructs url linking to relevant project page
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${projectData.projectId}`;
+  const projectURL = `${paths.routes.PROJECT}?projectID=${projectData.projectId}`;
 
   // Handles leaving the project
   const handleLeaveProject = async () => {
@@ -100,6 +102,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     <div className="my-project-list-card">
       {/* Thumbnail and Title*/}
       <div className="list-card-section1">
+        {/*
         <img
           className="list-card-image"
           src={projectData.thumbnail?.image
@@ -108,7 +111,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
           }
           alt={`${projectData.title} Thumbnail`}
           onClick={() => navigate(projectURL)}
-        ></img>
+        ></img> */}
         <div
           className="list-card-title"
           onClick={() => navigate(projectURL)}
@@ -128,6 +131,16 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
         </DropdownButton>
         <DropdownContent rightAlign={true}>
           <div className={`card-options-list ${optionsShown ? 'show' : ''}`}>
+            <button className="card-leave-button" onClick={() => navigate(projectURL)}>
+                <ThemeIcon
+                  id={"pencil"}
+                  width={21}
+                  height={21}
+                  ariaLabel={"Leave project"}
+                  className="mono-fill"
+                />
+                Edit Project
+            </button>
             <Popup>
               <PopupButton className='card-leave-button'>
                 <ThemeIcon
