@@ -30,7 +30,7 @@ interface ProjectPanelProps {
  */
 export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const navigate = useNavigate();
-  const projectURL = `${paths.routes.NEWPROJECT}?projectID=${project.projectId}`;
+  const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
 
   // Current user ID (for follow logic)
   const [userId, setUserId] = useState<number>();

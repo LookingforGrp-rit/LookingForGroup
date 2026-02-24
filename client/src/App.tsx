@@ -11,7 +11,7 @@ import ResetPassword from './components/pages/ResetPassword';
 // import Messages from './components/pages/Messages';
 import MyProjects from './components/pages/MyProjects';
 import Profile from './components/pages/Profile'; 
-import NewProject from './components/pages/NewProject';
+import Project from './components/pages/Project';
 // import ProjectPostPage from './components/pages/ProjectPostPage';
 import { Discover, Meet } from './components/pages/DiscoverAndMeet';
 //import Settings from './components/pages/Settings'; -- Commented in clean up 26-20-01 
@@ -61,7 +61,7 @@ function App() {
           {/* <Route path={paths.routes.MESSAGES} element={<Messages />} /> */}
           <Route path={paths.routes.MYPROJECTS} element={<MyProjects />} />
           <Route path={paths.routes.PROFILE} element={<Profile />} />
-          <Route path={paths.routes.NEWPROJECT} element={<NewProject />} />
+          <Route path={paths.routes.PROJECT} element={<Project />} />
           <Route path={paths.routes.CREATEPROJECT} element={<CreateProject />} />
           {/* <Route path={paths.routes.PROJECTPOST} element={<ProjectPostPage />} /> */}
           {/* <Route
