@@ -8,6 +8,7 @@ import profileImage from "../../images/blue_frog.png";
 import { ProjectCarousel } from "../ProjectCarousel";
 import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
+import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
 import { getByID } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
@@ -191,17 +192,7 @@ const Project = () => {
             </DropdownButton>
             <DropdownContent rightAlign={true}>
               <div id="project-info-dropdown">
-                {/* TODO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
-                <button className="project-info-dropdown-option">
-                  <ThemeIcon
-                    id={"share"}
-                    width={27}
-                    height={27}
-                    ariaLabel={"Share project"}
-                    className="mono-fill"
-                  />
-                  Share
-                </button>
+                <ShareButton />
                 
                 {/* Only be able to leave if you're a member of the project */}
                 { isMember ? 

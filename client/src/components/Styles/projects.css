@@ -398,6 +398,46 @@ Project Creator and Editor style rules
   transition: 0.25s;
 } */
 
+.share-button {
+  font-size: 16px;
+  background: none;
+  display: flex;
+  position: relative;
+
+  width: 100%;
+  border-radius: 10px;
+
+  gap: 17px;
+
+  align-items: center;
+  margin: 0;
+  flex-shrink: 0;
+
+  color: var(--main-text);
+  border: none;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+.share-button:hover {
+  background-color: var(--header-color) !important;
+}
+
+.share-response-popup {
+  width: 100%;
+  position: absolute;
+  bottom: 2.25em;
+  right: 0;
+
+  padding: 6px 0;
+  background-color: #000000aa;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.share-response-popup .hidden {
+  display: none;
+}
+
 .save-error-msg, .save-error-msg-general {
   display: none;
   margin: auto;

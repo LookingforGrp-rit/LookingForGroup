@@ -17,6 +17,7 @@ import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ThemeIcon } from "../ThemeIcon";
+import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getCurrentAccount, getUserFollowing } from "../../api/users";
@@ -246,10 +247,7 @@ const Profile = () => {
         </DropdownButton>
         <DropdownContent rightAlign={true}>
           <div id="profile-menu-dropdown">
-            <button className="profile-menu-dropdown-button">
-              <ThemeIcon id={'share'} width={27} height={27} className={'mono-fill'} ariaLabel={'Share'}/>
-              Share
-            </button>
+            <ShareButton />
             <button
               className="profile-menu-dropdown-button"
               id="profile-menu-block"
