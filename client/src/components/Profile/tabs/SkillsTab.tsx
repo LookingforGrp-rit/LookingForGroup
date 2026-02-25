@@ -43,7 +43,7 @@ export const SkillsTab = ({
   const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
   // load skills
-  useEffect(() => {
+  useMemo(() => {
     const fetchSkills = async () => {
       const response = await getSkills();
 
@@ -55,7 +55,7 @@ export const SkillsTab = ({
     if (allSkills.length === 0) {
       fetchSkills();
     }
-  }, [allSkills]);
+  }, []);
 
   // Update skills shown for search bar
   const currentDataSet = useMemo(() => {

@@ -1,5 +1,5 @@
 // Utilities and React functions
-import { useState, useEffect } from "react";
+import { useState, useMemo } from "react";
 
 import { getCurrentAccount } from "../../api/users";
 
@@ -36,7 +36,7 @@ export const ProfileEditPopup = () => {
   };
 
   // Profile should be set up on intialization
-  useEffect(() => {
+  useMemo(() => {
     const setUpProfileData = async () => {
       // Pick which socials to use based on type
       // fetch for profile on ID
@@ -76,8 +76,8 @@ export const ProfileEditPopup = () => {
     // window.location.reload(); // reload page
   };
 
-  // useEffect to initialize the tabs
-  useEffect(() => {
+
+  useMemo(() => {
     setTimeout(() => {
       // Initialize all tabs to be hidden except the first one
       pageTabs.forEach((tab, idx) => {
