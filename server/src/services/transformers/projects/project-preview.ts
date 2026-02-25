@@ -28,3 +28,4 @@ export const transformProjectToPreview = (project: ProjectsGetPayload): ProjectP
     transformedObj.thumbnail = transformProjectImage(project.projectId, project.thumbnail);
   return transformedObj;
 };
+export type ProjectPreviewPayload = ProjectsGetPayload;

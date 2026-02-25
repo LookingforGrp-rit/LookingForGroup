@@ -37,3 +37,5 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
     members: project.members.map((member) => transformProjectMember(project.projectId, member)),
   };
 };
+
+export type ProjectDetailPayload = ProjectsGetPayload;
