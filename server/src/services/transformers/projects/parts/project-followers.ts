@@ -25,3 +25,5 @@ export const transformProjectToFollowers = (project: ProjectsGetPayload): Projec
     apiUrl: `/api/projects/${project.projectId.toString()}/followers`,
   };
 };
+
+export type ProjectFollowersPayload = ProjectsGetPayload;
