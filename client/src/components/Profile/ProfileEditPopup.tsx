@@ -67,7 +67,6 @@ export const ProfileEditPopup = () => {
     try {
       await dataManager.saveChanges();
       setErrorVisible(false);
-      window.location.reload(); // reload page
     } catch (e) {
       // TODO handle error
       console.error((e as Error).message);
