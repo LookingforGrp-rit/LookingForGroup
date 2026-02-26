@@ -113,14 +113,17 @@ Profile Panel component style rules
   padding: 20px;
   overflow: auto;
 
-  #heart-empty, #heart-filled {
+  #heart-empty,
+  #heart-filled {
     position: absolute;
     top: 14px;
     right: 14px;
   }
+
   #heart-empty {
     stroke: var(--invert-text);
   }
+
   #heart-filled {
     fill: #F14F76;
   }
@@ -139,7 +142,7 @@ Profile Panel component style rules
     justify-content: center;
     align-items: center;
     width: 24px;
-    height: 24px; 
+    height: 24px;
   }
 
   p {
@@ -152,10 +155,11 @@ Profile Panel component style rules
   }
 
   /* !important because icons prioritize black due to added [data-theme] specification in general.css */
-  .mono-stroke > use {
+  .mono-stroke>use {
     stroke: var(--invert-text) !important;
   }
-  .mono-fill > use {
+
+  .mono-fill>use {
     fill: var(--invert-text) !important;
   }
 }
@@ -1056,12 +1060,12 @@ New Profile page style rules
   height: min-content;
 
   /* Left-most flexbox */
-  > #profile-img-container {
+  >#profile-img-container {
     display: flex;
     flex-direction: column;
     gap: 14px;
 
-    > #profile-image {
+    >#profile-image {
       width: 280px;
       height: 280px;
       object-fit: cover;
@@ -1069,7 +1073,7 @@ New Profile page style rules
       border: 2px solid white;
     }
 
-    > #profile-bio {
+    >#profile-bio {
       font-style: italic;
       font-size: 12px;
       color: var(--neutral-gray);
@@ -1080,29 +1084,30 @@ New Profile page style rules
     }
   }
 
+
+
   /* Right-most flexbox */
-  > #profile-info {
+  >#profile-info {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     width: 100%;
 
-    > #profile-info-text {
+    >#profile-info-text {
       display: flex;
       flex-direction: column;
       gap: 10px;
 
-      > #profile-top-row {
+      >#profile-top-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
 
-        > #profile-names {
+        >#profile-names {
           display: flex;
-          align-items: center;
           gap: 12px;
 
-          > #profile-fullname {
+          >#profile-fullname {
             color: var(--primary-color);
             font-size: 32px;
             font-weight: bold;
@@ -1113,7 +1118,7 @@ New Profile page style rules
             text-wrap: wrap;
           }
 
-          > #profile-username {
+          >#profile-username {
             color: var(--neutral-gray);
             font-size: 20px;
             font-style: italic;
@@ -1122,7 +1127,7 @@ New Profile page style rules
           }
         }
 
-        > #profile-buttons {
+        >#profile-buttons {
           display: flex;
           justify-content: flex-end;
           align-items: center;
@@ -1138,7 +1143,7 @@ New Profile page style rules
 
       }
 
-      > #profile-extras {
+      >#profile-extras {
         font-size: 16px;
         display: flex;
         flex-wrap: wrap;
@@ -1156,7 +1161,7 @@ New Profile page style rules
         }
       }
 
-      > #profile-description {
+      >#profile-description {
         font-size: 16px;
         text-align: left;
         max-width: 100%;
@@ -1164,7 +1169,7 @@ New Profile page style rules
         word-break: break-word;
       }
 
-      > #profile-funfact {
+      >#profile-funfact {
         color: var(--neutral-gray);
         font-size: 14px;
         text-align: left;
@@ -1173,14 +1178,14 @@ New Profile page style rules
         overflow-wrap: break-word;
         word-break: break-word;
 
-        > #funfact-start {
+        >#funfact-start {
           color: var(--primary-color);
           font-weight: bold;
           margin-right: 5px;
         }
       }
 
-      > #profile-interests {
+      >#profile-interests {
         display: flex;
         flex-wrap: wrap;
         gap: 10px;
@@ -1190,12 +1195,62 @@ New Profile page style rules
       }
     }
 
-    > #profile-skills {
+    >#profile-skills {
       display: flex;
       flex-wrap: wrap;
       gap: 10px;
     }
   }
+}
+
+@media only screen and (max-width: 900px) {
+  #profile-hero {
+    flex-wrap: wrap;
+    gap: 0px;
+
+    #profile-img-container {
+      max-height: 25vw;
+      max-width: 100%;
+      margin: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+
+      img {
+        max-width: 50%;
+        max-height: 100%;
+      }
+
+      #profile-bio {
+        width: 40%;
+        height: 100%;
+        
+      }
+
+      #profile-names{
+        align-items: baseline;
+      }
+
+      #profile-username{
+        display: flex;
+      }
+    }
+
+    #profile-info {
+      margin: 10px;
+
+      #profile-names {
+        align-items: baseline;
+      }
+
+      #profile-username{
+        margin:auto;
+      }
+    }
+  }
+}
+
+#profile-names {
+  align-items: center;
 }
 
 @media only screen and (max-width: 500px) {
@@ -1212,7 +1267,6 @@ New Profile page style rules
 @media only screen and (max-width: 1250px) {
   #profile-names {
     flex-direction: column;
-    align-items: center;
   }
 }
 
@@ -1437,7 +1491,7 @@ New Profile page style rules
   }
 }
 
-#profile-buttons > .dropdown-container > button {
+#profile-buttons>.dropdown-container>button {
   border: none;
   background: transparent;
 }
@@ -1459,7 +1513,8 @@ New Profile page style rules
   width: 120px;
 }
 
-#profile-menu-dropdown, #project-info-dropdown {
+#profile-menu-dropdown,
+#project-info-dropdown {
   display: flex;
   flex-direction: column;
   text-align: left;
@@ -1475,7 +1530,8 @@ New Profile page style rules
   cursor: default;
 }
 
-.profile-menu-dropdown-button, .project-info-dropdown-option {
+.profile-menu-dropdown-button,
+.project-info-dropdown-option {
   font-size: 16px;
   background: none;
   display: flex;
@@ -1490,13 +1546,17 @@ New Profile page style rules
   padding-top: 7px;
   padding-bottom: 7px;
 }
-.profile-menu-dropdown-button:hover, .project-info-dropdown-option:hover {
+
+.profile-menu-dropdown-button:hover,
+.project-info-dropdown-option:hover {
   background-color: var(--header-color) !important;
 }
 
-#profile-menu-report, #profile-menu-block {
+#profile-menu-report,
+#profile-menu-block {
   color: var(--error-delete-color);
   fill: var(--error-delete-color);
+
   .fa-solid {
     color: var(--error-delete-color);
   }
@@ -1673,4 +1733,5 @@ New Profile page style rules
 [data-theme="dark"] .interest-tag-button-blue-selected:hover .fa {
   color: white !important;
 }
+
 /* #endregion */

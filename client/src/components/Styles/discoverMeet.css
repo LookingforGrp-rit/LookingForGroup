@@ -28,7 +28,7 @@ Meet page hero style rules
 
 @media only screen and (max-width: 610px) {
   #discover-hero {
-    height: auto;
+    display: none;
   }
 }
 
