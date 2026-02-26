@@ -1107,6 +1107,12 @@ Header style rules
   z-index: 1;
 }
 
+@media only screen and (max-width: 500px) {
+    #header {
+        margin: 0 20px;
+    }
+}
+
 #header-searchbar {
   grid-area: search;
 }

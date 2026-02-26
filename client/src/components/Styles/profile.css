@@ -1223,7 +1223,7 @@ New Profile page style rules
       #profile-bio {
         width: 40%;
         height: 100%;
-        
+
       }
 
       #profile-names{
@@ -1244,6 +1244,10 @@ New Profile page style rules
 
       #profile-username{
         margin:auto;
+      }
+
+      #profile-top-row{
+        flex-wrap: wrap;
       }
     }
   }

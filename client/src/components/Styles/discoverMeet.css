@@ -380,7 +380,7 @@ Image carousel style rules
 @media screen and (max-width: 799px) {
   .carousel-contents {
     height: auto;
-    max-width: calc(100vw - 100px);
+    max-width: calc(100vw - 40px);
   }
 }
 
@@ -433,6 +433,13 @@ Filters / Tags Style Rules
   overflow-x: scroll;
   scroll-behavior: smooth;
   scrollbar-width: none;
+}
+
+@media only screen and (max-width: 500px){
+  #discover-filters{
+    margin: 0 20px;
+  }
+
 }
 
 .filters-scroller {

@@ -23,6 +23,11 @@ Project Panel component style rules
   justify-content: center;
 }
 
+@media only screen and (max-width: 500px) {
+  #discover-panel-box {
+    margin: 0 20px 20px;
+  }
+}
 .project-panel-box {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -2505,6 +2510,12 @@ New Project Page style rules
   }
 }
 
+@media screen and (max-width: 500px){
+  #project-page-content {
+    margin: 0 20px;
+  }
+}
+
 /* #endregion*/
 
 
@@ -2600,14 +2611,15 @@ Project Carousel style rules
   border-radius: 10px;
   text-align: left;
   padding: 20px;
+  max-width: calc(100vw - 80px);
 
   #project-info-top {
     display: flex;
     flex-direction: column;
     justify-content: start;
     gap: 5px;
-    width: 100%;
   }
+
 }
 
 .project-info-highlight {
@@ -2622,6 +2634,19 @@ Project Carousel style rules
   align-items: center;
 }
 
+@media only screen and (max-width: 700px) {
+  #project-info-header{
+    flex-wrap: wrap;
+    
+    #project-info-buttons{
+      margin-left:0px;
+    }
+  }
+
+  #project-tags{
+    flex-wrap: wrap;
+  }
+}
 #project-title {
   font-size: 32px;
   font-weight: 700;
@@ -3254,8 +3279,14 @@ My projects page style rules
     flex-wrap: wrap;
     gap: 20px;
   }
+}
 
-
+@media only screen and (max-width: 500px) {
+  .my-projects-header-row {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 0 20px;
+  }
 }
 
 @media only screen and (max-width: 540px) {
@@ -3263,6 +3294,8 @@ My projects page style rules
     flex-wrap: wrap;
   }
 }
+
+
 
 .my-projects-action-buttons {
   display: flex;
@@ -3403,6 +3436,13 @@ My projects page style rules
   }
 }
 
+@media only screen and (max-width: 500px) {
+  .my-projects-grid {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 20px;
+  }
+}
 .grid-card-image {
   grid-area: image;
   box-sizing: border-box;
