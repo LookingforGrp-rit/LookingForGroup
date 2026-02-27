@@ -26,3 +26,5 @@ export const transformProjectMember = (
     apiUrl: `/api/projects/${projectId.toString()}/members/${users.userId.toString()}`,
   };
 };
+
+export type ProjectMemberPayload = ProjectImageGetPayload;

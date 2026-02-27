@@ -22,3 +22,4 @@ export const transformProjectSocial = (
     ...transformSocial({ websiteId, label }),
   };
 };
+export type ProjectSocialPayload = ProjectSocialGetPayload;

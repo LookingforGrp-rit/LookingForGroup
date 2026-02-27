@@ -42,3 +42,4 @@ export const transformProjectJob = (
     apiUrl: `/api/projects/${projectId.toString()}/jobs/${jobId.toString()}`,
   };
 };
+export type ProjectJobPayload = ProjectJobGetPayload;
