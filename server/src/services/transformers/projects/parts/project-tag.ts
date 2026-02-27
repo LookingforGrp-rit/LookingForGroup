@@ -21,3 +21,4 @@ export const transformProjectTag = (
     ...transformTag({ label, tagId, type }),
   };
 };
+export type ProjectTagPayload = ProjectTagGetPayload;
