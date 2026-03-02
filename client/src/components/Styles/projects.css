@@ -23,7 +23,7 @@ Project Panel component style rules
   justify-content: center;
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 700px) {
   #discover-panel-box {
     margin: 0 20px 20px;
   }
@@ -2510,7 +2510,7 @@ New Project Page style rules
   }
 }
 
-@media screen and (max-width: 500px){
+@media screen and (max-width: 700px){
   #project-page-content {
     margin: 0 20px;
   }
@@ -3279,13 +3279,19 @@ My projects page style rules
     flex-wrap: wrap;
     gap: 20px;
   }
+
+  
 }
 
-@media only screen and (max-width: 500px) {
+@media only screen and (max-width: 700px) {
   .my-projects-header-row {
     padding-left: 0px;
     padding-right: 0px;
     margin: 0 20px;
+  }
+
+  .my-projects-action-buttons{
+    flex-wrap: wrap;
   }
 }
 
@@ -3436,13 +3442,8 @@ My projects page style rules
   }
 }
 
-@media only screen and (max-width: 500px) {
-  .my-projects-grid {
-    padding-left: 0px;
-    padding-right: 0px;
-    margin: 20px;
-  }
-}
+
+
 .grid-card-image {
   grid-area: image;
   box-sizing: border-box;
@@ -3570,6 +3571,7 @@ My projects page style rules
   gap: 10px;
 }
 
+
 .project-header-label {
   color: var(--primary-color);
   text-align: left;
@@ -3609,6 +3611,31 @@ My projects page style rules
     flex-direction: row;
     align-items: center;
   }
+}
+
+
+
+@media only screen and (max-width: 700px) {
+  .my-projects-grid,
+  .my-projects-list {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 0 20px 20px;
+  }
+
+  .my-projects-list-header {
+    display: none;
+  }
+ 
+  .my-project-list-card {
+    flex-wrap: wrap;
+  }
+
+  .dropdown-container {
+    margin-left: auto;
+  }
+
+  
 }
 
 .list-card-section1 {
