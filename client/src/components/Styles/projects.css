@@ -28,6 +28,7 @@ Project Panel component style rules
     margin: 0 20px 20px;
   }
 }
+
 .project-panel-box {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
@@ -344,10 +345,11 @@ Project Creator and Editor Popup style rules
 }
 
 @media only screen and (max-width: 700px) {
-  #project-editor-content{
+  #project-editor-content {
     margin: 0 20px;
   }
 }
+
 #project-editor-content label:not(.drop-area),
 #project-team-add-member-title,
 #team-add-member-cancel-button,
@@ -384,6 +386,16 @@ Project Creator and Editor Popup style rules
   color: var(--main-text);
   font-size: 15px;
   outline: none;
+}
+
+@media only screen and (max-width: 700px) {
+
+  #project-editor-content select,
+  #project-editor-general input,
+  #project-editor-content textarea,
+  #project-team-add-member-name input {
+    padding-bottom: 30px;
+  }
 }
 
 #project-editor-content select {
@@ -501,7 +513,7 @@ Project Creator and Editor Popup style rules
 
 .character-count {
   font-style: italic;
-  font-size: 1.6ch;
+  font-size: 15px;
   position: absolute;
   bottom: 7px;
   right: 14px;
@@ -625,6 +637,7 @@ Project Creator and Editor Popup style rules
   flex-wrap: wrap;
   gap: 20px;
   margin: 10px 0;
+  max-width: 100%;
 }
 
 .project-editor-image-container {
@@ -700,6 +713,7 @@ Project Creator and Editor Popup style rules
   position: relative;
   max-height: 182px;
   width: 323px;
+  max-width: 100%;
 }
 
 [data-theme="light"] #project-editor-add-image {
@@ -1037,16 +1051,16 @@ Project Creator and Editor Popup style rules
 }
 
 @media only screen and (max-width: 400px) {
-  #project-team-add-member-info{
+  #project-team-add-member-info {
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
     padding: 20px;
   }
 
-  #user-search-container > .dropdown-container{
-      margin-left: 0px;
-    }
+  #user-search-container>.dropdown-container {
+    margin-left: 0px;
+  }
 }
 
 .success {
@@ -1246,7 +1260,7 @@ Project Creator and Editor Popup style rules
     flex-direction: column;
   }
 
-  #position-contact{
+  #position-contact {
     max-width: fit-content;
   }
 }
@@ -2525,7 +2539,7 @@ New Project Page style rules
   }
 }
 
-@media screen and (max-width: 700px){
+@media screen and (max-width: 700px) {
   #project-page-content {
     margin: 0 20px;
   }
@@ -2650,18 +2664,19 @@ Project Carousel style rules
 }
 
 @media only screen and (max-width: 700px) {
-  #project-info-header{
+  #project-info-header {
     flex-wrap: wrap;
-    
-    #project-info-buttons{
-      margin-left:0px;
+
+    #project-info-buttons {
+      margin-left: 0px;
     }
   }
 
-  #project-tags{
+  #project-tags {
     flex-wrap: wrap;
   }
 }
+
 #project-title {
   font-size: 32px;
   font-weight: 700;
@@ -2973,7 +2988,7 @@ button#positions-popup-list-item-active {
     justify-content: baseline;
   }
 
-  .positions-popup-list{
+  .positions-popup-list {
     padding: 20px 0px 20px 0px;
     max-height: fit-content;
   }
@@ -3305,7 +3320,7 @@ My projects page style rules
     gap: 20px;
   }
 
-  
+
 }
 
 @media only screen and (max-width: 700px) {
@@ -3315,7 +3330,7 @@ My projects page style rules
     margin: 0 20px;
   }
 
-  .my-projects-action-buttons{
+  .my-projects-action-buttons {
     flex-wrap: wrap;
   }
 }
@@ -3641,6 +3656,7 @@ My projects page style rules
 
 
 @media only screen and (max-width: 700px) {
+
   .my-projects-grid,
   .my-projects-list {
     padding-left: 0px;
@@ -3651,7 +3667,7 @@ My projects page style rules
   .my-projects-list-header {
     display: none;
   }
- 
+
   .my-project-list-card {
     flex-wrap: wrap;
   }
@@ -3660,7 +3676,7 @@ My projects page style rules
     margin-left: auto;
   }
 
-  
+
 }
 
 .list-card-section1 {

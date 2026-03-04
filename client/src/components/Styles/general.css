@@ -1532,12 +1532,14 @@ Input style rules
 .input-multiline-container {
   display: flex;
   flex-grow: 1;
+
 }
 
 /* Paired with character limit */
 .input-multiline {
   padding: 15px;
 }
+
 
 /* Link wrapper */
 .input-link-wrapper {
