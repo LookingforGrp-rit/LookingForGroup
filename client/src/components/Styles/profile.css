@@ -1071,6 +1071,7 @@ New Profile page style rules
       object-fit: cover;
       border-radius: 10px;
       border: 2px solid white;
+      aspect-ratio: 1 / 1;
     }
 
     >#profile-bio {
@@ -1081,6 +1082,14 @@ New Profile page style rules
       overflow-wrap: break-word;
       word-break: break-word;
       text-align: center;
+      margin: auto
+    }
+  }
+
+  @media only screen and (max-width: 700px) {
+    #profile-image {
+      max-width: 100px;
+      max-height: 100px;
     }
   }
 
@@ -1209,28 +1218,24 @@ New Profile page style rules
     gap: 0px;
 
     #profile-img-container {
-      max-height: 25vw;
-      max-width: 100%;
       margin: 10px;
       flex-wrap: wrap;
-      align-items: center;
+      height: 25vw;
 
       img {
-        max-width: 50%;
-        max-height: 100%;
+        max-width: min(25vw, 25vh);
+        max-height: min(25vw, 25vh);
       }
 
       #profile-bio {
         width: 40%;
-        height: 100%;
-
       }
 
-      #profile-names{
+      #profile-names {
         align-items: baseline;
       }
 
-      #profile-username{
+      #profile-username {
         display: flex;
       }
     }
@@ -1242,11 +1247,11 @@ New Profile page style rules
         align-items: baseline;
       }
 
-      #profile-username{
-        margin:auto;
+      #profile-username {
+        margin: auto;
       }
 
-      #profile-top-row{
+      #profile-top-row {
         flex-wrap: wrap;
       }
     }

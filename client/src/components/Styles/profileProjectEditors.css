@@ -20,12 +20,14 @@
   flex-direction: column;
   height: 100%;
 }
-  #editor-links > label {
-    margin-bottom: 3px;
-  }
-  #editor-links > .editor-extra-info {
-    margin-bottom: 15px;
-  }
+
+#editor-links>label {
+  margin-bottom: 3px;
+}
+
+#editor-links>.editor-extra-info {
+  margin-bottom: 15px;
+}
 
 /* Contact Information Section */
 #editor-contact-info {
@@ -85,6 +87,7 @@
   gap: 15px;
 }
 
+
 /* Container for Select and Input components */
 .editor-link-item {
   display: flex;
@@ -93,15 +96,22 @@
   /* align-items: flex-start; */
   align-self: stretch;
 }
-  /* Select component wrapper */
-  .editor-link-item > .select-container {
-    width: 100%;
-    max-width: 166px;
-  }
 
-  /* Container for content of Select component */
-  .editor-link-item .value {
-    display: flex;
-    align-items: center;
-    gap: 8px;
+@media only screen and (max-width: 700px){
+  .editor-link-item {
+    flex-wrap: wrap;
   }
+}
+
+/* Select component wrapper */
+.editor-link-item>.select-container {
+  width: 100%;
+  max-width: 166px;
+}
+
+/* Container for content of Select component */
+.editor-link-item .value {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}

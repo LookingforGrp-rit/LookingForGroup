@@ -1499,8 +1499,9 @@ select.edit-position-compensation {
 }
 
 #base-url {
-  margin: auto;
+  margin: auto auto auto 0px;
   text-wrap: nowrap;
+  font-size: 15px;
 }
 
 /* #endregion */

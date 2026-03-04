@@ -41,7 +41,6 @@ Credits link footer style rules
   .FooterContainer {
     align-content: start;
     background-color: var(--bg-color);
-    margin-bottom: 80px;
   }
 
   .FooterContainer button {
