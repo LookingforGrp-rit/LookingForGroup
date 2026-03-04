@@ -803,19 +803,7 @@ Page popup style rules
   padding: 20px 40px;
 }
 
-@media (max-width: 576px) {
-  .popup {
-    /* max-width: 921px;
-    max-height: 781px;
-    width: 64vw; */
-    /* height: 95vw; */
-  }
 
-  /* Smaller popups within another popup should scale */
-  .popup .popup {
-    max-width: 50vw;
-  }  
-}
 
 .popup-container {
   display: flex;
@@ -829,6 +817,38 @@ Page popup style rules
   z-index: 3;
   border-radius: 10px;
 }
+
+@media only screen {
+  .popup {
+    height: 85vh;
+    width: 95vw;
+  }
+}
+
+@media (max-width: 700px) {
+  .popup {
+    margin: 20px 20px;
+    width: 100vw;
+    height: 85vh;
+    max-width: 100vw;
+  }
+
+  .popup-container {
+    align-items: baseline;
+    justify-content: baseline;
+  }
+
+  .popup .popup-container {
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.popup .popup {
+  height: auto;
+  width: auto;
+}
+
 
 #popup-close {
   position: absolute;

@@ -269,7 +269,8 @@ Project Creator and Editor Popup style rules
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  margin-top: 28px;
+  margin-top: 40px;
+  margin-bottom: 10px;
 }
 
 .project-editor-tab {
@@ -340,12 +341,13 @@ Project Creator and Editor Popup style rules
 #project-editor-content {
   flex-grow: 1;
   margin: 35px 56px 0 55px;
-
-  >* {
-    max-height: 710px;
-  }
 }
 
+@media only screen and (max-width: 700px) {
+  #project-editor-content{
+    margin: 0 20px;
+  }
+}
 #project-editor-content label:not(.drop-area),
 #project-team-add-member-title,
 #team-add-member-cancel-button,
@@ -759,8 +761,6 @@ Project Creator and Editor Popup style rules
   flex-wrap: nowrap;
   gap: 8px;
   margin-top: 15px;
-  /* height: 80px; */
-  /* max-height: 80px; */
   overflow-y: scroll;
 }
 
@@ -801,7 +801,6 @@ Project Creator and Editor Popup style rules
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
     flex-direction: column;
-    padding-left: 30%;
   }
 }
 
@@ -1037,6 +1036,19 @@ Project Creator and Editor Popup style rules
   row-gap: 15px;
 }
 
+@media only screen and (max-width: 400px) {
+  #project-team-add-member-info{
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    padding: 20px;
+  }
+
+  #user-search-container > .dropdown-container{
+      margin-left: 0px;
+    }
+}
+
 .success {
   color: green;
   font-weight: 500;
@@ -1210,13 +1222,12 @@ Project Creator and Editor Popup style rules
   width: 100%;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen {
   #project-team-open-positions-popup {
     flex-direction: column;
   }
 
   #project-team-open-positions-popup .positions-popup-list {
-    max-height: 20%;
     overflow-y: auto;
   }
 
@@ -1233,6 +1244,10 @@ Project Creator and Editor Popup style rules
 
   #edit-position-role {
     flex-direction: column;
+  }
+
+  #position-contact{
+    max-width: fit-content;
   }
 }
 
@@ -2945,12 +2960,22 @@ button#positions-popup-list-item-active {
   width: 100%;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen {
 
   #project-open-positions-popup {
     overflow-y: auto;
-    width: 70vw;
-    height: 80vh;
+    padding: 20px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    height: 100vh;
+    width: calc(100% - 40px);
+    justify-content: baseline;
+  }
+
+  .positions-popup-list{
+    padding: 20px 0px 20px 0px;
+    max-height: fit-content;
   }
 }
 
