@@ -17,7 +17,7 @@ COPY package.json package-lock.json ./
 COPY ./server/package.json ./server/package.json
 COPY ./server/prisma/schema.prisma ./server/prisma/schema.prisma
 
-RUN npm ci --workspace=server --only=dev --ignore-scripts
+RUN npm ci --workspace=server --ignore-scripts
 
 RUN npm run prisma:generate
 
@@ -43,6 +43,7 @@ FROM base AS runner
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 lfg
 
+#COPY .env .
 ENV NODE_ENV=production
 ENV PORT=3000
 
