@@ -8,6 +8,7 @@ import profileImage from "../../images/blue_frog.png";
 import { ProjectCarousel } from "../ProjectCarousel";
 import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
+import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
 import { getByID } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
@@ -26,7 +27,7 @@ import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/e
  * Project page. Renders the project page with all project details, team member information, and available positions.
  * @returns JSX Element
  */
-const NewProject = () => {
+const Project = () => {
   //Navigation hook
   const navigate = useNavigate();
 
@@ -191,17 +192,7 @@ const NewProject = () => {
             </DropdownButton>
             <DropdownContent rightAlign={true}>
               <div id="project-info-dropdown">
-                {/* TODO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
-                <button className="project-info-dropdown-option">
-                  <ThemeIcon
-                    id={"share"}
-                    width={27}
-                    height={27}
-                    ariaLabel={"Share project"}
-                    className="mono-fill"
-                  />
-                  Share
-                </button>
+                <ShareButton />
                 
                 {/* Only be able to leave if you're a member of the project */}
                 { isMember ? 
@@ -408,10 +399,6 @@ const NewProject = () => {
         loadingProject
       ) : (
         <div id="project-page-content">
-          {/* May need to adjust width/height styles to account for description/carousel sizes */}
-          {/* <div id="project-image-carousel">
-            <ImageCarousel carouselType="Project" dataList={displayedProject.images} />
-          </div> */}
           <ProjectCarousel project={displayedProject}></ProjectCarousel>
 
           <div id="project-info-panel">
@@ -564,4 +551,4 @@ const NewProject = () => {
   );
 };
 
-export default NewProject;
+export default Project;
