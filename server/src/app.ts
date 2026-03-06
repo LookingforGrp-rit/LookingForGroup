@@ -23,6 +23,10 @@ if (envConfig.env === 'development') {
   app.use('/docs', swaggerUi.serve, swaggerUi.setup(doc));
 }
 
+//app.get(new RegExp("[\\s\\S]/*"), (_req: Request, res: Response) => {
+//  console.log(`Received request ${_req.ip}`);
+//});
+
 app.use('/datasets', datasetsRouter);
 app.use('/users', usersRouter);
 app.use('/projects', projectsRouter);
