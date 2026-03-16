@@ -252,7 +252,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   max-width: 1121px;
   width: 100%;
-  height: 849px;
+  height: 869px;
   border: none;
   border-radius: 10px;
   color: var(--main-text);
@@ -2915,6 +2915,8 @@ Project Carousel style rules
   border-radius: 10px;
   flex: 0 381px;
   padding: 20px;
+  max-width: 100%;
+  box-sizing: border-box; /* makes it so padding is included in max width */
 }
 
 #positions-popup-list-edit {
@@ -3014,6 +3016,7 @@ button#positions-popup-list-item-active {
   border-radius: 10px;
   padding: 20px;
   width: 100%;
+  box-sizing: border-box;
 }
 
 @media only screen {
@@ -3030,7 +3033,6 @@ button#positions-popup-list-item-active {
   }
 
   .positions-popup-list {
-    padding: 20px 0px 20px 0px;
     max-height: fit-content;
   }
 }
