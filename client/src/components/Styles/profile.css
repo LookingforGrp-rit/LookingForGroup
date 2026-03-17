@@ -36,7 +36,7 @@ Profile Panel component style rules
 
 .profile-panel {
   width: 240px;
-  max-width: 40vw;
+  max-width: 35vw;
   height: fit-content;
   border: none;
   border-radius: 10px;
@@ -130,6 +130,11 @@ Profile Panel component style rules
   }
 }
 
+@media only screen{
+  .profile-panel {
+    width:180px;
+  }
+}
 .profile-panel-hover-item {
   /* border: 1px solid black; */
   display: flex;

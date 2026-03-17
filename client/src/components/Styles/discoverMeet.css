@@ -405,6 +405,10 @@ Image carousel style rules
     .project-tags{
       display: none;
     }
+
+    h2 {
+      font-size: clamp(1.5rem, 5vw, 2.0rem);
+    }
   }
 }
 
