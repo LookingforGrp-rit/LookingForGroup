@@ -35,7 +35,8 @@ Profile Panel component style rules
 }
 
 .profile-panel {
-  width: 210px;
+  width: 240px;
+  max-width: 40vw;
   height: fit-content;
   border: none;
   border-radius: 10px;
@@ -46,10 +47,10 @@ Profile Panel component style rules
   /* justify-content: start; */
   /* align-items: center; */
   text-align: left;
-  padding: 0 15px 10px 15px;
+  padding: 0 0px 10px 0px;
 
   img {
-    width: 240px;
+    width: 100%;
     height: auto;
     align-self: center;
     /* background-color: var(--primary-color); */
@@ -58,7 +59,7 @@ Profile Panel component style rules
 
   /* Name */
   h2 {
-    margin: 8px 0;
+    margin: 8px 15px 0 15px;
     font-size: 20px;
     font-weight: 700;
     color: var(--primary-color);
@@ -69,7 +70,7 @@ Profile Panel component style rules
 
   /* Major */
   h3 {
-    margin: 0;
+    margin: 0px 15px 0px 15px;
     color: var(--main-text);
     font-size: 16px;
     font-weight: 400;
@@ -78,7 +79,7 @@ Profile Panel component style rules
 
   /* Quote */
   #quote {
-    margin: 8px 0;
+    margin: 8px 15px 0 15px;
     color: var(--main-text);
     font-size: 14px;
     font-style: italic;
