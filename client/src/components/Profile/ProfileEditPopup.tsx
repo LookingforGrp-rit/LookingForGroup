@@ -2,6 +2,8 @@
 import { useState, useMemo } from "react";
 
 import { getCurrentAccount } from "../../api/users";
+import * as paths from '../../constants/routes';
+import { useNavigate } from "react-router-dom";
 
 // Components
 import { Popup, PopupButton, PopupContent } from "../Popup";
@@ -26,6 +28,8 @@ export const ProfileEditPopup = () => {
   const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
+  const navigate = useNavigate();
+
 
   // Profile should be set up on intialization
   useMemo(() => {
@@ -64,8 +68,8 @@ export const ProfileEditPopup = () => {
       console.error((e as Error).message);
     }
 
-    // probably not necessary
-    // window.location.reload(); // reload page
+    navigate(`${paths.routes.PROFILE}?userID=${modifiedProfile?.userId}`);
+    window.location.reload();
   };
 
 
