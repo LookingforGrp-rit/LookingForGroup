@@ -27,14 +27,6 @@ export const ProfileEditPopup = () => {
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
 
-  /**
-   * Updates the temporary profile data.
-   * @param profileData The user's profile data.
-   */
-  const updatePendingProfile = (profileData: PendingUserProfile) => {
-    setModifiedProfile(profileData);
-  };
-
   // Profile should be set up on intialization
   useMemo(() => {
     const setUpProfileData = async () => {
@@ -101,6 +93,26 @@ export const ProfileEditPopup = () => {
     }
   }, []);
 
+  const checkValidData = (pendingProfile : PendingUserProfile) : boolean => {
+    if (!pendingProfile) return false;
+
+    if (pendingProfile.firstName == "") {
+      return false;
+    }
+
+    if (pendingProfile.lastName == "") {
+      return false;
+    }
+
+    if (pendingProfile.bio == "") {
+      return false;
+    }
+
+    return true;
+  }
+
+  const validData = checkValidData(modifiedProfile as PendingUserProfile);
+
   /**
    * Component to organize the main tab content and handle switching tabs.
    * @returns JSX Element of the appropriate tab.
@@ -113,7 +125,7 @@ export const ProfileEditPopup = () => {
           <AboutTab
             profile={modifiedProfile}
             dataManager={dataManager}
-            updatePendingProfile={updatePendingProfile}
+            updatePendingProfile={setModifiedProfile}
           />
         );
       case 1:
@@ -121,7 +133,7 @@ export const ProfileEditPopup = () => {
           <ProjectsTab
             profile={modifiedProfile}
             dataManager={dataManager}
-            updatePendingProfile={updatePendingProfile}
+            updatePendingProfile={setModifiedProfile}
           />
         );
       case 2:
@@ -129,7 +141,7 @@ export const ProfileEditPopup = () => {
           <SkillsTab
             profile={modifiedProfile}
             dataManager={dataManager}
-            updatePendingProfile={updatePendingProfile}
+            updatePendingProfile={setModifiedProfile}
           />
         );
       case 3:
@@ -137,7 +149,7 @@ export const ProfileEditPopup = () => {
           <LinksTab
             profile={modifiedProfile}
             dataManager={dataManager}
-            updatePendingProfile={updatePendingProfile}
+            updatePendingProfile={setModifiedProfile}
           />
         );
       default:
@@ -174,7 +186,7 @@ export const ProfileEditPopup = () => {
           <input
             type="submit"
             id="project-editor-save"
-            className="profile-editor-save"
+            className={"profile-editor-save " + (validData ? "" : "hidden")}
             value="Save Changes"
           />
           {errorVisible && (
