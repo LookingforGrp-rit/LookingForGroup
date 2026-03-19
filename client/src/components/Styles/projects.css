@@ -341,6 +341,7 @@ Project Creator and Editor Popup style rules
   padding-top: 7px;
   padding-bottom: 7px;
 }
+
 .share-button:hover {
   background-color: var(--header-color) !important;
 }
@@ -2916,7 +2917,8 @@ Project Carousel style rules
   flex: 0 381px;
   padding: 20px;
   max-width: 100%;
-  box-sizing: border-box; /* makes it so padding is included in max width */
+  box-sizing: border-box;
+  /* makes it so padding is included in max width */
 }
 
 #positions-popup-list-edit {
@@ -3292,22 +3294,10 @@ My projects page style rules
 */
 /* #region my project page */
 
-@media only screen and (min-width: 800px) {
-  .my-projects-banner {
-    min-height: 220px;
-  }
-}
 
-@media only screen and (max-width: 799px) {
-  .my-projects-banner {
-    min-height: 200px;
-  }
-}
 
 .page#my-projects {
   box-sizing: border-box;
-  /* background-color:; */
-  padding: 0px 0px 0px 0px;
 }
 
 .my-projects-top-bar {
@@ -3354,6 +3344,22 @@ My projects page style rules
 
   #my-projects-sort-btn {
     width: 160px;
+  }
+}
+
+@media only screen and (min-width: 800px) {
+  .my-projects-banner {
+    min-height: 220px;
+  }
+}
+
+@media only screen and (max-width: 799px) {
+  .my-projects-banner {
+    min-height: 200px;
+  }
+
+  .page#my-projects {
+    padding-bottom: 100px;
   }
 }
 
@@ -3495,10 +3501,13 @@ My projects page style rules
   margin-right: 64px;
 }
 
-.placeholder-spacing {
-  margin: 0 60px;
-  display: flex;
+@media only screen and (max-width:700px) {
+  .page#my-projects hr {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
 }
+
 
 .my-projects-grid {
   width: auto;

@@ -130,11 +130,14 @@ Profile Panel component style rules
   }
 }
 
-@media only screen{
+@media only screen and (hover: none){
   .profile-panel {
     width:180px;
   }
+
+
 }
+
 .profile-panel-hover-item {
   /* border: 1px solid black; */
   display: flex;
