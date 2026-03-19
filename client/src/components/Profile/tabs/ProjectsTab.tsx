@@ -20,8 +20,9 @@ const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggle
   const projectData = membershipData.project;
 
   return (
-    <div className="projectTile" key={projectData.projectId}>
-      <img
+    <div key={projectData.projectId}>
+      <div className="projectTile">
+        <img
         src={usePreloadedImage(
           projectData.thumbnail?.image || placeholderThumbnail,
           placeholderThumbnail
@@ -47,7 +48,9 @@ const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggle
           ariaLabel={"Toggle visibility"}
         />
       </button>
-      {/* {<p>{projectData.title}</p>} */}
+      </div>
+      
+      <p className="project-tile-title">{projectData.title}</p>
     </div>
   );
 };
