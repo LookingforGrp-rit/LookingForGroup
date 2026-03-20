@@ -11,7 +11,7 @@
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
 Project Panel component style rules
-- Flexbox of project panels used in discover page and on user pages 
+- Flexbox of project panels used in discover page and on user pages
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
@@ -43,7 +43,7 @@ Project Panel component style rules
 
 .project-panel {
   height: auto;
-  /* commenting max width out. 
+  /* commenting max width out.
   Forcing width may mess with rendering calculations, causing uneven/unaligned project panel rows.
   If max width is necessary, calculations need to be updated for it to work properly*/
   /* max-width: 420px; */
@@ -2573,8 +2573,8 @@ New Project Page style rules
 @media screen and (max-width: 1199px) {
   #project-page-content {
     grid-template:
-      'info' auto
       'carousel' auto
+      'info' auto
       'overview' auto
       'people' auto
       'positions' auto;
@@ -2606,7 +2606,7 @@ Project Carousel style rules
   display: flex;
   flex-direction: column;
   position: relative;
-
+  margin-bottom: 20px;
   .carousel-contents {
     /* height: 370px; */
     width: 100%;
@@ -2683,7 +2683,7 @@ Project Carousel style rules
   text-align: left;
   padding: 20px;
   max-width: calc(100vw - 80px);
-  
+
   #project-info-top {
     display: flex;
     flex-direction: column;
@@ -3372,37 +3372,43 @@ My projects page style rules
 
 }
 
-@media only screen and (max-width: 700px) {
-  .my-projects-header-row {
-    padding-left: 0px;
-    padding-right: 0px;
-    margin: 0 20px;
-  }
-
-  .my-projects-action-buttons {
-    flex-wrap: wrap;
-  }
-}
-
-@media only screen and (max-width: 540px) {
-  .my-projects-action-buttons {
-    flex-wrap: wrap;
-  }
-}
-
-
-
 .my-projects-action-buttons {
   display: flex;
   flex-direction: row;
   width: max-content;
   gap: 15px;
-  align-items: center;
+  align-items: left;
 
   .arrow-az {
     transform: rotate(180deg);
   }
 }
+
+@media only screen and (max-width: 700px) {
+  .my-projects-header-row {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 0 20px;
+    flex-direction: column;
+    max-width: calc(100vw - 50px);
+    align-items: baseline;
+  }
+
+  .my-projects-action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .select-container,
+    .my-projects-create-btn{
+    display: flex;
+  }
+}
+
+
+
+
+
+
 
 .my-projects-display-switch {
   box-sizing: border-box;
