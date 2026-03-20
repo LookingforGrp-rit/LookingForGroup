@@ -92,10 +92,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     setSaveable(valid);
   }
 
-  // Submit the form to save or create the project
+  // Start editing the project creator
   const createOrEdit = async () => {
     if (!newProject && projectID) {
-    // Load existing project
+      
+      // Load existing project
       try {
         // const response = await getByID(Number(projectID));
         // if (!response.data) return;
@@ -185,7 +186,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   //TODO: update this to show a close without saving prompt
   const closeWithoutSaving = async () => {
     // Why is this here? If it's a new project then it won't be on the API anyway
-    if(projectData && newProject) await deleteProject(projectData?.projectId)
+    setCurrentTab(0);
+    if(projectData && newProject) await deleteProject(projectData?.projectId);
   }
 
 
@@ -244,6 +246,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
     console.log("Created project thumbnail: ");
     console.log(modifiedProject.thumbnail);
+    setCurrentTab(0);
 
     try {
       await dataManager.saveChanges();
