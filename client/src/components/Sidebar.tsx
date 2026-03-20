@@ -199,7 +199,7 @@ const SideBar = () => {
                 }
                 onClick={() => handleTextChange("Discover", paths.routes.HOME)}
               >
-                <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
+                <ThemeIcon id={'compass'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
               </button>
               <button
                 id={"meet-sidebar-btn"}
@@ -208,7 +208,7 @@ const SideBar = () => {
                 }
                 onClick={() => handleTextChange("Meet", paths.routes.MEET)}
               >
-                <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
+                <ThemeIcon id={'meet'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
               </button>
               <button
                 id={"my-projects-sidebar-btn"}
@@ -221,7 +221,7 @@ const SideBar = () => {
                   handleTextChange("My Projects", paths.routes.MYPROJECTS)
                 }
               >
-                <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
+                <ThemeIcon id={'folder'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
               </button>
               <button
                 id={"my-profile-sidebar-btn"}
@@ -234,7 +234,7 @@ const SideBar = () => {
                   handleTextChange("My Profile", paths.routes.PROFILE)
                 }
               >
-                <ThemeIcon id={'profile'} width={30} height={28.85} className={'mono-fill'} ariaLabel={'my profile'} />
+                <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
               </button>
             </div>
           </div>

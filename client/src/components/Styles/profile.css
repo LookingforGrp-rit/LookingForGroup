@@ -36,7 +36,7 @@ Profile Panel component style rules
 
 .profile-panel {
   width: 240px;
-  max-width: 35vw;
+  flex-shrink: 0;
   height: fit-content;
   border: none;
   border-radius: 10px;
@@ -130,11 +130,10 @@ Profile Panel component style rules
   }
 }
 
-@media only screen and (hover: none){
+@media only screen and (hover: none) {
   .profile-panel {
-    width:180px;
+    width: clamp(125px, 40vw, 200px);
   }
-
 
 }
 
@@ -1114,7 +1113,8 @@ New Profile page style rules
     >#profile-info-text {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 20px;
+      margin-bottom: 10px;
 
       >#profile-top-row {
         display: flex;
@@ -1149,6 +1149,7 @@ New Profile page style rules
           display: flex;
           justify-content: flex-end;
           align-items: center;
+          align-self: baseline;
           gap: 7px;
           overflow-wrap: break-word;
           word-break: break-word;
@@ -1165,7 +1166,7 @@ New Profile page style rules
         font-size: 16px;
         display: flex;
         flex-wrap: wrap;
-        align-items: center;
+        align-items: baseline;
         justify-content: start;
         gap: 20px;
         overflow-wrap: break-word;
@@ -1221,7 +1222,7 @@ New Profile page style rules
   }
 }
 
-@media only screen and (max-width: 900px) {
+@media only screen and (max-width: 1100px) {
   #profile-hero {
     flex-wrap: wrap;
     gap: 0px;
@@ -1260,10 +1261,24 @@ New Profile page style rules
         margin: auto;
       }
 
+      #profile-extras {
+        flex-direction: column;
+        align-items: baseline;
+      }
+
+
+
       #profile-top-row {
         flex-wrap: wrap;
+        gap: 10px;
       }
     }
+  }
+}
+
+#profile-extras {
+  svg {
+    flex-shrink: 0;
   }
 }
 
@@ -1288,11 +1303,6 @@ New Profile page style rules
   }
 }
 
-@media only screen and (max-width: 1250px) {
-  #profile-buttons {
-    justify-self: center;
-  }
-}
 
 .interests-selection {
   display: flex;
