@@ -2725,9 +2725,10 @@ Project Carousel style rules
 }
 
 #project-title {
-  font-size: 32px;
+  font-size: clamp(24px,5vw,32px);
   font-weight: 700;
   color: var(--primary-color);
+  margin-bottom: 5px;;
 }
 
 #project-info-buttons {

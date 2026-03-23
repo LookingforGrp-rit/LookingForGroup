@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 // import Notifications from "./pages/Notifications";
 import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
+import { getCurrentUsername } from '../api/users.ts';
 
 //user utils
 //import { getCurrentUsername } from "../api/users.ts";
@@ -174,6 +175,18 @@ const SideBar = () => {
     navigate(path); // Navigate to the specified path
   };
 
+  // Navigate to the current user's profile
+  const handleProfileAccess = async () => {
+    // navigate to Profile, attach userID
+    const res = await getCurrentUsername();
+    const userId = res.data.userId;
+    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+
+    // Collapse the dropwdown if coming from another user's page
+    if (window.location.href.includes("profile")) {
+      window.location.reload();
+    }
+  };
   /**
    * Handles window resize events and updates width state.
    */
@@ -231,7 +244,7 @@ const SideBar = () => {
                     : "sidebar-btn"
                 }
                 onClick={() =>
-                  handleTextChange("My Profile", paths.routes.PROFILE)
+                  handleProfileAccess()
                 }
               >
                 <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />

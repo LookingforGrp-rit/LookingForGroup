@@ -100,7 +100,7 @@ Profile Panel component style rules
   opacity: 0;
   position: absolute;
   height: auto;
-  width: 200px;
+  width: 100%;
   transition: opacity 0.2s;
   top: 0;
   bottom: 0;
@@ -113,6 +113,7 @@ Profile Panel component style rules
   text-align: left;
   padding: 20px;
   overflow: auto;
+  box-sizing: border-box;
 
   #heart-empty,
   #heart-filled {
@@ -132,9 +133,8 @@ Profile Panel component style rules
 
 @media only screen and (hover: none) {
   .profile-panel {
-    width: clamp(125px, 40vw, 200px);
+    width: clamp(125px, 25vw, 200px);
   }
-
 }
 
 .profile-panel-hover-item {
