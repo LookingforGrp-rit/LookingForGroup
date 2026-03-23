@@ -33,7 +33,7 @@ Login and Signup page style rules
   justify-content: center;
   align-items: center;
   height: 525px;
-  width: 880px;
+  width: min(95vw,880px);
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border-radius: 10px;
@@ -42,7 +42,7 @@ Login and Signup page style rules
 
 .login-form,
 .signup-form {
-  width: 440px;
+  width: min(95vw,440px);
   height: 485px;
   text-align: center;
   /* border: 1px solid black; */
@@ -53,6 +53,7 @@ Login and Signup page style rules
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .directory {
@@ -99,7 +100,7 @@ Login and Signup page style rules
 } */
 
 .signup-name-input {
-  width: 135px;
+  width: min(40vw,135px);
   height: 40px;
   margin: 5px;
   padding: 5px 20px;
@@ -113,7 +114,7 @@ Login and Signup page style rules
 
 .signup-input,
 .login-input {
-  width: 320px;
+  width: min(90vw,320px);
   height: 40px;
   margin: 5px;
   padding: 5px 20px;
@@ -176,6 +177,7 @@ Login and Signup page style rules
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-width: 100%;
 }
 
 .signup-form-inputs {
@@ -196,7 +198,7 @@ Login and Signup page style rules
 
 #password-wrapper input {
   padding-right: 60px;
-  width: 280px;
+  width: min(90vw,280px);
 }
 
 #show-password {
@@ -259,10 +261,6 @@ Login and Signup page style rules
     background-repeat: no-repeat;
   }
 
-  .login-signup-container {
-    width: 540px;
-    border-radius: 5px;
-  }
 
   .login-form,
   .signup-form {
