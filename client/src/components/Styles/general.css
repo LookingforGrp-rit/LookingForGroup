@@ -1781,6 +1781,7 @@ Spinning loader style rules
   -webkit-animation: spin 1.5s ease-in-out infinite;
   /* Safari */
   animation: spin 1.5s ease-in-out infinite;
+  justify-self: center;
 }
 
 /* Safari */
