@@ -68,8 +68,8 @@
   border: 2px dashed #424242;
   border-radius: 10px;
   gap: 10px;
-  width: 100%;
-  height: auto;
+  width: min(50vw, 250px);
+  height: min(50vw, 250px);
   aspect-ratio: 1 / 1;
 
 }
@@ -127,6 +127,10 @@ select {
   font-size: 1rem;
 }
 
+#profile-editor-add-image #img-view {
+  width: 100%;
+}
+
 /* Layout on medium screens */
 @media only screen and (max-width: 1171px) and (min-width: 700px) {
   .edit-profile-body.about {
@@ -144,13 +148,7 @@ select {
     width: 100%;
   }
 
-  #profile-editor-add-image {
-    max-width: 250px;
-  }
 
-  #profile-editor-add-image #img-view {
-    width: 100%;
-  }
 
   .about-row.row-1,
   .about-row.row-2,
@@ -197,15 +195,6 @@ select {
     gap: 20px;
     width: 100%;
     max-width: 100%;
-  }
-
-  #profile-editor-add-image {
-    max-width: 200px;
-    margin-right: 15vw;
-  }
-
-  #profile-editor-add-image #img-view {
-    width: 100%;
   }
 
   .editor-input-item input,

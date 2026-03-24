@@ -808,11 +808,6 @@ Project Creator and Editor Popup style rules
   }
 }
 
-@media only screen and (max-width: 700px){
-  #project-editor-selected-tags {
-    width: 100%;
-  }
-}
 
 #project-editor-selected-tags-container {
   display: flex;
