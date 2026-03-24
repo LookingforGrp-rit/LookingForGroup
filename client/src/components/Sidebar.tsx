@@ -250,12 +250,14 @@ const SideBar = () => {
     <div>
       <div className="SideBarContainer">
         <div className="headerContainer">
-          <h1
-            style={{ cursor: "pointer" }}
+          {/* Must be a button to be focusable and meet accessibility guidelines */}
+          <button
             onClick={() => handleTextChange("Discover", paths.routes.HOME)}
           >
-            lfg.
-          </h1>
+            <h1>
+              lfg.
+            </h1>
+          </button>
         </div>
 
         <div className="containerButtonSideBar">
