@@ -201,7 +201,7 @@ used for the more options dropdown menu and notifications
 
 .page-title {
   margin-bottom: 0;
-  font-size: 42px;
+  font-size: 2.625rem;
   margin-left: max(1.79vw, 27px);
   color: var(--primary-color);
 }
@@ -209,7 +209,7 @@ used for the more options dropdown menu and notifications
 .error {
   color: var(--error-delete-color);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: italic;
 }
 
@@ -502,7 +502,7 @@ Sidebar Nav style rules
   height: 12px;
   background-color: var(--red);
   color: white;
-  font-size: 10px;
+  font-size: 0.625rem;
   border-radius: 50%;
   position: absolute;
   top: 33px;
@@ -520,7 +520,7 @@ Sidebar Nav style rules
 /* title/logo */
 .headerContainer h1 {
   font-weight: bold;
-  font-size: 45px;
+  font-size: 2.8125rem;
   margin: 0px 0px 0px 30px;
   text-align: center;
   color: var(--primary-color);
@@ -615,7 +615,7 @@ Sidebar Nav style rules
   margin-bottom: 40px;
   width: 120px;
   height: 45px;
-  font-size: 18px;
+  font-size: 1.125rem;
   border: none;
   border-radius: 12px;
   /* outline: solid var(--orange) 2px; */
@@ -659,7 +659,7 @@ Sidebar Nav style rules
   margin-bottom: 40px;
   width: 194px;
   height: 55px;
-  font-size: 20px;
+  font-size: 1.25rem;
   /* padding-bottom: 5px; */
   border: none;
   border-radius: 30px;
@@ -935,7 +935,7 @@ Page popup style rules
     width: 104px;
     height: 40px;
     padding: 5px 16px;
-    font-size: 20px;
+    font-size: 1.25rem;
     border: none;
     border-radius: 40px;
     background-color: var(--primary-color);
@@ -951,7 +951,7 @@ Page popup style rules
   }
 
   h2 {
-    font-size: 24px;
+    font-size: 1.5rem;
     margin-top: min(3.46vh, 34px);
     margin-bottom: min(3.05vh, 30px);
     font-weight: 600;
@@ -959,14 +959,14 @@ Page popup style rules
   }
 
   h3 {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary-color);
     margin: min(0.2vh, 2px) 0 min(0.51vh, 5px);
   }
 
   h4 {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 400;
     color: var(--neutral-gray);
     font-style: italic;
@@ -1004,7 +1004,7 @@ Page popup style rules
   }
 
   .filter-tab {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 400;
     color: var(--neutral-gray);
     /* Indicate should be clicked without being a button */
@@ -1218,7 +1218,7 @@ Header style rules
   display: flex;
   justify-content: center;
   gap: 14px;
-  font-size: 16px;
+  font-size: 1rem;
 
   > #header-profile-user-info {
     display: flex;
@@ -1227,14 +1227,14 @@ Header style rules
     text-align: left;
 
     #header-profile-username {
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 700;
       color: var(--primary-color);
       margin: 0;
     }
     #header-profile-email {
       font-style: italic;
-      font-size: 12px;
+      font-size: 0.75rem;
       color: var(--main-text);
       margin: 0;
     }
@@ -1291,7 +1291,7 @@ Search style rules
 }
 
 .fa-search {
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .search-bar {
@@ -1305,7 +1305,7 @@ Search style rules
   border-radius: 40px;
   background-color: var(--header-color);
   color: var(--primary-color);
-  font-size: 16px;
+  font-size: 1rem;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   text-align: left;
@@ -1351,7 +1351,7 @@ Search style rules
 
 @media only screen and (max-width: 800px) {
   .search-bar {
-    font-size: 16px;
+    font-size: 1rem;
     /* width: 200px; */
   }
 }
@@ -1408,7 +1408,7 @@ Select style rules
   padding: 15px 15px;
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 .select::placeholder {
   color: var(--neutral-gray);
@@ -1455,7 +1455,7 @@ Select style rules
   border: none;
   background-color: var(--dropdown-color);
   padding: 15px 15px;
-  font-size: 14px;
+  font-size: 0.875rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1511,7 +1511,7 @@ Input style rules
 /* Universal styling for all input types */
 .input {
   min-height: 45px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   padding-left: 15px;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
@@ -1572,13 +1572,13 @@ Input style rules
 /* Combo box label */
 .input-combo-label {
   color: var(--primary-color);
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
 /* Details underneath label */
 .label-info {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--neutral-gray);
   font-style: italic;
   margin-top: 2px;

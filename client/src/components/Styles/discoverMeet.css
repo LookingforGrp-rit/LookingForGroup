@@ -287,13 +287,13 @@ Image carousel style rules
 
   h2 {
     margin: 0 0 20px;
-    font-size: 32px;
+    font-size: 2rem;
     font-weight: 700;
     color: var(--primary-color);
   }
 
   p {
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 400;
   }
 
@@ -309,7 +309,7 @@ Image carousel style rules
   }
 
   .learn-more {
-    font-size: 18px;
+    font-size: 1.125rem;
     font-weight: 700;
     border: none;
     padding: 0px;
@@ -454,7 +454,6 @@ Filters / Tags Style Rules
   border: none;
   background-color: rgba(0, 0, 0, 0);
   width: 40px;
-  font-size: 25px;
 }
 
 #filters-left-scroll {

@@ -133,7 +133,7 @@ Project Panel component style rules
 
       .follow-amt {
         margin: 0;
-        font-size: 14px;
+        font-size: 0.875rem;
         font-weight: 400;
         color: var(--primary-color);
         height: fit-content;
@@ -159,7 +159,7 @@ Project Panel component style rules
   h2 {
     padding: 0 20px;
     margin: 14px 0;
-    font-size: 22px;
+    font-size: 1.375rem;
     font-weight: 700;
     color: var(--primary-color);
     line-height: normal;
@@ -170,7 +170,7 @@ Project Panel component style rules
     padding: 0 20px;
     margin: 0;
     color: var(--main-text);
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 400;
     line-height: normal;
   }
@@ -180,7 +180,7 @@ Project Panel component style rules
     padding: 0 20px;
     margin: 14px 0;
     color: var(--main-text);
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 400;
     line-height: 28px;
 
@@ -301,7 +301,7 @@ Project Creator and Editor Popup style rules
   padding: 10px 20px;
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
-  font-size: 20px;
+  font-size: 1.25rem;
   width: max-content;
   margin-left: auto;
   margin-right: auto;
@@ -322,7 +322,7 @@ Project Creator and Editor Popup style rules
 } */
 
 .share-button {
-  font-size: 16px;
+  font-size: 1rem;
   background: none;
   display: flex;
   position: relative;
@@ -372,7 +372,7 @@ Project Creator and Editor Popup style rules
 .save-error-msg-general p,
 #invalid-input-error p {
   margin: 0 0 1.5% 0;
-  font-size: 18px;
+  font-size: 1.125rem;
   color: red;
 }
 
@@ -400,7 +400,7 @@ Project Creator and Editor Popup style rules
 #team-delete-member-cancel-button {
   color: var(--primary-color);
   background-color: transparent;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
   border: none;
 }
@@ -425,7 +425,7 @@ Project Creator and Editor Popup style rules
   flex-grow: 1;
   background-color: var(--bg-color);
   color: var(--main-text);
-  font-size: 15px;
+  font-size: 0.9375rem;
   outline: none;
 }
 
@@ -454,7 +454,7 @@ Project Creator and Editor Popup style rules
 
 .project-editor-extra-info {
   font-style: italic;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--neutral-gray);
 }
 
@@ -495,7 +495,7 @@ Project Creator and Editor Popup style rules
 
   .save-error-msg-general p {
     margin: 50 0 1.5% 0;
-    font-size: 18px;
+    font-size: 1.125rem;
     color: red;
   }
 }
@@ -554,7 +554,7 @@ Project Creator and Editor Popup style rules
 
 .character-count {
   font-style: italic;
-  font-size: 15px;
+  font-size: 0.9375rem;
   position: absolute;
   bottom: 7px;
   right: 14px;
@@ -839,7 +839,7 @@ Project Creator and Editor Popup style rules
 
 .project-editor-section-header {
   color: var(--primary-color);
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
 }
 
@@ -869,14 +869,13 @@ Project Creator and Editor Popup style rules
 #project-editor-team-tabs,
 #project-editor-tag-search-tabs {
   gap: 38px;
-  justify-content: center;
 }
 
 .project-editor-tag-search-tab {
   margin-bottom: 10px;
   padding: 0;
   color: var(--neutral-gray);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 400;
   word-break: normal;
   max-width: 100%;
@@ -924,7 +923,7 @@ Project Creator and Editor Popup style rules
 
 #confirm-editor-save-text {
   padding: 50px;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 #project-editor-project-members {
@@ -1107,7 +1106,7 @@ Project Creator and Editor Popup style rules
 .success {
   color: green;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: italic;
 }
 
@@ -1238,7 +1237,7 @@ Project Creator and Editor Popup style rules
   background-color: var(--header-color);
   box-sizing: border-box;
   width: 100%;
-  font-size: 20px;
+  font-size: 1.25rem;
   max-width: 100%;
 }
 
@@ -1308,7 +1307,7 @@ Project Creator and Editor Popup style rules
 
 #team-positions-popup-list-header {
   text-align: left;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--primary-color);
 }
@@ -1411,7 +1410,7 @@ Project Creator and Editor Popup style rules
 
 #edit-position-details>#edit-position-details-left>label,
 #edit-position-details>#edit-position-details-right>label {
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 #edit-position-details-left {
@@ -1477,7 +1476,7 @@ button.edit-position-contact .project-member-image {
 }
 
 .value .project-editor-project-member-name {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 #edit-position-details-right {
@@ -1509,7 +1508,7 @@ select.edit-position-compensation {
 
 #edit-position-details label {
   justify-self: end;
-  font-size: 16px;
+  font-size: 1rem;
   text-wrap: nowrap;
 }
 
@@ -1521,7 +1520,7 @@ select.edit-position-compensation {
 
 #position-edit-cancel {
   color: var(--primary-color);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -1542,7 +1541,7 @@ select.edit-position-compensation {
 #base-url {
   margin: auto auto auto 0px;
   text-wrap: nowrap;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 /* #endregion */
@@ -2006,13 +2005,12 @@ used to help wrap the lines around the word 'Members'*/
   color: var(--neutral-gray, #636363);
   text-align: center;
   font-family: Inter;
-  font-size: 16px;
+  font-size: 1rem;
   font-style: italic;
   font-weight: 400;
   line-height: normal;
   color: #271d66;
   font-family: Inter;
-  font-size: 16px;
   font-style: italic;
   font-weight: 400;
   line-height: normal;
@@ -2038,7 +2036,7 @@ used to help wrap the lines around the word 'Members'*/
   color: #f4f4f4;
   text-align: center;
   font-family: Inter;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
   line-height: 28px;
@@ -2055,7 +2053,7 @@ used to help wrap the lines around the word 'Members'*/
   cursor: pointer;
   text-align: center;
   font-family: Inter;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
@@ -2529,7 +2527,7 @@ plus a follow button & a more options button*/
   border: 1px solid #ccc;
   border-radius: 6px;
   resize: vertical;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .create-post-popup button {
@@ -2720,7 +2718,7 @@ Project Carousel style rules
 }
 
 #project-title {
-  font-size: clamp(24px,5vw,32px);
+  font-size: clamp(1.5rem,5vw,2rem);
   font-weight: 700;
   color: var(--primary-color);
   margin-bottom: 5px;;
@@ -2753,7 +2751,7 @@ Project Carousel style rules
   }
 
   .follow-amt {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 400;
     color: var(--primary-color);
     height: fit-content;
@@ -2772,7 +2770,7 @@ Project Carousel style rules
     color: var(--primary-color);
     margin: 0;
     text-align: right;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-family: Inter;
     font-weight: 400;
     letter-spacing: 2px;
@@ -2794,7 +2792,7 @@ Project Carousel style rules
 }
 
 #project-info-edit {
-  font-size: 16px;
+  font-size: 1rem;
   border: none;
   border-radius: 30px;
   background-color: var(--primary-color) !important;
@@ -2842,7 +2840,7 @@ Project Carousel style rules
   border-radius: 40px;
   background-color: var(--primary-color);
   color: var(--invert-text);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 150%;
   padding: 4px 16px;
@@ -2900,7 +2898,7 @@ Project Carousel style rules
 #positions-popup-header {
   grid-area: header;
   text-align: center;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
   margin: auto;
   padding: 10px 20px;
@@ -2964,7 +2962,7 @@ Project Carousel style rules
 }
 
 #team-positions-popup-list-buttons .add-item-button * {
-  font-size: 16px;
+  font-size: 1rem;
   color: var(--neutral-gray);
 }
 
@@ -2974,7 +2972,7 @@ Project Carousel style rules
   color: var(--main-text);
   border: none;
   border-radius: 50px;
-  font-size: 16px;
+  font-size: 1rem;
   padding: 5px 15px;
   font-weight: 400;
 }
@@ -3046,7 +3044,7 @@ button#positions-popup-list-item-active {
 
 .positions-popup-info-title {
   color: var(--primary-color);
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
   text-align: center;
   margin-bottom: 20px;
@@ -3110,7 +3108,7 @@ button#positions-popup-list-item-active {
   align-items: center;
   gap: 5px;
   font-style: normal;
-  font-size: 14px;
+  font-size: 0.875rem;
   transition: background-color 0.1s;
 }
 
@@ -3161,14 +3159,14 @@ button#positions-popup-list-item-active {
 }
 
 #project-overview-title {
-  font-size: 24px;
+  font-size: 1.5rem;
   color: var(--primary-color);
   font-weight: 600;
   margin-bottom: 20px;
 }
 
 .project-overview-section-header {
-  font-size: 20px;
+  font-size: 1rem;
   color: var(--primary-color);
   font-weight: 600;
   margin: 10px 0;
@@ -3182,7 +3180,7 @@ button#positions-popup-list-item-active {
   justify-content: start;
   color: var(--primary-color);
   font-style: italic;
-  font-size: 20px;
+  font-size: 1rem;
   margin: 15px 0;
 
   #project-overview-links {
@@ -3237,13 +3235,13 @@ button#positions-popup-list-item-active {
 
   .team-member-name {
     font-weight: 700;
-    font-size: 16px;
+    font-size: 1rem;
     color: var(--primary-color);
   }
 
   .team-member-role {
     font-style: italic;
-    font-size: clamp(10px,2vw,14px);
+    font-size: clamp(0.625rem,2vw,0.875rem);
     font-weight: 400;
     color: var(--neutral-gray);
   }
@@ -3279,7 +3277,7 @@ button#positions-popup-list-item-active {
   color: var(--main-text);
   border-radius: 30px;
   padding: 5px 10px;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 /* #endregion*/
@@ -3463,7 +3461,7 @@ My projects page style rules
   padding: 6px 17px;
   color: var(--invert-text);
   text-align: center;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
@@ -3568,7 +3566,7 @@ My projects page style rules
   text-align: left;
   width: 150px;
   text-wrap: wrap;
-  font-size: 16px;
+  font-size: 1rem;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
@@ -3602,7 +3600,7 @@ My projects page style rules
   padding-bottom: 5px;
   margin: 0px;
   text-align: right;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-family: Inter;
   font-weight: normal;
   letter-spacing: 2px;
@@ -3674,7 +3672,7 @@ My projects page style rules
 .project-header-label {
   color: var(--primary-color);
   text-align: left;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
@@ -3703,7 +3701,7 @@ My projects page style rules
   border-radius: 10px;
   height: fit-content;
   padding: 10px 20px 10px 10px;
-  font-size: 20px;
+  font-size: 1.25rem;
 
   .dropdown-container {
     display: flex;
@@ -3762,7 +3760,7 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--primary-color);
   text-align: left;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
@@ -3779,7 +3777,7 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main-text);
   text-align: left;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
@@ -3793,7 +3791,7 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main--text);
   text-align: right;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
@@ -3861,7 +3859,7 @@ My projects page style rules
   text-align: center;
 
   h3 {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
     margin: 0 0 15px;
@@ -3880,7 +3878,7 @@ My projects page style rules
     margin: 0 0 15px 0;
     color: var(--neutral-gray);
     font-style: italic;
-    font-size: 16px;
+    font-size: 1rem;
 
     span {
       color: var(--neutral-gray);
@@ -3897,7 +3895,7 @@ My projects page style rules
     border: none;
     outline: none;
     box-shadow: none;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
     line-height: 28px;
     color: var(--invert-text);
@@ -3917,7 +3915,7 @@ My projects page style rules
     border: none;
     outline: none;
     box-shadow: none;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
     min-width: 106px;

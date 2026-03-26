@@ -51,7 +51,7 @@
   background-color: var(--primary-color);
   transition: 0.25s;
   font-weight: bold;
-  font-size: 20px;
+  font-size: 1.25rem;
   color: var(--invert-text);
   border: none;
   border-radius: 30px;
@@ -64,11 +64,11 @@
 
 .errorFrog{max-width: 25vh; width: auto; align-self: center;}
 
-.error-header{color: var(--text-color); font-size: 30px;}
+.error-header{color: var(--text-color); font-size: 1.875rem;}
 
 @media only screen and (max-width: 799px) {
-  .error-box > * {font-size: 50px; margin: 50px;}
+  .error-box > * {font-size: 3.125rem; margin: 50px;}
   .error-button-container{padding-bottom: 100px;}
-  .error-button-container button {padding: 20px 30px; font-size: 35px;}
+  .error-button-container button {padding: 20px 30px; font-size: 2.1875rem;}
 }
 

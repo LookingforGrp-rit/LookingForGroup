@@ -28,7 +28,7 @@ Credits link footer style rules
 .FooterContainer button {
   border: 0px;
   background: 0px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
   margin: 2px;
 }
@@ -64,7 +64,7 @@ Credits style rules
   color: var(--primary-color);
   text-align: left;
   margin-left: clamp(20px,5vw,50px);
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
