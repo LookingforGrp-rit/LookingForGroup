@@ -3223,8 +3223,8 @@ button#positions-popup-list-item-active {
 }
 
 .project-contributor-profile {
-  width: 75px;
-  height: 75px;
+  width: clamp(45px,15vw,75px);
+  height: clamp(45px,15vw,75px);
   border-radius: 50%;
   border: 2px solid white;
   object-fit: cover;
@@ -3243,7 +3243,7 @@ button#positions-popup-list-item-active {
 
   .team-member-role {
     font-style: italic;
-    font-size: 14px;
+    font-size: clamp(10px,2vw,14px);
     font-weight: 400;
     color: var(--neutral-gray);
   }
