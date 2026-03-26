@@ -132,16 +132,12 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   };
 
   return (
-    <div className={'project-panel'}>
+    <button className={'project-panel'} onClick={() => navigate(projectURL)}>
       <img
         src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
         alt={'project image'}
       />
-      <div
-        className={'project-panel-hover'}
-        onClick={() => navigate(projectURL)}
-      // style={rightAlign ? { width: width, right: 0 } : { width: width }}
-      >
+      <div className={'project-panel-hover'}>
         <img
           src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
           alt={'project image'}
@@ -191,6 +187,6 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
         </div>
         <div id="quote">{project.hook}</div>
       </div>
-    </div>
+    </button>
   );
 };
