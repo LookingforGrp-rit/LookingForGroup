@@ -1269,7 +1269,7 @@ Search style rules
   width: calc(100% - 2em);
   /* Keeps width within parent element */
   /* padding: 10px 15px; */
-  padding: 10px 1em;
+  padding: 8px 1em;
   /*border: 3px solid gray;*/
   border-radius: 40px;
   background-color: var(--header-color);
@@ -1287,16 +1287,30 @@ Search style rules
 }
 
 /*text in the bar*/
-.search-input,
-.search-input::placeholder {
+.search-input {
   background: none;
   width: 100%;
   color: var(--primary-color);
   border: none;
-  padding: 4px;
+  padding: 14px;
   font: inherit;
   cursor: text;
   outline: inherit;
+}
+
+
+.search-input:focus,
+.search-input:focus-visible {
+  border-color: var(--primary-color);
+  border-width: 0;
+  border-bottom-width: 3px;
+  border-style: solid;
+}
+
+.search-input::placeholder {
+  color: var(--primary-color);
+  font: inherit;
+  cursor: text;
 }
 
 /*magnifying glass button*/

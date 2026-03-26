@@ -724,9 +724,7 @@ Project Creator and Editor style rules
 
 .search-wrapper>.search-bar>.search-input {
   background-color: none;
-  border: none;
   margin: 0;
-  padding: 0;
 }
 
 #project-editor-long-description-input {
@@ -1135,7 +1133,6 @@ Project Creator and Editor style rules
 
 #user-search-container .search-input {
   /* Override for default SearchBar component */
-  border: none;
   background-color: transparent;
 }
 
