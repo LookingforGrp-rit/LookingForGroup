@@ -3507,13 +3507,34 @@ My projects page style rules
 .grid-card-image {
   grid-area: image;
   box-sizing: border-box;
-  border: 2px solid white;
+  border: 2px solid var(--bg-color);
   border-radius: 10px;
   width: 200px;
   height: 200px;
   object-fit: cover;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   cursor: pointer;
+}
+
+.grid-card-image-button {
+  border-radius: 10px;
+  width: 200px;
+  height: 200px;
+
+  color: #00000000;
+  background-color: #00000000;
+
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  outline-width: 0;
+}
+
+.grid-card-image-button:focus {
+  border-radius: 10px;
+  outline-width: 4px;
+  outline-style: solid;
+  outline-color: var(--primary-color);
 }
 
 .grid-card-details {
@@ -3535,6 +3556,11 @@ My projects page style rules
   line-height: 28px;
   letter-spacing: 0%;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.grid-card-title:focus {
+  border-width: 4px;
 }
 
 .grid-card-title:hover {
