@@ -2809,10 +2809,6 @@ Project Carousel style rules
   transition: 0.25s;
 } */
 
-#project-info-edit:focus-visible{
-  outline: none !important;
-}
-
 #project-hook {
   flex-grow: 1;
 }
@@ -3204,6 +3200,7 @@ button#positions-popup-list-item-active {
   border-radius: 10px;
   width: calc(50% - 45px);
   min-width: 234px;
+  border-width: 0;
 }
 
 .project-contributor-profile {
