@@ -331,10 +331,10 @@ input:checked+.slider:before {
   .interact-option {
     background: none;
     border: none;
-    outline: none;
     box-shadow: none;
     color: var(--primary-color);
     font-style: italic;
+    overflow: visible;
   }
 
   .interact-option:hover {
@@ -352,7 +352,6 @@ input:checked+.slider:before {
   #options-visibility-btn {
     background: none;
     border: none;
-    outline: none;
     box-shadow: none;
     padding: 0px 0px;
   }
