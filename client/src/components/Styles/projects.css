@@ -31,7 +31,7 @@ Project Panel component style rules
 
 .project-panel-box {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill,minmax(min(350px,80vw),1fr));
   justify-content: space-between;
   align-content: start;
   gap: 20px;
@@ -226,9 +226,6 @@ Project Panel component style rules
 }
 
 @media only screen and (max-width: 700px) {
-  .project-panel-box {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
 
   .projects-banner-outer {
     display: none;
@@ -3613,6 +3610,7 @@ My projects page style rules
 
 .dropdown:has(.card-options-list) {
   box-sizing: border-box;
+  margin-bottom: 100px;
   border: 0px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
