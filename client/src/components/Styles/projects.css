@@ -36,8 +36,6 @@ Project Panel component style rules
   align-content: start;
   gap: 20px;
   width: 100%;
-  /* keep panels below searchbar */
-  z-index: 0;
   /* margin: 0 50px 50px 50px; */
 }
 
@@ -70,7 +68,7 @@ Project Panel component style rules
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s, opacity 0.2s;
-    z-index: 1;
+    z-index: 15;
   }
 }
 

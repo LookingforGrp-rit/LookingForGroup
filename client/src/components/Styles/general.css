@@ -1377,7 +1377,7 @@ Dropdown style rules
   /* box-shadow: 1px 2px 2px var(--dark-lighttheme); */
   position: absolute;
   background: none;
-  z-index: 2;
+  z-index: 15;
 }
 
 /* #endregion */
