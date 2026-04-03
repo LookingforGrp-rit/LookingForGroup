@@ -23,7 +23,6 @@
 .error-box{
     display: flex;
     flex-direction: column;
-    flex-align: center;
     text-align: center;
     padding-top: 200px;
 }
@@ -66,9 +65,4 @@
 
 .error-header{color: var(--text-color); font-size: 1.875rem;}
 
-@media only screen and (max-width: 799px) {
-  .error-box > * {font-size: 3.125rem; margin: 50px;}
-  .error-button-container{padding-bottom: 100px;}
-  .error-button-container button {padding: 20px 30px; font-size: 2.1875rem;}
-}
 

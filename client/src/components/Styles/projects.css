@@ -214,6 +214,7 @@ Project Panel component style rules
       opacity: 1;
       position: static;
       height: auto;
+      z-index: 1;
     }
   }
 
