@@ -31,7 +31,7 @@ Project Panel component style rules
 
 .project-panel-box {
   display: grid;
-  grid-template-columns: repeat(auto-fill,minmax(min(350px,80vw),1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px,30vw,350px), 80vw), 1fr));
   justify-content: space-between;
   align-content: start;
   gap: 20px;
@@ -74,6 +74,13 @@ Project Panel component style rules
 
 .project-panel:hover {
   transition: 0.2s;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  box-shadow: 2px 2px 10px 2px var(--shadow-color);
+
+  img {
+    border-radius: 10px 10px 0 0;
+  }
 
   .project-panel-hover {
     visibility: visible;
@@ -83,7 +90,7 @@ Project Panel component style rules
 }
 
 .project-panel-hover {
-  border-radius: 10px;
+  border-radius: 0 0 10px 10px;
   background-color: var(--bg-color);
   box-shadow: 2px 2px 10px 2px var(--shadow-color);
   color: var(--main-text);
@@ -91,7 +98,8 @@ Project Panel component style rules
   height: auto;
   /* min-width: 420px; */
   width: 100%;
-  /*top: -100px;*/
+  top: 100%;
+  pointer-events: none;
   visibility: visible;
   transition: visibility 0.2s;
 
@@ -207,7 +215,13 @@ Project Panel component style rules
     height: auto;
     display: grid;
     flex-direction: column;
+    align-self: baseline;
+    z-index: 0;
+    img {
+      border-radius: 10px 10px 0px 0px;
+      box-shadow: 2px 2px 10px 2px var(--shadow-color);
 
+    }
 
     .project-panel-hover {
       visibility: visible;
@@ -216,10 +230,6 @@ Project Panel component style rules
       height: auto;
       z-index: 1;
     }
-  }
-
-  .project-panel>img {
-    display: none;
   }
 
 }
@@ -799,6 +809,7 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   max-height: 485px;
+
   .error {
     margin-top: 15px;
   }
@@ -2601,6 +2612,7 @@ Project Carousel style rules
   flex-direction: column;
   position: relative;
   margin-bottom: 20px;
+
   .carousel-contents {
     /* height: 370px; */
     width: 100%;
@@ -2714,10 +2726,10 @@ Project Carousel style rules
 }
 
 #project-title {
-  font-size: clamp(1.5rem,5vw,2rem);
+  font-size: clamp(1.5rem, 5vw, 2rem);
   font-weight: 700;
   color: var(--primary-color);
-  margin-bottom: 5px;;
+  margin-bottom: 5px;
 }
 
 #project-info-buttons {
@@ -3217,8 +3229,8 @@ button#positions-popup-list-item-active {
 }
 
 .project-contributor-profile {
-  width: clamp(45px,15vw,75px);
-  height: clamp(45px,15vw,75px);
+  width: clamp(45px, 15vw, 75px);
+  height: clamp(45px, 15vw, 75px);
   border-radius: 50%;
   border: 2px solid white;
   object-fit: cover;
@@ -3237,7 +3249,7 @@ button#positions-popup-list-item-active {
 
   .team-member-role {
     font-style: italic;
-    font-size: clamp(0.625rem,2vw,0.875rem);
+    font-size: clamp(0.625rem, 2vw, 0.875rem);
     font-weight: 400;
     color: var(--neutral-gray);
   }
@@ -3394,7 +3406,7 @@ My projects page style rules
   }
 
   .select-container,
-    .my-projects-create-btn{
+  .my-projects-create-btn {
     display: flex;
   }
 }
