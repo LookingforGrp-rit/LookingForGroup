@@ -1433,7 +1433,7 @@ Select style rules
 
 /* Container for Select options */
 .select-options {
-  width: 100%;
+  width: min(100%,90vw);
   border-radius: 10px;
   position: absolute;
   background: none;
