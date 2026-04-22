@@ -132,20 +132,16 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   };
 
   return (
-    <div className={'project-panel'}>
+    <div className={'project-panel'} onClick={() => navigate(projectURL)}
+>
       <img
         src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
         alt={'project image'}
       />
       <div
         className={'project-panel-hover'}
-        onClick={() => navigate(projectURL)}
       // style={rightAlign ? { width: width, right: 0 } : { width: width }}
       >
-        <img
-          src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-          alt={'project image'}
-        />
         {/* <h2>{project.title}</h2> */}
         <div className='project-title-likes'>
           <h2>{project.title}</h2>

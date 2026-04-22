@@ -9,6 +9,12 @@
     gap: 20px 16px;
 }
 
+@media only screen and (max-width: 700px) {
+    #profile-editor-project-selection {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 .projectTile {
     position: relative;
     aspect-ratio: 1 / 1;

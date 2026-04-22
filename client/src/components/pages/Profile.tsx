@@ -318,15 +318,15 @@ const Profile = () => {
                   {displayedProfile?.title}
                 </div>
                 <div className="profile-extra">
-                  <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
+                  <ThemeIcon id={'major'} width={20} height={20} className={'mono-fill'} ariaLabel={'Major'}/>
                   {majorsArr.join(", ")} {displayedProfile?.academicYear}
                 </div>
                 <div className="profile-extra">
-                  <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
+                  <ThemeIcon id={'location'} width={20} height={20} className={'mono-fill'} ariaLabel={'Location'}/>
                   {displayedProfile?.location}
                 </div>
                 <div className="profile-extra">
-                  <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+                  <ThemeIcon id={'pronouns'} width={20} height={20} className={'mono-fill'} ariaLabel={'Pronouns'} />
                   {displayedProfile?.pronouns}
                 </div>
                 {/* Only show mentor status if user is a mentor */}
