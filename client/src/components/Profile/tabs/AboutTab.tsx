@@ -14,7 +14,7 @@ let profileAfterAboutChanges: PendingUserProfile;
 type AboutTabProps = {
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   profile: PendingUserProfile;
-  updatePendingProfile?: (updatedPendingrProfile: PendingUserProfile) => void;
+  updatePendingProfile?: (updatedPendingProfile: PendingUserProfile) => void;
 };
 
 /**

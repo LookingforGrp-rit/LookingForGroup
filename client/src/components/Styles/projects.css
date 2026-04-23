@@ -333,10 +333,7 @@ Project Creator and Editor Popup style rules
   display: flex;
   position: relative;
 
-  width: 100%;
   border-radius: 10px;
-
-  gap: 17px;
 
   align-items: center;
   margin: 0;
@@ -347,7 +344,10 @@ Project Creator and Editor Popup style rules
   padding-top: 7px;
   padding-bottom: 7px;
 }
-
+#profile-menu-dropdown .share-button {
+  width: 100%;
+  gap: 17px;
+}
 .share-button:hover {
   background-color: var(--header-color) !important;
 }

@@ -216,8 +216,10 @@ const Profile = () => {
 
     {/* If the displayed user is the user's profile */}
     {isUsersProfile ? (
-      // Show edit buttons
+      <>
+      <ShareButton />
       <ProfileEditPopup />
+      </>
     ) : (
       <>
       {/* Or, show follow and options buttons */}
