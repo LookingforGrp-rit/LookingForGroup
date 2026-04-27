@@ -132,8 +132,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   };
 
   return (
-    <div className={'project-panel'} onClick={() => navigate(projectURL)}
->
+    <button className={'project-panel'} onClick={() => navigate(projectURL)}>
       <img
         src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
         alt={'project image'}
@@ -187,6 +186,6 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
         </div>
         <div id="quote">{project.hook}</div>
       </div>
-    </div>
+    </button>
   );
 };
