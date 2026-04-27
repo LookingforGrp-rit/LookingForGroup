@@ -274,7 +274,7 @@ const Project = () => {
           const memberUser = member.user; //so i don't have to go user.user.userId or anything
 
           return (
-            <div
+            <button
               key={memberUser.userId}
               className="project-contributor"
               onClick={() =>
@@ -297,7 +297,7 @@ const Project = () => {
                 </div>
                 <div className="team-member-role">{member.role.label}</div>
               </div>
-            </div>
+            </button>
           );
         })}
       </>

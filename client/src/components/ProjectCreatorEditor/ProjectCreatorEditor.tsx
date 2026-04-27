@@ -1,4 +1,4 @@
-  import { useState, FC, Dispatch, SetStateAction } from "react";
+  import { useState, useRef, FC, Dispatch, SetStateAction } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -76,6 +76,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   // If this is set to true, the "Save Changes" button appears in every tab
   const [saveable, setSaveable] = useState(false);
 
+  // Component Refs
+  const exitButton = useRef(null);
+  const startButton = useRef(null);
+
   // Check if the current project can be saved
   let valid = false;
   if (modifiedProject?.title != "") {
@@ -92,10 +96,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     setSaveable(valid);
   }
 
-  // Submit the form to save or create the project
+  // Start editing the project creator
   const createOrEdit = async () => {
     if (!newProject && projectID) {
-    // Load existing project
+      
+      // Load existing project
       try {
         // const response = await getByID(Number(projectID));
         // if (!response.data) return;
@@ -125,6 +130,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       } catch (err) {
         console.error("Error creating new project:", err);
       }
+    }
+    if (startButton.current) {
+      (startButton.current as unknown as HTMLElement).focus();
     }
   }
 
@@ -185,7 +193,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   //TODO: update this to show a close without saving prompt
   const closeWithoutSaving = async () => {
     // Why is this here? If it's a new project then it won't be on the API anyway
-    if(projectData && newProject) await deleteProject(projectData?.projectId)
+    setCurrentTab(0);
+    if(projectData && newProject) await deleteProject(projectData?.projectId);
   }
 
 
@@ -244,6 +253,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
     console.log("Created project thumbnail: ");
     console.log(modifiedProject.thumbnail);
+    setCurrentTab(0);
 
     try {
       await dataManager.saveChanges();
@@ -285,7 +295,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         </PopupButton>
       )}
 
-      <PopupContent callback={closeWithoutSaving}>
+      <PopupContent callback={closeWithoutSaving} closeButtonRef={exitButton}>
         
         <div id="project-creator-editor">
           <div id="project-editor-tabs">
@@ -296,6 +306,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 setCurrentTab(0);
               }}
               className={`project-editor-tab ${currentTab === 0 ? "project-editor-tab-active" : ""}`}
+              ref={startButton}
             >
               General
             </button>
@@ -396,6 +407,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <></>
             )}
           </div>
+          
+          {/*Focus control*/}
+          <div tabIndex={0} onFocus={() => (exitButton.current as unknown as HTMLElement).focus()}></div>
+
           {/* Responsiveness fix: General Tab has its own button/error text for layout change 
             - This never actually displays anywhere, so I'm commenting it out
           */}

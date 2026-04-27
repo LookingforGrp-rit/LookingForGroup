@@ -669,9 +669,7 @@ Project Creator and Editor Popup style rules
 
 .search-wrapper>.search-bar>.search-input {
   background-color: none;
-  border: none;
   margin: 0;
-  padding: 0;
 }
 
 #project-editor-long-description-input {
@@ -1079,7 +1077,6 @@ Project Creator and Editor Popup style rules
 
 #user-search-container .search-input {
   /* Override for default SearchBar component */
-  border: none;
   background-color: transparent;
 }
 
@@ -2817,10 +2814,6 @@ Project Carousel style rules
   transition: 0.25s;
 } */
 
-#project-info-edit:focus-visible {
-  outline: none !important;
-}
-
 #project-hook {
   flex-grow: 1;
 }
@@ -3226,6 +3219,7 @@ button#positions-popup-list-item-active {
   border-radius: 10px;
   width: calc(50% - 45px);
   min-width: 234px;
+  border-width: 0;
 }
 
 .project-contributor-profile {
@@ -3552,13 +3546,34 @@ My projects page style rules
 .grid-card-image {
   grid-area: image;
   box-sizing: border-box;
-  border: 2px solid white;
+  border: 2px solid var(--bg-color);
   border-radius: 10px;
   width: 200px;
   height: 200px;
   object-fit: cover;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   cursor: pointer;
+}
+
+.grid-card-image-button {
+  border-radius: 10px;
+  width: 200px;
+  height: 200px;
+
+  color: #00000000;
+  background-color: #00000000;
+
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  outline-width: 0;
+}
+
+.grid-card-image-button:focus {
+  border-radius: 10px;
+  outline-width: 4px;
+  outline-style: solid;
+  outline-color: var(--primary-color);
 }
 
 .grid-card-details {
@@ -3580,6 +3595,11 @@ My projects page style rules
   line-height: 28px;
   letter-spacing: 0%;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.grid-card-title:focus {
+  border-width: 4px;
 }
 
 .grid-card-title:hover {
