@@ -11,6 +11,7 @@ Login and Signup page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region login and signup page */
 
 .background-cover {
   position: fixed;
@@ -32,7 +33,7 @@ Login and Signup page style rules
   justify-content: center;
   align-items: center;
   height: 525px;
-  width: 880px;
+  width: min(95vw,880px);
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border-radius: 10px;
@@ -41,7 +42,7 @@ Login and Signup page style rules
 
 .login-form,
 .signup-form {
-  width: 440px;
+  width: min(95vw,440px);
   height: 485px;
   text-align: center;
   /* border: 1px solid black; */
@@ -52,6 +53,7 @@ Login and Signup page style rules
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  box-sizing: border-box;
 }
 
 .directory {
@@ -87,7 +89,7 @@ Login and Signup page style rules
 
 .login-form h2,
 .signup-form h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--primary-color);
 }
@@ -98,7 +100,7 @@ Login and Signup page style rules
 } */
 
 .signup-name-input {
-  width: 135px;
+  width: min(40vw,135px);
   height: 40px;
   margin: 5px;
   padding: 5px 20px;
@@ -107,12 +109,12 @@ Login and Signup page style rules
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .signup-input,
 .login-input {
-  width: 320px;
+  width: min(90vw,320px);
   height: 40px;
   margin: 5px;
   padding: 5px 20px;
@@ -122,7 +124,7 @@ Login and Signup page style rules
   border-radius: 10px;
   text-align: left;
   outline: none;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 
 .signup-input::placeholder,
@@ -138,7 +140,7 @@ Login and Signup page style rules
   height: 40px;
   /* margin: 20px auto 0px auto; */
   padding: 5px 16px;
-  font-size: 20px;
+  font-size: 1.25rem;
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
@@ -152,7 +154,7 @@ Login and Signup page style rules
   height: 40px;
   margin: 20px auto 0px auto;
   padding: 5px 16px;
-  font-size: 20px;
+  font-size: 1.25rem;
   border: 1px solid #e3e3e3;
   border: none;
   border-radius: 50px;
@@ -175,6 +177,7 @@ Login and Signup page style rules
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  max-width: 100%;
 }
 
 .signup-form-inputs {
@@ -195,7 +198,7 @@ Login and Signup page style rules
 
 #password-wrapper input {
   padding-right: 60px;
-  width: 280px;
+  width: min(90vw,280px);
 }
 
 #show-password {
@@ -219,7 +222,7 @@ Login and Signup page style rules
 }
 
 #forgot-password {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--primary-color);
   margin: 0px;
   box-shadow: none;
@@ -258,10 +261,6 @@ Login and Signup page style rules
     background-repeat: no-repeat;
   }
 
-  .login-signup-container {
-    width: 540px;
-    border-radius: 5px;
-  }
 
   .login-form,
   .signup-form {
@@ -297,6 +296,7 @@ Login and Signup page style rules
     cursor: pointer;
   }
 }
+/* #endregion*/
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -305,6 +305,7 @@ Signup process modal style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region signup process modal */
 
 .signupProcess-background {
   position: fixed;
@@ -354,13 +355,13 @@ Signup process modal style rules
 }
 
 #signupProcess-title {
-  font-size: 28px;
+  font-size: 1.75rem;
   color: var(--orange);
   width: 500px;
   text-align: center;
 
   p {
-    font-size: 15px;
+    font-size: 0.9375rem;
     color: black;
     margin: 10px;
     font-weight: 400;
@@ -379,7 +380,7 @@ Signup process modal style rules
   border-radius: 14px;
   height: 45px;
   width: 100px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   background-color: var(--lightGray);
   color: black;
@@ -398,7 +399,7 @@ Signup process modal style rules
   border-radius: 14px;
   height: 45px;
   width: 100px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 800;
   background-color: var(--primary-color);
   color: var(--orange);
@@ -415,7 +416,7 @@ Signup process modal style rules
   border-radius: 14px;
   height: 45px;
   width: 100px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   background-color: var(--lightGray);
   color: black;
@@ -458,7 +459,7 @@ Signup process modal style rules
     width: 340px;
     height: 30px;
     padding: 5px 20px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     border: 2px solid var(--lightGray);
     border-radius: 50px;
     background-color: var(--primary-color);
@@ -507,7 +508,7 @@ Signup process modal style rules
     width: 140px;
     height: 40px;
     padding: 5px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     border: none;
     border-radius: 10px;
     background-color: var(--primary-color);
@@ -523,7 +524,7 @@ Signup process modal style rules
     align-items: center;
     width: 140px;
     height: 40px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     border: none;
     border-radius: 10px;
     background-color: var(--primary-color);
@@ -546,7 +547,7 @@ Signup process modal style rules
 }
 
 .signup-fullname h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
   margin: 0;
   text-align: left;
 }
@@ -557,7 +558,7 @@ Signup process modal style rules
 }
 
 #signup-profile-skill {
-  font-size: 14px;
+  font-size: 0.875rem;
   margin: 0 20px;
 
   display: flex;
@@ -584,7 +585,7 @@ Signup process modal style rules
   height: 65px;
   margin: 10px;
   padding: 0px 20px;
-  font-size: 16px;
+  font-size: 1rem;
   border: 2px solid var(--lightGray);
   border-radius: 4px;
   background-color: var(--primary-color);
@@ -612,7 +613,7 @@ Signup process modal style rules
   color: black;
   border-radius: 4px;
   padding: 5px 10px;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 #pronouns-input {
@@ -620,7 +621,7 @@ Signup process modal style rules
   height: 35px;
   margin: 40px 0px 0px 10px;
   padding: 5px 20px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   border: 2px solid var(--lightGray);
   border-radius: 4px;
   background-color: var(--primary-color);
@@ -636,7 +637,7 @@ Signup process modal style rules
   border: 2px solid var(--lightGray);
   border-radius: 4px;
   resize: none;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .name-username-pronouns-container {
@@ -656,7 +657,7 @@ Signup process modal style rules
   height: 200px;
   margin: 20px 40px;
   padding: 5px 10px;
-  font-size: 24px;
+  font-size: 1.5rem;
   border: 2px solid var(--lightGray);
   border-radius: 12px;
   background-color: var(--primary-color);
@@ -755,6 +756,7 @@ Signup process modal style rules
   }
 
   #signupProcess-title {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 }
+/* #endregion */

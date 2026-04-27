@@ -137,11 +137,10 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
         src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
         alt={'project image'}
       />
-      <div className={'project-panel-hover'}>
-        <img
-          src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-          alt={'project image'}
-        />
+      <div
+        className={'project-panel-hover'}
+      // style={rightAlign ? { width: width, right: 0 } : { width: width }}
+      >
         {/* <h2>{project.title}</h2> */}
         <div className='project-title-likes'>
           <h2>{project.title}</h2>
