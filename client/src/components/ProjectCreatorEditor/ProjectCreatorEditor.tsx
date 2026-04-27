@@ -258,7 +258,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           updateDisplayedProject(dataManager.getSavedProject());
         }
       }
-      navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`)
+      navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
