@@ -51,7 +51,7 @@ const Profile = () => {
   const [isUsersProfile, setIsUsersProfile] = useState<boolean>(false);
 
   const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
-  const [userID, setUserID] = useState<number>(0);
+  const [userID, setUserID] = useState<number>();
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
 
@@ -76,6 +76,7 @@ const Profile = () => {
    * @returns true if following
    */
   const checkFollow = useCallback(async () => {
+    if(userID){
     const followings = (await getUserFollowing(userID)).data?.users;
 
     let isFollowing = false;
@@ -88,6 +89,8 @@ const Profile = () => {
     }
     setIsFollow(isFollowing);
     return isFollowing;
+
+    }
   }, [profileID, userID])
 
   /**
@@ -164,7 +167,7 @@ const Profile = () => {
       // Get the userID for our current user
       const response = await getCurrentAccount()
       if (response.data) setUserID(response.data.userId);
-      setIsUsersProfile(userID.toString() === profileID);
+      if(userID) setIsUsersProfile(userID.toString() === profileID);
 
       try {
         const { data } = await getUsersById(Number(profileID));
