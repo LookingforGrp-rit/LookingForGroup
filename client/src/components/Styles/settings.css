@@ -341,6 +341,13 @@ input:checked+.slider:before {
     text-decoration: underline;
   }
 
+  .interact-option:focus {
+    text-decoration: underline;
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+    transition: 0s;
+  }
+
   input {
     border: none;
     background-color: var(--header-color);
@@ -365,6 +372,13 @@ input:checked+.slider:before {
     input {
       background-color: var(--invert-text);
     }
+  }
+
+  #options-theme-btn:focus,
+  #options-visibility-btn:focus {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+    transition: 0s;
   }
 
   #options-theme-dropdown,
