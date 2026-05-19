@@ -460,6 +460,7 @@ Filters / Tags Style Rules
   visibility: hidden; 
   opacity: 0;
   pointer-events: none;
+  transition: 0s;
 }
 
 #filters-left-scroll {

@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useEffect} from 'react';
+import React, {useState, Fragment, useEffect, useRef} from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
@@ -60,6 +60,11 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   const [activeTagFilters, setActiveTagFilters] = useState<Tag[]>([]);
   // Whether the "Applied Filters" section should display under the quick tags
   const [displayFiltersText, setDisplayFiltersText] = useState(false);
+
+  // Dynamically show/hide arrows
+  const tagFiltersRef = useRef<HTMLDivElement>(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(false);
 
 
   // Formatted for SearchBar dataSets prop
@@ -185,81 +190,48 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   };
 
   /**
-   * Scrolls horizontal tag list left or right.
-   * Hides or shows scroll buttons depending on edge conditions.
+   * Checks the scroll position and container width to determine if 
+   * there is more content to the left or right.
    */
-  const scrollTags = (direction: string) => {
-    // Check if left or right button was clicked
-    const tagFilterElement = document.getElementById('discover-tag-filters');
-    const leftScroll = document.getElementById('filters-left-scroll');
-    const rightScroll = document.getElementById('filters-right-scroll');
-
-    // Ensure these elements exist before running code
-    if (tagFilterElement && leftScroll && rightScroll) {
-      const scrollAmt = tagFilterElement.clientWidth;
-
-      // Check if other button is hidden, if so...
-      if (leftScroll.classList.contains('hide') || rightScroll.classList.contains('hide')) {
-        // Un-hide the other scrolling button
-        leftScroll.classList.remove('hide');
-        rightScroll.classList.remove('hide');
-      }
-
-      // If we are going to hit the edge with this scroll...
-      if (direction === 'left') {
-        if (tagFilterElement.scrollLeft - scrollAmt <= 0) {
-          leftScroll.classList.add('hide');
-        }
-
-        tagFilterElement.scrollBy(-scrollAmt, 0);
-      } else if (direction === 'right') {
-        const scrolledAmt = tagFilterElement.scrollLeft + tagFilterElement.offsetWidth + scrollAmt;
-        if (scrolledAmt >= tagFilterElement.scrollWidth) {
-          rightScroll.classList.add('hide');
-        }
-
-        tagFilterElement.scrollBy(scrollAmt, 0);
-      }
+  const checkScrollVisibility = () => {
+    if (tagFiltersRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = tagFiltersRef.current;
+      
+      setShowLeftArrow(scrollLeft > 0);
+      setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1);
     }
   };
 
   /**
-   * Recalculates visibility of scroll buttons on resize.
+   * Scrolls horizontal tag list left or right.
+   * Hides or shows scroll buttons depending on edge conditions.
    */
-  const resizeTagFilter = () => {
-    const tagFilterElement = document.getElementById('discover-tag-filters')!;
-    const leftScroll = document.getElementById('filters-left-scroll')!;
-    const rightScroll = document.getElementById('filters-right-scroll')!;
-
-    if (tagFilterElement && leftScroll && rightScroll) {
-      // Check if left scroll should be shown or hidden
-      if (tagFilterElement.scrollLeft <= 0 && !leftScroll.classList.contains('hide')) {
-        leftScroll.classList.add('hide');
-      } else if (tagFilterElement.scrollLeft > 0 && leftScroll.classList.contains('hide')) {
-        leftScroll.classList.remove('hide');
-      }
-
-      // Check if right scroll should be shown or hidden
-      const scrollAmt = tagFilterElement.scrollLeft + tagFilterElement.offsetWidth;
-      if (scrollAmt >= tagFilterElement.scrollWidth && !rightScroll.classList.contains('hide')) {
-        rightScroll.classList.add('hide');
-      } else if (scrollAmt < tagFilterElement.scrollWidth && rightScroll.classList.contains('hide')) {
-        rightScroll.classList.remove('hide');
+  const scrollTags = (direction: string) => {
+    if (tagFiltersRef.current) {
+      // 80% of width. Feel free to fiddle with
+      const scrollAmt = tagFiltersRef.current.clientWidth * 0.8;
+      
+      if (direction === 'left') {
+        tagFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
+      } else if (direction === 'right') {
+        tagFiltersRef.current.scrollBy({ left: scrollAmt, behavior: 'smooth' });
       }
     }
   };
 
-  // window.resize event listener
+  // Check arrow visibility on resize, mount, and data changes
   useEffect(() => {
+    checkScrollVisibility(); // initial
+    
     let timeout: NodeJS.Timeout;
     const handleResize = () => {
       clearTimeout(timeout);
-      timeout = setTimeout(resizeTagFilter, 250);
+      timeout = setTimeout(checkScrollVisibility, 150);
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  }, [dataLoaded]);
 
   /**
    * Checks if a tag is currently enabled in the popup filters.
@@ -293,12 +265,17 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
       <div id="discover-filters">
         <button
           id="filters-left-scroll"
-          className="filters-scroller hide"
+          className={`filters-scroller ${!showLeftArrow ? 'hide' : ''}`}
           onClick={() => scrollTags('left')}
         >
           <i className="fa fa-caret-left"></i>
         </button>
-        <div id="discover-tag-filters" tabIndex={-1}>
+        <div 
+          id="discover-tag-filters" 
+          tabIndex={-1}
+          ref={tagFiltersRef}
+          onScroll={checkScrollVisibility}
+        >
           { /* make each tag button have proper label & type */}
           {tagList.map(tagLabel => {
             const label = tagLabel === 'Developers' ? 'Developer' : tagLabel === 'Designers' ? 'Designer' : tagLabel;
@@ -503,7 +480,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         </div>
         <button
           id="filters-right-scroll"
-          className={`filters-scroller ${window.innerWidth >= 1450 ? 'hide' : ''}`}
+          className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
           onClick={() => scrollTags('right')}
         >
           <i className="fa fa-caret-right"></i>
