@@ -112,7 +112,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     <div className="search-wrapper">
       {/* Prevent form submission from refreshing the page */}
       <div className="search-bar">
-        <div role="button" className="search-button" aria-label="Search" tabIndex={1}>
+        <div className="search-button">
           <i className="fa fa-search" aria-hidden="true"></i>
         </div>
         {/* Input field for search query */}
@@ -128,6 +128,8 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
               e.preventDefault();
             }
           }}
+          aria-label='Searchbar'
+          autoFocus={false}
           autoComplete="searchbar-off"
         />
       </div>

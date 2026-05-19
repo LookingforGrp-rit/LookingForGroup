@@ -298,7 +298,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         >
           <i className="fa fa-caret-left"></i>
         </button>
-        <div id="discover-tag-filters" /*onResize={resizeTagFilter}*/>
+        <div id="discover-tag-filters" tabIndex={-1}>
           { /* make each tag button have proper label & type */}
           {tagList.map(tagLabel => {
             const label = tagLabel === 'Developers' ? 'Developer' : tagLabel === 'Designers' ? 'Designer' : tagLabel;

@@ -9,6 +9,12 @@
     gap: 20px 16px;
 }
 
+@media only screen and (max-width: 700px) {
+    #profile-editor-project-selection {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
 .projectTile {
     position: relative;
     aspect-ratio: 1 / 1;
@@ -39,24 +45,29 @@
     }
 
     .project-visibility-button {
-        position: absolute;
-        bottom: 9px;
-        right: 11.5px;
-        border: none;
-        padding: 0;
-        background-color: var(--primary-color);
-        width: 30px;
-        height: 30px;
-        border-radius: 30px;
-        display: flex;
-        justify-content: center;
-        align-items: center;
+      position: absolute;
+      bottom: 9px;
+      right: 11.5px;
+      border: none;
+      padding: 0;
+      background-color: var(--primary-color);
+      width: 30px;
+      height: 30px;
+      border-radius: 30px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 }
 
+.project-tile-title {
+  font-size: 18px;
+  margin-top: 6px;
+}
+
 #profile-editor-projects {
-    height: 100%;
-    font-size: 1rem;
+  height: 100%;
+  font-size: 1rem;
 }
 
 .no-projects-text {
