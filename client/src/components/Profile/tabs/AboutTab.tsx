@@ -116,6 +116,8 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
               const firstName = e.target.value;
               profileAfterAboutChanges = { ...profileAfterAboutChanges, firstName };
               updatePendingProfile(profileAfterAboutChanges);
+
+              //dataManager is also undefined here
               dataManager.updateFields({
                 id: {
                   value: userId,
@@ -134,6 +136,8 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
               const lastName = e.target.value;
               profileAfterAboutChanges = { ...profileAfterAboutChanges, lastName };
               updatePendingProfile(profileAfterAboutChanges);
+
+              //dataManager is also undefined here
               dataManager.updateFields({
                 id: {
                   value: userId,
@@ -152,6 +156,8 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
               const pronouns = e.target.value;
               profileAfterAboutChanges = { ...profileAfterAboutChanges, pronouns };
               updatePendingProfile(profileAfterAboutChanges);
+
+              //dataManager is also undefined here
               dataManager.updateFields({
                 id: {
                   value: userId,
@@ -185,6 +191,8 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
                       title
                     }
                     updatePendingProfile(profileAfterAboutChanges)
+
+                    //dataManager is also undefined here
                     dataManager.updateFields({
                       id: {
                         value: userId,
@@ -249,7 +257,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
                   //debugger;
                   updatePendingProfile(profileAfterAboutChanges);
 
-                  //updateFields is undefined for some reason when changing the year
+                  //dataManager is undefined for some reason when changing the year
                   dataManager.updateFields({
                     id: {
                       value: userId,
@@ -281,6 +289,8 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
               const location = e.target.value;
               profileAfterAboutChanges = { ...profileAfterAboutChanges, location };
               updatePendingProfile(profileAfterAboutChanges);
+
+              //dataManager is also undefined here
               dataManager.updateFields({
                 id: {
                   value: userId,
@@ -344,6 +354,8 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
             const headline = e.target.value;
             profileAfterAboutChanges = { ...profileAfterAboutChanges, headline };
             updatePendingProfile(profileAfterAboutChanges);
+
+            //dataManager is also undefined here
             dataManager.updateFields({
               id: {
                 value: userId,
@@ -364,6 +376,8 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
             const funFact = e.target.value;
             profileAfterAboutChanges = { ...profileAfterAboutChanges, funFact };
             updatePendingProfile(profileAfterAboutChanges);
+
+            //dataManager is also undefined here
             dataManager.updateFields({
               id: {
                 value: userId,
@@ -386,6 +400,8 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
           const bio = e.target.value;
           profileAfterAboutChanges = { ...profileAfterAboutChanges, bio };
           updatePendingProfile(profileAfterAboutChanges);
+
+          //dataManager is also undefined here
           dataManager.updateFields({
             id: {
               value: userId,
