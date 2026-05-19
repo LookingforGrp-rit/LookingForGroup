@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, ChangeEvent } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -29,6 +29,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
   // Components
   // --------------------
+  const [currentSearch, setCurrentSearch] = useState('');
+
   //Hero banner for profile display
   const profileHero = (
     <div id='discover-hero'>
@@ -338,21 +340,22 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
    */
   const updateProjectList = async (activeTagFilters: Tag[]) => {
     const projectList = fullProjectList;
-
     // Get project and user info to match with tags
     const items : ProjectWithFollowers[] = [];
     for (let item of projectList) {
       if (projectCache[item.projectId].full != undefined) {
         items.push(projectCache[item.projectId].full as ProjectWithFollowers);
-        return;
+        //return;
       }
-
-      const projectData = await getByID(item.projectId);
-      if (projectData.data) {
-        items.push(projectData.data);
-        projectCache[item.projectId].full = projectData.data;
-      } else {
-        console.error("Error getting project data from " + item.projectId);
+      else
+      {
+        const projectData = await getByID(item.projectId);
+        if (projectData.data) {
+          items.push(projectData.data);
+          projectCache[item.projectId].full = projectData.data;
+        } else {
+          console.error("Error getting project data from " + item.projectId);
+        }
       }
     }
 
@@ -386,7 +389,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       
       return matchesAny;
     }});
-
+     
     // If no tags are currently selected, render all projects
     // !! Needs to be skipped if searchbar has any input !!
     if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
@@ -397,6 +400,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       return;
     }
     
+    console.log(tagFilteredList[0].title);
     setProjectSearchData(tagFilteredList);
 
     // Set displayed projects
@@ -413,10 +417,12 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     // Get user info to match with tags
     const items : UserDetail[] = [];
     for (let item of userList) {
+      /* each item was being pushed twice, commented out this one
       if (userCache[item.userId].detail != undefined) {
         items.push(userCache[item.userId].detail as UserDetail);
         return;
       }
+      */
 
       const userData = await getUsersById(item.userId);
       if (userData.data) {
@@ -504,7 +510,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={ category == 'projects' ? projectDataSet : userDataSet }
           onSearch={ category == 'projects' ? searchProjects : searchUsers }
-          value={undefined} onChange={undefined} />
+          value={currentSearch} onChange={(e : ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)} />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 
