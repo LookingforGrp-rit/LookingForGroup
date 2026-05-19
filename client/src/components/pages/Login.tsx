@@ -72,7 +72,14 @@ const Login: React.FC = () => {
       const response = await getUserByUsername(loginInput);
       if (response.data) {
         // try login
-        try {
+        try { 
+          //this does not exist! but maybe it should?
+          //what would it do tho
+          //maybe we save this for when oauth is up and running
+          //rather than making something rudimentary now that'll be replaced by oauth anyway
+          //we have a /login endpoint that goes through oauth and sets currentUser to the id of the logged-in user 
+          //which is retrieved through their email that oauth would package for us
+          //we'd have to pass the password through here so we can give it to oauth too right? or maybe not idk how it works
           sendPost('/api/login', { loginInput, password }, (response: LoginResponse) => {
             if (response.error) {
               setError(response.error);

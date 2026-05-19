@@ -82,15 +82,10 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     }
 
     // check if username in use
-    try {
-      const data = await getUserByUsername(username);
-      // if there is a result, a match is found
-      if (data) {
-        setMessage('Username already in use');
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
+    const usernameCheck = await getUserByUsername(username);
+    // if there is a result, a match is found
+    if (usernameCheck) {
+      setMessage('Username already in use');
       return false;
     }
 
@@ -107,19 +102,14 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     }
 
     // check if the email is in use
-    try {
-      const data = await getUserByEmail(email);
-      
-      // if there is a result, a match is found
-      if (data) {
-        setMessage('Email already in use');
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
+    const emailCheck = await getUserByEmail(email);
+    // if there is a result, a match is found
+    if (emailCheck) {
+      setMessage('Email already in use');
       return false;
     }
 
+    //no password self-storage so none o this is needed
     // Check if password meets the requirements
     if (passwordMessage !== '') {
       setMessage('Password does not meet requirements');
@@ -133,6 +123,9 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     }
 
     // no errors, send email
+    //here we would call a POST to /users with all of our info in the body
+    //and thus signups should work!
+    //but we'd want oauth stuff here as well for rit email validation thingy things
     else {
       setMessage('Please wait...');
       // Send info to begin account activation
@@ -146,7 +139,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         username: username,
       });
       */
-      setMessage('An account activation email has been sent');
+      setMessage('An account activation email has been sent'); //a what
     }
   };
 
@@ -155,6 +148,12 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    * @param pass Password
    * @returns String message of remaining requirements to be met
    */
+  
+    //oauth will handle this since we're logging in with rit emails
+    //if google has all of our account auth info and we aren't storing our own
+    //we don't need to store passwords ourselves at all, google will completely handle that right
+    //i guess for the login page we can simply have a google oauth button there, or dress up google's oauth form in our lfg colors or smth
+    //is that possible? no idea
   const validatePassword = (pass : string) => {
     // Don't check password if there's nothing there
     if (pass === '') {
