@@ -316,18 +316,23 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const getShowcaseDetails = async (projectList : ProjectPreview[], usedCache : NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList : ProjectWithFollowers[] = [];
     for (let projectPreview of projectList.slice(0, 3)) {
-      if (usedCache[projectPreview.projectId].full != undefined) {
-        continue;
+
+      const cachedFull = usedCache[projectPreview.projectId].full;
+
+      if (cachedFull != undefined) {
+        //Even if it's already cached, it should still go into the carousel.
+        focusProjectDetailsList.push(cachedFull);
       }
+      else {
+        const projectRequest : ApiResponse<ProjectWithFollowers> = await getByID(projectPreview.projectId);
 
-      const projectRequest : ApiResponse<ProjectWithFollowers> = await getByID(projectPreview.projectId);
-
-      if (projectRequest.data) {
-        focusProjectDetailsList.push(projectRequest.data);
-        usedCache[projectPreview.projectId].full = projectRequest.data;
-      } else {
-        console.error("Error getting project data from " + projectPreview.projectId);
-        return {} as ProjectWithFollowers;
+        if (projectRequest.data) {
+          focusProjectDetailsList.push(projectRequest.data);
+          usedCache[projectPreview.projectId].full = projectRequest.data;
+        } else {
+          console.error("Error getting project data from " + projectPreview.projectId);
+          return {} as ProjectWithFollowers;
+        }
       }
     }
     
@@ -345,7 +350,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     for (let item of projectList) {
       if (projectCache[item.projectId].full != undefined) {
         items.push(projectCache[item.projectId].full as ProjectWithFollowers);
-        //return;
       }
       else
       {
