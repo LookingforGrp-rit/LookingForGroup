@@ -40,7 +40,7 @@ const Project = () => {
   // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState<MePrivate | null>();
-  const [userID, setUserID] = useState<number>(0);
+  const [userID, setUserID] = useState<number>();
   const [displayedProject, setDisplayedProject] =
     useState<ProjectWithFollowers>();
 
@@ -54,6 +54,7 @@ const Project = () => {
    * @returns true if user is following the project
    */
   const checkFollow = useCallback(async () => {
+    if(userID){
     const followings = (await getProjectFollowing(userID)).data?.projects;
 
     let isFollow = false;
@@ -66,6 +67,7 @@ const Project = () => {
     }
     setFollowing(isFollow);
     return isFollow;
+    }
   }, [projectID, userID]);
 
   // Sets state variables
@@ -86,7 +88,7 @@ const Project = () => {
         setFollowCount(projectResp.data.followers.count);
 
         if (userResp.data) {
-          for (let member of projectResp.data.members) {
+          for (const member of projectResp.data.members) {
             if (member.user.userId === userResp.data.userId) {
               setIsMember(true);
               return;
