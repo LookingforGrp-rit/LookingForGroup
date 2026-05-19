@@ -33,11 +33,11 @@ const GetStarted : React.FC<GetStartedProps> = ({ show, onBack, onCreateProject,
           <div id="getStarted-select">
             <button id="new-project-btn" onClick={onCreateProject}>
               Create Project
-              <img src="images/icons/nav/projects.png" alt="folder" />
+              <img src="/images/icons/nav/projects.png" alt="folder" />
             </button>
             <button id="join-project-btn" onClick={onJoinProject}>
               Join Project
-              <img src="images/icons/nav/discover.png" alt="compass" />
+              <img src="/images/icons/nav/discover.png" alt="compass" />
             </button>
           </div>
 
