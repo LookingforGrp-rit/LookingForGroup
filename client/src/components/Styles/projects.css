@@ -99,7 +99,8 @@ Project Panel component style rules
   position: absolute;
   height: auto;
   /* min-width: 420px; */
-  width: 100%;
+  left: 0px;
+  right: 0px;
   top: 100%;
   pointer-events: none;
   visibility: visible;
