@@ -87,7 +87,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
     };
     
   return (
-    <div className={'profile-panel'}>
+    <button className={'profile-panel'} onClick={() => navigate(profileURL)}>
       <img
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt='profile image'
@@ -98,7 +98,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
       <h3>{majorsArr.join(', ') || ''}</h3>
       <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
 
-      <div className={'profile-panel-hover'} onClick={() => navigate(profileURL)}>
+      <div className={'profile-panel-hover'}>
 
         {isFollow ? <ThemeIcon
           width={30}
@@ -141,6 +141,6 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
           <p>{profileData.funFact ? profileData.funFact : 'None specified'}</p>
         </div>
       </div>
-    </div>
+    </button>
   );
 };

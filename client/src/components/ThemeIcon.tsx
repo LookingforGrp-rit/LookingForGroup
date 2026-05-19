@@ -31,7 +31,7 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
   id = '',
   className = '',
   ariaLabel = '',
-  onClick = () => {}
+  onClick = undefined
 }) => {
 
   return (
