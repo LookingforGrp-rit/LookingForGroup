@@ -801,7 +801,7 @@ export interface MePrivate extends MeDetail {
   /**
    * The logged-in user's phone number, null if unset
    */
-  phoneNumber: string;
+  phoneNumber: string | null;
 
   /**
    * The logged-in user's UID

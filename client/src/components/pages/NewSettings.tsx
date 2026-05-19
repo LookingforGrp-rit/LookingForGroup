@@ -543,7 +543,7 @@ const Settings = () => {
                   <div className="input-container">
                     <input
                       id="option-primary-phone"
-                      placeholder={userInfo.phoneNumber}
+                      placeholder={userInfo.phoneNumber ?? 'No current phone number'}
                       type="text"
                       disabled
                     />
