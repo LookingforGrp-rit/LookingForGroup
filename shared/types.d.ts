@@ -1143,6 +1143,28 @@ export type UpdateUserInput = Partial<
     visibility?: "1" | "0";
   }
 >;
+export type CreateUserInput = Partial<
+  Pick<
+    MePrivate,
+    | "firstName"
+    | "lastName"
+    | "headline"
+    | "pronouns"
+    | "title"
+    | "academicYear"
+    | "location"
+    | "funFact"
+    | "bio"
+    | "phoneNumber"
+    | 'ritEmail'
+    | 'universityId'
+  > & {
+    profileImage?: File;
+    mentor?: "true" | "false";
+    // TODO update to use Visibility enum
+    visibility?: "1" | "0";
+  }
+>;
 
 /**
  * Data required to add a social media link to a user's profile
