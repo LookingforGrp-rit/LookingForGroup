@@ -24,7 +24,7 @@ type AboutTabProps = {
  * @param updatePendingProfile Updates profile data.
  * @returns JSX Element
  */
-export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}: AboutTabProps) => {
+export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { } }: AboutTabProps) => {
 
   profileAfterAboutChanges = structuredClone(profile);
 
@@ -66,7 +66,7 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
     const imageUploader = document.getElementById(
       "image-uploader"
     ) as HTMLInputElement;
-  
+
     if (!imageUploader?.files?.length) return;
 
     //get the image itself (there will always be only one)
@@ -99,10 +99,10 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
     <div id="profile-editor-about" className="edit-profile-body about">
       <div id="edit-profile-section-1">
         <div id="profile-editor-add-image" className="edit-profile-image">
-          <ProfileImageUploader 
-          onFileSelected={handleFileSelected}
-          initialImageUrl={previewUrl}
-          initialImageFile={selectedImageFile}
+          <ProfileImageUploader
+            onFileSelected={handleFileSelected}
+            initialImageUrl={previewUrl}
+            initialImageFile={selectedImageFile}
           />
         </div>
 
@@ -114,7 +114,7 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
             value={profile.firstName}
             onChange={(e) => {
               const firstName = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, firstName};
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, firstName };
               updatePendingProfile(profileAfterAboutChanges);
               dataManager.updateFields({
                 id: {
@@ -132,7 +132,7 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
             value={profile.lastName}
             onChange={(e) => {
               const lastName = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, lastName};
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, lastName };
               updatePendingProfile(profileAfterAboutChanges);
               dataManager.updateFields({
                 id: {
@@ -150,7 +150,7 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
             value={profile.pronouns}
             onChange={(e) => {
               const pronouns = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, pronouns};
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, pronouns };
               updatePendingProfile(profileAfterAboutChanges);
               dataManager.updateFields({
                 id: {
@@ -165,65 +165,65 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
 
         <div className="about-row row-2">
           {
-    <LabelInputBox
-      label={'Title'}
-      inputType={'none'}
-    >
-      <Select>
-        <SelectButton
-          placeholder={"Select"}
-          initialVal={profile.title ?? ""}
-          callback={(e) => e.preventDefault()}
-          type={'input'}
-        />
-        <SelectOptions
-          callback={(e) => { 
-            const title = (e.target as HTMLButtonElement).value
+            <LabelInputBox
+              label={'Title'}
+              inputType={'none'}
+            >
+              <Select>
+                <SelectButton
+                  placeholder={"Select"}
+                  initialVal={profile.title ?? ""}
+                  callback={(e) => e.preventDefault()}
+                  type={'input'}
+                />
+                <SelectOptions
+                  callback={(e) => {
+                    const title = (e.target as HTMLButtonElement).value
 
-            profileAfterAboutChanges = {
-              ...profileAfterAboutChanges,
-              title
-            }
-            updatePendingProfile(profileAfterAboutChanges)
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { title }
-              })
-           }}
-          options={roles.map(r => ({
-          value: r.label,
-          markup: <>{r.label}</>,
-          disabled: false
-          }))}
-        />
-      </Select>
-    </LabelInputBox>}
+                    profileAfterAboutChanges = {
+                      ...profileAfterAboutChanges,
+                      title
+                    }
+                    updatePendingProfile(profileAfterAboutChanges)
+                    dataManager.updateFields({
+                      id: {
+                        value: userId,
+                        type: 'canon',
+                      },
+                      data: { title }
+                    })
+                  }}
+                  options={roles.map(r => ({
+                    value: r.label,
+                    markup: <>{r.label}</>,
+                    disabled: false
+                  }))}
+                />
+              </Select>
+            </LabelInputBox>}
           {
-    //major (will need a ui change to accept multiple majors)
-    <LabelInputBox
-      label={'Major'}
-      inputType={'none'}
-    >
-      <Select>
-        <SelectButton
-          placeholder='Select'
-          initialVal={''}
-          callback={(e) => e.preventDefault()}
-          type={'input'}
-        />
-        <SelectOptions
-          callback={(e) => { e.preventDefault(); }}
-          options={majors.map(m => ({
-          value: m.label,
-          markup: <>{m.label}</>,
-          disabled: false
-          }))}
-        />
-      </Select>
-    </LabelInputBox>}
+            //major (will need a ui change to accept multiple majors)
+            <LabelInputBox
+              label={'Major'}
+              inputType={'none'}
+            >
+              <Select>
+                <SelectButton
+                  placeholder='Select'
+                  initialVal={''}
+                  callback={(e) => e.preventDefault()}
+                  type={'input'}
+                />
+                <SelectOptions
+                  callback={(e) => { e.preventDefault(); }}
+                  options={majors.map(m => ({
+                    value: m.label,
+                    markup: <>{m.label}</>,
+                    disabled: false
+                  }))}
+                />
+              </Select>
+            </LabelInputBox>}
 
           <LabelInputBox
             label={'Year'}
@@ -240,21 +240,25 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
                 callback={(e) => {
                   const year = (e.target as HTMLButtonElement).value as AcademicYear;
 
-              profileAfterAboutChanges = {
-                ...profileAfterAboutChanges,
-                academicYear: year as AcademicYear
-              }
-              updatePendingProfile(profileAfterAboutChanges);
+                  profileAfterAboutChanges = {
+                    ...profileAfterAboutChanges,
+                    academicYear: year as AcademicYear
+                  }
 
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon'
-                },
-                data: {
-                  academicYear: year as AcademicYear
-                }
-              })
+                  //Use this for checking what happens when the year is changed
+                  //debugger;
+                  updatePendingProfile(profileAfterAboutChanges);
+
+                  //updateFields is undefined for some reason when changing the year
+                  dataManager.updateFields({
+                    id: {
+                      value: userId,
+                      type: 'canon'
+                    },
+                    data: {
+                      academicYear: year as AcademicYear
+                    }
+                  })
                 }}
                 options={Object.values(AcademicYear).map((yr) => {
                   return {
@@ -275,7 +279,7 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
             value={profile.location}
             onChange={(e) => {
               const location = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, location};
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, location };
               updatePendingProfile(profileAfterAboutChanges);
               dataManager.updateFields({
                 id: {
@@ -301,18 +305,18 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
               <SelectOptions
                 callback={(e) => {
                   //true if it's mentor, false if it's anythin else
-                const mentor = ((e.target as HTMLButtonElement).value === "Mentor");
-                console.log(mentor)
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, mentor};
-              updatePendingProfile(profileAfterAboutChanges);
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { mentor: `${mentor}` } //annoying that it's a string but go off ig
-              })
-                  
+                  const mentor = ((e.target as HTMLButtonElement).value === "Mentor");
+                  console.log(mentor)
+                  profileAfterAboutChanges = { ...profileAfterAboutChanges, mentor };
+                  updatePendingProfile(profileAfterAboutChanges);
+                  dataManager.updateFields({
+                    id: {
+                      value: userId,
+                      type: 'canon',
+                    },
+                    data: { mentor: `${mentor}` } //annoying that it's a string but go off ig
+                  })
+
                 }}
                 options={[{
                   value: 'Not a mentor',
@@ -337,16 +341,16 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
           maxLength={100}
           value={profile.headline}
           onChange={(e) => {
-              const headline = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, headline};
-              updatePendingProfile(profileAfterAboutChanges);
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { headline }
-              })
+            const headline = e.target.value;
+            profileAfterAboutChanges = { ...profileAfterAboutChanges, headline };
+            updatePendingProfile(profileAfterAboutChanges);
+            dataManager.updateFields({
+              id: {
+                value: userId,
+                type: 'canon',
+              },
+              data: { headline }
+            })
           }}
         />
 
@@ -357,16 +361,16 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
           maxLength={100}
           value={profile.funFact}
           onChange={(e) => {
-              const funFact = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, funFact};
-              updatePendingProfile(profileAfterAboutChanges);
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { funFact }
-              })
+            const funFact = e.target.value;
+            profileAfterAboutChanges = { ...profileAfterAboutChanges, funFact };
+            updatePendingProfile(profileAfterAboutChanges);
+            dataManager.updateFields({
+              id: {
+                value: userId,
+                type: 'canon',
+              },
+              data: { funFact }
+            })
           }}
         />
       </div>
@@ -378,17 +382,17 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
         maxLength={600}
         value={profile.bio}
         onChange={(e) => {
-          
-              const bio = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, bio};
-              updatePendingProfile(profileAfterAboutChanges);
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { bio }
-              })
+
+          const bio = e.target.value;
+          profileAfterAboutChanges = { ...profileAfterAboutChanges, bio };
+          updatePendingProfile(profileAfterAboutChanges);
+          dataManager.updateFields({
+            id: {
+              value: userId,
+              type: 'canon',
+            },
+            data: { bio }
+          })
         }}
         id={'edit-profile-section-3'}
       />
