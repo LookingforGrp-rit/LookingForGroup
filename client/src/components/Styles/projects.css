@@ -1276,6 +1276,12 @@ Project Creator and Editor Popup style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }
 
+.delete-button:focus-visible {
+  outline-offset: 2px;
+  outline: 3px solid var(--primary-color);
+  transition: 0s;
+}
+
 #project-team-open-positions-popup {
   display: flex;
   gap: 25px;

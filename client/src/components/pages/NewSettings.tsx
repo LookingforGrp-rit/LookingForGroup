@@ -480,7 +480,7 @@ const Settings = () => {
         ) : (
           <div>
             {/* Top Row: Personal and Email Settings */}
-            <div className="settings-row">
+            <div className="settings-row" id='main'>
               {/* Personal Settings 
               <div className="settings-column">
                 <h2 className="settings-header">Personal</h2>

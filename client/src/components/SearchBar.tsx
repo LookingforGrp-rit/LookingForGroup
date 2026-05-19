@@ -112,7 +112,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     <div className="search-wrapper">
       {/* Prevent form submission from refreshing the page */}
       <div className="search-bar">
-        <div className="search-button">
+        <div role="button" className="search-button" aria-label="Search">
           <i className="fa fa-search" aria-hidden="true"></i>
         </div>
         {/* Input field for search query */}
@@ -122,6 +122,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           placeholder="Search"
           value={query}
           onChange={handleChange}
+          tabIndex={2}
           onKeyDown={(e) => {
             {/* Prevent odd popup behavior on enter click */}
             if (e.key === 'Enter') {

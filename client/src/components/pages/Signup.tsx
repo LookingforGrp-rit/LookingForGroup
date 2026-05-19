@@ -238,6 +238,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
           <div className="signup-form-inputs">
             <div className="row">
               <input
+                id='main'
                 className="signup-name-input"
                 autoComplete="off"
                 type="text"
