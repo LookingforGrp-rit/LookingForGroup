@@ -175,6 +175,7 @@ const Login: React.FC = () => {
           <div className="error">{error}</div>
           <div className="login-form-inputs">
             <input
+              id='main'
               className="login-input"
               type="text"
               placeholder="Username or email"
@@ -222,8 +223,8 @@ const Login: React.FC = () => {
           {/* <h1>Welcome!</h1>
                     <p>Don't have an account?</p> */}
           <ThemeImage
-            lightSrc={'assets/bannerImages/login_light.png'}
-            darkSrc={'assets/bannerImages/login_dark.png'}
+            lightSrc={'/assets/bannerImages/login_light.png'}
+            darkSrc={'/assets/bannerImages/login_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>
         </div>
