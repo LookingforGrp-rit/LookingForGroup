@@ -38,17 +38,19 @@ const Credits = () => {
       <h1 id="credits-title">Meet The LFG Team</h1>
 
       {/*runs through an array of all the members and creates a "card" for each one */}
-      <div id="credit-members-container">
-        {filteredMembersList.map(member => (
-          <div className="lfg-contributor" key={member.name}>
-            <img className="project-contributor-profile" src={member.photo} />
-            <div className="project-contributor-info">
-              <h2 className="team-member-name">{member.name}</h2>
-              <p className="team-member-role">{member.role}</p>
+      <main id="main" tabIndex={-1} aria-label='main content'>
+        <div id="credit-members-container">
+          {filteredMembersList.map(member => (
+            <div className="lfg-contributor" key={member.name}>
+              <img className="project-contributor-profile" src={member.photo} />
+              <div className="project-contributor-info">
+                <h2 className="team-member-name">{member.name}</h2>
+                <p className="team-member-role">{member.role}</p>
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </main>
     </div>
   );
 };

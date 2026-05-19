@@ -400,154 +400,156 @@ const Project = () => {
       {displayedProject === undefined ? (
         loadingProject
       ) : (
-        <div id="project-page-content">
-          <ProjectCarousel project={displayedProject}></ProjectCarousel>
+        <main id="main" tabIndex={-1} aria-label="main content" >
+          <div id="project-page-content">
+            <ProjectCarousel project={displayedProject}></ProjectCarousel>
 
-          <div id="project-info-panel">
-            <div id="project-info-top">
-              <div id="project-info-header">
-                <div id="project-title">{displayedProject.title}</div>
-                <div id="project-info-buttons">{buttonContent}</div>
-              </div>
-              <div id="project-hook">{displayedProject.hook}</div>
-              <div id="project-status">
-                <p>
-                  Status:{" "}
+            <div id="project-info-panel">
+              <div id="project-info-top">
+                <div id="project-info-header">
+                  <div id="project-title">{displayedProject.title}</div>
+                  <div id="project-info-buttons">{buttonContent}</div>
+                </div>
+                <div id="project-hook">{displayedProject.hook}</div>
+                <div id="project-status">
+                  <p>
+                    Status:{" "}
+                    <span className="project-info-highlight">
+                      {ProjectStatusEnums[displayedProject.status]}
+                    </span>
+                  </p>
+                </div>
+                <div id="project-creation">
+                  Created by:{" "}
                   <span className="project-info-highlight">
-                    {ProjectStatusEnums[displayedProject.status]}
+                    {projectLead?.firstName} {projectLead?.lastName}
                   </span>
-                </p>
+                  <br />
+                  {new Date(
+                    displayedProject.createdAt.toString()
+                  ).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })}
+                </div>
+                <Popup>
+                  <PopupButton buttonId="project-open-positions-button">
+                    Open Positions
+                  </PopupButton>
+                  <PopupContent>
+                    <TeamPositionsPanel displayedProject={displayedProject}
+                        viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
+                  </PopupContent>
+                </Popup>
               </div>
-              <div id="project-creation">
-                Created by:{" "}
-                <span className="project-info-highlight">
-                  {projectLead?.firstName} {projectLead?.lastName}
-                </span>
-                <br />
-                {new Date(
-                  displayedProject.createdAt.toString()
-                ).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+              <div id="project-tags">
+                {
+                  //If more tag types are usable, use commented code for cases
+                  //Also, check to see how many additional tags a project has
+                  displayedProject.tags.map((tag, index) => {
+                    /* let category : string;
+                    switch (tag.type) {
+                    } */
+                    if (index < 3) {
+                      return (
+                        <TagElement
+                          type={tag.type.toLowerCase()}
+                          key={index}
+                        >
+                          <p>{tag.label}</p>
+                        </TagElement>
+                      );
+                    } else if (index === 3) {
+                      return (
+                        <TagElement key={index}>
+                          <p>+{displayedProject.tags.length - 3}</p>
+                        </TagElement>
+                      );
+                    }
+                  })
+                }
               </div>
-              <Popup>
-                <PopupButton buttonId="project-open-positions-button">
-                  Open Positions
-                </PopupButton>
-                <PopupContent>
-                  <TeamPositionsPanel displayedProject={displayedProject}
-                      viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
-                </PopupContent>
-              </Popup>
             </div>
-            <div id="project-tags">
-              {
-                //If more tag types are usable, use commented code for cases
-                //Also, check to see how many additional tags a project has
-                displayedProject.tags.map((tag, index) => {
-                  /* let category : string;
-                  switch (tag.type) {
-                  } */
-                  if (index < 3) {
-                    return (
-                      <TagElement
-                        type={tag.type.toLowerCase()}
-                        key={index}
-                      >
-                        <p>{tag.label}</p>
-                      </TagElement>
-                    );
-                  } else if (index === 3) {
-                    return (
-                      <TagElement key={index}>
-                        <p>+{displayedProject.tags.length - 3}</p>
-                      </TagElement>
-                    );
-                  }
-                })
-              }
-            </div>
-          </div>
 
-          {/* Project overview section */}
-          <div id="project-overview">
-            <div id="project-overview-title">About This Project</div>
-            <div id="project-overview-text">{displayedProject.description}</div>
-            {/* Sections could also be added with some extra function, 
-          title and content can be assigned to similar elements */}
-            <div className="project-overview-section-header">Purpose</div>
-            <div>{displayedProject.purpose}</div>
-            <div className="project-overview-section-header">
-              Target Audience
-            </div>
-            <div>{displayedProject.audience}</div>
-            <div id="project-overview-links-section">
-              {displayedProject.projectSocials.length > 0 ? (
-                <>
-                  Keep up with us!
-                  <div id="project-overview-links">
-                    {displayedProject.projectSocials.map((social, index) => (
-                      <button
-                        key={index}
-                        onClick={() => {
-                          window.open(social.url, "_blank");
-                        }}
-                      >
-                        <ThemeIcon
-                          id={
-                            social.label === "Other"
-                              ? "link"
-                              : social.label.toLowerCase()
-                          }
-                          width={25}
-                          height={25}
-                          className={"color-fill"}
-                          ariaLabel={social.label}
-                        />
-                      </button>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <p>No contacts yet</p>
-              )}
-            </div>
-          </div>
-
-          <div id="project-people">
-            <div id="project-people-tabs">
-              <div // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
-                className={`project-people-tab ${peopleContent}`}
-                //onClick={() => setDisplayedPeople("People")} wow this button is now useless
-              >
-                The Team
+            {/* Project overview section */}
+            <div id="project-overview">
+              <div id="project-overview-title">About This Project</div>
+              <div id="project-overview-text">{displayedProject.description}</div>
+              {/* Sections could also be added with some extra function, 
+            title and content can be assigned to similar elements */}
+              <div className="project-overview-section-header">Purpose</div>
+              <div>{displayedProject.purpose}</div>
+              <div className="project-overview-section-header">
+                Target Audience
               </div>
-              {/* If contributors are added as a site feature, use the commented code below */}
-              {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
+              <div>{displayedProject.audience}</div>
+              <div id="project-overview-links-section">
+                {displayedProject.projectSocials.length > 0 ? (
+                  <>
+                    Keep up with us!
+                    <div id="project-overview-links">
+                      {displayedProject.projectSocials.map((social, index) => (
+                        <button
+                          key={index}
+                          onClick={() => {
+                            window.open(social.url, "_blank");
+                          }}
+                        >
+                          <ThemeIcon
+                            id={
+                              social.label === "Other"
+                                ? "link"
+                                : social.label.toLowerCase()
+                            }
+                            width={25}
+                            height={25}
+                            className={"color-fill"}
+                            ariaLabel={social.label}
+                          />
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <p>No contacts yet</p>
+                )}
+              </div>
             </div>
-            <div id="project-people-content">{peopleContent}</div>
-          </div>
 
-          <div id="project-open-positions">
-            <div className="centerer">
-              <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
-            </div>
-            
-            <div id="project-open-positions-list">
-              {displayedProject.jobs.map((position, index) => (
-                <button
-                  className="project-tag-label label-position"
-                  onClick={() => openPositionListing(index)}
-                  key={index}
+            <div id="project-people">
+              <div id="project-people-tabs">
+                <div // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
+                  className={`project-people-tab ${peopleContent}`}
+                  //onClick={() => setDisplayedPeople("People")} wow this button is now useless
                 >
-                  {position.role.label}
-                </button>
-              ))}
+                  The Team
+                </div>
+                {/* If contributors are added as a site feature, use the commented code below */}
+                {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
+              </div>
+              <div id="project-people-content">{peopleContent}</div>
+            </div>
+
+            <div id="project-open-positions">
+              <div className="centerer">
+                <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
+              </div>
+              
+              <div id="project-open-positions-list">
+                {displayedProject.jobs.map((position, index) => (
+                  <button
+                    className="project-tag-label label-position"
+                    onClick={() => openPositionListing(index)}
+                    key={index}
+                  >
+                    {position.role.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
+        </main>
       )}
     </div>
   );
