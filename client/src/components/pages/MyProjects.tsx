@@ -512,7 +512,7 @@ const MyProjects = () => {
       <hr />
 
       {/* Project Grid/List */}
-      <div>
+      <main id="main">
         {(!dataLoaded) ? (
           <div
             className='placeholder-spacing'
@@ -530,7 +530,7 @@ const MyProjects = () => {
             <ProjectListSection userProjects={projectsToDisplay} />
           )
         )}
-      </div>
+      </main>
       <CreditsFooter />
       <ToTopButton />
     </div>

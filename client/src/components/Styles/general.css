@@ -380,6 +380,25 @@ Button component style rules
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 
+/* Skip link in top corner to jump to main content */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background-color: var(--bg-color);
+  color: var(--main-text);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 9999;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--main-text);
+}
+
 /*general rules for buttons
 orange-button class makes the button orange, white-button class makes the button white*/
 .orange-button {
