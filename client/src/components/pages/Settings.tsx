@@ -8,6 +8,7 @@ import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
+// NOT IN USE, NOW UNDER NewSettings.tsx
 /**
  * Settings page. Creates the User Interface for the Settings by displaying account information and buttons for editing
  * @returns JSX Element
@@ -264,7 +265,7 @@ const Settings = () => {
               <div className="row displayName">
                 <input type="text" placeholder="myDisplayedName" value="" />
                 {/* TODO: check this matches design */}
-                <img src="images/icons/pencil.png" alt="pencil icon" />
+                <img src="/images/icons/pencil.png" alt="pencil icon" />
               </div>
             </div>
           </div>
