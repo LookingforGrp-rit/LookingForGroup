@@ -389,8 +389,8 @@ const MyProjects = () => {
     <div className="projects-banner-outer">
     <div className="projects-banner-wrapper">
       <ThemeImage
-        lightSrc={'assets/projects_header_light.png'}
-        darkSrc={'assets/projects_header_dark.png'}
+        lightSrc={'/assets/projects_header_light.png'}
+        darkSrc={'/assets/projects_header_dark.png'}
         className={'my-projects-banner'}
         alt={'My Projects Banner'}
       />

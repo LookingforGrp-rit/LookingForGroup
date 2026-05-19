@@ -433,8 +433,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
           {/* <h1>Welcome!</h1>
                     <p>Already have an account?</p> */}
           <ThemeImage
-            lightSrc={'assets/bannerImages/signup_light.png'}
-            darkSrc={'assets/bannerImages/signup_dark.png'}
+            lightSrc={'/assets/bannerImages/signup_light.png'}
+            darkSrc={'/assets/bannerImages/signup_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.LOGIN)}>Log In</button>
         </div>
