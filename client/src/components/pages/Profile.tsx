@@ -51,7 +51,7 @@ const Profile = () => {
   const [isUsersProfile, setIsUsersProfile] = useState<boolean>(false);
 
   const [displayedProfile, setDisplayedProfile] = useState<UserDetail>();
-  const [userID, setUserID] = useState<number>(0);
+  const [userID, setUserID] = useState<number>();
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
 
@@ -76,6 +76,7 @@ const Profile = () => {
    * @returns true if following
    */
   const checkFollow = useCallback(async () => {
+    if(userID){
     const followings = (await getUserFollowing(userID)).data?.users;
 
     let isFollowing = false;
@@ -88,6 +89,8 @@ const Profile = () => {
     }
     setIsFollow(isFollowing);
     return isFollowing;
+
+    }
   }, [profileID, userID])
 
   /**
@@ -164,7 +167,7 @@ const Profile = () => {
       // Get the userID for our current user
       const response = await getCurrentAccount()
       if (response.data) setUserID(response.data.userId);
-      setIsUsersProfile(userID.toString() === profileID);
+      if(userID) setIsUsersProfile(userID.toString() === profileID);
 
       try {
         const { data } = await getUsersById(Number(profileID));
@@ -276,7 +279,7 @@ const Profile = () => {
   // Final component
   // --------------------
   return (
-    <div className="page">
+    <div className="page" tabIndex={-1}>
       <Header
         dataSets={[{ data: fullProjectList }]}
         onSearch={searchProjects}
@@ -285,124 +288,126 @@ const Profile = () => {
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
-      <div id="profile-page-content">
-        <div id="profile-hero">
-          <div id="profile-img-container">
-            <img
-              src={usePreloadedImage(`${displayedProfile?.profileImage}`, profilePicture)}
-              id="profile-image"
-              alt="profile image"
-              onError={(e) => {
-                const profileImg = e.target as HTMLImageElement;
-                profileImg.src = profilePicture;
-              }}
-            />
-            <div id="profile-bio">{displayedProfile?.headline}</div>
-          </div>
+      <main id="main" tabIndex={-1}>
+        <div id="profile-page-content">
+          <div id="profile-hero">
+            <div id="profile-img-container">
+              <img
+                src={usePreloadedImage(`${displayedProfile?.profileImage}`, profilePicture)}
+                id="profile-image"
+                alt="profile image"
+                onError={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = profilePicture;
+                }}
+              />
+              <div id="profile-bio">{displayedProfile?.headline}</div>
+            </div>
 
-          <div id="profile-info">
-            <div id="profile-info-text">
-              <div id="profile-top-row">
-                <div id="profile-names">
-                  <p id="profile-fullname">
-                    {displayedProfile?.firstName} {displayedProfile?.lastName}
-                  </p>
-                  <p id="profile-username">
-                    @{displayedProfile?.username}
-                  </p>
-                </div>
-                <div id="profile-buttons">{aboutMeButtons}</div>
-              </div>
-
-              <div id="profile-extras">
-                <div className="profile-extra">
-                  <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
-                  {displayedProfile?.title}
-                </div>
-                <div className="profile-extra">
-                  <ThemeIcon id={'major'} width={20} height={20} className={'mono-fill'} ariaLabel={'Major'}/>
-                  {majorsArr.join(", ")} {displayedProfile?.academicYear}
-                </div>
-                <div className="profile-extra">
-                  <ThemeIcon id={'location'} width={20} height={20} className={'mono-fill'} ariaLabel={'Location'}/>
-                  {displayedProfile?.location}
-                </div>
-                <div className="profile-extra">
-                  <ThemeIcon id={'pronouns'} width={20} height={20} className={'mono-fill'} ariaLabel={'Pronouns'} />
-                  {displayedProfile?.pronouns}
-                </div>
-                {/* Only show mentor status if user is a mentor */}
-                {displayedProfile?.mentor && 
-                  <div className="profile-extra">
-                    <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
-                    Mentor
+            <div id="profile-info">
+              <div id="profile-info-text">
+                <div id="profile-top-row">
+                  <div id="profile-names">
+                    <p id="profile-fullname">
+                      {displayedProfile?.firstName} {displayedProfile?.lastName}
+                    </p>
+                    <p id="profile-username">
+                      @{displayedProfile?.username}
+                    </p>
                   </div>
-                }
-              </div>
+                  <div id="profile-buttons">{aboutMeButtons}</div>
+                </div>
 
-              <div id="profile-description">{displayedProfile?.bio}</div>
-
-              <div id="profile-funfact">
-                <span id="funfact-start">
-                  {displayedProfile?.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
-                </span>
-                {displayedProfile?.funFact}
-              </div>
-              {/* <div id="profile-interest">
-                <ProfileInterests
-                  user={{ interests: displayedProfile.interests || [] }}
-                  isUsersProfile={isUsersProfile}
-                />
-              </div> */}
-            </div>
-
-            <div id="profile-skills">
-              {displayedProfile?.skills !== undefined && (
-                /* Will take in a list of tags the user has selected, then */
-                /* use a map function to generate tags to fill this div */
-                displayedProfile?.skills.map((tag) => {
-                  let category: string;
-                  switch (tag.type) {
-                    case "Designer":
-                      category = "red";
-                      break;
-                    case "Developer":
-                      category = "yellow";
-                      break;
-                    case "Soft":
-                      category = "purple";
-                      break;
-                    default:
-                      category = "grey";
-                  }
-                  return (
-                    <div
-                      key={`${tag.skillId}`}
-                      className={`skill-tag-label label-${category}`}
-                    >
-                      {tag.label}
+                <div id="profile-extras">
+                  <div className="profile-extra">
+                    <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
+                    {displayedProfile?.title}
+                  </div>
+                  <div className="profile-extra">
+                    <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
+                    {majorsArr.join(", ")} {displayedProfile?.academicYear}
+                  </div>
+                  <div className="profile-extra">
+                    <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
+                    {displayedProfile?.location}
+                  </div>
+                  <div className="profile-extra">
+                    <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+                    {displayedProfile?.pronouns}
+                  </div>
+                  {/* Only show mentor status if user is a mentor */}
+                  {displayedProfile?.mentor && 
+                    <div className="profile-extra">
+                      <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
+                      Mentor
                     </div>
-                  );
-                })
-              )}
+                  }
+                </div>
+
+                <div id="profile-description">{displayedProfile?.bio}</div>
+
+                <div id="profile-funfact">
+                  <span id="funfact-start">
+                    {displayedProfile?.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
+                  </span>
+                  {displayedProfile?.funFact}
+                </div>
+                {/* <div id="profile-interest">
+                  <ProfileInterests
+                    user={{ interests: displayedProfile.interests || [] }}
+                    isUsersProfile={isUsersProfile}
+                  />
+                </div> */}
+              </div>
+
+              <div id="profile-skills">
+                {displayedProfile?.skills !== undefined && (
+                  /* Will take in a list of tags the user has selected, then */
+                  /* use a map function to generate tags to fill this div */
+                  displayedProfile?.skills.map((tag) => {
+                    let category: string;
+                    switch (tag.type) {
+                      case "Designer":
+                        category = "red";
+                        break;
+                      case "Developer":
+                        category = "yellow";
+                        break;
+                      case "Soft":
+                        category = "purple";
+                        break;
+                      default:
+                        category = "grey";
+                    }
+                    return (
+                      <div
+                        key={`${tag.skillId}`}
+                        className={`skill-tag-label label-${category}`}
+                      >
+                        {tag.label}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div id="profile-projects">
-          <h2>Projects</h2>
-          {/* Probably fine to use 25 for itemAddInterval */}
-          {displayedProjects ? (
-            <PanelBox
-              category={"projects"}
-              itemList={displayedProjects}
-              itemAddInterval={25}
-            />
-          ) : (
-            <div>No projects to display</div>
-          )}
+          <div id="profile-projects">
+            <h2>Projects</h2>
+            {/* Probably fine to use 25 for itemAddInterval */}
+            {displayedProjects ? (
+              <PanelBox
+                category={"projects"}
+                itemList={displayedProjects}
+                itemAddInterval={25}
+              />
+            ) : (
+              <div>No projects to display</div>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
