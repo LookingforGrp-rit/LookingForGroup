@@ -147,7 +147,8 @@ Login and Signup page style rules
   transition: 0.2s;
 }
 
-.signup-form-inputs {
+.signup-form-inputs,
+.login-form-inputs {
   /* border: 1px solid black; */
   width: 100%;
   max-width: 320px;
@@ -173,12 +174,12 @@ Login and Signup page style rules
 
 #password-wrapper {
   position: relative;
-  display: inline-block;
+  width: 100%;
   margin: 0px;
 }
 
 #password-wrapper input {
-  padding-right: 60px;
+  padding-right: 45px;
   width: 100%;
 }
 
@@ -217,6 +218,12 @@ Login and Signup page style rules
 
 #forgot-password:hover {
   text-decoration: underline;
+}
+
+#forgot-password,
+.mobile-signup,
+.mobile-login {
+  align-self: center;
 }
 
 .spacer {
