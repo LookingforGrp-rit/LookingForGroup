@@ -390,6 +390,12 @@ Button component style rules
 */
 /* #region button component */
 
+button:focus-visible {
+  transition: 0s;
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
 /*general rules for buttons
 orange-button class makes the button orange, white-button class makes the button white*/
 .orange-button {
