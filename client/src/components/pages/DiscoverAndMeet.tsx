@@ -399,9 +399,9 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       setFilteredProjectList(fullProjectList);
       return;
     }
-    
-    console.log(tagFilteredList[0].title);
-    setProjectSearchData(tagFilteredList);
+
+    //doing both updates messes with the display updating
+    //setProjectSearchData(tagFilteredList);
 
     // Set displayed projects
     setFilteredProjectList(tagFilteredList);
@@ -417,19 +417,18 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     // Get user info to match with tags
     const items : UserDetail[] = [];
     for (let item of userList) {
-      /* each item was being pushed twice, commented out this one
       if (userCache[item.userId].detail != undefined) {
         items.push(userCache[item.userId].detail as UserDetail);
-        return;
+        //return;
       }
-      */
-
-      const userData = await getUsersById(item.userId);
-      if (userData.data) {
-        items.push(userData.data);
-        userCache[item.userId].detail = userData.data;
-      } else {
-        console.error("Error getting user data for " + item.userId);
+      else {
+        const userData = await getUsersById(item.userId);
+        if (userData.data) {
+          items.push(userData.data);
+          userCache[item.userId].detail = userData.data;
+        } else {
+          console.error("Error getting user data for " + item.userId);
+        }
       }
     }
 
@@ -482,8 +481,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       setFilteredUserList(fullUserList);
       return;
     }
-
-    setUserSearchData(tagFilteredList);
+    //doing both updates messes with the display updating
+    //setUserSearchData(tagFilteredList);
 
     // Set displayed projects
     setFilteredUserList(tagFilteredList);
