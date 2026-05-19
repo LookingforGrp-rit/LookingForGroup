@@ -500,7 +500,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
   // Main render function
   return (
-    <div className="page">
+    <div className="page" tabIndex={-1}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={ category == 'projects' ? projectDataSet : userDataSet }
           onSearch={ category == 'projects' ? searchProjects : searchUsers }
@@ -514,13 +514,15 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         Clicking a tag filter adds it to a list & updates panel display based on that list
         Changes to filters via filter menu are only applied after a confirmation
       */}
-      <DiscoverFilters category={category} updateItemList={updateItemList} />
+      <main id="main" tabIndex={-1} aria-label='main content'>
+        <DiscoverFilters category={category} updateItemList={updateItemList} />
 
-      {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
-      <div id="discover-panel-box">
-        {/* If filteredItemList isn't done loading, display a loading bar */}
-        { discoverPanelContents }
-      </div>
+        {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
+        <div id="discover-panel-box">
+          {/* If filteredItemList isn't done loading, display a loading bar */}
+          { discoverPanelContents }
+        </div>
+      </main>
       <CreditsFooter />
       <ToTopButton />
     </div>

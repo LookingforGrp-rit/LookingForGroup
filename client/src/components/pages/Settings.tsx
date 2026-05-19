@@ -8,6 +8,7 @@ import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
+// NOT IN USE, NOW UNDER NewSettings.tsx
 /**
  * Settings page. Creates the User Interface for the Settings by displaying account information and buttons for editing
  * @returns JSX Element

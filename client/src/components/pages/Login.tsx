@@ -175,6 +175,7 @@ const Login: React.FC = () => {
           <div className="error">{error}</div>
           <div className="login-form-inputs">
             <input
+              id='main'
               className="login-input"
               type="text"
               placeholder="Username or email"

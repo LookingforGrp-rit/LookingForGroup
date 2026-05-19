@@ -341,7 +341,7 @@ input:checked+.slider:before {
     text-decoration: underline;
   }
 
-  .interact-option:focus {
+  .interact-option:focus-visible {
     text-decoration: underline;
     outline: 3px solid var(--primary-color);
     outline-offset: 2px;
@@ -374,8 +374,8 @@ input:checked+.slider:before {
     }
   }
 
-  #options-theme-btn:focus,
-  #options-visibility-btn:focus {
+  #options-theme-btn:focus-visible,
+  #options-visibility-btn:focus-visible {
     outline: 3px solid var(--primary-color);
     outline-offset: 2px;
     transition: 0s;

@@ -90,6 +90,7 @@ const ForgotPassword: React.FC = () => {
             <div className="error">{error}</div>
             <span id="errorMessage"></span>
             <input
+              id='main'
               className="login-input"
               type="text"
               placeholder="Enter your email"
