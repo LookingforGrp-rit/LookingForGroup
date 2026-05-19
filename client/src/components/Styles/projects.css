@@ -76,7 +76,9 @@ Project Panel component style rules
   transition: 0.2s;
   border-radius: 10px 10px 0 0;
   cursor: pointer;
-  box-shadow: 2px 2px 10px 2px var(--shadow-color);
+  /* box-shadow: 2px 2px 10px 2px var(--shadow-color); */
+  filter: drop-shadow(2px 2px 10px var(--shadow-color));
+  z-index: 2;
 
   img {
     border-radius: 10px 10px 0 0;
@@ -91,13 +93,14 @@ Project Panel component style rules
 
 .project-panel-hover {
   border-radius: 0 0 10px 10px;
-  background-color: var(--bg-color);
-  box-shadow: 2px 2px 10px 2px var(--shadow-color);
+  background-color: var(--header-color);
+  /* box-shadow: 2px 2px 10px 2px var(--shadow-color); */
   color: var(--main-text);
   position: absolute;
   height: auto;
   /* min-width: 420px; */
-  width: 100%;
+  left: 0px;
+  right: 0px;
   top: 100%;
   pointer-events: none;
   visibility: visible;
