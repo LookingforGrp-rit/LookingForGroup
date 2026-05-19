@@ -134,9 +134,9 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
           <DropdownButton buttonId="notif-btn">
             // If implementing, use SVG sprite sheet instead of hard-coded pngs
             <img
-              src="assets/bell_dark.png"
-              src-light="assets/bell_light.png"
-              src-dark="assets/bell_dark.png"
+              src="/assets/bell_dark.png"
+              src-light="/assets/bell_light.png"
+              src-dark="/assets/bell_dark.png"
               alt="" />
           </DropdownButton>
           <DropdownContent rightAlign={true}>This is where notification stuff will be</DropdownContent>

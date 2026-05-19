@@ -246,21 +246,24 @@ export const projectDataManager = async (projectId: number) => {
         ({ id, data }) => updatePic(projectId, id.value, data)
       );
     } catch (error) {
-      errorMessage += (error as { message: string }).message;
+      // Don't fail completely. This should probably be reverted as AWS is set up
+      console.warn("Skipped updating images (backend may be down):", (error as { message: string }).message);
     }
 
     // project thumbnails
     try {
 
-      await runAndCollectErrors<UpdateProjectThumbnailInput>(
-        "Updating project thumbnail",
-        [updates.thumbnail],
-        ({ data }) => updateThumb(projectId, data)
-      );
+      // Only update if there is a thumbnail
+      if (updates.thumbnail && updates.thumbnail.data && updates.thumbnail.data.thumbnail !== undefined) {
+        await runAndCollectErrors<UpdateProjectThumbnailInput>(
+          "Updating project thumbnail",
+          [updates.thumbnail],
+          ({ data }) => updateThumb(projectId, data)
+        );
+      }
 
     } catch (error) {
-      console.log("Failed to update thumbnail: " + (error as { message: string }).message);
-      errorMessage += (error as { message: string }).message;
+      console.warn("Skipped updating images (backend may be down):", (error as { message: string }).message);
     }
 
     // project socials

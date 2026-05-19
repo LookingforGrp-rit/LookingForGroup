@@ -39,8 +39,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           <div id="profile-hero">
             <div id="profile-hero-blurb-1" className="profile-hero-blurb">
               <ThemeImage
-                lightSrc={'assets/bannerImages/people1_light.png'}
-                darkSrc={'assets/bannerImages/people1_dark.png'}
+                lightSrc={'/assets/bannerImages/people1_light.png'}
+                darkSrc={'/assets/bannerImages/people1_dark.png'}
                 id={'profile-hero-img-1'}
                 alt={'banner image'}
               />
@@ -52,8 +52,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             <div id="profile-hero-blurb-2" className="profile-hero-blurb">
               {/* <h2>Look for people to work with!</h2> */}
               <ThemeImage
-                lightSrc={'assets/bannerImages/people2_light.png'}
-                darkSrc={'assets/bannerImages/people2_dark.png'}
+                lightSrc={'/assets/bannerImages/people2_light.png'}
+                darkSrc={'/assets/bannerImages/people2_dark.png'}
                 id={'profile-hero-img-2'}
                 alt={'banner image'}
               />
@@ -66,8 +66,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
             <div id="profile-hero-blurb-3" className="profile-hero-blurb">
               <ThemeImage
-                lightSrc={'assets/bannerImages/people3_light.png'}
-                darkSrc={'assets/bannerImages/people3_dark.png'}
+                lightSrc={'/assets/bannerImages/people3_light.png'}
+                darkSrc={'/assets/bannerImages/people3_dark.png'}
                 id={'profile-hero-img-3'}
                 alt={'banner image'}
               />
@@ -519,13 +519,15 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         Clicking a tag filter adds it to a list & updates panel display based on that list
         Changes to filters via filter menu are only applied after a confirmation
       */}
-      <DiscoverFilters category={category} updateItemList={updateItemList} />
+      <main id="main" tabIndex={-1} aria-label='main content'>
+        <DiscoverFilters category={category} updateItemList={updateItemList} />
 
-      {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
-      <div id="discover-panel-box">
-        {/* If filteredItemList isn't done loading, display a loading bar */}
-        { discoverPanelContents }
-      </div>
+        {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
+        <div id="discover-panel-box">
+          {/* If filteredItemList isn't done loading, display a loading bar */}
+          { discoverPanelContents }
+        </div>
+      </main>
       <CreditsFooter />
       <ToTopButton />
     </div>

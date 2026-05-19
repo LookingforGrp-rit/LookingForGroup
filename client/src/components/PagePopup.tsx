@@ -111,7 +111,7 @@ export const PagePopup = ({
               openClosePopup(show, setShow);
             }}
           >
-            <img src="images/icons/cancel.png" alt="cancel" />
+            <img src="/images/icons/cancel.png" alt="cancel" />
           </button>
           {children}
         </div>

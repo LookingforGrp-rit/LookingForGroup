@@ -90,6 +90,7 @@ const ForgotPassword: React.FC = () => {
             <div className="error">{error}</div>
             <span id="errorMessage"></span>
             <input
+              id='main'
               className="login-input"
               type="text"
               placeholder="Enter your email"
@@ -114,8 +115,8 @@ const ForgotPassword: React.FC = () => {
           {/* <h1>Welcome!</h1>
                     <p>Don't have an account?</p> */}
           <ThemeImage
-            lightSrc={'assets/bannerImages/login_light.png'}
-            darkSrc={'assets/bannerImages/login_dark.png'}
+            lightSrc={'/assets/bannerImages/login_light.png'}
+            darkSrc={'/assets/bannerImages/login_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>
         </div>

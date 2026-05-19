@@ -390,6 +390,25 @@ Button component style rules
 */
 /* #region button component */
 
+/* Skip link in top corner to jump to main content */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background-color: var(--bg-color);
+  color: var(--main-text);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 9999;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--primary-color);
+}
+
 /*general rules for buttons
 orange-button class makes the button orange, white-button class makes the button white*/
 .orange-button {
@@ -444,6 +463,13 @@ orange-button class makes the button orange, white-button class makes the button
   flex-direction: row;
   align-content: center;
   margin: auto;
+}
+
+.scale-on-hover {
+  transition: transform 0.2s;
+}
+.scale-on-hover:hover {
+  transform: scale(1.05);
 }
 
 /* #endregion*/
@@ -780,8 +806,10 @@ Page popup style rules
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   /* max-width: 1321px; */
+  width: min(1121px, 92vw);
   max-width: 1121px;
-  max-height: 869px;
+  max-height: min(849px, 90vh);
+  overflow-y: auto;
   opacity: 100%;
   z-index: 3;
   /* height: 849px; */
@@ -801,7 +829,27 @@ Page popup style rules
   padding: 20px 40px;
 }
 
+@media (max-width: 799px) {
+  .popup {
+    width: 95vw;
+    max-width: 95vw;
+    /* Leave room for the fixed bottom taskbar (~60px) plus breathing room */
+    max-height: calc(100vh - 90px);
+  }
+}
 
+@media (max-width: 576px) {
+  .popup {
+    width: 96vw;
+    max-width: 96vw;
+    border-radius: 8px;
+  }
+
+  /* Smaller popups within another popup should scale */
+  .popup .popup {
+    max-width: 80vw;
+  }
+}
 
 .popup-container {
   display: flex;
