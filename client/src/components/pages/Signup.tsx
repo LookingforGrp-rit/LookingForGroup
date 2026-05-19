@@ -238,6 +238,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
           <div className="signup-form-inputs">
             <div className="row">
               <input
+                id='main'
                 className="signup-name-input"
                 autoComplete="off"
                 type="text"
@@ -433,8 +434,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
           {/* <h1>Welcome!</h1>
                     <p>Already have an account?</p> */}
           <ThemeImage
-            lightSrc={'assets/bannerImages/signup_light.png'}
-            darkSrc={'assets/bannerImages/signup_dark.png'}
+            lightSrc={'/assets/bannerImages/signup_light.png'}
+            darkSrc={'/assets/bannerImages/signup_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.LOGIN)}>Log In</button>
         </div>

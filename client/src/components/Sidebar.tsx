@@ -311,9 +311,9 @@ const SideBar = () => {
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
             <img
-              src="assets/following.png"
-              src-light="assets/following.png"
-              src-dark="assets/following.png"
+              src="/assets/following.png"
+              src-light="/assets/following.png"
+              src-dark="/assets/following.png"
               alt="" /> Following
           </button> */}
 
@@ -322,7 +322,7 @@ const SideBar = () => {
           </button> */}
 
           {/*           {/* <button className={activePage === 'Messages' ? 'active' : ''} onClick={() => handleTextChange('Messages', paths.routes.MESSAGES)}>
-          <img src="images/icons/nav/msg-nav.png" className="navIcon" alt="Messages" /> Messages
+          <img src="/images/icons/nav/msg-nav.png" className="navIcon" alt="Messages" /> Messages
           </button> */}
         </div>
 

@@ -1276,6 +1276,12 @@ Project Creator and Editor Popup style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }
 
+.delete-button:focus-visible {
+  outline-offset: 2px;
+  outline: 3px solid var(--primary-color);
+  transition: 0s;
+}
+
 #project-team-open-positions-popup {
   display: flex;
   gap: 25px;
@@ -3579,6 +3585,11 @@ My projects page style rules
   outline-color: var(--primary-color);
 }
 
+.grid-card-image-button:hover {
+  transition-duration: 0.2s;
+  scale: 1.1;
+}
+
 .grid-card-details {
   display: flex;
   flex-direction: row;
@@ -3657,9 +3668,10 @@ My projects page style rules
   background-color: var(--dropdown-color);
   border: 0px;
   border-radius: 10px;
+  box-shadow: 1px 2px 2px var(--shadow-color);
   width: 154px;
   height: fit-content;
-  padding: 15px;
+  padding: 15px 10px;
   z-index: 1;
 
   display: flex;
@@ -3670,11 +3682,15 @@ My projects page style rules
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0;
+    padding: 5px;
 
     #trash {
       stroke: #ff3859;
     }
+  }
+
+  button:hover {
+    background-color: var(--header-color);
   }
 }
 
