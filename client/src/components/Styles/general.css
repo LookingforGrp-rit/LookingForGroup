@@ -225,6 +225,12 @@ button {
   transition: 0.2s;
 }
 
+a:focus-visible {
+  transition: 0s;
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
+}
+
 /*give sections of the page a drop shadow*/
 section {
   margin: 10px;
