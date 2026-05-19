@@ -264,7 +264,7 @@ const Settings = () => {
               <div className="row displayName">
                 <input type="text" placeholder="myDisplayedName" value="" />
                 {/* TODO: check this matches design */}
-                <img src="images/icons/pencil.png" alt="pencil icon" />
+                <img src="/images/icons/pencil.png" alt="pencil icon" />
               </div>
             </div>
           </div>

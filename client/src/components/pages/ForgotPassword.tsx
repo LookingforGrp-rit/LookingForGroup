@@ -114,8 +114,8 @@ const ForgotPassword: React.FC = () => {
           {/* <h1>Welcome!</h1>
                     <p>Don't have an account?</p> */}
           <ThemeImage
-            lightSrc={'assets/bannerImages/login_light.png'}
-            darkSrc={'assets/bannerImages/login_dark.png'}
+            lightSrc={'/assets/bannerImages/login_light.png'}
+            darkSrc={'/assets/bannerImages/login_dark.png'}
           />
           <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>
         </div>
