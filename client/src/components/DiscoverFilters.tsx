@@ -172,28 +172,14 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   const toggleTag = (event: any, tag: Tag) => {
     let newActiveTags: Tag[];
     const button = event.currentTarget;
-    if (tag.type === 'Project Type' || tag.type === 'Role' || tag.type === 'Major') {
-      // Remove all other tags of the same type except the one selected
-      const filterTags = document.querySelector('#discover-tag-filters')!;
-      const tagList : HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`discover-tag-filter-selected`) as HTMLCollectionOf<HTMLElement>;
-
-      for (let i = 0; i < tagList.length; i++) {
-        if(tagList[i] != button) {
-          tagList[i].classList.toggle('discover-tag-filter-selected');
-        }
-      }
-      newActiveTags = activeTagFilters.filter(t => t.type !== tag.type);
-      if(!activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) newActiveTags.push(tag);
-    }
-    else {
-      if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
-        newActiveTags = activeTagFilters.filter(t => t.label !== tag.label || t.type !== tag.type);
-      } else { 
-        newActiveTags = [...activeTagFilters, tag];
-      }
-    }
-
     button.classList.toggle('discover-tag-filter-selected');
+
+    if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
+      newActiveTags = activeTagFilters.filter(t => t.label !== tag.label || t.type !== tag.type);
+    } else { 
+      newActiveTags = [...activeTagFilters, tag];
+    }
+
     setActiveTagFilters(newActiveTags);
     updateItemList(newActiveTags);
   };
@@ -312,7 +298,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         >
           <i className="fa fa-caret-left"></i>
         </button>
-        <div id="discover-tag-filters" tabIndex={-1}>
+        <div id="discover-tag-filters" /*onResize={resizeTagFilter}*/>
           { /* make each tag button have proper label & type */}
           {tagList.map(tagLabel => {
             const label = tagLabel === 'Developers' ? 'Developer' : tagLabel === 'Designers' ? 'Designer' : tagLabel;
