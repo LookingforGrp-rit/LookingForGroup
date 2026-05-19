@@ -377,7 +377,7 @@ const MyProjects = () => {
   const projectsToDisplay = currentSearch.trim() !== '' ? filteredProjects : projectsList;
 
   return (
-    <div className="page" id="my-projects">
+    <div className="page" id="my-projects" tabIndex={-1}>
       {/* Top Bar */}
       <Header 
         dataSets={projectDataSet} 
