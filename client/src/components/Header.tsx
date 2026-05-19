@@ -100,7 +100,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
   const handleProfileAccess = async () => {
     // navigate to Profile, attach userID
     const res = await getCurrentUsername();
-    const userId = res.data.userId;
+    const userId = res.data?.userId;
     navigate(`${paths.routes.PROFILE}?userID=${userId}`);
 
     // Collapse the dropwdown if coming from another user's page
