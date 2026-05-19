@@ -48,40 +48,48 @@ export const PopupContext = createContext<PopupContextType>({
  * @param closeParent — optional function to close parent popup
  * @returns JSX.Element button
  */
-export const PopupButton = ({
+export const 
+PopupButton = ({
   children,
   buttonId = '',
   className = '',
   callback = async () => { },
   doNotClose = () => false,
   closeParent,
+  ref = undefined,
 }: {
   children: ReactNode;
   buttonId?: string;
   className?: string;
   callback?: () => void;
   doNotClose?: () => boolean;
-  closeParent?: (value : boolean) => void
+  closeParent?: (value : boolean) => void;
+  ref?: (React.RefObject<HTMLButtonElement | null>);
 }) => {
   const { open, setOpen } = useContext(PopupContext);
 
   const toggleOpen = () => {
-    callback();
     setOpen(!open);
+    callback();
+
+    if (ref) {
+      console.log(`Save ref: ${ref.current}`);
+    }
+
     if (closeParent) closeParent(false);
   };
 
   // If button should not close the popup, just execute callback 
   if (doNotClose()) {
     return (
-      <button id={buttonId} className={className} onClick={callback}>
+      <button id={buttonId} className={className} tabIndex={0} onClick={callback} ref={ref}>
         {children}
       </button>
     );
   }
 
   return (
-    <button id={buttonId} className={className} onClick={toggleOpen}>
+    <button id={buttonId} className={className} tabIndex={0} onClick={toggleOpen} ref={ref}>
       {children}
     </button>
   );
@@ -103,11 +111,15 @@ export const PopupContent = ({
   useClose = true,
   callback = async () => { },
   profilePopup = false,
+  closeButtonRef = undefined,
+  openFocusRef = undefined,
 }: {
   children: ReactNode;
   useClose?: boolean;
   callback?: () => void;
   profilePopup?: false | true;
+  closeButtonRef?: React.RefObject<null>;
+  openFocusRef?: React.RefObject<HTMLElement | null>;
 }) => {
   const { open, setOpen } = useContext(PopupContext);
   const popupRef = useRef(null);
@@ -157,36 +169,22 @@ export const PopupContent = ({
     return () => window.removeEventListener('popstate', handlePopState);
   }, [open, closePopup]);
 
-  if (!open) return null;
-
-  if (open && useClose) {
-    return (
-      <>
-        {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}
-        <div className="popup-cover" />
-        <div className="popup-container">
-          <div className="popup" ref={popupRef}>
-            <button className={`popup-close ${profilePopup === true ? 'popup-close-edit' : ''}`} onClick={closePopup}>
+  return (
+    <>
+      {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}
+      <div className={"popup-cover" + (open ? "" : " hidden")} />
+      <div className={"popup-container" + (open ? "" : " hidden")}>
+        <div className="popup" ref={popupRef}>
+          {useClose ? (
+            <button className={`popup-close ${profilePopup === true ? 'popup-close-edit' : ''}`}
+                onClick={closePopup} ref={closeButtonRef}>
               <img src={close} alt="close" />
-            </button>
-            {children}
-          </div>
+            </button>) : <></>}
+          {children}
         </div>
-      </>
-    );
-  } else if (open) {
-    return (
-      <>
-        {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}
-        <div className="popup-cover" />
-        <div className="popup-container">
-          <div className="popup" ref={popupRef}>{children}</div>
-        </div>
-      </>
-    );
-  } else {
-    return <></>;
-  }
+      </div>
+    </>
+  );
 };
 
 /**

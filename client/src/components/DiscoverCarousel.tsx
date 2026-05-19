@@ -23,7 +23,7 @@ export const DiscoverCarousel : React.FC<DiscoverCarouselProps> = ({ dataList = 
         return (
             <>
                 <div className='discover-project-image'>
-                <a href={`${paths.routes.PROJECT}?projectID=${project.projectId}`}>
+                <a href={`${paths.routes.PROJECT}?projectID=${project.projectId}`} tabIndex={-1}>
                   <img
                     src={project.thumbnail?.image ?? placeholderThumbnail}
                     alt={'project image'}
