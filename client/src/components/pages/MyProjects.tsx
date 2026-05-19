@@ -1,5 +1,5 @@
 // import { profiles } from "../../constants/fakeData";
-import { useState, useMemo, ChangeEvent } from 'react';
+import { useState, useMemo, ChangeEvent, useEffect } from 'react';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
@@ -121,9 +121,10 @@ const MyProjects = () => {
   //   }
   // };
 
-  if (!dataLoaded) {
+  // React likes this more than a boolean check
+  useEffect(() => {
     getUserProjects();
-  }
+  }, []);
   // else {
   //     if (projectsList.length < 20) {
   //         let tempList = new Array(0);
@@ -504,7 +505,9 @@ const MyProjects = () => {
 
           {/*Create Project Button*/}
           <div className="my-projects-create-btn">
-            <ProjectCreatorEditor newProject={true}/>
+            <ProjectCreatorEditor 
+              newProject={true}
+            />
           </div>
         </div>
       </div>
