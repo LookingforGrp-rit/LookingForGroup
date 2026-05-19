@@ -1,33 +1,47 @@
 /*
   Syles for project-related components, such as:
   - Panels (on Discover page)
-  - Carousel
+  - Project Creator and Editor Popup
   - Project page
-  - Project Creator and Editor
+  - Project page carousel
+  - My Projects page
 */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
 Project Panel component style rules
+- Flexbox of project panels used in discover page and on user pages
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region project-panel */
+
+#discover-panel-box {
+  margin: 0 50px 50px;
+  display: flex;
+  justify-content: center;
+}
+
+@media only screen and (max-width: 700px) {
+  #discover-panel-box {
+    margin: 0 20px 20px;
+  }
+}
+
 .project-panel-box {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px,30vw,350px), 80vw), 1fr));
   justify-content: space-between;
   align-content: start;
   gap: 20px;
   width: 100%;
-  /* keep panels below searchbar */
-  z-index: 0;
   /* margin: 0 50px 50px 50px; */
 }
 
 .project-panel {
   height: auto;
-  /* commenting max width out. 
+  /* commenting max width out.
   Forcing width may mess with rendering calculations, causing uneven/unaligned project panel rows.
   If max width is necessary, calculations need to be updated for it to work properly*/
   /* max-width: 420px; */
@@ -54,12 +68,21 @@ Project Panel component style rules
     visibility: hidden;
     opacity: 0;
     transition: visibility 0s, opacity 0.2s;
-    z-index: 1;
+    z-index: 15;
   }
 }
 
 .project-panel:hover {
   transition: 0.2s;
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  /* box-shadow: 2px 2px 10px 2px var(--shadow-color); */
+  filter: drop-shadow(2px 2px 10px var(--shadow-color));
+  z-index: 2;
+
+  img {
+    border-radius: 10px 10px 0 0;
+  }
 
   .project-panel-hover {
     visibility: visible;
@@ -68,45 +91,18 @@ Project Panel component style rules
   }
 }
 
-/* IPAD/TABLET Hover support for touch-screen devices that specifically are not computers */
-@media only screen and (any-hover: none) {
-
-  /* In mobile version hover panel is always visible
-     position is static so the grid uses the size of the hover panel
-     original thumbnail image is hidden to avoid duplicate from hover panel*/
-  .project-panel {
-    height: auto;
-    display: grid;
-    flex-direction: column; 
-
-    
-    .project-panel-hover {
-      visibility: visible;
-      opacity: 1;
-      position: static;
-      height:auto;
-    }
-  }
-
-  .project-panel > img {
-    display: none;
-  }
-
-  .project-panel-box {
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-}
-
 .project-panel-hover {
-  border-radius: 10px;
-  background-color: var(--bg-color);
-  box-shadow: 2px 2px 10px 2px var(--shadow-color);
+  border-radius: 0 0 10px 10px;
+  background-color: var(--header-color);
+  /* box-shadow: 2px 2px 10px 2px var(--shadow-color); */
   color: var(--main-text);
   position: absolute;
   height: auto;
   /* min-width: 420px; */
-  width: 100%;
-  /*top: -100px;*/
+  left: 0px;
+  right: 0px;
+  top: 100%;
+  pointer-events: none;
   visibility: visible;
   transition: visibility 0.2s;
 
@@ -146,7 +142,7 @@ Project Panel component style rules
 
       .follow-amt {
         margin: 0;
-        font-size: 14px;
+        font-size: 0.875rem;
         font-weight: 400;
         color: var(--primary-color);
         height: fit-content;
@@ -161,7 +157,8 @@ Project Panel component style rules
         stroke: #F14F76;
       }
 
-      #heart-empty:hover, #heart-filled:hover {
+      #heart-empty:hover,
+      #heart-filled:hover {
         transform: scale(1.2);
       }
     }
@@ -171,7 +168,7 @@ Project Panel component style rules
   h2 {
     padding: 0 20px;
     margin: 14px 0;
-    font-size: 22px;
+    font-size: 1.375rem;
     font-weight: 700;
     color: var(--primary-color);
     line-height: normal;
@@ -182,7 +179,7 @@ Project Panel component style rules
     padding: 0 20px;
     margin: 0;
     color: var(--main-text);
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 400;
     line-height: normal;
   }
@@ -192,7 +189,7 @@ Project Panel component style rules
     padding: 0 20px;
     margin: 14px 0;
     color: var(--main-text);
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 400;
     line-height: 28px;
 
@@ -211,127 +208,60 @@ Project Panel component style rules
   cursor: pointer;
 }
 
-/*
-------------------------------------------------------------------------------------------------
-Project image carousel style rules
-------------------------------------------------------------------------------------------------
-*/
+/* IPAD/TABLET Hover support for touch-screen devices that specifically are not computers */
+@media only screen and (any-hover: none) {
 
-#project-hero-bg1 {
-  width: 100%;
-  height: 100%;
-}
-
-#project-hero {
-  position: relative;
-  height: 100%;
-  border-radius: 10px;
-}
-
-#project-image-carousel-content {
-  display: flex;
-  flex-wrap: nowrap;
-  overflow: hidden;
-  height: 100%;
-  border-radius: 10px;
-}
-
-.project-image-carousel-item {
-  background-color: var(--background-light);
-  width: 100%;
-  min-width: 100%;
-  transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
-}
-
-.project-image-carousel-image {
-  object-fit: contain;
-  width: 100%;
-  height: 100%;
-}
-
-#project-image-carousel-buttons {
-  display: flex;
-  justify-content: space-between;
-  position: absolute;
-  top: 50%;
-  left: 0;
-  right: 0;
-  width: 100%;
-  transform: translateY(-50%);
-  z-index: 3;
-}
-
-#project-image-carousel-left,
-#project-image-carousel-right {
-  border: none;
-  width: 3vw;
-  max-width: 40px;
-  min-width: 20px;
-  height: 3vw;
-  max-height: 40px;
-  min-height: 20px;
-  padding: 0;
-  background-color: rgba(0, 0, 0, 0);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#project-image-carousel-left {
-  position: absolute;
-  left: -40px;
-}
-
-#project-image-carousel-right {
-  position: absolute;
-  right: -40px;
-}
-
-#project-image-carousel-left img,
-#project-image-carousel-right img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-  /*specific filters obtained through https://codepen.io/sosuke/pen/Pjoqqp */
-  /*filter:invert(78%) sepia(100%) saturate(2099%) hue-rotate(182deg) brightness(98%) contrast(106%);*/
-  /* filter: invert(10%) sepia(51%) saturate(3855%) hue-rotate(241deg) brightness(100%) contrast(98%); */
-}
-
-#project-image-carousel-left img {
-  transform: rotateY(180deg);
-}
-
-@media only screen {
-  .discover-project-image{
+  /* In mobile version hover panel is always visible
+     position is static so the grid uses the size of the hover panel
+     original thumbnail image is hidden to avoid duplicate from hover panel*/
+  .project-panel {
     height: auto;
-    width: 100%;
-  }
-}
+    display: grid;
+    flex-direction: column;
+    align-self: baseline;
+    z-index: 0;
+    img {
+      border-radius: 10px 10px 0px 0px;
+      box-shadow: 2px 2px 10px 2px var(--shadow-color);
 
-@media only screen and (max-width: 600px){
-  .discover-project-about{
-    height: auto;
-    padding-top: 0px;
+    }
 
-    p{
-      display: none;
+    .project-panel-hover {
+      visibility: visible;
+      opacity: 1;
+      position: static;
+      height: auto;
+      z-index: 1;
     }
   }
+
 }
+
+@media only screen and (max-width: 700px) {
+
+  .projects-banner-outer {
+    display: none;
+  }
+}
+
+/* #endregion */
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
-Project Creator and Editor style rules
+Project Creator and Editor Popup style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
-
+/* #region project-editor*/
 #project-creator-editor {
   display: flex;
   flex-direction: column;
   max-width: 1121px;
   width: 100%;
-  height: 849px;
+  height: 869px;
   border: none;
   border-radius: 10px;
   color: var(--main-text);
@@ -349,9 +279,10 @@ Project Creator and Editor style rules
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
-  margin-top: 28px;
+  margin-top: 40px;
+  margin-bottom: 10px;
 }
- 
+
 .project-editor-tab {
   border: none;
   border-radius: 30px;
@@ -361,7 +292,7 @@ Project Creator and Editor style rules
   font-size: 1.2rem;
   font-weight: 500;
 }
- 
+
 .project-editor-tab:hover,
 .project-editor-tab-active,
 #team-add-member-add-button,
@@ -379,13 +310,14 @@ Project Creator and Editor style rules
   padding: 10px 20px;
   background-color: var(--primary-color) !important;
   color: var(--invert-text);
-  font-size: 20px;
+  font-size: 1.25rem;
   width: max-content;
   margin-left: auto;
   margin-right: auto;
   font-weight: 700;
   cursor: pointer;
 }
+
 .profile-editor-save {
   margin-top: 37px;
   margin-bottom: 28px;
@@ -398,14 +330,58 @@ Project Creator and Editor style rules
   transition: 0.25s;
 } */
 
-.save-error-msg, .save-error-msg-general {
+.share-button {
+  font-size: 1rem;
+  background: none;
+  display: flex;
+  position: relative;
+
+  border-radius: 10px;
+
+  align-items: center;
+  margin: 0;
+  flex-shrink: 0;
+
+  color: var(--main-text);
+  border: none;
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+#profile-menu-dropdown .share-button {
+  width: 100%;
+  gap: 17px;
+}
+.share-button:hover {
+  background-color: var(--header-color) !important;
+}
+
+.share-response-popup {
+  width: 100%;
+  position: absolute;
+  bottom: 2.25em;
+  right: 0;
+
+  padding: 6px 0;
+  background-color: #000000aa;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.share-response-popup .hidden {
+  display: none;
+}
+
+.save-error-msg,
+.save-error-msg-general {
   display: none;
   margin: auto;
 }
 
-.save-error-msg p, .save-error-msg-general p, #invalid-input-error p {
+.save-error-msg p,
+.save-error-msg-general p,
+#invalid-input-error p {
   margin: 0 0 1.5% 0;
-  font-size: 18px;
+  font-size: 1.125rem;
   color: red;
 }
 
@@ -416,9 +392,11 @@ Project Creator and Editor style rules
 #project-editor-content {
   flex-grow: 1;
   margin: 35px 56px 0 55px;
+}
 
-  > * {
-    max-height: 710px;
+@media only screen and (max-width: 700px) {
+  #project-editor-content {
+    margin: 0 20px;
   }
 }
 
@@ -431,7 +409,7 @@ Project Creator and Editor style rules
 #team-delete-member-cancel-button {
   color: var(--primary-color);
   background-color: transparent;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
   border: none;
 }
@@ -456,8 +434,18 @@ Project Creator and Editor style rules
   flex-grow: 1;
   background-color: var(--bg-color);
   color: var(--main-text);
-  font-size: 15px;
+  font-size: 0.9375rem;
   outline: none;
+}
+
+@media only screen and (max-width: 700px) {
+
+  #project-editor-content select,
+  #project-editor-general input,
+  #project-editor-content textarea,
+  #project-team-add-member-name input {
+    padding-bottom: 30px;
+  }
 }
 
 #project-editor-content select {
@@ -475,7 +463,7 @@ Project Creator and Editor style rules
 
 .project-editor-extra-info {
   font-style: italic;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--neutral-gray);
 }
 
@@ -509,16 +497,16 @@ Project Creator and Editor style rules
     flex-direction: column;
   }
 
-.save-error-msg-general {
-  display:none;
-  margin: auto;
-}
+  .save-error-msg-general {
+    display: none;
+    margin: auto;
+  }
 
-.save-error-msg-general p {
-  margin: 50 0 1.5% 0;
-  font-size: 18px;
-  color: red;
-}
+  .save-error-msg-general p {
+    margin: 50 0 1.5% 0;
+    font-size: 1.125rem;
+    color: red;
+  }
 }
 
 .project-editor-input-item {
@@ -575,7 +563,7 @@ Project Creator and Editor style rules
 
 .character-count {
   font-style: italic;
-  font-size: 1.6ch;
+  font-size: 0.9375rem;
   position: absolute;
   bottom: 7px;
   right: 14px;
@@ -674,7 +662,7 @@ Project Creator and Editor style rules
   height: 2px;
   min-height: 2px;
   width: 100%;
-  border: none; 
+  border: none;
   background-color: var(--header-color);
 }
 
@@ -684,9 +672,7 @@ Project Creator and Editor style rules
 
 .search-wrapper>.search-bar>.search-input {
   background-color: none;
-  border: none;
   margin: 0;
-  padding: 0;
 }
 
 #project-editor-long-description-input {
@@ -699,6 +685,7 @@ Project Creator and Editor style rules
   flex-wrap: wrap;
   gap: 20px;
   margin: 10px 0;
+  max-width: 100%;
 }
 
 .project-editor-image-container {
@@ -722,6 +709,7 @@ Project Creator and Editor style rules
     height: 100%;
   }
 }
+
 .project-editor-image-container:hover .project-image-hover {
   opacity: 1;
 }
@@ -773,11 +761,13 @@ Project Creator and Editor style rules
   position: relative;
   max-height: 182px;
   width: 323px;
+  max-width: 100%;
 }
 
 [data-theme="light"] #project-editor-add-image {
   border: 2px dashed #BDBDBD;
 }
+
 [data-theme="dark"] #project-editor-add-image {
   border: 2px dashed #424242;
 }
@@ -786,9 +776,7 @@ Project Creator and Editor style rules
 #project-editor-tags {
   display: grid;
   grid-template:
-    'type search' auto 
-    'select search' 1fr 
-    'save save' auto /
+    'type search' auto 'select search' 1fr 'save save' auto /
     1fr 2fr;
   gap: 20px;
   height: 100%;
@@ -812,7 +800,7 @@ Project Creator and Editor style rules
 #project-editor-type-tags {
   grid-area: type;
   display: flex;
-  flex-direction: column; 
+  flex-direction: column;
   gap: 15px;
   max-height: 107px;
 }
@@ -822,11 +810,12 @@ Project Creator and Editor style rules
   display: flex;
   flex-direction: column;
   max-height: 485px;
-  
+
   .error {
     margin-top: 15px;
   }
 }
+
 
 #project-editor-selected-tags-container {
   display: flex;
@@ -835,8 +824,6 @@ Project Creator and Editor style rules
   flex-wrap: nowrap;
   gap: 8px;
   margin-top: 15px;
-  /* height: 80px; */
-  /* max-height: 80px; */
   overflow-y: scroll;
 }
 
@@ -860,7 +847,7 @@ Project Creator and Editor style rules
 
 .project-editor-section-header {
   color: var(--primary-color);
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 700;
 }
 
@@ -877,12 +864,11 @@ Project Creator and Editor style rules
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
     flex-direction: column;
-    padding-left: 30%;
   }
 }
 
 @media only screen and (max-width: 420px) {
-    #project-editor-team-tabs {
+  #project-editor-team-tabs {
     flex-direction: column;
   }
 }
@@ -891,14 +877,13 @@ Project Creator and Editor style rules
 #project-editor-team-tabs,
 #project-editor-tag-search-tabs {
   gap: 38px;
-  justify-content: center;
 }
 
 .project-editor-tag-search-tab {
   margin-bottom: 10px;
   padding: 0;
   color: var(--neutral-gray);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 400;
   word-break: normal;
   max-width: 100%;
@@ -946,7 +931,7 @@ Project Creator and Editor style rules
 
 #confirm-editor-save-text {
   padding: 50px;
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 #project-editor-project-members {
@@ -1080,7 +1065,7 @@ Project Creator and Editor style rules
   width: 100%;
 }
 
-#user-search-container .search-bar  {
+#user-search-container .search-bar {
   /* Override for default SearchBar component */
   display: flex;
   align-items: center;
@@ -1095,7 +1080,6 @@ Project Creator and Editor style rules
 
 #user-search-container .search-input {
   /* Override for default SearchBar component */
-  border: none;
   background-color: transparent;
 }
 
@@ -1113,10 +1097,23 @@ Project Creator and Editor style rules
   row-gap: 15px;
 }
 
+@media only screen and (max-width: 400px) {
+  #project-team-add-member-info {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    padding: 20px;
+  }
+
+  #user-search-container>.dropdown-container {
+    margin-left: 0px;
+  }
+}
+
 .success {
   color: green;
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: italic;
 }
 
@@ -1141,9 +1138,9 @@ Project Creator and Editor style rules
 }
 
 @media only screen and (max-width: 500px) {
-#project-team-add-member-permissions {
-  flex-wrap: wrap;
-}
+  #project-team-add-member-permissions {
+    flex-wrap: wrap;
+  }
 }
 
 #user-search-dropdown-button {
@@ -1247,7 +1244,7 @@ Project Creator and Editor style rules
   background-color: var(--header-color);
   box-sizing: border-box;
   width: 100%;
-  font-size: 20px;
+  font-size: 1.25rem;
   max-width: 100%;
 }
 
@@ -1292,13 +1289,12 @@ Project Creator and Editor style rules
   width: 100%;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen {
   #project-team-open-positions-popup {
     flex-direction: column;
   }
 
   #project-team-open-positions-popup .positions-popup-list {
-    max-height: 20%;
     overflow-y: auto;
   }
 
@@ -1308,19 +1304,23 @@ Project Creator and Editor style rules
   }
 
   #positions-popup-list-edit #edit-position-details {
-     flex-direction: column;
-     flex-wrap: nowrap;
-     align-items: center;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
   }
 
   #edit-position-role {
     flex-direction: column;
   }
+
+  #position-contact {
+    max-width: fit-content;
+  }
 }
 
 #team-positions-popup-list-header {
   text-align: left;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
   color: var(--primary-color);
 }
@@ -1408,7 +1408,7 @@ Project Creator and Editor style rules
 }
 
 #edit-position-button-pair {
-  display: flex;  
+  display: flex;
   flex-direction: row;
   gap: 10px;
   align-items: center;
@@ -1420,9 +1420,10 @@ Project Creator and Editor style rules
   justify-content: space-between;
   gap: 17px;
 }
-#edit-position-details > #edit-position-details-left > label,
-#edit-position-details > #edit-position-details-right > label {
-  font-size: 16px;
+
+#edit-position-details>#edit-position-details-left>label,
+#edit-position-details>#edit-position-details-right>label {
+  font-size: 1rem;
 }
 
 #edit-position-details-left {
@@ -1469,6 +1470,7 @@ button.edit-position-contact {
   padding: 15px;
   cursor: default;
 }
+
 .select-option.edit-position-contact {
   display: flex;
   gap: 5px;
@@ -1487,7 +1489,7 @@ button.edit-position-contact .project-member-image {
 }
 
 .value .project-editor-project-member-name {
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 #edit-position-details-right {
@@ -1519,7 +1521,7 @@ select.edit-position-compensation {
 
 #edit-position-details label {
   justify-self: end;
-  font-size: 16px;
+  font-size: 1rem;
   text-wrap: nowrap;
 }
 
@@ -1531,7 +1533,7 @@ select.edit-position-compensation {
 
 #position-edit-cancel {
   color: var(--primary-color);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
 }
 
@@ -1549,10 +1551,15 @@ select.edit-position-compensation {
   margin-top: auto;
 }
 
-#base-url{
-  margin: auto;
+#base-url {
+  margin: auto auto auto 0px;
   text-wrap: nowrap;
+  font-size: 0.9375rem;
 }
+
+/* #endregion */
+
+
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1561,12 +1568,7 @@ Project page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
-
-/*rules for the full page itself*/
-#project-page {
-  padding: 0px 15px;
-  width: calc(100% - 250px);
-}
+/* #region project-page */
 
 /*used for the header section of the page (with the project title, description & other options)*/
 #project-info {
@@ -1637,7 +1639,7 @@ Project page style rules
 #project-tags {
   grid-area: tags;
   display: flex;
-  justify-content: end;
+  justify-content: baseline;
   gap: 10px;
   margin-top: 10px;
 }
@@ -1690,12 +1692,6 @@ Project page style rules
   z-index: -2;
   left: 40px;
 }
-
-/* #header-buttons {
-  display: flex;
-  align-items: center;
-  grid-area: buttons
-} */
 
 #follow-project {
   width: 100px;
@@ -2022,13 +2018,12 @@ used to help wrap the lines around the word 'Members'*/
   color: var(--neutral-gray, #636363);
   text-align: center;
   font-family: Inter;
-  font-size: 16px;
+  font-size: 1rem;
   font-style: italic;
   font-weight: 400;
   line-height: normal;
   color: #271d66;
   font-family: Inter;
-  font-size: 16px;
   font-style: italic;
   font-weight: 400;
   line-height: normal;
@@ -2054,7 +2049,7 @@ used to help wrap the lines around the word 'Members'*/
   color: #f4f4f4;
   text-align: center;
   font-family: Inter;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
   line-height: 28px;
@@ -2071,7 +2066,7 @@ used to help wrap the lines around the word 'Members'*/
   cursor: pointer;
   text-align: center;
   font-family: Inter;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
@@ -2104,9 +2099,6 @@ used to help wrap the lines around the word 'Members'*/
 }
 
 @media only screen and (max-width: 800px) {
-  #project-page {
-    width: calc(100% - 30px);
-  }
 
   #project-info {
     display: grid;
@@ -2143,6 +2135,8 @@ used to help wrap the lines around the word 'Members'*/
   }
 }
 
+/* #endregion project-page */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -2150,6 +2144,7 @@ Project page general settings style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region general-settings-style-rules */
 
 /*rules  for the whole 'general settings' tab*/
 #general-settings {
@@ -2187,6 +2182,10 @@ Project page general settings style rules
   align-self: center;
 }
 
+/* #endregion */
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -2194,6 +2193,7 @@ Project page member settings style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region member settings */
 
 /*rules for the top section of the 'member settings' tab*/
 #member-settings-header {
@@ -2279,6 +2279,10 @@ Project page member settings style rules
   margin: 2.5% auto;
 }
 
+/*#endregion*/
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -2286,6 +2290,7 @@ Project page post style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region project page post */
 
 /*rules for the 'return' and 'to project' buttons*/
 #post-page-nav-buttons {
@@ -2520,7 +2525,7 @@ plus a follow button & a more options button*/
   border-radius: 10px;
   padding: 20px 30px;
   z-index: 1000;
-  width:400px;
+  width: 400px;
   max-width: 90%;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
   display: flex;
@@ -2528,13 +2533,14 @@ plus a follow button & a more options button*/
   gap: 15px;
 }
 
-.create-post-popup input, .create-post-popup textarea {
+.create-post-popup input,
+.create-post-popup textarea {
   width: 100%;
   padding: 8px 10px;
   border: 1px solid #ccc;
   border-radius: 6px;
   resize: vertical;
-  font-size: 14px;
+  font-size: 0.875rem;
 }
 
 .create-post-popup button {
@@ -2548,9 +2554,13 @@ plus a follow button & a more options button*/
   transition: background-color 0.2s ease;
 }
 
-.create-post-popup button:hover{
+.create-post-popup button:hover {
   background-color: darkorange;
 }
+
+/* #endregion */
+
+
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -2559,6 +2569,7 @@ New Project Page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region project page post */
 
 #project-page-content {
   display: grid;
@@ -2573,26 +2584,40 @@ New Project Page style rules
 @media screen and (max-width: 1199px) {
   #project-page-content {
     grid-template:
-      'info' auto
       'carousel' auto
+      'info' auto
       'overview' auto
       'people' auto
       'positions' auto;
   }
 }
 
+@media screen and (max-width: 700px) {
+  #project-page-content {
+    margin: 0 20px;
+  }
+}
+
+/* #endregion*/
+
+
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
 Project Carousel style rules
+- Scrolling carousel of all project images on project page
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region project carousel */
+
 .project-carousel {
   grid-area: carousel;
   display: flex;
   flex-direction: column;
   position: relative;
+  margin-bottom: 20px;
 
   .carousel-contents {
     /* height: 370px; */
@@ -2603,7 +2628,8 @@ Project Carousel style rules
   .carousel-row {
     position: absolute;
     height: 17px;
-    bottom: -22px; /* Height + 5px displacement */
+    bottom: -22px;
+    /* Height + 5px displacement */
     width: 100%;
   }
 
@@ -2622,6 +2648,7 @@ Project Carousel style rules
     margin: 0;
     margin-top: 8px;
   }
+
   .project-carousel-btn:hover {
     transition-duration: 0.2s;
 
@@ -2633,6 +2660,7 @@ Project Carousel style rules
     margin-top: 8px;
     transform: rotate(90deg);
   }
+
   .carousel-btn-right {
     margin: 0;
     margin-top: 8px;
@@ -2666,14 +2694,15 @@ Project Carousel style rules
   border-radius: 10px;
   text-align: left;
   padding: 20px;
+  max-width: calc(100vw - 80px);
 
   #project-info-top {
     display: flex;
     flex-direction: column;
     justify-content: start;
     gap: 5px;
-    width: 100%;
   }
+
 }
 
 .project-info-highlight {
@@ -2688,10 +2717,25 @@ Project Carousel style rules
   align-items: center;
 }
 
+@media only screen and (max-width: 700px) {
+  #project-info-header {
+    flex-wrap: wrap;
+
+    #project-info-buttons {
+      margin-left: 0px;
+    }
+  }
+
+  #project-tags {
+    flex-wrap: wrap;
+  }
+}
+
 #project-title {
-  font-size: 32px;
+  font-size: clamp(1.5rem, 5vw, 2rem);
   font-weight: 700;
   color: var(--primary-color);
+  margin-bottom: 5px;
 }
 
 #project-info-buttons {
@@ -2714,13 +2758,14 @@ Project Carousel style rules
     #heart-empty {
       stroke: #f14f76;
     }
+
     #heart-filled {
       fill: #f14f76;
     }
   }
 
   .follow-amt {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 400;
     color: var(--primary-color);
     height: fit-content;
@@ -2739,7 +2784,7 @@ Project Carousel style rules
     color: var(--primary-color);
     margin: 0;
     text-align: right;
-    font-size: 12px;
+    font-size: 0.75rem;
     font-family: Inter;
     font-weight: 400;
     letter-spacing: 2px;
@@ -2761,7 +2806,7 @@ Project Carousel style rules
 }
 
 #project-info-edit {
-  font-size: 16px;
+  font-size: 1rem;
   border: none;
   border-radius: 30px;
   background-color: var(--primary-color) !important;
@@ -2777,10 +2822,6 @@ Project Carousel style rules
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
   transition: 0.25s;
 } */
-
-#project-info-edit:focus-visible{
-  outline: none !important;
-}
 
 #project-hook {
   flex-grow: 1;
@@ -2809,12 +2850,13 @@ Project Carousel style rules
   border-radius: 40px;
   background-color: var(--primary-color);
   color: var(--invert-text);
-  font-size: 16px;
+  font-size: 1rem;
   font-weight: 700;
   line-height: 150%;
   padding: 4px 16px;
   width: fit-content;
 }
+
 #project-open-position-header {
   margin-left: auto;
   margin-right: auto;
@@ -2866,7 +2908,7 @@ Project Carousel style rules
 #positions-popup-header {
   grid-area: header;
   text-align: center;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
   margin: auto;
   padding: 10px 20px;
@@ -2883,6 +2925,9 @@ Project Carousel style rules
   border-radius: 10px;
   flex: 0 381px;
   padding: 20px;
+  max-width: 100%;
+  box-sizing: border-box;
+  /* makes it so padding is included in max width */
 }
 
 #positions-popup-list-edit {
@@ -2927,7 +2972,7 @@ Project Carousel style rules
 }
 
 #team-positions-popup-list-buttons .add-item-button * {
-  font-size: 16px;
+  font-size: 1rem;
   color: var(--neutral-gray);
 }
 
@@ -2937,7 +2982,7 @@ Project Carousel style rules
   color: var(--main-text);
   border: none;
   border-radius: 50px;
-  font-size: 16px;
+  font-size: 1rem;
   padding: 5px 15px;
   font-weight: 400;
 }
@@ -2964,7 +3009,7 @@ button#positions-popup-list-item-active {
   border-radius: 10px;
   padding: 20px;
 
-  > .positions-popup-info {
+  >.positions-popup-info {
     display: flex;
     flex-direction: column;
     gap: 15px;
@@ -2982,14 +3027,24 @@ button#positions-popup-list-item-active {
   border-radius: 10px;
   padding: 20px;
   width: 100%;
+  box-sizing: border-box;
 }
 
-@media only screen and (max-width: 1000px) {
+@media only screen {
 
   #project-open-positions-popup {
     overflow-y: auto;
-    width: 70vw;
-    height: 80vh;
+    padding: 20px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    height: 100vh;
+    width: calc(100% - 40px);
+    justify-content: baseline;
+  }
+
+  .positions-popup-list {
+    max-height: fit-content;
   }
 }
 
@@ -2999,7 +3054,7 @@ button#positions-popup-list-item-active {
 
 .positions-popup-info-title {
   color: var(--primary-color);
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
   text-align: center;
   margin-bottom: 20px;
@@ -3063,7 +3118,7 @@ button#positions-popup-list-item-active {
   align-items: center;
   gap: 5px;
   font-style: normal;
-  font-size: 14px;
+  font-size: 0.875rem;
   transition: background-color 0.1s;
 }
 
@@ -3114,14 +3169,14 @@ button#positions-popup-list-item-active {
 }
 
 #project-overview-title {
-  font-size: 24px;
+  font-size: 1.5rem;
   color: var(--primary-color);
   font-weight: 600;
   margin-bottom: 20px;
 }
 
 .project-overview-section-header {
-  font-size: 20px;
+  font-size: 1rem;
   color: var(--primary-color);
   font-weight: 600;
   margin: 10px 0;
@@ -3135,7 +3190,7 @@ button#positions-popup-list-item-active {
   justify-content: start;
   color: var(--primary-color);
   font-style: italic;
-  font-size: 20px;
+  font-size: 1rem;
   margin: 15px 0;
 
   #project-overview-links {
@@ -3173,11 +3228,12 @@ button#positions-popup-list-item-active {
   border-radius: 10px;
   width: calc(50% - 45px);
   min-width: 234px;
+  border-width: 0;
 }
 
 .project-contributor-profile {
-  width: 75px;
-  height: 75px;
+  width: clamp(45px, 15vw, 75px);
+  height: clamp(45px, 15vw, 75px);
   border-radius: 50%;
   border: 2px solid white;
   object-fit: cover;
@@ -3190,13 +3246,13 @@ button#positions-popup-list-item-active {
 
   .team-member-name {
     font-weight: 700;
-    font-size: 16px;
+    font-size: 1rem;
     color: var(--primary-color);
   }
 
   .team-member-role {
     font-style: italic;
-    font-size: 14px;
+    font-size: clamp(0.625rem, 2vw, 0.875rem);
     font-weight: 400;
     color: var(--neutral-gray);
   }
@@ -3232,8 +3288,12 @@ button#positions-popup-list-item-active {
   color: var(--main-text);
   border-radius: 30px;
   padding: 5px 10px;
-  font-size: 16px;
+  font-size: 1rem;
 }
+
+/* #endregion*/
+
+
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -3242,23 +3302,12 @@ My projects page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region my project page */
 
-@media only screen and (min-width: 800px) {
-  .my-projects-banner {
-    min-height: 220px;
-  }
-}
 
-@media only screen and (max-width: 799px) {
-  .my-projects-banner {
-    min-height: 200px;
-  }
-}
 
 .page#my-projects {
   box-sizing: border-box;
-  /* background-color:; */
-  padding: 0px 0px 0px 0px;
 }
 
 .my-projects-top-bar {
@@ -3308,46 +3357,68 @@ My projects page style rules
   }
 }
 
-/* Not using former grid layout, so this is commented */
-/* @media (min-width: 420px) {
-  .my-projects-header-row {
-    grid-template-columns: auto max-content;
-    grid-template-rows: auto max-content;
-    margin-bottom: 0%;
+@media only screen and (min-width: 800px) {
+  .my-projects-banner {
+    min-height: 220px;
   }
 }
 
-@media (min-width: 525px) {
-  .my-projects-header-row {
-    grid-template-columns: auto max-content max-content;
-    grid-template-rows: auto;
-    margin-bottom: 0%;
+@media only screen and (max-width: 799px) {
+  .my-projects-banner {
+    min-height: 200px;
+  }
+
+  .page#my-projects {
+    padding-bottom: 100px;
   }
 }
 
-@media ((min-width: 665px) and (max-width: 799px)) or (min-width: 885px) {
+@media only screen and (max-width: 1100px) {
   .my-projects-header-row {
-    grid-template-columns: auto max-content max-content max-content;
-    margin-bottom: 0%;
+    flex-wrap: wrap;
+    gap: 20px;
   }
-} */
+
+
+}
 
 .my-projects-action-buttons {
   display: flex;
   flex-direction: row;
   width: max-content;
   gap: 15px;
-  align-items: center;
+  align-items: left;
 
   .arrow-az {
     transform: rotate(180deg);
   }
 }
 
-/* #my-projects-sort-btn:hover {
-  background-color: var(--invert-text);
-  box-shadow: 0 0 5px 0 var(--primary-color);
-} */
+@media only screen and (max-width: 700px) {
+  .my-projects-header-row {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 0 20px;
+    flex-direction: column;
+    max-width: calc(100vw - 50px);
+    align-items: baseline;
+  }
+
+  .my-projects-action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .select-container,
+  .my-projects-create-btn {
+    display: flex;
+  }
+}
+
+
+
+
+
+
 
 .my-projects-display-switch {
   box-sizing: border-box;
@@ -3390,8 +3461,9 @@ My projects page style rules
     color: var(--invert-text);
   }
 }
+
 .my-projects-all-projects-button,
-.my-projects-create-btn > button {
+.my-projects-create-btn>button {
   box-sizing: border-box;
   width: fit-content;
   background-color: var(--primary-color);
@@ -3400,7 +3472,7 @@ My projects page style rules
   padding: 6px 17px;
   color: var(--invert-text);
   text-align: center;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
@@ -3426,13 +3498,14 @@ My projects page style rules
   transition: 0.2s;
 }
 
-.my-projects-create-btn > #project-info-create {
+.my-projects-create-btn>#project-info-create {
   gap: 14px;
+
   p {
     color: var(--invert-text);
   }
-  
-  .color-fill > use {
+
+  .color-fill>use {
     fill: var(--invert-text);
   }
 }
@@ -3444,45 +3517,72 @@ My projects page style rules
   margin-right: 64px;
 }
 
-.placeholder-spacing {
-  margin: 0 60px;
-  display: flex;
+@media only screen and (max-width:700px) {
+  .page#my-projects hr {
+    margin-left: 20px;
+    margin-right: 20px;
+  }
 }
 
+
 .my-projects-grid {
-  width: 100%;
+  width: auto;
   margin: 30px 0;
   padding-left: 60px;
   padding-right: 64px;
+  gap: 20px;
 
   display: flex;
-  gap: 20px;
   flex-wrap: wrap;
 }
 
 .my-project-grid-card {
-  box-sizing: border-box;
-  border: 0px;
-  border-radius: 0px;
-  width: fit-content;
-  height: fit-content;
-
   display: flex;
   flex-direction: column;
   gap: 5px;
   align-content: start;
+
 }
+
+@media only screen and (max-width: 768px) {
+  .my-projects-grid {
+    justify-content: center;
+  }
+}
+
+
 
 .grid-card-image {
   grid-area: image;
   box-sizing: border-box;
-  border: 2px solid white;
+  border: 2px solid var(--bg-color);
   border-radius: 10px;
   width: 200px;
   height: 200px;
   object-fit: cover;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   cursor: pointer;
+}
+
+.grid-card-image-button {
+  border-radius: 10px;
+  width: 200px;
+  height: 200px;
+
+  color: #00000000;
+  background-color: #00000000;
+
+  margin: 0;
+  padding: 0;
+  border-width: 0;
+  outline-width: 0;
+}
+
+.grid-card-image-button:focus {
+  border-radius: 10px;
+  outline-width: 4px;
+  outline-style: solid;
+  outline-color: var(--primary-color);
 }
 
 .grid-card-details {
@@ -3498,12 +3598,17 @@ My projects page style rules
   text-align: left;
   width: 150px;
   text-wrap: wrap;
-  font-size: 16px;
+  font-size: 1rem;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
   cursor: pointer;
+  text-decoration: none;
+}
+
+.grid-card-title:focus {
+  border-width: 4px;
 }
 
 .grid-card-title:hover {
@@ -3532,7 +3637,7 @@ My projects page style rules
   padding-bottom: 5px;
   margin: 0px;
   text-align: right;
-  font-size: 12px;
+  font-size: 0.75rem;
   font-family: Inter;
   font-weight: normal;
   letter-spacing: 2px;
@@ -3545,6 +3650,7 @@ My projects page style rules
 
 .dropdown:has(.card-options-list) {
   box-sizing: border-box;
+  margin-bottom: 100px;
   border: 0px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
@@ -3557,9 +3663,10 @@ My projects page style rules
   background-color: var(--dropdown-color);
   border: 0px;
   border-radius: 10px;
+  box-shadow: 1px 2px 2px var(--shadow-color);
   width: 154px;
   height: fit-content;
-  padding: 15px;
+  padding: 15px 10px;
   z-index: 1;
 
   display: flex;
@@ -3570,11 +3677,15 @@ My projects page style rules
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0;
+    padding: 5px;
 
     #trash {
       stroke: #ff3859;
     }
+  }
+
+  button:hover {
+    background-color: var(--header-color);
   }
 }
 
@@ -3600,19 +3711,22 @@ My projects page style rules
   gap: 10px;
 }
 
+
 .project-header-label {
   color: var(--primary-color);
   text-align: left;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
 }
+
 .project-header-label.title {
   max-width: 610px;
   width: 100%;
 }
+
 .project-header-label.date {
   text-align: right;
   flex-grow: 1;
@@ -3630,13 +3744,39 @@ My projects page style rules
   border-radius: 10px;
   height: fit-content;
   padding: 10px 20px 10px 10px;
-  font-size: 20px;
+  font-size: 1.25rem;
 
   .dropdown-container {
     display: flex;
     flex-direction: row;
     align-items: center;
   }
+}
+
+
+
+@media only screen and (max-width: 700px) {
+
+  .my-projects-grid,
+  .my-projects-list {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 0 20px 20px;
+  }
+
+  .my-projects-list-header {
+    display: none;
+  }
+
+  .my-project-list-card {
+    flex-wrap: wrap;
+  }
+
+  .dropdown-container {
+    margin-left: auto;
+  }
+
+
 }
 
 .list-card-section1 {
@@ -3663,7 +3803,7 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--primary-color);
   text-align: left;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-family: Inter;
   font-weight: bold;
   line-height: 28px;
@@ -3680,7 +3820,7 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main-text);
   text-align: left;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
@@ -3694,7 +3834,7 @@ My projects page style rules
   box-sizing: border-box;
   color: var(--main--text);
   text-align: right;
-  font-size: 20px;
+  font-size: 1.25rem;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
@@ -3727,7 +3867,7 @@ My projects page style rules
 
 .card-leave-button,
 .card-delete-button {
-  display:flex;
+  display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
@@ -3762,7 +3902,7 @@ My projects page style rules
   text-align: center;
 
   h3 {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
     margin: 0 0 15px;
@@ -3781,7 +3921,7 @@ My projects page style rules
     margin: 0 0 15px 0;
     color: var(--neutral-gray);
     font-style: italic;
-    font-size: 16px;
+    font-size: 1rem;
 
     span {
       color: var(--neutral-gray);
@@ -3798,7 +3938,7 @@ My projects page style rules
     border: none;
     outline: none;
     box-shadow: none;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
     line-height: 28px;
     color: var(--invert-text);
@@ -3818,7 +3958,7 @@ My projects page style rules
     border: none;
     outline: none;
     box-shadow: none;
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
     min-width: 106px;
@@ -3848,6 +3988,7 @@ My projects page style rules
   }
 }
 
+/* #endregion */
 
 
 /*

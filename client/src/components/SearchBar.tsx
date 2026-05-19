@@ -129,6 +129,8 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
               e.preventDefault();
             }
           }}
+          aria-label='Searchbar'
+          autoFocus={false}
           autoComplete="searchbar-off"
         />
       </div>

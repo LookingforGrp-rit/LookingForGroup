@@ -643,8 +643,8 @@ const Settings = () => {
                           disabled
                         />
                         <ThemeIcon
-                          src={'assets/dropdown_light.svg'}
-                          darkSrc={'assets/dropdown_dark.svg'}
+                          src={'/assets/dropdown_light.svg'}
+                          darkSrc={'/assets/dropdown_dark.svg'}
                           alt={'Visibility'}
                           addClass={'options-dropdown-parent-btn'}
                         />

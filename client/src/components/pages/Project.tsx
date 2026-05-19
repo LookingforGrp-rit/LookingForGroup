@@ -8,6 +8,7 @@ import profileImage from "../../images/blue_frog.png";
 import { ProjectCarousel } from "../ProjectCarousel";
 import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
+import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
 import { getByID } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
@@ -39,7 +40,7 @@ const Project = () => {
   // const [userPerms, setUserPerms] = useState(-1);
 
   const [user, setUser] = useState<MePrivate | null>();
-  const [userID, setUserID] = useState<number>(0);
+  const [userID, setUserID] = useState<number>();
   const [displayedProject, setDisplayedProject] =
     useState<ProjectWithFollowers>();
 
@@ -53,6 +54,7 @@ const Project = () => {
    * @returns true if user is following the project
    */
   const checkFollow = useCallback(async () => {
+    if(userID){
     const followings = (await getProjectFollowing(userID)).data?.projects;
 
     let isFollow = false;
@@ -65,6 +67,7 @@ const Project = () => {
     }
     setFollowing(isFollow);
     return isFollow;
+    }
   }, [projectID, userID]);
 
   // Sets state variables
@@ -85,7 +88,7 @@ const Project = () => {
         setFollowCount(projectResp.data.followers.count);
 
         if (userResp.data) {
-          for (let member of projectResp.data.members) {
+          for (const member of projectResp.data.members) {
             if (member.user.userId === userResp.data.userId) {
               setIsMember(true);
               return;
@@ -191,17 +194,7 @@ const Project = () => {
             </DropdownButton>
             <DropdownContent rightAlign={true}>
               <div id="project-info-dropdown">
-                {/* TODO: Add functionality to share. Probably copy link to clipboard. Should also alert user */}
-                <button className="project-info-dropdown-option">
-                  <ThemeIcon
-                    id={"share"}
-                    width={27}
-                    height={27}
-                    ariaLabel={"Share project"}
-                    className="mono-fill"
-                  />
-                  Share
-                </button>
+                <ShareButton />
                 
                 {/* Only be able to leave if you're a member of the project */}
                 { isMember ? 
@@ -283,7 +276,7 @@ const Project = () => {
           const memberUser = member.user; //so i don't have to go user.user.userId or anything
 
           return (
-            <div
+            <button
               key={memberUser.userId}
               className="project-contributor"
               onClick={() =>
@@ -306,7 +299,7 @@ const Project = () => {
                 </div>
                 <div className="team-member-role">{member.role.label}</div>
               </div>
-            </div>
+            </button>
           );
         })}
       </>

@@ -18,8 +18,8 @@ const NotFoundPage = () => {
             <Header dataSets={projectsList} onSearch={currentSearch} hideSearchBar />
             <main id="main" className="error-box">
                 <ThemeImage
-                    lightSrc={'assets/bannerImages/404_light.png'}
-                    darkSrc={'assets/bannerImages/404_dark.png'}
+                    lightSrc={'/assets/bannerImages/404_light.png'}
+                    darkSrc={'/assets/bannerImages/404_dark.png'}
                     id={'error-image'}
                     alt={'404 Not Found'}
                 />

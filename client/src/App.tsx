@@ -28,7 +28,7 @@ import { ThemeContext } from './contexts/ThemeContext';
 import uselocalstorage from 'use-local-storage';
 
 function App() {
-  //const [avatarImage, setAvatarImage] = useState('images/tempProfilePic.png'); -- Commented in clean up 26-20-01 
+  //const [avatarImage, setAvatarImage] = useState('/images/tempProfilePic.png'); -- Commented in clean up 26-20-01 
   const [profileImage, setProfileImage] = useState('');
 
   // https://css-tricks.com/easy-dark-mode-and-multiple-color-themes-in-react/
