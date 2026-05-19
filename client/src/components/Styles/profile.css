@@ -175,6 +175,8 @@ Profile Panel component style rules
 .profile-panel:hover .profile-panel-hover {
   opacity: 1;
   cursor: pointer;
+  transition-duration: 0.2s;
+  scale: 1.1;
 }
 
 /* #endregion */
@@ -406,6 +408,8 @@ Profile page style rules
 #edit-profile-modal #edit-profile-header button:hover {
   background-color: var(--bg-color);
   color: var(--main-text);
+  transition-duration: 0.2s;
+  scale: 1.1;
 }
 
 #edit-profile-modal #edit-profile-header button:active {
@@ -467,6 +471,8 @@ Profile page style rules
   /* background-color: var(--primary-color); */
   /* box-shadow: 0px 0px 10px 0px #00000040; */
   cursor: pointer;
+  transition-duration: 0.2s;
+  scale: 1.1;
 }
 
 #edit-profile-modal .edit-region-button.photo {
@@ -664,6 +670,8 @@ select.edit-region-input {
 
 #edit-profile-modal .list-project-hide-icon-button:hover {
   background-color: #969696;
+  transition-duration: 0.2s;
+  scale: 1.1;
 }
 
 /* ----- Skills Page ----- */
@@ -849,6 +857,8 @@ select.edit-region-input {
 
 #edit-profile-modal .skills-filter-button:hover {
   /* background-color: #dddddd; */
+  transition-duration: 0.2s;
+  scale: 1.1;
 }
 
 #edit-profile-modal .skills-filter-button#selected {
@@ -993,6 +1003,8 @@ select.edit-region-input {
 
 #edit-profile-modal .edit-region-input.links .remove-button:hover {
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
+  transition-duration: 0.2s;
+  scale: 1.1;
 }
 
 .edit-region-button-section.links {
@@ -1015,6 +1027,8 @@ select.edit-region-input {
 
 #edit-profile-modal .edit-region-button.links:hover {
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
+  transition-duration: 0.2s;
+  scale: 1.1;
 }
 
 /* ----- Save Button ----- */
@@ -1044,6 +1058,8 @@ select.edit-region-input {
 #edit-profile-save .edit-region-save-button:hover,
 #edit-profile-save .edit-region-save-button:active {
   background-color: var(--primary-color);
+  transition-duration: 0.2s;
+  scale: 1.1;
 }
 
 /* #endregion */
@@ -1527,6 +1543,8 @@ New Profile page style rules
 
 #about-me-buttons button:hover {
   background-color: var(--bg-color);
+  transition-duration: 0.2s;
+  scale: 1.1;
 }
 
 #about-me-buttons>div {
