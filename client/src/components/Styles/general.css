@@ -446,6 +446,13 @@ orange-button class makes the button orange, white-button class makes the button
   margin: auto;
 }
 
+.scale-on-hover {
+  transition: transform 0.2s;
+}
+.scale-on-hover:hover {
+  transform: scale(1.05);
+}
+
 /* #endregion*/
 
 /*
