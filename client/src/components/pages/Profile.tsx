@@ -81,11 +81,11 @@ const Profile = () => {
 
     let isFollowing = false;
 
-    if(followings !== undefined){ //if they have no follows then obviously they can't be following the guy we're looking at
-    for (const follower of followings){
-      isFollowing = (follower.user.userId === parseInt(profileID))
-      if (isFollowing) break;
-    }
+    if (followings !== undefined) { //if they have no follows then obviously they can't be following the guy we're looking at
+      for (const follower of followings) {
+        isFollowing = (follower.user.userId === parseInt(profileID))
+        if (isFollowing) break;
+      }
     }
     setIsFollow(isFollowing);
     return isFollowing;
@@ -102,11 +102,11 @@ const Profile = () => {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
       //adds the user following
-    const toggleFollow = !(await checkFollow());
-    setIsFollow(toggleFollow);
+      const toggleFollow = !(await checkFollow());
+      setIsFollow(toggleFollow);
       if (toggleFollow) {
         const follow = await addUserFollowing(parseInt(profileID));
-        if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
+        if (follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
       }
       else {
         await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
@@ -194,85 +194,85 @@ const Profile = () => {
   // Components
   // --------------------
   const aboutMeButtons = (
-  <>
-    {/* Add social links if present */}
-    {displayedProfile?.socials && (
-      <div id="about-me-buttons">
-        {displayedProfile?.socials.map((link) => (
-          <button
-            key={link.websiteId}
-            onClick={() => {
-              window.open(link.url, "_blank");
-            }}
-          >
-            <ThemeIcon
-              id={link.label === "Other" ? "link" : link.label.toLowerCase()}
-              width={25}
-              height={25}
-              className={"color-fill"}
-              ariaLabel={link.label}
-            />
-          </button>
-        ))}
-      </div>
-    )}
-
-    {/* If the displayed user is the user's profile */}
-    {isUsersProfile ? (
-      <>
-      <ShareButton />
-      <ProfileEditPopup />
-      </>
-    ) : (
-      <>
-      {/* Or, show follow and options buttons */}
-      {/*must change state based on follow status*/}
-      {isFollow ? (
-        <ThemeIcon
-          width={28}
-          height={25}
-          id={"heart-filled"}
-          ariaLabel="following"
-          onClick={() => followUser()}
-        />
-      ) : (
-        <ThemeIcon
-          width={28}
-          height={25}
-          id={"heart-empty"}
-          ariaLabel="following"
-          onClick={() => followUser()}
-        />
+    <>
+      {/* Add social links if present */}
+      {displayedProfile?.socials && (
+        <div id="about-me-buttons">
+          {displayedProfile?.socials.map((link) => (
+            <button
+              key={link.websiteId}
+              onClick={() => {
+                window.open(link.url, "_blank");
+              }}
+            >
+              <ThemeIcon
+                id={link.label === "Other" ? "link" : link.label.toLowerCase()}
+                width={25}
+                height={25}
+                className={"color-fill"}
+                ariaLabel={link.label}
+              />
+            </button>
+          ))}
+        </div>
       )}
-      
-      {/* TODO: Implement Share, Block, and Report functionality */}
-      <Dropdown>
-        <DropdownButton>
-          <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
-        </DropdownButton>
-        <DropdownContent rightAlign={true}>
-          <div id="profile-menu-dropdown">
-            <ShareButton />
-            <button
-              className="profile-menu-dropdown-button"
-              id="profile-menu-block"
-            >
-              <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'}/>
-              Block
-            </button>
-            <button
-              className="profile-menu-dropdown-button"
-              id="profile-menu-report"
-            >
-              <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
-              Report
-            </button>
-          </div>
-        </DropdownContent>
-      </Dropdown>
-      </>
-    )}
-  </>
+
+      {/* If the displayed user is the user's profile */}
+      {isUsersProfile ? (
+        <>
+          <ShareButton />
+          <ProfileEditPopup />
+        </>
+      ) : (
+        <>
+          {/* Or, show follow and options buttons */}
+          {/*must change state based on follow status*/}
+          {isFollow ? (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-filled"}
+              ariaLabel="following"
+              onClick={() => followUser()}
+            />
+          ) : (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-empty"}
+              ariaLabel="following"
+              onClick={() => followUser()}
+            />
+          )}
+
+          {/* TODO: Implement Share, Block, and Report functionality */}
+          <Dropdown>
+            <DropdownButton>
+              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
+            </DropdownButton>
+            <DropdownContent rightAlign={true}>
+              <div id="profile-menu-dropdown">
+                <ShareButton />
+                <button
+                  className="profile-menu-dropdown-button"
+                  id="profile-menu-block"
+                >
+                  <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+                  Block
+                </button>
+                <button
+                  className="profile-menu-dropdown-button"
+                  id="profile-menu-report"
+                >
+                  <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'} />
+                  Report
+                </button>
+              </div>
+            </DropdownContent>
+          </Dropdown>
+        </>
+      )}
+    </>
   );
 
   // --------------------
@@ -284,7 +284,7 @@ const Profile = () => {
         dataSets={[{ data: fullProjectList }]}
         onSearch={searchProjects}
         hideSearchBar={true}
-        onChange={() => {}}
+        onChange={() => { }}
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
@@ -318,26 +318,26 @@ const Profile = () => {
                   <div id="profile-buttons">{aboutMeButtons}</div>
                 </div>
 
-                <div id="profile-extras">
+              <div id="profile-extras">
+                <div className="profile-extra">
+                  <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
+                  {displayedProfile?.title}
+                </div>
+                <div className="profile-extra">
+                  <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
+                  {majorsArr.join(", ")} {displayedProfile?.academicYear}
+                </div>
+                <div className="profile-extra">
+                  <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'} />
+                  {displayedProfile?.location}
+                </div>
+                <div className="profile-extra">
+                  <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+                  {displayedProfile?.pronouns}
+                </div>
+                {/* Only show mentor status if user is a mentor */}
+                {displayedProfile?.mentor &&
                   <div className="profile-extra">
-                    <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
-                    {displayedProfile?.title}
-                  </div>
-                  <div className="profile-extra">
-                    <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
-                    {majorsArr.join(", ")} {displayedProfile?.academicYear}
-                  </div>
-                  <div className="profile-extra">
-                    <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
-                    {displayedProfile?.location}
-                  </div>
-                  <div className="profile-extra">
-                    <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
-                    {displayedProfile?.pronouns}
-                  </div>
-                  {/* Only show mentor status if user is a mentor */}
-                  {displayedProfile?.mentor && 
-                    <div className="profile-extra">
                       <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
                       Mentor
                     </div>
