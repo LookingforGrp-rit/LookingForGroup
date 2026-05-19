@@ -17,6 +17,7 @@ import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ThemeIcon } from "../ThemeIcon";
+import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getCurrentAccount, getUserFollowing } from "../../api/users";
@@ -215,8 +216,10 @@ const Profile = () => {
 
     {/* If the displayed user is the user's profile */}
     {isUsersProfile ? (
-      // Show edit buttons
+      <>
+      <ShareButton />
       <ProfileEditPopup />
+      </>
     ) : (
       <>
       {/* Or, show follow and options buttons */}
@@ -246,10 +249,7 @@ const Profile = () => {
         </DropdownButton>
         <DropdownContent rightAlign={true}>
           <div id="profile-menu-dropdown">
-            <button className="profile-menu-dropdown-button">
-              <ThemeIcon id={'share'} width={27} height={27} className={'mono-fill'} ariaLabel={'Share'}/>
-              Share
-            </button>
+            <ShareButton />
             <button
               className="profile-menu-dropdown-button"
               id="profile-menu-block"
@@ -320,15 +320,15 @@ const Profile = () => {
                   {displayedProfile?.title}
                 </div>
                 <div className="profile-extra">
-                  <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'}/>
+                  <ThemeIcon id={'major'} width={20} height={20} className={'mono-fill'} ariaLabel={'Major'}/>
                   {majorsArr.join(", ")} {displayedProfile?.academicYear}
                 </div>
                 <div className="profile-extra">
-                  <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'}/>
+                  <ThemeIcon id={'location'} width={20} height={20} className={'mono-fill'} ariaLabel={'Location'}/>
                   {displayedProfile?.location}
                 </div>
                 <div className="profile-extra">
-                  <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+                  <ThemeIcon id={'pronouns'} width={20} height={20} className={'mono-fill'} ariaLabel={'Pronouns'} />
                   {displayedProfile?.pronouns}
                 </div>
                 {/* Only show mentor status if user is a mentor */}

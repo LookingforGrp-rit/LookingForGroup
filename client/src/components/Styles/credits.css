@@ -28,7 +28,7 @@ Credits link footer style rules
 .FooterContainer button {
   border: 0px;
   background: 0px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
   margin: 2px;
 }
@@ -63,8 +63,8 @@ Credits style rules
 #credits-title {
   color: var(--primary-color);
   text-align: left;
-  margin-left: 50px;
-  font-size: 24px;
+  margin-left: clamp(20px,5vw,50px);
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
@@ -73,11 +73,11 @@ Credits style rules
   grid-template-columns: repeat(auto-fill, minmax(294px, 1vw));
   gap: 30px;
 
-  margin: 20px 50px;
+  margin: 20px clamp(20px,5vw,50px);
 }
 
 .lfg-contributor {
-  width: 245px;
+  width: clamp(120px,90vw,245px);
   justify-content: center;
   background-color: var(--header-color);
   display: flex;
@@ -96,7 +96,6 @@ Credits style rules
     align-items: flex-start;
     align-content: flex-start;
     flex-wrap: wrap;
-    margin-right: 30px;
   }
 
   .lfg-contributor {
