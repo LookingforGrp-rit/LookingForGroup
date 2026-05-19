@@ -3579,6 +3579,11 @@ My projects page style rules
   outline-color: var(--primary-color);
 }
 
+.grid-card-image-button:hover {
+  transition-duration: 0.2s;
+  scale: 1.1;
+}
+
 .grid-card-details {
   display: flex;
   flex-direction: row;
