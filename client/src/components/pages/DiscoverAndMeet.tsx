@@ -506,7 +506,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
   // Main render function
   return (
-    <div className="page">
+    <div className="page" tabIndex={-1}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={ category == 'projects' ? projectDataSet : userDataSet }
           onSearch={ category == 'projects' ? searchProjects : searchUsers }
