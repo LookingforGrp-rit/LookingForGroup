@@ -5,7 +5,7 @@ import * as paths from '../constants/routes';
 import usePreloadedImage from '../functions/imageLoad';
 import { UserPreview } from '@looking-for-group/shared';
 import { useEffect, useState } from 'react';
-import { getCurrentAccount, getUsersById } from '../api/users';
+import { addUserFollowing, deleteUserFollowing, getCurrentAccount, getUsersById } from '../api/users';
 
 interface ProfilePanelProps {
   profileData: UserPreview;
@@ -64,6 +64,27 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
       };
         getFollowData();
     }, [profileData.userId, userId])
+
+    /**
+     * Toggles following the user.
+     */
+    const toggleFollow = async () => {
+      if (!userId) {
+        navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
+      } else {
+        // otherwise, toggle follow state
+        const toggleFollow = !isFollow;
+        setIsFollow(toggleFollow);
+        
+        if (toggleFollow) { // now following
+          const follow = await addUserFollowing(profileData.userId);
+          if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
+        }
+        else { // no longer following
+          await deleteUserFollowing(profileData.userId);
+        }
+      }
+    };
     
   return (
     <button className={'profile-panel'} onClick={() => navigate(profileURL)}>
@@ -84,12 +105,14 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
           height={27}
           id={"heart-filled"}
           ariaLabel="unfollow profile"
+          onClick={(e) => {toggleFollow(); e.stopPropagation();}} // stopPropagation cancels the redirect of the parent
         />
         : <ThemeIcon
           width={30}
           height={27}
           id={"heart-empty"}
           ariaLabel="follow profile"
+          onClick={(e) => {toggleFollow(); e.stopPropagation();}} // stopPropagation cancels the redirect of the parent
         />}
         
         {/* List of items */}

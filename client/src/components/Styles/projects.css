@@ -3657,9 +3657,10 @@ My projects page style rules
   background-color: var(--dropdown-color);
   border: 0px;
   border-radius: 10px;
+  box-shadow: 1px 2px 2px var(--shadow-color);
   width: 154px;
   height: fit-content;
-  padding: 15px;
+  padding: 15px 10px;
   z-index: 1;
 
   display: flex;
@@ -3670,11 +3671,15 @@ My projects page style rules
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0;
+    padding: 5px;
 
     #trash {
       stroke: #ff3859;
     }
+  }
+
+  button:hover {
+    background-color: var(--header-color);
   }
 }
 
