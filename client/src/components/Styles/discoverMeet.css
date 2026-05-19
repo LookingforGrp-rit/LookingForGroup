@@ -433,7 +433,7 @@ Filters / Tags Style Rules
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
 }
 
@@ -487,10 +487,11 @@ Filters / Tags Style Rules
 #discover-tags-wrapper {
   position: relative;
   display: flex;
-  flex: 1 1 0%;
+  flex: 0 1 auto;
   min-width: 0;
   align-items: center;
   margin-right: 20px;
+  overflow: hidden;
 }
 
 .discover-tag-filter {
@@ -508,6 +509,7 @@ Filters / Tags Style Rules
 #discover-more-filters-container {
   display: flex;
   justify-content: end;
+  right: 0;
   flex: 0 0 auto;
 }
 
