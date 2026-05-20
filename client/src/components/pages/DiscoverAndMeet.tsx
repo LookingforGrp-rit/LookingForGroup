@@ -370,10 +370,19 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         // Check project type by name since IDs are not unique relative to tags
         // Project Type tag
         if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
-            const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
-            if (projectTypes.includes(tag.label.toLowerCase())) {
+          const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
+          if (projectTypes.includes(tag.label.toLowerCase())) {
+            matchesAny = true;
+          }
+          else if (tag.label === `New`){
+            //change the subtraction to change the 
+            const cutOff = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
+            const date = Date.parse(item.createdAt.toString());
+            if (date >= cutOff)
+            {
               matchesAny = true;
-          } 
+            }
+          }
         }
         // Purpose tag 
         else if (tag.type === 'Purpose' && item.purpose) {
