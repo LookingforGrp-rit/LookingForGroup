@@ -773,7 +773,6 @@ Page popup style rules
   /* height: 849px; */
 }
 
-
 /* Used inside of popup object for smaller popups */
 .small-popup {
   max-width: 456px;
@@ -842,10 +841,6 @@ Page popup style rules
     height: 24px;
     /* Font-size is meant to be 20pt, which corresponds to 24px here */
   }
-}
-
-#project-creator-editor{
-  scrollbar-width: none;
 }
 
 .popup-close {
