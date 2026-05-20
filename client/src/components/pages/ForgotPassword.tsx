@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { ThemeImage } from '../ThemeIcon';
+import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import { sendPost } from '../../functions/fetch.js';
 import { getUserByEmail } from '../../api/users.js';
 
@@ -84,6 +84,14 @@ const ForgotPassword: React.FC = () => {
 
                 *************************************************************/}
         <div className="login-form column">
+          <ThemeIcon //Back button to return to the previous page
+            id={'back'}
+            width={70}
+            height={25}
+            className={'color-fill'}
+            ariaLabel={'back'}
+            onClick={handleBackToLogin}
+          />
           <h2>Forgot password?</h2>
           <p>No worries! We'll send you reset instructions.</p>
           <div className="login-form-inputs">
@@ -97,10 +105,6 @@ const ForgotPassword: React.FC = () => {
               value={emailInput}
               onChange={(e) => setEmailInput(e.target.value)}
             />
-
-            <button id="forgot-password" onClick={handleBackToLogin}>
-              Back to Login
-            </button>
           </div>
           <button id="main-loginsignup-btn" onClick={handleSend}>
             Send
