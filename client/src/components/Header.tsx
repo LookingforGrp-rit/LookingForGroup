@@ -100,7 +100,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
   const handleProfileAccess = async () => {
     // navigate to Profile, attach userID
     const res = await getCurrentUsername();
-    const userId = res.data.userId;
+    const userId = res.data?.userId;
     navigate(`${paths.routes.PROFILE}?userID=${userId}`);
 
     // Collapse the dropwdown if coming from another user's page
@@ -114,6 +114,10 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
     setModeToggle(theme === 'dark' ? 'Dark Mode' : 'Light Mode');
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
+
+  useEffect(()=>{
+    theme === 'dark' ? setModeToggle('Light Mode') : setModeToggle('Dark Mode'); 
+  },[theme]);
 
   return (
     <div id="header">
@@ -134,9 +138,9 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
           <DropdownButton buttonId="notif-btn">
             // If implementing, use SVG sprite sheet instead of hard-coded pngs
             <img
-              src="assets/bell_dark.png"
-              src-light="assets/bell_light.png"
-              src-dark="assets/bell_dark.png"
+              src="/assets/bell_dark.png"
+              src-light="/assets/bell_light.png"
+              src-dark="/assets/bell_dark.png"
               alt="" />
           </DropdownButton>
           <DropdownContent rightAlign={true}>This is where notification stuff will be</DropdownContent>
