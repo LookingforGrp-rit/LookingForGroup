@@ -33,7 +33,7 @@ Login and Signup page style rules
   justify-content: center;
   align-items: center;
   height: 525px;
-  width: min(95vw,880px);
+  width: min(95vw, 880px);
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border-radius: 10px;
@@ -42,7 +42,7 @@ Login and Signup page style rules
 
 .login-form,
 .signup-form {
-  width: min(95vw,440px);
+  width: min(95vw, 440px);
   height: 485px;
   text-align: center;
   /* border: 1px solid black; */
@@ -100,7 +100,7 @@ Login and Signup page style rules
 } */
 
 .signup-name-input {
-  width: min(40vw,135px);
+  width: min(40vw, 135px);
   height: 40px;
   margin: 5px;
   padding: 5px 20px;
@@ -114,7 +114,7 @@ Login and Signup page style rules
 
 .signup-input,
 .login-input {
-  width: min(90vw,320px);
+  width: min(90vw, 320px);
   height: 40px;
   margin: 5px;
   padding: 5px 20px;
@@ -198,7 +198,7 @@ Login and Signup page style rules
 
 #password-wrapper input {
   padding-right: 60px;
-  width: min(90vw,280px);
+  width: min(90vw, 280px);
 }
 
 #show-password {
@@ -296,6 +296,7 @@ Login and Signup page style rules
     cursor: pointer;
   }
 }
+
 /* #endregion*/
 
 /*
@@ -759,4 +760,5 @@ Signup process modal style rules
     font-size: 1.5rem;
   }
 }
+
 /* #endregion */
