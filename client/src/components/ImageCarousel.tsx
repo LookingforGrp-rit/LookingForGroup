@@ -80,21 +80,22 @@ export const CarouselButton = ({
  * @returns A JSX div element containing navigation buttons for the carousel
  */
 export const CarouselTabs = ({ className = '' }: { className?: string }) => {
-    const { currentIndex, handleIndexChange, dataList } = useContext(CarouselContext);
+    const { currentIndex, handleStep, handleIndexChange, dataList } = useContext(CarouselContext);
     const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
     const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
         let newIndex = currentIndex;
 
         if (e.key === 'ArrowRight')
-            newIndex = currentIndex === dataList.length - 1 ? 0 : currentIndex + 1;
+            newIndex = 1;
         else if (e.key === 'ArrowLeft')
-            newIndex = currentIndex === 0 ? dataList.length - 1 : currentIndex - 1;
+            newIndex = -1;
         else
             return; // Don't intercept other keys
 
         e.preventDefault();
-        handleIndexChange(newIndex);
+        e.stopPropagation();
+        handleStep(newIndex);
         
         // Shift keyboard focus to new tab
         setTimeout(() => {
@@ -362,11 +363,11 @@ export const Carousel = ({
         if (e.key === 'ArrowRight') {
             e.preventDefault();
             e.stopPropagation();
-            handleIndexChange(currentIndex === dataList.length - 1 ? 0 : currentIndex + 1);
+            handleStep(1);
         } else if (e.key === 'ArrowLeft') {
             e.preventDefault();
             e.stopPropagation();
-            handleIndexChange(currentIndex === 0 ? dataList.length - 1 : currentIndex - 1);
+            handleStep(-1);
         }
     };
 
