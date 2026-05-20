@@ -37,6 +37,20 @@ const Credits = () => {
     });
   }, []);
 
+  // Sort the credits, prioritizing role and then moving to name
+  const sortedMembersList = useMemo(() => {
+    // shallow coppy
+    return [...filteredMembersList].sort((a, b) => {
+      // Compare roles
+      const roleComparison = a.role.localeCompare(b.role);
+      if (roleComparison !== 0)
+        return roleComparison;
+      
+      // If roles match, compare names
+      return a.name.localeCompare(b.name);
+    });
+  }, [filteredMembersList]);
+
   return (
     <div className="page" id="my-projects">
       <Header 
@@ -51,11 +65,11 @@ const Credits = () => {
       {/*runs through an array of all the members and creates a "card" for each one */}
       <main id="main" tabIndex={-1} aria-labelledby='credits-title'>
         <div className="sr-only" aria-live="polite" aria-atomic="true">
-          {`Showing ${filteredMembersList.length} team ${filteredMembersList.length === 1 ? 'member' : 'members'}.`}
+          {`Showing ${sortedMembersList.length} team ${sortedMembersList.length === 1 ? 'member' : 'members'}.`}
         </div>
 
         <ul id="credit-members-container">
-          {filteredMembersList.map(member => (
+          {sortedMembersList.map(member => (
             <li className="lfg-contributor" key={member.name}>
               <img 
                 className="project-contributor-profile" 
@@ -70,7 +84,7 @@ const Credits = () => {
           ))}
         </ul>
         
-        {filteredMembersList.length === 0 && (
+        {sortedMembersList.length === 0 && (
           <p className='no-members'>No team members found matching your search.</p>
         )}
 
