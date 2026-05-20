@@ -170,8 +170,10 @@ export const SkillsTab = ({
       const skillToToggle = allSkills.find(
         (potentialMatch) => potentialMatch.skillId === skillId
       );
+
       if (!skillToToggle) return;
 
+      //If the skill is selected and not in the total skills menu
       if (isSelected) {
         dataManager.deleteSkill({
           id: {
@@ -187,7 +189,10 @@ export const SkillsTab = ({
             ...profile.skills.filter((skill) => skill.skillId !== skillId),
           ],
         });
-      } else {
+      }
+
+      //If the skill is not selected
+      else {
         dataManager.addSkill({
           id: {
             type: "canon",
@@ -200,6 +205,7 @@ export const SkillsTab = ({
           },
         });
 
+        //Update profile
         updatePendingProfile({
           ...profile,
           skills: [
@@ -213,6 +219,9 @@ export const SkillsTab = ({
           ],
         });
       }
+      
+      //So the console doesn't get immediately cleared
+      debugger;
     },
     [allSkills, dataManager, isSkillSelected, profile, updatePendingProfile]
   );
