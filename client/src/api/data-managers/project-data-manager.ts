@@ -402,7 +402,6 @@ export const projectDataManager = async (projectId: number) => {
 
     // project members
     try {
-      console.log(deletes.members);
       await runAndCollectErrors<null>(
         "Deleting project member",
         deletes.members,
