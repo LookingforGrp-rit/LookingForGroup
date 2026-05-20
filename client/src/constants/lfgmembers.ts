@@ -8,12 +8,12 @@ export const members = [
 	{
         'name': 'Rose Rushton',
         'role': 'Project Lead/Producer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Sebastian Portalatin Prieto',
         'role': 'Back-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
     {
         'name': 'Ben Gomez',
@@ -58,82 +58,82 @@ export const members = [
 	{
         'name': 'Bin Xu',
         'role': 'Back-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Thomas Berrios',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Jackson Heim',
         'role': 'Back-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Marigold Parson',
         'role': 'Back-End Lead',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Max Chu',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Nicholas Rivera',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Ella Clevens',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Victoria Lau',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Kenny Hatch',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Saavan Tandon',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Dylan Kim',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Jack Shysko',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Josh Samuel',
         'role': 'Front-End Developer',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Liam Prisco',
         'role': 'Bugfixing',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Ethan Schechter',
         'role': 'Bugfixing',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
 	{
         'name': 'Elizabeth Sanabria',
         'role': 'Bugfixing',
-        'photo': '/assets/creditProfiles/BG.png'
+        'photo': '/assets/creditProfiles/Base.png'
     },
     {
         'name': 'Abraham Furlan',
