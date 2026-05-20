@@ -316,7 +316,6 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
                 callback={(e) => {
                   //true if it's mentor, false if it's anythin else
                   const mentor = ((e.target as HTMLButtonElement).value === "Mentor");
-                  console.log(mentor)
                   profileAfterAboutChanges = { ...profileAfterAboutChanges, mentor };
                   updatePendingProfile(profileAfterAboutChanges);
                   dataManager.updateFields({

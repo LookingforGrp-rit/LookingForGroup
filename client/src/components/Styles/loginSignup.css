@@ -31,6 +31,11 @@ Login and Signup page style rules
   max-width: 880px;
   margin: auto;
   display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  height: 525px;
+  width: min(95vw, 880px);
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border-radius: 10px;
@@ -39,20 +44,24 @@ Login and Signup page style rules
 }
 
 .login-form,
-.signup-form,
-.directory {
-  flex: 1;
-  height: 485px;
-  text-align: center;
-  /* border: 1px solid black; */
-  background-color: var(--bg-color);
-  padding: 40px 20px;
-  border-radius: 10px 0 0 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
+.signup-form {
+  width: min(95vw, 440px);
+
+  .signup-form,
+  .directory {
+    flex: 1;
+    height: 485px;
+    text-align: center;
+    /* border: 1px solid black; */
+    background-color: var(--bg-color);
+    padding: 40px 20px;
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+  }
 }
 
 .directory {
@@ -92,7 +101,7 @@ Login and Signup page style rules
 .signup-input,
 .login-input,
 .signup-name-input {
-  width: 100%; 
+  width: 100%;
   height: 40px;
   padding: 5px 20px;
   border: none;
@@ -258,7 +267,7 @@ Login and Signup page style rules
     border-radius: 4px;
 
     width: 100%;
-    max-width: 400px; 
+    max-width: 400px;
     height: auto;
     margin: 0 auto;
   }
@@ -291,6 +300,7 @@ Login and Signup page style rules
     cursor: pointer;
   }
 }
+
 /* #endregion*/
 
 /*
@@ -754,4 +764,5 @@ Signup process modal style rules
     font-size: 1.5rem;
   }
 }
+
 /* #endregion */

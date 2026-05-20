@@ -113,8 +113,6 @@ Project Panel component style rules
   flex-direction: column;
   justify-content: start;
   text-align: left;
-  /* Single source of spacing between rows + top/bottom padding.
-     Avoids compounding per-row margins that left a gap below the title. */
   gap: 6px;
   padding: 14px 0;
 
@@ -209,9 +207,6 @@ Project Panel component style rules
   padding: 0 20px;
 }
 
-/* Collapse the tags/description rows when a project has none, so their
-   margins don't leave a gap below the title in the hover submenu. */
-#project-panel-tags:empty,
 .project-panel-hover #quote:empty {
   display: none;
   margin: 0;
@@ -387,7 +382,6 @@ Project Creator and Editor Popup style rules
 
 .save-error-msg,
 .save-error-msg-general {
-  display: none;
   margin: auto;
 }
 
@@ -816,14 +810,14 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   gap: 15px;
-  max-height: 107px;
+  max-height: 180px;
 }
 
 #project-editor-selected-tags {
   grid-area: select;
   display: flex;
   flex-direction: column;
-  max-height: 485px;
+  max-height: 405px;
 
   .error {
     margin-top: 15px;
@@ -838,7 +832,8 @@ Project Creator and Editor Popup style rules
   flex-wrap: nowrap;
   gap: 8px;
   margin-top: 15px;
-  overflow-y: scroll;
+  /* Scrollbar only appears once the selected tags overflow the box */
+  overflow-y: auto;
 }
 
 #project-editor-type-tags-container {
@@ -847,8 +842,9 @@ Project Creator and Editor Popup style rules
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 8px;
-  overflow-y: scroll;
-  max-height: 28px;
+  overflow-y: auto;
+  /* Tall enough for ~3 rows of selected mediums before scrolling */
+  max-height: 104px;
 }
 
 #project-editor-type-tags,
@@ -868,7 +864,7 @@ Project Creator and Editor Popup style rules
 #project-editor-tag-search-tabs,
 #project-editor-team-tabs {
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
 }
 
 #project-editor-tag-search-tabs {
@@ -884,6 +880,7 @@ Project Creator and Editor Popup style rules
 @media only screen and (max-width: 420px) {
   #project-editor-team-tabs {
     flex-direction: column;
+    align-items: center;
   }
 }
 
@@ -1630,10 +1627,6 @@ Project page style rules
     'owner count buttons'
     'tags members buttons';
   gap: 5px;
-}
-
-#project-title {
-  grid-area: title;
 }
 
 #project-status {
@@ -2746,10 +2739,13 @@ Project Carousel style rules
 }
 
 #project-title {
+  grid-area: title;
   font-size: clamp(1.5rem, 5vw, 2rem);
   font-weight: 700;
   color: var(--primary-color);
   margin-bottom: 5px;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 #project-info-buttons {
