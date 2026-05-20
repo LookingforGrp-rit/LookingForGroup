@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback } from 'react';
+import { useMemo, useState, useCallback, ChangeEvent } from 'react';
 import { Header } from '../Header';
 import { members } from '../../constants/lfgmembers';
 
@@ -11,9 +11,15 @@ const Credits = () => {
 
   // displayed data based on filter/search query
   const [filteredMembersList, setFilteredMembersList] = useState(members);
+  const [searchQuery, setSearchQuery] = useState('');
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const dataSet = useMemo(() => [{ data: members }], []);
+
+  // Allows for the variable to update and display to the user
+  const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    setSearchQuery(e.target.value);
+  }, []);
 
   // Updates filtered members list with new search info
   const searchMembers = useCallback((searchResults: any[][]) => {
@@ -33,7 +39,12 @@ const Credits = () => {
 
   return (
     <div className="page" id="my-projects">
-      <Header dataSets={dataSet} onSearch={searchMembers} />
+      <Header 
+        dataSets={dataSet} 
+        onSearch={searchMembers} 
+        value={searchQuery}
+        onChange={handleSearchChange}
+      />
 
       <h1 id="credits-title">Meet The LFG Team</h1>
 
