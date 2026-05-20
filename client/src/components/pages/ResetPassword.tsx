@@ -138,7 +138,7 @@ const ResetPassword = () => {
       <div className="login-form column">
         <h2>Set new password</h2>
         <div className="login-form-inputs">
-          <div className="error">{error}</div>
+          <div className="error" aria-live="assertive" role="alert">{error}</div>
           <span id="errorMessage"></span>
           <input
             className="login-input"

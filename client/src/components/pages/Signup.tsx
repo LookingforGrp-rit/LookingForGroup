@@ -249,7 +249,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
           <h2>Sign Up</h2>
 
-          <div className="error">{message}</div>
+          <div className="error" aria-live="assertive" role="alert">{message}</div>
           <div className="signup-form-inputs">
             <div className="row">
               <input

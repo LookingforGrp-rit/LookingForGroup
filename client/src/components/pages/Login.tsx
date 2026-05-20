@@ -187,7 +187,7 @@ const Login: React.FC = () => {
             }}
           />
           <h2>Log In</h2>
-          <div className="error">{error}</div>
+          <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="login-form-inputs">
             <input
               id='main'
