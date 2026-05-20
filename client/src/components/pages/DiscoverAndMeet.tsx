@@ -375,9 +375,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             matchesAny = true;
           }
           else if (tag.label === `New`){
-            const weekAgo = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
+            //change the subtraction to change the 
+            const cutOff = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
             const date = Date.parse(item.createdAt.toString());
-            if (date >= weekAgo)
+            if (date >= cutOff)
             {
               matchesAny = true;
             }
