@@ -427,21 +427,19 @@ Filters / Tags Style Rules
 /*#region tag styles*/
 
 #discover-filters {
-  width: auto;
+  width: 100%;
   /* margin: 20px calc(100vw * (65 / 1512)); */
-  margin: 20px 50px;
+  padding: 20px 50px;
+  box-sizing: border-box;
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
-
-  overflow-x: scroll;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
+  justify-content: flex-start;
+  align-items: center;
 }
 
 @media only screen and (max-width: 700px){
   #discover-filters{
-    margin: 0 20px;
+    padding: 0 20px;
   }
 
 }
@@ -454,6 +452,15 @@ Filters / Tags Style Rules
   border: none;
   background-color: rgba(0, 0, 0, 0);
   width: 40px;
+  flex-shrink: 0;
+}
+
+.filters-scroller.hide {
+  display: block !important;
+  visibility: hidden; 
+  opacity: 0;
+  pointer-events: none;
+  transition: 0s;
 }
 
 #filters-left-scroll {
@@ -475,8 +482,17 @@ Filters / Tags Style Rules
   /* gap: 14px; */
   overflow-x: scroll;
   scroll-behavior: smooth;
-
   scrollbar-width: none;
+}
+
+#discover-tags-wrapper {
+  position: relative;
+  display: flex;
+  flex: 0 1 auto;
+  min-width: 0;
+  align-items: center;
+  margin-right: 20px;
+  overflow: hidden;
 }
 
 .discover-tag-filter {
@@ -494,7 +510,8 @@ Filters / Tags Style Rules
 #discover-more-filters-container {
   display: flex;
   justify-content: end;
-  flex: 1 1 auto;
+  right: 0;
+  flex: 0 0 auto;
 }
 
 .discover-tag-filter:hover,

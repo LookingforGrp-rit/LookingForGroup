@@ -81,11 +81,11 @@ const Profile = () => {
 
     let isFollowing = false;
 
-    if(followings !== undefined){ //if they have no follows then obviously they can't be following the guy we're looking at
-    for (const follower of followings){
-      isFollowing = (follower.user.userId === parseInt(profileID))
-      if (isFollowing) break;
-    }
+    if (followings !== undefined) { //if they have no follows then obviously they can't be following the guy we're looking at
+      for (const follower of followings) {
+        isFollowing = (follower.user.userId === parseInt(profileID))
+        if (isFollowing) break;
+      }
     }
     setIsFollow(isFollowing);
     return isFollowing;
@@ -102,11 +102,11 @@ const Profile = () => {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
       //adds the user following
-    const toggleFollow = !(await checkFollow());
-    setIsFollow(toggleFollow);
+      const toggleFollow = !(await checkFollow());
+      setIsFollow(toggleFollow);
       if (toggleFollow) {
         const follow = await addUserFollowing(parseInt(profileID));
-        if(follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
+        if (follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
       }
       else {
         await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
@@ -194,218 +194,220 @@ const Profile = () => {
   // Components
   // --------------------
   const aboutMeButtons = (
-  <>
-    {/* Add social links if present */}
-    {displayedProfile?.socials && (
-      <div id="about-me-buttons">
-        {displayedProfile?.socials.map((link) => (
-          <button
-            key={link.websiteId}
-            onClick={() => {
-              window.open(link.url, "_blank");
-            }}
-          >
-            <ThemeIcon
-              id={link.label === "Other" ? "link" : link.label.toLowerCase()}
-              width={25}
-              height={25}
-              className={"color-fill"}
-              ariaLabel={link.label}
-            />
-          </button>
-        ))}
-      </div>
-    )}
-
-    {/* If the displayed user is the user's profile */}
-    {isUsersProfile ? (
-      <>
-      <ShareButton />
-      <ProfileEditPopup />
-      </>
-    ) : (
-      <>
-      {/* Or, show follow and options buttons */}
-      {/*must change state based on follow status*/}
-      {isFollow ? (
-        <ThemeIcon
-          width={28}
-          height={25}
-          id={"heart-filled"}
-          ariaLabel="following"
-          onClick={() => followUser()}
-        />
-      ) : (
-        <ThemeIcon
-          width={28}
-          height={25}
-          id={"heart-empty"}
-          ariaLabel="following"
-          onClick={() => followUser()}
-        />
+    <>
+      {/* Add social links if present */}
+      {displayedProfile?.socials && (
+        <div id="about-me-buttons">
+          {displayedProfile?.socials.map((link) => (
+            <button
+              key={link.websiteId}
+              onClick={() => {
+                window.open(link.url, "_blank");
+              }}
+            >
+              <ThemeIcon
+                id={link.label === "Other" ? "link" : link.label.toLowerCase()}
+                width={25}
+                height={25}
+                className={"color-fill"}
+                ariaLabel={link.label}
+              />
+            </button>
+          ))}
+        </div>
       )}
-      
-      {/* TODO: Implement Share, Block, and Report functionality */}
-      <Dropdown>
-        <DropdownButton>
-          <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
-        </DropdownButton>
-        <DropdownContent rightAlign={true}>
-          <div id="profile-menu-dropdown">
-            <ShareButton />
-            <button
-              className="profile-menu-dropdown-button"
-              id="profile-menu-block"
-            >
-              <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'}/>
-              Block
-            </button>
-            <button
-              className="profile-menu-dropdown-button"
-              id="profile-menu-report"
-            >
-              <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'}/>
-              Report
-            </button>
-          </div>
-        </DropdownContent>
-      </Dropdown>
-      </>
-    )}
-  </>
+
+      {/* If the displayed user is the user's profile */}
+      {isUsersProfile ? (
+        <>
+          <ShareButton />
+          <ProfileEditPopup />
+        </>
+      ) : (
+        <>
+          {/* Or, show follow and options buttons */}
+          {/*must change state based on follow status*/}
+          {isFollow ? (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-filled"}
+              ariaLabel="following"
+              onClick={() => followUser()}
+            />
+          ) : (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-empty"}
+              ariaLabel="following"
+              onClick={() => followUser()}
+            />
+          )}
+
+          {/* TODO: Implement Share, Block, and Report functionality */}
+          <Dropdown>
+            <DropdownButton>
+              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
+            </DropdownButton>
+            <DropdownContent rightAlign={true}>
+              <div id="profile-menu-dropdown">
+                <ShareButton />
+                <button
+                  className="profile-menu-dropdown-button"
+                  id="profile-menu-block"
+                >
+                  <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
+                  Block
+                </button>
+                <button
+                  className="profile-menu-dropdown-button"
+                  id="profile-menu-report"
+                >
+                  <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'} />
+                  Report
+                </button>
+              </div>
+            </DropdownContent>
+          </Dropdown>
+        </>
+      )}
+    </>
   );
 
   // --------------------
   // Final component
   // --------------------
   return (
-    <div className="page">
+    <div className="page" tabIndex={-1}>
       <Header
         dataSets={[{ data: fullProjectList }]}
         onSearch={searchProjects}
         hideSearchBar={true}
-        onChange={() => {}}
+        onChange={() => { }}
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
-      <div id="profile-page-content">
-        <div id="profile-hero">
-          <div id="profile-img-container">
-            <img
-              src={usePreloadedImage(`${displayedProfile?.profileImage}`, profilePicture)}
-              id="profile-image"
-              alt="profile image"
-              onError={(e) => {
-                const profileImg = e.target as HTMLImageElement;
-                profileImg.src = profilePicture;
-              }}
-            />
-            <div id="profile-bio">{displayedProfile?.headline}</div>
-          </div>
+      <main id="main" tabIndex={-1}>
+        <div id="profile-page-content">
+          <div id="profile-hero">
+            <div id="profile-img-container">
+              <img
+                src={usePreloadedImage(`${displayedProfile?.profileImage}`, profilePicture)}
+                id="profile-image"
+                alt="profile image"
+                onError={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = profilePicture;
+                }}
+              />
+              <div id="profile-bio">{displayedProfile?.headline}</div>
+            </div>
 
-          <div id="profile-info">
-            <div id="profile-info-text">
-              <div id="profile-top-row">
-                <div id="profile-names">
-                  <p id="profile-fullname">
-                    {displayedProfile?.firstName} {displayedProfile?.lastName}
-                  </p>
-                  <p id="profile-username">
-                    @{displayedProfile?.username}
-                  </p>
+            <div id="profile-info">
+              <div id="profile-info-text">
+                <div id="profile-top-row">
+                  <div id="profile-names">
+                    <p id="profile-fullname">
+                      {displayedProfile?.firstName} {displayedProfile?.lastName}
+                    </p>
+                    <p id="profile-username">
+                      @{displayedProfile?.username}
+                    </p>
+                  </div>
+                  <div id="profile-buttons">{aboutMeButtons}</div>
                 </div>
-                <div id="profile-buttons">{aboutMeButtons}</div>
-              </div>
 
               <div id="profile-extras">
                 <div className="profile-extra">
-                  <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
+                  <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
                   {displayedProfile?.title}
                 </div>
                 <div className="profile-extra">
-                  <ThemeIcon id={'major'} width={20} height={20} className={'mono-fill'} ariaLabel={'Major'}/>
+                  <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
                   {majorsArr.join(", ")} {displayedProfile?.academicYear}
                 </div>
                 <div className="profile-extra">
-                  <ThemeIcon id={'location'} width={20} height={20} className={'mono-fill'} ariaLabel={'Location'}/>
+                  <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'} />
                   {displayedProfile?.location}
                 </div>
                 <div className="profile-extra">
-                  <ThemeIcon id={'pronouns'} width={20} height={20} className={'mono-fill'} ariaLabel={'Pronouns'} />
+                  <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
                   {displayedProfile?.pronouns}
                 </div>
                 {/* Only show mentor status if user is a mentor */}
-                {displayedProfile?.mentor && 
+                {displayedProfile?.mentor &&
                   <div className="profile-extra">
-                    <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
-                    Mentor
-                  </div>
-                }
-              </div>
-
-              <div id="profile-description">{displayedProfile?.bio}</div>
-
-              <div id="profile-funfact">
-                <span id="funfact-start">
-                  {displayedProfile?.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
-                </span>
-                {displayedProfile?.funFact}
-              </div>
-              {/* <div id="profile-interest">
-                <ProfileInterests
-                  user={{ interests: displayedProfile.interests || [] }}
-                  isUsersProfile={isUsersProfile}
-                />
-              </div> */}
-            </div>
-
-            <div id="profile-skills">
-              {displayedProfile?.skills !== undefined && (
-                /* Will take in a list of tags the user has selected, then */
-                /* use a map function to generate tags to fill this div */
-                displayedProfile?.skills.map((tag) => {
-                  let category: string;
-                  switch (tag.type) {
-                    case "Designer":
-                      category = "red";
-                      break;
-                    case "Developer":
-                      category = "yellow";
-                      break;
-                    case "Soft":
-                      category = "purple";
-                      break;
-                    default:
-                      category = "grey";
-                  }
-                  return (
-                    <div
-                      key={`${tag.skillId}`}
-                      className={`skill-tag-label label-${category}`}
-                    >
-                      {tag.label}
+                      <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
+                      Mentor
                     </div>
-                  );
-                })
-              )}
+                  }
+                </div>
+
+                <div id="profile-description">{displayedProfile?.bio}</div>
+
+                <div id="profile-funfact">
+                  <span id="funfact-start">
+                    {displayedProfile?.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
+                  </span>
+                  {displayedProfile?.funFact}
+                </div>
+                {/* <div id="profile-interest">
+                  <ProfileInterests
+                    user={{ interests: displayedProfile.interests || [] }}
+                    isUsersProfile={isUsersProfile}
+                  />
+                </div> */}
+              </div>
+
+              <div id="profile-skills">
+                {displayedProfile?.skills !== undefined && (
+                  /* Will take in a list of tags the user has selected, then */
+                  /* use a map function to generate tags to fill this div */
+                  displayedProfile?.skills.map((tag) => {
+                    let category: string;
+                    switch (tag.type) {
+                      case "Designer":
+                        category = "red";
+                        break;
+                      case "Developer":
+                        category = "yellow";
+                        break;
+                      case "Soft":
+                        category = "purple";
+                        break;
+                      default:
+                        category = "grey";
+                    }
+                    return (
+                      <div
+                        key={`${tag.skillId}`}
+                        className={`skill-tag-label label-${category}`}
+                      >
+                        {tag.label}
+                      </div>
+                    );
+                  })
+                )}
+              </div>
             </div>
           </div>
-        </div>
 
-        <div id="profile-projects">
-          <h2>Projects</h2>
-          {/* Probably fine to use 25 for itemAddInterval */}
-          {displayedProjects ? (
-            <PanelBox
-              category={"projects"}
-              itemList={displayedProjects}
-              itemAddInterval={25}
-            />
-          ) : (
-            <div>No projects to display</div>
-          )}
+          <div id="profile-projects">
+            <h2>Projects</h2>
+            {/* Probably fine to use 25 for itemAddInterval */}
+            {displayedProjects ? (
+              <PanelBox
+                category={"projects"}
+                itemList={displayedProjects}
+                itemAddInterval={25}
+              />
+            ) : (
+              <div>No projects to display</div>
+            )}
+          </div>
         </div>
-      </div>
+      </main>
     </div>
   );
 };
