@@ -115,6 +115,10 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
+  useEffect(()=>{
+    theme === 'dark' ? setModeToggle('Light Mode') : setModeToggle('Dark Mode'); 
+  },[theme]);
+
   return (
     <div id="header">
       {/* Conditional rendering for search bar */}
