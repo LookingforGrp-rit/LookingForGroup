@@ -97,12 +97,12 @@ Project Panel component style rules
   /* box-shadow: 2px 2px 10px 2px var(--shadow-color); */
   color: var(--main-text);
   position: absolute;
-  height: auto;
-  /* min-width: 420px; */
   left: 0px;
   right: 0px;
-  top: 100%;
-  pointer-events: none;
+  bottom: 0;
+  height: auto;
+  max-height: 100%;
+  /* min-width: 420px; */
   visibility: visible;
   transition: visibility 0.2s;
 
@@ -113,6 +113,10 @@ Project Panel component style rules
   flex-direction: column;
   justify-content: start;
   text-align: left;
+  /* Single source of spacing between rows + top/bottom padding.
+     Avoids compounding per-row margins that left a gap below the title. */
+  gap: 6px;
+  padding: 14px 0;
 
   img {
     /* width: 100%; */
@@ -124,7 +128,7 @@ Project Panel component style rules
 
   .project-title-likes {
     padding: 0 20px;
-    margin: 14px 0;
+    margin: 0;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
@@ -187,13 +191,14 @@ Project Panel component style rules
   /* Quote */
   #quote {
     padding: 0 20px;
-    margin: 14px 0;
+    margin: 0;
     color: var(--main-text);
     font-size: 0.875rem;
     font-weight: 400;
     line-height: 28px;
 
-    overflow-y: scroll;
+    min-height: 0;
+    overflow-y: auto;
   }
 }
 
@@ -202,6 +207,14 @@ Project Panel component style rules
   flex-wrap: wrap;
   gap: 10px;
   padding: 0 20px;
+}
+
+/* Collapse the tags/description rows when a project has none, so their
+   margins don't leave a gap below the title in the hover submenu. */
+#project-panel-tags:empty,
+.project-panel-hover #quote:empty {
+  display: none;
+  margin: 0;
 }
 
 .project-contributor:hover {
@@ -3717,7 +3730,7 @@ My projects page style rules
 
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: end;
   gap: 10px;
 }
 
@@ -3733,8 +3746,15 @@ My projects page style rules
 }
 
 .project-header-label.title {
-  max-width: 610px;
-  width: 100%;
+  justify-self: start;
+  /* max-width: 200px;
+  width: 100%; */
+  flex-grow: 10;
+}
+
+.project-header-label.status {
+  width: 135px;
+  flex-grow: 1;
 }
 
 .project-header-label.date {
@@ -3748,6 +3768,7 @@ My projects page style rules
 
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
   gap: 10px;
 
   border: 0px;
@@ -3760,10 +3781,9 @@ My projects page style rules
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex-grow: 0.025;
   }
 }
-
-
 
 @media only screen and (max-width: 700px) {
 
@@ -3785,14 +3805,12 @@ My projects page style rules
   .dropdown-container {
     margin-left: auto;
   }
-
-
 }
 
 .list-card-section1 {
   box-sizing: border-box;
-  width: 600px;
 
+  flex-grow: 10;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -3836,8 +3854,10 @@ My projects page style rules
   line-height: 28px;
   letter-spacing: 0%;
 
+  width: 150px;
   display: flex;
   align-items: center;
+  flex-grow: 1;
 }
 
 .list-card-date {
