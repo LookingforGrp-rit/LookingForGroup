@@ -631,9 +631,6 @@ export const TagsTab = ({
         <div id="project-editor-tag-search-container">{renderTags()}</div>
       </div>
       <div id="tags-save-info">
-        <div id="invalid-input-error" className={"save-error-msg-general"}>
-          <p>*Fill out all required info before saving!*</p>
-        </div>
         { saveable ?
           <Popup>
             <PopupButton
@@ -655,7 +652,9 @@ export const TagsTab = ({
             </PopupContent>
           </Popup>
         :
-          <></>
+          <div id="invalid-input-error" className={"save-error-msg-general"}>
+            <p>*Fill out all required info before saving!*</p>
+          </div>
         }
       </div>
     </div>
