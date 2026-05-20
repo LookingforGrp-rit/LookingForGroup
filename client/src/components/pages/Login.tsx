@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { sendPost } from '../../functions/fetch.js';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
-import { getUserByEmail, getUserByUsername } from '../../api/users.js';
+import { getCurrentUsername, getUserByEmail, getUserByUsername } from '../../api/users.js';
 
 type LoginResponse = {
   error?: string;
@@ -26,12 +26,32 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
+  const [isLoading, setIsLoading] = useState(false);
+
+  // Redirect the user to the homepage if they are currently logged in
+  useEffect(() => {
+    const checkSessionAndRedirect = async () => {
+      try {
+        const res = await getCurrentUsername();
+        if (res.data)
+          navigate(paths.routes.HOME);
+      } catch (err) {
+        console.error("Session check failed:", err);
+      }
+    };
+
+    checkSessionAndRedirect();
+  }, [navigate]);
+
   /**
    * Validates user inputs, sends login requests to the server API, and handles authentication
    * responses. Displays error messages for invalid inputs or failed authentication attempts.
    * @returns false if an error occurred.
    */
   const handleLogin = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+
     // Check if the loginInput and password are not empty
     if (loginInput === '' || password === '') {
       setError('Please fill in all information');
@@ -124,6 +144,7 @@ const Login: React.FC = () => {
     // {
     //   navigate(paths.routes.CREATEPROJECT);
     // }
+    setIsLoading(false);
   };
 
   /**
@@ -179,7 +200,7 @@ const Login: React.FC = () => {
             }}
           />
           <h2>Log In</h2>
-          <div className="error">{error}</div>
+          <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="login-form-inputs">
             <input
               id='main'
@@ -217,8 +238,8 @@ const Login: React.FC = () => {
               </p>
             </div>
           </div>
-          <button id="main-loginsignup-btn" onClick={handleLogin}>
-            Log In
+          <button id="main-loginsignup-btn" onClick={handleLogin} disabled={isLoading}>
+            {isLoading ? 'Loading...' : 'Log In'}
           </button>
         </div>
         {/*************************************************************

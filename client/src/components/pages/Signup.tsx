@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 // import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
@@ -60,6 +60,21 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     // avatarImage: avatarImage,
     profileImage: profileImage, // if they upload their own image
   };
+
+  // Redirect the user to the homepage if they are currently logged in
+  useEffect(() => {
+    const checkSessionAndRedirect = async () => {
+      try {
+        const res = await getCurrentUsername();
+        if (res.data)
+          navigate(paths.routes.HOME);
+      } catch (err) {
+        console.error("Session check failed:", err);
+      }
+    };
+
+    checkSessionAndRedirect();
+  }, [navigate]);
 
   /**
    * Goes through the various fields, verifies whether user input is valid, and sends it to the server.
@@ -231,7 +246,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
           <h2>Sign Up</h2>
 
-          <div className="error">{message}</div>
+          <div className="error" aria-live="assertive" role="alert">{message}</div>
           <div className="signup-form-inputs">
             <div className="row">
               <input

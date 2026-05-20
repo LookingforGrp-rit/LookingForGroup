@@ -19,7 +19,11 @@ const getBaseUrl = (): string => {
 export const GET = async (apiURL: string): Promise<ApiResponse> => {
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+    if (import.meta.env.DEV) {
+      url += url.includes("?")
+        ? `?devId=${import.meta.env.VITE_DEV_ID}`
+        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+    }
 
     const response = await fetch(url, {
       method: "GET",
@@ -57,7 +61,11 @@ export const POST = async (
 
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+    if (import.meta.env.DEV) {
+      url += url.includes("?")
+        ? `?devId=${import.meta.env.VITE_DEV_ID}`
+        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+    }
 
     const response = await fetch(url, {
       method: "POST",
@@ -97,7 +105,11 @@ export const PUT = async (
 
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+    if (import.meta.env.DEV) {
+      url += url.includes("?")
+        ? `?devId=${import.meta.env.VITE_DEV_ID}`
+        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+    }
 
     const response = await fetch(url, {
       method: "PUT",
@@ -137,7 +149,11 @@ export const DELETE = async (
 
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+    if (import.meta.env.DEV) {
+      url += url.includes("?")
+        ? `?devId=${import.meta.env.VITE_DEV_ID}`
+        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+    }
 
     const response = await fetch(url, {
       method: "DELETE",
@@ -177,7 +193,11 @@ export const PATCH = async (
 
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) url += `?devId=${import.meta.env.VITE_DEV_ID}`;
+    if (import.meta.env.DEV) {
+      url += url.includes("?")
+        ? `?devId=${import.meta.env.VITE_DEV_ID}`
+        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+    }
 
     const response = await fetch(url, {
       method: "PATCH",

@@ -27,50 +27,49 @@ Login and Signup page style rules
 }
 
 .login-signup-container {
+  width: 95%;
+  max-width: 880px;
   margin: auto;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   height: 525px;
-  width: min(95vw,880px);
+  width: min(95vw, 880px);
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border-radius: 10px;
   position: relative;
+  overflow: hidden;
 }
 
 .login-form,
 .signup-form {
-  width: min(95vw,440px);
-  height: 485px;
-  text-align: center;
-  /* border: 1px solid black; */
-  background-color: var(--bg-color);
-  padding: 20px;
-  border-radius: 10px 0 0 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  box-sizing: border-box;
+  width: min(95vw, 440px);
+
+  .signup-form,
+  .directory {
+    flex: 1;
+    height: 485px;
+    text-align: center;
+    /* border: 1px solid black; */
+    background-color: var(--bg-color);
+    padding: 40px 20px;
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+  }
 }
 
 .directory {
-  width: 440px;
-  height: 485px;
-  text-align: center;
   /* border: 1px solid black; */
   background: var(--sidebar-gradient);
   color: var(--main-text);
-  padding: 20px;
-  border-radius: 0 10px 10px 0;
   background-size: cover;
   background-position: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .directory img {
@@ -99,24 +98,11 @@ Login and Signup page style rules
   margin-bottom: 0;
 } */
 
-.signup-name-input {
-  width: min(40vw,135px);
-  height: 40px;
-  margin: 5px;
-  padding: 5px 20px;
-  border: none;
-  outline: none;
-  background-color: var(--header-color);
-  border-radius: 10px;
-  text-align: left;
-  font-size: 0.9375rem;
-}
-
 .signup-input,
-.login-input {
-  width: min(90vw,320px);
+.login-input,
+.signup-name-input {
+  width: 100%;
   height: 40px;
-  margin: 5px;
   padding: 5px 20px;
   border: none;
   background-color: var(--header-color);
@@ -125,6 +111,7 @@ Login and Signup page style rules
   text-align: left;
   outline: none;
   font-size: 0.9375rem;
+  box-sizing: border-box;
 }
 
 .signup-input::placeholder,
@@ -169,42 +156,47 @@ Login and Signup page style rules
   transition: 0.2s;
 }
 
+.signup-form-inputs,
 .login-form-inputs {
   /* border: 1px solid black; */
-  /* height: 300px; */
-  margin: 10px 0;
+  width: 100%;
+  max-width: 320px;
+  max-height: 340px;
+  height: auto;
+  margin: 20px 0;
+  gap: 15px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
-  max-width: 100%;
+  align-items: stretch;
 }
 
-.signup-form-inputs {
-  /* border: 1px solid black; */
-  height: 340px;
-  margin: 10px 0;
+.signup-form-inputs .row {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.signup-name-input {
+  flex: 1;
+  min-width: 0;
 }
 
 #password-wrapper {
   position: relative;
-  display: inline-block;
+  width: 100%;
   margin: 0px;
 }
 
 #password-wrapper input {
-  padding-right: 60px;
-  width: min(90vw,280px);
+  padding-right: 45px;
+  width: 100%;
 }
 
 #show-password {
   position: absolute;
   top: 55%;
-  right: 22px;
+  right: 0.5rem;
   transform: translateY(-50%);
   border: none;
   background-color: transparent;
@@ -238,7 +230,14 @@ Login and Signup page style rules
   text-decoration: underline;
 }
 
+#forgot-password,
+.mobile-signup,
+.mobile-login {
+  align-self: center;
+}
+
 .spacer {
+  border-bottom: 1px solid var(--primary-color);
   /* height: 30px; */
 }
 
@@ -264,8 +263,13 @@ Login and Signup page style rules
 
   .login-form,
   .signup-form {
-    position: fixed;
+    position: relative;
     border-radius: 4px;
+
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    margin: 0 auto;
   }
 
   .directory {
@@ -296,6 +300,7 @@ Login and Signup page style rules
     cursor: pointer;
   }
 }
+
 /* #endregion*/
 
 /*
@@ -759,4 +764,5 @@ Signup process modal style rules
     font-size: 1.5rem;
   }
 }
+
 /* #endregion */

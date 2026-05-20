@@ -911,7 +911,7 @@ export const TeamTab = ({
 
       <div id="edit-position-details">
         <div id="edit-position-details-left">
-          <label className="edit-position-availability">Availability</label>
+          <label className="edit-position-availability">Availability*</label>
           <Select>
             <SelectButton
               placeholder="Select"
@@ -945,7 +945,7 @@ export const TeamTab = ({
               })}
             />
           </Select>
-          <label className="edit-position-location">Location</label>
+          <label className="edit-position-location">Location*</label>
           <Select>
             <SelectButton
               placeholder="Select"
@@ -978,7 +978,7 @@ export const TeamTab = ({
               })}
             />
           </Select>
-          <label className="edit-position-contact">Main Contact</label>
+          <label className="edit-position-contact">Main Contact*</label>
           {/* <select className="edit-position-contact"></select> */}
           <Select>
             <SelectButton
@@ -1032,7 +1032,7 @@ export const TeamTab = ({
           </Select>
         </div>
         <div id="edit-position-details-right">
-          <label className="edit-position-duration">Duration</label>
+          <label className="edit-position-duration">Duration*</label>
           <Select>
             <SelectButton
               placeholder="Select"
@@ -1065,7 +1065,7 @@ export const TeamTab = ({
               })}
             />
           </Select>
-          <label className="edit-position-compensation">Compensation</label>
+          <label className="edit-position-compensation">Compensation*</label>
           <Select>
             <SelectButton
               placeholder="Select"
@@ -1575,7 +1575,9 @@ export const TeamTab = ({
             </PopupContent>
           </Popup>
         :
-          <></>
+          <div id="invalid-input-error" className={"save-error-msg-general"}>
+            <p>*Fill out all required info before saving!*</p>
+          </div>
         }
       </div>
     </div>

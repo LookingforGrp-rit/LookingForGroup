@@ -6,6 +6,7 @@ const s3 = new S3Client({
   credentials: {
     accessKeyId: envConfig.s3User,
     secretAccessKey: envConfig.s3Pass,
+    sessionToken: envConfig.sessionToken,
   },
   region: 'us-east-2',
   forcePathStyle: true,
