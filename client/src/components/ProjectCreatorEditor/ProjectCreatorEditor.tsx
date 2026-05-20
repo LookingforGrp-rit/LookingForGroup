@@ -20,6 +20,7 @@ import { projectDataManager } from "../../api/data-managers/project-data-manager
 import { PendingProject } from "../../../types/types";
 import { ProjectWithFollowers, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
+import { getCurrentUsername } from "../../api/users";
 
 // NO COMMENTS FOR WHAT THESE ARE??????
 interface Props {
@@ -98,6 +99,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // Start editing the project creator
   const createOrEdit = async () => {
+    const res = await getCurrentUsername();
+    if (!(res.status === 200 && res.data?.username)) {
+      //redirect user to login if they aren't logged in
+      navigate(paths.routes.LOGIN);
+      return;
+    }
+
     if (!newProject && projectID) {
       
       // Load existing project
