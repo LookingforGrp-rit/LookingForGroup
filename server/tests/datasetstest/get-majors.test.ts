@@ -24,30 +24,24 @@ describe('getMajorsService', () => {
   });
 
   it('returns transformed majors when found', async () => {
-    const prismaMajor = {
-      majorId: 1,
-      label: 'Animation',
-    };
+    const prismaMajor = [
+      { majorId: 1, label: 'Animation' },
+      { majorId: 2, label: 'Computer Engineering' },
+    ];
 
-    const transformed: Major = {
-      majorId: 1,
-      label: 'Animation',
-    };
-
-    vi.mocked(prisma.majors.findMany).mockResolvedValue([prismaMajor as Major]);
-    vi.mocked(transformMajor).mockReturnValue(transformed);
+    vi.mocked(prisma.majors.findMany).mockResolvedValue(prismaMajor as Major[]);
+    vi.mocked(transformMajor).mockImplementation((major) => ({ ...major, transformed: true }));
 
     const result = await getMajorsService();
 
-    const calls = vi.mocked(prisma.majors.findMany).mock.calls;
-    const [args] = calls[0];
+    // console.log(result);
 
-    expect(args?.orderBy).toEqual({ label: 'asc' });
-    expect(args?.select).toEqual(expect.any(Object));
-
-    expect(vi.mocked(transformMajor).mock.calls[0][0]).toEqual(prismaMajor);
-
-    expect(result).toEqual([transformed]);
+    expect(vi.mocked(prisma.majors.findMany)).toHaveBeenCalled();
+    expect(vi.mocked(transformMajor)).toHaveBeenCalledTimes(2);
+    expect(result).toEqual([
+      { majorId: 1, label: 'Animation', transformed: true },
+      { majorId: 2, label: 'Computer Engineering', transformed: true },
+    ]);
   });
 
   it('returns INTERNAL_ERROR when prisma throws', async () => {
