@@ -950,15 +950,33 @@ Page popup style rules
   margin: min(1.59vw, 24px) 0 0 min(1.59vw, 24px) !important;
   display: flex;
   align-items: center;
-
+  
   img {
     height: 24px;
     /* Font-size is meant to be 20pt, which corresponds to 24px here */
   }
 }
 
+
+.popup-back:hover{
+  border-color: var(--invert-text) !important;
+  color: var(--invert-text) !important;
+}
+
+#back{
+  padding:3px;
+}
+
+#back:hover{
+  padding:3px;
+  border-radius: 3px !important;
+  background-color: var(--invert-text) !important;
+  border-color: var(--invert-text) !important;
+}
+
 #project-creator-editor{
   scrollbar-width: none;
+
 }
 
 .popup-close {
