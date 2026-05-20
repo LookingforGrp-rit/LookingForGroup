@@ -38,18 +38,31 @@ const Credits = () => {
       <h1 id="credits-title">Meet The LFG Team</h1>
 
       {/*runs through an array of all the members and creates a "card" for each one */}
-      <main id="main" tabIndex={-1} aria-label='main content'>
-        <div id="credit-members-container">
+      <main id="main" tabIndex={-1} aria-labelledby='credits-title'>
+        <div className="sr-only" aria-live="polite" aria-atomic="true">
+          {`Showing ${filteredMembersList.length} team ${filteredMembersList.length === 1 ? 'member' : 'members'}.`}
+        </div>
+
+        <ul id="credit-members-container">
           {filteredMembersList.map(member => (
-            <div className="lfg-contributor" key={member.name}>
-              <img className="project-contributor-profile" src={member.photo} />
+            <li className="lfg-contributor" key={member.name}>
+              <img 
+                className="project-contributor-profile" 
+                src={member.photo} 
+                alt={`Profile photo of ${member.name}`}
+              />
               <div className="project-contributor-info">
                 <h2 className="team-member-name">{member.name}</h2>
                 <p className="team-member-role">{member.role}</p>
               </div>
-            </div>
+            </li>
           ))}
-        </div>
+        </ul>
+        
+        {filteredMembersList.length === 0 && (
+          <p className='no-members'>No team members found matching your search.</p>
+        )}
+
       </main>
     </div>
   );
