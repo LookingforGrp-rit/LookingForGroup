@@ -25,7 +25,7 @@ let dataManager: Awaited<ReturnType<typeof userDataManager>>;
  * @returns JSX Element
  */
 export const ProfileEditPopup = () => {
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState(5);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
   const navigate = useNavigate();
@@ -45,6 +45,7 @@ export const ProfileEditPopup = () => {
 
       setModifiedProfile(structuredClone(getUser.data));
       dataManager = await userDataManager();
+      console.log(dataManager)
 
       // console.log("ProfileEditPopup - Raw API response:", response.data);
       // console.log("ProfileEditPopup - User profile data:", response.data);
@@ -69,7 +70,6 @@ export const ProfileEditPopup = () => {
     }
 
     navigate(`${paths.routes.PROFILE}?userID=${modifiedProfile?.userId}`);
-    window.location.reload();
   };
 
 
