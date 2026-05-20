@@ -83,7 +83,7 @@ export const ProjectsTab = ({
     projectId: number,
     newVisibility: Visibility
   ) => {
-    dataManager.updateProjectVisibility({
+    dataManager?.updateProjectVisibility({
       id: {
         type: "canon",
         value: projectId,

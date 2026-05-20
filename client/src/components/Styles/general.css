@@ -978,9 +978,12 @@ Page popup style rules
   border-color: var(--invert-text) !important;
 }
 
-#project-creator-editor{
-  scrollbar-width: none;
+#project-creator-editor::-webkit-scrollbar-corner {
+    overflow: hidden;
+}
 
+#project-editor-selected-tags-container::-webkit-scrollbar-corner {
+   overflow: hidden;
 }
 
 .popup-close {
