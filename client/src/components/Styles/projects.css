@@ -361,6 +361,10 @@ Project Creator and Editor style rules
   font-size: 1.2rem;
   font-weight: 500;
 }
+
+#project-editor-selected-tags-container {
+  overflow-y: hidden;
+}
  
 .project-editor-tab:hover,
 .project-editor-tab-active,
