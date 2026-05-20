@@ -1,5 +1,5 @@
 // import { profiles } from "../../constants/fakeData";
-import { useState, useMemo, ChangeEvent } from 'react';
+import { useState, useMemo, ChangeEvent, useEffect } from 'react';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
@@ -79,7 +79,7 @@ const MyProjects = () => {
       }
 
     } catch (e) {
-      console.error('error getting projecrs', e);
+      console.error('error getting projects', e);
       setCreateError(true);
     }
 
@@ -121,9 +121,10 @@ const MyProjects = () => {
   //   }
   // };
 
-  if (!dataLoaded) {
+  // React likes this more than a boolean check
+  useEffect(() => {
     getUserProjects();
-  }
+  }, []);
   // else {
   //     if (projectsList.length < 20) {
   //         let tempList = new Array(0);
@@ -195,7 +196,7 @@ const MyProjects = () => {
           return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
             const aTime = new Date(a.createdAt).getTime();
             const bTime = new Date(b.createdAt).getTime();
-            return bTime - aTime;
+            return aTime - bTime;
           });
 
         case 'a-z':
@@ -211,7 +212,7 @@ const MyProjects = () => {
           return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
             const aTime = new Date(a.createdAt).getTime();
             const bTime = new Date(b.createdAt).getTime();
-            return aTime - bTime;
+            return bTime - aTime;
           });
       }
     }
@@ -376,7 +377,7 @@ const MyProjects = () => {
   const projectsToDisplay = currentSearch.trim() !== '' ? filteredProjects : projectsList;
 
   return (
-    <div className="page" id="my-projects">
+    <div className="page" id="my-projects" tabIndex={-1}>
       {/* Top Bar */}
       <Header 
         dataSets={projectDataSet} 
@@ -389,8 +390,8 @@ const MyProjects = () => {
     <div className="projects-banner-outer">
     <div className="projects-banner-wrapper">
       <ThemeImage
-        lightSrc={'assets/projects_header_light.png'}
-        darkSrc={'assets/projects_header_dark.png'}
+        lightSrc={'/assets/projects_header_light.png'}
+        darkSrc={'/assets/projects_header_dark.png'}
         className={'my-projects-banner'}
         alt={'My Projects Banner'}
       />
@@ -504,7 +505,9 @@ const MyProjects = () => {
 
           {/*Create Project Button*/}
           <div className="my-projects-create-btn">
-            <ProjectCreatorEditor newProject={true}/>
+            <ProjectCreatorEditor 
+              newProject={true}
+            />
           </div>
         </div>
       </div>
@@ -512,7 +515,7 @@ const MyProjects = () => {
       <hr />
 
       {/* Project Grid/List */}
-      <div>
+      <main id="main">
         {(!dataLoaded) ? (
           <div
             className='placeholder-spacing'
@@ -530,7 +533,7 @@ const MyProjects = () => {
             <ProjectListSection userProjects={projectsToDisplay} />
           )
         )}
-      </div>
+      </main>
       <CreditsFooter />
       <ToTopButton />
     </div>

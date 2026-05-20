@@ -32,6 +32,8 @@ General style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region general */
+
 /*default color scheme*/
 :root {
   /* default dark mode is default */
@@ -199,7 +201,7 @@ used for the more options dropdown menu and notifications
 
 .page-title {
   margin-bottom: 0;
-  font-size: 42px;
+  font-size: 2.625rem;
   margin-left: max(1.79vw, 27px);
   color: var(--primary-color);
 }
@@ -207,7 +209,7 @@ used for the more options dropdown menu and notifications
 .error {
   color: var(--error-delete-color);
   font-weight: 500;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-style: italic;
 }
 
@@ -221,6 +223,13 @@ used for the more options dropdown menu and notifications
 button {
   cursor: pointer;
   transition: 0.2s;
+}
+
+button:focus-visible,
+a:focus-visible {
+  transition: 0s;
+  outline: 3px solid var(--primary-color);
+  outline-offset: 2px;
 }
 
 /*give sections of the page a drop shadow*/
@@ -238,6 +247,8 @@ section {
   min-height: 50vh;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -245,6 +256,7 @@ Card component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region card component */
 
 /*style rules for the cards with drop shadows (see wireframes)*/
 /*discover card: used on the discover page for projects and profiles*/
@@ -341,6 +353,7 @@ Card component style rules
 #profile-project-name:hover {
   text-decoration: underline;
 }
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -349,6 +362,7 @@ Tag component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region tag components*/
 
 /*used in Tags component */
 .tag {
@@ -372,6 +386,8 @@ Tag component style rules
   }
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -379,6 +395,26 @@ Button component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region button component */
+
+/* Skip link in top corner to jump to main content */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 1rem;
+  background-color: var(--bg-color);
+  color: var(--main-text);
+  padding: 0.75rem 1.5rem;
+  border-radius: 0 0 0.5rem 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 9999;
+}
+
+.skip-link:focus {
+  top: 0;
+  outline: 2px solid var(--primary-color);
+}
 
 /*general rules for buttons
 orange-button class makes the button orange, white-button class makes the button white*/
@@ -436,6 +472,15 @@ orange-button class makes the button orange, white-button class makes the button
   margin: auto;
 }
 
+.scale-on-hover {
+  transition: transform 0.2s;
+}
+.scale-on-hover:hover {
+  transform: scale(1.05);
+}
+
+/* #endregion*/
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -443,6 +488,7 @@ Sidebar Nav style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region sidebar */
 
 .SideBarContainer {
   width: 220px;
@@ -480,7 +526,7 @@ Sidebar Nav style rules
   justify-content: center;
   align-items: center;
   text-align: center;
-  width: 200px;
+  width: 100%;
   margin: 30px 0 30px 0;
 }
 
@@ -489,26 +535,24 @@ Sidebar Nav style rules
   height: 12px;
   background-color: var(--red);
   color: white;
-  font-size: 10px;
+  font-size: 0.625rem;
   border-radius: 50%;
   position: absolute;
   top: 33px;
   right: 14px;
 }
 
-/* notification bell */
+/* title button */
 .headerContainer button {
   background: none;
   border: none;
-  width: 33px;
-  height: 33px;
 }
 
-/* title/logo */
+/* title/logo text */
 .headerContainer h1 {
   font-weight: bold;
-  font-size: 45px;
-  margin: 0px 0px 0px 30px;
+  font-size: 2.8125rem;
+  margin: 0px 0px 0px 0px;
   text-align: center;
   color: var(--primary-color);
 }
@@ -602,7 +646,7 @@ Sidebar Nav style rules
   margin-bottom: 40px;
   width: 120px;
   height: 45px;
-  font-size: 18px;
+  font-size: 1.125rem;
   border: none;
   border-radius: 12px;
   /* outline: solid var(--orange) 2px; */
@@ -646,7 +690,7 @@ Sidebar Nav style rules
   margin-bottom: 40px;
   width: 194px;
   height: 55px;
-  font-size: 20px;
+  font-size: 1.25rem;
   /* padding-bottom: 5px; */
   border: none;
   border-radius: 30px;
@@ -685,7 +729,7 @@ Sidebar Nav style rules
     position: fixed;
     bottom: 10px;
     background-color: var(--header-color);
-    z-index: 1;
+    z-index: 10;
     /*box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 16px;*/
   }
 
@@ -735,6 +779,8 @@ Sidebar Nav style rules
   }
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -742,6 +788,7 @@ Page popup style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region popup */
 
 /*rules for the cover a popup uses*/
 .popup-cover {
@@ -766,8 +813,10 @@ Page popup style rules
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   /* max-width: 1321px; */
+  width: min(1121px, 92vw);
   max-width: 1121px;
-  max-height: 849px;
+  max-height: min(849px, 90vh);
+  overflow-y: auto;
   opacity: 100%;
   z-index: 3;
   /* height: 849px; */
@@ -788,18 +837,26 @@ Page popup style rules
   padding: 20px 40px;
 }
 
+@media (max-width: 799px) {
+  .popup {
+    width: 95vw;
+    max-width: 95vw;
+    /* Leave room for the fixed bottom taskbar (~60px) plus breathing room */
+    max-height: calc(100vh - 90px);
+  }
+}
+
 @media (max-width: 576px) {
   .popup {
-    /* max-width: 921px;
-    max-height: 781px;
-    width: 64vw; */
-    /* height: 95vw; */
+    width: 96vw;
+    max-width: 96vw;
+    border-radius: 8px;
   }
 
   /* Smaller popups within another popup should scale */
   .popup .popup {
-    max-width: 50vw;
-  }  
+    max-width: 80vw;
+  }
 }
 
 .popup-container {
@@ -814,6 +871,36 @@ Page popup style rules
   z-index: 3;
   border-radius: 10px;
 }
+
+@media only screen and (hover:none){
+  .popup {
+    margin: 20px 20px;
+    width: 100vw;
+    height: 85vh;
+    max-width: 100vw;
+  }
+
+  .popup-container {
+    align-items: baseline;
+    justify-content: baseline;
+  }
+
+  .popup .popup-container {
+    align-items: center;
+    justify-content: center;
+  }
+
+  .popup .small-popup {
+    height: 100%;
+    justify-content: center;
+  }
+}
+
+.popup .popup {
+  height: auto;
+  width: auto;
+}
+
 
 #popup-close {
   position: absolute;
@@ -908,7 +995,7 @@ Page popup style rules
     width: 104px;
     height: 40px;
     padding: 5px 16px;
-    font-size: 20px;
+    font-size: 1.25rem;
     border: none;
     border-radius: 40px;
     background-color: var(--primary-color);
@@ -924,7 +1011,7 @@ Page popup style rules
   }
 
   h2 {
-    font-size: 24px;
+    font-size: 1.5rem;
     margin-top: min(3.46vh, 34px);
     margin-bottom: min(3.05vh, 30px);
     font-weight: 600;
@@ -932,14 +1019,14 @@ Page popup style rules
   }
 
   h3 {
-    font-size: 20px;
+    font-size: 1.25rem;
     font-weight: 600;
     color: var(--primary-color);
     margin: min(0.2vh, 2px) 0 min(0.51vh, 5px);
   }
 
   h4 {
-    font-size: 14px;
+    font-size: 0.875rem;
     font-weight: 400;
     color: var(--neutral-gray);
     font-style: italic;
@@ -977,24 +1064,33 @@ Page popup style rules
   }
 
   .filter-tab {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 400;
     color: var(--neutral-gray);
     /* Indicate should be clicked without being a button */
     cursor: pointer;
     transition: 0.2s;
+    padding: 1px;
     /* margin: 14px 38px; */
+    width: 12%;
+    text-align: center
   }
 
   .filter-tab:hover {
     color: var(--primary-color);
     font-weight: 600;
     transition: none;
+    padding: 1px;
+    width: 12%;
+    text-align: center
   }
 
   .filter-tab.selected {
     font-weight: 700;
     color: var(--primary-color);
+    padding: 1px;
+    width: 12%;
+    text-align: center
   }
 
   hr {
@@ -1067,6 +1163,8 @@ Page popup style rules
   color: var(--invert-text);
 } */
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1074,6 +1172,7 @@ Header style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region header */
 
 #header {
   display: grid;
@@ -1097,6 +1196,12 @@ Header style rules
   z-index: 1;
 }
 
+@media only screen and (max-width: 700px) {
+    #header {
+        margin: 0 20px;
+    }
+}
+
 #header-searchbar {
   grid-area: search;
 }
@@ -1110,9 +1215,8 @@ Header style rules
   grid-area: buttons;
   display: flex;
   justify-content: flex-end;
-  /* width: 140px; */
-  max-width: fit-content;
-  margin-left: 10px;
+  margin-left: 20px;
+  translate: -20px 0;
 }
 
 #header-buttons button {
@@ -1121,12 +1225,6 @@ Header style rules
   border: none;
   margin-left: 10px;
   height: 45px;
-  /* width: auto; */
-
-  /* margin-left:10px;
-    height:auto;
-    width:auto;
-    padding-top:4px; */
 }
 
 #notif-btn {
@@ -1168,12 +1266,6 @@ Header style rules
   }
 }
 
-/* #header-buttons img {
-    filter:none;
-    height:auto;
-    margin:2px;
-} */
-
 #header-profile-dropdown {
   margin-top: 10px;
   width: 165px;
@@ -1195,7 +1287,7 @@ Header style rules
   display: flex;
   justify-content: center;
   gap: 14px;
-  font-size: 16px;
+  font-size: 1rem;
 
   > #header-profile-user-info {
     display: flex;
@@ -1204,14 +1296,14 @@ Header style rules
     text-align: left;
 
     #header-profile-username {
-      font-size: 16px;
+      font-size: 1rem;
       font-weight: 700;
       color: var(--primary-color);
       margin: 0;
     }
     #header-profile-email {
       font-style: italic;
-      font-size: 12px;
+      font-size: 0.75rem;
       color: var(--main-text);
       margin: 0;
     }
@@ -1245,11 +1337,7 @@ Header style rules
   background-color: var(--header-color);
 }
 
-@media only screen and (max-width: 400px) {
-  #header {
-    width: 85%;
-  }
-}
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1258,6 +1346,7 @@ Search style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region search */
 
 /*position on the page*/
 .search-wrapper {
@@ -1271,7 +1360,7 @@ Search style rules
 }
 
 .fa-search {
-  font-size: 20px;
+  font-size: 1.25rem;
 }
 
 .search-bar {
@@ -1280,12 +1369,12 @@ Search style rules
   width: calc(100% - 2em);
   /* Keeps width within parent element */
   /* padding: 10px 15px; */
-  padding: 10px 1em;
+  padding: 8px 1em;
   /*border: 3px solid gray;*/
   border-radius: 40px;
   background-color: var(--header-color);
   color: var(--primary-color);
-  font-size: 16px;
+  font-size: 1rem;
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   text-align: left;
@@ -1298,16 +1387,30 @@ Search style rules
 }
 
 /*text in the bar*/
-.search-input,
-.search-input::placeholder {
+.search-input {
   background: none;
   width: 100%;
   color: var(--primary-color);
   border: none;
-  padding: 4px;
+  padding: 14px;
   font: inherit;
   cursor: text;
   outline: inherit;
+}
+
+
+.search-input:focus,
+.search-input:focus-visible {
+  border-color: var(--primary-color);
+  border-width: 0;
+  border-bottom-width: 3px;
+  border-style: solid;
+}
+
+.search-input::placeholder {
+  color: var(--primary-color);
+  font: inherit;
+  cursor: text;
 }
 
 /*magnifying glass button*/
@@ -1331,10 +1434,12 @@ Search style rules
 
 @media only screen and (max-width: 800px) {
   .search-bar {
-    font-size: 16px;
+    font-size: 1rem;
     /* width: 200px; */
   }
 }
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1343,6 +1448,7 @@ Dropdown style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region dropdown */
 
 .dropdown-container {
   position: relative;
@@ -1354,8 +1460,10 @@ Dropdown style rules
   /* box-shadow: 1px 2px 2px var(--dark-lighttheme); */
   position: absolute;
   background: none;
-  z-index: 2;
+  z-index: 15;
 }
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1364,6 +1472,8 @@ Select style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region select */
+
 .select-container {
   position: relative;
   width: 100%;
@@ -1381,7 +1491,7 @@ Select style rules
   padding: 15px 15px;
   border: 1px solid var(--border-color);
   border-radius: 10px;
-  font-size: 15px;
+  font-size: 0.9375rem;
 }
 .select::placeholder {
   color: var(--neutral-gray);
@@ -1406,7 +1516,7 @@ Select style rules
 
 /* Container for Select options */
 .select-options {
-  width: 100%;
+  width: min(100%,90vw);
   border-radius: 10px;
   position: absolute;
   background: none;
@@ -1428,7 +1538,7 @@ Select style rules
   border: none;
   background-color: var(--dropdown-color);
   padding: 15px 15px;
-  font-size: 14px;
+  font-size: 0.875rem;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -1470,6 +1580,8 @@ Select style rules
   text-align: left;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1477,11 +1589,12 @@ Input style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region input */
 
 /* Universal styling for all input types */
 .input {
   min-height: 45px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   padding-left: 15px;
   background: var(--bg-color);
   border: 1px solid var(--border-color);
@@ -1502,12 +1615,14 @@ Input style rules
 .input-multiline-container {
   display: flex;
   flex-grow: 1;
+
 }
 
 /* Paired with character limit */
 .input-multiline {
   padding: 15px;
 }
+
 
 /* Link wrapper */
 .input-link-wrapper {
@@ -1540,13 +1655,13 @@ Input style rules
 /* Combo box label */
 .input-combo-label {
   color: var(--primary-color);
-  font-size: 20px;
+  font-size: 1.25rem;
   font-weight: 600;
 }
 
 /* Details underneath label */
 .label-info {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--neutral-gray);
   font-style: italic;
   margin-top: 2px;
@@ -1564,6 +1679,14 @@ Input style rules
   flex: 1 1 auto;
 }
 
+@media only screen and (max-width: 700px) {
+  .label-input-box{
+    width: calc(100vw - 60px);
+  }
+}
+
+
+/* #endregion */
 
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
@@ -1572,6 +1695,7 @@ Scrollbar style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region scrollbar */
 
 /* width */
 ::-webkit-scrollbar {
@@ -1599,6 +1723,8 @@ Scrollbar style rules
   cursor: pointer;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1606,6 +1732,7 @@ Tag Filter style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region tag filter */
 
 #tag-filter-list {
   display: flex;
@@ -1628,6 +1755,8 @@ Tag Filter style rules
   cursor: pointer;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1635,6 +1764,7 @@ Image Carousel style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+/* #region image carousel */
 
 #carousel-tabs {
   display: flex;
@@ -1654,6 +1784,8 @@ Image Carousel style rules
   background-color: var(--primary-color);
 }
 
+/* #endregion*/
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1661,6 +1793,8 @@ Image Carousel style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region scoll to top button */
+
 .ToTopContainer {
   position: fixed;
   right: 50px;
@@ -1670,6 +1804,12 @@ Image Carousel style rules
   font-size: 3rem;
   z-index: 1;
   /* color: green; */
+}
+
+@media (max-width: 800px) {
+  .ToTopContainer {
+    bottom: 70px;
+  }
 }
 
 .ToTopContainer .to-top-button {
@@ -1704,6 +1844,8 @@ Image Carousel style rules
   left: 1rem;
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1711,6 +1853,8 @@ Spinning loader style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region spinning loader */
+
 .spinning-loader {
   border: 8px solid var(--neutral-gray);
   border-radius: 50%;
@@ -1720,6 +1864,7 @@ Spinning loader style rules
   -webkit-animation: spin 1.5s ease-in-out infinite;
   /* Safari */
   animation: spin 1.5s ease-in-out infinite;
+  justify-self: center;
 }
 
 /* Safari */
@@ -1743,6 +1888,8 @@ Spinning loader style rules
   }
 }
 
+/* #endregion */
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1750,6 +1897,9 @@ Theme Icons style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region theme icons */
+
+
 
 /* Rule
 ** Applied to the svg via ThemeIcon component...
@@ -1849,3 +1999,5 @@ Theme Icons style rules
     /* filter: none; */
   }
 }
+
+/* #endregion */

@@ -21,14 +21,14 @@ Credits link footer style rules
   height: 50px;
   width: 100%;
 
-  z-index: 1;
+  z-index: 0;
   background-color: var(--header-color);
 }
 
 .FooterContainer button {
   border: 0px;
   background: 0px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: bold;
   margin: 2px;
 }
@@ -63,44 +63,44 @@ Credits style rules
 #credits-title {
   color: var(--primary-color);
   text-align: left;
-  margin-left: 50px;
-  font-size: 24px;
+  margin-left: clamp(20px,5vw,50px);
+  font-size: 1.5rem;
   font-weight: 600;
 }
 
 #credit-members-container {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(294px, 1vw));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 30px;
-
-  margin: 20px 50px;
+  margin: 20px clamp(20px, 5vw, 50px);
+  padding: 0;
+  list-style: none;
 }
 
 .lfg-contributor {
-  width: 245px;
+  flex: 0 1 clamp(180px, 45vw, 245px);   
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   background-color: var(--header-color);
-  display: flex;
-  align-items: center;
-  padding: 12px 15px;
+  padding: 20px 15px;
   border-radius: 10px;
-  margin: 5px 10px;
   text-align: center;
-  scale: 1.1;
+}
+
+.no-members {
+  margin-left: clamp(20px,5vw,50px);
 }
 
 /* switches from grid to flexbox for mobile display */
 @media only screen and (max-width: 799px) {
   #credit-members-container {
-    display: flex;
-    align-items: flex-start;
-    align-content: flex-start;
-    flex-wrap: wrap;
-    margin-right: 30px;
+    gap: 20px;
   }
 
   .lfg-contributor {
     flex-grow: 1;
-    margin: 5px 25px;
   }
 }

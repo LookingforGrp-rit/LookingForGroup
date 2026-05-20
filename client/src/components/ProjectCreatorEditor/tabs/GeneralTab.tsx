@@ -6,7 +6,7 @@ import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../../types/types";
-import { useContext } from "react";
+import { useContext, useRef } from "react";
 
 // --- Variables ---
 let projectAfterGeneralChanges: PendingProject;
@@ -56,6 +56,7 @@ export const GeneralTab = ({
   projectAfterGeneralChanges = structuredClone(projectData);
   
   const projectId = projectData.projectId!;
+  const saveButtonRef = useRef<HTMLButtonElement>(null);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
@@ -86,6 +87,7 @@ export const GeneralTab = ({
       <LabelInputBox
         label={"Title*"}
         inputType={"single"}
+        maxLength={50}
         id="project-editor-title-input"
         value={projectAfterGeneralChanges.title || ""}
         onChange={(e) => {
@@ -297,13 +299,18 @@ export const GeneralTab = ({
             <PopupButton
               buttonId="project-editor-save"
               doNotClose={() => failCheck}
+              callback={() => {
+                console.log(`Current save ref: ${saveButtonRef.current}`);
+                saveButtonRef.current?.focus()}
+              }
             >
               Save Changes
             </PopupButton>
             <PopupContent useClose={false}>
               <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
               <div id="confirm-editor-save">
-                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save"
+                    ref={saveButtonRef} >
                   Confirm
                 </PopupButton>
                 <PopupButton buttonId="team-edit-member-cancel-button" >
