@@ -45,7 +45,6 @@ export const ProfileEditPopup = () => {
 
       setModifiedProfile(structuredClone(getUser.data));
       dataManager = await userDataManager();
-      console.log(dataManager)
 
       // console.log("ProfileEditPopup - Raw API response:", response.data);
       // console.log("ProfileEditPopup - User profile data:", response.data);
@@ -70,6 +69,7 @@ export const ProfileEditPopup = () => {
     }
 
     navigate(`${paths.routes.PROFILE}?userID=${modifiedProfile?.userId}`);
+    window.location.reload();
   };
 
 
