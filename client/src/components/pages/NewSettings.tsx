@@ -4,7 +4,7 @@ import { Popup, PopupButton, PopupContent } from '../Popup';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext, SetStateAction } from 'react';
+import { useState, useContext, SetStateAction, useEffect } from 'react';
 import { Header } from '../Header';
 import CreditsFooter from '../CreditsFooter';
 //import PasswordValidator from 'password-validator';
@@ -455,6 +455,14 @@ const Settings = () => {
   //     }
   //   }
   // };
+
+  useEffect(()=>{
+    if(theme === 'dark')
+      setThemeOption("Dark Mode")
+
+    if(theme === 'light')
+      setThemeOption("Light Mode")
+  },[theme])
 
   return (
     <div className="page" style={{ position: 'relative' }} tabIndex={-1}>

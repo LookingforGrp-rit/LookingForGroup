@@ -822,6 +822,7 @@ Page popup style rules
   /* height: 849px; */
 }
 
+
 /* Used inside of popup object for smaller popups */
 .small-popup {
   max-width: 456px;
@@ -948,6 +949,10 @@ Page popup style rules
   border-radius: 50px / 50px !important;
   background-color: var(--invert-text) !important;
   border-color: var(--invert-text) !important;
+}
+
+#project-creator-editor{
+  scrollbar-width: none;
 }
 
 .popup-close {
@@ -1081,18 +1086,27 @@ Page popup style rules
     /* Indicate should be clicked without being a button */
     cursor: pointer;
     transition: 0.2s;
+    padding: 1px;
     /* margin: 14px 38px; */
+    width: 12%;
+    text-align: center
   }
 
   .filter-tab:hover {
     color: var(--primary-color);
     font-weight: 600;
     transition: none;
+    padding: 1px;
+    width: 12%;
+    text-align: center
   }
 
   .filter-tab.selected {
     font-weight: 700;
     color: var(--primary-color);
+    padding: 1px;
+    width: 12%;
+    text-align: center
   }
 
   hr {
