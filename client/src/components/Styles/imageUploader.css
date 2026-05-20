@@ -16,7 +16,7 @@
 }
 
 #project-image-uploader #img-view {
-    width: 323px;
+    width: min(80vw, 323px);
     height: 182px;
     gap: 10px;
 
@@ -51,4 +51,9 @@
     position: absolute;
     bottom: 9px;
     right: 9px;
+}
+
+.camera-button:hover {
+    transition-duration: 0.2s;
+    scale: 1.1;
 }

@@ -4,24 +4,25 @@ import { PendingUserProfile } from "../../../../types/types";
 import usePreloadedImage from "../../../functions/imageLoad";
 import placeholderThumbnail from "../../../images/project_temp.png";
 import { ThemeIcon } from "../../ThemeIcon";
+import { FC } from "react";
+
+interface ProjectTileProps {
+  membershipData : MyMember;
+  onVisibilityToggled : (project_id : number) => void;
+}
 
 /**
  * Component for each project to display within the Profile Projects tab. Appears as a tile.
  * @param projectData A single project's data.
  * @returns JSX Element
  */
-const ProjectTile = ({
-  membershipData,
-  onVisibilityToggled,
-}: {
-  membershipData: MyMember;
-  onVisibilityToggled: () => void;
-}) => {
+const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggled }) => {
   const projectData = membershipData.project;
 
   return (
-    <div className="projectTile" key={projectData.projectId}>
-      <img
+    <div key={projectData.projectId}>
+      <div className="projectTile">
+        <img
         src={usePreloadedImage(
           projectData.thumbnail?.image || placeholderThumbnail,
           placeholderThumbnail
@@ -36,7 +37,7 @@ const ProjectTile = ({
         className="project-visibility-button"
         onClick={(e) => {
           e.preventDefault();
-          onVisibilityToggled();
+          onVisibilityToggled(projectData.projectId);
         }}
       >
         <ThemeIcon
@@ -47,7 +48,9 @@ const ProjectTile = ({
           ariaLabel={"Toggle visibility"}
         />
       </button>
-      {/* {<p>{projectData.title}</p>} */}
+      </div>
+      
+      <p className="project-tile-title">{projectData.title}</p>
     </div>
   );
 };
@@ -80,7 +83,7 @@ export const ProjectsTab = ({
     projectId: number,
     newVisibility: Visibility
   ) => {
-    dataManager.updateProjectVisibility({
+    dataManager?.updateProjectVisibility({
       id: {
         type: "canon",
         value: projectId,
@@ -97,14 +100,14 @@ export const ProjectsTab = ({
       visibility: newVisibility,
     };
 
+    const updatedProjects : MyMember[] = profile.projects;
+    updatedProjects[updatedProjects.findIndex(
+        (project : MyMember) => project.project.projectId === projectId
+      )] = updatedProject;
+
     updatePendingProfile({
       ...profile,
-      projects: [
-        ...profile.projects.filter(
-          ({ project }) => project.projectId !== projectId
-        ),
-        updatedProject,
-      ],
+      projects: updatedProjects,
     });
   };
 
@@ -120,9 +123,9 @@ export const ProjectsTab = ({
             <ProjectTile
               membershipData={membership}
               key={`project-${membership.project.projectId}`}
-              onVisibilityToggled={() =>
+              onVisibilityToggled={(_project_id : number) =>
                 onProjectVisibilityChanged(
-                  membership.project.projectId,
+                  _project_id,
                   membership.visibility === "Public" ? "Private" : "Public"
                 )
               }

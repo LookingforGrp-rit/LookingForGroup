@@ -64,7 +64,7 @@ const LabelInputBox: React.FC<LabelInputBoxProps> = ({ label, labelInfo, inputTy
         {label}
       </label>
       {labelInfo && <div className="label-info">{labelInfo}</div>}
-      <Input type="single" value={value} onChange={onChange} />
+      <Input type="single" maxLength={maxLength} value={value} onChange={onChange} />
       {children}
     </div>
   );

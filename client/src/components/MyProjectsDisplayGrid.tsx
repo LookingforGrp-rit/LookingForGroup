@@ -92,29 +92,30 @@ const MyProjectsDisplayGrid = ({
   return (
     <div className="my-project-grid-card">
       {/* Thumbnail */}
-      <img
-        className="grid-card-image"
-        src={usePreloadedImage(
-          projectData.thumbnail?.image ?? placeholderThumbnail,
-          placeholderThumbnail
-        )}
-        alt={`${projectData.title}`}
-        onClick={() => navigate(projectURL)}
-      ></img>
+      <button className="grid-card-image-button" onClick={() => navigate(projectURL)}>
+        <img
+          className="grid-card-image"
+          src={usePreloadedImage(
+            projectData.thumbnail?.image ?? placeholderThumbnail,
+            placeholderThumbnail
+          )}
+          alt={`${projectData.title}`}
+        />
+      </button>
 
       <div className="grid-card-details">
         {/* Title */}
-        <div className="grid-card-title" onClick={() => navigate(projectURL)}>
+        <a className="grid-card-title" href={projectURL}>
           {projectData.title}
-        </div>
+        </a>
 
         {/* Options */}
         <Dropdown>
           <DropdownButton buttonId="grid-card-options-button">
             <ThemeIcon
               id={"menu"}
-              width={15}
-              height={3}
+              width={30}
+              height={30}
               className={"mono-fill dropdown-menu"}
               ariaLabel={"More options"}
             />
