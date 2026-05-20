@@ -108,9 +108,10 @@ export const ProfileEditPopup = () => {
       return false;
     }
 
-    if (pendingProfile.bio == "") {
-      return false;
-    }
+    //Made bio optional because it is not required when making account
+    // if (pendingProfile.bio == "") {
+    //   return false;
+    // }
 
     return true;
   }

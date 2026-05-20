@@ -390,7 +390,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
       </div>
 
       <LabelInputBox
-        label={'About Me*'}
+        label={'About Me'}
         labelInfo='Share a brief overview of who you are, your interests, and what drives you!'
         inputType={'multi'}
         maxLength={600}
