@@ -127,7 +127,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
       {/* Options */}
       <Dropdown>
         <DropdownButton buttonId="list-card-options-button">
-          <ThemeIcon id={'menu'} width={25} height={5} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
+          <ThemeIcon id={'menu'} width={35} height={15} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
         </DropdownButton>
         <DropdownContent rightAlign={true}>
           <div className={`card-options-list ${optionsShown ? 'show' : ''}`}>
