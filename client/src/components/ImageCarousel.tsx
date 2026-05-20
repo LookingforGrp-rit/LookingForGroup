@@ -84,23 +84,30 @@ export const CarouselTabs = ({ className = '' }: { className?: string }) => {
     const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
     const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
-        let newIndex = currentIndex;
+        let direction = 0;
 
         if (e.key === 'ArrowRight')
-            newIndex = 1;
+            direction = 1;
         else if (e.key === 'ArrowLeft')
-            newIndex = -1;
+            direction = -1;
         else
             return; // Don't intercept other keys
 
         e.preventDefault();
         e.stopPropagation();
-        handleStep(newIndex);
+        handleStep(direction);
         
-        // Shift keyboard focus to new tab
+        // Calculate the actual target index for the tab array
+        const length = dataList.length;
+        let targetIndex = (currentIndex + direction) % length;
+        if (targetIndex < 0) {
+            targetIndex += length;
+        }
+
+        // Shift keyboard focus to the newly calculated tab index
         setTimeout(() => {
-            tabRefs.current[newIndex]?.focus();
-        }, 0);
+            tabRefs.current[targetIndex]?.focus();
+        }, 50);
     };
 
     return (
@@ -115,6 +122,7 @@ export const CarouselTabs = ({ className = '' }: { className?: string }) => {
 
                 return (
                     <button
+                        ref={(el) => {tabRefs.current[index] = el;}}
                         className={`carousel-tab${isActive ? ' carousel-tab-active' : ''}`}
                         onClick={() => handleIndexChange(index)}
                         aria-selected={isActive}
@@ -213,6 +221,9 @@ export const Carousel = ({
     // Guards against the snap running more than once per transition
     const snapping = useRef(false);
 
+    // Tracks a slide index that needs focus once it becomes active
+    const pendingFocus = useRef<number | null>(null);
+
     // Logical (real) index for tabs/active state, accounting for clones.
     const currentIndex = hasClones
         ? (((displayIndex - 1) % length) + length) % length
@@ -242,6 +253,21 @@ export const Carousel = ({
      */
     const handleStep = (direction: number) => {
         skipAuto.current = true;
+
+        // Check if focus is currently inside the active slide
+        const activeContainer = slideRefs.current[currentIndex];
+        const wasUserFocused = activeContainer && activeContainer.contains(document.activeElement);
+
+        // Calculate what the next logical index will be
+        const length = dataList.length;
+        let targetedIndex = (currentIndex + direction) % length;
+        if (targetedIndex < 0)
+            targetedIndex += length;
+
+        // Shift focus to the new slide container if needed
+        if (wasUserFocused)
+            pendingFocus.current = targetedIndex;
+
         advance(direction);
     };
 
@@ -251,9 +277,6 @@ export const Carousel = ({
      */
     const handleIndexChange = (newIndex: number) => {
         skipAuto.current = true;
-        
-        const activeContainer = slideRefs.current[currentIndex];
-        const wasUserFocused = activeContainer && activeContainer.contains(document.activeElement);
 
         let targetedIndex = newIndex;
         if (newIndex > dataList.length - 1) {
@@ -264,26 +287,6 @@ export const Carousel = ({
 
         setAnimate(true);
         setDisplayIndex(hasClones ? targetedIndex + 1 : targetedIndex);
-
-        if (wasUserFocused) {
-            setTimeout(() => {
-                const nextContainer = slideRefs.current[targetedIndex];
-                if (nextContainer) {
-                    // Focusable objects in new container
-                    const focusableSelectors = 'a:not([tabindex="-1"]), button:not([tabindex="-1"]), input:not([tabindex="-1"]), [tabindex="0"]';
-                    const firstFocusable = nextContainer.querySelector<HTMLElement>(focusableSelectors);
-                    
-                    // Focus the first one if there is one
-                    if (firstFocusable) {
-                        firstFocusable.focus({ preventScroll: true });
-                    } else {
-                        // If for some reason there are links missing
-                        nextContainer.setAttribute('tabindex', '-1');
-                        nextContainer.focus({ preventScroll: true });
-                    }
-                }
-            }, 50); // Slight delay for DOM to update
-        }
     };
 
     /**
@@ -358,6 +361,40 @@ export const Carousel = ({
         const interval = setInterval(autoScroll, 10_000);
         return () => clearInterval(interval);
     }, [dataList.length, hovering]);
+
+    /**
+     * Focus shifting logic. Waits until displayIndex matches the target real slide
+     * (meaning any clone transitions have finished and inert=true is removed)
+     * This prevents duplicate reading on screen readers
+     */
+    useEffect(() => {
+        if (pendingFocus.current === null) return;
+
+        // Calculate the physical position where the real slide lives
+        const targetDisplayIndex = hasClones ? pendingFocus.current + 1 : pendingFocus.current;
+
+        // Only fire if the displayIndex has settled on the real slide
+        if (displayIndex === targetDisplayIndex) {
+            setTimeout(() => {
+                const nextContainer = slideRefs.current[pendingFocus.current!];
+                if (nextContainer && !nextContainer.inert) {
+                    // Focusable objects in new container
+                    const focusableSelectors = 'a:not([tabindex="-1"]), button:not([tabindex="-1"]), input:not([tabindex="-1"]), [tabindex="0"]';
+                    const firstFocusable = nextContainer.querySelector<HTMLElement>(focusableSelectors);
+                    
+                    // Focus the first one if there is one
+                    if (firstFocusable) {
+                        firstFocusable.focus({ preventScroll: true });
+                    } else {
+                        // If for some reason there are links missing
+                        nextContainer.setAttribute('tabindex', '-1');
+                        nextContainer.focus({ preventScroll: true });
+                    }
+                }
+                pendingFocus.current = null; // Clear the pending focus
+            }, 50); // Slight delay for DOM to update
+        }
+    }, [displayIndex, hasClones]);
 
     const handleGlobalCarouselArrows = (e: KeyboardEvent<HTMLDivElement>) => {
         if (e.key === 'ArrowRight') {
