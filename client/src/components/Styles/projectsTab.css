@@ -60,6 +60,14 @@
     }
 }
 
+/* "Hide project" icon is visibile (white) in light mode */
+[data-theme='light'] {
+  #eye, #eye-line
+  {
+      filter: invert(1);
+  }
+}
+
 .project-tile-title {
   font-size: 18px;
   margin-top: 6px;
