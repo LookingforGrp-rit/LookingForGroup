@@ -84,6 +84,7 @@ export const Input: React.FC<CustomInputProps> = ({
   return (
     <input
       className="input"
+      maxLength={props.maxLength}
       onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
       {...props}
     />

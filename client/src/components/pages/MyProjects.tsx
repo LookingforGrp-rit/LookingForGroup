@@ -196,7 +196,7 @@ const MyProjects = () => {
           return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
             const aTime = new Date(a.createdAt).getTime();
             const bTime = new Date(b.createdAt).getTime();
-            return bTime - aTime;
+            return aTime - bTime;
           });
 
         case 'a-z':
@@ -212,7 +212,7 @@ const MyProjects = () => {
           return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
             const aTime = new Date(a.createdAt).getTime();
             const bTime = new Date(b.createdAt).getTime();
-            return aTime - bTime;
+            return bTime - aTime;
           });
       }
     }
