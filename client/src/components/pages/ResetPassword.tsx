@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { sendPost } from '../../functions/fetch';
 import passwordValidator from 'password-validator';
+import { getCurrentUsername } from '../../api/users';
+import { routes } from '../../constants/routes';
 
 /**
  * Reset Password page. Renders a secure, interactive form that allows the user to input
@@ -18,6 +20,21 @@ const ResetPassword = () => {
   const [confirmInput, setConfirmInput] = useState('');
   const [error, setError] = useState(''); // Error message for missing or incorrect information
   const [passwordMsg, setPasswordMsg] = useState('');
+
+  // Redirect the user to the homepage if they are currently logged in
+  useEffect(() => {
+    const checkSessionAndRedirect = async () => {
+      try {
+        const res = await getCurrentUsername();
+        if (res.data)
+          navigate(routes.HOME);
+      } catch (err) {
+        console.error("Session check failed:", err);
+      }
+    };
+
+    checkSessionAndRedirect();
+  }, [navigate]);
 
   /**
    * Checks the logic for submitting a new password.
@@ -121,7 +138,7 @@ const ResetPassword = () => {
       <div className="login-form column">
         <h2>Set new password</h2>
         <div className="login-form-inputs">
-          <div className="error">{error}</div>
+          <div className="error" aria-live="assertive" role="alert">{error}</div>
           <span id="errorMessage"></span>
           <input
             className="login-input"
