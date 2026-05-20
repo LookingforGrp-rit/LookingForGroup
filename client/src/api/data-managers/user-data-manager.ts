@@ -29,6 +29,7 @@ import {
   updateUserSkill,
   updateUserSocial,
 } from "../users";
+import { Visibility } from "@looking-for-group/shared/enums";
 
 /**
  * The Data Manager holds all information about a user before it is updated on the server.
@@ -171,9 +172,13 @@ export const userDataManager = async () => {
     // project visibilities
     try {
       await runAndCollectErrors<UpdateUserProjectVisibilityInput>(
-        "Updating project visibility",
+        "Updating project profile visibility",
         updates.projectVisibilities,
-        ({ id, data }) => APIUpdateProjectVisibility(id.value, data)
+        ({ id, data }) => {
+          return APIUpdateProjectVisibility(id.value, {
+            visibility: data.visibility
+          });
+        }
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -413,7 +418,7 @@ export const userDataManager = async () => {
 
   /**
    * Update whether a project is hidden on a user's profile
-   * @param visibility The project to be changed and its new visibility
+   * @param visibility The project to be hiddon on profile or not based on its new visibility
    */
   const updateProjectVisibility = (
     visibility: CRUDRequest<UpdateUserProjectVisibilityInput>

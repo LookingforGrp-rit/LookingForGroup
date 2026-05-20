@@ -28,8 +28,8 @@ export enum AcademicYear {
   Graduate = "Graduate"
 };
 export enum Visibility {
-  Public = 0,
-  Private = 1
+  Public = "Public",
+  Private = "Private"
 };
 export enum SkillProficiency {
   Novice = "Novice",
