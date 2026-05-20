@@ -152,7 +152,8 @@ Login and Signup page style rules
   /* border: 1px solid black; */
   width: 100%;
   max-width: 320px;
-  height: 340px;
+  max-height: 340px;
+  height: auto;
   margin: 20px 0;
   gap: 15px;
   display: flex;
@@ -253,8 +254,13 @@ Login and Signup page style rules
 
   .login-form,
   .signup-form {
-    position: fixed;
+    position: relative;
     border-radius: 4px;
+
+    width: 100%;
+    max-width: 400px; 
+    height: auto;
+    margin: 0 auto;
   }
 
   .directory {
