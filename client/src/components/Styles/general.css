@@ -579,7 +579,7 @@ Sidebar Nav style rules
 .headerContainer h1 {
   font-weight: bold;
   font-size: 2.8125rem;
-  margin: 0px 0px 0px 30px;
+  margin: 0px 0px 0px 0px;
   text-align: center;
   color: var(--primary-color);
 }
@@ -848,6 +848,7 @@ Page popup style rules
   /* height: 849px; */
 }
 
+
 /* Used inside of popup object for smaller popups */
 .small-popup {
   max-width: 456px;
@@ -954,6 +955,10 @@ Page popup style rules
     height: 24px;
     /* Font-size is meant to be 20pt, which corresponds to 24px here */
   }
+}
+
+#project-creator-editor{
+  scrollbar-width: none;
 }
 
 .popup-close {
@@ -1089,18 +1094,27 @@ Page popup style rules
     /* Indicate should be clicked without being a button */
     cursor: pointer;
     transition: 0.2s;
+    padding: 1px;
     /* margin: 14px 38px; */
+    width: 12%;
+    text-align: center
   }
 
   .filter-tab:hover {
     color: var(--primary-color);
     font-weight: 600;
     transition: none;
+    padding: 1px;
+    width: 12%;
+    text-align: center
   }
 
   .filter-tab.selected {
     font-weight: 700;
     color: var(--primary-color);
+    padding: 1px;
+    width: 12%;
+    text-align: center
   }
 
   hr {
