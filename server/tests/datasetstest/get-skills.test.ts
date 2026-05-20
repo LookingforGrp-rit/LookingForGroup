@@ -39,7 +39,7 @@ describe('getSkillsService', () => {
 
     const result = await getSkillsService();
 
-    console.log(result);
+    // console.log(result);
 
     expect(vi.mocked(prisma.skills.findMany)).toHaveBeenCalled();
     expect(vi.mocked(transformSkill)).toHaveBeenCalledTimes(2);
