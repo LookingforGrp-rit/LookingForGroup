@@ -3188,6 +3188,11 @@ button#positions-popup-list-item-active {
   margin-bottom: 20px;
 }
 
+#project-overview-text {
+  word-break: break-word;
+  hyphens: auto;
+}
+
 .project-overview-section-header {
   font-size: 1rem;
   color: var(--primary-color);
