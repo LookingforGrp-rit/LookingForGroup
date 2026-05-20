@@ -1,4 +1,4 @@
-import type { Skill } from '@looking-for-group/shared';
+import type { Skill, SkillType } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getSkillsService from '#services/datasets/get-skills.ts';
@@ -25,13 +25,13 @@ describe('getSkillsService', () => {
 
   it('returns transformed skill when found', async () => {
     const prismaSkills: Skill[] = [
-      { skillId: 1, label: 'C++', type: 'Developer' },
-      { skillId: 44, label: 'Canva', type: 'Designer' },
+      { skillId: 1, label: 'C++', type: 'Developer' as SkillType },
+      { skillId: 44, label: 'Canva', type: 'Designer' as SkillType },
     ];
 
     const transformed: Skill[] = [
-      { skillId: 1, label: 'C++', type: 'Developer' },
-      { skillId: 44, label: 'Canva', type: 'Designer' },
+      { skillId: 1, label: 'C++', type: 'Developer' as SkillType },
+      { skillId: 44, label: 'Canva', type: 'Designer' as SkillType },
     ];
 
     vi.mocked(prisma.skills.findMany).mockResolvedValue(prismaSkills);
