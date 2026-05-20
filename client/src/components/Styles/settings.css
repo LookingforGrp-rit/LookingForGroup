@@ -9,6 +9,7 @@ Settings page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region settings page */
 
 .column {
   display: flex;
@@ -69,7 +70,7 @@ Settings page style rules
   display: flex;
   align-items: center;
   width: 90px;
-  font-size: 20px;
+  font-size: 1.25rem;
   padding: 10px;
 }
 
@@ -106,7 +107,7 @@ Settings page style rules
 }
 
 .setting-in-page h3 span {
-  font-size: 14px;
+  font-size: 0.875rem;
   font-weight: 400;
   text-wrap: balance;
 }
@@ -123,7 +124,7 @@ Settings page style rules
   width: fit-content;
   height: 40px;
   padding: 5px 20px;
-  font-size: 16px;
+  font-size: 1rem;
   border: none;
   border-radius: 10px;
   outline: solid var(--primary-blue) 2px;
@@ -147,7 +148,7 @@ Settings page style rules
     border-left: none;
     border-right: none;
     background-color: var(--primary-color);
-    font-size: 16px;
+    font-size: 1rem;
     text-align: left;
     font-weight: 600;
     outline: none;
@@ -166,7 +167,7 @@ Settings page style rules
   border: 1px solid var(--medGray);
   background-color: var(--primary-color);
   border-radius: 12px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   text-align: left;
   margin: 14px 0;
 }
@@ -282,14 +283,14 @@ input:checked+.slider:before {
   }
 
   h2 {
-    font-size: 33px;
+    font-size: 2.0625rem;
     font-weight: 600;
     color: var(--primary-color);
     margin-bottom: 27px;
   }
 
   label {
-    font-size: 16px;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--primary-color);
   }
@@ -331,14 +332,21 @@ input:checked+.slider:before {
   .interact-option {
     background: none;
     border: none;
-    outline: none;
     box-shadow: none;
     color: var(--primary-color);
     font-style: italic;
+    overflow: visible;
   }
 
   .interact-option:hover {
     text-decoration: underline;
+  }
+
+  .interact-option:focus-visible {
+    text-decoration: underline;
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+    transition: 0s;
   }
 
   input {
@@ -352,7 +360,6 @@ input:checked+.slider:before {
   #options-visibility-btn {
     background: none;
     border: none;
-    outline: none;
     box-shadow: none;
     padding: 0px 0px;
   }
@@ -365,6 +372,13 @@ input:checked+.slider:before {
     input {
       background-color: var(--invert-text);
     }
+  }
+
+  #options-theme-btn:focus-visible,
+  #options-visibility-btn:focus-visible {
+    outline: 3px solid var(--primary-color);
+    outline-offset: 2px;
+    transition: 0s;
   }
 
   #options-theme-dropdown,
@@ -423,7 +437,7 @@ input:checked+.slider:before {
     }
 
     h3 {
-      font-size: 20px;
+      font-size: 1.25rem;
       font-weight: 700;
       color: var(--primary-color);
       margin: 0;
@@ -433,7 +447,7 @@ input:checked+.slider:before {
       background-color: var(--tag-green-selected);
       border-radius: 25px;
       padding: 10px 20px;
-      font-size: 14px;
+      font-size: 0.875rem;
       font-weight: 700;
       font-style: italic;
     }
@@ -447,7 +461,7 @@ input:checked+.slider:before {
       h4 {
         color: var(--neutral-gray);
         font-style: italic;
-        font-size: 16px;
+        font-size: 1rem;
         margin: 0 0 10px 0;
       }
 
@@ -458,7 +472,7 @@ input:checked+.slider:before {
 
       li {
         color: var(--neutral-gray);
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: 400;
         font-style: italic;
       }
@@ -485,7 +499,7 @@ input:checked+.slider:before {
       border: none;
       outline: none;
       box-shadow: none;
-      font-size: 20px;
+      font-size: 1.25rem;
       font-weight: 700;
       color: var(--invert-text);
       background-color: var(--primary-color);
@@ -511,7 +525,7 @@ input:checked+.slider:before {
       border: none;
       outline: none;
       box-shadow: none;
-      font-size: 20px;
+      font-size: 1.25rem;
       font-weight: 700;
       color: var(--main-text);
       min-width: 106px;
@@ -536,10 +550,12 @@ input:checked+.slider:before {
 
       .confirm-change-item {
         font-style: italic;
-        font-size: 16px;
+        font-size: 1rem;
         font-weight: 400;
         color: var(--primary-color)
       }
     }
   }
 }
+
+/* #endregion */

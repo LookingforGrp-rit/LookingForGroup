@@ -331,7 +331,9 @@ projectAfterLinkChanges = structuredClone(projectData);
             </PopupContent>
           </Popup>
         :
-          <></>
+          <div id="invalid-input-error" className={"save-error-msg-general"}>
+            <p>*Fill out all required info before saving!*</p>
+          </div>
         }
       </div>
     </div>
