@@ -25,7 +25,7 @@ let dataManager: Awaited<ReturnType<typeof userDataManager>>;
  * @returns JSX Element
  */
 export const ProfileEditPopup = () => {
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState(5);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
   const navigate = useNavigate();
@@ -108,9 +108,10 @@ export const ProfileEditPopup = () => {
       return false;
     }
 
-    if (pendingProfile.bio == "") {
-      return false;
-    }
+    //Made bio optional because it is not required when making account
+    // if (pendingProfile.bio == "") {
+    //   return false;
+    // }
 
     return true;
   }
