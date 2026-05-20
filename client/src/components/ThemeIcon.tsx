@@ -34,6 +34,20 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
   onClick = undefined
 }) => {
 
+  const handleKeyDown = (e: React.KeyboardEvent<SVGSVGElement>) => {
+    if (!onClick) 
+      return;
+
+    // SVG doesn't natively override these.
+    // If this is on a page with a form, like login, trying to hit enter while focused
+    // On the back button will try to submit the form. This fixes that
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault();
+      e.stopPropagation();
+      onClick(e as unknown as React.MouseEvent<SVGSVGElement>);
+    }
+  };
+
   return (
     <svg
       width={width}
@@ -41,7 +55,9 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
       id={id}
       className={`${className} ${onClick && "scale-on-hover"}`}
       onClick={onClick}
+      onKeyDown={handleKeyDown}
       aria-label={ariaLabel}
+      tabIndex={onClick ? 0 : -1}
     >
       <use href={`${source}#${id}`} xlinkHref={`${source}#${id}`} />
     </svg>
