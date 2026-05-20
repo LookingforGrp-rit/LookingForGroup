@@ -1737,6 +1737,7 @@ includes 'enter virtual space' and 'make post' buttons*/
   height: 60px;
 }
 
+
 /*rules for the project description*/
 #project-desc {
   grid-area: desc;
