@@ -29,7 +29,6 @@ import {
   updateUserSkill,
   updateUserSocial,
 } from "../users";
-import { Visibility } from "@looking-for-group/shared/enums";
 
 /**
  * The Data Manager holds all information about a user before it is updated on the server.
