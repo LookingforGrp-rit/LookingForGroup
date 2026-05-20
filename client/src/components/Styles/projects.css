@@ -3747,6 +3747,8 @@ My projects page style rules
   /* max-width: 200px;
   width: 100%; */
   flex-grow: 10;
+  flex-shrink: 10;
+  flex-basis: 512px;
 }
 
 .project-header-label.status {
@@ -3756,7 +3758,9 @@ My projects page style rules
 
 .project-header-label.date {
   text-align: right;
+  width: 120px;
   flex-grow: 1;
+  white-space: nowrap;
 }
 
 .my-project-list-card {
@@ -3808,10 +3812,12 @@ My projects page style rules
   box-sizing: border-box;
 
   flex-grow: 10;
+  flex-shrink: 10;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 20px;
+  flex-basis: 500px;
 }
 
 .list-card-image {
@@ -3851,7 +3857,7 @@ My projects page style rules
   line-height: 28px;
   letter-spacing: 0%;
 
-  width: 150px;
+  flex-basis: 150px;
   display: flex;
   align-items: center;
   flex-grow: 1;
