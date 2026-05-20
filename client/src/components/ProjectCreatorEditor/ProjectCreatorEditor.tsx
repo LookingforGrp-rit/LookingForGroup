@@ -77,6 +77,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   // If this is set to true, the "Save Changes" button appears in every tab
   const [saveable, setSaveable] = useState(false);
 
+  // Tracks whether the project was successfully saved (prevents deletion on cleanup after save)
+  const [saved, setSaved] = useState(false);
+
   // Component Refs
   const exitButton = useRef(null);
   const startButton = useRef(null);
@@ -202,7 +205,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const closeWithoutSaving = async () => {
     // Why is this here? If it's a new project then it won't be on the API anyway
     setCurrentTab(0);
-    if(projectData && newProject) await deleteProject(projectData?.projectId);
+    // Only delete if this is a new project AND it was not saved yet
+    if(projectData && newProject && !saved) await deleteProject(projectData?.projectId);
   }
 
 
@@ -273,6 +277,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           updateDisplayedProject(dataManager.getSavedProject());
         }
       }
+      
+      // Mark project as saved so cleanup won't delete it
+      setSaved(true);
       navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);

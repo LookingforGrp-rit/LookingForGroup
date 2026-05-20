@@ -1,7 +1,7 @@
 // Styles
 import './components/Styles/master.css';
 // Components and pages
-import { Route, Routes } from 'react-router-dom';
+import { Route, Routes, useLocation } from 'react-router-dom';
 import * as paths from './constants/routes';
 import { useState } from 'react';
 import Login from './components/pages/Login';
@@ -35,13 +35,25 @@ function App() {
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
   const [theme, setTheme] = uselocalstorage('theme', defaultDark ? 'dark' : 'light');
 
+  const location = useLocation();
+  const sidebarlessPages = ['/login', '/signup', '/forgotPassword'];
+  const hideSidebar = sidebarlessPages.includes(location.pathname);
+
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       <div className="App" data-theme={theme}>
-        <a href="#main" className="skip-link" tabIndex={1}>
+        <a 
+          href="#main" 
+          className="skip-link" 
+          tabIndex={1}
+          onClick={(e) => {
+            e.preventDefault();
+            document.getElementById('main')?.focus();
+          }}
+        >
           Skip to main content
         </a>
-        <SideBar /*avatarImage={avatarImage} setAvatarImage={setAvatarImage} theme={theme}  -- Commented in clean up 26-20-01 */ />
+        {!hideSidebar && <SideBar /*avatarImage={avatarImage} setAvatarImage={setAvatarImage} theme={theme}  -- Commented in clean up 26-20-01 */ />}
         <Routes>
           <Route path={paths.routes.DEFAULT} element={<Discover />} />
           <Route path={paths.routes.LOGIN} element={<Login />} />
