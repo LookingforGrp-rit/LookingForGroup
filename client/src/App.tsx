@@ -78,7 +78,7 @@ function App() {
               />
             }
           /> */}
-          <Route path={paths.routes.SETTINGS} element={<NewSettings currentTheme={theme} changeTheme={setTheme} />} />
+          <Route path={paths.routes.SETTINGS} element={<NewSettings />} />
           <Route path={paths.routes.NOTFOUND} element={<NotFound />} />
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
           <Route path={paths.routes.CREDITS} element={<Credits />} />
