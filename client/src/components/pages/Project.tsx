@@ -186,8 +186,8 @@ const Project = () => {
             <DropdownButton className="project-info-dropdown-btn">
               <ThemeIcon
                 id={"menu"}
-                width={25}
-                height={25}
+                width={40}
+                height={40}
                 className={"color-fill dropdown-menu"}
                 ariaLabel={"More options"}
               />
