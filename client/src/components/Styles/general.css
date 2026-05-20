@@ -552,7 +552,7 @@ Sidebar Nav style rules
 .headerContainer h1 {
   font-weight: bold;
   font-size: 2.8125rem;
-  margin: 0px 0px 0px 30px;
+  margin: 0px 0px 0px 0px;
   text-align: center;
   color: var(--primary-color);
 }
