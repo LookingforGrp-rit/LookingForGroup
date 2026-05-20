@@ -327,6 +327,7 @@ Project Creator and Editor Popup style rules
   width: max-content;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 20px;
   font-weight: 700;
   cursor: pointer;
 }
@@ -386,7 +387,6 @@ Project Creator and Editor Popup style rules
 
 .save-error-msg,
 .save-error-msg-general {
-  display: none;
   margin: auto;
 }
 
