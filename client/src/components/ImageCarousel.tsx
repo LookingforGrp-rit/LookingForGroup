@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, ReactNode, TransitionEvent } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, ReactNode, TransitionEvent, KeyboardEvent } from 'react';
 import { ThemeIcon } from './ThemeIcon';
 
 // This post was used to help create this component (found by Ben Gomez)
@@ -21,6 +21,8 @@ const CarouselContext = createContext<{
     handleTransitionEnd: (e: TransitionEvent) => void;
     // List of React elements to display in the carousel
     dataList: React.ReactNode[];
+    // Reference to each slide for accessibility
+    slideRefs: React.RefObject<(HTMLDivElement | null)[]>;
 }>({
     currentIndex: 0,
     displayIndex: 0,
@@ -30,6 +32,7 @@ const CarouselContext = createContext<{
     handleHover: () => {},
     handleTransitionEnd: () => {},
     dataList: [],
+    slideRefs: { current: [] }
 });
 
 /**
@@ -57,13 +60,14 @@ export const CarouselButton = ({
         <button
             className={`${className} carousel-btn-${direction}`}
             onClick={() => handleStep(directionNum)}
+            aria-label={direction === 'left' ? 'Go to previous slide' : 'Go to next slide'}
         >
             <ThemeIcon
                 id={size === 'small' ? 'dropdown-arrow' : 'carousel-arrow'}
                 width={size === 'small' ? 17 : 24}
                 height={size === 'small' ? 18 : 68}
                 className={'color-fill'}
-                ariaLabel={direction === 'left' ? 'Previous Image' : 'Next Image'}
+                aria-hidden={true}
             />
         </button>
     );
@@ -77,15 +81,44 @@ export const CarouselButton = ({
  */
 export const CarouselTabs = ({ className = '' }: { className?: string }) => {
     const { currentIndex, handleIndexChange, dataList } = useContext(CarouselContext);
+    const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+
+    const handleKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
+        let newIndex = currentIndex;
+
+        if (e.key === 'ArrowRight')
+            newIndex = currentIndex === dataList.length - 1 ? 0 : currentIndex + 1;
+        else if (e.key === 'ArrowLeft')
+            newIndex = currentIndex === 0 ? dataList.length - 1 : currentIndex - 1;
+        else
+            return; // Don't intercept other keys
+
+        e.preventDefault();
+        handleIndexChange(newIndex);
+        
+        // Shift keyboard focus to new tab
+        setTimeout(() => {
+            tabRefs.current[newIndex]?.focus();
+        }, 0);
+    };
 
     return (
-        <div className={`carousel-tabs ${className}`}>
+        <div 
+            className={`carousel-tabs ${className}`}
+            role="tablist"
+            aria-label="Carousel slides"
+            onKeyDown={handleKeyDown}
+        >
             {dataList.map((_, index) => {
-                const active = index === currentIndex ? ' carousel-tab-active' : '';
+                const isActive = index === currentIndex;
+
                 return (
                     <button
-                        className={`carousel-tab${active}`}
+                        className={`carousel-tab${isActive ? ' carousel-tab-active' : ''}`}
                         onClick={() => handleIndexChange(index)}
+                        aria-selected={isActive}
+                        aria-label={`Go to slide ${index + 1}`}
+                        tabIndex={isActive ? 0 : -1}
                         key={index}
                     ></button>
                 );
@@ -106,32 +139,46 @@ export const CarouselTabs = ({ className = '' }: { className?: string }) => {
  * @returns A JSX div element containing carousel content elements
  */
 export const CarouselContent = ({ className = '' }: { className?: string }) => {
-    const { displayIndex, animate, handleHover, handleTransitionEnd, dataList } =
+    const { displayIndex, animate, handleHover, handleTransitionEnd, dataList, slideRefs } =
         useContext(CarouselContext);
 
+    const hasClones = dataList.length > 1;
     // [cloneOfLast, ...slides, cloneOfFirst] when there is more than one slide.
-    const slides =
-        dataList.length > 1
+    const slides = hasClones
             ? [dataList[dataList.length - 1], ...dataList, dataList[0]]
             : dataList;
 
     return (
         <div className="carousel-contents" onTransitionEnd={handleTransitionEnd}>
-            {slides.map((data, index) => (
-                <div
-                    className={className}
-                    key={index}
-                    onMouseEnter={() => handleHover(true)}
-                    onMouseLeave={() => handleHover(false)}
-                    style={{
-                        transform: `translate(-${displayIndex * 100}%)`,
-                        // Disable the CSS transition only for the instant snap off a clone
-                        transition: animate ? undefined : 'none',
-                    }}
-                >
-                    {data}
-                </div>
-            ))}
+            {slides.map((data, index) => {
+                const isActive = index === displayIndex;
+                
+                // Calculate logical index. Only assign refs to the actual slides, not clones.
+                const logicalIndex = hasClones ? index - 1 : index;
+                const isRealSlide = logicalIndex >= 0 && logicalIndex < dataList.length;
+
+                return (
+                    <div
+                        ref={(el) => { 
+                            if (slideRefs.current && isRealSlide) {
+                                slideRefs.current[logicalIndex] = el;
+                            } 
+                        }}
+                        className={className}
+                        key={index}
+                        onMouseEnter={() => handleHover(true)}
+                        onMouseLeave={() => handleHover(false)}
+                        style={{
+                            transform: `translate(-${displayIndex * 100}%)`,
+                            // Disable the CSS transition only for the instant snap off a clone
+                            transition: animate ? undefined : 'none',
+                        }}
+                        inert={!isActive ? true : undefined}
+                    >
+                        {data}
+                    </div>
+                );
+            })}
         </div>
     );
 };
@@ -170,6 +217,8 @@ export const Carousel = ({
         ? (((displayIndex - 1) % length) + length) % length
         : displayIndex;
 
+    const slideRefs = useRef<(HTMLDivElement | null)[]>([]);
+
     /**
      * Moves the track by one step, allowing it to land on a clone so the
      * first/last wrap looks like a normal single-slide move.
@@ -201,8 +250,39 @@ export const Carousel = ({
      */
     const handleIndexChange = (newIndex: number) => {
         skipAuto.current = true;
+        
+        const activeContainer = slideRefs.current[currentIndex];
+        const wasUserFocused = activeContainer && activeContainer.contains(document.activeElement);
+
+        let targetedIndex = newIndex;
+        if (newIndex > dataList.length - 1) {
+            targetedIndex = 0;
+        } else if (newIndex < 0) {
+            targetedIndex = dataList.length - 1;
+        }
+
         setAnimate(true);
-        setDisplayIndex(hasClones ? newIndex + 1 : newIndex);
+        setDisplayIndex(hasClones ? targetedIndex + 1 : targetedIndex);
+
+        if (wasUserFocused) {
+            setTimeout(() => {
+                const nextContainer = slideRefs.current[targetedIndex];
+                if (nextContainer) {
+                    // Focusable objects in new container
+                    const focusableSelectors = 'a:not([tabindex="-1"]), button:not([tabindex="-1"]), input:not([tabindex="-1"]), [tabindex="0"]';
+                    const firstFocusable = nextContainer.querySelector<HTMLElement>(focusableSelectors);
+                    
+                    // Focus the first one if there is one
+                    if (firstFocusable) {
+                        firstFocusable.focus({ preventScroll: true });
+                    } else {
+                        // If for some reason there are links missing
+                        nextContainer.setAttribute('tabindex', '-1');
+                        nextContainer.focus({ preventScroll: true });
+                    }
+                }
+            }, 50); // Slight delay for DOM to update
+        }
     };
 
     /**
@@ -263,28 +343,32 @@ export const Carousel = ({
     /**
      * Auto-scroll logic: advances carousel by one slide unless skipAuto or hovering is true.
      */
-    const autoScroll = () => {
-        if (skipAuto.current) {
-            if (hovering) {
-                return;
-            } else {
-                skipAuto.current = false;
+    useEffect(() => {
+        const autoScroll = () => {
+            if (skipAuto.current) {
+                if (!hovering)
+                    skipAuto.current = false;
                 return;
             }
-        }
 
-        advance(1);
-    };
+            advance(1);
+        };
 
-    // Interval effect to automatically scroll carousel every 10 seconds
-    // Stops scrolling when user interacts (hover or button click)
-    useEffect(() => {
-        const interval = setInterval(() => {
-            autoScroll();
-        }, 10_000);
-
+        const interval = setInterval(autoScroll, 10_000);
         return () => clearInterval(interval);
-    });
+    }, [dataList.length, hovering]);
+
+    const handleGlobalCarouselArrows = (e: KeyboardEvent<HTMLDivElement>) => {
+        if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            e.stopPropagation();
+            handleIndexChange(currentIndex === dataList.length - 1 ? 0 : currentIndex + 1);
+        } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            e.stopPropagation();
+            handleIndexChange(currentIndex === 0 ? dataList.length - 1 : currentIndex - 1);
+        }
+    };
 
     return (
         <CarouselContext.Provider
@@ -297,9 +381,12 @@ export const Carousel = ({
                 handleHover,
                 handleTransitionEnd,
                 dataList,
+                slideRefs,
             }}
         >
-            {children}
+            <div onKeyDown={handleGlobalCarouselArrows}>
+                {children}
+            </div>
         </CarouselContext.Provider>
     );
 };
