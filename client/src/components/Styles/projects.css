@@ -1618,10 +1618,6 @@ Project page style rules
   gap: 5px;
 }
 
-#project-title {
-  grid-area: title;
-}
-
 #project-status {
   grid-area: status;
   margin-top: auto;
@@ -2732,10 +2728,13 @@ Project Carousel style rules
 }
 
 #project-title {
+  grid-area: title;
   font-size: clamp(1.5rem, 5vw, 2rem);
   font-weight: 700;
   color: var(--primary-color);
   margin-bottom: 5px;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 #project-info-buttons {
