@@ -243,7 +243,9 @@ section {
 
 /* Content areas to take up entire height of viewport
    to push the Footer to the bottom */
-.my-projects-grid, .my-projects-list, #discover-panel-box {
+.my-projects-grid,
+.my-projects-list,
+#discover-panel-box {
   min-height: 50vh;
 }
 
@@ -353,6 +355,7 @@ Card component style rules
 #profile-project-name:hover {
   text-decoration: underline;
 }
+
 /* #endregion */
 
 /*
@@ -475,9 +478,33 @@ orange-button class makes the button orange, white-button class makes the button
 .scale-on-hover {
   transition: transform 0.2s;
 }
+
 .scale-on-hover:hover {
   transform: scale(1.05);
 }
+
+/*back buttons on project pages*/
+.project-back-btn #back {
+  left: 50px;
+  top: 30px;
+  z-index: 3;
+}
+
+@media only screen and (max-width: 799px) {
+  .project-back-btn #back {
+    left: 50px;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+  .project-back-btn #back {
+    left: 20px;
+  }
+}
+
+
+
+
 
 /* #endregion*/
 
@@ -606,9 +633,7 @@ Sidebar Nav style rules
   }
 }
 
-.containerButtonSideBar .active > svg {
-  
-}
+.containerButtonSideBar .active>svg {}
 
 /* Profile picture or avatar */
 .displayProfilePic,
@@ -714,6 +739,7 @@ Sidebar Nav style rules
     filter: invert(1) saturate(0) brightness(0.5);
     transition: 0.25s;
   }
+
   p {
     color: var(--create-bg);
     transition: 0.25s;
@@ -872,7 +898,7 @@ Page popup style rules
   border-radius: 10px;
 }
 
-@media only screen and (hover:none){
+@media only screen and (hover:none) {
   .popup {
     margin: 20px 20px;
     width: 100vw;
@@ -924,15 +950,33 @@ Page popup style rules
   margin: min(1.59vw, 24px) 0 0 min(1.59vw, 24px) !important;
   display: flex;
   align-items: center;
-
+  
   img {
     height: 24px;
     /* Font-size is meant to be 20pt, which corresponds to 24px here */
   }
 }
 
+
+.popup-back:hover{
+  border-color: var(--invert-text) !important;
+  color: var(--invert-text) !important;
+}
+
+#back{
+  padding:3px;
+}
+
+#back:hover{
+  padding:3px;
+  border-radius: 3px !important;
+  background-color: var(--invert-text) !important;
+  border-color: var(--invert-text) !important;
+}
+
 #project-creator-editor{
   scrollbar-width: none;
+
 }
 
 .popup-close {
@@ -950,7 +994,9 @@ Page popup style rules
 }
 
 @media screen and (max-width: 1180px) {
-  .popup-close, .popup-close.popup-close-edit {
+
+  .popup-close,
+  .popup-close.popup-close-edit {
     margin: 0 8px 0 0 !important;
   }
 }
@@ -1193,9 +1239,9 @@ Header style rules
 }
 
 @media only screen and (max-width: 700px) {
-    #header {
-        margin: 0 20px;
-    }
+  #header {
+    margin: 0 20px;
+  }
 }
 
 #header-searchbar {
@@ -1271,6 +1317,7 @@ Header style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border: none;
   padding: 10px;
+
   /* color: var(--primary-color); */
   hr {
     border: 0;
@@ -1279,13 +1326,13 @@ Header style rules
   }
 }
 
-#header-profile-dropdown > #header-profile-user {
+#header-profile-dropdown>#header-profile-user {
   display: flex;
   justify-content: center;
   gap: 14px;
   font-size: 1rem;
 
-  > #header-profile-user-info {
+  >#header-profile-user-info {
     display: flex;
     flex-direction: column;
     width: fit-content;
@@ -1297,6 +1344,7 @@ Header style rules
       color: var(--primary-color);
       margin: 0;
     }
+
     #header-profile-email {
       font-style: italic;
       font-size: 0.75rem;
@@ -1489,6 +1537,7 @@ Select style rules
   border-radius: 10px;
   font-size: 0.9375rem;
 }
+
 .select::placeholder {
   color: var(--neutral-gray);
   font-style: italic;
@@ -1498,6 +1547,7 @@ Select style rules
 .select-button-dropdown {
   background-color: var(--header-color);
 }
+
 .select-button-input {
   background-color: var(--bg-color);
 }
@@ -1506,13 +1556,14 @@ Select style rules
 .select-button-arrow {
   transform: scale(1, 1);
 }
+
 .select-button-arrow.opened {
   transform: scale(1, -1);
 }
 
 /* Container for Select options */
 .select-options {
-  width: min(100%,90vw);
+  width: min(100%, 90vw);
   border-radius: 10px;
   position: absolute;
   background: none;
@@ -1542,19 +1593,22 @@ Select style rules
   gap: 8px;
   text-align: left;
 }
+
 .select-option:disabled {
   background-color: var(--tag-grey-unselected);
   color: var(--neutral-gray);
   cursor: not-allowed;
 }
+
 .select-option:hover {
   background-color: var(--primary-color);
   color: var(--invert-text);
-  
+
   .mono-stroke use {
     /* Important overrides theme specificity */
     stroke: var(--invert-text) !important;
   }
+
   .mono-fill use {
     /* Important overrides theme specificity */
     fill: var(--invert-text) !important;
@@ -1565,6 +1619,7 @@ Select style rules
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
+
 .select-option.bottom {
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
@@ -1602,6 +1657,7 @@ Input style rules
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
   flex-grow: 1;
 }
+
 .input::placeholder {
   color: var(--neutral-gray);
   font-style: italic;
@@ -1643,6 +1699,7 @@ Input style rules
     color: var(--invert-text);
   }
 }
+
 .input-link-remove:hover {
   background-color: var(--error-delete-color) !important;
   cursor: pointer;
@@ -1667,16 +1724,18 @@ Input style rules
   display: flex;
   flex-direction: column;
 
-  .input, .select {
+  .input,
+  .select {
     margin-top: 10px;
   }
 }
+
 .label-input-box textarea {
   flex: 1 1 auto;
 }
 
 @media only screen and (max-width: 700px) {
-  .label-input-box{
+  .label-input-box {
     width: calc(100vw - 60px);
   }
 }
@@ -1928,6 +1987,7 @@ Theme Icons style rules
 .theme-light .svg-color-icon {
   fill: black;
 }
+
 [data-theme="dark"] .mono-fill use,
 [data-theme="light"] button.active .mono-fill use,
 /* Where is this used? */
@@ -1936,26 +1996,29 @@ Theme Icons style rules
 }
 
 /* Colored SVGs */
-.color-stroke > use {
+.color-stroke>use {
   stroke: var(--primary-color);
 }
-.color-fill > use {
+
+.color-fill>use {
   fill: var(--primary-color);
 }
 
 /* Header Color SVGs */
-.header-color-stroke > use {
+.header-color-stroke>use {
   stroke: var(--header-color);
 }
-.header-color-fill > use {
+
+.header-color-fill>use {
   fill: var(--header-color);
 }
 
 /* Gradient Color SVGs */
-.gradient-color-stroke > use {
+.gradient-color-stroke>use {
   stroke: var(--modal-gradient-start);
 }
-.gradient-color-fill > use {
+
+.gradient-color-fill>use {
   fill: var(--modal-gradient-start);
 }
 
@@ -1964,21 +2027,23 @@ Theme Icons style rules
   top: 9px;
 }
 
-.empty-star > use {
+.empty-star>use {
   fill: none;
   stroke: var(--invert-text);
 }
-.project-image-hover > .filled-star > use,
-.star:hover > use {
+
+.project-image-hover>.filled-star>use,
+.star:hover>use {
   fill: var(--invert-text);
   stroke: var(--invert-text);
 }
 
 /* Only have shadow on image itself,  */
-:not(.project-image-hover) > .filled-star {
+:not(.project-image-hover)>.filled-star {
   filter: drop-shadow(0px 0px 10px rgb(0, 0, 0, 0.75));
 }
-.filled-star > use {
+
+.filled-star>use {
   fill: var(--main-text);
   stroke: var(--main-text);
 }
