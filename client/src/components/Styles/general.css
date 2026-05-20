@@ -964,12 +964,16 @@ Page popup style rules
 }
 
 #back{
-  padding:3px;
+  padding:4px;
+  padding-left: 7px;
+  padding-right: 7px;
 }
 
 #back:hover{
-  padding:3px;
-  border-radius: 3px !important;
+  padding:4px;
+  padding-left: 7px;
+  padding-right: 7px;
+  border-radius: 50px / 50px !important;
   background-color: var(--invert-text) !important;
   border-color: var(--invert-text) !important;
 }
