@@ -957,7 +957,6 @@ Page popup style rules
   }
 }
 
-
 .popup-back:hover{
   border-color: var(--invert-text) !important;
   color: var(--invert-text) !important;

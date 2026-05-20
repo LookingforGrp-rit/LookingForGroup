@@ -2919,12 +2919,12 @@ Project Carousel style rules
 #positions-popup-header {
   grid-area: header;
   text-align: center;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.45rem;
+  font-weight: 700;
   margin: auto;
   padding: 10px 20px;
-  background-color: var(--primary-color);
-  color: var(--invert-text);
+  background-color: none;
+  color: var(--primary-color);
   border-radius: 100px;
 }
 
