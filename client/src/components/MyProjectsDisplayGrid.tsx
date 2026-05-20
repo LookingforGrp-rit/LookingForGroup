@@ -114,8 +114,8 @@ const MyProjectsDisplayGrid = ({
           <DropdownButton buttonId="grid-card-options-button">
             <ThemeIcon
               id={"menu"}
-              width={15}
-              height={3}
+              width={30}
+              height={30}
               className={"mono-fill dropdown-menu"}
               ariaLabel={"More options"}
             />
