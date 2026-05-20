@@ -53,7 +53,7 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
       width={width}
       height={height}
       id={id}
-      className={className}
+      className={`${className} ${onClick && "scale-on-hover"}`}
       onClick={onClick}
       onKeyDown={handleKeyDown}
       aria-label={ariaLabel}
@@ -94,7 +94,7 @@ export const ThemeImage: React.FC<ThemeImageProps> = memo(({
   id = '',
   className = '',
   alt = '',
-  onClick = () => {}
+  onClick = undefined
 }) => {
 
   // Theme storage
@@ -112,7 +112,7 @@ export const ThemeImage: React.FC<ThemeImageProps> = memo(({
       src={getImageSource()}
       alt={alt}
       id={id}
-      className={className}
+      className={`${className} ${onClick && "scale-on-hover"}`}
       onClick={onClick}
     />
   );

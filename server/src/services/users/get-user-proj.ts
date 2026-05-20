@@ -15,7 +15,7 @@ export const getUserProjectsService = async (
     const projects = await prisma.projects.findMany({
       where: {
         members: {
-          every: {
+          some: {
             userId,
             profileVisibility: 'public',
           },
