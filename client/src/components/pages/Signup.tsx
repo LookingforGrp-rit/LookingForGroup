@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 // import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
@@ -9,7 +9,7 @@ import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import passwordValidator from 'password-validator';
-import { getUserByEmail, getUserByUsername } from '../../api/users';
+import { getCurrentUsername, getUserByEmail, getUserByUsername } from '../../api/users';
 
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
@@ -62,6 +62,21 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     // avatarImage: avatarImage,
     profileImage: profileImage, // if they upload their own image
   };
+
+  // Redirect the user to the homepage if they are currently logged in
+  useEffect(() => {
+    const checkSessionAndRedirect = async () => {
+      try {
+        const res = await getCurrentUsername();
+        if (res.data)
+          navigate(paths.routes.HOME);
+      } catch (err) {
+        console.error("Session check failed:", err);
+      }
+    };
+
+    checkSessionAndRedirect();
+  }, [navigate]);
 
   /**
    * Goes through the various fields, verifies whether user input is valid, and sends it to the server.

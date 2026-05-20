@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { sendPost } from '../../functions/fetch.js';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
-import { getUserByEmail, getUserByUsername } from '../../api/users.js';
+import { getCurrentUsername, getUserByEmail, getUserByUsername } from '../../api/users.js';
 
 type LoginResponse = {
   error?: string;
@@ -25,6 +25,21 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
+
+  // Redirect the user to the homepage if they are currently logged in
+  useEffect(() => {
+    const checkSessionAndRedirect = async () => {
+      try {
+        const res = await getCurrentUsername();
+        if (res.data)
+          navigate(paths.routes.HOME);
+      } catch (err) {
+        console.error("Session check failed:", err);
+      }
+    };
+
+    checkSessionAndRedirect();
+  }, [navigate]);
 
   /**
    * Validates user inputs, sends login requests to the server API, and handles authentication
