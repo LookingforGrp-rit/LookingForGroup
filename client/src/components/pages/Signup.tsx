@@ -8,7 +8,7 @@ import ChooseSkills from '../SignupProcess/ChooseSkills';
 import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
-import passwordValidator from 'password-validator';
+//import passwordValidator from 'password-validator';
 import { createNewUser, getUserByEmail } from '../../api/users';
 
 /**
@@ -135,6 +135,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
       });
       */
       await createNewUser({firstName, lastName, ritEmail: email});
+      //redirect to... the home page? no we want to redirect to the login page but the login page is probably broken because it still wants a password
+      //or we just SIGN THEM IN (NOT WORKING...) redirect to the home page after we've signed up to skip the step of logging in yet again
     }
   };
 
@@ -147,55 +149,56 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     //oauth will handle this since we're logging in with rit emails
     //if google has all of our account auth info and we aren't storing our own
     //we don't need to store passwords ourselves at all, google will completely handle that right
-    //i guess for the login page we can simply have a google oauth button there, or dress up google's oauth form in our lfg colors or smth
-    //is that possible? no idea
-  const validatePassword = (pass : string) => {
-    // Don't check password if there's nothing there
-    if (pass === '') {
-      return '';
-    }
+    //i guess for the login page we can simply have a google oauth button there
+    //or dress up google's oauth form in our lfg colors or smth... is that possible? no idea
 
-    const schema = new passwordValidator();
-    schema
-      .is()
-      .min(8, 'be 8 or more characters')
-      .is()
-      .max(20, 'be 20 or less characters')
-      .has()
-      .uppercase(1, 'have an uppercase letter')
-      .has()
-      .lowercase(1, 'have a lowercase letter')
-      .has()
-      .digits(1, 'have a number')
-      .has()
-      .symbols(1, 'have a symbol')
-      .has()
-      .not()
-      .spaces(1, 'have no spaces')
-      .has()
-      .not('[^\x00-\x7F]+', 'have no non-ASCII characters');
+  // const validatePassword = (pass : string) => {
+  //   // Don't check password if there's nothing there
+  //   if (pass === '') {
+  //     return '';
+  //   }
 
-    const output : boolean | any[] = schema.validate(pass, { details: true });
-    let passMsg = '';
+  //   const schema = new passwordValidator();
+  //   schema
+  //     .is()
+  //     .min(8, 'be 8 or more characters')
+  //     .is()
+  //     .max(20, 'be 20 or less characters')
+  //     .has()
+  //     .uppercase(1, 'have an uppercase letter')
+  //     .has()
+  //     .lowercase(1, 'have a lowercase letter')
+  //     .has()
+  //     .digits(1, 'have a number')
+  //     .has()
+  //     .symbols(1, 'have a symbol')
+  //     .has()
+  //     .not()
+  //     .spaces(1, 'have no spaces')
+  //     .has()
+  //     .not('[^\x00-\x7F]+', 'have no non-ASCII characters');
 
-	  if (output == false) {
-      return '';
-	  }
+  //   const output : boolean | any[] = schema.validate(pass, { details: true });
+  //   let passMsg = '';
 
-    const result : any[] = output as any[];
+	//   if (output == false) {
+  //     return '';
+	//   }
 
-    if (result.length > 0) {
-      passMsg += `Password must `;
+  //   const result : any[] = output as any[];
 
-      for (let i = 0; i < result.length - 1; i++) {
-        passMsg += `${result[i].message}, `;
-      }
-      passMsg += `${result.length > 1 ? 'and ' : ''}${result[result.length - 1].message}.`;
-    }
+  //   if (result.length > 0) {
+  //     passMsg += `Password must `;
 
-    console.log(passMsg);
-    return passMsg;
-  };
+  //     for (let i = 0; i < result.length - 1; i++) {
+  //       passMsg += `${result[i].message}, `;
+  //     }
+  //     passMsg += `${result.length > 1 ? 'and ' : ''}${result[result.length - 1].message}.`;
+  //   }
+
+  //   console.log(passMsg);
+  //   return passMsg;
+  // };
 
   /**
    * Handles Enter key presses

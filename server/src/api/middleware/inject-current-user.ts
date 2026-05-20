@@ -19,6 +19,11 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
   }
 
   const universityId = authenticatedRequest.headers[uidHeaderKey] as string | undefined;
+  //legacy stuff from shib, ergo it won't work
+  //if oauth sends us things in the headers like the rit email, we simply look at that instead of this
+  //if not, uhhhhhhh what then
+  //we send what we did for signup and check it there?
+  //are we even
 
   //if no university id found
   if (!universityId) {
