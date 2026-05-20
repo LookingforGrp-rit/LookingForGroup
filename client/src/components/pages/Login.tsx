@@ -26,6 +26,8 @@ const Login: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
+  const [isLoading, setIsLoading] = useState(false);
+
   // Redirect the user to the homepage if they are currently logged in
   useEffect(() => {
     const checkSessionAndRedirect = async () => {
@@ -47,6 +49,9 @@ const Login: React.FC = () => {
    * @returns false if an error occurred.
    */
   const handleLogin = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+
     // Check if the loginInput and password are not empty
     if (loginInput === '' || password === '') {
       setError('Please fill in all information');
@@ -132,6 +137,7 @@ const Login: React.FC = () => {
     // {
     //   navigate(paths.routes.CREATEPROJECT);
     // }
+    setIsLoading(false);
   };
 
   /**
@@ -225,8 +231,8 @@ const Login: React.FC = () => {
               </p>
             </div>
           </div>
-          <button id="main-loginsignup-btn" onClick={handleLogin}>
-            Log In
+          <button id="main-loginsignup-btn" onClick={handleLogin} disabled={isLoading}>
+            {isLoading ? 'Loading...' : 'Log In'}
           </button>
         </div>
         {/*************************************************************
