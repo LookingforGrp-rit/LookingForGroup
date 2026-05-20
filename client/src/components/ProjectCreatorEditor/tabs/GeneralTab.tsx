@@ -87,6 +87,7 @@ export const GeneralTab = ({
       <LabelInputBox
         label={"Title*"}
         inputType={"single"}
+        maxLength={50}
         id="project-editor-title-input"
         value={projectAfterGeneralChanges.title || ""}
         onChange={(e) => {
