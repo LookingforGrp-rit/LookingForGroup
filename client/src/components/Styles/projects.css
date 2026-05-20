@@ -207,8 +207,6 @@ Project Panel component style rules
   padding: 0 20px;
 }
 
-
-#project-panel-tags:empty,
 .project-panel-hover #quote:empty {
   display: none;
   margin: 0;
@@ -3187,6 +3185,11 @@ button#positions-popup-list-item-active {
   margin-bottom: 20px;
 }
 
+#project-overview-text {
+  word-break: break-word;
+  hyphens: auto;
+}
+
 .project-overview-section-header {
   font-size: 1rem;
   color: var(--primary-color);
@@ -3724,7 +3727,7 @@ My projects page style rules
 
   display: flex;
   flex-direction: row;
-  justify-content: start;
+  justify-content: end;
   gap: 10px;
 }
 
@@ -3740,8 +3743,15 @@ My projects page style rules
 }
 
 .project-header-label.title {
-  max-width: 610px;
-  width: 100%;
+  justify-self: start;
+  /* max-width: 200px;
+  width: 100%; */
+  flex-grow: 10;
+}
+
+.project-header-label.status {
+  width: 135px;
+  flex-grow: 1;
 }
 
 .project-header-label.date {
@@ -3755,6 +3765,7 @@ My projects page style rules
 
   display: flex;
   flex-direction: row;
+  justify-content: flex-end;
   gap: 10px;
 
   border: 0px;
@@ -3767,10 +3778,9 @@ My projects page style rules
     display: flex;
     flex-direction: row;
     align-items: center;
+    flex-grow: 0.025;
   }
 }
-
-
 
 @media only screen and (max-width: 700px) {
 
@@ -3792,14 +3802,12 @@ My projects page style rules
   .dropdown-container {
     margin-left: auto;
   }
-
-
 }
 
 .list-card-section1 {
   box-sizing: border-box;
-  width: 600px;
 
+  flex-grow: 10;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -3843,8 +3851,10 @@ My projects page style rules
   line-height: 28px;
   letter-spacing: 0%;
 
+  width: 150px;
   display: flex;
   align-items: center;
+  flex-grow: 1;
 }
 
 .list-card-date {

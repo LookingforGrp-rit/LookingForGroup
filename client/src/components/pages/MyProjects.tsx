@@ -79,7 +79,7 @@ const MyProjects = () => {
       }
 
     } catch (e) {
-      console.error('error getting projecrs', e);
+      console.error('error getting projects', e);
       setCreateError(true);
     }
 
