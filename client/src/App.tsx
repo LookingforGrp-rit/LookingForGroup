@@ -10,7 +10,7 @@ import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
 // import Messages from './components/pages/Messages';
 import MyProjects from './components/pages/MyProjects';
-import Profile from './components/pages/Profile'; 
+import Profile from './components/pages/Profile';
 import Project from './components/pages/Project';
 // import ProjectPostPage from './components/pages/ProjectPostPage';
 import { Discover, Meet } from './components/pages/DiscoverAndMeet';
@@ -40,11 +40,12 @@ function App() {
   const hideSidebar = sidebarlessPages.includes(location.pathname);
 
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    // <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{theme, setTheme}}>
       <div className="App" data-theme={theme}>
-        <a 
-          href="#main" 
-          className="skip-link" 
+        <a
+          href="#main"
+          className="skip-link"
           tabIndex={1}
           onClick={(e) => {
             e.preventDefault();
