@@ -3676,13 +3676,14 @@ My projects page style rules
 
 .grid-card-options-button,
 #grid-card-options-button {
+  display: flex;
+  align-items: center;
   box-sizing: border-box;
-  background-color: var(--bg-color);
+  background: none;
   border: 0px;
   border-radius: 20px;
   color: var(--main-text);
-  padding: 0 10px;
-  padding-bottom: 5px;
+  padding: 5px 10px;
   margin: 0px;
   text-align: right;
   font-size: 0.75rem;
