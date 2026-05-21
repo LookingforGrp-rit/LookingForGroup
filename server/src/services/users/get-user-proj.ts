@@ -11,6 +11,14 @@ export const getUserProjectsService = async (
   userId: number,
 ): Promise<ProjectPreview[] | GetProjectsError> => {
   try {
+    //check that user exists
+    const user = await prisma.users.findUnique({
+      where: {
+        userId,
+      },
+    });
+    if (user === null) return 'NOT_FOUND';
+
     //get projects that a user is publicly a member of
     const projects = await prisma.projects.findMany({
       where: {
