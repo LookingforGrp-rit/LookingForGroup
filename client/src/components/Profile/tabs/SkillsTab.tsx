@@ -231,6 +231,7 @@ export const SkillsTab = ({
         key={skill.label}
         onClick={() => handleSkillToggle(skill.skillId)}
         type={skill.type.toLowerCase() + " skill"}
+        selected={true}
       >
         <i className="fa fa-close"></i>
         <p>&nbsp;{skill.label}</p>
@@ -251,6 +252,7 @@ export const SkillsTab = ({
           key={skill.skillId}
           onClick={() => handleSkillToggle(skill.skillId)}
           type={skill.type.toLowerCase() + " skill"}
+          selected={isSkillSelected(skill.skillId) === "selected"}
         >
           <i
             className={

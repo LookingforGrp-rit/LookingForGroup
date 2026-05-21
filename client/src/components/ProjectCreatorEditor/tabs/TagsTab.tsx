@@ -6,27 +6,13 @@ import { Tag, Medium, TagType, ProjectWithFollowers} from "@looking-for-group/sh
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { PendingProject} from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
-import { ThemeIcon } from "../../ThemeIcon";
 import { Tag as TagElement } from "../../Tag";
-//import { KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
-//import { arrayMove, sortableKeyboardCoordinates } from "@dnd-kit/sortable";
-//import { SortableTag } from "./SortableItem";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableTag } from "./SortableItem";
+import { Fragment } from "react";
 
 // --- Constant ---
-const TAG_COLORS: Record<TagType | string, string> = {
-  "Creative": "green",
-  "Technical": "green",
-  "Games": "green",
-  "Multimedia": "green",
-  "Music": "green",
-  "Other": "green",
-  "Developer Skill": "yellow",
-  "Designer Skill": "red",
-  "Soft Skill": "purple",
-  "Medium": "blue",
-  "Purpose": "", // purpose tags are not used here
-};
-
 const TAG_TYPES = {
   DEV: "Developer Skill" as TagType,
   DESIGNER: "Designer Skill" as TagType,
@@ -98,40 +84,33 @@ export const TagsTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
-  // Event handlers for Sortable tags
- /* 
+  // Drag-and-drop sensors for the sortable selected-tags list.
+  // Pointer for mouse/touch, Keyboard for accessible reordering.
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-  */
 
   /**
-   * Handles tag drop to either keep tag in place or move it along array.
-   * @param e Event with comparison and item data.
+   * Reorders the selected tags when a drag finishes.
+   * Note: tag order is only kept for this edit session — the backend has no
+   * tag-position column, so the order resets to the server's order on reload.
+   * @param e Drag end event with the active (dragged) and over (target) tag ids.
    */
-  /*
   const handleDragEnd = (e: DragEndEvent) => {
-    // Get ids of elements to be swapped
-    const {active, over} = e;
-    if (!over) return;
-    if (active.id !== over.id) {
-      // Get indicies to swap
-      const oldIndex = items.indexOf(active.id.toString());
-      const newIndex = items.indexOf(over.id.toString());
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
 
-      // TODO: update tags accordingly
+    const tags = projectAfterTagsChanges.tags;
+    const oldIndex = tags.findIndex((t) => t.tagId === Number(active.id));
+    const newIndex = tags.findIndex((t) => t.tagId === Number(over.id));
+    if (oldIndex === -1 || newIndex === -1) return;
 
-      // Demo array on how it works:
-      setItems(arrayMove(items, oldIndex, newIndex));
-    }
-  }
-  */
-
-  // TODO: remove after finishing Sortable list
-  const [_items, _setItems] = useState(['1', '2', '3']);
+    projectAfterTagsChanges.tags = arrayMove(tags, oldIndex, newIndex);
+    updatePendingProject(projectAfterTagsChanges);
+  };
 
   // Snapshot of the Medium order on load
   const originalMediumOrder = useMemo(() => {
@@ -221,10 +200,7 @@ export const TagsTab = ({
     setSearchedTags(defaultTags);
   }, [currentTagsTab, currentDataSet])
 
-  // Helper function that returns an appropriate CSS color class name based on the tag type
-  const getTagColor = (type: TagType | string) => TAG_COLORS[type];
-
-  // Determines if a specific tag is already selected for the current project. 
+  // Determines if a specific tag is already selected for the current project.
   // Returns "selected" or "unselected" string for use in CSS classes.
   const isTagSelected = useCallback(
     (id: number, label: string, tab: number = -1) => {
@@ -553,69 +529,26 @@ export const TagsTab = ({
           <div className="error">*At least 1 tag is required</div>
         )}
 
-        {/* TODO: implement sortable tags
-          * Below is a demo proving functionality
-         */}
-        {/* <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-          <SortableContext items={items} strategy={verticalListSortingStrategy}>
-            {items.map(id => <SortableTag key={id} id={id} />)}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={projectAfterTagsChanges.tags.map((t) => t.tagId)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div id="project-editor-selected-tags-container">
+              {projectAfterTagsChanges.tags.map((t, index) => (
+                <Fragment key={t.tagId}>
+                  {/* Divider marks the cutoff: the first two tags appear on the discover card */}
+                  {index === 2 && <hr id="selected-tag-divider" />}
+                  <SortableTag id={t.tagId} tag={t} onRemove={handleTagSelect} />
+                </Fragment>
+              ))}
+            </div>
           </SortableContext>
-        </DndContext> */}
-
-        <div id="project-editor-selected-tags-container">
-          {
-            (() => {
-              const tags = projectAfterTagsChanges.tags ?? [];
-              return (
-                <>
-                  {tags.slice(0, 2).map((t) => {
-                    return <div className='tag-draggable' draggable="true">
-                      {/* TODO: implement dragging tags to reorder and backend functionality to track position */}
-                      <ThemeIcon
-                        width={21}
-                        height={21}
-                        id={'drag'}
-                        ariaLabel="drag"
-                        onClick={() => {console.log('clicked draggable tag icon')}}
-                      /> 
-                      <TagElement
-                        key={t.tagId}
-                        selected={true}
-                        type={t.type.toLowerCase()}
-                        onClick={() => handleTagSelect(t.tagId)}
-                      >
-                        <i className="fa fa-close"></i>
-                        <p>{t.label}</p>
-                      </TagElement>
-                    </div>;
-                  })}
-                  <hr id="selected-tag-divider" />
-                  {tags.slice(2).map((t) => (
-                    <div className='tag-draggable' draggable="true">
-                      {/* TODO: implement dragging tags to reorder and backend functionality to track position */}
-                      <ThemeIcon
-                        width={21}
-                        height={21}
-                        id={'drag'}
-                        ariaLabel="drag"
-                        onClick={() => {console.log('clicked draggable tag icon')}}
-                      />
-                      <TagElement
-                        key={t.tagId}
-                        selected={true}
-                        type={t.type.toLowerCase()}
-                        onClick={() => handleTagSelect(t.tagId)}
-                      >
-                        <i className="fa fa-close"></i>
-                        <p>{t.label}</p>
-                      </TagElement>
-                    </div>
-                  ))}
-                </>
-              );
-            })()
-          }
-        </div>
+        </DndContext>
       </div>
 
       <div id="project-editor-tag-search">
