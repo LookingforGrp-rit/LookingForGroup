@@ -322,7 +322,20 @@ Project Creator and Editor Popup style rules
   width: max-content;
   margin-left: auto;
   margin-right: auto;
-  margin-bottom: 20px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#project-editor-confirm {
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  background-color: var(--primary-color) !important;
+  color: var(--invert-text);
+  font-size: 1.25rem;
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
   font-weight: 700;
   cursor: pointer;
 }
@@ -371,7 +384,8 @@ Project Creator and Editor Popup style rules
   right: 0;
 
   padding: 6px 0;
-  background-color: #000000aa;
+  background-color: var(--shadow-color);
+  color: var(--main-text);
   border-radius: 10px;
   text-align: center;
 }
@@ -2849,6 +2863,8 @@ Project Carousel style rules
 
 #project-hook {
   flex-grow: 1;
+  overflow-wrap: anywhere;
+  hyphens: manual;
 }
 
 #project-status {
@@ -3200,7 +3216,7 @@ button#positions-popup-list-item-active {
 }
 
 #project-overview-text {
-  word-break: break-word;
+  overflow-wrap: anywhere;
   hyphens: auto;
 }
 
