@@ -33,9 +33,9 @@ components:
             apiUrl:
               type: string
       example:
+        apiUrl: /api/me/majors/1
         majorId: 1
         label: Animation
-        apiUrl: /api/me/majors/1
 
     MyFollowing:
       type: object
