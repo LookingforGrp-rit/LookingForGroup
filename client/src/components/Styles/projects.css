@@ -327,6 +327,10 @@ Project Creator and Editor Popup style rules
   cursor: pointer;
 }
 
+#team-add-member-add-button {
+  margin: 0;
+}
+
 .profile-editor-save {
   margin-top: 37px;
   margin-bottom: 28px;
