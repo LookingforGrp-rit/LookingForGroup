@@ -401,10 +401,8 @@ const Project = () => {
         loadingProject
       ) : (
         <main id="main" tabIndex={-1} aria-label="main content" >
+          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }}/>
           <div id="project-page-content">
-            <button className="project-back-btn" onClick={() => { navigate(-1); }}>
-              <ThemeIcon id={'back'} width={70} height={25} className={'color-fill'} ariaLabel={'back'} />
-            </button>
             <ProjectCarousel project={displayedProject}></ProjectCarousel>
             <div id="project-info-panel">
               <div id="project-info-top">

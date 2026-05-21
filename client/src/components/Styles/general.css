@@ -484,25 +484,16 @@ orange-button class makes the button orange, white-button class makes the button
 }
 
 /*back buttons on project pages*/
-.project-back-btn #back {
-  left: 50px;
-  top: 30px;
+.project-back-btn {
+  margin: 10px 30px;
   z-index: 3;
 }
 
-@media only screen and (max-width: 799px) {
-  .project-back-btn #back {
-    left: 50px;
+@media screen and (max-width: 700px) {
+  .project-back-btn {
+    margin: 10px 0px;
   }
 }
-
-@media only screen and (max-width: 700px) {
-  .project-back-btn #back {
-    left: 20px;
-  }
-}
-
-
 
 
 
@@ -861,6 +852,8 @@ Page popup style rules
   opacity: 100%;
   z-index: 3;
   padding: 20px 40px;
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
 
 @media (max-width: 799px) {
@@ -950,26 +943,26 @@ Page popup style rules
   margin: min(1.59vw, 24px) 0 0 min(1.59vw, 24px) !important;
   display: flex;
   align-items: center;
-  
+
   img {
     height: 24px;
     /* Font-size is meant to be 20pt, which corresponds to 24px here */
   }
 }
 
-.popup-back:hover{
+.popup-back:hover {
   border-color: var(--invert-text) !important;
   color: var(--invert-text) !important;
 }
 
-#back{
-  padding:4px;
+#back {
+  padding: 4px;
   padding-left: 7px;
   padding-right: 7px;
 }
 
-#back:hover{
-  padding:4px;
+#back:hover {
+  padding: 4px;
   padding-left: 7px;
   padding-right: 7px;
   border-radius: 50px / 50px !important;
@@ -977,12 +970,9 @@ Page popup style rules
   border-color: var(--invert-text) !important;
 }
 
-#project-creator-editor::-webkit-scrollbar-corner {
-    overflow: hidden;
-}
+#project-creator-editor {
+  scrollbar-width: none;
 
-#project-editor-selected-tags-container::-webkit-scrollbar-corner {
-   overflow: hidden;
 }
 
 .popup-close {

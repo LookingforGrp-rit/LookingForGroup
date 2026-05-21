@@ -16,6 +16,7 @@ import {
   deleteProject,
 } from "../../api/projects";
 
+import { getProjectsByUser } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../types/types";
 import { ProjectWithFollowers, } from '@looking-for-group/shared';
@@ -211,6 +212,40 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
 
   // Isn't this what createoredit is supposed to do? it never calls this though
+  
+  
+  /**
+   *  Adds a number to the end of a project so you don't have duplicate project titles(Unity style)
+   * @returns A unique project title
+   */
+  const getUniqueProjectTitle = async (
+    desiredTitle: string,
+    currentProjectId: number
+  ): Promise<string> => {
+    const base = desiredTitle.trim();
+
+    const res = await getProjectsByUser();
+    const projects = res.data ?? [];
+
+    // Lower-cased titles of the user's OTHER projects
+    const takenNames = new Set(
+      projects
+        .filter((p) => p.projectId !== currentProjectId)
+        .map((p) => p.title.trim().toLowerCase())
+    );
+
+    if (!takenNames.has(base.toLowerCase())) {
+      return base;
+    }
+
+    // Find the lowest available "(n)" suffix
+    let n = 1;
+    while (takenNames.has(`${base}(${n})`.toLowerCase())) {
+      n++;
+    }
+    return `${base}(${n})`;
+  };
+
   /**
    * Handles saving project changes to the server, validates input data before saving
    * For existing projects: updates thumbnails, images, positions, and project information
@@ -266,6 +301,22 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     console.log("Created project thumbnail: ");
     console.log(modifiedProject.thumbnail);
     setCurrentTab(0);
+
+    // Prevent duplicate project names in the user's project list.
+    // If the title collides with another of their projects, auto-rename it
+    // (e.g. "ProjectTitle" -> "ProjectTitle(1)").
+    const currentProjectId = dataManager.getSavedProject().projectId;
+    const uniqueTitle = await getUniqueProjectTitle(
+      modifiedProject.title,
+      currentProjectId
+    );
+    if (uniqueTitle !== modifiedProject.title) {
+      dataManager.updateFields({
+        id: { value: currentProjectId, type: "canon" },
+        data: { title: uniqueTitle },
+      });
+      setModifiedProject({ ...modifiedProject, title: uniqueTitle });
+    }
 
     try {
       await dataManager.saveChanges();
@@ -372,6 +423,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <GeneralTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 saveable={saveable}
@@ -381,6 +433,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <MediaTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 saveable={saveable}
@@ -390,6 +443,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <TagsTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 saveable={saveable}
@@ -401,6 +455,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 setErrorMember={setErrorAddMember}
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
                 saveable={saveable}
@@ -410,6 +465,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <LinksTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 saveProject={saveProject}
                 updatePendingProject={updatePendingProject}
                 setErrorLinks={setErrorLinks}

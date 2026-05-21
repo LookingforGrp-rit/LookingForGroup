@@ -21,6 +21,7 @@ import {
   JobLocation,
   JobCompensation,
   Role,
+  ProjectWithFollowers,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -70,6 +71,7 @@ let localIdIncrement = 0;
 type TeamTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
+  unmodifiedProject: ProjectWithFollowers;
   //setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
   setErrorMember: (error: string) => void;
   setErrorPosition: (error: string) => void;
@@ -97,6 +99,7 @@ type TeamTabProps = {
 export const TeamTab = ({
   dataManager,
   projectData,
+  unmodifiedProject,
   setErrorMember,
   setErrorPosition,
   /*permissions,*/
@@ -172,6 +175,47 @@ export const TeamTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
   const { setOpen } = useContext(PopupContext);
+
+  // Check if the Team Members tab is unsaved
+  const isTeamMembersUnsaved = useMemo(() => {
+    const currentMembers = projectData?.members || [];
+    const originalMembers = unmodifiedProject?.members || [];
+
+    if (currentMembers.length !== originalMembers.length) return true;
+
+    // Deep comparison
+    return currentMembers.some((current, index) => {
+      const original = originalMembers[index];
+      if (!original) return true;
+      return (
+        current.user?.userId !== original.user?.userId ||
+        current.role?.roleId !== original.role?.roleId
+      );
+    });
+  }, [projectData?.members, unmodifiedProject?.members]);
+
+  // Check if Open Positions is unsaved
+  const isOpenPositionsUnsaved = useMemo(() => {
+    const currentJobs = projectData?.jobs || [];
+    const originalJobs = unmodifiedProject?.jobs || [];
+
+    if (currentJobs.length !== originalJobs.length) return true;
+
+    // Deep comparison! Is this getting old?
+    return currentJobs.some((current, index) => {
+      const original = originalJobs[index];
+      if (!original) return true;
+      return (
+        current.role?.roleId !== original.role?.roleId ||
+        current.availability !== original.availability ||
+        current.location !== original.location ||
+        current.duration !== original.duration ||
+        current.compensation !== original.compensation ||
+        current.description !== original.description ||
+        current.contact?.userId !== original.contact?.userId
+      );
+    });
+  }, [projectData?.jobs, unmodifiedProject?.jobs]);
 
   // Update parent state with error message
   useEffect(() => {
@@ -830,7 +874,16 @@ export const TeamTab = ({
   const positionEditWindow = (
     <>
       <div id="edit-position-role">
-        <label>Role*</label>
+        <label>
+          Role
+          <span 
+            className="required-asterisk" 
+            aria-hidden="true" 
+            title="Required"
+          >
+            *
+          </span>
+        </label>
         <Select>
           <SelectButton
             placeholder={isCreatingNewPosition ? "Select" : ""}
@@ -868,31 +921,19 @@ export const TeamTab = ({
             })}
           />
         </Select>
-        <div id="edit-position-buttons">
-          <div id="edit-position-button-pair">
-            <button
-              type="button"
-              onClick={savePosition}
-              id="position-edit-save"
-            >
-              Save
-            </button>
-            <button
-              onClick={() => {
-                addPositionCallback();
-              }}
-              id="position-edit-cancel"
-              className="button-reset"
-            >
-              Cancel
-            </button>
-          </div>
-          <div className="error">{errorAddPosition}</div>
-        </div>
       </div>
 
       <div id="edit-position-description">
-        <label>Role Description*</label>
+        <label>
+          Role Description
+          <span 
+            className="required-asterisk" 
+            aria-hidden="true" 
+            title="Required"
+          >
+            *
+          </span>
+        </label>
         <textarea
           value={currentJob?.description ?? ""}
           onChange={(e) =>
@@ -911,7 +952,16 @@ export const TeamTab = ({
 
       <div id="edit-position-details">
         <div id="edit-position-details-left">
-          <label className="edit-position-availability">Availability*</label>
+          <label className="edit-position-availability">
+            Availability
+            <span 
+              className="required-asterisk" 
+              aria-hidden="true" 
+              title="Required"
+            >
+              *
+            </span>
+          </label>
           <Select>
             <SelectButton
               placeholder="Select"
@@ -945,7 +995,16 @@ export const TeamTab = ({
               })}
             />
           </Select>
-          <label className="edit-position-location">Location*</label>
+          <label className="edit-position-location">
+            Location
+            <span 
+              className="required-asterisk" 
+              aria-hidden="true" 
+              title="Required"
+            >
+              *
+            </span>
+          </label>
           <Select>
             <SelectButton
               placeholder="Select"
@@ -978,7 +1037,16 @@ export const TeamTab = ({
               })}
             />
           </Select>
-          <label className="edit-position-contact">Main Contact*</label>
+          <label className="edit-position-contact">
+            Main Contact
+            <span 
+              className="required-asterisk" 
+              aria-hidden="true" 
+              title="Required"
+            >
+              *
+            </span>
+          </label>
           {/* <select className="edit-position-contact"></select> */}
           <Select>
             <SelectButton
@@ -1032,7 +1100,16 @@ export const TeamTab = ({
           </Select>
         </div>
         <div id="edit-position-details-right">
-          <label className="edit-position-duration">Duration*</label>
+          <label className="edit-position-duration">
+            Duration
+            <span 
+              className="required-asterisk" 
+              aria-hidden="true" 
+              title="Required"
+            >
+              *
+            </span>
+          </label>
           <Select>
             <SelectButton
               placeholder="Select"
@@ -1065,7 +1142,16 @@ export const TeamTab = ({
               })}
             />
           </Select>
-          <label className="edit-position-compensation">Compensation*</label>
+          <label className="edit-position-compensation">
+            Compensation
+            <span 
+              className="required-asterisk" 
+              aria-hidden="true" 
+              title="Required"
+            >
+              *
+            </span>
+          </label>
           <Select>
             <SelectButton
               placeholder="Select"
@@ -1098,6 +1184,27 @@ export const TeamTab = ({
               })}
             />
           </Select>
+        </div>
+        <div id="edit-position-buttons">
+          <div id="edit-position-button-pair">
+            <button
+              type="button"
+              onClick={savePosition}
+              id="position-edit-save"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => {
+                addPositionCallback();
+              }}
+              id="position-edit-cancel"
+              className="button-reset"
+            >
+              Cancel
+            </button>
+          </div>
+          <div className="error">{errorAddPosition}</div>
         </div>
       </div>
     </>
@@ -1539,7 +1646,7 @@ export const TeamTab = ({
           }}
           className={`button-reset project-editor-team-tab ${currentTeamTab === 0 ? "team-tab-active" : ""}`}
         >
-          Current Team
+          Current Team {isTeamMembersUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
         </button>
         <button
           onClick={() => {
@@ -1547,7 +1654,7 @@ export const TeamTab = ({
           }}
           className={`button-reset project-editor-team-tab ${currentTeamTab === 1 ? "team-tab-active" : ""}`}
         >
-          Open Positions
+          Open Positions {isOpenPositionsUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
         </button>
       </div>
 
