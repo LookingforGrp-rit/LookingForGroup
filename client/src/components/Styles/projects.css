@@ -310,6 +310,13 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
 }
 
+.invalid-tab-alert {
+  color: var(--error-delete-color);
+  margin-left: 0.25rem;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
 #project-editor-save,
 #team-add-member-add-button,
 #team-edit-member-save-button {

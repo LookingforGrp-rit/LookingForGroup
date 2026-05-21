@@ -71,9 +71,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   // Error message for Links validation (used in LinksTab)
   const [errorLinks, setErrorLinks] = useState("");
 
-  //State variable for error message
-  const [message, setMessage] = useState("");
-
   // Tracker that checks if the project is currently saveable.
   // If this is set to true, the "Save Changes" button appears in every tab
   const [saveable, setSaveable] = useState(false);
@@ -274,7 +271,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       !modifiedProject.hook
     ) {
       const errorText = document.getElementById("invalid-input-error");
-      setMessage("*Fill out all required info under General before saving!*");
       await setFailCheck(true);
 
       if (errorText) {
@@ -289,7 +285,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       modifiedProject.mediums.length == 0
     ) {
       const errorText = document.getElementById("invalid-input-error");
-      setMessage("*Choose a project type and tag under Tags before saving!*");
       await setFailCheck(true);
 
       if (errorText) {
@@ -341,6 +336,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     setModifiedProject(updatedPendingProject);
   }
 
+  const generalTabInvalid = !modifiedProject?.title || !modifiedProject?.hook || !modifiedProject?.description;
+  const tagsTabInvalid = modifiedProject?.tags.length === 0 || modifiedProject?.mediums.length === 0;
+  const teamTabInvalid = errorAddMember !== "" || errorAddPosition !== "";
+  const linksTabInvalid = errorLinks !== "";
+
   return (
     <Popup>
       {newProject ? (
@@ -374,7 +374,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               className={`project-editor-tab ${currentTab === 0 ? "project-editor-tab-active" : ""}`}
               ref={startButton}
             >
-              General
+              General{generalTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
             <button
               id="media-tab"
@@ -394,7 +394,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               }}
               className={`project-editor-tab ${currentTab === 2 ? "project-editor-tab-active" : ""}`}
             >
-              Tags
+              Tags{tagsTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
             <button
               id="team-tab"
@@ -404,7 +404,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               }}
               className={`project-editor-tab ${currentTab === 3 ? "project-editor-tab-active" : ""}`}
             >
-              Team
+              Team{teamTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
             <button
               id="links-tab"
@@ -414,7 +414,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               }}
               className={`project-editor-tab ${currentTab === 4 ? "project-editor-tab-active" : ""}`}
             >
-              Links
+              Links{linksTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
           </div>
               
