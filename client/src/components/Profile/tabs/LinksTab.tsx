@@ -2,7 +2,8 @@ import React, { useState, useEffect } from "react";
 import { getSocials } from "../../../api/users";
 import {
   Social,
-  AddUserSocialInput
+  AddUserSocialInput,
+  MePrivate
 } from "@looking-for-group/shared";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { ThemeIcon } from "../../ThemeIcon";
@@ -15,6 +16,7 @@ import { BaseSocialUrl } from "@looking-for-group/shared/enums";
 //will be extremely similar if not identical to project profiles
 interface LinksTabProps {
   profile: PendingUserProfile;
+  unmodifiedProfile: MePrivate;
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   updatePendingProfile: (profileData: PendingUserProfile) => void;
 }
@@ -28,11 +30,13 @@ let profileAfterLinkChanges: PendingUserProfile;
  * @param dataManager Handles data changes to save changes later.
  * @param profile Temporary profile data.
  * @param updatePendingProfile Updates profile data.
+ * @param unmodifiedProfile A copy of the profile before any changes
  * @returns JSX Element
  */
 export const LinksTab: React.FC<LinksTabProps> = ({
   dataManager,
   profile,
+  unmodifiedProfile,
   updatePendingProfile,
 }) => {
 

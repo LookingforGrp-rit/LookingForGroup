@@ -15,6 +15,7 @@ import { ProjectsTab } from "./tabs/ProjectsTab";
 import { SkillsTab } from "./tabs/SkillsTab";
 import { userDataManager } from "../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../types/types";
+import { MePrivate } from "@looking-for-group/shared";
 
 // The profile to view is independent upon the site's state changes
 const pageTabs = ["About", "Projects", "Skills", "Links"];
@@ -28,6 +29,7 @@ export const ProfileEditPopup = () => {
   const [currentTab, setCurrentTab] = useState(5);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
+  const [unmodifiedProfile, setUnmodifiedProfile] = useState<MePrivate>();
   const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
 
   const navigate = useNavigate();
@@ -44,6 +46,7 @@ export const ProfileEditPopup = () => {
         throw "error getting current user " + getUser.error;
       }
 
+      setUnmodifiedProfile(getUser.data);
       setModifiedProfile(structuredClone(getUser.data));
 
       const manager = await userDataManager();
@@ -133,6 +136,7 @@ export const ProfileEditPopup = () => {
         return (
           <AboutTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
             updatePendingProfile={setModifiedProfile}
           />
@@ -141,6 +145,7 @@ export const ProfileEditPopup = () => {
         return (
           <ProjectsTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
             updatePendingProfile={setModifiedProfile}
           />
@@ -149,6 +154,7 @@ export const ProfileEditPopup = () => {
         return (
           <SkillsTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
             updatePendingProfile={setModifiedProfile}
           />
@@ -157,6 +163,7 @@ export const ProfileEditPopup = () => {
         return (
           <LinksTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
             updatePendingProfile={setModifiedProfile}
           />
