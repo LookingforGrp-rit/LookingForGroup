@@ -124,6 +124,57 @@ projectAfterLinkChanges = structuredClone(projectData);
     fetchProjectOwner();
   }, [projectData?.owner?.userId]);
 
+  const handleDeleteSocial = (index: number) => {
+    const targetSocial = (projectData.projectSocials || [])[index];
+    if (!targetSocial) return;
+
+    if (!("localId" in targetSocial)) {
+      dataManager.deleteSocial({
+        id: { type: 'canon', value: targetSocial.websiteId },
+        data: null
+      });
+    }
+
+    const filteredSocials = (projectData.projectSocials || []).filter((_, i) => i !== index);
+    updatePendingProject({ ...projectData, projectSocials: filteredSocials });
+  };
+
+  const handleCleanAndSave = () => {
+    const tempSocials = [...(projectData.projectSocials || [])];
+    const cleanedSocials: Pending<ProjectSocial>[] = [];
+
+    tempSocials.forEach((social) => {
+      const base = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] || '';
+      // It is considered empty if it equals the base URL, or contains nothing/spaces
+      const isEmpty = !social.url || social.url === base || social.url.trim() === '';
+
+      if (isEmpty) {
+        // Delete on backend
+        if ("localId" in social) {
+          dataManager.deleteSocial({
+            id: { type: 'local', value: social.localId as number },
+            data: null
+          });
+        } else if (social.websiteId) {
+          dataManager.deleteSocial({
+            id: { type: 'canon', value: social.websiteId },
+            data: null
+          });
+        }
+      } else {
+        cleanedSocials.push(social as Pending<ProjectSocial>);
+      }
+    });
+
+    // Frontend delete
+    updatePendingProject({
+      ...projectData,
+      projectSocials: cleanedSocials
+    });
+
+    saveProject();
+  };
+
   // --- Complete component ---
   return (
     <div id="editor-links">
@@ -184,142 +235,136 @@ projectAfterLinkChanges = structuredClone(projectData);
 
       <div id="editor-link-list">
         {/* Social URL inputs */}
-        { projectAfterLinkChanges.projectSocials && projectAfterLinkChanges.projectSocials.map((social, index) => (
+        { projectAfterLinkChanges.projectSocials && projectAfterLinkChanges.projectSocials.map((social, index) => {
+          const url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl];
           
-          <div className="editor-link-item" key={index}>
-            {/* Social type dropdown */}
-            <Select>
-              <SelectButton
-                placeholder='Select'
-                initialVal={social.label ? //silence linter, it works how it should
-                  <>
-                      <ThemeIcon
-                        width={20}
-                        height={20}
-                        id={
-                          social.label === 'Other' ? 'link' :
-                          social.label.toLowerCase()
-                        }
-                        className={'mono-fill'}
-                        ariaLabel={social.label}
-                      />
-                      {social.label}
-                  </> as unknown as string //this is how i've silenced the linter
-                  : undefined}
-                className='link-select'
-                type={"input"}
-              />
-              <SelectOptions
-                callback={(e) => {
-                  const selectedLabel = (e.target as HTMLInputElement).value;
-                  const selectedSocial = allSocials.find(s => s.label === selectedLabel);
-                  
-                  const tempSocials = projectAfterLinkChanges.projectSocials;
-                  tempSocials[index].label = selectedLabel;
-                  tempSocials[index].websiteId = selectedSocial?.websiteId || 0;
-                  (tempSocials[index] as Pending<ProjectSocial>).localId = ++localIdIncrement; //lol it never had a local id
-                  if(selectedSocial && "localId" in social){ //so it only tries to add newly added ones
-
-                  dataManager.addSocial({
-                    id: {
-                      value: (tempSocials[index] as Pending<ProjectSocial>).localId ?? ++localIdIncrement,
-                      type: 'local'
-                    },
-                    data: tempSocials[index] as AddProjectSocialInput
-                  })
-                  projectAfterLinkChanges = {
-                    ...projectAfterLinkChanges,
-                    projectSocials: tempSocials
-                  }
-                  }
-
-                  updatePendingProject(projectAfterLinkChanges);
-                }}
-                options={allSocials ? allSocials.map(website => {
-                  return {
-                    markup:
+          return (
+            <div className="editor-link-item" key={index}>
+              {/* Social type dropdown */}
+              <Select>
+                <SelectButton
+                  placeholder='Select'
+                  initialVal={social.label ? //silence linter, it works how it should
                     <>
-                      <ThemeIcon
-                        width={20}
-                        height={20}
-                        id={
-                          website.label === 'Other' ? 'link' :
-                          website.label.toLowerCase()
-                        }
-                        className={'mono-fill'}
-                        ariaLabel={website.label}
-                      />
-                      {website.label}
-                    </>,
-                    value: website.label,
-                    disabled: false,
-                  };
+                        <ThemeIcon
+                          width={20}
+                          height={20}
+                          id={
+                            social.label === 'Other' ? 'link' :
+                            social.label.toLowerCase()
+                          }
+                          className={'mono-fill'}
+                          ariaLabel={social.label}
+                        />
+                        {social.label}
+                    </> as unknown as string //this is how i've silenced the linter
+                    : undefined}
+                  className='link-select'
+                  type={"input"}
+                />
+                <SelectOptions
+                  callback={(e) => {
+                    const selectedLabel = (e.target as HTMLInputElement).value;
+                    const selectedSocial = allSocials.find(s => s.label === selectedLabel);
+                    
+                    const tempSocials = projectAfterLinkChanges.projectSocials;
+                    tempSocials[index].label = selectedLabel;
+                    tempSocials[index].websiteId = selectedSocial?.websiteId || 0;
+                    
+                    projectAfterLinkChanges = {
+                      ...projectAfterLinkChanges,
+                      projectSocials: tempSocials
+                    };
 
-                  
-                }) : []}
-              />
-            </Select>
-            {/* Social URL input 
-              /* NOTICE: there is a bit of a bug here 
-              /* if you type in the url field before selecting a media label, it won't take your input
-              /* (this is a temporary fix because it would've crashed otherwise)*/}
-            <div id="base-url">{BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}</div>
-            <Input
-              type={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "link" : "single"}
-              placeholder={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "URL" : 'Username'}
-              value={social.url && social.label ? social.url.substring(BaseSocialUrl[social.label as keyof typeof BaseSocialUrl].length) : ''}
-              onChange={(e) => {
-                // TODO: Implement some sort of security check for URLs.
-                // Could be as simple as checking the URL matches the social media
-                // But since 'Other' is an option, might be good to just find some
-                // external list of suspicious sites and make sure it's not one of those.
-                const tempSocials = projectAfterLinkChanges.projectSocials;
-                tempSocials[index].url = BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] + e.target.value;
-
-                if("localId" in social){
-                dataManager.addSocial({
-                  id: {
-                    type: "local",
-                    value: social.localId ?? ++localIdIncrement
-                  },
-                  data: tempSocials[index] as AddProjectSocialInput
-                })
-                }
-                else{
-                dataManager.updateSocial({
-                  id: {
-                    type: "canon",
-                    value: social.websiteId
-                  },
-                  data: {
-                    url: tempSocials[index].url
+                    updatePendingProject(projectAfterLinkChanges);
+                  }}
+                  // Hide duplicates, but always show other
+                  options={allSocials ? allSocials
+                    .filter(website => {
+                      if (website.label === 'Other') return true;
+                      if (website.label === social.label) return true; // Show currently selected platform
+                      // Hide platforms already selected in other rows
+                      return !(projectAfterLinkChanges.projectSocials || []).some(
+                        s => s.label === website.label
+                      );
+                    })
+                    .map(website => {
+                      return {
+                        markup:
+                        <>
+                          <ThemeIcon
+                            width={20}
+                            height={20}
+                            id={
+                              website.label === 'Other' ? 'link' :
+                              website.label.toLowerCase()
+                            }
+                            className={'mono-fill'}
+                            ariaLabel={website.label}
+                          />
+                          {website.label}
+                        </>,
+                        value: website.label,
+                        disabled: false,
+                      };
+                    }) : []
                   }
-                })
-                }
-                updatePendingProject({ ...projectAfterLinkChanges, projectSocials: tempSocials });
-              }}
-              onClick={() => {
-                if(!("localId" in social)){
+                />
+              </Select>
 
-                dataManager.deleteSocial({
-                  id: {
-                    type: 'canon',
-                    value: social.websiteId
-                  },
-                  data: null
-                });
-                projectAfterLinkChanges.projectSocials = 
-                  projectAfterLinkChanges.projectSocials.filter(
-                            (soc) =>
-                              social.websiteId !==
-                              soc.websiteId
-                          ); //get it outta here
-                updatePendingProject(projectAfterLinkChanges)
-                }
-              }}
-            />
-          </div>
-        ))}
+              {url && (<div id="base-url">{url}</div>)}
+              <Input
+                type="single"
+                style={{
+                  opacity: !social.label ? 0.4 : 1,
+                  cursor: !social.label ? 'not-allowed' : 'text'
+                }}
+                disabled={!social.label} // Disable textbox until site category selected
+                placeholder={url === '' || !social.label ? "URL" : 'Username'}
+                value={social.url && social.label ? social.url.substring(url.length) : ''}
+                onChange={(e) => {
+                  const tempSocials = projectAfterLinkChanges.projectSocials;
+                  const inputValue = e.target.value;
+                  tempSocials[index].url = url + inputValue;
+
+                  // Don't actually add the social until they type something
+                  if (inputValue.trim() !== '') {
+                    if("localId" in social) {
+                      dataManager.addSocial({
+                        id: {
+                          type: "local",
+                          value: social.localId as number
+                        },
+                        data: tempSocials[index] as AddProjectSocialInput
+                      });
+                    }
+                    else {
+                      dataManager.updateSocial({
+                        id: {
+                          type: "canon",
+                          value: social.websiteId
+                        },
+                        data: {
+                          url: tempSocials[index].url
+                        }
+                      });
+                    }
+                  }
+                  
+                  updatePendingProject({ ...projectAfterLinkChanges, projectSocials: tempSocials });
+                }}
+              />
+              <button 
+                  type="button" 
+                  className="delete-social-btn" 
+                  onClick={() => handleDeleteSocial(index)}
+                  title="Remove social link"
+                >
+                  <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+              </button>
+            </div>
+          );
+        })}
         <div id="add-link-container">
           <button id="profile-editor-add-link"
             onClick={() => {
@@ -329,7 +374,8 @@ projectAfterLinkChanges = structuredClone(projectData);
                   label: '',
                   url: '',
                   apiUrl: "",
-                  websiteId: 0
+                  websiteId: 0,
+                  localId: ++localIdIncrement
                 }]
               });
             }}

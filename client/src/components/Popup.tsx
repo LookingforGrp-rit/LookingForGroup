@@ -106,6 +106,7 @@ PopupButton = ({
  * @param useClose — show close button (default true)
  * @param callback — function to run on closing
  * @param profilePopup — variant style for profile popups
+ * @param confirmation — if true, does not disable popup but still runs callback (default false)
  * @returns JSX.Element | null popup overlay and content
  */
 export const PopupContent = ({
@@ -115,6 +116,7 @@ export const PopupContent = ({
   profilePopup = false,
   closeButtonRef = undefined,
   openFocusRef = undefined,
+  confirmation = false,
 }: {
   children: ReactNode;
   useClose?: boolean;
@@ -122,6 +124,7 @@ export const PopupContent = ({
   profilePopup?: false | true;
   closeButtonRef?: React.RefObject<null>;
   openFocusRef?: React.RefObject<HTMLElement | null>;
+  confirmation?: boolean;
 }) => {
   const { open, setOpen } = useContext(PopupContext);
   const popupRef = useRef(null);
@@ -129,7 +132,7 @@ export const PopupContent = ({
   // Close the popup and execute optional callback
   const closePopup = useCallback(() => {
     callback();
-    setOpen(false);
+    if(!confirmation) setOpen(false);
   }, [callback, setOpen]);
 
   // Close on Escape key press

@@ -78,6 +78,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   // Tracks whether the project was successfully saved (prevents deletion on cleanup after save)
   const [saved, setSaved] = useState(false);
 
+  const [confirm, setConfirm] = useState(false);
+
   // Component Refs
   const exitButton = useRef(null);
   const startButton = useRef(null);
@@ -199,7 +201,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   //this deletes the newly created project when the create window is manually closed
   //this is called below as the PopupContent's callback function (that only calls when it's closed so should it just be called onClose?)
-  //TODO: update this to show a close without saving prompt
   const closeWithoutSaving = async () => {
     // Why is this here? If it's a new project then it won't be on the API anyway
     setCurrentTab(0);
@@ -207,6 +208,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     if(projectData && newProject && !saved) await deleteProject(projectData?.projectId);
   }
 
+  const toggleConfirm = async () => {
+    setConfirm(!confirm);
+  }
 
   // Isn't this what createoredit is supposed to do? it never calls this though
   
@@ -361,8 +365,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         </PopupButton>
       )}
 
-      <PopupContent callback={closeWithoutSaving} closeButtonRef={exitButton}>
-        
+      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={true}>
+        {confirm ? <PopupContent confirmation={true} useClose={false}>
+          <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
+          <div id="confirm-editor-save">
+            <PopupButton doNotClose={() => false} callback={closeWithoutSaving} buttonId="project-editor-save">
+              Confirm
+            </PopupButton>
+            <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >
+              Cancel
+            </PopupButton>
+          </div>
+        </PopupContent> : ""}
         <div id="project-creator-editor">
           <div id="project-editor-tabs">
             <button
