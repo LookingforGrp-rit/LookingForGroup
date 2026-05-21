@@ -87,18 +87,35 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // Check if the current project can be saved
   let valid = false;
+  let newMessage = "";
   if (modifiedProject?.title != "") {
     if (modifiedProject?.hook != "") {
       if (modifiedProject?.description != "") {
         valid = true;
       }
+      else {
+        newMessage = "Project is missing a description!";
+      }
     }
+    else {
+      newMessage = "Project is missing a hook!";
+    }
+  }
+  else {
+    newMessage = "Project is missing a title!";
   }
   if (modifiedProject?.tags.length == 0 || modifiedProject?.mediums.length == 0) {
     valid = false;
   }
+  else {
+    newMessage = "Project is missing tag(s)!";
+  }
   if (valid != saveable) {
     setSaveable(valid);
+  }
+
+  const updateMessage = async () => {
+    setMessage(newMessage);
   }
 
   // Start editing the project creator
@@ -428,6 +445,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
+                setMessage={updateMessage}
               />
             ) : currentTab === 1 ? (
               <MediaTab
@@ -438,6 +457,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 2 ? (
               <TagsTab
@@ -448,6 +468,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
+                setMessage={updateMessage}
               />
             ) : currentTab === 3 ? (
               <TeamTab
@@ -460,6 +482,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 4 ? (
               <LinksTab
@@ -471,6 +494,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 setErrorLinks={setErrorLinks}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : (
               <></>

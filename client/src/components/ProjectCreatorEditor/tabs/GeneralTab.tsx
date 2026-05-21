@@ -31,6 +31,8 @@ type GeneralTabProps = {
   updatePendingProject?: (updatedPendingProject: PendingProject) => void;
   saveable : boolean;
   failCheck: boolean;
+  message: string;
+  setMessage: () => {};
 };
 
 /**
@@ -53,6 +55,8 @@ export const GeneralTab = ({
   updatePendingProject = () => {},
   saveable,
   failCheck,
+  message,
+  setMessage,
 }: GeneralTabProps) => {
 
   projectAfterGeneralChanges = structuredClone(projectData);
@@ -98,6 +102,7 @@ export const GeneralTab = ({
           const title = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, title };
           updatePendingProject(projectAfterGeneralChanges);
+          setMessage();
 
           if (title == "") {
             return;
@@ -156,6 +161,7 @@ export const GeneralTab = ({
                   },
                 });
               }
+              setMessage();
             }}
             options={Object.values(ProjectStatusEnums).map((option) => {
               return {
@@ -261,6 +267,7 @@ export const GeneralTab = ({
           const hook = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, hook };
           updatePendingProject(projectAfterGeneralChanges);
+          setMessage();
 
           if (hook == "") {
             return;
@@ -291,6 +298,7 @@ export const GeneralTab = ({
           const description = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, description };
           updatePendingProject(projectAfterGeneralChanges);
+          setMessage();
 
           if (description == "") {
             return;
@@ -333,7 +341,7 @@ export const GeneralTab = ({
           </Popup>
         :
           <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*Fill out all required info before saving!*</p>
+            <p>*{message}*</p>
           </div>
       }
       </div>

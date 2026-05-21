@@ -33,6 +33,8 @@ type TagsTabProps = {
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   saveable: boolean;
   failCheck: boolean;
+  message: string;
+  setMessage: () => {};
 };
 
 /**
@@ -62,6 +64,8 @@ export const TagsTab = ({
   updatePendingProject,
   saveable,
   failCheck,
+  message,
+  setMessage,
 }: TagsTabProps) => {
 
   projectAfterTagsChanges = structuredClone(projectData);
@@ -110,6 +114,7 @@ export const TagsTab = ({
 
     projectAfterTagsChanges.tags = arrayMove(tags, oldIndex, newIndex);
     updatePendingProject(projectAfterTagsChanges);
+    setMessage();
   };
 
   // Snapshot of the Medium order on load
@@ -252,6 +257,7 @@ export const TagsTab = ({
           );
 
         updatePendingProject(projectAfterTagsChanges);
+        setMessage();
         return;
       }
 
@@ -270,6 +276,7 @@ export const TagsTab = ({
         mediumId,
       });
       updatePendingProject(projectAfterTagsChanges);
+      setMessage();
       return;
     },
     [allMediums, dataManager, updatePendingProject]
@@ -296,6 +303,7 @@ export const TagsTab = ({
         );
 
         updatePendingProject(projectAfterTagsChanges);
+        setMessage();
         return;
       }
 
@@ -314,6 +322,7 @@ export const TagsTab = ({
         tagId,
       });
       updatePendingProject(projectAfterTagsChanges);
+      setMessage();
       return;
     },
     [allTags, dataManager, updatePendingProject]
@@ -632,7 +641,7 @@ export const TagsTab = ({
           </Popup>
         :
           <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*Fill out all required info before saving!*</p>
+            <p>*{message}*</p>
           </div>
         }
       </div>
