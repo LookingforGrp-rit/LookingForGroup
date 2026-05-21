@@ -1584,8 +1584,6 @@ select.edit-position-compensation {
 
 /* #endregion */
 
-
-
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -1615,7 +1613,8 @@ Project page style rules
 #project-info-panel {
   max-height: 22rem;
    overflow-y: scroll;
-   scrollbar-width: thin;
+   scrollbar-width: none;
+   scroll-behavior: smooth;
 }
 
 /*rules for the header used when a project member is viewing the page*/
