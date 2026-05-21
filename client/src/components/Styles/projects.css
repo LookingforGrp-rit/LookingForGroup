@@ -326,6 +326,14 @@ Project Creator and Editor Popup style rules
   cursor: pointer;
 }
 
+#project-editor-save.disabled,
+#project-editor-save:disabled,
+#team-add-member-add-button:disabled,
+#team-edit-member-save-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 #project-editor-confirm {
   border: none;
   border-radius: 30px;
