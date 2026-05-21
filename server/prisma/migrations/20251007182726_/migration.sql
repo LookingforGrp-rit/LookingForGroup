@@ -93,13 +93,13 @@ CREATE TABLE `project_socials` (
 -- CreateTable
 CREATE TABLE `projects` (
     `project_id` INTEGER NOT NULL AUTO_INCREMENT,
-    `title` VARCHAR(150) NOT NULL,
-    `hook` VARCHAR(200) NOT NULL DEFAULT '',
+    `title` VARCHAR(50) NOT NULL,
+    `hook` VARCHAR(300) NOT NULL DEFAULT '',
     `description` VARCHAR(2000) NOT NULL DEFAULT '',
     `thumbnail_id` INTEGER NULL,
     `purpose` ENUM('Personal', 'Portfolio Piece', 'Academic', 'Co-op') NULL,
     `status` ENUM('Planning', 'Development', 'Post-Production', 'Complete') NOT NULL DEFAULT 'Planning',
-    `audience` VARCHAR(300) NOT NULL DEFAULT '',
+    `audience` VARCHAR(100) NOT NULL DEFAULT '',
     `user_id` INTEGER NOT NULL,
     `created_at` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updated_at` TIMESTAMP(0) NOT NULL,
