@@ -40,6 +40,7 @@ describe('getuserProjectsService', () => {
       title: p.title,
       hook: p.hook,
       owner: p.users,
+      tags: p.tags,
       thumbnail: p.thumbnail,
       mediums: p.mediums,
       thumbnailId: p.thumbnailId ?? null,
