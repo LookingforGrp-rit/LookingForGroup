@@ -6,7 +6,7 @@ import LabelInputBox from '../../LabelInputBox';
 import { PendingUserProfile } from '../../../../types/types';
 import { userDataManager } from '../../../api/data-managers/user-data-manager';
 import { AcademicYear } from '@looking-for-group/shared/enums';
-import { Major, Role } from '@looking-for-group/shared';
+import { Major, MePrivate, Role } from '@looking-for-group/shared';
 import { getJobTitles, getMajors } from '../../../api/users';
 
 let profileAfterAboutChanges: PendingUserProfile;
@@ -14,6 +14,7 @@ let profileAfterAboutChanges: PendingUserProfile;
 type AboutTabProps = {
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   profile: PendingUserProfile;
+  unmodifiedProfile: MePrivate;
   updatePendingProfile?: (updatedPendingProfile: PendingUserProfile) => void;
 };
 
@@ -22,9 +23,10 @@ type AboutTabProps = {
  * @param dataManager Handles data changes to save changes later.
  * @param profile Temporary profile data.
  * @param updatePendingProfile Updates profile data.
+ * @param unmodifiedProfile A copy of the profile before any changes
  * @returns JSX Element
  */
-export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { } }: AboutTabProps) => {
+export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendingProfile = () => { } }: AboutTabProps) => {
 
   profileAfterAboutChanges = structuredClone(profile);
 
@@ -108,10 +110,12 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
 
         <div className="about-row row-1">
           <LabelInputBox
-            label={'First Name*'}
+            label={'First Name'}
+            required
             inputType={'single'}
             maxLength={50}
             value={profile.firstName}
+            initialValue={unmodifiedProfile.firstName}
             onChange={(e) => {
               const firstName = e.target.value;
               profileAfterAboutChanges = { ...profileAfterAboutChanges, firstName };
@@ -128,10 +132,12 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
             }}
           />
           <LabelInputBox
-            label={'Last Name*'}
+            label={'Last Name'}
+            required
             inputType={'single'}
             maxLength={50}
             value={profile.lastName}
+            initialValue={unmodifiedProfile.lastName}
             onChange={(e) => {
               const lastName = e.target.value;
               profileAfterAboutChanges = { ...profileAfterAboutChanges, lastName };
@@ -152,6 +158,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
             inputType={'single'}
             maxLength={25}
             value={profile.pronouns}
+            initialValue={unmodifiedProfile.pronouns}
             onChange={(e) => {
               const pronouns = e.target.value;
               profileAfterAboutChanges = { ...profileAfterAboutChanges, pronouns };
@@ -174,6 +181,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
             <LabelInputBox
               label={'Title'}
               inputType={'none'}
+              forceUnsaved={profile.title !== unmodifiedProfile.title}
             >
               <Select>
                 <SelectButton
@@ -236,6 +244,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
           <LabelInputBox
             label={'Year'}
             inputType={'none'}
+            forceUnsaved={profile.academicYear !== unmodifiedProfile.academicYear}
           >
             <Select>
               <SelectButton
@@ -285,6 +294,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
             label={'Location'}
             inputType={'single'}
             value={profile.location}
+            initialValue={unmodifiedProfile.location}
             onChange={(e) => {
               const location = e.target.value;
               profileAfterAboutChanges = { ...profileAfterAboutChanges, location };
@@ -304,6 +314,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
           <LabelInputBox
             label={'Mentorship Status'}
             inputType={'none'}
+            forceUnsaved={profile.mentor !== unmodifiedProfile.mentor}
           >
             <Select>
               <SelectButton
@@ -349,6 +360,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
           inputType={'multi'}
           maxLength={100}
           value={profile.headline}
+          initialValue={unmodifiedProfile.headline}
           onChange={(e) => {
             const headline = e.target.value;
             profileAfterAboutChanges = { ...profileAfterAboutChanges, headline };
@@ -371,6 +383,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
           inputType={'multi'}
           maxLength={100}
           value={profile.funFact}
+          initialValue={unmodifiedProfile.funFact}
           onChange={(e) => {
             const funFact = e.target.value;
             profileAfterAboutChanges = { ...profileAfterAboutChanges, funFact };
@@ -394,6 +407,7 @@ export const AboutTab = ({ dataManager, profile, updatePendingProfile = () => { 
         inputType={'multi'}
         maxLength={600}
         value={profile.bio}
+        initialValue={unmodifiedProfile.bio}
         onChange={(e) => {
 
           const bio = e.target.value;

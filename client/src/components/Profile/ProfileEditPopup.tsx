@@ -1,5 +1,5 @@
 // Utilities and React functions
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 
 import { getCurrentAccount } from "../../api/users";
 import * as paths from '../../constants/routes';
@@ -15,6 +15,7 @@ import { ProjectsTab } from "./tabs/ProjectsTab";
 import { SkillsTab } from "./tabs/SkillsTab";
 import { userDataManager } from "../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../types/types";
+import { MePrivate } from "@looking-for-group/shared";
 
 // The profile to view is independent upon the site's state changes
 const pageTabs = ["About", "Projects", "Skills", "Links"];
@@ -28,9 +29,35 @@ export const ProfileEditPopup = () => {
   const [currentTab, setCurrentTab] = useState(5);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
+  const [unmodifiedProfile, setUnmodifiedProfile] = useState<MePrivate>();
   const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
+  const [confirm, setConfirm] = useState(false);
 
+  const isOpening = useRef(true);
   const navigate = useNavigate();
+
+  const handlePopupCallback = () => {
+    if (isOpening.current) {
+      // Popup is opening. Ignore the confirm
+      setCurrentTab(0);
+      isOpening.current = false;
+    } else {
+      // Popup is closing. Show the confirm dialog
+      setConfirm(true);
+    }
+  };
+
+  const cancelConfirm = () => setConfirm(false);
+
+  const closeWithoutSaving = async () => {
+    setCurrentTab(0);
+    setConfirm(false);
+    isOpening.current = true;
+
+    // Reset modified profile to discard any unsaved changes
+    if (unmodifiedProfile)
+      setModifiedProfile(structuredClone(unmodifiedProfile));
+  }
 
   // Profile should be set up on intialization
   useEffect(() => {
@@ -44,6 +71,7 @@ export const ProfileEditPopup = () => {
         throw "error getting current user " + getUser.error;
       }
 
+      setUnmodifiedProfile(getUser.data);
       setModifiedProfile(structuredClone(getUser.data));
 
       const manager = await userDataManager();
@@ -133,6 +161,7 @@ export const ProfileEditPopup = () => {
         return (
           <AboutTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
             updatePendingProfile={setModifiedProfile}
           />
@@ -141,6 +170,7 @@ export const ProfileEditPopup = () => {
         return (
           <ProjectsTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
             updatePendingProfile={setModifiedProfile}
           />
@@ -149,6 +179,7 @@ export const ProfileEditPopup = () => {
         return (
           <SkillsTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
             updatePendingProfile={setModifiedProfile}
           />
@@ -157,6 +188,7 @@ export const ProfileEditPopup = () => {
         return (
           <LinksTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
             updatePendingProfile={setModifiedProfile}
           />
@@ -184,7 +216,22 @@ export const ProfileEditPopup = () => {
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
-      <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
+      <PopupContent profilePopup={true} callback={handlePopupCallback} confirmation={true}>
+        
+        {confirm ? (
+          <PopupContent confirmation={true} useClose={false}>
+            <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
+            <div id="confirm-editor-save">
+              <PopupButton doNotClose={() => false} callback={closeWithoutSaving} buttonId="project-editor-save">
+                Confirm
+              </PopupButton>
+              <PopupButton doNotClose={() => true} callback={cancelConfirm} buttonId="team-edit-member-cancel-button" >
+                Cancel
+              </PopupButton>
+            </div>
+          </PopupContent>
+        ) : ""}
+
         <form
           id="project-creator-editor"
           onSubmit={onSaveClicked}

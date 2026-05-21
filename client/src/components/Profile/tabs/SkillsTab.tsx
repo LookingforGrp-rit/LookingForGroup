@@ -8,6 +8,7 @@ import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
 import {
+  MePrivate,
   MySkill,
   Skill,
 } from "@looking-for-group/shared";
@@ -18,6 +19,7 @@ const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills"];
 
 interface SkillsTabProps {
   profile: PendingUserProfile;
+  unmodifiedProfile: MePrivate;
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   updatePendingProfile: (profileData: PendingUserProfile) => void;
 }
@@ -28,11 +30,13 @@ interface SkillsTabProps {
  * @param dataManager Handles data changes to save changes later.
  * @param profile Temporary profile data.
  * @param updatePendingProfile Updates profile data.
+ * @param unmodifiedProfile A copy of the profile before any changes
  * @returns JSX Element
  */
 export const SkillsTab = ({
   dataManager,
   profile,
+  unmodifiedProfile,
   updatePendingProfile,
 }: SkillsTabProps) => {
   // States
@@ -369,10 +373,32 @@ export const SkillsTab = ({
     return <div id="project-editor-tag-search-tabs">{tabs}</div>;
   };
 
+  const originalSkillOrder = useMemo(() => {
+    return (unmodifiedProfile.skills || []).map(s => s.skillId);
+  }, []);
+
+  // Does Skills match in EXACT order
+  const isSkillsUnsaved = useMemo(() => {
+    const currentskills = profile.skills || [];
+    
+    if (currentskills.length !== originalSkillOrder.length) return true;
+    
+    // Checks if any element shifted index or changed
+    return currentskills.some((s, index) => s.skillId !== originalSkillOrder[index]);
+  }, [profile.skills, originalSkillOrder]);
+
   return (
     <div id="profile-editor-tags">
       <div id="project-editor-selected-tags">
-        <div className="project-editor-section-header">Selected Skills</div>
+        <div className="project-editor-section-header">
+          Selected Skills
+          {/* This will work when you can select multiple skills. Someone else is working on it */}
+          {isSkillsUnsaved && (
+            <span className="unsaved-indicator">
+              (Unsaved)
+            </span>
+          )}  
+        </div>
         <div className="project-editor-extra-info">
           Drag and drop to reorder
         </div>
