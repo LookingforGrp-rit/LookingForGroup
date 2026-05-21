@@ -1,6 +1,6 @@
 // --- Imports ---
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import { ProjectPurpose, ProjectStatus } from "@looking-for-group/shared";
+import { ProjectPurpose, ProjectStatus, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
@@ -26,6 +26,7 @@ let projectAfterGeneralChanges: PendingProject;
 type GeneralTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
+  unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
   updatePendingProject?: (updatedPendingProject: PendingProject) => void;
   saveable : boolean;
@@ -47,6 +48,7 @@ type GeneralTabProps = {
 export const GeneralTab = ({
   dataManager,
   projectData,
+  unmodifiedProject,
   saveProject = async () => {},
   updatePendingProject = () => {},
   saveable,
@@ -90,6 +92,7 @@ export const GeneralTab = ({
         maxLength={50}
         id="project-editor-title-input"
         value={projectAfterGeneralChanges.title || ""}
+        initialValue={unmodifiedProject.title || ""}
         required
         onChange={(e) => {
           const title = e.target.value;
@@ -224,6 +227,7 @@ export const GeneralTab = ({
         id={"project-editor-audience-input"}
         maxLength={100}
         value={projectAfterGeneralChanges.audience || ""}
+        initialValue={unmodifiedProject.audience || ""}
         onChange={(e) => {
           const audience = e.target.value;
           projectAfterGeneralChanges = {
@@ -249,6 +253,7 @@ export const GeneralTab = ({
         id={"project-editor-description-input"}
         maxLength={300}
         value={projectAfterGeneralChanges.hook || ""}
+        initialValue={unmodifiedProject.hook || ""}
         required
         onChange={(e) => {
           const hook = e.target.value;
@@ -278,6 +283,7 @@ export const GeneralTab = ({
         id={"project-editor-long-description-input"}
         maxLength={2000}
         value={projectAfterGeneralChanges.description || ""}
+        initialValue={unmodifiedProject.description || ""}
         required={true}
         onChange={(e) => {
           const description = e.target.value;

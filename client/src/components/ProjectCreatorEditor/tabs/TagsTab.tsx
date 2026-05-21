@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getProjectTypes, getTags } from "../../../api/users";
-import { Tag, Medium, TagType} from "@looking-for-group/shared";
+import { Tag, Medium, TagType, ProjectWithFollowers} from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { PendingProject} from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
@@ -42,6 +42,7 @@ let projectAfterTagsChanges: PendingProject;
 type TagsTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
+  unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   saveable: boolean;
@@ -70,6 +71,7 @@ type TagsTabProps = {
 export const TagsTab = ({
   dataManager,
   projectData,
+  unmodifiedProject,
   saveProject,
   updatePendingProject,
   saveable,

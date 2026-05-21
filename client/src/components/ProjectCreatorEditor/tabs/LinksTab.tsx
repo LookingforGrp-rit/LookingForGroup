@@ -2,7 +2,7 @@
 import { useEffect, useState, useContext } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
-import { AddProjectSocialInput, ProjectSocial, Social, UserDetail } from "@looking-for-group/shared";
+import { AddProjectSocialInput, ProjectSocial, ProjectWithFollowers, Social, UserDetail } from "@looking-for-group/shared";
 import { Input } from "../../Input";
 import { getSocials, getUsersById } from "../../../api/users";
 import { ThemeIcon } from "../../ThemeIcon";
@@ -14,6 +14,7 @@ import { BaseSocialUrl } from "@looking-for-group/shared/enums";
 type LinksTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
+  unmodifiedProject: ProjectWithFollowers;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   setErrorLinks?: (error: string) => void;
   saveProject?: () => void;
@@ -41,6 +42,7 @@ let projectAfterLinkChanges: PendingProject;
 export const LinksTab = ({
   dataManager,
   projectData,
+  unmodifiedProject,
   updatePendingProject,
   setErrorLinks = () => {},
   saveProject = () => {},

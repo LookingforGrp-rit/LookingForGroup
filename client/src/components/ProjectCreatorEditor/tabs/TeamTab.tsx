@@ -21,6 +21,7 @@ import {
   JobLocation,
   JobCompensation,
   Role,
+  ProjectWithFollowers,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -70,6 +71,7 @@ let localIdIncrement = 0;
 type TeamTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
+  unmodifiedProject: ProjectWithFollowers;
   //setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
   setErrorMember: (error: string) => void;
   setErrorPosition: (error: string) => void;
@@ -97,6 +99,7 @@ type TeamTabProps = {
 export const TeamTab = ({
   dataManager,
   projectData,
+  unmodifiedProject,
   setErrorMember,
   setErrorPosition,
   /*permissions,*/

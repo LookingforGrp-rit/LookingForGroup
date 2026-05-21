@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState, useContext } from "react";
 import {
   CreateProjectImageInput,
   ProjectImage,
+  ProjectWithFollowers,
 } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
@@ -19,6 +20,7 @@ let localIdIncrement = 0;
 type MediaTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
+  unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   saveable: boolean;
@@ -52,6 +54,7 @@ const stringToFile = async (s: string) => {
 export const MediaTab = ({
   dataManager,
   projectData,
+  unmodifiedProject,
   saveProject,
   updatePendingProject,
   saveable,
