@@ -75,7 +75,7 @@ describe('getUserByEmailService', () => {
     expect(result).toBe('NOT_FOUND');
   });
 
-  it('returns INSTERNAL_ERROR when prisma throws', async () => {
+  it('returns INTERNAL_ERROR when prisma throws', async () => {
     vi.mocked(prisma.users.findFirst).mockRejectedValue(new Error('db on fire'));
 
     const result = await getUserByEmailService('boom@rit.edu');
