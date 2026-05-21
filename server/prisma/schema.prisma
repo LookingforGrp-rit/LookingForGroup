@@ -111,14 +111,14 @@ model ProjectSocials {
 
 model Projects {
   projectId         Int                 @id @default(autoincrement()) @map("project_id")
-  title             String              @db.VarChar(150)
-  hook              String              @default("") @db.VarChar(200)
+  title             String              @db.VarChar(50)
+  hook              String              @default("") @db.VarChar(300)
   description       String              @default("") @db.VarChar(2000)
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
   thumbnailId       Int?                @map("thumbnail_id") @unique
   purpose           ProjectsPurpose?
   status            ProjectsStatus      @default(Planning)
-  audience          String              @default("") @db.VarChar(300)
+  audience          String              @default("") @db.VarChar(100)
   userId            Int                 @map("user_id")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
