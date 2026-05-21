@@ -3,8 +3,8 @@ import { createContext } from 'react';
 type ThemeContextProps = {
   theme: string;
   setTheme: (theme: string) => void;
-  lightMode: string;
-  darkMode: string;
+  lightMode?: string;
+  darkMode?: string;
 };
 
 /**
