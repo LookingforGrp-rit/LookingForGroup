@@ -39,7 +39,7 @@ describe('getTagsService', () => {
 
     const result = await getTagsService();
 
-    console.log(result);
+    // console.log(result);
 
     expect(vi.mocked(prisma.tags.findMany)).toHaveBeenCalled();
     expect(vi.mocked(transformTag)).toHaveBeenCalledTimes(2);
