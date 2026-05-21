@@ -3205,6 +3205,9 @@ button#positions-popup-list-item-active {
   grid-area: overview;
   text-align: left;
   margin-top: 10px;
+
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 #project-overview-title {
@@ -3212,11 +3215,6 @@ button#positions-popup-list-item-active {
   color: var(--primary-color);
   font-weight: 600;
   margin-bottom: 20px;
-}
-
-#project-overview-text {
-  overflow-wrap: anywhere;
-  hyphens: auto;
 }
 
 .project-overview-section-header {
