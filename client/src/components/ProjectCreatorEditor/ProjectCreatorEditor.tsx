@@ -76,9 +76,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const [saveable, setSaveable] = useState(false);
 
   // Tracks whether the project was successfully saved (prevents deletion on cleanup after save)
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(true);
 
   const [confirm, setConfirm] = useState(false);
+
+  const [message, setMessage] = useState("");
 
   // Component Refs
   const exitButton = useRef(null);
@@ -86,9 +88,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // Check if the current project can be saved
   let valid = false;
-  if (modifiedProject?.title != "") {
-    if (modifiedProject?.hook != "") {
-      if (modifiedProject?.description != "") {
+  if (modifiedProject?.title != "" && modifiedProject?.title != undefined) {
+    if (modifiedProject?.hook != "" && modifiedProject?.hook != undefined) {
+      if (modifiedProject?.description != "" && modifiedProject?.description != undefined) {
         valid = true;
       }
     }
@@ -100,8 +102,38 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     setSaveable(valid);
   }
 
+  /**
+   * update the red missing fields message to show what is missing from the page
+   */
+  const updateMessage = async () => {
+    let newMessage = "";
+    if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
+    else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (modifiedProject?.tags.length == 0) newMessage = "Project is missing tags!";
+    else if (modifiedProject?.hook === "" || modifiedProject?.hook === undefined) newMessage = "Project is missing a hook!";
+    else if (modifiedProject?.description === "" || modifiedProject?.description === undefined) newMessage = "Project is missing a description!";
+
+    setMessage(newMessage);
+  }
+
+  /**
+   * faster version of updateMessage, for use with updateDisplayedProject()
+   * @param updatedPendingProject - parameter of updateDisplayedProject, using is faster than trying for modifiedProject
+   */ 
+  const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
+    let newMessage = "Project is missing hate";
+    if (updatedPendingProject?.title === "" || updatedPendingProject?.title === undefined) newMessage = "Project is missing a title!";
+    else if (updatedPendingProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (updatedPendingProject?.tags.length == 0) newMessage = "Project is missing tags!";
+    else if (updatedPendingProject?.hook === "" || updatedPendingProject?.hook === undefined) newMessage = "Project is missing a hook!";
+    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing a description!";
+    setMessage(newMessage);
+  }
+
   // Start editing the project creator
   const createOrEdit = async () => {
+    setSaved(true);
+    setConfirm(false);
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
       //redirect user to login if they aren't logged in
@@ -145,6 +177,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     if (startButton.current) {
       (startButton.current as unknown as HTMLElement).focus();
     }
+    updateMessage();
   }
 
   buttonCallback = createOrEdit;
@@ -244,6 +277,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     while (takenNames.has(`${base}(${n})`.toLowerCase())) {
       n++;
     }
+    updateMessage();
     return `${base}(${n})`;
   };
 
@@ -338,6 +372,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   const updatePendingProject = (updatedPendingProject: PendingProject) => {
     setModifiedProject(updatedPendingProject);
+    setSaved(false);
+    fastUpdateMessage(updatedPendingProject);
   }
 
   const generalTabInvalid = !modifiedProject?.title || !modifiedProject?.hook || !modifiedProject?.description;
@@ -365,7 +401,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         </PopupButton>
       )}
 
-      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={true}>
+      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
@@ -442,6 +478,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 1 ? (
               <MediaTab
@@ -452,6 +489,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 2 ? (
               <TagsTab
@@ -462,6 +500,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 3 ? (
               <TeamTab
@@ -474,6 +513,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 4 ? (
               <LinksTab
@@ -485,6 +525,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 setErrorLinks={setErrorLinks}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : (
               <></>

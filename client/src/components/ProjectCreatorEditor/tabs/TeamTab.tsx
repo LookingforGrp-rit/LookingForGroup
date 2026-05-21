@@ -80,6 +80,7 @@ type TeamTabProps = {
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   saveable : boolean;
   failCheck: boolean;
+  message: string;
 };
 
 
@@ -107,6 +108,7 @@ export const TeamTab = ({
   updatePendingProject,
   saveable,
   failCheck,
+  message,
 }: TeamTabProps) => {
   // --- Hooks ---
   // State for storing all available roles from the API.
@@ -1662,6 +1664,10 @@ export const TeamTab = ({
 
       <div id="team-save-info">
         <Popup>
+          {saveable ? "" :
+          <div id="invalid-input-error" className={"save-error-msg-general"}>
+            <p>*{message}*</p>
+          </div>}
           <PopupButton
             buttonId="project-editor-save"
             doNotClose={() => failCheck}
@@ -1682,11 +1688,6 @@ export const TeamTab = ({
             </div>
           </PopupContent>
         </Popup>
-        {!saveable && (
-          <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*Fill out all required info before saving!*</p>
-          </div>
-        )}
       </div>
     </div>
   );

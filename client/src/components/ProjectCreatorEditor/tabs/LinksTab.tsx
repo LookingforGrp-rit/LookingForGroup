@@ -20,6 +20,7 @@ type LinksTabProps = {
   saveProject?: () => void;
   saveable: boolean;
   failCheck: boolean;
+  message: string;
 }
 
 let localIdIncrement = 0;
@@ -48,6 +49,7 @@ export const LinksTab = ({
   saveProject = () => {},
   saveable,
   failCheck,
+  message,
 }: LinksTabProps) => {
 
 projectAfterLinkChanges = structuredClone(projectData);
@@ -387,6 +389,10 @@ projectAfterLinkChanges = structuredClone(projectData);
       </div>
       <div id="link-save-info">
         <Popup>
+          {saveable ? "" :
+          <div id="invalid-input-error" className={"save-error-msg-general"}>
+            <p>*{message}*</p>
+          </div>}
           <PopupButton
             buttonId="project-editor-save"
             doNotClose={() => failCheck}
@@ -407,11 +413,6 @@ projectAfterLinkChanges = structuredClone(projectData);
             </div>
           </PopupContent>
         </Popup>
-        {!saveable && (
-          <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*Fill out all required info before saving!*</p>
-          </div>
-        )}
       </div>
     </div>
   );
