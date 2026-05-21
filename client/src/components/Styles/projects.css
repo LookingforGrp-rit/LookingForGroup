@@ -1591,6 +1591,19 @@ Project page style rules
     'desc desc listing';
 }
 
+#project-tags{
+  display:none;
+  padding-top: 1rem;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+#project-info-panel {
+  max-height: 22rem;
+   overflow-y: scroll;
+   scrollbar-width: thin;
+}
+
 /*rules for the header used when a project member is viewing the page*/
 #project-info-member {
   display: grid;

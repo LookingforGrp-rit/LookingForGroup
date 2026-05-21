@@ -49,6 +49,7 @@ const Project = () => {
   const [isMember, setIsMember] = useState(false);
   const [viewedPosition, setViewedPosition] = useState(0);
 
+
   /**
    * Checks in the current user is following a project
    * @returns true if user is following the project
@@ -100,6 +101,9 @@ const Project = () => {
     };
     getProjectData();
   }, [projectID, checkFollow]);
+
+
+  
 
   //Checks to see whether or not the current user is the maker/owner of the project being displayed
   //oh do i need this too
@@ -443,6 +447,9 @@ const Project = () => {
                   </PopupContent>
                 </Popup>
               </div>
+
+
+              
               <div id="project-tags">
                 {
                   //If more tag types are usable, use commented code for cases
@@ -451,7 +458,7 @@ const Project = () => {
                     /* let category : string;
                     switch (tag.type) {
                     } */
-                    if (index < 3) {
+                    /*if (index < 3) { */
                       return (
                         <TagElement
                           type={tag.type.toLowerCase()}
@@ -460,13 +467,13 @@ const Project = () => {
                           <p>{tag.label}</p>
                         </TagElement>
                       );
-                    } else if (index === 3) {
+                   /* } else if (index === 3) {
                       return (
                         <TagElement key={index}>
                           <p>+{displayedProject.tags.length - 3}</p>
-                        </TagElement>
+                        </TagElement> 
                       );
-                    }
+                    }*/
                   })
                 }
               </div>
