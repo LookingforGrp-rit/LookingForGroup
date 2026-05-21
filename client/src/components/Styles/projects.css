@@ -326,6 +326,20 @@ Project Creator and Editor Popup style rules
   cursor: pointer;
 }
 
+#project-editor-confirm {
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  background-color: var(--primary-color) !important;
+  color: var(--invert-text);
+  font-size: 1.25rem;
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .profile-editor-save {
   margin-top: 37px;
   margin-bottom: 28px;

@@ -24,9 +24,9 @@ export const Input: React.FC<CustomInputProps> = ({
   ...props
 }) => {
 
-  
   // Keep track of value to change character count (multi-line only)
-  const [internalValue, setInternalValue] = useState('');
+  const [internalValue, setInternalValue] = useState(
+    typeof(props.value) != "undefined" ? props.value : '');
 
   // Multi-line input with character count
   if (type === 'multi') {

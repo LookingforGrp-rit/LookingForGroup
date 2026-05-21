@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getProjectTypes, getTags } from "../../../api/users";
-import { Tag, Medium, TagType} from "@looking-for-group/shared";
+import { Tag, Medium, TagType, ProjectWithFollowers} from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { PendingProject} from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
@@ -28,6 +28,7 @@ let projectAfterTagsChanges: PendingProject;
 type TagsTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
+  unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   saveable: boolean;
@@ -56,6 +57,7 @@ type TagsTabProps = {
 export const TagsTab = ({
   dataManager,
   projectData,
+  unmodifiedProject,
   saveProject,
   updatePendingProject,
   saveable,
@@ -109,6 +111,37 @@ export const TagsTab = ({
     projectAfterTagsChanges.tags = arrayMove(tags, oldIndex, newIndex);
     updatePendingProject(projectAfterTagsChanges);
   };
+
+  // Snapshot of the Medium order on load
+  const originalMediumOrder = useMemo(() => {
+    return (unmodifiedProject.mediums || []).map(m => m.mediumId);
+  }, []);
+
+  // Snapshot of the Tag order on load
+  const originalTagOrder = useMemo(() => {
+    return (unmodifiedProject.tags || []).map(t => t.tagId);
+  }, []);
+
+  // Does Mediums match in EXACT order
+  const isMediumsUnsaved = useMemo(() => {
+    const currentMediums = projectData.mediums || [];
+    
+    if (currentMediums.length !== originalMediumOrder.length) return true;
+    
+    // Checks if any element shifted index or changed
+    return currentMediums.some((m, index) => m.mediumId !== originalMediumOrder[index]);
+  }, [projectData.mediums, originalMediumOrder]);
+
+
+  // Does Tags match in EXACT order
+  const isTagsUnsaved = useMemo(() => {
+    const currentTags = projectData.tags || [];
+    
+    if (currentTags.length !== originalTagOrder.length) return true;
+    
+    // Checks if any element shifted index or changed
+    return currentTags.some((t, index) => t.tagId !== originalTagOrder[index]);
+  }, [projectData.tags, originalTagOrder]);
 
   // EFFECTS:
   // This component has several useEffect hooks that:
@@ -452,7 +485,14 @@ export const TagsTab = ({
   return (
     <div id="project-editor-tags">
       <div id="project-editor-type-tags">
-        <div className="project-editor-section-header">Medium</div>
+        <div className="project-editor-section-header">
+          Medium
+          {isMediumsUnsaved && (
+            <span className="unsaved-indicator">
+              (Unsaved)
+            </span>
+          )}
+        </div>
         {projectAfterTagsChanges.mediums.length === 0 ? (
           <div className="error">*At least 1 medium is required</div>
         ) : (
@@ -474,7 +514,13 @@ export const TagsTab = ({
       </div>
 
       <div id="project-editor-selected-tags">
-        <div className="project-editor-section-header">Selected Tags</div>
+        <div className="project-editor-section-header">Selected Tags
+          {isTagsUnsaved && (
+            <span className="unsaved-indicator">
+              (Unsaved)
+            </span>
+          )}
+        </div>
         <div className="project-editor-extra-info">
           Drag and drop to reorder. The first 2 tags will be displayed on your
           project's discover card.
