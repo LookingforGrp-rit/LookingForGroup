@@ -170,18 +170,22 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
           </div>
         </div>
         <div id="project-panel-tags">
-          {project.mediums.map((medium: ProjectMedium) => (
-            <TagElement type="medium" key={medium.mediumId}>
-              <p>{medium.label}</p>
-            </TagElement>
-          ))}
-          {project.tags?.slice(0, 3)
-            .map((tag: Tag) => {
+          {project.mediums.map((medium: ProjectMedium, index) => {
+            if (index < 2)
+            {
               return (
-                <TagElement type={tag.type.toLowerCase()} key={tag.tagId}>
-                  <p>{tag.label}</p>
+                <TagElement 
+                type="medium" key={index}>
+                  <p>{medium.label}</p>
                 </TagElement>
               );
+            } else if (index === 2) {
+              return (
+                <TagElement key={index}>
+                  <p>+{project.mediums.length - 2}</p>
+                </TagElement>
+              );
+            }
           })}
         </div>
         <div id="quote">{project.hook}</div>

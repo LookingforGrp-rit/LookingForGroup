@@ -868,27 +868,6 @@ export const TeamTab = ({
             })}
           />
         </Select>
-        <div id="edit-position-buttons">
-          <div id="edit-position-button-pair">
-            <button
-              type="button"
-              onClick={savePosition}
-              id="position-edit-save"
-            >
-              Save
-            </button>
-            <button
-              onClick={() => {
-                addPositionCallback();
-              }}
-              id="position-edit-cancel"
-              className="button-reset"
-            >
-              Cancel
-            </button>
-          </div>
-          <div className="error">{errorAddPosition}</div>
-        </div>
       </div>
 
       <div id="edit-position-description">
@@ -1098,6 +1077,27 @@ export const TeamTab = ({
               })}
             />
           </Select>
+        </div>
+        <div id="edit-position-buttons">
+          <div id="edit-position-button-pair">
+            <button
+              type="button"
+              onClick={savePosition}
+              id="position-edit-save"
+            >
+              Save
+            </button>
+            <button
+              onClick={() => {
+                addPositionCallback();
+              }}
+              id="position-edit-cancel"
+              className="button-reset"
+            >
+              Cancel
+            </button>
+          </div>
+          <div className="error">{errorAddPosition}</div>
         </div>
       </div>
     </>
