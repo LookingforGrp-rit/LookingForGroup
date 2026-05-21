@@ -1,5 +1,5 @@
 // --- Imports ---
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useMemo } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { AddProjectSocialInput, ProjectSocial, ProjectWithFollowers, Social, UserDetail } from "@looking-for-group/shared";
@@ -61,6 +61,27 @@ projectAfterLinkChanges = structuredClone(projectData);
   const [projectOwner, setProjectOwner] = useState<UserDetail | null>(null);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
+
+  // Checks if the current project socials differ in any way from the unmodified original data
+  const isLinksUnsaved = useMemo(() => {
+    const currentLinks = projectData?.projectSocials || [];
+    const originalLinks = unmodifiedProject?.projectSocials || [];
+
+    if (currentLinks.length !== originalLinks.length) return true;
+
+    // Check each link entirely
+    return currentLinks.some((current, index) => {
+      const original = originalLinks[index];
+      if (!original) 
+        return true;
+
+      return (
+        current.label !== original.label ||
+        current.url !== original.url ||
+        current.websiteId !== original.websiteId
+      );
+    });
+  }, [projectData?.projectSocials, unmodifiedProject?.projectSocials]);
 
   // Update parent state with error message
   useEffect(() => {
@@ -148,7 +169,14 @@ projectAfterLinkChanges = structuredClone(projectData);
         </div>
       )}
 
-      <div className="editor-header">Project Social Links</div>
+      <div className="editor-header">
+        Project Social Links
+        {isLinksUnsaved && (
+          <span className="unsaved-indicator">
+            (Unsaved)
+          </span>
+        )}
+      </div>
       <div className="editor-extra-info">
         Provide the links to pages you wish to include on your project page.
       </div>
