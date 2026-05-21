@@ -519,8 +519,8 @@ const Project = () => {
 
             <div id="project-people">
               <div id="project-people-tabs">
-                <div // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
-                  className={`project-people-tab ${peopleContent}`}
+                <div id="project-people-tab" // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
+                  
                 //onClick={() => setDisplayedPeople("People")} wow this button is now useless
                 >
                   The Team
