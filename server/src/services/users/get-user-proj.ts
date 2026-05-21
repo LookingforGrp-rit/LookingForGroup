@@ -25,7 +25,7 @@ export const getUserProjectsService = async (
       select: ProjectPreviewSelector,
     });
 
-    if (projects.length === 0) return 'NOT_FOUND';
+    //if (projects.length === 0) return 'NOT_FOUND';
 
     const result = projects.map(transformProjectToPreview);
 
