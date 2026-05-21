@@ -23,6 +23,11 @@ textarea {
   color: red;
 }
 
+.required-asterisk {
+  color: red;
+  margin-left: 3px;
+}
+
 .profile-edit-button {
   background-color: #271d66;
 }

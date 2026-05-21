@@ -11,6 +11,7 @@ interface LabelInputBoxProps {
   style?: React.CSSProperties;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   children?: React.ReactNode;
+  required?: boolean;
 }
 
 /**
@@ -28,43 +29,34 @@ interface LabelInputBoxProps {
  * @param children Optional custom content to render inside the container
  * @returns A JSX element wrapping the label, input (if any), and children
  */
-const LabelInputBox: React.FC<LabelInputBoxProps> = ({ label, labelInfo, inputType, maxLength, value, id, style, onChange, children }) => {
+const LabelInputBox: React.FC<LabelInputBoxProps> = ({ label, labelInfo, inputType, maxLength, value, id, style, onChange, children, required=false }) => {
 
-  // Multi-line input
-  if (inputType === 'multi') {
-    return (
-      <div className='label-input-box' id={id} style={style}>
-        <label className="input-combo-label">
-          {label}
-        </label>
-        {labelInfo && <div className="label-info">{labelInfo}</div>}
-        <Input type="multi" maxLength={maxLength} value={value} onChange={onChange} />
-        {children}
-      </div>
-    )
-  }
-
-  // No input (input likely in children)
-  if (inputType === 'none') {
-    return (
-      <div className='label-input-box' id={id} style={style}>
-        <label className="input-combo-label">
-          {label}
-        </label>
-        {labelInfo && <div className="label-info">{labelInfo}</div>}
-        {children}
-      </div>
-    )
-  }
-
-  // Single-line input (default)
   return (
     <div className='label-input-box' id={id} style={style}>
       <label className="input-combo-label">
         {label}
+        {required && (
+          <span 
+            className="required-asterisk" 
+            aria-hidden="true" 
+            title="Required"
+          >
+            *
+          </span>
+        )}
       </label>
+      
       {labelInfo && <div className="label-info">{labelInfo}</div>}
-      <Input type="single" maxLength={maxLength} value={value} onChange={onChange} />
+      
+      {inputType !== 'none' && (
+        <Input 
+          type={inputType} 
+          maxLength={maxLength} 
+          value={value} 
+          onChange={onChange}
+        />
+      )}
+      
       {children}
     </div>
   );

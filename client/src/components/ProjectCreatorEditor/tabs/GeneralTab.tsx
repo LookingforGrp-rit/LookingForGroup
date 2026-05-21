@@ -85,11 +85,12 @@ export const GeneralTab = ({
   return (
     <div id="project-editor-general">
       <LabelInputBox
-        label={"Title*"}
+        label={"Title"}
         inputType={"single"}
         maxLength={50}
         id="project-editor-title-input"
         value={projectAfterGeneralChanges.title || ""}
+        required
         onChange={(e) => {
           const title = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, title };
@@ -110,8 +111,9 @@ export const GeneralTab = ({
       />
 
       <LabelInputBox
-        label={"Status*"}
+        label={"Status"}
         inputType={"none"}
+        required
         id="project-editor-status-input"
       >
         <Select>
@@ -241,12 +243,13 @@ export const GeneralTab = ({
       />
 
       <LabelInputBox
-        label={"Short Description*"}
+        label={"Short Description"}
         labelInfo="Share a brief summary of your project. This will be displayed in your project's discover card."
         inputType={"multi"}
         id={"project-editor-description-input"}
         maxLength={300}
         value={projectAfterGeneralChanges.hook || ""}
+        required
         onChange={(e) => {
           const hook = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, hook };
@@ -267,7 +270,7 @@ export const GeneralTab = ({
       />
 
       <LabelInputBox
-        label={"About This Project*"}
+        label={"About This Project"}
         labelInfo="Use this space to go into detail about your project! Feel free to share it's
           inspirations and goals, outline key features, and describe this impact you hope it
           brings to others."
@@ -275,6 +278,7 @@ export const GeneralTab = ({
         id={"project-editor-long-description-input"}
         maxLength={2000}
         value={projectAfterGeneralChanges.description || ""}
+        required={true}
         onChange={(e) => {
           const description = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, description };
