@@ -423,6 +423,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <GeneralTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 saveable={saveable}
@@ -432,6 +433,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <MediaTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 saveable={saveable}
@@ -441,6 +443,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <TagsTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 saveable={saveable}
@@ -452,6 +455,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 setErrorMember={setErrorAddMember}
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
                 saveable={saveable}
@@ -461,6 +465,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <LinksTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 saveProject={saveProject}
                 updatePendingProject={updatePendingProject}
                 setErrorLinks={setErrorLinks}
