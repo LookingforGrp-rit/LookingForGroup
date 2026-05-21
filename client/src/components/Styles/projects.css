@@ -377,6 +377,11 @@ Project Creator and Editor Popup style rules
   background-color: var(--header-color) !important;
 }
 
+#project-info-dropdown .share-button {
+  gap: 23.85px;
+  text-align: right;
+}
+
 .share-response-popup {
   width: 100%;
   position: absolute;
