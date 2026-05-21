@@ -31,8 +31,20 @@ export const ProfileEditPopup = () => {
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
   const [unmodifiedProfile, setUnmodifiedProfile] = useState<MePrivate>();
   const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
+  const [confirm, setConfirm] = useState(false);
 
   const navigate = useNavigate();
+
+  const toggleConfirm = async () => {
+    setConfirm(!confirm);
+  }
+
+  const closeWithoutSaving = async () => {
+    setCurrentTab(0);
+    // Reset modified profile to discard any unsaved changes
+    if (unmodifiedProfile)
+      setModifiedProfile(structuredClone(unmodifiedProfile));
+  }
 
   // Profile should be set up on intialization
   useEffect(() => {
@@ -191,7 +203,22 @@ export const ProfileEditPopup = () => {
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
-      <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
+      <PopupContent profilePopup={true} callback={toggleConfirm} confirmation={true}>
+        
+        {confirm ? (
+          <PopupContent confirmation={true} useClose={false}>
+            <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
+            <div id="confirm-editor-save">
+              <PopupButton doNotClose={() => false} callback={closeWithoutSaving} buttonId="project-editor-save">
+                Confirm
+              </PopupButton>
+              <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >
+                Cancel
+              </PopupButton>
+            </div>
+          </PopupContent>
+        ) : ""}
+
         <form
           id="project-creator-editor"
           onSubmit={onSaveClicked}
