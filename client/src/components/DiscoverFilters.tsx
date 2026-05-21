@@ -171,18 +171,22 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
    */
   const toggleTag = (event: any, tag: Tag) => {
     let newActiveTags: Tag[];
-    const button = event.currentTarget;
-    button.classList.toggle('discover-tag-filter-selected');
+    
+    const discoverFilters = document.getElementsByClassName('discover-tag-filter');
+    for (let i = 0; i < discoverFilters.length; i++) {
+      discoverFilters[i].classList.remove('discover-tag-filter-selected');
+    }
 
     if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
-      newActiveTags = activeTagFilters.filter(t => t.label !== tag.label || t.type !== tag.type);
+      newActiveTags = []; 
     } else { 
-      newActiveTags = [...activeTagFilters, tag];
+      newActiveTags = [tag]; 
+      event.currentTarget.classList.add('discover-tag-filter-selected');
     }
 
     setActiveTagFilters(newActiveTags);
     updateItemList(newActiveTags);
-  };
+};
 
   /**
    * Scrolls horizontal tag list left or right.
