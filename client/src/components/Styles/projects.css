@@ -1582,6 +1582,13 @@ select.edit-position-compensation {
   font-size: 0.9375rem;
 }
 
+.delete-social-btn {
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
 /* #endregion */
 
 
