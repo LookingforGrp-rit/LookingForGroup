@@ -593,6 +593,7 @@ Filters / Tags Style Rules
   /* Required so pointer/touch drags aren't hijacked by scrolling */
   touch-action: none;
 }
+
 .tag-drag-handle:active {
   cursor: grabbing;
 }
@@ -794,37 +795,44 @@ Filters / Tags Style Rules
   }
 }
 
-.tag-red.tag-unselected:hover {
+.tag-red.tag-unselected:hover,
+.tag-button-red-unselected:hover {
   background-color: var(--tag-red-selected);
   border-color: var(--tag-red-selected);
 }
 
-.tag-orange.tag-unselected:hover {
+.tag-orange.tag-unselected:hover,
+.tag-button-orange-unselected:hover {
   background-color: var(--tag-orange-selected);
   border-color: var(--tag-orange-selected);
 }
 
-.tag-yellow.tag-unselected:hover {
+.tag-yellow.tag-unselected:hover,
+.tag-button-yellow-unselected:hover {
   background-color: var(--tag-yellow-selected);
   border-color: var(--tag-yellow-selected);
 }
 
-.tag-green.tag-unselected:hover {
+.tag-green.tag-unselected:hover,
+.tag-button-green-unselected:hover {
   background-color: var(--tag-green-selected);
   border-color: var(--tag-green-selected);
 }
 
-.tag-blue.tag-unselected:hover {
+.tag-blue.tag-unselected:hover,
+.tag-button-blue-unselected:hover {
   background-color: var(--tag-blue-selected);
   border-color: var(--tag-blue-selected);
 }
 
-.tag-purple.tag-unselected:hover {
+.tag-purple.tag-unselected:hover,
+.tag-button-purple-unselected:hover {
   background-color: var(--tag-purple-selected);
   border-color: var(--tag-purple-selected);
 }
 
-.tag-grey.tag-unselected:hover {
+.tag-grey.tag-unselected:hover,
+.tag-button-grey-unselected:hover {
   background-color: var(--tag-grey-selected);
   border-color: var(--tag-grey-selected);
 }

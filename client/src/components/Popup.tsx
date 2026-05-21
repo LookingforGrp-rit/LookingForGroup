@@ -56,6 +56,7 @@ PopupButton = ({
   callback = async () => { },
   doNotClose = () => false,
   closeParent,
+  disabled = false,
   ref = undefined,
 }: {
   children: ReactNode;
@@ -64,6 +65,7 @@ PopupButton = ({
   callback?: () => void;
   doNotClose?: () => boolean;
   closeParent?: (value : boolean) => void;
+  disabled?: boolean;
   ref?: (React.RefObject<HTMLButtonElement | null>);
 }) => {
   const { open, setOpen } = useContext(PopupContext);
@@ -82,14 +84,14 @@ PopupButton = ({
   // If button should not close the popup, just execute callback 
   if (doNotClose()) {
     return (
-      <button id={buttonId} className={className} tabIndex={0} onClick={callback} ref={ref}>
+      <button id={buttonId} className={className} tabIndex={0} onClick={callback} disabled={disabled} ref={ref}>
         {children}
       </button>
     );
   }
 
   return (
-    <button id={buttonId} className={className} tabIndex={0} onClick={toggleOpen} ref={ref}>
+    <button id={buttonId} className={className} tabIndex={0} onClick={toggleOpen} disabled={disabled} ref={ref}>
       {children}
     </button>
   );

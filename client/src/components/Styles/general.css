@@ -1096,6 +1096,7 @@ Page popup style rules
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    /*gap: min(3.87vh, 38px) min(2.51vw, 38px);*/
     gap: min(3.87vh, 38px) min(2.51vw, 38px);
     justify-content: center;
     margin: min(1.63vh, 16px) auto;
@@ -1110,8 +1111,8 @@ Page popup style rules
     transition: 0.2s;
     padding: 1px;
     /* margin: 14px 38px; */
-    width: 12%;
-    text-align: center
+    width: min(30%, 40%);
+    text-align: center;
   }
 
   .filter-tab:hover {
@@ -1119,16 +1120,14 @@ Page popup style rules
     font-weight: 600;
     transition: none;
     padding: 1px;
-    width: 12%;
-    text-align: center
+    text-align: center;
   }
 
   .filter-tab.selected {
     font-weight: 700;
     color: var(--primary-color);
     padding: 1px;
-    width: 12%;
-    text-align: center
+    text-align: center;
   }
 
   hr {
@@ -1169,6 +1168,7 @@ Page popup style rules
   }
 
   .popup #filters-popup {
+
     h2 {
       margin-top: 3.76vh;
       margin-bottom: 3.32vh;

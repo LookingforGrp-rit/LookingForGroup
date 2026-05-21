@@ -310,6 +310,13 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
 }
 
+.invalid-tab-alert {
+  color: var(--error-delete-color);
+  margin-left: 0.25rem;
+  font-size: 1.15rem;
+  line-height: 1;
+}
+
 #project-editor-save,
 #team-add-member-add-button,
 #team-edit-member-save-button {
@@ -324,6 +331,14 @@ Project Creator and Editor Popup style rules
   margin-right: auto;
   font-weight: 700;
   cursor: pointer;
+}
+
+#project-editor-save.disabled,
+#project-editor-save:disabled,
+#team-add-member-add-button:disabled,
+#team-edit-member-save-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 
 #project-editor-confirm {
@@ -375,6 +390,11 @@ Project Creator and Editor Popup style rules
 }
 .share-button:hover {
   background-color: var(--header-color) !important;
+}
+
+#project-info-dropdown .share-button {
+  gap: 23.85px;
+  text-align: right;
 }
 
 .share-response-popup {
@@ -1580,6 +1600,13 @@ select.edit-position-compensation {
   margin: auto auto auto 0px;
   text-wrap: nowrap;
   font-size: 0.9375rem;
+}
+
+.delete-social-btn {
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
 
 /* #endregion */
@@ -3193,6 +3220,9 @@ button#positions-popup-list-item-active {
   grid-area: overview;
   text-align: left;
   margin-top: 10px;
+
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 #project-overview-title {
@@ -3200,11 +3230,6 @@ button#positions-popup-list-item-active {
   color: var(--primary-color);
   font-weight: 600;
   margin-bottom: 20px;
-}
-
-#project-overview-text {
-  overflow-wrap: anywhere;
-  hyphens: auto;
 }
 
 .project-overview-section-header {
@@ -3296,11 +3321,12 @@ button#positions-popup-list-item-active {
   gap: 10px;
 }
 
-/* TODO: restore styles when "The Team" is a button again (regards Contributor functionality) */
-/* .project-people-tab:hover,
-.project-people-tab-active {
-  cursor: pointer;
-} */
+#project-people-tab {
+   font-weight: 700;
+    font-size: 1.3rem;
+    color: var(--primary-color);
+}
+
 
 #project-open-positions {
   grid-area: positions;
@@ -3665,13 +3691,14 @@ My projects page style rules
 
 .grid-card-options-button,
 #grid-card-options-button {
+  display: flex;
+  align-items: center;
   box-sizing: border-box;
-  background-color: var(--bg-color);
+  background: none;
   border: 0px;
   border-radius: 20px;
   color: var(--main-text);
-  padding: 0 10px;
-  padding-bottom: 5px;
+  padding: 5px 10px;
   margin: 0px;
   text-align: right;
   font-size: 0.75rem;
