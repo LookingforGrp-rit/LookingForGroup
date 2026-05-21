@@ -25,6 +25,7 @@ type MediaTabProps = {
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   saveable: boolean;
   failCheck: boolean;
+  message: string;
 };
 
 // Convert string to File
@@ -59,6 +60,7 @@ export const MediaTab = ({
   updatePendingProject,
   saveable,
   failCheck,
+  message,
 }: MediaTabProps) => {
 
   // An array for tracking the comparison of images and the thumbnail
@@ -494,7 +496,7 @@ export const MediaTab = ({
           </Popup>
         :
           <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*Fill out all required info before saving!*</p>
+            <p>*{message}*</p>
           </div>
         }
       </div>
