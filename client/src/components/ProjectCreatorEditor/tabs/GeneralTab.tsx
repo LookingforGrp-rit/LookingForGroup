@@ -32,7 +32,6 @@ type GeneralTabProps = {
   saveable : boolean;
   failCheck: boolean;
   message: string;
-  setMessage: () => {};
 };
 
 /**
@@ -56,7 +55,6 @@ export const GeneralTab = ({
   saveable,
   failCheck,
   message,
-  setMessage,
 }: GeneralTabProps) => {
 
   projectAfterGeneralChanges = structuredClone(projectData);
@@ -102,7 +100,6 @@ export const GeneralTab = ({
           const title = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, title };
           updatePendingProject(projectAfterGeneralChanges);
-          setMessage();
 
           if (title == "") {
             return;
@@ -161,7 +158,6 @@ export const GeneralTab = ({
                   },
                 });
               }
-              setMessage();
             }}
             options={Object.values(ProjectStatusEnums).map((option) => {
               return {
@@ -267,7 +263,6 @@ export const GeneralTab = ({
           const hook = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, hook };
           updatePendingProject(projectAfterGeneralChanges);
-          setMessage();
 
           if (hook == "") {
             return;
@@ -298,7 +293,6 @@ export const GeneralTab = ({
           const description = e.target.value;
           projectAfterGeneralChanges = { ...projectAfterGeneralChanges, description };
           updatePendingProject(projectAfterGeneralChanges);
-          setMessage();
 
           if (description == "") {
             return;

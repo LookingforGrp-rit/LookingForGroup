@@ -34,7 +34,6 @@ type TagsTabProps = {
   saveable: boolean;
   failCheck: boolean;
   message: string;
-  setMessage: () => {};
 };
 
 /**
@@ -65,7 +64,6 @@ export const TagsTab = ({
   saveable,
   failCheck,
   message,
-  setMessage,
 }: TagsTabProps) => {
 
   projectAfterTagsChanges = structuredClone(projectData);
@@ -114,7 +112,6 @@ export const TagsTab = ({
 
     projectAfterTagsChanges.tags = arrayMove(tags, oldIndex, newIndex);
     updatePendingProject(projectAfterTagsChanges);
-    setMessage();
   };
 
   // Snapshot of the Medium order on load
@@ -257,7 +254,6 @@ export const TagsTab = ({
           );
 
         updatePendingProject(projectAfterTagsChanges);
-        setMessage();
         return;
       }
 
@@ -276,7 +272,6 @@ export const TagsTab = ({
         mediumId,
       });
       updatePendingProject(projectAfterTagsChanges);
-      setMessage();
       return;
     },
     [allMediums, dataManager, updatePendingProject]
@@ -303,7 +298,6 @@ export const TagsTab = ({
         );
 
         updatePendingProject(projectAfterTagsChanges);
-        setMessage();
         return;
       }
 
@@ -322,7 +316,6 @@ export const TagsTab = ({
         tagId,
       });
       updatePendingProject(projectAfterTagsChanges);
-      setMessage();
       return;
     },
     [allTags, dataManager, updatePendingProject]

@@ -89,34 +89,45 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // Check if the current project can be saved
   let valid = false;
-  let newMessage = "";
-  if (modifiedProject?.title != "") {
-    if (modifiedProject?.hook != "") {
-      if (modifiedProject?.description != "") {
+  if (modifiedProject?.title != "" && modifiedProject?.title != undefined) {
+    if (modifiedProject?.hook != "" && modifiedProject?.hook != undefined) {
+      if (modifiedProject?.description != "" && modifiedProject?.description != undefined) {
         valid = true;
       }
-      else {
-        newMessage = "Project is missing a description!";
-      }
     }
-    else {
-      newMessage = "Project is missing a hook!";
-    }
-  }
-  else {
-    newMessage = "Project is missing a title!";
   }
   if (modifiedProject?.tags.length == 0 || modifiedProject?.mediums.length == 0) {
     valid = false;
-  }
-  else {
-    newMessage = "Project is missing tag(s)!";
   }
   if (valid != saveable) {
     setSaveable(valid);
   }
 
+  /**
+   * update the red missing fields message to show what is missing from the page
+   */
   const updateMessage = async () => {
+    let newMessage = "Project is missing hate";
+    if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
+    else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (modifiedProject?.tags.length == 0) newMessage = "Project is missing tags!";
+    else if (modifiedProject?.hook === "" || modifiedProject?.hook === undefined) newMessage = "Project is missing a hook!";
+    else if (modifiedProject?.description === "" || modifiedProject?.description === undefined) newMessage = "Project is missing a description!";
+
+    setMessage(newMessage);
+  }
+
+  /**
+   * faster version of updateMessage, for use with updateDisplayedProject()
+   * @param updatedPendingProject - parameter of updateDisplayedProject, using is faster than trying for modifiedProject
+   */ 
+  const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
+    let newMessage = "Project is missing hate";
+    if (updatedPendingProject?.title === "" || updatedPendingProject?.title === undefined) newMessage = "Project is missing a title!";
+    else if (updatedPendingProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (updatedPendingProject?.tags.length == 0) newMessage = "Project is missing tags!";
+    else if (updatedPendingProject?.hook === "" || updatedPendingProject?.hook === undefined) newMessage = "Project is missing a hook!";
+    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing a description!";
     setMessage(newMessage);
   }
 
@@ -167,6 +178,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     if (startButton.current) {
       (startButton.current as unknown as HTMLElement).focus();
     }
+    updateMessage();
   }
 
   buttonCallback = createOrEdit;
@@ -266,6 +278,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     while (takenNames.has(`${base}(${n})`.toLowerCase())) {
       n++;
     }
+    updateMessage();
     return `${base}(${n})`;
   };
 
@@ -363,6 +376,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const updatePendingProject = (updatedPendingProject: PendingProject) => {
     setModifiedProject(updatedPendingProject);
     setSaved(false);
+    fastUpdateMessage(updatedPendingProject);
   }
   
   return (
@@ -463,7 +477,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 saveable={saveable}
                 failCheck={failCheck}
                 message={message}
-                setMessage={updateMessage}
               />
             ) : currentTab === 1 ? (
               <MediaTab
@@ -486,7 +499,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 saveable={saveable}
                 failCheck={failCheck}
                 message={message}
-                setMessage={updateMessage}
               />
             ) : currentTab === 3 ? (
               <TeamTab
