@@ -80,6 +80,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   const [confirm, setConfirm] = useState(false);
 
+  const [message, setMessage] = useState("");
+
   // Component Refs
   const exitButton = useRef(null);
   const startButton = useRef(null);
@@ -104,7 +106,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
    * update the red missing fields message to show what is missing from the page
    */
   const updateMessage = async () => {
-    let newMessage = "Project is missing hate";
+    let newMessage = "";
     if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
     else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
     else if (modifiedProject?.tags.length == 0) newMessage = "Project is missing tags!";

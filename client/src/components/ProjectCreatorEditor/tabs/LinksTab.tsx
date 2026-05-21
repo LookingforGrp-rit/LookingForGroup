@@ -389,6 +389,10 @@ projectAfterLinkChanges = structuredClone(projectData);
       </div>
       <div id="link-save-info">
         <Popup>
+          {saveable ? "" :
+          <div id="invalid-input-error" className={"save-error-msg-general"}>
+            <p>*{message}*</p>
+          </div>}
           <PopupButton
             buttonId="project-editor-save"
             doNotClose={() => failCheck}
@@ -409,11 +413,6 @@ projectAfterLinkChanges = structuredClone(projectData);
             </div>
           </PopupContent>
         </Popup>
-        {!saveable && (
-          <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*{message}*</p>
-          </div>
-        )}
       </div>
     </div>
   );

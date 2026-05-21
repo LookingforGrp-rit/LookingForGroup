@@ -475,6 +475,10 @@ export const MediaTab = ({
       {/* Save button */}
       <div id="general-save-info">
         <Popup>
+          {saveable ? "" :
+          <div id="invalid-input-error" className={"save-error-msg-general"}>
+            <p>*{message}*</p>
+          </div>}
           <PopupButton
             buttonId="project-editor-save"
             doNotClose={() => failCheck}
@@ -495,11 +499,6 @@ export const MediaTab = ({
             </div>
           </PopupContent>
         </Popup>
-        {!saveable && (
-          <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*{message}*</p>
-          </div>
-        )}
       </div>
     </div>
   );
