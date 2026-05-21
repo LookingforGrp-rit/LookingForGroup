@@ -1,5 +1,5 @@
 // Utilities and React functions
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 
 import { getCurrentAccount } from "../../api/users";
 import * as paths from '../../constants/routes';
@@ -33,14 +33,27 @@ export const ProfileEditPopup = () => {
   const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
   const [confirm, setConfirm] = useState(false);
 
+  const isOpening = useRef(true);
   const navigate = useNavigate();
 
-  const toggleConfirm = async () => {
-    setConfirm(!confirm);
-  }
+  const handlePopupCallback = () => {
+    if (isOpening.current) {
+      // Popup is opening. Ignore the confirm
+      setCurrentTab(0);
+      isOpening.current = false;
+    } else {
+      // Popup is closing. Show the confirm dialog
+      setConfirm(true);
+    }
+  };
+
+  const cancelConfirm = () => setConfirm(false);
 
   const closeWithoutSaving = async () => {
     setCurrentTab(0);
+    setConfirm(false);
+    isOpening.current = true;
+
     // Reset modified profile to discard any unsaved changes
     if (unmodifiedProfile)
       setModifiedProfile(structuredClone(unmodifiedProfile));
@@ -203,7 +216,7 @@ export const ProfileEditPopup = () => {
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
-      <PopupContent profilePopup={true} callback={toggleConfirm} confirmation={true}>
+      <PopupContent profilePopup={true} callback={handlePopupCallback} confirmation={true}>
         
         {confirm ? (
           <PopupContent confirmation={true} useClose={false}>
@@ -212,7 +225,7 @@ export const ProfileEditPopup = () => {
               <PopupButton doNotClose={() => false} callback={closeWithoutSaving} buttonId="project-editor-save">
                 Confirm
               </PopupButton>
-              <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >
+              <PopupButton doNotClose={() => true} callback={cancelConfirm} buttonId="team-edit-member-cancel-button" >
                 Cancel
               </PopupButton>
             </div>
