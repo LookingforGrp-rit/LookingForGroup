@@ -61,6 +61,20 @@ export const LinksTab: React.FC<LinksTabProps> = ({
     getAllSocials();
   }, []);
 
+  const handleDeleteSocial = (index: number) => {
+    const targetSocial = (profile.socials || [])[index];
+    if (!targetSocial) return;
+
+    if (!("localId" in targetSocial)) {
+      dataManager.deleteSocial({
+        id: { type: 'canon', value: targetSocial.websiteId },
+        data: null
+      });
+    }
+
+    const filteredSocials = (profile.socials || []).filter((_, i) => i !== index);
+    updatePendingProfile({ ...profile, socials: filteredSocials });
+  };
 
   // Otherwise render the editable profile socials UI
   return (
@@ -164,7 +178,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
               /* (this is a temporary fix because it would've crashed otherwise)*/}
               <div id="base-url">{BaseSocialUrl[social.label as keyof typeof BaseSocialUrl]}</div>
               <Input
-                type={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "link" : "single"}
+                type="single"
                 placeholder={BaseSocialUrl[social.label as keyof typeof BaseSocialUrl] === '' || !social.label ? "URL" : 'Username'}
                 value={social.url && social.label ? social.url.substring(BaseSocialUrl[social.label as keyof typeof BaseSocialUrl].length) : ''}
                 onChange={(e) => {
@@ -217,6 +231,14 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                 }
               }}
               />
+              <button 
+                type="button" 
+                className="delete-social-btn" 
+                onClick={() => handleDeleteSocial(index)}
+                title="Remove social link"
+              >
+                <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+            </button>
             </div>
           ))}
         <div id="add-link-container">
