@@ -25,7 +25,8 @@ export const getUserProjectsService = async (
       select: ProjectPreviewSelector,
     });
 
-    if (projects.length === 0) return 'NOT_FOUND';
+    //So invisible projects don't throw a 404
+    if (projects.length === 0) return [];
 
     const result = projects.map(transformProjectToPreview);
 

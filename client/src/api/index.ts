@@ -25,6 +25,7 @@ export const GET = async (apiURL: string): Promise<ApiResponse> => {
         : `?devId=${import.meta.env.VITE_DEV_ID}`;
     }
 
+    //404 when all projects are set to invisible
     const response = await fetch(url, {
       method: "GET",
       credentials: "include",

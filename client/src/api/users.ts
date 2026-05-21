@@ -61,9 +61,9 @@ export const getCurrentUsername = async (): Promise<UsernameResponse> => {
     data:
       response.status === 200
         ? {
-            userId: (response.data as MePrivate).userId,
-            username: (response.data as MePrivate).username,
-          }
+          userId: (response.data as MePrivate).userId,
+          username: (response.data as MePrivate).username,
+        }
         : undefined,
     error: response.error,
   };
@@ -271,7 +271,7 @@ export const updateProjectVisibility = async (
   });
 
   // if (response.error)
-    //console.log(`Error in updateProjectVisibility: ${response.error}`);
+  //console.log(`Error in updateProjectVisibility: ${response.error}`);
   //console.log(response);
   return response as ApiResponse<MyMember>;
 };
