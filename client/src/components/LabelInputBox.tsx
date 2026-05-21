@@ -13,6 +13,7 @@ interface LabelInputBoxProps {
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   children?: React.ReactNode;
   required?: boolean;
+  forceUnsaved?: boolean;
 }
 
 /**
@@ -30,6 +31,7 @@ interface LabelInputBoxProps {
  * @param onChange Optional change handler for input events
  * @param children Optional custom content to render inside the container
  * @param required Optional boolean to render a red asterisk next to the title
+ * @param forceUnsaved Optional boolean to force the title to read "(Unsaved)"
  * @returns A JSX element wrapping the label, input (if any), and children
  */
 const LabelInputBox: React.FC<LabelInputBoxProps> = ({ 
@@ -44,9 +46,10 @@ const LabelInputBox: React.FC<LabelInputBoxProps> = ({
   onChange, 
   children, 
   required=false, 
+  forceUnsaved=false
 }) => {
   // If the value is different than the start value
-  const showUnsaved = value !== initialValue;
+  const showUnsaved = forceUnsaved || value !== initialValue;
 
   return (
     <div className='label-input-box' id={id} style={style}>

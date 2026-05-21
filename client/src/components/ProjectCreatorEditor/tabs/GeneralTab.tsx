@@ -116,6 +116,7 @@ export const GeneralTab = ({
       <LabelInputBox
         label={"Status"}
         inputType={"none"}
+        forceUnsaved={unmodifiedProject.status !== projectAfterGeneralChanges.status}
         required
         id="project-editor-status-input"
       >
@@ -170,6 +171,7 @@ export const GeneralTab = ({
       <LabelInputBox
         label={"Purpose"}
         inputType={"none"}
+        forceUnsaved={unmodifiedProject.purpose !== projectAfterGeneralChanges.purpose}
         id="project-editor-purpose-input"
       >
         <Select>
