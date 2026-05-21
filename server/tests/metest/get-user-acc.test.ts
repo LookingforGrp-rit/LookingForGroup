@@ -124,7 +124,7 @@ describe('getUserByIdService', () => {
 
     const result = await getUserAccountService(1);
 
-    console.log(result);
+    // console.log(result);
 
     const calls = vi.mocked(prisma.users.findUnique).mock.calls;
     const [args] = calls[0];
