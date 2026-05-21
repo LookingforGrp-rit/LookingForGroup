@@ -584,6 +584,19 @@ Filters / Tags Style Rules
   }
 }
 
+/* Drag handle button for sortable selected tags */
+.tag-drag-handle {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  cursor: grab;
+  /* Required so pointer/touch drags aren't hijacked by scrolling */
+  touch-action: none;
+}
+.tag-drag-handle:active {
+  cursor: grabbing;
+}
+
 .tag-button {
   display: flex;
   flex-direction: row;
