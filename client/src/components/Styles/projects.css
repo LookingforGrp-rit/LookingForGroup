@@ -2837,6 +2837,8 @@ Project Carousel style rules
 
 #project-hook {
   flex-grow: 1;
+  overflow-wrap: anywhere;
+  hyphens: manual;
 }
 
 #project-status {
@@ -3188,7 +3190,7 @@ button#positions-popup-list-item-active {
 }
 
 #project-overview-text {
-  word-break: break-word;
+  overflow-wrap: anywhere;
   hyphens: auto;
 }
 
