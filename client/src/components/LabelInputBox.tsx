@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Input } from './Input';
 
 interface LabelInputBoxProps {
@@ -12,6 +12,7 @@ interface LabelInputBoxProps {
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   children?: React.ReactNode;
   required?: boolean;
+  isUnsaved?: boolean;
 }
 
 /**
@@ -27,9 +28,22 @@ interface LabelInputBoxProps {
  * @param style Optional CSS styles applied to the container div
  * @param onChange Optional change handler for input events
  * @param children Optional custom content to render inside the container
+ * @param required Optional boolean to render a red asterisk next to the title
+ * @param isUnsaved Optional boolean to force the title to display "(Unsaved)"
  * @returns A JSX element wrapping the label, input (if any), and children
  */
-const LabelInputBox: React.FC<LabelInputBoxProps> = ({ label, labelInfo, inputType, maxLength, value, id, style, onChange, children, required=false }) => {
+const LabelInputBox: React.FC<LabelInputBoxProps> = ({ label, labelInfo, inputType, maxLength, value, id, style, onChange, children, required=false, isUnsaved: manualIsUnsaved }) => {
+  const [initialValue, setInitialValue] = useState(value);
+
+  // Make sure there is an initial value
+  useEffect(() => {
+    if (initialValue === undefined && value !== undefined) {
+      setInitialValue(value);
+    }
+  }, [value, initialValue]);
+
+  // If the props manually tell it the text is unsaved, or if the value is different than the start value
+  const showUnsaved = manualIsUnsaved || (value !== undefined && value !== initialValue);
 
   return (
     <div className='label-input-box' id={id} style={style}>
@@ -42,6 +56,11 @@ const LabelInputBox: React.FC<LabelInputBoxProps> = ({ label, labelInfo, inputTy
             title="Required"
           >
             *
+          </span>
+        )}
+        {showUnsaved && (
+          <span className="unsaved-indicator">
+            (Unsaved)
           </span>
         )}
       </label>
