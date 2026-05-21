@@ -1013,11 +1013,6 @@ export interface ProjectDetail extends ProjectPreview {
   audience: string;
 
   /**
-   * The tags attached to the project
-   */
-  tags: Tag[];
-
-  /**
    * The images attached to the project
    */
   projectImages: ProjectImage[];
@@ -1061,6 +1056,11 @@ export interface ProjectPreview {
    * The project title
    */
   title: string;
+  
+  /**
+   * The tags attached to the project
+   */
+  tags: Tag[];
 
   /**
    * A hook to catch attention to the project
