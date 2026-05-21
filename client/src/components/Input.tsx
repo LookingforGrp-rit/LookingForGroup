@@ -56,30 +56,6 @@ export const Input: React.FC<CustomInputProps> = ({
     );
   }
 
-  // Link input with remove button
-  if (type === 'link') {
-    return (
-      <div className="input-link-wrapper">
-        <input
-          type="url"
-          placeholder="URL"
-          className="input"
-          onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
-          {...props}
-        />
-        <button
-          className='input-link-remove'
-          title="Remove link"
-          onClick={(e) => {
-            onClick?.(e);
-          }}
-        >
-          <i className="fa-solid fa-minus"></i>
-        </button>
-      </div>
-    )
-  }
-
   // Standard Input (single line)
   return (
     <input
