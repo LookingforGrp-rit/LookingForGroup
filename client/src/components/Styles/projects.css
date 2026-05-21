@@ -371,7 +371,8 @@ Project Creator and Editor Popup style rules
   right: 0;
 
   padding: 6px 0;
-  background-color: #000000aa;
+  background-color: var(--shadow-color);
+  color: var(--main-text);
   border-radius: 10px;
   text-align: center;
 }
