@@ -79,7 +79,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const [saveable, setSaveable] = useState(false);
 
   // Tracks whether the project was successfully saved (prevents deletion on cleanup after save)
-  const [saved, setSaved] = useState(false);
+  const [saved, setSaved] = useState(true);
 
   const [confirm, setConfirm] = useState(false);
 
@@ -105,6 +105,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   // Start editing the project creator
   const createOrEdit = async () => {
+    setSaved(true);
+    setConfirm(false);
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
       //redirect user to login if they aren't logged in
@@ -343,6 +345,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   const updatePendingProject = (updatedPendingProject: PendingProject) => {
     setModifiedProject(updatedPendingProject);
+    setSaved(false);
   }
   
   return (
@@ -365,7 +368,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         </PopupButton>
       )}
 
-      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={true}>
+      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
