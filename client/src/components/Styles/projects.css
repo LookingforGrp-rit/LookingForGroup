@@ -331,6 +331,7 @@ Project Creator and Editor Popup style rules
   margin-right: auto;
   font-weight: 700;
   cursor: pointer;
+  margin-top: -1%;
 }
 
 #project-editor-save.disabled,
@@ -422,7 +423,7 @@ Project Creator and Editor Popup style rules
 .save-error-msg p,
 .save-error-msg-general p,
 #invalid-input-error p {
-  margin: 0 0 1.5% 0;
+  margin: -13% 0 0 0;
   font-size: 1.125rem;
   color: red;
 }
