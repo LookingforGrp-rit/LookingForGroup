@@ -1,5 +1,5 @@
 // Utilities and React functions
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 
 import { getCurrentAccount } from "../../api/users";
 import * as paths from '../../constants/routes';
@@ -18,21 +18,22 @@ import { PendingUserProfile } from "../../../types/types";
 
 // The profile to view is independent upon the site's state changes
 const pageTabs = ["About", "Projects", "Skills", "Links"];
-let dataManager: Awaited<ReturnType<typeof userDataManager>>;
+//const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
 
 /**
  * Profile Edit button. Handles changing tabs.
  * @returns JSX Element
  */
 export const ProfileEditPopup = () => {
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState(5);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
+  const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
+
   const navigate = useNavigate();
 
-
   // Profile should be set up on intialization
-  useMemo(() => {
+  useEffect(() => {
     const setUpProfileData = async () => {
       // Pick which socials to use based on type
       // fetch for profile on ID
@@ -44,7 +45,9 @@ export const ProfileEditPopup = () => {
       }
 
       setModifiedProfile(structuredClone(getUser.data));
-      dataManager = await userDataManager();
+
+      const manager = await userDataManager();
+      setDataManager(manager);
 
       // console.log("ProfileEditPopup - Raw API response:", response.data);
       // console.log("ProfileEditPopup - User profile data:", response.data);
@@ -61,6 +64,7 @@ export const ProfileEditPopup = () => {
     e.preventDefault(); // prevents any default calls
 
     try {
+      if(!dataManager) return;
       await dataManager.saveChanges();
       setErrorVisible(false);
     } catch (e) {
@@ -73,7 +77,7 @@ export const ProfileEditPopup = () => {
   };
 
 
-  useMemo(() => {
+  useEffect(() => {
     setTimeout(() => {
       // Initialize all tabs to be hidden except the first one
       pageTabs.forEach((tab, idx) => {
@@ -97,7 +101,7 @@ export const ProfileEditPopup = () => {
     }
   }, []);
 
-  const checkValidData = (pendingProfile : PendingUserProfile) : boolean => {
+  const checkValidData = (pendingProfile: PendingUserProfile): boolean => {
     if (!pendingProfile) return false;
 
     if (pendingProfile.firstName == "") {
@@ -108,21 +112,22 @@ export const ProfileEditPopup = () => {
       return false;
     }
 
-    if (pendingProfile.bio == "") {
-      return false;
-    }
+    //Made bio optional because it is not required when making account
+    // if (pendingProfile.bio == "") {
+    //   return false;
+    // }
 
     return true;
   }
 
-  const validData = checkValidData(modifiedProfile as PendingUserProfile);
+  const validData = modifiedProfile? checkValidData(modifiedProfile as PendingUserProfile): false;
 
   /**
    * Component to organize the main tab content and handle switching tabs.
    * @returns JSX Element of the appropriate tab.
    */
   const renderTabContent = () => {
-    if (!modifiedProfile) return <p>Loading...</p>;
+    if (!dataManager || !modifiedProfile) return <p>Loading...</p>;
     switch (currentTab) {
       case 0:
         return (
