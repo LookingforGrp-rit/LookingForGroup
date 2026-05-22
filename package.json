@@ -45,6 +45,7 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "balanced-match": "^4.0.4",
+    "eslint": "^9.39.4",
     "tsx": "^4.20.5"
   }
 }
