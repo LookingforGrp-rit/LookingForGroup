@@ -2968,7 +2968,7 @@ Project Carousel style rules
 #positions-popup-header {
   grid-area: header;
   text-align: center;
-  font-size: 1.45rem;
+  font-size: 3rem;
   font-weight: 700;
   margin: auto;
   padding: 10px 20px;
