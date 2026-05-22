@@ -77,10 +77,11 @@ COPY ./server/docker_setup ./setup_conf
 #
 ####### END MARIADB / MYSQL ######
 
-RUN --mount=type=secret,id=DB_USER,env=DB_USER
-RUN --mount=type=secret,id=DB_PASS,env=DB_PASS
-RUN --mount=type=secret,id=DB_HOST,env=DB_HOST
-RUN --mount=type=secret,id=DB_PORT,env=DB_PORT
+#Does not work for railway
+#RUN --mount=type=secret,id=DB_USER,env=DB_USER
+#RUN --mount=type=secret,id=DB_PASS,env=DB_PASS
+#RUN --mount=type=secret,id=DB_HOST,env=DB_HOST
+#RUN --mount=type=secret,id=DB_PORT,env=DB_PORT
 
 
 ENV NODE_ENV=production
