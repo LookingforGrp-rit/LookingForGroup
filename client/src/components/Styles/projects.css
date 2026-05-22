@@ -1335,7 +1335,7 @@ Project Creator and Editor Popup style rules
   width: 100%;
 }
 
-@media only screen {
+@media only screen and (max-width: 576px) {
   #project-team-open-positions-popup {
     flex-direction: column;
   }
@@ -1451,6 +1451,12 @@ Project Creator and Editor Popup style rules
   align-content: center;
   gap: 10px;
   align-self: stretch;
+}
+
+#edit-position-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #edit-position-button-pair {
@@ -3085,7 +3091,7 @@ button#positions-popup-list-item-active {
   box-sizing: border-box;
 }
 
-@media only screen {
+@media only screen and (max-width: 576px) {
 
   #project-open-positions-popup {
     overflow-y: auto;
