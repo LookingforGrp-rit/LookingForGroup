@@ -295,6 +295,7 @@ Image carousel style rules
   border-radius: 0px 10px 10px 0px;
   padding: 23px min(26px, calc(100vw * (26 / 1512)));
   width: 42.8%;
+  overflow-wrap: break-word;
 
   h2 {
     margin: 0 0 20px;
