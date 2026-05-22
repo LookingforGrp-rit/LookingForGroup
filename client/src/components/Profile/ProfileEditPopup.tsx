@@ -162,26 +162,27 @@ export const ProfileEditPopup = () => {
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
       <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
+        <div id="project-creator-editor">
+          <div id="project-editor-tabs">{editorTabs}</div>
+          <div id="project-editor-content">{renderTabContent()}</div>
+          <form
+            id="project-creator-editor"
+            onSubmit={onSaveClicked}
+            encType="multipart/form-data">
+            <input
+              type="submit"
+              id="project-editor-save"
+              className={"profile-editor-save " + (validData ? "" : "hidden")}
+              value="Save Changes"
+            />
+          </form>
 
-        <div id="project-editor-tabs">{editorTabs}</div>
-        <div id="project-editor-content">{renderTabContent()}</div>
-        <form
-          id="project-creator-editor"
-          onSubmit={onSaveClicked}
-          encType="multipart/form-data"
-        >
-          <input
-          type="submit"
-          id="project-editor-save"
-          className={"profile-editor-save " + (validData ? "" : "hidden")}
-          value="Save Changes"
-        />
           {errorVisible && (
             <div id="invalid-input-error" className="error-message">
               <p>*Fill out all required fields before saving!*</p>
             </div>
           )}
-        </form>
+        </div>
       </PopupContent>
     </Popup>
   );
