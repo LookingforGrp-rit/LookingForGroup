@@ -591,7 +591,7 @@ Sidebar Nav style rules
   /*background-color: var(--primary-blue);*/
 }
 
-.containerButtonSideBar button {
+.containerButtonSideBar>button {
   color: var(--main-text);
   width: 194px;
   height: 55px;
@@ -614,12 +614,14 @@ Sidebar Nav style rules
   }
 }
 
-.containerButtonSideBar button:hover {
+.containerButtonSideBar>button:hover {
   transition-duration: 0.25s;
   background-color: var(--invert-text);
 }
 
-.containerButtonSideBar button.active {
+
+
+.containerButtonSideBar>button.active {
   background-color: var(--primary-color);
   transition: 0.25s;
   font-weight: bold;
@@ -764,31 +766,34 @@ Sidebar Nav style rules
     display: flex;
     flex-direction: row;
     /* cursor: pointer; */
-    gap: 20px;
+    gap: 10px;
     align-items: center;
     justify-content: space-evenly;
     height: 80px;
     background-color: var(--header-color);
   }
 
-  .containerButtonSideBar button {
-    width: 20vw;
+  .containerButtonSideBar>button,
+  /*mobile view btn*/
+  .containerButtonSideBar .my-projects-create-btn {
+    width: 15vw;
     height: 45px;
     margin: 0 5px 20px 5px;
-    padding-left: calc((100vw - 160px) / 10);
-    padding-right: auto;
+    padding-left: calc((100vw - 160px) / 14);
+    padding-right: calc((100vw - 160px) / 14);
   }
 
-  .containerButtonSideBar button:hover {
+  .containerButtonSideBar>button:hover {
     transition-duration: 0.25s;
-    background-color: var(--invert-text);
+    color: var(--primary-color);
   }
 
-  .containerButtonSideBar button.active {
+  .containerButtonSideBar>button.active {
     background-color: var(--primary-color);
     transition: 0.25s;
     font-weight: bold;
     color: var(--invert-text);
+
 
     img {
       filter: invert(1);
