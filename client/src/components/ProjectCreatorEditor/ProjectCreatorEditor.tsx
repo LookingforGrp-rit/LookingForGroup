@@ -401,7 +401,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         </PopupButton>
       )}
 
-      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
+      <PopupContent callback={saved ? toggleConfirm : closeWithoutSaving} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
