@@ -46,3 +46,9 @@
     padding-bottom: 60px;
   }
 }
+.about-container, 
+.about-section {
+    background-color: transparent;
+    box-shadow: none !important;
+    background-image: none !important;
+}
