@@ -15,7 +15,7 @@ import {
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 
-const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills"];
+const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
 
 interface SkillsTabProps {
   profile: PendingUserProfile;
@@ -70,6 +70,8 @@ export const SkillsTab = ({
         return [{ data: allSkills.filter((s) => s.type === "Designer") }];
       case 2:
         return [{ data: allSkills.filter((s) => s.type === "Soft") }];
+      case 3:
+        return [{ data: allSkills.filter((s) => s.type === "Audio") }];
       default:
         return [{ data: [] }];
     }
