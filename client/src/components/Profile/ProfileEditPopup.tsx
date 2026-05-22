@@ -98,8 +98,10 @@ export const ProfileEditPopup = () => {
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevents any default calls
 
+    console.log('onSaveClicked');
+
     try {
-      if(!dataManager) return;
+      if (!dataManager) return;
       await dataManager.saveChanges();
       setErrorVisible(false);
     } catch (e) {
@@ -110,31 +112,6 @@ export const ProfileEditPopup = () => {
     navigate(`${paths.routes.PROFILE}?userID=${modifiedProfile?.userId}`);
     window.location.reload();
   };
-
-
-  useEffect(() => {
-    setTimeout(() => {
-      // Initialize all tabs to be hidden except the first one
-      pageTabs.forEach((tab, idx) => {
-        const tabElement = document.querySelector(
-          `#profile-editor-${tab.toLowerCase()}`
-        );
-        if (tabElement) {
-          if (idx === 0) {
-            tabElement.classList.remove("hidden");
-          } else {
-            tabElement.classList.add("hidden");
-          }
-        }
-      });
-    });
-
-    // Highlight the first tab button
-    const firstTab = document.querySelector(`#profile-tab-${pageTabs[0]}`);
-    if (firstTab) {
-      firstTab.classList.add("project-editor-tab-active");
-    }
-  }, []);
 
   const checkValidData = (pendingProfile: PendingUserProfile): boolean => {
     if (!pendingProfile) return false;
@@ -155,7 +132,7 @@ export const ProfileEditPopup = () => {
     return true;
   }
 
-  const validData = modifiedProfile? checkValidData(modifiedProfile as PendingUserProfile): false;
+  const validData = modifiedProfile ? checkValidData(modifiedProfile as PendingUserProfile) : false;
 
   /**
    * Component to organize the main tab content and handle switching tabs.
@@ -223,41 +200,28 @@ export const ProfileEditPopup = () => {
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
-      <PopupContent profilePopup={true} callback={handlePopupCallback} confirmation={!saved}>
-        
-        {confirm ? (
-          <PopupContent confirmation={true} useClose={false}>
-            <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
-            <div id="confirm-editor-save">
-              <PopupButton doNotClose={() => false} callback={closeWithoutSaving} buttonId="project-editor-save">
-                Confirm
-              </PopupButton>
-              <PopupButton doNotClose={() => true} callback={cancelConfirm} buttonId="team-edit-member-cancel-button" >
-                Cancel
-              </PopupButton>
-            </div>
-          </PopupContent>
-        ) : ""}
-
-        <form
-          id="project-creator-editor"
-          onSubmit={onSaveClicked}
-          encType="multipart/form-data"
-        >
+      <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
+        <div id="project-creator-editor">
           <div id="project-editor-tabs">{editorTabs}</div>
           <div id="project-editor-content">{renderTabContent()}</div>
-          <input
-            type="submit"
-            id="project-editor-save"
-            className={"profile-editor-save " + (validData ? "" : "hidden")}
-            value="Save Changes"
-          />
+          <form
+            id="project-creator-editor"
+            onSubmit={onSaveClicked}
+            encType="multipart/form-data">
+            <input
+              type="submit"
+              id="project-editor-save"
+              className={"profile-editor-save " + (validData ? "" : "hidden")}
+              value="Save Changes"
+            />
+          </form>
+
           {errorVisible && (
             <div id="invalid-input-error" className="error-message">
               <p>*Fill out all required fields before saving!*</p>
             </div>
           )}
-        </form>
+        </div>
       </PopupContent>
     </Popup>
   );

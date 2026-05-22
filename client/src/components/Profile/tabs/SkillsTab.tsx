@@ -7,11 +7,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
-import {
-  MePrivate,
-  MySkill,
-  Skill,
-} from "@looking-for-group/shared";
+import { MySkill, Skill } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 
@@ -85,85 +81,13 @@ export const SkillsTab = ({
    * Finds if a skill is present on the project
    * @returns string of status: "selected" or "unselected."
    */
-  const isSkillSelected = useCallback(
-    (id: number) => {
-      const skills: MySkill[] = profile.skills;
+  const isSkillSelected = (id: number) => {
+    const skills: MySkill[] = profile.skills;
 
-      if (skills.some((skill) => skill.skillId === id)) return "selected";
-      return "unselected";
-    },
-    [profile]
-  );
+    if (skills.some((skill) => skill.skillId === id)) return "selected";
+    return "unselected";
+  }
 
-  // TODO delete this function
-  // const handleSkillSelect = useCallback(
-  //   (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-  //     // prevent page from immediately re-rendering
-
-  //     // trim whitespace to get skill name
-  //     // take closest button to allow click on icon
-  //     const button = e.currentTarget;
-  //     const skill: string = button.innerText.trim();
-
-  //     // if skill is unselected
-  //     if (button.className.includes("unselected")) {
-  //       // get skill id and type according to type of skill
-  //       let id: number = -1;
-  //       let type: SkillType = "Developer";
-
-  //       if (button.className.includes("yellow")) {
-  //         // developer skills
-  //         id =
-  //           allSkills.find((s) => s.type === "Developer" && s.label === skill)
-  //             ?.skillId ?? -1;
-  //         type = "Developer";
-  //       } else if (button.className.includes("red")) {
-  //         // designer skills
-  //         id =
-  //           allSkills.find((s) => s.type === "Designer" && s.label === skill)
-  //             ?.skillId ?? -1;
-  //         type = "Designer";
-  //       } else if (button.className.includes("purple")) {
-  //         // soft skills
-  //         id =
-  //           allSkills.find((s) => s.type === "Soft" && s.label === skill)
-  //             ?.skillId ?? -1;
-  //         type = "Soft";
-  //       }
-
-  //       // error check: no skill found
-  //       if (id === -1) {
-  //         return;
-  //       }
-  //       //we have to implement proficiency
-
-  //       // Update selected skills with new ones
-  //       setProfile((prev) => ({
-  //         ...prev,
-  //         skills: [
-  //           ...(prev.skills ?? []),
-  //           {
-  //             skillId: id,
-  //             type: type,
-  //             label: skill,
-  //             position: 0, //this isn't over, position parameter.
-  //             proficiency: "Novice" as SkillProficiency, //we'll get to this later
-  //             apiUrl: "",
-  //           },
-  //         ],
-  //       }));
-  //     }
-  //     // if skill is selected
-  //     else {
-  //       // remove skill from project
-  //       setProfile((prev) => ({
-  //         ...prev,
-  //         skills: (prev.skills ?? []).filter((s) => s.label !== skill),
-  //       }));
-  //     }
-  //   },
-  //   [allSkills, profile]
-  // );
 
   /**
    * Toggles a skill as selected or unselected
@@ -171,9 +95,9 @@ export const SkillsTab = ({
   const handleSkillToggle = useCallback(
     (skillId: number) => {
       const isSelected = isSkillSelected(skillId) === "selected";
-      const skillToToggle = allSkills.find(
-        (potentialMatch) => potentialMatch.skillId === skillId
-      );
+
+      const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
+      
       if (!skillToToggle) return;
 
       if (isSelected) {
@@ -241,7 +165,7 @@ export const SkillsTab = ({
         <p>&nbsp;{skill.label}</p>
       </Tag>
     ));
-  }, [profile.skills, handleSkillToggle]);
+  }, [profile.skills]);
 
   /**
    * Renders skill tags as clickable buttons based on the active tab and search results.
@@ -271,6 +195,7 @@ export const SkillsTab = ({
     } else if (searchedSkills && searchedSkills.length === 0) {
       return <div className="no-results-message">No results found!</div>;
     }
+
     // Developer Skill
     if (currentSkillsTab === 0) {
       return allSkills
@@ -291,7 +216,9 @@ export const SkillsTab = ({
             <p>&nbsp;{developerSkill.label}</p>
           </Tag>
         ));
-    } else if (currentSkillsTab === 1) {
+    }
+    //design skill tab
+    else if (currentSkillsTab === 1) {
       return allSkills
         .filter((anySkill) => anySkill.type === "Designer")
         .map((designerSkill) => (
@@ -310,7 +237,9 @@ export const SkillsTab = ({
             <p>&nbsp;{designerSkill.label}</p>
           </Tag>
         ));
-    } else {
+    }
+    //returns the soft skills
+    else {
       return allSkills
         .filter((anySkill) => anySkill.type === "Soft")
         .map((softSkill) => (
