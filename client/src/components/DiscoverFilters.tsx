@@ -141,6 +141,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         Designer: 'Designer Skill',
         Developer: 'Developer Skill',
         Soft: 'Soft Skill',
+        Audio: 'Audio Skill',
         Role: 'Role',
         Major: 'Major',
         };
@@ -312,17 +313,16 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
             {/* 
                           When page loads, get all necessary tag lists based on page category.
                           Place these lists in an array, along with an identifier for which column 
-                          they belong. Map through these lists to construct filter dropdown.
                           Displayed tags are determined using a state variable, changable w/ searchbar.
                           Tags have an onClick function that adds their tag to a full tag list. 
                           Full tag list is only applied when hitting done, which then pushes the 
                           info to an active list.
                       */}
             <PopupContent useClose={false}>
-              {/* Back button */}
-              <PopupButton className="popup-back">
-                <ThemeIcon id={'back'} width={70} height={25} className={'color-fill'} ariaLabel={'back'}/>
-              </PopupButton>
+              {/* Close Button */}
+               <PopupButton className="popup-close">
+                  <img alt="close" src="/src/icons/cancel.png"></img>
+                </PopupButton>
               <div id="filters-popup">
                 <h2>{category === 'projects' ? 'Project Filters' : 'People Filters'}</h2>
                 <div id="filters" className="popup-section">
