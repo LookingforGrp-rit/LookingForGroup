@@ -360,7 +360,8 @@ Project Creator and Editor Popup style rules
   cursor: pointer;
 }
 
-.profile-editor-save {
+
+#project-editor-save.profile-editor-save {
   margin-top: 37px;
   margin-bottom: 28px;
 }
