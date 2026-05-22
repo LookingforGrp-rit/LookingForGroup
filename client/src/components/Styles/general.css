@@ -777,15 +777,9 @@ Sidebar Nav style rules
     padding-right: calc((100vw - 160px) / 14);
   }
 
-  .containerButtonSideBar .my-projects-create-btn img {
-    fill: var(--main-text);
-  }
-
   .containerButtonSideBar>button:hover {
-
     transition-duration: 0.25s;
     color: var(--primary-color);
-
   }
 
   .containerButtonSideBar>button.active {
