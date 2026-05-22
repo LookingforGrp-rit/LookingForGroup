@@ -42,7 +42,7 @@ RUN npm ci --workspace=server --omit=dev --ignore-scripts
 FROM base AS runner
 
 ###### MARIADB / MYSQL ######
-COPY ./server/docker_setup ./setup_conf
+#COPY ./server/docker_setup ./setup_conf
 #RUN groupadd -r mysql && useradd -r -g mysql mysql --home-dir /var/lib/mysql
 #RUN mkdir -p /var/lib/mysql/mysql ;\
 #  touch /var/lib/mysql/mysql/user.frm ;\
