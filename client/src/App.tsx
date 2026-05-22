@@ -24,6 +24,7 @@ import CreateProject from './components/pages/CreateProject';
 import Credits from './components/pages/CreditsPage';
 import AccountActivation from './components/pages/AccountActivation';
 import { ThemeContext } from './contexts/ThemeContext';
+import AboutPage from './components/pages/About';
 
 import uselocalstorage from 'use-local-storage';
 
@@ -95,6 +96,7 @@ function App() {
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
           <Route path={paths.routes.CREDITS} element={<Credits />} />
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
+          <Route path={paths.routes.ABOUT} element={<AboutPage />} />
         </Routes>
         {/* <CreditsFooter /> */}
       </div>

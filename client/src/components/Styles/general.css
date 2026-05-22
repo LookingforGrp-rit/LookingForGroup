@@ -246,7 +246,13 @@ section {
 .my-projects-grid,
 .my-projects-list,
 #discover-panel-box {
-  min-height: 50vh;
+  min-height: 35vh;
+}
+
+.placeholder-spacing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* #endregion */
@@ -585,7 +591,7 @@ Sidebar Nav style rules
   /*background-color: var(--primary-blue);*/
 }
 
-.containerButtonSideBar button {
+.containerButtonSideBar>button {
   color: var(--main-text);
   width: 194px;
   height: 55px;
@@ -608,12 +614,14 @@ Sidebar Nav style rules
   }
 }
 
-.containerButtonSideBar button:hover {
+.containerButtonSideBar>button:hover {
   transition-duration: 0.25s;
   background-color: var(--invert-text);
 }
 
-.containerButtonSideBar button.active {
+
+
+.containerButtonSideBar>button.active {
   background-color: var(--primary-color);
   transition: 0.25s;
   font-weight: bold;
@@ -758,31 +766,34 @@ Sidebar Nav style rules
     display: flex;
     flex-direction: row;
     /* cursor: pointer; */
-    gap: 20px;
+    gap: 10px;
     align-items: center;
     justify-content: space-evenly;
     height: 80px;
     background-color: var(--header-color);
   }
 
-  .containerButtonSideBar button {
-    width: 20vw;
+  .containerButtonSideBar>button,
+  /*mobile view btn*/
+  .containerButtonSideBar .my-projects-create-btn {
+    width: 15vw;
     height: 45px;
     margin: 0 5px 20px 5px;
-    padding-left: calc((100vw - 160px) / 10);
-    padding-right: auto;
+    padding-left: calc((100vw - 160px) / 14);
+    padding-right: calc((100vw - 160px) / 14);
   }
 
-  .containerButtonSideBar button:hover {
+  .containerButtonSideBar>button:hover {
     transition-duration: 0.25s;
-    background-color: var(--invert-text);
+    color: var(--primary-color);
   }
 
-  .containerButtonSideBar button.active {
+  .containerButtonSideBar>button.active {
     background-color: var(--primary-color);
     transition: 0.25s;
     font-weight: bold;
     color: var(--invert-text);
+
 
     img {
       filter: invert(1);
@@ -1111,7 +1122,7 @@ Page popup style rules
     transition: 0.2s;
     padding: 1px;
     /* margin: 14px 38px; */
-    width: min(30%, 40%);
+    width: min(20%, 30%);
     text-align: center;
   }
 
@@ -1848,8 +1859,8 @@ Image Carousel style rules
 
 .ToTopContainer {
   position: fixed;
-  right: 50px;
-  bottom: 50px;
+  right: 7px;
+  bottom: 55px;
   width: fit-content;
   height: fit-content;
   font-size: 3rem;
