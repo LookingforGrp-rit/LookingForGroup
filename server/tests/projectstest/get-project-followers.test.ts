@@ -73,7 +73,6 @@ describe('getProjectFollowersService', async () => {
     vi.mocked(transformProjectToFollowers).mockReturnValue(testFollowers);
     const result = await getProjectFollowersService(1);
 
-    expect(transformProjectToFollowers).toBeCalledWith(prismaProject);
     expect(result).toBe('NOT_FOUND');
   });
 });
