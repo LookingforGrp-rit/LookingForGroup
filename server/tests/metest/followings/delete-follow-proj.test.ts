@@ -3,24 +3,15 @@ import prisma from '#config/prisma.ts';
 import { deleteProjectFollowService } from '#services/me/followings/delete-follow-proj.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-
-// !! IF NOT_FOUND added in #services/me/followings/delete-follow-proj.ts
-// !! then uncomment the test and the all project related mocks
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
-    // projects: {
-    //     findUnique: vi.fn(),
-    // },
     projectFollowings: {
       delete: vi.fn(),
     },
   },
 }));
-
-// const prismaProject = {
-//     projectId: 1,
-// };
 
 const prismaProjectFollowing = {
   userId: 1,
@@ -33,9 +24,9 @@ describe('deleteProjectFollowService', () => {
     vi.clearAllMocks();
   });
 
-  // remove .skip
+  // !! remove skip if NOT_FOUND added in #services/me/followings/delete-follow-proj.ts
   it.skip('returns NOT_FOUND if project does not exist', async () => {
-    vi.mocked(prisma.projects.findUnique).mockResolvedValue(null);
+    vi.mocked(prisma.projectFollowings.delete).mockRejectedValue({ code: 'P2025' } as any);
 
     const result = await deleteProjectFollowService(1, 1);
 
@@ -43,7 +34,6 @@ describe('deleteProjectFollowService', () => {
   });
 
   it('returns NO_CONTENT after follow deleted successfully', async () => {
-    // vi.mocked(prisma.projects.findUnique).mockResolvedValue(prismaProject as any);
     vi.mocked(prisma.projectFollowings.delete).mockResolvedValue(prismaProjectFollowing);
 
     const result = await deleteProjectFollowService(1, 1);
