@@ -246,7 +246,13 @@ section {
 .my-projects-grid,
 .my-projects-list,
 #discover-panel-box {
-  min-height: 50vh;
+  min-height: 35vh;
+}
+
+.placeholder-spacing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* #endregion */
@@ -943,26 +949,26 @@ Page popup style rules
   margin: min(1.59vw, 24px) 0 0 min(1.59vw, 24px) !important;
   display: flex;
   align-items: center;
-  
+
   img {
     height: 24px;
     /* Font-size is meant to be 20pt, which corresponds to 24px here */
   }
 }
 
-.popup-back:hover{
+.popup-back:hover {
   border-color: var(--invert-text) !important;
   color: var(--invert-text) !important;
 }
 
-#back{
-  padding:4px;
+#back {
+  padding: 4px;
   padding-left: 7px;
   padding-right: 7px;
 }
 
-#back:hover{
-  padding:4px;
+#back:hover {
+  padding: 4px;
   padding-left: 7px;
   padding-right: 7px;
   border-radius: 50px / 50px !important;
@@ -970,7 +976,7 @@ Page popup style rules
   border-color: var(--invert-text) !important;
 }
 
-#project-creator-editor{
+#project-creator-editor {
   scrollbar-width: none;
 
 }
@@ -1096,6 +1102,7 @@ Page popup style rules
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    /*gap: min(3.87vh, 38px) min(2.51vw, 38px);*/
     gap: min(3.87vh, 38px) min(2.51vw, 38px);
     justify-content: center;
     margin: min(1.63vh, 16px) auto;
@@ -1110,8 +1117,8 @@ Page popup style rules
     transition: 0.2s;
     padding: 1px;
     /* margin: 14px 38px; */
-    width: 12%;
-    text-align: center
+    width: min(30%, 40%);
+    text-align: center;
   }
 
   .filter-tab:hover {
@@ -1119,16 +1126,14 @@ Page popup style rules
     font-weight: 600;
     transition: none;
     padding: 1px;
-    width: 12%;
-    text-align: center
+    text-align: center;
   }
 
   .filter-tab.selected {
     font-weight: 700;
     color: var(--primary-color);
     padding: 1px;
-    width: 12%;
-    text-align: center
+    text-align: center;
   }
 
   hr {
@@ -1169,6 +1174,7 @@ Page popup style rules
   }
 
   .popup #filters-popup {
+
     h2 {
       margin-top: 3.76vh;
       margin-bottom: 3.32vh;
@@ -1848,8 +1854,8 @@ Image Carousel style rules
 
 .ToTopContainer {
   position: fixed;
-  right: 50px;
-  bottom: 50px;
+  right: 7px;
+  bottom: 55px;
   width: fit-content;
   height: fit-content;
   font-size: 3rem;

@@ -70,6 +70,15 @@ components:
         proficiency:
           $ref: 'enums.yaml#/components/schemas/SkillProficiency'
 
+    AddUserMajorInput:
+      type: object
+      required:
+        - majorId
+      properties:
+        majorId:
+          type: integer
+          example: 1
+
     CreateProjectInput:
       type: object
       properties:

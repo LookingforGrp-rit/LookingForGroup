@@ -10,6 +10,9 @@ export const projectTabs = {
   'Project Type': { categoryTags: [], categoryName: 'Project Type', color: 'blue' },
   'Genre': { categoryTags: [], categoryName: 'Genre', color: 'green' },
   'Purpose': { categoryTags: [], categoryName: 'Purpose', color: 'grey' },
+  'Developer Skills': { categoryTags: [], categoryName: 'Developer Skills', color: 'grey' },
+  'Designer Skills': { categoryTags: [], categoryName: 'Designer Skills', color: 'grey' },
+  'Soft Skills': { categoryTags: [], categoryName: 'Soft Skills', color: 'grey' },
 };
 
 // export const peopleTabs = [

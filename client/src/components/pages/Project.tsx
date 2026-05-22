@@ -385,7 +385,11 @@ const Project = () => {
   const projectLead = displayedProject?.owner;
 
   //Page layout for if project data hasn't been loaded yet
-  const loadingProject = <>{<div>Loading project...</div>}</>;
+  const loadingProject =(
+        <div className='placeholder-spacing'>
+          <div className='spinning-loader'></div>
+        </div>
+  );
 
   return (
     <div className="page">
@@ -401,7 +405,7 @@ const Project = () => {
         loadingProject
       ) : (
         <main id="main" tabIndex={-1} aria-label="main content" >
-          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }}/>
+          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="project-page-content">
             <ProjectCarousel project={displayedProject}></ProjectCarousel>
             <div id="project-info-panel">
@@ -455,14 +459,14 @@ const Project = () => {
                       return (
                         <TagElement
                           type={tag.type.toLowerCase()}
-                          key={index}
+                          key={index} selected={true}
                         >
                           <p>{tag.label}</p>
                         </TagElement>
                       );
                     } else if (index === 3) {
                       return (
-                        <TagElement key={index}>
+                        <TagElement key={index} selected={true}>
                           <p>+{displayedProject.tags.length - 3}</p>
                         </TagElement>
                       );
@@ -519,8 +523,8 @@ const Project = () => {
 
             <div id="project-people">
               <div id="project-people-tabs">
-                <div // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
-                  className={`project-people-tab ${peopleContent}`}
+                <div id="project-people-tab" // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
+                  
                 //onClick={() => setDisplayedPeople("People")} wow this button is now useless
                 >
                   The Team

@@ -1,5 +1,5 @@
 // Utilities and React functions
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 
 import { getCurrentAccount } from "../../api/users";
 import * as paths from '../../constants/routes';
@@ -15,6 +15,7 @@ import { ProjectsTab } from "./tabs/ProjectsTab";
 import { SkillsTab } from "./tabs/SkillsTab";
 import { userDataManager } from "../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../types/types";
+import { MePrivate } from "@looking-for-group/shared";
 
 // The profile to view is independent upon the site's state changes
 const pageTabs = ["About", "Projects", "Skills", "Links"];
@@ -28,9 +29,42 @@ export const ProfileEditPopup = () => {
   const [currentTab, setCurrentTab] = useState(5);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
+  const [unmodifiedProfile, setUnmodifiedProfile] = useState<MePrivate>();
   const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
+  const [confirm, setConfirm] = useState(false);
+  const [saved, setSaved] = useState(true);
 
+  const isOpening = useRef(true);
   const navigate = useNavigate();
+
+  const handlePopupCallback = async () => {
+    if (saved) {
+      // Popup is opening. Ignore the confirm
+      setCurrentTab(0);
+      isOpening.current = false;
+      setSaved(true);
+    } else {
+      // Popup is closing. Show the confirm dialog
+      setConfirm(true);
+    }
+  };
+
+  const cancelConfirm = () => setConfirm(false);
+
+  const closeWithoutSaving = async () => {
+    setCurrentTab(0);
+    setConfirm(false);
+    isOpening.current = true;
+
+    // Reset modified profile to discard any unsaved changes
+    if (unmodifiedProfile)
+      setModifiedProfile(structuredClone(unmodifiedProfile));
+  }
+
+   const updatePendingProfile = (updatedPendingProject: PendingUserProfile) => {
+     setModifiedProfile(updatedPendingProject);
+     setSaved(false);
+   }
 
   // Profile should be set up on intialization
   useEffect(() => {
@@ -44,6 +78,7 @@ export const ProfileEditPopup = () => {
         throw "error getting current user " + getUser.error;
       }
 
+      setUnmodifiedProfile(getUser.data);
       setModifiedProfile(structuredClone(getUser.data));
 
       const manager = await userDataManager();
@@ -73,7 +108,7 @@ export const ProfileEditPopup = () => {
       // TODO handle error
       console.error((e as Error).message);
     }
-
+    setSaved(true);
     navigate(`${paths.routes.PROFILE}?userID=${modifiedProfile?.userId}`);
     window.location.reload();
   };
@@ -110,32 +145,36 @@ export const ProfileEditPopup = () => {
         return (
           <AboutTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       case 1:
         return (
           <ProjectsTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       case 2:
         return (
           <SkillsTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       case 3:
         return (
           <LinksTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       default:

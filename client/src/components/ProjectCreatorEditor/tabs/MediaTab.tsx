@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState, useContext } from "react";
 import {
   CreateProjectImageInput,
   ProjectImage,
+  ProjectWithFollowers,
 } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
@@ -19,10 +20,12 @@ let localIdIncrement = 0;
 type MediaTabProps = {
   dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
+  unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
   saveable: boolean;
   failCheck: boolean;
+  message: string;
 };
 
 // Convert string to File
@@ -52,10 +55,12 @@ const stringToFile = async (s: string) => {
 export const MediaTab = ({
   dataManager,
   projectData,
+  unmodifiedProject,
   saveProject,
   updatePendingProject,
   saveable,
   failCheck,
+  message,
 }: MediaTabProps) => {
 
   // An array for tracking the comparison of images and the thumbnail
@@ -469,31 +474,31 @@ export const MediaTab = ({
 
       {/* Save button */}
       <div id="general-save-info">
-        { saveable ?
-          <Popup>
-            <PopupButton
-              buttonId="project-editor-save"
-              doNotClose={() => failCheck}
-            >
-              Save Changes
-            </PopupButton>
-            <PopupContent useClose={false}>
-              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-              <div id="confirm-editor-save">
-                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                  Confirm
-                </PopupButton>
-                <PopupButton buttonId="team-edit-member-cancel-button" >
-                  Cancel
-                </PopupButton>
-              </div>
-            </PopupContent>
-          </Popup>
-        :
+        <Popup>
+          {saveable ? "" :
           <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*Fill out all required info before saving!*</p>
-          </div>
-        }
+            <p>*{message}*</p>
+          </div>}
+          <PopupButton
+            buttonId="project-editor-save"
+            doNotClose={() => failCheck}
+            disabled={!saveable}
+            className={!saveable ? "disabled" : ""}
+          >
+            Save Changes
+          </PopupButton>
+          <PopupContent useClose={false}>
+            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+            <div id="confirm-editor-save">
+              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                Confirm
+              </PopupButton>
+              <PopupButton buttonId="team-edit-member-cancel-button" >
+                Cancel
+              </PopupButton>
+            </div>
+          </PopupContent>
+        </Popup>
       </div>
     </div>
   );

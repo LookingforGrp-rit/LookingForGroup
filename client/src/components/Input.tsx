@@ -24,9 +24,9 @@ export const Input: React.FC<CustomInputProps> = ({
   ...props
 }) => {
 
-  
   // Keep track of value to change character count (multi-line only)
-  const [internalValue, setInternalValue] = useState('');
+  const [internalValue, setInternalValue] = useState(
+    typeof(props.value) != "undefined" ? props.value : '');
 
   // Multi-line input with character count
   if (type === 'multi') {
@@ -54,30 +54,6 @@ export const Input: React.FC<CustomInputProps> = ({
         />
       </div>
     );
-  }
-
-  // Link input with remove button
-  if (type === 'link') {
-    return (
-      <div className="input-link-wrapper">
-        <input
-          type="url"
-          placeholder="URL"
-          className="input"
-          onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
-          {...props}
-        />
-        <button
-          className='input-link-remove'
-          title="Remove link"
-          onClick={(e) => {
-            onClick?.(e);
-          }}
-        >
-          <i className="fa-solid fa-minus"></i>
-        </button>
-      </div>
-    )
   }
 
   // Standard Input (single line)
