@@ -110,7 +110,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
     else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
     else if (modifiedProject?.tags.length == 0) newMessage = "Project is missing tags!";
-    else if (modifiedProject?.hook === "" || modifiedProject?.hook === undefined) newMessage = "Project is missing a hook!";
+    else if (modifiedProject?.hook === "" || modifiedProject?.hook === undefined) newMessage = "Project is missing a short description!";
     else if (modifiedProject?.description === "" || modifiedProject?.description === undefined) newMessage = "Project is missing a description!";
 
     setMessage(newMessage);
@@ -125,8 +125,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     if (updatedPendingProject?.title === "" || updatedPendingProject?.title === undefined) newMessage = "Project is missing a title!";
     else if (updatedPendingProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
     else if (updatedPendingProject?.tags.length == 0) newMessage = "Project is missing tags!";
-    else if (updatedPendingProject?.hook === "" || updatedPendingProject?.hook === undefined) newMessage = "Project is missing a hook!";
-    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing a description!";
+    else if (updatedPendingProject?.hook === "" || updatedPendingProject?.hook === undefined) newMessage = "Project is missing a Short Description!";
+    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing an About This Project!";
     setMessage(newMessage);
   }
 

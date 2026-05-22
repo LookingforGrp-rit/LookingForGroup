@@ -334,6 +334,10 @@ Project Creator and Editor Popup style rules
   margin-top: -1%;
 }
 
+#project-editor-save {
+  margin-bottom: 28px;
+}
+
 #project-editor-save.disabled,
 #project-editor-save:disabled,
 #team-add-member-add-button:disabled,
@@ -423,7 +427,8 @@ Project Creator and Editor Popup style rules
 .save-error-msg p,
 .save-error-msg-general p,
 #invalid-input-error p {
-  margin: -13% 0 0 0;
+  margin: -20px 0 10px 0;
+  text-align: center;
   font-size: 1.125rem;
   color: red;
 }

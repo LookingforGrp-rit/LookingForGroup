@@ -251,7 +251,7 @@ export const GeneralTab = ({
       />
 
       <LabelInputBox
-        label={"Hook"}
+        label={"Short Description"}
         labelInfo="Share a brief summary of your project. This will be displayed in your project's discover card."
         inputType={"multi"}
         id={"project-editor-description-input"}
