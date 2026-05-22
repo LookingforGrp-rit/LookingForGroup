@@ -12,8 +12,8 @@ export const projectTabs = {
   'Purpose': { categoryTags: [], categoryName: 'Purpose', color: 'grey' },
   'Developer Skill': { categoryTags: [], categoryName: 'Developer Skills', color: 'grey' },
   'Designer Skill': { categoryTags: [], categoryName: 'Designer Skills', color: 'grey' },
-  'Soft Skill': { categoryTags: [], categoryName: 'Soft Skills', color: 'grey' },
   'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skills', color: 'grey'},
+  'Soft Skill': { categoryTags: [], categoryName: 'Soft Skills', color: 'grey' },
 };
 
 // export const peopleTabs = [
@@ -27,8 +27,8 @@ export const projectTabs = {
 export const peopleTabs = {
   'Developer Skill': { categoryTags: [], categoryName: 'Developer Skill', color: 'yellow' },
   'Designer Skill': { categoryTags: [], categoryName: 'Designer Skill', color: 'red' },
-  'Soft Skill': { categoryTags: [], categoryName: 'Soft Skill', color: 'purple' },
   'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skill', color: 'grey'},
+  'Soft Skill': { categoryTags: [], categoryName: 'Soft Skill', color: 'purple' },
   'Role': { categoryTags: [], categoryName: 'Role', color: 'grey' },
   'Major': { categoryTags: [], categoryName: 'Major', color: 'orange' },
 };
