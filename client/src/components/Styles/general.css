@@ -246,7 +246,13 @@ section {
 .my-projects-grid,
 .my-projects-list,
 #discover-panel-box {
-  min-height: 50vh;
+  min-height: 35vh;
+}
+
+.placeholder-spacing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* #endregion */
@@ -1853,8 +1859,8 @@ Image Carousel style rules
 
 .ToTopContainer {
   position: fixed;
-  right: 50px;
-  bottom: 50px;
+  right: 7px;
+  bottom: 55px;
   width: fit-content;
   height: fit-content;
   font-size: 3rem;
