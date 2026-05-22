@@ -168,6 +168,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           
           setProjectData(data);
           setModifiedProject(data);
+          setSaved(false); // Save defaults to true, so leaving without changing anything treats it as saving the project
           console.log(projectData);
         }
       } catch (err) {
