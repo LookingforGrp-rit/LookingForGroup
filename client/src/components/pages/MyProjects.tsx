@@ -382,18 +382,13 @@ const MyProjects = () => {
     setFilteredProjects(results[0] as ProjectDetail[]);
   };
 
-  const projectsModeSwitch = useCallback(() => {
-    const newMode = projectMode === "All" ? "Owned" : projectMode === "Owned" ? "Joined" : "All";
-
+  const projectsModeSwitch = useCallback((newMode: string) => {
     const newFilteredProjects = projectsList.filter((item) => {
       if (newMode === "All") return true;
       
       if (newMode === "Joined") {
         for (let member of item.members) {
-          if (member.user.username === userId)  {
-            if (item.owner.username === userId) return false;
-            return true;
-          } 
+          if (member.user.username === userId && item.owner.username !== userId) return true;
         }
       }
 
@@ -402,9 +397,7 @@ const MyProjects = () => {
 
       return false;
     });
-
-    console.log(newMode);
-    console.log(newFilteredProjects);
+    
     setProjectMode(newMode);
     setFilteredProjects(newFilteredProjects);
   }, [projectMode, filteredProjects, userId, projectsList]);
@@ -439,8 +432,14 @@ const MyProjects = () => {
         {/* Filters */}
         <div className="my-projects-filters">
           {/* All Projects Button */}
-          <button className="my-projects-all-projects-button" onClick={projectsModeSwitch}>
-            {projectMode} Projects
+          <button className={"my-projects-all-projects-button" + (projectMode === "All" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("All")}>
+            All Projects
+          </button>
+          <button className={"my-projects-all-projects-button" + (projectMode === "Owned" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("Owned")}>
+            Owned Projects
+          </button>
+          <button className={"my-projects-all-projects-button" + (projectMode === "Joined" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("Joined")}>
+            Joined Projects
           </button>
         </div>
 
