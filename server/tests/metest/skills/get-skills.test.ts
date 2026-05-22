@@ -55,7 +55,7 @@ describe('getSkillsService', () => {
 
   // !! remove skip if NOT_FOUND added in #services/me/skills/get-skills.ts
   it.skip('returns NOT_FOUND if user skill does not exist', async () => {
-    vi.mocked(prisma.userSkills.delete).mockRejectedValue({ code: 'P2025' } as any);
+    vi.mocked(prisma.userSkills.findMany).mockRejectedValue({ code: 'P2025' } as any);
 
     const result = await getSkillsService(1);
 
