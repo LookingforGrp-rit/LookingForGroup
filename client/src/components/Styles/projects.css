@@ -3711,6 +3711,8 @@ My projects page style rules
   letter-spacing: 0%;
   cursor: pointer;
   text-decoration: none;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .grid-card-title:focus {
