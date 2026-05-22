@@ -11,6 +11,7 @@ Login and Signup page style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region login and signup page */
 
 .background-cover {
   position: fixed;
@@ -26,49 +27,49 @@ Login and Signup page style rules
 }
 
 .login-signup-container {
+  width: 95%;
+  max-width: 880px;
   margin: auto;
   display: flex;
   flex-direction: row;
   justify-content: center;
   align-items: center;
   height: 525px;
-  width: 880px;
+  width: min(95vw, 880px);
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border-radius: 10px;
   position: relative;
+  overflow: hidden;
 }
 
 .login-form,
 .signup-form {
-  width: 440px;
-  height: 485px;
-  text-align: center;
-  /* border: 1px solid black; */
-  background-color: var(--bg-color);
-  padding: 20px;
-  border-radius: 10px 0 0 10px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  width: min(95vw, 440px);
+
+  .signup-form,
+  .directory {
+    flex: 1;
+    height: 485px;
+    text-align: center;
+    /* border: 1px solid black; */
+    background-color: var(--bg-color);
+    padding: 40px 20px;
+    border-radius: 10px 0 0 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+  }
 }
 
 .directory {
-  width: 440px;
-  height: 485px;
-  text-align: center;
   /* border: 1px solid black; */
   background: var(--sidebar-gradient);
   color: var(--main-text);
-  padding: 20px;
-  border-radius: 0 10px 10px 0;
   background-size: cover;
   background-position: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
 }
 
 .directory img {
@@ -87,7 +88,7 @@ Login and Signup page style rules
 
 .login-form h2,
 .signup-form h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 600;
   color: var(--primary-color);
 }
@@ -97,24 +98,11 @@ Login and Signup page style rules
   margin-bottom: 0;
 } */
 
-.signup-name-input {
-  width: 135px;
-  height: 40px;
-  margin: 5px;
-  padding: 5px 20px;
-  border: none;
-  outline: none;
-  background-color: var(--header-color);
-  border-radius: 10px;
-  text-align: left;
-  font-size: 15px;
-}
-
 .signup-input,
-.login-input {
-  width: 320px;
+.login-input,
+.signup-name-input {
+  width: 100%;
   height: 40px;
-  margin: 5px;
   padding: 5px 20px;
   border: none;
   background-color: var(--header-color);
@@ -122,7 +110,8 @@ Login and Signup page style rules
   border-radius: 10px;
   text-align: left;
   outline: none;
-  font-size: 15px;
+  font-size: 0.9375rem;
+  box-sizing: border-box;
 }
 
 .signup-input::placeholder,
@@ -138,7 +127,7 @@ Login and Signup page style rules
   height: 40px;
   /* margin: 20px auto 0px auto; */
   padding: 5px 16px;
-  font-size: 20px;
+  font-size: 1.25rem;
   border: none;
   border-radius: 40px;
   background-color: var(--primary-color);
@@ -152,7 +141,7 @@ Login and Signup page style rules
   height: 40px;
   margin: 20px auto 0px auto;
   padding: 5px 16px;
-  font-size: 20px;
+  font-size: 1.25rem;
   border: 1px solid #e3e3e3;
   border: none;
   border-radius: 50px;
@@ -167,41 +156,47 @@ Login and Signup page style rules
   transition: 0.2s;
 }
 
+.signup-form-inputs,
 .login-form-inputs {
   /* border: 1px solid black; */
-  /* height: 300px; */
-  margin: 10px 0;
+  width: 100%;
+  max-width: 320px;
+  max-height: 340px;
+  height: auto;
+  margin: 20px 0;
+  gap: 15px;
   display: flex;
   flex-direction: column;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
 }
 
-.signup-form-inputs {
-  /* border: 1px solid black; */
-  height: 340px;
-  margin: 10px 0;
+.signup-form-inputs .row {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  gap: 15px;
+  width: 100%;
+}
+
+.signup-name-input {
+  flex: 1;
+  min-width: 0;
 }
 
 #password-wrapper {
   position: relative;
-  display: inline-block;
+  width: 100%;
   margin: 0px;
 }
 
 #password-wrapper input {
-  padding-right: 60px;
-  width: 280px;
+  padding-right: 45px;
+  width: 100%;
 }
 
 #show-password {
   position: absolute;
   top: 55%;
-  right: 22px;
+  right: 0.5rem;
   transform: translateY(-50%);
   border: none;
   background-color: transparent;
@@ -219,7 +214,7 @@ Login and Signup page style rules
 }
 
 #forgot-password {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: var(--primary-color);
   margin: 0px;
   box-shadow: none;
@@ -235,7 +230,14 @@ Login and Signup page style rules
   text-decoration: underline;
 }
 
+#forgot-password,
+.mobile-signup,
+.mobile-login {
+  align-self: center;
+}
+
 .spacer {
+  border-bottom: 1px solid var(--primary-color);
   /* height: 30px; */
 }
 
@@ -258,15 +260,16 @@ Login and Signup page style rules
     background-repeat: no-repeat;
   }
 
-  .login-signup-container {
-    width: 540px;
-    border-radius: 5px;
-  }
 
   .login-form,
   .signup-form {
-    position: fixed;
+    position: relative;
     border-radius: 4px;
+
+    width: 100%;
+    max-width: 400px;
+    height: auto;
+    margin: 0 auto;
   }
 
   .directory {
@@ -298,6 +301,8 @@ Login and Signup page style rules
   }
 }
 
+/* #endregion*/
+
 /*
 /\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 ------------------------------------------------------------------------------------------------
@@ -305,6 +310,7 @@ Signup process modal style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
+/* #region signup process modal */
 
 .signupProcess-background {
   position: fixed;
@@ -354,13 +360,13 @@ Signup process modal style rules
 }
 
 #signupProcess-title {
-  font-size: 28px;
+  font-size: 1.75rem;
   color: var(--orange);
   width: 500px;
   text-align: center;
 
   p {
-    font-size: 15px;
+    font-size: 0.9375rem;
     color: black;
     margin: 10px;
     font-weight: 400;
@@ -379,7 +385,7 @@ Signup process modal style rules
   border-radius: 14px;
   height: 45px;
   width: 100px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   background-color: var(--lightGray);
   color: black;
@@ -398,7 +404,7 @@ Signup process modal style rules
   border-radius: 14px;
   height: 45px;
   width: 100px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 800;
   background-color: var(--primary-color);
   color: var(--orange);
@@ -415,7 +421,7 @@ Signup process modal style rules
   border-radius: 14px;
   height: 45px;
   width: 100px;
-  font-size: 18px;
+  font-size: 1.125rem;
   font-weight: 600;
   background-color: var(--lightGray);
   color: black;
@@ -458,7 +464,7 @@ Signup process modal style rules
     width: 340px;
     height: 30px;
     padding: 5px 20px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     border: 2px solid var(--lightGray);
     border-radius: 50px;
     background-color: var(--primary-color);
@@ -507,7 +513,7 @@ Signup process modal style rules
     width: 140px;
     height: 40px;
     padding: 5px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     border: none;
     border-radius: 10px;
     background-color: var(--primary-color);
@@ -523,7 +529,7 @@ Signup process modal style rules
     align-items: center;
     width: 140px;
     height: 40px;
-    font-size: 15px;
+    font-size: 0.9375rem;
     border: none;
     border-radius: 10px;
     background-color: var(--primary-color);
@@ -546,7 +552,7 @@ Signup process modal style rules
 }
 
 .signup-fullname h2 {
-  font-size: 24px;
+  font-size: 1.5rem;
   margin: 0;
   text-align: left;
 }
@@ -557,7 +563,7 @@ Signup process modal style rules
 }
 
 #signup-profile-skill {
-  font-size: 14px;
+  font-size: 0.875rem;
   margin: 0 20px;
 
   display: flex;
@@ -584,7 +590,7 @@ Signup process modal style rules
   height: 65px;
   margin: 10px;
   padding: 0px 20px;
-  font-size: 16px;
+  font-size: 1rem;
   border: 2px solid var(--lightGray);
   border-radius: 4px;
   background-color: var(--primary-color);
@@ -612,7 +618,7 @@ Signup process modal style rules
   color: black;
   border-radius: 4px;
   padding: 5px 10px;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 #pronouns-input {
@@ -620,7 +626,7 @@ Signup process modal style rules
   height: 35px;
   margin: 40px 0px 0px 10px;
   padding: 5px 20px;
-  font-size: 15px;
+  font-size: 0.9375rem;
   border: 2px solid var(--lightGray);
   border-radius: 4px;
   background-color: var(--primary-color);
@@ -636,7 +642,7 @@ Signup process modal style rules
   border: 2px solid var(--lightGray);
   border-radius: 4px;
   resize: none;
-  font-size: 16px;
+  font-size: 1rem;
 }
 
 .name-username-pronouns-container {
@@ -656,7 +662,7 @@ Signup process modal style rules
   height: 200px;
   margin: 20px 40px;
   padding: 5px 10px;
-  font-size: 24px;
+  font-size: 1.5rem;
   border: 2px solid var(--lightGray);
   border-radius: 12px;
   background-color: var(--primary-color);
@@ -755,6 +761,8 @@ Signup process modal style rules
   }
 
   #signupProcess-title {
-    font-size: 24px;
+    font-size: 1.5rem;
   }
 }
+
+/* #endregion */

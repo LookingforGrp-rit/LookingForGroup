@@ -6,7 +6,7 @@ import LabelInputBox from '../../LabelInputBox';
 import { PendingUserProfile } from '../../../../types/types';
 import { userDataManager } from '../../../api/data-managers/user-data-manager';
 import { AcademicYear } from '@looking-for-group/shared/enums';
-import { Major, Role } from '@looking-for-group/shared';
+import { Major, MePrivate, Role } from '@looking-for-group/shared';
 import { getJobTitles, getMajors } from '../../../api/users';
 
 let profileAfterAboutChanges: PendingUserProfile;
@@ -14,7 +14,8 @@ let profileAfterAboutChanges: PendingUserProfile;
 type AboutTabProps = {
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   profile: PendingUserProfile;
-  updatePendingProfile?: (updatedPendingrProfile: PendingUserProfile) => void;
+  unmodifiedProfile: MePrivate;
+  updatePendingProfile?: (updatedPendingProfile: PendingUserProfile) => void;
 };
 
 /**
@@ -22,9 +23,10 @@ type AboutTabProps = {
  * @param dataManager Handles data changes to save changes later.
  * @param profile Temporary profile data.
  * @param updatePendingProfile Updates profile data.
+ * @param unmodifiedProfile A copy of the profile before any changes
  * @returns JSX Element
  */
-export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}: AboutTabProps) => {
+export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendingProfile = () => { } }: AboutTabProps) => {
 
   profileAfterAboutChanges = structuredClone(profile);
 
@@ -66,7 +68,7 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
     const imageUploader = document.getElementById(
       "image-uploader"
     ) as HTMLInputElement;
-  
+
     if (!imageUploader?.files?.length) return;
 
     //get the image itself (there will always be only one)
@@ -99,23 +101,27 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
     <div id="profile-editor-about" className="edit-profile-body about">
       <div id="edit-profile-section-1">
         <div id="profile-editor-add-image" className="edit-profile-image">
-          <ProfileImageUploader 
-          onFileSelected={handleFileSelected}
-          initialImageUrl={previewUrl}
-          initialImageFile={selectedImageFile}
+          <ProfileImageUploader
+            onFileSelected={handleFileSelected}
+            initialImageUrl={previewUrl}
+            initialImageFile={selectedImageFile}
           />
         </div>
 
         <div className="about-row row-1">
           <LabelInputBox
-            label={'First Name*'}
+            label={'First Name'}
+            required
             inputType={'single'}
             maxLength={50}
             value={profile.firstName}
+            initialValue={unmodifiedProfile.firstName}
             onChange={(e) => {
               const firstName = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, firstName};
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, firstName };
               updatePendingProfile(profileAfterAboutChanges);
+
+              //dataManager is also undefined here
               dataManager.updateFields({
                 id: {
                   value: userId,
@@ -126,14 +132,18 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
             }}
           />
           <LabelInputBox
-            label={'Last Name*'}
+            label={'Last Name'}
+            required
             inputType={'single'}
             maxLength={50}
             value={profile.lastName}
+            initialValue={unmodifiedProfile.lastName}
             onChange={(e) => {
               const lastName = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, lastName};
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, lastName };
               updatePendingProfile(profileAfterAboutChanges);
+
+              //dataManager is also undefined here
               dataManager.updateFields({
                 id: {
                   value: userId,
@@ -148,10 +158,13 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
             inputType={'single'}
             maxLength={25}
             value={profile.pronouns}
+            initialValue={unmodifiedProfile.pronouns}
             onChange={(e) => {
               const pronouns = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, pronouns};
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, pronouns };
               updatePendingProfile(profileAfterAboutChanges);
+
+              //dataManager is also undefined here
               dataManager.updateFields({
                 id: {
                   value: userId,
@@ -165,69 +178,73 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
 
         <div className="about-row row-2">
           {
-    <LabelInputBox
-      label={'Title'}
-      inputType={'none'}
-    >
-      <Select>
-        <SelectButton
-          placeholder={"Select"}
-          initialVal={profile.title ?? ""}
-          callback={(e) => e.preventDefault()}
-          type={'input'}
-        />
-        <SelectOptions
-          callback={(e) => { 
-            const title = (e.target as HTMLButtonElement).value
+            <LabelInputBox
+              label={'Title'}
+              inputType={'none'}
+              forceUnsaved={profile.title !== unmodifiedProfile.title}
+            >
+              <Select>
+                <SelectButton
+                  placeholder={"Select"}
+                  initialVal={profile.title ?? ""}
+                  callback={(e) => e.preventDefault()}
+                  type={'input'}
+                />
+                <SelectOptions
+                  callback={(e) => {
+                    const title = (e.target as HTMLButtonElement).value
 
-            profileAfterAboutChanges = {
-              ...profileAfterAboutChanges,
-              title
-            }
-            updatePendingProfile(profileAfterAboutChanges)
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { title }
-              })
-           }}
-          options={roles.map(r => ({
-          value: r.label,
-          markup: <>{r.label}</>,
-          disabled: false
-          }))}
-        />
-      </Select>
-    </LabelInputBox>}
+                    profileAfterAboutChanges = {
+                      ...profileAfterAboutChanges,
+                      title
+                    }
+                    updatePendingProfile(profileAfterAboutChanges)
+
+                    //dataManager is also undefined here
+                    dataManager.updateFields({
+                      id: {
+                        value: userId,
+                        type: 'canon',
+                      },
+                      data: { title }
+                    })
+                  }}
+                  options={roles.map(r => ({
+                    value: r.label,
+                    markup: <>{r.label}</>,
+                    disabled: false
+                  }))}
+                />
+              </Select>
+            </LabelInputBox>}
           {
-    //major (will need a ui change to accept multiple majors)
-    <LabelInputBox
-      label={'Major'}
-      inputType={'none'}
-    >
-      <Select>
-        <SelectButton
-          placeholder='Select'
-          initialVal={''}
-          callback={(e) => e.preventDefault()}
-          type={'input'}
-        />
-        <SelectOptions
-          callback={(e) => { e.preventDefault(); }}
-          options={majors.map(m => ({
-          value: m.label,
-          markup: <>{m.label}</>,
-          disabled: false
-          }))}
-        />
-      </Select>
-    </LabelInputBox>}
+            //major (will need a ui change to accept multiple majors)
+            <LabelInputBox
+              label={'Major'}
+              inputType={'none'}
+            >
+              <Select>
+                <SelectButton
+                  placeholder='Select'
+                  initialVal={''}
+                  callback={(e) => e.preventDefault()}
+                  type={'input'}
+                />
+                <SelectOptions
+                  callback={(e) => { e.preventDefault(); }}
+                  options={majors.map(m => ({
+                    value: m.label,
+                    markup: <>{m.label}</>,
+                    disabled: false
+                  }))}
+                />
+              </Select>
+            </LabelInputBox>}
 
           <LabelInputBox
             label={'Year'}
             inputType={'none'}
+            forceUnsaved={profile.academicYear !== unmodifiedProfile.academicYear}
           >
             <Select>
               <SelectButton
@@ -240,21 +257,25 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
                 callback={(e) => {
                   const year = (e.target as HTMLButtonElement).value as AcademicYear;
 
-              profileAfterAboutChanges = {
-                ...profileAfterAboutChanges,
-                academicYear: year as AcademicYear
-              }
-              updatePendingProfile(profileAfterAboutChanges);
+                  profileAfterAboutChanges = {
+                    ...profileAfterAboutChanges,
+                    academicYear: year as AcademicYear
+                  }
 
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon'
-                },
-                data: {
-                  academicYear: year as AcademicYear
-                }
-              })
+                  //Use this for checking what happens when the year is changed
+                  //debugger;
+                  updatePendingProfile(profileAfterAboutChanges);
+
+                  //dataManager is undefined for some reason when changing the year
+                  dataManager.updateFields({
+                    id: {
+                      value: userId,
+                      type: 'canon'
+                    },
+                    data: {
+                      academicYear: year as AcademicYear
+                    }
+                  })
                 }}
                 options={Object.values(AcademicYear).map((yr) => {
                   return {
@@ -273,10 +294,13 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
             label={'Location'}
             inputType={'single'}
             value={profile.location}
+            initialValue={unmodifiedProfile.location}
             onChange={(e) => {
               const location = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, location};
+              profileAfterAboutChanges = { ...profileAfterAboutChanges, location };
               updatePendingProfile(profileAfterAboutChanges);
+
+              //dataManager is also undefined here
               dataManager.updateFields({
                 id: {
                   value: userId,
@@ -290,6 +314,7 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
           <LabelInputBox
             label={'Mentorship Status'}
             inputType={'none'}
+            forceUnsaved={profile.mentor !== unmodifiedProfile.mentor}
           >
             <Select>
               <SelectButton
@@ -301,18 +326,17 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
               <SelectOptions
                 callback={(e) => {
                   //true if it's mentor, false if it's anythin else
-                const mentor = ((e.target as HTMLButtonElement).value === "Mentor");
-                console.log(mentor)
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, mentor};
-              updatePendingProfile(profileAfterAboutChanges);
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { mentor: `${mentor}` } //annoying that it's a string but go off ig
-              })
-                  
+                  const mentor = ((e.target as HTMLButtonElement).value === "Mentor");
+                  profileAfterAboutChanges = { ...profileAfterAboutChanges, mentor };
+                  updatePendingProfile(profileAfterAboutChanges);
+                  dataManager.updateFields({
+                    id: {
+                      value: userId,
+                      type: 'canon',
+                    },
+                    data: { mentor: `${mentor}` } //annoying that it's a string but go off ig
+                  })
+
                 }}
                 options={[{
                   value: 'Not a mentor',
@@ -336,17 +360,20 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
           inputType={'multi'}
           maxLength={100}
           value={profile.headline}
+          initialValue={unmodifiedProfile.headline}
           onChange={(e) => {
-              const headline = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, headline};
-              updatePendingProfile(profileAfterAboutChanges);
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { headline }
-              })
+            const headline = e.target.value;
+            profileAfterAboutChanges = { ...profileAfterAboutChanges, headline };
+            updatePendingProfile(profileAfterAboutChanges);
+
+            //dataManager is also undefined here
+            dataManager.updateFields({
+              id: {
+                value: userId,
+                type: 'canon',
+              },
+              data: { headline }
+            })
           }}
         />
 
@@ -356,39 +383,45 @@ export const AboutTab = ({dataManager, profile, updatePendingProfile = () => {}}
           inputType={'multi'}
           maxLength={100}
           value={profile.funFact}
+          initialValue={unmodifiedProfile.funFact}
           onChange={(e) => {
-              const funFact = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, funFact};
-              updatePendingProfile(profileAfterAboutChanges);
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { funFact }
-              })
+            const funFact = e.target.value;
+            profileAfterAboutChanges = { ...profileAfterAboutChanges, funFact };
+            updatePendingProfile(profileAfterAboutChanges);
+
+            //dataManager is also undefined here
+            dataManager.updateFields({
+              id: {
+                value: userId,
+                type: 'canon',
+              },
+              data: { funFact }
+            })
           }}
         />
       </div>
 
       <LabelInputBox
-        label={'About Me*'}
+        label={'About Me'}
         labelInfo='Share a brief overview of who you are, your interests, and what drives you!'
         inputType={'multi'}
         maxLength={600}
         value={profile.bio}
+        initialValue={unmodifiedProfile.bio}
         onChange={(e) => {
-          
-              const bio = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, bio};
-              updatePendingProfile(profileAfterAboutChanges);
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { bio }
-              })
+
+          const bio = e.target.value;
+          profileAfterAboutChanges = { ...profileAfterAboutChanges, bio };
+          updatePendingProfile(profileAfterAboutChanges);
+
+          //dataManager is also undefined here
+          dataManager.updateFields({
+            id: {
+              value: userId,
+              type: 'canon',
+            },
+            data: { bio }
+          })
         }}
         id={'edit-profile-section-3'}
       />

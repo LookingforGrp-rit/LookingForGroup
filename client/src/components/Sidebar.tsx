@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 // import Notifications from "./pages/Notifications";
 import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
+import { getCurrentUsername } from '../api/users.ts';
 
 //user utils
 //import { getCurrentUsername } from "../api/users.ts";
@@ -181,6 +182,18 @@ const SideBar = () => {
     navigate(path); // Navigate to the specified path
   };
 
+  // Navigate to the current user's profile
+  const handleProfileAccess = async () => {
+    // navigate to Profile, attach userID
+    const res = await getCurrentUsername();
+    const userId = res.data.userId;
+    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+
+    // Collapse the dropwdown if coming from another user's page
+    if (window.location.href.includes("profile")) {
+      window.location.reload();
+    }
+  };
   /**
    * Handles window resize events and updates width state.
    */
@@ -206,7 +219,7 @@ const SideBar = () => {
                 }
                 onClick={() => handleTextChange("Discover", paths.routes.HOME)}
               >
-                <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
+                <ThemeIcon id={'compass'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
               </button>
               <button
                 id={"meet-sidebar-btn"}
@@ -215,7 +228,7 @@ const SideBar = () => {
                 }
                 onClick={() => handleTextChange("Meet", paths.routes.MEET)}
               >
-                <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
+                <ThemeIcon id={'meet'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
               </button>
               <button
                 id={"my-projects-sidebar-btn"}
@@ -228,7 +241,7 @@ const SideBar = () => {
                   handleTextChange("My Projects", paths.routes.MYPROJECTS)
                 }
               >
-                <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
+                <ThemeIcon id={'folder'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
               </button>
               <button
                 id={"my-profile-sidebar-btn"}
@@ -238,10 +251,10 @@ const SideBar = () => {
                     : "sidebar-btn"
                 }
                 onClick={() =>
-                  handleTextChange("My Profile", paths.routes.PROFILE)
+                  handleProfileAccess()
                 }
               >
-                <ThemeIcon id={'profile'} width={30} height={28.85} className={'mono-fill'} ariaLabel={'my profile'} />
+                <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
               </button>
               <button
                 id={"about-sidebar-btn"}
@@ -266,12 +279,14 @@ const SideBar = () => {
     <div>
       <div className="SideBarContainer">
         <div className="headerContainer">
-          <h1
-            style={{ cursor: "pointer" }}
+          {/* Must be a button to be focusable and meet accessibility guidelines */}
+          <button
             onClick={() => handleTextChange("Discover", paths.routes.HOME)}
           >
-            lfg.
-          </h1>
+            <h1>
+              lfg.
+            </h1>
+          </button>
         </div>
 
         <div className="containerButtonSideBar">
@@ -323,9 +338,9 @@ const SideBar = () => {
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
             <img
-              src="assets/following.png"
-              src-light="assets/following.png"
-              src-dark="assets/following.png"
+              src="/assets/following.png"
+              src-light="/assets/following.png"
+              src-dark="/assets/following.png"
               alt="" /> Following
           </button> */}
 
@@ -334,7 +349,7 @@ const SideBar = () => {
           </button> */}
 
           {/*           {/* <button className={activePage === 'Messages' ? 'active' : ''} onClick={() => handleTextChange('Messages', paths.routes.MESSAGES)}>
-          <img src="images/icons/nav/msg-nav.png" className="navIcon" alt="Messages" /> Messages
+          <img src="/images/icons/nav/msg-nav.png" className="navIcon" alt="Messages" /> Messages
           </button> */}
         </div>
 

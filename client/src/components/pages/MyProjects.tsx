@@ -1,5 +1,5 @@
 // import { profiles } from "../../constants/fakeData";
-import { useState, useMemo, ChangeEvent } from 'react';
+import { useState, useMemo, ChangeEvent, useEffect, useCallback } from 'react';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
@@ -54,6 +54,9 @@ const MyProjects = () => {
 
   const [_createError, setCreateError] = useState(false);
 
+  const [projectMode, setProjectMode] = useState("All");
+  const [userId, setUserId] = useState<string>('');
+
   // --------------------
   // Helper functions
   // --------------------
@@ -72,14 +75,16 @@ const MyProjects = () => {
         if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
         
         //console.log(projectsRes.data);
+        setUserId(res.data.username);
         
       } else {
         //guest
+        setUserId("guest");
         setLoggedIn(0);
       }
 
     } catch (e) {
-      console.error('error getting projecrs', e);
+      console.error('error getting projects', e);
       setCreateError(true);
     }
 
@@ -121,9 +126,10 @@ const MyProjects = () => {
   //   }
   // };
 
-  if (!dataLoaded) {
+  // React likes this more than a boolean check
+  useEffect(() => {
     getUserProjects();
-  }
+  }, []);
   // else {
   //     if (projectsList.length < 20) {
   //         let tempList = new Array(0);
@@ -195,7 +201,7 @@ const MyProjects = () => {
           return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
             const aTime = new Date(a.createdAt).getTime();
             const bTime = new Date(b.createdAt).getTime();
-            return bTime - aTime;
+            return aTime - bTime;
           });
 
         case 'a-z':
@@ -211,7 +217,7 @@ const MyProjects = () => {
           return tempList.sort((a: ProjectDetail, b: ProjectDetail) => {
             const aTime = new Date(a.createdAt).getTime();
             const bTime = new Date(b.createdAt).getTime();
-            return aTime - bTime;
+            return bTime - aTime;
           });
       }
     }
@@ -311,6 +317,9 @@ const MyProjects = () => {
   const ProjectListSection = ({userProjects} : {userProjects: ProjectDetail[]}) => {
     // Sort projects based on the method selected
     const sortedProjects = sortProjects(userProjects) as ProjectDetail[];
+    if (sortedProjects.length == 0) {
+      return <div className='my-projects-no-project'>No {projectMode === "All" ? "" : projectMode} projects!</div>;
+    }
 
     if (sortedProjects) {
       if (displayMode === 'grid') {
@@ -373,10 +382,30 @@ const MyProjects = () => {
     setFilteredProjects(results[0] as ProjectDetail[]);
   };
 
-  const projectsToDisplay = currentSearch.trim() !== '' ? filteredProjects : projectsList;
+  const projectsModeSwitch = useCallback((newMode: string) => {
+    const newFilteredProjects = projectsList.filter((item) => {
+      if (newMode === "All") return true;
+      
+      if (newMode === "Joined") {
+        for (let member of item.members) {
+          if (member.user.username === userId && item.owner.username !== userId) return true;
+        }
+      }
+
+      if (newMode === "Owned") return item.owner.username === userId;
+
+
+      return false;
+    });
+    
+    setProjectMode(newMode);
+    setFilteredProjects(newFilteredProjects);
+  }, [projectMode, filteredProjects, userId, projectsList]);
+
+  const projectsToDisplay = (currentSearch.trim() !== '' || projectMode !== "All") ? filteredProjects : projectsList;
 
   return (
-    <div className="page" id="my-projects">
+    <div className="page" id="my-projects" tabIndex={-1}>
       {/* Top Bar */}
       <Header 
         dataSets={projectDataSet} 
@@ -389,8 +418,8 @@ const MyProjects = () => {
     <div className="projects-banner-outer">
     <div className="projects-banner-wrapper">
       <ThemeImage
-        lightSrc={'assets/projects_header_light.png'}
-        darkSrc={'assets/projects_header_dark.png'}
+        lightSrc={'/assets/projects_header_light.png'}
+        darkSrc={'/assets/projects_header_dark.png'}
         className={'my-projects-banner'}
         alt={'My Projects Banner'}
       />
@@ -402,11 +431,15 @@ const MyProjects = () => {
 
         {/* Filters */}
         <div className="my-projects-filters">
-          {/* TODO: keep this button? or add other filters (like Owned and Joined) */}
-          {/* this button does nothing currently i think we should trash it */}
           {/* All Projects Button */}
-          <button className="my-projects-all-projects-button" onClick={() => { }}>
+          <button className={"my-projects-all-projects-button" + (projectMode === "All" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("All")}>
             All Projects
+          </button>
+          <button className={"my-projects-all-projects-button" + (projectMode === "Owned" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("Owned")}>
+            Owned Projects
+          </button>
+          <button className={"my-projects-all-projects-button" + (projectMode === "Joined" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("Joined")}>
+            Joined Projects
           </button>
         </div>
 
@@ -504,7 +537,9 @@ const MyProjects = () => {
 
           {/*Create Project Button*/}
           <div className="my-projects-create-btn">
-            <ProjectCreatorEditor newProject={true}/>
+            <ProjectCreatorEditor 
+              newProject={true}
+            />
           </div>
         </div>
       </div>
@@ -512,7 +547,7 @@ const MyProjects = () => {
       <hr />
 
       {/* Project Grid/List */}
-      <div>
+      <main id="main">
         {(!dataLoaded) ? (
           <div
             className='placeholder-spacing'
@@ -530,7 +565,7 @@ const MyProjects = () => {
             <ProjectListSection userProjects={projectsToDisplay} />
           )
         )}
-      </div>
+      </main>
       <CreditsFooter />
       <ToTopButton />
     </div>

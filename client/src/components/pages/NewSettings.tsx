@@ -4,7 +4,7 @@ import { Popup, PopupButton, PopupContent } from '../Popup';
 import { ThemeContext } from '../../contexts/ThemeContext';
 import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
-import { useState, useContext, SetStateAction } from 'react';
+import { useState, useContext, SetStateAction, useEffect } from 'react';
 import { Header } from '../Header';
 import CreditsFooter from '../CreditsFooter';
 //import PasswordValidator from 'password-validator';
@@ -456,8 +456,16 @@ const Settings = () => {
   //   }
   // };
 
+  useEffect(()=>{
+    if(theme === 'dark')
+      setThemeOption("Dark Mode")
+
+    if(theme === 'light')
+      setThemeOption("Light Mode")
+  },[theme])
+
   return (
-    <div className="page" style={{ position: 'relative' }}>
+    <div className="page" style={{ position: 'relative' }} tabIndex={-1}>
       {/* Top-right profile dropdown */}
       <div
         style={{
@@ -480,7 +488,7 @@ const Settings = () => {
         ) : (
           <div>
             {/* Top Row: Personal and Email Settings */}
-            <div className="settings-row">
+            <div className="settings-row" id='main'>
               {/* Personal Settings 
               <div className="settings-column">
                 <h2 className="settings-header">Personal</h2>
@@ -543,7 +551,7 @@ const Settings = () => {
                   <div className="input-container">
                     <input
                       id="option-primary-phone"
-                      placeholder={'123-123-1234'}
+                      placeholder={userInfo.phoneNumber ?? 'No current phone number'}
                       type="text"
                       disabled
                     />
@@ -643,8 +651,8 @@ const Settings = () => {
                           disabled
                         />
                         <ThemeIcon
-                          src={'assets/dropdown_light.svg'}
-                          darkSrc={'assets/dropdown_dark.svg'}
+                          src={'/assets/dropdown_light.svg'}
+                          darkSrc={'/assets/dropdown_dark.svg'}
                           alt={'Visibility'}
                           addClass={'options-dropdown-parent-btn'}
                         />
