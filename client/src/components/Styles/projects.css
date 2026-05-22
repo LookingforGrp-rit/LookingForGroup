@@ -67,7 +67,7 @@ Project Panel component style rules
   .project-panel-hover {
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s, opacity 0.2s;
+    transition: visibility 0.2s, opacity 0.2s;
     z-index: 15;
   }
 }
@@ -334,6 +334,10 @@ Project Creator and Editor Popup style rules
   margin-top: -1%;
 }
 
+#project-editor-save {
+  margin-bottom: 28px;
+}
+
 #project-editor-save.disabled,
 #project-editor-save:disabled,
 #team-add-member-add-button:disabled,
@@ -356,7 +360,8 @@ Project Creator and Editor Popup style rules
   cursor: pointer;
 }
 
-.profile-editor-save {
+
+#project-editor-save.profile-editor-save {
   margin-top: 37px;
   margin-bottom: 28px;
 }
@@ -423,7 +428,8 @@ Project Creator and Editor Popup style rules
 .save-error-msg p,
 .save-error-msg-general p,
 #invalid-input-error p {
-  margin: -13% 0 0 0;
+  margin: -20px 0 10px 0;
+  text-align: center;
   font-size: 1.125rem;
   color: red;
 }
@@ -1335,7 +1341,7 @@ Project Creator and Editor Popup style rules
   width: 100%;
 }
 
-@media only screen {
+@media only screen and (max-width: 576px) {
   #project-team-open-positions-popup {
     flex-direction: column;
   }
@@ -1451,6 +1457,12 @@ Project Creator and Editor Popup style rules
   align-content: center;
   gap: 10px;
   align-self: stretch;
+}
+
+#edit-position-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #edit-position-button-pair {
@@ -3085,7 +3097,7 @@ button#positions-popup-list-item-active {
   box-sizing: border-box;
 }
 
-@media only screen {
+@media only screen and (max-width: 576px) {
 
   #project-open-positions-popup {
     overflow-y: auto;
@@ -3521,7 +3533,28 @@ My projects page style rules
   }
 }
 
-.my-projects-all-projects-button,
+.my-projects-all-projects-button {
+  box-sizing: border-box;
+  width: fit-content;
+  background: none;
+  border: 0px;
+  border-radius: 55px;
+  padding: 6px 17px;
+  color: var(--main-text);
+  text-align: center;
+  font-size: 1.125rem;
+  font-family: Inter;
+  font-weight: bold;
+  line-height: 28px;
+  letter-spacing: 0%;
+
+}
+
+.my-projects-all-projects-selected {
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+}
+
 .my-projects-create-btn>button {
   box-sizing: border-box;
   width: fit-content;
@@ -3583,6 +3616,15 @@ My projects page style rules
   }
 }
 
+.my-projects-no-project {
+  color: var(--main-text);
+  font-size: 2rem;
+  font-family: Inter;
+  font-weight: bold;
+  line-height: 28px;
+  padding-left: 60px;
+  padding-top: 30px;
+}
 
 .my-projects-grid {
   width: auto;
