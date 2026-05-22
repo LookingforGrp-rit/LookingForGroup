@@ -972,6 +972,7 @@ Project Creator and Editor Popup style rules
 
 #team-save-info {
   display: flex;
+  flex-direction: column;
   align-items: center;
   margin-top: auto;
 }
@@ -1343,7 +1344,7 @@ Project Creator and Editor Popup style rules
   width: 100%;
 }
 
-@media only screen {
+@media only screen and (max-width: 576px) {
   #project-team-open-positions-popup {
     flex-direction: column;
   }
@@ -1459,6 +1460,12 @@ Project Creator and Editor Popup style rules
   align-content: center;
   gap: 10px;
   align-self: stretch;
+}
+
+#edit-position-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #edit-position-button-pair {
@@ -1601,6 +1608,7 @@ select.edit-position-compensation {
 /* Project Editor/Creator Links Tab */
 #link-save-info {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   margin-top: auto;
 }
@@ -3093,7 +3101,7 @@ button#positions-popup-list-item-active {
   box-sizing: border-box;
 }
 
-@media only screen {
+@media only screen and (max-width: 576px) {
 
   #project-open-positions-popup {
     overflow-y: auto;
@@ -3529,7 +3537,28 @@ My projects page style rules
   }
 }
 
-.my-projects-all-projects-button,
+.my-projects-all-projects-button {
+  box-sizing: border-box;
+  width: fit-content;
+  background: none;
+  border: 0px;
+  border-radius: 55px;
+  padding: 6px 17px;
+  color: var(--main-text);
+  text-align: center;
+  font-size: 1.125rem;
+  font-family: Inter;
+  font-weight: bold;
+  line-height: 28px;
+  letter-spacing: 0%;
+
+}
+
+.my-projects-all-projects-selected {
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+}
+
 .my-projects-create-btn>button {
   box-sizing: border-box;
   width: fit-content;
@@ -3591,6 +3620,15 @@ My projects page style rules
   }
 }
 
+.my-projects-no-project {
+  color: var(--main-text);
+  font-size: 2rem;
+  font-family: Inter;
+  font-weight: bold;
+  line-height: 28px;
+  padding-left: 60px;
+  padding-top: 30px;
+}
 
 .my-projects-grid {
   width: auto;
