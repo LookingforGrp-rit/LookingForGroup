@@ -741,7 +741,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-blue) !important;
+    color: var(--tag-text-unselected-blue)!important;
   }
 }
 
@@ -761,7 +761,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-purple) !important;
+    color: var(--tag-text-unselected-purple)!important;
   }
 }
 
@@ -781,13 +781,13 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-grey) !important;
+    color: var(--tag-text-unselected-grey)!important;
   }
 }
 
 .tag-unselected:hover {
   p {
-    color: var(--tag-text-selected);
+    color: var(--tag-text-selected); 
   }
 
   .fa {
@@ -799,42 +799,95 @@ Filters / Tags Style Rules
 .tag-button-red-unselected:hover {
   background-color: var(--tag-red-selected);
   border-color: var(--tag-red-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-orange.tag-unselected:hover,
 .tag-button-orange-unselected:hover {
   background-color: var(--tag-orange-selected);
   border-color: var(--tag-orange-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-yellow.tag-unselected:hover,
 .tag-button-yellow-unselected:hover {
   background-color: var(--tag-yellow-selected);
   border-color: var(--tag-yellow-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-green.tag-unselected:hover,
 .tag-button-green-unselected:hover {
   background-color: var(--tag-green-selected);
   border-color: var(--tag-green-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-blue.tag-unselected:hover,
 .tag-button-blue-unselected:hover {
   background-color: var(--tag-blue-selected);
   border-color: var(--tag-blue-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-purple.tag-unselected:hover,
 .tag-button-purple-unselected:hover {
   background-color: var(--tag-purple-selected);
   border-color: var(--tag-purple-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-grey.tag-unselected:hover,
 .tag-button-grey-unselected:hover {
   background-color: var(--tag-grey-selected);
   border-color: var(--tag-grey-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
 }
 
 .tag-button:hover {
