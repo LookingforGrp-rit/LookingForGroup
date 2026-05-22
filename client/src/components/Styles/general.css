@@ -249,6 +249,12 @@ section {
   min-height: 50vh;
 }
 
+.placeholder-spacing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* #endregion */
 
 /*

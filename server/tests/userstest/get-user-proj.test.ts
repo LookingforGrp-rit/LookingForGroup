@@ -15,6 +15,9 @@ vi.mock('#config/prisma.ts', () => ({
     projects: {
       findMany: vi.fn(),
     },
+    users: {
+      findUnique: vi.fn(),
+    },
   },
 }));
 
@@ -31,6 +34,10 @@ const mockPreviews = [
   { project_id: 10, title: 'projectAlpha' },
   { project_id: 11, title: 'projectBeta' },
 ];
+
+const mockUser = {
+  userId: 42,
+};
 
 describe('getuserProjectsService', () => {
   beforeEach(() => {
@@ -49,6 +56,7 @@ describe('getuserProjectsService', () => {
   });
   it('returns transformed projects for a user', async () => {
     vi.mocked(prisma.projects.findMany).mockResolvedValue(mockProjects as any);
+    vi.mocked(prisma.users.findUnique).mockResolvedValue(mockUser as any);
     const result = await getUserProjectsService(42);
 
     // expect(prisma.projects.findMany).toHaveBeenCalledWith({
@@ -68,10 +76,18 @@ describe('getuserProjectsService', () => {
     //expect(result).toEqual(mockPreviews);
   });
 
-  it('returns NOT_FOUND when noprojects exist', async () => {
+  it("returns NOT_FOUND when user doesn't exist", async () => {
     vi.mocked(prisma.projects.findMany).mockResolvedValue([]);
+    vi.mocked(prisma.users.findUnique).mockResolvedValue(null);
     const result = await getUserProjectsService(999);
     expect(result).toBe('NOT_FOUND');
+  });
+
+  it('returns [] when noprojects exist', async () => {
+    vi.mocked(prisma.projects.findMany).mockResolvedValue([]);
+    vi.mocked(prisma.users.findUnique).mockResolvedValue(mockUser as any);
+    const result = await getUserProjectsService(999);
+    expect(result).toEqual([]);
   });
 
   it('returns INTERNAL_ERROR when prisma throws', async () => {
