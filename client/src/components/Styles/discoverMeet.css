@@ -25,7 +25,6 @@ Meet page hero style rules
 
 }
 
-
 @media only screen and (max-width: 1100px) {
   #discover-hero {
     display: none;
@@ -219,6 +218,14 @@ Image carousel style rules
   flex-direction: column;
 }
 
+/* Desktop width */
+@media screen and (min-width: 1020px) {
+  .discover-project-about p
+  {
+    height: fit-content;
+  }
+}
+
 .carousel-row {
   display: flex;
   flex-direction: row;
@@ -259,7 +266,7 @@ Image carousel style rules
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
-  height: 375px;
+  height: 100%;
   border-radius: 10px;
   background-color: var(--header-color);
   max-width: calc(100vw - 320px);
@@ -270,7 +277,6 @@ Image carousel style rules
   display: flex;
   flex-direction: row;
   min-width: 100%;
-  height: 100%;
   transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
@@ -289,6 +295,7 @@ Image carousel style rules
   border-radius: 0px 10px 10px 0px;
   padding: 23px min(26px, calc(100vw * (26 / 1512)));
   width: 42.8%;
+  overflow-wrap: break-word;
 
   h2 {
     margin: 0 0 20px;
@@ -327,9 +334,11 @@ Image carousel style rules
 .project-tags {
   grid-area: tags;
   display: flex;
+  flex-wrap: wrap;
   justify-content: start;
   gap: 10px;
   margin-top: 10px;
+  width: max(70%);
 }
 
 .carousel-tag p {
@@ -361,9 +370,14 @@ Image carousel style rules
   .carousel-contents {
     height: auto;
   }
+  .carousel-row:first-child
+  {
+    height: 100%;
+  }
 
   .discover-carousel-content {
     flex-direction: column;
+    height: fit-content;
   }
 
   .discover-project-image {
@@ -413,9 +427,11 @@ Image carousel style rules
 
     h2 {
       font-size: clamp(1.5rem, 5vw, 2.0rem);
+      margin-top: 20px;
     }
   }
 }
+
 
 /*#endregion*/
 
@@ -741,7 +757,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-blue) !important;
+    color: var(--tag-text-unselected-blue)!important;
   }
 }
 
@@ -761,7 +777,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-purple) !important;
+    color: var(--tag-text-unselected-purple)!important;
   }
 }
 
@@ -781,13 +797,13 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-grey) !important;
+    color: var(--tag-text-unselected-grey)!important;
   }
 }
 
 .tag-unselected:hover {
   p {
-    color: var(--tag-text-selected);
+    color: var(--tag-text-selected); 
   }
 
   .fa {
@@ -799,42 +815,95 @@ Filters / Tags Style Rules
 .tag-button-red-unselected:hover {
   background-color: var(--tag-red-selected);
   border-color: var(--tag-red-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-orange.tag-unselected:hover,
 .tag-button-orange-unselected:hover {
   background-color: var(--tag-orange-selected);
   border-color: var(--tag-orange-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-yellow.tag-unselected:hover,
 .tag-button-yellow-unselected:hover {
   background-color: var(--tag-yellow-selected);
   border-color: var(--tag-yellow-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-green.tag-unselected:hover,
 .tag-button-green-unselected:hover {
   background-color: var(--tag-green-selected);
   border-color: var(--tag-green-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-blue.tag-unselected:hover,
 .tag-button-blue-unselected:hover {
   background-color: var(--tag-blue-selected);
   border-color: var(--tag-blue-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-purple.tag-unselected:hover,
 .tag-button-purple-unselected:hover {
   background-color: var(--tag-purple-selected);
   border-color: var(--tag-purple-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-grey.tag-unselected:hover,
 .tag-button-grey-unselected:hover {
   background-color: var(--tag-grey-selected);
   border-color: var(--tag-grey-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
 }
 
 .tag-button:hover {
