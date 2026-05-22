@@ -141,6 +141,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         Designer: 'Designer Skill',
         Developer: 'Developer Skill',
         Soft: 'Soft Skill',
+        Audio: 'Audio Skill',
         Role: 'Role',
         Major: 'Major',
         };
