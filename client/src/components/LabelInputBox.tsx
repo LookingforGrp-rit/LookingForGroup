@@ -7,10 +7,13 @@ interface LabelInputBoxProps {
   inputType: 'single' | 'multi' | 'none';
   maxLength?: number;
   value?: string;
+  initialValue?: string;
   id?: string;
   style?: React.CSSProperties;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   children?: React.ReactNode;
+  required?: boolean;
+  forceUnsaved?: boolean;
 }
 
 /**
@@ -22,49 +25,63 @@ interface LabelInputBoxProps {
  * @param inputType Determines the type of input: 'single', 'multi', or 'none'
  * @param maxLength Maximum character length for multi-line input (optional)
  * @param value Controlled value of the input (optional)
+ * @param initialValue Optional value of the input box before any edits. Used to track unsaved
  * @param id Optional HTML id for the container div
  * @param style Optional CSS styles applied to the container div
  * @param onChange Optional change handler for input events
  * @param children Optional custom content to render inside the container
+ * @param required Optional boolean to render a red asterisk next to the title
+ * @param forceUnsaved Optional boolean to force the title to read "(Unsaved)"
  * @returns A JSX element wrapping the label, input (if any), and children
  */
-const LabelInputBox: React.FC<LabelInputBoxProps> = ({ label, labelInfo, inputType, maxLength, value, id, style, onChange, children }) => {
+const LabelInputBox: React.FC<LabelInputBoxProps> = ({ 
+  label, 
+  labelInfo, 
+  inputType, 
+  maxLength, 
+  value, 
+  initialValue,
+  id, 
+  style, 
+  onChange, 
+  children, 
+  required=false, 
+  forceUnsaved=false
+}) => {
+  // If the value is different than the start value
+  const showUnsaved = forceUnsaved || value !== initialValue;
 
-  // Multi-line input
-  if (inputType === 'multi') {
-    return (
-      <div className='label-input-box' id={id} style={style}>
-        <label className="input-combo-label">
-          {label}
-        </label>
-        {labelInfo && <div className="label-info">{labelInfo}</div>}
-        <Input type="multi" maxLength={maxLength} value={value} onChange={onChange} />
-        {children}
-      </div>
-    )
-  }
-
-  // No input (input likely in children)
-  if (inputType === 'none') {
-    return (
-      <div className='label-input-box' id={id} style={style}>
-        <label className="input-combo-label">
-          {label}
-        </label>
-        {labelInfo && <div className="label-info">{labelInfo}</div>}
-        {children}
-      </div>
-    )
-  }
-
-  // Single-line input (default)
   return (
     <div className='label-input-box' id={id} style={style}>
       <label className="input-combo-label">
         {label}
+        {required && (
+          <span 
+            className="required-asterisk" 
+            aria-hidden="true" 
+            title="Required"
+          >
+            *
+          </span>
+        )}
+        {showUnsaved && (
+          <span className="unsaved-indicator">
+            (Unsaved)
+          </span>
+        )}
       </label>
+      
       {labelInfo && <div className="label-info">{labelInfo}</div>}
-      <Input type="single" value={value} onChange={onChange} />
+      
+      {inputType !== 'none' && (
+        <Input 
+          type={inputType} 
+          maxLength={maxLength} 
+          value={value} 
+          onChange={onChange}
+        />
+      )}
+      
       {children}
     </div>
   );

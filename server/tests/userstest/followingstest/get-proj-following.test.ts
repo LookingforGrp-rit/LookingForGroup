@@ -66,6 +66,7 @@ describe('getProjectFollowingService', () => {
         location: 'Test Location',
         majors: [],
       },
+      tags: [],
       thumbnail: {
         id: 1,
         url: 'test-thumbnail',

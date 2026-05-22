@@ -1,27 +1,28 @@
-import { MyMember, Visibility } from "@looking-for-group/shared";
+import { MePrivate, MyMember, Visibility } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 import usePreloadedImage from "../../../functions/imageLoad";
 import placeholderThumbnail from "../../../images/project_temp.png";
 import { ThemeIcon } from "../../ThemeIcon";
+import { FC, useMemo } from "react";
+
+interface ProjectTileProps {
+  membershipData : MyMember;
+  onVisibilityToggled : (project_id : number) => void;
+}
 
 /**
  * Component for each project to display within the Profile Projects tab. Appears as a tile.
  * @param projectData A single project's data.
  * @returns JSX Element
  */
-const ProjectTile = ({
-  membershipData,
-  onVisibilityToggled,
-}: {
-  membershipData: MyMember;
-  onVisibilityToggled: () => void;
-}) => {
+const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggled }) => {
   const projectData = membershipData.project;
 
   return (
-    <div className="projectTile" key={projectData.projectId}>
-      <img
+    <div key={projectData.projectId}>
+      <div className="projectTile">
+        <img
         src={usePreloadedImage(
           projectData.thumbnail?.image || placeholderThumbnail,
           placeholderThumbnail
@@ -36,7 +37,7 @@ const ProjectTile = ({
         className="project-visibility-button"
         onClick={(e) => {
           e.preventDefault();
-          onVisibilityToggled();
+          onVisibilityToggled(projectData.projectId);
         }}
       >
         <ThemeIcon
@@ -47,13 +48,16 @@ const ProjectTile = ({
           ariaLabel={"Toggle visibility"}
         />
       </button>
-      {/* {<p>{projectData.title}</p>} */}
+      </div>
+      
+      <p className="project-tile-title">{projectData.title}</p>
     </div>
   );
 };
 
 type ProjectsTabProps = {
   profile: PendingUserProfile;
+  unmodifiedProfile: MePrivate;
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   updatePendingProfile: (profileData: PendingUserProfile) => void;
 };
@@ -63,11 +67,13 @@ type ProjectsTabProps = {
  * @param dataManager Handles data changes to save changes later.
  * @param profile Temporary profile data.
  * @param updatePendingProfile Updates profile data.
+ * @param unmodifiedProfile A copy of the profile before any changes
  * @returns JSX Element
  */
 export const ProjectsTab = ({
   dataManager,
   profile,
+  unmodifiedProfile,
   updatePendingProfile,
 }: ProjectsTabProps) => {
 
@@ -80,7 +86,7 @@ export const ProjectsTab = ({
     projectId: number,
     newVisibility: Visibility
   ) => {
-    dataManager.updateProjectVisibility({
+    dataManager?.updateProjectVisibility({
       id: {
         type: "canon",
         value: projectId,
@@ -90,27 +96,53 @@ export const ProjectsTab = ({
       },
     });
 
-    const updatedProject: MyMember = {
-      ...profile.projects.find(
-        ({ project }) => project.projectId === projectId
-      )!,
-      visibility: newVisibility,
-    };
+    // New array
+    const updatedProjects = profile.projects.map((membership) => {
+      if (membership.project.projectId === projectId) {
+        return {
+          ...membership,
+          visibility: newVisibility,
+        };
+      }
+      return membership;
+    });
 
     updatePendingProfile({
       ...profile,
-      projects: [
-        ...profile.projects.filter(
-          ({ project }) => project.projectId !== projectId
-        ),
-        updatedProject,
-      ],
+      projects: updatedProjects,
     });
   };
 
+  // Check if the Projects tab is unsaved
+  const isProjectsUnsaved = useMemo(() => {
+    const currentProjects = profile.projects || [];
+    const originalProjects = unmodifiedProfile?.projects || [];
+
+    if (currentProjects.length !== originalProjects.length) return true;
+
+    // Compare by finding the matching project ID
+    return currentProjects.some((current) => {
+      const original = originalProjects.find(
+        (orig) => orig.project.projectId === current.project.projectId
+      );
+      
+      // If it doesn't exist in the original array, or visibility has changed
+      if (!original) 
+        return true;
+      return current.visibility !== original.visibility;
+    });
+  }, [profile.projects, unmodifiedProfile?.projects]);
+
   return (
     <div id="profile-editor-projects">
-      <div className="project-editor-section-header">Projects</div>
+      <div className="project-editor-section-header">
+        Projects
+        {isProjectsUnsaved && (
+          <span className="unsaved-indicator">
+            (Unsaved)
+          </span>
+        )}  
+      </div>
       <div className="project-editor-extra-info">
         Choose to hide/show projects you've worked on.
       </div>
@@ -120,9 +152,9 @@ export const ProjectsTab = ({
             <ProjectTile
               membershipData={membership}
               key={`project-${membership.project.projectId}`}
-              onVisibilityToggled={() =>
+              onVisibilityToggled={(_project_id : number) =>
                 onProjectVisibilityChanged(
-                  membership.project.projectId,
+                  _project_id,
                   membership.visibility === "Public" ? "Private" : "Public"
                 )
               }

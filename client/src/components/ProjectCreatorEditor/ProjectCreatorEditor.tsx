@@ -1,4 +1,4 @@
-  import { useState, FC, Dispatch, SetStateAction } from "react";
+  import { useState, useRef, FC, Dispatch, SetStateAction } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -16,10 +16,12 @@ import {
   deleteProject,
 } from "../../api/projects";
 
+import { getProjectsByUser } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../types/types";
 import { ProjectWithFollowers, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
+import { getCurrentUsername } from "../../api/users";
 
 // NO COMMENTS FOR WHAT THESE ARE??????
 interface Props {
@@ -69,18 +71,26 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   // Error message for Links validation (used in LinksTab)
   const [errorLinks, setErrorLinks] = useState("");
 
-  //State variable for error message
-  const [message, setMessage] = useState("");
-
   // Tracker that checks if the project is currently saveable.
   // If this is set to true, the "Save Changes" button appears in every tab
   const [saveable, setSaveable] = useState(false);
 
+  // Tracks whether the project was successfully saved (prevents deletion on cleanup after save)
+  const [saved, setSaved] = useState(true);
+
+  const [confirm, setConfirm] = useState(false);
+
+  const [message, setMessage] = useState("");
+
+  // Component Refs
+  const exitButton = useRef(null);
+  const startButton = useRef(null);
+
   // Check if the current project can be saved
   let valid = false;
-  if (modifiedProject?.title != "") {
-    if (modifiedProject?.hook != "") {
-      if (modifiedProject?.description != "") {
+  if (modifiedProject?.title != "" && modifiedProject?.title != undefined) {
+    if (modifiedProject?.hook != "" && modifiedProject?.hook != undefined) {
+      if (modifiedProject?.description != "" && modifiedProject?.description != undefined) {
         valid = true;
       }
     }
@@ -92,10 +102,48 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     setSaveable(valid);
   }
 
-  // Submit the form to save or create the project
+  /**
+   * update the red missing fields message to show what is missing from the page
+   */
+  const updateMessage = async () => {
+    let newMessage = "";
+    if (modifiedProject?.title === "" || modifiedProject?.title === undefined) newMessage = "Project is missing a title!";
+    else if (modifiedProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (modifiedProject?.tags.length == 0) newMessage = "Project is missing tags!";
+    else if (modifiedProject?.hook === "" || modifiedProject?.hook === undefined) newMessage = "Project is missing a hook!";
+    else if (modifiedProject?.description === "" || modifiedProject?.description === undefined) newMessage = "Project is missing a description!";
+
+    setMessage(newMessage);
+  }
+
+  /**
+   * faster version of updateMessage, for use with updateDisplayedProject()
+   * @param updatedPendingProject - parameter of updateDisplayedProject, using is faster than trying for modifiedProject
+   */ 
+  const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
+    let newMessage = "Project is missing hate";
+    if (updatedPendingProject?.title === "" || updatedPendingProject?.title === undefined) newMessage = "Project is missing a title!";
+    else if (updatedPendingProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (updatedPendingProject?.tags.length == 0) newMessage = "Project is missing tags!";
+    else if (updatedPendingProject?.hook === "" || updatedPendingProject?.hook === undefined) newMessage = "Project is missing a hook!";
+    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing a description!";
+    setMessage(newMessage);
+  }
+
+  // Start editing the project creator
   const createOrEdit = async () => {
+    setSaved(true);
+    setConfirm(false);
+    const res = await getCurrentUsername();
+    if (!(res.status === 200 && res.data?.username)) {
+      //redirect user to login if they aren't logged in
+      navigate(paths.routes.LOGIN);
+      return;
+    }
+
     if (!newProject && projectID) {
-    // Load existing project
+      
+      // Load existing project
       try {
         // const response = await getByID(Number(projectID));
         // if (!response.data) return;
@@ -126,6 +174,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         console.error("Error creating new project:", err);
       }
     }
+    if (startButton.current) {
+      (startButton.current as unknown as HTMLElement).focus();
+    }
+    updateMessage();
   }
 
   buttonCallback = createOrEdit;
@@ -182,14 +234,53 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   //this deletes the newly created project when the create window is manually closed
   //this is called below as the PopupContent's callback function (that only calls when it's closed so should it just be called onClose?)
-  //TODO: update this to show a close without saving prompt
   const closeWithoutSaving = async () => {
     // Why is this here? If it's a new project then it won't be on the API anyway
-    if(projectData && newProject) await deleteProject(projectData?.projectId)
+    setCurrentTab(0);
+    // Only delete if this is a new project AND it was not saved yet
+    if(projectData && newProject && !saved) await deleteProject(projectData?.projectId);
   }
 
+  const toggleConfirm = async () => {
+    setConfirm(!confirm);
+  }
 
   // Isn't this what createoredit is supposed to do? it never calls this though
+  
+  
+  /**
+   *  Adds a number to the end of a project so you don't have duplicate project titles(Unity style)
+   * @returns A unique project title
+   */
+  const getUniqueProjectTitle = async (
+    desiredTitle: string,
+    currentProjectId: number
+  ): Promise<string> => {
+    const base = desiredTitle.trim();
+
+    const res = await getProjectsByUser();
+    const projects = res.data ?? [];
+
+    // Lower-cased titles of the user's OTHER projects
+    const takenNames = new Set(
+      projects
+        .filter((p) => p.projectId !== currentProjectId)
+        .map((p) => p.title.trim().toLowerCase())
+    );
+
+    if (!takenNames.has(base.toLowerCase())) {
+      return base;
+    }
+
+    // Find the lowest available "(n)" suffix
+    let n = 1;
+    while (takenNames.has(`${base}(${n})`.toLowerCase())) {
+      n++;
+    }
+    updateMessage();
+    return `${base}(${n})`;
+  };
+
   /**
    * Handles saving project changes to the server, validates input data before saving
    * For existing projects: updates thumbnails, images, positions, and project information
@@ -218,7 +309,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       !modifiedProject.hook
     ) {
       const errorText = document.getElementById("invalid-input-error");
-      setMessage("*Fill out all required info under General before saving!*");
       await setFailCheck(true);
 
       if (errorText) {
@@ -233,7 +323,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       modifiedProject.mediums.length == 0
     ) {
       const errorText = document.getElementById("invalid-input-error");
-      setMessage("*Choose a project type and tag under Tags before saving!*");
       await setFailCheck(true);
 
       if (errorText) {
@@ -244,6 +333,23 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
     console.log("Created project thumbnail: ");
     console.log(modifiedProject.thumbnail);
+    setCurrentTab(0);
+
+    // Prevent duplicate project names in the user's project list.
+    // If the title collides with another of their projects, auto-rename it
+    // (e.g. "ProjectTitle" -> "ProjectTitle(1)").
+    const currentProjectId = dataManager.getSavedProject().projectId;
+    const uniqueTitle = await getUniqueProjectTitle(
+      modifiedProject.title,
+      currentProjectId
+    );
+    if (uniqueTitle !== modifiedProject.title) {
+      dataManager.updateFields({
+        id: { value: currentProjectId, type: "canon" },
+        data: { title: uniqueTitle },
+      });
+      setModifiedProject({ ...modifiedProject, title: uniqueTitle });
+    }
 
     try {
       await dataManager.saveChanges();
@@ -255,7 +361,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           updateDisplayedProject(dataManager.getSavedProject());
         }
       }
-      navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`)
+      
+      // Mark project as saved so cleanup won't delete it
+      setSaved(true);
+      navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
@@ -263,7 +372,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
 
   const updatePendingProject = (updatedPendingProject: PendingProject) => {
     setModifiedProject(updatedPendingProject);
+    setSaved(false);
+    fastUpdateMessage(updatedPendingProject);
   }
+
+  const generalTabInvalid = !modifiedProject?.title || !modifiedProject?.hook || !modifiedProject?.description;
+  const tagsTabInvalid = modifiedProject?.tags.length === 0 || modifiedProject?.mediums.length === 0;
+  const teamTabInvalid = errorAddMember !== "" || errorAddPosition !== "";
+  const linksTabInvalid = errorLinks !== "";
 
   return (
     <Popup>
@@ -285,8 +401,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
         </PopupButton>
       )}
 
-      <PopupContent callback={closeWithoutSaving}>
-        
+      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
+        {confirm ? <PopupContent confirmation={true} useClose={false}>
+          <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
+          <div id="confirm-editor-save">
+            <PopupButton doNotClose={() => false} callback={closeWithoutSaving} buttonId="project-editor-save">
+              Confirm
+            </PopupButton>
+            <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >
+              Cancel
+            </PopupButton>
+          </div>
+        </PopupContent> : ""}
         <div id="project-creator-editor">
           <div id="project-editor-tabs">
             <button
@@ -296,8 +422,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 setCurrentTab(0);
               }}
               className={`project-editor-tab ${currentTab === 0 ? "project-editor-tab-active" : ""}`}
+              ref={startButton}
             >
-              General
+              General{generalTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
             <button
               id="media-tab"
@@ -317,7 +444,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               }}
               className={`project-editor-tab ${currentTab === 2 ? "project-editor-tab-active" : ""}`}
             >
-              Tags
+              Tags{tagsTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
             <button
               id="team-tab"
@@ -327,7 +454,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               }}
               className={`project-editor-tab ${currentTab === 3 ? "project-editor-tab-active" : ""}`}
             >
-              Team
+              Team{teamTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
             <button
               id="links-tab"
@@ -337,7 +464,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               }}
               className={`project-editor-tab ${currentTab === 4 ? "project-editor-tab-active" : ""}`}
             >
-              Links
+              Links{linksTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
           </div>
               
@@ -346,28 +473,34 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <GeneralTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 1 ? (
               <MediaTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 2 ? (
               <TagsTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 3 ? (
               <TeamTab
@@ -375,20 +508,24 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
                 updatePendingProject={updatePendingProject}
                 saveProject={saveProject}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 setErrorMember={setErrorAddMember}
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : currentTab === 4 ? (
               <LinksTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
+                unmodifiedProject={projectData}
                 saveProject={saveProject}
                 updatePendingProject={updatePendingProject}
                 setErrorLinks={setErrorLinks}
                 saveable={saveable}
                 failCheck={failCheck}
+                message={message}
               />
             ) : (
               <></>
@@ -396,6 +533,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               <></>
             )}
           </div>
+          
+          {/*Focus control*/}
+          <div tabIndex={0} onFocus={() => (exitButton.current as unknown as HTMLElement).focus()}></div>
+
           {/* Responsiveness fix: General Tab has its own button/error text for layout change 
             - This never actually displays anywhere, so I'm commenting it out
           */}

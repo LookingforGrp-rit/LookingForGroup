@@ -3,6 +3,7 @@ import prisma from '#config/prisma.ts';
 import { MyMemberSelector } from '#services/selectors/me/parts/my-member.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMyMember } from '#services/transformers/me/parts/my-member.ts';
+//import { MembersProfileVisibility } from '@prisma/client';
 
 type UpdateProjectVisibilityServiceError = ServiceErrorSubset<
   'INTERNAL_ERROR' | 'NOT_FOUND' | 'FORBIDDEN'
@@ -37,6 +38,8 @@ export const updateProjectVisibility = async (
       return transformMyMember(existingMember);
     }
 
+    const normalized = visibility.toLowerCase();
+
     // Update the member's visibility
     const updatedMember = await prisma.members.update({
       where: {
@@ -46,13 +49,13 @@ export const updateProjectVisibility = async (
         },
       },
       data: {
-        profileVisibility: visibility,
+        profileVisibility: normalized === 'public' ? 'public' : 'private',
       },
       select: MyMemberSelector,
     });
 
     return transformMyMember(updatedMember);
-  } catch (error) {
+  } catch (error: unknown) {
     console.error('Error in updateProjectVisibilityService:', error);
 
     if (error instanceof Object && 'code' in error) {
