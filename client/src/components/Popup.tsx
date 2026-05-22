@@ -131,9 +131,10 @@ export const PopupContent = ({
 
   // Close the popup and execute optional callback
   const closePopup = useCallback(() => {
+    if(!open) return;
     callback();
     if(!confirmation) setOpen(false);
-  }, [callback, setOpen]);
+  }, [callback, setOpen, open]);
 
   // Close on Escape key press
   useEffect(() => {
