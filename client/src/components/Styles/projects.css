@@ -970,6 +970,7 @@ Project Creator and Editor Popup style rules
 
 #team-save-info {
   display: flex;
+  flex-direction: column;
   align-items: center;
   margin-top: auto;
 }
@@ -1605,6 +1606,7 @@ select.edit-position-compensation {
 /* Project Editor/Creator Links Tab */
 #link-save-info {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   margin-top: auto;
 }
