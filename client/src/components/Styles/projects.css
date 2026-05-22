@@ -3521,7 +3521,28 @@ My projects page style rules
   }
 }
 
-.my-projects-all-projects-button,
+.my-projects-all-projects-button {
+  box-sizing: border-box;
+  width: fit-content;
+  background: none;
+  border: 0px;
+  border-radius: 55px;
+  padding: 6px 17px;
+  color: var(--main-text);
+  text-align: center;
+  font-size: 1.125rem;
+  font-family: Inter;
+  font-weight: bold;
+  line-height: 28px;
+  letter-spacing: 0%;
+
+}
+
+.my-projects-all-projects-selected {
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+}
+
 .my-projects-create-btn>button {
   box-sizing: border-box;
   width: fit-content;
