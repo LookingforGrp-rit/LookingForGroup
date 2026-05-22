@@ -27,6 +27,7 @@ export const peopleTabs = {
   'Developer Skill': { categoryTags: [], categoryName: 'Developer Skill', color: 'yellow' },
   'Designer Skill': { categoryTags: [], categoryName: 'Designer Skill', color: 'red' },
   'Soft Skill': { categoryTags: [], categoryName: 'Soft Skill', color: 'purple' },
+  'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skill', color: 'grey'},
   'Role': { categoryTags: [], categoryName: 'Role', color: 'grey' },
   'Major': { categoryTags: [], categoryName: 'Major', color: 'orange' },
 };
