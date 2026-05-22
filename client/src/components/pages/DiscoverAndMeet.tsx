@@ -500,16 +500,26 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   let discoverPanelContents : React.ReactElement;
   if (category == 'projects') {
     if(!dataLoaded && filteredProjectList.length === 0) {
-      discoverPanelContents = (<div className='spinning-loader'></div>);
+      discoverPanelContents = (
+        <div className='placeholder-spacing'>
+          <div className='spinning-loader'></div>
+        </div>
+      );
     }
-
-    discoverPanelContents = (<PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} />);
+    else {
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} />);
+    }
   } else {
     if(!dataLoaded && filteredUserList.length === 0) {
-      discoverPanelContents = (<div className='spinning-loader'></div>);
+      discoverPanelContents = (
+        <div className='placeholder-spacing'>
+          <div className='spinning-loader'></div>
+        </div>
+      );
     }
-    
-    discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} />);
+    else {
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} />);
+    }
   }
 
   // Main render function
