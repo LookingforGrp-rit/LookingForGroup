@@ -32,15 +32,17 @@ export const ProfileEditPopup = () => {
   const [unmodifiedProfile, setUnmodifiedProfile] = useState<MePrivate>();
   const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
   const [confirm, setConfirm] = useState(false);
+  const [saved, setSaved] = useState(true);
 
   const isOpening = useRef(true);
   const navigate = useNavigate();
 
-  const handlePopupCallback = () => {
-    if (isOpening.current) {
+  const handlePopupCallback = async () => {
+    if (saved) {
       // Popup is opening. Ignore the confirm
       setCurrentTab(0);
       isOpening.current = false;
+      setSaved(true);
     } else {
       // Popup is closing. Show the confirm dialog
       setConfirm(true);
@@ -58,6 +60,11 @@ export const ProfileEditPopup = () => {
     if (unmodifiedProfile)
       setModifiedProfile(structuredClone(unmodifiedProfile));
   }
+
+   const updatePendingProfile = (updatedPendingProject: PendingUserProfile) => {
+     setModifiedProfile(updatedPendingProject);
+     setSaved(false);
+   }
 
   // Profile should be set up on intialization
   useEffect(() => {
@@ -99,7 +106,7 @@ export const ProfileEditPopup = () => {
       // TODO handle error
       console.error((e as Error).message);
     }
-
+    setSaved(true);
     navigate(`${paths.routes.PROFILE}?userID=${modifiedProfile?.userId}`);
     window.location.reload();
   };
@@ -163,7 +170,7 @@ export const ProfileEditPopup = () => {
             profile={modifiedProfile}
             unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       case 1:
@@ -172,7 +179,7 @@ export const ProfileEditPopup = () => {
             profile={modifiedProfile}
             unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       case 2:
@@ -181,7 +188,7 @@ export const ProfileEditPopup = () => {
             profile={modifiedProfile}
             unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       case 3:
@@ -190,7 +197,7 @@ export const ProfileEditPopup = () => {
             profile={modifiedProfile}
             unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       default:
@@ -216,7 +223,7 @@ export const ProfileEditPopup = () => {
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
-      <PopupContent profilePopup={true} callback={handlePopupCallback} confirmation={true}>
+      <PopupContent profilePopup={true} callback={handlePopupCallback} confirmation={!saved}>
         
         {confirm ? (
           <PopupContent confirmation={true} useClose={false}>
