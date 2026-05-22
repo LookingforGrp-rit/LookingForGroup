@@ -7,6 +7,7 @@ import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
 import { getCurrentUsername } from '../api/users.ts';
 
+
 //user utils
 //import { getCurrentUsername } from "../api/users.ts";
 //import { UserDetail } from "@looking-for-group/shared";
@@ -97,6 +98,13 @@ const SideBar = () => {
     // case '/messages':
     //   startingPage = 'Messages';
     //   break;
+    case "/about":
+      startingPage = "About";
+      for (const i of sidebarBtns) {
+        i.classList.remove("active");
+      }
+      document.querySelector("#about-sidebar-btn")?.classList.add("active");
+      break;
     default:
       startingPage = localStorage.getItem("lastActiveTab") || "Discover";
       for (const i of sidebarBtns) {
@@ -133,35 +141,35 @@ const SideBar = () => {
    * Fetches the current authenticated user and sets user data.
    * Updates `createError` depending on authentication status.
   */
- /*
-  const getAuth = async () => {
-    // Is user authenticated?
-    // Get auth
-    try {
-      const res = await getCurrentUsername();
-
-      if (res.status === 200 && res.data?.username) {
-        // Authenticated
-        setCreateError(false);
-
-        const userInfo: UserDetail = {
-          ...res.data,
-          following: res.data.following || { usersFollowing: { users: [], count: 0, apiUrl: "" }, projectsFollowing: { projects: [], count: 0, apiUrl: "" } },
-          followers: res.data.followers || { users: [], count: 0, apiUrl: "" },
-        };
-
-        setUserData(userInfo);
-      } else {
-        // If there is any issue authenticating the user's account,
-        // immediatly send the user to the login screen
-        navigate(paths.routes.LOGIN);
-        setCreateError(true);
-      }
-    } catch (err) {
-      console.error(err);
-    }
-  };
-  */
+  /*
+   const getAuth = async () => {
+     // Is user authenticated?
+     // Get auth
+     try {
+       const res = await getCurrentUsername();
+ 
+       if (res.status === 200 && res.data?.username) {
+         // Authenticated
+         setCreateError(false);
+ 
+         const userInfo: UserDetail = {
+           ...res.data,
+           following: res.data.following || { usersFollowing: { users: [], count: 0, apiUrl: "" }, projectsFollowing: { projects: [], count: 0, apiUrl: "" } },
+           followers: res.data.followers || { users: [], count: 0, apiUrl: "" },
+         };
+ 
+         setUserData(userInfo);
+       } else {
+         // If there is any issue authenticating the user's account,
+         // immediatly send the user to the login screen
+         navigate(paths.routes.LOGIN);
+         setCreateError(true);
+       }
+     } catch (err) {
+       console.error(err);
+     }
+   };
+   */
 
   /**
    * Handles updating the active page and navigation.
@@ -212,7 +220,7 @@ const SideBar = () => {
                 }
                 onClick={() => handleTextChange("Discover", paths.routes.HOME)}
               >
-                <ThemeIcon id={'compass'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
+                <ThemeIcon id={'compass'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} />
               </button>
               <button
                 id={"meet-sidebar-btn"}
@@ -221,8 +229,14 @@ const SideBar = () => {
                 }
                 onClick={() => handleTextChange("Meet", paths.routes.MEET)}
               >
-                <ThemeIcon id={'meet'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
+                <ThemeIcon id={'meet'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'} />
               </button>
+              <div className="my-projects-create-btn">
+                <ProjectCreatorEditor
+                  newProject={true}
+                  mobileView={true}
+                />
+              </div>
               <button
                 id={"my-projects-sidebar-btn"}
                 className={
@@ -234,7 +248,7 @@ const SideBar = () => {
                   handleTextChange("My Projects", paths.routes.MYPROJECTS)
                 }
               >
-                <ThemeIcon id={'folder'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
+                <ThemeIcon id={'folder'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
               </button>
               <button
                 id={"my-profile-sidebar-btn"}
@@ -248,6 +262,15 @@ const SideBar = () => {
                 }
               >
                 <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
+              </button>
+              <button
+                id={"about-sidebar-btn"}
+                className={
+                  activePage === "About" ? "active sidebar-btn" : "sidebar-btn"
+                }
+                onClick={() => handleTextChange("About", paths.routes.ABOUT)}
+              >
+                <ThemeIcon id={'info'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'about'}/>
               </button>
             </div>
           </div>
@@ -281,8 +304,8 @@ const SideBar = () => {
             }
             onClick={() => handleTextChange("Discover", paths.routes.HOME)}
           >
-            <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'}/>
-            Discover 
+            <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} />
+            Discover
           </button>
           <button
             id={"meet-sidebar-btn"}
@@ -291,7 +314,7 @@ const SideBar = () => {
             }
             onClick={() => handleTextChange("Meet", paths.routes.MEET)}
           >
-            <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'}/>
+            <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'} />
             Meet
           </button>
           <button
@@ -305,8 +328,19 @@ const SideBar = () => {
               handleTextChange("My Projects", paths.routes.MYPROJECTS)
             }
           >
-            <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
+            <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
             My Projects
+          </button>
+          {/* About button */}
+          <button
+            id={"about-sidebar-btn"}
+            className={
+              activePage === "About" ? "active sidebar-btn" : "sidebar-btn"
+            }
+            onClick={() => handleTextChange("About", paths.routes.ABOUT)}
+          >
+            <ThemeIcon id={'info'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'about'}/>
+            About
           </button>
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
@@ -332,8 +366,9 @@ const SideBar = () => {
         <div className="Create">
           <ProjectCreatorEditor
             newProject={true}
-            // buttonCallback={getAuth}
-            // user={userData}
+            mobileView={false}
+          // buttonCallback={getAuth}
+          // user={userData}
           />
         </div>
       </div>

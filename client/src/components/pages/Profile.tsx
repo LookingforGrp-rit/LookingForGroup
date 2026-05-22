@@ -329,7 +329,7 @@ const Profile = () => {
                     {majorsArr.join(", ")} {displayedProfile?.academicYear}
                   </div>
                   <div className="profile-extra">
-                    <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'} />
+                    <ThemeIcon id={'location'} width={12} height={22} className={'mono-fill'} ariaLabel={'Location'} />
                     {displayedProfile?.location}
                   </div>
                   <div className="profile-extra">
