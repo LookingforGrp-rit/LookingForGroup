@@ -31,7 +31,7 @@ Project Panel component style rules
 
 .project-panel-box {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px,30vw,350px), 80vw), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px, 30vw, 350px), 80vw), 1fr));
   justify-content: space-between;
   align-content: start;
   gap: 20px;
@@ -230,6 +230,7 @@ Project Panel component style rules
     flex-direction: column;
     align-self: baseline;
     z-index: 0;
+
     img {
       border-radius: 10px 10px 0px 0px;
       box-shadow: 2px 2px 10px 2px var(--shadow-color);
@@ -392,10 +393,12 @@ Project Creator and Editor Popup style rules
   padding-top: 7px;
   padding-bottom: 7px;
 }
+
 #profile-menu-dropdown .share-button {
   width: 100%;
   gap: 17px;
 }
+
 .share-button:hover {
   background-color: var(--header-color) !important;
 }
@@ -3339,9 +3342,9 @@ button#positions-popup-list-item-active {
 }
 
 #project-people-tab {
-   font-weight: 700;
-    font-size: 1.3rem;
-    color: var(--primary-color);
+  font-weight: 700;
+  font-size: 1.3rem;
+  color: var(--primary-color);
 }
 
 
@@ -3588,10 +3591,28 @@ My projects page style rules
   }
 }
 
+/*create btn in mobile view*/
+.containerButtonSideBar .my-projects-create-btn>button {
+  height: 45px;
+  padding-left: calc((100vw - 160px) / 14);
+  padding-right: calc((100vw - 160px) / 14);
+  background: var(--sidebar-gradient);
+
+  svg {
+    filter: invert(1) saturate(0) brightness(1);
+    transition: 0.25s;
+  }
+}
+
+
 .my-projects-all-projects-button:hover,
 .my-projects-create-btn>button:hover {
   transform: scale(1.1);
   transition: 0.2s;
+}
+
+.containerButtonSideBar .my-projects-create-btn>button:hover {
+  background-color: var(--main-text);
 }
 
 .my-projects-create-btn>#project-info-create {
