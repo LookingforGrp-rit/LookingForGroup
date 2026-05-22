@@ -67,7 +67,7 @@ Project Panel component style rules
   .project-panel-hover {
     visibility: hidden;
     opacity: 0;
-    transition: visibility 0s, opacity 0.2s;
+    transition: visibility 0.2s, opacity 0.2s;
     z-index: 15;
   }
 }
