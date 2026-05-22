@@ -20,6 +20,7 @@
     "prisma:generate": "npx prisma generate --schema=server/prisma/schema.prisma",
     "build:client": "npm run build --workspace=client",
     "dev": "concurrently \"npm run dev --workspace=client\" \"npm run dev --workspace=server\"",
+    "start:server": "node src/index.ts",
     "docker:build": "docker build .",
     "docker:run": "concurrently \"docker run lookingforgroup\" \"npm run dev --workspace=client\"",
     "test:server": "npm run test --workspace=server",
