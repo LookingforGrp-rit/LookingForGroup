@@ -14,7 +14,7 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
-import { ProjectDetail} from '@looking-for-group/shared';
+import { ProjectDetail } from '@looking-for-group/shared';
 
 /**
  * My Projects page. Creates a customizable page that showcases the user's projects.
@@ -36,7 +36,7 @@ const MyProjects = () => {
 
   // Type of sort for items. Can be newest, oldest, A-Z, or Z-A
   const [sortMethod, setSortMethod] = useState('newest');
-  
+
   // List of user's projects
   const [projectsList, setProjectsList] = useState<ProjectDetail[]>([]);
 
@@ -70,9 +70,9 @@ const MyProjects = () => {
         const projectsRes = await getProjectsByUser();
 
         if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
-        
+
         //console.log(projectsRes.data);
-        
+
       } else {
         //guest
         setLoggedIn(0);
@@ -145,7 +145,7 @@ const MyProjects = () => {
   //         setProjectsList(tempList);
   //     }
   // }
-  
+
   /**
    * Checks if any word in "title" starts with "snippet", and returns that answer as a boolean.
    * @param title Project title
@@ -234,7 +234,7 @@ const MyProjects = () => {
    * @param userProjects Projects to display
    * @returns JSX Element
    */
-  const GridDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => { //it's a parameter here but a property down there
+  const GridDisplay = ({ userProjects }: { userProjects: ProjectDetail[] }) => { //it's a parameter here but a property down there
     return (
       <>
         <div className='my-projects-grid'>
@@ -268,7 +268,7 @@ const MyProjects = () => {
    * @param userProjects Projects to display 
    * @returns JSX Element
    */
-  const ListDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => {
+  const ListDisplay = ({ userProjects }: { userProjects: ProjectDetail[] }) => {
     return (
       <>
         {/* Projects List header */}
@@ -309,7 +309,7 @@ const MyProjects = () => {
    * @param userProjects Projects to display 
    * @returns GridDisplay or ListDisplay components. Nothing if there is an error.
    */
-  const ProjectListSection = ({userProjects} : {userProjects: ProjectDetail[]}) => {
+  const ProjectListSection = ({ userProjects }: { userProjects: ProjectDetail[] }) => {
     // Sort projects based on the method selected
     const sortedProjects = sortProjects(userProjects) as ProjectDetail[];
 
@@ -379,24 +379,24 @@ const MyProjects = () => {
   return (
     <div className="page" id="my-projects" tabIndex={-1}>
       {/* Top Bar */}
-      <Header 
-        dataSets={projectDataSet} 
-        onSearch={handleSearch} 
+      <Header
+        dataSets={projectDataSet}
+        onSearch={handleSearch}
         value={currentSearch}
-        onChange={(e : ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
       />
 
       {/* Banner */}
-    <div className="projects-banner-outer">
-    <div className="projects-banner-wrapper">
-      <ThemeImage
-        lightSrc={'/assets/projects_header_light.png'}
-        darkSrc={'/assets/projects_header_dark.png'}
-        className={'my-projects-banner'}
-        alt={'My Projects Banner'}
-      />
-    </div>
-    </div>
+      <div className="projects-banner-outer">
+        <div className="projects-banner-wrapper">
+          <ThemeImage
+            lightSrc={'/assets/projects_header_light.png'}
+            darkSrc={'/assets/projects_header_dark.png'}
+            className={'my-projects-banner'}
+            alt={'My Projects Banner'}
+          />
+        </div>
+      </div>
 
       {/* Header */}
       <div className="my-projects-header-row">
@@ -426,61 +426,61 @@ const MyProjects = () => {
               options={[
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="clock"
-                      width={18}
-                      height={18}
-                      className="mono-stroke"
-                      ariaLabel="Sort by newest"
-                    />
-                    Newest
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="clock"
+                        width={18}
+                        height={18}
+                        className="mono-stroke"
+                        ariaLabel="Sort by newest"
+                      />
+                      Newest
+                    </>,
                   value: 'newest',
                   disabled: false,
                 },
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="clock"
-                      width={18}
-                      height={18}
-                      className="mono-stroke"
-                      ariaLabel="Sort by oldest"
-                    />
-                    Oldest
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="clock"
+                        width={18}
+                        height={18}
+                        className="mono-stroke"
+                        ariaLabel="Sort by oldest"
+                      />
+                      Oldest
+                    </>,
                   value: 'oldest',
                   disabled: false,
                 },
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="direction-arrow"
-                      width={18}
-                      height={18}
-                      className="mono-stroke arrow-az"
-                      ariaLabel="Sort A-Z"
-                    />
-                    A-Z
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="direction-arrow"
+                        width={18}
+                        height={18}
+                        className="mono-stroke arrow-az"
+                        ariaLabel="Sort A-Z"
+                      />
+                      A-Z
+                    </>,
                   value: 'a-z',
                   disabled: false,
                 },
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="direction-arrow"
-                      width={18}
-                      height={18}
-                      className="mono-stroke arrow-za"
-                      ariaLabel="Sort Z-A"
-                    />
-                    Z-A
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="direction-arrow"
+                        width={18}
+                        height={18}
+                        className="mono-stroke arrow-za"
+                        ariaLabel="Sort Z-A"
+                      />
+                      Z-A
+                    </>,
                   value: 'z-a',
                   disabled: false,
                 },
@@ -505,8 +505,9 @@ const MyProjects = () => {
 
           {/*Create Project Button*/}
           <div className="my-projects-create-btn">
-            <ProjectCreatorEditor 
+            <ProjectCreatorEditor
               newProject={true}
+              mobileView={false}
             />
           </div>
         </div>
