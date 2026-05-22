@@ -385,7 +385,11 @@ const Project = () => {
   const projectLead = displayedProject?.owner;
 
   //Page layout for if project data hasn't been loaded yet
-  const loadingProject = <>{<div>Loading project...</div>}</>;
+  const loadingProject =(
+        <div className='placeholder-spacing'>
+          <div className='spinning-loader'></div>
+        </div>
+  );
 
   return (
     <div className="page">
