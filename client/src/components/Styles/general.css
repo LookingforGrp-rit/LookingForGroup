@@ -246,7 +246,7 @@ section {
 .my-projects-grid,
 .my-projects-list,
 #discover-panel-box {
-  min-height: 50vh;
+  min-height: 35vh;
 }
 
 /* #endregion */
