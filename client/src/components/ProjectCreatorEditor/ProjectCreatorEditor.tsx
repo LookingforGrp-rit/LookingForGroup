@@ -239,10 +239,16 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   //this deletes the newly created project when the create window is manually closed
   //this is called below as the PopupContent's callback function (that only calls when it's closed so should it just be called onClose?)
   const closeWithoutSaving = async () => {
+    if (!saved) {
+      toggleConfirm();
+      return; 
+    } 
     // Why is this here? If it's a new project then it won't be on the API anyway
     setCurrentTab(0);
     // Only delete if this is a new project AND it was not saved yet
-    if (projectData && newProject && !saved) await deleteProject(projectData?.projectId);
+    if (projectData && newProject) {
+      await deleteProject(projectData?.projectId);
+    }
   }
 
   const toggleConfirm = async () => {
@@ -406,7 +412,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         </PopupButton>
       )}
 
-      <PopupContent callback={saved ? toggleConfirm : closeWithoutSaving} closeButtonRef={exitButton} confirmation={!saved}>
+      <PopupContent callback={closeWithoutSaving} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
