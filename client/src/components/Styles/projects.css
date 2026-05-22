@@ -3583,6 +3583,15 @@ My projects page style rules
   }
 }
 
+.my-projects-no-project {
+  color: var(--main-text);
+  font-size: 2rem;
+  font-family: Inter;
+  font-weight: bold;
+  line-height: 28px;
+  padding-left: 60px;
+  padding-top: 30px;
+}
 
 .my-projects-grid {
   width: auto;

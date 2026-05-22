@@ -135,7 +135,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     if (userId != "") {
       return;
     }
-
+    
     const res = await getCurrentUsername();
 
     if (res.status === 200 && res.data?.username && userId == "") {
@@ -147,9 +147,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
   // Set the necessary data for project mode
   const setupProjectData = (projects : ApiResponse<ProjectPreview[]>) : void => {
-    if (!projects.data) {
-      return;
-    }
+    if (!projects.data) return;
 
     const newProjectCache = projectCache;
     for (let project of projects.data) {
@@ -207,9 +205,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   */
     const getData = async (force : boolean = false) => {
       // Early escape
-      if (fetchedProjects && fetchedUsers && !force) {
-        return;
-      }
+      if (fetchedProjects && fetchedUsers && !force) return;
 
       // Get user profile
       await getAuth();
