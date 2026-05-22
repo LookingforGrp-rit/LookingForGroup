@@ -96,13 +96,6 @@ const SideBar = () => {
     // case '/messages':
     //   startingPage = 'Messages';
     //   break;
-    case "/about":
-      startingPage = "About";
-      for (const i of sidebarBtns) {
-        i.classList.remove("active");
-      }
-      document.querySelector("#about-sidebar-btn")?.classList.add("active");
-      break;
     default:
       startingPage = localStorage.getItem("lastActiveTab") || "Discover";
       for (const i of sidebarBtns) {
@@ -243,15 +236,6 @@ const SideBar = () => {
               >
                 <ThemeIcon id={'profile'} width={30} height={28.85} className={'mono-fill'} ariaLabel={'my profile'} />
               </button>
-              <button
-                id={"about-sidebar-btn"}
-                className={
-                  activePage === "About" ? "active sidebar-btn" : "sidebar-btn"
-                }
-                onClick={() => handleTextChange("About", paths.routes.ABOUT)}
-              >
-                <ThemeIcon id={'info'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'about'}/>
-              </button>
             </div>
           </div>
         </div>
@@ -308,17 +292,6 @@ const SideBar = () => {
           >
             <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'}/>
             My Projects
-          </button>
-          {/* About button */}
-          <button
-            id={"about-sidebar-btn"}
-            className={
-              activePage === "About" ? "active sidebar-btn" : "sidebar-btn"
-            }
-            onClick={() => handleTextChange("About", paths.routes.ABOUT)}
-          >
-            <ThemeIcon id={'info'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'about'}/>
-            About
           </button>
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
