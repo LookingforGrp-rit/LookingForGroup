@@ -3426,6 +3426,9 @@ My projects page style rules
   justify-content: space-between;
   align-items: center;
 
+  flex-wrap: wrap;
+  gap: 20px;
+
   #project-info-create {
     height: 40px;
   }
@@ -3449,15 +3452,6 @@ My projects page style rules
   .page#my-projects {
     padding-bottom: 100px;
   }
-}
-
-@media only screen and (max-width: 1100px) {
-  .my-projects-header-row {
-    flex-wrap: wrap;
-    gap: 20px;
-  }
-
-
 }
 
 .my-projects-action-buttons {
@@ -3491,12 +3485,6 @@ My projects page style rules
     display: flex;
   }
 }
-
-
-
-
-
-
 
 .my-projects-display-switch {
   box-sizing: border-box;
@@ -3736,6 +3724,8 @@ My projects page style rules
   letter-spacing: 0%;
   cursor: pointer;
   text-decoration: none;
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .grid-card-title:focus {
@@ -3930,6 +3920,9 @@ My projects page style rules
   align-items: center;
   gap: 20px;
   flex-basis: 500px;
+
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .list-card-image {
