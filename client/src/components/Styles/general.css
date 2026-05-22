@@ -1117,7 +1117,7 @@ Page popup style rules
     transition: 0.2s;
     padding: 1px;
     /* margin: 14px 38px; */
-    width: min(30%, 40%);
+    width: min(20%, 30%);
     text-align: center;
   }
 
