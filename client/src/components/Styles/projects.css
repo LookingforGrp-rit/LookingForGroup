@@ -115,6 +115,8 @@ Project Panel component style rules
   text-align: left;
   gap: 6px;
   padding: 14px 0;
+  word-break: break-word;
+  hyphens: auto;
 
   img {
     /* width: 100%; */
