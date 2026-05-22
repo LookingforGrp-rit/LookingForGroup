@@ -1,4 +1,4 @@
-  import { useState, useRef, FC, Dispatch, SetStateAction } from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -28,6 +28,10 @@ interface Props {
   // If this project already exists to be edited or if it's being created
   newProject: boolean;
 
+  //if the user is currently in mobile view, set to true (default is false)-
+  //created for styling of bottom navbar in mobile view
+  mobileView: boolean;
+
   // Not a real property, set to a variable to a function in the code
   buttonCallback?: () => void;
 
@@ -44,14 +48,14 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
  * The component is accessed via either the 'edit project' button on project pages or the 'create' button in the sidebar.
  * @returns React component Popup - Renders a modal for creating or editing projects
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = () => { }, updateDisplayedProject }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, buttonCallback = () => { }, updateDisplayedProject }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const navigate = useNavigate();
   const projectID = urlParams.get("projectID");
 
   // --- Hooks ---
-   
+
   // Stores current project data: represents actual data from the server
   const [projectData, setProjectData] = useState<ProjectWithFollowers>();
 
@@ -119,7 +123,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   /**
    * faster version of updateMessage, for use with updateDisplayedProject()
    * @param updatedPendingProject - parameter of updateDisplayedProject, using is faster than trying for modifiedProject
-   */ 
+   */
   const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
     let newMessage = "Project is missing hate";
     if (updatedPendingProject?.title === "" || updatedPendingProject?.title === undefined) newMessage = "Project is missing a title!";
@@ -142,7 +146,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     }
 
     if (!newProject && projectID) {
-      
+
       // Load existing project
       try {
         // const response = await getByID(Number(projectID));
@@ -158,16 +162,17 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       }
     }
     else if (newProject) {
-    // Setup default project for creation
+      // Setup default project for creation
       try {
         const response = await createNewProject({ title: "My Project" });
         if (!response.error && response.data) {
           dataManager = await projectDataManager(response.data.projectId);
 
           const data = dataManager.getSavedProject();
-          
+
           setProjectData(data);
           setModifiedProject(data);
+          setSaved(false); // Save defaults to true, so leaving without changing anything treats it as saving the project
           console.log(projectData);
         }
       } catch (err) {
@@ -192,19 +197,19 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     if (newProject || !projectID) return; // Only for existing projects
 
     const projectNumID = Number(projectID);
-    
+
     try {
       // Get current socials from database
       const currentSocialsResponse = await getProjectSocials(projectNumID);
       const currentSocials = currentSocialsResponse.data || [];
-      
+
       // Process each social in the modified project
       for (const social of modifiedProject?.projectSocials || []) {
         if (!social.url || !social.websiteId || social.websiteId === 0) continue; // Skip empty/invalid socials
-        
+
         // Check if this social already exists
         const existingSocial = currentSocials.find(s => s.websiteId === social.websiteId);
-        
+
         if (existingSocial) {
           // Update existing social if URL changed
           if (existingSocial.url !== social.url) {
@@ -215,12 +220,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
           await addProjectSocial(projectNumID, { websiteId: social.websiteId, url: social.url });
         }
       }
-      
+
       // Delete socials that were removed
       const modifiedSocialIds = (modifiedProject?.projectSocials || [])
         .filter(s => s.url && s.websiteId && s.websiteId !== 0)
         .map(s => s.websiteId);
-      
+
       for (const currentSocial of currentSocials) {
         if (!modifiedSocialIds.includes(currentSocial.websiteId)) {
           await deleteProjectSocial(projectNumID, currentSocial.websiteId);
@@ -238,7 +243,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
     // Why is this here? If it's a new project then it won't be on the API anyway
     setCurrentTab(0);
     // Only delete if this is a new project AND it was not saved yet
-    if(projectData && newProject && !saved) await deleteProject(projectData?.projectId);
+    if (projectData && newProject && !saved) await deleteProject(projectData?.projectId);
   }
 
   const toggleConfirm = async () => {
@@ -246,8 +251,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   }
 
   // Isn't this what createoredit is supposed to do? it never calls this though
-  
-  
+
+
   /**
    *  Adds a number to the end of a project so you don't have duplicate project titles(Unity style)
    * @returns A unique project title
@@ -291,7 +296,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
   const saveProject = async () => {
 
     // default to no errors
-    setFailCheck(false); 
+    setFailCheck(false);
 
     // save if on link tab
     if (currentTab === 4) await updateLinks();
@@ -357,11 +362,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
       // EXISTING PROJECT
       if (!newProject && projectID) {
 
-        if(updateDisplayedProject) {
+        if (updateDisplayedProject) {
           updateDisplayedProject(dataManager.getSavedProject());
         }
       }
-      
+
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
       navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
@@ -393,7 +398,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
             className={"color-fill"}
             ariaLabel={"create"}
           />{" "}
-          <p>Create</p>{" "}
+          {!mobileView ? <p>Create</p> : ""}
+
         </PopupButton>
       ) : (
         <PopupButton callback={buttonCallback} buttonId="project-info-edit">
@@ -467,9 +473,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               Links{linksTabInvalid && <span className="invalid-tab-alert" aria-hidden="true">*</span>}
             </button>
           </div>
-              
+
           <div id="project-editor-content">
-            {projectData && modifiedProject ? ( currentTab === 0 ? (
+            {projectData && modifiedProject ? (currentTab === 0 ? (
               <GeneralTab
                 dataManager={dataManager}
                 projectData={modifiedProject}
@@ -529,11 +535,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, buttonCallback = (
               />
             ) : (
               <></>
-            ) ) : (
+            )) : (
               <></>
             )}
           </div>
-          
+
           {/*Focus control*/}
           <div tabIndex={0} onFocus={() => (exitButton.current as unknown as HTMLElement).focus()}></div>
 

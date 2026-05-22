@@ -19,4 +19,5 @@ export const routes = {
   CREDITS: '/credits',
   ACCOUNTACTIVATE: '/activation/:token',
   NOTFOUND: '/*',
+  ABOUT: '/about',
 };
