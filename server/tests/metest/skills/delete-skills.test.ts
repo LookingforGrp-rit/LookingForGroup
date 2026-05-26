@@ -4,7 +4,6 @@ import prisma from '#config/prisma.ts';
 import { deleteSkillService } from '#services/me/skills/delete-skills.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -34,9 +33,8 @@ describe('deleteSkillService', () => {
     expect(result).toBe('NO_CONTENT');
   });
 
-  // !! remove skip if NOT_FOUND added in #services/me/skills/delete-skills.ts
-  it.skip('returns NOT_FOUND if user skill does not exist', async () => {
-    vi.mocked(prisma.userSkills.delete).mockRejectedValue({ code: 'P2025' } as any);
+  it('returns NOT_FOUND if user skill does not exist', async () => {
+    vi.mocked(prisma.userSkills.delete).mockRejectedValue({ code: 'P2025' });
 
     const result = await deleteSkillService(1, 1);
 

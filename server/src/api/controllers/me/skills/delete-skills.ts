@@ -10,6 +10,17 @@ export const deleteSkill = async (req: AuthenticatedRequest, res: Response): Pro
 
   const result = await deleteSkillService(skill, req.currentUser);
 
+  //not found
+  if (result === 'NOT_FOUND') {
+    const resBody: ApiResponse = {
+      status: 404,
+      error: 'Skill Not Found',
+      data: null,
+    };
+    res.status(404).json(resBody);
+    return;
+  }
+
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 500,

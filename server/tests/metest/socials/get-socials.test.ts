@@ -5,7 +5,6 @@ import { getSocialsService } from '#services/me/socials/get-socials.ts';
 import { transformMySocial } from '#services/transformers/me/parts/my-social.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -47,15 +46,6 @@ describe('getSocialsService', () => {
     const result = await getSocialsService(1);
 
     expect(result).toStrictEqual([transformed]);
-  });
-
-  // !! remove skip if NOT_FOUND added in #services/me/socials/get-socials.ts
-  it.skip('returns NOT_FOUND if user socials does not exist', async () => {
-    vi.mocked(prisma.userSocials.findMany).mockRejectedValue({ code: 'P2025' } as any);
-
-    const result = await getSocialsService(1);
-
-    expect(result).toBe('NOT_FOUND');
   });
 
   it('returns INTERNAL_ERROR when prisma throws', async () => {

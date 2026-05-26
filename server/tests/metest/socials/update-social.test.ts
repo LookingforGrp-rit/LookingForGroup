@@ -5,7 +5,6 @@ import { updateSocialService } from '#services/me/socials/update-social.ts';
 import { transformMySocial } from '#services/transformers/me/parts/my-social.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -46,9 +45,8 @@ describe('updateSocialService', () => {
     expect(result).toBe(transformed);
   });
 
-  // !! remove skip if NOT_FOUND added in #services/me/socials/update-social.ts
-  it.skip('returns NOT_FOUND if website not found', async () => {
-    vi.mocked(prisma.userSocials.update).mockRejectedValue({ code: 'P2025' } as any);
+  it('returns NOT_FOUND if website not found', async () => {
+    vi.mocked(prisma.userSocials.update).mockRejectedValue({ code: 'P2025' });
 
     const result = await updateSocialService({ websiteId: 20000, url: 'new.com' }, 1);
 
