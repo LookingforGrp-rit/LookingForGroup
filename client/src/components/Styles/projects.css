@@ -337,7 +337,7 @@ Project Creator and Editor Popup style rules
   margin-top: -1%;
 }
 
-#project-editor-save {
+#project-editor-save, #team-edit-member-cancel-button {
   margin-bottom: 28px;
 }
 
