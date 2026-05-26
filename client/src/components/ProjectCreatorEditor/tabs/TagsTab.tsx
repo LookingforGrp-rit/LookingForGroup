@@ -17,6 +17,7 @@ const TAG_TYPES = {
   DEV: "Developer Skill" as TagType,
   DESIGNER: "Designer Skill" as TagType,
   SOFT: "Soft Skill" as TagType,
+  AUD: "Audio Skill" as TagType,
   GENRE: ["Creative", "Technical", "Games", "Multimedia", "Music", "Other"] as TagType[],
   MEDIUM: "Medium",
 };
@@ -190,6 +191,8 @@ export const TagsTab = ({
       case 3:
         return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DESIGNER) }];
       case 4:
+        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.AUD)}]
+      case 5:
         return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.SOFT) }];
       default:
         return [{ data: [] }];
@@ -602,6 +605,15 @@ export const TagsTab = ({
                 setCurrentTagsTab(4);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 4 ? "tag-search-tab-active" : ""}`}
+              //Data from skills (type=Soft)
+            >
+              Audio Skills
+            </button>
+            <button
+              onClick={() => {
+                setCurrentTagsTab(5);
+              }}
+              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 5 ? "tag-search-tab-active" : ""}`}
               //Data from skills (type=Soft)
             >
               Soft Skills

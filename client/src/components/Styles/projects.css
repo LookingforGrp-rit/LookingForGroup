@@ -692,7 +692,7 @@ Project Creator and Editor Popup style rules
   border-radius: 10px;
   grid-area: search;
   min-width: 150px;
-  max-height: 628px;
+  max-height: 526px;
 }
 
 #project-editor-tag-search-container {
