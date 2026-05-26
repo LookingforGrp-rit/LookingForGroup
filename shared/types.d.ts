@@ -18,7 +18,8 @@ export type TagType =
   | "Major"
   | "Developer Skill"
   | "Designer Skill"
-  | "Soft Skill";
+  | "Soft Skill"
+  | "Audio Skill";
 export type AcademicYear =
   | "Freshman"
   | "Sophomore"

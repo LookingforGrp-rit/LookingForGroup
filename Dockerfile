@@ -105,4 +105,4 @@ USER lfg
 #ARG src_file="src/index.ts"
 #ARG local_dev
 #CMD [${src_file:-""}${local_dev:+"npm"}, ${local_dev:+"run"}, ${local_dev:+"dev"}]
-CMD ["src/index.ts"]
+CMD ["npm", "run" "start:server"]
