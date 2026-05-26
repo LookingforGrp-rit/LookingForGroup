@@ -1490,7 +1490,7 @@ Project Creator and Editor Popup style rules
   grid-template-areas:
     'availability-label availability-input'
     'location-label location-input'
-    'contact-label contact-input';
+    'contact-label contact-input ';
   gap: 8px;
   align-items: center;
 }
@@ -1527,6 +1527,14 @@ button.edit-position-contact {
   border-radius: 10px;
   padding: 15px;
   cursor: default;
+  
+}
+
+
+@media (min-width:576px) {
+  .edit-position-contact {
+    min-width: 150px;
+  }
 }
 
 .select-option.edit-position-contact {
