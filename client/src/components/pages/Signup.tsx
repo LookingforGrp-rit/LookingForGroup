@@ -24,6 +24,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
   const [email, setEmail] = useState('');
+  const [googleCredentials, setGoogleCredentials] = useState('')
   // const [username, setUsername] = useState('');
   // const [password, setPassword] = useState('');
   // const [confirm, setConfirm] = useState(''); // Second password input to check if they match
@@ -88,6 +89,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
       { theme: "filled_black", size: "large" , shape: 'pill'}
     );
   async function handleGoogle(response: any){
+    setGoogleCredentials(response.credential)
     //this^^ is our googleId, encoded in base64
     //so when we create a user we input this in there
     //server decodes it when it receives it,and it's passed into the createUser route
@@ -100,6 +102,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    * Goes through the various fields, verifies whether user input is valid, and sends it to the server.
    * @returns False if invalid
    */
+  //we don't need any of this do we since literally all of it is gonna be through google...
   const handleSignup = async () => {
     // Check if any of the fields are empty
     if (
@@ -169,8 +172,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         username: username,
       });
       */
-      await createNewUser({firstName, lastName, ritEmail: email, googleId});
-      //redirect to... the home page? no we want to redirect to the login page but the login page is probably broken because it still wants a password
+      await createNewUser({firstName, lastName, ritEmail: email, googleCredentials});
+      //then redirect to... the home page? no we want to redirect to the login page but the login page is probably broken because it still wants a password
       //or we just SIGN THEM IN (NOT WORKING...) redirect to the home page after we've signed up to skip the step of logging in yet again
     }
   };
@@ -268,7 +271,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
           <div className="error" aria-live="assertive" role="alert">{message}</div>
           <div className="signup-form-inputs">
-            <div className="row">
+            {/* we wouldn't need any of the other fields either would we?? */}
+            {/* <div className="row">
               <input
                 id='main'
                 className="signup-name-input"
@@ -294,8 +298,9 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               placeholder="School email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-            />
-          <div id="googleBtn"></div>
+            /> */}
+            <p>Sign up using your RIT email.</p>
+            <div id="googleBtn"></div>
 
             <span className="spacer"> </span>
 
