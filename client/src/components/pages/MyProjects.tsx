@@ -1,5 +1,5 @@
 // import { profiles } from "../../constants/fakeData";
-import { useState, useMemo, ChangeEvent, useEffect } from 'react';
+import { useState, useMemo, ChangeEvent, useEffect, useCallback } from 'react';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
@@ -14,7 +14,7 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
-import { ProjectDetail} from '@looking-for-group/shared';
+import { ProjectDetail } from '@looking-for-group/shared';
 
 /**
  * My Projects page. Creates a customizable page that showcases the user's projects.
@@ -36,7 +36,7 @@ const MyProjects = () => {
 
   // Type of sort for items. Can be newest, oldest, A-Z, or Z-A
   const [sortMethod, setSortMethod] = useState('newest');
-  
+
   // List of user's projects
   const [projectsList, setProjectsList] = useState<ProjectDetail[]>([]);
 
@@ -54,6 +54,9 @@ const MyProjects = () => {
 
   const [_createError, setCreateError] = useState(false);
 
+  const [projectMode, setProjectMode] = useState("All");
+  const [userId, setUserId] = useState<string>('');
+
   // --------------------
   // Helper functions
   // --------------------
@@ -70,11 +73,13 @@ const MyProjects = () => {
         const projectsRes = await getProjectsByUser();
 
         if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
-        
+
         //console.log(projectsRes.data);
+        setUserId(res.data.username);
         
       } else {
         //guest
+        setUserId("guest");
         setLoggedIn(0);
       }
 
@@ -145,7 +150,7 @@ const MyProjects = () => {
   //         setProjectsList(tempList);
   //     }
   // }
-  
+
   /**
    * Checks if any word in "title" starts with "snippet", and returns that answer as a boolean.
    * @param title Project title
@@ -234,7 +239,7 @@ const MyProjects = () => {
    * @param userProjects Projects to display
    * @returns JSX Element
    */
-  const GridDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => { //it's a parameter here but a property down there
+  const GridDisplay = ({ userProjects }: { userProjects: ProjectDetail[] }) => { //it's a parameter here but a property down there
     return (
       <>
         <div className='my-projects-grid'>
@@ -268,7 +273,7 @@ const MyProjects = () => {
    * @param userProjects Projects to display 
    * @returns JSX Element
    */
-  const ListDisplay = ({userProjects} : {userProjects: ProjectDetail[]}) => {
+  const ListDisplay = ({ userProjects }: { userProjects: ProjectDetail[] }) => {
     return (
       <>
         {/* Projects List header */}
@@ -309,9 +314,12 @@ const MyProjects = () => {
    * @param userProjects Projects to display 
    * @returns GridDisplay or ListDisplay components. Nothing if there is an error.
    */
-  const ProjectListSection = ({userProjects} : {userProjects: ProjectDetail[]}) => {
+  const ProjectListSection = ({ userProjects }: { userProjects: ProjectDetail[] }) => {
     // Sort projects based on the method selected
     const sortedProjects = sortProjects(userProjects) as ProjectDetail[];
+    if (sortedProjects.length == 0) {
+      return <div className='my-projects-no-project'>No {projectMode === "All" ? "" : projectMode} projects!</div>;
+    }
 
     if (sortedProjects) {
       if (displayMode === 'grid') {
@@ -374,40 +382,64 @@ const MyProjects = () => {
     setFilteredProjects(results[0] as ProjectDetail[]);
   };
 
-  const projectsToDisplay = currentSearch.trim() !== '' ? filteredProjects : projectsList;
+  const projectsModeSwitch = useCallback((newMode: string) => {
+    const newFilteredProjects = projectsList.filter((item) => {
+      if (newMode === "All") return true;
+      
+      if (newMode === "Joined") {
+        for (let member of item.members) {
+          if (member.user.username === userId && item.owner.username !== userId) return true;
+        }
+      }
+
+      if (newMode === "Owned") return item.owner.username === userId;
+
+
+      return false;
+    });
+    
+    setProjectMode(newMode);
+    setFilteredProjects(newFilteredProjects);
+  }, [projectMode, filteredProjects, userId, projectsList]);
+
+  const projectsToDisplay = (currentSearch.trim() !== '' || projectMode !== "All") ? filteredProjects : projectsList;
 
   return (
     <div className="page" id="my-projects" tabIndex={-1}>
       {/* Top Bar */}
-      <Header 
-        dataSets={projectDataSet} 
-        onSearch={handleSearch} 
+      <Header
+        dataSets={projectDataSet}
+        onSearch={handleSearch}
         value={currentSearch}
-        onChange={(e : ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
       />
 
       {/* Banner */}
-    <div className="projects-banner-outer">
-    <div className="projects-banner-wrapper">
-      <ThemeImage
-        lightSrc={'/assets/projects_header_light.png'}
-        darkSrc={'/assets/projects_header_dark.png'}
-        className={'my-projects-banner'}
-        alt={'My Projects Banner'}
-      />
-    </div>
-    </div>
+      <div className="projects-banner-outer">
+        <div className="projects-banner-wrapper">
+          <ThemeImage
+            lightSrc={'/assets/projects_header_light.png'}
+            darkSrc={'/assets/projects_header_dark.png'}
+            className={'my-projects-banner'}
+            alt={'My Projects Banner'}
+          />
+        </div>
+      </div>
 
       {/* Header */}
       <div className="my-projects-header-row">
 
         {/* Filters */}
         <div className="my-projects-filters">
-          {/* TODO: keep this button? or add other filters (like Owned and Joined) */}
-          {/* this button does nothing currently i think we should trash it */}
           {/* All Projects Button */}
-          <button className="my-projects-all-projects-button" onClick={() => { }}>
+          <button className={"my-projects-all-projects-button" + (projectMode === "All" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("All")}>
             All Projects
+          </button>
+          <button className={"my-projects-all-projects-button" + (projectMode === "Owned" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("Owned")}>
+            Owned Projects
+          </button>
+          <button className={"my-projects-all-projects-button" + (projectMode === "Joined" ? " my-projects-all-projects-selected" : "")} onClick={() => projectsModeSwitch("Joined")}>
+            Joined Projects
           </button>
         </div>
 
@@ -426,61 +458,61 @@ const MyProjects = () => {
               options={[
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="clock"
-                      width={18}
-                      height={18}
-                      className="mono-stroke"
-                      ariaLabel="Sort by newest"
-                    />
-                    Newest
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="clock"
+                        width={18}
+                        height={18}
+                        className="mono-stroke"
+                        ariaLabel="Sort by newest"
+                      />
+                      Newest
+                    </>,
                   value: 'newest',
                   disabled: false,
                 },
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="clock"
-                      width={18}
-                      height={18}
-                      className="mono-stroke"
-                      ariaLabel="Sort by oldest"
-                    />
-                    Oldest
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="clock"
+                        width={18}
+                        height={18}
+                        className="mono-stroke"
+                        ariaLabel="Sort by oldest"
+                      />
+                      Oldest
+                    </>,
                   value: 'oldest',
                   disabled: false,
                 },
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="direction-arrow"
-                      width={18}
-                      height={18}
-                      className="mono-stroke arrow-az"
-                      ariaLabel="Sort A-Z"
-                    />
-                    A-Z
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="direction-arrow"
+                        width={18}
+                        height={18}
+                        className="mono-stroke arrow-az"
+                        ariaLabel="Sort A-Z"
+                      />
+                      A-Z
+                    </>,
                   value: 'a-z',
                   disabled: false,
                 },
                 {
                   markup:
-                  <>
-                    <ThemeIcon
-                      id="direction-arrow"
-                      width={18}
-                      height={18}
-                      className="mono-stroke arrow-za"
-                      ariaLabel="Sort Z-A"
-                    />
-                    Z-A
-                  </>,
+                    <>
+                      <ThemeIcon
+                        id="direction-arrow"
+                        width={18}
+                        height={18}
+                        className="mono-stroke arrow-za"
+                        ariaLabel="Sort Z-A"
+                      />
+                      Z-A
+                    </>,
                   value: 'z-a',
                   disabled: false,
                 },
@@ -505,8 +537,9 @@ const MyProjects = () => {
 
           {/*Create Project Button*/}
           <div className="my-projects-create-btn">
-            <ProjectCreatorEditor 
+            <ProjectCreatorEditor
               newProject={true}
+              mobileView={false}
             />
           </div>
         </div>
