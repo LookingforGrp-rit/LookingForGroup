@@ -27,7 +27,7 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "medium":
       color = "blue";
       break;
-    
+
     // The genre type is very split
     case "creative":
     case "technical":
@@ -37,7 +37,7 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "other":
       color = "green";
       break;
-    
+
     case "developer skill":
       color = "yellow";
       break;
@@ -47,7 +47,7 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "soft skill":
       color = "purple";
       break;
-    
+
     default:
       if (type == "") break;
 
@@ -63,15 +63,15 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
 
   if (onClick != undefined) {
     return (
-    <button className={"tag-button tag-" + color + " " + className + " " + tag_extra_classes} onClick={onClick} >
-      {children}
-    </button>
+      <button className={"tag-button tag-" + color + " " + className + " " + tag_extra_classes} onClick={onClick} >
+        {children}
+      </button>
     );
   }
-  
+
   return (
     <div className={"tag-button tag-label tag-" + color + " " + className + " " + tag_extra_classes} >
       {children}
     </div>
-    );
+  );
 };

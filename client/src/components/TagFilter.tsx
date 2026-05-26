@@ -83,7 +83,7 @@ export const TagFilter = ({ projectFilter, setUseState }) => {
           const tagElement = document.getElementById(`tag-id-${result}`);
           console.log(tagElement);
 
-          if(tagElement) tagElement.classList.toggle('tag-filter-selected');
+          if (tagElement) tagElement.classList.toggle('tag-filter-selected');
           else console.log('error updating display');
 
         }
