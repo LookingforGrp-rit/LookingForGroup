@@ -148,8 +148,6 @@ select {
     width: 100%;
   }
 
-
-
   .about-row.row-1,
   .about-row.row-2,
   .about-row.row-3 {
@@ -161,7 +159,7 @@ select {
 
   .editor-input-item {
     flex: 1 1 250px;
-    min-width: 100px;
+    min-width: 80px;
     width: 100%;
   }
 
@@ -186,6 +184,7 @@ select {
 
   #profile-editor-about {
     overflow-x: auto;
+    width: 100%;
   }
 
   #edit-profile-section-1 {
