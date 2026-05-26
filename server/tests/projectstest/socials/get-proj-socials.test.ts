@@ -78,12 +78,26 @@ describe('getProjectSocialsService', async () => {
       }),
     );
   });
-  it('returns the social when add is successful', async () => {
+  it('returns the socials when get is successful', async () => {
     vi.mocked(prisma.projects.findUnique).mockResolvedValue(prismaProject);
     const result = await getProjectSocialsService(1);
 
     expect(transformProjectSocial).toBeCalled();
     expect(transformProjectSocial).toBeCalledTimes(2);
     expect(result).toEqual(transformedSocials);
+  });
+
+  it("returns NOT_FOUND when project doesn't exist", async () => {
+    vi.mocked(prisma.projects.findUnique).mockResolvedValue(null);
+    const result = await getProjectSocialsService(1);
+
+    expect(result).toEqual('NOT_FOUND');
+  });
+
+  it('returns INTERNAL_ERROR when prisma throws', async () => {
+    vi.mocked(prisma.projects.findUnique).mockRejectedValue(new Error('womp womp'));
+    const result = await getProjectSocialsService(1);
+
+    expect(result).toEqual('INTERNAL_ERROR');
   });
 });
