@@ -8,18 +8,17 @@ import { transformMeToPrivate } from '#services/transformers/me/me-private.ts';
 type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT'>;
 
 const createUserService = async (
-  uid: string,
   username: string,
   info: CreateUserInput,
 ): Promise<MePrivate | CreateUserServiceError> => {
   try {
     const result = await prisma.users.create({
       data: {
-        googleId: uid,
         username,
         firstName: info.firstName ?? '',
         lastName: info.lastName ?? '',
         ritEmail: info.ritEmail ?? '',
+        googleId: info.googleId ?? '',
       },
       select: MePrivateSelector,
     });

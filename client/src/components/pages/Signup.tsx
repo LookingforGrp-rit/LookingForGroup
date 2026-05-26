@@ -9,7 +9,7 @@ import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
-import { createNewUser, getUserByEmail } from '../../api/users';
+import { createNewUser, getCurrentUsername, getUserByEmail } from '../../api/users';
 
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
@@ -74,7 +74,27 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     };
 
     checkSessionAndRedirect();
-  }, [navigate]);
+
+    //google things
+    // @ts-expect-error google
+    google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleGoogle,
+    });
+
+    // @ts-expect-error google
+    google.accounts.id.renderButton(
+      document.getElementById("googleBtn"),
+      { theme: "filled_black", size: "large" , shape: 'pill'}
+    );
+  async function handleGoogle(response: any){
+    //this^^ is our googleId, encoded in base64
+    //so when we create a user we input this in there
+    //server decodes it when it receives it,and it's passed into the createUser route
+    await createNewUser({firstName, lastName, ritEmail: email, googleCredentials: response.credential}); //ok i have a way for this to work hang on
+  }
+  }, [navigate, firstName, lastName, email]);
+
 
   /**
    * Goes through the various fields, verifies whether user input is valid, and sends it to the server.
@@ -149,7 +169,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         username: username,
       });
       */
-      await createNewUser({firstName, lastName, ritEmail: email});
+      await createNewUser({firstName, lastName, ritEmail: email, googleId});
       //redirect to... the home page? no we want to redirect to the login page but the login page is probably broken because it still wants a password
       //or we just SIGN THEM IN (NOT WORKING...) redirect to the home page after we've signed up to skip the step of logging in yet again
     }
@@ -275,6 +295,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             />
+          <div id="googleBtn"></div>
 
             <span className="spacer"> </span>
 
@@ -330,7 +351,6 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               </p>
             </div>
           </div>
-
           <button id="main-loginsignup-btn" onClick={handleSignup}>
             Sign Up
           </button>

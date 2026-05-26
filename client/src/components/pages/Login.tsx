@@ -22,9 +22,9 @@ const Login: React.FC = () => {
 
   // State variables
   const [loginInput, setLoginInput] = useState<string>('');
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
-  //google things
   useEffect(() => {
     const checkSessionAndRedirect = async () => {
       try {
@@ -37,6 +37,8 @@ const Login: React.FC = () => {
     };
 
     checkSessionAndRedirect();
+
+    //google things
     // @ts-expect-error google
     google.accounts.id.initialize({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
