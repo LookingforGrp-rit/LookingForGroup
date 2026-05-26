@@ -29,7 +29,7 @@ const Login: React.FC = () => {
     // @ts-expect-error google
     google.accounts.id.initialize({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      callback: handleGoogle
+      callback: handleGoogle,
     });
 
     // @ts-expect-error google
@@ -41,7 +41,27 @@ const Login: React.FC = () => {
   }, [])
 
   function handleGoogle(response: any){
-    console.log("just seeing if this'll go through") //OH MY GOD IT JUST WORKS?
+    //decodeJwtResponse(response.credential);
+    //this^^ is our googleId, decoded from base64
+    //so when we create a user we input this in there, when we log in a user we check against this
+    //we probably shouldn't decode it clientside tho lol
+    //we should make a route that takes this
+    //for signup we want to pass this into the createUser route, but that'll be on the signup page and not here
+    //here is gonna be exclusively for logins for existing users, which i'm only now realizing is a pretty silly thing to start with lmao
+    //we have no users that'll have valid ids to log in with
+    //for signup we should exclusively do sign in with google since there should be no account without a googleId
+    //signups don't work on this branch but i have a branch where they do work
+  }
+
+  //yoinked this base64 decoder from the google documentation: https://developers.google.com/identity/gsi/web/guides/display-google-one-tap#javascript_3
+  function decodeJwtResponse(token: string) {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
   }
   /**
    * Validates user inputs, sends login requests to the server API, and handles authentication
