@@ -17,7 +17,7 @@ const createUserService = async (
   try {
     const result = await prisma.users.create({
       data: {
-        universityId: uid,
+        googleId: uid,
         username,
         firstName,
         lastName,

@@ -180,12 +180,12 @@ CREATE TABLE `users` (
     `created_at` TIMESTAMP(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updated_at` TIMESTAMP(0) NOT NULL,
     `phone_number` VARCHAR(20) NULL,
-    `university_id` VARCHAR(9) NOT NULL,
+    `google_id` VARCHAR(200) NOT NULL,
 
     UNIQUE INDEX `users_username_key`(`username`),
     UNIQUE INDEX `users_rit_email_key`(`rit_email`),
     UNIQUE INDEX `users_phone_number_key`(`phone_number`),
-    UNIQUE INDEX `university_id_UNIQUE`(`university_id`),
+    UNIQUE INDEX `google_id_UNIQUE`(`google_id`),
     PRIMARY KEY (`user_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
