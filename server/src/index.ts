@@ -1,7 +1,7 @@
 import app from '#app.ts';
-import envConfig from '#config/env.ts';
+//import envConfig from '#config/env.ts';
 
-const port = envConfig.port;
+const port = process.env.PORT || 3000;
 
 const server = app.listen(port, (err) => {
   if (err) {
