@@ -1,5 +1,5 @@
 // Utilities and React functions
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 
 import { getCurrentAccount } from "../../api/users";
 import * as paths from '../../constants/routes';
@@ -15,24 +15,59 @@ import { ProjectsTab } from "./tabs/ProjectsTab";
 import { SkillsTab } from "./tabs/SkillsTab";
 import { userDataManager } from "../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../types/types";
+import { MePrivate } from "@looking-for-group/shared";
 
 // The profile to view is independent upon the site's state changes
 const pageTabs = ["About", "Projects", "Skills", "Links"];
-let dataManager: Awaited<ReturnType<typeof userDataManager>>;
+//const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
 
 /**
  * Profile Edit button. Handles changing tabs.
  * @returns JSX Element
  */
 export const ProfileEditPopup = () => {
-  const [currentTab, setCurrentTab] = useState(0);
+  const [currentTab, setCurrentTab] = useState(5);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
+  const [unmodifiedProfile, setUnmodifiedProfile] = useState<MePrivate>();
+  const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
+  const [confirm, setConfirm] = useState(false);
+  const [saved, setSaved] = useState(true);
+
+  const isOpening = useRef(true);
   const navigate = useNavigate();
 
+  const handlePopupCallback = async () => {
+    if (saved) {
+      // Popup is opening. Ignore the confirm
+      setCurrentTab(0);
+      isOpening.current = false;
+      setSaved(true);
+    } else {
+      // Popup is closing. Show the confirm dialog
+      setConfirm(true);
+    }
+  };
+
+  const cancelConfirm = () => setConfirm(false);
+
+  const closeWithoutSaving = async () => {
+    setCurrentTab(0);
+    setConfirm(false);
+    isOpening.current = true;
+
+    // Reset modified profile to discard any unsaved changes
+    if (unmodifiedProfile)
+      setModifiedProfile(structuredClone(unmodifiedProfile));
+  }
+
+   const updatePendingProfile = (updatedPendingProject: PendingUserProfile) => {
+     setModifiedProfile(updatedPendingProject);
+     setSaved(false);
+   }
 
   // Profile should be set up on intialization
-  useMemo(() => {
+  useEffect(() => {
     const setUpProfileData = async () => {
       // Pick which socials to use based on type
       // fetch for profile on ID
@@ -43,8 +78,11 @@ export const ProfileEditPopup = () => {
         throw "error getting current user " + getUser.error;
       }
 
+      setUnmodifiedProfile(getUser.data);
       setModifiedProfile(structuredClone(getUser.data));
-      dataManager = await userDataManager();
+
+      const manager = await userDataManager();
+      setDataManager(manager);
 
       // console.log("ProfileEditPopup - Raw API response:", response.data);
       // console.log("ProfileEditPopup - User profile data:", response.data);
@@ -60,44 +98,22 @@ export const ProfileEditPopup = () => {
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevents any default calls
 
+    console.log('onSaveClicked');
+
     try {
+      if (!dataManager) return;
       await dataManager.saveChanges();
       setErrorVisible(false);
     } catch (e) {
       // TODO handle error
       console.error((e as Error).message);
     }
-
+    setSaved(true);
     navigate(`${paths.routes.PROFILE}?userID=${modifiedProfile?.userId}`);
     window.location.reload();
   };
 
-
-  useMemo(() => {
-    setTimeout(() => {
-      // Initialize all tabs to be hidden except the first one
-      pageTabs.forEach((tab, idx) => {
-        const tabElement = document.querySelector(
-          `#profile-editor-${tab.toLowerCase()}`
-        );
-        if (tabElement) {
-          if (idx === 0) {
-            tabElement.classList.remove("hidden");
-          } else {
-            tabElement.classList.add("hidden");
-          }
-        }
-      });
-    });
-
-    // Highlight the first tab button
-    const firstTab = document.querySelector(`#profile-tab-${pageTabs[0]}`);
-    if (firstTab) {
-      firstTab.classList.add("project-editor-tab-active");
-    }
-  }, []);
-
-  const checkValidData = (pendingProfile : PendingUserProfile) : boolean => {
+  const checkValidData = (pendingProfile: PendingUserProfile): boolean => {
     if (!pendingProfile) return false;
 
     if (pendingProfile.firstName == "") {
@@ -108,52 +124,57 @@ export const ProfileEditPopup = () => {
       return false;
     }
 
-    if (pendingProfile.bio == "") {
-      return false;
-    }
+    //Made bio optional because it is not required when making account
+    // if (pendingProfile.bio == "") {
+    //   return false;
+    // }
 
     return true;
   }
 
-  const validData = checkValidData(modifiedProfile as PendingUserProfile);
+  const validData = modifiedProfile ? checkValidData(modifiedProfile as PendingUserProfile) : false;
 
   /**
    * Component to organize the main tab content and handle switching tabs.
    * @returns JSX Element of the appropriate tab.
    */
   const renderTabContent = () => {
-    if (!modifiedProfile) return <p>Loading...</p>;
+    if (!dataManager || !modifiedProfile) return <p>Loading...</p>;
     switch (currentTab) {
       case 0:
         return (
           <AboutTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       case 1:
         return (
           <ProjectsTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       case 2:
         return (
           <SkillsTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       case 3:
         return (
           <LinksTab
             profile={modifiedProfile}
+            unmodifiedProfile={unmodifiedProfile!}
             dataManager={dataManager}
-            updatePendingProfile={setModifiedProfile}
+            updatePendingProfile={updatePendingProfile}
           />
         );
       default:
@@ -180,25 +201,27 @@ export const ProfileEditPopup = () => {
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
       <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
-        <form
-          id="project-creator-editor"
-          onSubmit={onSaveClicked}
-          encType="multipart/form-data"
-        >
+        <div id="project-creator-editor">
           <div id="project-editor-tabs">{editorTabs}</div>
           <div id="project-editor-content">{renderTabContent()}</div>
-          <input
-            type="submit"
-            id="project-editor-save"
-            className={"profile-editor-save " + (validData ? "" : "hidden")}
-            value="Save Changes"
-          />
+          <form
+            id="project-creator-editor"
+            onSubmit={onSaveClicked}
+            encType="multipart/form-data">
+            <input
+              type="submit"
+              id="project-editor-save"
+              className={"profile-editor-save " + (validData ? "" : "hidden")}
+              value="Save Changes"
+            />
+          </form>
+
           {errorVisible && (
             <div id="invalid-input-error" className="error-message">
               <p>*Fill out all required fields before saving!*</p>
             </div>
           )}
-        </form>
+        </div>
       </PopupContent>
     </Popup>
   );

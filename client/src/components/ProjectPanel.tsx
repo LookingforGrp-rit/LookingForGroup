@@ -65,19 +65,19 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
    * @returns boolean indicating follow status
    */
   const checkFollow = useCallback(async () => {
-    if(userId){
-    const followings = (await getProjectFollowing(userId)).data?.projects;
+    if (userId) {
+      const followings = (await getProjectFollowing(userId)).data?.projects;
 
-    let isFollow = false;
+      let isFollow = false;
 
-    if(followings !== undefined){
-    for (const follower of followings){
-      isFollow = (follower.project.projectId === project.projectId);
-      if(isFollow) break;
-    }
-    }
-    setFollowing(isFollow);
-    return isFollow;
+      if (followings !== undefined) {
+        for (const follower of followings) {
+          isFollow = (follower.project.projectId === project.projectId);
+          if (isFollow) break;
+        }
+      }
+      setFollowing(isFollow);
+      return isFollow;
 
     }
   }, [project, userId]);
@@ -87,11 +87,11 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
     const getProjectData = async () => {
       //get our current user for use later
       const userResp = await getCurrentAccount();
-      if(userResp.data) setUserId(userResp.data.userId);
-      
+      if (userResp.data) setUserId(userResp.data.userId);
+
       //get the project itself
       const projectResp = await getByID(projectId);
-      if (projectResp.data) { 
+      if (projectResp.data) {
         setFollowCount(projectResp.data.followers.count);
         checkFollow();
         if (project.title == "thumbnail") {
@@ -100,7 +100,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
         }
       }
     };
-      getProjectData();
+    getProjectData();
   }, [projectId, userId, checkFollow])
 
   /**
@@ -119,15 +119,15 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
     const toggleFollow = !await checkFollow();
     setFollowing(toggleFollow);
 
-    if(toggleFollow) {
+    if (toggleFollow) {
       await addProjectFollowing(project.projectId);
-          setFollowing(true);
-          setFollowCount(followCount + 1);
-        
-    } else { 
+      setFollowing(true);
+      setFollowCount(followCount + 1);
+
+    } else {
       await deleteProjectFollowing(project.projectId);
-          setFollowing(false);
-          setFollowCount(followCount - 1);
+      setFollowing(false);
+      setFollowCount(followCount - 1);
     }
   };
 
@@ -165,23 +165,26 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
                 onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
               />
             )}
-              {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>
+            {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>
             </button> */}
           </div>
         </div>
         <div id="project-panel-tags">
-          {project.mediums.map((medium: ProjectMedium) => (
-            <TagElement type="medium" key={medium.mediumId}>
-              <p>{medium.label}</p>
-            </TagElement>
-          ))}
-          {project.tags?.slice(0, 3)
-            .map((tag: Tag) => {
+          {project.mediums.map((medium: ProjectMedium, index) => {
+            if (index < 2) {
               return (
-                <TagElement type={tag.type.toLowerCase()} key={tag.tagId}>
-                  <p>{tag.label}</p>
+                <TagElement
+                  type="medium" key={index} selected={true}>
+                  <p>{medium.label}</p>
                 </TagElement>
               );
+            } else if (index === 2) {
+              return (
+                <TagElement key={index} selected={true}>
+                  <p>+{project.mediums.length - 2}</p>
+                </TagElement>
+              );
+            }
           })}
         </div>
         <div id="quote">{project.hook}</div>

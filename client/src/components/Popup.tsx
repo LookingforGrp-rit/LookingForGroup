@@ -56,6 +56,7 @@ PopupButton = ({
   callback = async () => { },
   doNotClose = () => false,
   closeParent,
+  disabled = false,
   ref = undefined,
 }: {
   children: ReactNode;
@@ -64,6 +65,7 @@ PopupButton = ({
   callback?: () => void;
   doNotClose?: () => boolean;
   closeParent?: (value : boolean) => void;
+  disabled?: boolean;
   ref?: (React.RefObject<HTMLButtonElement | null>);
 }) => {
   const { open, setOpen } = useContext(PopupContext);
@@ -82,14 +84,14 @@ PopupButton = ({
   // If button should not close the popup, just execute callback 
   if (doNotClose()) {
     return (
-      <button id={buttonId} className={className} tabIndex={0} onClick={callback} ref={ref}>
+      <button id={buttonId} className={className} tabIndex={0} onClick={callback} disabled={disabled} ref={ref}>
         {children}
       </button>
     );
   }
 
   return (
-    <button id={buttonId} className={className} tabIndex={0} onClick={toggleOpen} ref={ref}>
+    <button id={buttonId} className={className} tabIndex={0} onClick={toggleOpen} disabled={disabled} ref={ref}>
       {children}
     </button>
   );
@@ -104,6 +106,7 @@ PopupButton = ({
  * @param useClose — show close button (default true)
  * @param callback — function to run on closing
  * @param profilePopup — variant style for profile popups
+ * @param confirmation — if true, does not disable popup but still runs callback (default false)
  * @returns JSX.Element | null popup overlay and content
  */
 export const PopupContent = ({
@@ -113,6 +116,7 @@ export const PopupContent = ({
   profilePopup = false,
   closeButtonRef = undefined,
   openFocusRef = undefined,
+  confirmation = false,
 }: {
   children: ReactNode;
   useClose?: boolean;
@@ -120,15 +124,17 @@ export const PopupContent = ({
   profilePopup?: false | true;
   closeButtonRef?: React.RefObject<null>;
   openFocusRef?: React.RefObject<HTMLElement | null>;
+  confirmation?: boolean;
 }) => {
   const { open, setOpen } = useContext(PopupContext);
   const popupRef = useRef(null);
 
   // Close the popup and execute optional callback
   const closePopup = useCallback(() => {
+    if(!open) return;
     callback();
-    setOpen(false);
-  }, [callback, setOpen]);
+    if(!confirmation) setOpen(false);
+  }, [callback, setOpen, open]);
 
   // Close on Escape key press
   useEffect(() => {

@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { sendPost } from '../../functions/fetch.js';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
-import { getUserByEmail, getUserByUsername } from '../../api/users.js';
+import { getCurrentUsername, getUserByEmail, getUserByUsername } from '../../api/users.js';
 
 type LoginResponse = {
   error?: string;
@@ -26,6 +26,17 @@ const Login: React.FC = () => {
 
   //google things
   useEffect(() => {
+    const checkSessionAndRedirect = async () => {
+      try {
+        const res = await getCurrentUsername();
+        if (res.data)
+          navigate(paths.routes.HOME);
+      } catch (err) {
+        console.error("Session check failed:", err);
+      }
+    };
+
+    checkSessionAndRedirect();
     // @ts-expect-error google
     google.accounts.id.initialize({
       client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
@@ -38,7 +49,7 @@ const Login: React.FC = () => {
       { theme: "filled_black", size: "large" , shape: 'pill'}
     );
 
-  }, [])
+  }, [navigate])
 
   function handleGoogle(response: any){
     //decodeJwtResponse(response.credential);
@@ -69,6 +80,9 @@ const Login: React.FC = () => {
    * @returns false if an error occurred.
    */
   const handleLogin = async () => {
+    if (isLoading) return;
+    setIsLoading(true);
+
     // Check if the loginInput and password are not empty
     if (loginInput === '') {
       setError('Please fill in your username or email');
@@ -115,7 +129,6 @@ const Login: React.FC = () => {
       }
     }
   
-
     // // Sends the user to the create project popup if they successfully logged in
     // if(error == 'Logging in')
     // {
@@ -163,7 +176,7 @@ const Login: React.FC = () => {
             }}
           />
           <h2>Log In</h2>
-          <div className="error">{error}</div>
+          <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="login-form-inputs">
             <input
               id='main'
@@ -181,8 +194,8 @@ const Login: React.FC = () => {
               </p>
             </div>
           </div>
-          <button id="main-loginsignup-btn" onClick={handleLogin}>
-            Log In
+          <button id="main-loginsignup-btn" onClick={handleLogin} disabled={isLoading}>
+            {isLoading ? 'Loading...' : 'Log In'}
           </button>
         </div>
         {/*************************************************************

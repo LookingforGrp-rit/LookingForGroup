@@ -18,7 +18,7 @@ export const ProjectCarousel = ({ project }: { project: ProjectDetail }) => {
      * - Each <img> element has an onError handler to swap to a placeholder if the image fails to load.
      */
     const carouselContents = (!project.projectImages || project.projectImages.length === 0)
-    ? [<img src={`/assets/project_temp-DoyePTay.png`} />]
+    ? [<img src={`/assets/bannerImages/project_temp.png`} />]
     : project.projectImages.map((imageData) => (
         <img
             src={imageData.image}

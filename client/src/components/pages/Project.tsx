@@ -54,19 +54,19 @@ const Project = () => {
    * @returns true if user is following the project
    */
   const checkFollow = useCallback(async () => {
-    if(userID){
-    const followings = (await getProjectFollowing(userID)).data?.projects;
+    if (userID) {
+      const followings = (await getProjectFollowing(userID)).data?.projects;
 
-    let isFollow = false;
+      let isFollow = false;
 
-    if (followings !== undefined) {
-      for (const follower of followings) {
-        isFollow = follower.project.projectId === projectID;
-        if (isFollow) break;
+      if (followings !== undefined) {
+        for (const follower of followings) {
+          isFollow = follower.project.projectId === projectID;
+          if (isFollow) break;
+        }
       }
-    }
-    setFollowing(isFollow);
-    return isFollow;
+      setFollowing(isFollow);
+      return isFollow;
     }
   }, [projectID, userID]);
 
@@ -95,7 +95,7 @@ const Project = () => {
             }
           }
         }
-        
+
       }
     };
     getProjectData();
@@ -150,7 +150,7 @@ const Project = () => {
             <ProjectCreatorEditor
               newProject={false}
               updateDisplayedProject={setDisplayedProject}
-              /*permissions={userPerms}*/
+            /*permissions={userPerms}*/
             />
           </>
         }
@@ -186,8 +186,8 @@ const Project = () => {
             <DropdownButton className="project-info-dropdown-btn">
               <ThemeIcon
                 id={"menu"}
-                width={25}
-                height={25}
+                width={40}
+                height={40}
                 className={"color-fill dropdown-menu"}
                 ariaLabel={"More options"}
               />
@@ -195,44 +195,44 @@ const Project = () => {
             <DropdownContent rightAlign={true}>
               <div id="project-info-dropdown">
                 <ShareButton />
-                
+
                 {/* Only be able to leave if you're a member of the project */}
-                { isMember ? 
-                <Popup>
-                  <PopupButton className="project-info-dropdown-option">
-                    <ThemeIcon
-                      id={"logout"}
-                      width={27}
-                      height={27}
-                      ariaLabel={"Leave project"}
-                      className="mono-fill"
-                    />
-                    Leave
-                  </PopupButton>
-                  <PopupContent>
-                    <div className="small-popup">
-                      <h3>Leave Project</h3>
-                      <p className="confirm-msg">
-                        Are you sure you want to leave this project? You won't
-                        be able to rejoin unless you're re-added by a project
-                        member.
-                      </p>
-                      <div className="confirm-deny-btns">
-                        <PopupButton
-                          className="confirm-btn"
-                          callback={leaveProject}
-                        >
-                          Confirm
-                        </PopupButton>
-                        <PopupButton className="deny-btn">Cancel</PopupButton>
+                {isMember ?
+                  <Popup>
+                    <PopupButton className="project-info-dropdown-option">
+                      <ThemeIcon
+                        id={"logout"}
+                        width={27}
+                        height={27}
+                        ariaLabel={"Leave project"}
+                        className="mono-fill"
+                      />
+                      Leave
+                    </PopupButton>
+                    <PopupContent>
+                      <div className="small-popup">
+                        <h3>Leave Project</h3>
+                        <p className="confirm-msg">
+                          Are you sure you want to leave this project? You won't
+                          be able to rejoin unless you're re-added by a project
+                          member.
+                        </p>
+                        <div className="confirm-deny-btns">
+                          <PopupButton
+                            className="confirm-btn"
+                            callback={leaveProject}
+                          >
+                            Confirm
+                          </PopupButton>
+                          <PopupButton className="deny-btn">Cancel</PopupButton>
+                        </div>
                       </div>
-                    </div>
-                  </PopupContent>
-                </Popup> 
-                :
-                <></>
+                    </PopupContent>
+                  </Popup>
+                  :
+                  <></>
                 }
-                
+
                 <button
                   className="project-info-dropdown-option"
                   id="project-info-report"
@@ -364,7 +364,7 @@ const Project = () => {
    */
   const openOpenPositionsPanel = () => {
     const button = document.getElementById("project-open-positions-button");
-    if (button)  {
+    if (button) {
       button.click();
     }
   };
@@ -385,13 +385,17 @@ const Project = () => {
   const projectLead = displayedProject?.owner;
 
   //Page layout for if project data hasn't been loaded yet
-  const loadingProject = <>{<div>Loading project...</div>}</>;
+  const loadingProject =(
+        <div className='placeholder-spacing'>
+          <div className='spinning-loader'></div>
+        </div>
+  );
 
   return (
     <div className="page">
       <Header
         dataSets={[{ data: [] }]}
-        onSearch={() => {}}
+        onSearch={() => { }}
         hideSearchBar={true}
         value={undefined}
         onChange={undefined}
@@ -401,9 +405,9 @@ const Project = () => {
         loadingProject
       ) : (
         <main id="main" tabIndex={-1} aria-label="main content" >
+          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="project-page-content">
             <ProjectCarousel project={displayedProject}></ProjectCarousel>
-
             <div id="project-info-panel">
               <div id="project-info-top">
                 <div id="project-info-header">
@@ -439,7 +443,7 @@ const Project = () => {
                   </PopupButton>
                   <PopupContent>
                     <TeamPositionsPanel displayedProject={displayedProject}
-                        viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
+                      viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
                   </PopupContent>
                 </Popup>
               </div>
@@ -455,14 +459,14 @@ const Project = () => {
                       return (
                         <TagElement
                           type={tag.type.toLowerCase()}
-                          key={index}
+                          key={index} selected={true}
                         >
                           <p>{tag.label}</p>
                         </TagElement>
                       );
                     } else if (index === 3) {
                       return (
-                        <TagElement key={index}>
+                        <TagElement key={index} selected={true}>
                           <p>+{displayedProject.tags.length - 3}</p>
                         </TagElement>
                       );
@@ -519,9 +523,9 @@ const Project = () => {
 
             <div id="project-people">
               <div id="project-people-tabs">
-                <div // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
-                  className={`project-people-tab ${peopleContent}`}
-                  //onClick={() => setDisplayedPeople("People")} wow this button is now useless
+                <div id="project-people-tab" // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
+                  
+                //onClick={() => setDisplayedPeople("People")} wow this button is now useless
                 >
                   The Team
                 </div>
@@ -535,7 +539,7 @@ const Project = () => {
               <div className="centerer">
                 <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
               </div>
-              
+
               <div id="project-open-positions-list">
                 {displayedProject.jobs.map((position, index) => (
                   <button

@@ -8,8 +8,6 @@ interface CompleteProfileProps {
     firstName: string,
     lastName: string,
     email: string,
-    username: string,
-    password: string,
     // proficiencies: selectedProficiencies,
     skills: string[],
     // interests: selectedInterests,

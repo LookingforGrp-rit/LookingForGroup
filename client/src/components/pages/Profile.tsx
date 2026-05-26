@@ -76,19 +76,19 @@ const Profile = () => {
    * @returns true if following
    */
   const checkFollow = useCallback(async () => {
-    if(userID){
-    const followings = (await getUserFollowing(userID)).data?.users;
+    if (userID) {
+      const followings = (await getUserFollowing(userID)).data?.users;
 
-    let isFollowing = false;
+      let isFollowing = false;
 
-    if (followings !== undefined) { //if they have no follows then obviously they can't be following the guy we're looking at
-      for (const follower of followings) {
-        isFollowing = (follower.user.userId === parseInt(profileID))
-        if (isFollowing) break;
+      if (followings !== undefined) { //if they have no follows then obviously they can't be following the guy we're looking at
+        for (const follower of followings) {
+          isFollowing = (follower.user.userId === parseInt(profileID))
+          if (isFollowing) break;
+        }
       }
-    }
-    setIsFollow(isFollowing);
-    return isFollowing;
+      setIsFollow(isFollowing);
+      return isFollowing;
 
     }
   }, [profileID, userID])
@@ -167,7 +167,7 @@ const Profile = () => {
       // Get the userID for our current user
       const response = await getCurrentAccount()
       if (response.data) setUserID(response.data.userId);
-      if(userID) setIsUsersProfile(userID.toString() === profileID);
+      if (userID) setIsUsersProfile(userID.toString() === profileID);
 
       try {
         const { data } = await getUsersById(Number(profileID));
@@ -290,6 +290,7 @@ const Profile = () => {
       {/* Checks if we have profile data to use, then determines what to render */}
       <main id="main" tabIndex={-1}>
         <div id="profile-page-content">
+          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="profile-hero">
             <div id="profile-img-container">
               <img
@@ -318,26 +319,26 @@ const Profile = () => {
                   <div id="profile-buttons">{aboutMeButtons}</div>
                 </div>
 
-              <div id="profile-extras">
-                <div className="profile-extra">
-                  <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
-                  {displayedProfile?.title}
-                </div>
-                <div className="profile-extra">
-                  <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
-                  {majorsArr.join(", ")} {displayedProfile?.academicYear}
-                </div>
-                <div className="profile-extra">
-                  <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'} />
-                  {displayedProfile?.location}
-                </div>
-                <div className="profile-extra">
-                  <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
-                  {displayedProfile?.pronouns}
-                </div>
-                {/* Only show mentor status if user is a mentor */}
-                {displayedProfile?.mentor &&
+                <div id="profile-extras">
                   <div className="profile-extra">
+                    <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
+                    {displayedProfile?.title}
+                  </div>
+                  <div className="profile-extra">
+                    <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
+                    {majorsArr.join(", ")} {displayedProfile?.academicYear}
+                  </div>
+                  <div className="profile-extra">
+                    <ThemeIcon id={'location'} width={12} height={22} className={'mono-fill'} ariaLabel={'Location'} />
+                    {displayedProfile?.location}
+                  </div>
+                  <div className="profile-extra">
+                    <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+                    {displayedProfile?.pronouns}
+                  </div>
+                  {/* Only show mentor status if user is a mentor */}
+                  {displayedProfile?.mentor &&
+                    <div className="profile-extra">
                       <ThemeIcon id={'mentor'} width={20} height={20} className={'mono-fill'} ariaLabel={'Mentorship Status'} />
                       Mentor
                     </div>

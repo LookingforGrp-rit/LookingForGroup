@@ -135,7 +135,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     if (userId != "") {
       return;
     }
-
+    
     const res = await getCurrentUsername();
 
     if (res.status === 200 && res.data?.username && userId == "") {
@@ -147,9 +147,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
   // Set the necessary data for project mode
   const setupProjectData = (projects : ApiResponse<ProjectPreview[]>) : void => {
-    if (!projects.data) {
-      return;
-    }
+    if (!projects.data) return;
 
     const newProjectCache = projectCache;
     for (let project of projects.data) {
@@ -207,9 +205,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   */
     const getData = async (force : boolean = false) => {
       // Early escape
-      if (fetchedProjects && fetchedUsers && !force) {
-        return;
-      }
+      if (fetchedProjects && fetchedUsers && !force) return;
 
       // Get user profile
       await getAuth();
@@ -370,10 +366,19 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         // Check project type by name since IDs are not unique relative to tags
         // Project Type tag
         if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
-            const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
-            if (projectTypes.includes(tag.label.toLowerCase())) {
+          const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
+          if (projectTypes.includes(tag.label.toLowerCase())) {
+            matchesAny = true;
+          }
+          else if (tag.label === `New`){
+            //change the subtraction to change the 
+            const cutOff = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
+            const date = Date.parse(item.createdAt.toString());
+            if (date >= cutOff)
+            {
               matchesAny = true;
-          } 
+            }
+          }
         }
         // Purpose tag 
         else if (tag.type === 'Purpose' && item.purpose) {
@@ -495,16 +500,26 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   let discoverPanelContents : React.ReactElement;
   if (category == 'projects') {
     if(!dataLoaded && filteredProjectList.length === 0) {
-      discoverPanelContents = (<div className='spinning-loader'></div>);
+      discoverPanelContents = (
+        <div className='placeholder-spacing'>
+          <div className='spinning-loader'></div>
+        </div>
+      );
     }
-
-    discoverPanelContents = (<PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} />);
+    else {
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} />);
+    }
   } else {
     if(!dataLoaded && filteredUserList.length === 0) {
-      discoverPanelContents = (<div className='spinning-loader'></div>);
+      discoverPanelContents = (
+        <div className='placeholder-spacing'>
+          <div className='spinning-loader'></div>
+        </div>
+      );
     }
-    
-    discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} />);
+    else {
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} />);
+    }
   }
 
   // Main render function

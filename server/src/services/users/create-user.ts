@@ -1,4 +1,4 @@
-import type { MePrivate } from '@looking-for-group/shared';
+import type { CreateUserInput, MePrivate } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
 import { MePrivateSelector } from '#services/selectors/me/me-private.ts';
@@ -10,18 +10,16 @@ type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT'>;
 const createUserService = async (
   uid: string,
   username: string,
-  firstName: string,
-  lastName: string,
-  email: string,
+  info: CreateUserInput,
 ): Promise<MePrivate | CreateUserServiceError> => {
   try {
     const result = await prisma.users.create({
       data: {
         googleId: uid,
         username,
-        firstName,
-        lastName,
-        ritEmail: email,
+        firstName: info.firstName ?? '',
+        lastName: info.lastName ?? '',
+        ritEmail: info.ritEmail ?? '',
       },
       select: MePrivateSelector,
     });

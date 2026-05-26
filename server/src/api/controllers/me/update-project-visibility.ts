@@ -8,10 +8,20 @@ import { updateProjectVisibility } from '#services/me/update-project-visibility.
  * Does NOT update the entire project's visibility, only toggles whether or not it's seen on the user's account
  */
 const updateProjectVisibilityController = async (req: AuthenticatedRequest, res: Response) => {
+  console.log('BODY:', req.body);
+  console.log('QUERY:', req.query);
+
   const projectId = parseInt(req.params.id);
 
   // Validate request body - expecting { visibility: 'private' or 'public' }
-  const visibility = (req.body as { visibility: 'private' | 'public' | undefined }).visibility;
+  type VisibilityBody = {
+    visibility?: 'private' | 'public' | { visibility?: 'private' | 'public' };
+  };
+
+  const body = req.body as VisibilityBody;
+  const rawVisibility = body.visibility;
+
+  const visibility = typeof rawVisibility === 'string' ? rawVisibility : rawVisibility?.visibility;
 
   const result = await updateProjectVisibility(projectId, req.currentUser, visibility);
 

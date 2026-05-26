@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 // import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
@@ -8,8 +8,8 @@ import ChooseSkills from '../SignupProcess/ChooseSkills';
 import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
-import passwordValidator from 'password-validator';
-import { getUserByEmail, getUserByUsername } from '../../api/users';
+//import passwordValidator from 'password-validator';
+import { createNewUser, getUserByEmail } from '../../api/users';
 
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
@@ -24,12 +24,12 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState(''); // Second password input to check if they match
+  // const [username, setUsername] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [confirm, setConfirm] = useState(''); // Second password input to check if they match
   const [message, setMessage] = useState('');
-  const [passwordMessage, setPasswordMessage] = useState(''); // Password requirements
-  const [showPassword, setShowPassword] = useState(false);
+  // const [passwordMessage, setPasswordMessage] = useState(''); // Password requirements
+  // const [showPassword, setShowPassword] = useState(false);
 
   // State variables for modals
   // const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -52,8 +52,6 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     firstName: firstName,
     lastName: lastName,
     email: email,
-    username: username,
-    password: password,
     // proficiencies: selectedProficiencies,
     skills: selectedSkills,
     // interests: selectedInterests,
@@ -63,6 +61,21 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     profileImage: profileImage, // if they upload their own image
   };
 
+  // Redirect the user to the homepage if they are currently logged in
+  useEffect(() => {
+    const checkSessionAndRedirect = async () => {
+      try {
+        const res = await getCurrentUsername();
+        if (res.data)
+          navigate(paths.routes.HOME);
+      } catch (err) {
+        console.error("Session check failed:", err);
+      }
+    };
+
+    checkSessionAndRedirect();
+  }, [navigate]);
+
   /**
    * Goes through the various fields, verifies whether user input is valid, and sends it to the server.
    * @returns False if invalid
@@ -71,34 +84,27 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     // Check if any of the fields are empty
     if (
       email === '' ||
-      password === '' ||
-      confirm === '' ||
       firstName === '' ||
-      lastName === '' ||
-      username === ''
+      lastName === ''
     ) {
       setMessage('Please fill in all information');
       return false;
     }
 
-    // check if username in use
-    try {
-      const data = await getUserByUsername(username);
-      // if there is a result, a match is found
-      if (data) {
-        setMessage('Username already in use');
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
+    //usernames are automatically set with your entered email, so checks are not needed
+    // // check if username in use
+    // const usernameCheck = await getUserByUsername(username);
+    // // if there is a result, a match is found
+    // if (usernameCheck) {
+    //   setMessage('Username already in use');
+    //   return false;
+    // }
 
-    // check if username is valid
-    if (!(username.match(/^[a-zA-Z0-9_]+$/) != null)) {
-      setMessage('Username can not include white space or special characters!');
-      return false;
-    }
+    // // check if username is valid
+    // if (!(username.match(/^[a-zA-Z0-9_]+$/) != null)) {
+    //   setMessage('Username can not include white space or special characters!');
+    //   return false;
+    // }
 
     if (!email.includes('rit.edu')) {
       // check if email is valid
@@ -107,32 +113,29 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     }
 
     // check if the email is in use
-    try {
-      const data = await getUserByEmail(email);
-      
-      // if there is a result, a match is found
-      if (data) {
-        setMessage('Email already in use');
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
+    const emailCheck = await getUserByEmail(email);
+    // if there is a result, a match is found
+    if (emailCheck.status === 200) {
+      setMessage('Email already in use');
       return false;
     }
 
+    //no password self-storage so none of this is needed
     // Check if password meets the requirements
-    if (passwordMessage !== '') {
-      setMessage('Password does not meet requirements');
-      return false;
-    }
+    // if (passwordMessage !== '') {
+    //   setMessage('Password does not meet requirements');
+    //   return false;
+    // }
 
-    // check if the passwords match
-    if (password !== confirm) {
-      setMessage('Passwords do not match');
-      return false;
-    }
+    // // check if the passwords match
+    // if (password !== confirm) {
+    //   setMessage('Passwords do not match');
+    //   return false;
+    // }
 
-    // no errors, send email
+    //here we would call a POST to /users with all of our info in the body
+    //and thus signups should work!
+    //we'd want oauth stuff here as well for rit email validation thingy things
     else {
       setMessage('Please wait...');
       // Send info to begin account activation
@@ -146,7 +149,9 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         username: username,
       });
       */
-      setMessage('An account activation email has been sent');
+      await createNewUser({firstName, lastName, ritEmail: email});
+      //redirect to... the home page? no we want to redirect to the login page but the login page is probably broken because it still wants a password
+      //or we just SIGN THEM IN (NOT WORKING...) redirect to the home page after we've signed up to skip the step of logging in yet again
     }
   };
 
@@ -155,53 +160,60 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    * @param pass Password
    * @returns String message of remaining requirements to be met
    */
-  const validatePassword = (pass : string) => {
-    // Don't check password if there's nothing there
-    if (pass === '') {
-      return '';
-    }
+  
+    //oauth will handle this since we're logging in with rit emails
+    //if google has all of our account auth info and we aren't storing our own
+    //we don't need to store passwords ourselves at all, google will completely handle that right
+    //i guess for the login page we can simply have a google oauth button there
+    //or dress up google's oauth form in our lfg colors or smth... is that possible? no idea
 
-    const schema = new passwordValidator();
-    schema
-      .is()
-      .min(8, 'be 8 or more characters')
-      .is()
-      .max(20, 'be 20 or less characters')
-      .has()
-      .uppercase(1, 'have an uppercase letter')
-      .has()
-      .lowercase(1, 'have a lowercase letter')
-      .has()
-      .digits(1, 'have a number')
-      .has()
-      .symbols(1, 'have a symbol')
-      .has()
-      .not()
-      .spaces(1, 'have no spaces')
-      .has()
-      .not('[^\x00-\x7F]+', 'have no non-ASCII characters');
+  // const validatePassword = (pass : string) => {
+  //   // Don't check password if there's nothing there
+  //   if (pass === '') {
+  //     return '';
+  //   }
 
-    const output : boolean | any[] = schema.validate(pass, { details: true });
-    let passMsg = '';
+  //   const schema = new passwordValidator();
+  //   schema
+  //     .is()
+  //     .min(8, 'be 8 or more characters')
+  //     .is()
+  //     .max(20, 'be 20 or less characters')
+  //     .has()
+  //     .uppercase(1, 'have an uppercase letter')
+  //     .has()
+  //     .lowercase(1, 'have a lowercase letter')
+  //     .has()
+  //     .digits(1, 'have a number')
+  //     .has()
+  //     .symbols(1, 'have a symbol')
+  //     .has()
+  //     .not()
+  //     .spaces(1, 'have no spaces')
+  //     .has()
+  //     .not('[^\x00-\x7F]+', 'have no non-ASCII characters');
 
-	  if (output == false) {
-      return '';
-	  }
+  //   const output : boolean | any[] = schema.validate(pass, { details: true });
+  //   let passMsg = '';
 
-    const result : any[] = output as any[];
+	//   if (output == false) {
+  //     return '';
+	//   }
 
-    if (result.length > 0) {
-      passMsg += `Password must `;
+  //   const result : any[] = output as any[];
 
-      for (let i = 0; i < result.length - 1; i++) {
-        passMsg += `${result[i].message}, `;
-      }
-      passMsg += `${result.length > 1 ? 'and ' : ''}${result[result.length - 1].message}.`;
-    }
+  //   if (result.length > 0) {
+  //     passMsg += `Password must `;
 
-    console.log(passMsg);
-    return passMsg;
-  };
+  //     for (let i = 0; i < result.length - 1; i++) {
+  //       passMsg += `${result[i].message}, `;
+  //     }
+  //     passMsg += `${result.length > 1 ? 'and ' : ''}${result[result.length - 1].message}.`;
+  //   }
+
+  //   console.log(passMsg);
+  //   return passMsg;
+  // };
 
   /**
    * Handles Enter key presses
@@ -234,7 +246,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
           <h2>Sign Up</h2>
 
-          <div className="error">{message}</div>
+          <div className="error" aria-live="assertive" role="alert">{message}</div>
           <div className="signup-form-inputs">
             <div className="row">
               <input
@@ -266,15 +278,15 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
             <span className="spacer"> </span>
 
-            <input
+            {/* <input
               className="signup-input"
               autoComplete="off"
               type="text"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-            />
-            <div id='password-wrapper'>
+            /> */}
+            {/* <div id='password-wrapper'>
               <input
                 className="signup-input"
                 autoComplete="off"
@@ -297,20 +309,20 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
                   <ThemeIcon id={'eye'} width={18} height={13} className={'mono-fill'} ariaLabel={'Hide password'}/>
                 )}
               </button>
-            </div>
+            </div> */}
             {/* {(passwordMessage !== '') ? (
                             <div className="error">{passwordMessage}</div>
                         ) : (
                             <></>
                         )} */}
-            <input
+            {/* <input
               className="signup-input"
               autoComplete="off"
               type="password"
               placeholder="Re-enter password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
-            />
+            /> */}
             <div className="mobile-login">
               <p>Already have an account? </p>
               <p id="login-btn-mobile" onClick={() => navigate(paths.routes.LOGIN)}>

@@ -17,6 +17,7 @@ import type {
   Tag,
   Social,
   UpdateUserInput,
+  CreateUserInput,
   AddUserSocialInput,
   UpdateUserSocialInput,
   AddUserSkillsInput,
@@ -39,7 +40,7 @@ import type {
  * @returns status - 200 if valid, 400 if not
  */
 export const createNewUser = async (
-  userData: UserPreview
+  userData: CreateUserInput
 ): Promise<ApiResponse> => {
   const apiURL = "/users";
 
@@ -265,8 +266,10 @@ export const updateProjectVisibility = async (
   projectID: number,
   visibility: UpdateUserProjectVisibilityInput
 ): Promise<ApiResponse<MyMember>> => {
-  const url = `me/projects/${projectID}/visibility`;
-  const response = await PUT(url, visibility);
+  const url = `/me/projects/${projectID}/visibility`;
+  const response = await PUT(url, {
+    visibility,
+  });
 
   // if (response.error)
     //console.log(`Error in updateProjectVisibility: ${response.error}`);

@@ -1,22 +1,13 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { ApiResponse, CreateUserInput } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import {
-  uidHeaderKey,
-  firstNameHeaderKey,
-  lastNameHeaderKey,
-  emailHeaderKey,
-} from '#config/constants.ts';
 import envConfig from '#config/env.ts';
 import createUserService from '#services/users/create-user.ts';
 
 //POST api/users
 //creates a user
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-  let uid = req.headers[uidHeaderKey] as string;
-  let firstName = req.headers[firstNameHeaderKey] as string | undefined;
-  let lastName = req.headers[lastNameHeaderKey] as string;
-  let email = req.headers[emailHeaderKey] as string;
-
+  const uid = `${Math.floor(Math.random() * 1000000000)}`;
+  const info: CreateUserInput = req.body as CreateUserInput;
   if (envConfig.env === 'development' || envConfig.env === 'test') {
     /// Fudge for development
     const devFirstName = req.query.devFirstName as string | undefined;
@@ -25,35 +16,35 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     const devUID = req.query.devUID as string | undefined;
 
     if (devFirstName) {
-      firstName = devFirstName;
+      info.firstName = devFirstName;
     }
 
     if (devLastName) {
-      lastName = devLastName;
+      info.lastName = devLastName;
     }
 
     if (devEmail) {
-      email = devEmail;
+      info.ritEmail = devEmail;
     }
 
     if (devUID) {
-      uid = devUID;
+      info.universityId = devUID;
     }
   }
 
-  if (!uid || !firstName || !lastName || !email) {
+  if (!uid || !info.firstName || !info.lastName || !info.ritEmail) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Missing information in headers',
+      error: 'Missing information in request body',
       data: null,
     };
     res.status(400).json(resBody);
     return;
   }
 
-  const username = email.substring(0, email.indexOf('@'));
+  const username = info.ritEmail.substring(0, info.ritEmail.indexOf('@'));
 
-  const result = await createUserService(uid, username, firstName, lastName, email);
+  const result = await createUserService(uid, username, info);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

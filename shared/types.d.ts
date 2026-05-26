@@ -1,7 +1,7 @@
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft";
+export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
 export type TagType =
   | "Creative"
   | "Technical"
@@ -18,7 +18,8 @@ export type TagType =
   | "Major"
   | "Developer Skill"
   | "Designer Skill"
-  | "Soft Skill";
+  | "Soft Skill"
+  | "Audio Skill";
 export type AcademicYear =
   | "Freshman"
   | "Sophomore"
@@ -1013,11 +1014,6 @@ export interface ProjectDetail extends ProjectPreview {
   audience: string;
 
   /**
-   * The tags attached to the project
-   */
-  tags: Tag[];
-
-  /**
    * The images attached to the project
    */
   projectImages: ProjectImage[];
@@ -1061,6 +1057,11 @@ export interface ProjectPreview {
    * The project title
    */
   title: string;
+  
+  /**
+   * The tags attached to the project
+   */
+  tags: Tag[];
 
   /**
    * A hook to catch attention to the project
@@ -1136,6 +1137,28 @@ export type UpdateUserInput = Partial<
     | "funFact"
     | "bio"
     | "phoneNumber"
+  > & {
+    profileImage?: File;
+    mentor?: "true" | "false";
+    // TODO update to use Visibility enum
+    visibility?: "1" | "0";
+  }
+>;
+export type CreateUserInput = Partial<
+  Pick<
+    MePrivate,
+    | "firstName"
+    | "lastName"
+    | "headline"
+    | "pronouns"
+    | "title"
+    | "academicYear"
+    | "location"
+    | "funFact"
+    | "bio"
+    | "phoneNumber"
+    | 'ritEmail'
+    | 'universityId'
   > & {
     profileImage?: File;
     mentor?: "true" | "false";

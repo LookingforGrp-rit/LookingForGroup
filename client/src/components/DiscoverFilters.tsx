@@ -60,6 +60,8 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   const [activeTagFilters, setActiveTagFilters] = useState<Tag[]>([]);
   // Whether the "Applied Filters" section should display under the quick tags
   const [displayFiltersText, setDisplayFiltersText] = useState(false);
+  //Keeps track of the currently selected tab in this popup.
+  const [activeTabId, setActiveTabId] = useState(0);
 
   // Dynamically show/hide arrows
   const tagFiltersRef = useRef<HTMLDivElement>(null);
@@ -139,6 +141,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         Designer: 'Designer Skill',
         Developer: 'Developer Skill',
         Soft: 'Soft Skill',
+        Audio: 'Audio Skill',
         Role: 'Role',
         Major: 'Major',
         };
@@ -167,6 +170,15 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   useEffect(() => {
     if (!dataLoaded) getData();
   }, [dataLoaded]);
+  //Displays the correct tabs depending on the value of activeTabId.
+  useEffect(() => {
+    if(filterPopupTabs[activeTabId]) {
+      const currentTab = filterPopupTabs[activeTabId];
+      setCurrentTags(currentTab.categoryTags);
+      setDataSet([{ data: currentTab.categoryTags }]);
+      setSearchedTags({ tags: currentTab.categoryTags, color: currentTab.color });
+    }
+  }, [activeTabId, filterPopupTabs]);
 
   /**
    * Toggles a tag's selection in the horizontal quick filter.
@@ -245,15 +257,15 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
    */
   const setupFilters = () => {
     // Defaults to the first available tab
-    if (filterPopupTabs.length > 0) {
-      const firstTab = filterPopupTabs[0];
-      setCurrentTags(firstTab.categoryTags);
-      setDataSet([{ data: firstTab.categoryTags }]);
-      setSearchedTags({
-        tags: firstTab.categoryTags,
-        color: firstTab.color,
-      });
-    }
+    //if (filterPopupTabs.length > 0) {
+    //  const currentTab = filterPopupTabs[activeTabId];
+    //  setCurrentTags(currentTab.categoryTags);
+    //  setDataSet([{ data: currentTab.categoryTags }]);
+    //  setSearchedTags({
+    //    tags: currentTab.categoryTags,
+    //    color: currentTab.color,
+    //  });
+    //}
     setEnabledFilters([]);
   };
 
@@ -301,17 +313,16 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
             {/* 
                           When page loads, get all necessary tag lists based on page category.
                           Place these lists in an array, along with an identifier for which column 
-                          they belong. Map through these lists to construct filter dropdown.
                           Displayed tags are determined using a state variable, changable w/ searchbar.
                           Tags have an onClick function that adds their tag to a full tag list. 
                           Full tag list is only applied when hitting done, which then pushes the 
                           info to an active list.
                       */}
             <PopupContent useClose={false}>
-              {/* Back button */}
-              <PopupButton className="popup-back">
-                <ThemeIcon id={'back'} width={70} height={25} className={'color-fill'} ariaLabel={'back'}/>
-              </PopupButton>
+              {/* Close Button */}
+               <PopupButton className="popup-close">
+                  <img alt="close" src="/src/icons/cancel.png"></img>
+                </PopupButton>
               <div id="filters-popup">
                 <h2>{category === 'projects' ? 'Project Filters' : 'People Filters'}</h2>
                 <div id="filters" className="popup-section">
@@ -325,19 +336,19 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                     {filterPopupTabs.map((tab, index) => (
                       <a
                         key={`${tab.categoryName}-${index}`}
-                        className={`filter-tab ${index === 0 ? 'selected' : ''}`}
-                        onClick={(e) => {
-                          const element = e.target as HTMLElement;
+                        className={`filter-tab ${index === activeTabId ? 'selected' : ''}`}
+                        onClick={() => {
+                          //const element = e.target as HTMLElement;
 
-                          // Remove .selected from all 3 options, add it only to current button
-                          const tabs = document.querySelector('#filter-tabs')!.children;
-                          for (let i = 0; i < tabs.length; i++) {
-                            tabs[i].classList.remove('selected');
-                          }
-                          element.classList.add('selected');
-                          setCurrentTags(tab.categoryTags);
-                          setDataSet([{ data: tab.categoryTags }]);
-                          setSearchedTags({ tags: tab.categoryTags, color: tab.color });
+                          //// Remove .selected from all 3 options, add it only to current button
+                          //const tabs = document.querySelector('#filter-tabs')!.children;
+                          //for (let i = 0; i < tabs.length; i++) {
+                          //  tabs[i].classList.remove('selected');
+                          //}
+                          //element.classList.add('selected');
+
+                          //Sets the index to the setActiveId value.
+                          setActiveTabId(index);
                         }}
                       >
                         {tab.categoryName}
