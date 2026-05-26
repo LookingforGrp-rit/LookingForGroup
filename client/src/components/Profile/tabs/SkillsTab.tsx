@@ -7,17 +7,15 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
-import {
-  MySkill,
-  Skill,
-} from "@looking-for-group/shared";
+import { MySkill, Skill } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 
-const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills"];
+const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
 
 interface SkillsTabProps {
   profile: PendingUserProfile;
+  unmodifiedProfile: MePrivate;
   dataManager: Awaited<ReturnType<typeof userDataManager>>;
   updatePendingProfile: (profileData: PendingUserProfile) => void;
 }
@@ -28,11 +26,13 @@ interface SkillsTabProps {
  * @param dataManager Handles data changes to save changes later.
  * @param profile Temporary profile data.
  * @param updatePendingProfile Updates profile data.
+ * @param unmodifiedProfile A copy of the profile before any changes
  * @returns JSX Element
  */
 export const SkillsTab = ({
   dataManager,
   profile,
+  unmodifiedProfile,
   updatePendingProfile,
 }: SkillsTabProps) => {
   // States
@@ -66,6 +66,8 @@ export const SkillsTab = ({
         return [{ data: allSkills.filter((s) => s.type === "Designer") }];
       case 2:
         return [{ data: allSkills.filter((s) => s.type === "Soft") }];
+      case 3:
+        return [{ data: allSkills.filter((s) => s.type === "Audio") }];
       default:
         return [{ data: [] }];
     }
@@ -81,85 +83,13 @@ export const SkillsTab = ({
    * Finds if a skill is present on the project
    * @returns string of status: "selected" or "unselected."
    */
-  const isSkillSelected = useCallback(
-    (id: number) => {
-      const skills: MySkill[] = profile.skills;
+  const isSkillSelected = (id: number) => {
+    const skills: MySkill[] = profile.skills;
 
-      if (skills.some((skill) => skill.skillId === id)) return "selected";
-      return "unselected";
-    },
-    [profile]
-  );
+    if (skills.some((skill) => skill.skillId === id)) return "selected";
+    return "unselected";
+  }
 
-  // TODO delete this function
-  // const handleSkillSelect = useCallback(
-  //   (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
-  //     // prevent page from immediately re-rendering
-
-  //     // trim whitespace to get skill name
-  //     // take closest button to allow click on icon
-  //     const button = e.currentTarget;
-  //     const skill: string = button.innerText.trim();
-
-  //     // if skill is unselected
-  //     if (button.className.includes("unselected")) {
-  //       // get skill id and type according to type of skill
-  //       let id: number = -1;
-  //       let type: SkillType = "Developer";
-
-  //       if (button.className.includes("yellow")) {
-  //         // developer skills
-  //         id =
-  //           allSkills.find((s) => s.type === "Developer" && s.label === skill)
-  //             ?.skillId ?? -1;
-  //         type = "Developer";
-  //       } else if (button.className.includes("red")) {
-  //         // designer skills
-  //         id =
-  //           allSkills.find((s) => s.type === "Designer" && s.label === skill)
-  //             ?.skillId ?? -1;
-  //         type = "Designer";
-  //       } else if (button.className.includes("purple")) {
-  //         // soft skills
-  //         id =
-  //           allSkills.find((s) => s.type === "Soft" && s.label === skill)
-  //             ?.skillId ?? -1;
-  //         type = "Soft";
-  //       }
-
-  //       // error check: no skill found
-  //       if (id === -1) {
-  //         return;
-  //       }
-  //       //we have to implement proficiency
-
-  //       // Update selected skills with new ones
-  //       setProfile((prev) => ({
-  //         ...prev,
-  //         skills: [
-  //           ...(prev.skills ?? []),
-  //           {
-  //             skillId: id,
-  //             type: type,
-  //             label: skill,
-  //             position: 0, //this isn't over, position parameter.
-  //             proficiency: "Novice" as SkillProficiency, //we'll get to this later
-  //             apiUrl: "",
-  //           },
-  //         ],
-  //       }));
-  //     }
-  //     // if skill is selected
-  //     else {
-  //       // remove skill from project
-  //       setProfile((prev) => ({
-  //         ...prev,
-  //         skills: (prev.skills ?? []).filter((s) => s.label !== skill),
-  //       }));
-  //     }
-  //   },
-  //   [allSkills, profile]
-  // );
 
   /**
    * Toggles a skill as selected or unselected
@@ -167,9 +97,9 @@ export const SkillsTab = ({
   const handleSkillToggle = useCallback(
     (skillId: number) => {
       const isSelected = isSkillSelected(skillId) === "selected";
-      const skillToToggle = allSkills.find(
-        (potentialMatch) => potentialMatch.skillId === skillId
-      );
+
+      const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
+      
       if (!skillToToggle) return;
 
       if (isSelected) {
@@ -231,12 +161,13 @@ export const SkillsTab = ({
         key={skill.label}
         onClick={() => handleSkillToggle(skill.skillId)}
         type={skill.type.toLowerCase() + " skill"}
+        selected={true}
       >
         <i className="fa fa-close"></i>
         <p>&nbsp;{skill.label}</p>
       </Tag>
     ));
-  }, [profile.skills, handleSkillToggle]);
+  }, [profile.skills]);
 
   /**
    * Renders skill tags as clickable buttons based on the active tab and search results.
@@ -251,6 +182,7 @@ export const SkillsTab = ({
           key={skill.skillId}
           onClick={() => handleSkillToggle(skill.skillId)}
           type={skill.type.toLowerCase() + " skill"}
+          selected={isSkillSelected(skill.skillId) === "selected"}
         >
           <i
             className={
@@ -265,6 +197,7 @@ export const SkillsTab = ({
     } else if (searchedSkills && searchedSkills.length === 0) {
       return <div className="no-results-message">No results found!</div>;
     }
+
     // Developer Skill
     if (currentSkillsTab === 0) {
       return allSkills
@@ -285,7 +218,9 @@ export const SkillsTab = ({
             <p>&nbsp;{developerSkill.label}</p>
           </Tag>
         ));
-    } else if (currentSkillsTab === 1) {
+    }
+    //design skill tab
+    else if (currentSkillsTab === 1) {
       return allSkills
         .filter((anySkill) => anySkill.type === "Designer")
         .map((designerSkill) => (
@@ -304,7 +239,9 @@ export const SkillsTab = ({
             <p>&nbsp;{designerSkill.label}</p>
           </Tag>
         ));
-    } else {
+    }
+    //returns the soft skills
+    else {
       return allSkills
         .filter((anySkill) => anySkill.type === "Soft")
         .map((softSkill) => (
@@ -367,10 +304,32 @@ export const SkillsTab = ({
     return <div id="project-editor-tag-search-tabs">{tabs}</div>;
   };
 
+  const originalSkillOrder = useMemo(() => {
+    return (unmodifiedProfile.skills || []).map(s => s.skillId);
+  }, []);
+
+  // Does Skills match in EXACT order
+  const isSkillsUnsaved = useMemo(() => {
+    const currentskills = profile.skills || [];
+    
+    if (currentskills.length !== originalSkillOrder.length) return true;
+    
+    // Checks if any element shifted index or changed
+    return currentskills.some((s, index) => s.skillId !== originalSkillOrder[index]);
+  }, [profile.skills, originalSkillOrder]);
+
   return (
     <div id="profile-editor-tags">
       <div id="project-editor-selected-tags">
-        <div className="project-editor-section-header">Selected Skills</div>
+        <div className="project-editor-section-header">
+          Selected Skills
+          {/* This will work when you can select multiple skills. Someone else is working on it */}
+          {isSkillsUnsaved && (
+            <span className="unsaved-indicator">
+              (Unsaved)
+            </span>
+          )}  
+        </div>
         <div className="project-editor-extra-info">
           Drag and drop to reorder
         </div>

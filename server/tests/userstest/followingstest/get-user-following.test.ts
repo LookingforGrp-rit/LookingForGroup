@@ -75,6 +75,7 @@ describe('getProjectFollowingService', () => {
       thumbnailId: 0,
       status: 'Planning',
       audience: '',
+      tags: [],
       mediums: [],
       apiUrl: '/api/projects/99',
     };

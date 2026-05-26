@@ -246,7 +246,13 @@ section {
 .my-projects-grid,
 .my-projects-list,
 #discover-panel-box {
-  min-height: 50vh;
+  min-height: 35vh;
+}
+
+.placeholder-spacing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 /* #endregion */
@@ -484,25 +490,16 @@ orange-button class makes the button orange, white-button class makes the button
 }
 
 /*back buttons on project pages*/
-.project-back-btn #back {
-  left: 50px;
-  top: 30px;
+.project-back-btn {
+  margin: 10px 30px;
   z-index: 3;
 }
 
-@media only screen and (max-width: 799px) {
-  .project-back-btn #back {
-    left: 50px;
+@media screen and (max-width: 700px) {
+  .project-back-btn {
+    margin: 10px 0px;
   }
 }
-
-@media only screen and (max-width: 700px) {
-  .project-back-btn #back {
-    left: 20px;
-  }
-}
-
-
 
 
 
@@ -594,7 +591,7 @@ Sidebar Nav style rules
   /*background-color: var(--primary-blue);*/
 }
 
-.containerButtonSideBar button {
+.containerButtonSideBar>button {
   color: var(--main-text);
   width: 194px;
   height: 55px;
@@ -617,12 +614,14 @@ Sidebar Nav style rules
   }
 }
 
-.containerButtonSideBar button:hover {
+.containerButtonSideBar>button:hover {
   transition-duration: 0.25s;
   background-color: var(--invert-text);
 }
 
-.containerButtonSideBar button.active {
+
+
+.containerButtonSideBar>button.active {
   background-color: var(--primary-color);
   transition: 0.25s;
   font-weight: bold;
@@ -767,31 +766,34 @@ Sidebar Nav style rules
     display: flex;
     flex-direction: row;
     /* cursor: pointer; */
-    gap: 20px;
+    gap: 10px;
     align-items: center;
     justify-content: space-evenly;
     height: 80px;
     background-color: var(--header-color);
   }
 
-  .containerButtonSideBar button {
-    width: 20vw;
+  .containerButtonSideBar>button,
+  /*mobile view btn*/
+  .containerButtonSideBar .my-projects-create-btn {
+    width: 15vw;
     height: 45px;
     margin: 0 5px 20px 5px;
-    padding-left: calc((100vw - 160px) / 10);
-    padding-right: auto;
+    padding-left: calc((100vw - 160px) / 14);
+    padding-right: calc((100vw - 160px) / 14);
   }
 
-  .containerButtonSideBar button:hover {
+  .containerButtonSideBar>button:hover {
     transition-duration: 0.25s;
-    background-color: var(--invert-text);
+    color: var(--primary-color);
   }
 
-  .containerButtonSideBar button.active {
+  .containerButtonSideBar>button.active {
     background-color: var(--primary-color);
     transition: 0.25s;
     font-weight: bold;
     color: var(--invert-text);
+
 
     img {
       filter: invert(1);
@@ -861,6 +863,8 @@ Page popup style rules
   opacity: 100%;
   z-index: 3;
   padding: 20px 40px;
+  margin-top: 2%;
+  margin-bottom: 2%;
 }
 
 @media (max-width: 799px) {
@@ -950,26 +954,26 @@ Page popup style rules
   margin: min(1.59vw, 24px) 0 0 min(1.59vw, 24px) !important;
   display: flex;
   align-items: center;
-  
+
   img {
     height: 24px;
     /* Font-size is meant to be 20pt, which corresponds to 24px here */
   }
 }
 
-.popup-back:hover{
+.popup-back:hover {
   border-color: var(--invert-text) !important;
   color: var(--invert-text) !important;
 }
 
-#back{
-  padding:4px;
+#back {
+  padding: 4px;
   padding-left: 7px;
   padding-right: 7px;
 }
 
-#back:hover{
-  padding:4px;
+#back:hover {
+  padding: 4px;
   padding-left: 7px;
   padding-right: 7px;
   border-radius: 50px / 50px !important;
@@ -977,12 +981,9 @@ Page popup style rules
   border-color: var(--invert-text) !important;
 }
 
-#project-creator-editor::-webkit-scrollbar-corner {
-    overflow: hidden;
-}
+#project-creator-editor {
+  scrollbar-width: none;
 
-#project-editor-selected-tags-container::-webkit-scrollbar-corner {
-   overflow: hidden;
 }
 
 .popup-close {
@@ -1106,6 +1107,7 @@ Page popup style rules
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
+    /*gap: min(3.87vh, 38px) min(2.51vw, 38px);*/
     gap: min(3.87vh, 38px) min(2.51vw, 38px);
     justify-content: center;
     margin: min(1.63vh, 16px) auto;
@@ -1120,8 +1122,8 @@ Page popup style rules
     transition: 0.2s;
     padding: 1px;
     /* margin: 14px 38px; */
-    width: 12%;
-    text-align: center
+    width: min(20%, 30%);
+    text-align: center;
   }
 
   .filter-tab:hover {
@@ -1129,16 +1131,14 @@ Page popup style rules
     font-weight: 600;
     transition: none;
     padding: 1px;
-    width: 12%;
-    text-align: center
+    text-align: center;
   }
 
   .filter-tab.selected {
     font-weight: 700;
     color: var(--primary-color);
     padding: 1px;
-    width: 12%;
-    text-align: center
+    text-align: center;
   }
 
   hr {
@@ -1179,6 +1179,7 @@ Page popup style rules
   }
 
   .popup #filters-popup {
+
     h2 {
       margin-top: 3.76vh;
       margin-bottom: 3.32vh;
@@ -1858,8 +1859,8 @@ Image Carousel style rules
 
 .ToTopContainer {
   position: fixed;
-  right: 50px;
-  bottom: 50px;
+  right: 7px;
+  bottom: 55px;
   width: fit-content;
   height: fit-content;
   font-size: 3rem;

@@ -22,9 +22,8 @@ Meet page hero style rules
   margin: 0 50px;
   background-image: var(--hero-gradient);
   border-radius: 10px;
-  
-}
 
+}
 
 @media only screen and (max-width: 1100px) {
   #discover-hero {
@@ -61,6 +60,7 @@ Meet page hero style rules
 }
 
 @media only screen and (max-width: 1090px) {
+
   #profile-hero,
   #project-hero {
     display: flex;
@@ -74,6 +74,7 @@ Meet page hero style rules
 }
 
 @media only screen and (max-width: 799px) and (min-width: 610px) {
+
   .profile-hero-blurb img,
   .project-hero-blurb img {
     transform: translateY(40px);
@@ -86,6 +87,7 @@ Meet page hero style rules
 }
 
 @media only screen and (max-width: 700px) {
+
   #profile-hero,
   #project-hero {
     display: flex;
@@ -210,9 +212,18 @@ Image carousel style rules
 /*#region image carousel*/
 
 .discover-carousel {
-  margin: 0px 20px; /* TEMPORARY, should change after more styling is done */
+  margin: 0px 20px;
+  /* TEMPORARY, should change after more styling is done */
   display: flex;
   flex-direction: column;
+}
+
+/* Desktop width */
+@media screen and (min-width: 1020px) {
+  .discover-project-about p
+  {
+    height: fit-content;
+  }
 }
 
 .carousel-row {
@@ -255,17 +266,17 @@ Image carousel style rules
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
-  height: 375px;
+  height: 100%;
   border-radius: 10px;
   background-color: var(--header-color);
-  max-width: calc(100vw - 320px); /* Should match up with everything else */
+  max-width: calc(100vw - 320px);
+  /* Should match up with everything else */
 }
 
 .discover-carousel-content {
   display: flex;
   flex-direction: row;
   min-width: 100%;
-  height: 100%;
   transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
@@ -284,6 +295,7 @@ Image carousel style rules
   border-radius: 0px 10px 10px 0px;
   padding: 23px min(26px, calc(100vw * (26 / 1512)));
   width: 42.8%;
+  overflow-wrap: break-word;
 
   h2 {
     margin: 0 0 20px;
@@ -322,9 +334,11 @@ Image carousel style rules
 .project-tags {
   grid-area: tags;
   display: flex;
+  flex-wrap: wrap;
   justify-content: start;
   gap: 10px;
   margin-top: 10px;
+  width: max(70%);
 }
 
 .carousel-tag p {
@@ -356,9 +370,14 @@ Image carousel style rules
   .carousel-contents {
     height: auto;
   }
+  .carousel-row:first-child
+  {
+    height: 100%;
+  }
 
   .discover-carousel-content {
     flex-direction: column;
+    height: fit-content;
   }
 
   .discover-project-image {
@@ -386,31 +405,33 @@ Image carousel style rules
 
 /* mobile changes */
 @media only screen {
-  .discover-project-image{
+  .discover-project-image {
     height: auto;
     width: 100%;
   }
 }
 
-@media only screen and (max-width: 700px){
-  .discover-project-about{
+@media only screen and (max-width: 700px) {
+  .discover-project-about {
     height: auto;
     padding-top: 0px;
 
     /*on smaller devices hide text and tags for discover carousel*/
-    p{
+    p {
       display: none;
     }
 
-    .project-tags{
+    .project-tags {
       display: none;
     }
 
     h2 {
       font-size: clamp(1.5rem, 5vw, 2.0rem);
+      margin-top: 20px;
     }
   }
 }
+
 
 /*#endregion*/
 
@@ -437,8 +458,8 @@ Filters / Tags Style Rules
   align-items: center;
 }
 
-@media only screen and (max-width: 700px){
-  #discover-filters{
+@media only screen and (max-width: 700px) {
+  #discover-filters {
     padding: 0 20px;
   }
 
@@ -457,7 +478,7 @@ Filters / Tags Style Rules
 
 .filters-scroller.hide {
   display: block !important;
-  visibility: hidden; 
+  visibility: hidden;
   opacity: 0;
   pointer-events: none;
   transition: 0s;
@@ -572,10 +593,25 @@ Filters / Tags Style Rules
   svg:hover {
     cursor: grab;
   }
+
   /* Mouse-down */
   svg:hover:active {
     cursor: grabbing;
   }
+}
+
+/* Drag handle button for sortable selected tags */
+.tag-drag-handle {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  cursor: grab;
+  /* Required so pointer/touch drags aren't hijacked by scrolling */
+  touch-action: none;
+}
+
+.tag-drag-handle:active {
+  cursor: grabbing;
 }
 
 .tag-button {
@@ -593,19 +629,21 @@ Filters / Tags Style Rules
   height: fit-content;
   width: max-content;
   max-width: 100%;
-  padding: 0 17px; 
+  padding: 0 17px;
   font-size: medium;
   flex-shrink: 0;
   text-align: left;
+
   p {
     margin: 0px;
     color: var(--tag-text-selected);
   }
+
   i {
     width: 14px;
   }
 
-  .fa { 
+  .fa {
     color: var(--tag-text-selected) !important;
   }
 }
@@ -622,14 +660,17 @@ Filters / Tags Style Rules
     */
 }
 
-.tag-red {
+.tag-red,
+.tag-button-red-selected {
   background-color: var(--tag-red-selected);
   border-color: var(--tag-red-selected);
 }
-.tag-red .tag-unselected {
+
+.tag-red.tag-unselected,
+.tag-button-red-unselected {
   background-color: var(--tag-red-unselected);
   border-color: var(--tag-red-unselected-border);
-  
+
   p {
     color: var(--tag-text-unselected-red);
   }
@@ -639,14 +680,17 @@ Filters / Tags Style Rules
   }
 }
 
-.tag-orange {
+.tag-orange,
+.tag-button-orange-selected {
   background-color: var(--tag-orange-selected);
   border-color: var(--tag-orange-selected);
 }
-.tag-orange .tag-unselected {
+
+.tag-orange.tag-unselected,
+.tag-button-orange-unselected {
   background-color: var(--tag-orange-unselected);
   border-color: var(--tag-orange-unselected-border);
-  
+
   p {
     color: var(--tag-text-unselected-orange);
   }
@@ -656,14 +700,18 @@ Filters / Tags Style Rules
   }
 }
 
-.tag-yellow {
+.tag-yellow,
+.tag-yellow.tag-selected,
+.tag-button-yellow-selected {
   background-color: var(--tag-yellow-selected);
   border-color: var(--tag-yellow-selected);
 }
-.tag-yellow .tag-unselected {
+
+.tag-yellow.tag-unselected,
+.tag-button-yellow-unselected {
   background-color: var(--tag-yellow-unselected);
   border-color: var(--tag-yellow-unselected-border);
-  
+
   p {
     color: var(--tag-text-unselected-yellow);
   }
@@ -673,14 +721,17 @@ Filters / Tags Style Rules
   }
 }
 
-.tag-green {
+.tag-green,
+.tag-button-green-selected {
   background-color: var(--tag-green-selected);
   border-color: var(--tag-green-selected);
 }
-.tag-green .tag-unselected {
+
+.tag-green.tag-unselected,
+.tag-button-green-unselected {
   background-color: var(--tag-green-unselected);
   border-color: var(--tag-green-unselected-border);
-  
+
   p {
     color: var(--tag-text-unselected-green);
   }
@@ -690,105 +741,176 @@ Filters / Tags Style Rules
   }
 }
 
-.tag-blue {
+.tag-blue,
+.tag-button-blue-selected {
   background-color: var(--tag-blue-selected);
   border-color: var(--tag-blue-selected);
 }
-.tag-blue .tag-unselected {
+
+.tag-blue.tag-unselected,
+.tag-button-blue-unselected {
   background-color: var(--tag-blue-unselected);
   border-color: var(--tag-blue-unselected-border);
-  
+
   p {
     color: var(--tag-text-unselected-blue);
   }
 
   .fa {
-    color: var(--tag-text-unselected-blue) !important;
+    color: var(--tag-text-unselected-blue)!important;
   }
 }
 
-.tag-purple {
+.tag-purple,
+.tag-button-purple-selected {
   background-color: var(--tag-purple-selected);
   border-color: var(--tag-purple-selected);
 }
-.tag-purple .tag-unselected {
+
+.tag-purple.tag-unselected,
+.tag-button-purple-unselected {
   background-color: var(--tag-purple-unselected);
   border-color: var(--tag-purple-unselected-border);
-  
+
   p {
     color: var(--tag-text-unselected-purple);
   }
 
   .fa {
-    color: var(--tag-text-unselected-purple) !important;
+    color: var(--tag-text-unselected-purple)!important;
   }
 }
 
-.tag-grey {
+.tag-grey,
+.tag-button-grey-selected {
   background-color: var(--tag-grey-selected);
   border-color: var(--tag-grey-selected);
 }
-.tag-grey .tag-unselected {
+
+.tag-grey.tag-unselected,
+.tag-button-grey-unselected {
   background-color: var(--tag-grey-unselected);
   border-color: var(--tag-grey-unselected-border);
-  
+
   p {
     color: var(--tag-text-unselected-grey);
   }
 
   .fa {
-    color: var(--tag-text-unselected-grey) !important;
+    color: var(--tag-text-unselected-grey)!important;
   }
 }
 
 .tag-unselected:hover {
   p {
-    color: var(--tag-text-selected);
+    color: var(--tag-text-selected); 
   }
-  .fa { 
+
+  .fa {
     color: var(--tag-text-selected) !important;
   }
 }
 
-.tag-red .tag-unselected:hover {
+.tag-red.tag-unselected:hover,
+.tag-button-red-unselected:hover {
   background-color: var(--tag-red-selected);
   border-color: var(--tag-red-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
-.tag-orange .tag-unselected:hover {
+.tag-orange.tag-unselected:hover,
+.tag-button-orange-unselected:hover {
   background-color: var(--tag-orange-selected);
   border-color: var(--tag-orange-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
-.tag-yellow .tag-unselected:hover {
+.tag-yellow.tag-unselected:hover,
+.tag-button-yellow-unselected:hover {
   background-color: var(--tag-yellow-selected);
   border-color: var(--tag-yellow-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
-.tag-green .tag-unselected:hover {
+.tag-green.tag-unselected:hover,
+.tag-button-green-unselected:hover {
   background-color: var(--tag-green-selected);
   border-color: var(--tag-green-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
-.tag-blue .tag-unselected:hover {
+.tag-blue.tag-unselected:hover,
+.tag-button-blue-unselected:hover {
   background-color: var(--tag-blue-selected);
   border-color: var(--tag-blue-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
-.tag-purple .tag-unselected:hover {
+.tag-purple.tag-unselected:hover,
+.tag-button-purple-unselected:hover {
   background-color: var(--tag-purple-selected);
   border-color: var(--tag-purple-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
-.tag-grey .tag-unselected:hover {
+.tag-grey.tag-unselected:hover,
+.tag-button-grey-unselected:hover {
   background-color: var(--tag-grey-selected);
   border-color: var(--tag-grey-selected);
+
+  p {
+    color: var(--tag-text-selected) !important; 
+  }
+
 }
 
 .tag-button:hover {
   cursor: pointer;
   transition: 0.2s;
 }
+
 .tag-label:hover {
   cursor: default;
   transition: 0.2s;
@@ -796,4 +918,3 @@ Filters / Tags Style Rules
 
 
 /*#endregion tag styles*/
-
