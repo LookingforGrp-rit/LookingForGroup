@@ -222,16 +222,56 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
             <LabelInputBox
               label={'Major'}
               inputType={'none'}
+              forceUnsaved={profile.majors !== unmodifiedProfile.majors}
             >
               <Select>
                 <SelectButton
-                  placeholder='Select'
+                  placeholder="Select"
                   initialVal={''}
                   callback={(e) => e.preventDefault()}
                   type={'input'}
                 />
                 <SelectOptions
-                  callback={(e) => { e.preventDefault(); }}
+                  callback={(e) => {
+                    e.preventDefault();
+
+                    //finds the major needed to be changed after grabbing the target as an HTML element and getting the value
+                    const majorChangeID = majors.find((match) => match.label === (e.target as HTMLButtonElement).value);
+                    const oldMajor = majors.find((match) => match.label === profileAfterAboutChanges.majors[0].label);
+                    
+                    console.log(profile.majors[1].majorId);
+                    console.log(profileAfterAboutChanges.majors[0]);
+                    console.log(oldMajor);
+
+                    //if there's nothing just returns
+                    if (!majorChangeID || !oldMajor)
+                      return;
+
+                    profileAfterAboutChanges = {
+                      ...profileAfterAboutChanges,
+                      majors: majorChangeID
+                    }
+
+                    updatePendingProfile(profileAfterAboutChanges);
+
+                    dataManager.addMajor({
+                      id: {
+                        value: userId,
+                        type: 'canon'
+                      },
+                      data: {
+                        majorId: majorChangeID.majorId,
+                      }
+                    });
+
+                    dataManager.deleteMajor({
+                      id: {
+                        type: "canon",
+                        value: oldMajor?.majorId,
+                      },
+                      data: null,
+                    });
+                  }}
                   options={majors.map(m => ({
                     value: m.label,
                     markup: <>{m.label}</>,
