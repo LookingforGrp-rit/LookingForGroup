@@ -377,6 +377,9 @@ const Profile = () => {
                       case "Soft":
                         category = "purple";
                         break;
+                      case "Audio":
+                        category = "periwinkle";
+                        break;
                       default:
                         category = "grey";
                     }
