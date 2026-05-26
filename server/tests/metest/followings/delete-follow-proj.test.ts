@@ -3,7 +3,6 @@ import prisma from '#config/prisma.ts';
 import { deleteProjectFollowService } from '#services/me/followings/delete-follow-proj.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -24,9 +23,8 @@ describe('deleteProjectFollowService', () => {
     vi.clearAllMocks();
   });
 
-  // !! remove skip if NOT_FOUND added in #services/me/followings/delete-follow-proj.ts
-  it.skip('returns NOT_FOUND if project does not exist', async () => {
-    vi.mocked(prisma.projectFollowings.delete).mockRejectedValue({ code: 'P2025' } as any);
+  it('returns NOT_FOUND if project does not exist', async () => {
+    vi.mocked(prisma.projectFollowings.delete).mockRejectedValue({ code: 'P2025' });
 
     const result = await deleteProjectFollowService(1, 1);
 

@@ -22,6 +22,13 @@ export const deleteSkillService = async (
     return 'NO_CONTENT';
   } catch (error) {
     console.error('Error in deleteSkillsService:', error);
+
+    if (error instanceof Object && 'code' in error) {
+      if (error.code === 'P2025') {
+        return 'NOT_FOUND';
+      }
+    }
+
     return 'INTERNAL_ERROR';
   }
 };

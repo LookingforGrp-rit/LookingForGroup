@@ -3,7 +3,6 @@ import prisma from '#config/prisma.ts';
 import { deleteSocialService } from '#services/me/socials/delete-social.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -36,9 +35,8 @@ describe('deleteSocialService', () => {
     expect(result).toBe('NO_CONTENT');
   });
 
-  // !! remove skip if NOT_FOUND added in #services/me/socials/delete-social.ts
-  it.skip('returns NOT_FOUND if user social does not exist', async () => {
-    vi.mocked(prisma.userSocials.delete).mockRejectedValue({ code: 'P2025' } as any);
+  it('returns NOT_FOUND if user social does not exist', async () => {
+    vi.mocked(prisma.userSocials.delete).mockRejectedValue({ code: 'P2025' });
 
     const result = await deleteSocialService(1, 1);
 

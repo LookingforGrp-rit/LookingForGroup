@@ -5,7 +5,6 @@ import { getSkillsService } from '#services/me/skills/get-skills.ts';
 import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -36,7 +35,7 @@ const transformed: MySkill = {
   proficiency: 'Novice',
   label: '',
   skillId: 1,
-  type: 'Designer' as SkillType,
+  type: 'Designer',
 };
 
 describe('getSkillsService', () => {
@@ -51,15 +50,6 @@ describe('getSkillsService', () => {
     const result = await getSkillsService(1);
 
     expect(result).toStrictEqual([transformed]);
-  });
-
-  // !! remove skip if NOT_FOUND added in #services/me/skills/get-skills.ts
-  it.skip('returns NOT_FOUND if user skill does not exist', async () => {
-    vi.mocked(prisma.userSkills.findMany).mockRejectedValue({ code: 'P2025' } as any);
-
-    const result = await getSkillsService(1);
-
-    expect(result).toBe('NOT_FOUND');
   });
 
   it('returns INTERNAL_ERROR when prisma throws', async () => {
