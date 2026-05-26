@@ -18,13 +18,14 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
     }
   }
 
+  //change this to use and accept google oauth
   const universityId = authenticatedRequest.headers[uidHeaderKey] as string | undefined;
 
   //if no university id found
   if (!universityId) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Missing university ID in headers',
+      error: 'Missing ID in headers',
       data: null,
     };
     response.status(400).json(resBody);

@@ -389,11 +389,11 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `phone_number` int DEFAULT NULL,
-  `university_id` varchar(9) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `google_id` varchar(9) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `users_username_key` (`username`),
   UNIQUE KEY `users_rit_email_key` (`rit_email`),
-  UNIQUE KEY `university_id_UNIQUE` (`university_id`),
+  UNIQUE KEY `google_id_UNIQUE` (`google_id`),
   UNIQUE KEY `users_phone_number_key` (`phone_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

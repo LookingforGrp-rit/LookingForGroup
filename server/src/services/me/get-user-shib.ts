@@ -9,12 +9,12 @@ type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 //we have some code for implementing shibboleth but we weren't allowed to use it
 //and we were working on an alternative for user sign in
 export const getUserByShibService = async (
-  universityId: string,
+  googleId: string,
 ): Promise<{ username: string; userId: number } | GetUserServiceError> => {
   try {
     //findUnique
     const user = await prisma.users.findFirst({
-      where: { universityId },
+      where: { googleId },
       select: {
         username: true,
         userId: true,

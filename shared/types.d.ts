@@ -806,7 +806,7 @@ export interface MePrivate extends MeDetail {
   /**
    * The logged-in user's UID
    */
-  universityId: string;
+  googleId: string;
 
   /**
    * The date on which the logged-in user's account was created
