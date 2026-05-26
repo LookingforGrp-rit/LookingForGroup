@@ -46,7 +46,7 @@ const prismaProjectNoThumb: Projects = {
   userId: 1,
 };
 
-describe('getThumbnailService', async () => {
+describe('removeThumbnailService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
