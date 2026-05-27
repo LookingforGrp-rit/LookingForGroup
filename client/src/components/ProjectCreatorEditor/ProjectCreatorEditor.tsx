@@ -247,33 +247,28 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       toggleConfirm();
       return; 
     }
-    setOpen(false);
     // Only delete if this is a new project AND it was not saved yet
     if (projectData && newProject) {
       await deleteProject(projectData?.projectId);
+      setOpen(false);
+      setSaved(true);
     }
   }
 
   const deleteNoSave = async () => {
     if (!open) return;
-    setOpen(false);
     // Only delete if this is a new project AND it was not saved yet
     if (projectData && newProject) {
       await deleteProject(projectData?.projectId);
+      setOpen(false);
+      setSaved(true);
     }
   }
 
 useEffect(() => {
-  window.onbeforeunload = () => {
-    if (!saved) return ' ';
-  }
-
-  window.onunload = deleteNoSave;
-
-  return () => {
-    window.onbeforeunload = null;
-    window.onunload = null;
-  };
+  window.addEventListener("beforeunload", deleteNoSave, {once: true, passive: false});
+  
+  window.addEventListener("pagehide", deleteNoSave, {once: true, passive: false});
 });
 
   const toggleConfirm = async () => {
