@@ -1,13 +1,13 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getProjectTagsService from '#services/projects/tags/temp-tags.ts';
+import getProjectTagsOrderedService from '#services/projects/tags/get-proj-tags-ordered.ts';
 
-//GET api/projects/{id}/temptags
+//GET api/projects/{id}/tags/ordered
 //gets the tags associated with a project
-const getTempProjectTagsController = async (req: Request, res: Response): Promise<void> => {
+const getProjectTagsOrderedController = async (req: Request, res: Response): Promise<void> => {
   const projID = parseInt(req.params.id);
 
-  const result = await getProjectTagsService(projID);
+  const result = await getProjectTagsOrderedService(projID);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -22,7 +22,7 @@ const getTempProjectTagsController = async (req: Request, res: Response): Promis
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Project not found',
+      error: 'Tags not found',
       data: null,
     };
     res.status(404).json(resBody);
@@ -37,4 +37,4 @@ const getTempProjectTagsController = async (req: Request, res: Response): Promis
   res.status(200).json(resBody);
 };
 
-export default getTempProjectTagsController;
+export default getProjectTagsOrderedController;

@@ -25,8 +25,8 @@ import getProjectSocials from './socials/get-proj-socials.ts';
 import { updateProjectSocial } from './socials/update-proj-social.ts';
 import addTags from './tags/add-tags.ts';
 import deleteTags from './tags/delete-tags.ts';
+import getTagsOrdered from './tags/get-proj-tags-ordered.ts';
 import getTags from './tags/get-proj-tags.ts';
-import getTempTags from './tags/temp-tags.ts';
 import getThumbnail from './thumbnail/get-thumbnail.ts';
 import removeThumbnail from './thumbnail/remove-thumbnail.ts';
 import updateThumbnail from './thumbnail/update-thumbnail.ts';
@@ -60,6 +60,7 @@ export default {
   removeImage,
   reorderImages,
   getTags,
+  getTagsOrdered,
   deleteTags,
   addProjectSocial,
   getProjectSocials,
@@ -68,5 +69,4 @@ export default {
   getProjectMediums,
   addMediums,
   deleteMediums,
-  getTempTags,
 };
