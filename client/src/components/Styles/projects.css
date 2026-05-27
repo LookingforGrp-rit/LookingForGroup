@@ -2760,6 +2760,7 @@ Project Carousel style rules
     width: 100%;
     height: 100%;
     object-fit: cover;
+    aspect-ratio: 16/9;
   }
 
   .project-carousel-tabs {
@@ -2784,6 +2785,7 @@ Project Carousel style rules
   text-align: left;
   padding: 20px;
   max-width: calc(100vw - 80px);
+  margin-bottom: 2.8%;
 
   #project-info-top {
     display: flex;

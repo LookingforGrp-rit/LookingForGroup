@@ -33,6 +33,7 @@ export const ProjectCarousel = ({ project }: { project: ProjectDetail }) => {
         <Carousel dataList={carouselContents}>
             <div className='project-carousel'>
                 <CarouselContent className='project-carousel-content' />
+                {project.projectImages.length > 1 ?
                 <div className='carousel-row'>
                     <CarouselButton 
                         direction='left'
@@ -45,7 +46,7 @@ export const ProjectCarousel = ({ project }: { project: ProjectDetail }) => {
                         className='project-carousel-btn'
                         size='small'
                     />
-                </div>
+                </div> : ""}
                 {/* <div className='carousel-row'>
                 </div> */}
             </div>
