@@ -10,7 +10,7 @@ import createUserService from '#services/users/create-user.ts';
 
 //POST api/users
 //creates a user
-//we are being sent this with all of its information
+//we are being sent this with all of its information (minus the name and email stuff google handles that)
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   const info: GoogleCredentialUserInput = req.body as GoogleCredentialUserInput;
   const devInfo: CreateUserInput = {} as CreateUserInput;
