@@ -17,7 +17,7 @@ const getProjectTagsService = async (
         tags: {
           select: ProjectTagSelector,
           orderBy: {
-            label: 'asc',
+            displayOrder: 'asc',
           },
         },
       },
@@ -27,7 +27,7 @@ const getProjectTagsService = async (
       return 'NOT_FOUND';
     }
 
-    return project.tags.map((tag) => transformProjectTag(projectId, tag));
+    return project.tags.map((tag) => transformProjectTag(projectId, tag.tag));
   } catch (e) {
     console.error(`Error in getProjectTagsService: ${JSON.stringify(e)}`);
 

@@ -244,8 +244,6 @@ router.delete(
 
 //Get a project's tags
 router.get('/:id/tags', projectExistsAt('path', 'id'), PROJECT.getTags);
-//Get a porject's tags (ordered by user)
-router.get('/:id/tags/ordered', projectExistsAt('path', 'id'), PROJECT.getTagsOrdered);
 //Deletes a project tag
 router.delete(
   '/:id/tags/:tagId',

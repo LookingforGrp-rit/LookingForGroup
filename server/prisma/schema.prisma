@@ -113,8 +113,8 @@ model ProjectTags {
   projectId    Int      @map("project_id")
   tagId        Int      @map("tag_id")
   displayOrder Int      @default(0) @map("display_order") @db.UnsignedInt
-  projects     Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_tags_project")
-  tags         Tags     @relation(fields: [tagId], references: [tagId], onDelete: Cascade, map: "FK_project_tags_tag")
+  project     Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_tags_project")
+  tag         Tags     @relation(fields: [tagId], references: [tagId], onDelete: Cascade, map: "FK_project_tags_tag")
 
   @@id([projectId, tagId])
   @@index([tagId], map: "FK_project_tags_tag_id")
@@ -140,9 +140,9 @@ model Projects {
   projectImages     ProjectImages[]     @relation("ProjectImages")
   projectSocials    ProjectSocials[]
   mediums           Mediums[]
-  tags              Tags[]
+  // tags              Tags[]
   users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")
-  tagOrder          ProjectTags[]
+  tags              ProjectTags[]
 
   @@index([userId], map: "FK_user_id")
   @@map("projects")
@@ -161,7 +161,7 @@ model Tags {
   tagId       Int           @id @default(autoincrement()) @map("tag_id")
   label       String        @db.VarChar(50)
   type        String        @db.VarChar(50)
-  projects    Projects[]
+  // projects    Projects[]
   projectTags ProjectTags[]
 
   @@unique([label, type])

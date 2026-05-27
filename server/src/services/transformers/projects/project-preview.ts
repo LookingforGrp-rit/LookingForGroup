@@ -16,21 +16,11 @@ type ProjectsGetPayload = Awaited<typeof sampleProjectPreview>[number];
 
 //map to shared type
 export const transformProjectToPreview = (project: ProjectsGetPayload): ProjectPreview => {
-  const orderMap = new Map(
-    project.tagOrder.map(({ tagId, displayOrder }) => [tagId, displayOrder]),
-  );
-
-  project.tags.sort(
-    (a, b) =>
-      (orderMap.get(a.tagId) ?? Number.MAX_SAFE_INTEGER) -
-      (orderMap.get(b.tagId) ?? Number.MAX_SAFE_INTEGER),
-  );
-
   const transformedObj = {
     projectId: project.projectId,
     title: project.title,
     hook: project.hook,
-    tags: project.tags.map((tag) => transformProjectTag(project.projectId, tag)),
+    tags: project.tags.map((tag) => transformProjectTag(project.projectId, tag.tag)),
     owner: transformUserToPreview(project.users),
     mediums: project.mediums.map((medium) => transformProjectMedium(project.projectId, medium)),
     apiUrl: `/api/projects/${project.projectId.toString()}`,

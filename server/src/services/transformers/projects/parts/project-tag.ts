@@ -1,12 +1,12 @@
 import type { ProjectTag } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { ProjectTagSelector } from '#services/selectors/projects/parts/project-tag.ts';
+import { TagSelector } from '#services/selectors/datasets/tag.ts';
 import { transformTag } from '#services/transformers/datasets/tag.ts';
 
 //sample project tag from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const sampleTag = prisma.tags.findMany({
-  select: ProjectTagSelector,
+  select: TagSelector,
 });
 
 type ProjectTagGetPayload = Awaited<typeof sampleTag>[number];
