@@ -239,7 +239,7 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
                     //finds the major needed to be changed after grabbing the target as an HTML element and getting the value
                     const majorChangeID = majors.find((match) => match.label === (e.target as HTMLButtonElement).value);
                     const oldMajor = majors.find((match) => match.label === currentMajor.label);
-                    
+
                     console.log(profile.majors.majorId);
                     console.log(profileAfterAboutChanges.majors);
                     console.log(oldMajor);
