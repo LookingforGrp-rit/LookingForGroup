@@ -2788,7 +2788,8 @@ Project Carousel style rules
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
-  padding: 20px;
+  padding: 3%;
+  height: 86%;
   max-width: calc(100vw - 80px);
   margin-bottom: 2.8%;
 
