@@ -92,7 +92,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     setGoogleCredentials(response.credential)
     //this^^ is our googleId, encoded in base64
     //so when we create a user we input this in there
-    //server decodes it when it receives it,and it's passed into the createUser route
+    //server decodes it when it receives it, and it's passed into the createUser route
     await createNewUser({firstName, lastName, ritEmail: email, googleCredentials: response.credential}); //ok i have a way for this to work hang on
   }
   }, [navigate, firstName, lastName, email]);
@@ -175,6 +175,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
       await createNewUser({firstName, lastName, ritEmail: email, googleCredentials});
       //then redirect to... the home page? no we want to redirect to the login page but the login page is probably broken because it still wants a password
       //or we just SIGN THEM IN (NOT WORKING...) redirect to the home page after we've signed up to skip the step of logging in yet again
+      //or we should redirect them to the other pieces of this signup page that allows them to make their stuff
     }
   };
 

@@ -56,26 +56,12 @@ const Login: React.FC = () => {
   function handleGoogle(response: any){
     //decodeJwtResponse(response.credential);
     //this^^ is our googleId, decoded from base64
-    //so when we create a user we input this in there, when we log in a user we check against this
+    //when we log in a user we check against this with a backend request
     //we probably shouldn't decode it clientside tho lol
-    //we should make a route that takes this
-    //for signup we want to pass this into the createUser route, but that'll be on the signup page and not here
-    //here is gonna be exclusively for logins for existing users, which i'm only now realizing is a pretty silly thing to start with lmao
-    //we have no users that'll have valid ids to log in with
-    //for signup we should exclusively do sign in with google since there should be no account without a googleId
-    //signups don't work on this branch but i have a branch where they do work
+    //here is gonna be exclusively for logins for existing users
+    //and we have one existing user with a valiid google id, me!
   }
 
-  //yoinked this base64 decoder from the google documentation: https://developers.google.com/identity/gsi/web/guides/display-google-one-tap#javascript_3
-  function decodeJwtResponse(token: string) {
-    const base64Url = token.split('.')[1];
-    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-    }).join(''));
-
-    return JSON.parse(jsonPayload);
-  }
   /**
    * Validates user inputs, sends login requests to the server API, and handles authentication
    * responses. Displays error messages for invalid inputs or failed authentication attempts.
