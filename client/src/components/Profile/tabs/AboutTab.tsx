@@ -41,6 +41,7 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
   //getting the full lists of roles & majors
   const [roles, setRoles] = useState<Role[]>([]);
   const [majors, setMajors] = useState<Major[]>([]);
+  const [currentMajor] = useState(profile.majors[0]);
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -227,7 +228,7 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
               <Select>
                 <SelectButton
                   placeholder="Select"
-                  initialVal={''}
+                  initialVal={`${currentMajor.label}`}
                   callback={(e) => e.preventDefault()}
                   type={'input'}
                 />
@@ -237,10 +238,10 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
 
                     //finds the major needed to be changed after grabbing the target as an HTML element and getting the value
                     const majorChangeID = majors.find((match) => match.label === (e.target as HTMLButtonElement).value);
-                    const oldMajor = majors.find((match) => match.label === profileAfterAboutChanges.majors[0].label);
+                    const oldMajor = majors.find((match) => match.label === currentMajor.label);
                     
-                    console.log(profile.majors[1].majorId);
-                    console.log(profileAfterAboutChanges.majors[0]);
+                    console.log(profile.majors.majorId);
+                    console.log(profileAfterAboutChanges.majors);
                     console.log(oldMajor);
 
                     //if there's nothing just returns
