@@ -49,6 +49,10 @@ textarea {
   .editor-input-item button {
     right: 60px;
   }
+  .editor-link-item .input
+  {
+    width: 65%;
+  }
 
   .link-input {
     display: flex;
