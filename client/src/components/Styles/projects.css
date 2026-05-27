@@ -337,7 +337,8 @@ Project Creator and Editor Popup style rules
   margin-top: -1%;
 }
 
-#project-editor-save, #team-edit-member-cancel-button {
+#project-editor-save,
+#team-edit-member-cancel-button {
   margin-bottom: 28px;
 }
 
@@ -445,12 +446,13 @@ Project Creator and Editor Popup style rules
 
 #project-editor-content {
   flex-grow: 1;
-  margin: 35px 56px 0 55px;
+  margin: 35px 56px 30px 55px;
 }
 
 @media only screen and (max-width: 700px) {
   #project-editor-content {
     margin: 0 20px;
+    margin-bottom: 20px;
   }
 }
 
@@ -919,7 +921,7 @@ Project Creator and Editor Popup style rules
 
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
-    flex-direction: column;
+    flex-direction: row;
   }
 }
 
@@ -1533,7 +1535,7 @@ button.edit-position-contact {
   border-radius: 10px;
   padding: 15px;
   cursor: default;
-  
+
 }
 
 
@@ -2979,7 +2981,7 @@ Project Carousel style rules
     'list info' auto
     'close close' 50px /
     300px auto;
-    
+
 
   #project-team-open-positions-popup {
     margin-top: 0;
