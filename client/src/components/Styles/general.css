@@ -886,8 +886,8 @@ Page popup style rules
 
 @media (max-width: 576px) {
   .popup {
-    width: 96vw;
-    max-width: 96vw;
+    width: 95vw;
+    max-width: 95vw;
     border-radius: 8px;
   }
 
@@ -910,10 +910,10 @@ Page popup style rules
   border-radius: 10px;
 }
 
-@media only screen and (hover:none) {
+@media only screen and (hover: none) {
   .popup {
     margin: 20px 20px;
-    width: 100vw;
+    width: 95vw;
     height: 85vh;
     max-width: 100vw;
   }
@@ -991,7 +991,6 @@ Page popup style rules
 
 #project-creator-editor {
   scrollbar-width: none;
-
 }
 
 .popup-close {
@@ -1099,7 +1098,7 @@ Page popup style rules
   }
 
   #filters {
-    /* Scale with viewport, but cap off at 919x392 (including padding) */
+    /* Scale with viewport, but cap off at 857x340 (including padding) */
     max-width: 857px;
     max-height: 340px;
     width: 56.7vw;
@@ -1115,10 +1114,10 @@ Page popup style rules
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    /*gap: min(3.87vh, 38px) min(2.51vw, 38px);*/
     gap: min(3.87vh, 38px) min(2.51vw, 38px);
     justify-content: center;
     margin: min(1.63vh, 16px) auto;
+    width: 90%;
   }
 
   .filter-tab {
@@ -1128,7 +1127,7 @@ Page popup style rules
     /* Indicate should be clicked without being a button */
     cursor: pointer;
     transition: 0.2s;
-    padding: 1px;
+    padding: 8px;
     /* margin: 14px 38px; */
     width: min(20%, 30%);
     text-align: center;
@@ -1159,6 +1158,7 @@ Page popup style rules
   #filter-tags {
     display: flex;
     flex-wrap: wrap;
+    overflow-x: hidden;
     gap: min(1.02vh, 10px) min(0.66vw, 10px);
   }
 
@@ -1185,9 +1185,7 @@ Page popup style rules
   .popup-back {
     margin: 2.01vw 0 0 2.01vw !important;
   }
-
   .popup #filters-popup {
-
     h2 {
       margin-top: 3.76vh;
       margin-bottom: 3.32vh;
@@ -1204,9 +1202,9 @@ Page popup style rules
     }
 
     #filter-tabs {
-      column-gap: 3.19vw;
+      column-gap: 5vw;
     }
-
+    
     #selected-section {
       width: 72vw;
       height: 19.7vh;

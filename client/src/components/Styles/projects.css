@@ -502,6 +502,10 @@ Project Creator and Editor Popup style rules
   #project-team-add-member-name input {
     padding-bottom: 30px;
   }
+
+  #project-editor-selected-tags {
+    width: 100%;
+  }
 }
 
 #project-editor-content select {
@@ -694,7 +698,7 @@ Project Creator and Editor Popup style rules
   border-radius: 10px;
   grid-area: search;
   min-width: 150px;
-  max-height: 526px;
+  max-height: 628px;
 }
 
 #project-editor-tag-search-container {
@@ -1498,7 +1502,7 @@ Project Creator and Editor Popup style rules
   grid-template-areas:
     'availability-label availability-input'
     'location-label location-input'
-    'contact-label contact-input ';
+    'contact-label contact-input';
   gap: 8px;
   align-items: center;
 }
