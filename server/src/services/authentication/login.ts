@@ -1,6 +1,6 @@
 import { OAuth2Client } from 'google-auth-library';
 
-export const authenticationService = async (token: string) => {
+export const loginService = async (token: string) => {
   const client = new OAuth2Client();
 
   // asking google to verify the token
@@ -26,4 +26,12 @@ export const authenticationService = async (token: string) => {
   // need to check if the user exists
   // waiting for update to the database and user service to do this
   // or maybe just a direct call to the database here (that would probably be easier and make more sense).
+
+  // Remove eslint-disable-next-line once checking logic is in place.
+  // eslint-disable-next-line
+  if (true /*User exists*/) {
+    //
+  } else {
+    //
+  }
 };
