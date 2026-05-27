@@ -1,6 +1,10 @@
 import { OAuth2Client } from 'google-auth-library';
+import prisma from '#config/prisma.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
-export const loginService = async (token: string) => {
+type LoginServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'BAD_REQUEST'>;
+
+export const loginService = async (token: string): Promise<boolean | LoginServiceError> => {
   const client = new OAuth2Client();
 
   // asking google to verify the token
@@ -12,26 +16,26 @@ export const loginService = async (token: string) => {
 
   const payload = ticket.getPayload();
   const email = payload?.email;
+  const googleId = payload?.sub;
 
-  // a# - authentication error no. #
-  // a01 - authentication error no. 1
-  if (!email) {
-    throw new Error('a01: No Email');
+  //these are definitely 400 type errors so i'll send em up to frontend to handle for consistency's sake
+  if (!email || (email.indexOf('@g.rit.edu') === -1 && email.indexOf('@rit.edu') === -1)) {
+    return 'BAD_REQUEST'; //for consistency with the others
   }
 
-  if (email.indexOf('@g.rit.edu') === -1 && email.indexOf('@rit.edu') === -1) {
-    throw new Error('a02: Invalid Email');
-  }
+  //prisma check for user existence
+  const userExists = await prisma.users.findFirst({
+    where: {
+      googleId,
+    },
+  });
 
-  // need to check if the user exists
-  // waiting for update to the database and user service to do this
-  // or maybe just a direct call to the database here (that would probably be easier and make more sense).
+  //🍪 creation code goes here (or in the controller, whichever makes more sense but i think putting in the service makes more sense)
 
-  // Remove eslint-disable-next-line once checking logic is in place.
-  // eslint-disable-next-line
-  if (true /*User exists*/) {
-    //
-  } else {
-    //
+  if (!userExists) {
+    //- loginService stores the necessary information in session storage (email, name, etc, google id)
+    //so uh do that in here
   }
+  //it returns the truth value, which would correspond to whether or not they exist
+  return Boolean(userExists);
 };
