@@ -1148,8 +1148,6 @@ export type UpdateUserInput = Partial<
 export type CreateUserInput = Partial<
   Pick<
     MePrivate,
-    | "firstName"
-    | "lastName"
     | "headline"
     | "pronouns"
     | "title"
@@ -1158,35 +1156,22 @@ export type CreateUserInput = Partial<
     | "funFact"
     | "bio"
     | "phoneNumber"
-    | 'ritEmail'
+    | 'username'
+    | 'googleId'
   > & {
-    profileImage?: File;
-    googleCredentials: string;
-    googleId: string;
-    mentor?: "true" | "false";
+    profileImage?: string;
+    mentor?: true | false;
     // TODO update to use Visibility enum
-    visibility?: "1" | "0";
+    visibility?: 1 | 0;
   }
->;
-
-//created from the google documentation for the credential payload
-export type GoogleCredentialPayload = {
-  iss: string, // The JWT's issuer
-  nbf:  number,
-  aud: string, // Your server's client ID
-  sub: string, // The unique ID of the user's Google Account
-  hd: string, // If present, the host domain of the user's GSuite email address
-  email: string, // The user's email address
-  email_verified: boolean, // true, if Google has verified the email address
-  azp: string,
-  name: string,                          // If present, a URL to user's profile picture
-  picture: url.Url,
-  given_name: string,
-  family_name: string,
-  iat: number, // Unix timestamp of the assertion's creation time
-  exp: number, // Unix timestamp of the assertion's expiration time
-  jti: string
-}
+> & {
+    firstName: string;
+    lastName: string;
+    googleId: string;
+    username: string
+    googleCredentials: string;
+    ritEmail: string;
+  };
 
 /**
  * Data required to add a social media link to a user's profile

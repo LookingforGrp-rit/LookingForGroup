@@ -93,7 +93,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     //this^^ is our googleId, encoded in base64
     //so when we create a user we input this in there
     //server decodes it when it receives it, and it's passed into the createUser route
-    await createNewUser({firstName, lastName, ritEmail: email, googleCredentials: response.credential}); //ok i have a way for this to work hang on
+    await createNewUser({firstName, lastName, ritEmail: email, googleCredentials: response.credential, googleId: '', username: ''}); 
+    //sending blanks for googleId and username just so typescript doesn't yell at me for type mismatching
   }
   }, [navigate, firstName, lastName, email]);
 
