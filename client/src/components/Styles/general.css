@@ -1120,19 +1120,21 @@ Page popup style rules
   }
 
   .filter-tab {
+    display: block;
     font-size: 1rem;
     font-weight: 400;
     color: var(--neutral-gray);
     /* Indicate should be clicked without being a button */
     cursor: pointer;
     transition: 0.2s;
-    padding: 8px;
+    padding: 1px;
     /* margin: 14px 38px; */
     width: min(20%, 30%);
     text-align: center;
   }
 
   .filter-tab:hover {
+    display: block;
     color: var(--primary-color);
     font-weight: 600;
     transition: none;
@@ -1141,6 +1143,7 @@ Page popup style rules
   }
 
   .filter-tab.selected {
+    display: block;
     font-weight: 700;
     color: var(--primary-color);
     padding: 1px;
@@ -1179,6 +1182,14 @@ Page popup style rules
   }
 }
 
+@media screen and (max-width: 700px)
+{
+  #filter-tabs
+  {
+    column-gap: min(6vw, 45px);
+  }
+}
+
 /* Mobile styling */
 @media (max-width: 576px) {
   .popup-back {
@@ -1201,7 +1212,7 @@ Page popup style rules
     }
 
     #filter-tabs {
-      column-gap: 5vw;
+      column-gap: 10vw;
     }
     
     #selected-section {
