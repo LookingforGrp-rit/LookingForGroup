@@ -921,6 +921,7 @@ Project Creator and Editor Popup style rules
 
 #project-editor-tag-search-tabs {
   overflow-x: auto;
+  justify-content: flex-start;
 }
 
 @media only screen and (max-width: 799px) {
