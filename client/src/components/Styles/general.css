@@ -80,6 +80,7 @@ General style rules
   --tag-blue-selected: #b0dcee;
   --tag-purple-selected: #d7bed3;
   --tag-grey-selected: #d0d0d0;
+  --tag-periwinkle-selected: #A2ADF9;
 
   --tag-red-unselected: #0e0e0e;
   --tag-orange-unselected: #0e0e0e;
@@ -88,6 +89,7 @@ General style rules
   --tag-blue-unselected: #0e0e0e;
   --tag-purple-unselected: #0e0e0e;
   --tag-grey-unselected: #0e0e0e;
+  --tag-periwinkle-unselected: #0e0e0e;
 
   --tag-red-unselected-border: #ffa0b0;
   --tag-orange-unselected-border: #ffa281;
@@ -96,6 +98,7 @@ General style rules
   --tag-blue-unselected-border: #b0dcee;
   --tag-purple-unselected-border: #d7bed3;
   --tag-grey-unselected-border: #d0d0d0;
+  --tag-periwinkle-unselected-border: #A2ADF9;
 
   --tag-text-selected: black;
 
@@ -106,6 +109,7 @@ General style rules
   --tag-text-unselected-blue: #b0dcee;
   --tag-text-unselected-purple: #d7bed3;
   --tag-text-unselected-grey: #d0d0d0;
+  --tag-text-unselected-periwinkle: #A2ADF9;
 
   --modal-gradient-start: #0a0a0a;
   --modal-gradient-end: #2c2a3a;
@@ -152,6 +156,7 @@ General style rules
   --tag-blue-selected: #b0dcee;
   --tag-purple-selected: #d7bed3;
   --tag-grey-selected: #d0d0d0;
+  --tag-periwinkle-selected: #A2ADF9;
 
   --tag-red-unselected: #ffd9df;
   --tag-orange-unselected: #ffdacd;
@@ -160,6 +165,7 @@ General style rules
   --tag-blue-unselected: #dff1f8;
   --tag-purple-unselected: #efe5ed;
   --tag-grey-unselected: #ececec;
+  --tag-periwinkle-unselected: #d1d6fc;
 
   --tag-red-unselected-border: #ffd9df;
   --tag-orange-unselected-border: #ffdacd;
@@ -168,6 +174,7 @@ General style rules
   --tag-blue-unselected-border: #dff1f8;
   --tag-purple-unselected-border: #efe5ed;
   --tag-grey-unselected-border: #ececec;
+  --tag-periwinkle-unselected-border: #d1d6fc;
 
   --tag-text-selected: black;
 
@@ -178,6 +185,7 @@ General style rules
   --tag-text-unselected-blue: black;
   --tag-text-unselected-purple: black;
   --tag-text-unselected-grey: black;
+  --tag-text-unselected-periwinkle: black;
 
   --modal-gradient-start: #ffffff;
   --modal-gradient-end: #d3d3ff;

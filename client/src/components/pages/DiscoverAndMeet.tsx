@@ -466,17 +466,19 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           matchesAny = true;
         } 
         // Check role and major by name since IDs are not unique relative to tags
-        /* These appear to be unused
-        else if (tag.type === 'Role' && item.job_title) { 
-            if (item.job_title.toLowerCase() === tag.label.toLowerCase()) {
+        /* it seems roles are not yet implimented
+        else if (tag.type === 'Role' && item.title) { 
+            if (item.bio === tag.label.toLowerCase()) {
               matchesAny = true;
             }
-        } else if (tag.type === 'Major' && item.major) {
-            if (item.major.toLowerCase() === tag.label.toLowerCase()) {
-              matchesAny = true;
-            }
+        } */
+        else if (tag.type === 'Major' && item.majors) {
+          const userMajors = item.majors?.map((s) => s?.label?.toLowerCase())
+            .filter((s) => typeof s === 'string');
+          if (userMajors.includes(tag.label.toLowerCase())) {
+            matchesAny = true;
+          }
         }
-        */
         return matchesAny;
       }
     });

@@ -47,7 +47,7 @@ textarea {
 
 @media only screen and (max-width: 700px) {
   .editor-input-item button {
-   right: 60px;
+    right: 60px;
   }
   .editor-link-item .input
   {
@@ -87,19 +87,27 @@ textarea {
 #profile-editor-tags {
   display: grid;
   grid-template:
-    'select search' auto 
-    'select search' auto /
+    'select search' auto 'select search' auto /
     1fr 2fr;
   gap: 25px;
   height: 100%;
 
-  > #project-editor-selected-tags {
+  >#project-editor-selected-tags {
     max-height: 633px;
 
-    > #project-editor-selected-tags-container {
+    >#project-editor-selected-tags-container {
       max-height: 514px;
     }
   }
+}
+
+@media only screen and (max-width: 800px) {
+
+  #profile-editor-tags #project-editor-tag-search-tabs {
+    gap: 20px;
+
+  }
+
 }
 
 @media only screen and (max-width: 700px) {

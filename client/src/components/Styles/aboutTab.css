@@ -154,7 +154,12 @@ select {
     display: flex;
     flex-wrap: wrap;
     gap: 20px;
-    width: 90%;
+    width: 100%;
+  }
+
+  .about-row.row-2 .select-button-input {
+    margin-right: 10px;
+
   }
 
   .editor-input-item {

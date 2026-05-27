@@ -800,6 +800,26 @@ Filters / Tags Style Rules
   }
 }
 
+.tag-periwinkle,
+.tag-button-periwinkle-selected {
+  background-color: var(--tag-periwinkle-selected);
+  border-color: var(--tag-periwinkle-selected)
+}
+
+.tag-periwinkle.tag-unselected,
+.tag-button-periwinkle-unselected {
+  background-color: var(--tag-periwinkle-unselected);
+  border-color: var(--tag-periwinkle-unselected-border);
+
+  p {
+    color: var(--tag-text-unselected-periwinkle);
+  }
+
+  .fa {
+    color: var(--tag-text-unselected-periwinkle)!important;
+  }
+}
+
 .tag-unselected:hover {
   p {
     color: var(--tag-text-selected); 
@@ -903,6 +923,16 @@ Filters / Tags Style Rules
     color: var(--tag-text-selected) !important; 
   }
 
+}
+
+.tag-periwinkle.tag-unselected:hover,
+.tag-button-periwinkle-unselected:hover {
+  background-color: var(--tag-periwinkle-selected);
+  border-color: var(--tag-periwinkle-selected);
+
+  p {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-button:hover {

@@ -275,6 +275,7 @@ const Profile = () => {
     </>
   );
 
+  //console.log(displayedProfile);
   // --------------------
   // Final component
   // --------------------
@@ -376,6 +377,9 @@ const Profile = () => {
                         break;
                       case "Soft":
                         category = "purple";
+                        break;
+                      case "Audio":
+                        category = "periwinkle";
                         break;
                       default:
                         category = "grey";

@@ -361,7 +361,7 @@ interface PendingUserMember extends Exclude<MyMember, "apiUrl"> {
  */
 interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
   profileImage: string | null | PendingProfileImage;
-  majors: (MyMajor | PendingMajor)[];
+  majors: (MyMajor | PendingMajor)
   academicYear: AcademicYear | null;
   projects: (MyMember | PendingUserMember)[];
   skills: (MySkill | PendingUserSkill)[];
