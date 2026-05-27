@@ -1117,7 +1117,6 @@ Page popup style rules
     gap: min(3.87vh, 38px) min(2.51vw, 38px);
     justify-content: center;
     margin: min(1.63vh, 16px) auto;
-    width: 90%;
   }
 
   .filter-tab {
