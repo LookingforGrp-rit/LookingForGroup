@@ -37,7 +37,7 @@ vi.mock('#config/prisma.ts', () => ({
   },
 }));
 
-describe('addJobsService', async () => {
+describe('deleteJobsService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });

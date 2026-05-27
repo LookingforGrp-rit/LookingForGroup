@@ -95,7 +95,7 @@ vi.mock('#services/transformers/projects/parts/project-job.ts', () => ({
   transformProjectJob: vi.fn(),
 }));
 
-describe('addJobsService', async () => {
+describe('getJobsService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (transformProjectJob as Mock).mockImplementation(
