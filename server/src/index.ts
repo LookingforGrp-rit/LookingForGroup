@@ -1,7 +1,7 @@
 import app from '#app.ts';
 //import envConfig from '#config/env.ts';
 
-const port = Number(process.env.PORT) || 3000;
+const port = process.env.PORT || 3000;
 
 const server = app.listen(port, (err) => {
   if (err) {
@@ -16,7 +16,7 @@ const server = app.listen(port, (err) => {
                             /___/                                  /_/  
 `);
   console.log('Server started');
-  console.log(`Listening on port ${port}`);
+  console.log(`Listening on port ${String(port)}`);
 });
 
 const server_close = (error?: Error) => {
