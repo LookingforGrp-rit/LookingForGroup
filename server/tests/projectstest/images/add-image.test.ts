@@ -58,4 +58,12 @@ describe('addImageService', async () => {
 
     expect(result).toBe(transformedImage);
   });
+
+  it('returns INTERNAL_ERROR if prisma throws', async () => {
+    vi.mocked(prisma.projectImages.create).mockRejectedValue(new Error('womp womp'));
+    vi.mocked(transformProjectImage).mockResolvedValue(transformedImage);
+    const result = await addImageService(imageData);
+
+    expect(result).toBe('INTERNAL_ERROR');
+  });
 });
