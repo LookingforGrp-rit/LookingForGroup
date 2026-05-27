@@ -41,6 +41,7 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
   //getting the full lists of roles & majors
   const [roles, setRoles] = useState<Role[]>([]);
   const [majors, setMajors] = useState<Major[]>([]);
+  const [currentMajor] = useState(profile.majors[0]);
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -222,16 +223,56 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
             <LabelInputBox
               label={'Major'}
               inputType={'none'}
+              forceUnsaved={profile.majors !== unmodifiedProfile.majors}
             >
               <Select>
                 <SelectButton
-                  placeholder='Select'
-                  initialVal={''}
+                  placeholder="Select"
+                  initialVal={`${currentMajor.label}`}
                   callback={(e) => e.preventDefault()}
                   type={'input'}
                 />
                 <SelectOptions
-                  callback={(e) => { e.preventDefault(); }}
+                  callback={(e) => {
+                    e.preventDefault();
+
+                    //finds the major needed to be changed after grabbing the target as an HTML element and getting the value
+                    const majorChangeID = majors.find((match) => match.label === (e.target as HTMLButtonElement).value);
+                    const oldMajor = majors.find((match) => match.label === currentMajor.label);
+                    
+                    console.log(profile.majors.majorId);
+                    console.log(profileAfterAboutChanges.majors);
+                    console.log(oldMajor);
+
+                    //if there's nothing just returns
+                    if (!majorChangeID || !oldMajor)
+                      return;
+
+                    profileAfterAboutChanges = {
+                      ...profileAfterAboutChanges,
+                      majors: majorChangeID
+                    }
+
+                    updatePendingProfile(profileAfterAboutChanges);
+
+                    dataManager.addMajor({
+                      id: {
+                        value: userId,
+                        type: 'canon'
+                      },
+                      data: {
+                        majorId: majorChangeID.majorId,
+                      }
+                    });
+
+                    dataManager.deleteMajor({
+                      id: {
+                        type: "canon",
+                        value: oldMajor?.majorId,
+                      },
+                      data: null,
+                    });
+                  }}
                   options={majors.map(m => ({
                     value: m.label,
                     markup: <>{m.label}</>,

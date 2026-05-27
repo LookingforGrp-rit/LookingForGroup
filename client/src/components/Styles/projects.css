@@ -2969,7 +2969,9 @@ Project Carousel style rules
   height: 849px;
   max-height: 849px;
   gap: 30px;
-  padding: 28px 59px 21px 59px;
+  padding: 28px 5px 21px 5px;
+  overflow-y: auto;
+  overflow-x: auto;
   border-radius: 10px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
   grid-template:
@@ -2977,6 +2979,7 @@ Project Carousel style rules
     'list info' auto
     'close close' 50px /
     300px auto;
+    
 
   #project-team-open-positions-popup {
     margin-top: 0;
@@ -3026,6 +3029,7 @@ Project Carousel style rules
   flex-direction: column;
   gap: 15px;
   width: 100%;
+  margin-left: 10%;
 }
 
 #positions-popup-list-buttons {
@@ -3088,8 +3092,9 @@ button#positions-popup-list-item-active {
   justify-content: space-between;
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 20px;
   padding: 20px;
+  margin-right: 2%;
 
   >.positions-popup-info {
     display: flex;
