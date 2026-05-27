@@ -500,6 +500,10 @@ Project Creator and Editor Popup style rules
   #project-team-add-member-name input {
     padding-bottom: 30px;
   }
+
+  #project-editor-selected-tags {
+    width: 100%;
+  }
 }
 
 #project-editor-content select {
