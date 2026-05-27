@@ -290,7 +290,11 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         >
           { /* make each tag button have proper label & type */}
           {tagList.map(tagLabel => {
-            const label = tagLabel === 'Developers' ? 'Developer' : tagLabel === 'Designers' ? 'Designer' : tagLabel;
+            const label = tagLabel === 'Developers' ? 'Developer' : 
+              tagLabel === 'Designers' ? 'Designer' : 
+              tagLabel === 'Audio Engineers' ? 'Audio' : 
+              tagLabel === 'Software Engineers' ? "Soft" :
+              tagLabel;
             const type = category === 'projects' ? 'Project Type' : tagLabel === 'Other' ? 'Major' : 'Role';
             const tagObj: Tag = { tagId: 0, label, type };
             return (
@@ -298,7 +302,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                 className="discover-tag-filter"
                 data-type={type}
                 onClick={(e) => toggleTag(e, tagObj)}>
-                {label}
+                {tagLabel}
               </button>
             )
           })}
