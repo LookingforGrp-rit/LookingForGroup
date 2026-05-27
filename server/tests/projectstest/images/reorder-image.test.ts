@@ -89,7 +89,7 @@ describe('reorderImageService', async () => {
       },
     );
   });
-  it('returns the image if successful', async () => {
+  it('returns the images if successful', async () => {
     vi.mocked(prisma.projectImages.findFirst).mockResolvedValueOnce(prismaImage1);
     vi.mocked(prisma.projectImages.findFirst).mockResolvedValueOnce(prismaImage2);
     vi.mocked(prisma.projects.findFirst).mockResolvedValue(prismaProject);
@@ -98,5 +98,32 @@ describe('reorderImageService', async () => {
     expect(transformProjectImage).toBeCalled();
     expect(transformProjectImage).toBeCalledTimes(2);
     expect(result).toStrictEqual(transformedImages);
+  });
+
+  it("returns NOT_FOUND if an image isn't found", async () => {
+    vi.mocked(prisma.projectImages.findFirst).mockResolvedValueOnce(null);
+    vi.mocked(prisma.projectImages.findFirst).mockResolvedValueOnce(prismaImage2);
+    vi.mocked(prisma.projects.findFirst).mockResolvedValue(prismaProject);
+    const result = await reorderImagesService(1, { imageOrder: [2, 1] });
+
+    expect(result).toBe('NOT_FOUND');
+  });
+
+  it("returns NOT_FOUND if a project isn't found", async () => {
+    vi.mocked(prisma.projectImages.findFirst).mockResolvedValueOnce(prismaImage1);
+    vi.mocked(prisma.projectImages.findFirst).mockResolvedValueOnce(prismaImage2);
+    vi.mocked(prisma.projects.findFirst).mockResolvedValue(null);
+    const result = await reorderImagesService(1, { imageOrder: [2, 1] });
+
+    expect(result).toBe('NOT_FOUND');
+  });
+
+  it('returns INTERNAL_ERROR if prisma throws', async () => {
+    vi.mocked(prisma.projectImages.findFirst).mockRejectedValueOnce(new Error('womp womp'));
+    vi.mocked(prisma.projectImages.findFirst).mockResolvedValueOnce(prismaImage2);
+    vi.mocked(prisma.projects.findFirst).mockResolvedValue(null);
+    const result = await reorderImagesService(1, { imageOrder: [2, 1] });
+
+    expect(result).toBe('INTERNAL_ERROR');
   });
 });
