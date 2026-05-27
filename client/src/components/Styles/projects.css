@@ -320,6 +320,11 @@ Project Creator and Editor Popup style rules
   line-height: 1;
 }
 
+#project-editor-save{
+  display: block;
+  align-self: center;
+}
+
 #project-editor-save,
 #team-add-member-add-button,
 #team-edit-member-save-button {
