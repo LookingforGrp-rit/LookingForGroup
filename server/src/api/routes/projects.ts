@@ -252,7 +252,7 @@ router.delete(
   projectExistsAt('path', 'id'),
   projectAttributeExistsAt('tag', { type: 'path', key: 'id' }, { type: 'path', key: 'tagId' }),
   authenticated(requiresProjectOwner),
-  PROJECT.deleteTags,
+  PROJECT.deleteTag,
 );
 //Adds a project tag
 router.post(
@@ -262,7 +262,17 @@ router.post(
   projectExistsAt('path', 'id'),
   attributeExistsAt('tag', 'body', 'tagId'),
   authenticated(requiresProjectOwner),
-  PROJECT.addTags,
+  PROJECT.addTag,
+);
+// updates order of a project's tags
+router.patch(
+  '/:id/tags',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  attributeExistsAt('tag', 'body', 'tagId'),
+  authenticated(requiresProjectOwner),
+  PROJECT.updateTag,
 );
 
 // JOBS ROUTES
