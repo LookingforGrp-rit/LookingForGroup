@@ -1,4 +1,8 @@
-import type { CreateUserInput, MePrivate } from '@looking-for-group/shared';
+import type {
+  CreateUserInput,
+  GoogleCredentialUserInput,
+  MePrivate,
+} from '@looking-for-group/shared';
 import { OAuth2Client } from 'google-auth-library';
 import prisma from '#config/prisma.ts';
 import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
@@ -8,20 +12,16 @@ import { transformMeToPrivate } from '#services/transformers/me/me-private.ts';
 
 type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT' | 'BAD_REQUEST'>;
 
-type CreateUserServiceParameters = Omit<CreateUserInput, 'googleId' | 'username'> & {
-  username: string;
-  googleId: string;
-};
-
 const createUserService = async (
-  info: CreateUserServiceParameters,
+  info: GoogleCredentialUserInput,
 ): Promise<MePrivate | CreateUserServiceError> => {
   try {
     //if there are no google credentials by now we're in dev, since we already have the checks in the controller
     //so bypass the google stuff and create the dev user directly from here
     if (!info.googleCredentials) {
+      const devData = info as CreateUserInput;
       const result = await prisma.users.create({
-        data: info,
+        data: devData,
         select: MePrivateSelector,
       });
       return transformMeToPrivate(result);
@@ -43,12 +43,17 @@ const createUserService = async (
     if (!payload || !payload.given_name || !payload.family_name || !payload.sub || !payload.email)
       return 'INTERNAL_ERROR'; //when would this ever happen? google's down or something? i guess
 
+    //only rit emails are allowed
+    if (payload.email.indexOf('@g.rit.edu') === -1 && payload.email.indexOf('@rit.edu') === -1) {
+      return 'BAD_REQUEST';
+    }
+
     //populate info object with the payload information
-    userData.firstName = payload.given_name;
-    userData.lastName = payload.family_name;
-    userData.ritEmail = payload.email;
-    userData.googleId = payload.sub;
-    userData.username = payload.email.substring(0, payload.email.indexOf('@'));
+    (userData as CreateUserInput).firstName = payload.given_name;
+    (userData as CreateUserInput).lastName = payload.family_name;
+    (userData as CreateUserInput).ritEmail = payload.email;
+    (userData as CreateUserInput).googleId = payload.sub;
+    (userData as CreateUserInput).username = payload.email.substring(0, payload.email.indexOf('@'));
 
     //now we have to take the googleCredentials out of the user data thing
     //with this uh destructuring assignment or something this is new to me
@@ -58,7 +63,7 @@ const createUserService = async (
     console.log(userData);
 
     const result = await prisma.users.create({
-      data: userData,
+      data: userData as CreateUserInput,
       select: MePrivateSelector,
     });
 

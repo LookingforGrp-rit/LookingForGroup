@@ -1,4 +1,8 @@
-import type { ApiResponse, CreateUserInput } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  CreateUserInput,
+  GoogleCredentialUserInput,
+} from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import envConfig from '#config/env.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
@@ -8,7 +12,7 @@ import createUserService from '#services/users/create-user.ts';
 //creates a user
 //we are being sent this with all of its information
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-  const info: CreateUserInput = req.body as CreateUserInput;
+  const info: GoogleCredentialUserInput = req.body as GoogleCredentialUserInput;
   const devInfo: CreateUserInput = {} as CreateUserInput;
   if ((envConfig.env === 'development' || envConfig.env === 'test') && !info.googleCredentials) {
     /// Fudge for development
@@ -126,6 +130,16 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       data: null,
     };
     res.status(409).json(resBody);
+    return;
+  }
+
+  if (result === 'BAD_REQUEST') {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Only RIT emails are allowed',
+      data: null,
+    };
+    res.status(400).json(resBody);
     return;
   }
 

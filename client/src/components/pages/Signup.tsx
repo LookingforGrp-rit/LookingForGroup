@@ -93,8 +93,18 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     //this^^ is our googleId, encoded in base64
     //so when we create a user we input this in there
     //server decodes it when it receives it, and it's passed into the createUser route
-    await createNewUser({firstName, lastName, ritEmail: email, googleCredentials: response.credential, googleId: '', username: ''}); 
-    //sending blanks for googleId and username just so typescript doesn't yell at me for type mismatching
+    
+    //for whoever comes to this:
+    //this line below with the object in it is the call to the backend that will handle user creation
+    //createNewUser takes in a CreateUserInput as a parameter, look at that for the things you should put in
+    //you will want to populate an object with all of the things the user is selecting and put it in as that object
+    //but move this call out of here and into another handler that runs when everything is filled
+    //there are other components on this page that handle letting users pick proficiencies and skills and do initial account setup stuff...
+    //...but they are not implemented on the actual signup page yet so we can't reach them
+    //because they're react components it should be relatively easy to navigate through them and save info, but i suck at react and i hate it and it hates me back
+    //so uh yeah good luck frontend person
+    await createNewUser({googleCredentials: response.credential}); 
+    
   }
   }, [navigate, firstName, lastName, email]);
 
@@ -106,14 +116,14 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   //we don't need any of this do we since literally all of it is gonna be through google...
   const handleSignup = async () => {
     // Check if any of the fields are empty
-    if (
-      email === '' ||
-      firstName === '' ||
-      lastName === ''
-    ) {
-      setMessage('Please fill in all information');
-      return false;
-    }
+    // if (
+    //   email === '' ||
+    //   firstName === '' ||
+    //   lastName === ''
+    // ) {
+    //   setMessage('Please fill in all information');
+    //   return false;
+    // }
 
     //usernames are automatically set with your entered email, so checks are not needed
     // // check if username in use
@@ -130,6 +140,9 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     //   return false;
     // }
 
+    //not needed! we already have this.
+    //BUT there absolutely should be a check that looks at the email itself
+    //so you can't go through account 
     if (!email.includes('rit.edu')) {
       // check if email is valid
       setMessage('Not an RIT email');
