@@ -12,8 +12,8 @@ export const projectTabs = {
   'Purpose': { categoryTags: [], categoryName: 'Purpose', color: 'grey' },
   'Developer Skill': { categoryTags: [], categoryName: 'Developer Skills', color: 'yellow' },
   'Designer Skill': { categoryTags: [], categoryName: 'Designer Skills', color: 'red' },
-  'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skills', color: 'purple'},
-  'Soft Skill': { categoryTags: [], categoryName: 'Soft Skills', color: 'periwinkle' },
+  'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skills', color: 'periwinkle'},
+  'Soft Skill': { categoryTags: [], categoryName: 'Soft Skills', color: 'purple' },
 };
 
 // export const peopleTabs = [
@@ -157,7 +157,7 @@ export const desSkills = [
   'Clip Studio Paint',
 ];
 
-export const peopleTags = ['Developers', 'Designers', 'Other'];
+export const peopleTags = ['Developers', 'Designers', 'Audio Engineers', 'Software Engineers', 'Other'];
 
 //Used for profiles and position listings on projects
 export const proficiencies = [
