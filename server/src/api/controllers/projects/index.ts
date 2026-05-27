@@ -26,6 +26,7 @@ import { updateProjectSocial } from './socials/update-proj-social.ts';
 import addTags from './tags/add-tags.ts';
 import deleteTags from './tags/delete-tags.ts';
 import getTags from './tags/get-proj-tags.ts';
+import getTempTags from './tags/temp-tags.ts';
 import getThumbnail from './thumbnail/get-thumbnail.ts';
 import removeThumbnail from './thumbnail/remove-thumbnail.ts';
 import updateThumbnail from './thumbnail/update-thumbnail.ts';
@@ -67,4 +68,5 @@ export default {
   getProjectMediums,
   addMediums,
   deleteMediums,
+  getTempTags,
 };

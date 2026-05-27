@@ -242,6 +242,7 @@ router.delete(
 
 // TAGS ROUTES
 
+router.get('/:id/temptags', projectExistsAt('path', 'id'), PROJECT.getTempTags);
 //Get a project's tags
 router.get('/:id/tags', projectExistsAt('path', 'id'), PROJECT.getTags);
 //Deletes a project tag
