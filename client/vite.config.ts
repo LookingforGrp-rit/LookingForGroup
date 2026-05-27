@@ -4,7 +4,7 @@ import { defineConfig, loadEnv } from "vite";
 
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, "../", "");
-  const apiPort = env.PORT || 8081;
+  const apiPort = Number(env.PORT) || 3000;
 
   return {
     server: {
