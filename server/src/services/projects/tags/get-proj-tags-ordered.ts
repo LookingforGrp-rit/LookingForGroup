@@ -15,7 +15,7 @@ const getProjectTagsOrderedService = async (
     const project = await prisma.projects.findUnique({
       where: { projectId },
       include: {
-        projectTags: {
+        tagOrder: {
           select: ProjectTagOrderSelector,
           orderBy: {
             displayOrder: 'asc',
@@ -35,7 +35,7 @@ const getProjectTagsOrderedService = async (
     }
 
     const orderMap = new Map(
-      project.projectTags.map(({ tagId, displayOrder }) => [tagId, displayOrder]),
+      project.tagOrder.map(({ tagId, displayOrder }) => [tagId, displayOrder]),
     );
 
     tags.sort(

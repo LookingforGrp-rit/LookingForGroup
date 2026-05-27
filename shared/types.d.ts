@@ -189,6 +189,27 @@ export interface Tag {
 }
 
 /**
+ * Tags refer to attributes attached to projects.
+ * These refer to desired skills a project is looking for or genres a project fits into.
+ */
+export interface TagOrder {
+  /**
+   * The database ID corresponding with the project
+   */
+  projectId: number;
+
+  /**
+   * The database ID corresponding with the tag
+   */
+  tagId: number;
+
+  /**
+   * The order this tag is in compared to other tags attached to the project
+   */
+  displayOrder: number;
+}
+
+/**
  * Socials refer to links to external social media accounts for users and projects.
  * A user or project is currently limited to one social link for each social media website.
  */
@@ -1061,6 +1082,11 @@ export interface ProjectPreview {
    * The tags attached to the project
    */
   tags: Tag[];
+
+  /**
+   * The order of tags attached to the project
+   */
+  tagOrder: TagOrder[];
 
   /**
    * A hook to catch attention to the project

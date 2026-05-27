@@ -1,5 +1,6 @@
 import { UserPreviewSelector } from '../users/user-preview.ts';
 import { ProjectMediumSelector } from './parts/project-medium.ts';
+import { ProjectTagOrderSelector } from './parts/project-tag-order.ts';
 import { ProjectTagSelector } from './parts/project-tag.ts';
 
 export const ProjectPreviewSelector = Object.freeze({
@@ -14,6 +15,12 @@ export const ProjectPreviewSelector = Object.freeze({
   userId: true,
   tags: {
     select: ProjectTagSelector,
+  },
+  tagOrder: {
+    select: ProjectTagOrderSelector,
+    orderBy: {
+      displayOrder: 'asc' as const,
+    },
   },
   mediums: {
     select: ProjectMediumSelector,

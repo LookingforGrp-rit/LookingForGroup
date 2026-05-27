@@ -112,7 +112,7 @@ model ProjectSocials {
 model ProjectTags {
   projectId    Int      @map("project_id")
   tagId        Int      @map("tag_id")
-  displayOrder Int      @default(0) @db.UnsignedInt @map("display_order")
+  displayOrder Int      @default(0) @map("display_order") @db.UnsignedInt
   projects     Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_tags_project")
   tags         Tags     @relation(fields: [tagId], references: [tagId], onDelete: Cascade, map: "FK_project_tags_tag")
 
@@ -142,7 +142,7 @@ model Projects {
   mediums           Mediums[]
   tags              Tags[]
   users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")
-  projectTags       ProjectTags[]
+  tagOrder          ProjectTags[]
 
   @@index([userId], map: "FK_user_id")
   @@map("projects")
