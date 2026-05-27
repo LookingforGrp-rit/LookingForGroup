@@ -463,18 +463,16 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             matchesAny = true;
         }
         else if (tag.label === 'Audio') {
+          //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
           .filter((s) => typeof s === 'string');
-
-          console.log(userSkills);
 
           if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
         }
         else if (tag.label === 'Soft') {
+          //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
           .filter((s) => typeof s === 'string');
-
-          console.log(userSkills);
 
           if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
         }
