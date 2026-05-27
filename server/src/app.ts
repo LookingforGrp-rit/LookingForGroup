@@ -1,6 +1,9 @@
+import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import express, { type Request, type Response } from 'express';
+import session, { type CookieOptions } from 'express-session';
 import morgan from 'morgan';
 import envConfig from '#config/env.ts';
+import prisma from '#config/prisma.ts';
 import datasetsRouter from '#routes/datasets.ts';
 import imagesRouter from '#routes/images.ts';
 import meRouter from '#routes/me.ts';
@@ -9,6 +12,27 @@ import projectsRouter from '#routes/projects.ts';
 import usersRouter from '#routes/users.ts';
 
 const app = express();
+
+app.use(
+  // I have no idea why eslint is flagging this.
+  // If anyone else can figure it out please do and remove these comments
+  // See express session documentation to understand what any of it means.
+
+  session({
+    secret: process.env.EXPRESS_SESSION_SECRET || 'declaration of independence',
+    resave: false,
+    saveUninitialized: false,
+    store: new PrismaSessionStore(prisma, { checkPeriod: 2 * 60 * 1000 /* every 2 minutes */ }),
+    cookie: function (): CookieOptions {
+      return {
+        httpOnly: true,
+        secure: envConfig.env === 'production',
+        maxAge: 60000,
+        sameSite: true,
+      };
+    },
+  }),
+);
 
 app.use(morgan(envConfig.env === 'development' ? 'dev' : 'tiny'));
 app.use(express.urlencoded({ extended: true }));

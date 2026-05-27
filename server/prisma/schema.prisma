@@ -235,6 +235,13 @@ model Skills {
   @@map("skills")
 }
 
+model Session {
+  id String @id
+  sid String @unique
+  data String
+  expiresAt DateTime
+}
+
 enum JobsAvailability {
   FullTime @map("Full-time")
   PartTime @map("Part-time")
