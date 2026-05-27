@@ -24,7 +24,8 @@ COPY server/package.json ./server/package.json
 COPY client/package.json ./client/package.json
 COPY shared/package.json ./shared/package.json
 
-RUN npm install
+# run clean install
+RUN npm ci
 
 #######################
 # Copy full project source code
