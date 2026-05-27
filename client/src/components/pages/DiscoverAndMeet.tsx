@@ -462,6 +462,22 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         else if (tag.label === 'Designer' && item.designer) {
             matchesAny = true;
         }
+        else if (tag.label === 'Audio') {
+          const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
+          .filter((s) => typeof s === 'string');
+
+          console.log(userSkills);
+
+          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
+        }
+        else if (tag.label === 'Soft') {
+          const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
+          .filter((s) => typeof s === 'string');
+
+          console.log(userSkills);
+
+          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
+        }
         else if (tag.label === 'Other' && !item.designer && !item.developer) {
           matchesAny = true;
         } 
