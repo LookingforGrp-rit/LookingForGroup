@@ -266,8 +266,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }
 
 useEffect(() => {
+  //for chrome
   window.addEventListener("beforeunload", deleteNoSave, {once: true, passive: false});
   
+  //for firefox
   window.addEventListener("pagehide", deleteNoSave, {once: true, passive: false});
 });
 
