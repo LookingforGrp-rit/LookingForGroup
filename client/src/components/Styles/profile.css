@@ -909,11 +909,6 @@ select.edit-region-input {
   color: var(--tag-red-unselected-border);
 }
 
-@media screen and (max-width: 700px)
-{
-  
-}
-
 /* ----- Links Page ----- */
 .edit-profile-body.links {
   height: 57vh;
