@@ -491,7 +491,7 @@ export const TagsTab = ({
     <div id="project-editor-tags">
       <div id="project-editor-type-tags">
         <div className="project-editor-section-header">
-          Medium
+          Selected Medium(s)
           {isMediumsUnsaved && (
             <span className="unsaved-indicator">
               (Unsaved)
@@ -519,7 +519,7 @@ export const TagsTab = ({
       </div>
 
       <div id="project-editor-selected-tags">
-        <div className="project-editor-section-header">Selected Tags
+        <div className="project-editor-section-header">Selected Tag(s)
           {isTagsUnsaved && (
             <span className="unsaved-indicator">
               (Unsaved)
@@ -568,7 +568,7 @@ export const TagsTab = ({
               onClick={() => {
                 setCurrentTagsTab(0);
               }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 0 ? "tag-search-tab-active" : ""}`}
+              className={`button-reset medium-tag-tab project-editor-tag-search-tab ${currentTagsTab === 0 ? "tag-search-tab-active" : ""}`}
               //Data from genres
             >
               Medium
