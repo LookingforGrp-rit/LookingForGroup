@@ -451,7 +451,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           matchesAny = true;
         }
         // Check for specific skills
-        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft') {
+        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio') {
           const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
             
