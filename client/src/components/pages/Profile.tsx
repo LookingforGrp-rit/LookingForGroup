@@ -275,6 +275,7 @@ const Profile = () => {
     </>
   );
 
+  //console.log(displayedProfile);
   // --------------------
   // Final component
   // --------------------
