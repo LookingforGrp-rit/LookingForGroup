@@ -945,7 +945,7 @@ Project Creator and Editor Popup style rules
 
 #project-editor-team-tabs,
 #project-editor-tag-search-tabs {
-  gap: 38px;
+  gap: 30px;
 }
 
 .project-editor-tag-search-tab {
@@ -956,6 +956,11 @@ Project Creator and Editor Popup style rules
   font-weight: 400;
   word-break: normal;
   max-width: 100%;
+}
+
+.medium-tag-tab {
+  border-right: 1px solid var(--border-color);
+  padding-right: 5%;
 }
 
 /* Project Editor/Creator Team Tab */
