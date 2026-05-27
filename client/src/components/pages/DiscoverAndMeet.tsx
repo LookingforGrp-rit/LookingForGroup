@@ -451,7 +451,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           matchesAny = true;
         }
         // Check for specific skills
-        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft') {
+        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio') {
           const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
             
@@ -461,6 +461,20 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         }
         else if (tag.label === 'Designer' && item.designer) {
             matchesAny = true;
+        }
+        else if (tag.label === 'Audio') {
+          //TODO: replace with an item boolean like with designer or developer, probably a backend task
+          const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
+          .filter((s) => typeof s === 'string');
+
+          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
+        }
+        else if (tag.label === 'Soft') {
+          //TODO: replace with an item boolean like with designer or developer, probably a backend task
+          const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
+          .filter((s) => typeof s === 'string');
+
+          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
         }
         else if (tag.label === 'Other' && !item.designer && !item.developer) {
           matchesAny = true;

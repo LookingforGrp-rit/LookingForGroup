@@ -12,6 +12,7 @@ export type TagType =
   | "Developer"
   | "Designer"
   | "Soft"
+  | "Audio"
   | "Purpose"
   | "Project Type"
   | "Role"
