@@ -320,6 +320,11 @@ Project Creator and Editor Popup style rules
   line-height: 1;
 }
 
+#project-editor-save{
+  display: block;
+  align-self: center;
+}
+
 #project-editor-save,
 #team-add-member-add-button,
 #team-edit-member-save-button {
@@ -337,7 +342,8 @@ Project Creator and Editor Popup style rules
   margin-top: -1%;
 }
 
-#project-editor-save {
+#project-editor-save,
+#team-edit-member-cancel-button {
   margin-bottom: 28px;
 }
 
@@ -445,12 +451,13 @@ Project Creator and Editor Popup style rules
 
 #project-editor-content {
   flex-grow: 1;
-  margin: 35px 56px 0 55px;
+  margin: 35px 56px 30px 55px;
 }
 
 @media only screen and (max-width: 700px) {
   #project-editor-content {
     margin: 0 20px;
+    margin-bottom: 20px;
   }
 }
 
@@ -499,6 +506,10 @@ Project Creator and Editor Popup style rules
   #project-editor-content textarea,
   #project-team-add-member-name input {
     padding-bottom: 30px;
+  }
+
+  #project-editor-selected-tags {
+    width: 100%;
   }
 }
 
@@ -915,11 +926,12 @@ Project Creator and Editor Popup style rules
 
 #project-editor-tag-search-tabs {
   overflow-x: auto;
+  justify-content: flex-start;
 }
 
 @media only screen and (max-width: 799px) {
   #project-editor-tag-search-tabs {
-    flex-direction: column;
+    flex-direction: row;
   }
 }
 
@@ -933,7 +945,7 @@ Project Creator and Editor Popup style rules
 
 #project-editor-team-tabs,
 #project-editor-tag-search-tabs {
-  gap: 38px;
+  gap: 30px;
 }
 
 .project-editor-tag-search-tab {
@@ -944,6 +956,11 @@ Project Creator and Editor Popup style rules
   font-weight: 400;
   word-break: normal;
   max-width: 100%;
+}
+
+.medium-tag-tab {
+  border-right: 1px solid var(--border-color);
+  padding-right: 5%;
 }
 
 /* Project Editor/Creator Team Tab */
@@ -1533,6 +1550,14 @@ button.edit-position-contact {
   border-radius: 10px;
   padding: 15px;
   cursor: default;
+
+}
+
+
+@media (min-width:576px) {
+  .edit-position-contact {
+    min-width: 150px;
+  }
 }
 
 .select-option.edit-position-contact {
@@ -2740,6 +2765,7 @@ Project Carousel style rules
     width: 100%;
     height: 100%;
     object-fit: cover;
+    aspect-ratio: 16/9;
   }
 
   .project-carousel-tabs {
@@ -2764,6 +2790,7 @@ Project Carousel style rules
   text-align: left;
   padding: 20px;
   max-width: calc(100vw - 80px);
+  margin-bottom: 2.8%;
 
   #project-info-top {
     display: flex;
@@ -2961,7 +2988,9 @@ Project Carousel style rules
   height: 849px;
   max-height: 849px;
   gap: 30px;
-  padding: 28px 59px 21px 59px;
+  padding: 28px 5px 21px 5px;
+  overflow-y: auto;
+  overflow-x: auto;
   border-radius: 10px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
   grid-template:
@@ -2969,6 +2998,7 @@ Project Carousel style rules
     'list info' auto
     'close close' 50px /
     300px auto;
+
 
   #project-team-open-positions-popup {
     margin-top: 0;
@@ -3018,6 +3048,7 @@ Project Carousel style rules
   flex-direction: column;
   gap: 15px;
   width: 100%;
+  margin-left: 10%;
 }
 
 #positions-popup-list-buttons {
@@ -3080,8 +3111,9 @@ button#positions-popup-list-item-active {
   justify-content: space-between;
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-  border-radius: 10px;
+  border-radius: 20px;
   padding: 20px;
+  margin-right: 2%;
 
   >.positions-popup-info {
     display: flex;

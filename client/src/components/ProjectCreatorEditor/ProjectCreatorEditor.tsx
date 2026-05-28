@@ -1,4 +1,4 @@
-import { useState, useRef, FC, Dispatch, SetStateAction } from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction, useEffect } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -86,6 +86,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
   const [message, setMessage] = useState("");
 
+  const [open, setOpen] = useState(false);
+
   // Component Refs
   const exitButton = useRef(null);
   const startButton = useRef(null);
@@ -137,6 +139,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   // Start editing the project creator
   const createOrEdit = async () => {
     setSaved(true);
+    setOpen(true);
     setConfirm(false);
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
@@ -239,24 +242,40 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   //this deletes the newly created project when the create window is manually closed
   //this is called below as the PopupContent's callback function (that only calls when it's closed so should it just be called onClose?)
   const closeWithoutSaving = async () => {
+    if (!open) return;
     if (!saved) {
       toggleConfirm();
       return; 
-    } 
-    // Why is this here? If it's a new project then it won't be on the API anyway
-    setCurrentTab(0);
+    }
     // Only delete if this is a new project AND it was not saved yet
     if (projectData && newProject) {
       await deleteProject(projectData?.projectId);
+      setOpen(false);
+      setSaved(true);
     }
   }
+
+  const deleteNoSave = async () => {
+    if (!open) return;
+    // Only delete if this is a new project AND it was not saved yet
+    if (projectData && newProject) {
+      await deleteProject(projectData?.projectId);
+      setOpen(false);
+      setSaved(true);
+    }
+  }
+
+useEffect(() => {
+  //for chrome
+  window.addEventListener("beforeunload", deleteNoSave, {once: true, passive: false});
+  
+  //for firefox
+  window.addEventListener("pagehide", deleteNoSave, {once: true, passive: false});
+});
 
   const toggleConfirm = async () => {
     setConfirm(!confirm);
   }
-
-  // Isn't this what createoredit is supposed to do? it never calls this though
-
 
   /**
    *  Adds a number to the end of a project so you don't have duplicate project titles(Unity style)
@@ -374,6 +393,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
+      setOpen(false);
       navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
@@ -416,7 +436,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
-            <PopupButton doNotClose={() => false} callback={closeWithoutSaving} buttonId="project-editor-save">
+            <PopupButton doNotClose={() => false} callback={deleteNoSave} buttonId="project-editor-save">
               Confirm
             </PopupButton>
             <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >

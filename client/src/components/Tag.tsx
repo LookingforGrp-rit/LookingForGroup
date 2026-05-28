@@ -47,7 +47,9 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "soft skill":
       color = "purple";
       break;
-    
+    case "audio skill":
+      color = "periwinkle";
+      break;
     default:
       if (type == "") break;
 
