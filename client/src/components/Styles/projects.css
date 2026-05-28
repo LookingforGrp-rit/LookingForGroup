@@ -3044,7 +3044,7 @@ Project Carousel style rules
   flex-direction: column;
   gap: 15px;
   width: 100%;
-  margin-left: 10%;
+  margin-left: 0%;
 }
 
 #positions-popup-list-buttons {
