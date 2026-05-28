@@ -30,7 +30,7 @@ describe('createUserService', async () => {
   it('creates a user and returns transformed MePrivate', async () => {
     const prismaUser: Users = {
       userId: 1,
-      universityId: 'u123',
+      googleId: 'u123',
       username: 'goldleaf',
       firstName: 'Gold',
       lastName: 'Leaf',
@@ -56,7 +56,7 @@ describe('createUserService', async () => {
       firstName: 'Gold',
       lastName: 'Leaf',
       ritEmail: 'gold@rit.edu',
-      universityId: '1234',
+      googleId: '1234',
       visibility: 'Public',
       phoneNumber: null,
       createdAt: new Date(),
@@ -103,7 +103,7 @@ describe('createUserService', async () => {
 
     expect(vi.mocked(prisma.users.create)).toHaveBeenCalledWith({
       data: {
-        universityId: '1234',
+        googleId: '1234',
         username: 'goldleaf',
         firstName: 'Gold',
         lastName: 'Leaf',
