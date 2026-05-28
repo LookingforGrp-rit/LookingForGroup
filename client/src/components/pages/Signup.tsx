@@ -8,8 +8,8 @@ import ChooseSkills from '../SignupProcess/ChooseSkills';
 import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
-import passwordValidator from 'password-validator';
-import { getCurrentUsername, getUserByEmail, getUserByUsername } from '../../api/users';
+//import passwordValidator from 'password-validator';
+import { createNewUser, getCurrentUsername, getUserByEmail } from '../../api/users';
 
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
@@ -24,12 +24,13 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
   const [email, setEmail] = useState('');
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirm, setConfirm] = useState(''); // Second password input to check if they match
+  const [googleCredentials, setGoogleCredentials] = useState('')
+  // const [username, setUsername] = useState('');
+  // const [password, setPassword] = useState('');
+  // const [confirm, setConfirm] = useState(''); // Second password input to check if they match
   const [message, setMessage] = useState('');
-  const [passwordMessage, setPasswordMessage] = useState(''); // Password requirements
-  const [showPassword, setShowPassword] = useState(false);
+  // const [passwordMessage, setPasswordMessage] = useState(''); // Password requirements
+  // const [showPassword, setShowPassword] = useState(false);
 
   // State variables for modals
   // const [showAvatarModal, setShowAvatarModal] = useState(false);
@@ -48,12 +49,11 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [bio, setBio] = useState(''); // State variable for the user's bio
 
   // user info to be sent to the backend
+  //we don't need name stuff, your email handles that
   const userInfo = {
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
-    username: username,
-    password: password,
+    //firstName: firstName,
+    //lastName: lastName,
+    //email: email,
     // proficiencies: selectedProficiencies,
     skills: selectedSkills,
     // interests: selectedInterests,
@@ -76,93 +76,125 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     };
 
     checkSessionAndRedirect();
+
+    //google things
+    // @ts-expect-error google
+    google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleGoogle,
+    });
+
+    // @ts-expect-error google
+    google.accounts.id.renderButton(
+      document.getElementById("googleBtn"),
+      { theme: "filled_black", size: "large" , shape: 'pill'}
+    );
+  async function handleGoogle(response: any){
+    setGoogleCredentials(response.credential)
+    //this^^ is our googleId, encoded in base64
+    //so when we create a user we input this in there
+    //server decodes it when it receives it, and it's passed into the createUser route
+    
+    //for whoever comes to this:
+    //this createNewUser line with the object in it is the call to the backend that will handle user creation
+    //createNewUser takes in a GoogleCredentialUserInput as a parameter, you can check types.d.ts for more info on that
+    //you will want to populate an object with all of the things the user is selecting and put it in as part of that object
+    //but move this call out of this useEffect and into another handler that runs when everything is filled
+    //there are other components on this page that handle letting users pick proficiencies and skills and do initial account setup stuff...
+    //...but they are not implemented on the actual signup page yet so we can't reach them as of right now
+    //because they're react components it should be relatively easy to navigate through them and save info, but i suck at react and i hate it and it hates me back
+    
+    //there are a lot of commented out checks because all of that is handled by google on the backend
+    //there are specific errors that will be thrown based on what's wrong with the thing so you can check for those instead
+    //the message the error comes with should let you know what went wrong
+    await createNewUser({googleCredentials: response.credential}); 
+    
+  }
   }, [navigate]);
+
 
   /**
    * Goes through the various fields, verifies whether user input is valid, and sends it to the server.
    * @returns False if invalid
    */
+  //we don't need any of this do we since literally all of it is gonna be through google...
   const handleSignup = async () => {
     // Check if any of the fields are empty
-    if (
-      email === '' ||
-      password === '' ||
-      confirm === '' ||
-      firstName === '' ||
-      lastName === '' ||
-      username === ''
-    ) {
-      setMessage('Please fill in all information');
-      return false;
-    }
+    // if (
+    //   email === '' ||
+    //   firstName === '' ||
+    //   lastName === ''
+    // ) {
+    //   setMessage('Please fill in all information');
+    //   return false;
+    // }
 
-    // check if username in use
-    try {
-      const data = await getUserByUsername(username);
-      // if there is a result, a match is found
-      if (data) {
-        setMessage('Username already in use');
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
+    //usernames are automatically set with your entered email, so checks are not needed
+    // // check if username in use
+    // const usernameCheck = await getUserByUsername(username);
+    // // if there is a result, a match is found
+    // if (usernameCheck) {
+    //   setMessage('Username already in use');
+    //   return false;
+    // }
 
-    // check if username is valid
-    if (!(username.match(/^[a-zA-Z0-9_]+$/) != null)) {
-      setMessage('Username can not include white space or special characters!');
-      return false;
-    }
+    // // check if username is valid
+    // if (!(username.match(/^[a-zA-Z0-9_]+$/) != null)) {
+    //   setMessage('Username can not include white space or special characters!');
+    //   return false;
+    // }
 
-    if (!email.includes('rit.edu')) {
-      // check if email is valid
-      setMessage('Not an RIT email');
-      return false;
-    }
+    //not needed! we already have this on the backend
+    //you could replace this with something that checks for an error from the createUser thing
+    // if (!email.includes('rit.edu')) {
+    //   // check if email is valid
+    //   setMessage('Not an RIT email');
+    //   return false;
+    // }
 
     // check if the email is in use
-    try {
-      const data = await getUserByEmail(email);
-      
-      // if there is a result, a match is found
-      if (data) {
-        setMessage('Email already in use');
-        return false;
-      }
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
+    //also not needed google handles this
+    // const emailCheck = await getUserByEmail(email);
+    // // if there is a result, a match is found
+    // if (emailCheck.status === 200) {
+    //   setMessage('Email already in use');
+    //   return false;
+    // }
 
+    //no password self-storage so none of this is needed
     // Check if password meets the requirements
-    if (passwordMessage !== '') {
-      setMessage('Password does not meet requirements');
-      return false;
-    }
+    // if (passwordMessage !== '') {
+    //   setMessage('Password does not meet requirements');
+    //   return false;
+    // }
 
-    // check if the passwords match
-    if (password !== confirm) {
-      setMessage('Passwords do not match');
-      return false;
-    }
+    // // check if the passwords match
+    // if (password !== confirm) {
+    //   setMessage('Passwords do not match');
+    //   return false;
+    // }
 
-    // no errors, send email
-    else {
-      setMessage('Please wait...');
-      // Send info to begin account activation
-      /*
-      await signUp({
-        email: email,
-        password: password,
-        confirm: confirm,
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-      });
-      */
-      setMessage('An account activation email has been sent');
-    }
+    //here we would call a POST to /users with all of our info in the body
+    //and thus signups should work!
+    // else {
+    //   setMessage('Please wait...');
+    //   // Send info to begin account activation
+    //   /*
+          //obsolete
+    //   await signUp({
+    //     email: email,
+    //     password: password,
+    //     confirm: confirm,
+    //     firstName: firstName,
+    //     lastName: lastName,
+    //     username: username,
+    //   });
+    //   */
+    //   await createNewUser({googleCredentials});
+    //   //then redirect to... the home page? no we want to redirect to the login page but the login page is probably broken because it still wants a password
+    //   //or we just SIGN THEM IN (NOT WORKING...) redirect to the home page after we've signed up to skip the step of logging in yet again
+    //   //or we should redirect them to the other pieces of this signup page that allows them to make their stuff
+    // }
   };
 
   /**
@@ -170,53 +202,60 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    * @param pass Password
    * @returns String message of remaining requirements to be met
    */
-  const validatePassword = (pass : string) => {
-    // Don't check password if there's nothing there
-    if (pass === '') {
-      return '';
-    }
+  
+    //oauth will handle this since we're logging in with rit emails
+    //if google has all of our account auth info and we aren't storing our own
+    //we don't need to store passwords ourselves at all, google will completely handle that right
+    //i guess for the login page we can simply have a google oauth button there
+    //or dress up google's oauth form in our lfg colors or smth... is that possible? no idea
 
-    const schema = new passwordValidator();
-    schema
-      .is()
-      .min(8, 'be 8 or more characters')
-      .is()
-      .max(20, 'be 20 or less characters')
-      .has()
-      .uppercase(1, 'have an uppercase letter')
-      .has()
-      .lowercase(1, 'have a lowercase letter')
-      .has()
-      .digits(1, 'have a number')
-      .has()
-      .symbols(1, 'have a symbol')
-      .has()
-      .not()
-      .spaces(1, 'have no spaces')
-      .has()
-      .not('[^\x00-\x7F]+', 'have no non-ASCII characters');
+  // const validatePassword = (pass : string) => {
+  //   // Don't check password if there's nothing there
+  //   if (pass === '') {
+  //     return '';
+  //   }
 
-    const output : boolean | any[] = schema.validate(pass, { details: true });
-    let passMsg = '';
+  //   const schema = new passwordValidator();
+  //   schema
+  //     .is()
+  //     .min(8, 'be 8 or more characters')
+  //     .is()
+  //     .max(20, 'be 20 or less characters')
+  //     .has()
+  //     .uppercase(1, 'have an uppercase letter')
+  //     .has()
+  //     .lowercase(1, 'have a lowercase letter')
+  //     .has()
+  //     .digits(1, 'have a number')
+  //     .has()
+  //     .symbols(1, 'have a symbol')
+  //     .has()
+  //     .not()
+  //     .spaces(1, 'have no spaces')
+  //     .has()
+  //     .not('[^\x00-\x7F]+', 'have no non-ASCII characters');
 
-	  if (output == false) {
-      return '';
-	  }
+  //   const output : boolean | any[] = schema.validate(pass, { details: true });
+  //   let passMsg = '';
 
-    const result : any[] = output as any[];
+	//   if (output == false) {
+  //     return '';
+	//   }
 
-    if (result.length > 0) {
-      passMsg += `Password must `;
+  //   const result : any[] = output as any[];
 
-      for (let i = 0; i < result.length - 1; i++) {
-        passMsg += `${result[i].message}, `;
-      }
-      passMsg += `${result.length > 1 ? 'and ' : ''}${result[result.length - 1].message}.`;
-    }
+  //   if (result.length > 0) {
+  //     passMsg += `Password must `;
 
-    console.log(passMsg);
-    return passMsg;
-  };
+  //     for (let i = 0; i < result.length - 1; i++) {
+  //       passMsg += `${result[i].message}, `;
+  //     }
+  //     passMsg += `${result.length > 1 ? 'and ' : ''}${result[result.length - 1].message}.`;
+  //   }
+
+  //   console.log(passMsg);
+  //   return passMsg;
+  // };
 
   /**
    * Handles Enter key presses
@@ -251,7 +290,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
           <div className="error" aria-live="assertive" role="alert">{message}</div>
           <div className="signup-form-inputs">
-            <div className="row">
+            {/* we wouldn't need any of the other fields either would we?? */}
+            {/* <div className="row">
               <input
                 id='main'
                 className="signup-name-input"
@@ -277,19 +317,21 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               placeholder="School email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-            />
+            /> */}
+            <p>Sign up using your RIT email.</p>
+            <div id="googleBtn"></div>
 
             <span className="spacer"> </span>
 
-            <input
+            {/* <input
               className="signup-input"
               autoComplete="off"
               type="text"
               placeholder="Username"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-            />
-            <div id='password-wrapper'>
+            /> */}
+            {/* <div id='password-wrapper'>
               <input
                 className="signup-input"
                 autoComplete="off"
@@ -312,20 +354,20 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
                   <ThemeIcon id={'eye'} width={18} height={13} className={'mono-fill'} ariaLabel={'Hide password'}/>
                 )}
               </button>
-            </div>
+            </div> */}
             {/* {(passwordMessage !== '') ? (
                             <div className="error">{passwordMessage}</div>
                         ) : (
                             <></>
                         )} */}
-            <input
+            {/* <input
               className="signup-input"
               autoComplete="off"
               type="password"
               placeholder="Re-enter password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
-            />
+            /> */}
             <div className="mobile-login">
               <p>Already have an account? </p>
               <p id="login-btn-mobile" onClick={() => navigate(paths.routes.LOGIN)}>
@@ -333,7 +375,6 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               </p>
             </div>
           </div>
-
           <button id="main-loginsignup-btn" onClick={handleSignup}>
             Sign Up
           </button>

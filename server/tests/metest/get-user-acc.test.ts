@@ -82,7 +82,7 @@ describe('getUserByIdService', () => {
       lastName: '',
       visibility: 'Public' as Visibility,
       phoneNumber: null,
-      universityId: '2222222222',
+      googleId: '2222222222',
       createdAt: new Date('2026-05-20 13:25:14'),
       updatedAt: new Date('2026-05-20 13:25:14'),
       academicYear: 'Sophomore' as AcademicYear,

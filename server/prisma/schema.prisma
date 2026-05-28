@@ -226,7 +226,7 @@ model Users {
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @unique @map("phone_number") @db.VarChar(20)
-  universityId      String              @unique(map: "university_id_UNIQUE") @map("university_id") @db.VarChar(9)
+  googleId          String              @unique(map: "google_id_UNIQUE") @map("google_id") @default("bill of rights")
   members           Members[]
   projectFollowings ProjectFollowings[]
   projects          Projects[]
@@ -247,6 +247,14 @@ model Skills {
 
   @@unique([label, type])
   @@map("skills")
+}
+
+model Session {
+  id String @id
+  sid String @unique
+  data String
+  gid String @default("federalist papers")
+  expiresAt DateTime
 }
 
 enum JobsAvailability {

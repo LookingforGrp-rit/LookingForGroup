@@ -49,7 +49,7 @@ describe('getUserFollowersService', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       phoneNumber: null,
-      universityId: '',
+      googleId: '',
     };
 
     const prismaResult = [

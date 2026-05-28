@@ -18,13 +18,19 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
     }
   }
 
+  //change this to use and accept google oauth
   const universityId = authenticatedRequest.headers[uidHeaderKey] as string | undefined;
+  //legacy stuff from shib, ergo it won't work
+  //if oauth sends us things in the headers like the rit email, we simply look at that instead of this
+  //if not, uhhhhhhh what then
+  //we send what we did for signup and check it there?
+  //are we even
 
   //if no university id found
   if (!universityId) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Missing university ID in headers',
+      error: 'Missing ID in headers',
       data: null,
     };
     response.status(400).json(resBody);
