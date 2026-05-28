@@ -205,7 +205,7 @@ export const ProfileEditPopup = () => {
           <div id="project-editor-tabs">{editorTabs}</div>
           <div id="project-editor-content">{renderTabContent()}</div>
           <form
-            id="project-creator-editor"
+            //id="project-creator-editor"
             onSubmit={onSaveClicked}
             encType="multipart/form-data">
             <input

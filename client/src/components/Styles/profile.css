@@ -1688,6 +1688,11 @@ New Profile page style rules
   border: 2px solid var(--tag-grey-selected);
 }
 
+.label-periwinkle {
+  background-color: var(--tag-periwinkle-selected);
+  border: 2px solid var(--tag-periwinkle-selected);
+}
+
 /* #skill-tags-container .tag-button {
   margin:0;
 }

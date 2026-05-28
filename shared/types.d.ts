@@ -12,13 +12,15 @@ export type TagType =
   | "Developer"
   | "Designer"
   | "Soft"
+  | "Audio"
   | "Purpose"
   | "Project Type"
   | "Role"
   | "Major"
   | "Developer Skill"
   | "Designer Skill"
-  | "Soft Skill";
+  | "Soft Skill"
+  | "Audio Skill";
 export type AcademicYear =
   | "Freshman"
   | "Sophomore"
