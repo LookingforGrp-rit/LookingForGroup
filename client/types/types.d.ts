@@ -39,8 +39,8 @@ import {
  */
 export type Fillable<T> = {
   [attr in keyof T]: T[attr] extends object
-    ? Fillable<T[attr]> | null
-    : T[attr] | null;
+  ? Fillable<T[attr]> | null
+  : T[attr] | null;
 };
 
 /**
@@ -141,7 +141,7 @@ interface ProjectChangesUpdates {
    * The thumbnail to be updated
    */
   thumbnail: CRUDRequest<UpdateProjectThumbnailInput>;
-  
+
   /**
    * All images to be updated
    */
@@ -366,4 +366,22 @@ interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
   projects: (MyMember | PendingUserMember)[];
   skills: (MySkill | PendingUserSkill)[];
   socials: (MySocial | PendingUserSocial)[];
+}
+
+/**
+ * Representation of an email invite to send.
+ * transporter is the transporter to user, there should only be one at any time
+ * invitee is the person inviting the targetUser
+ * targetUser is the person recieving the invite
+ * project is the project this email invite pertains to
+ * textBody is the body of the email as plain text
+ * HTMLBody is the body of the email as HTML
+ */
+interface EmailInvite {
+  transporter: any;
+  invitee: ProjectMember | PendingProjectMember | undefined;
+  targetUser: UserPreview;
+  project: PendingProject;
+  textBody: string | undefined;
+  HTMLBody: string | undefined;
 }

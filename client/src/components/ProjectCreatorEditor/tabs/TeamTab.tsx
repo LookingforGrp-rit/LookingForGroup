@@ -30,6 +30,7 @@ import {
   JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 import {
+  EmailInvite,
   Pending,
   PendingProject,
   PendingProjectMember,
@@ -494,6 +495,41 @@ export const TeamTab = ({
   );
 
   /**
+   * Async function that sends the email properly
+   * @param EmailInvite email object to read info from and send
+   */
+  const sendEmail = async (email: EmailInvite) => {
+    const transporter: any = email.transporter;
+    const inviteeName: string = `${email.invitee?.user?.firstName} ${email.invitee?.user?.lastName}`;
+    const inviteeEmail: string = `${email.invitee?.user?.username}.rit.edu`;
+    const targetUserEmail: string = `${email.targetUser.username}.rit.edu`;
+    const projectName: string = `${email.project.title}`;
+
+    try {
+      await transporter.verify();
+      console.log("Server is ready to take our messages");
+    } catch (err) {
+      console.error("Verification failed:", err);
+    }
+
+    try {
+      const info = await transporter.sendMail({
+        from: `"${inviteeName}" <${inviteeEmail}>`, // sender address
+        to: `${targetUserEmail}`, // list of recipients
+        subject: `Invitation to join ${projectName}`, // subject line
+        text: `${email.textBody}`, // plain text body
+        html: `${email.HTMLBody}`, // HTML body
+      });
+
+      console.log("Message sent: %s", info.messageId);
+      // Preview URL is only available when using an Ethereal test account
+      //console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+    } catch (err) {
+      console.error("Error while sending mail:", err);
+    }
+  }
+
+  /**
    * Sends a project invite to a specified user by email
    * @param targetUser specified user
    * @returns string | false
@@ -505,23 +541,51 @@ export const TeamTab = ({
       return false;
     }
 
-    const targetUserEmail: string = `${targetUser.username}.rit.edu`;
     const targetUserName: string = `${targetUser.firstName} ${targetUser.lastName}`;
     const projectName: string = project.title;
     const inviteeName: string = `${invitee.user?.firstName} ${invitee.user?.lastName}`;
 
     //Returns message
-    const message: string = `Hello ${targetUserName},\n
-                            \n
-                            You've been invited to join the project ${projectName} by ${inviteeName}. 
-                            If you don't want to join the project or believe this is a mistake, you may safely ignore this email.\n
-                            \n
-                            Click this link to accept the invitation: \n
-                            \n
-                            Thank you!`;
+    const message: string =
+      `Hello ${targetUserName},\n
+      \n
+      You've been invited to join the project ${projectName} by ${inviteeName}. 
+      If you don't want to join the project or believe this is a mistake, you may safely ignore this email.\n
+      \n
+      Click this link to accept the invitation: \n
+      Thank you!`;
+
+    //MOVE THIS SOMEWHERE WHERE IT ONLY HAPPENS ONCE
+    //Require is undefined for some reason
+    const nodemailer = require("nodemailer");
+
+    //MOVE THIS SOMEWHERE WHERE IT ONLY HAPPENS ONCE
+    // Create a transporter using SMTP
+    //Using local for now
+    const transporter = nodemailer.createTransport({
+      host: "localhost",
+      port: 587,
+      secure: false, // use STARTTLS (upgrade connection to TLS after connecting)
+
+      // auth: {
+      //   user: process.env.SMTP_USER,
+      //   pass: process.env.SMTP_PASS,
+      // },
+    });
 
     //Send the email to targetUserEmail
-    
+    const emailObject: EmailInvite = {
+      transporter: transporter,
+      invitee: invitee,
+      targetUser: targetUser,
+      project: project,
+      textBody: message,
+
+      //Probably not going to use HTMLBody, but it's there in case we will in the future
+      HTMLBody: undefined
+    };
+
+    sendEmail(emailObject);
     return message;
   }
 
@@ -565,13 +629,13 @@ export const TeamTab = ({
 
       // set user for member
       // Somehow wait until they accept the invite
-      // setCurrentMember({
-      //   ...emptyMember,
-      //   ...currentMember,
-      //   user: {
-      //     ...matchedUser,
-      //   },
-      // });
+      setCurrentMember({
+        ...emptyMember,
+        ...currentMember,
+        user: {
+          ...matchedUser,
+        },
+      });
 
       // clear search results
       setSearchResults([]);
