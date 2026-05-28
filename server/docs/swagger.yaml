@@ -2444,7 +2444,7 @@ paths:
 
   /api/projects/{id}/tags:
     get:
-      summary: Get a project's tags
+      summary: Get a project's tags in the order user specified
       description: Returns the list of tags associated with the specified project
       tags:
         - Projects
@@ -2565,15 +2565,41 @@ paths:
             type: integer
           required: false
           description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectTagInput'
       responses:
         '200':
           description: Tag updated successfully
           content:
             application/json:
-              example:
-                status: 200
-                error: null
-                data: null
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectTag'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     delete:
       summary: Deletes a project tag
       security:
@@ -3287,8 +3313,10 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectSocialInput'
     UpdateProjectSocialInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectSocialInput'
-    AddProjectTagsInput:
-      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectTagsInput'
+    AddProjectTagInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectTagInput'
+    UpdateProjectTagInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectTagInput'
     AddProjectMediumsInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectMediumsInput'
     CreateProjectJobInput:
