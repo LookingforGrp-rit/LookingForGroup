@@ -14,6 +14,9 @@ export const ProjectPreviewSelector = Object.freeze({
   userId: true,
   tags: {
     select: ProjectTagSelector,
+    orderBy: {
+      displayOrder: 'asc' as const,
+    },
   },
   mediums: {
     select: ProjectMediumSelector,

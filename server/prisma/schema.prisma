@@ -85,13 +85,13 @@ model ProjectFollowings {
 }
 
 model ProjectImages {
-  imageId     Int       @id @default(autoincrement()) @map("image_id")
-  image       String    @db.VarChar(100)
-  altText     String    @db.VarChar(150)
-  position    Int
-  projectId   Int       @map("project_id")
-  projects    Projects  @relation("ProjectImages", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_images_projects")
-  isThumbFor  Projects? 
+  imageId    Int       @id @default(autoincrement()) @map("image_id")
+  image      String    @db.VarChar(100)
+  altText    String    @db.VarChar(150)
+  position   Int
+  projectId  Int       @map("project_id")
+  projects   Projects  @relation("ProjectImages", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_images_projects")
+  isThumbFor Projects?
 
   @@index([projectId], map: "FK_project_images_projects")
   @@map("project_images")
@@ -109,13 +109,25 @@ model ProjectSocials {
   @@map("project_socials")
 }
 
+model ProjectTags {
+  projectId    Int      @map("project_id")
+  tagId        Int      @map("tag_id")
+  displayOrder Int      @default(0) @map("display_order") @db.UnsignedInt
+  project      Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_tags_project")
+  tag          Tags     @relation(fields: [tagId], references: [tagId], onDelete: Cascade, map: "FK_project_tags_tag")
+
+  @@id([projectId, tagId])
+  @@index([tagId], map: "FK_project_tags_tag_id")
+  @@map("project_tags")
+}
+
 model Projects {
   projectId         Int                 @id @default(autoincrement()) @map("project_id")
   title             String              @db.VarChar(50)
   hook              String              @default("") @db.VarChar(300)
   description       String              @default("") @db.VarChar(2000)
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
-  thumbnailId       Int?                @map("thumbnail_id") @unique
+  thumbnailId       Int?                @unique @map("thumbnail_id")
   purpose           ProjectsPurpose?
   status            ProjectsStatus      @default(Planning)
   audience          String              @default("") @db.VarChar(100)
@@ -128,8 +140,9 @@ model Projects {
   projectImages     ProjectImages[]     @relation("ProjectImages")
   projectSocials    ProjectSocials[]
   mediums           Mediums[]
-  tags              Tags[]
+  // tags              Tags[]
   users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")
+  tags              ProjectTags[]
 
   @@index([userId], map: "FK_user_id")
   @@map("projects")
@@ -145,10 +158,11 @@ model Socials {
 }
 
 model Tags {
-  tagId    Int        @id @default(autoincrement()) @map("tag_id")
-  label    String     @db.VarChar(50)
-  type     String     @db.VarChar(50)
-  projects Projects[]
+  tagId       Int           @id @default(autoincrement()) @map("tag_id")
+  label       String        @db.VarChar(50)
+  type        String        @db.VarChar(50)
+  // projects    Projects[]
+  projectTags ProjectTags[]
 
   @@unique([label, type])
   @@map("tags")
