@@ -1,23 +1,20 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  CreateUserInput,
+  GoogleCredentialUserInput,
+} from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import {
-  uidHeaderKey,
-  firstNameHeaderKey,
-  lastNameHeaderKey,
-  emailHeaderKey,
-} from '#config/constants.ts';
 import envConfig from '#config/env.ts';
+import { uploadImageService } from '#services/images/upload-image.ts';
 import createUserService from '#services/users/create-user.ts';
 
 //POST api/users
 //creates a user
+//we are being sent this with all of its information (minus the name and email stuff google handles that)
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-  let uid = req.headers[uidHeaderKey] as string;
-  let firstName = req.headers[firstNameHeaderKey] as string | undefined;
-  let lastName = req.headers[lastNameHeaderKey] as string;
-  let email = req.headers[emailHeaderKey] as string;
-
-  if (envConfig.env === 'development' || envConfig.env === 'test') {
+  const info: GoogleCredentialUserInput = req.body as GoogleCredentialUserInput;
+  const devInfo: CreateUserInput = {} as CreateUserInput;
+  if ((envConfig.env === 'development' || envConfig.env === 'test') && !info.googleCredentials) {
     /// Fudge for development
     const devFirstName = req.query.devFirstName as string | undefined;
     const devLastName = req.query.devLastName as string | undefined;
@@ -25,35 +22,96 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     const devUID = req.query.devUID as string | undefined;
 
     if (devFirstName) {
-      firstName = devFirstName;
+      devInfo.firstName = devFirstName;
     }
 
     if (devLastName) {
-      lastName = devLastName;
+      devInfo.lastName = devLastName;
     }
 
     if (devEmail) {
-      email = devEmail;
+      devInfo.ritEmail = devEmail;
+      devInfo.username = devInfo.ritEmail.substring(0, devInfo.ritEmail.indexOf('@'));
     }
 
     if (devUID) {
-      uid = devUID;
+      devInfo.googleId = devUID;
     }
-  }
+    const result = await createUserService(devInfo);
+    if (result === 'INTERNAL_ERROR') {
+      const resBody: ApiResponse = {
+        status: 500,
+        error: 'Internal Server Error',
+        data: null,
+      };
+      res.status(500).json(resBody);
+      return;
+    }
 
-  if (!uid || !firstName || !lastName || !email) {
+    if (result === 'CONFLICT') {
+      const resBody: ApiResponse = {
+        status: 409,
+        error: 'User already exists',
+        data: null,
+      };
+      res.status(409).json(resBody);
+      return;
+    }
+
+    const resBody: ApiResponse<typeof result> = {
+      status: 201,
+      error: null,
+      data: result,
+    };
+    res.status(201).json(resBody);
+    return;
+  }
+  //don't check for google credentials if we have dev-defined things
+  //because if we have dev-defined things we're running it through swagger to test everything else aside from the google stuff
+  //so this is a bit of a bypass
+  //basically tryna say if we have none of the dev things check for the credentials
+  if (!info.googleCredentials) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Missing information in headers',
+      error: 'Missing Google credentials',
       data: null,
     };
     res.status(400).json(resBody);
     return;
   }
 
-  const username = email.substring(0, email.indexOf('@'));
+  //check if they sent over a pfp, and upload it to the db
+  if (req.file) {
+    const dbImage = await uploadImageService(
+      req.file.buffer,
+      req.file.originalname,
+      req.file.mimetype,
+    );
 
-  const result = await createUserService(uid, username, firstName, lastName, email);
+    if (dbImage === 'CONTENT_TOO_LARGE') {
+      const resBody: ApiResponse = {
+        status: 413,
+        error: 'Image too large',
+        data: null,
+      };
+      res.status(413).json(resBody);
+      return;
+    }
+
+    if (dbImage === 'INTERNAL_ERROR') {
+      const resBody: ApiResponse = {
+        status: 500,
+        error: 'Internal Server Error',
+        data: null,
+      };
+      res.status(500).json(resBody);
+      return;
+    }
+
+    info.profileImage = dbImage.location;
+  }
+
+  const result = await createUserService(info);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -72,6 +130,16 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       data: null,
     };
     res.status(409).json(resBody);
+    return;
+  }
+
+  if (result === 'BAD_REQUEST') {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Only RIT emails are allowed',
+      data: null,
+    };
+    res.status(400).json(resBody);
     return;
   }
 

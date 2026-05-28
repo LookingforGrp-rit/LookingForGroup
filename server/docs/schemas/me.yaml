@@ -241,7 +241,7 @@ components:
             phoneNumber:
               type: string
               nullable: true
-            universityId:
+            googleId:
               type: string
             createdAt:
               type: string
@@ -285,7 +285,7 @@ components:
         ritEmail: mhr2964@rit.edu
         visibility: 1
         phoneNumber: null
-        universityId: 11111111
+        googleId: 11111111
         createdAt: 2038-01-19 03:14:07
         updatedAt: 2038-01-19 03:14:07
 

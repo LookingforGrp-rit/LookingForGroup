@@ -98,7 +98,7 @@ vi.mock('#config/prisma.ts', () => ({
 
 const prismaUser = {
   userId: 1,
-  universityId: 'u123',
+  googleId: 'u123',
   username: 'goldleaf',
   firstName: 'Gold',
   lastName: 'Leaf',

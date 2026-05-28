@@ -671,7 +671,7 @@ paths:
           required: true
           schema:
             type: string
-          description: University ID from the Shibboleth authentication headers
+          description: Google ID from the Google OAuth response
       responses:
         '200':
           description: Username successfully retrieved
