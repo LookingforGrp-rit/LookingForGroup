@@ -2486,7 +2486,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
     post:
       summary: Adds a project tag
-      description: Adds an amount of tags to the specified project
+      description: Adds a tag to the specified project
       security:
         - shibbolethAuth: []
       tags:
@@ -2509,7 +2509,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddProjectTagsInput'
+              $ref: '#/components/schemas/AddProjectTagInput'
       responses:
         '201':
           description: Tags created successfully
@@ -2540,6 +2540,40 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
   /api/projects/{id}/tags/{tagId}:
+    patch:
+      summary: Updates the order of a tag in the list
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: path
+          name: tagId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the tag
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Tag updated successfully
+          content:
+            application/json:
+              example:
+                status: 200
+                error: null
+                data: null
     delete:
       summary: Deletes a project tag
       security:
@@ -2554,11 +2588,11 @@ paths:
           required: true
           description: The ID of the project
         - in: path
-          name: id
+          name: tagId
           schema:
             type: integer
           required: true
-          description: The ID of the project
+          description: The ID of the tag
         - in: query
           name: devId
           schema:
