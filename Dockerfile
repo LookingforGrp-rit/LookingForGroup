@@ -4,7 +4,7 @@
 # base Node.js layer
 #######################
 # node:20-slim should be compatable with Prisma
-FROM node:20-slim AS base
+FROM node:24-slim AS base
 
 #######################
 # system dependencies
@@ -25,7 +25,7 @@ COPY client/package.json ./client/package.json
 COPY shared/package.json ./shared/package.json
 
 # run clean install
-RUN npm ci
+RUN npm ci --ignore-scripts
 
 #######################
 # Copy full project source code
