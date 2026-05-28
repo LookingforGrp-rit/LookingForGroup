@@ -293,7 +293,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
             const label = tagLabel === 'Developers' ? 'Developer' : 
               tagLabel === 'Designers' ? 'Designer' : 
               tagLabel === 'Audio Creators' ? 'Audio' : 
-              tagLabel === 'Soft Skills' ? "Soft" :
+              //tagLabel === 'Soft Skills' ? "Soft" :
               tagLabel;
             const type = category === 'projects' ? 'Project Type' : tagLabel === 'Other' ? 'Major' : 'Role';
             const tagObj: Tag = { tagId: 0, label, type };
