@@ -945,7 +945,7 @@ Project Creator and Editor Popup style rules
 
 #project-editor-team-tabs,
 #project-editor-tag-search-tabs {
-  gap: 38px;
+  gap: 30px;
 }
 
 .project-editor-tag-search-tab {
@@ -956,6 +956,11 @@ Project Creator and Editor Popup style rules
   font-weight: 400;
   word-break: normal;
   max-width: 100%;
+}
+
+.medium-tag-tab {
+  border-right: 1px solid var(--border-color);
+  padding-right: 5%;
 }
 
 /* Project Editor/Creator Team Tab */
@@ -2760,6 +2765,7 @@ Project Carousel style rules
     width: 100%;
     height: 100%;
     object-fit: cover;
+    aspect-ratio: 16/9;
   }
 
   .project-carousel-tabs {
@@ -2784,6 +2790,7 @@ Project Carousel style rules
   text-align: left;
   padding: 20px;
   max-width: calc(100vw - 80px);
+  margin-bottom: 2.8%;
 
   #project-info-top {
     display: flex;
