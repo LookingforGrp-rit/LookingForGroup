@@ -3,6 +3,8 @@ import type { Request, Response } from 'express';
 import { loginService } from '#services/authentication/login.ts';
 
 export const login = async (request: Request, response: Response) => {
+  console.log('Yes hello the backend is working!!');
+
   if (!request.body) {
     console.log('Endpoint [TODO: INSERT ENDPOINT] threw an error: Missing credentials.');
     const resBody: ApiResponse = {
@@ -34,6 +36,8 @@ export const login = async (request: Request, response: Response) => {
 
   request.session.gid = userData.google_id;
   request.session.data = userData.userExists ? JSON.stringify(userData) : '';
+
+  console.log(`Session data { gid: ${request.session.gid}, data: ${request.session.data}`);
 
   const resBody: ApiResponse = {
     status: 200,

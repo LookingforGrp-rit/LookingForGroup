@@ -212,7 +212,7 @@ model Users {
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @unique @map("phone_number") @db.VarChar(20)
-  googleId          String              @unique(map: "google_id_UNIQUE") @map("google_id")
+  googleId          String              @unique(map: "google_id_UNIQUE") @map("google_id") @default("bill of rights")
   members           Members[]
   projectFollowings ProjectFollowings[]
   projects          Projects[]

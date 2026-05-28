@@ -46,5 +46,7 @@ export const loginService = async (token: string): Promise<UserData | LoginServi
     userExists: Boolean(user),
   };
 
+  console.log(`logging in user ${JSON.stringify(userData)}`);
+
   return userData;
 };
