@@ -1182,7 +1182,6 @@ Page popup style rules
 
 /* Mobile styling */
 
-/* Side-scrolling for mobile filters pop-up */
 @media screen and (max-width: 1180px)
 {
   .popup #filters-popup{
@@ -1198,11 +1197,6 @@ Page popup style rules
       justify-content: flex-start;
       column-gap: 5vw;
     }
-  }
-  .popup-section #more-filters-scrollers
-  {
-    display: flex;
-    flex-wrap: nowrap;
   }
 }
 
