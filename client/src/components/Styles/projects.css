@@ -1644,6 +1644,122 @@ select.edit-position-compensation {
   cursor: pointer;
 }
 
+.popup-trigger-invisible {
+  background: none;
+  border: none;
+}
+
+.project-crop {
+  width: 70%;
+  text-align: center;
+
+  img {
+    border: 3px solid white;
+    margin: 1vw 0;
+  }
+
+  #zoom {
+    width: 50%;
+    background: none;
+  }
+
+  .project-crop-extra-info {
+    margin-bottom: 20px;
+  }
+
+  .confirm-project-crop {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    padding-bottom: 20px;
+    width:max-content;
+  }
+
+  #project-crop-save {
+    border: none;
+    border-radius: 30px;
+    padding: 10px 20px;
+    background-color: var(--primary-color) !important;
+    color: var(--invert-text);
+    font-size: 1.25rem;
+    width: max-content;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: -1%;
+  }
+
+  #project-crop-cancel {
+    color: var(--primary-color);
+    background-color: transparent;
+    font-size: 1.25rem;
+    font-weight: 700;
+    border: none;
+  }
+
+  /* #region slider */
+  input[type=range]::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 8.4px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    background: var(--primary-color);
+    border-radius: 1.3px;
+    border: 0.2px solid var(--border-color);
+  }
+
+  input[type=range]:focus::-webkit-slider-runnable-track {
+    background: var(--primary-color);
+  }
+
+  input[type=range]::-moz-range-track {
+    width: 100%;
+    height: 8.4px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+    background: var(--primary-color);
+    border-radius: 1.3px;
+    border: 3px solid var(--bg-color);
+  }
+
+  input[type=range]::-ms-track {
+    width: 100%;
+    height: 8.4px;
+    background: transparent;
+    border-color: transparent;
+    border-width: 16px 0;
+    color: transparent;
+  }
+  input[type=range]::-ms-fill-lower {
+    background: var(--primary-color);
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  }
+  input[type=range]:focus::-ms-fill-lower {
+    background: var(--primary-color);
+  }
+  input[type=range]::-ms-fill-upper {
+    background: var(--primary-color);
+    border: 0.2px solid #010101;
+    border-radius: 2.6px;
+    box-shadow: 1px 1px 1px #000000, 0px 0px 1px #0d0d0d;
+  }
+  input[type=range]:focus::-ms-fill-upper {
+    background: var(--primary-color);
+  }
+  /* #endregion */
+  
+  .slider-text {
+    
+  }
+}
+
+
+#canvas-crop {
+  background: white;
+  aspect-ratio: 16/9;
+  height: 100%;
+  margin: 1vw 0;
+}
+
 /* #endregion */
 
 

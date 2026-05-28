@@ -73,6 +73,8 @@ export const MediaTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
+  const [tempImage, setTempImage] = useState<ProjectImage | PendingProjectImage>();
+
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
 
@@ -376,6 +378,26 @@ export const MediaTab = ({
 
   // --- Complete component ---
   return (
+    <Popup>
+      <PopupContent>
+        <div className="project-crop">
+          <label>Crop image for thumbnail usage</label>
+          <img className="project-crop-img"
+            src={"/src/images/project_temp.png"}
+            alt={"/src/images/project_temp.png"}
+          />
+          <input type="range" id="zoom" name="zoom" min={1} max={100}/>
+          <label className="slider-text" htmlFor="zoom">zoom</label>
+          <div className="project-crop-extra-info">
+            Upload images that showcase your project. Select one image to be used as
+            the main thumbnail on the project's discover card.
+          </div>
+          <div className="confirm-project-crop">
+            <PopupButton buttonId="project-crop-save">Crop Image</PopupButton>
+            <PopupButton buttonId="project-crop-cancel" className="project-info-buttons">Skip</PopupButton>
+          </div>
+        </div>
+      </PopupContent>
     <div id="project-editor-media">
       <label>Project Images</label>
       <div className="project-editor-extra-info">
@@ -434,8 +456,8 @@ export const MediaTab = ({
             {/* Hover element */}
             <div className="project-image-hover">
               {projectAfterMediaChanges.thumbnail === projectImage || 
-        ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
-      ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId) ?
+              ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
+              ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId) ?
                 <ThemeIcon
                   id="star"
                   className="star filled-star"
@@ -467,9 +489,11 @@ export const MediaTab = ({
         ))}
 
         {/* Image uploader */}
+        <PopupButton className="popup-trigger-invisible">
         <div id="project-editor-add-image">
           <ProjectImageUploader onFileSelected={handleImageUpload} />
         </div>
+        </PopupButton>
       </div>
 
       {/* Save button */}
@@ -501,5 +525,6 @@ export const MediaTab = ({
         </Popup>
       </div>
     </div>
+    </Popup>
   );
 };
