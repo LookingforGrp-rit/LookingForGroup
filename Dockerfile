@@ -50,7 +50,6 @@ RUN npm run build
 #######################
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV DB_NAME=lfg
 
 EXPOSE 3000
 
