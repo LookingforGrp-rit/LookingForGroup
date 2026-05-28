@@ -295,13 +295,35 @@ input:checked+.slider:before {
     color: var(--primary-color);
   }
 
+
+
+  #back {
+    position: relative;
+    margin-bottom: 50px;
+  }
+
+  @media (max-width: 420px) {
+    #back {
+      position: absolute;
+    }
+
+    .page-title {
+      margin-top: 42px;
+      padding-top: 20px;
+    }
+
+    #header {
+      margin-bottom: 20px;
+    }
+  }
+
   .settings-row {
     display: flex;
     flex-direction: row;
     margin: 0px min(8.47vw, 128px) 0px min(3.17vw, 48px);
     justify-content: flex-start;
   }
-  
+
   .settings-column {
     margin: 0px min(1vw, 20px)
   }
