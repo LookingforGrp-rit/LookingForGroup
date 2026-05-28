@@ -1383,6 +1383,13 @@ Project Creator and Editor Popup style rules
   }
 }
 
+@media (max-width: 1194px) {
+  #project-team-open-positions-popup {
+   
+  }
+}
+
+
 #team-positions-popup-list-header {
   text-align: left;
   font-size: 1.25rem;
@@ -3140,15 +3147,77 @@ button#positions-popup-list-item-active {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
-    height: 100vh;
+    
     width: calc(100% - 40px);
     justify-content: baseline;
   }
 
   .positions-popup-list {
-    max-height: fit-content;
+    
   }
 }
+
+@media (max-width: 1194px) {
+
+  #project-open-positions-popup {
+    display: grid;
+    width: 100%;
+    max-width: 1121px;
+    height: 849px;
+    max-height: 849px;
+    gap: 30px;
+    padding: 28px 5px 21px 5px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
+    margin-left: 0%;
+    margin-right: 0%;
+    grid-template:
+      'header header' 50px
+      'list info' auto
+      'close close' 50px /
+      auto auto;
+  }
+  
+}
+
+@media (max-width: 700px) {
+
+  #project-open-positions-popup {
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    height: 100vh;
+    width: calc(100% - 40px);
+    justify-content: baseline;
+    align-items: center;
+    
+  }
+
+  .positions-popup-list {
+    max-height: fit-content;
+    margin-left: 20% !important;
+    margin-right: 20% !important;
+  }
+
+  .positions-popup-info-wrapper {
+    margin-right: 0%;
+  }
+
+  #project-team-open-positions-popup{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    align-content: center;
+  }
+
+  
+  
+}
+
 
 .positions-popup-info select {
   margin: 0;
