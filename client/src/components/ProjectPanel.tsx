@@ -133,61 +133,58 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
 
   return (
     <button className={'project-panel'} onClick={() => navigate(projectURL)}>
-      <img
-        src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-        alt={'project image'}
-      />
-      <div
-        className={'project-panel-hover'}
-      // style={rightAlign ? { width: width, right: 0 } : { width: width }}
-      >
-        {/* <h2>{project.title}</h2> */}
-        <div className='project-title-likes'>
-          <h2>{project.title}</h2>
-          <div className='project-likes'>
-            <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
-              {formatFollowCount(followCount)}
-            </p>
-            {isFollowing ? (
-              <ThemeIcon
-                width={28}
-                height={25}
-                id={"heart-filled"}
-                ariaLabel="following"
-                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
-              />
-            ) : (
-              <ThemeIcon
-                width={28}
-                height={25}
-                id={"heart-empty"}
-                ariaLabel="following"
-                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
-              />
-            )}
-            {/* <i className={`fa-solid fa-heart ${isFollowing ? 'following' : ''}`}></i>
-            </button> */}
+      <div className="project-image-container">
+        <img
+          src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
+          alt={'project image'}
+        />
+        <div className={'project-panel-hover'}>
+          <div id="project-panel-tags">
+            {project.mediums.map((medium: ProjectMedium, index) => {
+              if (index < 2) {
+                return (
+                  <TagElement
+                    type="medium" key={index} selected={true}>
+                    <p>{medium.label}</p>
+                  </TagElement>
+                );
+              } else if (index === 2) {
+                return (
+                  <TagElement key={index} selected={true}>
+                    <p>+{project.mediums.length - 2}</p>
+                  </TagElement>
+                );
+              }
+            })}
           </div>
+          <div id="quote">{project.hook}</div>
         </div>
-        <div id="project-panel-tags">
-          {project.mediums.map((medium: ProjectMedium, index) => {
-            if (index < 2) {
-              return (
-                <TagElement
-                  type="medium" key={index} selected={true}>
-                  <p>{medium.label}</p>
-                </TagElement>
-              );
-            } else if (index === 2) {
-              return (
-                <TagElement key={index} selected={true}>
-                  <p>+{project.mediums.length - 2}</p>
-                </TagElement>
-              );
-            }
-          })}
+      </div>
+      
+      <div className='project-title-likes'>
+        <h2>{project.title}</h2>
+        <div className='project-likes'>
+          <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
+            {formatFollowCount(followCount)}
+          </p>
+          {isFollowing ? (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-filled"}
+              ariaLabel="following"
+              onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+            />
+          ) : (
+            <ThemeIcon
+              width={28}
+              height={25}
+              id={"heart-empty"}
+              ariaLabel="following"
+              onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+            />
+          )}
         </div>
-        <div id="quote">{project.hook}</div>
       </div>
     </button>
   );

@@ -13,6 +13,7 @@ export type TagType =
   | "Developer"
   | "Designer"
   | "Soft"
+  | "Audio"
   | "Purpose"
   | "Project Type"
   | "Role"
@@ -926,6 +927,11 @@ export interface ProjectTag extends Tag {
    * The location of this resource on the server
    */
   apiUrl: string;
+
+  /**
+   * The order this tag is in compared to other tags attached to the project
+   */
+  displayOrder: number;
 }
 
 /**
@@ -1303,8 +1309,12 @@ export type UpdateProjectThumbnailInput = {
 /**
  * Data required to add a tag to a project
  */
-// TODO rename to AddProjectTagInput (no plural)
-export type AddProjectTagsInput = Pick<ProjectTag, "tagId">;
+export type AddProjectTagInput = Pick<ProjectTag, "tagId" | "displayOrder">;
+
+/**
+ * Data required to update a tag on a project
+ */
+export type UpdateProjectTagInput = Partial<AddProjectTagInput>;
 
 /**
  * Data required to add a medium to a project

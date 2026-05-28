@@ -10,10 +10,10 @@ export const projectTabs = {
   'Project Type': { categoryTags: [], categoryName: 'Project Type', color: 'blue' },
   'Genre': { categoryTags: [], categoryName: 'Genre', color: 'green' },
   'Purpose': { categoryTags: [], categoryName: 'Purpose', color: 'grey' },
-  'Developer Skill': { categoryTags: [], categoryName: 'Developer Skills', color: 'grey' },
-  'Designer Skill': { categoryTags: [], categoryName: 'Designer Skills', color: 'grey' },
-  'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skills', color: 'grey'},
-  'Soft Skill': { categoryTags: [], categoryName: 'Soft Skills', color: 'grey' },
+  'Developer Skill': { categoryTags: [], categoryName: 'Developer Skills', color: 'yellow' },
+  'Designer Skill': { categoryTags: [], categoryName: 'Designer Skills', color: 'red' },
+  'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skills', color: 'periwinkle'},
+  'Soft Skill': { categoryTags: [], categoryName: 'Soft Skills', color: 'purple' },
 };
 
 // export const peopleTabs = [
@@ -27,7 +27,7 @@ export const projectTabs = {
 export const peopleTabs = {
   'Developer Skill': { categoryTags: [], categoryName: 'Developer Skill', color: 'yellow' },
   'Designer Skill': { categoryTags: [], categoryName: 'Designer Skill', color: 'red' },
-  'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skill', color: 'grey'},
+  'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skill', color: 'periwinkle'},
   'Soft Skill': { categoryTags: [], categoryName: 'Soft Skill', color: 'purple' },
   'Role': { categoryTags: [], categoryName: 'Role', color: 'grey' },
   'Major': { categoryTags: [], categoryName: 'Major', color: 'orange' },
@@ -157,7 +157,7 @@ export const desSkills = [
   'Clip Studio Paint',
 ];
 
-export const peopleTags = ['Developers', 'Designers', 'Other'];
+export const peopleTags = ['Developers', 'Designers', 'Audio Creators'/*, 'Soft Skills', 'Other'*/];
 
 //Used for profiles and position listings on projects
 export const proficiencies = [

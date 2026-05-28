@@ -361,43 +361,51 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
     let tagFilteredList = items.filter((item) => {
      if (activeTagFilters.length === 0) return true;
-     let matchesAny = false;
+     //let matchesAny = false;
+     let matchesAll = true;
       for (const tag of activeTagFilters) {
         // Check project type by name since IDs are not unique relative to tags
         // Project Type tag
         if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
           const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
-          if (projectTypes.includes(tag.label.toLowerCase())) {
-            matchesAny = true;
-          }
-          else if (tag.label === `New`){
+          if (tag.label === `New`){
             //change the subtraction to change the 
             const cutOff = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
             const date = Date.parse(item.createdAt.toString());
-            if (date >= cutOff)
+            if (date < cutOff)
             {
-              matchesAny = true;
+              //matchesAny = true;
+              matchesAll = false;
             }
+          }
+          else if (!projectTypes.includes(tag.label.toLowerCase())) {
+            //matchesAny = true;
+            matchesAll = false;
           }
         }
         // Purpose tag 
         else if (tag.type === 'Purpose' && item.purpose) {
           const projectPurpose = item.purpose.toLowerCase();
-          if (projectPurpose.includes(tag.label.toLowerCase())) {
-            matchesAny = true;
+          if (!projectPurpose.includes(tag.label.toLowerCase())) {
+            //matchesAny = true;
+            matchesAll = false;
           }
         }
         // Tag check can be done by ID: Genre
         else if (tag.tagId && item.tags) {
             const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
         
-            if (tagIDs.includes(tag.tagId)) {
-              matchesAny = true;
+            if (!tagIDs.includes(tag.tagId)) {
+              //matchesAny = true;
+              matchesAll = false;
             }
         }
       
-      return matchesAny;
-    }});
+      
+      }
+      //return matchesAny;
+      return matchesAll;
+    });
      
     // If no tags are currently selected, render all projects
     // !! Needs to be skipped if searchbar has any input !!
@@ -451,7 +459,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           matchesAny = true;
         }
         // Check for specific skills
-        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft') {
+        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio') {
           const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
             
@@ -462,21 +470,37 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         else if (tag.label === 'Designer' && item.designer) {
             matchesAny = true;
         }
+        else if (tag.label === 'Audio') {
+          //TODO: replace with an item boolean like with designer or developer, probably a backend task
+          const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
+          .filter((s) => typeof s === 'string');
+
+          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
+        }
+        else if (tag.label === 'Soft') {
+          //TODO: replace with an item boolean like with designer or developer, probably a backend task
+          const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
+          .filter((s) => typeof s === 'string');
+
+          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
+        }
         else if (tag.label === 'Other' && !item.designer && !item.developer) {
           matchesAny = true;
         } 
         // Check role and major by name since IDs are not unique relative to tags
-        /* These appear to be unused
-        else if (tag.type === 'Role' && item.job_title) { 
-            if (item.job_title.toLowerCase() === tag.label.toLowerCase()) {
+        /* it seems roles are not yet implimented
+        else if (tag.type === 'Role' && item.title) { 
+            if (item.bio === tag.label.toLowerCase()) {
               matchesAny = true;
             }
-        } else if (tag.type === 'Major' && item.major) {
-            if (item.major.toLowerCase() === tag.label.toLowerCase()) {
-              matchesAny = true;
-            }
+        } */
+        else if (tag.type === 'Major' && item.majors) {
+          const userMajors = item.majors?.map((s) => s?.label?.toLowerCase())
+            .filter((s) => typeof s === 'string');
+          if (userMajors.includes(tag.label.toLowerCase())) {
+            matchesAny = true;
+          }
         }
-        */
         return matchesAny;
       }
     });

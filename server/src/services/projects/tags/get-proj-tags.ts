@@ -1,4 +1,4 @@
-import type { ProjectTag } from '@looking-for-group/shared';
+import type { ProjectTag, TagType } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectTagSelector } from '#services/selectors/projects/parts/project-tag.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -17,7 +17,7 @@ const getProjectTagsService = async (
         tags: {
           select: ProjectTagSelector,
           orderBy: {
-            label: 'asc',
+            displayOrder: 'asc',
           },
         },
       },
@@ -27,7 +27,14 @@ const getProjectTagsService = async (
       return 'NOT_FOUND';
     }
 
-    return project.tags.map((tag) => transformProjectTag(projectId, tag));
+    return project.tags.map((tag) =>
+      transformProjectTag(projectId, {
+        label: tag.tag.label,
+        tagId: tag.tagId,
+        type: tag.tag.type as TagType,
+        displayOrder: tag.displayOrder,
+      }),
+    );
   } catch (e) {
     console.error(`Error in getProjectTagsService: ${JSON.stringify(e)}`);
 

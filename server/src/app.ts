@@ -1,3 +1,5 @@
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import express, { type Request, type Response } from 'express';
 import session, { type CookieOptions } from 'express-session';
@@ -58,8 +60,20 @@ app.use('/me', meRouter);
 app.use('/images', imagesRouter);
 app.use('/mod', modRouter);
 
-app.get('', (_req: Request, res: Response) => {
-  res.json({ message: 'You Reached The Looking For Group API' });
-});
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const clientBuildPath = path.join(__dirname, '../../client/build');
+
+if (envConfig.env === 'production') {
+  app.use(express.static(clientBuildPath));
+
+  app.use((_req: Request, res: Response) => {
+    res.sendFile(path.join(clientBuildPath, 'index.html'));
+  });
+}
+// app.get('/', (_req: Request, res: Response) => {
+//   res.json({ message: 'You Reached The Looking For Group API' });
+// });
 
 export default app;
