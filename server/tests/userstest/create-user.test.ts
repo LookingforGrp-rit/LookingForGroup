@@ -1,4 +1,4 @@
-import type { MePrivate } from '@looking-for-group/shared';
+import type { CreateUserInput, MePrivate } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 //import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
@@ -34,7 +34,7 @@ describe('createUserService', async () => {
       username: 'goldleaf',
       firstName: 'Gold',
       lastName: 'Leaf',
-      ritEmail: 'gold@rit.edu',
+      ritEmail: 'goldleaf@rit.edu',
       profileImage: null,
       headline: '',
       pronouns: '',
@@ -55,7 +55,7 @@ describe('createUserService', async () => {
       username: 'goldleaf',
       firstName: 'Gold',
       lastName: 'Leaf',
-      ritEmail: 'gold@rit.edu',
+      ritEmail: 'goldleaf@rit.edu',
       googleId: '1234',
       visibility: 'Public',
       phoneNumber: null,
@@ -99,7 +99,13 @@ describe('createUserService', async () => {
     vi.mocked(prisma.users.create).mockResolvedValue(prismaUser);
     vi.mocked(transformMeToPrivate).mockReturnValue(mePrivate);
 
-    const result = await createUserService('1234', 'goldleaf', 'Gold', 'Leaf', 'gold@rit.edu');
+    const result = await createUserService({
+      username: 'goldleaf',
+      firstName: 'Gold',
+      lastName: 'Leaf',
+      ritEmail: 'goldleaf@rit.edu',
+      googleId: '1234',
+    } as CreateUserInput);
 
     expect(vi.mocked(prisma.users.create)).toHaveBeenCalledWith({
       data: {
@@ -107,7 +113,7 @@ describe('createUserService', async () => {
         username: 'goldleaf',
         firstName: 'Gold',
         lastName: 'Leaf',
-        ritEmail: 'gold@rit.edu',
+        ritEmail: 'goldleaf@rit.edu',
       },
       select: expect.any(Object),
     });
