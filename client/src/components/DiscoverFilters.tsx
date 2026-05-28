@@ -63,10 +63,15 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   //Keeps track of the currently selected tab in this popup.
   const [activeTabId, setActiveTabId] = useState(0);
 
-  // Dynamically show/hide arrows
+  // Dynamically show/hide arrows for discover / meet pages
   const tagFiltersRef = useRef<HTMLDivElement>(null);
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
+
+    // Dynamically show/hide arrows for filters popups
+  const moreTagFiltersRef = useRef<HTMLDivElement>(null);
+  const [moreShowLeftArrow, setMoreShowLeftArrow] = useState(false);
+  const [moreShowRightArrow, setMoreShowRightArrow] = useState(false);
 
 
   // Formatted for SearchBar dataSets prop
@@ -215,6 +220,20 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   };
 
   /**
+   * Filters pop-up controls
+   * Checks the scroll position and container width to determine if 
+   * there is more content to the left or right.
+   */
+  const checkMoreScrollVisibility = () => {
+    if (moreTagFiltersRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = moreTagFiltersRef.current;
+      
+      setMoreShowLeftArrow(scrollLeft > 0);
+      setMoreShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1);
+    }
+  };
+
+  /**
    * Scrolls horizontal tag list left or right.
    * Hides or shows scroll buttons depending on edge conditions.
    */
@@ -227,6 +246,24 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         tagFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
       } else if (direction === 'right') {
         tagFiltersRef.current.scrollBy({ left: scrollAmt, behavior: 'smooth' });
+      }
+    }
+  };
+
+  /**
+   * Filters pop-up controls
+   * Scrolls horizontal tag list left or right.
+   * Hides or shows scroll buttons depending on edge conditions.
+   */
+  const moreScrollTags = (direction: string) => {
+    if (moreTagFiltersRef.current) {
+      // 80% of width. Feel free to fiddle with
+      const scrollAmt = moreTagFiltersRef.current.clientWidth * 0.8;
+      
+      if (direction === 'left') {
+        moreTagFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
+      } else if (direction === 'right') {
+        moreTagFiltersRef.current.scrollBy({ left: scrollAmt, behavior: 'smooth' });
       }
     }
   };
@@ -251,6 +288,21 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   const isTagEnabled = (tag: Tag, color: string) => {
     return enabledFilters.findIndex(f => f.tag.label === tag.label && f.color === color);
   };
+
+  // Filters pop-up controls
+  // Check arrow visibility on resize, mount, and data changes
+  useEffect(() => {
+    checkMoreScrollVisibility(); // initial
+    
+    let timeout: NodeJS.Timeout;
+    const handleResize = () => {
+      clearTimeout(timeout);
+      timeout = setTimeout(checkMoreScrollVisibility, 150);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, [dataLoaded]);
 
   /**
    * Initializes popup filters to the first tab.
@@ -336,28 +388,50 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                       setSearchedTags({ tags: results[0] as Tag[], color: searchedTags.color });
                     }}
                   ></SearchBar>
-                  <div id="filter-tabs">
-                    {filterPopupTabs.map((tab, index) => (
-                      <a
-                        key={`${tab.categoryName}-${index}`}
-                        className={`filter-tab ${index === activeTabId ? 'selected' : ''}`}
-                        onClick={() => {
-                          //const element = e.target as HTMLElement;
-
-                          //// Remove .selected from all 3 options, add it only to current button
-                          //const tabs = document.querySelector('#filter-tabs')!.children;
-                          //for (let i = 0; i < tabs.length; i++) {
-                          //  tabs[i].classList.remove('selected');
-                          //}
-                          //element.classList.add('selected');
-
-                          //Sets the index to the setActiveId value.
-                          setActiveTabId(index);
-                        }}
+                  <div id="more-filters-scrollers">
+                    <button
+                        id="more-filters-left-scroll"
+                        className={`filters-scroller ${!moreShowLeftArrow ? 'hide' : ''}`}
+                        onClick={() => moreScrollTags('left')}
                       >
-                        {tab.categoryName}
-                      </a>
-                    ))}
+                        <i className="fa fa-caret-left"></i>
+                     </button>
+                     <div 
+                        id="discover-more-tag-filters" 
+                        tabIndex={-1}
+                        ref={moreTagFiltersRef}
+                        onScroll={checkMoreScrollVisibility}
+                      ></div>
+                    <div id="filter-tabs">
+                      {filterPopupTabs.map((tab, index) => (
+                        <a
+                          key={`${tab.categoryName}-${index}`}
+                          className={`filter-tab ${index === activeTabId ? 'selected' : ''}`}
+                          onClick={() => {
+                            //const element = e.target as HTMLElement;
+
+                            //// Remove .selected from all 3 options, add it only to current button
+                            //const tabs = document.querySelector('#filter-tabs')!.children;
+                            //for (let i = 0; i < tabs.length; i++) {
+                            //  tabs[i].classList.remove('selected');
+                            //}
+                            //element.classList.add('selected');
+
+                            //Sets the index to the setActiveId value.
+                            setActiveTabId(index);
+                          }}
+                        >
+                          {tab.categoryName}
+                        </a>
+                      ))}
+                    </div>
+                    <button
+                        id="more-filters-right-scroll"
+                        className={`filters-scroller ${!moreShowRightArrow ? 'hide' : ''}`}
+                        onClick={() => moreScrollTags('right')}
+                      >
+                        <i className="fa fa-caret-right"></i>
+                      </button>
                   </div>
                   <hr />
                   <div id="filter-tags">

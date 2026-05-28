@@ -465,9 +465,6 @@ Filters / Tags Style Rules
 }
 
 .filters-scroller {
-  /* position: absolute;
-  top: 0;
-  height: 100%; */
   font-size: medium;
   border: none;
   background-color: rgba(0, 0, 0, 0);
@@ -493,6 +490,26 @@ Filters / Tags Style Rules
   right: 0;
   text-align: right;
   background-image: linear-gradient(to right, #00000000 30%, var(--bg-color) 70%);
+}
+
+/* Scrollers used in the popup filters tabs */
+#more-filters-left-scroll {
+  left: 0;
+  text-align: left;
+  background-image: linear-gradient(to right, var(--bg-color) 30%, #00000000 70%);
+}
+#more-filters-right-scroll {
+  right: 0;
+  text-align: right;
+  background-image: linear-gradient(to right, #00000000 30%, var(--bg-color) 70%);
+}
+
+/* Hides scrolling arrows when scrolling is not an option (non-mobile devices) */
+@media screen and (min-width: 1180px)
+{
+  #more-filters-left-scroll, #more-filters-right-scroll {
+    display: none;
+}
 }
 
 #discover-tag-filters {
