@@ -38,6 +38,9 @@ import {
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 //import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
+import {
+  transporter
+} from "../../../nodemailer";
 
 // --- Variables ---
 // Default project value
@@ -499,7 +502,6 @@ export const TeamTab = ({
    * @param EmailInvite email object to read info from and send
    */
   const sendEmail = async (email: EmailInvite) => {
-    const transporter: any = email.transporter;
     const inviteeName: string = `${email.invitee?.user?.firstName} ${email.invitee?.user?.lastName}`;
     const inviteeEmail: string = `${email.invitee?.user?.username}.rit.edu`;
     const targetUserEmail: string = `${email.targetUser.username}.rit.edu`;
@@ -515,7 +517,7 @@ export const TeamTab = ({
     try {
       const info = await transporter.sendMail({
         from: `"${inviteeName}" <${inviteeEmail}>`, // sender address
-        to: `${targetUserEmail}`, // list of recipients
+        to: `ddw6891@rit.edu`, // list of recipients
         subject: `Invitation to join ${projectName}`, // subject line
         text: `${email.textBody}`, // plain text body
         html: `${email.HTMLBody}`, // HTML body
@@ -554,24 +556,6 @@ export const TeamTab = ({
       \n
       Click this link to accept the invitation: \n
       Thank you!`;
-
-    //MOVE THIS SOMEWHERE WHERE IT ONLY HAPPENS ONCE
-    //Require is undefined for some reason
-    const nodemailer = require("nodemailer");
-
-    //MOVE THIS SOMEWHERE WHERE IT ONLY HAPPENS ONCE
-    // Create a transporter using SMTP
-    //Using local for now
-    const transporter = nodemailer.createTransport({
-      host: "localhost",
-      port: 587,
-      secure: false, // use STARTTLS (upgrade connection to TLS after connecting)
-
-      // auth: {
-      //   user: process.env.SMTP_USER,
-      //   pass: process.env.SMTP_PASS,
-      // },
-    });
 
     //Send the email to targetUserEmail
     const emailObject: EmailInvite = {
