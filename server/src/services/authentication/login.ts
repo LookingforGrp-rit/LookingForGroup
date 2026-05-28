@@ -3,8 +3,15 @@ import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type LoginServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'BAD_REQUEST'>;
+export type UserData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  google_id: string;
+  userExists: boolean;
+};
 
-export const loginService = async (token: string): Promise<boolean | LoginServiceError> => {
+export const loginService = async (token: string): Promise<UserData | LoginServiceError> => {
   const client = new OAuth2Client();
 
   // asking google to verify the token
@@ -23,18 +30,21 @@ export const loginService = async (token: string): Promise<boolean | LoginServic
   }
 
   //prisma check for user existence
-  const userExists = await prisma.users.findFirst({
+  const user = await prisma.users.findFirst({
     where: {
       googleId,
     },
   });
 
-  //🍪 creation code goes here (or in the controller, whichever makes more sense but i think putting in the service makes more sense)
+  // Sets up data to return to the controller
+  // (which it will store in the session store if the user does not exist)
+  const userData: UserData = {
+    firstName: user?.firstName || payload.given_name || 'John',
+    lastName: user?.lastName || payload.family_name || 'Doe',
+    email: user?.ritEmail || email,
+    google_id: user?.googleId || googleId || '0',
+    userExists: Boolean(user),
+  };
 
-  if (!userExists) {
-    //- loginService stores the necessary information in session storage (email, name, etc, google id)
-    //so uh do that in here
-  }
-  //it returns the truth value, which would correspond to whether or not they exist
-  return Boolean(userExists);
+  return userData;
 };

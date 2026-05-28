@@ -10,7 +10,7 @@
     "checkJs": true,
     "strict": true,
     "allowUnreachableCode": false,
-    "typeRoots": ["**/generated/**"],
+    "typeRoots": ["./src/typings", "**/generated/**"],
     "paths": {
       "#app.ts": ["./src/app.ts"],
       "#prisma-models/*": ["./src/models/generated/prisma/*"],

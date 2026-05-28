@@ -14,15 +14,15 @@ import usersRouter from '#routes/users.ts';
 const app = express();
 
 app.use(
-  // I have no idea why eslint is flagging this.
-  // If anyone else can figure it out please do and remove these comments
   // See express session documentation to understand what any of it means.
-
   session({
     secret: process.env.EXPRESS_SESSION_SECRET || 'declaration of independence',
     resave: false,
     saveUninitialized: false,
-    store: new PrismaSessionStore(prisma, { checkPeriod: 2 * 60 * 1000 /* every 2 minutes */ }),
+    store: new PrismaSessionStore(prisma, {
+      checkPeriod: 2 * 60 * 1000 /* every 2 minutes */,
+      dbRecordIdIsSessionId: true,
+    }),
     cookie: function (): CookieOptions {
       return {
         httpOnly: true,

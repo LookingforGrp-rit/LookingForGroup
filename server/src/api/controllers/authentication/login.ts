@@ -13,9 +13,8 @@ export const login = async (request: Request, response: Response) => {
     return response.status(400).json(resBody);
   }
 
-  const userExists = await loginService(request.params.credentials); //since it returns the user's existence
-
-  if (userExists === 'INTERNAL_ERROR') {
+  const userData = await loginService(request.params.credentials); //since it returns the user's existence
+  if (userData === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
       status: 500,
       error: 'Internal Server Error',
@@ -24,7 +23,7 @@ export const login = async (request: Request, response: Response) => {
     return response.status(500).json(resBody);
   }
 
-  if (userExists === 'BAD_REQUEST') {
+  if (userData === 'BAD_REQUEST') {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Email missing or invalid',
@@ -33,10 +32,13 @@ export const login = async (request: Request, response: Response) => {
     return response.status(400).json(resBody);
   }
 
+  request.session.gid = userData.google_id;
+  request.session.data = userData.userExists ? JSON.stringify(userData) : '';
+
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: { userExists }, //{userExists: true/false} for the frontend's use
+    data: { userExists: userData.userExists }, //{userExists: true/false} for the frontend's use
   };
   return response.status(200).json(resBody); //now frontend can get it
   //i notice that this is routed to /google-login so it wouldn't handle all the other logins

@@ -239,6 +239,7 @@ model Session {
   id String @id
   sid String @unique
   data String
+  gid String @default("federalist papers")
   expiresAt DateTime
 }
 
