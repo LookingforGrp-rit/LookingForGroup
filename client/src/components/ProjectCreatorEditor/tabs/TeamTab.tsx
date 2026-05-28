@@ -38,6 +38,9 @@ import {
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 //import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
+import {
+  //transporter
+} from "../../../../../server/src/mailer";
 
 // --- Variables ---
 // Default project value
@@ -555,27 +558,9 @@ export const TeamTab = ({
       Click this link to accept the invitation: \n
       Thank you!`;
 
-    //MOVE THIS SOMEWHERE WHERE IT ONLY HAPPENS ONCE
-    //Require is undefined for some reason
-    const nodemailer = require("nodemailer");
-
-    //MOVE THIS SOMEWHERE WHERE IT ONLY HAPPENS ONCE
-    // Create a transporter using SMTP
-    //Using local for now
-    const transporter = nodemailer.createTransport({
-      host: "localhost",
-      port: 587,
-      secure: false, // use STARTTLS (upgrade connection to TLS after connecting)
-
-      // auth: {
-      //   user: process.env.SMTP_USER,
-      //   pass: process.env.SMTP_PASS,
-      // },
-    });
-
     //Send the email to targetUserEmail
     const emailObject: EmailInvite = {
-      transporter: transporter,
+      transporter: undefined,
       invitee: invitee,
       targetUser: targetUser,
       project: project,
