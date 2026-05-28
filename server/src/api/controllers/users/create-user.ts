@@ -1,17 +1,20 @@
 import type {
   ApiResponse,
   CreateUserInput,
-  GoogleCredentialPayload,
+  GoogleCredentialUserInput,
 } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import envConfig from '#config/env.ts';
+import { uploadImageService } from '#services/images/upload-image.ts';
 import createUserService from '#services/users/create-user.ts';
 
 //POST api/users
 //creates a user
+//we are being sent this with all of its information (minus the name and email stuff google handles that)
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-  const info: CreateUserInput = req.body as CreateUserInput;
-  if (envConfig.env === 'development' || envConfig.env === 'test') {
+  const info: GoogleCredentialUserInput = req.body as GoogleCredentialUserInput;
+  const devInfo: CreateUserInput = {} as CreateUserInput;
+  if ((envConfig.env === 'development' || envConfig.env === 'test') && !info.googleCredentials) {
     /// Fudge for development
     const devFirstName = req.query.devFirstName as string | undefined;
     const devLastName = req.query.devLastName as string | undefined;
@@ -19,22 +22,54 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     const devUID = req.query.devUID as string | undefined;
 
     if (devFirstName) {
-      info.firstName = devFirstName;
+      devInfo.firstName = devFirstName;
     }
 
     if (devLastName) {
-      info.lastName = devLastName;
+      devInfo.lastName = devLastName;
     }
 
     if (devEmail) {
-      info.ritEmail = devEmail;
+      devInfo.ritEmail = devEmail;
+      devInfo.username = devInfo.ritEmail.substring(0, devInfo.ritEmail.indexOf('@'));
     }
 
     if (devUID) {
-      info.googleCredentials = devUID;
+      devInfo.googleId = devUID;
     }
-  }
+    const result = await createUserService(devInfo);
+    if (result === 'INTERNAL_ERROR') {
+      const resBody: ApiResponse = {
+        status: 500,
+        error: 'Internal Server Error',
+        data: null,
+      };
+      res.status(500).json(resBody);
+      return;
+    }
 
+    if (result === 'CONFLICT') {
+      const resBody: ApiResponse = {
+        status: 409,
+        error: 'User already exists',
+        data: null,
+      };
+      res.status(409).json(resBody);
+      return;
+    }
+
+    const resBody: ApiResponse<typeof result> = {
+      status: 201,
+      error: null,
+      data: result,
+    };
+    res.status(201).json(resBody);
+    return;
+  }
+  //don't check for google credentials if we have dev-defined things
+  //because if we have dev-defined things we're running it through swagger to test everything else aside from the google stuff
+  //so this is a bit of a bypass
+  //basically tryna say if we have none of the dev things check for the credentials
   if (!info.googleCredentials) {
     const resBody: ApiResponse = {
       status: 400,
@@ -45,40 +80,38 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     return;
   }
 
-  const encodedCred = info.googleCredentials;
+  //check if they sent over a pfp, and upload it to the db
+  if (req.file) {
+    const dbImage = await uploadImageService(
+      req.file.buffer,
+      req.file.originalname,
+      req.file.mimetype,
+    );
 
-  //yoinked this base64 decoder from the google documentation: https://developers.google.com/identity/gsi/web/guides/display-google-one-tap#javascript_3
-  const base64Url = encodedCred.split('.')[1];
-  const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-  const jsonPayload = decodeURIComponent(
-    atob(base64)
-      .split('')
-      .map(function (c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      })
-      .join(''),
-  );
+    if (dbImage === 'CONTENT_TOO_LARGE') {
+      const resBody: ApiResponse = {
+        status: 413,
+        error: 'Image too large',
+        data: null,
+      };
+      res.status(413).json(resBody);
+      return;
+    }
 
-  const decodedCred = JSON.parse(jsonPayload) as GoogleCredentialPayload;
+    if (dbImage === 'INTERNAL_ERROR') {
+      const resBody: ApiResponse = {
+        status: 500,
+        error: 'Internal Server Error',
+        data: null,
+      };
+      res.status(500).json(resBody);
+      return;
+    }
 
-  info.firstName = decodedCred.given_name;
-  info.lastName = decodedCred.family_name;
-  info.ritEmail = decodedCred.email;
-  info.googleId = decodedCred.sub;
-
-  if (!info.firstName || !info.lastName || !info.ritEmail) {
-    const resBody: ApiResponse = {
-      status: 400,
-      error: 'Missing information in request body',
-      data: null,
-    };
-    res.status(400).json(resBody);
-    return;
+    info.profileImage = dbImage.location;
   }
 
-  const username = info.ritEmail.substring(0, info.ritEmail.indexOf('@'));
-
-  const result = await createUserService(username, info);
+  const result = await createUserService(info);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -97,6 +130,16 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
       data: null,
     };
     res.status(409).json(resBody);
+    return;
+  }
+
+  if (result === 'BAD_REQUEST') {
+    const resBody: ApiResponse = {
+      status: 400,
+      error: 'Only RIT emails are allowed',
+      data: null,
+    };
+    res.status(400).json(resBody);
     return;
   }
 

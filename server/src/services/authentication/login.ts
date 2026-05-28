@@ -18,7 +18,6 @@ export const loginService = async (token: string): Promise<boolean | LoginServic
   const email = payload?.email;
   const googleId = payload?.sub;
 
-  //these are definitely 400 type errors so i'll send em up to frontend to handle for consistency's sake
   if (!email || (email.indexOf('@g.rit.edu') === -1 && email.indexOf('@rit.edu') === -1)) {
     return 'BAD_REQUEST'; //for consistency with the others
   }

@@ -49,10 +49,11 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [bio, setBio] = useState(''); // State variable for the user's bio
 
   // user info to be sent to the backend
+  //we don't need name stuff, your email handles that
   const userInfo = {
-    firstName: firstName,
-    lastName: lastName,
-    email: email,
+    //firstName: firstName,
+    //lastName: lastName,
+    //email: email,
     // proficiencies: selectedProficiencies,
     skills: selectedSkills,
     // interests: selectedInterests,
@@ -93,9 +94,23 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     //this^^ is our googleId, encoded in base64
     //so when we create a user we input this in there
     //server decodes it when it receives it, and it's passed into the createUser route
-    await createNewUser({firstName, lastName, ritEmail: email, googleCredentials: response.credential}); //ok i have a way for this to work hang on
+    
+    //for whoever comes to this:
+    //this createNewUser line with the object in it is the call to the backend that will handle user creation
+    //createNewUser takes in a GoogleCredentialUserInput as a parameter, you can check types.d.ts for more info on that
+    //you will want to populate an object with all of the things the user is selecting and put it in as part of that object
+    //but move this call out of this useEffect and into another handler that runs when everything is filled
+    //there are other components on this page that handle letting users pick proficiencies and skills and do initial account setup stuff...
+    //...but they are not implemented on the actual signup page yet so we can't reach them as of right now
+    //because they're react components it should be relatively easy to navigate through them and save info, but i suck at react and i hate it and it hates me back
+    
+    //there are a lot of commented out checks because all of that is handled by google on the backend
+    //there are specific errors that will be thrown based on what's wrong with the thing so you can check for those instead
+    //the message the error comes with should let you know what went wrong
+    await createNewUser({googleCredentials: response.credential}); 
+    
   }
-  }, [navigate, firstName, lastName, email]);
+  }, [navigate]);
 
 
   /**
@@ -105,14 +120,14 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   //we don't need any of this do we since literally all of it is gonna be through google...
   const handleSignup = async () => {
     // Check if any of the fields are empty
-    if (
-      email === '' ||
-      firstName === '' ||
-      lastName === ''
-    ) {
-      setMessage('Please fill in all information');
-      return false;
-    }
+    // if (
+    //   email === '' ||
+    //   firstName === '' ||
+    //   lastName === ''
+    // ) {
+    //   setMessage('Please fill in all information');
+    //   return false;
+    // }
 
     //usernames are automatically set with your entered email, so checks are not needed
     // // check if username in use
@@ -129,19 +144,22 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     //   return false;
     // }
 
-    if (!email.includes('rit.edu')) {
-      // check if email is valid
-      setMessage('Not an RIT email');
-      return false;
-    }
+    //not needed! we already have this on the backend
+    //you could replace this with something that checks for an error from the createUser thing
+    // if (!email.includes('rit.edu')) {
+    //   // check if email is valid
+    //   setMessage('Not an RIT email');
+    //   return false;
+    // }
 
     // check if the email is in use
-    const emailCheck = await getUserByEmail(email);
-    // if there is a result, a match is found
-    if (emailCheck.status === 200) {
-      setMessage('Email already in use');
-      return false;
-    }
+    //also not needed google handles this
+    // const emailCheck = await getUserByEmail(email);
+    // // if there is a result, a match is found
+    // if (emailCheck.status === 200) {
+    //   setMessage('Email already in use');
+    //   return false;
+    // }
 
     //no password self-storage so none of this is needed
     // Check if password meets the requirements
@@ -158,25 +176,25 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
     //here we would call a POST to /users with all of our info in the body
     //and thus signups should work!
-    //we'd want oauth stuff here as well for rit email validation thingy things
-    else {
-      setMessage('Please wait...');
-      // Send info to begin account activation
-      /*
-      await signUp({
-        email: email,
-        password: password,
-        confirm: confirm,
-        firstName: firstName,
-        lastName: lastName,
-        username: username,
-      });
-      */
-      await createNewUser({firstName, lastName, ritEmail: email, googleCredentials});
-      //then redirect to... the home page? no we want to redirect to the login page but the login page is probably broken because it still wants a password
-      //or we just SIGN THEM IN (NOT WORKING...) redirect to the home page after we've signed up to skip the step of logging in yet again
-      //or we should redirect them to the other pieces of this signup page that allows them to make their stuff
-    }
+    // else {
+    //   setMessage('Please wait...');
+    //   // Send info to begin account activation
+    //   /*
+          //obsolete
+    //   await signUp({
+    //     email: email,
+    //     password: password,
+    //     confirm: confirm,
+    //     firstName: firstName,
+    //     lastName: lastName,
+    //     username: username,
+    //   });
+    //   */
+    //   await createNewUser({googleCredentials});
+    //   //then redirect to... the home page? no we want to redirect to the login page but the login page is probably broken because it still wants a password
+    //   //or we just SIGN THEM IN (NOT WORKING...) redirect to the home page after we've signed up to skip the step of logging in yet again
+    //   //or we should redirect them to the other pieces of this signup page that allows them to make their stuff
+    // }
   };
 
   /**
