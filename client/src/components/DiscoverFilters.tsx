@@ -68,6 +68,11 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
 
+    // Dynamically show/hide arrows for pop-up filters
+  const popupTagFiltersRef = useRef<HTMLDivElement>(null);
+  const [showPopupLeftArrow, setShowPopupLeftArrow] = useState(false);
+  const [showPopupRightArrow, setShowPopupRightArrow] = useState(false);
+
 
   // Formatted for SearchBar dataSets prop
   const [dataSet, setDataSet] = useState([{ data: currentTags }]);
@@ -214,6 +219,20 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     }
   };
 
+    /**
+     * === For Popup Filters ===
+   * Checks the scroll position and container width to determine if 
+   * there is more content to the left or right.
+   */
+  const checkPopupScrollVisibility = () => {
+    if (popupTagFiltersRef.current) {
+      const { scrollLeft, scrollWidth, clientWidth } = popupTagFiltersRef.current;
+      
+      setShowPopupLeftArrow(scrollLeft > 0);
+      setShowPopupRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1);
+    }
+  };
+
   /**
    * Scrolls horizontal tag list left or right.
    * Hides or shows scroll buttons depending on edge conditions.
@@ -227,6 +246,23 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         tagFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
       } else if (direction === 'right') {
         tagFiltersRef.current.scrollBy({ left: scrollAmt, behavior: 'smooth' });
+      }
+    }
+  };
+
+  /** === For Popup Filters ===
+   * Scrolls horizontal tag list left or right.
+   * Hides or shows scroll buttons depending on edge conditions.
+   */
+  const popupScrollTags = (direction: string) => {
+    if (popupTagFiltersRef.current) {
+      // 80% of width. Feel free to fiddle with
+      const scrollAmt = popupTagFiltersRef.current.clientWidth * 0.8;
+      
+      if (direction === 'left') {
+        popupTagFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
+      } else if (direction === 'right') {
+        popupTagFiltersRef.current.scrollBy({ left: scrollAmt, behavior: 'smooth' });
       }
     }
   };
@@ -309,7 +345,9 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         </div>
         {/* Container so more filters popup is aligned at the end */}
         <div id="discover-more-filters-container">
-          {/* Additional filters popup */}
+
+          {/* === Additional filters popup === */}
+
           <Popup>
             <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
               <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'}/>
@@ -336,28 +374,51 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                       setSearchedTags({ tags: results[0] as Tag[], color: searchedTags.color });
                     }}
                   ></SearchBar>
-                  <div id="filter-tabs">
-                    {filterPopupTabs.map((tab, index) => (
-                      <a
-                        key={`${tab.categoryName}-${index}`}
-                        className={`filter-tab ${index === activeTabId ? 'selected' : ''}`}
-                        onClick={() => {
-                          //const element = e.target as HTMLElement;
+                  <div id="more-filters-scroller">
+                    <button
+                      id="popup-filters-left-scroll"
+                      className={`filters-scroller ${!showPopupLeftArrow ? 'hide' : ''}`}
+                      onClick={() => popupScrollTags('left')}
+                    >
+                      <i className="fa fa-caret-left"></i>
+                    </button>
+                    <div                       // Needed for arrow functionality
+                      id="discover-tag-filters" 
+                      tabIndex={-1}
+                      ref={popupTagFiltersRef}
+                      onScroll={checkPopupScrollVisibility}
+                    >
+                    <div id="filter-tabs">
+                      {filterPopupTabs.map((tab, index) => (
+                        <a
+                          key={`${tab.categoryName}-${index}`}
+                          className={`filter-tab ${index === activeTabId ? 'selected' : ''}`}
+                          onClick={() => {
+                            //const element = e.target as HTMLElement;
 
-                          //// Remove .selected from all 3 options, add it only to current button
-                          //const tabs = document.querySelector('#filter-tabs')!.children;
-                          //for (let i = 0; i < tabs.length; i++) {
-                          //  tabs[i].classList.remove('selected');
-                          //}
-                          //element.classList.add('selected');
+                            //// Remove .selected from all 3 options, add it only to current button
+                            //const tabs = document.querySelector('#filter-tabs')!.children;
+                            //for (let i = 0; i < tabs.length; i++) {
+                            //  tabs[i].classList.remove('selected');
+                            //}
+                            //element.classList.add('selected');
 
-                          //Sets the index to the setActiveId value.
-                          setActiveTabId(index);
-                        }}
-                      >
-                        {tab.categoryName}
-                      </a>
-                    ))}
+                            //Sets the index to the setActiveId value.
+                            setActiveTabId(index);
+                          }}
+                        >
+                          {tab.categoryName}
+                        </a>
+                      ))}
+                      </div>
+                    </div>
+                    <button
+                      id="popup-filters-right-scroll"
+                      className={`filters-scroller ${!showPopupRightArrow ? 'hide' : ''}`}
+                      onClick={() => popupScrollTags('right')}
+                    >
+                      <i className="fa fa-caret-right"></i>
+                    </button>
                   </div>
                   <hr />
                   <div id="filter-tags">

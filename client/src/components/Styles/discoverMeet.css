@@ -495,11 +495,39 @@ Filters / Tags Style Rules
   background-image: linear-gradient(to right, #00000000 30%, var(--bg-color) 70%);
 }
 
+/* Popup Scrollers Styles */
+
+#popup-filters-left-scroll {
+  left: 0;
+  text-align: left;
+  background-image: linear-gradient(to right, var(--bg-color) 30%, #00000000 70%);
+}
+
+#popup-filters-right-scroll {
+  right: 0;
+  text-align: right;
+  background-image: linear-gradient(to right, #00000000 30%, var(--bg-color) 70%);
+}
+
+#more-filters-scroller
+{
+  display: flex;
+  flex-wrap: nowrap;
+}
+
+/* Removes pop-up filter scrolling arrows on desktop */
+@media screen and (min-width: 1180px)
+{
+  #popup-filters-left-scroll, #popup-filters-left-scroll
+  {
+    display: none;
+  }
+}
+
 #discover-tag-filters {
   height: auto;
   width: 100%;
   display: flex;
-  /* gap: 14px; */
   overflow-x: scroll;
   scroll-behavior: smooth;
   scrollbar-width: none;
