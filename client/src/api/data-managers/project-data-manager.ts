@@ -1,7 +1,7 @@
 import {
   AddProjectMediumsInput,
   AddProjectSocialInput,
-  AddProjectTagsInput,
+  AddProjectTagInput,
   ApiResponse,
   CreateProjectImageInput,
   CreateProjectJobInput,
@@ -12,6 +12,7 @@ import {
   UpdateProjectJobInput,
   UpdateProjectMemberInput,
   UpdateProjectSocialInput,
+  UpdateProjectTagInput,
   UpdateProjectThumbnailInput,
 } from "@looking-for-group/shared";
 import {
@@ -33,6 +34,7 @@ import {
   updateProject,
   updateProjectJob,
   updateProjectSocial,
+  updateProjectTag,
   updateThumb,
 } from "../projects";
 import {
@@ -91,6 +93,7 @@ export const projectDataManager = async (projectId: number) => {
           },
           data: {} as UpdateProjectThumbnailInput,
         },
+        tags: [],
         projectImages: [],
         projectSocials: [],
         jobs: [],
@@ -211,6 +214,17 @@ export const projectDataManager = async (projectId: number) => {
         "Updating project",
         [updates.fields],
         ({ data }) => updateProject(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    // project tags
+    try {
+      await runAndCollectErrors<UpdateProjectTagInput>(
+        "Updating project tag",
+        updates.tags,
+        ({ id, data }) => updateProjectTag(projectId, id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -346,7 +360,7 @@ export const projectDataManager = async (projectId: number) => {
 
     // project tags
     try {
-      await runAndCollectErrors<AddProjectTagsInput>(
+      await runAndCollectErrors<AddProjectTagInput>(
         "Adding project tag",
         creates.tags,
         ({ data }) => addProjectTag(projectId, data)
@@ -496,7 +510,7 @@ export const projectDataManager = async (projectId: number) => {
    * Adds a new tag to the project
    * @param tag The tag to be added
    */
-  const addTag = (tag: CRUDRequest<AddProjectTagsInput>) => {
+  const addTag = (tag: CRUDRequest<AddProjectTagInput>) => {
     if (changes.create.tags.some(({ id }) => id.value === tag.id.value)) {
       changes.create.tags = [
         ...changes.create.tags.filter(({ id }) => id.value !== tag.id.value),
@@ -645,6 +659,35 @@ export const projectDataManager = async (projectId: number) => {
           )
       ),
       existingImageUpdate,
+    ];
+  };
+
+  /**
+   * Updates an existing tag of a project
+   * @param tag The tag to be updated and its new data
+   */
+  const updateTag = (tag: CRUDRequest<UpdateProjectTagInput>) => {
+    let existingTagUpdate = changes.update.tags.find(
+      ({ id }) => id.value === tag.id.value && id.type === tag.id.type
+    );
+
+    existingTagUpdate = {
+      id: tag.id,
+      data: {
+        ...existingTagUpdate?.data,
+        ...tag.data,
+      },
+    };
+
+    changes.update.tags = [
+      ...changes.update.tags.filter(
+        ({ id }) =>
+          !(
+            id.value == existingTagUpdate.id.value &&
+            id.type == existingTagUpdate.id.type
+          )
+      ),
+      existingTagUpdate,
     ];
   };
 
@@ -952,6 +995,7 @@ export const projectDataManager = async (projectId: number) => {
     createJob,
     updateFields,
     updateImage,
+    updateTag,
     updateSocial,
     updateJob,
     updateMember,

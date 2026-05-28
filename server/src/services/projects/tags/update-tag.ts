@@ -11,6 +11,7 @@ type UpdateTagServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' |
 // update a tag
 const updateTagService = async (
   projectId: number,
+  tagId: number,
   tag: UpdateProjectTagInput,
 ): Promise<ProjectTag[] | UpdateTagServiceError> => {
   try {
@@ -21,7 +22,7 @@ const updateTagService = async (
     }
 
     // check if tag to be updated exists
-    const existingIndex = tags.findIndex((t) => t.tagId === tag.tagId);
+    const existingIndex = tags.findIndex((t) => t.tagId === tagId);
 
     if (existingIndex === -1) {
       return 'NOT_FOUND';
@@ -32,7 +33,7 @@ const updateTagService = async (
       where: {
         projectId_tagId: {
           projectId,
-          tagId: tag.tagId as number,
+          tagId: tagId,
         },
       },
       data: {
@@ -45,15 +46,15 @@ const updateTagService = async (
     const [movedTag] = tags.splice(existingIndex, 1);
 
     // insert at new position
-    const targetIndex = (tag.displayOrder as number) - 1;
+    const targetIndex = tag.displayOrder as number;
 
     tags.splice(targetIndex, 0, movedTag);
 
     // renumber all tags
     for (const [index, t] of tags.entries()) {
-      if (t.displayOrder !== index + 1) {
+      if (t.displayOrder !== index) {
         // update display order in db if it doesn't match the new order
-        t.displayOrder = index + 1;
+        t.displayOrder = index;
         await prisma.projectTags.update({
           where: {
             projectId_tagId: {

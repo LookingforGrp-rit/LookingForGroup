@@ -2,13 +2,14 @@ import type { UpdateProjectTagInput, ApiResponse } from '@looking-for-group/shar
 import type { Request, Response } from 'express';
 import updateTagService from '#services/projects/tags/update-tag.ts';
 
-//PATCH api/projects/{id}/tags/
+//PATCH api/projects/{id}/tags/{tagId}
 //updates a tag for the project
 const updateTagController = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id);
+  const tagId = parseInt(req.params.tagId);
   const tag: UpdateProjectTagInput = req.body as UpdateProjectTagInput;
 
-  const result = await updateTagService(id, tag);
+  const result = await updateTagService(projectId, tagId, tag);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -24,7 +25,7 @@ const updateTagController = async (req: Request, res: Response) => {
     const resBody: ApiResponse = {
       status: 404,
       error: 'Tag not found',
-      data: null,
+      data: result,
     };
     res.status(404).json(resBody);
     return;

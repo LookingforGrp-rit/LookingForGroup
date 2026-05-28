@@ -29,7 +29,7 @@ export const deleteTagService = async (
 
     for (let i = 0; i < tags.length; i++) {
       const currentTag = tags[i];
-      if (currentTag.displayOrder !== i + 1) {
+      if (currentTag.displayOrder !== i) {
         await prisma.projectTags.update({
           where: {
             projectId_tagId: {
@@ -38,7 +38,7 @@ export const deleteTagService = async (
             },
           },
           data: {
-            displayOrder: i + 1,
+            displayOrder: i,
           },
         });
       }

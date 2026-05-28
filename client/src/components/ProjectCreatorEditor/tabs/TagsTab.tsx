@@ -2,15 +2,16 @@
 import { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getProjectTypes, getTags } from "../../../api/users";
-import { Tag, Medium, TagType, ProjectWithFollowers} from "@looking-for-group/shared";
+import { Tag, Medium, TagType, ProjectWithFollowers } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
-import { PendingProject} from "../../../../types/types";
+import { PendingProject } from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { Tag as TagElement } from "../../Tag";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "./SortableItem";
 import { Fragment } from "react";
+import { data } from "react-router-dom";
 
 // --- Constant ---
 const TAG_TYPES = {
@@ -110,7 +111,24 @@ export const TagsTab = ({
     const newIndex = tags.findIndex((t) => t.tagId === Number(over.id));
     if (oldIndex === -1 || newIndex === -1) return;
 
-    projectAfterTagsChanges.tags = arrayMove(tags, oldIndex, newIndex);
+    const reorderedTags = arrayMove(tags, oldIndex, newIndex).map((tag, index) => ({
+      ...tag,
+      displayOrder: index,
+    }));
+
+    projectAfterTagsChanges.tags = reorderedTags;
+
+    dataManager.updateTag({
+      id: {
+        type: "canon",
+        value: reorderedTags[newIndex].tagId,
+      },
+      data: {
+        tagId: reorderedTags[newIndex].tagId,
+        displayOrder: reorderedTags[newIndex].displayOrder,
+      },
+    });
+
     updatePendingProject(projectAfterTagsChanges);
   };
 
@@ -127,9 +145,9 @@ export const TagsTab = ({
   // Does Mediums match in EXACT order
   const isMediumsUnsaved = useMemo(() => {
     const currentMediums = projectData.mediums || [];
-    
+
     if (currentMediums.length !== originalMediumOrder.length) return true;
-    
+
     // Checks if any element shifted index or changed
     return currentMediums.some((m, index) => m.mediumId !== originalMediumOrder[index]);
   }, [projectData.mediums, originalMediumOrder]);
@@ -138,9 +156,9 @@ export const TagsTab = ({
   // Does Tags match in EXACT order
   const isTagsUnsaved = useMemo(() => {
     const currentTags = projectData.tags || [];
-    
+
     if (currentTags.length !== originalTagOrder.length) return true;
-    
+
     // Checks if any element shifted index or changed
     return currentTags.some((t, index) => t.tagId !== originalTagOrder[index]);
   }, [projectData.tags, originalTagOrder]);
@@ -166,11 +184,11 @@ export const TagsTab = ({
   }, [allMediums]);
   useEffect(() => {
     const getAllTags = async () => {
-        const response = await getTags();
-        if (!response.data) {
-          return;
-        }
-        setAllTags(response.data);
+      const response = await getTags();
+      if (!response.data) {
+        return;
+      }
+      setAllTags(response.data);
     };
     if (allTags.length === 0) {
       getAllTags();
@@ -183,8 +201,9 @@ export const TagsTab = ({
       case 0:
         return [{ data: allMediums }];
       case 1:
-          return [{ data: allTags.filter(tag => TAG_TYPES.GENRE.includes(tag.type as TagType))
-          }];
+        return [{
+          data: allTags.filter(tag => TAG_TYPES.GENRE.includes(tag.type as TagType))
+        }];
       case 2:
         return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DEV) }];
       case 3:
@@ -206,17 +225,17 @@ export const TagsTab = ({
   // Returns "selected" or "unselected" string for use in CSS classes.
   const isTagSelected = useCallback(
     (id: number, label: string, tab: number = -1) => {
-      switch (tab){
+      switch (tab) {
         case -1: // No tab, iterate through all categories
           return (
             projectData.mediums.some((m) => m.mediumId === id && m.label === label) ||
             projectData.tags.some((t) => t.tagId === id && t.label === label)) ?
-              "selected" :
-              "unselected";
+            "selected" :
+            "unselected";
         case 0: // Mediums
           return projectData.mediums.some(
             (t) => t.mediumId === id && t.label === label
-          ) ? 
+          ) ?
             "selected" :
             "unselected";
         case 1: // Genre
@@ -225,13 +244,13 @@ export const TagsTab = ({
         case 4: // Soft Skills
           return projectData.tags.some(
             (t) => t.tagId === id && t.label === label
-          ) ? 
+          ) ?
             "selected" :
             "unselected";
         default:
           return "unselected";
       }
-  }, [projectData.mediums, projectData.tags]);
+    }, [projectData.mediums, projectData.tags]);
 
   const handleMediumSelect = useCallback(
     (mediumId: number) => {
@@ -307,13 +326,15 @@ export const TagsTab = ({
           type: "canon",
         },
         data: {
-          tagId,
+          tagId: tagId,
+          displayOrder: projectAfterTagsChanges.tags.length,
         },
       });
 
       projectAfterTagsChanges.tags.push({
         ...allTags.find((tag) => tag.tagId === tagId)!,
         tagId,
+        displayOrder: projectAfterTagsChanges.tags.length,
       });
       updatePendingProject(projectAfterTagsChanges);
       return;
@@ -355,7 +376,7 @@ export const TagsTab = ({
             }
             selected={selected}
           >
-            <i className={ selected ? "fa fa-check" : "fa fa-plus" }></i>
+            <i className={selected ? "fa fa-check" : "fa fa-plus"}></i>
             <p>{isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label}</p>
           </TagElement>
         );
@@ -383,7 +404,7 @@ export const TagsTab = ({
           ></i>
           <p>{medium.label}</p>
         </TagElement>;
-    });
+      });
     } else if (currentTagsTab === 1) {
       return allTags
         .filter((tag) =>
@@ -392,9 +413,9 @@ export const TagsTab = ({
           )
         )
         .map((genreTag) => {
-        const selected = isTagSelected(genreTag.tagId, genreTag.label, currentTagsTab) === "selected";
-        
-        return <TagElement
+          const selected = isTagSelected(genreTag.tagId, genreTag.label, currentTagsTab) === "selected";
+
+          return <TagElement
             key={genreTag.tagId}
             type={"creative"}
             selected={selected}
@@ -409,7 +430,7 @@ export const TagsTab = ({
             ></i>
             <p>{genreTag.label}</p>
           </TagElement>;
-    });
+        });
     } else if (currentTagsTab === 2) {
       return allTags
         .filter((tag) => tag.type === "Developer Skill")
@@ -422,7 +443,7 @@ export const TagsTab = ({
             onClick={() => handleTagSelect(developerSkillTag.tagId)}
           >
             <i
-              className={ selected ? "fa fa-close" : "fa fa-plus" }
+              className={selected ? "fa fa-close" : "fa fa-plus"}
             ></i>
             <p>{developerSkillTag.label}</p>
           </TagElement>;
@@ -566,7 +587,7 @@ export const TagsTab = ({
                 setCurrentTagsTab(0);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 0 ? "tag-search-tab-active" : ""}`}
-              //Data from genres
+            //Data from genres
             >
               Medium
             </button>
@@ -575,7 +596,7 @@ export const TagsTab = ({
                 setCurrentTagsTab(1);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 1 ? "tag-search-tab-active" : ""}`}
-              //Data from tags
+            //Data from tags
             >
               Genre
             </button>
@@ -584,7 +605,7 @@ export const TagsTab = ({
                 setCurrentTagsTab(2);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 2 ? "tag-search-tab-active" : ""}`}
-              //Data from skills (type=Developer)
+            //Data from skills (type=Developer)
             >
               Developer Skills
             </button>
@@ -593,7 +614,7 @@ export const TagsTab = ({
                 setCurrentTagsTab(3);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 3 ? "tag-search-tab-active" : ""}`}
-              //Data from skills (type=Designer)
+            //Data from skills (type=Designer)
             >
               Designer Skills
             </button>
@@ -602,7 +623,7 @@ export const TagsTab = ({
                 setCurrentTagsTab(4);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 4 ? "tag-search-tab-active" : ""}`}
-              //Data from skills (type=Soft)
+            //Data from skills (type=Soft)
             >
               Soft Skills
             </button>
@@ -614,9 +635,9 @@ export const TagsTab = ({
       <div id="tags-save-info">
         <Popup>
           {saveable ? "" :
-          <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*{message}*</p>
-          </div>}
+            <div id="invalid-input-error" className={"save-error-msg-general"}>
+              <p>*{message}*</p>
+            </div>}
           <PopupButton
             buttonId="project-editor-save"
             doNotClose={() => failCheck}

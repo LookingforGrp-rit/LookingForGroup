@@ -266,11 +266,11 @@ router.post(
 );
 // updates order of a project's tags
 router.patch(
-  '/:id/tags',
+  '/:id/tags/:tagId',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
-  attributeExistsAt('tag', 'body', 'tagId'),
+  projectAttributeExistsAt('tag', { type: 'path', key: 'id' }, { type: 'path', key: 'tagId' }),
   authenticated(requiresProjectOwner),
   PROJECT.updateTag,
 );
