@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { sendPost } from '../../functions/fetch.js';
+import { sendPost, sendGet } from '../../functions/fetch.js';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import { getCurrentUsername, getUserByEmail, getUserByUsername } from '../../api/users.js';
 
@@ -22,13 +22,9 @@ const Login: React.FC = () => {
 
   // State variables
   const [loginInput, setLoginInput] = useState<string>('');
-  const [password, setPassword] = useState<string>('');
-  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
-  const [isLoading, setIsLoading] = useState(false);
-
-  // Redirect the user to the homepage if they are currently logged in
   useEffect(() => {
     const checkSessionAndRedirect = async () => {
       try {
@@ -41,7 +37,38 @@ const Login: React.FC = () => {
     };
 
     checkSessionAndRedirect();
-  }, [navigate]);
+
+    //google things
+    // @ts-expect-error google
+    google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleGoogle,
+    });
+
+    // @ts-expect-error google
+    google.accounts.id.renderButton(
+      document.getElementById("googleBtn"),
+      { theme: "filled_black", size: "large" , shape: 'pill'}
+    );
+
+  }, [navigate])
+
+  async function handleGoogle(response: any){
+    //decodeJwtResponse(response.credential);
+    //this^^ is our googleId, decoded from base64
+    //when we log in a user we check against this with a backend request
+    //we probably shouldn't decode it clientside tho lol
+    //here is gonna be exclusively for logins for existing users
+    //and we have one existing user with a valiid google id, me!
+
+    const res = await fetch(`/api/google-login`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ credential: response.credential })
+    });
+
+    console.log('hello yes this is happening!');
+  }
 
   /**
    * Validates user inputs, sends login requests to the server API, and handles authentication
@@ -53,20 +80,30 @@ const Login: React.FC = () => {
     setIsLoading(true);
 
     // Check if the loginInput and password are not empty
-    if (loginInput === '' || password === '') {
-      setError('Please fill in all information');
+    if (loginInput === '') {
+      setError('Please fill in your username or email');
       return false;
     }
 
     // Check if the login credentials are associated with an account
-    // search input as email
+    let data;
     if (loginInput.includes('@') && loginInput.includes('.')) {
+    // search input as email
+        const resp = await getUserByEmail(loginInput);
+        data = resp.data;
+    } 
+    else {
+    // search input as username
+      const resp = await getUserByUsername(loginInput);
+      data = resp.data;
+    }
       try {
-        const data = await getUserByEmail(loginInput);
         if (data) {
-          // try login
+          // try login 
           try {
-            sendPost('/api/login', { loginInput, password }, (response: LoginResponse) => {
+            //SEND THIS THROUGH TO AUTHENTICATE ROUTE (OR MAKE A /LOGIN THAT TAKES THIS)
+            //the reason this doesn't work is it doesn't go anywhere
+            sendPost('/api/login', { loginInput }, (response: LoginResponse) => {
               if (response.error) {
                 setError(response.error);
                 return false;
@@ -87,70 +124,12 @@ const Login: React.FC = () => {
         return false;
       }
     }
-    // search input as username
-    try {
-      const response = await getUserByUsername(loginInput);
-      if (response.data) {
-        // try login
-        try {
-          sendPost('/api/login', { loginInput, password }, (response: LoginResponse) => {
-            if (response.error) {
-              setError(response.error);
-              return false;
-            }
-            // Success message
-            setError('Logging in');
-          });
-          return true; // Prevent executing additional code after login attempt
-        } catch (err) {
-          setError('An error occurred during login');
-          console.log(err);
-          return false;
-        }
-      }
-    } catch (err) {
-      setError('An error occurred during login');
-      console.log(err);
-      return false;
-    }
-
-    // no errors, send login request
-    try {
-      // Success message
-      setError('Trying to log in');
-      sendPost('/api/login', { loginInput, password }, (response: LoginResponse) => {
-        if (response.error) {
-          setError(response.error);
-        } else {
-          // Success message
-          setError('Logging in');
-        }
-      });
-    } catch (err) {
-      setError('An error occurred during login');
-      console.log(err);
-      return false;
-    }
-
+  
     // // Sends the user to the create project popup if they successfully logged in
     // if(error == 'Logging in')
     // {
     //   navigate(paths.routes.CREATEPROJECT);
     // }
-    setIsLoading(false);
-  };
-
-  /**
-   * Clears any error messages and navigates the user to the Forgot Password page.
-   */
-  const handleForgotPass = () => {
-    // remove error message
-    setError('');
-    // Navigate to the Forgot Password Page
-    // Pass the 'from' state to remember where to return after going back to login
-    // If 'from' is not defined, it will default to the home page 
-    navigate(paths.routes.FORGOTPASSWORD, { state: { from } });
-  };
 
   /**
    * Triggers the login function when the Enter key is pressed while focus is in the form.
@@ -203,27 +182,7 @@ const Login: React.FC = () => {
               value={loginInput}
               onChange={(e) => setLoginInput(e.target.value)}
             />
-            <div id='password-wrapper'>
-              <input
-                className="login-input"
-                type={showPassword ? "text" : "password"}
-                placeholder="Password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-              <button id="show-password" onClick={() => setShowPassword((prevState) =>
-                !prevState)}>
-                {showPassword ? (
-                  <ThemeIcon id={'eye-line'} width={18} height={13} className={'mono-fill'} ariaLabel={'Show password'}/>
-                ) : (
-                  <ThemeIcon id={'eye'} width={18} height={13} className={'mono-fill'} ariaLabel={'Hide password'}/>
-                )}
-              </button>
-            </div>
-            <button id="forgot-password" onClick={handleForgotPass}>
-              Forgot Password
-            </button>
-
+            <div id="googleBtn"></div>
             <div className="mobile-signup">
               <p>No account? </p>
               <p id="signup-btn-mobile" onClick={() => navigate(paths.routes.SIGNUP)}>

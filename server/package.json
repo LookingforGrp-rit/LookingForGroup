@@ -41,6 +41,7 @@
     "@types/swagger-ui-express": "^4.1.8",
     "@types/yamljs": "^0.2.34",
     "@vitest/eslint-plugin": "^1.2.7",
+    "chai": "^6.2.2",
     "dotenv": "^17.2.0",
     "eslint": "^9.32.0",
     "eslint-config-prettier": "^10.1.8",
