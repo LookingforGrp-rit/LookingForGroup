@@ -1,7 +1,7 @@
 import type { ProjectStatus, ProjectPurpose, Tag } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
-import addTagService from '#services/projects/tags/add-tags.ts';
+import addTagService from '#services/projects/tags/add-tag.ts';
 import { transformProjectTag } from '#services/transformers/projects/parts/project-tag.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
@@ -57,7 +57,7 @@ describe('addTagsService', async () => {
   });
   it("returns the project's tags", async () => {
     vi.mocked(prisma.projects.update).mockResolvedValue(prismaProject);
-    const result = await addTagService(100, { tagId: 70 });
+    const result = await addTagService(100, { tagId: 70, displayOrder: 0 });
 
     expect(result).toStrictEqual([
       {
@@ -70,19 +70,19 @@ describe('addTagsService', async () => {
   });
   it("returns NOT_FOUND if the project can't be found", async () => {
     vi.mocked(prisma.projects.update).mockRejectedValue({ code: 'P2025' });
-    const result = await addTagService(100, { tagId: 70 });
+    const result = await addTagService(100, { tagId: 70, displayOrder: 0 });
 
     expect(result).toBe('NOT_FOUND');
   });
   it('returns CONFLICT if the prisma finds a conflict', async () => {
     vi.mocked(prisma.projects.update).mockRejectedValue({ code: 'P2002' });
-    const result = await addTagService(100, { tagId: 70 });
+    const result = await addTagService(100, { tagId: 70, displayOrder: 0 });
 
     expect(result).toBe('CONFLICT');
   });
   it('returns INTERNAL_ERROR if the prisma finds any other error', async () => {
     vi.mocked(prisma.projects.update).mockRejectedValue(new Error('womp womp'));
-    const result = await addTagService(100, { tagId: 70 });
+    const result = await addTagService(100, { tagId: 70, displayOrder: 0 });
 
     expect(result).toBe('INTERNAL_ERROR');
   });
