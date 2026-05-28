@@ -1734,7 +1734,8 @@ Project page style rules
   display: flex;
   justify-content: baseline;
   gap: 10px;
-  margin-top: 10px;
+  padding-right: 1vw;
+  padding-left: 1vw;
 }
 
 .project-tag {
@@ -2672,7 +2673,7 @@ New Project Page style rules
     'overview people' auto
     'overview positions' auto / 17fr 15fr;
   margin: 0 50px;
-  gap: 20px;
+  gap: 0;
 }
 
 @media screen and (max-width: 1199px) {
@@ -2712,6 +2713,7 @@ Project Carousel style rules
   flex-direction: column;
   position: relative;
   margin-bottom: 20px;
+  margin-right: 1.5vw;
 
   .carousel-contents {
     /* height: 370px; */
@@ -2788,15 +2790,19 @@ Project Carousel style rules
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
-  padding: 20px;
+  padding: 1vw;
+  padding-right: 0;
+  padding-left: 0;
   max-width: calc(100vw - 80px);
-  margin-bottom: 2.8%;
+  margin-bottom: 1vw;
+  aspect-ratio: 16/9;
 
   #project-info-top {
     display: flex;
     flex-direction: column;
     justify-content: start;
-    gap: 5px;
+    padding-right: 1vw;
+    padding-left: 1vw;
   }
 
 }
