@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { sendPost, sendGet } from '../../functions/fetch.js';
+import { sendPost } from '../../functions/fetch.js';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 import { getCurrentUsername, getUserByEmail, getUserByUsername } from '../../api/users.js';
 
@@ -61,7 +61,6 @@ const Login: React.FC = () => {
       credentials: 'include',
       body: JSON.stringify({ credential: response.credential })
     });
-
     //our userExists is stored in res.json()
     //so there we do stuff with it
     //except that is all that's stored in there so we don't get anything else back, that might be intentional?
@@ -72,6 +71,16 @@ const Login: React.FC = () => {
     if(body.userExists) { navigate(paths.routes.HOME); }
     else { navigate(paths.routes.SIGNUP); }
   }
+  async function handleTest() {
+    const res = await fetch('http://localhost:3000/google-login/test', {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include'
+    })
+
+    console.log(res);
+  }
+
 
   /**
    * Validates user inputs, sends login requests to the server API, and handles authentication
@@ -186,6 +195,9 @@ const Login: React.FC = () => {
               onChange={(e) => setLoginInput(e.target.value)}
             />
             <div id="googleBtn"></div>
+            <button onClick={handleTest}>
+              Press me to test sessions!!!
+            </button>
             <div className="mobile-signup">
               <p>No account? </p>
               <p id="signup-btn-mobile" onClick={() => navigate(paths.routes.SIGNUP)}>
