@@ -23,7 +23,7 @@ const deleteAccountPressed = async () => {
  * Settings page. Renders the settings page interface with options for updating user account information, appearance preferences, and account settings
  * @returns JSX Element
  */
-const Settings = () => {
+const Settings = (userProfile : any) => {
   // --------------------
   // Global variables
   // --------------------
@@ -480,7 +480,7 @@ const Settings = () => {
       <div id="settings-page">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h1 className="page-title">Settings</h1>
-          <Header dataSets={[]} onSearch={() => {}} hideSearchBar />
+          <Header dataSets={[]} onSearch={() => {}} hideSearchBar userProfile={userProfile}/>
         </div>
         <hr />
         {userInfo === undefined ? (

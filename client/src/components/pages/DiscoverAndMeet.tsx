@@ -11,7 +11,8 @@ import { getUsers, getUsersById } from '../../api/users';
 import {
   ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
   StructuredUserInfo, UserPreview, ProjectPreview,
-  UserDetail, ProjectWithFollowers
+  UserDetail, ProjectWithFollowers,
+  MePrivate
 } from '@looking-for-group/shared';
 
 //import api utils
@@ -19,6 +20,7 @@ import { getCurrentUsername } from '../../api/users.ts'
 
 type DiscoverAndMeetProps = {
   category: 'projects' | 'profiles';
+  userProfile: MePrivate
 };
 
 /**
@@ -27,7 +29,7 @@ type DiscoverAndMeetProps = {
  * @param category "projects" for Discover, "profiles" for Meet
  * @returns JSX Element
  */
-const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
+const DiscoverAndMeet = ({ category, userProfile }: DiscoverAndMeetProps) => {
   // --------------------
   // Components
   // --------------------
@@ -111,7 +113,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [heroProjectList, setHeroProjectList] = useState<ProjectWithFollowers[]>([]);
 
   // Stores userId for ability to follow users/projects
-  const [userId, setUserId] = useState<string>('');
+  const [username, setUsername] = useState<string>(userProfile.username);
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
@@ -128,24 +130,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
   // Helper functions
   // --------------------
-
-  /**
-   * Gets the user's profile by authenticateing the
-   * data before setting the user's ID
-   */
-  const getAuth = async () => {
-    if (userId != "") {
-      return;
-    }
-
-    const res = await getCurrentUsername();
-
-    if (res.status === 200 && res.data?.username && userId == "") {
-      setUserId(res.data.username)
-    } else {
-      setUserId('guest');
-    }
-  }
 
   // Set the necessary data for project mode
   const setupProjectData = (projects: ApiResponse<ProjectPreview[]>): void => {
@@ -208,9 +192,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const getData = async (force: boolean = false) => {
     // Early escape
     if (fetchedProjects && fetchedUsers && !force) return;
-
-    // Get user profile
-    await getAuth();
 
     try {
       if (category == 'projects') {
@@ -543,7 +524,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   return (
     <div className="page" tabIndex={-1}>
       {/* Search bar and profile/notification buttons */}
-      <Header dataSets={category == 'projects' ? projectDataSet : userDataSet}
+      <Header dataSets={category == 'projects' ? projectDataSet : userDataSet} userProfile={userProfile}
         onSearch={category == 'projects' ? searchProjects : searchUsers}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)} />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
@@ -571,11 +552,11 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 };
 
 // Return projects category
-export const Discover = () => {
-  return <DiscoverAndMeet category={'projects'} />;
+export const Discover = (userProfile: any) => {
+  return <DiscoverAndMeet category={'projects'} userProfile={userProfile}/>;
 };
 
 // Return profiles category
-export const Meet = () => {
-  return <DiscoverAndMeet category={'profiles'} />;
+export const Meet = (userProfile: any) => {
+  return <DiscoverAndMeet category={'profiles'} userProfile={userProfile}/>;
 };

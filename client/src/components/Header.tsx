@@ -11,6 +11,7 @@ import profilePicture from '../images/blue_frog.png';
 
 //user utils
 import { getCurrentUsername } from '../api/users.ts';
+import { MePrivate } from '@looking-for-group/shared';
 
 //Header component to be used in pages
 
@@ -22,11 +23,12 @@ export let loggedIn = false;
 //(logout = logout the user and send them to home page or equivalent)
 
 type HeaderProps = {
-  dataSets : DataSet[];
-  onSearch : (results : unknown[][]) => void;
-  value? : string;
-  onChange? : (e: ChangeEvent<HTMLInputElement>) => void;
-  hideSearchBar? : boolean;
+  dataSets: DataSet[];
+  onSearch: (results: unknown[][]) => void;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  hideSearchBar?: boolean;
+  userProfile: MePrivate;
 };
 
 /**
@@ -44,10 +46,10 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false }) => {
+export const Header: React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, userProfile }) => {
   // User info state
-  const [username, setUsername] = useState<string | null>(null);
-  const [email, setEmail] = useState(null);
+  const [username, setUsername] = useState<string>('');
+  const [email, setEmail] = useState<string>('');
   const [profileImg, setProfileImg] = useState<string>('');
   const location = useLocation(); // Hook to access the current location
 
@@ -61,33 +63,49 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
   const navigate = useNavigate(); // Hook for navigation
 
   // Fetch current user info on mount
+  // useEffect(() => {
+  //   const fetchUsername = async () => {
+  //     try {
+  //       const res = await getCurrentUsername();
+
+  //       if (res.status == 200 && res.data?.username) {
+  //         loggedIn = true;
+  //         setUsername(res.data.username);
+  //         setEmail(res.data.email ?? null);
+  //         setProfileImg(res.data.profileImage ?? '');
+  //       } else {
+  //         loggedIn = false;
+  //         setUsername('Guest');
+  //         setEmail('');
+  //         setProfileImg('');
+  //       }
+  //     } catch (err) {
+  //       console.log('Error fetching username: ' + err);
+  //       loggedIn = false;
+  //       setUsername('Guest');
+  //       setEmail('');
+  //       setProfileImg('');
+  //     }
+  //   };
+
+  //   fetchUsername();
+  // }, []);
+
+  //loads in the data for the header
   useEffect(() => {
-    const fetchUsername = async () => {
-      try {
-        const res = await getCurrentUsername();
-
-        if (res.status == 200 && res.data?.username) {
-          loggedIn = true;
-          setUsername(res.data.username);
-          setEmail(res.data.email ?? null);
-          setProfileImg(res.data.profileImage ?? '');
-        } else {
-          loggedIn = false;
-          setUsername('Guest');
-          setEmail(null);
-          setProfileImg('');
-        }
-      } catch (err) {
-        console.log('Error fetching username: ' + err);
-        loggedIn = false;
-        setUsername('Guest');
-        setEmail(null);
-        setProfileImg('');
-      }
-    };
-
-    fetchUsername();
-  }, []);
+    console.log(userProfile);
+    if (userProfile.username !== '') {
+      loggedIn = true
+      setUsername(userProfile.username);
+      setEmail(userProfile.ritEmail);
+      setProfileImg(userProfile.profileImage ?? '');
+    } else {
+      loggedIn = false
+      setUsername('Guest');
+      setEmail('');
+      setProfileImg('');
+    }
+  },[]);
 
   // Navigate to a page and optionally update sidebar (if implemented)
   const handlePageChange = (path: string) => {
@@ -115,17 +133,17 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  useEffect(()=>{
-    theme === 'dark' ? setModeToggle('Light Mode') : setModeToggle('Dark Mode'); 
-  },[theme]);
+  useEffect(() => {
+    theme === 'dark' ? setModeToggle('Light Mode') : setModeToggle('Dark Mode');
+  }, [theme]);
 
   return (
     <div id="header">
       {/* Conditional rendering for search bar */}
       {(!hideSearchBar) && (
         <div id="header-searchbar">
-          <SearchBar 
-            dataSets={dataSets} 
+          <SearchBar
+            dataSets={dataSets}
             onSearch={onSearch}
             value={value}
             onChange={onChange}
@@ -167,14 +185,14 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 }}
               />
             ) : (
-              <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
+              <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'} />
             )}
             <ThemeIcon
               id={'dropdown-arrow'}
               width={15}
               height={12}
               className={'color-fill'}
-              ariaLabel={'dropdown arrow'}/>
+              ariaLabel={'dropdown arrow'} />
           </DropdownButton>
 
           {/* These are its elements once opened (unique for logged out/in) */}
@@ -184,7 +202,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* (Blank) Profile Icon */}
                 <button id="header-profile-user">
-                  <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
+                  <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'} />
                   <div id="header-profile-user-info">
                     <p id="header-profile-username">{username}</p>
                     <br />
@@ -196,13 +214,13 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
-                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'}/>
+                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'} />
                   {modeToggle}
                 </button>{' '}
 
                 {/* LOG IN Button */}
                 <button onClick={() => navigate(paths.routes.LOGIN, { state: { from: location.pathname } })}>
-                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
+                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'} />
                   Log In
                 </button>
               </div>
@@ -228,7 +246,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                       }}
                     />
                   ) : (
-                    <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
+                    <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'} />
                   )}
                   <div id="header-profile-user-info">
                     <p id="header-profile-username">{username}</p>
@@ -241,19 +259,19 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
-                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'}/>
+                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'} />
                   {modeToggle}
                 </button>{' '}
 
                 {/* Settings Link */}
                 <button onClick={() => handlePageChange(paths.routes.SETTINGS)}>
-                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'}/>
+                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
                   Settings
                 </button>
 
                 {/* LOG OUT Button */}
                 <button onClick={() => sendPost('/api/logout')}>
-                  <ThemeIcon id={'logout'} width={25} height={25} className={'mono-fill'} ariaLabel={'log out'}/>
+                  <ThemeIcon id={'logout'} width={25} height={25} className={'mono-fill'} ariaLabel={'log out'} />
                   Log Out
                 </button>
               </div>

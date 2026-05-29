@@ -7,13 +7,13 @@ import '../Styles/pages.css';
  * About page detailing the purpose and features of LFG
  * @returns JSX Element containing platform information
  */
-const AboutPage = () => {
+const AboutPage = (userProfile : any) => {
     const [projectsList, _setProjectsList] = useState([] as DataSet[]);
     const currentSearch = (_results: unknown[][]) => void {};
 
     return (
         <div className="page">
-            <Header dataSets={projectsList} onSearch={currentSearch} />
+            <Header dataSets={projectsList} onSearch={currentSearch} userProfile={userProfile} />
             
             <div className="about-container" style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
                 <h1 className="about-header">About Looking For Group</h1>

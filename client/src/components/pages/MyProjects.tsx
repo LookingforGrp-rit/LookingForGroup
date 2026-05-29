@@ -14,13 +14,13 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
-import { ProjectDetail } from '@looking-for-group/shared';
+import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
 
 /**
  * My Projects page. Creates a customizable page that showcases the user's projects.
  * @returns JSX Element
  */
-const MyProjects = () => {
+const MyProjects = (userProfile: any) => {
 
   //const navigate = useNavigate();
 
@@ -412,6 +412,7 @@ const MyProjects = () => {
         onSearch={handleSearch}
         value={currentSearch}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        userProfile={userProfile}
       />
 
       {/* Banner */}

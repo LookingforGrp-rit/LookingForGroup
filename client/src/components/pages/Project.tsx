@@ -27,7 +27,7 @@ import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/e
  * Project page. Renders the project page with all project details, team member information, and available positions.
  * @returns JSX Element
  */
-const Project = () => {
+const Project = (userProfile : any) => {
   //Navigation hook
   const navigate = useNavigate();
 
@@ -399,6 +399,7 @@ const Project = () => {
         hideSearchBar={true}
         value={undefined}
         onChange={undefined}
+        userProfile={userProfile}
       />
 
       {displayedProject === undefined ? (

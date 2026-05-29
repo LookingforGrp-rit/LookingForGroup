@@ -36,7 +36,7 @@ type Project = ProjectPreview;
  * Profile page with user information collected from profileID.
  * @returns JSX Element
  */
-const Profile = () => {
+const Profile = (userProfile : any) => {
   // --------------------
   // Global variables
   // --------------------
@@ -286,6 +286,7 @@ const Profile = () => {
         onSearch={searchProjects}
         hideSearchBar={true}
         onChange={() => { }}
+        userProfile={userProfile}
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
