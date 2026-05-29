@@ -39,7 +39,7 @@ import { projectDataManager } from "../../../api/data-managers/project-data-mana
 //import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
 import {
-  //transporter
+  transporter
 } from "../../../../../server/src/mailer";
 
 // --- Variables ---
@@ -560,7 +560,7 @@ export const TeamTab = ({
 
     //Send the email to targetUserEmail
     const emailObject: EmailInvite = {
-      transporter: undefined,
+      transporter: transporter,
       invitee: invitee,
       targetUser: targetUser,
       project: project,
