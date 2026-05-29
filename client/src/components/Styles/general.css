@@ -628,7 +628,6 @@ Sidebar Nav style rules
 }
 
 
-
 .containerButtonSideBar>button.active {
   background-color: var(--primary-color);
   transition: 0.25s;
@@ -787,6 +786,14 @@ Sidebar Nav style rules
     width: 15vw;
     height: 45px;
     margin: 0 5px 20px 5px;
+  }
+
+  /*temporary, until mobile sidebar layout is decided on*/
+  #about-sidebar-btn {
+    display: none;
+  }
+
+  .containerButtonSideBar>button {
     padding-left: calc((100vw - 160px) / 14);
     padding-right: calc((100vw - 160px) / 14);
   }
@@ -811,7 +818,7 @@ Sidebar Nav style rules
 
 @media only screen and (max-width: 500px) {
   .containerButtonSideBar {
-    gap: 10px;
+    gap: 5px;
   }
 }
 
@@ -1121,19 +1128,21 @@ Page popup style rules
   }
 
   .filter-tab {
+    display: block;
     font-size: 1rem;
     font-weight: 400;
     color: var(--neutral-gray);
     /* Indicate should be clicked without being a button */
     cursor: pointer;
     transition: 0.2s;
-    padding: 8px;
+    padding: 1px;
     /* margin: 14px 38px; */
     width: min(20%, 30%);
     text-align: center;
   }
 
   .filter-tab:hover {
+    display: block;
     color: var(--primary-color);
     font-weight: 600;
     transition: none;
@@ -1142,6 +1151,7 @@ Page popup style rules
   }
 
   .filter-tab.selected {
+    display: block;
     font-weight: 700;
     color: var(--primary-color);
     padding: 1px;
@@ -1180,6 +1190,14 @@ Page popup style rules
   }
 }
 
+@media screen and (max-width: 700px)
+{
+  #filter-tabs
+  {
+    column-gap: min(6vw, 45px);
+  }
+}
+
 /* Mobile styling */
 
 @media screen and (max-width: 1180px)
@@ -1204,6 +1222,7 @@ Page popup style rules
   .popup-back {
     margin: 2.01vw 0 0 2.01vw !important;
   }
+
   .popup #filters-popup {
     h2 {
       margin-top: 3.76vh;
@@ -1224,7 +1243,7 @@ Page popup style rules
     {
       column-gap: 10vw;
     }
-    
+
     #selected-section {
       width: 72vw;
       height: 19.7vh;
@@ -1266,7 +1285,8 @@ Header style rules
     */
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
   /* width: calc(100% - 50px); */
-  margin: 0 50px;
+  margin: 0 0px;
+  padding: 0 50px;
   height: 90px;
   position: sticky;
   top: 0;

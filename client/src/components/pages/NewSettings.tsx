@@ -54,7 +54,7 @@ const Settings = () => {
   const getUserData = async () => {
     // authentication
     const acc = await getCurrentAccount();
-    if ( !acc.error && acc.data) {
+    if (!acc.error && acc.data) {
       setUserInfo(acc.data);
     }
 
@@ -85,8 +85,8 @@ const Settings = () => {
    * @param setSuccess Function to set success message in parent component
    * @returns 
    */
-  const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess } : 
-    {type: string, prev: string, cur: string, apiParams: JsonData, setError: React.Dispatch<SetStateAction<string>>, setSuccess: React.Dispatch<SetStateAction<string>>}) => {
+  const ConfirmChange = ({ type, prev = '', cur = '', apiParams, setError, setSuccess }:
+    { type: string, prev: string, cur: string, apiParams: JsonData, setError: React.Dispatch<SetStateAction<string>>, setSuccess: React.Dispatch<SetStateAction<string>> }) => {
     //const [password, setPassword] = useState('');
 
     // git merge 07/24/2025: Yevhenii Shyshko
@@ -147,7 +147,7 @@ const Settings = () => {
               if (response !== undefined && response.error) {
                 setError(response.error);
               }
-              else if(response.data) onSuccess();
+              else if (response.data) onSuccess();
             }}
           >
             Submit
@@ -165,7 +165,7 @@ const Settings = () => {
    * @returns JSX Element
    */
   // User form for changing username/password/email
-  const ChangeForm = ({ type } : {type: string}) => {
+  const ChangeForm = ({ type }: { type: string }) => {
     // Variables
     const [errorMsg, setError] = useState('');
     const [successMsg, setSuccess] = useState('');
@@ -246,13 +246,13 @@ const Settings = () => {
             setSuccess('');
 
             // Update userInfo properly
-            const cleaned_type : string = type.replace(' ', '').toLowerCase();
+            const cleaned_type: string = type.replace(' ', '').toLowerCase();
             if (cleaned_type != 'password') {
               // Create deep copy of object, make changes, then call state update
-              const tempInfo : MePrivate = JSON.parse(JSON.stringify(userInfo));
-              
+              const tempInfo: MePrivate = JSON.parse(JSON.stringify(userInfo));
+
               //tempInfo[cleaned_type] = firstParam;
-              
+
               setUserInfo(tempInfo);
               //this isn't really needed but i'm gonna leave it anyway
             }
@@ -315,36 +315,36 @@ const Settings = () => {
                   // TO-DO: Check if already in use if username
                   // or primary email address. Excludes password
                   //don't actually todo this these are not used anymore
-                  
-                    // if (type === 'Primary Email') {
-                    //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                    //   if (!emailRegex.test(firstParam)) {
-                    //     setError('*Please enter a valid email address.');
-                    //     return;
-                    //   }
-                    // }
-                    // if (type === 'Username') {
-                    //   const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
-                    //   if (!usernameRegex.test(firstParam)) {
-                    //     setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
-                    //     return;
-                    //   }
-                    // }
-                    if (type === 'Phone') {
-                      const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
-                      if (!phoneRegex.test(firstParam)) {
-                        setError('*Please enter a valid phone number.');
-                        return;
-                      }
-                      else {
-                        // TODO: Insert the backend connection to change the user's phone number
-                      }
-                    }
 
-                    if (type !== 'Password') {
+                  // if (type === 'Primary Email') {
+                  //   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                  //   if (!emailRegex.test(firstParam)) {
+                  //     setError('*Please enter a valid email address.');
+                  //     return;
+                  //   }
+                  // }
+                  // if (type === 'Username') {
+                  //   const usernameRegex = /^[a-zA-Z0-9_]{3,20}$/;
+                  //   if (!usernameRegex.test(firstParam)) {
+                  //     setError('*Username must be 3-20 characters, letters, numbers, or underscores only.');
+                  //     return;
+                  //   }
+                  // }
+                  if (type === 'Phone') {
+                    const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+                    if (!phoneRegex.test(firstParam)) {
+                      setError('*Please enter a valid phone number.');
+                      return;
+                    }
+                    else {
+                      // TODO: Insert the backend connection to change the user's phone number
+                    }
+                  }
+
+                  if (type !== 'Password') {
                     let data;
-                    if (type ==='Username')   data = await getUserByUsername(firstParam);
-                    if(type === 'Email')      data = await getUserByEmail(firstParam);
+                    if (type === 'Username') data = await getUserByUsername(firstParam);
+                    if (type === 'Email') data = await getUserByEmail(firstParam);
 
                     if (data?.data) {
                       setError(`*${type} is already in use.`);
@@ -456,13 +456,13 @@ const Settings = () => {
   //   }
   // };
 
-  useEffect(()=>{
-    if(theme === 'dark')
+  useEffect(() => {
+    if (theme === 'dark')
       setThemeOption("Dark Mode")
 
-    if(theme === 'light')
+    if (theme === 'light')
       setThemeOption("Light Mode")
-  },[theme])
+  }, [theme])
 
   return (
     <div className="page" style={{ position: 'relative' }} tabIndex={-1}>
@@ -479,14 +479,17 @@ const Settings = () => {
       {/* Search bar is not used in settings */}
       <div id="settings-page">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <h1 className="page-title">Settings</h1>
-          <Header dataSets={[]} onSearch={() => {}} hideSearchBar />
+          <Header dataSets={[]} onSearch={() => { }} hideSearchBar />
         </div>
         <hr />
         {userInfo === undefined ? (
           <p>You aren't logged in!</p>
         ) : (
+
           <div>
+
             {/* Top Row: Personal and Email Settings */}
             <div className="settings-row" id='main'>
               {/* Personal Settings 
@@ -684,28 +687,28 @@ const Settings = () => {
                 </div> */}
               </div>
             </div>
-              <div className="settings-row">
-                {/* Account Deletion */}
-                <div className="subsection">
-                  <Popup>
-                    <PopupButton className="delete-button">Delete Account</PopupButton>
-                    <PopupContent>
-                      <div className="delete-user-title">Delete Account</div>
-                      <div className="delete-user-extra-info">
-                        Are you sure you want to delete your account? This action cannot be undone.
-                      </div>
-                      <div className="delete-user-button-pair">
-                        <button className="delete-button" onClick={deleteAccountPressed}>
-                          Delete
-                        </button>
-                        <PopupButton buttonId="cancel-button" className="button-reset">
-                          Cancel
-                        </PopupButton>
-                      </div>
-                    </PopupContent>
-                  </Popup>
-                </div>
+            <div className="settings-row">
+              {/* Account Deletion */}
+              <div className="subsection">
+                <Popup>
+                  <PopupButton className="delete-button">Delete Account</PopupButton>
+                  <PopupContent>
+                    <div className="delete-user-title">Delete Account</div>
+                    <div className="delete-user-extra-info">
+                      Are you sure you want to delete your account? This action cannot be undone.
+                    </div>
+                    <div className="delete-user-button-pair">
+                      <button className="delete-button" onClick={deleteAccountPressed}>
+                        Delete
+                      </button>
+                      <PopupButton buttonId="cancel-button" className="button-reset">
+                        Cancel
+                      </PopupButton>
+                    </div>
+                  </PopupContent>
+                </Popup>
               </div>
+            </div>
           </div>
         )}
       </div>
