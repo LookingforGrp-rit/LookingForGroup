@@ -3727,13 +3727,13 @@ My projects page style rules
 }
 
 .my-projects-no-project {
-  color: var(--main-text);
-  font-size: 2rem;
-  font-family: Inter;
-  font-weight: bold;
-  line-height: 28px;
-  padding-left: 60px;
-  padding-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px, 30vw, 350px), 80vw), 1fr));
+  justify-content: space-between;
+  align-content: start;
+  gap: 20px;
+  width: 100%;
+  margin: 0 50px 50px 50px;
 }
 
 .my-projects-grid {
