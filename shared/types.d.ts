@@ -1,4 +1,5 @@
 import type { Request } from "express";
+import type url = require("url");
 
 // Enums for better typing
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
@@ -808,7 +809,7 @@ export interface MePrivate extends MeDetail {
   /**
    * The logged-in user's UID
    */
-  universityId: string;
+  googleId: string;
 
   /**
    * The date on which the logged-in user's account was created
@@ -926,6 +927,11 @@ export interface ProjectTag extends Tag {
    * The location of this resource on the server
    */
   apiUrl: string;
+
+  /**
+   * The order this tag is in compared to other tags attached to the project
+   */
+  displayOrder: number;
 }
 
 /**
@@ -1145,6 +1151,53 @@ export type UpdateUserInput = Partial<
     visibility?: "1" | "0";
   }
 >;
+export type CreateUserInput = Partial<
+  Pick<
+    MePrivate,
+    | "headline"
+    | "pronouns"
+    | "title"
+    | "academicYear"
+    | "location"
+    | "funFact"
+    | "bio"
+    | "phoneNumber"
+    | 'username'
+    | 'googleId'
+  > & {
+    profileImage?: string;
+    mentor?: true | false;
+    // TODO update to use Visibility enum
+    visibility?: 1 | 0;
+  }
+> & {
+    firstName: string;
+    lastName: string;
+    googleId: string;
+    username: string;
+    ritEmail: string;
+  };
+
+  //we don't need anything else for
+export type GoogleCredentialUserInput = Partial<
+  Pick<
+    MePrivate,
+    | "headline"
+    | "pronouns"
+    | "title"
+    | "academicYear"
+    | "location"
+    | "funFact"
+    | "bio"
+    | "phoneNumber"
+  > & {
+    profileImage?: string;
+    mentor?: true | false;
+    // TODO update to use Visibility enum
+    visibility?: 1 | 0;
+    googleCredentials: string;
+  }
+>
 
 /**
  * Data required to add a social media link to a user's profile
@@ -1256,8 +1309,12 @@ export type UpdateProjectThumbnailInput = {
 /**
  * Data required to add a tag to a project
  */
-// TODO rename to AddProjectTagInput (no plural)
-export type AddProjectTagsInput = Pick<ProjectTag, "tagId">;
+export type AddProjectTagInput = Pick<ProjectTag, "tagId" | "displayOrder">;
+
+/**
+ * Data required to update a tag on a project
+ */
+export type UpdateProjectTagInput = Partial<AddProjectTagInput>;
 
 /**
  * Data required to add a medium to a project

@@ -109,6 +109,18 @@ model ProjectSocials {
   @@map("project_socials")
 }
 
+model ProjectTags {
+  projectId    Int      @map("project_id")
+  tagId        Int      @map("tag_id")
+  displayOrder Int      @default(0) @map("display_order") @db.UnsignedInt
+  project      Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_tags_project")
+  tag          Tags     @relation(fields: [tagId], references: [tagId], onDelete: Cascade, map: "FK_project_tags_tag")
+
+  @@id([projectId, tagId])
+  @@index([tagId], map: "FK_project_tags_tag_id")
+  @@map("project_tags")
+}
+
 model Projects {
   projectId         Int                 @id @default(autoincrement()) @map("project_id")
   title             String              @db.VarChar(50)
@@ -128,8 +140,9 @@ model Projects {
   projectImages     ProjectImages[]     @relation("ProjectImages")
   projectSocials    ProjectSocials[]
   mediums           Mediums[]
-  tags              Tags[]
+  // tags              Tags[]
   users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")
+  tags              ProjectTags[]
 
   @@index([userId], map: "FK_user_id")
   @@map("projects")
@@ -145,10 +158,11 @@ model Socials {
 }
 
 model Tags {
-  tagId    Int        @id @default(autoincrement()) @map("tag_id")
-  label    String     @db.VarChar(50)
-  type     String     @db.VarChar(50)
-  projects Projects[]
+  tagId       Int           @id @default(autoincrement()) @map("tag_id")
+  label       String        @db.VarChar(50)
+  type        String        @db.VarChar(50)
+  // projects    Projects[]
+  projectTags ProjectTags[]
 
   @@unique([label, type])
   @@map("tags")
@@ -212,7 +226,7 @@ model Users {
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @unique @map("phone_number") @db.VarChar(20)
-  googleId          String              @unique(map: "google_id_UNIQUE") @default("bill of rights") @map("google_id")
+  googleId          String              @unique(map: "google_id_UNIQUE") @map("google_id") @default("bill of rights")
   members           Members[]
   projectFollowings ProjectFollowings[]
   projects          Projects[]
@@ -233,6 +247,14 @@ model Skills {
 
   @@unique([label, type])
   @@map("skills")
+}
+
+model Session {
+  id String @id
+  sid String @unique
+  data String
+  gid String @default("federalist papers")
+  expiresAt DateTime
 }
 
 enum JobsAvailability {

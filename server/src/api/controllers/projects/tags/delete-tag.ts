@@ -1,14 +1,14 @@
-import type { AddProjectTagsInput, ApiResponse } from '@looking-for-group/shared';
+import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import addTagsService from '#services/projects/tags/add-tags.ts';
+import { deleteTagService } from '#services/projects/tags/delete-tag.ts';
 
-//POST api/projects/{id}/tags
-//adds a tag to the project
-const addTagsController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
-  const tag: AddProjectTagsInput = req.body as AddProjectTagsInput;
+//DELETE api/projects/{id}/tags/{tagId}
+//deletes a tag from a project
+const deleteTagController = async (req: Request, res: Response) => {
+  const id = parseInt(req.params.id);
+  const tagId = parseInt(req.params.tagId);
 
-  const result = await addTagsService(projectId, tag);
+  const result = await deleteTagService(id, tagId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -19,7 +19,6 @@ const addTagsController = async (req: Request, res: Response) => {
     res.status(500).json(resBody);
     return;
   }
-
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
@@ -29,13 +28,12 @@ const addTagsController = async (req: Request, res: Response) => {
     res.status(404).json(resBody);
     return;
   }
-
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: result,
+    data: null,
   };
   res.status(200).json(resBody);
 };
 
-export default addTagsController;
+export default deleteTagController;

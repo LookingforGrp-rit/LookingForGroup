@@ -36,7 +36,7 @@ describe('uidExists test service,', async () => {
       mentor: false,
       createdAt: new Date(),
       updatedAt: new Date(),
-      universityId: '1',
+      googleId: '1',
       location: '',
       funFact: '',
       bio: '',

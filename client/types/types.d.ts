@@ -1,10 +1,11 @@
 import {
   AddProjectMediumsInput,
   AddProjectSocialInput,
-  AddProjectTagsInput,
+  AddProjectTagInput,
   CreateProjectImageInput,
   CreateProjectJobInput,
   CreateProjectMemberInput,
+  UpdateProjectTagInput,
   UpdateProjectImageInput,
   UpdateProjectInput,
   UpdateProjectJobInput,
@@ -100,7 +101,7 @@ interface ProjectChangesCreates {
   /**
    * All tags to be created
    */
-  tags: CRUDRequest<AddProjectTagsInput>[];
+  tags: CRUDRequest<AddProjectTagInput>[];
 
   /**
    * All project images to be created
@@ -142,6 +143,11 @@ interface ProjectChangesUpdates {
    */
   thumbnail: CRUDRequest<UpdateProjectThumbnailInput>;
 
+  /**
+   * All tags to be updated
+   */
+  tags: CRUDRequest<UpdateProjectTagInput>[];
+  
   /**
    * All images to be updated
    */
