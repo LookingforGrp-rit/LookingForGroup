@@ -115,7 +115,6 @@ export const PopupContent = ({
   callback = async () => { },
   profilePopup = false,
   closeButtonRef = undefined,
-  openFocusRef = undefined,
   confirmation = false,
 }: {
   children: ReactNode;
@@ -123,18 +122,24 @@ export const PopupContent = ({
   callback?: () => void;
   profilePopup?: false | true;
   closeButtonRef?: React.RefObject<null>;
-  openFocusRef?: React.RefObject<HTMLElement | null>;
   confirmation?: boolean;
 }) => {
   const { open, setOpen } = useContext(PopupContext);
   const popupRef = useRef(null);
+  const pushedHistoryState = useRef(false);
 
   // Close the popup and execute optional callback
   const closePopup = useCallback(() => {
-    if(!open) return;
+    if (!open) return;
     callback();
-    if(!confirmation) setOpen(false);
-  }, [callback, setOpen, open]);
+    if (!confirmation) {
+      setOpen(false);
+      if (pushedHistoryState.current && (history.state as { popup?: boolean } | null)?.popup) {
+        pushedHistoryState.current = false;
+        history.back();
+      }
+    }
+  }, [callback, confirmation, open, setOpen]);
 
   // Close on Escape key press
   useEffect(() => {
@@ -161,19 +166,20 @@ export const PopupContent = ({
   useEffect(() => {
     if (open) {
       // Push new browser history if no popup state yet
-      if (!history.state.popup) {
+      if (!(history.state as { popup?: boolean } | null)?.popup) {
         history.pushState({ popup: true }, '', '');
+        pushedHistoryState.current = true;
       }
-    };
+    }
     const handlePopState = (event: PopStateEvent) => {
       // Close popup 
-      if (open && !event.state.popup) {
+      if (open && !((event.state as { popup?: boolean } | null)?.popup)) {
         closePopup();
       }
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
-  }, [open, closePopup]);
+  }, [closePopup, open]);
 
   return (
     <>
