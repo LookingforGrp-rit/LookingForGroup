@@ -217,6 +217,8 @@ export const MediaTab = ({
     }
 
     imageUploader.value = "";
+    // TODO: make image load from the new uploaded image
+    // TODO: check if image needs to be cropped at all
     setCropSrc("/src/images/projects_header_light.png");
     setCropAlt("/src/images/projects_header_light.png");
     (document.getElementById("xTrans") as HTMLInputElement).valueAsNumber = 0;
@@ -224,6 +226,9 @@ export const MediaTab = ({
     (document.getElementById("zoom") as HTMLInputElement).valueAsNumber = 100;
   }, [dataManager, projectId, updatePendingProject, cropSrc, cropAlt]);
 
+  /**
+   * updates the canvas element for cropping images
+   */
   const updateCanvas = useCallback(() => {
     const ctx = canvas.current?.getContext("2d");
     ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
@@ -414,6 +419,7 @@ export const MediaTab = ({
   return (
     <Popup>
     <PopupContent>
+      {/* TODO: popup is iffy on showing up after uploading an image, fix that */}
       <div className="project-crop">
         <label>Crop image for thumbnail usage</label>
         <canvas ref={canvas} id="canvas"></canvas>
