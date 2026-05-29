@@ -55,14 +55,15 @@ const MyProjectsDisplayGrid = ({
     error: "Not initialized",
   });
 
-    // Project visibilty toggle
+  // Project visibilty toggle
   const [isVisible, setIsVisible] = useState(() => {
-    const savedValue = localStorage.getItem("project" + projId + "visibilty");
-    return savedValue || true;
+    const savedValue = localStorage.getItem("project_" + projId + "_visibilty");
+    console.log(savedValue);
+    return savedValue ? JSON.parse(savedValue) : false;
   });;
 
   useEffect(() => {
-    localStorage.setItem("project" + projId + "visibilty", isVisible.toString());
+    localStorage.setItem("project_" + projId + "_visibilty", JSON.stringify(isVisible));
   }, [isVisible]);
 
   /**
