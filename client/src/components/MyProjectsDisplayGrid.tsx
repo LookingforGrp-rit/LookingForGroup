@@ -92,7 +92,7 @@ const MyProjectsDisplayGrid = ({
   };
 
   return (
-    <div className="my-project-grid-card" style={{visibility: isVisible ? "visible" : "hidden"}}>
+    <div className="my-project-grid-card">
       {/* Thumbnail */}
       <button className="grid-card-image-button" onClick={() => navigate(projectURL)}>
         <img
@@ -102,6 +102,7 @@ const MyProjectsDisplayGrid = ({
             placeholderThumbnail
           )}
           alt={`${projectData.title}`}
+          style={{opacity: isVisible ? "1" : "0.25"}}
         />
       </button>
 

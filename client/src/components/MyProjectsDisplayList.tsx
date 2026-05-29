@@ -102,7 +102,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   };
 
   return (
-    <div className="my-project-list-card" style={{visibility: isVisible ? "visible" : "hidden"}}>
+    <div className="my-project-list-card">
       {/* Thumbnail and Title*/}
       <div className="list-card-section1">
         {/*
@@ -118,6 +118,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
         <div
           className="list-card-title"
           onClick={() => navigate(projectURL)}
+          style={{opacity: isVisible ? "1" : "0.25"}}
         >{projectData.title}</div>
       </div>
 
