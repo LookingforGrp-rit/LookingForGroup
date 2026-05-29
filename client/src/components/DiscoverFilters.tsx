@@ -382,13 +382,11 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                     >
                       <i className="fa fa-caret-left"></i>
                     </button>
-                    <div                       // Needed for arrow functionality
-                      id="discover-tag-filters" 
+                    <div id="filter-tabs"
                       tabIndex={-1}
                       ref={popupTagFiltersRef}
                       onScroll={checkPopupScrollVisibility}
                     >
-                    <div id="filter-tabs">
                       {filterPopupTabs.map((tab, index) => (
                         <a
                           key={`${tab.categoryName}-${index}`}
@@ -410,7 +408,6 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                           {tab.categoryName}
                         </a>
                       ))}
-                      </div>
                     </div>
                     <button
                       id="popup-filters-right-scroll"
@@ -421,72 +418,72 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                     </button>
                   </div>
                   <hr />
-                  <div id="filter-tags">
-                    {searchedTags.tags.length === 0 ? (
-                      <p>No tags found. Please try a different search term.</p>
-                    ) : (
-                      searchedTags.tags.map((tag) => (
-                        <button
-                          key={`${tag.label}-${tag.type}`}
-                          // className={`tag-button tag-button-${searchedTags.color}-unselected`}
-                          className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
-                          onClick={(e) => {
-                            const element = e.target as HTMLElement;
-                            const selecIndex = isTagEnabled(tag, searchedTags.color);
-                            let tempEnabled = enabledFilters;
+                    <div id="filter-tags">
+                      {searchedTags.tags.length === 0 ? (
+                        <p>No tags found. Please try a different search term.</p>
+                      ) : (
+                        searchedTags.tags.map((tag) => (
+                          <button
+                            key={`${tag.label}-${tag.type}`}
+                            // className={`tag-button tag-button-${searchedTags.color}-unselected`}
+                            className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
+                            onClick={(e) => {
+                              const element = e.target as HTMLElement;
+                              const selecIndex = isTagEnabled(tag, searchedTags.color);
+                              let tempEnabled = enabledFilters;
 
-                            if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
-                              // Remove all other tags of the same type except the one selected
-                              const filterTags = document.querySelector('#filter-tags')!;
-                              const tagList : HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
+                              if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
+                                // Remove all other tags of the same type except the one selected
+                                const filterTags = document.querySelector('#filter-tags')!;
+                                const tagList : HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
 
-                              for (let i = 0; i < tagList.length; i++) {
-                                const tagObj : Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
-                                const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
+                                for (let i = 0; i < tagList.length; i++) {
+                                  const tagObj : Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
+                                  const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
 
-                                if (tagList[i].innerText.trim() !== tag.label) {
-                                  tagList[i].classList.replace(
-                                    `tag-button-${searchedTags.color}-selected`,
-                                    `tag-button-${searchedTags.color}-unselected`
-                                  );
+                                  if (tagList[i].innerText.trim() !== tag.label) {
+                                    tagList[i].classList.replace(
+                                      `tag-button-${searchedTags.color}-selected`,
+                                      `tag-button-${searchedTags.color}-unselected`
+                                    );
 
-                                  tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
+                                    tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
+                                  }
                                 }
                               }
-                            }
 
-                            if (selecIndex === -1) {
-                              // Creates an object to store text and category
-                              //setEnabledFilters([...enabledFilters, { tag, color: searchedTags.color }]);
-                              setEnabledFilters([
-                                ...tempEnabled,
-                                { tag, color: searchedTags.color },
-                              ]);
-                              element.classList.replace(
-                                `tag-button-${searchedTags.color}-unselected`,
-                                `tag-button-${searchedTags.color}-selected`
-                              );
-                            } else {
-                              // Remove tag from list of enabled filters
-                              setEnabledFilters(tempEnabled.toSpliced(selecIndex, 1));
-                              element.classList.replace(
-                                `tag-button-${searchedTags.color}-selected`,
-                                `tag-button-${searchedTags.color}-unselected`
-                              );
-                            }
-                          }}
-                        >
-                          <i
-                            className={
-                              isTagEnabled(tag, searchedTags.color) !== -1
-                                ? 'fa fa-check'
-                                : 'fa fa-plus'
-                            }
-                          ></i>
-                          <p>{tag.label}</p>
-                        </button>
-                      ))
-                    )}
+                              if (selecIndex === -1) {
+                                // Creates an object to store text and category
+                                //setEnabledFilters([...enabledFilters, { tag, color: searchedTags.color }]);
+                                setEnabledFilters([
+                                  ...tempEnabled,
+                                  { tag, color: searchedTags.color },
+                                ]);
+                                element.classList.replace(
+                                  `tag-button-${searchedTags.color}-unselected`,
+                                  `tag-button-${searchedTags.color}-selected`
+                                );
+                              } else {
+                                // Remove tag from list of enabled filters
+                                setEnabledFilters(tempEnabled.toSpliced(selecIndex, 1));
+                                element.classList.replace(
+                                  `tag-button-${searchedTags.color}-selected`,
+                                  `tag-button-${searchedTags.color}-unselected`
+                                );
+                              }
+                            }}
+                          >
+                            <i
+                              className={
+                                isTagEnabled(tag, searchedTags.color) !== -1
+                                  ? 'fa fa-check'
+                                  : 'fa fa-plus'
+                              }
+                            ></i>
+                            <p>{tag.label}</p>
+                          </button>
+                        ))
+                      )}
                   </div>
                 </div>
                 <div id="selected-section" className="popup-section">
