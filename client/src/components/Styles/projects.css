@@ -126,7 +126,7 @@ Project Panel component style rules
   border-radius: 10px;
   cursor: pointer;
   filter: drop-shadow(2px 2px 10px var(--shadow-color));
-  z-index: 2;
+  /* z-index: 2; */
 
   img {
     border-radius: 10px 10px 0 0;
