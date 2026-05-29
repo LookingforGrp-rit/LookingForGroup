@@ -53,21 +53,18 @@ const Login: React.FC = () => {
 
   }, [navigate])
 
-  async function handleGoogle(response: any){
-    //decodeJwtResponse(response.credential);
-    //this^^ is our googleId, decoded from base64
-    //when we log in a user we check against this with a backend request
-    //we probably shouldn't decode it clientside tho lol
-    //here is gonna be exclusively for logins for existing users
-    //and we have one existing user with a valiid google id, me!
+  async function handleGoogle(){
 
     const res = await fetch(`http://localhost:3000/google-login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credential: response.credential })
+      credentials: "include"
     });
 
-    console.log(res);
+    //our userExists is stored in res.json()
+    //so there we do stuff with it
+    //except that is all that's stored in there so we don't get anything else back, that might be intentional?
+    console.log(await res.json());
 
     console.log('hello yes this is happening!');
   }

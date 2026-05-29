@@ -1,8 +1,7 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
-import { uidHeaderKey } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
-import { getUserByShibService } from '#services/me/get-user-shib.ts';
+import { getUserByGoogleService } from '#services/me/get-user-shib.ts';
 
 const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
   const authenticatedRequest = request as AuthenticatedRequest;
@@ -17,27 +16,24 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       return;
     }
   }
+  console.log(request.headers.cookie);
 
   //change this to use and accept google oauth
-  const universityId = authenticatedRequest.headers[uidHeaderKey] as string | undefined;
-  //legacy stuff from shib, ergo it won't work
-  //if oauth sends us things in the headers like the rit email, we simply look at that instead of this
-  //if not, uhhhhhhh what then
-  //we send what we did for signup and check it there?
-  //are we even
+  //actually we're putting it in the cookies right
+  const googleId = authenticatedRequest.session.gid;
 
-  //if no university id found
-  if (!universityId) {
+  //if no google id found
+  if (!googleId) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Missing ID in headers',
+      error: 'Missing Google ID in session store',
       data: null,
     };
     response.status(400).json(resBody);
     return;
   }
 
-  const result = await getUserByShibService(universityId);
+  const result = await getUserByGoogleService(googleId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

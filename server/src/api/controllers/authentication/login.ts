@@ -33,10 +33,12 @@ export const login = async (request: Request, response: Response) => {
     return response.status(400).json(resBody);
   }
 
+  //okay wait what does this do exactly
+  //this is putting it in the request, but frontend will never see this bc we send back the response
   request.session.gid = userData.google_id;
   request.session.data = !userData.userExists ? JSON.stringify(userData) : '';
 
-  console.log(`Session data { gid: ${request.session.gid}, data: ${request.session.data}`);
+  console.log(`Session data { gid: ${request.session.gid}, data: ${request.session.data}}`);
 
   const resBody: ApiResponse = {
     status: 200,

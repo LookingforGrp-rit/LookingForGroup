@@ -19,10 +19,8 @@ const getBaseUrl = (): string => {
 export const GET = async (apiURL: string): Promise<ApiResponse> => {
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) {
-      url += url.includes("?")
-        ? `?devId=${import.meta.env.VITE_DEV_ID}`
-        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+    if (import.meta.env.DEV && import.meta.env.VITE_DEV_ID) {
+      url += `?devId=${import.meta.env.VITE_DEV_ID}`
     }
 
     const response = await fetch(url, {
@@ -61,10 +59,8 @@ export const POST = async (
 
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) {
-      url += url.includes("?")
-        ? `?devId=${import.meta.env.VITE_DEV_ID}`
-        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+    if (import.meta.env.DEV && import.meta.env.VITE_DEV_ID) {
+      url += `?devId=${import.meta.env.VITE_DEV_ID}`
     }
 
     const response = await fetch(url, {
@@ -105,10 +101,8 @@ export const PUT = async (
 
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) {
-      url += url.includes("?")
-        ? `?devId=${import.meta.env.VITE_DEV_ID}`
-        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+    if (import.meta.env.DEV && import.meta.env.VITE_DEV_ID) {
+      url += `?devId=${import.meta.env.VITE_DEV_ID}`
     }
 
     const response = await fetch(url, {
@@ -149,10 +143,8 @@ export const DELETE = async (
 
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) {
-      url += url.includes("?")
-        ? `?devId=${import.meta.env.VITE_DEV_ID}`
-        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+    if (import.meta.env.DEV && import.meta.env.VITE_DEV_ID) {
+      url += `?devId=${import.meta.env.VITE_DEV_ID}`
     }
 
     const response = await fetch(url, {
@@ -196,7 +188,7 @@ export const PATCH = async (
     if (import.meta.env.DEV) {
       url += url.includes("?")
         ? `?devId=${import.meta.env.VITE_DEV_ID}`
-        : `?devId=${import.meta.env.VITE_DEV_ID}`;
+        : '';
     }
 
     const response = await fetch(url, {
