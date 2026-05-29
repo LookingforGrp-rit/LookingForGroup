@@ -53,7 +53,7 @@ const Login: React.FC = () => {
 
   }, [navigate])
 
-  async function handleGoogle(response: any){
+  async function handleGoogle(response: any) {
     //decodeJwtResponse(response.credential);
     //this^^ is our googleId, decoded from base64
     //when we log in a user we check against this with a backend request
@@ -63,13 +63,20 @@ const Login: React.FC = () => {
 
     const res = await fetch(`http://localhost:3000/google-login`, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credential: response.credential })
+      headers: { "Content-Type": "application/json", "credentials": "include" },
+      body: JSON.stringify({ credential: response.credential }),
+      credentials: 'include'
     });
+  }
+
+  async function handleTest() {
+    const res = await fetch('http://localhost:3000/google-login/test', {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+      credentials: 'include'
+    })
 
     console.log(res);
-
-    console.log('hello yes this is happening!');
   }
 
   /**
@@ -185,6 +192,9 @@ const Login: React.FC = () => {
               onChange={(e) => setLoginInput(e.target.value)}
             />
             <div id="googleBtn"></div>
+            <button onClick={handleTest}>
+              Press me to test sessions!!!
+            </button>
             <div className="mobile-signup">
               <p>No account? </p>
               <p id="signup-btn-mobile" onClick={() => navigate(paths.routes.SIGNUP)}>

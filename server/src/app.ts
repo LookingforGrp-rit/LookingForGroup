@@ -23,6 +23,7 @@ app.use(
     secret: process.env.EXPRESS_SESSION_SECRET || 'declaration of independence',
     resave: false,
     saveUninitialized: false,
+    rolling: true,
     store: new PrismaSessionStore(prisma, {
       checkPeriod: 2 * 60 * 1000 /* every 2 minutes */,
     }),
@@ -33,6 +34,7 @@ app.use(
         //30 minutes * 60 seconds/minute * 1000ms/second
         maxAge: 30 * 60 * 1000,
         sameSite: true,
+        domain: 'localhost',
       };
     },
   }),
