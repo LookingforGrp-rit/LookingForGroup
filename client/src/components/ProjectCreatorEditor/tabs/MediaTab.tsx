@@ -1,5 +1,5 @@
 // --- Imports ---
-import { useCallback, useEffect, useState, useContext } from "react";
+import { useCallback, useEffect, useState, useContext, useRef } from "react";
 import {
   CreateProjectImageInput,
   ProjectImage,
@@ -73,7 +73,18 @@ export const MediaTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
-  const [tempImage, setTempImage] = useState<ProjectImage | PendingProjectImage>();
+  const [tempImage, setTempImage] = useState<HTMLImageElement>();
+
+  const [canvas, setCanvas] = useState<HTMLCanvasElement>();
+  const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
+
+  const [zoom, setZoom] = useState(100);
+  const [dX, setDX] = useState(0);
+  const [dY, setDY] = useState(0);
+
+  const inputX = useRef<HTMLInputElement>(null);
+  const inputY = useRef<HTMLInputElement>(null);
+  const inputZoom = useRef<HTMLInputElement>(null);
 
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
@@ -115,6 +126,7 @@ export const MediaTab = ({
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async () => {
+    /*
     // Get image in input element
     const imageUploader = document.getElementById(
       "image-uploader"
@@ -207,7 +219,32 @@ export const MediaTab = ({
     }
 
     imageUploader.value = "";
+    */
+    setCanvas(document.getElementById("canvas") as HTMLCanvasElement);
+    setCtx(canvas?.getContext("2d") as CanvasRenderingContext2D);
+
+    const image = new Image(100, 100);
+    image.src = "/src/images/project-temp.png";
+    setTempImage(image);
+    (document.getElementById("xTrans") as HTMLInputElement).valueAsNumber = 0;
+    (document.getElementById("yTrans") as HTMLInputElement).valueAsNumber = 0;
+    (document.getElementById("zoom") as HTMLInputElement).valueAsNumber = 100;
   }, [dataManager, projectId, updatePendingProject]);
+
+  const updateCanvas = useCallback(() => {
+
+    ctx?.drawImage(tempImage as CanvasImageSource, dX, dY, zoom, zoom, 0, 0, ctx.canvas.width, ctx.canvas.height);
+    console.log(dX + " " + dY + " " + zoom);
+  }, [tempImage, ctx, dX, dY, zoom]);
+
+  const updateX = async() => {
+    setDX(Number.parseInt((document.getElementById("yTrans") as HTMLInputElement).value));
+    updateCanvas();
+  }
+
+  useEffect(() => {
+    tempImage?.addEventListener("load", updateCanvas);
+  }, [tempImage, ctx, dX, dY, zoom]);
 
   // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
@@ -379,25 +416,53 @@ export const MediaTab = ({
   // --- Complete component ---
   return (
     <Popup>
-      <PopupContent>
-        <div className="project-crop">
-          <label>Crop image for thumbnail usage</label>
-          <img className="project-crop-img"
-            src={"/src/images/project_temp.png"}
-            alt={"/src/images/project_temp.png"}
-          />
-          <input type="range" id="zoom" name="zoom" min={1} max={100}/>
-          <label className="slider-text" htmlFor="zoom">zoom</label>
-          <div className="project-crop-extra-info">
-            Upload images that showcase your project. Select one image to be used as
-            the main thumbnail on the project's discover card.
-          </div>
-          <div className="confirm-project-crop">
-            <PopupButton buttonId="project-crop-save">Crop Image</PopupButton>
-            <PopupButton buttonId="project-crop-cancel" className="project-info-buttons">Skip</PopupButton>
-          </div>
+    <PopupContent>
+      <div className="project-crop">
+        <label>Crop image for thumbnail usage</label>
+        <canvas id="canvas"></canvas>
+        <img id="test1212aaa" src="/src/images/project_temp.png" alt="/src/images/project_temp.png" />
+        <input 
+          type="range" ref={inputZoom}
+          id="zoom" name="zoom" 
+          onChange={() => {
+            setZoom(inputZoom?.current?.valueAsNumber as number);
+            updateCanvas();
+          }}
+          min={100} max={500}
+          defaultValue={zoom}/>
+        <label className="slider-text" htmlFor="zoom">zoom</label>
+        <input 
+          type="range" ref={inputX}
+          id="xTrans" name="xTrans" 
+          onChange={() => {
+            setDX(inputX?.current?.valueAsNumber as number);
+            updateCanvas();
+          }}
+          min={tempImage ? -tempImage.width : 0} 
+          max={tempImage ? tempImage.width : 100}
+          defaultValue={dX}/>
+        <label className="slider-text" htmlFor="xtrans">X</label>
+        <input  
+          type="range" ref={inputY}
+          id="yTrans" name="yTrans" 
+          onChange={() => {
+            setDY(inputY?.current?.valueAsNumber as number);
+            updateCanvas();
+          }}
+          min={tempImage ? -tempImage.height : 0} 
+          max={tempImage ? tempImage.height : 100}
+          defaultValue={dY}/>
+        <label className="slider-text" htmlFor="yTrans">Y</label>
+        <div className="project-crop-extra-info">
+          Upload images that showcase your project. Select one image to be used as
+          the main thumbnail on the project's discover card.
         </div>
-      </PopupContent>
+        <div className="confirm-project-crop">
+          <PopupButton buttonId="project-crop-save">Crop Image</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" className="project-info-buttons">Skip</PopupButton>
+        </div>
+      </div>
+    </PopupContent>
     <div id="project-editor-media">
       <label>Project Images</label>
       <div className="project-editor-extra-info">
