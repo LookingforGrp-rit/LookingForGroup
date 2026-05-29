@@ -73,15 +73,15 @@ export const MediaTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
-  const [tempImage, setTempImage] = useState<HTMLImageElement>();
-
-  const [canvas, setCanvas] = useState<HTMLCanvasElement>();
-  const [ctx, setCtx] = useState<CanvasRenderingContext2D>();
-
   const [zoom, setZoom] = useState(100);
   const [dX, setDX] = useState(0);
   const [dY, setDY] = useState(0);
 
+  const [cropSrc, setCropSrc] = useState("/src/images/projects_header_light.png");
+  const [cropAlt, setCropAlt] = useState("/src/images/projects_header_light.png");
+
+  const tempImage = useRef<HTMLImageElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
   const inputX = useRef<HTMLInputElement>(null);
   const inputY = useRef<HTMLInputElement>(null);
   const inputZoom = useRef<HTMLInputElement>(null);
@@ -126,7 +126,6 @@ export const MediaTab = ({
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async () => {
-    /*
     // Get image in input element
     const imageUploader = document.getElementById(
       "image-uploader"
@@ -212,39 +211,37 @@ export const MediaTab = ({
           thumbnail: thumbObj,
         };
       }
-      updatePendingProject(projectAfterMediaChanges);
-
+      await updatePendingProject(projectAfterMediaChanges);
     } catch (err) {
       console.error(err);
     }
 
     imageUploader.value = "";
-    */
-    setCanvas(document.getElementById("canvas") as HTMLCanvasElement);
-    setCtx(canvas?.getContext("2d") as CanvasRenderingContext2D);
-
-    const image = new Image(100, 100);
-    image.src = "/src/images/project-temp.png";
-    setTempImage(image);
+    setCropSrc("/src/images/projects_header_light.png");
+    setCropAlt("/src/images/projects_header_light.png");
     (document.getElementById("xTrans") as HTMLInputElement).valueAsNumber = 0;
     (document.getElementById("yTrans") as HTMLInputElement).valueAsNumber = 0;
     (document.getElementById("zoom") as HTMLInputElement).valueAsNumber = 100;
-  }, [dataManager, projectId, updatePendingProject]);
+  }, [dataManager, projectId, updatePendingProject, cropSrc, cropAlt]);
 
   const updateCanvas = useCallback(() => {
+    const ctx = canvas.current?.getContext("2d");
+    ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
+    if (tempImage.current)
+    ctx?.drawImage(
+      tempImage.current, 
+      dX, dY, 
+      tempImage.current.width / zoom * 100, 
+      tempImage.current.height / zoom * 100, 
+      0, 0, 
+      tempImage.current.width, tempImage.current.height);
 
-    ctx?.drawImage(tempImage as CanvasImageSource, dX, dY, zoom, zoom, 0, 0, ctx.canvas.width, ctx.canvas.height);
-    console.log(dX + " " + dY + " " + zoom);
-  }, [tempImage, ctx, dX, dY, zoom]);
-
-  const updateX = async() => {
-    setDX(Number.parseInt((document.getElementById("yTrans") as HTMLInputElement).value));
-    updateCanvas();
-  }
+      console.log(cropSrc + " " + cropAlt)
+  }, [tempImage, dX, dY, zoom, document, canvas,cropSrc,cropAlt]);
 
   useEffect(() => {
-    tempImage?.addEventListener("load", updateCanvas);
-  }, [tempImage, ctx, dX, dY, zoom]);
+    tempImage?.current?.addEventListener("load", updateCanvas);
+  }, [tempImage, dX, dY, zoom]);
 
   // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
@@ -419,8 +416,8 @@ export const MediaTab = ({
     <PopupContent>
       <div className="project-crop">
         <label>Crop image for thumbnail usage</label>
-        <canvas id="canvas"></canvas>
-        <img id="test1212aaa" src="/src/images/project_temp.png" alt="/src/images/project_temp.png" />
+        <canvas ref={canvas} id="canvas"></canvas>
+        <img  ref={tempImage} id="test12" src={cropSrc} alt={cropAlt} />
         <input 
           type="range" ref={inputZoom}
           id="zoom" name="zoom" 
@@ -428,7 +425,7 @@ export const MediaTab = ({
             setZoom(inputZoom?.current?.valueAsNumber as number);
             updateCanvas();
           }}
-          min={100} max={500}
+          min={1} max={500}
           defaultValue={zoom}/>
         <label className="slider-text" htmlFor="zoom">zoom</label>
         <input 
@@ -438,8 +435,8 @@ export const MediaTab = ({
             setDX(inputX?.current?.valueAsNumber as number);
             updateCanvas();
           }}
-          min={tempImage ? -tempImage.width : 0} 
-          max={tempImage ? tempImage.width : 100}
+          min={tempImage.current ? -tempImage.current.width : 0} 
+          max={tempImage.current ? tempImage.current.width : 100}
           defaultValue={dX}/>
         <label className="slider-text" htmlFor="xtrans">X</label>
         <input  
@@ -449,8 +446,8 @@ export const MediaTab = ({
             setDY(inputY?.current?.valueAsNumber as number);
             updateCanvas();
           }}
-          min={tempImage ? -tempImage.height : 0} 
-          max={tempImage ? tempImage.height : 100}
+          min={tempImage.current ? -tempImage.current.height : 0} 
+          max={tempImage.current ? tempImage.current.height : 100}
           defaultValue={dY}/>
         <label className="slider-text" htmlFor="yTrans">Y</label>
         <div className="project-crop-extra-info">
@@ -458,6 +455,7 @@ export const MediaTab = ({
           the main thumbnail on the project's discover card.
         </div>
         <div className="confirm-project-crop">
+          {/* TODO: impliment saving the cropped image */}
           <PopupButton buttonId="project-crop-save">Crop Image</PopupButton>
           <PopupButton buttonId="project-crop-cancel" className="project-info-buttons">Skip</PopupButton>
         </div>

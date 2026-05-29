@@ -1660,6 +1660,10 @@ select.edit-position-compensation {
     width: 100%;
   }
 
+  img {
+    display: none;
+  }
+
   input[type="range"] {
     width: 50%;
     background: none;
