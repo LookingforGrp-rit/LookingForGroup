@@ -1,11 +1,13 @@
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
+import cors from 'cors';
 import express, { type Request, type Response } from 'express';
 import session, { type CookieOptions } from 'express-session';
 import morgan from 'morgan';
 import envConfig from '#config/env.ts';
 import prisma from '#config/prisma.ts';
+import googleRouter from '#routes/authentication.ts';
 import datasetsRouter from '#routes/datasets.ts';
 import imagesRouter from '#routes/images.ts';
 import meRouter from '#routes/me.ts';
@@ -23,19 +25,20 @@ app.use(
     saveUninitialized: false,
     store: new PrismaSessionStore(prisma, {
       checkPeriod: 2 * 60 * 1000 /* every 2 minutes */,
-      dbRecordIdIsSessionId: true,
     }),
     cookie: function (): CookieOptions {
       return {
         httpOnly: true,
         secure: envConfig.env === 'production',
-        maxAge: 60000,
+        //30 minutes * 60 seconds/minute * 1000ms/second
+        maxAge: 30 * 60 * 1000,
         sameSite: true,
       };
     },
   }),
 );
 
+app.use(cors({ origin: process.env.CLIENT_URL || 'http://localhost:5173', credentials: true }));
 app.use(morgan(envConfig.env === 'development' ? 'dev' : 'tiny'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -59,6 +62,7 @@ app.use('/projects', projectsRouter);
 app.use('/me', meRouter);
 app.use('/images', imagesRouter);
 app.use('/mod', modRouter);
+app.use('/google-login', googleRouter);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

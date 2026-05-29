@@ -5,6 +5,6 @@ import { login } from '../controllers/authentication/login.ts';
 const router = Router();
 
 // Checks if the token given to the server is valid
-router.post('/api/google-login', login);
+router.post('/', login);
 
 export default router;

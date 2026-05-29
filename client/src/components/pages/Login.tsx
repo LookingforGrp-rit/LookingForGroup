@@ -61,11 +61,13 @@ const Login: React.FC = () => {
     //here is gonna be exclusively for logins for existing users
     //and we have one existing user with a valiid google id, me!
 
-    const res = await fetch(`/api/google-login`, {
+    const res = await fetch(`http://localhost:3000/google-login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ credential: response.credential })
     });
+
+    console.log(res);
 
     console.log('hello yes this is happening!');
   }
