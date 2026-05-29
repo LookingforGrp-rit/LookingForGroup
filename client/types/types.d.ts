@@ -370,14 +370,17 @@ interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
 
 /**
  * Representation of an email invite to send.
- * transporter is the transporter to user, there should only be one at any time
- * invitee is the person inviting the targetUser
- * targetUser is the person recieving the invite
- * project is the project this email invite pertains to
- * textBody is the body of the email as plain text
+ * Kind is what purpose the email has. Currently it's only invitations, 
+ *  but more could be added like password reset, notifications, etc
+ * Transporter is the transporter to user, there should only be one at any time
+ * Invitee is the person inviting the targetUser
+ * TargetUser is the person recieving the invite
+ * Project is the project this email invite pertains to
+ * TextBody is the body of the email as plain text
  * HTMLBody is the body of the email as HTML
  */
-interface EmailInvite {
+interface Email {
+  kind: "Invite";
   transporter: any;
   invitee: ProjectMember | PendingProjectMember | undefined;
   targetUser: UserPreview;

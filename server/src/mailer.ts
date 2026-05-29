@@ -1,7 +1,7 @@
 import nodemailer from 'nodemailer';
 
-//MOVE THIS SOMEWHERE WHERE IT ONLY HAPPENS ONCE
-// Create a transporter using SMTP
+//Make sure this only happens once
+//Create a transporter using SMTP
 //Using local for now
 const transporter = nodemailer.createTransport({
   host: 'localhost',

@@ -30,7 +30,7 @@ import {
   JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 import {
-  EmailInvite,
+  Email,
   Pending,
   PendingProject,
   PendingProjectMember,
@@ -499,9 +499,10 @@ export const TeamTab = ({
 
   /**
    * Async function that sends the email properly
+   * The kind property has not been fully implemented yet
    * @param EmailInvite email object to read info from and send
    */
-  const sendEmail = async (email: EmailInvite) => {
+  const sendEmail = async (email: Email) => {
     const transporter: any = email.transporter;
     const inviteeName: string = `${email.invitee?.user?.firstName} ${email.invitee?.user?.lastName}`;
     const inviteeEmail: string = `${email.invitee?.user?.username}.rit.edu`;
@@ -559,7 +560,8 @@ export const TeamTab = ({
       Thank you!`;
 
     //Send the email to targetUserEmail
-    const emailObject: EmailInvite = {
+    const emailObject: Email = {
+      kind: "Invite",
       transporter: transporter,
       invitee: invitee,
       targetUser: targetUser,
