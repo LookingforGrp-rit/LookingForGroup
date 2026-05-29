@@ -147,7 +147,7 @@ interface ProjectChangesUpdates {
    * All tags to be updated
    */
   tags: CRUDRequest<UpdateProjectTagInput>[];
-  
+
   /**
    * All images to be updated
    */
