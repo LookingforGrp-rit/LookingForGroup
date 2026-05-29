@@ -519,7 +519,7 @@ export const TeamTab = ({
     try {
       const info = await transporter.sendMail({
         from: `"${inviteeName}" <${inviteeEmail}>`, // sender address
-        to: `${targetUserEmail}`, // list of recipients
+        to: `ddw6891@rit.edu`, // list of recipients
         subject: `Invitation to join ${projectName}`, // subject line
         text: `${email.textBody}`, // plain text body
         html: `${email.HTMLBody}`, // HTML body
@@ -534,12 +534,43 @@ export const TeamTab = ({
   }
 
   /**
+   * Creates a URL for a user to accept their invite to a project
+   * Not done yet, will probably make improvements at some point
+   * @returns the URL as a string if one was able to be made, otherwise false
+   */
+  const getProjectInviteURL = (targetUser: UserPreview, invitee: ProjectMember | PendingProjectMember | undefined,
+    project: PendingProject) => {
+
+    //Change this to an array in the database soon
+    let temparray: string[] = [];
+
+    //If targetUser isn't in allUsers or the project's title is null or if the invitee is undefined, return false
+    if (!allUsers.includes(targetUser) || project.title === null || invitee === undefined) {
+      return false;
+    }
+
+    //Store an array of these in the database?
+    let inviteIdentifier: string = ``;
+
+    //If it's already in the array, make a new one
+    do {
+      inviteIdentifier = `${targetUser.userId}${invitee.user?.userId}${project.projectId}`;
+
+      //While the array containing inviteIdentifiers contains this one
+    } while (temparray.includes(inviteIdentifier))
+
+    //I think this is the right URL, please fix if it's wrong
+    return `https://lookingforgrp.com/invite/${inviteIdentifier}/`;
+  }
+
+  /**
    * Sends a project invite to a specified user by email
    * @param targetUser specified user
-   * @returns string | false
+   * @returns the email as a string if it was able to be created, otherwise false
    */
   const sendProjectInviteByAutoEmail = (targetUser: UserPreview, project: PendingProject,
     invitee: ProjectMember | PendingProjectMember | undefined) => {
+
     //If targetUser isn't in allUsers or the project's title is null or if the invitee is undefined, return false
     if (!allUsers.includes(targetUser) || project.title === null || invitee === undefined) {
       return false;
@@ -556,7 +587,7 @@ export const TeamTab = ({
       You've been invited to join the project ${projectName} by ${inviteeName}. 
       If you don't want to join the project or believe this is a mistake, you may safely ignore this email.\n
       \n
-      Click this link to accept the invitation: \n
+      Click this link to accept the invitation: ${getProjectInviteURL(targetUser, invitee, project)}\n
       Thank you!`;
 
     //Send the email to targetUserEmail
