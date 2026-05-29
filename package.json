@@ -34,12 +34,14 @@
     "format:server": "npm run format --workspace=server"
   },
   "devDependencies": {
+    "@types/nodemailer": "^8.0.0",
     "concurrently": "^9.2.0",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
-    "prisma": "^6.19.3"
+    "prisma": "^6.19.3",
+    "vite-plugin-node-polyfills": "^0.28.0"
   },
   "engines": {
     "node": ">=v23.6.0"
@@ -53,7 +55,7 @@
     "eslint": "^9.39.4",
     "express": "^5.2.1",
     "multer": "^2.1.1",
-    "nodemailer": "^8.0.9",
+    "nodemailer": "^8.0.10",
     "swagger-parser": "^10.0.3",
     "tsx": "^4.20.5"
   }
