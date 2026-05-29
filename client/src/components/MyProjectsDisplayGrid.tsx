@@ -58,8 +58,7 @@ const MyProjectsDisplayGrid = ({
   // Project visibilty toggle
   const [isVisible, setIsVisible] = useState(() => {
     const savedValue = localStorage.getItem("project_" + projId + "_visibilty");
-    console.log(savedValue);
-    return savedValue ? JSON.parse(savedValue) : false;
+    return savedValue ? JSON.parse(savedValue) : true;
   });;
 
   useEffect(() => {
