@@ -1262,7 +1262,8 @@ Header style rules
     */
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
   /* width: calc(100% - 50px); */
-  margin: 0 50px;
+  margin: 0 0px;
+  padding: 0 50px;
   height: 90px;
   position: sticky;
   top: 0;
