@@ -132,7 +132,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     else if (updatedPendingProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
     else if (updatedPendingProject?.tags.length == 0) newMessage = "Project is missing tags!";
     else if (updatedPendingProject?.hook === "" || updatedPendingProject?.hook === undefined) newMessage = "Project is missing a Short Description!";
-    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing an About This Project!";
+    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing a Project Overview!";
     setMessage(newMessage);
   }
 
