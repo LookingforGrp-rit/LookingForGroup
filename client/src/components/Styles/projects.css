@@ -3535,6 +3535,10 @@ My projects page style rules
   }
 }
 
+.value svg{
+  margin-right: 0.5em;
+}
+
 @media only screen and (min-width: 800px) {
   .my-projects-banner {
     min-height: 220px;
