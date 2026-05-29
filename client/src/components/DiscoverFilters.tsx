@@ -62,6 +62,8 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   const [displayFiltersText, setDisplayFiltersText] = useState(false);
   //Keeps track of the currently selected tab in this popup.
   const [activeTabId, setActiveTabId] = useState(0);
+  // Whether the popup is active; this effects popup filter arrows visibility
+  const [activePopup, setActivePopup] = useState(false);
 
   // Dynamically show/hide arrows
   const tagFiltersRef = useRef<HTMLDivElement>(null);
@@ -185,6 +187,11 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     }
   }, [activeTabId, filterPopupTabs]);
 
+  // Checks arrow visibility when filters popup loads
+  useEffect(() => {
+    checkPopupScrollVisibility();
+  }, [activePopup]);
+
   /**
    * Toggles a tag's selection in the horizontal quick filter.
    * Updates visual selection and parent dataset.
@@ -270,11 +277,16 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   // Check arrow visibility on resize, mount, and data changes
   useEffect(() => {
     checkScrollVisibility(); // initial
+    checkPopupScrollVisibility();
     
-    let timeout: NodeJS.Timeout;
+    let windowTimeout: NodeJS.Timeout;
+    let popupTimeout: NodeJS.Timeout;
     const handleResize = () => {
-      clearTimeout(timeout);
-      timeout = setTimeout(checkScrollVisibility, 150);
+      clearTimeout(windowTimeout);
+      clearTimeout(popupTimeout);
+      windowTimeout = setTimeout(checkScrollVisibility, 150);
+      popupTimeout = setTimeout(checkPopupScrollVisibility, 150);
+
     };
 
     window.addEventListener('resize', handleResize);
@@ -289,7 +301,8 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   };
 
   /**
-   * Initializes popup filters to the first tab.
+   * Initializes popup filters to the first tab. Also,
+   * sets the popup as active, which triggers popup filter arrow visiblity.
    */
   const setupFilters = () => {
     // Defaults to the first available tab
@@ -302,6 +315,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     //    color: currentTab.color,
     //  });
     //}
+    setActivePopup(true);
     setEnabledFilters([]);
   };
 
@@ -347,7 +361,6 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         <div id="discover-more-filters-container">
 
           {/* === Additional filters popup === */}
-
           <Popup>
             <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
               <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'}/>
@@ -363,7 +376,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
             <PopupContent useClose={false}>
               {/* Close Button */}
                <PopupButton className="popup-close">
-                  <img alt="close" src="/src/icons/cancel.png"></img>
+                  <img alt="close" src="/src/icons/cancel.png" onClick={() => {setActivePopup(false);}}></img>
                 </PopupButton>
               <div id="filters-popup">
                 <h2>{category === 'projects' ? 'Project Filters' : 'People Filters'}</h2>
@@ -374,10 +387,10 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                       setSearchedTags({ tags: results[0] as Tag[], color: searchedTags.color });
                     }}
                   ></SearchBar>
-                  <div id="more-filters-scroller">
+                  <div id="more-filters-scroll-container">
                     <button
                       id="popup-filters-left-scroll"
-                      className={`filters-scroller ${!showPopupLeftArrow ? 'hide' : ''}`}
+                      className={`more-filters-scroller ${!showPopupLeftArrow ? 'hide' : ''}`}
                       onClick={() => popupScrollTags('left')}
                     >
                       <i className="fa fa-caret-left"></i>
@@ -411,7 +424,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                     </div>
                     <button
                       id="popup-filters-right-scroll"
-                      className={`filters-scroller ${!showPopupRightArrow ? 'hide' : ''}`}
+                      className={`more-filters-scroller ${!showPopupRightArrow ? 'hide' : ''}`}
                       onClick={() => popupScrollTags('right')}
                     >
                       <i className="fa fa-caret-right"></i>
