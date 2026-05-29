@@ -51,8 +51,14 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
 
   // Project visibilty toggle
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(() => {
+    const savedValue = localStorage.getItem("project" + projId + "visibilty");
+    return savedValue || true;
+  });;
 
+  useEffect(() => {
+    localStorage.setItem("project" + projId + "visibilty", isVisible.toString());
+  }, [isVisible]);
   // Fetches project status and project thumbnail
 
   useEffect(() => {

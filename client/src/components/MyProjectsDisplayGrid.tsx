@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
@@ -11,6 +11,7 @@ import { leaveProject } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
 import placeholderThumbnail from "../images/project_temp.png";
 import usePreloadedImage from "../functions/imageLoad";
+import { json } from "body-parser";
 
 //backend base url for getting images
 
@@ -55,7 +56,15 @@ const MyProjectsDisplayGrid = ({
   });
 
     // Project visibilty toggle
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(() => {
+    const savedValue = localStorage.getItem("project" + projId + "visibilty");
+    return savedValue || true;
+  });;
+
+  useEffect(() => {
+    localStorage.setItem("project" + projId + "visibilty", isVisible.toString());
+  }, [isVisible]);
+
   /**
    * toggleOptions
    * - Toggles the visibility of the dropdown menu for project actions.
