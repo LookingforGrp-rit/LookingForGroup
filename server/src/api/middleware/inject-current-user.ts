@@ -16,7 +16,6 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       return;
     }
   }
-  console.log(request.headers.cookie);
 
   //change this to use and accept google oauth
   //actually we're putting it in the cookies right

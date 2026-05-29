@@ -53,20 +53,24 @@ const Login: React.FC = () => {
 
   }, [navigate])
 
-  async function handleGoogle(){
+  async function handleGoogle(response: any){
 
     const res = await fetch(`http://localhost:3000/google-login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      credentials: "include"
+      credentials: 'include',
+      body: JSON.stringify({ credential: response.credential })
     });
 
     //our userExists is stored in res.json()
     //so there we do stuff with it
     //except that is all that's stored in there so we don't get anything else back, that might be intentional?
-    console.log(await res.json());
+    const body = await res.json() as {userExists: boolean};
 
     console.log('hello yes this is happening!');
+    
+    if(body.userExists) { navigate(paths.routes.HOME); }
+    else { navigate(paths.routes.SIGNUP); }
   }
 
   /**
