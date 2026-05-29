@@ -85,13 +85,13 @@ model ProjectFollowings {
 }
 
 model ProjectImages {
-  imageId     Int       @id @default(autoincrement()) @map("image_id")
-  image       String    @db.VarChar(100)
-  altText     String    @db.VarChar(150)
-  position    Int
-  projectId   Int       @map("project_id")
-  projects    Projects  @relation("ProjectImages", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_images_projects")
-  isThumbFor  Projects? 
+  imageId    Int       @id @default(autoincrement()) @map("image_id")
+  image      String    @db.VarChar(100)
+  altText    String    @db.VarChar(150)
+  position   Int
+  projectId  Int       @map("project_id")
+  projects   Projects  @relation("ProjectImages", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_images_projects")
+  isThumbFor Projects?
 
   @@index([projectId], map: "FK_project_images_projects")
   @@map("project_images")
@@ -115,7 +115,7 @@ model Projects {
   hook              String              @default("") @db.VarChar(300)
   description       String              @default("") @db.VarChar(2000)
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
-  thumbnailId       Int?                @map("thumbnail_id") @unique
+  thumbnailId       Int?                @unique @map("thumbnail_id")
   purpose           ProjectsPurpose?
   status            ProjectsStatus      @default(Planning)
   audience          String              @default("") @db.VarChar(100)
@@ -212,7 +212,7 @@ model Users {
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @unique @map("phone_number") @db.VarChar(20)
-  universityId      String              @unique(map: "university_id_UNIQUE") @map("university_id") @db.VarChar(9)
+  googleId          String              @unique(map: "google_id_UNIQUE") @default("bill of rights") @map("google_id")
   members           Members[]
   projectFollowings ProjectFollowings[]
   projects          Projects[]
