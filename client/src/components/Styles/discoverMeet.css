@@ -338,7 +338,8 @@ Image carousel style rules
   justify-content: start;
   gap: 10px;
   margin-top: 10px;
-  width: max(70%);
+  margin-bottom: 40px;
+  width: max(100%);
 }
 
 .carousel-tag p {
