@@ -5,12 +5,12 @@ import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
-import { getByID,  deleteProject } from '../api/projects';
+import projects, { getByID,  deleteProject } from '../api/projects';
 import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 import { ThemeIcon } from './ThemeIcon';
 import { ProjectStatus as ProjectStatusEnums } from '@looking-for-group/shared/enums';
-
+import { } from './pages/Project.tsx'
 //backend base url for getting images
 
 /**
@@ -49,6 +49,9 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   const [showResult, setShowResult] = useState(false);
   const [requestType, setRequestType] = useState<'delete' | 'leave'>('delete');
   const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
+
+  // Project visibilty toggle
+  const [isVisible, setIsVisible] = useState(true);
 
   // Fetches project status and project thumbnail
 
@@ -99,7 +102,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   };
 
   return (
-    <div className="my-project-list-card">
+    <div className="my-project-list-card" style={{visibility: isVisible ? "visible" : "hidden"}}>
       {/* Thumbnail and Title*/}
       <div className="list-card-section1">
         {/*
@@ -141,6 +144,29 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
                 />
                 Edit Project
             </button>
+            {isVisible ? (
+              <button className="card-leave-button" onClick={() => setIsVisible(!isVisible)}>
+                  <ThemeIcon
+                    id={"eye"}
+                    width={21}
+                    height={21}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
+                  Hide Project
+              </button>
+            ) : (
+              <button className="card-leave-button" onClick={() => setIsVisible(!isVisible)}>
+                  <ThemeIcon
+                    id={"eye"}
+                    width={21}
+                    height={21}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
+                  Show Project
+              </button>
+            )}
             <Popup>
               <PopupButton className='card-leave-button'>
                 <ThemeIcon

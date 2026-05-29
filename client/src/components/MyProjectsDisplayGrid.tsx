@@ -54,6 +54,8 @@ const MyProjectsDisplayGrid = ({
     error: "Not initialized",
   });
 
+    // Project visibilty toggle
+  const [isVisible, setIsVisible] = useState(true);
   /**
    * toggleOptions
    * - Toggles the visibility of the dropdown menu for project actions.
@@ -90,7 +92,7 @@ const MyProjectsDisplayGrid = ({
   };
 
   return (
-    <div className="my-project-grid-card">
+    <div className="my-project-grid-card" style={{visibility: isVisible ? "visible" : "hidden"}}>
       {/* Thumbnail */}
       <button className="grid-card-image-button" onClick={() => navigate(projectURL)}>
         <img
@@ -132,6 +134,29 @@ const MyProjectsDisplayGrid = ({
                   />
                   Edit Project
               </button>
+              {isVisible ? (
+              <button className="card-leave-button" onClick={() => setIsVisible(!isVisible)}>
+                  <ThemeIcon
+                    id={"eye"}
+                    width={21}
+                    height={21}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
+                  Hide Project
+              </button>
+            ) : (
+              <button className="card-leave-button" onClick={() => setIsVisible(!isVisible)}>
+                  <ThemeIcon
+                    id={"eye"}
+                    width={21}
+                    height={21}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
+                  Show Project
+              </button>
+            )}
               <Popup>
                 <PopupButton className="card-leave-button">
                   <ThemeIcon
