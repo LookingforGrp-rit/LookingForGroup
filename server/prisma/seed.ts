@@ -67,7 +67,7 @@ async function main() {
                 location: 'Rochester, NY',
                 funFact: 'Loves Prisma',
                 bio: 'This is an example user.',
-                universityId: '11111111',
+                googleId: '11111111',
                 academicYear: 'Freshman',
                 majors: {
                     connect: [{ majorId: 1 }]
@@ -87,7 +87,7 @@ async function main() {
                 location: 'Rochester, NY',
                 funFact: 'Loves cheez-its',
                 bio: 'This is an example user.',
-                universityId: '222222222',
+                googleId: '222222222',
                 academicYear: 'Freshman',
                 majors: {
                     connect: [{ majorId: 4 }, { majorId: 5 }]
@@ -107,7 +107,7 @@ async function main() {
                 location: 'Rochester, NY',
                 funFact: 'Loves shooting',
                 bio: 'This is an example user.',
-                universityId: '33333333',
+                googleId: '33333333',
                 academicYear: 'Senior',
                 majors: {
                     connect: [{ majorId: 7 }]

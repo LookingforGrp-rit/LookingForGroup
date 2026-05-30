@@ -1,4 +1,4 @@
-import { useState, useRef, FC, Dispatch, SetStateAction, useEffect } from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -132,7 +132,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     else if (updatedPendingProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
     else if (updatedPendingProject?.tags.length == 0) newMessage = "Project is missing tags!";
     else if (updatedPendingProject?.hook === "" || updatedPendingProject?.hook === undefined) newMessage = "Project is missing a Short Description!";
-    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing an About This Project!";
+    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing a Project Overview!";
     setMessage(newMessage);
   }
 
@@ -255,23 +255,23 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
   }
 
-  const deleteNoSave = async () => {
+  const deleteNoSave = useCallback(() => {
     if (!open) return;
     // Only delete if this is a new project AND it was not saved yet
     if (projectData && newProject) {
-      await deleteProject(projectData?.projectId);
+      deleteProject(projectData?.projectId);
       setOpen(false);
       setSaved(true);
     }
-  }
+  }, [open, projectData, newProject]);
 
-useEffect(() => {
-  //for chrome
-  window.addEventListener("beforeunload", deleteNoSave, {once: true, passive: false});
-  
-  //for firefox
-  window.addEventListener("pagehide", deleteNoSave, {once: true, passive: false});
-});
+  useEffect(() => {
+    //for chrome
+    window.addEventListener("beforeunload", deleteNoSave, {once: true, passive: false});
+    
+    //for firefox
+    window.addEventListener("pagehide", deleteNoSave, {once: true, passive: false});
+  }, [open, projectID, newProject]);
 
   const toggleConfirm = async () => {
     setConfirm(!confirm);

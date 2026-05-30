@@ -22,10 +22,13 @@ Profile Panel component style rules
 /* #region profile page component */
 
 .profile-panel-box {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px, 30vw, 350px), 80vw), 1fr));
+  justify-content: space-between;
+  align-content: start;
   gap: 20px;
+  width: 100%;
+  /* margin: 0 50px 50px 50px; */
 }
 
 .profile-column {

@@ -35,7 +35,7 @@ const mockUsers = [
     designer: false,
     createdAt: new Date(),
     updatedAt: new Date(),
-    universityId: '1',
+    googleId: '1',
   },
   {
     userId: 2,
@@ -53,7 +53,7 @@ const mockUsers = [
     designer: false,
     createdAt: new Date(),
     updatedAt: new Date(),
-    universityId: '1',
+    googleId: '1',
   },
 ];
 

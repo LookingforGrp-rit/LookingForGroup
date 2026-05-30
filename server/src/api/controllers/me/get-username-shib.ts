@@ -12,20 +12,20 @@ export const getUsernameByShib = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const universityId = req.headers[uidHeaderKey] as string | undefined;
+  const googleId = req.headers[uidHeaderKey] as string | undefined;
 
   //if no university id found
-  if (!universityId) {
+  if (!googleId) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Missing university ID in headers',
+      error: 'Missing ID in headers',
       data: null,
     };
     res.status(400).json(resBody);
     return;
   }
 
-  const result = await getUserByShibService(universityId);
+  const result = await getUserByShibService(googleId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

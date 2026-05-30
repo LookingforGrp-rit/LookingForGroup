@@ -1124,6 +1124,7 @@ Page popup style rules
     gap: min(3.87vh, 38px) min(2.51vw, 38px);
     justify-content: center;
     margin: min(1.63vh, 16px) auto;
+    width: 100%;
   }
 
   .filter-tab {
@@ -1198,6 +1199,25 @@ Page popup style rules
 }
 
 /* Mobile styling */
+
+@media screen and (max-width: 1180px)
+{
+  .popup #filters-popup{
+    #filter-tabs
+    {
+      height: auto;
+      width: 100%;
+      display: flex;
+      flex-wrap: nowrap;
+      overflow-x: scroll;
+      scroll-behavior: smooth;
+      scrollbar-width: none;
+      justify-content: flex-start;
+      column-gap: 5vw;
+    }
+  }
+}
+
 @media (max-width: 576px) {
   .popup-back {
     margin: 2.01vw 0 0 2.01vw !important;
@@ -1219,7 +1239,8 @@ Page popup style rules
       padding: 2.88vh 2.6vw;
     }
 
-    #filter-tabs {
+    #filter-tabs
+    {
       column-gap: 10vw;
     }
 
@@ -1230,6 +1251,8 @@ Page popup style rules
     }
   }
 }
+
+
 
 /* .popup #primary-btn:hover {
   background-color: var(--border-color);
@@ -1262,7 +1285,8 @@ Header style rules
     */
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
   /* width: calc(100% - 50px); */
-  margin: 0 50px;
+  margin: 0 0px;
+  padding: 0 50px;
   height: 90px;
   position: sticky;
   top: 0;

@@ -113,7 +113,7 @@ const transformed: MePrivate = {
   skills: [] as MySkill[],
   socials: [] as MySocial[],
   title: '',
-  universityId: '',
+  googleId: '',
   updatedAt: new Date(),
   userId: 1,
   username: '',

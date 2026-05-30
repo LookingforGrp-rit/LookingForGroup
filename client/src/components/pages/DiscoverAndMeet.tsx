@@ -361,43 +361,51 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
     let tagFilteredList = items.filter((item) => {
      if (activeTagFilters.length === 0) return true;
-     let matchesAny = false;
+     //let matchesAny = false;
+     let matchesAll = true;
       for (const tag of activeTagFilters) {
         // Check project type by name since IDs are not unique relative to tags
         // Project Type tag
         if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
           const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
-          if (projectTypes.includes(tag.label.toLowerCase())) {
-            matchesAny = true;
-          }
-          else if (tag.label === `New`){
+          if (tag.label === `New`){
             //change the subtraction to change the 
             const cutOff = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
             const date = Date.parse(item.createdAt.toString());
-            if (date >= cutOff)
+            if (date < cutOff)
             {
-              matchesAny = true;
+              //matchesAny = true;
+              matchesAll = false;
             }
+          }
+          else if (!projectTypes.includes(tag.label.toLowerCase())) {
+            //matchesAny = true;
+            matchesAll = false;
           }
         }
         // Purpose tag 
         else if (tag.type === 'Purpose' && item.purpose) {
           const projectPurpose = item.purpose.toLowerCase();
-          if (projectPurpose.includes(tag.label.toLowerCase())) {
-            matchesAny = true;
+          if (!projectPurpose.includes(tag.label.toLowerCase())) {
+            //matchesAny = true;
+            matchesAll = false;
           }
         }
         // Tag check can be done by ID: Genre
         else if (tag.tagId && item.tags) {
             const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
         
-            if (tagIDs.includes(tag.tagId)) {
-              matchesAny = true;
+            if (!tagIDs.includes(tag.tagId)) {
+              //matchesAny = true;
+              matchesAll = false;
             }
         }
       
-      return matchesAny;
-    }});
+      
+      }
+      //return matchesAny;
+      return matchesAll;
+    });
      
     // If no tags are currently selected, render all projects
     // !! Needs to be skipped if searchbar has any input !!

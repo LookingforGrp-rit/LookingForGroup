@@ -28,6 +28,7 @@ import type {
   ProjectFollowsList,
   UpdateUserProjectVisibilityInput,
   MyMember,
+  GoogleCredentialUserInput,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -39,7 +40,7 @@ import type {
  * @returns status - 200 if valid, 400 if not
  */
 export const createNewUser = async (
-  userData: UserPreview
+  userData: GoogleCredentialUserInput
 ): Promise<ApiResponse> => {
   const apiURL = "/users";
 

@@ -10,7 +10,7 @@ export const deleteUserService = async (
 ): Promise<DeleteUserServiceError | DeleteUserServiceSuccess> => {
   try {
     //user validation (does this user exist)
-    const userExists = await prisma.userSocials.findFirst({
+    const userExists = await prisma.users.findFirst({
       where: {
         userId,
       },

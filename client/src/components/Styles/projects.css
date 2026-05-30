@@ -41,102 +41,46 @@ Project Panel component style rules
 
 .project-panel {
   height: auto;
-  /* commenting max width out.
-  Forcing width may mess with rendering calculations, causing uneven/unaligned project panel rows.
-  If max width is necessary, calculations need to be updated for it to work properly*/
-  /* max-width: 420px; */
   border: none;
   border-radius: 10px;
   background-color: var(--header-color);
   display: flex;
+  flex-direction: column;
   position: relative;
   max-width: 750px;
 
+  .project-image-container {
+    position: relative;
+    display: flex;
+    width: 100%;
+    border-radius: 10px 10px 0 0;
+  }
+
   img {
-    /* using 'object-fit:cover' risks cutting off important parts of the image */
-    /* recommended using 'object-fit:contain' if image cutoff is undesired*/
     object-fit: cover;
-    /* max-height: 200px; */
     height: auto;
     width: 100%;
-    border-radius: 10px;
+    border-radius: 10px 10px 0 0;
     align-self: center;
     background-color: var(--header-color);
   }
 
-  .project-panel-hover {
-    visibility: hidden;
-    opacity: 0;
-    transition: visibility 0.2s, opacity 0.2s;
-    z-index: 15;
-  }
-}
-
-.project-panel:hover {
-  transition: 0.2s;
-  border-radius: 10px 10px 0 0;
-  cursor: pointer;
-  /* box-shadow: 2px 2px 10px 2px var(--shadow-color); */
-  filter: drop-shadow(2px 2px 10px var(--shadow-color));
-  z-index: 2;
-
-  img {
-    border-radius: 10px 10px 0 0;
-  }
-
-  .project-panel-hover {
-    visibility: visible;
-    opacity: 1;
-    cursor: pointer;
-  }
-}
-
-.project-panel-hover {
-  border-radius: 0 0 10px 10px;
-  background-color: var(--header-color);
-  /* box-shadow: 2px 2px 10px 2px var(--shadow-color); */
-  color: var(--main-text);
-  position: absolute;
-  left: 0px;
-  right: 0px;
-  bottom: 0;
-  height: auto;
-  max-height: 86%;
-  /* min-width: 420px; */
-  visibility: visible;
-  transition: visibility 0.2s;
-
-  /* bottom: 0; */
-  /* left: 0; */
-  /* right: 0; */
-  display: flex;
-  flex-direction: column;
-  justify-content: start;
-  text-align: left;
-  gap: 6px;
-  padding: 3% 0;
-  word-break: break-word;
-  hyphens: auto;
-  overflow-y: scroll;
-
-  img {
-    /* width: 100%; */
-    height: auto;
-    /* align-self: flex-start; */
-    /* background-color: var(--primary-color); */
-    border-radius: 10px 10px 0 0;
-  }
-
   .project-title-likes {
-    padding: 0 20px;
+    padding: 14px 20px;
     margin: 0;
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+    align-items: center;
 
     h2 {
       padding: 0;
       margin: 0;
+      font-size: 1.375rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      line-height: normal;
+      text-align: left;
     }
 
     .project-likes {
@@ -169,14 +113,58 @@ Project Panel component style rules
     }
   }
 
-  /* Name */
-  h2 {
-    padding: 0 20px;
-    margin: 14px 0;
-    font-size: 1.375rem;
-    font-weight: 700;
-    color: var(--primary-color);
-    line-height: normal;
+  .project-panel-hover {
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0.2s, opacity 0.2s;
+    z-index: 15;
+  }
+}
+
+.project-panel:hover {
+  transition: 0.2s;
+  border-radius: 10px;
+  cursor: pointer;
+  filter: drop-shadow(2px 2px 10px var(--shadow-color));
+  /* z-index: 2; */
+
+  img {
+    border-radius: 10px 10px 0 0;
+  }
+
+  .project-panel-hover {
+    visibility: visible;
+    opacity: 1;
+    cursor: pointer;
+  }
+}
+
+.project-panel-hover {
+  border-radius: 10px 10px 0 0;
+  background-color: var(--header-color);
+  color: var(--main-text);
+  position: absolute;
+  left: 0px;
+  right: 0px;
+  bottom: 0;
+  height: auto;
+  max-height: 100%;
+  visibility: visible;
+  transition: visibility 0.2s;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  text-align: left;
+  gap: 6px;
+  padding: 3% 0;
+  word-break: break-word;
+  hyphens: auto;
+  overflow-y: auto;
+
+  img {
+    height: auto;
+    border-radius: 10px 10px 0 0;
   }
 
   /* Major */
@@ -226,15 +214,18 @@ Project Panel component style rules
      original thumbnail image is hidden to avoid duplicate from hover panel*/
   .project-panel {
     height: auto;
-    display: grid;
+    display: flex;
     flex-direction: column;
     align-self: baseline;
     z-index: 0;
 
+    .project-image-container {
+      flex-direction: column;
+    }
+
     img {
       border-radius: 10px 10px 0px 0px;
       box-shadow: 2px 2px 10px 2px var(--shadow-color);
-
     }
 
     .project-panel-hover {
@@ -249,7 +240,6 @@ Project Panel component style rules
 }
 
 @media only screen and (max-width: 700px) {
-
   .projects-banner-outer {
     display: none;
   }
@@ -1393,6 +1383,13 @@ Project Creator and Editor Popup style rules
   }
 }
 
+@media (max-width: 1194px) {
+  #project-team-open-positions-popup {
+   
+  }
+}
+
+
 #team-positions-popup-list-header {
   text-align: left;
   font-size: 1.25rem;
@@ -1734,7 +1731,8 @@ Project page style rules
   display: flex;
   justify-content: baseline;
   gap: 10px;
-  margin-top: 10px;
+  padding-right: 1vw;
+  padding-left: 1vw;
 }
 
 .project-tag {
@@ -2672,7 +2670,7 @@ New Project Page style rules
     'overview people' auto
     'overview positions' auto / 17fr 15fr;
   margin: 0 50px;
-  gap: 20px;
+  gap: 0;
 }
 
 @media screen and (max-width: 1199px) {
@@ -2712,6 +2710,7 @@ Project Carousel style rules
   flex-direction: column;
   position: relative;
   margin-bottom: 20px;
+  margin-right: 1.5vw;
 
   .carousel-contents {
     /* height: 370px; */
@@ -2788,15 +2787,19 @@ Project Carousel style rules
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
-  padding: 20px;
+  padding: 1vw;
+  padding-right: 0;
+  padding-left: 0;
   max-width: calc(100vw - 80px);
-  margin-bottom: 2.8%;
+  margin-bottom: 1vw;
+  aspect-ratio: 16/9;
 
   #project-info-top {
     display: flex;
     flex-direction: column;
     justify-content: start;
-    gap: 5px;
+    padding-right: 1vw;
+    padding-left: 1vw;
   }
 
 }
@@ -3048,7 +3051,7 @@ Project Carousel style rules
   flex-direction: column;
   gap: 15px;
   width: 100%;
-  margin-left: 10%;
+  margin-left: 0%;
 }
 
 #positions-popup-list-buttons {
@@ -3144,15 +3147,77 @@ button#positions-popup-list-item-active {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
-    height: 100vh;
+    
     width: calc(100% - 40px);
     justify-content: baseline;
   }
 
   .positions-popup-list {
-    max-height: fit-content;
+    
   }
 }
+
+@media (max-width: 1194px) {
+
+  #project-open-positions-popup {
+    display: grid;
+    width: 100%;
+    max-width: 1121px;
+    height: 849px;
+    max-height: 849px;
+    gap: 30px;
+    padding: 28px 5px 21px 5px;
+    overflow-y: auto;
+    overflow-x: auto;
+    border-radius: 10px;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
+    margin-left: 0%;
+    margin-right: 0%;
+    grid-template:
+      'header header' 50px
+      'list info' auto
+      'close close' 50px /
+      auto auto;
+  }
+  
+}
+
+@media (max-width: 700px) {
+
+  #project-open-positions-popup {
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: column;
+    height: 100vh;
+    width: calc(100% - 40px);
+    justify-content: baseline;
+    align-items: center;
+    
+  }
+
+  .positions-popup-list {
+    max-height: fit-content;
+    margin-left: 20% !important;
+    margin-right: 20% !important;
+  }
+
+  .positions-popup-info-wrapper {
+    margin-right: 0%;
+  }
+
+  #project-team-open-positions-popup{
+    display: flex;
+    align-items: center;
+    text-align: center;
+    align-content: center;
+  }
+
+  
+  
+}
+
 
 .positions-popup-info select {
   margin: 0;
@@ -3470,6 +3535,10 @@ My projects page style rules
   }
 }
 
+.value svg{
+  margin-right: 0.5em;
+}
+
 @media only screen and (min-width: 800px) {
   .my-projects-banner {
     min-height: 220px;
@@ -3662,13 +3731,13 @@ My projects page style rules
 }
 
 .my-projects-no-project {
-  color: var(--main-text);
-  font-size: 2rem;
-  font-family: Inter;
-  font-weight: bold;
-  line-height: 28px;
-  padding-left: 60px;
-  padding-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px, 30vw, 350px), 80vw), 1fr));
+  justify-content: space-between;
+  align-content: start;
+  gap: 20px;
+  width: 100%;
+  margin: 0 50px 50px 50px;
 }
 
 .my-projects-grid {

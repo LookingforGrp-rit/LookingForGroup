@@ -148,6 +148,7 @@ const Project = () => {
         {
           <>
             <ProjectCreatorEditor
+              mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
               newProject={false}
               updateDisplayedProject={setDisplayedProject}
             /*permissions={userPerms}*/
@@ -478,16 +479,24 @@ const Project = () => {
 
             {/* Project overview section */}
             <div id="project-overview">
-              <div id="project-overview-title">About This Project</div>
+              <div id="project-overview-title">Project Overview</div>
               <div id="project-overview-text">{displayedProject.description}</div>
               {/* Sections could also be added with some extra function, 
             title and content can be assigned to similar elements */}
-              <div className="project-overview-section-header">Purpose</div>
-              <div>{displayedProject.purpose}</div>
-              <div className="project-overview-section-header">
-                Target Audience
-              </div>
-              <div>{displayedProject.audience}</div>
+              {displayedProject.purpose && (
+                <>
+                  <div className="project-overview-section-header">Purpose</div>
+                  <div>{displayedProject.purpose}</div>
+                </>
+              )}
+              {displayedProject.audience?.trim() && (
+                <>
+                  <div className="project-overview-section-header">
+                    Target Audience
+                  </div>
+                  <div>{displayedProject.audience}</div>
+                </>
+              )}
               <div id="project-overview-links-section">
                 {displayedProject.projectSocials.length > 0 ? (
                   <>
