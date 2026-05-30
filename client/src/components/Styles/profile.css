@@ -1296,8 +1296,7 @@ New Profile page style rules
 
         #profile-buttons {
           flex-wrap: wrap;
-          /*not working rip*/
-          justify-content: flex-start;
+          justify-content: flex-start !important;
         }
       }
     }
@@ -1335,6 +1334,7 @@ New Profile page style rules
         max-width: min(50vw, 50vh);
         max-height: min(50vw, 50vh);
         align-self: center;
+        margin-top: 20px;
       }
 
       #profile-bio {
