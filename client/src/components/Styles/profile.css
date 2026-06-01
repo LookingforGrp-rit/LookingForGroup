@@ -23,7 +23,7 @@ Profile Panel component style rules
 
 .profile-panel-box {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px, 30vw, 350px), 80vw), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px, 30vw, 270px), 80vw), 1fr));
   justify-content: space-between;
   align-content: start;
   gap: 20px;
@@ -51,6 +51,7 @@ Profile Panel component style rules
   /* align-items: center; */
   text-align: left;
   padding: 0 0px 10px 0px;
+  margin: 0 auto;
 
   img {
     width: 100%;
