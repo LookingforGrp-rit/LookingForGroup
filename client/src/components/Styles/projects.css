@@ -2992,8 +2992,9 @@ Project Carousel style rules
   max-height: 849px;
   gap: 30px;
   padding: 28px 5px 21px 5px;
+  box-sizing: border-box;
   overflow-y: auto;
-  overflow-x: auto;
+  overflow-x: hidden;
   border-radius: 10px;
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
   grid-template:
@@ -3167,8 +3168,9 @@ button#positions-popup-list-item-active {
     max-height: 849px;
     gap: 30px;
     padding: 28px 5px 21px 5px;
+    box-sizing: border-box;
     overflow-y: auto;
-    overflow-x: auto;
+    overflow-x: hidden;
     border-radius: 10px;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
     margin-left: 0%;
