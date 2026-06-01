@@ -1195,16 +1195,17 @@ export type GoogleCredentialUserInput = Partial<
     mentor?: true | false;
     // TODO update to use Visibility enum
     visibility?: 1 | 0;
-    googleCredentials: string;
   }
 >
-export type UserSessionData = {
+
+export type SessionUserData = Partial <{
   firstName: string;
   lastName: string;
   email: string;
   googleId: string;
   userExists: boolean;
-};
+}>
+
 /**
  * Data required to add a social media link to a user's profile
  */

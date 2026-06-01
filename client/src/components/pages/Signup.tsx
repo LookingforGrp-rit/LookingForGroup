@@ -10,7 +10,7 @@ import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
 import { getCurrentUsername, googleLogin } from '../../api/users';
-import { CreateUserInput, UserSessionData } from '@looking-for-group/shared';
+import { CreateUserInput, SessionUserData } from '@looking-for-group/shared';
 
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
@@ -25,7 +25,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
   const [email, setEmail] = useState('');
-  const [sessionData, setSessionData] = useState<UserSessionData>();
+  const [sessionData, setSessionData] = useState<SessionUserData>();
   const [userData, setUserData] = useState<CreateUserInput>();
   // const [username, setUsername] = useState('');
   // const [password, setPassword] = useState('');
