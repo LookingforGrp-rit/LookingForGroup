@@ -1068,7 +1068,7 @@ export interface ProjectPreview {
   /**
    * The tags attached to the project
    */
-  tags: Tag[];
+  tags: ProjectTag[];
 
   /**
    * A hook to catch attention to the project
