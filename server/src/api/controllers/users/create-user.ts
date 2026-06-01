@@ -6,6 +6,7 @@ import type {
 } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import envConfig from '#config/env.ts';
+import type { UserData } from '#services/authentication/login.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import createUserService from '#services/users/create-user.ts';
 
@@ -154,4 +155,11 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     data: result,
   };
   res.status(201).json(resBody);
+
+  // Removing user information from session because it's not needed anymore.
+  const userInfo: UserData = JSON.parse(req.session.data || '') as UserData;
+  userInfo.email = '';
+  userInfo.firstName = '';
+  userInfo.lastName = '';
+  req.session.data = JSON.stringify(userInfo);
 };

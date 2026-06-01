@@ -1,9 +1,11 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
-import { isLoggedInHeaderKey, uidHeaderKey } from '#config/constants.ts';
+import { uidHeaderKey } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
+import type { UserData } from '#services/authentication/login.ts';
 
 const requiresLogin = (request: Request, response: Response, next: NextFunction) => {
+  const userData: UserData = JSON.parse(request.session.data || '') as UserData;
   if (envConfig.env === 'development' || envConfig.env === 'test') {
     /// Add UID for development, missing correct header
     request.headers[uidHeaderKey] = '000000001';
@@ -12,7 +14,7 @@ const requiresLogin = (request: Request, response: Response, next: NextFunction)
     return;
   }
 
-  if (request.headers[isLoggedInHeaderKey] === 'true') {
+  if (userData.userExists) {
     next();
     return;
   }
