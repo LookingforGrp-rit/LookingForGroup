@@ -41,7 +41,11 @@ export const login = async (request: Request, response: Response) => {
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: { userExists: userData.userExists }, //{userExists: true/false} for the frontend's use
+    data: {
+      userExists: userData.userExists, //{userExists: true/false} for the frontend's use
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+    },
   };
   return response.status(200).json(resBody); //now frontend can get it
   //i notice that this is routed to /google-login so it wouldn't handle all the other logins

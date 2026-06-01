@@ -1,18 +1,18 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import { uidHeaderKey } from '#config/constants.ts';
-import { getUserByShibService } from '#services/me/get-user-shib.ts';
+import type { UserData } from '#services/authentication/login.ts';
+import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 
 //GET api/me/get-username
 //get username by shibboleth
 //this probably won't be used
 //we have some code for implementing shibboleth but we weren't allowed to use it
 //and we were working on an alternative for user sign in
-export const getUsernameByShib = async (
+export const getUsernameByGoogle = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const googleId = req.headers[uidHeaderKey] as string | undefined;
+  const googleId = (JSON.parse(req.session.data || '') as UserData).google_id;
 
   //if no university id found
   if (!googleId) {
@@ -25,7 +25,7 @@ export const getUsernameByShib = async (
     return;
   }
 
-  const result = await getUserByShibService(googleId);
+  const result = await getUserByGoogleService(googleId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
