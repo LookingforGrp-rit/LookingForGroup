@@ -1,10 +1,12 @@
 import { MouseEventHandler } from 'react';
-import { hardSkills, softSkills, proficiencies } from '../../constants/skills';
+import { getSkills } from '../../api/users';
 
 // list of skills to choose from
 // technologies, arts, tools, and soft skills
-//combined into one list
-const skills = hardSkills.concat(softSkills.concat(proficiencies));
+// pulled from the database
+
+const res = await getSkills();
+const skills = res.data;
 
 interface ChooseSkillsProps {
   show : boolean;
@@ -75,15 +77,15 @@ const ChooseSkills : React.FC<ChooseSkillsProps> = ({
           )}
 
           <div id="skill-select">
-            {skills.map((skill, index) => (
+            {skills?.map((skill, index) => (
               <button
                 key={index}
                 onClick={handleSkillSelect}
                 // add the 'active' class to the buttons that were selected
                 // doing this inside className so that it's remembered when the user goes back and forth between modals
-                className={`skillBtn ${selectedSkills.includes(skill) ? 'active' : ''}`}
+                className={`skillBtn ${selectedSkills.includes(skill.label) ? 'active' : ''}`}
               >
-                {skill}
+                {skill.label}
               </button>
             ))}
           </div>

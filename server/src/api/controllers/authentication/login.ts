@@ -41,7 +41,12 @@ export const login = async (request: Request, response: Response) => {
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: { userExists: userData.userExists }, //{userExists: true/false} for the frontend's use
+    data: {
+      firstName: userData.firstName,
+      lastName: userData.lastName,
+      email: userData.email,
+      userExists: userData.userExists,
+    }, //{userExists: true/false} for the frontend's use, but the frontend also wants the name and email for display
   };
   return response.status(200).json(resBody); //now frontend can get it
   //i notice that this is routed to /google-login so it wouldn't handle all the other logins

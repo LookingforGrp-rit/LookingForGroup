@@ -112,6 +112,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    */
   //we don't need any of this do we since literally all of it is gonna be through google...
   const handleSignup = async () => {
+    setShowSkillsModal(true);
     // Check if any of the fields are empty
     // if (
     //   email === '' ||
@@ -389,7 +390,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
           <ChooseSkills
             onNext={() => {
               setShowSkillsModal(false);
-              // setShowInterestsModal(true);
+              setShowCompleteProfileModal(true);
             }}
             onBack={() => {
               setShowSkillsModal(false);
