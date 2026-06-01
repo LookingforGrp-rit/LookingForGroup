@@ -310,7 +310,7 @@ Project Creator and Editor Popup style rules
   line-height: 1;
 }
 
-#project-editor-save{
+#project-editor-save {
   display: block;
   align-self: center;
 }
@@ -1384,9 +1384,7 @@ Project Creator and Editor Popup style rules
 }
 
 @media (max-width: 1194px) {
-  #project-team-open-positions-popup {
-   
-  }
+  #project-team-open-positions-popup {}
 }
 
 
@@ -2709,7 +2707,7 @@ Project Carousel style rules
   display: flex;
   flex-direction: column;
   position: relative;
-  margin-bottom: 20px;
+  margin-bottom: 35px;
   margin-right: 1.5vw;
 
   .carousel-contents {
@@ -2778,6 +2776,18 @@ Project Carousel style rules
   }
 }
 
+@media only screen and (min-width: 1200px) {
+  .project-carousel {
+    margin-bottom: 30px;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .project-carousel {
+    margin-right: 0px;
+  }
+}
+
 #project-info-panel {
   grid-area: info;
   display: flex;
@@ -2787,10 +2797,8 @@ Project Carousel style rules
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
-  padding: 1vw;
-  padding-right: 0;
-  padding-left: 0;
-  max-width: calc(100vw - 80px);
+  padding: 20px 10px;
+  max-width: calc(100vw - 340px);
   margin-bottom: 1vw;
   aspect-ratio: 16/9;
 
@@ -2800,8 +2808,15 @@ Project Carousel style rules
     justify-content: start;
     padding-right: 1vw;
     padding-left: 1vw;
+    gap: 10px;
   }
 
+}
+
+@media only screen and (max-width: 800px) {
+  #project-info-panel {
+    max-width: calc(100vw - 80px);
+  }
 }
 
 .project-info-highlight {
@@ -2819,6 +2834,7 @@ Project Carousel style rules
 @media only screen and (max-width: 700px) {
   #project-info-header {
     flex-wrap: wrap;
+    gap: 10px;
 
     #project-info-buttons {
       margin-left: 0px;
@@ -2828,6 +2844,8 @@ Project Carousel style rules
   #project-tags {
     flex-wrap: wrap;
   }
+
+  #project-info-panel {}
 }
 
 #project-title {
@@ -2967,7 +2985,7 @@ Project Carousel style rules
 }
 
 #project-open-positions-button {
-  margin-top: 6px;
+  margin: 6px 0;
 }
 
 #align-end {
@@ -3147,14 +3165,12 @@ button#positions-popup-list-item-active {
     display: flex;
     flex-wrap: nowrap;
     flex-direction: column;
-    
+
     width: calc(100% - 40px);
     justify-content: baseline;
   }
 
-  .positions-popup-list {
-    
-  }
+  .positions-popup-list {}
 }
 
 @media (max-width: 1194px) {
@@ -3179,7 +3195,7 @@ button#positions-popup-list-item-active {
       'close close' 50px /
       auto auto;
   }
-  
+
 }
 
 @media (max-width: 700px) {
@@ -3194,7 +3210,7 @@ button#positions-popup-list-item-active {
     width: calc(100% - 40px);
     justify-content: baseline;
     align-items: center;
-    
+
   }
 
   .positions-popup-list {
@@ -3207,15 +3223,15 @@ button#positions-popup-list-item-active {
     margin-right: 0%;
   }
 
-  #project-team-open-positions-popup{
+  #project-team-open-positions-popup {
     display: flex;
     align-items: center;
     text-align: center;
     align-content: center;
   }
 
-  
-  
+
+
 }
 
 
@@ -3447,6 +3463,8 @@ button#positions-popup-list-item-active {
 
 #project-open-positions {
   grid-area: positions;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 #project-open-positions-list {
@@ -3535,7 +3553,7 @@ My projects page style rules
   }
 }
 
-.value svg{
+.value svg {
   margin-right: 0.5em;
 }
 
