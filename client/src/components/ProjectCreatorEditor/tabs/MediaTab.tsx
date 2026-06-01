@@ -79,12 +79,14 @@ export const MediaTab = ({
   const [dY, setDY] = useState(0);
 
   const [cropImg, setCropImg] = useState<ProjectImage | PendingProjectImage>();
+  const [cropSrc, setCropSrc] = useState<string>();
 
   const tempImage = useRef<HTMLImageElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
   const inputX = useRef<HTMLInputElement>(null);
   const inputY = useRef<HTMLInputElement>(null);
   const inputZoom = useRef<HTMLInputElement>(null);
+  const fileReader = new FileReader();
 
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
@@ -123,7 +125,9 @@ export const MediaTab = ({
     }
     initializeImages();
     tempImage.current?.addEventListener("load", updateCanvas);
-  }, [tempImage, dX, dY, zoom, cropImg]);
+    fileReader.onload = () => setCropSrc(fileReader.result as string);
+    fileReader.onerror = () => setCropSrc(placeholder);
+  }, [tempImage, dX, dY, zoom, cropImg, setCropSrc, fileReader, placeholder]);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async () => {
@@ -216,14 +220,14 @@ export const MediaTab = ({
       // TODO: check if image needs to be cropped at all
       await updatePendingProject(projectAfterMediaChanges);
       setCropImg({localId, ...fullImg});
-      console.log({localId, ...fullImg});
-      console.log(projectAfterMediaChanges.projectImages);
+      fileReader.readAsDataURL(cropImg?.image as File);
+      console.log(tempImage);
     } catch (err) {
       console.error(err);
     }
 
     imageUploader.value = "";
-  }, [dataManager, projectId, updatePendingProject, setCropImg]);
+  }, [dataManager, projectId, updatePendingProject, setCropImg, fileReader]);
   /**
    * updates the canvas element for cropping images
    */
@@ -241,7 +245,7 @@ export const MediaTab = ({
     async () => canvas.current?.toBlob((blob) => {
       dataManager.updateImage({
         id: {
-          value: projectId,
+          value: (cropImg as ProjectImage).imageId,
           type: "local"
         },
         data: {
@@ -426,12 +430,7 @@ export const MediaTab = ({
       <div className="project-crop">
         <label>Crop image for thumbnail usage</label>
         <canvas ref={canvas} id="canvas" width={1600} height={900}></canvas>
-        {}
-        <img ref={tempImage} id="test12" src={(cropImg as ProjectImage)?.image} alt={cropImg?.altText as string} 
-          onError={(e) => {
-            const profileImg = e.target as HTMLImageElement;
-            profileImg.src = placeholder;
-          }} />
+        <img ref={tempImage} id="test12" src={cropSrc} alt={cropImg?.altText as string} />
         <input 
           type="range" ref={inputZoom}
           id="zoom" name="zoom" 
