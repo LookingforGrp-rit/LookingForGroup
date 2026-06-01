@@ -18,14 +18,15 @@ Project Panel component style rules
 /* #region project-panel */
 
 #discover-panel-box {
-  margin: 0 50px 50px;
+  margin: 0 5vw;
+  margin-bottom: 20px;
   display: flex;
   justify-content: center;
 }
 
 @media only screen and (max-width: 700px) {
   #discover-panel-box {
-    margin: 0 20px 20px;
+    margin: 0 20px;
   }
 }
 
@@ -3504,19 +3505,18 @@ My projects page style rules
 .projects-banner-wrapper {
   border-radius: 10px;
   overflow: hidden;
+  width: 100%;
 }
 
 .projects-banner-outer {
   box-sizing: border-box;
-  padding: 0 60px;
-  margin-bottom: 30px;
+  margin: 0 5vw;
 }
 
 .my-projects-header-row {
   box-sizing: border-box;
-  width: 100%;
-  padding-left: 60px;
-  padding-right: 64px;
+  width: auto;
+  margin: 30px 5vw;
 
   display: flex;
   flex-direction: row;
@@ -3569,8 +3569,6 @@ My projects page style rules
 
 @media only screen and (max-width: 700px) {
   .my-projects-header-row {
-    padding-left: 0px;
-    padding-right: 0px;
     margin: 0 20px;
     flex-direction: column;
     max-width: calc(100vw - 50px);
@@ -3719,8 +3717,7 @@ My projects page style rules
 .page#my-projects hr {
   box-sizing: border-box;
   border-color: var(--header-color);
-  margin-left: 60px;
-  margin-right: 64px;
+  margin: 0 5vw;
 }
 
 @media only screen and (max-width:700px) {
