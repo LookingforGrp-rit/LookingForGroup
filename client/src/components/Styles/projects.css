@@ -3569,6 +3569,10 @@ My projects page style rules
   }
 }
 
+.my-projects-action-buttons .value {
+  display: flex;
+}
+
 @media only screen and (max-width: 700px) {
   .my-projects-header-row {
     padding-left: 0px;

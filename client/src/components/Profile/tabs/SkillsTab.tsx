@@ -3,13 +3,16 @@
   Currently, this tab does not work
   Feel free to replace this entire file, or try and debug the code
   */
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useEffect, useMemo, useCallback, Fragment } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
-import { MySkill, Skill } from "@looking-for-group/shared";
+import { MySkill, Skill, MePrivate, TagType } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
+import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
+import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
+import { SortableTag } from "../../ProjectCreatorEditor/tabs/SortableItem";
 
 const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
 
@@ -90,6 +93,54 @@ export const SkillsTab = ({
     return "unselected";
   }
 
+  // Drag-and-drop sensors for the sortable selected-tags list.
+  // Pointer for mouse/touch, Keyboard for accessible reordering.
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  /**
+     * Reorders the selected tags when a drag finishes.
+     * Note: tag order is only kept for this edit session — the backend has no
+     * tag-position column, so the order resets to the server's order on reload.
+     * @param e Drag end event with the active (dragged) and over (target) tag ids.
+     */
+    const handleDragEnd = (e: DragEndEvent) => {
+      const { active, over } = e;
+      if (!over || active.id === over.id) return;
+  
+      const skills = profile.skills;
+      const oldIndex = skills.findIndex((s) => s.skillId === Number(active.id));
+      const newIndex = skills.findIndex((s) => s.skillId === Number(over.id));
+      if (oldIndex === -1 || newIndex === -1) return;
+  
+      const reorderedSkills = arrayMove([...skills], oldIndex, newIndex).map(
+        (skill, index) => ({
+          ...skill,
+          position: index,
+        })
+      );
+
+      const updatedProfile = {
+        ...profile,
+        skills: reorderedSkills,
+      };
+
+      dataManager.updateSkill({
+        id: {
+          type: "canon",
+          value: reorderedSkills[newIndex].skillId,
+        },
+        data: {
+          position: reorderedSkills[newIndex].position,
+        },
+      });
+
+      updatePendingProfile(updatedProfile);
+    };
 
   /**
    * Toggles a skill as selected or unselected
@@ -99,7 +150,7 @@ export const SkillsTab = ({
       const isSelected = isSkillSelected(skillId) === "selected";
 
       const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
-      
+
       if (!skillToToggle) return;
 
       if (isSelected) {
@@ -125,7 +176,7 @@ export const SkillsTab = ({
           },
           data: {
             skillId,
-            position: 0,
+            position: profile.skills.length, // add to end of list by default
             proficiency: "Novice", // TODO add proficiency
           },
         });
@@ -138,7 +189,7 @@ export const SkillsTab = ({
               ...skillToToggle,
               apiUrl: "",
               proficiency: "Novice",
-              position: 0,
+              position: profile.skills.length, // add to end of list by default
             },
           ],
         });
@@ -147,27 +198,7 @@ export const SkillsTab = ({
     [allSkills, dataManager, isSkillSelected, profile, updatePendingProfile]
   );
 
-  /**
-   * Renders selected profile skills.
-   * @returns JSX Element
-   */
-  const loadProfileSkills = useMemo(() => {
-    if (!profile?.skills) return [];
-
-    console.log(profile.skills);
-
-    return profile.skills.map((skill) => (
-      <Tag
-        key={skill.label}
-        onClick={() => handleSkillToggle(skill.skillId)}
-        type={skill.type.toLowerCase() + " skill"}
-        selected={true}
-      >
-        <i className="fa fa-close"></i>
-        <p>&nbsp;{skill.label}</p>
-      </Tag>
-    ));
-  }, [profile.skills]);
+  const selectedSkills = profile.skills.sort((a, b) => a.position - b.position) || [];
 
   /**
    * Renders skill tags as clickable buttons based on the active tab and search results.
@@ -305,15 +336,15 @@ export const SkillsTab = ({
   };
 
   const originalSkillOrder = useMemo(() => {
-    return (unmodifiedProfile.skills || []).map(s => s.skillId);
-  }, []);
+    return (unmodifiedProfile.skills || []).map((s: MySkill) => s.skillId);
+  }, [unmodifiedProfile.skills]);
 
   // Does Skills match in EXACT order
   const isSkillsUnsaved = useMemo(() => {
     const currentskills = profile.skills || [];
-    
+
     if (currentskills.length !== originalSkillOrder.length) return true;
-    
+
     // Checks if any element shifted index or changed
     return currentskills.some((s, index) => s.skillId !== originalSkillOrder[index]);
   }, [profile.skills, originalSkillOrder]);
@@ -328,15 +359,37 @@ export const SkillsTab = ({
             <span className="unsaved-indicator">
               (Unsaved)
             </span>
-          )}  
+          )}
         </div>
         <div className="project-editor-extra-info">
           Drag and drop to reorder
         </div>
-        <div id="project-editor-selected-tags-container">
-          {/* TODO: Separate top 2 skills from others with hr element, see Project editor links tab for implementation */}
-          {loadProfileSkills}
-        </div>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext
+            items={selectedSkills.map((t) => t.skillId)}
+            strategy={verticalListSortingStrategy}
+          >
+            <div id="project-editor-selected-tags-container">
+              {selectedSkills.map((skill) => (
+                <Fragment key={skill.skillId}>
+                  <SortableTag
+                    id={skill.skillId}
+                    tag={{
+                      tagId: skill.skillId,
+                      label: skill.label,
+                      type: skill.type as TagType,
+                    }}
+                    onRemove={handleSkillToggle}
+                  />
+                </Fragment>
+              ))}
+            </div>
+          </SortableContext>
+        </DndContext>
       </div>
 
       <div id="project-editor-tag-search">
