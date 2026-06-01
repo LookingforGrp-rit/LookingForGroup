@@ -89,12 +89,19 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     // @ts-expect-error google
     google.accounts.id.renderButton(
       document.getElementById("googleBtn"),
-      { theme: "filled_black", size: "large" , shape: 'pill'}
+      { theme: "filled_black", size: "large" , shape: 'pill', text: 'signup_with'}
     );
   async function handleGoogle(response: any){
     const sessionData = await googleLogin({credential: response.credential})
     setSessionData(sessionData.data); 
-    //sessionData
+    //now we display the message that corresponds to whatever happened
+    //not even gonna bother reading the react one because react variables update whenever they feel like it and not right when you tell them to
+    if(!sessionData.data.userExists) {
+      setMessage("User does not exist. Click 'Sign Up' to create a user.")
+    }
+    else {
+      setMessage(`Welcome back, ${sessionData.data.firstName}!`)
+    }
   }
   }, [navigate]);
 

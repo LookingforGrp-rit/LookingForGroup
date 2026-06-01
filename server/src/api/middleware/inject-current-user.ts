@@ -17,8 +17,6 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
     }
   }
 
-  //change this to use and accept google oauth
-  //actually we're putting it in the cookies right
   const googleId = authenticatedRequest.session.gid;
 
   //if no google id found
