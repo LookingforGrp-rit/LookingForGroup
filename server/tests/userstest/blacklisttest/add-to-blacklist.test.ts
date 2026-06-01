@@ -48,8 +48,8 @@ describe('addBlacklistService', async () => {
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser);
     const result = await addBlacklistService(1);
 
-    expect(prisma.userBlacklist.create).toBeCalled();
-    expect(prisma.userBlacklist.create).toBeCalledWith({
+    expect(prisma.userBlacklist.create).toHaveBeenCalled();
+    expect(prisma.userBlacklist.create).toHaveBeenCalledWith({
       data: {
         userId: 1,
       },
