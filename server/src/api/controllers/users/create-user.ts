@@ -1,9 +1,4 @@
-import type {
-  ApiResponse,
-  CreateUserInput,
-  GoogleCredentialUserInput,
-  SessionUserData,
-} from '@looking-for-group/shared';
+import type { ApiResponse, CreateUserInput, SessionUserData } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import envConfig from '#config/env.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
@@ -13,7 +8,7 @@ import createUserService from '#services/users/create-user.ts';
 //creates a user
 //we are being sent this with all of its information (minus the name and email stuff google handles that)
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-  const info: GoogleCredentialUserInput = req.body as GoogleCredentialUserInput;
+  const info: CreateUserInput = req.body as CreateUserInput;
   const devInfo: CreateUserInput = {} as CreateUserInput;
   const sessionInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
 

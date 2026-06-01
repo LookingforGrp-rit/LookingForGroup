@@ -9,7 +9,7 @@ import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
-import { getCurrentUsername, googleLogin } from '../../api/users';
+import { addUserSkill, createNewUser, getCurrentUsername, googleLogin } from '../../api/users';
 import { CreateUserInput, SessionUserData } from '@looking-for-group/shared';
 
 /**
@@ -26,7 +26,6 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [lastName, setLastName] = useState(''); // User's last name
   const [email, setEmail] = useState('');
   const [sessionData, setSessionData] = useState<SessionUserData>();
-  const [userData, setUserData] = useState<CreateUserInput>();
   // const [username, setUsername] = useState('');
   // const [password, setPassword] = useState('');
   // const [confirm, setConfirm] = useState(''); // Second password input to check if they match
@@ -46,24 +45,22 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   // to remeber the user's choices when they go back and forth between modals
   // const [selectedProficiencies, setSelectedProficiencies] = useState<string[]>([]); // State variable for the selected proficiencies
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]); // State variable for the selected skills
+  const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]); // State variable for the ids of the selected skills
   // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
   const [bio, setBio] = useState(''); // State variable for the user's bio
 
   // user info to be sent to the backend
-  //we don't need name stuff, your email handles that
+  //we will add more to this once the frontend components can handle them
   const userInfo = {
-    //firstName: firstName,
-    //lastName: lastName,
-    //email: email,
-    // proficiencies: selectedProficiencies,
-    skills: selectedSkills,
-    // interests: selectedInterests,
+    firstName: firstName,
+    lastName: lastName,
+    ritEmail: email,
+    username: '',
     pronouns: pronouns,
     bio: bio,
-    // avatarImage: avatarImage,
     profileImage: profileImage, // if they upload their own image
-  };
+  } as CreateUserInput;
 
   // Redirect the user to the homepage if they are currently logged in
   useEffect(() => {
@@ -97,10 +94,13 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     //now we display the message that corresponds to whatever happened
     //not even gonna bother reading the react one because react variables update whenever they feel like it and not right when you tell them to
     if(!sessionData.data.userExists) {
-      setMessage("User does not exist. Click 'Sign Up' to create a user.")
+      setFirstName(sessionData.data.firstName);
+      setLastName(sessionData.data.lastName);
+      setEmail(sessionData.data.email);
+      setShowSkillsModal(true);
     }
     else {
-      setMessage(`Welcome back, ${sessionData.data.firstName}!`)
+      navigate(paths.routes.HOME);
     }
   }
   }, [navigate]);
@@ -112,7 +112,12 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    */
   //we don't need any of this do we since literally all of it is gonna be through google...
   const handleSignup = async () => {
-    setShowSkillsModal(true);
+    if(!sessionData) {
+      setMessage('No email entered')
+    }
+    else{
+      setShowSkillsModal(true);
+    }
     // Check if any of the fields are empty
     // if (
     //   email === '' ||
@@ -369,9 +374,6 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               </p>
             </div>
           </div>
-          <button id="main-loginsignup-btn" onClick={handleSignup}>
-            Sign Up
-          </button>
 
           {/*************************************************************
 
@@ -398,6 +400,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             show={showSkillsModal}
             selectedSkills={selectedSkills}
             setSelectedSkills={setSelectedSkills}
+            selectedSkillIds={selectedSkillIds}
+            setSelectedSkillIds={setSelectedSkillIds}
             mode="signup"
             onClose={() => {
               setShowSkillsModal(false);
@@ -446,11 +450,13 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             }}
             onBack={() => {
               setShowCompleteProfileModal(false);
+              setShowSkillsModal(true);
               // setShowAvatarModal(true);
             }}
             show={showCompleteProfileModal}
             // avatarImage={avatarImage}
             userInfo={userInfo}
+            selectedSkills={selectedSkills}
             bio={bio}
             pronouns={pronouns}
             setBio={setBio}
@@ -465,11 +471,20 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               setShowGetStartedModal(false);
               setShowCompleteProfileModal(true);
             }}
-            onCreateProject={() => {
+            onCreateProject={async () => {
+
+              await createNewUser(userInfo); //populating this with all of the things we selected
+              for(const id of selectedSkillIds){
+                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+              }
               setShowGetStartedModal(false);
               navigate(paths.routes.MYPROJECTS);
             }}
-            onJoinProject={() => {
+            onJoinProject={async () => {
+              await createNewUser(userInfo); //populating this with all of the things we selected
+              for(const id of selectedSkillIds){
+                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+              }
               setShowGetStartedModal(false);
               navigate(paths.routes.HOME);
             }}
