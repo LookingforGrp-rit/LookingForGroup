@@ -154,4 +154,11 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     data: result,
   };
   res.status(201).json(resBody);
+
+  // Removing user information from session because it's not needed anymore.
+  const userInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
+  userInfo.email = '';
+  userInfo.firstName = '';
+  userInfo.lastName = '';
+  req.session.data = JSON.stringify(userInfo);
 };

@@ -1,7 +1,8 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import envConfig from '#config/env.ts';
-import { getUserByGoogleService } from '#services/me/get-user-shib.ts';
+//import type { UserData } from '#services/authentication/login.ts';
+import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 
 const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
   const authenticatedRequest = request as AuthenticatedRequest;
@@ -16,6 +17,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       return;
     }
   }
+  //const googleId = (JSON.parse(request.session.data || '') as UserData).google_id;
 
   const googleId = authenticatedRequest.session.gid;
 

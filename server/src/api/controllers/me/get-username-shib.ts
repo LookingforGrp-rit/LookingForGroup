@@ -1,6 +1,6 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import { getUserByGoogleService } from '#services/me/get-user-shib.ts';
+import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 
 //GET api/me/get-username
 //get username by google now
