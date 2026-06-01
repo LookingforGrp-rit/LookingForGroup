@@ -4,6 +4,7 @@ import {
   CreateProjectImageInput,
   ProjectImage,
   ProjectWithFollowers,
+  UpdateProjectImageInput,
 } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
@@ -77,8 +78,7 @@ export const MediaTab = ({
   const [dX, setDX] = useState(0);
   const [dY, setDY] = useState(0);
 
-  const [cropSrc, setCropSrc] = useState("/src/images/projects_header_light.png");
-  const [cropAlt, setCropAlt] = useState("/src/images/projects_header_light.png");
+  const [cropImg, setCropImg] = useState<ProjectImage | PendingProjectImage>();
 
   const tempImage = useRef<HTMLImageElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -122,7 +122,8 @@ export const MediaTab = ({
       }
     }
     initializeImages();
-  });
+    tempImage.current?.addEventListener("load", updateCanvas);
+  }, [tempImage, dX, dY, zoom, cropImg]);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async () => {
@@ -141,7 +142,7 @@ export const MediaTab = ({
     for (const image of projectAfterMediaChanges.projectImages) {
       if (typeof image.image === 'string') {
         // convert to file
-        const imageFile = await stringToFile(image.image);
+        const imageFile = await stringToFile((image as PendingProjectImage).image?.name as string);
         // compare
         if (file.name === imageFile.name && file.size === imageFile.size && file.webkitRelativePath === imageFile.webkitRelativePath) {
           // TODO: add error to show users cannot add duplicate image
@@ -211,42 +212,44 @@ export const MediaTab = ({
           thumbnail: thumbObj,
         };
       }
+      // TODO: make image load from the new uploaded image
+      // TODO: check if image needs to be cropped at all
       await updatePendingProject(projectAfterMediaChanges);
+      setCropImg({localId, ...fullImg});
+      console.log({localId, ...fullImg});
+      console.log(projectAfterMediaChanges.projectImages);
     } catch (err) {
       console.error(err);
     }
 
     imageUploader.value = "";
-    // TODO: make image load from the new uploaded image
-    // TODO: check if image needs to be cropped at all
-    setCropSrc("/src/images/projects_header_light.png");
-    setCropAlt("/src/images/projects_header_light.png");
-    (document.getElementById("xTrans") as HTMLInputElement).valueAsNumber = 0;
-    (document.getElementById("yTrans") as HTMLInputElement).valueAsNumber = 0;
-    (document.getElementById("zoom") as HTMLInputElement).valueAsNumber = 100;
-  }, [dataManager, projectId, updatePendingProject, cropSrc, cropAlt]);
-
+  }, [dataManager, projectId, updatePendingProject, setCropImg]);
   /**
    * updates the canvas element for cropping images
    */
   const updateCanvas = useCallback(() => {
     const ctx = canvas.current?.getContext("2d");
     ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
-    if (tempImage.current)
+    if (tempImage.current && canvas.current)
     ctx?.drawImage(
       tempImage.current, 
-      dX, dY, 
-      tempImage.current.width / zoom * 100, 
-      tempImage.current.height / zoom * 100, 
-      0, 0, 
-      tempImage.current.width, tempImage.current.height);
+      dX, dY,
+      tempImage.current.width / 100 * zoom, tempImage.current.height / 100 * zoom);
+  }, [tempImage, dX, dY, zoom, canvas]);
 
-      console.log(cropSrc + " " + cropAlt)
-  }, [tempImage, dX, dY, zoom, document, canvas,cropSrc,cropAlt]);
-
-  useEffect(() => {
-    tempImage?.current?.addEventListener("load", updateCanvas);
-  }, [tempImage, dX, dY, zoom]);
+  const UpdateImage = useCallback(
+    async () => canvas.current?.toBlob((blob) => {
+      dataManager.updateImage({
+        id: {
+          value: projectId,
+          type: "local"
+        },
+        data: {
+          image: new File([blob as Blob], cropImg?.image as string)
+        },
+      })
+      }, "images/png", 1)
+  , [canvas, cropImg]);
 
   // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
@@ -422,38 +425,43 @@ export const MediaTab = ({
       {/* TODO: popup is iffy on showing up after uploading an image, fix that */}
       <div className="project-crop">
         <label>Crop image for thumbnail usage</label>
-        <canvas ref={canvas} id="canvas"></canvas>
-        <img  ref={tempImage} id="test12" src={cropSrc} alt={cropAlt} />
+        <canvas ref={canvas} id="canvas" width={1600} height={900}></canvas>
+        {}
+        <img ref={tempImage} id="test12" src={(cropImg as ProjectImage)?.image} alt={cropImg?.altText as string} 
+          onError={(e) => {
+            const profileImg = e.target as HTMLImageElement;
+            profileImg.src = placeholder;
+          }} />
         <input 
           type="range" ref={inputZoom}
           id="zoom" name="zoom" 
           onChange={() => {
-            setZoom(inputZoom?.current?.valueAsNumber as number);
+            setZoom(inputZoom.current?.valueAsNumber as number);
             updateCanvas();
           }}
-          min={1} max={500}
+          min={1} max={1000}
           defaultValue={zoom}/>
         <label className="slider-text" htmlFor="zoom">zoom</label>
         <input 
           type="range" ref={inputX}
           id="xTrans" name="xTrans" 
           onChange={() => {
-            setDX(inputX?.current?.valueAsNumber as number);
+            setDX(inputX.current?.valueAsNumber as number);
             updateCanvas();
           }}
-          min={tempImage.current ? -tempImage.current.width : 0} 
-          max={tempImage.current ? tempImage.current.width : 100}
+          min={canvas.current ? -canvas.current.width : -100} 
+          max={canvas.current ? canvas.current.width : 100}
           defaultValue={dX}/>
         <label className="slider-text" htmlFor="xtrans">X</label>
         <input  
           type="range" ref={inputY}
           id="yTrans" name="yTrans" 
           onChange={() => {
-            setDY(inputY?.current?.valueAsNumber as number);
+            setDY(inputY.current?.valueAsNumber as number);
             updateCanvas();
           }}
-          min={tempImage.current ? -tempImage.current.height : 0} 
-          max={tempImage.current ? tempImage.current.height : 100}
+          min={canvas.current ? -canvas.current.height : -100} 
+          max={canvas.current ? canvas.current.height : 100}
           defaultValue={dY}/>
         <label className="slider-text" htmlFor="yTrans">Y</label>
         <div className="project-crop-extra-info">
@@ -462,7 +470,7 @@ export const MediaTab = ({
         </div>
         <div className="confirm-project-crop">
           {/* TODO: impliment saving the cropped image */}
-          <PopupButton buttonId="project-crop-save">Crop Image</PopupButton>
+          <PopupButton buttonId="project-crop-save" callback={UpdateImage}>Crop Image</PopupButton>
           <PopupButton buttonId="project-crop-cancel" className="project-info-buttons">Skip</PopupButton>
         </div>
       </div>
