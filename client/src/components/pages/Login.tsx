@@ -50,12 +50,15 @@ const Login: React.FC = () => {
     //Sets the string for the Google Sign In button.
     let googleBtnTheme = new String("");
 
+    //If we're in dark mode, we use filled_black.
     if(theme == 'dark'){
       googleBtnTheme = "filled_black";
     }
+    //Light mode uses outline.
     else if(theme == 'light'){
       googleBtnTheme = "outline";
     }
+    //The filled_blue option shows up in case something goes wrong.
     else{
       googleBtnTheme = "filled_blue";
     }
