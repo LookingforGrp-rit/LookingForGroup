@@ -173,13 +173,26 @@ components:
         url:
           type: string
 
-    AddProjectTagsInput:
+    AddProjectTagInput:
       type: object
       properties:
         tagId:
           type: number
+        displayOrder:
+          type: number
       required:
         - tagId
+        - displayOrder
+
+    UpdateProjectTagInput:
+      type: object
+      properties:
+        tagId:
+          type: number
+        displayOrder:
+          type: number
+      required:
+        - displayOrder
 
     AddProjectMediumsInput:
       type: array

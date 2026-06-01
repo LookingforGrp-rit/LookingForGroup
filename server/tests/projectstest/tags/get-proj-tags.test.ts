@@ -35,6 +35,7 @@ const tag2: Tag = {
   label: 'Test 2',
   type: 'Designer',
 };
+
 const prismaProject = {
   audience: '',
   createdAt: now,
@@ -47,18 +48,30 @@ const prismaProject = {
   title: 'test 1',
   updatedAt: now,
   userId: 1,
-  tags: [tag1, tag2],
+  tags: [
+    {
+      tagId: 70,
+      displayOrder: 0,
+      tag: tag1,
+    },
+    {
+      tagId: 71,
+      displayOrder: 1,
+      tag: tag2,
+    },
+  ],
 };
 
 describe('getProjectTagsService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (transformProjectTag as Mock).mockImplementation(
-      (projectId: number, { label, tagId, type }) => ({
-        projectId: projectId,
-        label: label,
-        tagId: tagId,
-        type: type,
+      (projectId: number, { label, tagId, type, displayOrder }) => ({
+        projectId,
+        tagId,
+        label,
+        type,
+        displayOrder,
       }),
     );
   });
@@ -70,16 +83,18 @@ describe('getProjectTagsService', async () => {
     expect(transformProjectTag).toBeCalledTimes(2);
     expect(result).toStrictEqual([
       {
-        label: 'Test',
         projectId: 1,
         tagId: 70,
+        label: 'Test',
         type: 'Developer',
+        displayOrder: 0,
       },
       {
-        label: 'Test 2',
         projectId: 1,
         tagId: 71,
+        label: 'Test 2',
         type: 'Designer',
+        displayOrder: 1,
       },
     ]);
   });

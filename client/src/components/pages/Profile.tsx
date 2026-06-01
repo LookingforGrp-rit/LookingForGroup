@@ -366,7 +366,7 @@ const Profile = () => {
                 {displayedProfile?.skills !== undefined && (
                   /* Will take in a list of tags the user has selected, then */
                   /* use a map function to generate tags to fill this div */
-                  displayedProfile?.skills.map((tag) => {
+                  displayedProfile?.skills.sort((a, b) => a.position - b.position).map((tag) => {
                     let category: string;
                     switch (tag.type) {
                       case "Designer":
