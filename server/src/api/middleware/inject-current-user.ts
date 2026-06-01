@@ -1,4 +1,4 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest, SessionUserData } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import envConfig from '#config/env.ts';
 //import type { UserData } from '#services/authentication/login.ts';
@@ -17,9 +17,8 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       return;
     }
   }
-  //const googleId = (JSON.parse(request.session.data || '') as UserData).google_id;
 
-  const googleId = authenticatedRequest.session.gid;
+  const googleId = (JSON.parse(request.session.data || '') as SessionUserData).googleId;
 
   //if no google id found
   if (!googleId) {
