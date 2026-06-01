@@ -33,7 +33,7 @@ export const login = async (request: Request, response: Response) => {
     return response.status(400).json(resBody);
   }
 
-  request.session.gid = userData.google_id;
+  request.session.gid = userData.googleId;
   request.session.data = !userData.userExists ? JSON.stringify(userData) : '';
 
   console.log(`Session data { gid: ${request.session.gid}, data: ${request.session.data}}`);

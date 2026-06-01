@@ -29,6 +29,7 @@ import type {
   UpdateUserProjectVisibilityInput,
   MyMember,
   GoogleCredentialUserInput,
+  UserSessionData,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -55,7 +56,7 @@ export const googleLogin = async (
   return await POST(apiURL, credential);
 }
 
-export const testLogin = async (): Promise<ApiResponse> => {
+export const testLogin = async (): Promise<ApiResponse<UserSessionData>> => {
   const apiURL = '/google-login/test';
 
   return await GET(apiURL);

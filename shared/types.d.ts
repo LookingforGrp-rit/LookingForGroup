@@ -1198,7 +1198,13 @@ export type GoogleCredentialUserInput = Partial<
     googleCredentials: string;
   }
 >
-
+export type UserSessionData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  googleId: string;
+  userExists: boolean;
+};
 /**
  * Data required to add a social media link to a user's profile
  */
