@@ -7,7 +7,7 @@ import { LeaveDeleteContext } from "../contexts/LeaveDeleteContext";
 import { PagePopup } from "./PagePopup";
 import { deleteProject } from "../api/projects";
 import { ApiResponse, ProjectDetail } from "@looking-for-group/shared";
-import { leaveProject } from "../api/users";
+import { leaveProject, updateProjectVisibility } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
 import placeholderThumbnail from "../images/project_temp.png";
 import usePreloadedImage from "../functions/imageLoad";
@@ -100,6 +100,12 @@ const MyProjectsDisplayGrid = ({
     setShowResult(true);
   };
 
+  // Should hide/show the project by changing it's visibilty
+  const handleProjectVisibility = async () => {
+    setIsVisible(!isVisible);
+    updateProjectVisibility(projId, isVisible);
+  }
+
   return (
     <div className="my-project-grid-card">
       {/* Thumbnail */}
@@ -134,7 +140,7 @@ const MyProjectsDisplayGrid = ({
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div className={`card-options-list ${optionsShown ? "show" : ""}`}>
-              <button className="card-leave-button" onClick={() => navigate(projectURL)}>
+              <button className="card-leave-button" onClick={() => handleProjectVisibility()}>
                   <ThemeIcon
                     id={"pencil"}
                     width={21}
@@ -145,7 +151,7 @@ const MyProjectsDisplayGrid = ({
                   Edit Project
               </button>
               {isVisible ? (
-              <button className="card-leave-button" onClick={() => setIsVisible(!isVisible)}>
+              <button className="card-leave-button" onClick={() => handleProjectVisibility()}>
                   <ThemeIcon
                     id={"eye"}
                     width={21}

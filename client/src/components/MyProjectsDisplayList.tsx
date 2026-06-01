@@ -7,7 +7,7 @@ import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
 import projects, { getByID,  deleteProject } from '../api/projects';
 import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
-import { leaveProject } from '../api/users';
+import { leaveProject, updateProjectVisibility } from "../api/users";
 import { ThemeIcon } from './ThemeIcon';
 import { ProjectStatus as ProjectStatusEnums } from '@looking-for-group/shared/enums';
 import { } from './pages/Project.tsx'
@@ -108,6 +108,12 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     return `${day}/${month}/${year}`;
   };
 
+  // Should hide/show the project by changing it's visibilty
+  const handleProjectVisibility = async () => {
+    setIsVisible(!isVisible);
+    updateProjectVisibility(projId, isVisible);
+  }
+
   return (
     <div className="my-project-list-card">
       {/* Thumbnail and Title*/}
@@ -153,7 +159,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
                 Edit Project
             </button>
             {isVisible ? (
-              <button className="card-leave-button" onClick={() => setIsVisible(!isVisible)}>
+              <button className="card-leave-button" onClick={() => handleProjectVisibility() }>
                   <ThemeIcon
                     id={"eye"}
                     width={21}
@@ -164,7 +170,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
                   Hide Project
               </button>
             ) : (
-              <button className="card-leave-button" onClick={() => setIsVisible(!isVisible)}>
+              <button className="card-leave-button" onClick={() => handleProjectVisibility() }>
                   <ThemeIcon
                     id={"eye"}
                     width={21}

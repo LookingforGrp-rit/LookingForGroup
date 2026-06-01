@@ -39,6 +39,12 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const [isFollowing, setFollowing] = useState(false);
   // Avoid looping useEffect by separating projectId
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
+  
+  // Project visibilty toggle
+  const [isVisible, setIsVisible] = useState(() => {
+    const savedValue = localStorage.getItem("project_" + projectId + "_visibilty");
+    return savedValue ? JSON.parse(savedValue) : true;
+  });;
 
   /**
    * Formats the follow count for display
@@ -131,61 +137,64 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
     }
   };
 
-  return (
-    <button className={'project-panel'} onClick={() => navigate(projectURL)}>
-      <div className="project-image-container">
-        <img
-          src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-          alt={'project image'}
-        />
-        <div className={'project-panel-hover'}>
-          <div id="project-panel-tags">
-            {project.mediums.map((medium: ProjectMedium, index) => {
-              if (index < 2) {
-                return (
-                  <TagElement
-                    type="medium" key={index} selected={true}>
-                    <p>{medium.label}</p>
-                  </TagElement>
-                );
-              } else if (index === 2) {
-                return (
-                  <TagElement key={index} selected={true}>
-                    <p>+{project.mediums.length - 2}</p>
-                  </TagElement>
-                );
-              }
-            })}
+  if(isVisible)
+  {
+    return (
+      <button className={'project-panel'} onClick={() => navigate(projectURL)}>
+        <div className="project-image-container">
+          <img
+            src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
+            alt={'project image'}
+          />
+          <div className={'project-panel-hover'}>
+            <div id="project-panel-tags">
+              {project.mediums.map((medium: ProjectMedium, index) => {
+                if (index < 2) {
+                  return (
+                    <TagElement
+                      type="medium" key={index} selected={true}>
+                      <p>{medium.label}</p>
+                    </TagElement>
+                  );
+                } else if (index === 2) {
+                  return (
+                    <TagElement key={index} selected={true}>
+                      <p>+{project.mediums.length - 2}</p>
+                    </TagElement>
+                  );
+                }
+              })}
+            </div>
+            <div id="quote">{project.hook}</div>
           </div>
-          <div id="quote">{project.hook}</div>
         </div>
-      </div>
-      
-      <div className='project-title-likes'>
-        <h2>{project.title}</h2>
-        <div className='project-likes'>
-          <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
-            {formatFollowCount(followCount)}
-          </p>
-          {isFollowing ? (
-            <ThemeIcon
-              width={28}
-              height={25}
-              id={"heart-filled"}
-              ariaLabel="following"
-              onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
-            />
-          ) : (
-            <ThemeIcon
-              width={28}
-              height={25}
-              id={"heart-empty"}
-              ariaLabel="following"
-              onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
-            />
-          )}
+        
+        <div className='project-title-likes'>
+          <h2>{project.title}</h2>
+          <div className='project-likes'>
+            <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
+              {formatFollowCount(followCount)}
+            </p>
+            {isFollowing ? (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-filled"}
+                ariaLabel="following"
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+              />
+            ) : (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-empty"}
+                ariaLabel="following"
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+              />
+            )}
+          </div>
         </div>
-      </div>
-    </button>
-  );
+      </button>
+    );
+  }
 };
