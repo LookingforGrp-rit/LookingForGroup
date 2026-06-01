@@ -1,8 +1,7 @@
-import type { ApiResponse } from '@looking-for-group/shared';
+import type { ApiResponse, SessionUserData } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import { uidHeaderKey } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
-import type { UserData } from '#services/authentication/login.ts';
 
 const requiresLogin = (request: Request, response: Response, next: NextFunction) => {
   if (envConfig.env === 'development' || envConfig.env === 'test') {
@@ -12,7 +11,7 @@ const requiresLogin = (request: Request, response: Response, next: NextFunction)
     next();
     return;
   }
-  const userData: UserData = JSON.parse(request.session.data || '') as UserData;
+  const userData: SessionUserData = JSON.parse(request.session.data || '') as SessionUserData;
 
   if (userData.userExists) {
     next();

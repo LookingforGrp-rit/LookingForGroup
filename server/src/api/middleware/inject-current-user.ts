@@ -1,7 +1,7 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest, SessionUserData } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import envConfig from '#config/env.ts';
-import type { UserData } from '#services/authentication/login.ts';
+//import type { UserData } from '#services/authentication/login.ts';
 import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 
 const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
@@ -17,13 +17,14 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       return;
     }
   }
-  const googleId = (JSON.parse(request.session.data || '') as UserData).google_id;
+
+  const googleId = (JSON.parse(request.session.data || '') as SessionUserData).googleId || '';
 
   //if no google id found
   if (!googleId) {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Missing ID in headers',
+      error: 'Missing Google ID in session store',
       data: null,
     };
     response.status(400).json(resBody);

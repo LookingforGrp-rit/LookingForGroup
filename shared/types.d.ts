@@ -1202,7 +1202,7 @@ export type SessionUserData = Partial <{
   firstName: string;
   lastName: string;
   email: string;
-  google_id: string;
+  googleId: string;
   userExists: boolean;
 }>
 

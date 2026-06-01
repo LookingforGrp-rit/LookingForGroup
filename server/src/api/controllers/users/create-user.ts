@@ -6,7 +6,6 @@ import type {
 } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import envConfig from '#config/env.ts';
-import type { UserData } from '#services/authentication/login.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
 import createUserService from '#services/users/create-user.ts';
 
@@ -19,7 +18,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   const sessionInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
 
   // This is for creating a dev user via the swagger docs
-  if ((envConfig.env === 'development' || envConfig.env === 'test') && !sessionInfo.google_id) {
+  if ((envConfig.env === 'development' || envConfig.env === 'test') && !sessionInfo.googleId) {
     /// Fudge for development
     const devFirstName = req.query.devFirstName as string | undefined;
     const devLastName = req.query.devLastName as string | undefined;
@@ -76,7 +75,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   //because if we have dev-defined things we're running it through swagger to test everything else aside from the google stuff
   //so this is a bit of a bypass
   //basically tryna say if we have none of the dev things check for the credentials
-  if (!sessionInfo.google_id) {
+  if (!sessionInfo.googleId) {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Missing Google credentials',
@@ -157,7 +156,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   res.status(201).json(resBody);
 
   // Removing user information from session because it's not needed anymore.
-  const userInfo: UserData = JSON.parse(req.session.data || '') as UserData;
+  const userInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
   userInfo.email = '';
   userInfo.firstName = '';
   userInfo.lastName = '';

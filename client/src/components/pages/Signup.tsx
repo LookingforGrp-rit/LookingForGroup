@@ -9,7 +9,8 @@ import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
-import { createNewUser, getCurrentUsername, getUserByEmail } from '../../api/users';
+import { getCurrentUsername, googleLogin } from '../../api/users';
+import { CreateUserInput, SessionUserData } from '@looking-for-group/shared';
 
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
@@ -24,7 +25,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
   const [email, setEmail] = useState('');
-  const [googleCredentials, setGoogleCredentials] = useState('')
+  const [sessionData, setSessionData] = useState<SessionUserData>();
+  const [userData, setUserData] = useState<CreateUserInput>();
   // const [username, setUsername] = useState('');
   // const [password, setPassword] = useState('');
   // const [confirm, setConfirm] = useState(''); // Second password input to check if they match
@@ -87,28 +89,19 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     // @ts-expect-error google
     google.accounts.id.renderButton(
       document.getElementById("googleBtn"),
-      { theme: "filled_black", size: "large" , shape: 'pill'}
+      { theme: "filled_black", size: "large" , shape: 'pill', text: 'signup_with'}
     );
   async function handleGoogle(response: any){
-    setGoogleCredentials(response.credential)
-    //this^^ is our googleId, encoded in base64
-    //so when we create a user we input this in there
-    //server decodes it when it receives it, and it's passed into the createUser route
-    
-    //for whoever comes to this:
-    //this createNewUser line with the object in it is the call to the backend that will handle user creation
-    //createNewUser takes in a GoogleCredentialUserInput as a parameter, you can check types.d.ts for more info on that
-    //you will want to populate an object with all of the things the user is selecting and put it in as part of that object
-    //but move this call out of this useEffect and into another handler that runs when everything is filled
-    //there are other components on this page that handle letting users pick proficiencies and skills and do initial account setup stuff...
-    //...but they are not implemented on the actual signup page yet so we can't reach them as of right now
-    //because they're react components it should be relatively easy to navigate through them and save info, but i suck at react and i hate it and it hates me back
-    
-    //there are a lot of commented out checks because all of that is handled by google on the backend
-    //there are specific errors that will be thrown based on what's wrong with the thing so you can check for those instead
-    //the message the error comes with should let you know what went wrong
-    await createNewUser({googleCredentials: response.credential}); 
-    
+    const sessionData = await googleLogin({credential: response.credential})
+    setSessionData(sessionData.data); 
+    //now we display the message that corresponds to whatever happened
+    //not even gonna bother reading the react one because react variables update whenever they feel like it and not right when you tell them to
+    if(!sessionData.data.userExists) {
+      setMessage("User does not exist. Click 'Sign Up' to create a user.")
+    }
+    else {
+      setMessage(`Welcome back, ${sessionData.data.firstName}!`)
+    }
   }
   }, [navigate]);
 
@@ -119,6 +112,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    */
   //we don't need any of this do we since literally all of it is gonna be through google...
   const handleSignup = async () => {
+    setShowSkillsModal(true);
     // Check if any of the fields are empty
     // if (
     //   email === '' ||
@@ -396,7 +390,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
           <ChooseSkills
             onNext={() => {
               setShowSkillsModal(false);
-              // setShowInterestsModal(true);
+              setShowCompleteProfileModal(true);
             }}
             onBack={() => {
               setShowSkillsModal(false);

@@ -19,7 +19,7 @@ const createUserService = async (
   try {
     //if there are no google credentials by now we're in dev, since we already have the checks in the controller
     //so bypass the google stuff and create the dev user directly from here
-    if (!session.google_id) {
+    if (!session.googleId) {
       const devData = info as CreateUserInput;
       const result = await prisma.users.create({
         data: devData,
@@ -30,7 +30,7 @@ const createUserService = async (
 
     const { ...userData } = info;
 
-    if (!session.firstName || !session.lastName || !session.email || !session.google_id) {
+    if (!session.firstName || !session.lastName || !session.email || !session.googleId) {
       return 'BAD_REQUEST';
     }
 
@@ -38,14 +38,9 @@ const createUserService = async (
     (userData as CreateUserInput).firstName = session.firstName;
     (userData as CreateUserInput).lastName = session.lastName;
     (userData as CreateUserInput).ritEmail = session.email;
-    (userData as CreateUserInput).googleId = session.google_id;
+    (userData as CreateUserInput).googleId = session.googleId;
     (userData as CreateUserInput).username = session.email.substring(0, session.email.indexOf('@'));
 
-    //now we have to take the googleCredentials out of the user data thing
-    //with this uh destructuring assignment or something this is new to me
-    //i used this: https://www.codemzy.com/blog/copying-object-without-property-javascript
-    //but it's giving me an unused property error, whatever man it works
-    //CURSE YOU LINTER
     console.log(userData);
 
     const result = await prisma.users.create({

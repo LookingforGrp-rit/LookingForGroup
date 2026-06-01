@@ -29,6 +29,7 @@ import type {
   UpdateUserProjectVisibilityInput,
   MyMember,
   GoogleCredentialUserInput,
+  SessionUserData,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -46,6 +47,20 @@ export const createNewUser = async (
 
   return await POST(apiURL, userData);
 };
+
+export const googleLogin = async (
+  credential: {credential: string}
+): Promise<ApiResponse> => {
+  const apiURL = '/google-login';
+
+  return await POST(apiURL, credential);
+}
+
+export const testLogin = async (): Promise<ApiResponse<SessionUserData>> => {
+  const apiURL = '/google-login/test';
+
+  return await GET(apiURL);
+}
 
 /**
  * Checks if the user is logged in (shibboleth) and returns username if they are
