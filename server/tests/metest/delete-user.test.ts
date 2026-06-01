@@ -22,6 +22,7 @@ vi.mock('#config/prisma.ts', () => ({
       deleteMany: vi.fn(),
     },
     users: {
+      findFirst: vi.fn(),
       delete: vi.fn(),
     },
   },
@@ -33,6 +34,7 @@ describe('deleteUserService', () => {
   });
 
   it('returns NOT_FOUND if user does not exist', async () => {
+    vi.mocked(prisma.users.findFirst).mockResolvedValue(null);
     vi.mocked(prisma.users.delete).mockRejectedValue(new Error('User not found'));
 
     const result = await deleteUserService(1);
@@ -41,7 +43,7 @@ describe('deleteUserService', () => {
   });
 
   it('deletes user and related data successfully', async () => {
-    vi.mocked(prisma.userSocials.findFirst).mockResolvedValue({ userId: 1 } as any);
+    vi.mocked(prisma.users.findFirst).mockResolvedValue({ userId: 1 } as any);
     vi.mocked(prisma.userFollowings.deleteMany).mockResolvedValue({ count: 1 });
     vi.mocked(prisma.userSkills.deleteMany).mockResolvedValue({ count: 1 });
     vi.mocked(prisma.userSocials.deleteMany).mockResolvedValue({ count: 1 });
@@ -61,7 +63,7 @@ describe('deleteUserService', () => {
   });
 
   it('returns INTERNAL_ERROR on exception', async () => {
-    vi.mocked(prisma.userSocials.findFirst).mockResolvedValue({ userId: 1 } as any);
+    vi.mocked(prisma.users.findFirst).mockResolvedValue({ userId: 1 } as any);
     vi.mocked(prisma.users.delete).mockRejectedValue(new Error('db exploded :fire:'));
 
     const result = await deleteUserService(1);

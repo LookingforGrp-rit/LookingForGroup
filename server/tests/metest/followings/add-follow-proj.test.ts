@@ -2,7 +2,7 @@ import type {
   MyProjectFollowing,
   ProjectMedium,
   ProjectPreview,
-  Tag,
+  ProjectTag,
   UserPreview,
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
@@ -54,8 +54,10 @@ const transformedProjectPreview: ProjectPreview = {
       label: '',
       tagId: 1,
       type: 'Creative',
+      apiUrl: 'api/projects/tags/1',
+      displayOrder: 0,
     },
-  ] as Tag[],
+  ] as ProjectTag[],
   thumbnail: null,
   thumbnailId: 0,
   title: '',
