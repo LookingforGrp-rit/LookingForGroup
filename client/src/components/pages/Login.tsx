@@ -3,7 +3,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { sendPost } from '../../functions/fetch.js';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
-import { getCurrentUsername, getUserByEmail, getUserByUsername } from '../../api/users.js';
+import { getCurrentUsername, getUserByEmail, getUserByUsername, googleLogin, testLogin } from '../../api/users.js';
 
 type LoginResponse = {
   error?: string;
@@ -55,28 +55,14 @@ const Login: React.FC = () => {
 
   async function handleGoogle(response: any){
 
-    const res = await fetch(`http://localhost:3000/google-login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: 'include',
-      body: JSON.stringify({ credential: response.credential })
-    });
-    //our userExists is stored in res.json()
-    //so there we do stuff with it
-    //except that is all that's stored in there so we don't get anything else back, that might be intentional?
-    const body = await res.json() as {userExists: boolean};
-
-    console.log('hello yes this is happening!');
+    const res = await googleLogin({credential: response.credential});
+    const body = await res.data as {userExists: boolean};
     
-    if(body.userExists) { navigate(paths.routes.HOME); }
+    if (body.userExists) { navigate(paths.routes.HOME); }
     else { navigate(paths.routes.SIGNUP); }
   }
   async function handleTest() {
-    const res = await fetch('http://localhost:3000/google-login/test', {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-      credentials: 'include'
-    })
+    const res = await testLogin()
 
     console.log(res);
   }

@@ -27,6 +27,9 @@ const createUserService = async (
       return transformMeToPrivate(result);
     }
 
+    //now we have to take the googleCredentials out of the user data thing
+    //with this uh destructuring assignment or something this is new to me
+    //i used this: https://www.codemzy.com/blog/copying-object-without-property-javascript
     const { googleCredentials, ...userData } = info;
 
     //if we do have google credentials go do a google
@@ -41,11 +44,11 @@ const createUserService = async (
     //escort the payload
     const payload = ticket.getPayload();
     if (!payload || !payload.given_name || !payload.family_name || !payload.sub || !payload.email)
-      return 'INTERNAL_ERROR'; //when would this ever happen? google's down or something? i guess
+      return 'INTERNAL_ERROR'; //when would this ever happen? google's down or something? good to cover for it i guess
 
     //only rit emails are allowed
     if (payload.email.indexOf('@g.rit.edu') === -1 && payload.email.indexOf('@rit.edu') === -1) {
-      return 'BAD_REQUEST';
+      return 'BAD_REQUEST'; //i wonder if this should be a 403 forbidden instead
     }
 
     //populate info object with the payload information
@@ -55,11 +58,6 @@ const createUserService = async (
     (userData as CreateUserInput).googleId = payload.sub;
     (userData as CreateUserInput).username = payload.email.substring(0, payload.email.indexOf('@'));
 
-    //now we have to take the googleCredentials out of the user data thing
-    //with this uh destructuring assignment or something this is new to me
-    //i used this: https://www.codemzy.com/blog/copying-object-without-property-javascript
-    //but it's giving me an unused property error, whatever man it works
-    //CURSE YOU LINTER
     console.log(userData);
 
     const result = await prisma.users.create({
