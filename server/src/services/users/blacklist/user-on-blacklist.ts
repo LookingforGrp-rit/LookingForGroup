@@ -9,7 +9,7 @@ type AddBlacklistServiceSuccess = ServiceSuccessSusbet<'OK'>;
 
 //NOTE: OK means they ARE blacklisted, so they should NOT be able to sign in!
 //Likewise, NOT_FOUND means they are NOT blacklisted, so they SHOULD be able to sign in
-const addBlacklistService = async (
+const userOnBlacklistService = async (
   userId: number,
 ): Promise<AddBlacklistServiceSuccess | AddBlacklistServiceError> => {
   try {
@@ -29,4 +29,4 @@ const addBlacklistService = async (
   }
 };
 
-export default addBlacklistService;
+export default userOnBlacklistService;
