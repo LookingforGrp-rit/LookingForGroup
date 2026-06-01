@@ -5,7 +5,6 @@ import envConfig from '#config/env.ts';
 import type { UserData } from '#services/authentication/login.ts';
 
 const requiresLogin = (request: Request, response: Response, next: NextFunction) => {
-  const userData: UserData = JSON.parse(request.session.data || '') as UserData;
   if (envConfig.env === 'development' || envConfig.env === 'test') {
     /// Add UID for development, missing correct header
     request.headers[uidHeaderKey] = '000000001';
@@ -13,6 +12,7 @@ const requiresLogin = (request: Request, response: Response, next: NextFunction)
     next();
     return;
   }
+  const userData: UserData = JSON.parse(request.session.data || '') as UserData;
 
   if (userData.userExists) {
     next();

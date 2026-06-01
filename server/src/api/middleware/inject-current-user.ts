@@ -6,7 +6,6 @@ import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 
 const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
   const authenticatedRequest = request as AuthenticatedRequest;
-  const userData: UserData = JSON.parse(request.session.data || '') as UserData;
 
   if (envConfig.env === 'development' || envConfig.env === 'test') {
     /// Add currentUser for development
@@ -18,8 +17,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       return;
     }
   }
-
-  const googleId = userData.google_id;
+  const googleId = (JSON.parse(request.session.data || '') as UserData).google_id;
 
   //if no google id found
   if (!googleId) {
