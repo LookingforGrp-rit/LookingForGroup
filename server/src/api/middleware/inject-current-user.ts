@@ -18,7 +18,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
     }
   }
 
-  const googleId = (JSON.parse(request.session.data || '') as SessionUserData).googleId;
+  const googleId = (JSON.parse(request.session.data || '') as SessionUserData).googleId || '';
 
   //if no google id found
   if (!googleId) {
