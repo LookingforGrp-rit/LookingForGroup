@@ -27,6 +27,6 @@ router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.delete('/delete-project/:id/', authenticated(deleteProject));
-router.put('/ban_user/:id/', authenticated(banUser));
+router.put('/ban-user/:id/', authenticated(banUser));
 
 export default router;
