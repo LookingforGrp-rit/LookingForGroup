@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 // import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
@@ -11,6 +11,7 @@ import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
 import { addUserSkill, createNewUser, getCurrentUsername, googleLogin } from '../../api/users';
 import { CreateUserInput, SessionUserData } from '@looking-for-group/shared';
+import { ThemeContext } from '../../contexts/ThemeContext';
 
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
@@ -49,6 +50,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
   const [bio, setBio] = useState(''); // State variable for the user's bio
+  const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
   // user info to be sent to the backend
   //we will add more to this once the frontend components can handle them
@@ -83,10 +85,26 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
       callback: handleGoogle,
     });
 
+    //Sets the string for the Google Sign Up button.
+    let googleBtnTheme = new String("");
+
+    //If we're in dark mode, we use filled_black.
+    if(theme == 'dark'){
+      googleBtnTheme = "filled_black";
+    }
+    //Light mode uses outline.
+    else if(theme == 'light'){
+      googleBtnTheme = "outline";
+    }
+    //The filled_blue option shows up in case something goes wrong.
+    else{
+      googleBtnTheme = "filled_blue";
+    }
+
     // @ts-expect-error google
     google.accounts.id.renderButton(
       document.getElementById("googleBtn"),
-      { theme: "filled_black", size: "large" , shape: 'pill', text: 'signup_with'}
+      { theme: googleBtnTheme, size: "large" , shape: 'pill', text: "signup_with"}
     );
   async function handleGoogle(response: any){
     const sessionData = await googleLogin({credential: response.credential})
