@@ -1130,13 +1130,14 @@ New Profile page style rules
     justify-content: space-between;
     width: 100%;
 
-    >#profile-info-text {
+    #profile-info-text {
       display: flex;
       flex-direction: column;
       gap: 20px;
       margin-bottom: 10px;
 
-      >#profile-top-row {
+
+      #profile-top-row {
         display: flex;
         justify-content: space-between;
         align-items: center;
@@ -1144,6 +1145,7 @@ New Profile page style rules
         >#profile-names {
           display: flex;
           gap: 12px;
+          flex-wrap: wrap;
 
           >#profile-fullname {
             color: var(--primary-color);
@@ -1165,18 +1167,22 @@ New Profile page style rules
           }
         }
 
-        >#profile-buttons {
+        #profile-buttons {
           display: flex;
           justify-content: flex-end;
           align-items: center;
           align-self: baseline;
-          gap: 7px;
+          gap: 10px;
           overflow-wrap: break-word;
           word-break: break-word;
           width: fit-content;
 
           #heart-empty {
             stroke: #F14F76;
+          }
+
+          #project-info-edit {
+            flex-shrink: 0;
           }
         }
 
@@ -1242,15 +1248,15 @@ New Profile page style rules
   }
 }
 
+
 @media only screen and (max-width: 1100px) {
   #profile-hero {
-    flex-wrap: wrap;
+
     gap: 0px;
 
     #profile-img-container {
       margin: 10px;
       flex-wrap: wrap;
-      height: 25vw;
 
       img {
         max-width: min(25vw, 25vh);
@@ -1258,15 +1264,17 @@ New Profile page style rules
       }
 
       #profile-bio {
-        width: 40%;
+        max-width: min(25vw, 25vh);
+        align-self: flex-start;
+        height: 40px;
       }
 
       #profile-names {
         align-items: baseline;
       }
 
-      #profile-username {
-        display: flex;
+      #profile-info-text {
+        gap: 40px;
       }
     }
 
@@ -1286,11 +1294,14 @@ New Profile page style rules
         align-items: baseline;
       }
 
-
-
       #profile-top-row {
         flex-wrap: wrap;
         gap: 10px;
+
+        #profile-buttons {
+          flex-wrap: wrap;
+          justify-content: flex-start !important;
+        }
       }
     }
   }
@@ -1306,10 +1317,39 @@ New Profile page style rules
   align-items: center;
 }
 
+
 @media only screen and (max-width: 700px) {
 
   #profile-page-content {
     margin: 0 20px;
+  }
+}
+
+@media only screen and (max-width: 600px) {
+
+  #profile-hero {
+    flex-direction: column;
+
+
+
+
+    #profile-img-container {
+      img {
+        max-width: min(50vw, 50vh);
+        max-height: min(50vw, 50vh);
+        align-self: center;
+        margin-top: 20px;
+      }
+
+      #profile-bio {
+        max-width: min(50vw, 50vh);
+      }
+    }
+
+    #profile-buttons,
+    #profile-extras {
+      margin-right: 20px;
+    }
   }
 }
 
@@ -1320,8 +1360,10 @@ New Profile page style rules
 @media only screen and (max-width: 1250px) {
   #profile-names {
     flex-direction: column;
+    align-items: flex-start;
   }
 }
+
 
 
 .interests-selection {
