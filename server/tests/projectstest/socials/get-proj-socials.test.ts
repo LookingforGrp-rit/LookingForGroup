@@ -83,8 +83,8 @@ describe('getProjectSocialsService', async () => {
     vi.mocked(prisma.projects.findUnique).mockResolvedValue(prismaProject);
     const result = await getProjectSocialsService(1);
 
-    expect(transformProjectSocial).toBeCalled();
-    expect(transformProjectSocial).toBeCalledTimes(2);
+    expect(transformProjectSocial).toHaveBeenCalled();
+    expect(transformProjectSocial).toHaveBeenCalledTimes(2);
     expect(result).toEqual(transformedSocials);
   });
 

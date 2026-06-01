@@ -21,8 +21,8 @@ describe('deleteBlacklistService', async () => {
   it('returns OK if successful', async () => {
     const result = await deleteBlacklistService(1);
 
-    expect(prisma.userBlacklist.delete).toBeCalled();
-    expect(prisma.userBlacklist.delete).toBeCalledWith({
+    expect(prisma.userBlacklist.delete).toHaveBeenCalled();
+    expect(prisma.userBlacklist.delete).toHaveBeenCalledWith({
       where: {
         userId: 1,
       },
