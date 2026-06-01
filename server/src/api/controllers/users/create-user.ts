@@ -2,6 +2,7 @@ import type {
   ApiResponse,
   CreateUserInput,
   GoogleCredentialUserInput,
+  SessionUserData,
 } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import envConfig from '#config/env.ts';
@@ -14,7 +15,10 @@ import createUserService from '#services/users/create-user.ts';
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   const info: GoogleCredentialUserInput = req.body as GoogleCredentialUserInput;
   const devInfo: CreateUserInput = {} as CreateUserInput;
-  if ((envConfig.env === 'development' || envConfig.env === 'test') && !info.googleCredentials) {
+  const sessionInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
+
+  // This is for creating a dev user via the swagger docs
+  if ((envConfig.env === 'development' || envConfig.env === 'test') && !sessionInfo.google_id) {
     /// Fudge for development
     const devFirstName = req.query.devFirstName as string | undefined;
     const devLastName = req.query.devLastName as string | undefined;
@@ -37,7 +41,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     if (devUID) {
       devInfo.googleId = devUID;
     }
-    const result = await createUserService(devInfo);
+    const result = await createUserService(devInfo, sessionInfo);
     if (result === 'INTERNAL_ERROR') {
       const resBody: ApiResponse = {
         status: 500,
@@ -66,11 +70,12 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     res.status(201).json(resBody);
     return;
   }
+
   //don't check for google credentials if we have dev-defined things
   //because if we have dev-defined things we're running it through swagger to test everything else aside from the google stuff
   //so this is a bit of a bypass
   //basically tryna say if we have none of the dev things check for the credentials
-  if (!info.googleCredentials) {
+  if (!sessionInfo.google_id) {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Missing Google credentials',
@@ -111,7 +116,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     info.profileImage = dbImage.location;
   }
 
-  const result = await createUserService(info);
+  const result = await createUserService(info, sessionInfo);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
