@@ -29,6 +29,7 @@ interface ProjectPanelProps {
  * @returns JSX element rendering a clickable project preview panel with follow functionality
  */
 export const ProjectPanel = ({ project }: ProjectPanelProps) => {
+  //console.log(project.projectId);
   const navigate = useNavigate();
   const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
 
@@ -39,6 +40,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const [isFollowing, setFollowing] = useState(false);
   // Avoid looping useEffect by separating projectId
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
+
 
   /**
    * Formats the follow count for display
@@ -83,25 +85,26 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   }, [project, userId]);
 
   // Fetch current user ID and up-to-date project follower info
-  useEffect(() => {
-    const getProjectData = async () => {
-      //get our current user for use later
-      const userResp = await getCurrentAccount();
-      if (userResp.data) setUserId(userResp.data.userId);
+  // useEffect(() => {
+  //   const getProjectData = async () => {
+  //     //get our current user for use later
+  //     const userResp = await getCurrentAccount();
+  //     if (userResp.data) setUserId(userResp.data.userId);
 
-      //get the project itself
-      const projectResp = await getByID(projectId);
-      if (projectResp.data) {
-        setFollowCount(projectResp.data.followers.count);
-        checkFollow();
-        if (project.title == "thumbnail") {
-          console.log("Thumbnail project's thumbnail:");
-          console.log(project.thumbnail);
-        }
-      }
-    };
-    getProjectData();
-  }, [projectId, userId, checkFollow])
+  //     //get the project itself
+  //     const projectResp = await getByID(projectId);
+  //     if (projectResp.data) {
+  //       console.log(projectResp);
+  //       setFollowCount(projectResp.data.followers.count);
+  //       checkFollow();
+  //       if (project.title == "thumbnail") {
+  //         console.log("Thumbnail project's thumbnail:");
+  //         console.log(project.thumbnail);
+  //       }
+  //     }
+  //   };
+  //   getProjectData();
+  // }, [])
 
   /**
    * Handles click on the follow/unfollow button

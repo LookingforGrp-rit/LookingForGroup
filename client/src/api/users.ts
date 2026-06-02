@@ -54,7 +54,6 @@ export const getCurrentUsername = async (): Promise<UsernameResponse> => {
   // const apiURL = `/me/get-username`;
   const apiURL = `/me`;
   const response = await GET(apiURL);
-  console.log("Username");
 
   //console.log(response);
   return {

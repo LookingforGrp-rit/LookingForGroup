@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, ChangeEvent } from 'react';
+import { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -20,7 +20,6 @@ import { getCurrentUsername } from '../../api/users.ts'
 
 type DiscoverAndMeetProps = {
   category: 'projects' | 'profiles';
-  userProfile: MePrivate
 };
 
 /**
@@ -29,7 +28,7 @@ type DiscoverAndMeetProps = {
  * @param category "projects" for Discover, "profiles" for Meet
  * @returns JSX Element
  */
-const DiscoverAndMeet = ({ category, userProfile }: DiscoverAndMeetProps) => {
+const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
   // --------------------
   // Components
   // --------------------
@@ -113,7 +112,7 @@ const DiscoverAndMeet = ({ category, userProfile }: DiscoverAndMeetProps) => {
   const [heroProjectList, setHeroProjectList] = useState<ProjectWithFollowers[]>([]);
 
   // Stores userId for ability to follow users/projects
-  const [username, setUsername] = useState<string>(userProfile.username);
+  const [userId, setID] = useState<string>('');
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
@@ -199,18 +198,14 @@ const DiscoverAndMeet = ({ category, userProfile }: DiscoverAndMeetProps) => {
           setFetchedProjects(true);
 
           const projectResponse = await getProjects();
-          const projects = await projectResponse;
-
-          setupProjectData(projects);
+          setupProjectData(projectResponse);
         }
       }
       else {
         if (!fetchedUsers || force) {
           setFetchedUsers(true);
           const userResponse = await getUsers();
-          const users = await userResponse;
-
-          setupUserData(users);
+          setupUserData(userResponse);
         }
       }
     } catch (error) {
@@ -224,7 +219,7 @@ const DiscoverAndMeet = ({ category, userProfile }: DiscoverAndMeetProps) => {
     setDataLoaded(true);
   };
 
-  useMemo(() => getData(), []);
+  useMemo(() => getData(),[]);
 
   /**
    * Updates the filtered project list with new search information
@@ -524,7 +519,7 @@ const DiscoverAndMeet = ({ category, userProfile }: DiscoverAndMeetProps) => {
   return (
     <div className="page" tabIndex={-1}>
       {/* Search bar and profile/notification buttons */}
-      <Header dataSets={category == 'projects' ? projectDataSet : userDataSet} userProfile={userProfile}
+      <Header dataSets={category == 'projects' ? projectDataSet : userDataSet}
         onSearch={category == 'projects' ? searchProjects : searchUsers}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)} />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
@@ -552,11 +547,11 @@ const DiscoverAndMeet = ({ category, userProfile }: DiscoverAndMeetProps) => {
 };
 
 // Return projects category
-export const Discover = (userProfile: any) => {
-  return <DiscoverAndMeet category={'projects'} userProfile={userProfile}/>;
+export const Discover = () => {
+  return <DiscoverAndMeet category={'projects'} />;
 };
 
 // Return profiles category
-export const Meet = (userProfile: any) => {
-  return <DiscoverAndMeet category={'profiles'} userProfile={userProfile}/>;
+export const Meet = () => {
+  return <DiscoverAndMeet category={'profiles'} />;
 };

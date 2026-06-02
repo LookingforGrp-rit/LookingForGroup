@@ -286,7 +286,6 @@ const Profile = (userProfile : any) => {
         onSearch={searchProjects}
         hideSearchBar={true}
         onChange={() => { }}
-        userProfile={userProfile}
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}

@@ -28,7 +28,6 @@ type HeaderProps = {
   value?: string;
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar?: boolean;
-  userProfile: MePrivate;
 };
 
 /**
@@ -46,7 +45,7 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header: React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, userProfile }) => {
+export const Header: React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false }) => {
   // User info state
   const [username, setUsername] = useState<string>('');
   const [email, setEmail] = useState<string>('');
@@ -63,49 +62,49 @@ export const Header: React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", 
   const navigate = useNavigate(); // Hook for navigation
 
   // Fetch current user info on mount
-  // useEffect(() => {
-  //   const fetchUsername = async () => {
-  //     try {
-  //       const res = await getCurrentUsername();
+  useEffect(() => {
+    const fetchUsername = async () => {
+      try {
+        const res = await getCurrentUsername();
 
-  //       if (res.status == 200 && res.data?.username) {
-  //         loggedIn = true;
-  //         setUsername(res.data.username);
-  //         setEmail(res.data.email ?? null);
-  //         setProfileImg(res.data.profileImage ?? '');
-  //       } else {
-  //         loggedIn = false;
-  //         setUsername('Guest');
-  //         setEmail('');
-  //         setProfileImg('');
-  //       }
-  //     } catch (err) {
-  //       console.log('Error fetching username: ' + err);
-  //       loggedIn = false;
-  //       setUsername('Guest');
-  //       setEmail('');
-  //       setProfileImg('');
-  //     }
-  //   };
+        if (res.status == 200 && res.data?.username) {
+          loggedIn = true;
+          setUsername(res.data.username);
+          setEmail(res.data.email ?? null);
+          setProfileImg(res.data.profileImage ?? '');
+        } else {
+          loggedIn = false;
+          setUsername('Guest');
+          setEmail('');
+          setProfileImg('');
+        }
+      } catch (err) {
+        console.log('Error fetching username: ' + err);
+        loggedIn = false;
+        setUsername('Guest');
+        setEmail('');
+        setProfileImg('');
+      }
+    };
 
-  //   fetchUsername();
-  // }, []);
+    fetchUsername();
+  }, []);
 
   //loads in the data for the header
-  useEffect(() => {
-    console.log(userProfile);
-    if (userProfile.username !== '') {
-      loggedIn = true
-      setUsername(userProfile.username);
-      setEmail(userProfile.ritEmail);
-      setProfileImg(userProfile.profileImage ?? '');
-    } else {
-      loggedIn = false
-      setUsername('Guest');
-      setEmail('');
-      setProfileImg('');
-    }
-  },[]);
+  // useEffect(() => {
+  //   console.log(userProfile);
+  //   if (userProfile.username !== '') {
+  //     loggedIn = true
+  //     setUsername(userProfile.username);
+  //     setEmail(userProfile.ritEmail);
+  //     setProfileImg(userProfile.profileImage ?? '');
+  //   } else {
+  //     loggedIn = false
+  //     setUsername('Guest');
+  //     setEmail('');
+  //     setProfileImg('');
+  //   }
+  // },[]);
 
   // Navigate to a page and optionally update sidebar (if implemented)
   const handlePageChange = (path: string) => {
