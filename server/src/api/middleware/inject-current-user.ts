@@ -1,4 +1,4 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest, SessionUserData } from '@looking-for-group/shared';
 import type { NextFunction, Request, Response } from 'express';
 import envConfig from '#config/env.ts';
 //import type { UserData } from '#services/authentication/login.ts';
@@ -16,9 +16,18 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       next();
       return;
     }
+
+    const resBody: ApiResponse = {
+      status: 401,
+      error: 'Not logged in',
+      data: null,
+    };
+    response.status(401).json(resBody);
+    return;
   }
 
-  const googleId = authenticatedRequest.session.gid;
+  const googleId: string =
+    (JSON.parse(request.session.data || '{}') as SessionUserData).googleId || '';
 
   //if no google id found
   if (!googleId) {
@@ -55,6 +64,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
 
   const userID = result.userId;
   authenticatedRequest.currentUser = userID;
+  request.session.touch();
   next();
 };
 
