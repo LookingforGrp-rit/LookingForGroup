@@ -9,7 +9,7 @@ type GetSocialsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 //GET api/datasets/socials
 const getSocialsService = async (): Promise<Social[] | GetSocialsServiceError> => {
   try {
-    const socials = await prisma.socials.findMany({
+    let socials = await prisma.socials.findMany({
       select: SocialSelector,
 
       orderBy: {
@@ -17,8 +17,10 @@ const getSocialsService = async (): Promise<Social[] | GetSocialsServiceError> =
       },
     });
 
-    //Should sort the array in order of ascending websiteId
-    socials.toSorted((websiteA, websiteB) => websiteA.websiteId - websiteB.websiteId);
+    //Should sort the array alphabetically
+    socials = socials.toSorted(
+      (social1, social2) => social1.label.charCodeAt(0) - social2.label.charCodeAt(0),
+    );
     return socials.map(transformSocial);
   } catch (e) {
     console.error(`Error in getSocialsService: ${JSON.stringify(e)}`);
