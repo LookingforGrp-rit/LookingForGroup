@@ -4043,20 +4043,21 @@ My projects page style rules
   justify-self: start;
   /* max-width: 200px;
   width: 100%; */
-  flex-grow: 10;
-  flex-shrink: 10;
+  flex-grow: 1;
+  flex-shrink: 1;
   flex-basis: 512px;
+  padding-left: 10px;
 }
 
 .project-header-label.status {
-  width: 135px;
-  flex-grow: 1;
+  width: 250px;
+  flex-shrink: 0;
 }
 
 .project-header-label.date {
   text-align: right;
   width: 120px;
-  flex-grow: 1;
+  flex-shrink: 0;
   white-space: nowrap;
 }
 
@@ -4079,42 +4080,20 @@ My projects page style rules
     display: flex;
     flex-direction: row;
     align-items: center;
-    flex-grow: 0.025;
-  }
-}
-
-@media only screen and (max-width: 700px) {
-
-  .my-projects-grid,
-  .my-projects-list {
-    padding-left: 0px;
-    padding-right: 0px;
-    margin: 30px 20px 20px;
-  }
-
-  .my-projects-list-header {
-    display: none;
-  }
-
-  .my-project-list-card {
-    flex-wrap: wrap;
-  }
-
-  .dropdown-container {
-    margin-left: auto;
+    flex-shrink: 0;
   }
 }
 
 .list-card-section1 {
   box-sizing: border-box;
 
-  flex-grow: 10;
-  flex-shrink: 10;
+  flex-grow: 1;
+  flex-shrink: 1;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 20px;
-  flex-basis: 500px;
+  width: 100%;
 
   word-break: break-word;
   hyphens: auto;
@@ -4157,10 +4136,10 @@ My projects page style rules
   line-height: 28px;
   letter-spacing: 0%;
 
-  flex-basis: 150px;
+  flex-basis: 250px;
   display: flex;
   align-items: center;
-  flex-grow: 1;
+  flex-shrink: 0;
 }
 
 .list-card-date {
@@ -4176,7 +4155,7 @@ My projects page style rules
   display: flex;
   justify-content: end;
   align-items: center;
-  flex-grow: 1;
+  flex-shrink: 0;
 }
 
 
@@ -4195,6 +4174,45 @@ My projects page style rules
 
   svg {
     padding: 11.5px 7.5px;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  /* .list-card-status, .list-card-date, .project-header-label.date, .project-header-label.status {
+    flex-shrink: 1;
+  } */
+  .list-card-status {
+    flex-basis: 150px;
+  }
+
+  .project-header-label.status {
+    flex-basis: 150px;
+  }
+}
+
+@media only screen and (max-width: 900px) {
+
+  .my-projects-grid,
+  .my-projects-list {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 30px 20px 20px;
+  }
+
+  .my-projects-list-header {
+    display: none;
+  }
+
+  .my-project-list-card {
+    flex-wrap: wrap;
+  }
+
+  .dropdown-container {
+    margin-left: auto;
+  }
+
+  .list-card-status {
+    flex-basis: 100%;
   }
 }
 
