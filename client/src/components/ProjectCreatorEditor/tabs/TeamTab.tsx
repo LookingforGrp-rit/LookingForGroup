@@ -38,10 +38,10 @@ import {
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 //import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
-import {
-  transporter,
-  sendEmail
-} from "../../../../../server/src/mailer";
+// import {
+//   transporter,
+//   sendEmail
+// } from "../../../../../server/src/mailer";
 
 // --- Variables ---
 // Default project value
@@ -556,19 +556,19 @@ export const TeamTab = ({
       Thank you!`;
 
     //Send the email to targetUserEmail
-    const emailObject: Email = {
-      kind: "Invite",
-      transporter: transporter,
-      invitee: invitee,
-      targetUser: targetUser,
-      project: project,
-      textBody: message,
+    // const emailObject: Email = {
+    //   kind: "Invite",
+    //   transporter: transporter,
+    //   invitee: invitee,
+    //   targetUser: targetUser,
+    //   project: project,
+    //   textBody: message,
 
-      //Probably not going to use HTMLBody, but it's there in case we will in the future
-      HTMLBody: undefined
-    };
+    //   //Probably not going to use HTMLBody, but it's there in case we will in the future
+    //   HTMLBody: undefined
+    // };
 
-    sendEmail(emailObject);
+    // sendEmail(emailObject);
     return message;
   }
 

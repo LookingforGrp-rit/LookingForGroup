@@ -656,6 +656,13 @@ export interface UserDetail extends UserPreview {
   followers: UserFollowsList;
 }
 
+export interface UserEmail extends Pick<UserPreview, 'userId' | 'firstName' | 'lastName'> {
+  /**
+   * The user's rit email
+   */
+  ritEmail: string;
+}
+
 // ME
 
 // TODO should MePreview use the same properties as UserPreview?
@@ -1271,9 +1278,20 @@ export type CreateProjectMemberInput = {
  * Data required to invite a user to join a project
  */
 export type SendProjectInviteInput = {
-  email: string;
-  userId: number;
+  inviteeUserId: number;
+  targetUserId: number;
   roleId: number;
+};
+
+/**
+ * Data required to send invitation email to user
+ */
+export type EmailInput = {
+  invitee: UserEmail;
+  targetUser: UserEmail;
+  subject: string;
+  textBody: string;
+  HTMLBody: string;
 };
 
 /**

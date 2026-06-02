@@ -1,5 +1,5 @@
 import type { AuthenticatedRequest } from '@looking-for-group/shared';
-import { Router, type NextFunction, type Request, type Response } from 'express';
+import express, { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
@@ -12,6 +12,7 @@ import { skipIfEmpty } from '../middleware/validators/skip-if-empty.ts';
 import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
+const urlencodedParser = express.urlencoded({ extended: true });
 
 export const authenticated = (
   controller: (
@@ -181,8 +182,7 @@ router.post(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
-  userExistsAt('body', 'userId'),
-  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  urlencodedParser,
   authenticated(requiresProjectOwner),
   PROJECT.sendInvite,
 );
