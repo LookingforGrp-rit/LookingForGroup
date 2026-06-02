@@ -14,6 +14,7 @@ const userOnBlacklistService = async (
 ): Promise<AddBlacklistServiceSuccess | AddBlacklistServiceError> => {
   try {
     //check if user exists
+
     const user = await prisma.userBlacklist.findUnique({
       where: {
         userId: userId,
