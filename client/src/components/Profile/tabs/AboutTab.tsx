@@ -190,6 +190,7 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
                   initialVal={profile.title ?? ""}
                   callback={(e) => e.preventDefault()}
                   type={'input'}
+                  searchable={true}
                 />
                 <SelectOptions
                   callback={(e) => {
@@ -231,6 +232,7 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
                   initialVal={`${currentMajor.label}`}
                   callback={(e) => e.preventDefault()}
                   type={'input'}
+                  searchable={true}
                 />
                 <SelectOptions
                   callback={(e) => {
