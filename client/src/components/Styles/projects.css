@@ -86,13 +86,16 @@ Project Panel component style rules
       color: var(--primary-color);
       line-height: normal;
       text-align: left;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     .project-likes {
       display: flex;
-      flex-direction: row;
+      flex-direction: row-reverse;
       gap: 8px;
       align-items: center;
+      padding-left: 8px;
 
       .follow-amt {
         margin: 0;
