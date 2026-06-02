@@ -27,6 +27,8 @@ const getProjectImagesService = async (
       return 'NOT_FOUND';
     }
 
+    //Image order is user-defined, so this will not be ordered
+    //project.projectImages = project.projectImages.toSorted((image1, image2) => image1.imageId - image2.imageId);
     return project.projectImages.map((image) => transformProjectImage(projectId, image));
   } catch (e) {
     console.error(`Error in getProjectImagesService: ${JSON.stringify(e)}`);

@@ -10,7 +10,7 @@ export const getProjectFollowingService = async (
   userId: number,
 ): Promise<ProjectFollowsList | GetProjectsError> => {
   try {
-    const projects = await prisma.projectFollowings.findMany({
+    let projects = await prisma.projectFollowings.findMany({
       where: {
         userId,
       },
@@ -24,6 +24,12 @@ export const getProjectFollowingService = async (
         },
       },
     });
+
+    //Sorts the array alphabetically by project title
+    projects = projects.toSorted(
+      (project1, project2) =>
+        project1.projects.title.charCodeAt(0) - project2.projects.title.charCodeAt(0),
+    );
 
     const followings: ProjectFollowsList = {
       count: projects.length,
