@@ -1,4 +1,3 @@
-import type { ProjectStatus, ProjectPurpose, Tag } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
 import addTagService from '#services/projects/tags/add-tag.ts';
@@ -10,8 +9,8 @@ import { transformProjectTag } from '#services/transformers/projects/parts/proje
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
-    projects: {
-      update: vi.fn(),
+    projectTags: {
+      create: vi.fn(),
     },
   },
 }));
@@ -20,68 +19,56 @@ vi.mock('#services/transformers/projects/parts/project-tag.ts', () => ({
   transformProjectTag: vi.fn(),
 }));
 
-const now = new Date();
-
-const tag: Tag = {
+const prismaProjectTag = {
+  projectId: 100,
   tagId: 70,
-  label: 'Test',
-  type: 'Developer',
-};
-
-const prismaProject = {
-  audience: '',
-  createdAt: now,
-  description: '',
-  hook: '',
-  projectId: 1,
-  purpose: 'Academic' as ProjectPurpose,
-  status: 'Planning' as ProjectStatus,
-  thumbnailId: 0,
-  title: 'test 1',
-  tags: [tag],
-  updatedAt: now,
-  userId: 1,
+  displayOrder: 0,
+  tag: {
+    tagId: 70,
+    label: 'Test',
+    type: 'Developer',
+  },
 };
 
 describe('addTagsService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
     (transformProjectTag as Mock).mockImplementation(
-      (projectId: number, { label, tagId, type }) => ({
-        projectId: projectId,
+      (_projectId: number, { label, tagId, type, displayOrder }) => ({
+        apiUrl: '',
         label: label,
         tagId: tagId,
         type: type,
+        displayOrder: displayOrder,
       }),
     );
   });
   it("returns the project's tags", async () => {
-    vi.mocked(prisma.projects.update).mockResolvedValue(prismaProject);
+    vi.mocked(prisma.projectTags.create).mockResolvedValue(prismaProjectTag);
     const result = await addTagService(100, { tagId: 70, displayOrder: 0 });
 
-    expect(result).toStrictEqual([
-      {
-        projectId: 100,
-        label: 'Test',
-        tagId: 70,
-        type: 'Developer',
-      },
-    ]);
+    expect(result).toStrictEqual({
+      apiUrl: '',
+      tagId: 70,
+      label: 'Test',
+      type: 'Developer',
+      displayOrder: 0,
+    });
   });
-  it("returns NOT_FOUND if the project can't be found", async () => {
-    vi.mocked(prisma.projects.update).mockRejectedValue({ code: 'P2025' });
+  it("returns NOT_FOUND if the tag can't be found", async () => {
+    vi.mocked(prisma.projectTags.create).mockRejectedValue({ code: 'P2025' });
     const result = await addTagService(100, { tagId: 70, displayOrder: 0 });
 
     expect(result).toBe('NOT_FOUND');
   });
   it('returns CONFLICT if the prisma finds a conflict', async () => {
-    vi.mocked(prisma.projects.update).mockRejectedValue({ code: 'P2002' });
+    vi.mocked(prisma.projectTags.create).mockRejectedValue({ code: 'P2002' });
     const result = await addTagService(100, { tagId: 70, displayOrder: 0 });
 
     expect(result).toBe('CONFLICT');
   });
   it('returns INTERNAL_ERROR if the prisma finds any other error', async () => {
-    vi.mocked(prisma.projects.update).mockRejectedValue(new Error('womp womp'));
+    vi.mocked(prisma.projectTags.create).mockRejectedValue(new Error('womp womp'));
     const result = await addTagService(100, { tagId: 70, displayOrder: 0 });
 
     expect(result).toBe('INTERNAL_ERROR');
