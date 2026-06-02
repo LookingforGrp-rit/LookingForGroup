@@ -1356,6 +1356,10 @@ export const TeamTab = ({
                               return member;
                             }
                           })
+
+                          //update the temporary changes made to edit member popup roles, if pressed x for main save, it will still undo everything else
+                          updatePendingProject(projectAfterTeamChanges);
+                          
                       }}
                     >
                       Save
