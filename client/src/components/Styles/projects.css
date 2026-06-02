@@ -3582,9 +3582,8 @@ My projects page style rules
 .my-projects-action-buttons {
   display: flex;
   flex-direction: row;
-  width: max-content;
+  width: fit-content;
   gap: 15px;
-  align-items: left;
 
   .arrow-az {
     transform: rotate(180deg);
@@ -3602,14 +3601,30 @@ My projects page style rules
     max-width: calc(100vw - 50px);
     align-items: baseline;
   }
-
-  .my-projects-action-buttons {
-    flex-wrap: wrap;
-  }
-
+  
   .select-container,
   .my-projects-create-btn {
     display: flex;
+  }
+}
+
+@media only screen and (max-width: 799px)
+{
+  .my-projects-filters
+  {
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+    align-items: center;
+    row-gap: 20px;
+  }
+
+  .my-projects-action-buttons {
+    margin: 0 auto;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
   }
 }
 
@@ -3761,8 +3776,9 @@ My projects page style rules
   justify-content: space-between;
   align-content: start;
   gap: 20px;
-  width: 100%;
-  margin: 0 50px 50px 50px;
+  width: fit-content;
+  margin: 30px auto;
+  text-align: center;
 }
 
 .my-projects-grid {
@@ -3946,7 +3962,7 @@ My projects page style rules
 
 .my-projects-list-header {
   box-sizing: border-box;
-  margin: 0 64px 10px 60px;
+  margin: 30px 64px 10px 60px;
   padding-right: 80px;
 
   display: flex;
@@ -4023,8 +4039,31 @@ My projects page style rules
     display: none;
   }
 
+  .list-card-section1
+  {
+    grid-area: name;
+  }
+
+  .list-card-status
+  {
+    grid-area: status;
+  }
+
+  .list-card-date
+  {
+    grid-area: date;
+  }
+  .dropdown-container #list-card-options-button
+  {
+    grid-area: menu;
+  }
+
   .my-project-list-card {
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "name menu"
+                         "status date";
   }
 
   .dropdown-container {
