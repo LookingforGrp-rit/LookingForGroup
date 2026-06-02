@@ -17,7 +17,7 @@ import { getProjects } from '../api/projects';
  * @param itemAddInterval - Number of items to add to the display when scrolling.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, itemAddInterval = 0 }: { category: string, itemList: unknown[], itemAddInterval: number }) => {
+export const PanelBox = ({ category, itemList, itemAddInterval = 0, userId }: { category: string, itemList: unknown[], itemAddInterval: number, userId: number | undefined}) => {
   // Don't display all items at first, load them in periodically
   // Currently rendered subset of items. Initially displays only a portion (controlled by itemAddInterval).
   const [displayedItems, setDisplayedItems] = useState(itemList.slice(0, itemAddInterval));
@@ -68,7 +68,7 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0 }: { category
 
     const panelProjects = itemList.map((project) => {
       return (
-        <ProjectPanel project={project as ProjectWithFollowers} key={(project as ProjectWithFollowers).projectId} />
+        <ProjectPanel project={project as ProjectWithFollowers} key={(project as ProjectWithFollowers).projectId} currentUserId={userId} />
       );
     })
     return <div className="project-panel-box" onScroll={addItems} >{panelProjects}</div>

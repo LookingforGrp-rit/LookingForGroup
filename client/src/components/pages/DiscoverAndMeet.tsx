@@ -112,7 +112,8 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
   const [heroProjectList, setHeroProjectList] = useState<ProjectWithFollowers[]>([]);
 
   // Stores userId for ability to follow users/projects
-  const [userId, setID] = useState<string>('');
+  const [username, setUsername] = useState<string>('');
+    const [userId, setUserId] = useState<number>();
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
@@ -129,6 +130,25 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
   // --------------------
   // Helper functions
   // --------------------
+
+    /**
+   * Gets the user's profile by authenticateing the
+   * data before setting the user's ID
+   */
+  const getAuth = async () => {
+    if (username != "") {
+      return;
+    }
+    
+    const res = await getCurrentUsername();
+
+    if (res.status === 200 && res.data?.username && username == "") {
+      setUsername(res.data.username)
+      setUserId(res.data.userId);
+    } else {
+      setUsername('guest');
+    }
+  }
 
   // Set the necessary data for project mode
   const setupProjectData = (projects: ApiResponse<ProjectPreview[]>): void => {
@@ -191,6 +211,8 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
   const getData = async (force: boolean = false) => {
     // Early escape
     if (fetchedProjects && fetchedUsers && !force) return;
+
+    await getAuth();
 
     try {
       if (category == 'projects') {
@@ -500,7 +522,7 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
       );
     }
     else {
-      discoverPanelContents = (<PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} />);
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} userId={userId}/>);
     }
   } else {
     if (!dataLoaded && filteredUserList.length === 0) {
@@ -511,7 +533,7 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
       );
     }
     else {
-      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} />);
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} userId={userId} />);
     }
   }
 
