@@ -177,14 +177,14 @@ router.post(
 //Sends an invite to a pending member of a project through email
 //Currently the same as adding a member normally, but at least it doesnt break the site immediately
 router.post(
-  '/:id/members',
+  '/:id/members/invite',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
   userExistsAt('body', 'userId'),
   skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
   authenticated(requiresProjectOwner),
-  PROJECT.addMember,
+  PROJECT.sendInvite,
 );
 //Edits a member of a specific project through id
 router.patch(

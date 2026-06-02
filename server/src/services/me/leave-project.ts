@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type LeaveProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'FORBIDDEN'>;
-type LeaveProjectServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type LeaveProjectServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 /**
  * DELETE api/me/projects/{id}/leave

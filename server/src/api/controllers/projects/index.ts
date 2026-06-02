@@ -18,6 +18,7 @@ import getProjectMediums from './mediums/get-proj-mediums.ts';
 import addMember from './members/add-member.ts';
 import deleteMember from './members/delete-member.ts';
 import getMembers from './members/get-members.ts';
+import sendInvite from './members/send-invite.ts';
 import updateMember from './members/update-member.ts';
 import { addProjectSocial } from './socials/add-social.ts';
 import { deleteProjectSocial } from './socials/delete-proj-social.ts';
@@ -69,4 +70,5 @@ export default {
   getProjectMediums,
   addMediums,
   deleteMediums,
+  sendInvite,
 };

@@ -1268,6 +1268,15 @@ export type CreateProjectMemberInput = {
 };
 
 /**
+ * Data required to invite a user to join a project
+ */
+export type SendProjectInviteInput = {
+  email: string;
+  userId: number;
+  roleId: number;
+};
+
+/**
  * Data required to change a member's role in a project
  */
 export type UpdateProjectMemberInput = Partial<
