@@ -20,6 +20,7 @@ const addBlacklistService = async (
     if (user === null) return 'NOT_FOUND';
 
     //Attempt to add to blacklist
+
     await prisma.userBlacklist.create({
       data: {
         userId: userId,

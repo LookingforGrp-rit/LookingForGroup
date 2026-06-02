@@ -33,6 +33,15 @@ export const login = async (request: Request, response: Response) => {
     return response.status(400).json(resBody);
   }
 
+  if (userData === 'FORBIDDEN') {
+    const resBody: ApiResponse = {
+      status: 403,
+      error: 'User blacklisted from LFG',
+      data: null,
+    };
+    return response.status(403).json(resBody);
+  }
+
   request.session.gid = userData.googleId || '';
   request.session.data = !userData.userExists ? JSON.stringify(userData) : '';
 

@@ -2,8 +2,9 @@ import type { SessionUserData } from '@looking-for-group/shared';
 import { OAuth2Client } from 'google-auth-library';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import userOnBlacklistService from '#services/users/blacklist/user-on-blacklist.ts';
 
-type LoginServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'BAD_REQUEST'>;
+type LoginServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'BAD_REQUEST' | 'FORBIDDEN'>;
 
 export const loginService = async (token: string): Promise<SessionUserData | LoginServiceError> => {
   const client = new OAuth2Client();
@@ -29,6 +30,10 @@ export const loginService = async (token: string): Promise<SessionUserData | Log
       googleId,
     },
   });
+
+  if ((await userOnBlacklistService(user?.userId || -1)) === 'OK') {
+    return 'FORBIDDEN'; // no sir, not allowed.
+  }
 
   // Sets up data to return to the controller
   // (which it will store in the session store if the user does not exist)
