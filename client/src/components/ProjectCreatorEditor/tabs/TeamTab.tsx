@@ -1293,6 +1293,7 @@ export const TeamTab = ({
                         initialVal={member.role?.label}
                         className=""
                         type="dropdown"
+                        searchable={true}
                       />
                       <SelectOptions
                         callback={(e) => {
@@ -1518,7 +1519,7 @@ export const TeamTab = ({
               </div>
               <label id="project-team-add-member-role">Role</label>
               <Select key={selectKey}>
-                <SelectButton placeholder="Select" initialVal="" type="input" />
+                <SelectButton placeholder="Select" initialVal="" type="input" searchable={true} />
                 <SelectOptions
                   callback={(e) => {
                     setCurrentMember({

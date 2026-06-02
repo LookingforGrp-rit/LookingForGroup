@@ -201,6 +201,12 @@ export const Select: React.FC<SelectProps> = ({ children }) => {
     // Close on click outside
     useEffect(() => {
         const close = (e: MouseEvent) => {
+            const target = e.target as Node;
+
+            if (!target.isConnected) {
+                return;
+            }
+            
             if (selectRef.current && !selectRef.current.contains(e.target as Node)) {
                 setOpen(false);
             }
