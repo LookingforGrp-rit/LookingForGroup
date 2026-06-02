@@ -1581,6 +1581,7 @@ Select style rules
 
 /* Universal styles for Select component */
 .select {
+  box-sizing: border-box;
   display: flex;
   cursor: pointer;
   flex-direction: row;
@@ -1588,7 +1589,7 @@ Select style rules
   align-items: center;
   width: 100%;
   height: 45px;
-  padding: 0px 7px;
+  padding: 0px 15px;
   border: 1px solid var(--border-color);
   border-radius: 10px;
   font-size: 0.9375rem;
@@ -1608,7 +1609,7 @@ Select style rules
     box-shadow: none;
 }
 
-.select::placeholder {
+.select-search-input::placeholder {
   color: var(--neutral-gray);
   font-style: italic;
 }
