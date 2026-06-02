@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import Masonry from '@mui/lab/Masonry';
 import { ProjectPanel } from './ProjectPanel';
 import { ProfilePanel } from './ProfilePanel';
 import { ProjectWithFollowers, UserPreview } from '@looking-for-group/shared';
@@ -67,18 +66,13 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0 }: { category
         className="project-panel-box"
         onScroll={addItems}
       >
-        <Masonry
-          columns={{ xs: 1, sm: 2, md: 2, lg: 3, xl: 4 }}
-          spacing={{ xs: 1.5, sm: 1.5, md: 2, lg: 2, xl: 2.5 }}
-        >
-          {displayedItems.length > 0 ? (
-            displayedItems.map((project) => (
-              <ProjectPanel project={project as ProjectWithFollowers} key={(project as ProjectWithFollowers).projectId} />
-            ))
-          ) : (
-            <>Sorry, no projects here</>
-          )}
-        </Masonry>
+        {displayedItems.length > 0 ? (
+          displayedItems.map((project) => (
+            <ProjectPanel project={project as ProjectWithFollowers} key={(project as ProjectWithFollowers).projectId} />
+          ))
+        ) : (
+          <>Sorry, no projects here</>
+        )}
       </div>
     );
   };
@@ -95,18 +89,13 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0 }: { category
         className="profile-panel-box"
         onScroll={addItems}
       >
-        <Masonry
-          columns={{ xs: 2, sm: 3, md: 3, lg: 4, xl: 5 }}
-          spacing={{ xs: 2, sm: 2, md: 2, lg: 2, xl: 2.5 }}
-        >
-          {displayedItems.length > 0 ? (
-            displayedItems.map((profile) => (
-              <ProfilePanel profileData={profile as UserPreview} key={(profile as UserPreview).userId} />
-            ))
-          ) : (
-            <>Sorry, no people here</>
-          )}
-        </Masonry>
+        {displayedItems.length > 0 ? (
+          displayedItems.map((profile) => (
+            <ProfilePanel profileData={profile as UserPreview} key={(profile as UserPreview).userId} />
+          ))
+        ) : (
+          <>Sorry, no people here</>
+        )}
       </div>
     );
   };
