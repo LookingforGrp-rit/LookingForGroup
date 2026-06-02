@@ -28,12 +28,6 @@ const transporter = nodemailer.createTransport({
 const sendEmail = async (
   email: EmailInput,
 ): Promise<SendEmailServiceError | SendEmailServiceSuccess> => {
-  // const transporter: any = email.transporter;
-  // const inviteeName: string = `${email.invitee?.user?.firstName} ${email.invitee?.user?.lastName}`;
-  // const inviteeEmail: string = `${email.invitee?.user?.username}.rit.edu`;
-  // const targetUserEmail: string = `${email.targetUser.username}.rit.edu`;
-  // const projectName: string = `${email.project.title}`;
-
   try {
     await transporter.verify();
     console.log('Server is ready to take our messages');
