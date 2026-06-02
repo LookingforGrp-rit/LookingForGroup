@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 // import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
@@ -9,7 +9,9 @@ import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
-import { createNewUser, getCurrentUsername, getUserByEmail } from '../../api/users';
+import { addUserSkill, createNewUser, getCurrentUsername, googleLogin } from '../../api/users';
+import { CreateUserInput, SessionUserData } from '@looking-for-group/shared';
+import { ThemeContext } from '../../contexts/ThemeContext';
 
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
@@ -24,7 +26,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
   const [email, setEmail] = useState('');
-  const [googleCredentials, setGoogleCredentials] = useState('')
+  const [sessionData, setSessionData] = useState<SessionUserData>();
   // const [username, setUsername] = useState('');
   // const [password, setPassword] = useState('');
   // const [confirm, setConfirm] = useState(''); // Second password input to check if they match
@@ -44,24 +46,23 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   // to remeber the user's choices when they go back and forth between modals
   // const [selectedProficiencies, setSelectedProficiencies] = useState<string[]>([]); // State variable for the selected proficiencies
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]); // State variable for the selected skills
+  const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]); // State variable for the ids of the selected skills
   // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
   const [bio, setBio] = useState(''); // State variable for the user's bio
+  const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
   // user info to be sent to the backend
-  //we don't need name stuff, your email handles that
+  //we will add more to this once the frontend components can handle them
   const userInfo = {
-    //firstName: firstName,
-    //lastName: lastName,
-    //email: email,
-    // proficiencies: selectedProficiencies,
-    skills: selectedSkills,
-    // interests: selectedInterests,
+    firstName: firstName,
+    lastName: lastName,
+    ritEmail: email,
+    username: '',
     pronouns: pronouns,
     bio: bio,
-    // avatarImage: avatarImage,
     profileImage: profileImage, // if they upload their own image
-  };
+  } as CreateUserInput;
 
   // Redirect the user to the homepage if they are currently logged in
   useEffect(() => {
@@ -84,31 +85,41 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
       callback: handleGoogle,
     });
 
+    //Sets the string for the Google Sign Up button.
+    let googleBtnTheme = new String("");
+
+    //If we're in dark mode, we use filled_black.
+    if(theme == 'dark'){
+      googleBtnTheme = "filled_black";
+    }
+    //Light mode uses outline.
+    else if(theme == 'light'){
+      googleBtnTheme = "outline";
+    }
+    //The filled_blue option shows up in case something goes wrong.
+    else{
+      googleBtnTheme = "filled_blue";
+    }
+
     // @ts-expect-error google
     google.accounts.id.renderButton(
       document.getElementById("googleBtn"),
-      { theme: "filled_black", size: "large" , shape: 'pill'}
+      { theme: googleBtnTheme, size: "large" , shape: 'pill', text: "signup_with"}
     );
   async function handleGoogle(response: any){
-    setGoogleCredentials(response.credential)
-    //this^^ is our googleId, encoded in base64
-    //so when we create a user we input this in there
-    //server decodes it when it receives it, and it's passed into the createUser route
-    
-    //for whoever comes to this:
-    //this createNewUser line with the object in it is the call to the backend that will handle user creation
-    //createNewUser takes in a GoogleCredentialUserInput as a parameter, you can check types.d.ts for more info on that
-    //you will want to populate an object with all of the things the user is selecting and put it in as part of that object
-    //but move this call out of this useEffect and into another handler that runs when everything is filled
-    //there are other components on this page that handle letting users pick proficiencies and skills and do initial account setup stuff...
-    //...but they are not implemented on the actual signup page yet so we can't reach them as of right now
-    //because they're react components it should be relatively easy to navigate through them and save info, but i suck at react and i hate it and it hates me back
-    
-    //there are a lot of commented out checks because all of that is handled by google on the backend
-    //there are specific errors that will be thrown based on what's wrong with the thing so you can check for those instead
-    //the message the error comes with should let you know what went wrong
-    await createNewUser({googleCredentials: response.credential}); 
-    
+    const sessionData = await googleLogin({credential: response.credential})
+    setSessionData(sessionData.data); 
+    //now we display the message that corresponds to whatever happened
+    //not even gonna bother reading the react one because react variables update whenever they feel like it and not right when you tell them to
+    if(!sessionData.data.userExists) {
+      setFirstName(sessionData.data.firstName);
+      setLastName(sessionData.data.lastName);
+      setEmail(sessionData.data.email);
+      setShowSkillsModal(true);
+    }
+    else {
+      navigate(paths.routes.HOME);
+    }
   }
   }, [navigate]);
 
@@ -119,6 +130,12 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    */
   //we don't need any of this do we since literally all of it is gonna be through google...
   const handleSignup = async () => {
+    if(!sessionData) {
+      setMessage('No email entered')
+    }
+    else{
+      setShowSkillsModal(true);
+    }
     // Check if any of the fields are empty
     // if (
     //   email === '' ||
@@ -375,9 +392,6 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               </p>
             </div>
           </div>
-          <button id="main-loginsignup-btn" onClick={handleSignup}>
-            Sign Up
-          </button>
 
           {/*************************************************************
 
@@ -396,7 +410,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
           <ChooseSkills
             onNext={() => {
               setShowSkillsModal(false);
-              // setShowInterestsModal(true);
+              setShowCompleteProfileModal(true);
             }}
             onBack={() => {
               setShowSkillsModal(false);
@@ -404,6 +418,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             show={showSkillsModal}
             selectedSkills={selectedSkills}
             setSelectedSkills={setSelectedSkills}
+            selectedSkillIds={selectedSkillIds}
+            setSelectedSkillIds={setSelectedSkillIds}
             mode="signup"
             onClose={() => {
               setShowSkillsModal(false);
@@ -452,11 +468,13 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             }}
             onBack={() => {
               setShowCompleteProfileModal(false);
+              setShowSkillsModal(true);
               // setShowAvatarModal(true);
             }}
             show={showCompleteProfileModal}
             // avatarImage={avatarImage}
             userInfo={userInfo}
+            selectedSkills={selectedSkills}
             bio={bio}
             pronouns={pronouns}
             setBio={setBio}
@@ -471,11 +489,20 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               setShowGetStartedModal(false);
               setShowCompleteProfileModal(true);
             }}
-            onCreateProject={() => {
+            onCreateProject={async () => {
+
+              await createNewUser(userInfo); //populating this with all of the things we selected
+              for(const id of selectedSkillIds){
+                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+              }
               setShowGetStartedModal(false);
               navigate(paths.routes.MYPROJECTS);
             }}
-            onJoinProject={() => {
+            onJoinProject={async () => {
+              await createNewUser(userInfo); //populating this with all of the things we selected
+              for(const id of selectedSkillIds){
+                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+              }
               setShowGetStartedModal(false);
               navigate(paths.routes.HOME);
             }}

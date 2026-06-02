@@ -65,7 +65,7 @@ describe('getProjectFollowersService', async () => {
     vi.mocked(transformProjectToFollowers).mockReturnValue(testFollowers);
     const result = await getProjectFollowersService(1);
 
-    expect(transformProjectToFollowers).toBeCalledWith(prismaProject);
+    expect(transformProjectToFollowers).toHaveBeenCalledWith(prismaProject);
     expect(result).toBe(testFollowers);
   });
   it("Return NOT_FOUND if project doesn't exist", async () => {

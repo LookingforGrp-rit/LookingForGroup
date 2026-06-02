@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ProjectPanel } from './ProjectPanel';
 import { ProfilePanel } from './ProfilePanel';
-import { ProjectWithFollowers, UserPreview} from '@looking-for-group/shared';
+import { ProjectWithFollowers, UserPreview } from '@looking-for-group/shared';
 
 // Item list should use "useState" so that it'll re-render on the fly
 // And so that no search functionality needs to be included in this component
@@ -16,7 +16,7 @@ import { ProjectWithFollowers, UserPreview} from '@looking-for-group/shared';
  * @param itemAddInterval - Number of items to add to the display when scrolling.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, itemAddInterval = 0 } : {category: string, itemList: unknown[], itemAddInterval: number}) => {
+export const PanelBox = ({ category, itemList, itemAddInterval = 0 }: { category: string, itemList: unknown[], itemAddInterval: number }) => {
   // Don't display all items at first, load them in periodically
   // Currently rendered subset of items. Initially displays only a portion (controlled by itemAddInterval).
   const [displayedItems, setDisplayedItems] = useState(itemList.slice(0, itemAddInterval));
@@ -62,10 +62,13 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0 } : {category
    */
   const ProjectPanelBox = () => {
     return (
-      <div className="project-panel-box" onScroll={addItems}>
+      <div
+        className="project-panel-box"
+        onScroll={addItems}
+      >
         {displayedItems.length > 0 ? (
           displayedItems.map((project) => (
-            <ProjectPanel project={project as ProjectWithFollowers} key={(project as ProjectWithFollowers).projectId}/>
+            <ProjectPanel project={project as ProjectWithFollowers} key={(project as ProjectWithFollowers).projectId} />
           ))
         ) : (
           <>Sorry, no projects here</>
@@ -82,7 +85,10 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0 } : {category
    */
   const ProfilePanelBox = () => {
     return (
-      <div className="profile-panel-box" onScroll={addItems}>
+      <div
+        className="profile-panel-box"
+        onScroll={addItems}
+      >
         {displayedItems.length > 0 ? (
           displayedItems.map((profile) => (
             <ProfilePanel profileData={profile as UserPreview} key={(profile as UserPreview).userId} />

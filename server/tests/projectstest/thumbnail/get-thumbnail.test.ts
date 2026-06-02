@@ -64,8 +64,8 @@ describe('getThumbnailService', async () => {
     vi.mocked(transformProjectImage).mockReturnValue(transformedThumb);
     const result = await getThumbnailService(100);
 
-    expect(transformProjectImage).toBeCalled();
-    expect(transformProjectImage).toBeCalledWith(100, thumbImage);
+    expect(transformProjectImage).toHaveBeenCalled();
+    expect(transformProjectImage).toHaveBeenCalledWith(100, thumbImage);
     expect(result).toBe(transformedThumb);
   });
   it("returns NOT_FOUND if the project doesn't exist", async () => {

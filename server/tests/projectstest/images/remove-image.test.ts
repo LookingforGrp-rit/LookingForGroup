@@ -55,7 +55,7 @@ describe('removeImageService', async () => {
     vi.mocked(prisma.projectImages.delete).mockResolvedValue(deletedImage);
     const result = await removeImageService(1, 0);
 
-    expect(prisma.projects.update).toBeCalled();
+    expect(prisma.projects.update).toHaveBeenCalled();
     expect(result).toBe('NO_CONTENT');
   });
 

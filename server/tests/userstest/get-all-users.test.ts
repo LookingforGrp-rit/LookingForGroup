@@ -93,8 +93,8 @@ describe('test getAllUsersService', () => {
 
     // console.log(result);
     const findMany = prisma.users.findMany;
-    expect(findMany).toBeCalled();
-    expect(findMany).toBeCalledWith(
+    expect(findMany).toHaveBeenCalled();
+    expect(findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: {
           AND: [{ mentor: true }],
@@ -112,9 +112,9 @@ describe('test getAllUsersService', () => {
     });
 
     const findMany = prisma.users.findMany;
-    expect(findMany).toBeCalled();
+    expect(findMany).toHaveBeenCalled();
 
-    expect(findMany).toBeCalledWith(
+    expect(findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         where: {
           AND: [
