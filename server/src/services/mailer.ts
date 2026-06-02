@@ -5,6 +5,8 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type SendEmailServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 type SendEmailServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
+// open http://localhost:8025 in browser to see webUI
+
 //Make sure this only happens once
 //Create a transporter using SMTP
 //Using local for now
