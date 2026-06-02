@@ -1163,7 +1163,6 @@ export type CreateUserInput = Partial<
     | "bio"
     | "phoneNumber"
     | 'username'
-    | 'googleId'
   > & {
     profileImage?: string;
     mentor?: true | false;
@@ -1173,31 +1172,18 @@ export type CreateUserInput = Partial<
 > & {
     firstName: string;
     lastName: string;
-    googleId: string;
+    googleId?: string;
     username: string;
     ritEmail: string;
   };
 
-  //we don't need anything else for
-export type GoogleCredentialUserInput = Partial<
-  Pick<
-    MePrivate,
-    | "headline"
-    | "pronouns"
-    | "title"
-    | "academicYear"
-    | "location"
-    | "funFact"
-    | "bio"
-    | "phoneNumber"
-  > & {
-    profileImage?: string;
-    mentor?: true | false;
-    // TODO update to use Visibility enum
-    visibility?: 1 | 0;
-    googleCredentials: string;
-  }
->
+export type SessionUserData = Partial <{
+  firstName: string;
+  lastName: string;
+  email: string;
+  googleId: string;
+  userExists: boolean;
+}>
 
 /**
  * Data required to add a social media link to a user's profile

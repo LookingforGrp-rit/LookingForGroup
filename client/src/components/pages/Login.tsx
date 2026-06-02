@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { sendPost, sendGet } from '../../functions/fetch.js';
+import { sendPost } from '../../functions/fetch.js';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
-import { getCurrentUsername, getUserByEmail, getUserByUsername } from '../../api/users.js';
+import { getCurrentUsername, getUserByEmail, getUserByUsername, googleLogin, testLogin } from '../../api/users.js';
+import { ThemeContext } from '../../contexts/ThemeContext';
 
 type LoginResponse = {
   error?: string;
@@ -24,6 +25,7 @@ const Login: React.FC = () => {
   const [loginInput, setLoginInput] = useState<string>('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
+  const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
   useEffect(() => {
     const checkSessionAndRedirect = async () => {
@@ -45,30 +47,44 @@ const Login: React.FC = () => {
       callback: handleGoogle,
     });
 
+    //Sets the string for the Google Sign In button.
+    let googleBtnTheme = new String("");
+
+    //If we're in dark mode, we use filled_black.
+    if(theme == 'dark'){
+      googleBtnTheme = "filled_black";
+    }
+    //Light mode uses outline.
+    else if(theme == 'light'){
+      googleBtnTheme = "outline";
+    }
+    //The filled_blue option shows up in case something goes wrong.
+    else{
+      googleBtnTheme = "filled_blue";
+    }
+
     // @ts-expect-error google
     google.accounts.id.renderButton(
       document.getElementById("googleBtn"),
-      { theme: "filled_black", size: "large" , shape: 'pill'}
+      { theme: googleBtnTheme, size: "large" , shape: 'pill'}
     );
 
   }, [navigate])
 
   async function handleGoogle(response: any){
-    //decodeJwtResponse(response.credential);
-    //this^^ is our googleId, decoded from base64
-    //when we log in a user we check against this with a backend request
-    //we probably shouldn't decode it clientside tho lol
-    //here is gonna be exclusively for logins for existing users
-    //and we have one existing user with a valiid google id, me!
 
-    const res = await fetch(`/api/google-login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ credential: response.credential })
-    });
-
-    console.log('hello yes this is happening!');
+    const res = await googleLogin({credential: response.credential});
+    const body = await res.data as {userExists: boolean};
+    
+    if (body.userExists) { navigate(paths.routes.HOME); }
+    else { navigate(paths.routes.SIGNUP); }
   }
+  async function handleTest() {
+    const res = await testLogin()
+
+    console.log(res);
+  }
+
 
   /**
    * Validates user inputs, sends login requests to the server API, and handles authentication
@@ -183,6 +199,9 @@ const Login: React.FC = () => {
               onChange={(e) => setLoginInput(e.target.value)}
             />
             <div id="googleBtn"></div>
+            <button onClick={handleTest}>
+              Press me to test sessions!!!
+            </button>
             <div className="mobile-signup">
               <p>No account? </p>
               <p id="signup-btn-mobile" onClick={() => navigate(paths.routes.SIGNUP)}>

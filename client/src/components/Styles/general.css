@@ -1191,21 +1191,17 @@ Page popup style rules
   }
 }
 
-@media screen and (max-width: 700px)
-{
-  #filter-tabs
-  {
+@media screen and (max-width: 700px) {
+  #filter-tabs {
     column-gap: min(6vw, 45px);
   }
 }
 
 /* Mobile styling */
 
-@media screen and (max-width: 1180px)
-{
-  .popup #filters-popup{
-    #filter-tabs
-    {
+@media screen and (max-width: 1180px) {
+  .popup #filters-popup {
+    #filter-tabs {
       height: auto;
       width: 100%;
       display: flex;
@@ -1240,8 +1236,7 @@ Page popup style rules
       padding: 2.88vh 2.6vw;
     }
 
-    #filter-tabs
-    {
+    #filter-tabs {
       column-gap: 10vw;
     }
 

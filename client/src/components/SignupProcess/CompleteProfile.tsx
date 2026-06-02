@@ -1,21 +1,12 @@
+import { CreateUserInput } from '@looking-for-group/shared';
 import { MouseEventHandler } from 'react';
 
 interface CompleteProfileProps {
   show : boolean;
   onNext : MouseEventHandler<HTMLButtonElement>;
   onBack : MouseEventHandler<HTMLButtonElement>;
-  userInfo : {
-    firstName: string,
-    lastName: string,
-    email: string,
-    // proficiencies: selectedProficiencies,
-    skills: string[],
-    // interests: selectedInterests,
-    pronouns: string,
-    bio: string,
-    // avatarImage: avatarImage,
-    profileImage: any, // if they upload their own image
-  };
+  userInfo : CreateUserInput;
+  selectedSkills: string[];
   bio : string;
   pronouns : string;
   setBio : React.Dispatch<React.SetStateAction<string>>;
@@ -46,6 +37,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   onBack,
   // avatarImage,
   userInfo,
+  selectedSkills,
   bio,
   pronouns,
   setBio,
@@ -161,7 +153,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 
             {/* Skills */}
             <div id="signup-profile-skill">
-              {userInfo.skills.map((skill, index) => (
+              {selectedSkills.map((skill, index) => (
                 <div key={index} style={{ border: `2px solid ${tagColors[index % 5]}` }}>
                   {skill}
                 </div>
