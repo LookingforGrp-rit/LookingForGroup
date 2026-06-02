@@ -26,7 +26,7 @@ const pageTabs = ["About", "Projects", "Skills", "Links"];
  * @returns JSX Element
  */
 export const ProfileEditPopup = () => {
-  const [currentTab, setCurrentTab] = useState(5);
+  const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
   const [unmodifiedProfile, setUnmodifiedProfile] = useState<MePrivate>();

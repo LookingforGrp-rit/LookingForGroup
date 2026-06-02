@@ -501,8 +501,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             matchesAny = true;
           }
         }
-        return matchesAny;
       }
+      return matchesAny;
     });
 
     // If no tags are currently selected, render all projects
