@@ -973,6 +973,7 @@ export const TeamTab = ({
         <Select>
           <SelectButton
             placeholder={isCreatingNewPosition ? "Select" : ""}
+            searchable={true}
             initialVal={
               isCreatingNewPosition
                 ? ""
@@ -1376,6 +1377,7 @@ export const TeamTab = ({
                         initialVal={member.role?.label}
                         className=""
                         type="dropdown"
+                        searchable={true}
                       />
                       <SelectOptions
                         callback={(e) => {
@@ -1440,6 +1442,10 @@ export const TeamTab = ({
                               return member;
                             }
                           })
+
+                          //update the temporary changes made to edit member popup roles, if pressed x for main save, it will still undo everything else
+                          updatePendingProject(projectAfterTeamChanges);
+                          
                       }}
                     >
                       Save
@@ -1601,7 +1607,7 @@ export const TeamTab = ({
               </div>
               <label id="project-team-add-member-role">Role</label>
               <Select key={selectKey}>
-                <SelectButton placeholder="Select" initialVal="" type="input" />
+                <SelectButton placeholder="Select" initialVal="" type="input" searchable={true} />
                 <SelectOptions
                   callback={(e) => {
                     setCurrentMember({

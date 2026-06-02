@@ -10,13 +10,14 @@ type AddBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 //NOTE: OK means they ARE blacklisted, so they should NOT be able to sign in!
 //Likewise, NOT_FOUND means they are NOT blacklisted, so they SHOULD be able to sign in
 const userOnBlacklistService = async (
-  userId: number,
+  googleId: string,
 ): Promise<AddBlacklistServiceSuccess | AddBlacklistServiceError> => {
   try {
     //check if user exists
+
     const user = await prisma.userBlacklist.findUnique({
       where: {
-        userId: userId,
+        googleId: googleId,
       },
     });
 

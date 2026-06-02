@@ -20,22 +20,22 @@ describe('deleteBlacklistService', async () => {
   });
 
   it('returns OK if successful', async () => {
-    vi.mocked(prisma.userBlacklist.findUnique).mockResolvedValue({ userId: 1 });
-    const result = await userOnBlacklistService(1);
+    vi.mocked(prisma.userBlacklist.findUnique).mockResolvedValue({ userId: 1, googleId: '1' });
+    const result = await userOnBlacklistService('1');
 
     expect(result).toBe('OK');
   });
 
   it("returns NOT_FOUND if user isn't found", async () => {
     vi.mocked(prisma.userBlacklist.findUnique).mockResolvedValue(null);
-    const result = await userOnBlacklistService(1);
+    const result = await userOnBlacklistService('1');
 
     expect(result).toBe('NOT_FOUND');
   });
 
   it('returns INTERNAL_ERROR if prisma throws', async () => {
     vi.mocked(prisma.userBlacklist.findUnique).mockRejectedValue(new Error('womp womp'));
-    const result = await userOnBlacklistService(1);
+    const result = await userOnBlacklistService('1');
 
     expect(result).toBe('INTERNAL_ERROR');
   });

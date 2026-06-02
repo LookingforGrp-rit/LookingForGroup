@@ -92,13 +92,13 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt='profile image'
       />
-      <h2>
-        {profileData.firstName} {profileData.lastName}
-      </h2>
-      <h3>{majorsArr.join(', ') || ''}</h3>
-      <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
 
       <div className={'profile-panel-hover'}>
+        <h2>
+          {profileData.firstName} {profileData.lastName}
+        </h2>
+        <h3>{majorsArr.join(', ') || ''}</h3>
+        <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
 
         {isFollow ? <ThemeIcon
           width={30}

@@ -2,8 +2,9 @@ import type { SessionUserData } from '@looking-for-group/shared';
 import { OAuth2Client } from 'google-auth-library';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import userOnBlacklistService from '#services/users/blacklist/user-on-blacklist.ts';
 
-type LoginServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'BAD_REQUEST'>;
+type LoginServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'BAD_REQUEST' | 'FORBIDDEN'>;
 
 export const loginService = async (token: string): Promise<SessionUserData | LoginServiceError> => {
   const client = new OAuth2Client();
@@ -21,6 +22,10 @@ export const loginService = async (token: string): Promise<SessionUserData | Log
 
   if (!email || (email.indexOf('@g.rit.edu') === -1 && email.indexOf('@rit.edu') === -1)) {
     return 'BAD_REQUEST'; //for consistency with the others
+  }
+
+  if ((await userOnBlacklistService(googleId || '')) === 'OK') {
+    return 'FORBIDDEN'; // no sir, not allowed.
   }
 
   //prisma check for user existence

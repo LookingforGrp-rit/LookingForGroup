@@ -7,12 +7,12 @@ type DeleteBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 //PATCH api/mod/ban-user/{id}
 //add a tag
 const deleteBlacklistService = async (
-  userId: number,
+  googleId: string,
 ): Promise<DeleteBlacklistServiceSuccess | DeleteBlacklistServiceError> => {
   try {
     await prisma.userBlacklist.delete({
       where: {
-        userId: userId,
+        googleId: googleId,
       },
     });
 

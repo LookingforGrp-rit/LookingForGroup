@@ -11,7 +11,7 @@ const requiresLogin = (request: Request, response: Response, next: NextFunction)
     next();
     return;
   }
-  const userData: SessionUserData = JSON.parse(request.session.data || '') as SessionUserData;
+  const userData: SessionUserData = JSON.parse(request.session.data || '{}') as SessionUserData;
 
   if (userData.userExists) {
     next();
