@@ -889,6 +889,7 @@ export const TeamTab = ({
         <Select>
           <SelectButton
             placeholder={isCreatingNewPosition ? "Select" : ""}
+            searchable={true}
             initialVal={
               isCreatingNewPosition
                 ? ""
