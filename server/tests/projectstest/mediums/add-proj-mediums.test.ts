@@ -83,8 +83,8 @@ describe('addMediumsService', async () => {
     vi.mocked(prisma.projects.update).mockResolvedValue(prismaProject);
     const result = await addMediumsService(1, { mediumId: 6 });
 
-    expect(transformProjectMedium).toBeCalled();
-    expect(transformProjectMedium).toBeCalledTimes(2);
+    expect(transformProjectMedium).toHaveBeenCalled();
+    expect(transformProjectMedium).toHaveBeenCalledTimes(2);
     expect(result).toStrictEqual(transformedMediums);
   });
 

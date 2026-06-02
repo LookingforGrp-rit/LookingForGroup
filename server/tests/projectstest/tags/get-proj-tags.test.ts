@@ -79,8 +79,8 @@ describe('getProjectTagsService', async () => {
     vi.mocked(prisma.projects.findUnique).mockResolvedValue(prismaProject);
     const result = await getProjectTagsService(1);
 
-    expect(transformProjectTag).toBeCalled();
-    expect(transformProjectTag).toBeCalledTimes(2);
+    expect(transformProjectTag).toHaveBeenCalled();
+    expect(transformProjectTag).toHaveBeenCalledTimes(2);
     expect(result).toStrictEqual([
       {
         projectId: 1,
