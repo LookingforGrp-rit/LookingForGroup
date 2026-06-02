@@ -261,6 +261,7 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 30px auto;
 }
 
 /* #endregion */
@@ -1269,8 +1270,6 @@ Header style rules
   display: grid;
   align-items: center;
   text-align: left;
-  /* margin-right: 50px; */
-  margin: auto;
   grid-template: 'search buttons' 90px / auto max-content;
   background-color: rgba(0, 0, 0, 0);
   /* 
@@ -1279,23 +1278,30 @@ Header style rules
         from what I've tested. I see no reason to not use it.
     */
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
-  /* width: calc(100% - 50px); */
-  margin: 0 0px;
-  padding: 0 50px;
+
+  /* these values account for the width of the scroll bar */
+  padding-left: calc(5vw - 10px);
+  padding-right: calc(5vw + 10px);
+
+  width: 90%;
+  margin: 0;
   height: 90px;
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
-@media only screen and (max-width: 700px) {
+
+@media screen and (max-width: 800px) {
   #header {
-    margin: 0 20px;
+    padding: 0 20px;
+    margin: 0 auto;
   }
 }
 
 #header-searchbar {
   grid-area: search;
+  padding: 0 10px;
 }
 
 #header-searchbar>.search-wrapper>.search-bar {
@@ -1307,12 +1313,11 @@ Header style rules
   grid-area: buttons;
   display: flex;
   justify-content: flex-end;
-  margin-left: 20px;
-}
+  translate: -10px 0;
 
-@media only screen and (min-width: 870px) {
-  #header-buttons {
-    translate: -10px 0;
+  .dropdown-container
+  {
+    padding: 0 10px;
   }
 }
 

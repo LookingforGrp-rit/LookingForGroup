@@ -18,17 +18,18 @@ Project Panel component style rules
 /* #region project-panel */
 
 #discover-panel-box {
-  margin: 0 50px 50px;
+  width: 90%;
+  margin: 0 auto 20px;
   display: flex;
   justify-content: center;
 }
-
+/*
 @media only screen and (max-width: 700px) {
   #discover-panel-box {
-    margin: 0 20px 20px;
+    margin: 0 20px;
   }
 }
-
+*/
 .project-panel-box {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
@@ -3528,19 +3529,18 @@ My projects page style rules
 .projects-banner-wrapper {
   border-radius: 10px;
   overflow: hidden;
+  width: 100%;
 }
 
 .projects-banner-outer {
   box-sizing: border-box;
-  padding: 0 60px;
-  margin-bottom: 30px;
+  margin: 0 5vw;
 }
 
 .my-projects-header-row {
   box-sizing: border-box;
-  width: 100%;
-  padding-left: 60px;
-  padding-right: 64px;
+  width: auto;
+  margin: 30px 5vw;
 
   display: flex;
   flex-direction: row;
@@ -3597,9 +3597,7 @@ My projects page style rules
 
 @media only screen and (max-width: 700px) {
   .my-projects-header-row {
-    padding-left: 0px;
-    padding-right: 0px;
-    margin: 0 20px;
+    margin: 30px 5vw;
     flex-direction: column;
     max-width: calc(100vw - 50px);
     align-items: baseline;
@@ -3747,8 +3745,7 @@ My projects page style rules
 .page#my-projects hr {
   box-sizing: border-box;
   border-color: var(--header-color);
-  margin-left: 60px;
-  margin-right: 64px;
+  margin: 0 5vw;
 }
 
 @media only screen and (max-width:700px) {
@@ -3769,12 +3766,9 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: auto;
-  margin: 30px 0;
-  padding-left: 60px;
-  padding-right: 64px;
+  width: 90%;
+  margin: 30px auto;
   gap: 20px;
-
   display: flex;
   flex-wrap: wrap;
 }
@@ -3782,7 +3776,6 @@ My projects page style rules
 .my-project-grid-card {
   display: flex;
   flex-direction: column;
-  gap: 5px;
   align-content: start;
 
 }
@@ -4023,7 +4016,7 @@ My projects page style rules
   .my-projects-list {
     padding-left: 0px;
     padding-right: 0px;
-    margin: 0 20px 20px;
+    margin: 30px 20px 20px;
   }
 
   .my-projects-list-header {
