@@ -19,7 +19,7 @@ Meet page hero style rules
 
 #discover-hero {
   width: 90%;
-  margin: 0 5vw;
+  margin: 0 auto;
   background-image: var(--hero-gradient);
   border-radius: 10px;
 
@@ -454,21 +454,22 @@ Filters / Tags Style Rules
 /*#region tag styles*/
 
 #discover-filters {
-  /*width: 100%;*/
+  width: 90%;
   /* margin: 20px calc(100vw * (65 / 1512)); */
-  margin: 20px 5vw;
+  margin: 20px auto;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
 }
-
+/*
 @media only screen and (max-width: 700px) {
   #discover-filters {
-    margin: 20px 5vw;
+    width: 90vw;
+    margin: 20px auto;
   }
-}
+}*/
 
 .filters-scroller {
   /* position: absolute;

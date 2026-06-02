@@ -25,6 +25,7 @@ Profile Panel component style rules
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px, 30vw, 350px), 80vw), 1fr));
   justify-content: space-between;
+  justify-items: center;
   align-content: start;
   gap: 20px;
   width: 100%;

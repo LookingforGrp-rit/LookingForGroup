@@ -18,18 +18,18 @@ Project Panel component style rules
 /* #region project-panel */
 
 #discover-panel-box {
-  margin: 0 5vw;
-  margin-bottom: 20px;
+  width: 90%;
+  margin: 0 auto 20px;
   display: flex;
   justify-content: center;
 }
-
+/*
 @media only screen and (max-width: 700px) {
   #discover-panel-box {
     margin: 0 20px;
   }
 }
-
+*/
 .project-panel-box {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(min(clamp(250px, 30vw, 350px), 80vw), 1fr));
@@ -3569,7 +3569,7 @@ My projects page style rules
 
 @media only screen and (max-width: 700px) {
   .my-projects-header-row {
-    margin: 0 20px;
+    margin: 30px 5vw;
     flex-direction: column;
     max-width: calc(100vw - 50px);
     align-items: baseline;
@@ -3738,12 +3738,9 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: auto;
-  margin: 30px 0;
-  padding-left: 60px;
-  padding-right: 64px;
+  width: 90%;
+  margin: 30px auto;
   gap: 20px;
-
   display: flex;
   flex-wrap: wrap;
 }
@@ -3751,7 +3748,6 @@ My projects page style rules
 .my-project-grid-card {
   display: flex;
   flex-direction: column;
-  gap: 5px;
   align-content: start;
 
 }
@@ -3992,7 +3988,7 @@ My projects page style rules
   .my-projects-list {
     padding-left: 0px;
     padding-right: 0px;
-    margin: 0 20px 20px;
+    margin: 30px 20px 20px;
   }
 
   .my-projects-list-header {
