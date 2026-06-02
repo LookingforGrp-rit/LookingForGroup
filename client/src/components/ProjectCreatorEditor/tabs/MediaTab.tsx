@@ -79,7 +79,6 @@ export const MediaTab = ({
   const [dY, setDY] = useState(0);
 
   const [cropImg, setCropImg] = useState<ProjectImage | PendingProjectImage>();
-  const [cropSrc, setCropSrc] = useState<string>();
 
   const tempImage = useRef<HTMLImageElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -125,9 +124,9 @@ export const MediaTab = ({
     }
     initializeImages();
     tempImage.current?.addEventListener("load", updateCanvas);
-    fileReader.onload = () => setCropSrc(fileReader.result as string);
-    fileReader.onerror = () => setCropSrc(placeholder);
-  }, [tempImage, dX, dY, zoom, cropImg, setCropSrc, fileReader, placeholder]);
+    fileReader.onload = () => setCropImg({...cropImg, image: fileReader.result} as PendingProjectImage);
+    fileReader.onerror = () => setCropImg({...cropImg, image: placeholder} as ProjectImage);
+  }, [tempImage, dX, dY, zoom, cropImg, fileReader, placeholder, setCropImg]);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async () => {
@@ -216,18 +215,16 @@ export const MediaTab = ({
           thumbnail: thumbObj,
         };
       }
-      // TODO: make image load from the new uploaded image
       // TODO: check if image needs to be cropped at all
       await updatePendingProject(projectAfterMediaChanges);
-      setCropImg({localId, ...fullImg});
-      fileReader.readAsDataURL(cropImg?.image as File);
-      console.log(tempImage);
+      setCropImg({...fullImg, localId: localId});
+      fileReader.readAsDataURL(fullImg.image);
     } catch (err) {
       console.error(err);
     }
 
     imageUploader.value = "";
-  }, [dataManager, projectId, updatePendingProject, setCropImg, fileReader]);
+  }, [dataManager, projectId, updatePendingProject, setCropImg, fileReader, tempImage, cropImg]);
   /**
    * updates the canvas element for cropping images
    */
@@ -243,17 +240,35 @@ export const MediaTab = ({
 
   const UpdateImage = useCallback(
     async () => canvas.current?.toBlob((blob) => {
-      dataManager.updateImage({
+      const indexToUpdate = projectAfterMediaChanges.projectImages.length - 1;
+      const newFile = new File([blob as Blob], (projectAfterMediaChanges.projectImages[indexToUpdate] as PendingProjectImage).image?.name as string);
+      const newImg = {
+        image: newFile,
+        altText: cropImg?.altText
+      } as CreateProjectImageInput
+      const localId = ++localIdIncrement;
+      handleImageDelete(projectAfterMediaChanges.projectImages[indexToUpdate]);
+      dataManager.createImage({
         id: {
-          value: (cropImg as ProjectImage).imageId,
-          type: "local"
+          value: localId,
+          type: "local",
         },
-        data: {
-          image: new File([blob as Blob], cropImg?.image as string)
-        },
-      })
+        data: newImg,
+      });
+      projectAfterMediaChanges = {
+        ...projectAfterMediaChanges,
+        projectImages: [
+          ...projectAfterMediaChanges.projectImages,
+          {
+            localId,
+            ...newImg
+          },
+        ],
+      };
+      updatePendingProject(projectAfterMediaChanges);
+      setCropImg(undefined);
       }, "images/png", 1)
-  , [canvas, cropImg]);
+  , [canvas, cropImg, updatePendingProject, projectAfterMediaChanges]);
 
   // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
@@ -424,13 +439,13 @@ export const MediaTab = ({
 
   // --- Complete component ---
   return (
-    <Popup>
-    <PopupContent>
-      {/* TODO: popup is iffy on showing up after uploading an image, fix that */}
+    <Popup startOpen={true}>
+    {cropImg !== undefined ?
+    <PopupContent confirmation={true} callback={() => setCropImg(undefined)}>
       <div className="project-crop">
         <label>Crop image for thumbnail usage</label>
         <canvas ref={canvas} id="canvas" width={1600} height={900}></canvas>
-        <img ref={tempImage} id="test12" src={cropSrc} alt={cropImg?.altText as string} />
+        <img ref={tempImage} id="test12" src={cropImg?.image as string} alt={cropImg?.altText as string} />
         <input 
           type="range" ref={inputZoom}
           id="zoom" name="zoom" 
@@ -448,8 +463,8 @@ export const MediaTab = ({
             setDX(inputX.current?.valueAsNumber as number);
             updateCanvas();
           }}
-          min={canvas.current ? -canvas.current.width : -100} 
-          max={canvas.current ? canvas.current.width : 100}
+          min={canvas.current ? -canvas.current.width: -100} 
+          max={canvas.current ?  canvas.current.width:  100}
           defaultValue={dX}/>
         <label className="slider-text" htmlFor="xtrans">X</label>
         <input  
@@ -459,21 +474,20 @@ export const MediaTab = ({
             setDY(inputY.current?.valueAsNumber as number);
             updateCanvas();
           }}
-          min={canvas.current ? -canvas.current.height : -100} 
-          max={canvas.current ? canvas.current.height : 100}
+          min={canvas.current ? -canvas.current.height: -100} 
+          max={canvas.current ?  canvas.current.height:  100}
           defaultValue={dY}/>
         <label className="slider-text" htmlFor="yTrans">Y</label>
         <div className="project-crop-extra-info">
-          Upload images that showcase your project. Select one image to be used as
-          the main thumbnail on the project's discover card.
+          Crop Image to fit the site's 16/9 ratio, or skip. Not cropping may cause the image to display in other places.
         </div>
         <div className="confirm-project-crop">
           {/* TODO: impliment saving the cropped image */}
-          <PopupButton buttonId="project-crop-save" callback={UpdateImage}>Crop Image</PopupButton>
-          <PopupButton buttonId="project-crop-cancel" className="project-info-buttons">Skip</PopupButton>
+          <PopupButton buttonId="project-crop-save" callback={UpdateImage} doNotClose={() => true}>Crop Image</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" callback={() => setCropImg(undefined)}className="project-info-buttons" doNotClose={() => true}>Skip</PopupButton>
         </div>
       </div>
-    </PopupContent>
+    </PopupContent> : "" }
     <div id="project-editor-media">
       <label>Project Images</label>
       <div className="project-editor-extra-info">
@@ -565,11 +579,9 @@ export const MediaTab = ({
         ))}
 
         {/* Image uploader */}
-        <PopupButton className="popup-trigger-invisible">
         <div id="project-editor-add-image">
           <ProjectImageUploader onFileSelected={handleImageUpload} />
         </div>
-        </PopupButton>
       </div>
 
       {/* Save button */}

@@ -200,8 +200,8 @@ export const PopupContent = ({
  * @param children— the content inside the popup context
  * @returns JSX.Element that provides popup context to children
  */
-export const Popup = ({ children }: { children: ReactNode }) => {
-  const [open, setOpen] = useState(false);
+export const Popup = ({ children, startOpen = false }: { children: ReactNode; startOpen?: boolean }) => {
+  const [open, setOpen] = useState(startOpen);
 
   return (
     <PopupContext.Provider value={{ open, setOpen }}>
