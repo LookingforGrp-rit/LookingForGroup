@@ -261,6 +261,7 @@ section {
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 30px auto;
 }
 
 /* #endregion */
@@ -1190,21 +1191,17 @@ Page popup style rules
   }
 }
 
-@media screen and (max-width: 700px)
-{
-  #filter-tabs
-  {
+@media screen and (max-width: 700px) {
+  #filter-tabs {
     column-gap: min(6vw, 45px);
   }
 }
 
 /* Mobile styling */
 
-@media screen and (max-width: 1180px)
-{
-  .popup #filters-popup{
-    #filter-tabs
-    {
+@media screen and (max-width: 1180px) {
+  .popup #filters-popup {
+    #filter-tabs {
       height: auto;
       width: 100%;
       display: flex;
@@ -1239,8 +1236,7 @@ Page popup style rules
       padding: 2.88vh 2.6vw;
     }
 
-    #filter-tabs
-    {
+    #filter-tabs {
       column-gap: 10vw;
     }
 
@@ -1274,8 +1270,6 @@ Header style rules
   display: grid;
   align-items: center;
   text-align: left;
-  /* margin-right: 50px; */
-  margin: auto;
   grid-template: 'search buttons' 90px / auto max-content;
   background-color: rgba(0, 0, 0, 0);
   /* 
@@ -1284,23 +1278,30 @@ Header style rules
         from what I've tested. I see no reason to not use it.
     */
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
-  /* width: calc(100% - 50px); */
-  margin: 0 0px;
-  padding: 0 50px;
+
+  /* these values account for the width of the scroll bar */
+  padding-left: calc(5vw - 10px);
+  padding-right: calc(5vw + 10px);
+
+  width: 90%;
+  margin: 0;
   height: 90px;
   position: sticky;
   top: 0;
   z-index: 1;
 }
 
-@media only screen and (max-width: 700px) {
+
+@media screen and (max-width: 800px) {
   #header {
-    margin: 0 20px;
+    padding: 0 20px;
+    margin: 0 auto;
   }
 }
 
 #header-searchbar {
   grid-area: search;
+  padding: 0 10px;
 }
 
 #header-searchbar>.search-wrapper>.search-bar {
@@ -1312,8 +1313,12 @@ Header style rules
   grid-area: buttons;
   display: flex;
   justify-content: flex-end;
-  margin-left: 20px;
-  translate: -20px 0;
+  translate: -10px 0;
+
+  .dropdown-container
+  {
+    padding: 0 10px;
+  }
 }
 
 #header-buttons button {
@@ -1581,19 +1586,35 @@ Select style rules
 
 /* Universal styles for Select component */
 .select {
+  box-sizing: border-box;
   display: flex;
+  cursor: pointer;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   height: 45px;
-  padding: 15px 15px;
+  padding: 0px 15px;
   border: 1px solid var(--border-color);
   border-radius: 10px;
   font-size: 0.9375rem;
+  color: var(--neutral-gray);
 }
 
-.select::placeholder {
+.select-search-input {
+    width: 100%;
+    border: none !important;
+    outline: none !important;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    box-shadow: none;
+}
+
+.select-search-input::placeholder {
   color: var(--neutral-gray);
   font-style: italic;
 }

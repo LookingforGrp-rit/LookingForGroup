@@ -1,17 +1,12 @@
+import type { SessionUserData } from '@looking-for-group/shared';
 import { OAuth2Client } from 'google-auth-library';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import userOnBlacklistService from '#services/users/blacklist/user-on-blacklist.ts';
 
-type LoginServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'BAD_REQUEST'>;
-export type UserData = {
-  firstName: string;
-  lastName: string;
-  email: string;
-  google_id: string;
-  userExists: boolean;
-};
+type LoginServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'BAD_REQUEST' | 'FORBIDDEN'>;
 
-export const loginService = async (token: string): Promise<UserData | LoginServiceError> => {
+export const loginService = async (token: string): Promise<SessionUserData | LoginServiceError> => {
   const client = new OAuth2Client();
 
   // asking google to verify the token
@@ -36,13 +31,17 @@ export const loginService = async (token: string): Promise<UserData | LoginServi
     },
   });
 
+  if ((await userOnBlacklistService(user?.userId || -1)) === 'OK') {
+    return 'FORBIDDEN'; // no sir, not allowed.
+  }
+
   // Sets up data to return to the controller
   // (which it will store in the session store if the user does not exist)
-  const userData: UserData = {
+  const userData: SessionUserData = {
     firstName: user?.firstName || payload.given_name || 'John',
     lastName: user?.lastName || payload.family_name || 'Doe',
     email: user?.ritEmail || email,
-    google_id: user?.googleId || googleId || '0',
+    googleId: user?.googleId || googleId || '0',
     userExists: Boolean(user),
   };
 

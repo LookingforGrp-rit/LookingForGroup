@@ -89,8 +89,8 @@ describe('reorderImageService', async () => {
     vi.mocked(prisma.projects.findUnique).mockResolvedValue(prismaProject);
     const result = await getProjectImagesService(1);
 
-    expect(transformProjectImage).toBeCalled();
-    expect(transformProjectImage).toBeCalledTimes(2);
+    expect(transformProjectImage).toHaveBeenCalled();
+    expect(transformProjectImage).toHaveBeenCalledTimes(2);
     expect(result).toStrictEqual(transformedImages);
   });
   it("returns NOT_FOUND if the project isn't found", async () => {
