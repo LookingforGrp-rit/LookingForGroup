@@ -55,6 +55,13 @@ export const googleLogin = async (
 
   return await POST(apiURL, credential);
 }
+export const googleLogout = async (
+  userId: number,
+): Promise<ApiResponse> => {
+  const apiURL = '/google-login';
+
+  return await DELETE(apiURL, {userId});
+}
 
 export const testLogin = async (): Promise<ApiResponse<SessionUserData>> => {
   const apiURL = '/google-login/test';
