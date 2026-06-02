@@ -18,7 +18,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
     }
   }
 
-  const googleId = authenticatedRequest.session.gid;
+  const googleId = request.session.gid;
 
   //if no google id found
   if (!googleId) {
@@ -55,6 +55,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
 
   const userID = result.userId;
   authenticatedRequest.currentUser = userID;
+  request.session.touch();
   next();
 };
 
