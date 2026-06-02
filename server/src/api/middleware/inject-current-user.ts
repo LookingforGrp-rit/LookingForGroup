@@ -16,9 +16,17 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       next();
       return;
     }
+
+    const resBody: ApiResponse = {
+      status: 401,
+      error: 'Not logged in',
+      data: null,
+    };
+    response.status(401).json(resBody);
+    return;
   }
 
-  const googleId = (JSON.parse(request.session.data || '') as SessionUserData).googleId || '';
+  const googleId = (JSON.parse(request.session.data || '{}') as SessionUserData).googleId || '';
 
   //if no google id found
   if (!googleId) {
@@ -55,6 +63,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
 
   const userID = result.userId;
   authenticatedRequest.currentUser = userID;
+  request.session.touch();
   next();
 };
 
