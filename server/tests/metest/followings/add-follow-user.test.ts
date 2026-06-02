@@ -37,6 +37,7 @@ const transformedUserPreview: UserPreview = {
   designer: false,
   developer: true,
   firstName: 'Eric',
+  preferredName: 'Eric',
   funFact: '',
   headline: '',
   lastName: '',

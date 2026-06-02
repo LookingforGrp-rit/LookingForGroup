@@ -24,6 +24,7 @@ const prismaUser: Users = {
   username: 'goldleaf',
   firstName: 'Gold',
   lastName: 'Leaf',
+  preferredName: 'Gold',
   ritEmail: 'goldleaf@rit.edu',
   profileImage: null,
   headline: '',
