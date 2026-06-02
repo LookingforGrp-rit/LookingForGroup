@@ -58,13 +58,13 @@ if (envConfig.env === 'development') {
 //  console.log(`Received request ${_req.ip}`);
 //});
 
-app.use('/datasets', datasetsRouter);
-app.use('/users', usersRouter);
-app.use('/projects', projectsRouter);
-app.use('/me', meRouter);
-app.use('/images', imagesRouter);
-app.use('/mod', modRouter);
-app.use('/google-login', googleRouter);
+app.use('/api/datasets', datasetsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/projects', projectsRouter);
+app.use('/api/me', meRouter);
+app.use('/api/images', imagesRouter);
+app.use('/api/mod', modRouter);
+app.use('/api/google-login', googleRouter);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

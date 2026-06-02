@@ -2,12 +2,12 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import deleteBlacklistService from '#services/users/blacklist/delete-from-blacklist.ts';
 
-//delete api/mod/unban-user/{id}
+//DELETE api/mod/unban-user/{googleId}
 //removes user from blacklist
 export const unbanUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const userId = parseInt(req.params.id);
+  const googleId = req.params.googleId;
 
-  const result = await deleteBlacklistService(userId);
+  const result = await deleteBlacklistService(googleId);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
