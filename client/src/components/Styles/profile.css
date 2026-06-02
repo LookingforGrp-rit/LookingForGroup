@@ -40,7 +40,7 @@ Profile Panel component style rules
 .profile-panel {
   width: 240px;
   flex-shrink: 0;
-  height: fit-content;
+  height: 280px;
   border: none;
   border-radius: 10px;
   background-color: var(--header-color);
@@ -50,12 +50,14 @@ Profile Panel component style rules
   /* justify-content: start; */
   /* align-items: center; */
   text-align: left;
-  padding: 0 0px 10px 0px;
+  padding: 0;
   margin: 0 auto;
+  overflow: hidden;
 
   img {
     width: 100%;
-    height: auto;
+    height: 180px;
+    object-fit: cover;
     align-self: center;
     /* background-color: var(--primary-color); */
     border-radius: 10px 10px 0 0;
@@ -97,26 +99,25 @@ Profile Panel component style rules
 }
 
 .profile-panel-hover {
-  position: relative;
-  border-radius: 10px;
-  background-color: var(--panel-hover);
-  color: var(--invert-text);
-  opacity: 0;
   position: absolute;
-  height: auto;
+  border-radius: 0 0 10px 10px;
+  background-color: var(--header-color);
+  color: var(--main-text);
+  height: 100%;
   width: 100%;
-  transition: opacity 0.2s;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
+  transform: translateY(calc(100% - 100px));
+  transition: transform 0.25s ease-out;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: 20px;
+  justify-content: flex-start;
+  gap: 10px;
   text-align: left;
-  padding: 20px;
-  overflow: auto;
+  padding: 0 0 10px 0;
+  overflow: hidden;
   box-sizing: border-box;
 
   #heart-empty,
@@ -124,10 +125,12 @@ Profile Panel component style rules
     position: absolute;
     top: 14px;
     right: 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
   }
 
   #heart-empty {
-    stroke: var(--invert-text);
+    stroke: #fead81;
   }
 
   #heart-filled {
@@ -148,6 +151,7 @@ Profile Panel component style rules
   align-items: start;
   font-style: italic;
   gap: 15px;
+  padding: 0 15px;
 
   .icon-box {
     display: flex;
@@ -160,7 +164,7 @@ Profile Panel component style rules
   p {
     /* border: 1px solid black; */
     margin: 0;
-    color: var(--invert-text);
+    color: var(--main-text);
     overflow-x: hidden;
     text-wrap: wrap;
     align-self: center;
@@ -168,19 +172,22 @@ Profile Panel component style rules
 
   /* !important because icons prioritize black due to added [data-theme] specification in general.css */
   .mono-stroke>use {
-    stroke: var(--invert-text) !important;
+    stroke: #fead81 !important;
   }
 
   .mono-fill>use {
-    fill: var(--invert-text) !important;
+    fill: #fead81 !important;
   }
 }
 
 .profile-panel:hover .profile-panel-hover {
-  opacity: 1;
+  transform: translateY(0);
   cursor: pointer;
-  transition-duration: 0.2s;
-  scale: 1.1;
+}
+
+.profile-panel:hover .profile-panel-hover #heart-empty,
+.profile-panel:hover .profile-panel-hover #heart-filled {
+  opacity: 1;
 }
 
 /* #endregion */
