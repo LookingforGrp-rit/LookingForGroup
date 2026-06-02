@@ -11,15 +11,17 @@ const getRolesService = async (): Promise<Role[] | GetRolesServiceError> => {
   try {
     const roles = await prisma.roles.findMany({
       select: RoleSelector,
+
       orderBy: {
         label: 'asc',
       },
     });
 
+    //Should sort the array in order of ascending roleId
+    roles.toSorted((roleA, roleB) => roleA.roleId - roleB.roleId);
     return roles.map(transformRole);
   } catch (e) {
     console.error(`Error in getRolesService: ${JSON.stringify(e)}`);
-
     return 'INTERNAL_ERROR';
   }
 };

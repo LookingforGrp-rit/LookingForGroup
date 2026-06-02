@@ -11,15 +11,17 @@ const getSocialsService = async (): Promise<Social[] | GetSocialsServiceError> =
   try {
     const socials = await prisma.socials.findMany({
       select: SocialSelector,
+
       orderBy: {
         label: 'asc',
       },
     });
 
+    //Should sort the array in order of ascending websiteId
+    socials.toSorted((websiteA, websiteB) => websiteA.websiteId - websiteB.websiteId);
     return socials.map(transformSocial);
   } catch (e) {
     console.error(`Error in getSocialsService: ${JSON.stringify(e)}`);
-
     return 'INTERNAL_ERROR';
   }
 };
