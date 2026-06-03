@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ProjectPanel } from './ProjectPanel';
 import { ProfilePanel } from './ProfilePanel';
-import { ApiResponse, ProjectPreview, ProjectWithFollowers, UserPreview } from '@looking-for-group/shared';
-import { getProjects } from '../api/projects';
+import { ApiResponse, ProjectFollower, ProjectPreview, ProjectWithFollowers, UserPreview } from '@looking-for-group/shared';
+import { getByID } from '../api/projects.ts';
+import { getProjectFollowing } from '../api/users.ts';
 
 // Item list should use "useState" so that it'll re-render on the fly
 // And so that no search functionality needs to be included in this component
@@ -17,7 +18,7 @@ import { getProjects } from '../api/projects';
  * @param itemAddInterval - Number of items to add to the display when scrolling.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, itemAddInterval = 0, userId }: { category: string, itemList: unknown[], itemAddInterval: number, userId: number | undefined}) => {
+export const PanelBox = ({ category, itemList, itemAddInterval = 0, userId }: { category: string, itemList: unknown[], itemAddInterval: number, userId: number }) => {
   // Don't display all items at first, load them in periodically
   // Currently rendered subset of items. Initially displays only a portion (controlled by itemAddInterval).
   const [displayedItems, setDisplayedItems] = useState(itemList.slice(0, itemAddInterval));
@@ -25,10 +26,14 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, userId }: { 
   const [itemListCopy, setItemListCopy] = useState(itemList);
 
   // Make sure displayedItems gets updated when itemList receives API data
-  if (itemList !== itemListCopy) {
+  useEffect(()=>{
+    if (itemList !== itemListCopy) {
     setDisplayedItems(itemList.slice(0, itemAddInterval));
     setItemListCopy(itemList);
   }
+
+  },[displayedItems, itemListCopy])
+  console.log("PanelBox")
 
   /**
    * Appends more items to the displayed list when the user scrolls to the bottom.
@@ -62,13 +67,40 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, userId }: { 
    * @returns JSX element containing the project panels
    */
   const ProjectPanelBox = () => {
-    //console.log(itemList);
+    console.log("Project Panel");
     if (itemList.length === 0)
       return <div className="project-panel-box" onScroll={addItems}><>Sorry, no projects here</></div>
 
+    //maps out the project panels with only one project's data
     const panelProjects = itemList.map((project) => {
+      //console.log((project as ProjectWithFollowers).projectId);
+
+      //variables needed for the proejct panel
+      let followers: number;
+      let isFollow = false;
+
+      const GetProjectsDetails = async () => {
+        //grabs the project by the one id
+        const projectResp = await getByID((project as ProjectWithFollowers).projectId);
+        const followings = (await getProjectFollowing(userId)).data?.projects;
+        if (projectResp.data) {
+          followers = projectResp.data.followers.count;
+        }
+
+        if (followings !== undefined) {
+          for (const follower of followings) {
+            isFollow = (follower.project.projectId === (project as ProjectWithFollowers).projectId);
+            if (isFollow) break;
+          }
+        }
+      }
+
+      GetProjectsDetails();
       return (
-        <ProjectPanel project={project as ProjectWithFollowers} key={(project as ProjectWithFollowers).projectId} currentUserId={userId} />
+        <ProjectPanel
+          project={project as ProjectWithFollowers}
+          key={(project as ProjectWithFollowers).projectId}
+          currentUserId={userId} />
       );
     })
     return <div className="project-panel-box" onScroll={addItems} >{panelProjects}</div>

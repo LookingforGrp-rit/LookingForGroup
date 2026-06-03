@@ -399,7 +399,6 @@ const Project = (userProfile : any) => {
         hideSearchBar={true}
         value={undefined}
         onChange={undefined}
-        userProfile={userProfile}
       />
 
       {displayedProject === undefined ? (

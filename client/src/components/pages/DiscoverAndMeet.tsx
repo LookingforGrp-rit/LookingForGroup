@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -12,11 +12,11 @@ import {
   ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
   StructuredUserInfo, UserPreview, ProjectPreview,
   UserDetail, ProjectWithFollowers,
-  MePrivate
 } from '@looking-for-group/shared';
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'
+import { useLoaderData } from 'react-router-dom';
 
 type DiscoverAndMeetProps = {
   category: 'projects' | 'profiles';
@@ -28,7 +28,7 @@ type DiscoverAndMeetProps = {
  * @param category "projects" for Discover, "profiles" for Meet
  * @returns JSX Element
  */
-const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
+const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
   // Components
   // --------------------
@@ -113,7 +113,7 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
 
   // Stores userId for ability to follow users/projects
   const [username, setUsername] = useState<string>('');
-    const [userId, setUserId] = useState<number>();
+  const [userId, setUserId] = useState<number>(0);
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
@@ -131,15 +131,15 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
   // Helper functions
   // --------------------
 
-    /**
-   * Gets the user's profile by authenticateing the
-   * data before setting the user's ID
-   */
+  /**
+ * Gets the user's profile by authenticateing the
+ * data before setting the user's ID
+ */
   const getAuth = async () => {
     if (username != "") {
       return;
     }
-    
+
     const res = await getCurrentUsername();
 
     if (res.status === 200 && res.data?.username && username == "") {
@@ -167,6 +167,7 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
 
     }
 
+    console.log(projects.data);
     setFullProjectList(projects.data);
     setFilteredProjectList(projects.data);
 
@@ -241,7 +242,7 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
     setDataLoaded(true);
   };
 
-  useMemo(() => getData(),[]);
+  useMemo(() => getData(), []);
 
   /**
    * Updates the filtered project list with new search information
@@ -522,7 +523,7 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
       );
     }
     else {
-      discoverPanelContents = (<PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} userId={userId}/>);
+      discoverPanelContents = <PanelBox category={category} itemList={filteredProjectList} itemAddInterval={25} userId={userId} />;
     }
   } else {
     if (!dataLoaded && filteredUserList.length === 0) {
@@ -568,10 +569,105 @@ const DiscoverAndMeet = ({ category}: DiscoverAndMeetProps) => {
   );
 };
 
+const DiscoverPage = () => {
+  //temp variables to initialize the use states for startup
+  let allProjects;
+  let currentUsername;
+  let currentUserID;
+
+  //loads up the data to populate the states that will be used inside the page on startup
+  useEffect(() => {
+    const LoadUser = async () => {
+      const userRes = await getCurrentUsername();
+      if (userRes.status === 200) {
+        currentUserID = userRes.data?.userId;
+        currentUsername = userRes.data?.username;
+      }
+    }
+    LoadUser();
+  }, []);
+
+  //separate useeffect for when the server project data changes
+  useEffect(() => {
+    const LoadProjects = async () => {
+      //loads the project data on 
+      const projRes = await getProjects();
+      if (projRes.status === 200) {
+        allProjects = projRes.data;
+      }
+    }
+    LoadProjects();
+  },[])
+
+  //sets up the states for if they're needed to be changed at all
+
+  //creates the panel showing all the projects
+  let discoverPanel: React.ReactElement;
+}
+
+const ProfileMeetPage = () => {
+  //banner for the meets page
+  const profileHero = (
+    <div id='discover-hero'>
+      {
+        <div id="profile-hero-bg1">
+          <div id="profile-hero">
+            <div id="profile-hero-blurb-1" className="profile-hero-blurb">
+              <ThemeImage
+                lightSrc={'/assets/bannerImages/people1_light.png'}
+                darkSrc={'/assets/bannerImages/people1_dark.png'}
+                id={'profile-hero-img-1'}
+                alt={'banner image'}
+              />
+              {/* <div>
+                <span className='profile-hero-highlight'>Explore profiles</span> to see each other's personality, expertise, and project history.
+              </div> */}
+            </div>
+
+            <div id="profile-hero-blurb-2" className="profile-hero-blurb">
+              {/* <h2>Look for people to work with!</h2> */}
+              <ThemeImage
+                lightSrc={'/assets/bannerImages/people2_light.png'}
+                darkSrc={'/assets/bannerImages/people2_dark.png'}
+                id={'profile-hero-img-2'}
+                alt={'banner image'}
+              />
+              {/* <div className="panel-text">
+                Find someone interesting? <span className='profile-hero-highlight'>Send a message!</span><br/>
+                <div id='spacer'></div>
+                <span className='profile-hero-highlight'>Introduce yourself</span>, share project ideas, and show interest in working together!
+              </div> */}
+            </div>
+
+            <div id="profile-hero-blurb-3" className="profile-hero-blurb">
+              <ThemeImage
+                lightSrc={'/assets/bannerImages/people3_light.png'}
+                darkSrc={'/assets/bannerImages/people3_dark.png'}
+                id={'profile-hero-img-3'}
+                alt={'banner image'}
+              />
+              {/* <div>
+                Keep your profile up to date with your skills, project preferences, and interests to 
+                <span className='profile-hero-highlight'> find your group!</span>
+              </div> */}
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  );
+
+
+}
+
 // Return projects category
 export const Discover = () => {
   return <DiscoverAndMeet category={'projects'} />;
 };
+
+// export const Discover = () => {
+//   return <DiscoverPage />;
+// };
 
 // Return profiles category
 export const Meet = () => {

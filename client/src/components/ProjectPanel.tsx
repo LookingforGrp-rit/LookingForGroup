@@ -85,22 +85,23 @@ export const ProjectPanel = ({ project, currentUserId }: ProjectPanelProps) => {
   }, [project, userId]);
 
   // Fetch current user ID and up-to-date project follower info
-  useEffect(() => {
-    const getProjectData = async () => {
-      //get the project itself
-      const projectResp = await getByID(projectId);
-      if (projectResp.data) {
-        console.log(projectResp);
-        setFollowCount(projectResp.data.followers.count);
-        checkFollow();
-        if (project.title == "thumbnail") {
-          console.log("Thumbnail project's thumbnail:");
-          console.log(project.thumbnail);
-        }
-      }
-    };
-    getProjectData();
-  }, [])
+  // useEffect(() => {
+  //   const getProjectData = async () => {
+  //     //get the project itself
+  //     const projectResp = await getByID(projectId);
+  //     if (projectResp.data) {
+  //       //console.log(projectResp);
+  //       setFollowCount(projectResp.data.followers.count);
+  //       checkFollow();
+  //       if (project.title == "thumbnail") {
+  //         console.log("Thumbnail project's thumbnail:");
+  //         console.log(project.thumbnail);
+  //       }
+  //     }
+  //   };
+  //   getProjectData();
+  // }, [])
+  // console.log('test');
 
   /**
    * Handles click on the follow/unfollow button
