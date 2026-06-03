@@ -10,16 +10,20 @@ import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
 import { addUserSkill, createNewUser, getCurrentUsername, googleLogin } from '../../api/users';
-import { CreateUserInput, SessionUserData } from '@looking-for-group/shared';
+import { CreateUserInput, SessionUserData, Skill } from '@looking-for-group/shared';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
+interface SignUpProps {
+  profileImage : string;
+  setProfileImage : React.Dispatch<React.SetStateAction<string>>;
+}
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
  * @param profileImage Uploaded profile image to use for user creation.
  * @param setProfileImage Sets the profile image variable
  * @returns JSX Element
  */
-const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
+const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation
 
   // State variables
@@ -45,7 +49,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   // State variables for selected buttons
   // to remeber the user's choices when they go back and forth between modals
   // const [selectedProficiencies, setSelectedProficiencies] = useState<string[]>([]); // State variable for the selected proficiencies
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]); // State variable for the selected skills
+  const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]); // State variable for the selected skills
   const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]); // State variable for the ids of the selected skills
   // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
@@ -421,9 +425,6 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             selectedSkillIds={selectedSkillIds}
             setSelectedSkillIds={setSelectedSkillIds}
             mode="signup"
-            onClose={() => {
-              setShowSkillsModal(false);
-            }}
           />
 
           {/* <ChooseInterests
