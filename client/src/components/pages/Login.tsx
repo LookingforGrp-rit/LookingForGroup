@@ -79,11 +79,6 @@ const Login: React.FC = () => {
     if (body.userExists) { navigate(paths.routes.HOME); }
     else { navigate(paths.routes.SIGNUP); }
   }
-  async function handleTest() {
-    const res = await testLogin()
-
-    console.log(res);
-  }
 
 
   /**
@@ -199,9 +194,6 @@ const Login: React.FC = () => {
               onChange={(e) => setLoginInput(e.target.value)}
             />
             <div id="googleBtn"></div>
-            <button onClick={handleTest}>
-              Press me to test sessions!!!
-            </button>
             <div className="mobile-signup">
               <p>No account? </p>
               <p id="signup-btn-mobile" onClick={() => navigate(paths.routes.SIGNUP)}>
