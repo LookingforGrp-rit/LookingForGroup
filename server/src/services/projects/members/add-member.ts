@@ -32,12 +32,20 @@ const addMemberService = async (
     });
 
     // send invite email to invitee
-    await sendInviteService(projectId, {
+    const emailResult = await sendInviteService(projectId, {
       inviterUserId: data.inviterUserId,
       inviteeUserId: data.inviteeUserId,
       roleId: data.roleId,
       message: data.message ?? '',
     } as SendProjectInviteInput);
+
+    if (
+      emailResult === 'INTERNAL_ERROR' ||
+      emailResult === 'NOT_FOUND' ||
+      emailResult === 'CONFLICT'
+    ) {
+      return emailResult;
+    }
 
     const result = transformProjectMember(newMember.projectId, newMember);
 
