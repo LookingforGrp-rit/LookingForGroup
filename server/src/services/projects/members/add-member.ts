@@ -1,6 +1,7 @@
 import type {
   ProjectMember,
   CreateProjectMemberInput,
+  CreateProjectOwnerInput,
   SendProjectInviteInput,
 } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
@@ -14,40 +15,61 @@ type AddMemberServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' |
 //POST api/projects/{id}/members
 const addMemberService = async (
   projectId: number,
-  data: CreateProjectMemberInput,
+  data: CreateProjectMemberInput | CreateProjectOwnerInput,
 ): Promise<ProjectMember | AddMemberServiceError> => {
   try {
-    // create new member with pending role
-    // will update to correct role when invitee accepts invite
-    const newMember = await prisma.members.create({
-      data: {
-        projects: { connect: { projectId } },
-        users: { connect: { userId: data.inviteeUserId } },
-        roles: { connect: { label: 'Pending' } },
-      },
-      select: {
-        ...ProjectMemberSelector,
-        projectId: true,
-      },
-    });
+    // declare newMember in outer scope so it's available after branches
+    let result: ProjectMember;
 
-    // send invite email to invitee
-    const emailResult = await sendInviteService(projectId, {
-      inviterUserId: data.inviterUserId,
-      inviteeUserId: data.inviteeUserId,
-      roleId: data.roleId,
-      message: data.message ?? '',
-    } as SendProjectInviteInput);
+    // it's creating an owner
+    if ('userId' in data) {
+      // create owner
+      const newMember = await prisma.members.create({
+        data: {
+          projects: { connect: { projectId } },
+          users: { connect: { userId: data.userId } },
+          roles: { connect: { roleId: data.roleId } },
+        },
+        select: {
+          ...ProjectMemberSelector,
+          projectId: true,
+        },
+      });
 
-    if (
-      emailResult === 'INTERNAL_ERROR' ||
-      emailResult === 'NOT_FOUND' ||
-      emailResult === 'CONFLICT'
-    ) {
-      return emailResult;
+      result = transformProjectMember(newMember.projectId, newMember);
+    } else {
+      // create new member with pending role
+      // will update to correct role when invitee accepts invite
+      const newMember = await prisma.members.create({
+        data: {
+          projects: { connect: { projectId } },
+          users: { connect: { userId: data.inviteeUserId } },
+          roles: { connect: { label: 'Pending' } },
+        },
+        select: {
+          ...ProjectMemberSelector,
+          projectId: true,
+        },
+      });
+
+      // send invite email to invitee
+      const emailResult = await sendInviteService(projectId, {
+        inviterUserId: data.inviterUserId,
+        inviteeUserId: data.inviteeUserId,
+        roleId: data.roleId,
+        message: data.message ?? '',
+      } as SendProjectInviteInput);
+
+      if (
+        emailResult === 'INTERNAL_ERROR' ||
+        emailResult === 'NOT_FOUND' ||
+        emailResult === 'CONFLICT'
+      ) {
+        return emailResult;
+      }
+
+      result = transformProjectMember(newMember.projectId, newMember);
     }
-
-    const result = transformProjectMember(newMember.projectId, newMember);
 
     return result;
   } catch (e) {

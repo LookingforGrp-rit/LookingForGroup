@@ -1277,6 +1277,14 @@ export type CreateProjectMemberInput = {
 };
 
 /**
+ * Data required to add owner of a project
+ */
+export type CreateProjectOwnerInput = {
+  userId: number;
+  roleId: number;
+};
+
+/**
  * Data required to invite a user to join a project
  */
 export type SendProjectInviteInput = Required<CreateProjectMemberInput>;
