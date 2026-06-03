@@ -2,6 +2,7 @@ import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
+import requiresModerator from '#middleware/authorization/requires-mod.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
@@ -46,6 +47,24 @@ router.patch(
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   authenticated(PROJECT.updateProject),
+);
+
+router.patch(
+  'approve/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.approveProject),
+);
+
+router.patch(
+  'unapprove/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.unapproveProject),
 );
 
 //Deletes project through a specific id

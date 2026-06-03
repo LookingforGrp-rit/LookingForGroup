@@ -11,6 +11,7 @@ const requiresProjectOwner = async (
   const user = request.currentUser;
 
   //check if ID is number
+
   if (isNaN(user.userId)) {
     const resBody: ApiResponse = {
       status: 400,

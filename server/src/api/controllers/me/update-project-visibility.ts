@@ -23,7 +23,7 @@ const updateProjectVisibilityController = async (req: AuthenticatedRequest, res:
 
   const visibility = typeof rawVisibility === 'string' ? rawVisibility : rawVisibility?.visibility;
 
-  const result = await updateProjectVisibility(projectId, req.currentUser, visibility);
+  const result = await updateProjectVisibility(projectId, req.currentUser.userId, visibility);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

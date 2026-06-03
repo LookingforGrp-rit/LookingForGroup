@@ -5,7 +5,7 @@ import { getSocialsService } from '#services/me/socials/get-socials.ts';
 //GET api/me/socials
 //get socials on user profile
 export const getSocials = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const result = await getSocialsService(req.currentUser);
+  const result = await getSocialsService(req.currentUser.userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
