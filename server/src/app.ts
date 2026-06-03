@@ -51,20 +51,20 @@ if (envConfig.env === 'development') {
   const swaggerUi = (await import('swagger-ui-express')).default;
   const doc = await swaggerParser.bundle('./docs/swagger.yaml');
 
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(doc));
+  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(doc));
 }
 
 //app.get(new RegExp("[\\s\\S]/*"), (_req: Request, res: Response) => {
 //  console.log(`Received request ${_req.ip}`);
 //});
 
-app.use('/datasets', datasetsRouter);
-app.use('/users', usersRouter);
-app.use('/projects', projectsRouter);
-app.use('/me', meRouter);
-app.use('/images', imagesRouter);
-app.use('/mod', modRouter);
-app.use('/google-login', googleRouter);
+app.use('/api/datasets', datasetsRouter);
+app.use('/api/users', usersRouter);
+app.use('/api/projects', projectsRouter);
+app.use('/api/me', meRouter);
+app.use('/api/images', imagesRouter);
+app.use('/api/mod', modRouter);
+app.use('/api/google-login', googleRouter);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

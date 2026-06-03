@@ -19,12 +19,12 @@ describe('deleteBlacklistService', async () => {
     vi.clearAllMocks();
   });
   it('returns OK if successful', async () => {
-    const result = await deleteBlacklistService(1);
+    const result = await deleteBlacklistService('1');
 
     expect(prisma.userBlacklist.delete).toHaveBeenCalled();
     expect(prisma.userBlacklist.delete).toHaveBeenCalledWith({
       where: {
-        userId: 1,
+        googleId: '1',
       },
     });
     expect(result).toBe('OK');
@@ -32,14 +32,14 @@ describe('deleteBlacklistService', async () => {
 
   it("returns NOT_FOUND if user isn't on blacklist", async () => {
     vi.mocked(prisma.userBlacklist.delete).mockRejectedValue({ code: 'P2025' });
-    const result = await deleteBlacklistService(1);
+    const result = await deleteBlacklistService('1');
 
     expect(result).toBe('NOT_FOUND');
   });
 
   it("returns INTERNAL_ERROR if user isn't on blacklist", async () => {
     vi.mocked(prisma.userBlacklist.delete).mockRejectedValue(new Error('womp womp'));
-    const result = await deleteBlacklistService(1);
+    const result = await deleteBlacklistService('1');
 
     expect(result).toBe('INTERNAL_ERROR');
   });
