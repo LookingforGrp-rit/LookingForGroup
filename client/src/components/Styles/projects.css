@@ -3455,9 +3455,9 @@ button#positions-popup-list-item-active {
 
 #project-overview-links-section {
   display: flex;
-  flex-direction: row;
-  gap: 20px;
-  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  align-items: start;
   justify-content: start;
   color: var(--primary-color);
   font-style: italic;
@@ -3474,6 +3474,14 @@ button#positions-popup-list-item-active {
       border: none;
       padding: 0;
     }
+  }
+}
+
+/* Display the links section to the center when on mobile size */
+@media only screen and (max-width: 700px) {
+  #project-overview-links-section {
+    flex-direction: column;
+    align-items: center;
   }
 }
 
@@ -3542,11 +3550,22 @@ button#positions-popup-list-item-active {
 }
 
 
-#project-open-positions {
+#project-open-positions .centerer{
   grid-area: positions;
   margin-top: 20px;
   margin-bottom: 20px;
+  display: none;
 }
+
+@media only screen and (max-width: 700px) {
+  #project-open-positions .centerer {
+    grid-area: positions;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: grid;
+  }
+}
+
 
 #project-open-positions-list {
   display: flex;
