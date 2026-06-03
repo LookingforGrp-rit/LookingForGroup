@@ -179,7 +179,7 @@ const MyProjectsDisplayGrid = ({
                   </PopupButton>
                   <PopupContent>
                     <div className="small-popup">
-                      <h3>Leave Project</h3>
+                      <h3>Delete Project</h3>
                       <p className="confirm-msg">
                         Are you sure you want to delete{" "}
                         <span className="project-info-highlight">

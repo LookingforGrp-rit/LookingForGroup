@@ -661,6 +661,13 @@ export interface UserDetail extends UserPreview {
   followers: UserFollowsList;
 }
 
+export interface UserEmail extends Pick<UserPreview, 'userId' | 'firstName' | 'lastName'> {
+  /**
+   * The user's rit email
+   */
+  ritEmail: string;
+}
+
 // ME
 
 // TODO should MePreview use the same properties as UserPreview?
@@ -1275,8 +1282,34 @@ export type ReorderProjectImagesInput = {
  * Data required to add a user as a member of a project, role defaults to "Member"
  */
 export type CreateProjectMemberInput = {
+  inviterUserId: number;
+  inviteeUserId: number;
+  roleId: number;
+  message?: string;
+};
+
+/**
+ * Data required to add owner of a project
+ */
+export type CreateProjectOwnerInput = {
   userId: number;
-  roleId?: number;
+  roleId: number;
+};
+
+/**
+ * Data required to invite a user to join a project
+ */
+export type SendProjectInviteInput = Required<CreateProjectMemberInput>;
+
+/**
+ * Data required to send invitation email to user
+ */
+export type EmailInput = {
+  inviter: UserEmail;
+  invitee: UserEmail;
+  subject: string;
+  textBody: string;
+  HTMLBody: string;
 };
 
 /**
