@@ -25,8 +25,8 @@ describe('getMediumsService', () => {
 
   it('returns transformed mediums when found', async () => {
     const prismaMediums = [
-      { mediumId: 1, label: 'Video Game' },
       { mediumId: 2, label: 'Analog Game' },
+      { mediumId: 1, label: 'Video Game' },
     ];
 
     vi.mocked(prisma.mediums.findMany).mockResolvedValue(prismaMediums as Medium[]);
@@ -39,8 +39,8 @@ describe('getMediumsService', () => {
     expect(vi.mocked(prisma.mediums.findMany)).toHaveBeenCalled();
     expect(vi.mocked(transformMedium)).toHaveBeenCalledTimes(2);
     expect(result).toEqual([
-      { mediumId: 1, label: 'Video Game', transformed: true },
       { mediumId: 2, label: 'Analog Game', transformed: true },
+      { mediumId: 1, label: 'Video Game', transformed: true },
     ]);
   });
 
