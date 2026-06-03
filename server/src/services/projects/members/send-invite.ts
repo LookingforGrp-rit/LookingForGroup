@@ -2,9 +2,9 @@ import type { SendProjectInviteInput, EmailInput, UserEmail } from '@looking-for
 import prisma from '#config/prisma.ts';
 import getRolesService from '#services/datasets/get-roles.ts';
 import { sendEmail } from '#services/mailer.ts';
+import getProjectByIdService from '#services/projects/get-proj-id.ts';
 import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
-import getProjectByIdService from '../get-proj-id.ts';
 
 type SendInviteServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type SendInviteServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
@@ -100,7 +100,10 @@ const sendInviteService = async (
                 </div>`,
     };
 
-    await sendEmail(email);
+    const emailResult = await sendEmail(email);
+    if (emailResult === 'INTERNAL_ERROR') {
+      return emailResult;
+    }
 
     return 'NO_CONTENT';
   } catch (e) {

@@ -12,7 +12,6 @@ import { skipIfEmpty } from '../middleware/validators/skip-if-empty.ts';
 import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
-// const urlencodedParser = express.urlencoded({ extended: true });
 
 export const authenticated = (
   controller: (
@@ -176,17 +175,6 @@ router.post(
   authenticated(requiresProjectOwner),
   PROJECT.addMember,
 );
-//Sends an invite to a pending member of a project through email
-//Currently the same as adding a member normally, but at least it doesnt break the site immediately
-// router.post(
-//   '/:id/members/invite',
-//   requiresLogin,
-//   injectCurrentUser,
-//   projectExistsAt('path', 'id'),
-//   urlencodedParser,
-//   authenticated(requiresProjectOwner),
-//   PROJECT.sendInvite,
-// );
 //Edits a member of a specific project through id
 router.patch(
   '/:id/members/:userId',
