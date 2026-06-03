@@ -45,8 +45,6 @@ export const login = async (request: Request, response: Response) => {
   request.session.gid = userData.googleId || '';
   request.session.data = !userData.userExists ? JSON.stringify(userData) : '';
 
-  console.log(`Session data { gid: ${request.session.gid}, data: ${request.session.data}}`);
-
   const resBody: ApiResponse = {
     status: 200,
     error: null,
