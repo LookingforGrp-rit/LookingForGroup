@@ -10,7 +10,8 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 import users, {
   getJobTitles,
   getUsers,
-  getUsersById
+  getUsersById,
+  getCurrentAccount,
 } from "../../../api/users";
 import {
   ProjectJob,
@@ -22,6 +23,7 @@ import {
   JobCompensation,
   Role,
   ProjectWithFollowers,
+  SendProjectInviteInput,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -30,7 +32,6 @@ import {
   JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 import {
-  Email,
   Pending,
   PendingProject,
   PendingProjectMember,
@@ -158,6 +159,9 @@ export const TeamTab = ({
     []
   );
 
+  // current logged in user id
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
   // State for error/successful messages
   const [errorAddMember, setErrorAddMember] = useState("");
   const [errorAddPosition, setErrorAddPosition] = useState("");
@@ -282,6 +286,20 @@ export const TeamTab = ({
       getUsersList();
     }
   }, [allUsers]);
+
+  // load current logged-in account id
+  useEffect(() => {
+    const loadCurrent = async () => {
+      try {
+        const resp = await getCurrentAccount();
+        if (resp && resp.data) setCurrentUserId(resp.data.userId);
+      } catch (e) {
+        console.error("Failed to load current account", e);
+      }
+    };
+
+    loadCurrent();
+  }, []);
 
   // Assign active buttons in Open Positions
   const isTeamTabOpen = currentTeamTab === 1;
@@ -423,6 +441,14 @@ export const TeamTab = ({
       }
     }
 
+    // limit posbile null role
+    if (!currentMember.role) {
+      setSuccessAddMember(false);
+      setErrorAddMember("Select a role");
+      setSelectKey((previous) => previous + 1);
+      return false;
+    }
+
     // Match this user with all users to get profile image
     const matchedUser = allUsers.find(
       (user) => user.userId === currentMember.user?.userId
@@ -462,8 +488,11 @@ export const TeamTab = ({
           type: "local",
         },
         data: {
-          userId: currentMember.user.userId,
-          roleId: currentMember.role?.roleId,
+          inviteeUserId: currentMember.user.userId,
+          // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
+          inviterUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
+          roleId: currentMember.role.roleId,
+          message: '',
         },
       });
 
@@ -529,31 +558,26 @@ export const TeamTab = ({
   }
 
   /**
-   * Sends a project invite to a specified user by email
-   * @param targetUser specified user
-   * @returns the email as a string if it was able to be created, otherwise false
+   * Sends an email invite to a user to join a project.
+   * @param targetUser Target user to receive the invite
+   * @param role Role the user is being invited for
+   * @param inviter User who is sending the invite
+   * @returns boolean indicating whether the email was sent successfully
    */
-  const sendProjectInviteByAutoEmail = (targetUser: UserPreview, project: PendingProject,
-    invitee: ProjectMember | PendingProjectMember | undefined) => {
+  const sendProjectInviteEmail = (targetUser: UserPreview, role: Role,
+    inviter: ProjectMember | PendingProjectMember | undefined): boolean => {
 
-    //If targetUser isn't in allUsers or the project's title is null or if the invitee is undefined, return false
-    if (!allUsers.includes(targetUser) || project.title === null || invitee === undefined) {
+    //If targetUser isn't in allUsers or the role is falsy or the inviter is falsy, return false
+    if (!allUsers.includes(targetUser) || !role || !inviter) {
       return false;
     }
 
-    const targetUserName: string = `${targetUser.firstName} ${targetUser.lastName}`;
-    const projectName: string = project.title;
-    const inviteeName: string = `${invitee.user?.firstName} ${invitee.user?.lastName}`;
-
-    //Returns message
-    const message: string =
-      `Hello ${targetUserName},\n
-      \n
-      You've been invited to join the project ${projectName} by ${inviteeName}. 
-      If you don't want to join the project or believe this is a mistake, you may safely ignore this email.\n
-      \n
-      Click this link to accept the invitation: ${getProjectInviteURL(targetUser, invitee, project)}\n
-      Thank you!`;
+    // construct necessary information for invite input
+    // const inviteInput: SendProjectInviteInput = {
+    //   inviteeUserId: invitee.user?.userId as number,
+    //   targetUserId: targetUser.userId,
+    //   roleId: ,
+    // };
 
     //Send the email to targetUserEmail
     // const emailObject: Email = {
@@ -569,7 +593,8 @@ export const TeamTab = ({
     // };
 
     // sendEmail(emailObject);
-    return message;
+    // return message;
+    return true;
   }
 
   /**
@@ -606,9 +631,6 @@ export const TeamTab = ({
         setErrorAddMember("User not found");
         return;
       }
-
-      //Sends an invite to a specified user by email
-      sendProjectInviteByAutoEmail(matchedUser, projectAfterTeamChanges, currentMember);
 
       // set user for member
       // Somehow wait until they accept the invite

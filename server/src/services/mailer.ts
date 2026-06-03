@@ -40,8 +40,8 @@ const sendEmail = async (
 
   try {
     const info = await transporter.sendMail({
-      from: `"${email.invitee.firstName} ${email.invitee.lastName}" <${email.invitee.ritEmail}>`, // sender address
-      to: `"${email.targetUser.firstName} ${email.targetUser.lastName}" <${email.targetUser.ritEmail}>`, // recipient
+      from: `"${email.inviter.firstName} ${email.inviter.lastName}" <${email.inviter.ritEmail}>`, // sender address
+      to: `"${email.invitee.firstName} ${email.invitee.lastName}" <${email.invitee.ritEmail}>`, // recipient
       subject: email.subject, // subject line
       text: email.textBody, // plain text body
       html: email.HTMLBody, // HTML body

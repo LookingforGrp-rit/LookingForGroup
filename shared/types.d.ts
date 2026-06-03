@@ -1270,25 +1270,23 @@ export type ReorderProjectImagesInput = {
  * Data required to add a user as a member of a project, role defaults to "Member"
  */
 export type CreateProjectMemberInput = {
-  userId: number;
-  roleId?: number;
+  inviterUserId: number;
+  inviteeUserId: number;
+  roleId: number;
+  message?: string;
 };
 
 /**
  * Data required to invite a user to join a project
  */
-export type SendProjectInviteInput = {
-  inviteeUserId: number;
-  targetUserId: number;
-  roleId: number;
-};
+export type SendProjectInviteInput = Required<CreateProjectMemberInput>;
 
 /**
  * Data required to send invitation email to user
  */
 export type EmailInput = {
+  inviter: UserEmail;
   invitee: UserEmail;
-  targetUser: UserEmail;
   subject: string;
   textBody: string;
   HTMLBody: string;
