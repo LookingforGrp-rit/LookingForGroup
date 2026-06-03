@@ -94,7 +94,7 @@ CREATE TABLE `project_socials` (
 CREATE TABLE `projects` (
     `project_id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(150) NOT NULL,
-    `hook` VARCHAR(200) NOT NULL DEFAULT '',
+    `hook` VARCHAR(300) NOT NULL DEFAULT '',
     `description` VARCHAR(2000) NOT NULL DEFAULT '',
     `thumbnail_id` INTEGER NULL,
     `purpose` ENUM('Personal', 'Portfolio Piece', 'Academic', 'Co-op') NULL,
