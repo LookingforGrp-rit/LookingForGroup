@@ -65,6 +65,7 @@ describe('getUserFollowersService', () => {
       username: 'sender',
       firstName: 'send',
       lastName: 'user',
+      preferredName: 'Leafleaf',
       profileImage: null,
       mentor: false,
       headline: '',
