@@ -72,8 +72,12 @@ const Login: React.FC = () => {
   }, [navigate])
 
   async function handleGoogle(response: any){
-
     const res = await googleLogin({credential: response.credential});
+    //Display error to user
+    if(res.error){
+      setError(res.error);
+      return;
+    }
     const body = await res.data as {userExists: boolean};
     
     if (body.userExists) { navigate(paths.routes.HOME); }

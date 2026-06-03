@@ -52,6 +52,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   const [bio, setBio] = useState(''); // State variable for the user's bio
   const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
+  const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
+
   // user info to be sent to the backend
   //we will add more to this once the frontend components can handle them
   const userInfo = {
@@ -108,6 +110,12 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     );
   async function handleGoogle(response: any){
     const sessionData = await googleLogin({credential: response.credential})
+    if(sessionData.error){
+      setError(sessionData.error)
+      return;
+    }
+    setError('');
+    console.log(sessionData);
     setSessionData(sessionData.data); 
     //now we display the message that corresponds to whatever happened
     //not even gonna bother reading the react one because react variables update whenever they feel like it and not right when you tell them to
@@ -336,6 +344,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               onChange={(e) => setEmail(e.target.value)}
             /> */}
             <p>Sign up using your RIT email.</p>
+            <div className="error" aria-live="assertive" role="alert">{error}</div>
             <div id="googleBtn"></div>
 
             <span className="spacer"> </span>
