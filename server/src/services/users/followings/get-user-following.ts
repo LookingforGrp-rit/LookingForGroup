@@ -11,7 +11,7 @@ export const getUserFollowingService = async (
   senderId: number,
 ): Promise<UserFollowsList | GetUserServiceError> => {
   try {
-    const userFollowings = await prisma.userFollowings.findMany({
+    let userFollowings = await prisma.userFollowings.findMany({
       where: { senderId },
       orderBy: {
         followedAt: 'desc',
@@ -23,6 +23,17 @@ export const getUserFollowingService = async (
         followedAt: true,
       },
     });
+
+    //Sorts array alphabetically by first name
+    userFollowings = userFollowings.toSorted(
+      (userFollowing1, userFollowing2) =>
+        userFollowing1.receiverUser.firstName.charCodeAt(0) -
+        userFollowing2.receiverUser.firstName.charCodeAt(0),
+    );
+
+    //For when the prefferedName column gets implemented in the database
+    // userFollowings = userFollowings.toSorted((userFollowing1, userFollowing2) =>
+    //   userFollowing1.receiverUser.preferredName.charCodeAt(0) - userFollowing2.receiverUser.preferredName.charCodeAt(0));
 
     const followings: UserFollowsList = {
       count: userFollowings.length,

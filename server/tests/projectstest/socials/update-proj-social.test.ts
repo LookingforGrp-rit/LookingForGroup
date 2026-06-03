@@ -44,7 +44,7 @@ describe('getProjectSocialsService', async () => {
     vi.mocked(transformProjectSocial).mockReturnValue(transformedSocial);
     const result = await updateProjectSocialService('www.test.com', 1, 29);
 
-    expect(transformProjectSocial).toBeCalled();
+    expect(transformProjectSocial).toHaveBeenCalled();
     expect(result).toEqual(transformedSocial);
   });
 

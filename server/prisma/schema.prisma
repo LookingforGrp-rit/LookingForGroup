@@ -168,6 +168,15 @@ model Tags {
   @@map("tags")
 }
 
+model UserBlacklist {
+  userId   Int    @id @map("user_id")
+  googleId String @unique @map("google_id")
+  users    Users  @relation(fields: [userId], references: [userId], onDelete: NoAction, map: "FK_user_blacklist_users")
+
+  @@index([userId], map: "FK_user_blacklist_user")
+  @@map("user_blacklist")
+}
+
 model UserFollowings {
   senderId     Int      @map("sender_id")
   receiverId   Int      @map("receiver_id")
@@ -226,7 +235,8 @@ model Users {
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @unique @map("phone_number") @db.VarChar(20)
-  googleId          String              @unique(map: "google_id_UNIQUE") @map("google_id") @default("bill of rights")
+  googleId          String              @unique(map: "google_id_UNIQUE") @default("bill of rights") @map("google_id")
+  preferredName     String              @default("") @map("preferred_name") @db.VarChar(50)
   members           Members[]
   projectFollowings ProjectFollowings[]
   projects          Projects[]
@@ -235,6 +245,7 @@ model Users {
   userSkills        UserSkills[]
   userSocials       UserSocials[]
   majors            Majors[]
+  userBlacklists    UserBlacklist[]
 
   @@map("users")
 }
@@ -250,10 +261,10 @@ model Skills {
 }
 
 model Session {
-  id String @id
-  sid String @unique
-  data String
-  gid String @default("federalist papers")
+  id        String   @id
+  sid       String   @unique
+  data      String
+  gid       String   @default("federalist papers")
   expiresAt DateTime
 }
 

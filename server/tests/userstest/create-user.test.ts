@@ -34,6 +34,7 @@ describe('createUserService', async () => {
       username: 'goldleaf',
       firstName: 'Gold',
       lastName: 'Leaf',
+      preferredName: 'Gold',
       ritEmail: 'goldleaf@rit.edu',
       profileImage: null,
       headline: '',
@@ -55,6 +56,7 @@ describe('createUserService', async () => {
       username: 'goldleaf',
       firstName: 'Gold',
       lastName: 'Leaf',
+      preferredName: 'Gold',
       ritEmail: 'goldleaf@rit.edu',
       googleId: '1234',
       visibility: 'Public',
@@ -99,13 +101,17 @@ describe('createUserService', async () => {
     vi.mocked(prisma.users.create).mockResolvedValue(prismaUser);
     vi.mocked(transformMeToPrivate).mockReturnValue(mePrivate);
 
-    const result = await createUserService({
-      username: 'goldleaf',
-      firstName: 'Gold',
-      lastName: 'Leaf',
-      ritEmail: 'goldleaf@rit.edu',
-      googleId: '1234',
-    } as CreateUserInput);
+    const result = await createUserService(
+      {
+        username: 'goldleaf',
+        firstName: 'Gold',
+        lastName: 'Leaf',
+        preferredName: 'Gold',
+        ritEmail: 'goldleaf@rit.edu',
+        googleId: '1234',
+      } as CreateUserInput,
+      {},
+    );
 
     expect(vi.mocked(prisma.users.create)).toHaveBeenCalledWith({
       data: {
@@ -113,6 +119,7 @@ describe('createUserService', async () => {
         username: 'goldleaf',
         firstName: 'Gold',
         lastName: 'Leaf',
+        preferredName: 'Gold',
         ritEmail: 'goldleaf@rit.edu',
       },
       select: expect.any(Object),

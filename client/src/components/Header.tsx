@@ -3,14 +3,13 @@ import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext, ChangeEvent } from 'react';
 import * as paths from '../constants/routes';
-import { sendPost } from '../functions/fetch';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
 import profilePicture from '../images/blue_frog.png';
 
 //user utils
-import { getCurrentUsername } from '../api/users.ts';
+import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
 
 //Header component to be used in pages
 
@@ -47,8 +46,9 @@ type HeaderProps = {
 export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false }) => {
   // User info state
   const [username, setUsername] = useState<string | null>(null);
-  const [email, setEmail] = useState(null);
+  const [email, setEmail] = useState('');
   const [profileImg, setProfileImg] = useState<string>('');
+  const [userId, setUserId] = useState<number>();
   const location = useLocation(); // Hook to access the current location
 
   // Pull the theme and setTheme function from useState() via a context
@@ -64,24 +64,27 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
   useEffect(() => {
     const fetchUsername = async () => {
       try {
-        const res = await getCurrentUsername();
+        const res = await getCurrentAccount();
 
         if (res.status == 200 && res.data?.username) {
           loggedIn = true;
           setUsername(res.data.username);
-          setEmail(res.data.email ?? null);
-          setProfileImg(res.data.profileImage ?? '');
+          setUserId(res.data.userId);
+          setEmail(res.data.ritEmail);
+          setProfileImg(res.data.profileImage ?? profilePicture);
         } else {
           loggedIn = false;
+          setUserId(undefined);
           setUsername('Guest');
-          setEmail(null);
+          setEmail('');
           setProfileImg('');
         }
       } catch (err) {
         console.log('Error fetching username: ' + err);
         loggedIn = false;
+        setUserId(undefined);
         setUsername('Guest');
-        setEmail(null);
+        setEmail('');
         setProfileImg('');
       }
     };
@@ -116,7 +119,12 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
   };
 
   useEffect(()=>{
-    theme === 'dark' ? setModeToggle('Light Mode') : setModeToggle('Dark Mode'); 
+    if(theme === 'dark') {
+      setModeToggle('Light Mode');
+     } 
+     else {
+      setModeToggle('Dark Mode'); 
+    }
   },[theme]);
 
   return (
@@ -157,13 +165,8 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 className={'rounded'}
                 title={'Profile picture'}
                 // Cannot use usePreloadedImage function because this is in a callback
-                onLoad={(e) => {
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = `${profileImg}`;
-                }}
-                onError={(e) => {
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = profilePicture;
+                onError={() => {
+                  setProfileImg(profilePicture);
                 }}
               />
             ) : (
@@ -217,14 +220,8 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                       src={`${profileImg}`}
                       className={'rounded'}
                       alt={'profile'}
-                      // Cannot use usePreloadedImage function because this is in a callback
-                      onLoad={(e) => {
-                        const profileImg = e.target as HTMLImageElement;
-                        profileImg.src = `${profileImg}`;
-                      }}
-                      onError={(e) => {
-                        const profileImg = e.target as HTMLImageElement;
-                        profileImg.src = profilePicture;
+                      onError={() => {
+                        setProfileImg(profilePicture);
                       }}
                     />
                   ) : (
@@ -252,7 +249,11 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 </button>
 
                 {/* LOG OUT Button */}
-                <button onClick={() => sendPost('/api/logout')}>
+                <button onClick={() => {
+                  if(userId) googleLogout(userId);
+                  navigate(paths.routes.HOME);
+                  
+                  }}>
                   <ThemeIcon id={'logout'} width={25} height={25} className={'mono-fill'} ariaLabel={'log out'}/>
                   Log Out
                 </button>

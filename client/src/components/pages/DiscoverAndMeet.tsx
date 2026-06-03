@@ -120,8 +120,13 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   }, [userSearchData]);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
+  // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent =
-    category === 'projects' ? <DiscoverCarousel dataList={heroProjectList} /> : profileHero;
+    category === 'projects'
+      ? (currentSearch && currentSearch.trim() !== '')
+        ? null
+        : <DiscoverCarousel dataList={heroProjectList} />
+      : profileHero;
   
   // --------------------
   // Helper functions
@@ -501,8 +506,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             matchesAny = true;
           }
         }
-        return matchesAny;
       }
+      return matchesAny;
     });
 
     // If no tags are currently selected, render all projects

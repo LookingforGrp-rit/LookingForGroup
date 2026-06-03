@@ -7,10 +7,11 @@ import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import {
+import users, {
   getJobTitles,
   getUsers,
-  getUsersById
+  getUsersById,
+  getCurrentAccount,
 } from "../../../api/users";
 import {
   ProjectJob,
@@ -22,6 +23,7 @@ import {
   JobCompensation,
   Role,
   ProjectWithFollowers,
+  SendProjectInviteInput,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -37,6 +39,10 @@ import {
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 //import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
+// import {
+//   transporter,
+//   sendEmail
+// } from "../../../../../server/src/mailer";
 
 // --- Variables ---
 // Default project value
@@ -78,7 +84,7 @@ type TeamTabProps = {
   // permissions: number;
   saveProject: () => void;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
-  saveable : boolean;
+  saveable: boolean;
   failCheck: boolean;
   message: string;
 };
@@ -152,6 +158,9 @@ export const TeamTab = ({
   const [searchResults, setSearchResults] = useState<Partial<UserPreview>[]>(
     []
   );
+
+  // current logged in user id
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   // State for error/successful messages
   const [errorAddMember, setErrorAddMember] = useState("");
@@ -278,6 +287,20 @@ export const TeamTab = ({
     }
   }, [allUsers]);
 
+  // load current logged-in account id
+  useEffect(() => {
+    const loadCurrent = async () => {
+      try {
+        const resp = await getCurrentAccount();
+        if (resp && resp.data) setCurrentUserId(resp.data.userId);
+      } catch (e) {
+        console.error("Failed to load current account", e);
+      }
+    };
+
+    loadCurrent();
+  }, []);
+
   // Assign active buttons in Open Positions
   const isTeamTabOpen = currentTeamTab === 1;
   useEffect(() => {
@@ -320,14 +343,14 @@ export const TeamTab = ({
   // Load correct contact name in open positions
   useEffect(() => {
     const loadName = async () => {
-    if (!currentJob?.contact?.userId) return;
+      if (!currentJob?.contact?.userId) return;
 
-    const user = await getUsersById(currentJob.contact.userId);
-    setContactName(`${user.data?.firstName} ${user.data?.lastName}`);
-  };
+      const user = await getUsersById(currentJob.contact.userId);
+      setContactName(`${user.data?.firstName} ${user.data?.lastName}`);
+    };
 
-  loadName();
-}, [currentJob?.contact?.userId]);
+    loadName();
+  }, [currentJob?.contact?.userId]);
 
   // --- Data retrieval ---
   /**
@@ -339,7 +362,8 @@ export const TeamTab = ({
   const getProjectJob = useCallback((id: number) => {
     return projectAfterTeamChanges.jobs.find((j) =>
       j.role?.roleId === id
-    )},
+    )
+  },
     [projectAfterTeamChanges.jobs]
   );
 
@@ -417,6 +441,14 @@ export const TeamTab = ({
       }
     }
 
+    // limit posbile null role
+    if (!currentMember.role) {
+      setSuccessAddMember(false);
+      setErrorAddMember("Select a role");
+      setSelectKey((previous) => previous + 1);
+      return false;
+    }
+
     // Match this user with all users to get profile image
     const matchedUser = allUsers.find(
       (user) => user.userId === currentMember.user?.userId
@@ -448,7 +480,7 @@ export const TeamTab = ({
       setClosePopup(true);
       // add member
 
-      if("localId" in currentMember) (currentMember as PendingProjectMember).localId = ++localIdIncrement;
+      if ("localId" in currentMember) (currentMember as PendingProjectMember).localId = ++localIdIncrement;
 
       dataManager.createMember({
         id: {
@@ -456,8 +488,11 @@ export const TeamTab = ({
           type: "local",
         },
         data: {
-          userId: currentMember.user.userId,
-          roleId: currentMember.role?.roleId,
+          inviteeUserId: currentMember.user.userId,
+          // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
+          inviterUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
+          roleId: currentMember.role.roleId,
+          message: '',
         },
       });
 
@@ -528,6 +563,7 @@ export const TeamTab = ({
       }
 
       // set user for member
+      // Somehow wait until they accept the invite
       setCurrentMember({
         ...emptyMember,
         ...currentMember,
@@ -701,7 +737,7 @@ export const TeamTab = ({
         ...projectAfterTeamChanges.jobs,
         currentJob as Pending<ProjectJob>
       ]
-      
+
       updatePendingProject(projectAfterTeamChanges);
 
       setEditMode(false);
@@ -729,13 +765,13 @@ export const TeamTab = ({
     });
 
     projectAfterTeamChanges.jobs = [
-        ...projectAfterTeamChanges.jobs.filter(
-          (job) =>
-            (job as ProjectJob).jobId !== (currentJob as ProjectJob).jobId
-        ),
-        currentJob as ProjectJob,
-      ]
-    
+      ...projectAfterTeamChanges.jobs.filter(
+        (job) =>
+          (job as ProjectJob).jobId !== (currentJob as ProjectJob).jobId
+      ),
+      currentJob as ProjectJob,
+    ]
+
 
     setErrorAddPosition("");
     setEditMode(false);
@@ -752,124 +788,124 @@ export const TeamTab = ({
   // --- Content variables ---
   // JSX content for viewing position details.
   const positionViewWindow = (
-    projectAfterTeamChanges.jobs.length === 0 ? 
-    // No positions to view
-    <>
-      <div className="positions-popup-info-title">
-        No open positions
-      </div>
-    </> :
-    // Positions to view
-    <>
-      <button
-        className="edit-project-member-button"
-        onClick={() => {
-          setCurrentJob(getProjectJob(currentJob?.role?.roleId as number));
-          setEditMode(true);
-        }}
-      >
-        <ThemeIcon
-          id={"pencil"}
-          width={11}
-          height={12}
-          className={"gradient-color-fill edit-project-member-icon"}
-          ariaLabel={"edit"}
-        />
-      </button>
-      <div className="positions-popup-info-title">
-        {currentJob?.role?.label ?? "Member"}
-      </div>
-      <div className="positions-popup-info-description">
-        <div id="position-description-content">
-          {currentJob?.description ?? ""}
+    projectAfterTeamChanges.jobs.length === 0 ?
+      // No positions to view
+      <>
+        <div className="positions-popup-info-title">
+          No open positions
         </div>
-      </div>
-      <div id="open-position-details">
-        <div id="open-position-details-left">
-          <div id="position-availability">
-            <span className="position-detail-indicator">Availability: </span>
-            {(currentJob && currentJob?.availability) && JobAvailabilityEnums[currentJob.availability]}
+      </> :
+      // Positions to view
+      <>
+        <button
+          className="edit-project-member-button"
+          onClick={() => {
+            setCurrentJob(getProjectJob(currentJob?.role?.roleId as number));
+            setEditMode(true);
+          }}
+        >
+          <ThemeIcon
+            id={"pencil"}
+            width={11}
+            height={12}
+            className={"gradient-color-fill edit-project-member-icon"}
+            ariaLabel={"edit"}
+          />
+        </button>
+        <div className="positions-popup-info-title">
+          {currentJob?.role?.label ?? "Member"}
+        </div>
+        <div className="positions-popup-info-description">
+          <div id="position-description-content">
+            {currentJob?.description ?? ""}
           </div>
-          <div id="position-location">
-            <span className="position-detail-indicator">Location: </span>
-            {(currentJob && currentJob?.location) && JobLocationEnums[currentJob.location]}
-          </div>
-          <div id="open-position-contact">
-            <span className="position-detail-indicator">Contact: </span>
-            {/* FIXME: Contact is owner until change contact is implemented */}
-            <div
-              id="position-contact-link"
-              onClick={() => {
-                // Link to profile, close popup
-                navigate(`${paths.routes.PROFILE}?userID=${currentJob?.contact?.userId}`);
-                setOpen(false);
-              }} 
-            >
-              <img
-                className="project-member-image"
-                src={
-                  projectAfterTeamChanges.owner?.profileImage ?? profileImage
-                }
-                alt="profile picture"
-                onError={(e) => {
-                  // default profile picture if user image doesn't load
-                  // Cannot use usePreloadedImage function because this is in a callback
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = profileImage;
+        </div>
+        <div id="open-position-details">
+          <div id="open-position-details-left">
+            <div id="position-availability">
+              <span className="position-detail-indicator">Availability: </span>
+              {(currentJob && currentJob?.availability) && JobAvailabilityEnums[currentJob.availability]}
+            </div>
+            <div id="position-location">
+              <span className="position-detail-indicator">Location: </span>
+              {(currentJob && currentJob?.location) && JobLocationEnums[currentJob.location]}
+            </div>
+            <div id="open-position-contact">
+              <span className="position-detail-indicator">Contact: </span>
+              {/* FIXME: Contact is owner until change contact is implemented */}
+              <div
+                id="position-contact-link"
+                onClick={() => {
+                  // Link to profile, close popup
+                  navigate(`${paths.routes.PROFILE}?userID=${currentJob?.contact?.userId}`);
+                  setOpen(false);
                 }}
-              />
-              <span>{contactName}</span>
+              >
+                <img
+                  className="project-member-image"
+                  src={
+                    projectAfterTeamChanges.owner?.profileImage ?? profileImage
+                  }
+                  alt="profile picture"
+                  onError={(e) => {
+                    // default profile picture if user image doesn't load
+                    // Cannot use usePreloadedImage function because this is in a callback
+                    const profileImg = e.target as HTMLImageElement;
+                    profileImg.src = profileImage;
+                  }}
+                />
+                <span>{contactName}</span>
+              </div>
+            </div>
+          </div>
+          <div id="open-position-details-right">
+            <div id="position-duration">
+              <span className="position-detail-indicator">Duration: </span>
+              {(currentJob && currentJob?.duration) && JobDurationEnums[currentJob.duration]}
+            </div>
+            <div id="position-compensation">
+              <span className="position-detail-indicator">Compensation: </span>
+              {(currentJob && currentJob?.compensation) && JobCompensationEnums[currentJob.compensation]}
             </div>
           </div>
         </div>
-        <div id="open-position-details-right">
-          <div id="position-duration">
-            <span className="position-detail-indicator">Duration: </span>
-            {(currentJob && currentJob?.duration) && JobDurationEnums[currentJob.duration]}
-          </div>
-          <div id="position-compensation">
-            <span className="position-detail-indicator">Compensation: </span>
-            {(currentJob && currentJob?.compensation) && JobCompensationEnums[currentJob.compensation]}
-          </div>
-        </div>
-      </div>
-      <Popup>
-        <PopupButton className="delete-position-button button-reset">
-          <ThemeIcon
-            id="trash"
-            width={21}
-            height={21}
-            ariaLabel="Delete position"
-          />
-        </PopupButton>
-        <PopupContent useClose={false}>
-          <div id="project-team-delete-member-title">Delete Position</div>
-          <div
-            id="project-team-delete-member-text"
-            className="project-editor-extra-info"
-          >
-            Are you sure you want to delete{" "}
-            <span className="project-info-highlight">
-              {getProjectJob(currentJob?.role?.roleId as number)?.role?.label ??
-                "Member"}
-            </span>{" "}
-            from the project? This action cannot be undone.
-          </div>
-          <div className="project-editor-button-pair">
-            {/* TODO: make delete button work */}
-            <PopupButton
-              className="delete-button"
-              callback={() => deletePosition()}
+        <Popup>
+          <PopupButton className="delete-position-button button-reset">
+            <ThemeIcon
+              id="trash"
+              width={21}
+              height={21}
+              ariaLabel="Delete position"
+            />
+          </PopupButton>
+          <PopupContent useClose={false}>
+            <div id="project-team-delete-member-title">Delete Position</div>
+            <div
+              id="project-team-delete-member-text"
+              className="project-editor-extra-info"
             >
-              Delete
-            </PopupButton>
-            <PopupButton buttonId="team-delete-member-cancel-button">
-              Cancel
-            </PopupButton>
-          </div>
-        </PopupContent>
-      </Popup>
-    </>
+              Are you sure you want to delete{" "}
+              <span className="project-info-highlight">
+                {getProjectJob(currentJob?.role?.roleId as number)?.role?.label ??
+                  "Member"}
+              </span>{" "}
+              from the project? This action cannot be undone.
+            </div>
+            <div className="project-editor-button-pair">
+              {/* TODO: make delete button work */}
+              <PopupButton
+                className="delete-button"
+                callback={() => deletePosition()}
+              >
+                Delete
+              </PopupButton>
+              <PopupButton buttonId="team-delete-member-cancel-button">
+                Cancel
+              </PopupButton>
+            </div>
+          </PopupContent>
+        </Popup>
+      </>
   );
 
   // JSX content for editing position details.
@@ -878,9 +914,9 @@ export const TeamTab = ({
       <div id="edit-position-role">
         <label>
           Role
-          <span 
-            className="required-asterisk" 
-            aria-hidden="true" 
+          <span
+            className="required-asterisk"
+            aria-hidden="true"
             title="Required"
           >
             *
@@ -889,12 +925,13 @@ export const TeamTab = ({
         <Select>
           <SelectButton
             placeholder={isCreatingNewPosition ? "Select" : ""}
+            searchable={true}
             initialVal={
               isCreatingNewPosition
                 ? ""
                 : (allRoles.find(
-                    ({ roleId }) => roleId === currentJob?.role?.roleId
-                  )?.label ?? "Member")
+                  ({ roleId }) => roleId === currentJob?.role?.roleId
+                )?.label ?? "Member")
             }
             type="input"
           />
@@ -928,9 +965,9 @@ export const TeamTab = ({
       <div id="edit-position-description">
         <label>
           Role Description
-          <span 
-            className="required-asterisk" 
-            aria-hidden="true" 
+          <span
+            className="required-asterisk"
+            aria-hidden="true"
             title="Required"
           >
             *
@@ -956,9 +993,9 @@ export const TeamTab = ({
         <div id="edit-position-details-left">
           <label className="edit-position-availability">
             Availability
-            <span 
-              className="required-asterisk" 
-              aria-hidden="true" 
+            <span
+              className="required-asterisk"
+              aria-hidden="true"
               title="Required"
             >
               *
@@ -971,14 +1008,14 @@ export const TeamTab = ({
                 isCreatingNewPosition
                   ? ""
                   : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.availability)
-                      ? JobAvailabilityEnums[getProjectJob(currentJob?.role?.roleId as number)!.availability!] // explicit because its checked for before
-                      : ''
+                    ? JobAvailabilityEnums[getProjectJob(currentJob?.role?.roleId as number)!.availability!] // explicit because its checked for before
+                    : ''
               }
               type="input"
             />
             <SelectOptions
-              callback={(e) =>{
-                const key = Object.keys(JobAvailabilityEnums).find((key) => 
+              callback={(e) => {
+                const key = Object.keys(JobAvailabilityEnums).find((key) =>
                   JobAvailabilityEnums[key as keyof typeof JobAvailabilityEnums] === (e.target as HTMLButtonElement).value);
 
                 setCurrentJob({
@@ -999,9 +1036,9 @@ export const TeamTab = ({
           </Select>
           <label className="edit-position-location">
             Location
-            <span 
-              className="required-asterisk" 
-              aria-hidden="true" 
+            <span
+              className="required-asterisk"
+              aria-hidden="true"
               title="Required"
             >
               *
@@ -1014,8 +1051,8 @@ export const TeamTab = ({
                 isCreatingNewPosition
                   ? ""
                   : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.location)
-                      ? JobLocationEnums[getProjectJob(currentJob?.role?.roleId as number)!.location!] // explicit because its checked for before
-                      : ''
+                    ? JobLocationEnums[getProjectJob(currentJob?.role?.roleId as number)!.location!] // explicit because its checked for before
+                    : ''
               }
               type="input"
             />
@@ -1041,9 +1078,9 @@ export const TeamTab = ({
           </Select>
           <label className="edit-position-contact">
             Main Contact
-            <span 
-              className="required-asterisk" 
-              aria-hidden="true" 
+            <span
+              className="required-asterisk"
+              aria-hidden="true"
               title="Required"
             >
               *
@@ -1104,9 +1141,9 @@ export const TeamTab = ({
         <div id="edit-position-details-right">
           <label className="edit-position-duration">
             Duration
-            <span 
-              className="required-asterisk" 
-              aria-hidden="true" 
+            <span
+              className="required-asterisk"
+              aria-hidden="true"
               title="Required"
             >
               *
@@ -1119,15 +1156,15 @@ export const TeamTab = ({
                 isCreatingNewPosition
                   ? ""
                   : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.duration)
-                      ? JobDurationEnums[getProjectJob(currentJob?.role?.roleId as number)!.duration!] // explicit because its checked for before
-                      : ''
+                    ? JobDurationEnums[getProjectJob(currentJob?.role?.roleId as number)!.duration!] // explicit because its checked for before
+                    : ''
               }
               type="input"
             />
             <SelectOptions
-              callback={(e) =>{
+              callback={(e) => {
                 const key = Object.keys(JobDurationEnums).find((key) => JobDurationEnums[key as keyof typeof JobDurationEnums] === (e.target as HTMLButtonElement).value)
-                
+
                 setCurrentJob({
                   ...emptyJob,
                   ...currentJob,
@@ -1146,9 +1183,9 @@ export const TeamTab = ({
           </Select>
           <label className="edit-position-compensation">
             Compensation
-            <span 
-              className="required-asterisk" 
-              aria-hidden="true" 
+            <span
+              className="required-asterisk"
+              aria-hidden="true"
               title="Required"
             >
               *
@@ -1161,15 +1198,15 @@ export const TeamTab = ({
                 isCreatingNewPosition
                   ? ""
                   : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.compensation)
-                      ? JobCompensationEnums[getProjectJob(currentJob?.role?.roleId as number)!.compensation!] // explicit because its checked for before
-                      : ''
+                    ? JobCompensationEnums[getProjectJob(currentJob?.role?.roleId as number)!.compensation!] // explicit because its checked for before
+                    : ''
               }
               type="input"
             />
             <SelectOptions
-              callback={(e) =>{
+              callback={(e) => {
                 const key = Object.keys(JobCompensationEnums).find((key) => JobCompensationEnums[key as keyof typeof JobCompensationEnums] === (e.target as HTMLButtonElement).value)
-                
+
                 setCurrentJob({
                   ...emptyJob,
                   ...currentJob,
@@ -1292,6 +1329,7 @@ export const TeamTab = ({
                         initialVal={member.role?.label}
                         className=""
                         type="dropdown"
+                        searchable={true}
                       />
                       <SelectOptions
                         callback={(e) => {
@@ -1341,7 +1379,7 @@ export const TeamTab = ({
                         });
 
                         // update team changes array
-                        projectAfterTeamChanges.members = 
+                        projectAfterTeamChanges.members =
                           projectAfterTeamChanges.members.map((member) => {
                             // if this member matches the updated member
                             if (currentMember.user?.userId === member.user?.userId) {
@@ -1356,6 +1394,10 @@ export const TeamTab = ({
                               return member;
                             }
                           })
+
+                          //update the temporary changes made to edit member popup roles, if pressed x for main save, it will still undo everything else
+                          updatePendingProject(projectAfterTeamChanges);
+                          
                       }}
                     >
                       Save
@@ -1411,12 +1453,12 @@ export const TeamTab = ({
                                 });
                               }
                               projectAfterTeamChanges.members =
-                              projectAfterTeamChanges.members.filter(
-                                    (member) =>
-                                      member.user?.userId !==
-                                      currentMember.user?.userId
-                                  )
-                                  updatePendingProject(projectAfterTeamChanges)
+                                projectAfterTeamChanges.members.filter(
+                                  (member) =>
+                                    member.user?.userId !==
+                                    currentMember.user?.userId
+                                )
+                              updatePendingProject(projectAfterTeamChanges)
                             }}
                           >
                             Delete
@@ -1517,7 +1559,7 @@ export const TeamTab = ({
               </div>
               <label id="project-team-add-member-role">Role</label>
               <Select key={selectKey}>
-                <SelectButton placeholder="Select" initialVal="" type="input" />
+                <SelectButton placeholder="Select" initialVal="" type="input" searchable={true} />
                 <SelectOptions
                   callback={(e) => {
                     setCurrentMember({
@@ -1665,9 +1707,9 @@ export const TeamTab = ({
       <div id="team-save-info">
         <Popup>
           {saveable ? "" :
-          <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*{message}*</p>
-          </div>}
+            <div id="invalid-input-error" className={"save-error-msg-general"}>
+              <p>*{message}*</p>
+            </div>}
           <PopupButton
             buttonId="project-editor-save"
             doNotClose={() => failCheck}

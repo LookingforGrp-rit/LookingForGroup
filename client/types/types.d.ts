@@ -40,8 +40,8 @@ import {
  */
 export type Fillable<T> = {
   [attr in keyof T]: T[attr] extends object
-    ? Fillable<T[attr]> | null
-    : T[attr] | null;
+  ? Fillable<T[attr]> | null
+  : T[attr] | null;
 };
 
 /**
@@ -147,7 +147,7 @@ interface ProjectChangesUpdates {
    * All tags to be updated
    */
   tags: CRUDRequest<UpdateProjectTagInput>[];
-  
+
   /**
    * All images to be updated
    */

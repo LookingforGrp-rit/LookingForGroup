@@ -98,7 +98,7 @@ export const ProfileEditPopup = () => {
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevents any default calls
 
-    console.log('onSaveClicked');
+    console.log('Saving...'); //yo having this like change the button as feedback for the user that it's saving could be amazing holup
 
     try {
       if (!dataManager) return;
