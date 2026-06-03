@@ -63,6 +63,7 @@ const sendInviteService = async (
                 \n\n
                 You've been invited to join the project "${project.title}" as a ${role.label} by ${inviter.firstName} ${inviter.lastName}. 
                 If you don't want to join the project or believe this is a mistake, you may safely ignore this email.
+                \n
                 Here is the message from the inviter if they included one:
                 \n
                 ${msg}

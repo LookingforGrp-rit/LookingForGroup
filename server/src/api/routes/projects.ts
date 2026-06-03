@@ -1,5 +1,5 @@
 import type { AuthenticatedRequest } from '@looking-for-group/shared';
-import express, { Router, type NextFunction, type Request, type Response } from 'express';
+import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
@@ -12,7 +12,7 @@ import { skipIfEmpty } from '../middleware/validators/skip-if-empty.ts';
 import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
 const router = Router();
-const urlencodedParser = express.urlencoded({ extended: true });
+// const urlencodedParser = express.urlencoded({ extended: true });
 
 export const authenticated = (
   controller: (
@@ -178,15 +178,15 @@ router.post(
 );
 //Sends an invite to a pending member of a project through email
 //Currently the same as adding a member normally, but at least it doesnt break the site immediately
-router.post(
-  '/:id/members/invite',
-  requiresLogin,
-  injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  urlencodedParser,
-  authenticated(requiresProjectOwner),
-  PROJECT.sendInvite,
-);
+// router.post(
+//   '/:id/members/invite',
+//   requiresLogin,
+//   injectCurrentUser,
+//   projectExistsAt('path', 'id'),
+//   urlencodedParser,
+//   authenticated(requiresProjectOwner),
+//   PROJECT.sendInvite,
+// );
 //Edits a member of a specific project through id
 router.patch(
   '/:id/members/:userId',
