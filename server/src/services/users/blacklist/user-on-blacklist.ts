@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type AddBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type AddBlacklistServiceSuccess = ServiceSuccessSusbet<'OK'>;
+type AddBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 
 //Checks if a user is on the blacklist
 //To be used when they attempt to log in

@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DeleteProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteProjectServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteProjectServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/projects/{id}
 export const deleteProjectService = async (

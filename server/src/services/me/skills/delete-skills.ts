@@ -1,9 +1,9 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 import { getSkillsService } from './get-skills.ts';
 
 type DeleteSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteSkillServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteSkillServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/me/skills/{id}
 export const deleteSkillService = async (
