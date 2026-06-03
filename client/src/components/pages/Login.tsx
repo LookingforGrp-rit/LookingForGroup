@@ -206,7 +206,7 @@ const Login: React.FC = () => {
             lightSrc={'/assets/bannerImages/login_light.png'}
             darkSrc={'/assets/bannerImages/login_dark.png'}
           />
-          <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>
+          <button onClick={() => navigate(paths.routes.SIGNUP, {replace: true})}>Sign Up</button>
         </div>
       </div>
     </div>

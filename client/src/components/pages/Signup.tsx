@@ -493,7 +493,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             lightSrc={'/assets/bannerImages/signup_light.png'}
             darkSrc={'/assets/bannerImages/signup_dark.png'}
           />
-          <button onClick={() => navigate(paths.routes.LOGIN)}>Log In</button>
+          <button onClick={() => navigate(paths.routes.LOGIN, {replace: true})}>Log In</button>
         </div>
       </div>
     </div>
