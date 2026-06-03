@@ -335,7 +335,7 @@ Signup process modal style rules
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: var(--header-color);
   background-repeat: no-repeat;
   z-index: 10;
 }
@@ -345,7 +345,7 @@ Signup process modal style rules
 .ChooseProficiencies,
 .CompleteProfile,
 .GetStarted {
-  background-color: var(--primary-color);
+  background-color: var(--bg-color);
   margin: auto;
   display: flex;
   justify-content: center;
@@ -361,16 +361,19 @@ Signup process modal style rules
 
 #signupProcess-title {
   font-size: 1.75rem;
-  color: var(--orange);
+  color: var(--primary-color);
   width: 500px;
   text-align: center;
+  margin-bottom: 10px;
+}
 
-  p {
-    font-size: 0.9375rem;
-    color: black;
+#signupProcess-subtitle {
+    font-size: 1.25rem;
+    color: var(--primary-color);
     margin: 10px;
+    margin-top: 0;
+    margin-bottom: 20px;
     font-weight: 400;
-  }
 }
 
 /* buttons */
@@ -423,9 +426,9 @@ Signup process modal style rules
   width: 100px;
   font-size: 1.125rem;
   font-weight: 600;
-  background-color: var(--lightGray);
-  color: black;
-  border: 2px solid var(--lightGray);
+  background-color: var(--primary-color);
+  color: var(--orange);
+  border: 2px solid var(--orange);
 }
 
 #signup-backBtn:hover {
@@ -482,6 +485,7 @@ Signup process modal style rules
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
+  grid-area: profileImage;
 }
 
 /* upload picture or use avatar buttons */
@@ -621,31 +625,7 @@ Signup process modal style rules
   font-size: 1rem;
 }
 
-#pronouns-input {
-  width: 180px;
-  height: 35px;
-  margin: 40px 0px 0px 10px;
-  padding: 5px 20px;
-  font-size: 0.9375rem;
-  border: 2px solid var(--lightGray);
-  border-radius: 4px;
-  background-color: var(--primary-color);
-  color: black;
-  font-weight: 400;
-}
-
-#bio-input {
-  width: 400px;
-  height: 140px;
-  margin: 20px;
-  padding: 10px;
-  border: 2px solid var(--lightGray);
-  border-radius: 4px;
-  resize: none;
-  font-size: 1rem;
-}
-
-.name-username-pronouns-container {
+/* .name-username-pronouns-container {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -654,6 +634,92 @@ Signup process modal style rules
   gap: 10px;
   width: 230px;
   height: 150px;
+} */
+
+#completeProfile-input-container {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  grid-template-rows: auto auto auto auto auto;
+  grid-template-areas: 
+  'profileImage pronouns academicYear slogan'
+  'profileImage phoneNumber major bio'
+  'profileImage jobTitle jobTitle bio'
+  'profileImage location location bio'
+  'profileImage funFact funFact bio';
+  row-gap: 20px;
+  column-gap: 20px;
+  
+}
+
+#pronouns-input, #slogan-input, #phoneNumber-input, #jobTitle-input, 
+#location-input, #funFact-input {
+  font-weight: 400;
+  input {
+    margin-top: 0px;
+    background-color: var(--header-color);
+  }
+}
+
+#pronouns-input {
+  grid-area: pronouns;
+}
+
+#slogan-input {
+  grid-area: slogan;
+}
+
+#phoneNumber-input {
+  grid-area: phoneNumber;
+}
+
+#jobTitle-input {
+  grid-area: jobTitle;
+}
+
+#location-input {
+  grid-area: location;
+}
+
+#funFact-input {
+  grid-area: funFact;
+}
+
+#academicYear-input {
+  grid-area: academicYear;
+  
+  div {
+    height: 100%;
+    width: 100%;
+
+    div {
+      background-color: var(--header-color);
+      
+    }
+  }
+}
+
+#major-input {
+  grid-area: major;
+  
+  div {
+    height: 100%;
+    width: 100%;
+
+    div {
+      background-color: var(--header-color);
+    }
+  }
+}
+
+#bio-input {
+  resize: none;
+  font-size: 1rem;
+  grid-area: bio;
+  
+  div textarea {
+    margin-top: 0px;
+    background-color: var(--header-color);
+  }
 }
 
 #new-project-btn,

@@ -1,5 +1,7 @@
 import { CreateUserInput } from '@looking-for-group/shared';
 import { MouseEventHandler } from 'react';
+import LabelInputBox from '../LabelInputBox';
+import { Select, SelectButton, SelectOptions } from '../Select';
 
 interface CompleteProfileProps {
   show : boolean;
@@ -9,6 +11,12 @@ interface CompleteProfileProps {
   selectedSkills: string[];
   bio : string;
   pronouns : string;
+  slogan : string;
+  phoneNumber : string;
+  currentJobTitle : string;
+  location : string;
+  funFact : string;
+  major: string;
   setBio : React.Dispatch<React.SetStateAction<string>>;
   setPronouns : React.Dispatch<React.SetStateAction<string>>;
   profileImage : any;
@@ -24,6 +32,12 @@ interface CompleteProfileProps {
  * @param userInfo user information
  * @param bio current user bio 
  * @param pronouns user pronouns
+ * @param slogan user slogan
+ * @param phoneNumber 
+ * @param currentJobTitle
+ * @param location
+ * @param funFact
+ * @param major
  * @param setBio set user bio 
  * @param setPronouns set user pronouns
  * @param profileImage user profile image 
@@ -40,6 +54,12 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   selectedSkills,
   bio,
   pronouns,
+  slogan,
+  phoneNumber,
+  currentJobTitle,
+  location,
+  funFact,
+  major,
   setBio,
   setPronouns,
   profileImage,
@@ -90,67 +110,146 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
     <div className="signupProcess-background">
       <div className="signupProcess-modal">
         <div className="CompleteProfile">
-          <h1 id="signupProcess-title">Complete Your Profile</h1>
-          <p>You can add more and edit later</p>
+          <h1 id="signupProcess-title">Complete Your Profile!</h1>
+          <p id="signupProcess-subtitle">You can add more and edit later</p>
 
-          <div id="profile-details">
-            <div className="row">
-              <div className="column">
-                {/* Profile picture container */}
-                <div id="profile-pic" style={{ width: 160, height: 160 }}>
-                  {/* image is profile image, if empty/null display avatar image */}
-                  <img src={profileImage ? profileImage : /*avatarImage*/ ''} alt="profile-pic" />
-                  {/* <img src={profileImage} alt="profile-pic" /> */}
-                </div>
-                <div className="profile-pic-option">
-                  {/* <button>Upload Picture</button> */}
-                  {/* input to upload picture */}
-                  <input
-                    type="file"
-                    id="upload-pfp"
-                    accept="image/*"
-                    hidden
-                    onChange={handleUploadPfp}
-                  />
-                  <label htmlFor="upload-pfp">Upload Picture</label>
-
-                  {/* button to use avatar as profile picture */}
-                  {/* <button onClick={handleUseAvatar}>Use Avatar</button> */}
-                </div>
+          <div id="completeProfile-input-container">
+            <div id="profile-details">
+              {/* Profile picture container */}
+              <div id="profile-pic" style={{ width: 160, height: 160 }}>
+                {/* image is profile image, if empty/null display avatar image */}
+                <img src={profileImage ? profileImage : /*avatarImage*/ ''} alt="profile-pic" />
+                {/* <img src={profileImage} alt="profile-pic" /> */}
               </div>
-
-              <div className="name-username-pronouns-container">
-                <div className="signup-fullname">
-                  {/* First and Last Name */}
-                  <h2>
-                    {userInfo.firstName} {userInfo.lastName}{' '}
-                  </h2>
-
-                  {/* Username */}
-                  <p>@{userInfo.username}</p>
-                </div>
-
-                {/* Pronouns */}
+              <div className="profile-pic-option">
+                {/* <button>Upload Picture</button> */}
+                {/* input to upload picture */}
                 <input
-                  id="pronouns-input"
-                  type="text"
-                  autoComplete="off"
-                  placeholder="Add Pronouns"
-                  onChange={handlePronounsChange}
-                  value={pronouns}
+                  type="file"
+                  id="upload-pfp"
+                  accept="image/*"
+                  hidden
+                  onChange={handleUploadPfp}
                 />
+                <label htmlFor="upload-pfp">Upload Picture</label>
+
+                {/* button to use avatar as profile picture */}
+                {/* <button onClick={handleUseAvatar}>Use Avatar</button> */}
               </div>
             </div>
+            
+            {/* <div className="signup-fullname">
+              <h2>
+                {userInfo.firstName} {userInfo.lastName}{' '}
+              </h2>
 
-            {/* Input Box for Bio */}
-            <textarea
+              <p>@{userInfo.username}</p>
+            </div> */}
+
+            {/* Pronouns */}
+            <LabelInputBox
+              label={"Add Pronouns"}
+              inputType={"single"}
+              maxLength={50}
+              id="pronouns-input"
+              value={pronouns}
+              placeholder={"Pronouns"}
+              onChange={handlePronounsChange}
+              hideUnsaved={true}
+            />
+
+            {/* Slogan */}
+            <LabelInputBox
+              label={"Add Slogan"}
+              inputType={"single"}
+              maxLength={20}
+              id="slogan-input"
+              value={slogan}
+              placeholder={"Slogan"}
+              // onChange={}
+              hideUnsaved={true}
+            />
+
+            {/* Phone Number */}
+            <LabelInputBox
+              label={"Add Phone Number"}
+              inputType={"single"}
+              maxLength={15}
+              id="phoneNumber-input"
+              value={phoneNumber}
+              placeholder={"Phone Number"}
+              // onChange={}
+              hideUnsaved={true}
+            />
+
+            {/* Current Job Title */}
+            <LabelInputBox
+              label={"Add Job Title"}
+              inputType={"single"}
+              maxLength={30}
+              id="jobTitle-input"
+              value={currentJobTitle}
+              placeholder={"Current Job Title"}
+              // onChange={}
+              hideUnsaved={true}
+            />
+
+            {/* Location */}
+            <LabelInputBox
+              label={"Add Location (Optional)"}
+              inputType={"single"}
+              maxLength={30}
+              id="location-input"
+              value={location}
+              placeholder={"Location (Optional)"}
+              // onChange={}
+              hideUnsaved={true}
+            />
+
+            {/* Fun Fact */}
+            <LabelInputBox
+              label={"Add Fun Fact"}
+              inputType={"single"}
+              maxLength={30}
+              id="funFact-input"
+              value={funFact}
+              placeholder={"Fun Fact"}
+              // onChange={}
+              hideUnsaved={true}
+            />
+
+            {/* Academic Year */}
+            <div id="academicYear-input">
+              <Select>
+              <SelectButton 
+              placeholder='Academic Year'
+              type={"input"}
+              />
+            </Select>
+            </div>
+
+            {/* Major */}
+            <div id="major-input">
+              <Select>
+              <SelectButton 
+              placeholder='Major'
+              type={"input"}
+              />
+            </Select>
+            </div>
+
+            {/* Bio */}
+            <LabelInputBox
+              label={"Bio"}
+              inputType={"multi"}
+              maxLength={100}
               id="bio-input"
-              autoComplete="off"
-              placeholder="Add A Bio"
+              placeholder={"Bio"}
               onChange={handleBioChange}
               value={bio}
-            ></textarea>
-
+              hideUnsaved={true}
+            />
+          </div>
             {/* Skills */}
             <div id="signup-profile-skill">
               {selectedSkills.map((skill, index) => (
@@ -159,7 +258,6 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
                 </div>
               ))}
             </div>
-          </div>
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
               Back
