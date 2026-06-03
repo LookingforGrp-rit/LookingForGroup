@@ -23,6 +23,7 @@ Project Panel component style rules
   display: flex;
   justify-content: center;
 }
+
 /*
 @media only screen and (max-width: 700px) {
   #discover-panel-box {
@@ -1359,12 +1360,19 @@ Project Creator and Editor Popup style rules
   display: flex;
   gap: 25px;
   margin-top: 15px;
-  width: 100%;
 }
 
 @media only screen and (max-width: 576px) {
-  #project-team-open-positions-popup {
-    flex-direction: column;
+
+  #project-open-positions-popup {
+    overflow-y: auto;
+    padding: 20px;
+    flex-wrap: nowrap;
+    justify-content: baseline;
+  }
+
+  .positions-popup-list {
+    max-height: fit-content;
   }
 
   #project-team-open-positions-popup .positions-popup-list {
@@ -1390,11 +1398,6 @@ Project Creator and Editor Popup style rules
     max-width: fit-content;
   }
 }
-
-@media (max-width: 1194px) {
-  #project-team-open-positions-popup {}
-}
-
 
 #team-positions-popup-list-header {
   text-align: left;
@@ -1690,7 +1693,7 @@ select.edit-position-compensation {
     flex-direction: row;
     gap: 20px;
     padding-bottom: 20px;
-    width:max-content;
+    width: max-content;
   }
 
   #project-crop-save {
@@ -1714,9 +1717,7 @@ select.edit-position-compensation {
     border: none;
   }
 
-  .slider-text {
-    
-  }
+  .slider-text {}
 }
 
 
@@ -2922,8 +2923,6 @@ Project Carousel style rules
   #project-tags {
     flex-wrap: wrap;
   }
-
-  #project-info-panel {}
 }
 
 #project-title {
@@ -3078,27 +3077,23 @@ Project Carousel style rules
 }
 
 #project-open-positions-popup {
-  background-image: var(--modal-gradient);
+  /*background-image: var(--modal-gradient);*/
   border-radius: 10px;
   font-style: normal;
-  display: grid;
-  width: 1121px;
-  max-width: 1121px;
+  display: flex;
+  flex-direction: column;
+  flex-wrap: nowrap;
+  justify-content: baseline;
+  align-content: center;
+  width: 100%;
+  max-width: 1141px;
+  margin: 40px;
   height: 849px;
   max-height: 849px;
-  gap: 30px;
-  padding: 28px 5px 21px 5px;
+  padding: 20px 25px;
   box-sizing: border-box;
   overflow-y: auto;
   overflow-x: hidden;
-  border-radius: 10px;
-  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
-  grid-template:
-    'header header' 50px
-    'list info' auto
-    'close close' 50px /
-    300px auto;
-
 
   #project-team-open-positions-popup {
     margin-top: 0;
@@ -3109,28 +3104,37 @@ Project Carousel style rules
   }
 }
 
+#project-team-open-positions-info {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-content: flex-start;
+  gap: 20px;
+  margin-bottom: 20px;
+  max-width: 1141px;
+}
+
 #positions-popup-header {
-  grid-area: header;
   text-align: center;
   font-size: 3rem;
   font-weight: 700;
-  margin: auto;
+  width: auto;
+  margin: 30px auto;
   padding: 10px 20px;
   background-color: none;
   color: var(--primary-color);
-  border-radius: 100px;
 }
 
 .positions-popup-list {
-  grid-area: list;
   text-align: center;
   background-color: var(--bg-color);
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
   border-radius: 10px;
-  flex: 0 381px;
+  /* flex: 0 381px;*/
   padding: 20px;
   max-width: 100%;
   box-sizing: border-box;
+  margin: 0 auto;
   /* makes it so padding is included in max width */
 }
 
@@ -3146,7 +3150,7 @@ Project Carousel style rules
 #project-team-open-positions-popup>.positions-popup-list {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 25px;
   width: 100%;
   margin-left: 0%;
 }
@@ -3208,12 +3212,13 @@ button#positions-popup-list-item-active {
 .positions-popup-info-wrapper {
   display: flex;
   flex-direction: column;
+  flex-grow: 2;
   justify-content: space-between;
   background-color: var(--bg-color);
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
+  border-radius: 10px;
   padding: 20px;
-  margin-right: 2%;
+  min-height: 400px;
 
   >.positions-popup-info {
     display: flex;
@@ -3223,7 +3228,6 @@ button#positions-popup-list-item-active {
 }
 
 #project-editor-team-content .positions-popup-info {
-  grid-area: info;
   display: flex;
   flex-direction: column;
   gap: 15px;
@@ -3236,82 +3240,48 @@ button#positions-popup-list-item-active {
   box-sizing: border-box;
 }
 
-@media only screen and (max-width: 576px) {
+@media only screen and (max-width: 1194px) {
 
   #project-open-positions-popup {
-    overflow-y: auto;
-    padding: 20px;
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: column;
-
-    width: calc(100% - 40px);
-    justify-content: baseline;
-  }
-
-  .positions-popup-list {}
-}
-
-@media (max-width: 1194px) {
-
-  #project-open-positions-popup {
-    display: grid;
-    width: 100%;
-    max-width: 1121px;
-    height: 849px;
-    max-height: 849px;
     gap: 30px;
-    padding: 28px 5px 21px 5px;
     box-sizing: border-box;
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 10px;
-    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.25);
-    margin-left: 0%;
-    margin-right: 0%;
-    grid-template:
-      'header header' 50px
-      'list info' auto
-      'close close' 50px /
-      auto auto;
   }
 
 }
 
-@media (max-width: 700px) {
+@media only screen and (max-width: 800px) {
 
   #project-open-positions-popup {
     overflow-y: auto;
     padding: 20px;
-    display: flex;
-    flex-wrap: nowrap;
-    flex-direction: column;
-    height: 100vh;
-    width: calc(100% - 40px);
     justify-content: baseline;
     align-items: center;
-
   }
 
-  .positions-popup-list {
+  .positions-popup-list,
+  .positions-popup-info-wrapper {
     max-height: fit-content;
-    margin-left: 20% !important;
-    margin-right: 20% !important;
   }
 
   .positions-popup-info-wrapper {
     margin-right: 0%;
+    min-height: fit-content;
   }
 
   #project-team-open-positions-popup {
-    display: flex;
     align-items: center;
     text-align: center;
     align-content: center;
+    margin: 0;
   }
 
-
-
+  #project-team-open-positions-info {
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
 }
 
 
@@ -3674,17 +3644,15 @@ My projects page style rules
     max-width: calc(100vw - 50px);
     align-items: baseline;
   }
-  
+
   .select-container,
   .my-projects-create-btn {
     display: flex;
   }
 }
 
-@media only screen and (max-width: 799px)
-{
-  .my-projects-filters
-  {
+@media only screen and (max-width: 799px) {
+  .my-projects-filters {
     margin: 0 auto;
     display: flex;
     flex-wrap: wrap;
@@ -4113,22 +4081,19 @@ My projects page style rules
     display: none;
   }
 
-  .list-card-section1
-  {
+  .list-card-section1 {
     grid-area: name;
   }
 
-  .list-card-status
-  {
+  .list-card-status {
     grid-area: status;
   }
 
-  .list-card-date
-  {
+  .list-card-date {
     grid-area: date;
   }
-  .dropdown-container #list-card-options-button
-  {
+
+  .dropdown-container #list-card-options-button {
     grid-area: menu;
   }
 
@@ -4137,7 +4102,7 @@ My projects page style rules
     grid-template-columns: 3fr 1fr;
     grid-template-rows: 1fr 1fr;
     grid-template-areas: "name menu"
-                         "status date";
+      "status date";
   }
 
   .dropdown-container {
@@ -4239,6 +4204,7 @@ My projects page style rules
 }
 
 @media only screen and (max-width: 1200px) {
+
   /* .list-card-status, .list-card-date, .project-header-label.date, .project-header-label.status {
     flex-shrink: 1;
   } */
