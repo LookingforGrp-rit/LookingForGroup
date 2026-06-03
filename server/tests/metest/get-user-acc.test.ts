@@ -80,6 +80,7 @@ describe('getUserByIdService', () => {
       ritEmail: 'gold@rit.edu',
       firstName: '',
       lastName: '',
+      preferredName: '',
       visibility: 'Public' as Visibility,
       phoneNumber: null,
       googleId: '2222222222',

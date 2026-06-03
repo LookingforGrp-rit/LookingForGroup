@@ -29,6 +29,11 @@ const getProjectSocialsService = async (
       return 'NOT_FOUND';
     }
 
+    //Array is alphebetized by website label
+    project.projectSocials = project.projectSocials.toSorted(
+      (social1, social2) =>
+        social1.socials.label.charCodeAt(0) - social2.socials.label.charCodeAt(0),
+    );
     return project.projectSocials.map((social) => transformProjectSocial(projectId, social));
   } catch (e) {
     console.error(`Error in getProjectSocialsService: ${JSON.stringify(e)}`);

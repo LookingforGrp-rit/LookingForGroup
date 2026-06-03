@@ -114,7 +114,17 @@ export const getAllUsersService = async (
       select: UserDetailSelector,
     });
 
-    const transformedUsers = users.map(transformUserToPreview);
+    let transformedUsers = users.map(transformUserToPreview);
+
+    //Sorts the users in alphabetical order by first name
+    transformedUsers = transformedUsers.toSorted(
+      (transformedUser1, transformedUser2) =>
+        transformedUser1.firstName.charCodeAt(0) - transformedUser2.firstName.charCodeAt(0),
+    );
+
+    //For when the preferred name column is implemented in the database
+    // transformedUsers = transformedUsers.toSorted((transformedUser1, transformedUser2) =>
+    //   transformedUser1.preferredName.charCodeAt(0) - transformedUser2.preferredName.charCodeAt(0));
     return transformedUsers;
   } catch (error) {
     console.error('Error in getAllUsersService:', error);
