@@ -101,8 +101,12 @@ export const getMyProjectsService = async (
     if (projects.length === 0) return 'NOT_FOUND';
 
     //user helper to transform project
-    const fullProject = projects.map(transformProjectToDetail);
+    let fullProject = projects.map(transformProjectToDetail);
 
+    //Array is sorted alphabetically by project title
+    fullProject = fullProject.toSorted(
+      (project1, project2) => project1.title.charCodeAt(0) - project2.title.charCodeAt(0),
+    );
     return fullProject;
   } catch (e) {
     console.error(`Error in getMyProjectsService: ${JSON.stringify(e)}`);
