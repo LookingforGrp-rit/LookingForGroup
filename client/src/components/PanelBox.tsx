@@ -33,7 +33,7 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, userId }: { 
   }
 
   },[displayedItems, itemListCopy])
-  console.log("PanelBox")
+  //console.log("PanelBox")
 
   /**
    * Appends more items to the displayed list when the user scrolls to the bottom.
@@ -67,7 +67,7 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, userId }: { 
    * @returns JSX element containing the project panels
    */
   const ProjectPanelBox = () => {
-    console.log("Project Panel");
+    //console.log("Project Panel");
     if (itemList.length === 0)
       return <div className="project-panel-box" onScroll={addItems}><>Sorry, no projects here</></div>
 

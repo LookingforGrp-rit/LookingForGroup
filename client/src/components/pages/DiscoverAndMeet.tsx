@@ -155,19 +155,22 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     if (!projects.data) return;
 
     const newProjectCache = projectCache;
-    for (let project of projects.data) {
+    console.log(projectCache);
 
+    for (let project of projects.data) {
       const cachedProject = newProjectCache[project.projectId];
       if (!cachedProject) {
         newProjectCache[project.projectId] = { preview: project };
+        //console.log(newProjectCache[project.projectId]);
       }
       else {
         cachedProject.preview = project;
+        //console.log(cachedProject.preview);
       }
 
     }
 
-    console.log(projects.data);
+    //console.log(projects.data);
     setFullProjectList(projects.data);
     setFilteredProjectList(projects.data);
 
@@ -242,7 +245,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     setDataLoaded(true);
   };
 
-  useMemo(() => getData(), []);
+  useMemo(() => getData(),[]);
 
   /**
    * Updates the filtered project list with new search information
@@ -571,43 +574,51 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
 const DiscoverPage = () => {
   //temp variables to initialize the use states for startup
-  let allProjects;
-  let currentUsername;
+  let allProjects : ProjectPreview[] | null | undefined = [];
+  let heroProjectContent : ProjectWithFollowers[] = [];
   let currentUserID;
 
   //loads up the data to populate the states that will be used inside the page on startup
   useEffect(() => {
-    const LoadUser = async () => {
+    const LoadData = async () => {
       const userRes = await getCurrentUsername();
-      if (userRes.status === 200) {
+      if(userRes.status === 200){
         currentUserID = userRes.data?.userId;
-        currentUsername = userRes.data?.username;
       }
-    }
-    LoadUser();
-  }, []);
 
-  //separate useeffect for when the server project data changes
-  useEffect(() => {
-    const LoadProjects = async () => {
       //loads the project data on 
       const projRes = await getProjects();
-      if (projRes.status === 200) {
+      if(projRes.status === 200) {
+        //sets the project data into the variable
         allProjects = projRes.data;
+
+        //sets up the hero content to be plugged into the carousel
+        const projectDetailList : ProjectWithFollowers[] = [];
+        for(let project of (allProjects as ProjectPreview[]).slice(0,3)){
+          let temp : NumberDictionary<StructuredProjectInfo> = {};
+          console.log(temp[project.projectId]);
+        }
+
       }
     }
-    LoadProjects();
-  },[])
+    LoadData();
+  }, []);
 
   //sets up the states for if they're needed to be changed at all
+  const [filteredProjects, setFilteredProjects] = useState<ProjectPreview[]>(allProjects)
+
 
   //creates the panel showing all the projects
   let discoverPanel: React.ReactElement;
-}
+
+  return(
+    <div></div>
+  );
+} 
 
 const ProfileMeetPage = () => {
   //banner for the meets page
-  const profileHero = (
+    const profileHero = (
     <div id='discover-hero'>
       {
         <div id="profile-hero-bg1">
