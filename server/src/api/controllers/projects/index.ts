@@ -4,6 +4,7 @@ import deleteProject from './delete-proj.ts';
 import getProjectByID from './get-proj-id.ts';
 import { getProjectFollowers } from './get-project-followers.ts';
 import getProjects from './get-projects.ts';
+import getUnapprovedProjects from './get-unapproved-projects.ts';
 import addImage from './images/add-image.ts';
 import getProjectImages from './images/get-proj-images.ts';
 import removeImage from './images/remove-image.ts';
@@ -73,4 +74,5 @@ export default {
   deleteMediums,
   approveProject,
   unapproveProject,
+  getUnapprovedProjects,
 };

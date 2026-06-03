@@ -30,6 +30,14 @@ export const authenticated = (
 //Receive all projects
 router.get('/', PROJECT.getProjects);
 
+router.get(
+  '/unapproved',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  authenticated(PROJECT.getUnapprovedProjects),
+);
+
 //Create a new project
 router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
 
@@ -50,7 +58,7 @@ router.patch(
 );
 
 router.patch(
-  'approve/:id',
+  '/approve/:id',
   requiresLogin,
   injectCurrentUser,
   authenticated(requiresModerator),
@@ -59,7 +67,7 @@ router.patch(
 );
 
 router.patch(
-  'unapprove/:id',
+  '/unapprove/:id',
   requiresLogin,
   injectCurrentUser,
   authenticated(requiresModerator),
