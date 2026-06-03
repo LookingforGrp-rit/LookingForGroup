@@ -312,8 +312,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         <div className="signup-form column">
 
           <h2>Sign Up</h2>
-
-          <div className="error" aria-live="assertive" role="alert">{message}</div>
+          <p>Sign up using your RIT email.</p>
+          <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="signup-form-inputs">
             {/* we wouldn't need any of the other fields either would we?? */}
             {/* <div className="row">
@@ -343,8 +343,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             /> */}
-            <p>Sign up using your RIT email.</p>
-            <div className="error" aria-live="assertive" role="alert">{error}</div>
+            
             <div id="googleBtn"></div>
 
             <span className="spacer"> </span>

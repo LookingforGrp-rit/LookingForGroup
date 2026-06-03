@@ -203,6 +203,7 @@ const Login: React.FC = () => {
               onChange={(e) => setLoginInput(e.target.value)}
             /> */}
             <div id="googleBtn"></div>
+            <span className="spacer"> </span>
             {/* <button onClick={handleTest}>
               Press me to test sessions!!!
             </button> */}
