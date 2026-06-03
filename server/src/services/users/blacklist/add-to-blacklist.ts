@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type AddBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type AddBlacklistServiceSuccess = ServiceSuccessSusbet<'OK'>;
+type AddBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 
 //PUT api/mod/ban-user/{id}
 //add a user to blacklist

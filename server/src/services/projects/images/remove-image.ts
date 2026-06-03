@@ -1,9 +1,9 @@
 import prisma from '#config/prisma.ts';
 import { deleteImageService } from '#services/images/delete-image.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type RemoveImageServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type RemoveImageServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type RemoveImageServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/projects/{id}/images/{imageId}
 //delete a project image

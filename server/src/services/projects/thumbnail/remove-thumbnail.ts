@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type RemoveThumbnailServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type RemoveThumbnailServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type RemoveThumbnailServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/projects/{id}/thumbnail
 //deselect the thumbnail (does not delete the thumbnail image, simply removes the designated thumbnail)

@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DeleteMajorServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteMajorServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteMajorServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/me/majors/{id}
 //deletes a major from a user
