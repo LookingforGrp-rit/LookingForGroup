@@ -1,8 +1,4 @@
-import type {
-  ApiResponse,
-  CreateUserInput,
-  GoogleCredentialUserInput,
-} from '@looking-for-group/shared';
+import type { ApiResponse, CreateUserInput, SessionUserData } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import envConfig from '#config/env.ts';
 import { uploadImageService } from '#services/images/upload-image.ts';
@@ -12,9 +8,12 @@ import createUserService from '#services/users/create-user.ts';
 //creates a user
 //we are being sent this with all of its information (minus the name and email stuff google handles that)
 export const createUser = async (req: Request, res: Response): Promise<void> => {
-  const info: GoogleCredentialUserInput = req.body as GoogleCredentialUserInput;
+  const info: CreateUserInput = req.body as CreateUserInput;
   const devInfo: CreateUserInput = {} as CreateUserInput;
-  if ((envConfig.env === 'development' || envConfig.env === 'test') && !info.googleCredentials) {
+  const sessionInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
+
+  // This is for creating a dev user via the swagger docs
+  if ((envConfig.env === 'development' || envConfig.env === 'test') && !sessionInfo.googleId) {
     /// Fudge for development
     const devFirstName = req.query.devFirstName as string | undefined;
     const devLastName = req.query.devLastName as string | undefined;
@@ -37,7 +36,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     if (devUID) {
       devInfo.googleId = devUID;
     }
-    const result = await createUserService(devInfo);
+    const result = await createUserService(devInfo, sessionInfo);
     if (result === 'INTERNAL_ERROR') {
       const resBody: ApiResponse = {
         status: 500,
@@ -66,11 +65,12 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     res.status(201).json(resBody);
     return;
   }
+
   //don't check for google credentials if we have dev-defined things
   //because if we have dev-defined things we're running it through swagger to test everything else aside from the google stuff
   //so this is a bit of a bypass
   //basically tryna say if we have none of the dev things check for the credentials
-  if (!info.googleCredentials) {
+  if (!sessionInfo.googleId) {
     const resBody: ApiResponse = {
       status: 400,
       error: 'Missing Google credentials',
@@ -111,7 +111,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     info.profileImage = dbImage.location;
   }
 
-  const result = await createUserService(info);
+  const result = await createUserService(info, sessionInfo);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -149,4 +149,11 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     data: result,
   };
   res.status(201).json(resBody);
+
+  // Removing user information from session because it's not needed anymore.
+  const userInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
+  userInfo.email = '';
+  userInfo.firstName = '';
+  userInfo.lastName = '';
+  req.session.data = JSON.stringify(userInfo);
 };

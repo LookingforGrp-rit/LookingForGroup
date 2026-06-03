@@ -65,7 +65,7 @@ describe('updateProjectMemberService', async () => {
     vi.mocked(transformProjectMember).mockReturnValue(transformedMember);
     const result = await updateMemberService({ projectId: 100, userId: 29 }, data);
 
-    expect(transformProjectMember).toBeCalled();
+    expect(transformProjectMember).toHaveBeenCalled();
     expect(result).toBe(transformedMember);
   });
   it("returns NOT_FOUND when member isn't found", async () => {

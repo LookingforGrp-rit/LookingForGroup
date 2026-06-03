@@ -1,7 +1,9 @@
 import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type Request, type Response, type NextFunction } from 'express';
+import { banUser } from '#controllers/mod/ban-user.ts';
 import { clearProfile } from '#controllers/mod/clear-profile.ts';
 import { deleteProject } from '#controllers/mod/delete-project.ts';
+import { unbanUser } from '#controllers/mod/unban-user.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
@@ -26,5 +28,7 @@ router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.delete('/delete-project/:id/', authenticated(deleteProject));
+router.put('/ban-user/:googleId/', authenticated(banUser));
+router.delete('/unban-user/:googleId/', authenticated(unbanUser));
 
 export default router;

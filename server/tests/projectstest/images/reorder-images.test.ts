@@ -95,8 +95,8 @@ describe('reorderImageService', async () => {
     vi.mocked(prisma.projects.findFirst).mockResolvedValue(prismaProject);
     const result = await reorderImagesService(1, { imageOrder: [2, 1] });
 
-    expect(transformProjectImage).toBeCalled();
-    expect(transformProjectImage).toBeCalledTimes(2);
+    expect(transformProjectImage).toHaveBeenCalled();
+    expect(transformProjectImage).toHaveBeenCalledTimes(2);
     expect(result).toStrictEqual(transformedImages);
   });
 

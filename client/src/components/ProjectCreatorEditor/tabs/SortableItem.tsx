@@ -45,7 +45,13 @@ export const SortableTag = ({
       </button>
       <TagElement
         selected={true}
-        type={tag.type.toLowerCase()}
+        type={
+          ["developer", "designer", "soft", "audio"].includes(
+            tag.type.toLowerCase()
+          )
+            ? `${tag.type.toLowerCase()} skill`
+            : tag.type.toLowerCase()
+        }
         onClick={() => onRemove(tag.tagId)}
       >
         <i className="fa fa-close"></i>
