@@ -32,6 +32,10 @@ const prismaJob1 = {
   location: 'Hybrid' as JobLocation,
   compensation: 'Paid' as JobCompensation,
   description: 'test job',
+  roles: {
+    roleId: 23,
+    label: 'Artist',
+  },
 };
 
 const prismaJob2 = {
@@ -46,6 +50,10 @@ const prismaJob2 = {
   location: 'Hybrid' as JobLocation,
   compensation: 'Paid' as JobCompensation,
   description: 'test job 2',
+  roles: {
+    roleId: 25,
+    label: 'Programmer',
+  },
 };
 
 const transformedJobs: ProjectJob[] = [

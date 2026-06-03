@@ -29,12 +29,18 @@ const testSocial1 = {
   websiteId: 29,
   url: 'www.test.com',
   label: 'Test',
+  socials: {
+    label: 'Test',
+  },
 };
 
 const testSocial2 = {
   websiteId: 42,
   url: 'www.test2.com',
   label: 'Test 2',
+  socials: {
+    label: 'Test 2',
+  },
 };
 
 const prismaProject = {

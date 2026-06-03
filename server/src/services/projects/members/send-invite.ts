@@ -38,7 +38,7 @@ const sendInviteService = async (
     }
 
     const invitee = await prisma.users.findUnique({
-      where: { userId: data.inviterUserId },
+      where: { userId: data.inviteeUserId },
       select: UserEmailSelector,
     });
 
@@ -53,6 +53,13 @@ const sendInviteService = async (
     }
 
     const msg = data.message.length === 0 ? 'No message included.' : data.message;
+
+    const clientUrl = process.env.CLIENT_URL ?? '';
+
+    const inviteUrl =
+      `${clientUrl}/projects/${String(projectId)}/members/invite` +
+      `?userId=${String(invitee.userId)}` +
+      `&roleId=${String(role.roleId)}`;
 
     const email: EmailInput = {
       inviter: inviter as UserEmail,
@@ -70,7 +77,7 @@ const sendInviteService = async (
                 \n
                 Click the link below to view the project and accept the invite:
                 \n
-                ${process.env.CLIENT_URL}/projects/${projectId}/members/invite?userId=${invitee.userId}&roleId=${role.roleId}
+                ${inviteUrl}
                 \n\n
                 Best,
                 \n
@@ -90,7 +97,7 @@ const sendInviteService = async (
                   <p>Here is the message from the inviter if they included one:</p>
                   <p>${msg}</p>
                   <p>Click the link below to view the project and accept the invite:</p>
-                  <a href="${process.env.CLIENT_URL}/projects/${projectId}/members/invite?userId=${invitee.userId}&roleId=${role.roleId}" target="_blank">
+                  <a href="${inviteUrl}" target="_blank">
                     Accept Invite to Join ${project.title}
                   </a>
                   <p>
