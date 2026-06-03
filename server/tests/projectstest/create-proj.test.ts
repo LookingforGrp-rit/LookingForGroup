@@ -19,6 +19,7 @@ vi.mock('#config/prisma.ts', () => ({
   default: {
     projects: {
       create: vi.fn(),
+      findMany: vi.fn(),
     },
     users: {
       findMany: vi.fn(),
@@ -27,6 +28,9 @@ vi.mock('#config/prisma.ts', () => ({
       findMany: vi.fn(),
     },
     majors: {
+      findMany: vi.fn(),
+    },
+    roles: {
       findMany: vi.fn(),
     },
   },
