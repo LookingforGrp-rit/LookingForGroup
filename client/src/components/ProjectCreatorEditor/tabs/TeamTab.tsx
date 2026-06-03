@@ -176,6 +176,8 @@ export const TeamTab = ({
   // selected contact name after saving local position
   const [contactName, setContactName] = useState("");
 
+  const [messageText, setMessageText] = useState("");
+
 
   // check if a value is null or undefined
   const isNullOrUndefined = (value: unknown | null | undefined) => {
@@ -385,6 +387,7 @@ export const TeamTab = ({
     const resetFields = () => {
       setSearchQuery("");
       setSelectKey((previous) => previous + 1);
+      setMessageText("");
     };
 
     // notify user of error, reset fields
@@ -492,7 +495,7 @@ export const TeamTab = ({
           // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
           inviterUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
           roleId: currentMember.role.roleId,
-          message: '',
+          message: messageText,
         },
       });
 
@@ -584,6 +587,7 @@ export const TeamTab = ({
     setSearchBarKey((previous) => previous + 1);
     setSelectKey((previous) => previous + 1);
     setClosePopup(false);
+    setMessageText("");
   };
 
   // --- Position handlers ---
@@ -1581,6 +1585,12 @@ export const TeamTab = ({
                   })}
                 />
               </Select>
+              <label id="project-team-add-member-message-label">Message</label>
+              <textarea
+                id="project-team-add-member-message-text"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+              ></textarea>
             </div>
             {/* Action buttons */}
             <div className="project-editor-button-pair">
