@@ -36,6 +36,7 @@ describe('getUserFollowersService', () => {
       ritEmail: 'send@rit.edu',
       firstName: 'send',
       lastName: 'user',
+      preferredName: 'Leafleaf',
       profileImage: null,
       headline: '',
       pronouns: '',
