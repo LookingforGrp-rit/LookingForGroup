@@ -381,7 +381,7 @@ Signup process modal style rules
 
 /* buttons */
 #signupProcess-btns {
-  margin-top: 5%;
+  margin-top: 2.5%;
   width: 900px;
   display: flex;
   justify-content: space-between;
