@@ -41,7 +41,7 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
   //getting the full lists of roles & majors
   const [roles, setRoles] = useState<Role[]>([]);
   const [majors, setMajors] = useState<Major[]>([]);
-  const [currentMajor] = useState(profile.majors[0]);
+  const [currentMajor] = useState(profile?.majors[0]);
 
   useEffect(() => {
     const fetchRoles = async () => {
@@ -229,7 +229,7 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
               <Select>
                 <SelectButton
                   placeholder="Select"
-                  initialVal={`${currentMajor.label}`}
+                  initialVal={`${currentMajor?.label}`}
                   callback={(e) => e.preventDefault()}
                   type={'input'}
                   searchable={true}
