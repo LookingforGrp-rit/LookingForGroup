@@ -125,7 +125,7 @@ model Projects {
   projectId         Int                 @id @default(autoincrement()) @map("project_id")
   title             String              @db.VarChar(50)
   hook              String              @default("") @db.VarChar(300)
-  description       String              @default("") @db.VarChar(2000)
+  description       String              @default("") @db.Text
   thumbnail         ProjectImages?      @relation(fields: [thumbnailId], references: [imageId])
   thumbnailId       Int?                @unique @map("thumbnail_id")
   purpose           ProjectsPurpose?
@@ -143,6 +143,7 @@ model Projects {
   // tags              Tags[]
   users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")
   tags              ProjectTags[]
+  approved          Boolean             @default(false)
 
   @@index([userId], map: "FK_user_id")
   @@map("projects")
@@ -245,6 +246,7 @@ model Users {
   userSocials       UserSocials[]
   majors            Majors[]
   userBlacklists    UserBlacklist[]
+  moderator         Boolean             @default(false)
 
   @@map("users")
 }
