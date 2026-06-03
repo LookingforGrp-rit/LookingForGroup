@@ -71,7 +71,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
           setUsername(res.data.username);
           setUserId(res.data.userId);
           setEmail(res.data.ritEmail);
-          setProfileImg(res.data.profileImage ?? '');
+          setProfileImg(res.data.profileImage ?? profilePicture);
         } else {
           loggedIn = false;
           setUserId(undefined);
@@ -165,13 +165,8 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 className={'rounded'}
                 title={'Profile picture'}
                 // Cannot use usePreloadedImage function because this is in a callback
-                onLoad={(e) => {
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = `${profileImg}`;
-                }}
-                onError={(e) => {
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = profilePicture;
+                onError={() => {
+                  setProfileImg(profilePicture);
                 }}
               />
             ) : (
@@ -225,14 +220,8 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                       src={`${profileImg}`}
                       className={'rounded'}
                       alt={'profile'}
-                      // Cannot use usePreloadedImage function because this is in a callback
-                      onLoad={(e) => {
-                        const profileImg = e.target as HTMLImageElement;
-                        profileImg.src = `${profileImg}`;
-                      }}
-                      onError={(e) => {
-                        const profileImg = e.target as HTMLImageElement;
-                        profileImg.src = profilePicture;
+                      onError={() => {
+                        setProfileImg(profilePicture);
                       }}
                     />
                   ) : (
