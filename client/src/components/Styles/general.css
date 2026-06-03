@@ -1580,25 +1580,41 @@ Select style rules
 
 .select-container {
   position: relative;
-  width: 100%;
+  width: fit-content;
   border-radius: 10px;
 }
 
 /* Universal styles for Select component */
 .select {
+  box-sizing: border-box;
   display: flex;
+  cursor: pointer;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   width: 100%;
   height: 45px;
-  padding: 15px 15px;
+  padding: 0px 15px;
   border: 1px solid var(--border-color);
   border-radius: 10px;
   font-size: 0.9375rem;
+  color: var(--neutral-gray);
 }
 
-.select::placeholder {
+.select-search-input {
+    width: 100%;
+    border: none !important;
+    outline: none !important;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+    font-family: inherit;
+    font-size: inherit;
+    color: inherit;
+    box-shadow: none;
+}
+
+.select-search-input::placeholder {
   color: var(--neutral-gray);
   font-style: italic;
 }

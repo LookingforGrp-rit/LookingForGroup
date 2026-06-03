@@ -3169,7 +3169,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/ban-user/{id}:
+  /api/mod/ban-user/{googleId}:
     put:
       summary: Bans a user by adding them to a blacklist
       tags:
@@ -3177,12 +3177,12 @@ paths:
       security:
         - shibbolethAuth: []
       parameters:
-        - name: id
+        - name: googleId
           in: path
           required: true
-          description: ID of the user to be banned
+          description: Google ID of the user to be banned
           schema:
-            type: integer
+            type: string
         - in: query
           name: devId
           schema:
@@ -3216,7 +3216,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/unban-user/{id}:
+  /api/mod/unban-user/{googleId}:
     delete:
       summary: Unbans a user by removing them from a blacklist
       tags:
@@ -3224,12 +3224,12 @@ paths:
       security:
         - shibbolethAuth: []
       parameters:
-        - name: id
+        - name: googleId
           in: path
           required: true
-          description: ID of the user to be unbanned
+          description: Google ID of the user to be unbanned
           schema:
-            type: integer
+            type: string
         - in: query
           name: devId
           schema:
