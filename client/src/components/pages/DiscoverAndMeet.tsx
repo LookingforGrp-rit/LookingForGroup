@@ -16,7 +16,6 @@ import {
 
 //import api utils
 import { getCurrentUsername } from '../../api/users.ts'
-import { useLoaderData } from 'react-router-dom';
 
 type DiscoverAndMeetProps = {
   category: 'projects' | 'profiles';
@@ -594,11 +593,20 @@ const DiscoverPage = () => {
 
         //sets up the hero content to be plugged into the carousel
         const projectDetailList : ProjectWithFollowers[] = [];
+        let temp : NumberDictionary<StructuredProjectInfo> = {};
+        
+        //runs through the list of the first 3 projects given in the project data
+        //and populates the current temp dictionary of project that can be
+        //read with all their data or only as a preview
         for(let project of (allProjects as ProjectPreview[]).slice(0,3)){
-          let temp : NumberDictionary<StructuredProjectInfo> = {};
-          console.log(temp[project.projectId]);
+          //if the temp doesn't have this index populate it with a preview of the project
+          //if it does have the index id it will just populate it with the new data
+          if(!temp[project.projectId]){
+            temp[project.projectId] = {preview : project};
+          }else{
+            temp[project.projectId].preview = project;
+          }
         }
-
       }
     }
     LoadData();
