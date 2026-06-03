@@ -99,7 +99,7 @@ export interface UserAndProjectInfo {
  * Used for routes that make changes to a logged-in user
  */
 export interface AuthenticatedRequest extends Request {
-  currentUser: number;
+  currentUser: { username: string; userId: number; isMod: boolean };
 }
 
 //API RESPONSE

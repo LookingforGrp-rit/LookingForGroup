@@ -12,7 +12,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
     const devId = request.query.devId as string | undefined;
 
     if (devId) {
-      authenticatedRequest.currentUser = parseInt(devId);
+      authenticatedRequest.currentUser.userId = parseInt(devId);
       next();
       return;
     }
@@ -53,8 +53,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
     return;
   }
 
-  const userID = result.userId;
-  authenticatedRequest.currentUser = userID;
+  authenticatedRequest.currentUser = result;
   request.session.touch();
   next();
 };

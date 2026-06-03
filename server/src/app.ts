@@ -32,7 +32,7 @@ app.use(
         httpOnly: true,
         secure: envConfig.env === 'production',
         //30 minutes * 60 seconds/minute * 1000ms/second
-        maxAge: 30 * 60 * 1000,
+        maxAge: 15 * 60 * 1000,
         sameSite: true,
         domain: 'localhost',
       };
