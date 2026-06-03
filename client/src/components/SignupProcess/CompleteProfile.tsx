@@ -1,4 +1,4 @@
-import { CreateUserInput } from '@looking-for-group/shared';
+import { CreateUserInput, Skill } from '@looking-for-group/shared';
 import { MouseEventHandler } from 'react';
 import LabelInputBox from '../LabelInputBox';
 import { Select, SelectButton, SelectOptions } from '../Select';
@@ -8,7 +8,7 @@ interface CompleteProfileProps {
   onNext : MouseEventHandler<HTMLButtonElement>;
   onBack : MouseEventHandler<HTMLButtonElement>;
   userInfo : CreateUserInput;
-  selectedSkills: string[];
+  selectedSkills: Skill[];
   bio : string;
   pronouns : string;
   slogan : string;
@@ -254,7 +254,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             <div id="signup-profile-skill">
               {selectedSkills.map((skill, index) => (
                 <div key={index} style={{ border: `2px solid ${tagColors[index % 5]}` }}>
-                  {skill}
+                  {skill.label}
                 </div>
               ))}
             </div>
