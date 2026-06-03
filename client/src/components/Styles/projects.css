@@ -369,7 +369,7 @@ Project Creator and Editor Popup style rules
 
 
 #project-editor-save.profile-editor-save {
-  margin-top: 37px;
+  margin-top: 0;
   margin-bottom: 28px;
 }
 
@@ -449,7 +449,7 @@ Project Creator and Editor Popup style rules
 
 #project-editor-content {
   flex-grow: 1;
-  margin: 35px 56px 30px 55px;
+  margin: 35px 56px 0 55px;
 }
 
 @media only screen and (max-width: 700px) {
@@ -537,7 +537,7 @@ Project Creator and Editor Popup style rules
 
 #project-editor-general {
   display: grid;
-  height: 100%;
+  height: 720px;
   grid-template:
     'title title about' 1fr
     'status purpose about' 1fr
@@ -701,7 +701,7 @@ Project Creator and Editor Popup style rules
   border-radius: 10px;
   grid-area: search;
   min-width: 150px;
-  max-height: 628px;
+  max-height: 548px;
 }
 
 #project-editor-tag-search-container {
@@ -710,7 +710,7 @@ Project Creator and Editor Popup style rules
   justify-content: flex-start;
   gap: 10px;
   /*For scrolling*/
-  max-height: 472px;
+  max-height: 370px;
   overflow-y: auto;
 }
 
@@ -718,6 +718,7 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-x: auto;
 }
 
 #tag-search-divider,
@@ -872,7 +873,7 @@ Project Creator and Editor Popup style rules
   grid-area: select;
   display: flex;
   flex-direction: column;
-  max-height: 405px;
+  max-height: 427px;
 
   .error {
     margin-top: 15px;
@@ -923,7 +924,7 @@ Project Creator and Editor Popup style rules
 }
 
 #project-editor-tag-search-tabs {
-  overflow-x: auto;
+  overflow-x: visible;
   justify-content: flex-start;
 }
 
@@ -985,7 +986,7 @@ Project Creator and Editor Popup style rules
 #project-editor-team-content {
   display: flex;
   height: 100%;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
 }
 
 #team-save-info {

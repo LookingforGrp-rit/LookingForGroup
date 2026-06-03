@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DeleteUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteUserServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteUserServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/me
 export const deleteUserService = async (
