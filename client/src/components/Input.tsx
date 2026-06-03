@@ -7,6 +7,7 @@ interface CustomInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
   maxLength?: number;
   onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   onClick?: React.MouseEventHandler<HTMLElement>;
+  placeholder?: string
 }
 
 /**
@@ -15,12 +16,14 @@ interface CustomInputProps extends Omit<InputHTMLAttributes<HTMLInputElement>, '
  * @param style - Optional custom styles for the input
  * @param onChange - Change event handler
  * @param onClick - Click event handler (for link type to handle removal)
+ * @param placeholder - Optional placeholder text
  * @returns JSX.Element
  */
 export const Input: React.FC<CustomInputProps> = ({
   type,
   onChange,
   onClick,
+  placeholder,
   ...props
 }) => {
 
@@ -50,6 +53,7 @@ export const Input: React.FC<CustomInputProps> = ({
           maxLength={props.maxLength}
           value={value}
           onChange={handleChange}
+          placeholder={placeholder}
           {...(props as TextareaHTMLAttributes<HTMLTextAreaElement>)}
         />
       </div>
@@ -62,6 +66,7 @@ export const Input: React.FC<CustomInputProps> = ({
       className="input"
       maxLength={props.maxLength}
       onChange={onChange as React.ChangeEventHandler<HTMLInputElement>}
+      placeholder={placeholder}
       {...props}
     />
   );
