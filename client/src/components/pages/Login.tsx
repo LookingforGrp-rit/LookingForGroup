@@ -194,18 +194,18 @@ const Login: React.FC = () => {
           <h2>Log In</h2>
           <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="login-form-inputs">
-            <input
+            {/* <input
               id='main'
               className="login-input"
               type="text"
               placeholder="Username or email"
               value={loginInput}
               onChange={(e) => setLoginInput(e.target.value)}
-            />
+            /> */}
             <div id="googleBtn"></div>
-            <button onClick={handleTest}>
+            {/* <button onClick={handleTest}>
               Press me to test sessions!!!
-            </button>
+            </button> */}
             <div className="mobile-signup">
               <p>No account? </p>
               <p id="signup-btn-mobile" onClick={() => navigate(paths.routes.SIGNUP)}>
@@ -213,9 +213,9 @@ const Login: React.FC = () => {
               </p>
             </div>
           </div>
-          <button id="main-loginsignup-btn" onClick={handleLogin} disabled={isLoading}>
+          {/* <button id="main-loginsignup-btn" onClick={handleLogin} disabled={isLoading}>
             {isLoading ? 'Loading...' : 'Log In'}
-          </button>
+          </button> */}
         </div>
         {/*************************************************************
 
