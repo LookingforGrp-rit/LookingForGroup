@@ -21,6 +21,7 @@ export const transformUserToPreview = (user: UsersGetPayload): UserPreview => {
     userId: user.userId,
     firstName: user.firstName,
     lastName: user.lastName,
+    preferredName: user.preferredName,
     username: user.username,
     profileImage: user.profileImage ?? null,
     headline: user.headline,

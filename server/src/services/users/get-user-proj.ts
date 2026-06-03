@@ -35,8 +35,12 @@ export const getUserProjectsService = async (
 
     //if (projects.length === 0) return 'NOT_FOUND';
 
-    const result = projects.map(transformProjectToPreview);
+    let result = projects.map(transformProjectToPreview);
 
+    //Sorts the array alphabetically by project title
+    result = result.toSorted(
+      (project1, project2) => project1.title.charCodeAt(0) - project2.title.charCodeAt(0),
+    );
     return result;
   } catch (e) {
     console.error(`Error in getUserProjectsService: ${JSON.stringify(e)}`);

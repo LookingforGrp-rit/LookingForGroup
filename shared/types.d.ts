@@ -51,11 +51,11 @@ export type Visibility = "Public" | "Private";
 
 // Structures for type management
 export interface StringDictionary<T> {
-	[key : string]: T;
+  [key: string]: T;
 }
 
 export interface NumberDictionary<T> {
-  [key : number] : T;
+  [key: number]: T;
 }
 
 interface ProjectType {
@@ -65,14 +65,14 @@ interface ProjectType {
 export type ProjectInfoStage = "Preview" | "Detail" | "Full";
 
 export interface StructuredProjectInfo {
-  preview? : ProjectPreview;
-  detail? : ProjectDetail;
-  full? : ProjectWithFollowers;
+  preview?: ProjectPreview;
+  detail?: ProjectDetail;
+  full?: ProjectWithFollowers;
 }
 
 export interface StructuredUserInfo {
-  preview? : UserPreview;
-  detail? : UserDetail;
+  preview?: UserPreview;
+  detail?: UserDetail;
 }
 
 export interface UserAndProjectInfo {
@@ -128,8 +128,8 @@ export interface ApiResponse<_data = any> {
 }
 
 export interface UserIdentifiers {
-  userId : number,
-  username : string,
+  userId: number,
+  username: string,
 }
 
 export interface UsernameResponse extends ApiResponse {
@@ -546,6 +546,11 @@ export interface UserPreview {
   lastName: string;
 
   /**
+ * The user's preferred name
+ */
+  preferredName: string;
+
+  /**
    * The users's username
    */
   username: string;
@@ -682,6 +687,10 @@ export interface MePreview {
    * The logged-in user's last name
    */
   lastName: string;
+  /**
+* The logged-in user's preferred name
+*/
+  preferredName: string;
   /**
    * The logged-in users's username
    */
@@ -1071,7 +1080,7 @@ export interface ProjectPreview {
    * The project title
    */
   title: string;
-  
+
   /**
    * The tags attached to the project
    */
@@ -1143,6 +1152,7 @@ export type UpdateUserInput = Partial<
     MePrivate,
     | "firstName"
     | "lastName"
+    | "preferredName"
     | "headline"
     | "pronouns"
     | "title"
@@ -1177,16 +1187,18 @@ export type CreateUserInput = Partial<
     visibility?: 1 | 0;
   }
 > & {
-    firstName: string;
-    lastName: string;
-    googleId?: string;
-    username: string;
-    ritEmail: string;
-  };
-
-export type SessionUserData = Partial <{
   firstName: string;
   lastName: string;
+  preferredName: string;
+  googleId?: string;
+  username: string;
+  ritEmail: string;
+};
+
+export type SessionUserData = Partial<{
+  firstName: string;
+  lastName: string;
+  preferredName: string;
   email: string;
   googleId: string;
   userExists: boolean;
