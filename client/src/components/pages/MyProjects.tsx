@@ -1,5 +1,5 @@
 // import { profiles } from "../../constants/fakeData";
-import { useState, useMemo, ChangeEvent, useEffect, useCallback } from 'react';
+import { useState, useMemo, ChangeEvent, useCallback } from 'react';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
 import CreditsFooter from '../CreditsFooter';
@@ -14,7 +14,7 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
-import { ProjectDetail } from '@looking-for-group/shared';
+import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
 
 /**
  * My Projects page. Creates a customizable page that showcases the user's projects.
@@ -66,28 +66,30 @@ const MyProjects = () => {
   const getUserProjects = async () => {
     try {
       const res = await getCurrentUsername();
-
-      // User is logged in, pull their data
-      if (res.data) {
-        setLoggedIn(res.data.userId);
-        const projectsRes = await getProjectsByUser();
-
-        if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
-
-        //console.log(projectsRes.data);
-        setUserId(res.data.username);
-        
-      } else {
-        //guest
-        setUserId("guest");
-        setLoggedIn(0);
-      }
+      setUserProjects({...res.data} as MePrivate)
 
     } catch (e) {
       console.error('error getting projects', e);
       setCreateError(true);
     }
+  }
 
+  const setUserProjects = async (data: MePrivate | undefined) => {
+    // User is logged in, pull their data
+    if (data) {
+      setLoggedIn(data.userId);
+      const projectsRes = await getProjectsByUser();
+
+      if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
+
+      //console.log(projectsRes.data);
+      setUserId(data.username);
+      
+    } else {
+      //guest
+      setUserId("guest");
+      setLoggedIn(0);
+    }
     setDataLoaded(true);
   }
 
@@ -127,9 +129,6 @@ const MyProjects = () => {
   // };
 
   // React likes this more than a boolean check
-  useEffect(() => {
-    getUserProjects();
-  }, []);
   // else {
   //     if (projectsList.length < 20) {
   //         let tempList = new Array(0);
@@ -412,6 +411,7 @@ const MyProjects = () => {
         onSearch={handleSearch}
         value={currentSearch}
         onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        setCurrentUserId={setUserProjects}
       />
 
       {/* Banner */}

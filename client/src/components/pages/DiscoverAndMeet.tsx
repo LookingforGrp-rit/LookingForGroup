@@ -7,10 +7,11 @@ import { PanelBox } from '../PanelBox';
 import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
-import { getUsers, getUsersById, getCurrentAccount, getProjectFollowing } from '../../api/users';
+import { getUsers, getUsersById, getProjectFollowing } from '../../api/users';
 import { ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
     StructuredUserInfo, UserPreview, ProjectPreview, 
-    UserDetail, ProjectWithFollowers } from '@looking-for-group/shared';
+    UserDetail, ProjectWithFollowers, 
+    MePrivate} from '@looking-for-group/shared';
 
 //import api utils
 // Current auth and follow state are loaded with getCurrentAccount/getProjectFollowing
@@ -134,6 +135,11 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
 
   const loadFollowedProjectIds = async (userId: number) => {
+    if (currentUserId === -1) {
+      setFollowedProjectIds(new Set());
+      return;
+    }
+
     try {
       const response = await getProjectFollowing(userId);
       if (response.data?.projects) {
@@ -148,17 +154,13 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   /**
    * Loads the current user and their followed projects so follow icons render immediately.
    */
-  const getAuth = async () => {
-    if (currentUserId !== null) {
-      return;
-    }
+  const getAuth = async (data: MePrivate | undefined) => {
 
-    const res = await getCurrentAccount();
-    if (res.status === 200 && res.data?.userId) {
-      setCurrentUserId(res.data.userId);
-      await loadFollowedProjectIds(res.data.userId);
+    if (data) {
+      setCurrentUserId(data.userId);
+      await loadFollowedProjectIds(data.userId);
     } else {
-      setCurrentUserId(null);
+      setCurrentUserId(-1);
       setFollowedProjectIds(new Set());
     }
   };
@@ -183,7 +185,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     // Pre-fetch full details for the first visible batch to avoid flashing like/count state
     const INITIAL_LOAD_COUNT = 25;
     for (let i = 0; i < Math.min(INITIAL_LOAD_COUNT, projects.data.length); i++) {
-      const projectPreview = projects.data[i];
+      const projectPreview = projects.data[i] as ProjectPreview;
       const projectId = projectPreview.projectId;
       if (!newProjectCache[projectId]?.full) {
         try {
@@ -243,7 +245,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       if (fetchedProjects && fetchedUsers && !force) return;
 
       // Get user profile
-      await getAuth();
+      //await getAuth();
 
       try {
         if(category == 'projects') {
@@ -594,6 +596,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           itemAddInterval={25}
           projectCache={projectCache}
           followedProjectIds={followedProjectIds}
+          userId={currentUserId ?? -1}
         />
       );
     }
@@ -606,7 +609,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       );
     }
     else {
-      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} />);
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} userId={currentUserId ?? -1}/>);
     }
   }
 
@@ -616,7 +619,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={ category == 'projects' ? projectDataSet : userDataSet }
           onSearch={ category == 'projects' ? searchProjects : searchUsers }
-          value={currentSearch} onChange={(e : ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)} />
+          value={currentSearch} onChange={(e : ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)} 
+          setCurrentUserId={getAuth}/>
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 
