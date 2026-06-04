@@ -1,10 +1,12 @@
-import approveProject from './approve-proj.ts';
+import approveProject from './approval/approve-proj.ts';
+import getUnapprovedProjectById from './approval/get-unapproved-proj-id.ts';
+import getUnapprovedProjects from './approval/get-unapproved-projects.ts';
+import unapproveProject from './approval/unapprove-proj.ts';
 import createProject from './create-proj.ts';
 import deleteProject from './delete-proj.ts';
 import getProjectByID from './get-proj-id.ts';
 import { getProjectFollowers } from './get-project-followers.ts';
 import getProjects from './get-projects.ts';
-import getUnapprovedProjects from './get-unapproved-projects.ts';
 import addImage from './images/add-image.ts';
 import getProjectImages from './images/get-proj-images.ts';
 import removeImage from './images/remove-image.ts';
@@ -32,7 +34,6 @@ import updateTag from './tags/update-tag.ts';
 import getThumbnail from './thumbnail/get-thumbnail.ts';
 import removeThumbnail from './thumbnail/remove-thumbnail.ts';
 import updateThumbnail from './thumbnail/update-thumbnail.ts';
-import unapproveProject from './unapprove-proj.ts';
 import updateProject from './update-project.ts';
 
 //index file for all project routes
@@ -75,4 +76,5 @@ export default {
   approveProject,
   unapproveProject,
   getUnapprovedProjects,
+  getUnapprovedProjectById,
 };

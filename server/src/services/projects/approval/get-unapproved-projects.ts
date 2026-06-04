@@ -1,17 +1,17 @@
-import type { ProjectDetail } from '@looking-for-group/shared';
+import type { ProjectPreview } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { ProjectDetailSelector } from '#services/selectors/projects/project-detail.ts';
+import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
-import { transformProjectToDetail } from '#services/transformers/projects/project-detail.ts';
+import { transformProjectToPreview } from '#services/transformers/projects/project-preview.ts';
 
 type GetUnapprovedProjectsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 export const getUnapprovedProjectsService = async (): Promise<
-  ProjectDetail[] | GetUnapprovedProjectsServiceError
+  ProjectPreview[] | GetUnapprovedProjectsServiceError
 > => {
   try {
     const result = await prisma.projects.findMany({
-      select: ProjectDetailSelector,
+      select: ProjectPreviewSelector,
       orderBy: {
         createdAt: 'desc',
       },
@@ -20,7 +20,7 @@ export const getUnapprovedProjectsService = async (): Promise<
       },
     });
 
-    const transformedProjects = result.map(transformProjectToDetail);
+    const transformedProjects = result.map(transformProjectToPreview);
     return transformedProjects;
   } catch (e) {
     console.error('getUnapprovedProjectsService returned an error: ', e);

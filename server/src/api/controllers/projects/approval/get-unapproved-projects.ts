@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { getUnapprovedProjectsService } from '#services/projects/get-unapproved-projects.ts';
+import { getUnapprovedProjectsService } from '#services/projects/approval/get-unapproved-projects.ts';
 
 const getUnapprovedProjectsController = async (_request: Request, response: Response) => {
   const result = await getUnapprovedProjectsService();

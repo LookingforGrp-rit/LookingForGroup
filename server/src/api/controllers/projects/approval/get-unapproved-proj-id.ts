@@ -1,10 +1,10 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
-import type { Response } from 'express';
-import { changeProjectApprovalService } from '#services/projects/change-proj-approval.ts';
+import type { ApiResponse } from '@looking-for-group/shared';
+import type { Request, Response } from 'express';
+import { getUnapprovedProjectByIdService } from '#services/projects/approval/get-unapproved-proj-id.ts';
 
-const approveProjectController = async (request: AuthenticatedRequest, response: Response) => {
-  const projectId = parseInt(request.params.id);
-  const result = await changeProjectApprovalService(projectId, true);
+const getUnapprovedProjectByIdController = async (request: Request, response: Response) => {
+  const projectId = parseInt(request.params.id as string);
+  const result = await getUnapprovedProjectByIdService(projectId);
 
   if (result === 'INTERNAL_ERROR') {
     const res: ApiResponse = {
@@ -29,9 +29,9 @@ const approveProjectController = async (request: AuthenticatedRequest, response:
   const res: ApiResponse = {
     status: 200,
     error: null,
-    data: 'Project approved',
+    data: result,
   };
   response.status(200).json(res);
 };
 
-export default approveProjectController;
+export default getUnapprovedProjectByIdController;

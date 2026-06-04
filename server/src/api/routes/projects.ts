@@ -30,6 +30,7 @@ export const authenticated = (
 //Receive all projects
 router.get('/', PROJECT.getProjects);
 
+//Get all unapproved projects
 router.get(
   '/unapproved',
   requiresLogin,
@@ -44,6 +45,16 @@ router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createP
 //Get a specific project
 router.get('/:id', PROJECT.getProjectByID);
 
+//Get a specific unapproved project
+router.get(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  PROJECT.getUnapprovedProjectById,
+);
+
 //Get a specific project's members
 router.get('/:id/members', projectExistsAt('path', 'id'), PROJECT.getMembers);
 
@@ -57,6 +68,7 @@ router.patch(
   authenticated(PROJECT.updateProject),
 );
 
+//Approve a project
 router.patch(
   '/approve/:id',
   requiresLogin,
@@ -66,6 +78,7 @@ router.patch(
   authenticated(PROJECT.approveProject),
 );
 
+//Unapprove a project
 router.patch(
   '/unapprove/:id',
   requiresLogin,
