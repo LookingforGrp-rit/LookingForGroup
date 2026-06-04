@@ -11,15 +11,6 @@ export const reportProjectService = async (
   reportText: string,
 ): Promise<GetServiceSuccess | GetServiceError> => {
   try {
-    //Check if project exists
-    //Because this is being called by api/me, there is no need to validate the id of the user
-    // const project = await prisma.reportProject.findFirst({
-    //   where: {
-    //     projectId,
-    //   },
-    // });
-    // if (!project) return 'NOT_FOUND';
-
     //Check if report already exists
     const report = await prisma.reportProject.findFirst({
       where: {
