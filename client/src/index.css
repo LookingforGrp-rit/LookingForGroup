@@ -10,3 +10,18 @@ body {
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New', monospace;
 }
+
+#profile-btn svg,
+#profile-btn svg:focus,
+#profile-btn svg:active,
+#profile:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+button svg,
+button svg:focus,
+svg[tabindex="-1"]:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}

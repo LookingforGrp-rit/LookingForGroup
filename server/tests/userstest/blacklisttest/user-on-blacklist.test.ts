@@ -20,7 +20,10 @@ describe('deleteBlacklistService', async () => {
   });
 
   it('returns OK if successful', async () => {
-    vi.mocked(prisma.userBlacklist.findUnique).mockResolvedValue({ userId: 1, googleId: '1' });
+    vi.mocked(prisma.userBlacklist.findUnique).mockResolvedValue({
+      googleId: '1',
+      banReason: 'silly',
+    });
     const result = await userOnBlacklistService('1');
 
     expect(result).toBe('OK');

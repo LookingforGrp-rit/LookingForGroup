@@ -43,6 +43,10 @@ RUN npx prisma generate --schema=server/prisma/schema.prisma
 #######################
 # Compiles react and vite into assets
 # Will be served by backend
+
+ARG VITE_GOOGLE_CLIENT_ID
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+
 RUN npm run build
 
 #######################

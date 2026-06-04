@@ -14,11 +14,6 @@ import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editU
 import { MePrivate, UpdateUserInput } from '@looking-for-group/shared';
 type JsonData = Record<string, unknown>;
 
-// Take the user ID and delete it
-const deleteAccountPressed = async () => {
-  await deleteUser();
-};
-
 /**
  * Settings page. Renders the settings page interface with options for updating user account information, appearance preferences, and account settings
  * @returns JSX Element
@@ -44,6 +39,12 @@ const Settings = () => {
   // --------------------
   // Helper functions
   // --------------------
+
+  // Take the user ID and delete it
+  const deleteAccountPressed = async () => {
+    await deleteUser();
+    navigate(paths.routes.HOME);
+  };
 
   // TODO: Function needed to check password!
   // TODO: Function needed to check field validity (e.g. is this actually an email?)
@@ -479,7 +480,7 @@ const Settings = () => {
       {/* Search bar is not used in settings */}
       <div id="settings-page">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
+          <ThemeIcon id={'back'} width={110} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <h1 className="page-title">Settings</h1>
           <Header dataSets={[]} onSearch={() => { }} hideSearchBar />
         </div>

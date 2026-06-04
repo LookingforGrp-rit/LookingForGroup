@@ -38,7 +38,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   // Navigation hook
   const navigate = useNavigate();
 
-  const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
+  const { projId, isOwner, reloadProjects, removeProject } = useContext(LeaveDeleteContext);
 
   // Project status fetched from API
   const [status, setStatus] = useState<string>();
@@ -80,6 +80,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     setRequestType('leave');
     setResultObj(response);
     setShowResult(true);
+    if (response.status === 200) setTimeout(() => removeProject(projId), 1500);
   };
 
   // Handles deleting the project (owner only)
@@ -88,6 +89,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     setRequestType('delete');
     setResultObj(response);
     setShowResult(true);
+    if (response.status === 200) setTimeout(() => removeProject(projId), 1500);
   };
 
   //Converts ISO date string to DD/MM/YYYY format

@@ -120,6 +120,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     return [{ data: userSearchData }];
   }, [userSearchData]);
 
+  // Pagination state for projects
+  const [currentProjectPage, setCurrentProjectPage] = useState(1);
+  const PROJECTS_PER_PAGE = 6;
+
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent =
@@ -306,6 +310,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     }
     
     setFilteredProjectList(matches);
+    setCurrentProjectPage(1);
 
     // Preload full project data for search results so the like icon state is available immediately.
     (async () => {
@@ -367,24 +372,45 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // Update the showcased projects after getting more info from the server
   const getShowcaseDetails = async (projectList : ProjectPreview[], usedCache : NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList : ProjectWithFollowers[] = [];
-    for (let projectPreview of projectList.slice(0, 3)) {
 
+    console.log(projectList);
+    // remove projects without open positions
+    // const filteredProjectList = projectList.filter(a => a.jobs.length > 1);
+
+    // create a copy of the array for the carousel
+    const carouselProjectList = projectList.slice();
+
+    // Go through carouselProjectList and only keep 3 projects with open positions
+    for(let projectPreview of carouselProjectList.sort(() => Math.random() - 0.5))
+    {
       const cachedFull = usedCache[projectPreview.projectId].full;
-
+      
       if (cachedFull != undefined) {
-        //Even if it's already cached, it should still go into the carousel.
-        focusProjectDetailsList.push(cachedFull);
+        if (cachedFull.jobs.length > 0)
+        {
+          focusProjectDetailsList.push(cachedFull);
+        }
       }
-      else {
+      else 
+      {
         const projectRequest : ApiResponse<ProjectWithFollowers> = await getByID(projectPreview.projectId);
 
         if (projectRequest.data) {
-          focusProjectDetailsList.push(projectRequest.data);
+          if(projectRequest.data.jobs.length > 0)
+          {
+            focusProjectDetailsList.push(projectRequest.data);
+          }
           usedCache[projectPreview.projectId].full = projectRequest.data;
         } else {
           console.error("Error getting project data from " + projectPreview.projectId);
           return {} as ProjectWithFollowers;
         }
+      }
+
+      // Once 3 projects have been added to carousel, break out of loop
+      if(focusProjectDetailsList.length == 3)
+      {
+        break;
       }
     }
     
@@ -478,6 +504,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
     // Set displayed projects
     setFilteredProjectList(tagFilteredList);
+    setCurrentProjectPage(1);
   };
 
   /**
@@ -577,6 +604,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     setFilteredUserList(tagFilteredList);
   };
 
+  const totalProjectPages = Math.max(1, Math.ceil(filteredProjectList.length / PROJECTS_PER_PAGE));
+  const startIndex = (currentProjectPage - 1) * PROJECTS_PER_PAGE;
+  const paginatedProjects = filteredProjectList.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
+
   let discoverPanelContents : React.ReactElement;
   if (category == 'projects') {
     if(!dataLoaded && filteredProjectList.length === 0) {
@@ -588,13 +619,40 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     }
     else {
       discoverPanelContents = (
-        <PanelBox
-          category={category}
-          itemList={filteredProjectList}
-          itemAddInterval={25}
-          projectCache={projectCache}
-          followedProjectIds={followedProjectIds}
-        />
+        <div className="pagination-wrapper">
+          <PanelBox
+            category={category}
+            itemList={paginatedProjects} 
+            itemAddInterval={PROJECTS_PER_PAGE} 
+            projectCache={projectCache}
+            followedProjectIds={followedProjectIds}
+          />
+          
+          {/* Pagination Controls */}
+          {filteredProjectList.length > 0 && (
+            <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '2rem', paddingBottom: '2rem' }}>
+              <button
+              className="pagination-btn" 
+                onClick={() => setCurrentProjectPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentProjectPage === 1}
+                
+              >
+                Previous
+              </button>
+              
+              <span>Page {currentProjectPage} of {totalProjectPages}</span>
+              
+              <button 
+              className="pagination-btn"
+                onClick={() => setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages))}
+                disabled={currentProjectPage === totalProjectPages}
+
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
       );
     }
   } else {
