@@ -47,13 +47,13 @@ const createUserService = async (
     }
 
     //populate info object with the payload information
-    userData.firstName = session.firstName;
-    userData.lastName = session.lastName;
-    userData.ritEmail = session.email;
-    userData.googleId = session.googleId;
-    userData.username = session.email.substring(0, session.email.indexOf('@'));
+    majorlessUserData.firstName = session.firstName;
+    majorlessUserData.lastName = session.lastName;
+    majorlessUserData.ritEmail = session.email;
+    majorlessUserData.googleId = session.googleId;
+    majorlessUserData.username = session.email.substring(0, session.email.indexOf('@'));
 
-    console.log(userData);
+    console.log(majorlessUserData);
 
     //majors are a relation so i gotta do this for em
     const result = await prisma.users.create({
