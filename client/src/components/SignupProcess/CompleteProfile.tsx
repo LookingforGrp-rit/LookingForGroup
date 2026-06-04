@@ -2,6 +2,9 @@ import { CreateUserInput, Skill } from '@looking-for-group/shared';
 import { MouseEventHandler } from 'react';
 import LabelInputBox from '../LabelInputBox';
 import { Select, SelectButton, SelectOptions } from '../Select';
+import { ProfileImageUploader } from '../ImageUploader';
+import profilePicture from "../../images/blue_frog.png";
+import { AboutTab } from '../Profile/tabs/AboutTab';
 
 interface CompleteProfileProps {
   show : boolean;
@@ -49,7 +52,6 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   show,
   onNext,
   onBack,
-  // avatarImage,
   userInfo,
   selectedSkills,
   bio,
@@ -114,16 +116,23 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
           <p id="signupProcess-subTitle">You can add more and edit later</p>
 
           <div id="completeProfile-input-container">
+            {/*
             <div id="profile-details">
-              {/* Profile picture container */}
-              <div id="profile-pic" style={{ width: 160, height: 160 }}>
-                {/* image is profile image, if empty/null display avatar image */}
-                <img src={profileImage ? profileImage : /*avatarImage*/ ''} alt="profile-pic" />
-                {/* <img src={profileImage} alt="profile-pic" /> */}
+              <div id="profile-editor-add-image" className="edit-profile-image">
+                <ProfileImageUploader
+                  initialImageUrl={profilePicture}
+                />
+                </div>
+                */}
+              {/* Profile picture container
+              <div id="profile-pic">
+                {/* image is profile image, if empty/null display avatar image
+                <img src={profileImage ? profileImage : /* avatar image alt="profile-pic" />
+                {/* <img src={profileImage} alt="profile-pic" />
               </div>
               <div className="profile-pic-option">
-                {/* <button>Upload Picture</button> */}
-                {/* input to upload picture */}
+                {/* <button>Upload Picture</button>
+                {/* input to upload picture
                 <input
                   type="file"
                   id="upload-pfp"
@@ -133,7 +142,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
                 />
                 <label htmlFor="upload-pfp">Upload Picture</label>
 
-                {/* button to use avatar as profile picture */}
+                {/* button to use avatar as profile picture
                 {/* <button onClick={handleUseAvatar}>Use Avatar</button> */}
               </div>
             </div>
@@ -268,8 +277,6 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             </button>
           </div>
         </div>
-      </div>
-    </div>
   );
 };
 
