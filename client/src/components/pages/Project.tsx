@@ -111,12 +111,18 @@ const Project = () => {
    * @returns String to display
    */
   const formatFollowCount = (followers: number): string => {
-    if (followers >= 1000) {
-      const multOfHundred = followers % 100 === 0;
-      const formattedNum = (followers / 1000).toFixed(1);
-      return `${formattedNum}K ${multOfHundred ? "+" : ""}`;
+    const trim = (n: number) => {
+      const s = n.toFixed(1);
+      return s.endsWith(".0") ? s.slice(0, -2) : s;
+    };
+    if (followers < 10000) return `${followers}`;
+    if (followers < 1_000_000) return `${Math.floor(followers / 1000)}k`;
+    if (followers < 1_000_000_000) {
+      const m = followers / 1_000_000;
+      return `${m < 10 ? trim(m) : Math.floor(m)}M`;
     }
-    return `${followers}`;
+    const b = followers / 1_000_000_000;
+    return `${b < 10 ? trim(b) : Math.floor(b)}B`;
   };
 
   /**

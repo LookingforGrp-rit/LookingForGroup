@@ -104,6 +104,8 @@ Project Panel component style rules
         color: var(--primary-color);
         height: fit-content;
         transition: 0.2s;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
       }
 
       .follow-amt.following {
@@ -2979,6 +2981,8 @@ Project Carousel style rules
     color: var(--primary-color);
     height: fit-content;
     transition: 0.2s;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
   }
 
   .follow-amt.following {
