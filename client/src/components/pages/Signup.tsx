@@ -82,7 +82,6 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
     funFact: funFact,
     // major: major,
     profileImage: profileImage, // if they upload their own image
-    preferredName: firstName, // default to first name for now
   } as CreateUserInput;
 
   // Redirect the user to the homepage if they are currently logged in
