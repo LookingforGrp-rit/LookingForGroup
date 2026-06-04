@@ -3223,7 +3223,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/ban-user/{googleId}:
+  /api/mod/ban-user/{googleId}/{reason}:
     put:
       summary: Bans a user by adding them to a blacklist
       tags:
@@ -3235,6 +3235,12 @@ paths:
           in: path
           required: true
           description: Google ID of the user to be banned
+          schema:
+            type: string
+        - name: reason
+          in: path
+          required: false
+          description: Reason the user is to be banned
           schema:
             type: string
         - in: query

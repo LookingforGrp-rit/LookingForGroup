@@ -30,7 +30,7 @@ router.use(requiresLogin, injectCurrentUser, authenticated(requiresModerator));
 
 router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.delete('/delete-project/:id/', authenticated(deleteProject));
-router.put('/ban-user/:googleId/', authenticated(banUser));
+router.put('/ban-user/:googleId/:reason', authenticated(banUser));
 router.delete('/unban-user/:googleId/', authenticated(unbanUser));
 router.get('/project-report/', authenticated(getProjectReports));
 router.delete('/project-report/:id', authenticated(deleteProjectReport));
