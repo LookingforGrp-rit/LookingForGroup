@@ -16,7 +16,7 @@ import { ProjectWithFollowers, UserPreview, NumberDictionary, StructuredProjectI
  * @param itemAddInterval - Number of items to add to the display when scrolling.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache, followedProjectIds }: { category: string, itemList: unknown[], itemAddInterval: number, projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number> }) => {
+export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache, followedProjectIds, userId }: { category: string, itemList: unknown[], itemAddInterval: number, projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
   // Don't display all items at first, load them in periodically
   // Currently rendered subset of items. Initially displays only a portion (controlled by itemAddInterval).
   const [displayedItems, setDisplayedItems] = useState(itemList.slice(0, itemAddInterval));
@@ -75,6 +75,7 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache
                 project={project}
                 initialIsFollowing={followedProjectIds?.has(projectId)}
                 key={projectId}
+                currentUserId={userId}
               />
             );
           })
@@ -99,7 +100,7 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache
       >
         {displayedItems.length > 0 ? (
           displayedItems.map((profile) => (
-            <ProfilePanel profileData={profile as UserPreview} key={(profile as UserPreview).userId} />
+            <ProfilePanel profileData={profile as UserPreview} currentUserId={userId} key={(profile as UserPreview).userId} />
           ))
         ) : (
           <>Sorry, no people here</>
