@@ -104,6 +104,8 @@ Project Panel component style rules
         color: var(--primary-color);
         height: fit-content;
         transition: 0.2s;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
       }
 
       .follow-amt.following {
@@ -1163,11 +1165,12 @@ Project Creator and Editor Popup style rules
   grid-template-areas:
     'name-label name-search'
     'role-label role-select'
+    'message-label message-text'
     'permissions permissions';
 
   grid-template-columns: 1fr 4fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  column-gap: 8px;
+  grid-template-rows: 1fr 1fr auto;
+  column-gap: 20px;
   row-gap: 15px;
 }
 
@@ -1205,6 +1208,15 @@ Project Creator and Editor Popup style rules
 
 #project-team-add-member-info>.select-container {
   grid-area: role-select;
+}
+
+#project-team-add-member-message-label{
+  grid-area: message-label;
+}
+
+#project-team-add-member-message-text{
+  grid-area: message-text;
+  min-height: 12em;
 }
 
 #project-team-add-member-permissions {
@@ -1283,7 +1295,7 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   width: 439px;
-  padding: 20px 40px;
+  padding: 20px 50px;
   align-items: center;
   gap: 15px;
   background: var(--bg-color);
@@ -2969,6 +2981,8 @@ Project Carousel style rules
     color: var(--primary-color);
     height: fit-content;
     transition: 0.2s;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
   }
 
   .follow-amt.following {

@@ -18,6 +18,7 @@ import { ThemeIcon } from './ThemeIcon.tsx';
 
 interface ProjectPanelProps {
   project: ProjectWithFollowers;
+  initialIsFollowing?: boolean;
 }
 
 /**
@@ -28,7 +29,7 @@ interface ProjectPanelProps {
  * @param project - ProjectWithFollowers object containing project info, thumbnail, tags, and follower data
  * @returns JSX element rendering a clickable project preview panel with follow functionality
  */
-export const ProjectPanel = ({ project }: ProjectPanelProps) => {
+export const ProjectPanel = ({ project, initialIsFollowing }: ProjectPanelProps) => {
   const navigate = useNavigate();
   const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
 
@@ -36,7 +37,13 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const [userId, setUserId] = useState<number>();
   // Local state for follow count and current user's follow status
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
-  const [isFollowing, setFollowing] = useState(false);
+  const [isFollowing, setFollowing] = useState(initialIsFollowing ?? false);
+
+  useEffect(() => {
+    setFollowing(initialIsFollowing ?? false);
+  }, [initialIsFollowing]);
+
+  const shouldCheckFollow = initialIsFollowing === undefined;
   // Avoid looping useEffect by separating projectId
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
 
@@ -89,19 +96,28 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
       const userResp = await getCurrentAccount();
       if (userResp.data) setUserId(userResp.data.userId);
 
-      //get the project itself
-      const projectResp = await getByID(projectId);
-      if (projectResp.data) {
-        setFollowCount(projectResp.data.followers.count);
-        checkFollow();
-        if (project.title == "thumbnail") {
-          console.log("Thumbnail project's thumbnail:");
-          console.log(project.thumbnail);
+      // Check if we already have full project data with followers
+      // If not, fetch it to get the current follower count
+      if (!project.followers) {
+        const projectResp = await getByID(projectId);
+        if (projectResp.data) {
+          setFollowCount(projectResp.data.followers.count);
         }
+      } else {
+        setFollowCount(project.followers.count);
+      }
+      
+      if (shouldCheckFollow) {
+        checkFollow();
+      }
+
+      if (project.title == "thumbnail") {
+        console.log("Thumbnail project's thumbnail:");
+        console.log(project.thumbnail);
       }
     };
     getProjectData();
-  }, [projectId, userId, checkFollow])
+  }, [projectId, userId, checkFollow, project.followers, shouldCheckFollow])
 
   /**
    * Handles click on the follow/unfollow button

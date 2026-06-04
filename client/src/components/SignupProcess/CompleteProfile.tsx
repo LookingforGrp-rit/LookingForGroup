@@ -111,7 +111,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
       <div className="signupProcess-modal">
         <div className="CompleteProfile">
           <h1 id="signupProcess-title">Complete Your Profile!</h1>
-          <p id="signupProcess-subtitle">You can add more and edit later</p>
+          <p id="signupProcess-subTitle">You can add more and edit later</p>
 
           <div id="completeProfile-input-container">
             <div id="profile-details">
@@ -150,7 +150,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             <LabelInputBox
               label={"Add Pronouns"}
               inputType={"single"}
-              maxLength={50}
+              maxLength={20}
               id="pronouns-input"
               value={pronouns}
               placeholder={"Pronouns"}
@@ -186,7 +186,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             <LabelInputBox
               label={"Add Job Title"}
               inputType={"single"}
-              maxLength={30}
+              maxLength={50}
               id="jobTitle-input"
               value={currentJobTitle}
               placeholder={"Current Job Title"}
@@ -198,7 +198,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             <LabelInputBox
               label={"Add Location (Optional)"}
               inputType={"single"}
-              maxLength={30}
+              maxLength={50}
               id="location-input"
               value={location}
               placeholder={"Location (Optional)"}
@@ -210,7 +210,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             <LabelInputBox
               label={"Add Fun Fact"}
               inputType={"single"}
-              maxLength={30}
+              maxLength={50}
               id="funFact-input"
               value={funFact}
               placeholder={"Fun Fact"}
@@ -251,6 +251,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             />
           </div>
             {/* Skills */}
+            <div id="signupProcess-skills-subTitle">Chosen Skills:</div>
             <div id="signup-profile-skill">
               {selectedSkills.map((skill, index) => (
                 <div key={index} style={{ border: `2px solid ${tagColors[index % 5]}` }}>
