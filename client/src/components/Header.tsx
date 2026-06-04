@@ -164,9 +164,9 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
         <Dropdown>
           {/* This is the button to open the dropdown menu */}
           <DropdownButton buttonId="profile-btn">
-            {(profileImg) ? (
+            {(loggedIn) ? (
               <img
-                src={`${profileImg}`}
+                src={`${profileImg || profilePicture}`}
                 id={'profile-img-icon'}
                 className={'rounded'}
                 title={'Profile picture'}
@@ -196,7 +196,6 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                   <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
                   <div id="header-profile-user-info">
                     <p id="header-profile-username">{username}</p>
-                    <br />
                     <p id="header-profile-email">{email}</p>
                   </div>
                 </button>
@@ -221,18 +220,15 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* Profile Icon (if user has one) */}
                 <button onClick={() => handleProfileAccess()} id="header-profile-user">
-                  {(profileImg) ? (
+                  {
                     <img
-                      src={`${profileImg}`}
+                      src={`${profileImg || profilePicture}`}
                       className={'rounded'}
                       alt={'profile'}
                       onError={() => {
                         setProfileImg(profilePicture);
                       }}
-                    />
-                  ) : (
-                    <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
-                  )}
+                    />}
                   <div id="header-profile-user-info">
                     <p id="header-profile-username">{username}</p>
                     <br />

@@ -128,7 +128,27 @@ const MyProjects = () => {
   //   }
   // };
 
-  // React likes this more than a boolean check
+  //drop a project from local state — used right after a successful delete/leave
+  const removeProject = useCallback((projectId: number) => {
+    setProjectsList((prev) => prev.filter((p) => p.projectId !== projectId));
+    setFilteredProjects((prev) => prev.filter((p) => p.projectId !== projectId));
+  }, []);
+
+  // Keep the filtered list in sync when the underlying project list changes
+  useEffect(() => {
+    if (projectMode === "All") return;
+    const filtered = projectsList.filter((item) => {
+      if (projectMode === "Joined") {
+        for (const member of item.members) {
+          if (member.user.username === userId && item.owner.username !== userId) return true;
+        }
+        return false;
+      }
+      if (projectMode === "Owned") return item.owner.username === userId;
+      return false;
+    });
+    setFilteredProjects(filtered);
+  }, [projectsList, projectMode, userId]);
   // else {
   //     if (projectsList.length < 20) {
   //         let tempList = new Array(0);
@@ -254,6 +274,7 @@ const MyProjects = () => {
                   projId: project.projectId,
                   userId: loggedIn,
                   reloadProjects: getUserProjects,
+                  removeProject,
                 }}
               >
                 <MyProjectsDisplayGrid
@@ -295,6 +316,7 @@ const MyProjects = () => {
                   projId: project.projectId,
                   userId: loggedIn,
                   reloadProjects: getUserProjects,
+                  removeProject,
                 }}
               >
                 <MyProjectsDisplayList
