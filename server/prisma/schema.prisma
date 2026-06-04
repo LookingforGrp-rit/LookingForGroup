@@ -260,7 +260,6 @@ model Users {
   userSkills        UserSkills[]
   userSocials       UserSocials[]
   majors            Majors[]
-  userBlacklists    UserBlacklist[]
   report            ReportProject[]
 
   @@map("users")
