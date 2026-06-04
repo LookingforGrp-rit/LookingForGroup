@@ -1,11 +1,11 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DeleteBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteBlacklistServiceSuccess = ServiceSuccessSusbet<'OK'>;
+type DeleteBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-//PATCH api/mod/ban-user/{id}
-//add a tag
+//DELETE api/mod/unban-user/{id}
+//unbans a user
 const deleteBlacklistService = async (
   googleId: string,
 ): Promise<DeleteBlacklistServiceSuccess | DeleteBlacklistServiceError> => {

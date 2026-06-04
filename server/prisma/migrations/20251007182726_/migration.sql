@@ -94,7 +94,7 @@ CREATE TABLE `project_socials` (
 CREATE TABLE `projects` (
     `project_id` INTEGER NOT NULL AUTO_INCREMENT,
     `title` VARCHAR(150) NOT NULL,
-    `hook` VARCHAR(200) NOT NULL DEFAULT '',
+    `hook` VARCHAR(300) NOT NULL DEFAULT '',
     `description` VARCHAR(2000) NOT NULL DEFAULT '',
     `thumbnail_id` INTEGER NULL,
     `purpose` ENUM('Personal', 'Portfolio Piece', 'Academic', 'Co-op') NULL,
@@ -200,30 +200,30 @@ CREATE TABLE `skills` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `_MediumsToProjects` (
+CREATE TABLE `_mediumstoprojects` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
-    UNIQUE INDEX `_MediumsToProjects_AB_unique`(`A`, `B`),
-    INDEX `_MediumsToProjects_B_index`(`B`)
+    UNIQUE INDEX `_mediumstoprojects_AB_unique`(`A`, `B`),
+    INDEX `_mediumstoprojects_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `_MajorsToUsers` (
+CREATE TABLE `_majorstousers` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
-    UNIQUE INDEX `_MajorsToUsers_AB_unique`(`A`, `B`),
-    INDEX `_MajorsToUsers_B_index`(`B`)
+    UNIQUE INDEX `_majorstousers_AB_unique`(`A`, `B`),
+    INDEX `_majorstousers_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `_ProjectsToTags` (
+CREATE TABLE `_projectstotags` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
-    UNIQUE INDEX `_ProjectsToTags_AB_unique`(`A`, `B`),
-    INDEX `_ProjectsToTags_B_index`(`B`)
+    UNIQUE INDEX `_projectstotags_AB_unique`(`A`, `B`),
+    INDEX `_projectstotags_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -281,22 +281,22 @@ ALTER TABLE `user_socials` ADD CONSTRAINT `FK_user_socials_socials` FOREIGN KEY 
 ALTER TABLE `user_socials` ADD CONSTRAINT `FK_user_socials_users` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_MediumsToProjects` ADD CONSTRAINT `_MediumsToProjects_A_fkey` FOREIGN KEY (`A`) REFERENCES `mediums`(`medium_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_mediumstoprojects` ADD CONSTRAINT `_mediumstoprojects_A_fkey` FOREIGN KEY (`A`) REFERENCES `mediums`(`medium_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_MediumsToProjects` ADD CONSTRAINT `_MediumsToProjects_B_fkey` FOREIGN KEY (`B`) REFERENCES `projects`(`project_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_mediumstoprojects` ADD CONSTRAINT `_mediumstoprojects_B_fkey` FOREIGN KEY (`B`) REFERENCES `projects`(`project_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_MajorsToUsers` ADD CONSTRAINT `_MajorsToUsers_A_fkey` FOREIGN KEY (`A`) REFERENCES `majors`(`major_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_majorstousers` ADD CONSTRAINT `_majorstousers_A_fkey` FOREIGN KEY (`A`) REFERENCES `majors`(`major_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_MajorsToUsers` ADD CONSTRAINT `_MajorsToUsers_B_fkey` FOREIGN KEY (`B`) REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_majorstousers` ADD CONSTRAINT `_majorstousers_B_fkey` FOREIGN KEY (`B`) REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_ProjectsToTags` ADD CONSTRAINT `_ProjectsToTags_A_fkey` FOREIGN KEY (`A`) REFERENCES `projects`(`project_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_projectstotags` ADD CONSTRAINT `_projectstotags_A_fkey` FOREIGN KEY (`A`) REFERENCES `projects`(`project_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_ProjectsToTags` ADD CONSTRAINT `_ProjectsToTags_B_fkey` FOREIGN KEY (`B`) REFERENCES `tags`(`tag_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_projectstotags` ADD CONSTRAINT `_projectstotags_B_fkey` FOREIGN KEY (`B`) REFERENCES `tags`(`tag_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --

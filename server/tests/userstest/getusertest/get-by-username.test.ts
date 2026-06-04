@@ -38,6 +38,7 @@ describe('getUserByUsernameService', () => {
       apiUrl: '/api/users/3',
       firstName: '',
       lastName: '',
+      preferredName: '',
       profileImage: null,
       mentor: false,
       designer: false,

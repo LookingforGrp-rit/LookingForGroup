@@ -7,10 +7,11 @@ import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import {
+import users, {
   getJobTitles,
   getUsers,
-  getUsersById
+  getUsersById,
+  getCurrentAccount,
 } from "../../../api/users";
 import {
   ProjectJob,
@@ -22,6 +23,7 @@ import {
   JobCompensation,
   Role,
   ProjectWithFollowers,
+  SendProjectInviteInput,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -37,6 +39,10 @@ import {
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 //import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
+// import {
+//   transporter,
+//   sendEmail
+// } from "../../../../../server/src/mailer";
 
 // --- Variables ---
 // Default project value
@@ -153,6 +159,9 @@ export const TeamTab = ({
     []
   );
 
+  // current logged in user id
+  const [currentUserId, setCurrentUserId] = useState<number | null>(null);
+
   // State for error/successful messages
   const [errorAddMember, setErrorAddMember] = useState("");
   const [errorAddPosition, setErrorAddPosition] = useState("");
@@ -166,6 +175,8 @@ export const TeamTab = ({
 
   // selected contact name after saving local position
   const [contactName, setContactName] = useState("");
+
+  const [messageText, setMessageText] = useState("");
 
 
   // check if a value is null or undefined
@@ -278,6 +289,20 @@ export const TeamTab = ({
     }
   }, [allUsers]);
 
+  // load current logged-in account id
+  useEffect(() => {
+    const loadCurrent = async () => {
+      try {
+        const resp = await getCurrentAccount();
+        if (resp && resp.data) setCurrentUserId(resp.data.userId);
+      } catch (e) {
+        console.error("Failed to load current account", e);
+      }
+    };
+
+    loadCurrent();
+  }, []);
+
   // Assign active buttons in Open Positions
   const isTeamTabOpen = currentTeamTab === 1;
   useEffect(() => {
@@ -362,6 +387,7 @@ export const TeamTab = ({
     const resetFields = () => {
       setSearchQuery("");
       setSelectKey((previous) => previous + 1);
+      setMessageText("");
     };
 
     // notify user of error, reset fields
@@ -418,6 +444,14 @@ export const TeamTab = ({
       }
     }
 
+    // limit posbile null role
+    if (!currentMember.role) {
+      setSuccessAddMember(false);
+      setErrorAddMember("Select a role");
+      setSelectKey((previous) => previous + 1);
+      return false;
+    }
+
     // Match this user with all users to get profile image
     const matchedUser = allUsers.find(
       (user) => user.userId === currentMember.user?.userId
@@ -457,8 +491,11 @@ export const TeamTab = ({
           type: "local",
         },
         data: {
-          userId: currentMember.user.userId,
-          roleId: currentMember.role?.roleId,
+          inviteeUserId: currentMember.user.userId,
+          // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
+          inviterUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
+          roleId: currentMember.role.roleId,
+          message: messageText,
         },
       });
 
@@ -529,6 +566,7 @@ export const TeamTab = ({
       }
 
       // set user for member
+      // Somehow wait until they accept the invite
       setCurrentMember({
         ...emptyMember,
         ...currentMember,
@@ -549,6 +587,7 @@ export const TeamTab = ({
     setSearchBarKey((previous) => previous + 1);
     setSelectKey((previous) => previous + 1);
     setClosePopup(false);
+    setMessageText("");
   };
 
   // --- Position handlers ---
@@ -1555,6 +1594,12 @@ export const TeamTab = ({
                   })}
                 />
               </Select>
+              <label id="project-team-add-member-message-label">Message</label>
+              <textarea
+                id="project-team-add-member-message-text"
+                value={messageText}
+                onChange={(e) => setMessageText(e.target.value)}
+              ></textarea>
             </div>
             {/* Action buttons */}
             <div className="project-editor-button-pair">

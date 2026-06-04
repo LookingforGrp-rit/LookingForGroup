@@ -118,25 +118,25 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
         {/* List of items */}
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
-            <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
+            <ThemeIcon id={'role'} width={20} height={20} className={'color-fill undefined'} ariaLabel={'Profession'}/>
           </div>
           <p>{profileData.title ? profileData.title : 'None specified'}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
-            <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'} />
+            <ThemeIcon id={'location'} width={12} height={16} className={'color-fill undefined'} ariaLabel={'Location'} />
           </div>
           <p>{profileData.location ? profileData.location : 'None specified'}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
-            <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+            <ThemeIcon id={'pronouns'} width={22} height={22} className={'color-fill undefined'} ariaLabel={'Pronouns'} />
           </div>
           <p>{profileData.pronouns ? profileData.pronouns : 'None specified'}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
-            <ThemeIcon id={'funfact'} width={24} height={24} className={'mono-stroke'} ariaLabel={'Fun Fact'} />
+            <ThemeIcon id={'funfact'} width={24} height={24} className={'color-fill undefined'} ariaLabel={'Fun Fact'} />
           </div>
           <p>{profileData.funFact ? profileData.funFact : 'None specified'}</p>
         </div>

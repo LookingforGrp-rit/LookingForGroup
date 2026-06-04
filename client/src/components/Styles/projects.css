@@ -105,6 +105,8 @@ Project Panel component style rules
         color: var(--primary-color);
         height: fit-content;
         transition: 0.2s;
+        font-variant-numeric: tabular-nums;
+        font-feature-settings: "tnum";
       }
 
       .follow-amt.following {
@@ -364,7 +366,7 @@ Project Creator and Editor Popup style rules
 
 
 #project-editor-save.profile-editor-save {
-  margin-top: 37px;
+  margin-top: 0;
   margin-bottom: 28px;
 }
 
@@ -444,7 +446,7 @@ Project Creator and Editor Popup style rules
 
 #project-editor-content {
   flex-grow: 1;
-  margin: 35px 56px 30px 55px;
+  margin: 35px 56px 0 55px;
 }
 
 @media only screen and (max-width: 700px) {
@@ -532,7 +534,7 @@ Project Creator and Editor Popup style rules
 
 #project-editor-general {
   display: grid;
-  height: 100%;
+  height: 720px;
   grid-template:
     'title title about' 1fr
     'status purpose about' 1fr
@@ -696,7 +698,7 @@ Project Creator and Editor Popup style rules
   border-radius: 10px;
   grid-area: search;
   min-width: 150px;
-  max-height: 628px;
+  max-height: 548px;
 }
 
 #project-editor-tag-search-container {
@@ -705,7 +707,7 @@ Project Creator and Editor Popup style rules
   justify-content: flex-start;
   gap: 10px;
   /*For scrolling*/
-  max-height: 472px;
+  max-height: 370px;
   overflow-y: auto;
 }
 
@@ -713,6 +715,7 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow-x: auto;
 }
 
 #tag-search-divider,
@@ -867,7 +870,7 @@ Project Creator and Editor Popup style rules
   grid-area: select;
   display: flex;
   flex-direction: column;
-  max-height: 405px;
+  max-height: 427px;
 
   .error {
     margin-top: 15px;
@@ -919,7 +922,7 @@ Project Creator and Editor Popup style rules
 }
 
 #project-editor-tag-search-tabs {
-  overflow-x: auto;
+  overflow-x: visible;
   justify-content: flex-start;
 }
 
@@ -981,7 +984,7 @@ Project Creator and Editor Popup style rules
 #project-editor-team-content {
   display: flex;
   height: 100%;
-  margin-bottom: 40px;
+  margin-bottom: 25px;
 }
 
 #team-save-info {
@@ -1176,11 +1179,12 @@ Project Creator and Editor Popup style rules
   grid-template-areas:
     'name-label name-search'
     'role-label role-select'
+    'message-label message-text'
     'permissions permissions';
 
   grid-template-columns: 1fr 4fr;
-  grid-template-rows: 1fr 1fr 1fr;
-  column-gap: 8px;
+  grid-template-rows: 1fr 1fr auto;
+  column-gap: 20px;
   row-gap: 15px;
 }
 
@@ -1218,6 +1222,15 @@ Project Creator and Editor Popup style rules
 
 #project-team-add-member-info>.select-container {
   grid-area: role-select;
+}
+
+#project-team-add-member-message-label{
+  grid-area: message-label;
+}
+
+#project-team-add-member-message-text{
+  grid-area: message-text;
+  min-height: 12em;
 }
 
 #project-team-add-member-permissions {
@@ -1296,7 +1309,7 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   width: 439px;
-  padding: 20px 40px;
+  padding: 20px 50px;
   align-items: center;
   gap: 15px;
   background: var(--bg-color);
@@ -2935,6 +2948,8 @@ Project Carousel style rules
     color: var(--primary-color);
     height: fit-content;
     transition: 0.2s;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
   }
 
   .follow-amt.following {
@@ -3423,9 +3438,9 @@ button#positions-popup-list-item-active {
 
 #project-overview-links-section {
   display: flex;
-  flex-direction: row;
-  gap: 20px;
-  align-items: center;
+  flex-direction: column;
+  gap: 5px;
+  align-items: start;
   justify-content: start;
   color: var(--primary-color);
   font-style: italic;
@@ -3442,6 +3457,14 @@ button#positions-popup-list-item-active {
       border: none;
       padding: 0;
     }
+  }
+}
+
+/* Display the links section to the center when on mobile size */
+@media only screen and (max-width: 700px) {
+  #project-overview-links-section {
+    flex-direction: column;
+    align-items: center;
   }
 }
 
@@ -3510,11 +3533,22 @@ button#positions-popup-list-item-active {
 }
 
 
-#project-open-positions {
+#project-open-positions .centerer{
   grid-area: positions;
   margin-top: 20px;
   margin-bottom: 20px;
+  display: none;
 }
+
+@media only screen and (max-width: 700px) {
+  #project-open-positions .centerer {
+    grid-area: positions;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: grid;
+  }
+}
+
 
 #project-open-positions-list {
   display: flex;
