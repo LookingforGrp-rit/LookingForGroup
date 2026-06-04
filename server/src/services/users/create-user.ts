@@ -12,14 +12,33 @@ const createUserService = async (
   session: SessionUserData,
 ): Promise<MePrivate | CreateUserServiceError> => {
   try {
+    //destructure to take majors out of userData
+    //because you have to connect it individually
+    const { majors, ...majorlessUserData } = userData;
     //if there are no google credentials by now we're in dev, since we already have the checks in the controller
     //so bypass the google stuff and create the dev user directly from here
     if (!session.googleId) {
       const devData = userData;
-      const result = await prisma.users.create({
-        data: devData,
-        select: MePrivateSelector,
-      });
+      const { majors, ...majorlessDevData } = devData;
+      let result;
+      if (devData.majors.length !== 0) {
+        result = await prisma.users.create({
+          data: {
+            ...devData,
+            majors: {
+              connect: {
+                majorId: majors[0].majorId,
+              },
+            },
+          },
+          select: MePrivateSelector,
+        });
+      } else {
+        result = await prisma.users.create({
+          data: majorlessDevData,
+          select: MePrivateSelector,
+        });
+      }
       return transformMeToPrivate(result);
     }
 
@@ -36,13 +55,22 @@ const createUserService = async (
 
     console.log(userData);
 
+    //majors are a relation so i gotta do this for em
     const result = await prisma.users.create({
-      data: userData,
+      data: {
+        ...majorlessUserData,
+        majors: {
+          connect: {
+            majorId: majors[0].majorId,
+          },
+        },
+      },
       select: MePrivateSelector,
     });
 
     return transformMeToPrivate(result);
   } catch (e) {
+    console.log(e);
     console.error(`Error in createUserService: ${JSON.stringify(e)}`);
 
     if (e instanceof PrismaClientKnownRequestError) {
