@@ -459,30 +459,30 @@ export const MediaTab = ({
           <label className="slider-text" htmlFor="zoom">Zoom</label>
         </div>
         <div id="xTrans-row">
-        <input 
-          type="range" ref={inputX}
-          id="xTrans" name="xTrans" 
-          onChange={() => {
-            setDX(inputX.current?.valueAsNumber as number);
-            updateCanvas();
-          }}
-          min={canvas.current ? -canvas.current.width: -100} 
-          max={canvas.current ?  canvas.current.width:  100}
-          defaultValue={dX}/>
-        <label className="slider-text" htmlFor="xtrans">Xpos</label>
+          <input 
+            type="range" ref={inputX}
+            id="xTrans" name="xTrans" 
+            onChange={() => {
+              setDX(inputX.current?.valueAsNumber as number);
+              updateCanvas();
+            }}
+            min={canvas.current ? -canvas.current.width: -100} 
+            max={canvas.current ?  canvas.current.width:  100}
+            defaultValue={dX}/>
+          <label className="slider-text" htmlFor="xtrans">Xpos</label>
         </div>
         <div id="yTrans-row">
-        <input  
-          type="range" ref={inputY}
-          id="yTrans" name="yTrans" 
-          onChange={() => {
-            setDY(inputY.current?.valueAsNumber as number);
-            updateCanvas();
-          }}
-          min={canvas.current ? -canvas.current.height: -100} 
-          max={canvas.current ?  canvas.current.height:  100}
-          defaultValue={dY}/>
-        <label className="slider-text" htmlFor="yTrans">Ypos</label>
+          <input  
+            type="range" ref={inputY}
+            id="yTrans" name="yTrans" 
+            onChange={() => {
+              setDY(inputY.current?.valueAsNumber as number);
+              updateCanvas();
+            }}
+            min={canvas.current ? -canvas.current.height: -100} 
+            max={canvas.current ?  canvas.current.height:  100}
+            defaultValue={dY}/>
+          <label className="slider-text" htmlFor="yTrans">Ypos</label>
         </div>
         <div className="project-crop-extra-info">
           Crop Image to fit the site's 16:9 ratio, or skip. Not cropping may cause the image to display in other places.
