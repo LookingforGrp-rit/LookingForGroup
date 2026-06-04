@@ -782,6 +782,7 @@ Sidebar Nav style rules
     align-items: center;
     justify-content: space-evenly;
     height: 80px;
+    width:100%;
     background-color: var(--border-color);
   }
 
@@ -796,12 +797,12 @@ Sidebar Nav style rules
 
   .containerButtonSideBar>.my-projects-create-btn>#project-info-create{
     background-image: var(--create-gradient);
-    width: 18vw !important;
-    height: 18vw !important;
+    width: 90px !important;
+    height: 90px !important;
     border-radius: 50% !important;
     padding:0% !important;
     margin-bottom: 30%;
-    border-width: 1vw !important;
+    border-width: 5px !important;
     border-color: var(--border-color) !important;
     background-color: var(--border-color);
     border:solid;
@@ -810,8 +811,8 @@ Sidebar Nav style rules
   .containerButtonSideBar>.my-projects-create-btn>#project-info-create>#create{
     margin: 0% !important;
     padding:0% !important;
-    width:11vw !important;
-    height:11vw !important;
+    width: 55px !important;
+    height: 55px !important;
   }
 
   /*temporary, until mobile sidebar layout is decided on*/
@@ -853,19 +854,20 @@ Sidebar Nav style rules
     }
   }
 
-  .sidebar-btn{
-    width: 12vw !important;
-    height: 12vw !important;
+  .sidebar-btn,#my-profile-sidebar-btn{
+    height: 55px !important;
+    width: 55px !important;
     border-radius: 50% !important;
     border-width: 2% !important;
-    padding:3.5% !important;
+    padding:0% !important;
+    
   }
 
-  .sidebar-icon{
+  .sidebar-icon,.containerButtonSideBar>#my-profile-sidebar-btn>#profile{
     margin: 0% !important;
-    padding:0% !important;
-    width:20vw !important;
-    height:20vw !important;
+    padding:25% !important;
+    width: auto !important;
+    height: auto !important;
   }
 }
 
