@@ -228,7 +228,7 @@ export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendin
             <LabelInputBox
               label={'Major'}
               inputType={'none'}
-              forceUnsaved={profile.majors !== unmodifiedProfile.majors}
+              forceUnsaved={profile.majors[0]?.majorId !== unmodifiedProfile.majors[0]?.majorId}
             >
               <Select>
                 <SelectButton
