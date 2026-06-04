@@ -710,7 +710,7 @@ Signup process modal style rules
   grid-template-columns: 1.5fr 1fr 1fr 1fr;
   grid-template-rows: auto auto auto auto auto;
   grid-template-areas: 
-  'profileImage pronouns academicYear slogan'
+  'profileImage pronouns academicYear headline'
   'profileImage phoneNumber major bio'
   'profileImage jobTitle jobTitle bio'
   'profileImage location location bio'
@@ -721,7 +721,7 @@ Signup process modal style rules
   margin: 10px 0 20px 0;
 }
 
-#pronouns-input, #slogan-input, #phoneNumber-input, #jobTitle-input, 
+#pronouns-input, #headline-input, #phoneNumber-input, #jobTitle-input, 
 #location-input, #funFact-input {
   font-weight: 400;
   height: 50px;
@@ -735,8 +735,8 @@ Signup process modal style rules
   grid-area: pronouns;
 }
 
-#slogan-input {
-  grid-area: slogan;
+#headline-input {
+  grid-area: headline;
 }
 
 #phoneNumber-input {
@@ -759,7 +759,8 @@ Signup process modal style rules
   grid-area: academicYear;
   height: 50px;
 
-  div {
+  .select-container,
+  .select-button-input {
     height: 100%;
     width: 100%;
 
@@ -774,7 +775,8 @@ Signup process modal style rules
   grid-area: major;
   height: 50px;
 
-  div {
+  .select-container,
+  .select-button-input {
     height: 100%;
     width: 100%;
 
