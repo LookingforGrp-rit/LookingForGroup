@@ -4,7 +4,7 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT' | 'NOT_FOUND'>;
 type GetServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-//PUT api/me/report-project/{id}
+//PUT api/me/projects/report/{id}/{report}
 export const reportProjectService = async (
   userId: number,
   projectId: number,
@@ -13,12 +13,12 @@ export const reportProjectService = async (
   try {
     //Check if project exists
     //Because this is being called by api/me, there is no need to validate the id of the user
-    const project = await prisma.reportProject.findFirst({
-      where: {
-        projectId,
-      },
-    });
-    if (!project) return 'NOT_FOUND';
+    // const project = await prisma.reportProject.findFirst({
+    //   where: {
+    //     projectId,
+    //   },
+    // });
+    // if (!project) return 'NOT_FOUND';
 
     //Check if report already exists
     const report = await prisma.reportProject.findFirst({
