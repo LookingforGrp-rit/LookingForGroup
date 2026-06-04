@@ -885,6 +885,8 @@ Page popup style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   opacity: 100%;
   z-index: 3;
+  padding: 24px 56px;
+  box-sizing: border-box;
 
   .confirm-msg
   {
@@ -1671,7 +1673,7 @@ Select style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   /* Limit height to ten items, maybe less */
   max-height: 450px;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 
