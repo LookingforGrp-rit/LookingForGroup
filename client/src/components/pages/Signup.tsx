@@ -502,7 +502,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
 
               await createNewUser(userInfo); //populating this with all of the things we selected
               for(const id of selectedSkillIds){
-                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+                await addUserSkill({skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice'})
               }
               setShowGetStartedModal(false);
               navigate(paths.routes.MYPROJECTS);
@@ -510,7 +510,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected
               for(const id of selectedSkillIds){
-                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+                await addUserSkill({skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice'})
               }
               setShowGetStartedModal(false);
               navigate(paths.routes.HOME);
