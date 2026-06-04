@@ -34,7 +34,7 @@ app.use(
         //30 minutes * 60 seconds/minute * 1000ms/second
         maxAge: 30 * 60 * 1000,
         sameSite: true,
-        domain: 'localhost',
+        domain: process.env.HOST_URL,
       };
     },
   }),
