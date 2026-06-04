@@ -18,10 +18,10 @@ Project Panel component style rules
 /* #region project-panel */
 
 #discover-panel-box {
-  width: 90%;
+  width: 100%;
+  max-width: 1200px;
   margin: 0 auto 20px;
-  display: flex;
-  justify-content: center;
+  display: block;
 }
 
 /*
@@ -33,14 +33,16 @@ Project Panel component style rules
 */
 .project-panel-box {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
-  justify-content: space-between;
-  align-content: start;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  justify-items: stretch;
+  align-items: stretch;
   gap: 20px;
   width: 100%;
 }
 
 .project-panel {
+  width: 100%;
   height: 240px;
   border: none;
   border-radius: 10px;
