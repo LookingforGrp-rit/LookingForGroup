@@ -14,11 +14,6 @@ import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editU
 import { MePrivate, UpdateUserInput } from '@looking-for-group/shared';
 type JsonData = Record<string, unknown>;
 
-// Take the user ID and delete it
-const deleteAccountPressed = async () => {
-  await deleteUser();
-};
-
 /**
  * Settings page. Renders the settings page interface with options for updating user account information, appearance preferences, and account settings
  * @returns JSX Element
@@ -44,6 +39,12 @@ const Settings = () => {
   // --------------------
   // Helper functions
   // --------------------
+
+  // Take the user ID and delete it
+  const deleteAccountPressed = async () => {
+    await deleteUser();
+    navigate(paths.routes.HOME);
+  };
 
   // TODO: Function needed to check password!
   // TODO: Function needed to check field validity (e.g. is this actually an email?)
