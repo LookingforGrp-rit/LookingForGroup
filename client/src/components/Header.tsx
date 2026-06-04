@@ -190,7 +190,6 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                   <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
                   <div id="header-profile-user-info">
                     <p id="header-profile-username">{username}</p>
-                    <br />
                     <p id="header-profile-email">{email}</p>
                   </div>
                 </button>
