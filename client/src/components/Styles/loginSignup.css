@@ -359,7 +359,7 @@ Signup process modal style rules
   background: var(--bg-color);
   margin: auto;
   display: flex;
-  justify-content: center;
+  justify-content: space-between;
   align-items: center;
   height: 820px;
   width: 1000px;
@@ -387,6 +387,13 @@ Signup process modal style rules
   color: var(--primary-color);
   font-size: 0.9375rem;
   margin: 0 10px 20px 10px;
+  font-weight: 400;
+}
+
+#signupProcess-skills-subTitle {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  margin: 40px 10px 0 10px;
   font-weight: 400;
 }
 
@@ -496,7 +503,7 @@ Signup process modal style rules
 }
 
 #profile-details {
-  height: 515px;
+  height: 100%;
   margin: 20px;
   display: flex;
   flex-direction: column;
@@ -700,7 +707,7 @@ Signup process modal style rules
 
 #completeProfile-input-container {
   display: grid;
-  grid-template-columns: auto auto auto auto;
+  grid-template-columns: 1.5fr 1fr 1fr 1fr;
   grid-template-rows: auto auto auto auto auto;
   grid-template-areas: 
   'profileImage pronouns academicYear slogan'
@@ -710,12 +717,14 @@ Signup process modal style rules
   'profileImage funFact funFact bio';
   row-gap: 20px;
   column-gap: 20px;
-  
+
+  margin: 10px 0 20px 0;
 }
 
 #pronouns-input, #slogan-input, #phoneNumber-input, #jobTitle-input, 
 #location-input, #funFact-input {
   font-weight: 400;
+  height: 50px;
   input {
     margin-top: 0px;
     background-color: var(--header-color);
@@ -748,7 +757,8 @@ Signup process modal style rules
 
 #academicYear-input {
   grid-area: academicYear;
-  
+  height: 50px;
+
   div {
     height: 100%;
     width: 100%;
@@ -762,7 +772,8 @@ Signup process modal style rules
 
 #major-input {
   grid-area: major;
-  
+  height: 50px;
+
   div {
     height: 100%;
     width: 100%;
@@ -777,6 +788,7 @@ Signup process modal style rules
   resize: none;
   font-size: 1rem;
   grid-area: bio;
+  height: 260px;
   
   div textarea {
     margin-top: 0px;
