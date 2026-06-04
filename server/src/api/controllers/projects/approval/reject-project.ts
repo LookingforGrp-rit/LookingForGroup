@@ -10,7 +10,7 @@ const rejectProjectController = async (req: Request, res: Response) => {
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Project not found',
+      error: 'Project not found in list of projects awaiting request.',
       data: null,
     };
     res.status(404).json(resBody);

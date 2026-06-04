@@ -1,6 +1,8 @@
 import approveProject from './approval/approve-proj.ts';
 import getUnapprovedProjectById from './approval/get-unapproved-proj-id.ts';
 import getUnapprovedProjects from './approval/get-unapproved-projects.ts';
+import rejectProject from './approval/reject-project.ts';
+import requestApproval from './approval/request-approval.ts';
 import unapproveProject from './approval/unapprove-proj.ts';
 import createProject from './create-proj.ts';
 import deleteProject from './delete-proj.ts';
@@ -77,4 +79,6 @@ export default {
   unapproveProject,
   getUnapprovedProjects,
   getUnapprovedProjectById,
+  rejectProject,
+  requestApproval,
 };
