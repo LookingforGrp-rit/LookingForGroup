@@ -372,24 +372,45 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // Update the showcased projects after getting more info from the server
   const getShowcaseDetails = async (projectList : ProjectPreview[], usedCache : NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList : ProjectWithFollowers[] = [];
-    for (let projectPreview of projectList.slice(0, 3)) {
 
+    console.log(projectList);
+    // remove projects without open positions
+    // const filteredProjectList = projectList.filter(a => a.jobs.length > 1);
+
+    // create a copy of the array for the carousel
+    const carouselProjectList = projectList.slice();
+
+    // Go through carouselProjectList and only keep 3 projects with open positions
+    for(let projectPreview of carouselProjectList.sort(() => Math.random() - 0.5))
+    {
       const cachedFull = usedCache[projectPreview.projectId].full;
-
+      
       if (cachedFull != undefined) {
-        //Even if it's already cached, it should still go into the carousel.
-        focusProjectDetailsList.push(cachedFull);
+        if (cachedFull.jobs.length > 0)
+        {
+          focusProjectDetailsList.push(cachedFull);
+        }
       }
-      else {
+      else 
+      {
         const projectRequest : ApiResponse<ProjectWithFollowers> = await getByID(projectPreview.projectId);
 
         if (projectRequest.data) {
-          focusProjectDetailsList.push(projectRequest.data);
+          if(projectRequest.data.jobs.length > 0)
+          {
+            focusProjectDetailsList.push(projectRequest.data);
+          }
           usedCache[projectPreview.projectId].full = projectRequest.data;
         } else {
           console.error("Error getting project data from " + projectPreview.projectId);
           return {} as ProjectWithFollowers;
         }
+      }
+
+      // Once 3 projects have been added to carousel, break out of loop
+      if(focusProjectDetailsList.length == 3)
+      {
+        break;
       }
     }
     
