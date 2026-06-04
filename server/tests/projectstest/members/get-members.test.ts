@@ -40,6 +40,9 @@ const testMembers = [
     label: 'Test',
     profileVisibility: 'Public' as MembersProfileVisibility,
     createdAt: now,
+    users: {
+      firstName: 'Alice',
+    },
   },
   {
     projectId: 1,
@@ -48,6 +51,9 @@ const testMembers = [
     label: 'Test 2',
     profileVisibility: 'Public' as MembersProfileVisibility,
     createdAt: now,
+    users: {
+      firstName: 'Eric',
+    },
   },
 ];
 
