@@ -30,7 +30,6 @@ const createUserService = async (
     //populate info object with the payload information
     userData.firstName = session.firstName;
     userData.lastName = session.lastName;
-    userData.preferredName = session.firstName;
     userData.ritEmail = session.email;
     userData.googleId = session.googleId;
     userData.username = session.email.substring(0, session.email.indexOf('@'));
