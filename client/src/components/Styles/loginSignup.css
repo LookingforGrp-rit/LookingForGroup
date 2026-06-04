@@ -824,7 +824,6 @@ Signup process modal style rules
   top: 20px;
   left: 20px;
   cursor: pointer;
-  z-index: 0;
 }
 
 @media screen and (max-width: 1020px) {
