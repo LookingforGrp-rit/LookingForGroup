@@ -164,10 +164,13 @@ const Profile = () => {
   // Gets the profile data
   const getProfileData = async (data: MePrivate | undefined) => {
     // Get the userID for our current user
-    if (data) setUserID(data.userId);
+    if (data) { 
+      setUserID(data.userId);  
+      setIsUsersProfile(data.userId.toString() === profileID);
+    }
     else setUserID(-1);
-    if (userID) setIsUsersProfile(userID.toString() === profileID);
 
+    //set the variable i just set the damn variable bro
     try {
       const { data } = await getUsersById(Number(profileID));
 
@@ -284,7 +287,7 @@ const Profile = () => {
         onSearch={searchProjects}
         hideSearchBar={true}
         onChange={() => { }}
-        setCurrentUserId={getProfileData}
+        setCurrentUserId={getProfileData} //brother you're not even passing anything
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
