@@ -4,10 +4,11 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type AddBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type AddBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-//PUT api/mod/ban-user/{id}
+//PUT api/mod/ban-user/{id}/{reason}
 //add a user to blacklist
 const addBlacklistService = async (
   googleId: string,
+  reason: string,
 ): Promise<AddBlacklistServiceSuccess | AddBlacklistServiceError> => {
   try {
     //check if user exists
@@ -23,8 +24,8 @@ const addBlacklistService = async (
 
     await prisma.userBlacklist.create({
       data: {
-        userId: user.userId,
         googleId: googleId,
+        banReason: reason,
       },
     });
 

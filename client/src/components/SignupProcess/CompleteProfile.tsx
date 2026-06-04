@@ -16,9 +16,15 @@ interface CompleteProfileProps {
   currentJobTitle : string;
   location : string;
   funFact : string;
-  major: string;
+  // major: string;
   setBio : React.Dispatch<React.SetStateAction<string>>;
   setPronouns : React.Dispatch<React.SetStateAction<string>>;
+  setSlogan :  React.Dispatch<React.SetStateAction<string>>;
+  setPhoneNumber :  React.Dispatch<React.SetStateAction<string>>;
+  setCurrentJobTitle :  React.Dispatch<React.SetStateAction<string>>;
+  setLocation :  React.Dispatch<React.SetStateAction<string>>;
+  setFunFact :  React.Dispatch<React.SetStateAction<string>>;
+  // setMajor: 
   profileImage : any;
   setProfileImage : any;
 }
@@ -33,11 +39,11 @@ interface CompleteProfileProps {
  * @param bio current user bio 
  * @param pronouns user pronouns
  * @param slogan user slogan
- * @param phoneNumber 
- * @param currentJobTitle
- * @param location
- * @param funFact
- * @param major
+ * @param phoneNumber user phone number
+ * @param currentJobTitle user current job title
+ * @param location user location 
+ * @param funFact user fun fact
+ * @param major user major
  * @param setBio set user bio 
  * @param setPronouns set user pronouns
  * @param profileImage user profile image 
@@ -59,9 +65,15 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   currentJobTitle,
   location,
   funFact,
-  major,
+  // major,
   setBio,
   setPronouns,
+  setSlogan,
+  setPhoneNumber,
+  setCurrentJobTitle,
+  setLocation,
+  setFunFact, 
+  // setMajor,
   profileImage,
   setProfileImage,
 }) => {
@@ -77,6 +89,31 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   // Utilizes an imported function for setting the pronouns of a profile
   const handlePronounsChange = (e : React.ChangeEvent<HTMLInputElement>) => {
     setPronouns(e.target.value);
+  };
+
+  // Utilizes an imported function for setting the slogan of a profile
+  const handleSloganChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    setSlogan(e.target.value);
+  };
+
+  // Utilizes an imported function for setting the phone number of a profile
+  const handlePhoneNumberChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    setPhoneNumber(e.target.value);
+  };
+
+  // Utilizes an imported function for setting the current job title of a profile
+  const handleCurrentJobTitleChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    setCurrentJobTitle(e.target.value);
+  };
+
+  // Utilizes an imported function for setting the location of a profile
+  const handleLocationChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    setLocation(e.target.value);
+  };
+
+  // Utilizes an imported function for setting the fun fact of a profile
+  const handleFunFactChange = (e : React.ChangeEvent<HTMLInputElement>) => {
+    setFunFact(e.target.value);
   };
 
   // Loads and utilizes an imported function for setting a profile picture 
@@ -111,7 +148,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
       <div className="signupProcess-modal">
         <div className="CompleteProfile">
           <h1 id="signupProcess-title">Complete Your Profile!</h1>
-          <p id="signupProcess-subtitle">You can add more and edit later</p>
+          <p id="signupProcess-subTitle">You can add more and edit later</p>
 
           <div id="completeProfile-input-container">
             <div id="profile-details">
@@ -150,7 +187,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             <LabelInputBox
               label={"Add Pronouns"}
               inputType={"single"}
-              maxLength={50}
+              maxLength={20}
               id="pronouns-input"
               value={pronouns}
               placeholder={"Pronouns"}
@@ -166,7 +203,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
               id="slogan-input"
               value={slogan}
               placeholder={"Slogan"}
-              // onChange={}
+              onChange={handleSloganChange}
               hideUnsaved={true}
             />
 
@@ -178,7 +215,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
               id="phoneNumber-input"
               value={phoneNumber}
               placeholder={"Phone Number"}
-              // onChange={}
+              onChange={handlePhoneNumberChange}
               hideUnsaved={true}
             />
 
@@ -186,11 +223,11 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             <LabelInputBox
               label={"Add Job Title"}
               inputType={"single"}
-              maxLength={30}
+              maxLength={50}
               id="jobTitle-input"
               value={currentJobTitle}
               placeholder={"Current Job Title"}
-              // onChange={}
+              onChange={handleCurrentJobTitleChange}
               hideUnsaved={true}
             />
 
@@ -198,11 +235,11 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             <LabelInputBox
               label={"Add Location (Optional)"}
               inputType={"single"}
-              maxLength={30}
+              maxLength={50}
               id="location-input"
               value={location}
               placeholder={"Location (Optional)"}
-              // onChange={}
+              onChange={handleLocationChange}
               hideUnsaved={true}
             />
 
@@ -210,11 +247,11 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             <LabelInputBox
               label={"Add Fun Fact"}
               inputType={"single"}
-              maxLength={30}
+              maxLength={50}
               id="funFact-input"
               value={funFact}
               placeholder={"Fun Fact"}
-              // onChange={}
+              onChange={handleFunFactChange}
               hideUnsaved={true}
             />
 
@@ -251,6 +288,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             />
           </div>
             {/* Skills */}
+            <div id="signupProcess-skills-subTitle">Chosen Skills:</div>
             <div id="signup-profile-skill">
               {selectedSkills.map((skill, index) => (
                 <div key={index} style={{ border: `2px solid ${tagColors[index % 5]}` }}>

@@ -54,6 +54,12 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
   // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
   const [bio, setBio] = useState(''); // State variable for the user's bio
+  const [slogan, setSlogan] = useState(''); // State variable for the user's slogan
+  const [phoneNumber, setPhoneNumber] = useState(''); // State variable for the user's Phone Number
+  const [currentJobTitle, setCurrentJobTitle] = useState(''); // State variable for the user's current Job Title
+  const [location, setLocation] = useState(''); // State variable for the user's Location
+  const [funFact, setFunFact] = useState(''); // State variable for the user's bio
+  const [major, setMajor] = useState(''); // State variable for user's major
   const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
@@ -67,6 +73,12 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
     username: '',
     pronouns: pronouns,
     bio: bio,
+    slogan: slogan,
+    phoneNumber: phoneNumber,
+    currentJobTitle: currentJobTitle,
+    location: location,
+    funFact: funFact,
+    // major: major,
     profileImage: profileImage, // if they upload their own image
   } as CreateUserInput;
 
@@ -486,8 +498,20 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
             selectedSkills={selectedSkills}
             bio={bio}
             pronouns={pronouns}
+            slogan={slogan}
+            phoneNumber={phoneNumber}
+            currentJobTitle={currentJobTitle}
+            location={location} 
+            funFact={funFact}
+            // major={major}
             setBio={setBio}
             setPronouns={setPronouns}
+            setSlogan={setSlogan}
+            setPhoneNumber={setPhoneNumber}
+            setCurrentJobTitle={setCurrentJobTitle}
+            setLocation={setLocation} 
+            setFunFact={setFunFact}
+            // setMajor={setMajor}
             profileImage={profileImage}
             setProfileImage={setProfileImage}
           />
@@ -502,7 +526,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
 
               await createNewUser(userInfo); //populating this with all of the things we selected
               for(const id of selectedSkillIds){
-                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+                await addUserSkill({skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice'})
               }
               setShowGetStartedModal(false);
               navigate(paths.routes.MYPROJECTS);
@@ -510,7 +534,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected
               for(const id of selectedSkillIds){
-                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+                await addUserSkill({skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice'})
               }
               setShowGetStartedModal(false);
               navigate(paths.routes.HOME);
