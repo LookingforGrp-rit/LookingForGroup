@@ -111,7 +111,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
       <div className="signupProcess-modal">
         <div className="CompleteProfile">
           <h1 id="signupProcess-title">Complete Your Profile!</h1>
-          <p id="signupProcess-subtitle">You can add more and edit later</p>
+          <p id="signupProcess-subTitle">You can add more and edit later</p>
 
           <div id="completeProfile-input-container">
             <div id="profile-details">
@@ -251,6 +251,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             />
           </div>
             {/* Skills */}
+            <div id="signupProcess-skills-subTitle">Chosen Skills:</div>
             <div id="signup-profile-skill">
               {selectedSkills.map((skill, index) => (
                 <div key={index} style={{ border: `2px solid ${tagColors[index % 5]}` }}>
