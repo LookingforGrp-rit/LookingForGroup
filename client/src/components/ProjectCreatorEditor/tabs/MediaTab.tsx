@@ -443,19 +443,22 @@ export const MediaTab = ({
     {cropImg !== undefined ?
     <PopupContent confirmation={true} callback={() => setCropImg(undefined)}>
       <div className="project-crop">
-        <label>Crop image for thumbnail usage</label>
+        <label id="project-crop-header">Crop image for thumbnail usage</label>
         <canvas ref={canvas} id="canvas" width={1600} height={900}></canvas>
         <img ref={tempImage} id="test12" src={cropImg?.image as string} alt={cropImg?.altText as string} />
-        <input 
-          type="range" ref={inputZoom}
-          id="zoom" name="zoom" 
-          onChange={() => {
-            setZoom(inputZoom.current?.valueAsNumber as number);
-            updateCanvas();
-          }}
-          min={1} max={1000}
-          defaultValue={zoom}/>
-        <label className="slider-text" htmlFor="zoom">zoom</label>
+        <div id="zoom-row">
+          <input 
+            type="range" ref={inputZoom}
+            id="zoom" name="zoom" 
+            onChange={() => {
+              setZoom(inputZoom.current?.valueAsNumber as number);
+              updateCanvas();
+            }}
+            min={1} max={1000}
+            defaultValue={zoom}/>
+          <label className="slider-text" htmlFor="zoom">Zoom</label>
+        </div>
+        <div id="xTrans-row">
         <input 
           type="range" ref={inputX}
           id="xTrans" name="xTrans" 
@@ -466,7 +469,9 @@ export const MediaTab = ({
           min={canvas.current ? -canvas.current.width: -100} 
           max={canvas.current ?  canvas.current.width:  100}
           defaultValue={dX}/>
-        <label className="slider-text" htmlFor="xtrans">X</label>
+        <label className="slider-text" htmlFor="xtrans">Xpos</label>
+        </div>
+        <div id="yTrans-row">
         <input  
           type="range" ref={inputY}
           id="yTrans" name="yTrans" 
@@ -477,9 +482,10 @@ export const MediaTab = ({
           min={canvas.current ? -canvas.current.height: -100} 
           max={canvas.current ?  canvas.current.height:  100}
           defaultValue={dY}/>
-        <label className="slider-text" htmlFor="yTrans">Y</label>
+        <label className="slider-text" htmlFor="yTrans">Ypos</label>
+        </div>
         <div className="project-crop-extra-info">
-          Crop Image to fit the site's 16/9 ratio, or skip. Not cropping may cause the image to display in other places.
+          Crop Image to fit the site's 16:9 ratio, or skip. Not cropping may cause the image to display in other places.
         </div>
         <div className="confirm-project-crop">
           {/* TODO: impliment saving the cropped image */}
