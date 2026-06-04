@@ -995,238 +995,247 @@ export const TeamTab = ({
 
       <div id="edit-position-details">
         <div id="edit-position-details-left">
-          <label className="edit-position-availability">
-            Availability
-            <span
-              className="required-asterisk"
-              aria-hidden="true"
-              title="Required"
-            >
-              *
-            </span>
-          </label>
-          <Select>
-            <SelectButton
-              placeholder="Select"
-              initialVal={
-                isCreatingNewPosition
-                  ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.availability)
-                    ? JobAvailabilityEnums[getProjectJob(currentJob?.role?.roleId as number)!.availability!] // explicit because its checked for before
-                    : ''
-              }
-              type="input"
-            />
-            <SelectOptions
-              callback={(e) => {
-                const key = Object.keys(JobAvailabilityEnums).find((key) =>
-                  JobAvailabilityEnums[key as keyof typeof JobAvailabilityEnums] === (e.target as HTMLButtonElement).value);
+          <div className="edit-position-container">
+            <label className="edit-position-availability">
+              Availability
+              <span
+                className="required-asterisk"
+                aria-hidden="true"
+                title="Required"
+              >
+                *
+              </span>
+            </label>
+            <Select>
+              <SelectButton
+                placeholder="Select"
+                initialVal={
+                  isCreatingNewPosition
+                    ? ""
+                    : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.availability)
+                      ? JobAvailabilityEnums[getProjectJob(currentJob?.role?.roleId as number)!.availability!] // explicit because its checked for before
+                      : ''
+                }
+                type="input"
+              />
+              <SelectOptions
+                callback={(e) => {
+                  const key = Object.keys(JobAvailabilityEnums).find((key) =>
+                    JobAvailabilityEnums[key as keyof typeof JobAvailabilityEnums] === (e.target as HTMLButtonElement).value);
 
-                setCurrentJob({
-                  ...emptyJob,
-                  ...currentJob,
-                  availability: key as JobAvailability,
-                })
-              }
-              }
-              options={Object.values(JobAvailabilityEnums).map((option) => {
-                return {
-                  markup: <>{option}</>,
-                  value: option,
-                  disabled: false,
-                };
-              })}
-            />
-          </Select>
-          <label className="edit-position-location">
-            Location
-            <span
-              className="required-asterisk"
-              aria-hidden="true"
-              title="Required"
-            >
-              *
-            </span>
-          </label>
-          <Select>
-            <SelectButton
-              placeholder="Select"
-              initialVal={
-                isCreatingNewPosition
-                  ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.location)
-                    ? JobLocationEnums[getProjectJob(currentJob?.role?.roleId as number)!.location!] // explicit because its checked for before
-                    : ''
-              }
-              type="input"
-            />
-            <SelectOptions
-              callback={(e) => {
-                const key = Object.keys(JobLocationEnums).find((key) => JobLocationEnums[key as keyof typeof JobLocationEnums] === (e.target as HTMLButtonElement).value)
+                  setCurrentJob({
+                    ...emptyJob,
+                    ...currentJob,
+                    availability: key as JobAvailability,
+                  })
+                }
+                }
+                options={Object.values(JobAvailabilityEnums).map((option) => {
+                  return {
+                    markup: <>{option}</>,
+                    value: option,
+                    disabled: false,
+                  };
+                })}
+              />
+            </Select>
+          </div>
+          <div className="edit-position-container">
+            <label className="edit-position-location">
+              Location
+              <span
+                className="required-asterisk"
+                aria-hidden="true"
+                title="Required"
+              >
+                *
+              </span>
+            </label>
+            <Select>
+              <SelectButton
+                placeholder="Select"
+                initialVal={
+                  isCreatingNewPosition
+                    ? ""
+                    : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.location)
+                      ? JobLocationEnums[getProjectJob(currentJob?.role?.roleId as number)!.location!] // explicit because its checked for before
+                      : ''
+                }
+                type="input"
+              />
+              <SelectOptions
+                callback={(e) => {
+                  const key = Object.keys(JobLocationEnums).find((key) => JobLocationEnums[key as keyof typeof JobLocationEnums] === (e.target as HTMLButtonElement).value)
 
-                setCurrentJob({
-                  ...emptyJob,
-                  ...currentJob,
-                  location: key as JobLocation,
-                })
-              }
-              }
-              options={Object.values(JobLocationEnums).map((option) => {
-                return {
-                  markup: <>{option}</>,
-                  value: option,
-                  disabled: false,
-                };
-              })}
-            />
-          </Select>
-          <label className="edit-position-contact">
-            Main Contact
-            <span
-              className="required-asterisk"
-              aria-hidden="true"
-              title="Required"
-            >
-              *
-            </span>
-          </label>
-          {/* <select className="edit-position-contact"></select> */}
-          <Select>
-            <SelectButton
-              className="edit-position-contact"
-              placeholder="Select"
-              type="input"
-            />
-            <SelectOptions
-              className="edit-position-contact"
-              callback={(e) => {
-                const selectedId = parseInt(
-                  (e.currentTarget as HTMLButtonElement).value
-                );
-                setCurrentJob({
-                  ...emptyJob,
-                  ...currentJob,
-                  contact:
-                    allUsers.find(({ userId }) => userId === selectedId) ??
-                    null,
-                });
-              }}
-              options={projectAfterTeamChanges.members
-                .filter((member) => member.user !== null)
-                // .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
-                .map(({ user }) => ({
-                  markup: (
-                    <>
-                      <img
-                        className="project-member-image"
-                        src={user!.profileImage ?? profileImage}
-                        alt="profile"
-                        title={"Profile picture"}
-                        // Cannot use usePreloadedImage function because this is in a callback
-                        onError={(e) => {
-                          const profileImageElement =
-                            e.target as HTMLImageElement;
-                          profileImageElement.src = profileImage;
-                        }}
-                      />
-                      <div className="project-editor-project-member-info">
-                        <div className="project-editor-project-member-name">
-                          {user!.firstName} {user!.lastName}
+                  setCurrentJob({
+                    ...emptyJob,
+                    ...currentJob,
+                    location: key as JobLocation,
+                  })
+                }
+                }
+                options={Object.values(JobLocationEnums).map((option) => {
+                  return {
+                    markup: <>{option}</>,
+                    value: option,
+                    disabled: false,
+                  };
+                })}
+              />
+            </Select>
+          </div>
+          <div className="edit-position-container">
+            <label className="edit-position-contact">Main Contact
+              <span
+                className="required-asterisk"
+                aria-hidden="true"
+                title="Required"
+              >
+                *
+              </span>
+            </label>
+            {/* <select className="edit-position-contact"></select> */}
+            <Select>
+              <SelectButton
+                className="edit-position-contact"
+                placeholder="Select"
+                type="input"
+              />
+              <SelectOptions
+                className="edit-position-contact"
+                callback={(e) => {
+                  const selectedId = parseInt(
+                    (e.currentTarget as HTMLButtonElement).value
+                  );
+                  setCurrentJob({
+                    ...emptyJob,
+                    ...currentJob,
+                    contact:
+                      allUsers.find(({ userId }) => userId === selectedId) ??
+                      null,
+                  });
+                }}
+                options={projectAfterTeamChanges.members
+                  .filter((member) => member.user !== null)
+                  // .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
+                  .map(({ user }) => ({
+                    markup: (
+                      <>
+
+                        <div className="project-editor-project-member-info">
+                          <img
+                            className="project-member-image"
+                            src={user!.profileImage ?? profileImage}
+                            alt="profile"
+                            title={"Profile picture"}
+                            // Cannot use usePreloadedImage function because this is in a callback
+                            onError={(e) => {
+                              const profileImageElement =
+                                e.target as HTMLImageElement;
+                              profileImageElement.src = profileImage;
+                            }}
+                          /> <div className="project-editor-project-member-name">
+                            {user!.firstName} {user!.lastName}
+                          </div>
                         </div>
-                      </div>
-                    </>
-                  ),
-                  value: user!.userId.toString(),
-                  disabled: false,
-                }))}
-            />
-          </Select>
+                      </>
+                    ),
+                    value: user!.userId.toString(),
+                    disabled: false,
+                  }))}
+              />
+            </Select>
+          </div>
         </div>
         <div id="edit-position-details-right">
-          <label className="edit-position-duration">
-            Duration
-            <span
-              className="required-asterisk"
-              aria-hidden="true"
-              title="Required"
-            >
-              *
-            </span>
-          </label>
-          <Select>
-            <SelectButton
-              placeholder="Select"
-              initialVal={
-                isCreatingNewPosition
-                  ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.duration)
-                    ? JobDurationEnums[getProjectJob(currentJob?.role?.roleId as number)!.duration!] // explicit because its checked for before
-                    : ''
-              }
-              type="input"
-            />
-            <SelectOptions
-              callback={(e) => {
-                const key = Object.keys(JobDurationEnums).find((key) => JobDurationEnums[key as keyof typeof JobDurationEnums] === (e.target as HTMLButtonElement).value)
+          <div className="edit-position-container">
+            <label className="edit-position-duration">
+              Duration
+              <span
+                className="required-asterisk"
+                aria-hidden="true"
+                title="Required"
+              >
+                *
+              </span>
+            </label>
+            <Select>
+              <SelectButton
+                placeholder="Select"
+                initialVal={
+                  isCreatingNewPosition
+                    ? ""
+                    : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.duration)
+                      ? JobDurationEnums[getProjectJob(currentJob?.role?.roleId as number)!.duration!] // explicit because its checked for before
+                      : ''
+                }
+                type="input"
+              />
+              <SelectOptions
+                callback={(e) => {
+                  const key = Object.keys(JobDurationEnums).find((key) => JobDurationEnums[key as keyof typeof JobDurationEnums] === (e.target as HTMLButtonElement).value)
 
-                setCurrentJob({
-                  ...emptyJob,
-                  ...currentJob,
-                  duration: key as JobDuration,
-                })
-              }
-              }
-              options={Object.values(JobDurationEnums).map((option) => {
-                return {
-                  markup: <>{option}</>,
-                  value: option,
-                  disabled: false,
-                };
-              })}
-            />
-          </Select>
-          <label className="edit-position-compensation">
-            Compensation
-            <span
-              className="required-asterisk"
-              aria-hidden="true"
-              title="Required"
-            >
-              *
-            </span>
-          </label>
-          <Select>
-            <SelectButton
-              placeholder="Select"
-              initialVal={
-                isCreatingNewPosition
-                  ? ""
-                  : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.compensation)
-                    ? JobCompensationEnums[getProjectJob(currentJob?.role?.roleId as number)!.compensation!] // explicit because its checked for before
-                    : ''
-              }
-              type="input"
-            />
-            <SelectOptions
-              callback={(e) => {
-                const key = Object.keys(JobCompensationEnums).find((key) => JobCompensationEnums[key as keyof typeof JobCompensationEnums] === (e.target as HTMLButtonElement).value)
+                  setCurrentJob({
+                    ...emptyJob,
+                    ...currentJob,
+                    duration: key as JobDuration,
+                  })
+                }
+                }
+                options={Object.values(JobDurationEnums).map((option) => {
+                  return {
+                    markup: <>{option}</>,
+                    value: option,
+                    disabled: false,
+                  };
+                })}
+              />
+            </Select>
+          </div>
+          <div className="edit-position-container">
+            <label className="edit-position-compensation">
+              Compensation
+              <span
+                className="required-asterisk"
+                aria-hidden="true"
+                title="Required"
+              >
+                *
+              </span>
+            </label>
+            <Select>
+              <SelectButton
+                placeholder="Select"
+                initialVal={
+                  isCreatingNewPosition
+                    ? ""
+                    : (getProjectJob(currentJob?.role?.roleId as number) && getProjectJob(currentJob?.role?.roleId as number)?.compensation)
+                      ? JobCompensationEnums[getProjectJob(currentJob?.role?.roleId as number)!.compensation!] // explicit because its checked for before
+                      : ''
+                }
+                type="input"
+              />
+              <SelectOptions
+                callback={(e) => {
+                  const key = Object.keys(JobCompensationEnums).find((key) => JobCompensationEnums[key as keyof typeof JobCompensationEnums] === (e.target as HTMLButtonElement).value)
 
-                setCurrentJob({
-                  ...emptyJob,
-                  ...currentJob,
-                  compensation: key as JobCompensation,
-                })
-              }
-              }
-              options={Object.values(JobCompensationEnums).map((option) => {
-                return {
-                  markup: <>{option}</>,
-                  value: option,
-                  disabled: false,
-                };
-              })}
-            />
-          </Select>
+                  setCurrentJob({
+                    ...emptyJob,
+                    ...currentJob,
+                    compensation: key as JobCompensation,
+                  })
+                }
+                }
+                options={Object.values(JobCompensationEnums).map((option) => {
+                  return {
+                    markup: <>{option}</>,
+                    value: option,
+                    disabled: false,
+                  };
+                })}
+              />
+            </Select>
+          </div>
         </div>
       </div>
       <div id="edit-position-buttons">
@@ -1399,9 +1408,9 @@ export const TeamTab = ({
                             }
                           })
 
-                          //update the temporary changes made to edit member popup roles, if pressed x for main save, it will still undo everything else
-                          updatePendingProject(projectAfterTeamChanges);
-                          
+                        //update the temporary changes made to edit member popup roles, if pressed x for main save, it will still undo everything else
+                        updatePendingProject(projectAfterTeamChanges);
+
                       }}
                     >
                       Save
@@ -1622,7 +1631,8 @@ export const TeamTab = ({
   // Renders the open positions interface with job listings and position editing functionality.
   const openPositionsContent: JSX.Element = useMemo(
     () => (
-      <div id="project-team-open-positions-popup">
+      <div id="project-team-open-positions-info">
+        {/* left container */}
         <div className="positions-popup-list">
           <div id="team-positions-popup-list-header">Open Positions</div>
           <div id="team-positions-popup-list-buttons">
@@ -1663,12 +1673,15 @@ export const TeamTab = ({
             </div>
           </div>
         </div>
-        <div
-          className="positions-popup-info"
-          id={editMode ? "positions-popup-list-edit" : ""}
-        >
-          {/* {positionWindowContent} */}
-          {positionWindow}
+        {/* right container */}
+        <div className="positions-popup-info-wrapper">
+          <div
+            className="positions-popup-info"
+            id={editMode ? "positions-popup-list-edit" : ""}
+          >
+            {/* {positionWindowContent} */}
+            {positionWindow}
+          </div>
         </div>
       </div>
     ),
