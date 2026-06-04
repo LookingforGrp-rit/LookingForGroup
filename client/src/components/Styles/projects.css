@@ -4436,7 +4436,7 @@ My projects page style rules
 
 .pagination-btn {
   padding: 0.5rem 1rem;
-  background-color: #fead81;
+  background-color: var(--primary-color);
   color: white;
   border: none;
   border-radius: 4px;
@@ -4445,7 +4445,7 @@ My projects page style rules
 }
 
 .pagination-btn:hover:not(:disabled) {
-  background-color: #e79d75;
+  background-color: var(--panel-hover);
 }
 
 .pagination-btn:disabled {
