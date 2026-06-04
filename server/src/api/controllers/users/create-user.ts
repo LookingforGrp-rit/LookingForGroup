@@ -10,7 +10,9 @@ import createUserService from '#services/users/create-user.ts';
 export const createUser = async (req: Request, res: Response): Promise<void> => {
   const info: CreateUserInput = req.body as CreateUserInput;
   const devInfo: CreateUserInput = {} as CreateUserInput;
-  const sessionInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
+  const sessionInfo: SessionUserData = JSON.parse(req.session.data || '{}') as SessionUserData;
+
+  console.log(sessionInfo);
 
   // This is for creating a dev user via the swagger docs
   if ((envConfig.env === 'development' || envConfig.env === 'test') && !sessionInfo.googleId) {
