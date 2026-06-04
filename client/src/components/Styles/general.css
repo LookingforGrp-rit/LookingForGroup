@@ -1427,14 +1427,14 @@ Header style rules
       font-size: 1rem;
       font-weight: 700;
       color: var(--primary-color);
-      margin: 0;
+      margin: 1px;
     }
 
     #header-profile-email {
       font-style: italic;
       font-size: 0.75rem;
       color: var(--main-text);
-      margin: 0;
+      margin: 1px;
     }
   }
 }
