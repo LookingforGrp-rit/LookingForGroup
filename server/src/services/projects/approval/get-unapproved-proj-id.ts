@@ -6,6 +6,7 @@ import { transformProjectToDetail } from '#services/transformers/projects/projec
 
 type GetUnapprovedProjectsByIdServiceError = ServiceErrorSubset<'NOT_FOUND' | 'INTERNAL_ERROR'>;
 
+//GET api/projects/unapproved/:id
 export const getUnapprovedProjectByIdService = async (
   projectId: number,
 ): Promise<ProjectDetail | GetUnapprovedProjectsByIdServiceError> => {

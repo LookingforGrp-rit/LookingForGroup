@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import { changeProjectApprovalService } from '#services/projects/approval/change-proj-approval.ts';
 
 const unapproveProjectController = async (request: AuthenticatedRequest, response: Response) => {
-  const projectId = parseInt(request.params.id as string);
+  const projectId = parseInt(request.params.id);
   const result = await changeProjectApprovalService(projectId, false);
 
   if (result === 'INTERNAL_ERROR') {

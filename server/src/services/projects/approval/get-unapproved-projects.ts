@@ -6,6 +6,7 @@ import { transformProjectToPreview } from '#services/transformers/projects/proje
 
 type GetUnapprovedProjectsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
+//GET api/projects/unapproved/
 export const getUnapprovedProjectsService = async (): Promise<
   ProjectPreview[] | GetUnapprovedProjectsServiceError
 > => {

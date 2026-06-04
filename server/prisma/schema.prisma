@@ -269,6 +269,12 @@ model Session {
   expiresAt DateTime
 }
 
+model ProjectsAwaitingApproval {
+  projectId Int     @id
+
+  @@map("projects_awaiting_approval")
+}
+
 enum JobsAvailability {
   FullTime @map("Full-time")
   PartTime @map("Part-time")
