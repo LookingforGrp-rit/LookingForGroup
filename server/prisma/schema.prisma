@@ -169,11 +169,9 @@ model Tags {
 }
 
 model UserBlacklist {
-  userId   Int    @id @map("user_id")
-  googleId String @unique @map("google_id")
-  users    Users  @relation(fields: [userId], references: [userId], onDelete: NoAction, map: "FK_user_blacklist_users")
+  googleId  String @id @map("google_id")
+  banReason String @map("ban_reason")
 
-  @@index([userId], map: "FK_user_blacklist_user")
   @@map("user_blacklist")
 }
 
@@ -245,7 +243,6 @@ model Users {
   userSkills        UserSkills[]
   userSocials       UserSocials[]
   majors            Majors[]
-  userBlacklists    UserBlacklist[]
 
   @@map("users")
 }

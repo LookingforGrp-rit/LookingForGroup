@@ -15,6 +15,7 @@ export default defineProject({
       '/datasets': 'http://localhost:3000',
       '/images': 'http://localhost:3000',
       '/mod': 'http://localhost:3000',
+      '/authentication': 'http://localhost:3000',
     },
   },
 });
