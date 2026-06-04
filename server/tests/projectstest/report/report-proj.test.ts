@@ -56,7 +56,7 @@ const prismaReport = {
   reportText: 'test report',
 };
 
-describe('createProjectService', async () => {
+describe('reportProjectService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
