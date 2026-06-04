@@ -759,7 +759,8 @@ Signup process modal style rules
   grid-area: academicYear;
   height: 50px;
 
-  div {
+  .select-container,
+  .select-button-input {
     height: 100%;
     width: 100%;
 
@@ -774,7 +775,8 @@ Signup process modal style rules
   grid-area: major;
   height: 50px;
 
-  div {
+  .select-container,
+  .select-button-input {
     height: 100%;
     width: 100%;
 

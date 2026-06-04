@@ -85,8 +85,22 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	// matches the colors in the design/background
 	const tagColors = ["#9FACFF", "#97E5AB", "#99E6EA", "#F18067", "#239EF7"];
 
-	const [allMajors, setAllMajors] = useState<Major[]>([]);
-	//const [roles, setRoles] = useState<Role[]>([]); //i was gonna have this for setting a job title since there's a preset list of them, but it makes more sense to type it in
+  const [allMajors, setAllMajors] = useState<Major[]>([]);
+
+  useMemo(() => {
+      const fetchMajors = async () => {
+      const response = await getMajors();
+  
+      if (response.data === undefined || !response.data) {
+        return;
+      }
+      setAllMajors(response.data);
+      };
+      if (allMajors.length === 0) {
+      fetchMajors();
+      }
+    }, []);
+
 
 	useMemo(() => {
 		const fetchMajors = async () => {
