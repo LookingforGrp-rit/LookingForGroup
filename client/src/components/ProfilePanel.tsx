@@ -9,6 +9,7 @@ import { addUserFollowing, deleteUserFollowing, getCurrentAccount, getUsersById 
 
 interface ProfilePanelProps {
   profileData: UserPreview;
+  currentUserId: number;
 }
 
 /**
@@ -20,7 +21,7 @@ interface ProfilePanelProps {
  * @param profileData - UserPreview object containing basic user info (name, image, title, location, pronouns, fun fact, etc.)
  * @returns JSX element representing a user profile panel
  */
-export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
+export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) => {
 
   const navigate = useNavigate();
   const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
@@ -29,7 +30,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   
   //follow stuff
   // Current logged-in user id
-  const [userId, setUserId] = useState<number>();
+  const [userId, setUserId] = useState<number>(currentUserId);
   // Whether the current user follows the displayed user
   const [isFollow, setIsFollow] = useState<boolean>(false);
   /**
@@ -44,8 +45,10 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
     useEffect(() => {
       const getFollowData = async () => {
         //get our current user so we can check their follow status
-        const userResp = await getCurrentAccount();
-        if(userResp.data) setUserId(userResp.data.userId);
+        if (userId !== -1) {
+          const userResp = await getCurrentAccount();
+          if(userResp.data) setUserId(userResp.data.userId);
+        }
         
         //get the displayed user (again...) so we have their followers
         //because followers are currently not in the profileData
@@ -69,7 +72,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
      * Toggles following the user.
      */
     const toggleFollow = async () => {
-      if (!userId) {
+      if (userId !== -1) {
         navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
       } else {
         // otherwise, toggle follow state

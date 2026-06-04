@@ -187,8 +187,9 @@ const SideBar = () => {
   const handleProfileAccess = async () => {
     // navigate to Profile, attach userID
     const res = await getCurrentUsername();
-    const userId = res.data.userId;
-    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+    const userId = res.data?.userId;
+    if (userId) navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+    else navigate(paths.routes.LOGIN);
 
     // Collapse the dropwdown if coming from another user's page
     if (window.location.href.includes("profile")) {
