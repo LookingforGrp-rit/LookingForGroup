@@ -1315,8 +1315,7 @@ Header style rules
   justify-content: flex-end;
   translate: -10px 0;
 
-  .dropdown-container
-  {
+  .dropdown-container {
     padding: 0 10px;
   }
 }
@@ -1602,16 +1601,16 @@ Select style rules
 }
 
 .select-search-input {
-    width: 100%;
-    border: none !important;
-    outline: none !important;
-    background: transparent;
-    padding: 0;
-    margin: 0;
-    font-family: inherit;
-    font-size: inherit;
-    color: inherit;
-    box-shadow: none;
+  width: 100%;
+  border: none !important;
+  outline: none !important;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  box-shadow: none;
 }
 
 .select-search-input::placeholder {

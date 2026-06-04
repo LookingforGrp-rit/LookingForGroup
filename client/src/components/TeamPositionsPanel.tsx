@@ -25,29 +25,27 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
 
   return <div id="project-open-positions-popup">
     <div id="positions-popup-header">Join The Team</div>
-    <div id="project-team-open-positions-info">
+    <div id="join-team-open-positions-info">
       {/* Left Container */}
-      <div id="project-team-open-positions-popup">
-        <div className="positions-popup-list">
-          <p className="positions-popup-info-title">
-            Open Positions
-          </p>
-          <div id="team-positions-popup-list-buttons">
-            {displayedProject.jobs?.map((job, index) => (
-              <button
-                className={`positions-popup-list-item`}
-                id={
-                  index === viewedPosition
-                    ? "positions-popup-list-item-active"
-                    : ""
-                }
-                onClick={() => setViewedPosition(index)}
-                key={index}
-              >
-                {job.role.label}
-              </button>
-            ))}
-          </div>
+      <div className="positions-popup-list">
+        <p className="positions-popup-info-title">
+          Open Positions
+        </p>
+        <div id="team-positions-popup-list-buttons">
+          {displayedProject.jobs?.map((job, index) => (
+            <button
+              className={`positions-popup-list-item`}
+              id={
+                index === viewedPosition
+                  ? "positions-popup-list-item-active"
+                  : ""
+              }
+              onClick={() => setViewedPosition(index)}
+              key={index}
+            >
+              {job.role.label}
+            </button>
+          ))}
         </div>
       </div>
 
