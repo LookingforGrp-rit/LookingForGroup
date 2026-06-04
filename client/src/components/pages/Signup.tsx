@@ -10,7 +10,7 @@ import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
 import { addUserSkill, createNewUser, getCurrentUsername, googleLogin } from '../../api/users';
-import { CreateUserInput, SessionUserData, Skill } from '@looking-for-group/shared';
+import { CreateUserInput, SessionUserData, Skill, Major, AcademicYear } from '@looking-for-group/shared';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
 interface SignUpProps {
@@ -60,7 +60,8 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
   const [currentJobTitle, setCurrentJobTitle] = useState(''); // State variable for the user's current Job Title
   const [location, setLocation] = useState(''); // State variable for the user's Location
   const [funFact, setFunFact] = useState(''); // State variable for the user's bio
-  const [major, setMajor] = useState(''); // State variable for user's major
+  const [major, setMajor] = useState<Major>(); // State variable for user's major
+  const [year, setYear] = useState<AcademicYear>();
   const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
@@ -80,7 +81,8 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
     currentJobTitle: currentJobTitle,
     location: location,
     funFact: funFact,
-    // major: major,
+    major: major,
+    academicYear: year,
     profileImage: profileImage, // if they upload their own image
   } as CreateUserInput;
 
@@ -506,7 +508,8 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
             currentJobTitle={currentJobTitle}
             location={location} 
             funFact={funFact}
-            // major={major}
+            major={major}
+            year={year}
             setBio={setBio}
             setPronouns={setPronouns}
             setSlogan={setSlogan}
@@ -514,7 +517,8 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
             setCurrentJobTitle={setCurrentJobTitle}
             setLocation={setLocation} 
             setFunFact={setFunFact}
-            // setMajor={setMajor}
+            setMajor={setMajor}
+            setYear={setYear}
             profileImage={profileImage}
             setProfileImage={setProfileImage}
           />

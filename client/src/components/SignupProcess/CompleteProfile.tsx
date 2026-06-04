@@ -1,7 +1,15 @@
-import { CreateUserInput, Skill } from '@looking-for-group/shared';
-import { MouseEventHandler } from 'react';
+import { CreateUserInput, Skill, Major, AcademicYear } from '@looking-for-group/shared';
+import { MouseEventHandler, SetStateAction, useMemo, useState } from 'react';
+import { getMajors } from "../../api/users";
 import LabelInputBox from '../LabelInputBox';
 import { Select, SelectButton, SelectOptions } from '../Select';
+enum AcademicYears {
+  Freshman = "Freshman",
+  Sophomore = "Sophomore",
+  Junior = "Junior",
+  Senior = "Senior",
+  Graduate = "Graduate"
+};
 
 interface CompleteProfileProps {
   show : boolean;
@@ -16,7 +24,8 @@ interface CompleteProfileProps {
   currentJobTitle : string;
   location : string;
   funFact : string;
-  // major: string;
+  major: Major | undefined;
+  year: AcademicYear | undefined;
   setBio : React.Dispatch<React.SetStateAction<string>>;
   setPronouns : React.Dispatch<React.SetStateAction<string>>;
   setSlogan :  React.Dispatch<React.SetStateAction<string>>;
@@ -24,7 +33,8 @@ interface CompleteProfileProps {
   setCurrentJobTitle :  React.Dispatch<React.SetStateAction<string>>;
   setLocation :  React.Dispatch<React.SetStateAction<string>>;
   setFunFact :  React.Dispatch<React.SetStateAction<string>>;
-  // setMajor: 
+  setMajor: React.Dispatch<React.SetStateAction<Major | undefined>>;
+  setYear: React.Dispatch<React.SetStateAction<AcademicYear | undefined>>;
   profileImage : any;
   setProfileImage : any;
 }
@@ -65,7 +75,8 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   currentJobTitle,
   location,
   funFact,
-  // major,
+  major,
+  year,
   setBio,
   setPronouns,
   setSlogan,
@@ -73,13 +84,30 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   setCurrentJobTitle,
   setLocation,
   setFunFact, 
-  // setMajor,
+  setMajor,
+  setYear,
   profileImage,
   setProfileImage,
 }) => {
   // make each skill tag a different color
   // matches the colors in the design/background
   const tagColors = ['#9FACFF', '#97E5AB', '#99E6EA', '#F18067', '#239EF7'];
+
+  const [allMajors, setAllMajors] = useState<Major[]>([]);
+
+  useMemo(() => {
+      const fetchMajors = async () => {
+      const response = await getMajors();
+  
+      if (response.data === undefined || !response.data) {
+        return;
+      }
+      setAllMajors(response.data);
+      };
+      if (allMajors.length === 0) {
+      fetchMajors();
+      }
+    }, []);
 
   // Utilizes an imported function for setting the bio of a profile
   const handleBioChange = (e : React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -258,9 +286,21 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             {/* Academic Year */}
             <div id="academicYear-input">
               <Select>
-              <SelectButton 
-              placeholder='Academic Year'
-              type={"input"}
+              <SelectButton
+                placeholder="Academic Year"
+                initialVal={year}
+                callback={(e) => e.preventDefault()}
+                type={'input'}
+              />
+              <SelectOptions
+                callback={(e) => setYear((e.target as HTMLButtonElement).value as AcademicYear)}
+                options={Object.values(AcademicYears).map((yr) => {
+                  return {
+                    value: yr,
+                    markup: <>{yr}</>,
+                    disabled: false
+                  };
+                })}
               />
             </Select>
             </div>
@@ -268,11 +308,33 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
             {/* Major */}
             <div id="major-input">
               <Select>
-              <SelectButton 
-              placeholder='Major'
-              type={"input"}
-              />
-            </Select>
+                <SelectButton
+                  placeholder="Major"
+                  initialVal={major?.label}
+                  callback={(e) => e.preventDefault()}
+                  type={'input'}
+                  searchable={true}
+                />
+                <SelectOptions
+                  callback={(e) => {
+                    e.preventDefault();
+
+                    //finds the major needed to be changed after grabbing the target as an HTML element and getting the value
+                    const majorChange = allMajors.find((match) => match.label === (e.target as HTMLButtonElement).value);
+                    const oldMajor = allMajors.find((match) => match.label === major?.label);
+
+                    //if there's nothing just returns
+                    if (majorChange === oldMajor) return;
+
+                    setMajor(majorChange);
+                  }}
+                  options={allMajors.map(m => ({
+                    value: m.label,
+                    markup: <>{m.label}</>,
+                    disabled: false
+                  }))}
+                />
+              </Select>
             </div>
 
             {/* Bio */}
