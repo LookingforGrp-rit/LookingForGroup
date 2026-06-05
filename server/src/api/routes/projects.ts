@@ -89,7 +89,7 @@ router.patch(
 
 //Approve a project
 router.patch(
-  '/approve/:id',
+  '/projects/{id}/approve',
   requiresLogin,
   injectCurrentUser,
   authenticated(requiresModerator),
@@ -99,7 +99,7 @@ router.patch(
 
 //Unapprove a project
 router.patch(
-  '/unapprove/:id',
+  '/projects/{id}/unapprove',
   requiresLogin,
   injectCurrentUser,
   authenticated(requiresModerator),

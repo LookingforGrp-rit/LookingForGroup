@@ -17,7 +17,9 @@ export const getUnapprovedProjectByIdService = async (
         createdAt: 'desc',
       },
       where: {
-        projectId,
+        awaitingapproval: {
+          projectId,
+        },
       },
     });
 

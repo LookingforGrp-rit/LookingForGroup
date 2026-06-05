@@ -11,18 +11,18 @@ export const approveProjectService = async (
 ): Promise<ApproveProjectServiceError | ApproveProjectServiceSuccess> => {
   try {
     // Will throw an exception if project is not on list of projects awaiting approval.
-    await prisma.projectsAwaitingApproval.update({
+    await prisma.projectsAwaitingApproval.delete({
+      where: {
+        projectId,
+      },
+    });
+
+    await prisma.projects.update({
       where: {
         projectId,
       },
       data: {
         approved: true,
-      },
-    });
-
-    await prisma.projectsAwaitingApproval.delete({
-      where: {
-        projectId,
       },
     });
     return 'OK';

@@ -122,7 +122,7 @@ model ProjectTags {
 }
 
 model Projects {
-  projectId         Int                 @id @default(autoincrement()) @map("project_id")
+  projectId         Int                 @id @default(autoincrement()) @map("project_id") @unique
   title             String              @db.VarChar(50)
   hook              String              @default("") @db.VarChar(300)
   description       String              @default("") @db.Text
@@ -144,6 +144,9 @@ model Projects {
   users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")
   tags              ProjectTags[]
   approved          Boolean             @default(false)
+
+  //here because prisma doesn't like one-way relationships
+  awaitingapproval  ProjectsAwaitingApproval?  @relation()
 
   @@index([userId], map: "FK_user_id")
   @@map("projects")
@@ -271,6 +274,7 @@ model Session {
 
 model ProjectsAwaitingApproval {
   projectId Int     @id
+  project Projects  @relation(fields: [projectId], references: [projectId], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("projects_awaiting_approval")
 }

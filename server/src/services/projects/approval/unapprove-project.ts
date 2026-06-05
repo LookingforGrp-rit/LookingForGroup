@@ -9,9 +9,11 @@ export const unapproveProjectService = async (
   projectId: number,
 ): Promise<UnapproveProjectServiceError | ChangeProjectApprovalServiceSuccess> => {
   try {
-    await prisma.projectsAwaitingApproval.update({
+    await prisma.projects.update({
       where: { projectId },
-      data: { approved: false },
+      data: {
+        approved: false,
+      },
     });
 
     return 'OK';

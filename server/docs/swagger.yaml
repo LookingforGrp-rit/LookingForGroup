@@ -3076,6 +3076,93 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/approve:
+    put:
+      summary: Approves a project for publishing.
+      description:
+        Removes the project from the list of projects awaiting approval and sets its approval
+        field to `true`.
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: Project approved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: Project Approved
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/unapprove:
+    put:
+      summary: Removes a project from the public space without deleting it.
+      description: Sets a project's approval field to `false`.
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+      responses:
+        '200':
+          description: Project unapproved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: Project Approved
+
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
   # MOD
   /api/mod/clear-profile/{id}:
     patch:
@@ -3258,6 +3345,42 @@ paths:
                     example: null
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  # UNAPPROVED
+  /api/projects/unapproved:
+    get:
+      summary: Get all unapproved projects awaiting approval
+      tags:
+        - Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      description: Retrieves a list of all projects awaiting approval.
+      responses:
+        '200':
+          description: A list of projects awaiting approval
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectPreview'
         '500':
           $ref: '#/components/responses/InternalServerError'
 

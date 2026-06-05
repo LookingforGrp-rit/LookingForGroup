@@ -18,6 +18,7 @@ export const getUnapprovedProjectsService = async (): Promise<
       },
       where: {
         approved: false,
+        awaitingapproval: {},
       },
     });
 

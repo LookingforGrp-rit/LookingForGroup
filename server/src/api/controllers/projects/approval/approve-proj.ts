@@ -3,6 +3,7 @@ import type { Response } from 'express';
 import { approveProjectService } from '#services/projects/approval/approve-project.ts';
 
 const approveProjectController = async (request: AuthenticatedRequest, response: Response) => {
+  console.log('approveProjectController tapped.');
   const projectId = parseInt(request.params.id);
   const result = await approveProjectService(projectId);
 

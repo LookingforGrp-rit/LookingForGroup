@@ -6,6 +6,7 @@ type ParameterLocation = 'path' | 'body';
 
 export const projectExistsAt = (type: ParameterLocation, key: string): RequestHandler => {
   return async (req: Request, res: Response, next: NextFunction) => {
+    console.log('projectExistsAt tapped');
     let rawProjectId;
 
     switch (type) {

@@ -4,7 +4,7 @@ import { loginService } from '#services/authentication/login.ts';
 
 export const login = async (request: Request, response: Response) => {
   if (!request.body) {
-    console.log('Endpoint [TODO: INSERT ENDPOINT] threw an error: Missing credentials.');
+    console.log('Endpoint /api/google-login threw an error: Missing credentials.');
     const resBody: ApiResponse = {
       status: 400,
       error: 'Missing Credential',

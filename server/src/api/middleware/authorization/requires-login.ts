@@ -4,6 +4,7 @@ import { uidHeaderKey } from '#config/constants.ts';
 import envConfig from '#config/env.ts';
 
 const requiresLogin = (request: Request, response: Response, next: NextFunction) => {
+  console.log('requiresLogin tapped');
   if (envConfig.env === 'development' || envConfig.env === 'test') {
     /// Add UID for development, missing correct header
     request.headers[uidHeaderKey] = '000000001';
