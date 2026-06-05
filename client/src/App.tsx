@@ -30,7 +30,7 @@ import uselocalstorage from 'use-local-storage';
 
 function App() {
   //const [avatarImage, setAvatarImage] = useState('/images/tempProfilePic.png'); -- Commented in clean up 26-20-01 
-  const [profileImage, setProfileImage] = useState('');
+  const [profileImage, setProfileImage] = useState<File>();
 
   // https://css-tricks.com/easy-dark-mode-and-multiple-color-themes-in-react/
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -64,8 +64,8 @@ function App() {
               <SignUp
                 // avatarImage={avatarImage}
                 // setAvatarImage={setAvatarImage}
-                profileImage={profileImage}
-                setProfileImage={setProfileImage}
+                profileImage={profileImage as File}
+                setProfileImage={setProfileImage as React.Dispatch<React.SetStateAction<File>>}
               />
             }
           />
