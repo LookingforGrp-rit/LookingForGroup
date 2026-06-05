@@ -4,6 +4,7 @@ import LabelInputBox from '../LabelInputBox';
 import { Select, SelectButton, SelectOptions } from '../Select';
 import { getMajors } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
+import { ThemeIcon } from '../ThemeIcon';
 enum AcademicYears {
   Freshman = "Freshman",
   Sophomore = "Sophomore",
@@ -285,6 +286,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 								<SelectButton
 									placeholder="Academic Year (required)"
 									type={"input"}
+                  initialVal={academicYear}
 								/>
 								<SelectOptions
                   callback={(e) => setAcademicYear((e.target as HTMLButtonElement).value as AcademicYear)}
@@ -337,15 +339,6 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
               hideUnsaved={true}
             />
           </div>
-            {/* Skills */}
-            <div id="signupProcess-skills-subTitle">Chosen Skills:</div>
-            <div id="signup-profile-skill">
-              {selectedSkills.map((skill, index) => (
-                <div key={index} style={{ border: `2px solid ${tagColors[index % 5]}` }}>
-                  {skill.label}
-                </div>
-              ))}
-            </div>
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
               Back
