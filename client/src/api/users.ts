@@ -47,7 +47,7 @@ export const createNewUser = async (
 
   const response = await POST(apiURL, userData);
   
-  if (response.error) console.log(`Error in createUser: ${response.error}`);
+  if (response.error) console.log(`Error in createUser: ${response.error} session data: ${JSON.stringify(response.data)}`);
   return response as ApiResponse<MePrivate>;
 };
 

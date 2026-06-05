@@ -503,8 +503,7 @@ Signup process modal style rules
 }
 
 #profile-details {
-  height: 100%;
-  margin: 20px;
+  margin: 0 20px 0 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -513,52 +512,36 @@ Signup process modal style rules
   grid-area: profileImage;
 }
 
-/* upload picture or use avatar buttons */
-.profile-pic-option {
-  width: 164px;
-  height: 164px;
-  position: fixed;
-  display: none;
-  transition: 0.2s;
+#profile-pic {
+  width:100%;
+  height: auto;
 
-  button,
-  label {
-    display: none;
+  img {
+    width:100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
   }
 }
 
-.profile-pic-option:hover {
+/* upload picture or use avatar buttons */
+.profile-pic-option{
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
-  background-color: rgba(0, 0, 0, 0.2);
   z-index: 1;
   border-radius: 4px;
   transition: 0.2s;
+  gap: 10px;
+  width: 100%;
 
-  button {
-    display: block;
-    width: 140px;
-    height: 40px;
-    padding: 5px;
-    font-size: 0.9375rem;
-    border: none;
-    border-radius: 10px;
-    background-color: var(--primary-color);
-    color: black;
-    font-weight: 600;
-    text-align: center;
-    box-shadow: 0px 0px 10px 0px var(--shadow-color);
-  }
-
+  button,
   label {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    width: 140px;
-    height: 40px;
-    font-size: 0.9375rem;
+    display: block;
+    width: 100%;
+    height: auto;
+    padding: 5px;
+    font-size: 1rem;
     border: none;
     border-radius: 10px;
     background-color: var(--primary-color);
@@ -566,12 +549,12 @@ Signup process modal style rules
     font-weight: 700;
     text-align: center;
     box-shadow: 0px 0px 10px 0px var(--shadow-color);
-    transition: 0.2s;
   }
 
   button:hover,
   label:hover {
-    color: var(--orange);
+    transform: scale(1.1);
+    transition: 0.2s;
     cursor: pointer;
   }
 }
@@ -790,7 +773,7 @@ Signup process modal style rules
   resize: none;
   font-size: 1rem;
   grid-area: bio;
-  height: 260px;
+  height: 100%;
   
   div textarea {
     margin-top: 0px;

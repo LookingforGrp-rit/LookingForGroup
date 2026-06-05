@@ -49,6 +49,7 @@ General style rules
   --dropdown-color: #0e0e0e;
   /* dropdown/small modal background color */
   --sidebar-gradient: linear-gradient(180deg, #2c2a3a 30%, #fead81 100%);
+  --create-gradient: linear-gradient(180deg, #fead81 0%, #2c2a3a 100%);
   --hero-gradient: linear-gradient(180deg, #0e0e0e 30%, #2c2a3a 100%);
   /* gradient for  discover hero section */
   --modal-gradient: linear-gradient(293deg, var(--modal-gradient-start) 0%, var(--modal-gradient-end) 100%);
@@ -132,6 +133,7 @@ General style rules
   --header-color: #ececf7;
   --dropdown-color: #fff;
   --sidebar-gradient: linear-gradient(180deg, #d3d3ff 0%, #ffceb4 100%);
+  --create-gradient: linear-gradient(180deg, #b0b0fc 0%, #fead81 100%);
   --hero-gradient: linear-gradient(180deg, #ffffff 50%, #d3d3ff 100%);
   --modal-gradient: linear-gradient(293deg, var(--modal-gradient-start) 0%, var(--modal-gradient-end) 100%);
   --border-color: #d3d3ff;
@@ -189,6 +191,8 @@ General style rules
 
   --modal-gradient-start: #ffffff;
   --modal-gradient-end: #d3d3ff;
+
+
 }
 
 * {
@@ -244,9 +248,9 @@ a:focus-visible {
 section {
   margin: 10px;
   padding: 4px 16px 16px 16px;
-  border-style: solid;
+  /* border-style: solid;
   border: 2px solid black;
-  box-shadow: 10px 10px 5px lightblue;
+  box-shadow: 10px 10px 5px lightblue; */
 }
 
 /* Content areas to take up entire height of viewport
@@ -761,7 +765,7 @@ Sidebar Nav style rules
     /*border: solid black 2px;*/
     position: fixed;
     bottom: 10px;
-    background-color: var(--header-color);
+    background-color: var(--border-color);
     z-index: 10;
     /*box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 16px;*/
   }
@@ -774,11 +778,12 @@ Sidebar Nav style rules
     display: flex;
     flex-direction: row;
     /* cursor: pointer; */
-    gap: 10px;
+    gap: 15px;
     align-items: center;
     justify-content: space-evenly;
     height: 80px;
-    background-color: var(--header-color);
+    width:100%;
+    background-color: var(--border-color);
   }
 
   .containerButtonSideBar>button,
@@ -787,6 +792,27 @@ Sidebar Nav style rules
     width: 15vw;
     height: 45px;
     margin: 0 5px 20px 5px;
+    background-color: var(--border-color);
+  }
+
+  .containerButtonSideBar>.my-projects-create-btn>#project-info-create{
+    background-image: var(--create-gradient);
+    width: 90px !important;
+    height: 90px !important;
+    border-radius: 50% !important;
+    padding:0% !important;
+    margin-bottom: 30%;
+    border-width: 5px !important;
+    border-color: var(--border-color) !important;
+    background-color: var(--border-color);
+    border:solid;
+  }
+
+  .containerButtonSideBar>.my-projects-create-btn>#project-info-create>#create{
+    margin: 0% !important;
+    padding:0% !important;
+    width: 55px !important;
+    height: 55px !important;
   }
 
   /*temporary, until mobile sidebar layout is decided on*/
@@ -797,6 +823,18 @@ Sidebar Nav style rules
   .containerButtonSideBar>button {
     padding-left: calc((100vw - 160px) / 14);
     padding-right: calc((100vw - 160px) / 14);
+    border: none;
+    text-align: left;
+    display: flex;
+    align-items: center;
+  }
+
+  .containerButtonSideBar>.my-projects-create-btn{
+    border: none;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    width:auto;
   }
 
   .containerButtonSideBar>button:hover {
@@ -814,6 +852,22 @@ Sidebar Nav style rules
     img {
       filter: invert(1);
     }
+  }
+
+  .sidebar-btn,#my-profile-sidebar-btn{
+    height: 55px !important;
+    width: 55px !important;
+    border-radius: 50% !important;
+    border-width: 2% !important;
+    padding:0% !important;
+    
+  }
+
+  .sidebar-icon,.containerButtonSideBar>#my-profile-sidebar-btn>#profile{
+    margin: 0% !important;
+    padding:25% !important;
+    width: auto !important;
+    height: auto !important;
   }
 }
 

@@ -3,7 +3,8 @@ import { fileURLToPath } from 'url';
 import { PrismaSessionStore } from '@quixo3/prisma-session-store';
 import cors from 'cors';
 import express, { type Request, type Response } from 'express';
-import session, { type CookieOptions } from 'express-session';
+// import session, { type CookieOptions } from 'express-session';
+import session from 'express-session';
 import morgan from 'morgan';
 import envConfig from '#config/env.ts';
 import prisma from '#config/prisma.ts';
@@ -17,6 +18,10 @@ import usersRouter from '#routes/users.ts';
 
 const app = express();
 
+if (envConfig.env === 'production') {
+  app.set('trust proxy', 1);
+}
+
 app.use(
   // See express session documentation to understand what any of it means.
   session({
@@ -27,15 +32,21 @@ app.use(
     store: new PrismaSessionStore(prisma, {
       checkPeriod: 2 * 60 * 1000 /* every 2 minutes */,
     }),
-    cookie: function (): CookieOptions {
-      return {
-        httpOnly: true,
-        secure: envConfig.env === 'production',
-        //30 minutes * 60 seconds/minute * 1000ms/second
-        maxAge: 30 * 60 * 1000,
-        sameSite: true,
-        domain: process.env.HOST_URL,
-      };
+    // cookie: function (): CookieOptions {
+    //   return {
+    //     httpOnly: true,
+    //     secure: envConfig.env === 'production',
+    //     //30 minutes * 60 seconds/minute * 1000ms/second
+    //     maxAge: 30 * 60 * 1000,
+    //     sameSite: 'lax',
+    //     // domain: process.env.HOST_URL || 'localhost',
+    //   };
+    // },
+    cookie: {
+      httpOnly: true,
+      secure: envConfig.env === 'production',
+      maxAge: 30 * 60 * 1000,
+      sameSite: 'lax',
     },
   }),
 );
