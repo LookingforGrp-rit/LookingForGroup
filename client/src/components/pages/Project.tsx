@@ -20,6 +20,7 @@ import {
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import AboutFooter from "../AboutFooter";
 
 //Main component for the project page
 /**
@@ -566,6 +567,7 @@ const Project = () => {
           </div>
         </main>
       )}
+    <AboutFooter />
     </div>
   );
 };

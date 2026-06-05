@@ -13,7 +13,7 @@ Credits link footer style rules
 .FooterContainer {
   display: flex;
   position: sticky;
-  top: 96%;
+  top: 100%;
 
   text-align: center;
   justify-content: center;

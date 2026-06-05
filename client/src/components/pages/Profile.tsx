@@ -24,6 +24,7 @@ import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFoll
 import { getUsersById } from "../../api/users";
 import { MeDetail, MePrivate, ProjectPreview, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
+import AboutFooter from "../AboutFooter";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -416,6 +417,7 @@ const Profile = () => {
           </div>
         </div>
       </main>
+      <AboutFooter />
     </div>
   );
 };
