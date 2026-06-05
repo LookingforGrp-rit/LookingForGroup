@@ -17,6 +17,10 @@ import usersRouter from '#routes/users.ts';
 
 const app = express();
 
+if (envConfig.env === 'production') {
+  app.set('trust proxy', 1);
+}
+
 app.use(
   // See express session documentation to understand what any of it means.
   session({
@@ -33,8 +37,8 @@ app.use(
         secure: envConfig.env === 'production',
         //30 minutes * 60 seconds/minute * 1000ms/second
         maxAge: 30 * 60 * 1000,
-        sameSite: true,
-        domain: process.env.HOST_URL,
+        sameSite: 'lax',
+        // domain: process.env.HOST_URL || 'localhost',
       };
     },
   }),
