@@ -45,7 +45,10 @@ export const createNewUser = async (
 ): Promise<ApiResponse> => {
   const apiURL = "/users";
 
-  return await POST(apiURL, userData);
+  const response = await POST(apiURL, userData);
+  
+  if (response.error) console.log(`Error in createUser: ${response.error}`);
+  return response as ApiResponse<MePrivate>;
 };
 
 export const googleLogin = async (
@@ -54,6 +57,13 @@ export const googleLogin = async (
   const apiURL = '/google-login';
 
   return await POST(apiURL, credential);
+}
+export const googleLogout = async (
+  userId: number,
+): Promise<ApiResponse> => {
+  const apiURL = '/google-login';
+
+  return await DELETE(apiURL, {userId});
 }
 
 export const testLogin = async (): Promise<ApiResponse<SessionUserData>> => {

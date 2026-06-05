@@ -34,7 +34,7 @@ app.use(
         //30 minutes * 60 seconds/minute * 1000ms/second
         maxAge: 30 * 60 * 1000,
         sameSite: true,
-        domain: 'localhost',
+        domain: process.env.HOST_URL,
       };
     },
   }),
@@ -51,7 +51,7 @@ if (envConfig.env === 'development') {
   const swaggerUi = (await import('swagger-ui-express')).default;
   const doc = await swaggerParser.bundle('./docs/swagger.yaml');
 
-  app.use('/docs', swaggerUi.serve, swaggerUi.setup(doc));
+  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(doc));
 }
 
 //app.get(new RegExp("[\\s\\S]/*"), (_req: Request, res: Response) => {

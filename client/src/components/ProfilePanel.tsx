@@ -9,6 +9,7 @@ import { addUserFollowing, deleteUserFollowing, getCurrentAccount, getUsersById 
 
 interface ProfilePanelProps {
   profileData: UserPreview;
+  currentUserId: number;
 }
 
 /**
@@ -20,7 +21,7 @@ interface ProfilePanelProps {
  * @param profileData - UserPreview object containing basic user info (name, image, title, location, pronouns, fun fact, etc.)
  * @returns JSX element representing a user profile panel
  */
-export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
+export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) => {
 
   const navigate = useNavigate();
   const profileURL = `${paths.routes.PROFILE}?userID=${profileData.userId}`;
@@ -29,7 +30,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
   
   //follow stuff
   // Current logged-in user id
-  const [userId, setUserId] = useState<number>();
+  const [userId, setUserId] = useState<number>(currentUserId);
   // Whether the current user follows the displayed user
   const [isFollow, setIsFollow] = useState<boolean>(false);
   /**
@@ -44,8 +45,10 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
     useEffect(() => {
       const getFollowData = async () => {
         //get our current user so we can check their follow status
-        const userResp = await getCurrentAccount();
-        if(userResp.data) setUserId(userResp.data.userId);
+        if (userId !== -1) {
+          const userResp = await getCurrentAccount();
+          if(userResp.data) setUserId(userResp.data.userId);
+        }
         
         //get the displayed user (again...) so we have their followers
         //because followers are currently not in the profileData
@@ -69,7 +72,7 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
      * Toggles following the user.
      */
     const toggleFollow = async () => {
-      if (!userId) {
+      if (userId !== -1) {
         navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
       } else {
         // otherwise, toggle follow state
@@ -92,13 +95,13 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt='profile image'
       />
-      <h2>
-        {profileData.firstName} {profileData.lastName}
-      </h2>
-      <h3>{majorsArr.join(', ') || ''}</h3>
-      <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
 
       <div className={'profile-panel-hover'}>
+        <h2>
+          {profileData.firstName} {profileData.lastName}
+        </h2>
+        <h3>{majorsArr.join(', ') || ''}</h3>
+        <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
 
         {isFollow ? <ThemeIcon
           width={30}
@@ -118,25 +121,25 @@ export const ProfilePanel = ({ profileData }: ProfilePanelProps) => {
         {/* List of items */}
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
-            <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'}/>
+            <ThemeIcon id={'role'} width={20} height={20} className={'color-fill undefined'} ariaLabel={'Profession'}/>
           </div>
           <p>{profileData.title ? profileData.title : 'None specified'}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
-            <ThemeIcon id={'location'} width={12} height={16} className={'mono-fill'} ariaLabel={'Location'} />
+            <ThemeIcon id={'location'} width={12} height={16} className={'color-fill undefined'} ariaLabel={'Location'} />
           </div>
           <p>{profileData.location ? profileData.location : 'None specified'}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
-            <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+            <ThemeIcon id={'pronouns'} width={22} height={22} className={'color-fill undefined'} ariaLabel={'Pronouns'} />
           </div>
           <p>{profileData.pronouns ? profileData.pronouns : 'None specified'}</p>
         </div>
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
-            <ThemeIcon id={'funfact'} width={24} height={24} className={'mono-stroke'} ariaLabel={'Fun Fact'} />
+            <ThemeIcon id={'funfact'} width={24} height={24} className={'color-fill undefined'} ariaLabel={'Fun Fact'} />
           </div>
           <p>{profileData.funFact ? profileData.funFact : 'None specified'}</p>
         </div>

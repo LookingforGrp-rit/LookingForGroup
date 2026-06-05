@@ -27,7 +27,7 @@ export const login = async (request: Request, response: Response) => {
   if (userData === 'BAD_REQUEST') {
     const resBody: ApiResponse = {
       status: 400,
-      error: 'Email missing or invalid',
+      error: 'Email missing or invalid (An RIT account is required)',
       data: null,
     };
     return response.status(400).json(resBody);
@@ -44,8 +44,6 @@ export const login = async (request: Request, response: Response) => {
 
   request.session.gid = userData.googleId || '';
   request.session.data = !userData.userExists ? JSON.stringify(userData) : '';
-
-  console.log(`Session data { gid: ${request.session.gid}, data: ${request.session.data}}`);
 
   const resBody: ApiResponse = {
     status: 200,

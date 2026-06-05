@@ -10,21 +10,26 @@ import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
 import { addUserSkill, createNewUser, getCurrentUsername, googleLogin } from '../../api/users';
-import { CreateUserInput, SessionUserData } from '@looking-for-group/shared';
+import { AcademicYear, CreateUserInput, Major, SessionUserData, Skill } from '@looking-for-group/shared';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
+interface SignUpProps {
+  profileImage : string;
+  setProfileImage : React.Dispatch<React.SetStateAction<string>>;
+}
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
  * @param profileImage Uploaded profile image to use for user creation.
  * @param setProfileImage Sets the profile image variable
  * @returns JSX Element
  */
-const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
+const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation
 
   // State variables
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
+  const [preferredName, setPreferredName] = useState(''); // User's preferred name
   const [email, setEmail] = useState('');
   const [sessionData, setSessionData] = useState<SessionUserData>();
   // const [username, setUsername] = useState('');
@@ -45,22 +50,39 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   // State variables for selected buttons
   // to remeber the user's choices when they go back and forth between modals
   // const [selectedProficiencies, setSelectedProficiencies] = useState<string[]>([]); // State variable for the selected proficiencies
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]); // State variable for the selected skills
+  const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]); // State variable for the selected skills
   const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]); // State variable for the ids of the selected skills
   // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
   const [bio, setBio] = useState(''); // State variable for the user's bio
+  const [headline, setHeadline] = useState(''); // State variable for the user's headline
+  const [phoneNumber, setPhoneNumber] = useState(''); // State variable for the user's Phone Number
+  const [title, setTitle] = useState(''); // State variable for the user's current Job Title
+  const [location, setLocation] = useState(''); // State variable for the user's Location
+  const [funFact, setFunFact] = useState(''); // State variable for the user's bio
+  const [major, setMajor] = useState<Major[]>([]); // State variable for user's major //it's an array because it's stored as an array on the backend, to allow for multiple
+  const [academicYear, setAcademicYear] = useState('')
   const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
+
+  const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
   // user info to be sent to the backend
   //we will add more to this once the frontend components can handle them
   const userInfo = {
     firstName: firstName,
     lastName: lastName,
+    preferredName: preferredName, // default to first name for now
     ritEmail: email,
     username: '',
     pronouns: pronouns,
+    majors: major, //called "majors" because it can hold multiple, the ui just doesn't support that yet
+    academicYear: academicYear as AcademicYear,
     bio: bio,
+    headline: headline,
+    phoneNumber: phoneNumber,
+    title: title,
+    location: location,
+    funFact: funFact,
     profileImage: profileImage, // if they upload their own image
   } as CreateUserInput;
 
@@ -108,12 +130,19 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     );
   async function handleGoogle(response: any){
     const sessionData = await googleLogin({credential: response.credential})
+    if(sessionData.error){
+      setError(sessionData.error)
+      return;
+    }
+    setError('');
+    console.log(sessionData);
     setSessionData(sessionData.data); 
     //now we display the message that corresponds to whatever happened
     //not even gonna bother reading the react one because react variables update whenever they feel like it and not right when you tell them to
     if(!sessionData.data.userExists) {
       setFirstName(sessionData.data.firstName);
       setLastName(sessionData.data.lastName);
+      setPreferredName(sessionData.data.firstName);  // default preferred name to first name
       setEmail(sessionData.data.email);
       setShowSkillsModal(true);
     }
@@ -304,8 +333,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         <div className="signup-form column">
 
           <h2>Sign Up</h2>
-
-          <div className="error" aria-live="assertive" role="alert">{message}</div>
+          <p>Sign up using your RIT email.</p>
+          <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="signup-form-inputs">
             {/* we wouldn't need any of the other fields either would we?? */}
             {/* <div className="row">
@@ -335,7 +364,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             /> */}
-            <p>Sign up using your RIT email.</p>
+            
             <div id="googleBtn"></div>
 
             <span className="spacer"> </span>
@@ -421,9 +450,6 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             selectedSkillIds={selectedSkillIds}
             setSelectedSkillIds={setSelectedSkillIds}
             mode="signup"
-            onClose={() => {
-              setShowSkillsModal(false);
-            }}
           />
 
           {/* <ChooseInterests
@@ -477,8 +503,22 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             selectedSkills={selectedSkills}
             bio={bio}
             pronouns={pronouns}
+            headline={headline}
+            phoneNumber={phoneNumber}
+            title={title}
+            major={major}
+            academicYear={academicYear}
+            location={location} 
+            funFact={funFact}
             setBio={setBio}
             setPronouns={setPronouns}
+            setHeadline={setHeadline}
+            setPhoneNumber={setPhoneNumber}
+            setTitle={setTitle}
+            setLocation={setLocation} 
+            setFunFact={setFunFact}
+            setMajor={setMajor}
+            setAcademicYear={setAcademicYear}
             profileImage={profileImage}
             setProfileImage={setProfileImage}
           />
@@ -493,7 +533,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
               await createNewUser(userInfo); //populating this with all of the things we selected
               for(const id of selectedSkillIds){
-                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+                await addUserSkill({skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice'})
               }
               setShowGetStartedModal(false);
               navigate(paths.routes.MYPROJECTS);
@@ -501,7 +541,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected
               for(const id of selectedSkillIds){
-                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+                await addUserSkill({skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice'})
               }
               setShowGetStartedModal(false);
               navigate(paths.routes.HOME);
@@ -520,7 +560,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             lightSrc={'/assets/bannerImages/signup_light.png'}
             darkSrc={'/assets/bannerImages/signup_dark.png'}
           />
-          <button onClick={() => navigate(paths.routes.LOGIN)}>Log In</button>
+          <button onClick={() => navigate(paths.routes.LOGIN, {replace: true})}>Log In</button>
         </div>
       </div>
     </div>

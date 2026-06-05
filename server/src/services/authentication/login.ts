@@ -24,16 +24,16 @@ export const loginService = async (token: string): Promise<SessionUserData | Log
     return 'BAD_REQUEST'; //for consistency with the others
   }
 
+  if ((await userOnBlacklistService(googleId || '')) === 'OK') {
+    return 'FORBIDDEN'; // no sir, not allowed.
+  }
+
   //prisma check for user existence
   const user = await prisma.users.findFirst({
     where: {
       googleId,
     },
   });
-
-  if ((await userOnBlacklistService(user?.userId || -1)) === 'OK') {
-    return 'FORBIDDEN'; // no sir, not allowed.
-  }
 
   // Sets up data to return to the controller
   // (which it will store in the session store if the user does not exist)
@@ -44,8 +44,6 @@ export const loginService = async (token: string): Promise<SessionUserData | Log
     googleId: user?.googleId || googleId || '0',
     userExists: Boolean(user),
   };
-
-  console.log(`logging in user ${JSON.stringify(userData)}`);
 
   return userData;
 };

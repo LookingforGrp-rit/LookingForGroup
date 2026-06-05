@@ -16,6 +16,6 @@ type ServiceSuccess = 'OK' | 'CREATED' | 'NO_CONTENT';
 
 // This utility allows us to use ServiceSuccess as a list of all possible output values
 // while making subtypes that only have some of the values which is then enforced by TypeScript
-type ServiceSuccessSusbet<T extends ServiceSuccess> = T;
+type ServiceSuccessSubset<T extends ServiceSuccess> = T;
 
-export { type ServiceErrorSubset, type ServiceSuccessSusbet };
+export { type ServiceErrorSubset, type ServiceSuccessSubset };

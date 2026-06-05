@@ -1,9 +1,10 @@
 // --- Imports ---
-import { useCallback, useEffect, useState, useContext } from "react";
+import { useCallback, useEffect, useState, useContext, useRef } from "react";
 import {
   CreateProjectImageInput,
   ProjectImage,
   ProjectWithFollowers,
+  UpdateProjectImageInput,
 } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { ProjectImageUploader } from "../../ImageUploader";
@@ -73,6 +74,19 @@ export const MediaTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
+  const [zoom, setZoom] = useState(100);
+  const [dX, setDX] = useState(0);
+  const [dY, setDY] = useState(0);
+
+  const [cropImg, setCropImg] = useState<ProjectImage | PendingProjectImage>();
+
+  const tempImage = useRef<HTMLImageElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const inputX = useRef<HTMLInputElement>(null);
+  const inputY = useRef<HTMLInputElement>(null);
+  const inputZoom = useRef<HTMLInputElement>(null);
+  const fileReader = new FileReader();
+
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
 
@@ -109,7 +123,10 @@ export const MediaTab = ({
       }
     }
     initializeImages();
-  });
+    tempImage.current?.addEventListener("load", updateCanvas);
+    fileReader.onload = () => setCropImg({...cropImg, image: fileReader.result} as PendingProjectImage);
+    fileReader.onerror = () => setCropImg({...cropImg, image: placeholder} as ProjectImage);
+  }, [tempImage, dX, dY, zoom, cropImg, fileReader, placeholder, setCropImg]);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async () => {
@@ -128,7 +145,7 @@ export const MediaTab = ({
     for (const image of projectAfterMediaChanges.projectImages) {
       if (typeof image.image === 'string') {
         // convert to file
-        const imageFile = await stringToFile(image.image);
+        const imageFile = await stringToFile((image as PendingProjectImage).image?.name as string);
         // compare
         if (file.name === imageFile.name && file.size === imageFile.size && file.webkitRelativePath === imageFile.webkitRelativePath) {
           // TODO: add error to show users cannot add duplicate image
@@ -198,14 +215,60 @@ export const MediaTab = ({
           thumbnail: thumbObj,
         };
       }
-      updatePendingProject(projectAfterMediaChanges);
-
+      // TODO: check if image needs to be cropped at all
+      await updatePendingProject(projectAfterMediaChanges);
+      setCropImg({...fullImg, localId: localId});
+      fileReader.readAsDataURL(fullImg.image);
     } catch (err) {
       console.error(err);
     }
 
     imageUploader.value = "";
-  }, [dataManager, projectId, updatePendingProject]);
+  }, [dataManager, projectId, updatePendingProject, setCropImg, fileReader, tempImage, cropImg]);
+  /**
+   * updates the canvas element for cropping images
+   */
+  const updateCanvas = useCallback(() => {
+    const ctx = canvas.current?.getContext("2d");
+    ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
+    if (tempImage.current && canvas.current)
+    ctx?.drawImage(
+      tempImage.current, 
+      dX, dY,
+      tempImage.current.width / 100 * zoom, tempImage.current.height / 100 * zoom);
+  }, [tempImage, dX, dY, zoom, canvas]);
+
+  const UpdateImage = useCallback(
+    async () => canvas.current?.toBlob((blob) => {
+      const indexToUpdate = projectAfterMediaChanges.projectImages.length - 1;
+      const newFile = new File([blob as Blob], (projectAfterMediaChanges.projectImages[indexToUpdate] as PendingProjectImage).image?.name as string);
+      const newImg = {
+        image: newFile,
+        altText: cropImg?.altText
+      } as CreateProjectImageInput
+      const localId = ++localIdIncrement;
+      handleImageDelete(projectAfterMediaChanges.projectImages[indexToUpdate]);
+      dataManager.createImage({
+        id: {
+          value: localId,
+          type: "local",
+        },
+        data: newImg,
+      });
+      projectAfterMediaChanges = {
+        ...projectAfterMediaChanges,
+        projectImages: [
+          ...projectAfterMediaChanges.projectImages,
+          {
+            localId,
+            ...newImg
+          },
+        ],
+      };
+      updatePendingProject(projectAfterMediaChanges);
+      setCropImg(undefined);
+      }, "images/png", 1)
+  , [canvas, cropImg, updatePendingProject, projectAfterMediaChanges]);
 
   // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
@@ -376,6 +439,61 @@ export const MediaTab = ({
 
   // --- Complete component ---
   return (
+    <Popup startOpen={true}>
+    {cropImg !== undefined ?
+    <PopupContent confirmation={true} callback={() => setCropImg(undefined)}>
+      <div className="project-crop">
+        <label id="project-crop-header">Crop image for thumbnail usage</label>
+        <canvas ref={canvas} id="canvas" width={1600} height={900}></canvas>
+        <img ref={tempImage} id="test12" src={cropImg?.image as string} alt={cropImg?.altText as string} />
+        <div id="zoom-row">
+          <input 
+            type="range" ref={inputZoom}
+            id="zoom" name="zoom" 
+            onChange={() => {
+              setZoom(inputZoom.current?.valueAsNumber as number);
+              updateCanvas();
+            }}
+            min={1} max={1000}
+            defaultValue={zoom}/>
+          <label className="slider-text" htmlFor="zoom">Zoom</label>
+        </div>
+        <div id="xTrans-row">
+          <input 
+            type="range" ref={inputX}
+            id="xTrans" name="xTrans" 
+            onChange={() => {
+              setDX(inputX.current?.valueAsNumber as number);
+              updateCanvas();
+            }}
+            min={canvas.current ? -canvas.current.width: -100} 
+            max={canvas.current ?  canvas.current.width:  100}
+            defaultValue={dX}/>
+          <label className="slider-text" htmlFor="xtrans">Xpos</label>
+        </div>
+        <div id="yTrans-row">
+          <input  
+            type="range" ref={inputY}
+            id="yTrans" name="yTrans" 
+            onChange={() => {
+              setDY(inputY.current?.valueAsNumber as number);
+              updateCanvas();
+            }}
+            min={canvas.current ? -canvas.current.height: -100} 
+            max={canvas.current ?  canvas.current.height:  100}
+            defaultValue={dY}/>
+          <label className="slider-text" htmlFor="yTrans">Ypos</label>
+        </div>
+        <div className="project-crop-extra-info">
+          Crop Image to fit the site's 16:9 ratio, or skip. Not cropping may cause the image to display in other places.
+        </div>
+        <div className="confirm-project-crop">
+          {/* TODO: impliment saving the cropped image */}
+          <PopupButton buttonId="project-crop-save" callback={UpdateImage} doNotClose={() => true}>Crop Image</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" callback={() => setCropImg(undefined)}className="project-info-buttons" doNotClose={() => true}>Skip</PopupButton>
+        </div>
+      </div>
+    </PopupContent> : "" }
     <div id="project-editor-media">
       <label>Project Images</label>
       <div className="project-editor-extra-info">
@@ -434,8 +552,8 @@ export const MediaTab = ({
             {/* Hover element */}
             <div className="project-image-hover">
               {projectAfterMediaChanges.thumbnail === projectImage || 
-        ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
-      ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId) ?
+              ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
+              ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId) ?
                 <ThemeIcon
                   id="star"
                   className="star filled-star"
@@ -501,5 +619,6 @@ export const MediaTab = ({
         </Popup>
       </div>
     </div>
+    </Popup>
   );
 };

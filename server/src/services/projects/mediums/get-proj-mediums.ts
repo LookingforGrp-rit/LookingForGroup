@@ -27,6 +27,7 @@ const getProjectMediumsService = async (
       return 'NOT_FOUND';
     }
 
+    //Keeping this user-defined since they appear in the same spot and they should stay consistent with each other
     return project.mediums.map((medium) => transformProjectMedium(projectId, medium));
   } catch (e) {
     console.error(`Error in getProjectMediumsService: ${JSON.stringify(e)}`);

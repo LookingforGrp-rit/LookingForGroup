@@ -7,7 +7,7 @@ import { Tag as TagElement } from './Tag';
 
 //import shares types
 import usePreloadedImage from '../functions/imageLoad.tsx';
-import { ProjectWithFollowers, ProjectMedium, Tag } from '@looking-for-group/shared';
+import { ProjectWithFollowers, ProjectMedium } from '@looking-for-group/shared';
 import React from 'react';
 import { getByID } from '../api/projects.ts';
 import { ThemeIcon } from './ThemeIcon.tsx';
@@ -18,6 +18,8 @@ import { ThemeIcon } from './ThemeIcon.tsx';
 
 interface ProjectPanelProps {
   project: ProjectWithFollowers;
+  initialIsFollowing?: boolean;
+  currentUserId: number;
 }
 
 /**
@@ -28,15 +30,21 @@ interface ProjectPanelProps {
  * @param project - ProjectWithFollowers object containing project info, thumbnail, tags, and follower data
  * @returns JSX element rendering a clickable project preview panel with follow functionality
  */
-export const ProjectPanel = ({ project }: ProjectPanelProps) => {
+export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: ProjectPanelProps) => {
   const navigate = useNavigate();
   const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
 
   // Current user ID (for follow logic)
-  const [userId, setUserId] = useState<number>();
+  const [userId, setUserId] = useState<number>(currentUserId);
   // Local state for follow count and current user's follow status
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
-  const [isFollowing, setFollowing] = useState(false);
+  const [isFollowing, setFollowing] = useState(initialIsFollowing ?? false);
+
+  useEffect(() => {
+    setFollowing(initialIsFollowing ?? false);
+  }, [initialIsFollowing]);
+
+  const shouldCheckFollow = initialIsFollowing === undefined;
   // Avoid looping useEffect by separating projectId
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
 
@@ -65,7 +73,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
    * @returns boolean indicating follow status
    */
   const checkFollow = useCallback(async () => {
-    if (userId) {
+    if (userId !== -1 && userId) {
       const followings = (await getProjectFollowing(userId)).data?.projects;
 
       let isFollow = false;
@@ -86,22 +94,33 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   useEffect(() => {
     const getProjectData = async () => {
       //get our current user for use later
-      const userResp = await getCurrentAccount();
-      if (userResp.data) setUserId(userResp.data.userId);
+      if (!userId && userId !== -1) {
+        const userResp = await getCurrentAccount();
+        if (userResp.data) setUserId(userResp.data.userId);
+      }
 
-      //get the project itself
-      const projectResp = await getByID(projectId);
-      if (projectResp.data) {
-        setFollowCount(projectResp.data.followers.count);
-        checkFollow();
-        if (project.title == "thumbnail") {
-          console.log("Thumbnail project's thumbnail:");
-          console.log(project.thumbnail);
+      // Check if we already have full project data with followers
+      // If not, fetch it to get the current follower count
+      if (!project.followers) {
+        const projectResp = await getByID(projectId);
+        if (projectResp.data) {
+          setFollowCount(projectResp.data.followers.count);
         }
+      } else {
+        setFollowCount(project.followers.count);
+      }
+      
+      if (shouldCheckFollow) {
+        checkFollow();
+      }
+
+      if (project.title == "thumbnail") {
+        console.log("Thumbnail project's thumbnail:");
+        console.log(project.thumbnail);
       }
     };
     getProjectData();
-  }, [projectId, userId, checkFollow])
+  }, [projectId, userId, checkFollow, project.followers, shouldCheckFollow])
 
   /**
    * Handles click on the follow/unfollow button
@@ -112,7 +131,7 @@ export const ProjectPanel = ({ project }: ProjectPanelProps) => {
   const handleFollowClick = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
 
-    if (!userId || userId === 0) {
+    if (!userId || userId === -1) {
       navigate(paths.routes.LOGIN);
       return;
     }

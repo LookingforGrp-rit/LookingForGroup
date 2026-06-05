@@ -27,6 +27,7 @@ const getProjectTagsService = async (
       return 'NOT_FOUND';
     }
 
+    //Swagger docs say the order of the tags is user-defined, so it will not be alphabetized
     return project.tags.map((tag) =>
       transformProjectTag(projectId, {
         label: tag.tag.label,

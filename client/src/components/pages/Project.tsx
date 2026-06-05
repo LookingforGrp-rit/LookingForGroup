@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -13,7 +13,6 @@ import { ThemeIcon } from "../ThemeIcon";
 import { getByID } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import {
-  getCurrentAccount,
   deleteProjectFollowing,
   addProjectFollowing,
   getProjectFollowing,
@@ -71,35 +70,31 @@ const Project = () => {
   }, [projectID, userID]);
 
   // Sets state variables
-  useEffect(() => {
-    const getProjectData = async () => {
-      //get our current user for use later
-      const userResp = await getCurrentAccount();
-      if (userResp.data) {
-        setUser(userResp.data);
-        setUserID(userResp.data.userId);
-      }
+  const getProjectData = async (data: MePrivate | undefined) => {
+    //get our current user for use later
+    if (data) {
+      setUser(data);
+      setUserID(data.userId);
+    }
 
-      //get the project itself
-      const projectResp = await getByID(projectID);
-      if (projectResp.data) {
-        setDisplayedProject(projectResp.data);
-        checkFollow();
-        setFollowCount(projectResp.data.followers.count);
+    //get the project itself
+    const projectResp = await getByID(projectID);
+    if (projectResp.data) {
+      setDisplayedProject(projectResp.data);
+      checkFollow();
+      setFollowCount(projectResp.data.followers.count);
 
-        if (userResp.data) {
-          for (const member of projectResp.data.members) {
-            if (member.user.userId === userResp.data.userId) {
-              setIsMember(true);
-              return;
-            }
+      if (data) {
+        for (const member of projectResp.data.members) {
+          if (member.user.userId === data.userId) {
+            setIsMember(true);
+            return;
           }
         }
-
       }
-    };
-    getProjectData();
-  }, [projectID, checkFollow]);
+
+    }
+  };
 
   //Checks to see whether or not the current user is the maker/owner of the project being displayed
   //oh do i need this too
@@ -111,12 +106,18 @@ const Project = () => {
    * @returns String to display
    */
   const formatFollowCount = (followers: number): string => {
-    if (followers >= 1000) {
-      const multOfHundred = followers % 100 === 0;
-      const formattedNum = (followers / 1000).toFixed(1);
-      return `${formattedNum}K ${multOfHundred ? "+" : ""}`;
+    const trim = (n: number) => {
+      const s = n.toFixed(1);
+      return s.endsWith(".0") ? s.slice(0, -2) : s;
+    };
+    if (followers < 10000) return `${followers}`;
+    if (followers < 1_000_000) return `${Math.floor(followers / 1000)}k`;
+    if (followers < 1_000_000_000) {
+      const m = followers / 1_000_000;
+      return `${m < 10 ? trim(m) : Math.floor(m)}M`;
     }
-    return `${followers}`;
+    const b = followers / 1_000_000_000;
+    return `${b < 10 ? trim(b) : Math.floor(b)}B`;
   };
 
   /**
@@ -400,6 +401,7 @@ const Project = () => {
         hideSearchBar={true}
         value={undefined}
         onChange={undefined}
+        setCurrentUserId={getProjectData}
       />
 
       {displayedProject === undefined ? (

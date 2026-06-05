@@ -920,21 +920,32 @@ Page popup style rules
   /* height: 849px; */
 }
 
+.popup:has(.small-popup){
+  max-width: 800px;
+  height: 40vh;
+}
+
 
 /* Used inside of popup object for smaller popups */
 .small-popup {
-  max-width: 456px;
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   background-color: var(--bg-color);
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   opacity: 100%;
   z-index: 3;
-  padding: 20px 40px;
-  margin-top: 2%;
-  margin-bottom: 2%;
+  padding: 24px 56px;
+  box-sizing: border-box;
+
+  .confirm-msg
+  {
+    width: 80%;
+  }
 }
 
 @media (max-width: 799px) {
@@ -992,6 +1003,21 @@ Page popup style rules
 
   .popup .small-popup {
     height: 100%;
+    width: 100%;
+    justify-content: center;
+  }
+
+  /* Popup container with a smaller popup inside (for leave/delete project specifically) */
+  .popup:has(.small-popup)
+  {
+    width: 95vw;
+    height: 50vh;
+    max-width: 500px;
+  }
+
+  .popup-container:has(.popup .small-popup)
+  {
+    align-items: center;
     justify-content: center;
   }
 }
@@ -1369,8 +1395,7 @@ Header style rules
   justify-content: flex-end;
   translate: -10px 0;
 
-  .dropdown-container
-  {
+  .dropdown-container {
     padding: 0 10px;
   }
 }
@@ -1456,14 +1481,14 @@ Header style rules
       font-size: 1rem;
       font-weight: 700;
       color: var(--primary-color);
-      margin: 0;
+      margin: 1px;
     }
 
     #header-profile-email {
       font-style: italic;
       font-size: 0.75rem;
       color: var(--main-text);
-      margin: 0;
+      margin: 1px;
     }
   }
 }
@@ -1656,16 +1681,16 @@ Select style rules
 }
 
 .select-search-input {
-    width: 100%;
-    border: none !important;
-    outline: none !important;
-    background: transparent;
-    padding: 0;
-    margin: 0;
-    font-family: inherit;
-    font-size: inherit;
-    color: inherit;
-    box-shadow: none;
+  width: 100%;
+  border: none !important;
+  outline: none !important;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  color: inherit;
+  box-shadow: none;
 }
 
 .select-search-input::placeholder {
@@ -1702,7 +1727,7 @@ Select style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   /* Limit height to ten items, maybe less */
   max-height: 450px;
-  overflow-y: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 }
 

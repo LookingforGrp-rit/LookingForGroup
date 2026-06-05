@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type AddBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type AddBlacklistServiceSuccess = ServiceSuccessSusbet<'OK'>;
+type AddBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 
 //Checks if a user is on the blacklist
 //To be used when they attempt to log in
@@ -10,14 +10,14 @@ type AddBlacklistServiceSuccess = ServiceSuccessSusbet<'OK'>;
 //NOTE: OK means they ARE blacklisted, so they should NOT be able to sign in!
 //Likewise, NOT_FOUND means they are NOT blacklisted, so they SHOULD be able to sign in
 const userOnBlacklistService = async (
-  userId: number,
+  googleId: string,
 ): Promise<AddBlacklistServiceSuccess | AddBlacklistServiceError> => {
   try {
     //check if user exists
 
     const user = await prisma.userBlacklist.findUnique({
       where: {
-        userId: userId,
+        googleId: googleId,
       },
     });
 

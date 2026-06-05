@@ -185,10 +185,9 @@ export const PATCH = async (
 
   try {
     let url = getBaseUrl() + apiURL;
-    if (import.meta.env.DEV) {
-      url += url.includes("?")
-        ? `?devId=${import.meta.env.VITE_DEV_ID}`
-        : '';
+
+    if (import.meta.env.DEV && import.meta.env.VITE_DEV_ID) {
+      url += `?devId=${import.meta.env.VITE_DEV_ID}`
     }
 
     const response = await fetch(url, {

@@ -9,7 +9,7 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
@@ -20,9 +20,9 @@ import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getCurrentAccount, getUserFollowing } from "../../api/users";
+import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing } from "../../api/users";
 import { getUsersById } from "../../api/users";
-import { MeDetail, ProjectPreview, UserDetail } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectPreview, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
 
 type Profile = MeDetail;
@@ -76,7 +76,7 @@ const Profile = () => {
    * @returns true if following
    */
   const checkFollow = useCallback(async () => {
-    if (userID) {
+    if (userID !== -1 && userID !== undefined) {
       const followings = (await getUserFollowing(userID)).data?.users;
 
       let isFollowing = false;
@@ -162,33 +162,34 @@ const Profile = () => {
   }, [profileID, isUsersProfile, setFullProjectList, setDisplayedProjects]);
 
   // Gets the profile data
-  useEffect(() => {
-    const getProfileData = async () => {
-      // Get the userID for our current user
-      const response = await getCurrentAccount()
-      if (response.data) setUserID(response.data.userId);
-      if (userID) setIsUsersProfile(userID.toString() === profileID);
+  const getProfileData = async (data: MePrivate | undefined) => {
+    // Get the userID for our current user
+    if (data) { 
+      setUserID(data.userId);  
+      setIsUsersProfile(data.userId.toString() === profileID);
+    }
+    else setUserID(-1);
 
-      try {
-        const { data } = await getUsersById(Number(profileID));
+    //set the variable i just set the damn variable bro
+    try {
+      const { data } = await getUsersById(Number(profileID));
 
-        // Only run this if profile data exists for user
-        if (data) {
-          setDisplayedProfile(data);
-          setMajorsArr(data.majors.map((maj) => maj.label));
-          await getProfileProjectData();
-          checkFollow();
-        }
-      } catch (error) {
-        if (error instanceof Error) {
-          console.error(error.message);
-        } else {
-          console.log(`Unknown error: ${error}`);
-        }
+      // Only run this if profile data exists for user
+      if (data) {
+        setDisplayedProfile(data);
+        setMajorsArr(data.majors.map((maj) => maj.label));
+        await getProfileProjectData();
+        checkFollow();
       }
-    };
-    getProfileData();
-  }, [getProfileProjectData, checkFollow, isUsersProfile, profileID, userID]);
+    } catch (error) {
+      if (error instanceof Error) {
+        console.error(error.message);
+      } else {
+        console.log(`Unknown error: ${error}`);
+      }
+    }
+  };
+    
 
   // --------------------
   // Components
@@ -286,6 +287,7 @@ const Profile = () => {
         onSearch={searchProjects}
         hideSearchBar={true}
         onChange={() => { }}
+        setCurrentUserId={getProfileData} //brother you're not even passing anything
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
@@ -406,6 +408,7 @@ const Profile = () => {
                 category={"projects"}
                 itemList={displayedProjects}
                 itemAddInterval={25}
+                userId={userID as number}
               />
             ) : (
               <div>No projects to display</div>
