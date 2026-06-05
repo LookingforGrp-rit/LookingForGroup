@@ -8,11 +8,12 @@ import { deleteProjectFollowing } from '#controllers/me/followings/delete-follow
 import { deleteUserFollowing } from '#controllers/me/followings/delete-follow-user.ts';
 import { getAccount } from '#controllers/me/get-acc.ts';
 import { getMyProjects } from '#controllers/me/get-my-proj.ts';
-import { getUsernameByShib } from '#controllers/me/get-username-shib.ts';
+import { getUsernameByGoogle } from '#controllers/me/get-username-google.ts';
 import { leaveProjectController } from '#controllers/me/leave-project.ts';
 import addUserMajor from '#controllers/me/majors/add-major.ts';
 import { deleteMajor } from '#controllers/me/majors/delete-major.ts';
 import { getUserMajors } from '#controllers/me/majors/get-majors.ts';
+import { reportProjectController } from '#controllers/me/report-proj.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
 import { deleteSkill } from '#controllers/me/skills/delete-skills.ts';
 import { getSkills } from '#controllers/me/skills/get-skills.ts';
@@ -104,6 +105,12 @@ router.put(
   authenticated(userAttributeExistsAt('project', 'path', 'id')),
   authenticated(updateProjectVisibilityController),
 );
+//Report project
+router.post(
+  '/projects/report/:id/:report',
+  projectExistsAt('path', 'id'),
+  authenticated(reportProjectController),
+);
 
 // SKILLS ROUTES
 
@@ -151,6 +158,6 @@ router.patch('/', upload.single('profileImage'), authenticated(updateUserInfo));
 router.delete('/', authenticated(deleteUser));
 
 //Gets username by shib ID
-router.get('/get-username', authenticated(getUsernameByShib));
+router.get('/get-username', authenticated(getUsernameByGoogle));
 
 export default router;

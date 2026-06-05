@@ -1,3 +1,5 @@
+import 'dotenv/config';
+
 import app from '#app.ts';
 //import envConfig from '#config/env.ts';
 

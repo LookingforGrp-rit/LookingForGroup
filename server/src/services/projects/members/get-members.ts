@@ -9,7 +9,7 @@ type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 //GET api/projects/{id}/members
 const getMembersService = async (projectId: number): Promise<ProjectMember[] | GetServiceError> => {
   try {
-    const members = await prisma.members.findMany({
+    let members = await prisma.members.findMany({
       where: { projectId },
       select: ProjectMemberSelector,
       orderBy: {
@@ -22,6 +22,16 @@ const getMembersService = async (projectId: number): Promise<ProjectMember[] | G
     if (members.length === 0) {
       return 'NOT_FOUND';
     }
+
+    //Array is alphabetized by first name
+    members = members.toSorted(
+      (member1, member2) =>
+        member1.users.firstName.charCodeAt(0) - member2.users.firstName.charCodeAt(0),
+    );
+
+    //For when the preferredName column is made in the database
+    // members = members.toSorted((member1, member2) =>
+    //   member1.users.preferredName.charCodeAt(0) - member2.users.preferredName.charCodeAt(0));
 
     return members.map((member) => transformProjectMember(projectId, member));
   } catch (e) {

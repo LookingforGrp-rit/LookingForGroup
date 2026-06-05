@@ -1,4 +1,4 @@
-import type { AddProjectTagsInput, ProjectTag } from '@looking-for-group/shared';
+import type { AddProjectTagInput, ProjectTag, TagType } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectTagSelector } from '#services/selectors/projects/parts/project-tag.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -8,29 +8,26 @@ type AddTagsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | '
 
 //POST api/projects/{id}/tags
 //add a tag
-const addTagsService = async (
+const addTagService = async (
   projectId: number,
-  tag: AddProjectTagsInput,
-): Promise<ProjectTag[] | AddTagsServiceError> => {
+  tag: AddProjectTagInput,
+): Promise<ProjectTag | AddTagsServiceError> => {
   try {
-    const result = await prisma.projects.update({
-      where: {
-        projectId,
-      },
+    const newTag = await prisma.projectTags.create({
       data: {
-        tags: {
-          connect: tag,
-        },
+        projectId,
+        tagId: tag.tagId,
+        displayOrder: tag.displayOrder,
       },
-      include: {
-        tags: {
-          where: tag,
-          select: ProjectTagSelector,
-        },
-      },
+      select: ProjectTagSelector,
     });
 
-    return result.tags.map((tag) => transformProjectTag(projectId, tag));
+    return transformProjectTag(projectId, {
+      label: newTag.tag.label,
+      tagId: newTag.tagId,
+      type: newTag.tag.type as TagType,
+      displayOrder: newTag.displayOrder,
+    });
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {
@@ -47,4 +44,4 @@ const addTagsService = async (
   }
 };
 
-export default addTagsService;
+export default addTagService;

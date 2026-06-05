@@ -40,6 +40,9 @@ const testMembers = [
     label: 'Test',
     profileVisibility: 'Public' as MembersProfileVisibility,
     createdAt: now,
+    users: {
+      firstName: 'Alice',
+    },
   },
   {
     projectId: 1,
@@ -48,6 +51,9 @@ const testMembers = [
     label: 'Test 2',
     profileVisibility: 'Public' as MembersProfileVisibility,
     createdAt: now,
+    users: {
+      firstName: 'Eric',
+    },
   },
 ];
 
@@ -94,8 +100,8 @@ describe('getProjectMemberService', async () => {
     vi.mocked(prisma.members.findMany).mockResolvedValue(testMembers);
     const result = await getMemberService(1);
 
-    expect(transformProjectMember).toBeCalled();
-    expect(transformProjectMember).toBeCalledTimes(2);
+    expect(transformProjectMember).toHaveBeenCalled();
+    expect(transformProjectMember).toHaveBeenCalledTimes(2);
     expect(result).toStrictEqual(transformedMembers);
   });
 });

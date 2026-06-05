@@ -279,7 +279,7 @@ export const GeneralTab = ({
       />
 
       <LabelInputBox
-        label={"About This Project"}
+        label={" Project Overview"}
         labelInfo="Use this space to go into detail about your project! Feel free to share it's
           inspirations and goals, outline key features, and describe this impact you hope it
           brings to others."

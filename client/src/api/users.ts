@@ -28,6 +28,8 @@ import type {
   ProjectFollowsList,
   UpdateUserProjectVisibilityInput,
   MyMember,
+  SessionUserData,
+  CreateUserInput,
 } from "@looking-for-group/shared";
 
 /* USER CRUD */
@@ -39,12 +41,36 @@ import type {
  * @returns status - 200 if valid, 400 if not
  */
 export const createNewUser = async (
-  userData: UserPreview
+  userData: CreateUserInput
 ): Promise<ApiResponse> => {
   const apiURL = "/users";
 
-  return await POST(apiURL, userData);
+  const response = await POST(apiURL, userData);
+  
+  if (response.error) console.log(`Error in createUser: ${response.error}`);
+  return response as ApiResponse<MePrivate>;
 };
+
+export const googleLogin = async (
+  credential: {credential: string}
+): Promise<ApiResponse> => {
+  const apiURL = '/google-login';
+
+  return await POST(apiURL, credential);
+}
+export const googleLogout = async (
+  userId: number,
+): Promise<ApiResponse> => {
+  const apiURL = '/google-login';
+
+  return await DELETE(apiURL, {userId});
+}
+
+export const testLogin = async (): Promise<ApiResponse<SessionUserData>> => {
+  const apiURL = '/google-login/test';
+
+  return await GET(apiURL);
+}
 
 /**
  * Checks if the user is logged in (shibboleth) and returns username if they are

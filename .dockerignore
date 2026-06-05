@@ -1,2 +1,21 @@
-**/node_modules/**
-**/generated/**
+#dependencies
+node_modules
+**/node_modules
+
+# git
+.git
+.gitignore
+
+#local env files
+.env
+.env.*
+
+# build
+client/build
+dist
+coverage
+
+# logs
+npm-debug.logs
+*.log
+

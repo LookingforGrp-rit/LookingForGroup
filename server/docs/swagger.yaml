@@ -671,7 +671,7 @@ paths:
           required: true
           schema:
             type: string
-          description: University ID from the Shibboleth authentication headers
+          description: Google ID from the Google OAuth response
       responses:
         '200':
           description: Username successfully retrieved
@@ -871,6 +871,60 @@ paths:
           $ref: '#/components/responses/NotFound'
         '401':
           $ref: '#/components/responses/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/projects/report/{id}/{report}:
+    post:
+      summary: Report a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the project to report
+          schema:
+            type: integer
+        - name: report
+          in: path
+          required: true
+          description: Report message
+          schema:
+            type: string
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Project reported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -2444,7 +2498,7 @@ paths:
 
   /api/projects/{id}/tags:
     get:
-      summary: Get a project's tags
+      summary: Get a project's tags in the order user specified
       description: Returns the list of tags associated with the specified project
       tags:
         - Projects
@@ -2486,7 +2540,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
     post:
       summary: Adds a project tag
-      description: Adds an amount of tags to the specified project
+      description: Adds a tag to the specified project
       security:
         - shibbolethAuth: []
       tags:
@@ -2509,7 +2563,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/AddProjectTagsInput'
+              $ref: '#/components/schemas/AddProjectTagInput'
       responses:
         '201':
           description: Tags created successfully
@@ -2540,6 +2594,66 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
   /api/projects/{id}/tags/{tagId}:
+    patch:
+      summary: Updates the order of a tag in the list
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: path
+          name: tagId
+          schema:
+            type: integer
+          required: true
+          description: The ID of the tag
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateProjectTagInput'
+      responses:
+        '200':
+          description: Tag updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectTag'
+
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     delete:
       summary: Deletes a project tag
       security:
@@ -2554,11 +2668,11 @@ paths:
           required: true
           description: The ID of the project
         - in: path
-          name: id
+          name: tagId
           schema:
             type: integer
           required: true
-          description: The ID of the project
+          description: The ID of the tag
         - in: query
           name: devId
           schema:
@@ -3109,6 +3223,187 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/mod/ban-user/{googleId}/{reason}:
+    put:
+      summary: Bans a user by adding them to a blacklist
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: googleId
+          in: path
+          required: true
+          description: Google ID of the user to be banned
+          schema:
+            type: string
+        - name: reason
+          in: path
+          required: false
+          description: Reason the user is to be banned
+          schema:
+            type: string
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: User banned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/unban-user/{googleId}:
+    delete:
+      summary: Unbans a user by removing them from a blacklist
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: googleId
+          in: path
+          required: true
+          description: Google ID of the user to be unbanned
+          schema:
+            type: string
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: User unbanned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/project-report/:
+    get:
+      summary: Get a list of all project reports
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: Project reports acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/project-report/{id}:
+    delete:
+      summary: Removes a project report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of report to delete
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Project reports acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   # IMAGES
   /api/images/{image}:
     get:
@@ -3253,8 +3548,10 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectSocialInput'
     UpdateProjectSocialInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectSocialInput'
-    AddProjectTagsInput:
-      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectTagsInput'
+    AddProjectTagInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectTagInput'
+    UpdateProjectTagInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectTagInput'
     AddProjectMediumsInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/AddProjectMediumsInput'
     CreateProjectJobInput:

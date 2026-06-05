@@ -5,7 +5,7 @@ export const MePrivateSelector = Object.freeze({
   ritEmail: true,
   visibility: true,
   phoneNumber: true,
-  universityId: true,
+  googleId: true,
   createdAt: true,
   updatedAt: true,
 });

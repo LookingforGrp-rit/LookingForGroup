@@ -17,7 +17,7 @@ const router = Router();
 router.get('/', getAllUsers);
 
 //Creates a new user
-router.post('/', requiresLogin, createUser);
+router.post('/', createUser);
 
 //Gets another user's projects
 router.get('/:id/projects/', getOtherUserProjects);

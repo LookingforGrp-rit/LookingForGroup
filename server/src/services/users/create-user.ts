@@ -1,33 +1,76 @@
-import type { MePrivate } from '@looking-for-group/shared';
+import type { CreateUserInput, MePrivate, SessionUserData } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
 import { MePrivateSelector } from '#services/selectors/me/me-private.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMeToPrivate } from '#services/transformers/me/me-private.ts';
 
-type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT'>;
+type CreateUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT' | 'BAD_REQUEST'>;
 
 const createUserService = async (
-  uid: string,
-  username: string,
-  firstName: string,
-  lastName: string,
-  email: string,
+  userData: CreateUserInput,
+  session: SessionUserData,
 ): Promise<MePrivate | CreateUserServiceError> => {
   try {
+    //destructure to take majors out of userData
+    //because you have to connect it individually
+    const { majors, ...majorlessUserData } = userData;
+    //if there are no google credentials by now we're in dev, since we already have the checks in the controller
+    //so bypass the google stuff and create the dev user directly from here
+    if (!session.googleId) {
+      const devData = userData;
+      const { majors, ...majorlessDevData } = devData;
+      let result;
+      if (devData.majors.length !== 0) {
+        result = await prisma.users.create({
+          data: {
+            ...devData,
+            majors: {
+              connect: {
+                majorId: majors[0].majorId,
+              },
+            },
+          },
+          select: MePrivateSelector,
+        });
+      } else {
+        result = await prisma.users.create({
+          data: majorlessDevData,
+          select: MePrivateSelector,
+        });
+      }
+      return transformMeToPrivate(result);
+    }
+
+    if (!session.firstName || !session.lastName || !session.email || !session.googleId) {
+      return 'BAD_REQUEST';
+    }
+
+    //populate info object with the payload information
+    majorlessUserData.firstName = session.firstName;
+    majorlessUserData.lastName = session.lastName;
+    majorlessUserData.ritEmail = session.email;
+    majorlessUserData.googleId = session.googleId;
+    majorlessUserData.username = session.email.substring(0, session.email.indexOf('@'));
+
+    console.log(majorlessUserData);
+
+    //majors are a relation so i gotta do this for em
     const result = await prisma.users.create({
       data: {
-        universityId: uid,
-        username,
-        firstName,
-        lastName,
-        ritEmail: email,
+        ...majorlessUserData,
+        majors: {
+          connect: {
+            majorId: majors[0].majorId,
+          },
+        },
       },
       select: MePrivateSelector,
     });
 
     return transformMeToPrivate(result);
   } catch (e) {
+    console.log(e);
     console.error(`Error in createUserService: ${JSON.stringify(e)}`);
 
     if (e instanceof PrismaClientKnownRequestError) {
@@ -38,7 +81,6 @@ const createUserService = async (
           return 'INTERNAL_ERROR';
       }
     }
-
     return 'INTERNAL_ERROR';
   }
 };

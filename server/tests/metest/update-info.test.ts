@@ -82,6 +82,7 @@ const transformed: MePrivate = {
   designer: false,
   developer: true,
   firstName: 'Eric',
+  preferredName: 'Eric',
   followers: {
     users: [],
     count: 0,
@@ -113,7 +114,7 @@ const transformed: MePrivate = {
   skills: [] as MySkill[],
   socials: [] as MySocial[],
   title: '',
-  universityId: '',
+  googleId: '',
   updatedAt: new Date(),
   userId: 1,
   username: '',

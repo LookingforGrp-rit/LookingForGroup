@@ -36,6 +36,7 @@ describe('getUserFollowersService', () => {
       ritEmail: 'send@rit.edu',
       firstName: 'send',
       lastName: 'user',
+      preferredName: 'Leafleaf',
       profileImage: null,
       headline: '',
       pronouns: '',
@@ -49,7 +50,7 @@ describe('getUserFollowersService', () => {
       createdAt: new Date(),
       updatedAt: new Date(),
       phoneNumber: null,
-      universityId: '',
+      googleId: '',
     };
 
     const prismaResult = [
@@ -65,6 +66,7 @@ describe('getUserFollowersService', () => {
       username: 'sender',
       firstName: 'send',
       lastName: 'user',
+      preferredName: 'Leafleaf',
       profileImage: null,
       mentor: false,
       headline: '',

@@ -26,7 +26,7 @@ const pageTabs = ["About", "Projects", "Skills", "Links"];
  * @returns JSX Element
  */
 export const ProfileEditPopup = () => {
-  const [currentTab, setCurrentTab] = useState(5);
+  const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
   const [unmodifiedProfile, setUnmodifiedProfile] = useState<MePrivate>();
@@ -98,7 +98,7 @@ export const ProfileEditPopup = () => {
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevents any default calls
 
-    console.log('onSaveClicked');
+    console.log('Saving...'); //yo having this like change the button as feedback for the user that it's saving could be amazing holup
 
     try {
       if (!dataManager) return;

@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DeleteSocialServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type DeleteSocialServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type DeleteSocialServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE api/me/socials/{websiteId}
 export const deleteSocialService = async (

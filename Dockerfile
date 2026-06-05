@@ -4,7 +4,7 @@
 # base Node.js layer
 #######################
 # node:20-slim should be compatable with Prisma
-FROM node:20-slim AS base
+FROM node:24-slim AS base
 
 #######################
 # system dependencies
@@ -24,7 +24,8 @@ COPY server/package.json ./server/package.json
 COPY client/package.json ./client/package.json
 COPY shared/package.json ./shared/package.json
 
-RUN npm install
+# run clean install
+RUN npm ci --ignore-scripts
 
 #######################
 # Copy full project source code
@@ -42,6 +43,10 @@ RUN npx prisma generate --schema=server/prisma/schema.prisma
 #######################
 # Compiles react and vite into assets
 # Will be served by backend
+
+ARG VITE_GOOGLE_CLIENT_ID
+ENV VITE_GOOGLE_CLIENT_ID=$VITE_GOOGLE_CLIENT_ID
+
 RUN npm run build
 
 #######################
@@ -49,7 +54,6 @@ RUN npm run build
 #######################
 ENV NODE_ENV=production
 ENV PORT=3000
-ENV DB_NAME=lfg
 
 EXPOSE 3000
 

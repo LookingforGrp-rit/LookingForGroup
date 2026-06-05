@@ -70,23 +70,6 @@ CREATE TABLE `_prisma_migrations` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `_ProjectsToTags`
---
-
-DROP TABLE IF EXISTS `_ProjectsToTags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `_ProjectsToTags` (
-  `A` int NOT NULL,
-  `B` int NOT NULL,
-  UNIQUE KEY `_ProjectsToTags_AB_unique` (`A`,`B`),
-  KEY `_ProjectsToTags_B_index` (`B`),
-  CONSTRAINT `_ProjectsToTags_A_fkey` FOREIGN KEY (`A`) REFERENCES `projects` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `_ProjectsToTags_B_fkey` FOREIGN KEY (`B`) REFERENCES `tags` (`tag_id`) ON DELETE CASCADE ON UPDATE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
 -- Table structure for table `jobs`
 --
 
@@ -389,11 +372,11 @@ CREATE TABLE `users` (
   `created_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `updated_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `phone_number` int DEFAULT NULL,
-  `university_id` varchar(9) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `google_id` varchar(9) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`user_id`),
   UNIQUE KEY `users_username_key` (`username`),
   UNIQUE KEY `users_rit_email_key` (`rit_email`),
-  UNIQUE KEY `university_id_UNIQUE` (`university_id`),
+  UNIQUE KEY `google_id_UNIQUE` (`google_id`),
   UNIQUE KEY `users_phone_number_key` (`phone_number`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

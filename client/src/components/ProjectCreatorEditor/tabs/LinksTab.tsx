@@ -130,13 +130,6 @@ projectAfterLinkChanges = structuredClone(projectData);
     const targetSocial = (projectData.projectSocials || [])[index];
     if (!targetSocial) return;
 
-    if (!("localId" in targetSocial)) {
-      dataManager.deleteSocial({
-        id: { type: 'canon', value: targetSocial.websiteId },
-        data: null
-      });
-    }
-
     const filteredSocials = (projectData.projectSocials || []).filter((_, i) => i !== index);
     updatePendingProject({ ...projectData, projectSocials: filteredSocials });
   };
@@ -329,30 +322,6 @@ projectAfterLinkChanges = structuredClone(projectData);
                   const inputValue = e.target.value;
                   tempSocials[index].url = url + inputValue;
 
-                  // Don't actually add the social until they type something
-                  if (inputValue.trim() !== '') {
-                    if("localId" in social) {
-                      dataManager.addSocial({
-                        id: {
-                          type: "local",
-                          value: social.localId as number
-                        },
-                        data: tempSocials[index] as AddProjectSocialInput
-                      });
-                    }
-                    else {
-                      dataManager.updateSocial({
-                        id: {
-                          type: "canon",
-                          value: social.websiteId
-                        },
-                        data: {
-                          url: tempSocials[index].url
-                        }
-                      });
-                    }
-                  }
-                  
                   updatePendingProject({ ...projectAfterLinkChanges, projectSocials: tempSocials });
                 }}
               />

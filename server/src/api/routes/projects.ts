@@ -169,7 +169,8 @@ router.post(
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
-  userExistsAt('body', 'userId'),
+  userExistsAt('body', 'inviterUserId'),
+  userExistsAt('body', 'inviteeUserId'),
   skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
   authenticated(requiresProjectOwner),
   PROJECT.addMember,
@@ -252,7 +253,7 @@ router.delete(
   projectExistsAt('path', 'id'),
   projectAttributeExistsAt('tag', { type: 'path', key: 'id' }, { type: 'path', key: 'tagId' }),
   authenticated(requiresProjectOwner),
-  PROJECT.deleteTags,
+  PROJECT.deleteTag,
 );
 //Adds a project tag
 router.post(
@@ -262,7 +263,17 @@ router.post(
   projectExistsAt('path', 'id'),
   attributeExistsAt('tag', 'body', 'tagId'),
   authenticated(requiresProjectOwner),
-  PROJECT.addTags,
+  PROJECT.addTag,
+);
+// updates order of a project's tags
+router.patch(
+  '/:id/tags/:tagId',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  projectAttributeExistsAt('tag', { type: 'path', key: 'id' }, { type: 'path', key: 'tagId' }),
+  authenticated(requiresProjectOwner),
+  PROJECT.updateTag,
 );
 
 // JOBS ROUTES

@@ -23,9 +23,10 @@ import { addProjectSocial } from './socials/add-social.ts';
 import { deleteProjectSocial } from './socials/delete-proj-social.ts';
 import getProjectSocials from './socials/get-proj-socials.ts';
 import { updateProjectSocial } from './socials/update-proj-social.ts';
-import addTags from './tags/add-tags.ts';
-import deleteTags from './tags/delete-tags.ts';
+import addTag from './tags/add-tag.ts';
+import deleteTag from './tags/delete-tag.ts';
 import getTags from './tags/get-proj-tags.ts';
+import updateTag from './tags/update-tag.ts';
 import getThumbnail from './thumbnail/get-thumbnail.ts';
 import removeThumbnail from './thumbnail/remove-thumbnail.ts';
 import updateThumbnail from './thumbnail/update-thumbnail.ts';
@@ -49,7 +50,7 @@ export default {
   removeThumbnail,
   updateThumbnail,
   addMember,
-  addTags,
+  addTag,
   updateProject,
   updateMember,
   deleteProject,
@@ -59,7 +60,8 @@ export default {
   removeImage,
   reorderImages,
   getTags,
-  deleteTags,
+  deleteTag,
+  updateTag,
   addProjectSocial,
   getProjectSocials,
   updateProjectSocial,

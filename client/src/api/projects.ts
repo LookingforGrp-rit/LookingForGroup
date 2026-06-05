@@ -17,7 +17,8 @@ import type {
   UpdateProjectMemberInput,
   AddProjectSocialInput,
   UpdateProjectSocialInput,
-  AddProjectTagsInput,
+  AddProjectTagInput,
+  UpdateProjectTagInput,
   AddProjectMediumsInput,
   ReorderProjectImagesInput,
   ProjectFollowers,
@@ -411,7 +412,7 @@ export const getProjectTags = async (
  */
 export const addProjectTag = async (
   projectID: number,
-  tagData: AddProjectTagsInput
+  tagData: AddProjectTagInput
 ): Promise<ApiResponse<ProjectTag>> => {
   const apiURL = `/projects/${projectID}/tags`;
   const response = await POST(apiURL, tagData);
@@ -510,6 +511,25 @@ export const addProjectJob = async (
   return response as ApiResponse<ProjectJob>;
 };
 
+// Update a project tag
+/**
+ * @param projectID - ID of the project
+ * @param tagId - ID of the tag to be updated
+ * @param tagData - Data with which to update the tag
+ */
+export const updateProjectTag = async (
+  projectID: number,
+  tagId: number,
+  tagData: UpdateProjectTagInput
+): Promise<ApiResponse<ProjectTag>> => {
+  const apiURL = `/projects/${projectID}/tags/${tagId}`;
+  const response = await PATCH(apiURL, tagData);
+
+  if (response.error)
+    console.log(`Error in updateProjectTag: ${response.error}`);
+  return response as ApiResponse<ProjectTag>;
+};
+
 // Update a project job
 /**
  * @param projectID - ID of the project
@@ -596,6 +616,7 @@ export default {
   deleteProjectSocial,
   getProjectTags,
   addProjectTag,
+  updateProjectTag,
   deleteProjectTag,
   getProjectMediums,
   addProjectMedium,

@@ -54,8 +54,8 @@ describe('addProjectSocialService', async () => {
     vi.mocked(transformProjectSocial).mockReturnValue(transformedSocial);
     const result = await addProjectSocialService(data, 1);
 
-    expect(transformProjectSocial).toBeCalled();
-    expect(transformProjectSocial).toBeCalledWith(1, testSocial);
+    expect(transformProjectSocial).toHaveBeenCalled();
+    expect(transformProjectSocial).toHaveBeenCalledWith(1, testSocial);
     expect(result).toBe(transformedSocial);
   });
   it("returns NOT_FOUND when websiteId isn't found", async () => {

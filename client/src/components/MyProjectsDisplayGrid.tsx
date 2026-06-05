@@ -41,7 +41,7 @@ const MyProjectsDisplayGrid = ({
   //Navigation hook
   const navigate = useNavigate();
   // Context providing project ID, ownership status, and reload function
-  const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
+  const { projId, isOwner, reloadProjects, removeProject } = useContext(LeaveDeleteContext);
 
   //const [status, setStatus] = useState<string>();
   const [optionsShown, _setOptionsShown] = useState(false);
@@ -74,6 +74,7 @@ const MyProjectsDisplayGrid = ({
     setRequestType("leave");
     setResultObj(response);
     setShowResult(true);
+    if (response.status === 200) setTimeout(() => removeProject(projId), 1500);
   };
 
   /**
@@ -87,6 +88,7 @@ const MyProjectsDisplayGrid = ({
     setRequestType("delete");
     setResultObj(response);
     setShowResult(true);
+    if (response.status === 200) setTimeout(() => removeProject(projId), 1500);
   };
 
   return (
@@ -179,7 +181,7 @@ const MyProjectsDisplayGrid = ({
                   </PopupButton>
                   <PopupContent>
                     <div className="small-popup">
-                      <h3>Leave Project</h3>
+                      <h3>Delete Project</h3>
                       <p className="confirm-msg">
                         Are you sure you want to delete{" "}
                         <span className="project-info-highlight">
