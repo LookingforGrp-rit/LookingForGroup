@@ -693,20 +693,22 @@ const Settings = () => {
               <div className="subsection">
                 <Popup>
                   <PopupButton className="delete-button">Delete Account</PopupButton>
+                  <div className="popup">
                   <PopupContent>
                     <div className="delete-user-title">Delete Account</div>
                     <div className="delete-user-extra-info">
                       Are you sure you want to delete your account? This action cannot be undone.
                     </div>
                     <div className="delete-user-button-pair">
-                      <button className="delete-button" onClick={deleteAccountPressed}>
-                        Delete
-                      </button>
+                      <PopupButton className="delete-button" callback={deleteAccountPressed}>
+                      Delete
+                      </PopupButton>
                       <PopupButton buttonId="cancel-button" className="button-reset">
                         Cancel
                       </PopupButton>
                     </div>
                   </PopupContent>
+                  </div>
                 </Popup>
               </div>
             </div>
