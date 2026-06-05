@@ -10,6 +10,7 @@ import { getUserByUsername } from '#controllers/users/get-user/get-by-username.t
 import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
+import { getBlacklistedUsers } from '../controllers/users/get-blacklisted-users.ts';
 
 const router = Router();
 
@@ -44,5 +45,10 @@ router.get('/:id', getUserById);
 router.get('/search-username/:username', getUserByUsername);
 // Gets users by email
 router.get('/search-email/:email', getUserByEmail);
+
+// GET BLACKLIST ROUTES
+
+//Gets users on the blacklist
+router.get('/blacklist', getBlacklistedUsers);
 
 export default router;

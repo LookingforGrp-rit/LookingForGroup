@@ -6,7 +6,7 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type GetBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 type GetBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-//GET api/users/blacklisted
+//GET api/users/blacklist
 //Gets all blacklisted users
 export const getBlacklistedUsers = async (req: Request, res: Response):
     Promise<GetBlacklistServiceSuccess | GetBlacklistServiceError> => {
