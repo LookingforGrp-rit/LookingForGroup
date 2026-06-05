@@ -280,7 +280,7 @@ Project Creator and Editor Popup style rules
   border-radius: 10px;
   color: var(--main-text);
   max-height: 100%;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 #project-editor-tabs {
@@ -654,17 +654,10 @@ Project Creator and Editor Popup style rules
   grid-area: desc;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
   min-height: 150px;
   flex: 1 1 auto;
-  overflow-y: auto;
-}
-
-#project-editor-description-input textarea {
-  min-height: 150px;
-  max-height: 250px;
-  width: 100%;
-  box-sizing: border-box;
+  overflow-y: visible;
 }
 
 /* Project Editor/Creator Media Tab */
