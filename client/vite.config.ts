@@ -27,6 +27,6 @@ export default defineConfig(({ mode }) => {
     },
 
     // https://vitejs.dev/config/
-    plugins: [react(), nodePolyfills()],
+    plugins: [react()],
   };
 });

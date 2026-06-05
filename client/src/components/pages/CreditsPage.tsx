@@ -1,3 +1,7 @@
+/**
+ * THIS IS NO LONGER USED AS OF JUNE 5TH 2026
+ * PLEASES USE About.tsx FOR CREDITS
+ */
 import { useMemo, useState, useCallback, ChangeEvent } from 'react';
 import { Header } from '../Header';
 import { members } from '../../constants/lfgmembers';
