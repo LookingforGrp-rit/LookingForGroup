@@ -248,9 +248,9 @@ a:focus-visible {
 section {
   margin: 10px;
   padding: 4px 16px 16px 16px;
-  border-style: solid;
+  /* border-style: solid;
   border: 2px solid black;
-  box-shadow: 10px 10px 5px lightblue;
+  box-shadow: 10px 10px 5px lightblue; */
 }
 
 /* Content areas to take up entire height of viewport
