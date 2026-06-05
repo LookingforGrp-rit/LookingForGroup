@@ -3,38 +3,37 @@ import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 
 //footer supposed to be at the bottom of every page
-//put useful links here- for now just credits
 
 /**
  * Footer component intended to appear at the bottom of every page.
- * Provides a button to navigate to the Credits view and visually
- * indicates when the Credits page is active.
+ * Provides a button to navigate to the About view and visually
+ * indicates when the About page is active.
  *
- * @returns A footer container with a Credits navigation button.
+ * @returns A footer container with am About navigation button.
  */
-const CreditsFooter = () => {
+const AboutFooter = () => {
   // Hook for navigating programmatically
   const navigate = useNavigate();
 
   // State to track if the Credits page is ative, used for button highlight
-  const [isCredits, setIsCredits] = useState(false);
+  const [isAbout, setIsAbout] = useState(false);
 
   // Function to toggle Crdits page visibility and navigate to it
   const toggleCredits = (isShown : boolean, path : string) => {
-    setIsCredits(isShown);
+    setIsAbout(isShown);
     navigate(path); // Navigate to the specified path
   };
 
   return (
     <div className="FooterContainer">
       <button
-        className={isCredits === true ? 'shown' : ''} //Highlight if active
-        onClick={() => toggleCredits(true, paths.routes.CREDITS)}
+        className={isAbout === true ? 'shown' : ''} //Highlight if active
+        onClick={() => toggleCredits(true, paths.routes.ABOUT)}
       >
-        Credits
+        About
       </button>
     </div>
   );
 };
 
-export default CreditsFooter;
+export default AboutFooter;
