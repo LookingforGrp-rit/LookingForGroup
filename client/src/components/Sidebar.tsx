@@ -187,8 +187,9 @@ const SideBar = () => {
   const handleProfileAccess = async () => {
     // navigate to Profile, attach userID
     const res = await getCurrentUsername();
-    const userId = res.data.userId;
-    navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+    const userId = res.data?.userId;
+    if (userId) navigate(`${paths.routes.PROFILE}?userID=${userId}`);
+    else navigate(paths.routes.LOGIN);
 
     // Collapse the dropwdown if coming from another user's page
     if (window.location.href.includes("profile")) {
@@ -330,17 +331,6 @@ const SideBar = () => {
           >
             <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
             My Projects
-          </button>
-          {/* About button */}
-          <button
-            id={"about-sidebar-btn"}
-            className={
-              activePage === "About" ? "active sidebar-btn" : "sidebar-btn"
-            }
-            onClick={() => handleTextChange("About", paths.routes.ABOUT)}
-          >
-            <ThemeIcon id={'info'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'about'}/>
-            About
           </button>
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png

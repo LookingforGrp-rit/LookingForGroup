@@ -1652,8 +1652,13 @@ button.edit-position-contact .project-member-image {
   width: 70%;
   text-align: center;
 
+  #project-crop-header{
+    display: block;
+    padding-top: 1em;
+  }
+
   #canvas {
-    border: 3px solid white;
+    border: 3px solid var(--main-text);
     margin: 1vw 0;
     width: 100%;
   }
@@ -1665,9 +1670,20 @@ button.edit-position-contact .project-member-image {
   input[type="range"] {
     width: 50%;
     background: none;
+    margin: 0.5em;
+  }
+
+  #zoom-row,
+  #xTrans-row,
+  #yTrans-row{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
   }
 
   .project-crop-extra-info {
+    margin-top: 20px;
     margin-bottom: 20px;
   }
 
@@ -1675,8 +1691,10 @@ button.edit-position-contact .project-member-image {
     display: flex;
     flex-direction: row;
     gap: 20px;
+    padding-top: 10px;
     padding-bottom: 20px;
-    width: max-content;
+    width: 100%;
+    justify-content: center;
   }
 
   #project-crop-save {

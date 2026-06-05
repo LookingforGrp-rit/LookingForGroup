@@ -6,7 +6,7 @@ import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext, SetStateAction, useEffect } from 'react';
 import { Header } from '../Header';
-import CreditsFooter from '../CreditsFooter';
+import AboutFooter from '../AboutFooter';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
@@ -713,7 +713,7 @@ const Settings = () => {
           </div>
         )}
       </div>
-      <CreditsFooter />
+      <AboutFooter />
       <ToTopButton />
     </div>
   );

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -13,7 +13,6 @@ import { ThemeIcon } from "../ThemeIcon";
 import { getByID } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import {
-  getCurrentAccount,
   deleteProjectFollowing,
   addProjectFollowing,
   getProjectFollowing,
@@ -21,6 +20,7 @@ import {
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import AboutFooter from "../AboutFooter";
 
 //Main component for the project page
 /**
@@ -71,35 +71,31 @@ const Project = () => {
   }, [projectID, userID]);
 
   // Sets state variables
-  useEffect(() => {
-    const getProjectData = async () => {
-      //get our current user for use later
-      const userResp = await getCurrentAccount();
-      if (userResp.data) {
-        setUser(userResp.data);
-        setUserID(userResp.data.userId);
-      }
+  const getProjectData = async (data: MePrivate | undefined) => {
+    //get our current user for use later
+    if (data) {
+      setUser(data);
+      setUserID(data.userId);
+    }
 
-      //get the project itself
-      const projectResp = await getByID(projectID);
-      if (projectResp.data) {
-        setDisplayedProject(projectResp.data);
-        checkFollow();
-        setFollowCount(projectResp.data.followers.count);
+    //get the project itself
+    const projectResp = await getByID(projectID);
+    if (projectResp.data) {
+      setDisplayedProject(projectResp.data);
+      checkFollow();
+      setFollowCount(projectResp.data.followers.count);
 
-        if (userResp.data) {
-          for (const member of projectResp.data.members) {
-            if (member.user.userId === userResp.data.userId) {
-              setIsMember(true);
-              return;
-            }
+      if (data) {
+        for (const member of projectResp.data.members) {
+          if (member.user.userId === data.userId) {
+            setIsMember(true);
+            return;
           }
         }
-
       }
-    };
-    getProjectData();
-  }, [projectID, checkFollow]);
+
+    }
+  };
 
   //Checks to see whether or not the current user is the maker/owner of the project being displayed
   //oh do i need this too
@@ -406,6 +402,7 @@ const Project = () => {
         hideSearchBar={true}
         value={undefined}
         onChange={undefined}
+        setCurrentUserId={getProjectData}
       />
 
       {displayedProject === undefined ? (
@@ -570,6 +567,7 @@ const Project = () => {
           </div>
         </main>
       )}
+    <AboutFooter />
     </div>
   );
 };

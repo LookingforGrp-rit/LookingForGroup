@@ -45,7 +45,10 @@ export const createNewUser = async (
 ): Promise<ApiResponse> => {
   const apiURL = "/users";
 
-  return await POST(apiURL, userData);
+  const response = await POST(apiURL, userData);
+  
+  if (response.error) console.log(`Error in createUser: ${response.error} session data: ${JSON.stringify(response.data)}`);
+  return response as ApiResponse<MePrivate>;
 };
 
 export const googleLogin = async (
