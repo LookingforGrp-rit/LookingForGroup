@@ -150,12 +150,12 @@ model Projects {
 }
 
 model ReportProject {
-  reportId      Int       @id @default(autoincrement()) @map("report_id")
-  userId        Int       @map("user_id")
-  projectId     Int       @map("project_id")
-  reportText    String    @map("report_text")
-  users         Users     @relation(fields: [userId], references: [userId], map: "FK_project_report_users")
-  projects      Projects  @relation(fields: [projectId], references: [projectId], map: "FK_project_report_projects")
+  reportId   Int      @id @default(autoincrement()) @map("report_id")
+  userId     Int      @map("user_id")
+  projectId  Int      @map("project_id")
+  reportText String   @map("report_text")
+  users      Users    @relation(fields: [userId], references: [userId], map: "FK_project_report_users")
+  projects   Projects @relation(fields: [projectId], references: [projectId], map: "FK_project_report_projects")
 
   @@unique([userId, projectId])
   @@index([userId], map: "FK_project_report_users")
@@ -292,9 +292,11 @@ model Skills {
 model Session {
   id        String   @id
   sid       String   @unique
-  data      String
+  data      String   @db.Text
   gid       String   @default("federalist papers")
   expiresAt DateTime
+
+  @@map("session")
 }
 
 enum JobsAvailability {
