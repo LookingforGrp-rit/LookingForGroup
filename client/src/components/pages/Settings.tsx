@@ -5,7 +5,7 @@ import * as paths from '../../constants/routes';
 // import VolumeSettings from '../SettingsPageComponents/VolumeSetting';
 import ProfileVisibilitySetting from '../SettingsPageComponents/ProfileVisibilitySetting';
 import ToTopButton from '../ToTopButton';
-import CreditsFooter from '../CreditsFooter';
+import AboutFooter from '../AboutFooter';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
 // NOT IN USE, NOW UNDER NewSettings.tsx
@@ -323,7 +323,7 @@ const Settings = () => {
       </div>
 
       {/* Scroll To Top button */}
-      <CreditsFooter />
+      <AboutFooter />
       <ToTopButton />
     </div>
   );
