@@ -295,11 +295,14 @@ input:checked+.slider:before {
     color: var(--primary-color);
   }
 
-
+  .project-back-btn {
+    flex-shrink: 0;
+    margin-bottom: 20px;
+  }
 
   #back {
     position: relative;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
   }
 
   @media (max-width: 420px) {

@@ -1,21 +1,21 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import { reportProjectService } from '#services/me/report-proj.ts';
+import { reportUserService } from '#services/me/report-user.ts';
 
 /**
- * POST api/me/projects/reports/{id}/{report}
- * Allows authenticated users to report a project
+ * POST api/me/users/reports/{id}/{report}
+ * Allows authenticated users to report a user
  */
-const reportProjectController = async (req: AuthenticatedRequest, res: Response) => {
-  const projectId = parseInt(req.params.id);
+const reportUserController = async (req: AuthenticatedRequest, res: Response) => {
+  const reportedId = parseInt(req.params.id);
   const report = req.params.report;
 
-  const result = await reportProjectService(req.currentUser, projectId, report);
+  const result = await reportUserService(req.currentUser, reportedId, report);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Project not found',
+      error: 'User not found',
       data: null,
     };
     res.status(404).json(resBody);
@@ -50,4 +50,4 @@ const reportProjectController = async (req: AuthenticatedRequest, res: Response)
   res.status(200).json(resBody);
 };
 
-export { reportProjectController };
+export { reportUserController };
