@@ -78,6 +78,9 @@ const Login: React.FC = () => {
       setError(res.error);
       return;
     }
+
+    console.log('userdata: '+ res.data);
+
     const body = await res.data as {userExists: boolean};
     
     if (body.userExists) { navigate(paths.routes.HOME); }
