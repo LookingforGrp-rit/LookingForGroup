@@ -87,6 +87,63 @@ const AboutPage = () => {
                             </li>
                         </ul>
                     </section>
+
+                    <section className="about-section">
+                        <h2>User Guidelines</h2>
+                        <p>The following guidelines below help keep LFG a friendly, encouraging, and creative community for everyone to enjoy.
+                            If you see anyone or anything that violates these guidelines, please use our report feature to notify a moderator. </p>
+
+                            <h3>User Eligibility</h3>
+
+                            <ul className="features-list">
+                            <li>
+                                 Users must be either presently affiliated with RIT (Student or Staff) or formerly affiliated with RIT (Alumni). This is so we can focus on RIT students getting the help they need to get co-ops, internships, or future jobs
+                            </li>
+                            </ul>
+
+                            <h3>Copyright</h3>
+                            <ul className="features-list">
+                            <li>
+                                Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/">here</a>)
+                            </li>
+                            <li>
+                                <strong>Theft Is Not Tolerated. </strong>Projects found using stolen material will be taken down and should be reported.
+                                <ul>
+                                    <li>If a project uses a work without permission the user will be asked to remove the stolen work or else the project will be deleted</li>
+                                </ul>
+                            </li>
+                            <li>
+                                Projects falling under Fair Use Guidelines (<a href="https://www.copyright.gov/fair-use/">U.S. Copyright Office Fair Use Index</a>) will not be taken down, however, Fair Use is never guaranteed in every case.
+                            </li>
+                        </ul>
+                         <h3>Banned Content</h3>
+                         <ul className="features-list">
+                            <li>Content promoting/inciting hate, harassment, or discrimination are not tolerated on LFG. As well as selling the project/products on the site. Such content will be taken down and will result in bans.
+                                <ul>
+                                    <li>
+                                        We do not carry any responsibilities involving payment for hiring if complications occur.
+                                    </li>
+                                </ul>
+                            </li>
+                            <li>
+                                Sensitive content such as Suicide, real or disturbing depictions of violence, content that exploits children in any way and sexually explicit content should be tagged with the appropriate filters and should not be displayed in promotional images/videos. 
+                                <ul>
+                                    <li>
+                                        Refer to <a href="https://www.esrb.org/ratings-guide/">ESRB Rating Guides on how to tag your project.</a>
+                                    </li>
+                                </ul>
+                            </li>
+                         </ul>
+                         <h3>Ai Content</h3>
+                         <ul className="features-list">
+                            <li>Projects must disclose use of AI</li>
+                            <li>AI used maliciously to violate copyright laws is strictly prohibited and will result in the project taken down and potential bans.</li>
+                            <li>All other rules on this website applies to AI generated content.</li>
+                         </ul>
+                    </section>
+                    <section className="about-section">
+                        <h2>Data Protection and Security</h2>
+                        <p>We do not use cookies to store your data.</p></section>
                 </section>
                 <section id="credits" tabIndex={-1} aria-labelledby='credits-title'>
                     <h1 id="credits-title">Meet The LFG Team</h1>
