@@ -1,12 +1,16 @@
-import { CreateUserInput, Major, ProjectImage, Skill } from '@looking-for-group/shared';
+import { CreateUserInput, Major, Skill, AcademicYear } from '@looking-for-group/shared';
 import { MouseEventHandler, useMemo, useState } from 'react';
 import LabelInputBox from '../LabelInputBox';
 import { Select, SelectButton, SelectOptions } from '../Select';
-import { ProfileImageUploader } from '../ImageUploader';
-import profilePicture from "../../images/blue_frog.png";
-import { AboutTab } from '../Profile/tabs/AboutTab';
 import { getMajors } from "../../api/users";
-import { AcademicYear } from "@looking-for-group/shared/enums";
+import placeholder from "../../images/blue_frog.png";
+enum AcademicYears {
+  Freshman = "Freshman",
+  Sophomore = "Sophomore",
+  Junior = "Junior",
+  Senior = "Senior",
+  Graduate = "Graduate"
+};
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -16,24 +20,24 @@ interface CompleteProfileProps {
 	selectedSkills: Skill[];
 	bio: string;
 	pronouns: string;
-	slogan: string;
+	headline: string;
 	phoneNumber: string;
 	title: string;
 	location: string;
 	funFact: string;
 	major: Major[];
-  	academicYear: AcademicYear;
+  academicYear: AcademicYear | undefined;
 	setBio: React.Dispatch<React.SetStateAction<string>>;
 	setPronouns: React.Dispatch<React.SetStateAction<string>>;
-	setSlogan: React.Dispatch<React.SetStateAction<string>>;
+	setHeadline: React.Dispatch<React.SetStateAction<string>>;
 	setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
 	setTitle: React.Dispatch<React.SetStateAction<string>>;
 	setLocation: React.Dispatch<React.SetStateAction<string>>;
 	setFunFact: React.Dispatch<React.SetStateAction<string>>;
 	setMajor: React.Dispatch<React.SetStateAction<Major[]>>;
-	setAcademicYear: React.Dispatch<React.SetStateAction<string>>;
-	profileImage: string;
-	setProfileImage: React.Dispatch<React.SetStateAction<string>>;
+	setAcademicYear: React.Dispatch<React.SetStateAction<AcademicYear | undefined>>;
+	profileImage: File;
+	setProfileImage: React.Dispatch<React.SetStateAction<File>>;
 }
 
 /**
@@ -67,14 +71,15 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   selectedSkills,
   bio,
   pronouns,
-  slogan,
+  headline,
   phoneNumber,
   title,
   location,
   funFact,
   major,
+  profileImage,
   setBio,
-  setSlogan,
+  setHeadline,
   setPhoneNumber,
   setTitle,
   setLocation,
@@ -82,7 +87,6 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   setMajor,
   setAcademicYear,
   setPronouns,
-  profileImage,
   setProfileImage,
 }) => {
 	// make each skill tag a different color
@@ -90,6 +94,8 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 	const tagColors = ["#9FACFF", "#97E5AB", "#99E6EA", "#F18067", "#239EF7"];
 
   const [allMajors, setAllMajors] = useState<Major[]>([]);
+
+  const [displayImg, setDisplayImg] = useState<string>();
 
   useMemo(() => {
       const fetchMajors = async () => {
@@ -128,9 +134,10 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 			const reader = new FileReader();
 			reader.onload = (event) => {
 				if (event.target && event.target.result) {
-					setProfileImage(event.target.result as string);
+					setDisplayImg(event.target.result as string);
 				}
 			};
+      setProfileImage(target.files[0]);
 			reader.readAsDataURL(target.files[0]);
 		}
 	};
@@ -159,14 +166,13 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 						<div id="profile-details">
 							{/* Profile picture container */}
 							<div
-								id="profile-pic"
-								style={{ width: 160, height: 160 }}>
+								id="profile-pic">
 								{/* image is profile image, if empty/null display avatar image */}
 								<img
 									src={
-										profileImage
-											? profileImage
-											: /*avatarImage*/ ""
+										displayImg
+											? displayImg
+											: placeholder
 									}
 									alt="profile-pic"
 								/>
@@ -187,7 +193,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 								</label>
 
 								{/* button to use avatar as profile picture */}
-								{/* <button onClick={handleUseAvatar}>Use Avatar</button> */}
+								{<button onClick={() => setDisplayImg(placeholder)}>Use Avatar</button>}
 							</div>
 						</div>
 
@@ -217,9 +223,9 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 							inputType={"single"}
 							maxLength={20}
 							id="headline-input"
-							value={slogan}
+							value={headline}
 							placeholder={"Headline"}
-							onChange={(e) => setSlogan(e.target.value)}
+							onChange={(e) => setHeadline(e.target.value)}
 							hideUnsaved={true}
 						/>
 
@@ -280,8 +286,8 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 									type={"input"}
 								/>
 								<SelectOptions
-                  callback={(e) => setAcademicYear((e.target as HTMLButtonElement).value)}
-									options={Object.values(AcademicYear).map(
+                  callback={(e) => setAcademicYear((e.target as HTMLButtonElement).value as AcademicYear)}
+									options={Object.values(AcademicYears).map(
 										(yr) => {
 											return {
 												value: yr,
@@ -301,6 +307,8 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 								<SelectButton
 									placeholder="Major"
 									type={"input"}
+                  initialVal={major[0]?.label}
+                  searchable={true}
 								/>
                 <SelectOptions 
                   callback={(e) => { //praying this works so i can migrate it to users
