@@ -10,7 +10,7 @@ import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
 import { addUserSkill, createNewUser, getCurrentUsername, googleLogin } from '../../api/users';
-import { CreateUserInput, SessionUserData, Skill } from '@looking-for-group/shared';
+import { AcademicYear, CreateUserInput, Major, SessionUserData, Skill } from '@looking-for-group/shared';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
 interface SignUpProps {
@@ -29,6 +29,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
   // State variables
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
+  const [preferredName, setPreferredName] = useState(''); // User's preferred name
   const [email, setEmail] = useState('');
   const [sessionData, setSessionData] = useState<SessionUserData>();
   // const [username, setUsername] = useState('');
@@ -54,6 +55,13 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
   // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
   const [bio, setBio] = useState(''); // State variable for the user's bio
+  const [headline, setHeadline] = useState(''); // State variable for the user's headline
+  const [phoneNumber, setPhoneNumber] = useState(''); // State variable for the user's Phone Number
+  const [title, setTitle] = useState(''); // State variable for the user's current Job Title
+  const [location, setLocation] = useState(''); // State variable for the user's Location
+  const [funFact, setFunFact] = useState(''); // State variable for the user's bio
+  const [major, setMajor] = useState<Major[]>([]); // State variable for user's major //it's an array because it's stored as an array on the backend, to allow for multiple
+  const [academicYear, setAcademicYear] = useState('')
   const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
@@ -63,10 +71,18 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
   const userInfo = {
     firstName: firstName,
     lastName: lastName,
+    preferredName: preferredName, // default to first name for now
     ritEmail: email,
     username: '',
     pronouns: pronouns,
+    majors: major, //called "majors" because it can hold multiple, the ui just doesn't support that yet
+    academicYear: academicYear as AcademicYear,
     bio: bio,
+    headline: headline,
+    phoneNumber: phoneNumber,
+    title: title,
+    location: location,
+    funFact: funFact,
     profileImage: profileImage, // if they upload their own image
   } as CreateUserInput;
 
@@ -126,6 +142,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
     if(!sessionData.data.userExists) {
       setFirstName(sessionData.data.firstName);
       setLastName(sessionData.data.lastName);
+      setPreferredName(sessionData.data.firstName);  // default preferred name to first name
       setEmail(sessionData.data.email);
       setShowSkillsModal(true);
     }
@@ -486,8 +503,22 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
             selectedSkills={selectedSkills}
             bio={bio}
             pronouns={pronouns}
+            headline={headline}
+            phoneNumber={phoneNumber}
+            title={title}
+            major={major}
+            academicYear={academicYear}
+            location={location} 
+            funFact={funFact}
             setBio={setBio}
             setPronouns={setPronouns}
+            setHeadline={setHeadline}
+            setPhoneNumber={setPhoneNumber}
+            setTitle={setTitle}
+            setLocation={setLocation} 
+            setFunFact={setFunFact}
+            setMajor={setMajor}
+            setAcademicYear={setAcademicYear}
             profileImage={profileImage}
             setProfileImage={setProfileImage}
           />

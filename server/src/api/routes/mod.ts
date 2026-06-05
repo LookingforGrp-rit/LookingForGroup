@@ -2,7 +2,9 @@ import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type Request, type Response, type NextFunction } from 'express';
 import { banUser } from '#controllers/mod/ban-user.ts';
 import { clearProfile } from '#controllers/mod/clear-profile.ts';
+import { deleteProjectReport } from '#controllers/mod/delete-project-report.ts';
 import { deleteProject } from '#controllers/mod/delete-project.ts';
+import { getProjectReports } from '#controllers/mod/get-project-reports.ts';
 import { unbanUser } from '#controllers/mod/unban-user.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
@@ -30,5 +32,6 @@ router.patch('/clear-profile/:id/', authenticated(clearProfile));
 router.delete('/delete-project/:id/', authenticated(deleteProject));
 router.put('/ban-user/:googleId/:reason', authenticated(banUser));
 router.delete('/unban-user/:googleId/', authenticated(unbanUser));
-
+router.get('/project-report/', authenticated(getProjectReports));
+router.delete('/project-report/:id', authenticated(deleteProjectReport));
 export default router;

@@ -10,6 +10,7 @@ import profilePicture from '../images/blue_frog.png';
 
 //user utils
 import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
+import { MePrivate } from '@looking-for-group/shared';
 
 //Header component to be used in pages
 
@@ -26,6 +27,7 @@ type HeaderProps = {
   value? : string;
   onChange? : (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar? : boolean;
+  setCurrentUserId?: (data: MePrivate | undefined) => Promise<void>;
 };
 
 /**
@@ -43,7 +45,7 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false }) => {
+export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, setCurrentUserId}) => {
   // User info state
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -64,17 +66,20 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
   useEffect(() => {
     const fetchUsername = async () => {
       try {
+        if(userId === -1) return;
         const res = await getCurrentAccount();
 
         if (res.status == 200 && res.data?.username) {
           loggedIn = true;
           setUsername(res.data.username);
           setUserId(res.data.userId);
+          if (setCurrentUserId) setCurrentUserId(res.data);
           setEmail(res.data.ritEmail);
           setProfileImg(res.data.profileImage ?? profilePicture);
         } else {
           loggedIn = false;
-          setUserId(undefined);
+          setUserId(-1);
+          if (setCurrentUserId) setCurrentUserId(undefined);
           setUsername('Guest');
           setEmail('');
           setProfileImg('');
@@ -82,7 +87,8 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
       } catch (err) {
         console.log('Error fetching username: ' + err);
         loggedIn = false;
-        setUserId(undefined);
+        setUserId(-1);
+          if (setCurrentUserId) setCurrentUserId(undefined);
         setUsername('Guest');
         setEmail('');
         setProfileImg('');
@@ -158,9 +164,9 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
         <Dropdown>
           {/* This is the button to open the dropdown menu */}
           <DropdownButton buttonId="profile-btn">
-            {(profileImg) ? (
+            {(loggedIn) ? (
               <img
-                src={`${profileImg}`}
+                src={`${profileImg || profilePicture}`}
                 id={'profile-img-icon'}
                 className={'rounded'}
                 title={'Profile picture'}
@@ -190,7 +196,6 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                   <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
                   <div id="header-profile-user-info">
                     <p id="header-profile-username">{username}</p>
-                    <br />
                     <p id="header-profile-email">{email}</p>
                   </div>
                 </button>
@@ -215,18 +220,15 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* Profile Icon (if user has one) */}
                 <button onClick={() => handleProfileAccess()} id="header-profile-user">
-                  {(profileImg) ? (
+                  {
                     <img
-                      src={`${profileImg}`}
+                      src={`${profileImg || profilePicture}`}
                       className={'rounded'}
                       alt={'profile'}
                       onError={() => {
                         setProfileImg(profilePicture);
                       }}
-                    />
-                  ) : (
-                    <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
-                  )}
+                    />}
                   <div id="header-profile-user-info">
                     <p id="header-profile-username">{username}</p>
                     <br />

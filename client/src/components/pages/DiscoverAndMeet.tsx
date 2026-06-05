@@ -7,10 +7,11 @@ import { PanelBox } from '../PanelBox';
 import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
-import { getUsers, getUsersById, getCurrentAccount, getProjectFollowing } from '../../api/users';
+import { getUsers, getUsersById, getProjectFollowing } from '../../api/users';
 import { ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
     StructuredUserInfo, UserPreview, ProjectPreview, 
-    UserDetail, ProjectWithFollowers } from '@looking-for-group/shared';
+    UserDetail, ProjectWithFollowers, 
+    MePrivate} from '@looking-for-group/shared';
 
 //import api utils
 // Current auth and follow state are loaded with getCurrentAccount/getProjectFollowing
@@ -120,6 +121,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     return [{ data: userSearchData }];
   }, [userSearchData]);
 
+  // Pagination state for projects
+  const [currentProjectPage, setCurrentProjectPage] = useState(1);
+  const PROJECTS_PER_PAGE = 6;
+
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent =
@@ -134,6 +139,11 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // --------------------
 
   const loadFollowedProjectIds = async (userId: number) => {
+    if (currentUserId === -1) {
+      setFollowedProjectIds(new Set());
+      return;
+    }
+
     try {
       const response = await getProjectFollowing(userId);
       if (response.data?.projects) {
@@ -148,17 +158,13 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   /**
    * Loads the current user and their followed projects so follow icons render immediately.
    */
-  const getAuth = async () => {
-    if (currentUserId !== null) {
-      return;
-    }
+  const getAuth = async (data: MePrivate | undefined) => {
 
-    const res = await getCurrentAccount();
-    if (res.status === 200 && res.data?.userId) {
-      setCurrentUserId(res.data.userId);
-      await loadFollowedProjectIds(res.data.userId);
+    if (data) {
+      setCurrentUserId(data.userId);
+      await loadFollowedProjectIds(data.userId);
     } else {
-      setCurrentUserId(null);
+      setCurrentUserId(-1);
       setFollowedProjectIds(new Set());
     }
   };
@@ -183,7 +189,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     // Pre-fetch full details for the first visible batch to avoid flashing like/count state
     const INITIAL_LOAD_COUNT = 25;
     for (let i = 0; i < Math.min(INITIAL_LOAD_COUNT, projects.data.length); i++) {
-      const projectPreview = projects.data[i];
+      const projectPreview = projects.data[i] as ProjectPreview;
       const projectId = projectPreview.projectId;
       if (!newProjectCache[projectId]?.full) {
         try {
@@ -243,7 +249,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       if (fetchedProjects && fetchedUsers && !force) return;
 
       // Get user profile
-      await getAuth();
+      //await getAuth();
 
       try {
         if(category == 'projects') {
@@ -306,6 +312,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     }
     
     setFilteredProjectList(matches);
+    setCurrentProjectPage(1);
 
     // Preload full project data for search results so the like icon state is available immediately.
     (async () => {
@@ -367,24 +374,45 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   // Update the showcased projects after getting more info from the server
   const getShowcaseDetails = async (projectList : ProjectPreview[], usedCache : NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList : ProjectWithFollowers[] = [];
-    for (let projectPreview of projectList.slice(0, 3)) {
 
+    console.log(projectList);
+    // remove projects without open positions
+    // const filteredProjectList = projectList.filter(a => a.jobs.length > 1);
+
+    // create a copy of the array for the carousel
+    const carouselProjectList = projectList.slice();
+
+    // Go through carouselProjectList and only keep 3 projects with open positions
+    for(let projectPreview of carouselProjectList.sort(() => Math.random() - 0.5))
+    {
       const cachedFull = usedCache[projectPreview.projectId].full;
-
+      
       if (cachedFull != undefined) {
-        //Even if it's already cached, it should still go into the carousel.
-        focusProjectDetailsList.push(cachedFull);
+        if (cachedFull.jobs.length > 0)
+        {
+          focusProjectDetailsList.push(cachedFull);
+        }
       }
-      else {
+      else 
+      {
         const projectRequest : ApiResponse<ProjectWithFollowers> = await getByID(projectPreview.projectId);
 
         if (projectRequest.data) {
-          focusProjectDetailsList.push(projectRequest.data);
+          if(projectRequest.data.jobs.length > 0)
+          {
+            focusProjectDetailsList.push(projectRequest.data);
+          }
           usedCache[projectPreview.projectId].full = projectRequest.data;
         } else {
           console.error("Error getting project data from " + projectPreview.projectId);
           return {} as ProjectWithFollowers;
         }
+      }
+
+      // Once 3 projects have been added to carousel, break out of loop
+      if(focusProjectDetailsList.length == 3)
+      {
+        break;
       }
     }
     
@@ -478,6 +506,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
     // Set displayed projects
     setFilteredProjectList(tagFilteredList);
+    setCurrentProjectPage(1);
   };
 
   /**
@@ -577,6 +606,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     setFilteredUserList(tagFilteredList);
   };
 
+  const totalProjectPages = Math.max(1, Math.ceil(filteredProjectList.length / PROJECTS_PER_PAGE));
+  const startIndex = (currentProjectPage - 1) * PROJECTS_PER_PAGE;
+  const paginatedProjects = filteredProjectList.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
+
   let discoverPanelContents : React.ReactElement;
   if (category == 'projects') {
     if(!dataLoaded && filteredProjectList.length === 0) {
@@ -588,13 +621,41 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     }
     else {
       discoverPanelContents = (
-        <PanelBox
-          category={category}
-          itemList={filteredProjectList}
-          itemAddInterval={25}
-          projectCache={projectCache}
-          followedProjectIds={followedProjectIds}
-        />
+        <div className="pagination-wrapper">
+          <PanelBox
+            category={category}
+            itemList={paginatedProjects} 
+            itemAddInterval={PROJECTS_PER_PAGE} 
+            projectCache={projectCache}
+            followedProjectIds={followedProjectIds}
+            userId={currentUserId ?? -1}
+          />
+          
+          {/* Pagination Controls */}
+          {filteredProjectList.length > 0 && (
+            <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '2rem', paddingBottom: '2rem' }}>
+              <button
+              className="pagination-btn" 
+                onClick={() => setCurrentProjectPage(prev => Math.max(prev - 1, 1))}
+                disabled={currentProjectPage === 1}
+                
+              >
+                Previous
+              </button>
+              
+              <span>Page {currentProjectPage} of {totalProjectPages}</span>
+              
+              <button 
+              className="pagination-btn"
+                onClick={() => setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages))}
+                disabled={currentProjectPage === totalProjectPages}
+
+              >
+                Next
+              </button>
+            </div>
+          )}
+        </div>
       );
     }
   } else {
@@ -606,7 +667,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       );
     }
     else {
-      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} />);
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} userId={currentUserId ?? -1}/>);
     }
   }
 
@@ -616,7 +677,8 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={ category == 'projects' ? projectDataSet : userDataSet }
           onSearch={ category == 'projects' ? searchProjects : searchUsers }
-          value={currentSearch} onChange={(e : ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)} />
+          value={currentSearch} onChange={(e : ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)} 
+          setCurrentUserId={getAuth}/>
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 
