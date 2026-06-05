@@ -30,6 +30,7 @@ const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggle
         alt={
           projectData.thumbnail?.altText || `Thumbnail for ${projectData.title}`
         }
+        style={{opacity: membershipData.visibility == "Public" ? "1" : "0.25"}}
       />
       {/*TODO: use visibility here*/}
       {/* isVisible && <div className='image-overlay'/> */}
@@ -95,7 +96,6 @@ export const ProjectsTab = ({
         visibility: newVisibility,
       },
     });
-
     // New array
     const updatedProjects = profile.projects.map((membership) => {
       if (membership.project.projectId === projectId) {
