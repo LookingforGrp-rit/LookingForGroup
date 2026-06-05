@@ -39,6 +39,7 @@ Project Panel component style rules
   align-items: stretch;
   gap: 20px;
   width: 100%;
+  padding-bottom: 10px;
 }
 
 .project-panel {
