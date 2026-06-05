@@ -359,7 +359,7 @@ Signup process modal style rules
   background: var(--bg-color);
   margin: auto;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
   height: 820px;
   width: 1000px;
@@ -403,6 +403,19 @@ Signup process modal style rules
   width: 900px;
   display: flex;
   justify-content: space-between;
+
+  #back {
+    position: relative;
+    top: 0;
+    left: 0;
+  }
+
+  #next {
+    padding: 4px;
+    padding-left: 7px;
+    padding-right: 7px;
+    color: var(--primary-color)
+  }
 }
 
 #signup-nextBtn:disabled {
@@ -412,16 +425,12 @@ Signup process modal style rules
   width: 100px;
   font-size: 1.125rem;
   font-weight: 600;
-  background-color: var(--neutral-gray);
-  color: var(--invert-text);
-  border: 2px solid var(--shadow-color);
+  background: none;
+  color: var(--neutral-gray);
   cursor: not-allowed;
 }
 
 #signup-nextBtn:disabled:hover {
-  background-color: var(--neutral-gray);
-  color: var(--invert-text);
-  border: 2px solid var(--shadow-color);
   transform: scale(1);
 }
 
@@ -432,9 +441,8 @@ Signup process modal style rules
   width: 100px;
   font-size: 1.125rem;
   font-weight: 800;
-  background-color: var(--primary-color);
-  color: var(--invert-text);
-  border: 2px solid var(--pri);
+  background: none;
+  color: var(--primary-color);
 }
 
 #signup-nextBtn:hover {
@@ -449,8 +457,8 @@ Signup process modal style rules
   width: 100px;
   font-size: 1.125rem;
   font-weight: 800;
-  background-color: var(--primary-color);
-  color: var(--invert-text);
+  background: none;
+  color: var(--primary-color);
 }
 
 #signup-backBtn:hover {
@@ -515,6 +523,7 @@ Signup process modal style rules
 #profile-pic {
   width:100%;
   height: auto;
+  border: 6px solid var(--main-text);
 
   img {
     width:100%;
@@ -545,7 +554,7 @@ Signup process modal style rules
     border: none;
     border-radius: 10px;
     background-color: var(--primary-color);
-    color: black;
+    color: var(--invert-text);
     font-weight: 700;
     text-align: center;
     box-shadow: 0px 0px 10px 0px var(--shadow-color);

@@ -154,7 +154,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 				s !== skillToToggle.skillId
 			));
 			}
-			else if (selectedSkills.length < 5) {
+			else {
 			setSelectedSkills([
 				...selectedSkills,
 				skillToToggle
@@ -299,9 +299,9 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 		<div className="signupProcess-modal">
 			<div className="ChooseSkills">
 				<h1 id="signupProcess-title">
-					Choose Your Top 5 Skills
+					Choose At Least 3 Skills
 				</h1>
-				<p id="signupProcess-subTitle">You can add more and edit later</p>
+				<p id="signupProcess-subTitle">You can edit them later</p>
 				<div id="profile-editor-tags">
 				<div id="project-editor-selected-tags">
 				<div className="project-editor-section-header">
@@ -362,7 +362,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 						// disable the next button if the user has not selected 5 skills
 						// this is to prevent the user from moving to the next modal without selecting the required number of skills
 						// the user can only move to the next modal when they have selected 5 skills
-						disabled={selectedSkills.length !== 5}>
+						disabled={selectedSkills.length < 3}>
 						Next
 					</button>
 				</div>
