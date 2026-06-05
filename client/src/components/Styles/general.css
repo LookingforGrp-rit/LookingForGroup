@@ -2220,8 +2220,6 @@ Theme Icons style rules
   stroke: var(--main-text);
 }
 
-.
-
 /* Fallback using CSS media queries */
 @media (prefers-color-scheme: light) {
   .svg-color-icon {
