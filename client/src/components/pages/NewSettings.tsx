@@ -480,7 +480,7 @@ const Settings = () => {
       {/* Search bar is not used in settings */}
       <div id="settings-page">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <ThemeIcon id={'back'} width={110} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
+          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <h1 className="page-title">Settings</h1>
           <Header dataSets={[]} onSearch={() => { }} hideSearchBar />
         </div>
@@ -493,6 +493,7 @@ const Settings = () => {
 
             {/* Top Row: Personal and Email Settings */}
             <div className="settings-row" id='main'>
+              <h2 className="settings-header">Account</h2>
               {/* Personal Settings 
               <div className="settings-column">
                 <h2 className="settings-header">Personal</h2>
@@ -533,7 +534,6 @@ const Settings = () => {
               </div> */}
               {/* Email Settings */}
               <div className="settings-column">
-                <h2 className="settings-header">Email</h2>
                 <div className="subsection">
                   <label htmlFor="option-rit-email">RIT Email</label>
                   <div className="input-container disabled">
@@ -549,7 +549,6 @@ const Settings = () => {
 
               {/* Phone Settings */}
               <div className="settings-column">
-                <h2 className="settings-header">Contact</h2>
                 <div className="subsection">
                   <label htmlFor="option-primary-phone">Phone Number</label>
                   <div className="input-container">
@@ -571,10 +570,11 @@ const Settings = () => {
             </div>
 
             {/* Bottom row: Appearance and Account Visibility */}
+            <hr/>
             <div className="settings-row">
               {/* Appearance */}
+              <h2 className="settings-header">Appearance</h2>
               <div className="settings-column">
-                <h2 className="settings-header">Appearance</h2>
                 <div className="subsection">
                   <label htmlFor="option-theme">Current Theme</label>
                   <Dropdown>
@@ -688,6 +688,7 @@ const Settings = () => {
                 </div> */}
               </div>
             </div>
+            <hr/>
             <div className="settings-row">
               {/* Account Deletion */}
               <div className="subsection">

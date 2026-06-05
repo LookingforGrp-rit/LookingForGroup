@@ -4,6 +4,7 @@ import LabelInputBox from '../LabelInputBox';
 import { Select, SelectButton, SelectOptions } from '../Select';
 import { getMajors } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
+import { ThemeIcon } from '../ThemeIcon';
 enum AcademicYears {
   Freshman = "Freshman",
   Sophomore = "Sophomore",
@@ -78,6 +79,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
   funFact,
   major,
   profileImage,
+  academicYear,
   setBio,
   setHeadline,
   setPhoneNumber,
@@ -282,8 +284,9 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 						<div id="academicYear-input">
 							<Select>
 								<SelectButton
-									placeholder="Academic Year"
+									placeholder="Academic Year (required)"
 									type={"input"}
+                  initialVal={academicYear}
 								/>
 								<SelectOptions
                   callback={(e) => setAcademicYear((e.target as HTMLButtonElement).value as AcademicYear)}
@@ -305,7 +308,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 						<div id="major-input">
 							<Select>
 								<SelectButton
-									placeholder="Major"
+									placeholder="Major (required)"
 									type={"input"}
                   initialVal={major[0]?.label}
                   searchable={true}
@@ -336,20 +339,11 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
               hideUnsaved={true}
             />
           </div>
-            {/* Skills */}
-            <div id="signupProcess-skills-subTitle">Chosen Skills:</div>
-            <div id="signup-profile-skill">
-              {selectedSkills.map((skill, index) => (
-                <div key={index} style={{ border: `2px solid ${tagColors[index % 5]}` }}>
-                  {skill.label}
-                </div>
-              ))}
-            </div>
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
               Back
             </button>
-            <button id="signup-nextBtn" onClick={onNext}>
+            <button id="signup-nextBtn" onClick={onNext} disabled={!(major && academicYear)}>
               Next
             </button>
           </div>

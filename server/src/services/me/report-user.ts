@@ -4,34 +4,34 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT' | 'NOT_FOUND'>;
 type GetServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-//POST api/me/projects/report/{id}/{report}
-export const reportProjectService = async (
-  userId: number,
-  projectId: number,
+//POST api/me/users/report/{id}/{report}
+export const reportUserService = async (
+  reporterId: number,
+  reportedId: number,
   reportText: string,
 ): Promise<GetServiceSuccess | GetServiceError> => {
   try {
     //Check if report already exists
-    const report = await prisma.reportProject.findFirst({
+    const report = await prisma.reportUser.findFirst({
       where: {
-        userId,
-        projectId,
+        reporterId,
+        reportedId,
       },
     });
     if (report) return 'CONFLICT';
 
     //Create report
-    await prisma.reportProject.create({
+    await prisma.reportUser.create({
       data: {
-        userId,
-        projectId,
+        reporterId,
+        reportedId,
         reportText,
       },
     });
 
     return 'OK';
   } catch (e) {
-    console.error(`Error in reportProjectService: ${JSON.stringify(e)}`);
+    console.error(`Error in reportUserService: ${JSON.stringify(e)}`);
 
     return 'INTERNAL_ERROR';
   }
