@@ -80,6 +80,7 @@ const Login: React.FC = () => {
     }
 
     console.log('userdata: '+ JSON.stringify(res.data));
+    console.log('test');
 
     const body = await res.data as {userExists: boolean};
     
