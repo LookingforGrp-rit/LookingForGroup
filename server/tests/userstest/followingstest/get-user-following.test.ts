@@ -70,6 +70,7 @@ describe('getProjectFollowingService', () => {
         funFact: '',
         location: '',
         majors: [],
+        displayPhone: false,
         apiUrl: '/api/users/1',
       },
       thumbnail: null,

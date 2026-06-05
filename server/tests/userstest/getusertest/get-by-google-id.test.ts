@@ -41,6 +41,7 @@ describe('getUserByUsernameService', () => {
       lastName: '',
       preferredName: '',
       profileImage: null,
+      displayPhone: false,
       mentor: false,
       designer: false,
       developer: false,
