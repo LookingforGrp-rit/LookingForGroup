@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
+import { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -7,7 +7,7 @@ import { PanelBox } from '../PanelBox';
 import { ThemeImage } from '../ThemeIcon';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
-import { getUsers, getUsersById, getProjectFollowing } from '../../api/users';
+import { getUsers, getUsersById, getProjectFollowing, getCurrentUsername } from '../../api/users';
 import { ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
     StructuredUserInfo, UserPreview, ProjectPreview, 
     UserDetail, ProjectWithFollowers, 
@@ -174,19 +174,16 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     if (!projects.data) return;
 
     const newProjectCache = projectCache;
-    console.log(projectCache);
-
     for (let project of projects.data) {
+
       const cachedProject = newProjectCache[project.projectId];
       if (!cachedProject) {
         newProjectCache[project.projectId] = { preview: project };
-        //console.log(newProjectCache[project.projectId]);
       }
       else {
         cachedProject.preview = project;
-        //console.log(cachedProject.preview);
       }
-
+    
     }
 
     // Pre-fetch full details for the first visible batch to avoid flashing like/count state
@@ -210,13 +207,13 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     setFilteredProjectList(projects.data);
 
     setProjectSearchData(projects.data);
-
+    
     getShowcaseDetails(projects.data, newProjectCache);
     setProjectCache(newProjectCache);
   };
 
   // Set the necessary data for user mode
-  const setupUserData = (users: ApiResponse<UserPreview[]>): void => {
+  const setupUserData = (users : ApiResponse<UserPreview[]>) : void => {
     if (!users.data) {
       return;
     }
@@ -231,7 +228,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       else {
         cachedUser.preview = user;
       }
-
+    
     }
     setUserCache(newUserCache);
 
@@ -254,42 +251,44 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       // Get user profile
       //await getAuth();
 
-    await getAuth();
+      try {
+        if(category == 'projects') {
+          if (!fetchedProjects || force) {
+            setFetchedProjects(true);
 
-    try {
-      if (category == 'projects') {
-        if (!fetchedProjects || force) {
-          setFetchedProjects(true);
+            const projectResponse = await getProjects();
+            const projects = await projectResponse;
 
             await setupProjectData(projects);
           }
         }
-      }
-      else {
-        if (!fetchedUsers || force) {
-          setFetchedUsers(true);
-          const userResponse = await getUsers();
-          setupUserData(userResponse);
+        else {
+          if (!fetchedUsers || force) {
+            setFetchedUsers(true);
+            const userResponse = await getUsers();
+            const users = await userResponse;
+
+            setupUserData(users);
+          }
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error(error.message);
+        } else {
+          console.log(`Unknown error: ${error}`);
         }
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        console.error(error.message);
-      } else {
-        console.log(`Unknown error: ${error}`);
-      }
-    }
 
-    setDataLoaded(true);
-  };
+      setDataLoaded(true);
+    };
 
-  useMemo(() => getData(),[]);
+  useMemo(() => getData(), []);
 
   /**
    * Updates the filtered project list with new search information
    * @param searchResults
    */
-  const searchProjects = useCallback((searchResults: any[][]) => {
+  const searchProjects = useCallback((searchResults: any[][]) => { 
     if (!searchResults || !Array.isArray(searchResults)) return;
 
     // Flatten the nested arrays
@@ -311,7 +310,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         matchIds.push(projectPreview.projectId);
       }
     }
-
+    
     setFilteredProjectList(matches);
     setCurrentProjectPage(1);
 
@@ -338,7 +337,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
    * Updates the filtered project list with new search information
    * @param searchResults
    */
-  const searchUsers = useCallback((searchResults: any[][]) => {
+  const searchUsers = useCallback((searchResults: any[][]) => { 
     if (!searchResults || !Array.isArray(searchResults)) return;
 
     // Flatten the nested arrays
@@ -357,7 +356,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         matches.push(fullUserList[matchIndex]);
       }
     }
-
+    
     setFilteredUserList(matches);
   }, [userSearchData, fullUserList]);
 
@@ -416,10 +415,10 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         break;
       }
     }
-
+    
     setHeroProjectList(focusProjectDetailsList);
   }
-
+  
   /**
    * Changes what projects are shown to the user whenever a filter has been added or changed
    * @param activeTagFilters Tags that are shown to the user now
@@ -427,12 +426,13 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const updateProjectList = async (activeTagFilters: Tag[]) => {
     const projectList = fullProjectList;
     // Get project and user info to match with tags
-    const items: ProjectWithFollowers[] = [];
+    const items : ProjectWithFollowers[] = [];
     for (let item of projectList) {
       if (projectCache[item.projectId].full != undefined) {
         items.push(projectCache[item.projectId].full as ProjectWithFollowers);
       }
-      else {
+      else
+      {
         const projectData = await getByID(item.projectId);
         if (projectData.data) {
           items.push(projectData.data);
@@ -515,9 +515,9 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
    */
   const updateUserList = async (activeTagFilters: Tag[]) => {
     const userList = fullUserList;
-
+    
     // Get user info to match with tags
-    const items: UserDetail[] = [];
+    const items : UserDetail[] = [];
     for (let item of userList) {
       if (userCache[item.userId].detail != undefined) {
         items.push(userCache[item.userId].detail as UserDetail);
@@ -537,7 +537,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     let tagFilteredList = items.filter((item) => {
       if (activeTagFilters.length === 0) return true;
       let matchesAny = false;
-
+      
       for (const tag of activeTagFilters) {
         // Check for tag label Developer
         if (tag.label === 'Developer' && item.developer) {
@@ -547,31 +547,31 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio') {
           const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
-
+            
           if (userSkills.includes(tag.label.toLowerCase().trim())) {
             matchesAny = true;
           }
         }
         else if (tag.label === 'Designer' && item.designer) {
-          matchesAny = true;
+            matchesAny = true;
         }
         else if (tag.label === 'Audio') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
-            .filter((s) => typeof s === 'string');
+          .filter((s) => typeof s === 'string');
 
           if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
         }
         else if (tag.label === 'Soft') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
-            .filter((s) => typeof s === 'string');
+          .filter((s) => typeof s === 'string');
 
           if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
         }
         else if (tag.label === 'Other' && !item.designer && !item.developer) {
           matchesAny = true;
-        }
+        } 
         // Check role and major by name since IDs are not unique relative to tags
         /* it seems roles are not yet implimented
         else if (tag.type === 'Role' && item.title) { 
@@ -612,7 +612,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
   let discoverPanelContents : React.ReactElement;
   if (category == 'projects') {
-    if (!dataLoaded && filteredProjectList.length === 0) {
+    if(!dataLoaded && filteredProjectList.length === 0) {
       discoverPanelContents = (
         <div className='placeholder-spacing'>
           <div className='spinning-loader'></div>
@@ -659,7 +659,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       );
     }
   } else {
-    if (!dataLoaded && filteredUserList.length === 0) {
+    if(!dataLoaded && filteredUserList.length === 0) {
       discoverPanelContents = (
         <div className='placeholder-spacing'>
           <div className='spinning-loader'></div>
@@ -694,7 +694,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
         <div id="discover-panel-box">
           {/* If filteredItemList isn't done loading, display a loading bar */}
-          {discoverPanelContents}
+          { discoverPanelContents }
         </div>
       </main>
       <CreditsFooter />
@@ -702,6 +702,17 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     </div>
   );
 };
+
+// Return projects category
+export const Discover = () => {
+  return <DiscoverAndMeet category={'projects'} />;
+};
+
+// Return profiles category
+export const Meet = () => {
+  return <DiscoverAndMeet category={'profiles'} />;
+};
+
 
 const DiscoverPage = () => {
   //temp variables to initialize the use states for startup
@@ -810,17 +821,3 @@ const ProfileMeetPage = () => {
 
 
 }
-
-// Return projects category
-export const Discover = () => {
-  return <DiscoverAndMeet category={'projects'} />;
-};
-
-// export const Discover = () => {
-//   return <DiscoverPage />;
-// };
-
-// Return profiles category
-export const Meet = () => {
-  return <DiscoverAndMeet category={'profiles'} />;
-};
