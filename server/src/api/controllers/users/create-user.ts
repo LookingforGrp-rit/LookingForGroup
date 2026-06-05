@@ -12,7 +12,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   const devInfo: CreateUserInput = {} as CreateUserInput;
   const sessionInfo: SessionUserData = JSON.parse(req.session.data || '{}') as SessionUserData;
 
-  console.log(sessionInfo);
+  console.log(`Session Info: ${JSON.stringify(sessionInfo)}`);
 
   // This is for creating a dev user via the swagger docs
   if ((envConfig.env === 'development' || envConfig.env === 'test') && !sessionInfo.googleId) {
@@ -76,7 +76,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     const resBody: ApiResponse = {
       status: 400,
       error: 'Missing Google credentials',
-      data: null,
+      data: sessionInfo,
     };
     res.status(400).json(resBody);
     return;

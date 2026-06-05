@@ -375,7 +375,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const getShowcaseDetails = async (projectList : ProjectPreview[], usedCache : NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList : ProjectWithFollowers[] = [];
 
-    console.log(projectList);
     // remove projects without open positions
     // const filteredProjectList = projectList.filter(a => a.jobs.length > 1);
 
@@ -636,7 +635,13 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
             <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '2rem', paddingBottom: '2rem' }}>
               <button
               className="pagination-btn" 
-                onClick={() => setCurrentProjectPage(prev => Math.max(prev - 1, 1))}
+                onClick={() => 
+                  {
+                    setCurrentProjectPage(prev => Math.max(prev - 1, 1));
+
+                    // Scroll up to top of panel
+                    document.getElementsByClassName("discover-carousel")[0]?.scrollIntoView(true);
+                  }}
                 disabled={currentProjectPage === 1}
                 
               >
@@ -647,7 +652,13 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
               
               <button 
               className="pagination-btn"
-                onClick={() => setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages))}
+                onClick={() => 
+                  {
+                    setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages));
+
+                    // Scroll up to top of panel
+                    document.getElementsByClassName("discover-carousel")[0]?.scrollIntoView(true);
+                  }}
                 disabled={currentProjectPage === totalProjectPages}
 
               >
