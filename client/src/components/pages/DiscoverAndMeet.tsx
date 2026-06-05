@@ -375,7 +375,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const getShowcaseDetails = async (projectList : ProjectPreview[], usedCache : NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList : ProjectWithFollowers[] = [];
 
-    console.log(projectList);
     // remove projects without open positions
     // const filteredProjectList = projectList.filter(a => a.jobs.length > 1);
 
