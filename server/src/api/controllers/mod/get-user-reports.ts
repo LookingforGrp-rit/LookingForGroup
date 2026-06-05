@@ -1,14 +1,11 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import getProjectReportService from '#services/projects/get-project-reports.ts';
+import getUserReportService from '#services/users/get-user-reports.ts';
 
-//GET api/mod/project-report/
-//gets all project reports
-export const getProjectReports = async (
-  req: AuthenticatedRequest,
-  res: Response,
-): Promise<void> => {
-  const result = await getProjectReportService();
+//GET api/mod/user-report/
+//gets all user reports
+export const getUserReports = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const result = await getUserReportService();
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
