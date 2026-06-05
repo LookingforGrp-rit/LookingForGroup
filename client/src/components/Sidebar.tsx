@@ -332,17 +332,6 @@ const SideBar = () => {
             <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
             My Projects
           </button>
-          {/* About button */}
-          <button
-            id={"about-sidebar-btn"}
-            className={
-              activePage === "About" ? "active sidebar-btn" : "sidebar-btn"
-            }
-            onClick={() => handleTextChange("About", paths.routes.ABOUT)}
-          >
-            <ThemeIcon id={'info'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'about'}/>
-            About
-          </button>
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
             <img
