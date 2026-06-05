@@ -9,13 +9,13 @@ import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
-import { addUserSkill, createNewUser, getCurrentUsername, googleLogin } from '../../api/users';
+import { addUserSkill, createNewUser, getCurrentUsername, googleLogin, editUser } from '../../api/users';
 import { AcademicYear, CreateUserInput, Major, SessionUserData, Skill } from '@looking-for-group/shared';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
 interface SignUpProps {
-  profileImage : string;
-  setProfileImage : React.Dispatch<React.SetStateAction<string>>;
+  profileImage : File;
+  setProfileImage : React.Dispatch<React.SetStateAction<File>>;
 }
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
@@ -61,7 +61,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
   const [location, setLocation] = useState(''); // State variable for the user's Location
   const [funFact, setFunFact] = useState(''); // State variable for the user's bio
   const [major, setMajor] = useState<Major[]>([]); // State variable for user's major //it's an array because it's stored as an array on the backend, to allow for multiple
-  const [academicYear, setAcademicYear] = useState('')
+  const [academicYear, setAcademicYear] = useState<AcademicYear>()
   const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
@@ -73,6 +73,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
     lastName: lastName,
     preferredName: preferredName, // default to first name for now
     ritEmail: email,
+    googleId: sessionData?.googleId,
     username: '',
     pronouns: pronouns,
     majors: major, //called "majors" because it can hold multiple, the ui just doesn't support that yet
@@ -83,7 +84,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
     title: title,
     location: location,
     funFact: funFact,
-    profileImage: profileImage, // if they upload their own image
+    mentor: false,
   } as CreateUserInput;
 
   // Redirect the user to the homepage if they are currently logged in
@@ -535,6 +536,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
               for(const id of selectedSkillIds){
                 await addUserSkill({skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice'})
               }
+              await editUser({profileImage: profileImage});
               setShowGetStartedModal(false);
               navigate(paths.routes.MYPROJECTS);
             }}
@@ -543,6 +545,7 @@ const SignUp : React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profi
               for(const id of selectedSkillIds){
                 await addUserSkill({skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice'})
               }
+              await editUser({profileImage: profileImage});
               setShowGetStartedModal(false);
               navigate(paths.routes.HOME);
             }}
