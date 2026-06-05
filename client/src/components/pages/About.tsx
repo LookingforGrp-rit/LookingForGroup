@@ -3,6 +3,8 @@ import { Header } from '../Header';
 import { members } from '../../constants/lfgmembers';
 import '../Styles/pages.css';
 import AboutFooter from '../AboutFooter';
+import { ThemeIcon } from '../ThemeIcon';
+import { useNavigate } from 'react-router-dom';
 
 /**
  * About page detailing the purpose and features of LFG
@@ -15,6 +17,8 @@ const AboutPage = () => {
     // Format data for use with SearchBar, which requires it to be: [{ data: }]
     const dataSet = useMemo(() => [{ data: members }], []);
 
+    const navigate = useNavigate(); // Hook for navigation
+
     // Allows for the variable to update and display to the user
     const handleSearchChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
         setSearchQuery(e.target.value);
@@ -23,7 +27,7 @@ const AboutPage = () => {
     // Updates filtered members list with new search info
     const searchMembers = useCallback((searchResults: any[][]) => {
         if (!searchResults || !Array.isArray(searchResults)) return;
-        
+
         // Flatten the nested arrays
         const flattened = searchResults.flat();
 
@@ -43,8 +47,8 @@ const AboutPage = () => {
             // Compare roles
             const roleComparison = a.role.localeCompare(b.role);
             if (roleComparison !== 0)
-            return roleComparison;
-            
+                return roleComparison;
+
             // If roles match, compare names
             return a.name.localeCompare(b.name);
         });
@@ -52,17 +56,19 @@ const AboutPage = () => {
 
     return (
         <div className="page">
-            <Header 
-                dataSets={dataSet} 
-                onSearch={searchMembers} 
+            <Header
+                dataSets={dataSet}
+                onSearch={searchMembers}
                 value={searchQuery}
                 onChange={handleSearchChange}
+                hideSearchBar={true}
             />
-            
+            <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
+
             <main id="main" tabIndex={-1} aria-labelledby='about-header'>
                 <section className="about-container" tabIndex={-1} style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
                     <h1 className="about-header">About Looking For Group</h1>
-                    
+
                     <section className="about-section">
                         <h2>Our Purpose</h2>
                         <p>
@@ -97,9 +103,9 @@ const AboutPage = () => {
                     <ul id="credit-members-container">
                         {sortedMembersList.map(member => (
                             <li className="lfg-contributor" key={member.name}>
-                                <img 
-                                    className="project-contributor-profile" 
-                                    src={member.photo} 
+                                <img
+                                    className="project-contributor-profile"
+                                    src={member.photo}
                                     alt={`Profile photo of ${member.name}`}
                                 />
                                 <div className="project-contributor-info">
@@ -109,7 +115,7 @@ const AboutPage = () => {
                             </li>
                         ))}
                     </ul>
-                    
+
                     {sortedMembersList.length === 0 && (
                         <p className='no-members'>No team members found matching your search.</p>
                     )}
