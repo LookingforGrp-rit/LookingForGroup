@@ -92,12 +92,12 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
     if (response.status === 200) setTimeout(() => removeProject(projId), 1500);
   };
 
-  //Converts ISO date string to DD/MM/YYYY format
+  //Converts ISO date string to MM/DD/YYYY format
   const formatDate = (dateStr: string) => {
     if (!dateStr) return 'No data';
     const [date] = dateStr.split('T');
     const [year, month, day] = date.split('-');
-    return `${day}/${month}/${year}`;
+    return `${month}/${day}/${year}`;
   };
 
   return (
