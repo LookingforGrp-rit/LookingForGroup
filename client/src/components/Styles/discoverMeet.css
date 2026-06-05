@@ -267,7 +267,8 @@ Image carousel style rules
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
-  height: 100%;
+  height: 370px;
+  max-height: 370px;
   width: 90%;
   border-radius: 10px;
   background-color: var(--header-color);
@@ -279,17 +280,25 @@ Image carousel style rules
   display: flex;
   flex-direction: row;
   min-width: 100%;
+  height: 100%;
   transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
 }
 
 .discover-project-image {
   border-radius: 10px 0px 0px 10px;
   width: 57.2%;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
   img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
   }
 }
 
@@ -297,6 +306,7 @@ Image carousel style rules
   border-radius: 0px 10px 10px 0px;
   padding: 23px min(26px, calc(100vw * (26 / 1512)));
   width: 42.8%;
+  height: 100%;
   overflow-wrap: break-word;
 
   h2 {
