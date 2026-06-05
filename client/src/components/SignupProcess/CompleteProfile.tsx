@@ -69,6 +69,8 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	title,
 	location,
 	funFact,
+  major,
+  academicYear,
 	setBio,
 	setPronouns,
 	setHeadline,
@@ -272,7 +274,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<div id="academicYear-input">
 							<Select>
 								<SelectButton
-									placeholder="Academic Year"
+									placeholder="Academic Year (required)"
 									type={"input"}
 								/>
 								<SelectOptions
@@ -295,7 +297,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<div id="major-input">
 							<Select>
 								<SelectButton
-									placeholder="Major"
+									placeholder="Major (required)"
 									type={"input"}
 								/>
                 <SelectOptions 
@@ -341,7 +343,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<button id="signup-backBtn" onClick={onBack}>
 							Back
 						</button>
-						<button id="signup-nextBtn" onClick={onNext}>
+						<button id="signup-nextBtn" onClick={onNext} disabled={!(major && academicYear)}>
 							Next
 						</button>
 					</div>
