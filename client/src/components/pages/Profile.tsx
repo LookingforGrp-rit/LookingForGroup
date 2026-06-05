@@ -357,6 +357,11 @@ const Profile = () => {
                   </span>
                   {displayedProfile?.funFact}
                 </div>
+
+                <div id="profile-phone-number">
+                  0
+                </div>
+
                 {/* <div id="profile-interest">
                   <ProfileInterests
                     user={{ interests: displayedProfile.interests || [] }}
