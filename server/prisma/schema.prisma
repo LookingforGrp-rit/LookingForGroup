@@ -259,6 +259,7 @@ model Users {
   bio               String              @default("") @db.VarChar(600)
   visibility        Int                 @default(1) @db.TinyInt
   mentor            Boolean             @default(false)
+  displayPhone      Boolean             @default(false) @map("display_phone")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @unique @map("phone_number") @db.VarChar(20)

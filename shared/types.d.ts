@@ -608,6 +608,17 @@ export interface UserPreview {
   /**
    * Location of this resource on the server
    */
+
+  /**
+   * The user's preference on whether or not they wish to display their phone number on their profile
+   */
+  displayPhone: boolean;
+
+  /**
+   * The user's phone number (only filled is displayPhone is true)
+   */
+  phoneNumber?: string | null;
+
   apiUrl: string;
 }
 
