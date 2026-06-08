@@ -124,7 +124,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     return [{ data: userSearchData }];
   }, [userSearchData]);
 
-  const PROJECTS_PER_PAGE = 12;
+  const PROJECTS_PER_PAGE = 6;
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)

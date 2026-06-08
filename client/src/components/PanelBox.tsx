@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ProjectPanel } from './ProjectPanel';
 import { ProfilePanel } from './ProfilePanel';
 import { ProjectWithFollowers, UserPreview, NumberDictionary, StructuredProjectInfo } from '@looking-for-group/shared';
@@ -28,36 +28,55 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache
   const [displayedItems, setDisplayedItems] = useState(itemList.slice(0, itemAddInterval));
   // Keeps a copy of the incoming itemList prop to detect updates from API or parent component.
   const [itemListCopy, setItemListCopy] = useState(itemList);
-  //console.log(itemList !== itemListCopy);
+
+  // Intersection Observer pattern for infinite scrolling
+  const interObsRef = useRef<HTMLDivElement>(null);
 
   // Make sure displayedItems gets updated when itemList receives API data
-  useEffect(() => {
-    //console.log(displayedItems);
-    if (itemList !== itemListCopy) {
-      setDisplayedItems(itemList.slice(0, itemAddInterval));
-      setItemListCopy(itemList);
-    }
-  }, [itemList])
+  if (itemList !== itemListCopy) {
+    setDisplayedItems(itemList.slice(0, itemAddInterval));
+    setItemListCopy(itemList);
+  }
 
-  // Updated to use native react events
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+  // Replaces the scroll behaviour
+  const loadMoreItems = useCallback(() => {
+    setDisplayedItems((prevItems) => {
+      const startIndex = prevItems.length;
 
-    if (Math.ceil(scrollTop) + clientHeight >= scrollHeight - 5) {
-      const startIndex = displayedItems.length;
-      
-      // Only add if there is something left
+      // Ensure there is more to load
       if (startIndex < itemList.length) {
         const newItems = itemList.slice(startIndex, startIndex + itemAddInterval);
-        setDisplayedItems(prevItems => prevItems.concat(newItems));
+        return [...prevItems, ...newItems];
       }
-    }
-  };
+
+      // Just return same list if there is nothing more to load
+      return prevItems;
+    });
+  }, [itemList, itemAddInterval]);
+
+  // Actual observer code
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        // If the div is visible on screen, load more
+        if (entries[0].isIntersecting)
+          loadMoreItems();
+      },
+      { threshold: 0.1 } // Fires as soon as 10% of the marker is visible
+    );
+
+    if (interObsRef.current)
+      observer.observe(interObsRef.current);
+
+    return () => {
+      if (interObsRef.current) observer.unobserve(interObsRef.current);
+    };
+  }, [loadMoreItems]);
 
   // Return directly instead of deferring
   if (category === 'projects') {
     return (
-      <div className="project-panel-box" onScroll={handleScroll}>
+      <div className="project-panel-box">
         {displayedItems.length > 0 ? (
           displayedItems.map((item) => {
             const projectId = (item as ProjectWithFollowers).projectId;
@@ -74,13 +93,14 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache
         ) : (
           <>Sorry, no projects here</>
         )}
+        <div ref={interObsRef} style={{ height: '20px', width: '100%' }} />
       </div>
     );
   }
 
   // Functional else statement
   return (
-    <div className="profile-panel-box" onScroll={handleScroll}>
+    <div className="profile-panel-box">
       {displayedItems.length > 0 ? (
         displayedItems.map((profile) => (
           <ProfilePanel 
@@ -92,6 +112,7 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache
       ) : (
         <>Sorry, no people here</>
       )}
+      <div ref={interObsRef} style={{ height: '20px', width: '100%' }} />
     </div>
   );
 };
