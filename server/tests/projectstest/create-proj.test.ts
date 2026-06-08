@@ -3,6 +3,7 @@ import type {
   UserPreview,
   ProjectPurpose,
   ProjectStatus,
+  Visibility,
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
@@ -55,6 +56,7 @@ describe('createProjectService', async () => {
       projectId: 1,
       purpose: 'Academic' as ProjectPurpose,
       status: 'Planning' as ProjectStatus,
+      globalVisibility: 'public' as Visibility,
       thumbnailId: 0,
       title: 'test 1',
       updatedAt: now,
@@ -71,6 +73,7 @@ describe('createProjectService', async () => {
       mediums: [],
       members: [],
       owner: { userId: 1 } as UserPreview,
+      globalVisibility: 'public' as Visibility,
       projectId: 1,
       projectImages: [],
       projectSocials: [],

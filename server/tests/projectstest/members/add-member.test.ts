@@ -5,7 +5,7 @@ import type {
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
-import { MembersProfileVisibility } from '#prisma-models/index.js';
+import type { Visibility } from '#prisma-models/index.js';
 import addMemberService from '#services/projects/members/add-member.ts';
 import sendInviteService from '#services/projects/members/send-invite.ts';
 import { transformProjectMember } from '#services/transformers/projects/parts/project-member.ts';
@@ -46,7 +46,7 @@ const testMember = {
   projectId: 1,
   userId: 29,
   roleId: 31,
-  profileVisibility: 'Public' as MembersProfileVisibility,
+  profileVisibility: 'public' as Visibility,
   createdAt: now,
 };
 
