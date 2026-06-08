@@ -20,7 +20,7 @@ export const transformProjectToPreview = (project: ProjectsGetPayload): ProjectP
     projectId: project.projectId,
     title: project.title,
     hook: project.hook,
-    visibility: project.visibility,
+    globalVisibility: project.globalVisibility,
     tags: project.tags.map((tag) =>
       transformProjectTag(project.projectId, {
         label: tag.tag.label, //tag.tag :cinema:

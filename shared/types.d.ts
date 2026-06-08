@@ -47,7 +47,7 @@ export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
 export type JobDuration = "ShortTerm" | "LongTerm";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
-export type Visibility = "Public" | "Private";
+export type Visibility = "public" | "private";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
 
@@ -263,7 +263,7 @@ export interface UserMember {
   /**
    * Is this project visible on the user's profile?
    */
-  visibility: Visibility;
+  profileVisibility: Visibility;
 
   /**
    * The date the user became a member
@@ -827,8 +827,7 @@ export interface MePrivate extends MeDetail {
   /**
    * Whether the logged-in user has set their profile to be Public or Private
    */
-  // TODO implement or remove
-  visibility: Visibility;
+  privacy: Visibility;
 
   /**
    * The logged-in user's phone number, null if unset
@@ -1179,11 +1178,10 @@ export type UpdateUserInput = Partial<
     | "funFact"
     | "bio"
     | "phoneNumber"
+    | 'privacy'
   > & {
     profileImage?: File;
     mentor?: "true" | "false";
-    // TODO update to use Visibility enum
-    visibility?: "1" | "0";
   }
 >;
 export type CreateUserInput = Partial<
@@ -1198,11 +1196,10 @@ export type CreateUserInput = Partial<
     | "bio"
     | "phoneNumber"
     | 'username'
+    | 'privacy'
   > & {
     profileImage?: string;
     mentor?: true | false;
-    // TODO update to use Visibility enum
-    visibility?: 1 | 0;
   }
 > & {
   firstName: string;
@@ -1255,18 +1252,11 @@ export type AddUserMajorInput = Pick<Major, "majorId">;
 /**
  * Data required to show or hide a project on a user's profile
  */
-export type UpdateUserProjectVisibilityInput = {
+export type UpdateProjectProfileVisibilityInput = {
   profileVisibility: Visibility;
 };
 
 // PROJECTS inputs
-
-/**
- * Data required to show or hide a project on the website
- */
-export type UpdateProjectVisibilityInput = {
-  globalVisibility: Visibility; 
-};
 
 /**
  * Data required to create a new project
@@ -1275,7 +1265,7 @@ export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
     Pick<
       ProjectDetail,
-      "hook" | "description" | "status" | "audience" | "purpose"
+      "hook" | "description" | "status" | "audience" | "purpose" | 'globalVisibility'
     >
   >;
 
