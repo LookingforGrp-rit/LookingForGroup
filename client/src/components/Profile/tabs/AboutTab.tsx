@@ -1,21 +1,21 @@
-import { useState, useEffect, useCallback } from 'react';
-import { ProfileImageUploader } from '../../ImageUploader';
-import usePreloadedImage from '../../../functions/imageLoad';
-import { Select, SelectButton, SelectOptions } from '../../Select';
-import LabelInputBox from '../../LabelInputBox';
-import { PendingUserProfile } from '../../../../types/types';
-import { userDataManager } from '../../../api/data-managers/user-data-manager';
-import { AcademicYear } from '@looking-for-group/shared/enums';
-import { Major, MePrivate, Role } from '@looking-for-group/shared';
-import { getJobTitles, getMajors } from '../../../api/users';
+import { useState, useEffect, useCallback } from "react";
+import { ProfileImageUploader } from "../../ImageUploader";
+import usePreloadedImage from "../../../functions/imageLoad";
+import { Select, SelectButton, SelectOptions } from "../../Select";
+import LabelInputBox from "../../LabelInputBox";
+import { PendingUserProfile } from "../../../../types/types";
+import { userDataManager } from "../../../api/data-managers/user-data-manager";
+import { AcademicYear } from "@looking-for-group/shared/enums";
+import { Major, MePrivate, Role } from "@looking-for-group/shared";
+import { getJobTitles, getMajors } from "../../../api/users";
 
 let profileAfterAboutChanges: PendingUserProfile;
 
 type AboutTabProps = {
-  dataManager: Awaited<ReturnType<typeof userDataManager>>;
-  profile: PendingUserProfile;
-  unmodifiedProfile: MePrivate;
-  updatePendingProfile?: (updatedPendingProfile: PendingUserProfile) => void;
+	dataManager: Awaited<ReturnType<typeof userDataManager>>;
+	profile: PendingUserProfile;
+	unmodifiedProfile: MePrivate;
+	updatePendingProfile?: (updatedPendingProfile: PendingUserProfile) => void;
 };
 
 /**
@@ -26,452 +26,536 @@ type AboutTabProps = {
  * @param unmodifiedProfile A copy of the profile before any changes
  * @returns JSX Element
  */
-export const AboutTab = ({ dataManager, profile, unmodifiedProfile, updatePendingProfile = () => { } }: AboutTabProps) => {
+export const AboutTab = ({
+	dataManager,
+	profile,
+	unmodifiedProfile,
+	updatePendingProfile = () => {}
+}: AboutTabProps) => {
+	profileAfterAboutChanges = structuredClone(profile);
 
-  profileAfterAboutChanges = structuredClone(profile);
+	const userId = profile.userId!;
+	// Holds new profile image if one is selected
 
-  const userId = profile.userId!;
-  // Holds new profile image if one is selected
+	// Preview URL for profile image
+	const [previewUrl, setPreviewUrl] = useState<string>(
+		usePreloadedImage(
+			`${profile.profileImage}`,
+			"/src/images/blue_frog.png"
+		)
+	);
 
-  // Preview URL for profile image
-  const [previewUrl, setPreviewUrl] = useState<string>(usePreloadedImage(`${profile.profileImage}`, "/src/images/blue_frog.png"));
+	const [selectedImageFile, setSelectedImageFile] = useState<File>();
 
-  const [selectedImageFile, setSelectedImageFile] = useState<File>();
+	//getting the full lists of roles & majors
+	const [roles, setRoles] = useState<Role[]>([]);
+	const [majors, setMajors] = useState<Major[]>([]);
+	const [currentMajor] = useState<Major>(
+		profile.majors[0] ?? {
+			label: "None",
+			majorId: 0 //will it scream at me for this?
+		}
+	);
 
-  //getting the full lists of roles & majors
-  const [roles, setRoles] = useState<Role[]>([]);
-  const [majors, setMajors] = useState<Major[]>([]);
-  const [currentMajor] = useState<Major>(profile.majors[0] ?? {
-    label: 'None',
-    majorId: 0 //will it scream at me for this?
-  });
+	useEffect(() => {
+		const fetchRoles = async () => {
+			const response = await getJobTitles();
+			const roles: Role[] = response?.data ?? [];
+			setRoles(roles);
+		};
+		const fetchMajors = async () => {
+			const response = await getMajors();
+			setMajors(response?.data ?? []);
+		};
+		const initializePfp = () => {
+			setPreviewUrl(profile.profileImage as string);
+		};
+		fetchMajors();
+		fetchRoles();
+		initializePfp();
+	}, [profile.profileImage]);
 
+	/**
+	 * Saves the uploaded image to the profile.
+	 */
+	const handleFileSelected = useCallback(async () => {
+		//get the image uploader element
+		const imageUploader = document.getElementById(
+			"image-uploader"
+		) as HTMLInputElement;
 
-  useEffect(() => {
-    const fetchRoles = async () => {
-      const response = await getJobTitles();
-      const roles: Role[] = response?.data ?? [];
-      setRoles(roles);
-    };
-    const fetchMajors = async () => {
-      const response = await getMajors();
-      setMajors(response?.data ?? []);
-    };
-    const initializePfp = () => {
-      setPreviewUrl(profile.profileImage as string)
-    }
-    fetchMajors();
-    fetchRoles();
-    initializePfp();
-  }, [profile.profileImage]);
+		if (!imageUploader?.files?.length) return;
 
-  /**
-   * Saves the uploaded image to the profile.
-   */
-  const handleFileSelected = useCallback(async () => {
-    //get the image uploader element
-    const imageUploader = document.getElementById(
-      "image-uploader"
-    ) as HTMLInputElement;
+		//get the image itself (there will always be only one)
+		const file = imageUploader.files[0];
+		if (!["image/jpeg", "image/png"].includes(file.type)) return;
 
-    if (!imageUploader?.files?.length) return;
+		//and we got it!
+		setSelectedImageFile(file);
+		const imgLink = URL.createObjectURL(file);
+		setPreviewUrl(imgLink.substring(5, imgLink.length));
 
-    //get the image itself (there will always be only one)
-    const file = imageUploader.files[0];
-    if (!["image/jpeg", "image/png"].includes(file.type)) return;
+		dataManager.updateFields({
+			id: {
+				value: userId,
+				type: "canon"
+			},
+			data: {
+				profileImage: file
+			}
+		});
 
-    //and we got it!
-    setSelectedImageFile(file);
-    const imgLink = URL.createObjectURL(file);
-    setPreviewUrl(imgLink.substring(5, imgLink.length));
+		profileAfterAboutChanges = {
+			...profileAfterAboutChanges,
+			profileImage: file
+		};
+		updatePendingProfile(profileAfterAboutChanges);
+	}, [dataManager, updatePendingProfile, userId]);
 
-    dataManager.updateFields({
-      id: {
-        value: userId,
-        type: 'canon'
-      },
-      data: {
-        profileImage: file
-      }
-    })
+	return (
+		<div id="profile-editor-about" className="edit-profile-body about">
+			<div id="edit-profile-section-1">
+				<div
+					id="profile-editor-add-image"
+					className="edit-profile-image">
+					<ProfileImageUploader
+						onFileSelected={handleFileSelected}
+						initialImageUrl={previewUrl}
+						initialImageFile={selectedImageFile}
+					/>
+				</div>
 
-    profileAfterAboutChanges = {
-      ...profileAfterAboutChanges,
-      profileImage: file
-    }
-    updatePendingProfile(profileAfterAboutChanges)
-  }, [dataManager, updatePendingProfile, userId]);
+				<div className="about-row row-1">
+					<LabelInputBox
+						label={"First Name"}
+						required
+						inputType={"single"}
+						maxLength={50}
+						value={profile.firstName}
+						initialValue={unmodifiedProfile.firstName}
+						onChange={(e) => {
+							const firstName = e.target.value;
+							profileAfterAboutChanges = {
+								...profileAfterAboutChanges,
+								firstName
+							};
+							updatePendingProfile(profileAfterAboutChanges);
 
-  return (
-    <div id="profile-editor-about" className="edit-profile-body about">
-      <div id="edit-profile-section-1">
-        <div id="profile-editor-add-image" className="edit-profile-image">
-          <ProfileImageUploader
-            onFileSelected={handleFileSelected}
-            initialImageUrl={previewUrl}
-            initialImageFile={selectedImageFile}
-          />
-        </div>
+							//dataManager is also undefined here
+							dataManager.updateFields({
+								id: {
+									value: userId,
+									type: "canon"
+								},
+								data: { firstName }
+							});
+						}}
+					/>
+					<LabelInputBox
+						label={"Last Name"}
+						required
+						inputType={"single"}
+						maxLength={50}
+						value={profile.lastName}
+						initialValue={unmodifiedProfile.lastName}
+						onChange={(e) => {
+							const lastName = e.target.value;
+							profileAfterAboutChanges = {
+								...profileAfterAboutChanges,
+								lastName
+							};
+							updatePendingProfile(profileAfterAboutChanges);
 
-        <div className="about-row row-1">
-          <LabelInputBox
-            label={'First Name'}
-            required
-            inputType={'single'}
-            maxLength={50}
-            value={profile.firstName}
-            initialValue={unmodifiedProfile.firstName}
-            onChange={(e) => {
-              const firstName = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, firstName };
-              updatePendingProfile(profileAfterAboutChanges);
+							//dataManager is also undefined here
+							dataManager.updateFields({
+								id: {
+									value: userId,
+									type: "canon"
+								},
+								data: { lastName }
+							});
+						}}
+					/>
+					<LabelInputBox
+						label={"Pronouns"}
+						inputType={"single"}
+						maxLength={25}
+						value={profile.pronouns}
+						initialValue={unmodifiedProfile.pronouns}
+						onChange={(e) => {
+							const pronouns = e.target.value;
+							profileAfterAboutChanges = {
+								...profileAfterAboutChanges,
+								pronouns
+							};
+							updatePendingProfile(profileAfterAboutChanges);
 
-              //dataManager is also undefined here
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { firstName }
-              })
-            }}
-          />
-          <LabelInputBox
-            label={'Last Name'}
-            required
-            inputType={'single'}
-            maxLength={50}
-            value={profile.lastName}
-            initialValue={unmodifiedProfile.lastName}
-            onChange={(e) => {
-              const lastName = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, lastName };
-              updatePendingProfile(profileAfterAboutChanges);
+							dataManager.updateFields({
+								id: {
+									value: userId,
+									type: "canon"
+								},
+								data: { pronouns }
+							});
+						}}
+					/>
+				</div>
 
-              //dataManager is also undefined here
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { lastName }
-              })
-            }}
-          />
-          <LabelInputBox
-            label={'Pronouns'}
-            inputType={'single'}
-            maxLength={25}
-            value={profile.pronouns}
-            initialValue={unmodifiedProfile.pronouns}
-            onChange={(e) => {
-              const pronouns = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, pronouns };
-              updatePendingProfile(profileAfterAboutChanges);
+				<div className="about-row row-2">
+					{
+						<LabelInputBox
+							label={"Title"}
+							inputType={"none"}
+							forceUnsaved={
+								profile.title !== unmodifiedProfile.title
+							}>
+							<Select>
+								<SelectButton
+									placeholder={"Select"}
+									initialVal={profile.title ?? ""}
+									callback={(e) => e.preventDefault()}
+									type={"input"}
+									searchable={true}
+								/>
+								<SelectOptions
+									callback={(e) => {
+										const title = (
+											e.target as HTMLButtonElement
+										).value;
 
-              //dataManager is also undefined here
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { pronouns }
-              })
-            }}
-          />
-        </div>
+										profileAfterAboutChanges = {
+											...profileAfterAboutChanges,
+											title
+										};
+										updatePendingProfile(
+											profileAfterAboutChanges
+										);
 
-        <div className="about-row row-2">
-          {
-            <LabelInputBox
-              label={'Title'}
-              inputType={'none'}
-              forceUnsaved={profile.title !== unmodifiedProfile.title}
-            >
-              <Select>
-                <SelectButton
-                  placeholder={"Select"}
-                  initialVal={profile.title ?? ""}
-                  callback={(e) => e.preventDefault()}
-                  type={'input'}
-                  searchable={true}
-                />
-                <SelectOptions
-                  callback={(e) => {
-                    const title = (e.target as HTMLButtonElement).value
+										//dataManager is also undefined here
+										dataManager.updateFields({
+											id: {
+												value: userId,
+												type: "canon"
+											},
+											data: { title }
+										});
+									}}
+									options={roles.map((r) => ({
+										value: r.label,
+										markup: <>{r.label}</>,
+										disabled: false
+									}))}
+								/>
+							</Select>
+						</LabelInputBox>
+					}
+					{
+						//major (will need a ui change to accept multiple majors)
+						<LabelInputBox
+							label={"Major"}
+							inputType={"none"}
+							forceUnsaved={
+								profile.majors[0]?.majorId !==
+								unmodifiedProfile.majors[0]?.majorId
+							}>
+							<Select>
+								<SelectButton
+									placeholder="Select"
+									initialVal={`${currentMajor?.label}` || ""}
+									callback={(e) => e.preventDefault()}
+									type={"input"}
+									searchable={true}
+								/>
+								<SelectOptions
+									callback={(e) => {
+										e.preventDefault();
 
-                    profileAfterAboutChanges = {
-                      ...profileAfterAboutChanges,
-                      title
-                    }
-                    updatePendingProfile(profileAfterAboutChanges)
+										console.log(
+											(e.target as HTMLButtonElement)
+												.value
+										);
 
-                    //dataManager is also undefined here
-                    dataManager.updateFields({
-                      id: {
-                        value: userId,
-                        type: 'canon',
-                      },
-                      data: { title }
-                    })
-                  }}
-                  options={roles.map(r => ({
-                    value: r.label,
-                    markup: <>{r.label}</>,
-                    disabled: false
-                  }))}
-                />
-              </Select>
-            </LabelInputBox>}
-          {
-            //major (will need a ui change to accept multiple majors)
-            <LabelInputBox
-              label={'Major'}
-              inputType={'none'}
-              forceUnsaved={profile.majors[0]?.majorId !== unmodifiedProfile.majors[0]?.majorId}
-            >
-              <Select>
-                <SelectButton
-                  placeholder="Select"
-                  initialVal={`${currentMajor?.label}` || ''}
-                  callback={(e) => e.preventDefault()}
-                  type={'input'}
-                  searchable={true}
-                />
-                <SelectOptions
-                  callback={(e) => {
-                    e.preventDefault();
+										//finds the major needed to be changed after grabbing the target as an HTML element and getting the value
+										const newMajor = majors.find(
+											(match) => {
+												return (
+													match.label ===
+													(
+														e.target as HTMLButtonElement
+													).value
+												);
+											}
+										);
+										const oldMajor = majors.find(
+											(match) =>
+												match.label ===
+												currentMajor?.label
+										);
 
-                    //finds the major needed to be changed after grabbing the target as an HTML element and getting the value
-                    const majorChangeID = majors.find((match) => match.label === (e.target as HTMLButtonElement).value);
-                    const oldMajor = majors.find((match) => match.label === currentMajor?.label);
+										console.log(newMajor);
 
-                    console.log(profile.majors.majorId);
-                    console.log(profileAfterAboutChanges.majors);
-                    console.log(oldMajor);
+										//if there's nothing just returns
+										if (!newMajor) return;
 
-                    //if there's nothing just returns
-                    if (!majorChangeID || !oldMajor)
-                      return;
+										profileAfterAboutChanges = {
+											...profileAfterAboutChanges,
+											majors: newMajor
+										};
 
-                    profileAfterAboutChanges = {
-                      ...profileAfterAboutChanges,
-                      majors: majorChangeID
-                    }
+										updatePendingProfile(
+											profileAfterAboutChanges
+										);
 
-                    updatePendingProfile(profileAfterAboutChanges);
+										dataManager.addMajor({
+											id: {
+												value: userId,
+												type: "canon"
+											},
+											data: {
+												majorId: newMajor.majorId
+											}
+										});
 
-                    dataManager.addMajor({
-                      id: {
-                        value: userId,
-                        type: 'canon'
-                      },
-                      data: {
-                        majorId: majorChangeID.majorId,
-                      }
-                    });
+										if (oldMajor) {
+											dataManager.deleteMajor({
+												id: {
+													type: "canon",
+													value: oldMajor?.majorId
+												},
+												data: null
+											});
+										}
+									}}
+									options={majors.map((m) => ({
+										value: m.label,
+										markup: <>{m.label}</>,
+										disabled: false
+									}))}
+								/>
+							</Select>
+						</LabelInputBox>
+					}
 
-                    dataManager.deleteMajor({
-                      id: {
-                        type: "canon",
-                        value: oldMajor?.majorId,
-                      },
-                      data: null,
-                    });
-                  }}
-                  options={majors.map(m => ({
-                    value: m.label,
-                    markup: <>{m.label}</>,
-                    disabled: false
-                  }))}
-                />
-              </Select>
-            </LabelInputBox>}
+					<LabelInputBox
+						label={"Year"}
+						inputType={"none"}
+						forceUnsaved={
+							profile.academicYear !==
+							unmodifiedProfile.academicYear
+						}>
+						<Select>
+							<SelectButton
+								placeholder="Select"
+								initialVal={
+									profile.academicYear
+										? profile.academicYear
+										: ""
+								}
+								callback={(e) => e.preventDefault()}
+								type={"input"}
+							/>
+							<SelectOptions
+								callback={(e) => {
+									const year = (e.target as HTMLButtonElement)
+										.value as AcademicYear;
 
-          <LabelInputBox
-            label={'Year'}
-            inputType={'none'}
-            forceUnsaved={profile.academicYear !== unmodifiedProfile.academicYear}
-          >
-            <Select>
-              <SelectButton
-                placeholder="Select"
-                initialVal={profile.academicYear ? profile.academicYear : ""}
-                callback={(e) => e.preventDefault()}
-                type={'input'}
-              />
-              <SelectOptions
-                callback={(e) => {
-                  const year = (e.target as HTMLButtonElement).value as AcademicYear;
+									profileAfterAboutChanges = {
+										...profileAfterAboutChanges,
+										academicYear: year as AcademicYear
+									};
 
-                  profileAfterAboutChanges = {
-                    ...profileAfterAboutChanges,
-                    academicYear: year as AcademicYear
-                  }
+									//Use this for checking what happens when the year is changed
+									//debugger;
+									updatePendingProfile(
+										profileAfterAboutChanges
+									);
 
-                  //Use this for checking what happens when the year is changed
-                  //debugger;
-                  updatePendingProfile(profileAfterAboutChanges);
+									//dataManager is undefined for some reason when changing the year
+									dataManager.updateFields({
+										id: {
+											value: userId,
+											type: "canon"
+										},
+										data: {
+											academicYear: year as AcademicYear
+										}
+									});
+								}}
+								options={Object.values(AcademicYear).map(
+									(yr) => {
+										return {
+											value: yr,
+											markup: <>{yr}</>,
+											disabled: false
+										};
+									}
+								)}
+							/>
+						</Select>
+					</LabelInputBox>
+				</div>
 
-                  //dataManager is undefined for some reason when changing the year
-                  dataManager.updateFields({
-                    id: {
-                      value: userId,
-                      type: 'canon'
-                    },
-                    data: {
-                      academicYear: year as AcademicYear
-                    }
-                  })
-                }}
-                options={Object.values(AcademicYear).map((yr) => {
-                  return {
-                    value: yr,
-                    markup: <>{yr}</>,
-                    disabled: false
-                  };
-                })}
-              />
-            </Select>
-          </LabelInputBox>
-        </div>
+				<div className="about-row row-3">
+					<LabelInputBox
+						label={"Location"}
+						inputType={"single"}
+						value={profile.location}
+						initialValue={unmodifiedProfile.location}
+						onChange={(e) => {
+							const location = e.target.value;
+							profileAfterAboutChanges = {
+								...profileAfterAboutChanges,
+								location
+							};
+							updatePendingProfile(profileAfterAboutChanges);
 
-        <div className="about-row row-3">
-          <LabelInputBox
-            label={'Location'}
-            inputType={'single'}
-            value={profile.location}
-            initialValue={unmodifiedProfile.location}
-            onChange={(e) => {
-              const location = e.target.value;
-              profileAfterAboutChanges = { ...profileAfterAboutChanges, location };
-              updatePendingProfile(profileAfterAboutChanges);
+							//dataManager is also undefined here
+							dataManager.updateFields({
+								id: {
+									value: userId,
+									type: "canon"
+								},
+								data: { location }
+							});
+						}}
+					/>
 
-              //dataManager is also undefined here
-              dataManager.updateFields({
-                id: {
-                  value: userId,
-                  type: 'canon',
-                },
-                data: { location }
-              })
-            }}
-          />
+					<LabelInputBox
+						label={"Mentorship Status"}
+						inputType={"none"}
+						forceUnsaved={
+							profile.mentor !== unmodifiedProfile.mentor
+						}>
+						<Select>
+							<SelectButton
+								placeholder="Select"
+								initialVal={
+									profile.mentor === true
+										? "Mentor"
+										: "Not a mentor"
+								}
+								callback={(e) => e.preventDefault()}
+								type={"input"}
+							/>
+							<SelectOptions
+								callback={(e) => {
+									//true if it's mentor, false if it's anythin else
+									const mentor =
+										(e.target as HTMLButtonElement)
+											.value === "Mentor";
+									profileAfterAboutChanges = {
+										...profileAfterAboutChanges,
+										mentor
+									};
+									updatePendingProfile(
+										profileAfterAboutChanges
+									);
+									dataManager.updateFields({
+										id: {
+											value: userId,
+											type: "canon"
+										},
+										data: { mentor: `${mentor}` } //annoying that it's a string but go off ig
+									});
+								}}
+								options={[
+									{
+										value: "Not a mentor",
+										markup: <>Not a mentor</>,
+										disabled: false
+									},
+									{
+										value: "Mentor",
+										markup: <>Mentor</>,
+										disabled: false
+									}
+								]}
+							/>
+						</Select>
+					</LabelInputBox>
+				</div>
+			</div>
 
-          <LabelInputBox
-            label={'Mentorship Status'}
-            inputType={'none'}
-            forceUnsaved={profile.mentor !== unmodifiedProfile.mentor}
-          >
-            <Select>
-              <SelectButton
-                placeholder="Select"
-                initialVal={profile.mentor === true ? 'Mentor' : 'Not a mentor'}
-                callback={(e) => e.preventDefault()}
-                type={'input'}
-              />
-              <SelectOptions
-                callback={(e) => {
-                  //true if it's mentor, false if it's anythin else
-                  const mentor = ((e.target as HTMLButtonElement).value === "Mentor");
-                  profileAfterAboutChanges = { ...profileAfterAboutChanges, mentor };
-                  updatePendingProfile(profileAfterAboutChanges);
-                  dataManager.updateFields({
-                    id: {
-                      value: userId,
-                      type: 'canon',
-                    },
-                    data: { mentor: `${mentor}` } //annoying that it's a string but go off ig
-                  })
+			<div id="edit-profile-section-2">
+				<LabelInputBox
+					label={"Personal Quote"}
+					labelInfo="Write a fun and catchy phrase that captures your unique personality!"
+					inputType={"multi"}
+					maxLength={100}
+					value={profile.headline}
+					initialValue={unmodifiedProfile.headline}
+					onChange={(e) => {
+						const headline = e.target.value;
+						profileAfterAboutChanges = {
+							...profileAfterAboutChanges,
+							headline
+						};
+						updatePendingProfile(profileAfterAboutChanges);
 
-                }}
-                options={[{
-                  value: 'Not a mentor',
-                  markup: <>Not a mentor</>,
-                  disabled: false
-                }, {
-                  value: 'Mentor',
-                  markup: <>Mentor</>,
-                  disabled: false
-                }]}
-              />
-            </Select>
-          </LabelInputBox>
-        </div>
-      </div>
+						//dataManager is also undefined here
+						dataManager.updateFields({
+							id: {
+								value: userId,
+								type: "canon"
+							},
+							data: { headline }
+						});
+					}}
+				/>
 
-      <div id="edit-profile-section-2">
-        <LabelInputBox
-          label={'Personal Quote'}
-          labelInfo='Write a fun and catchy phrase that captures your unique personality!'
-          inputType={'multi'}
-          maxLength={100}
-          value={profile.headline}
-          initialValue={unmodifiedProfile.headline}
-          onChange={(e) => {
-            const headline = e.target.value;
-            profileAfterAboutChanges = { ...profileAfterAboutChanges, headline };
-            updatePendingProfile(profileAfterAboutChanges);
+				<LabelInputBox
+					label={"Fun Fact"}
+					labelInfo="Share a fun fact about yourself that will surprise others!"
+					inputType={"multi"}
+					maxLength={100}
+					value={profile.funFact}
+					initialValue={unmodifiedProfile.funFact}
+					onChange={(e) => {
+						const funFact = e.target.value;
+						profileAfterAboutChanges = {
+							...profileAfterAboutChanges,
+							funFact
+						};
+						updatePendingProfile(profileAfterAboutChanges);
 
-            //dataManager is also undefined here
-            dataManager.updateFields({
-              id: {
-                value: userId,
-                type: 'canon',
-              },
-              data: { headline }
-            })
-          }}
-        />
+						//dataManager is also undefined here
+						dataManager.updateFields({
+							id: {
+								value: userId,
+								type: "canon"
+							},
+							data: { funFact }
+						});
+					}}
+				/>
+			</div>
 
-        <LabelInputBox
-          label={'Fun Fact'}
-          labelInfo='Share a fun fact about yourself that will surprise others!'
-          inputType={'multi'}
-          maxLength={100}
-          value={profile.funFact}
-          initialValue={unmodifiedProfile.funFact}
-          onChange={(e) => {
-            const funFact = e.target.value;
-            profileAfterAboutChanges = { ...profileAfterAboutChanges, funFact };
-            updatePendingProfile(profileAfterAboutChanges);
+			<LabelInputBox
+				label={"About Me"}
+				labelInfo="Share a brief overview of who you are, your interests, and what drives you!"
+				inputType={"multi"}
+				maxLength={600}
+				value={profile.bio}
+				initialValue={unmodifiedProfile.bio}
+				onChange={(e) => {
+					const bio = e.target.value;
+					profileAfterAboutChanges = {
+						...profileAfterAboutChanges,
+						bio
+					};
+					updatePendingProfile(profileAfterAboutChanges);
 
-            //dataManager is also undefined here
-            dataManager.updateFields({
-              id: {
-                value: userId,
-                type: 'canon',
-              },
-              data: { funFact }
-            })
-          }}
-        />
-      </div>
-
-      <LabelInputBox
-        label={'About Me'}
-        labelInfo='Share a brief overview of who you are, your interests, and what drives you!'
-        inputType={'multi'}
-        maxLength={600}
-        value={profile.bio}
-        initialValue={unmodifiedProfile.bio}
-        onChange={(e) => {
-
-          const bio = e.target.value;
-          profileAfterAboutChanges = { ...profileAfterAboutChanges, bio };
-          updatePendingProfile(profileAfterAboutChanges);
-
-          //dataManager is also undefined here
-          dataManager.updateFields({
-            id: {
-              value: userId,
-              type: 'canon',
-            },
-            data: { bio }
-          })
-        }}
-        id={'edit-profile-section-3'}
-      />
-    </div>
-  );
+					//dataManager is also undefined here
+					dataManager.updateFields({
+						id: {
+							value: userId,
+							type: "canon"
+						},
+						data: { bio }
+					});
+				}}
+				id={"edit-profile-section-3"}
+			/>
+		</div>
+	);
 };
