@@ -28,11 +28,11 @@ const approveProjectController = async (request: AuthenticatedRequest, response:
   }
 
   const res: ApiResponse = {
-    status: 200,
+    status: 204,
     error: null,
     data: 'Project approved',
   };
-  response.status(200).json(res);
+  response.status(204).json(res);
 };
 
 export default approveProjectController;

@@ -27,6 +27,26 @@ export const authenticated = (
     next: NextFunction,
   ) => void | Promise<void>;
 
+//Approve a project
+router.patch(
+  '/:id/approve',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.approveProject),
+);
+
+//Unapprove a project
+router.patch(
+  '/:id/unapprove',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.unapproveProject),
+);
+
 //Receive all projects
 router.get('/', PROJECT.getProjects);
 
@@ -329,26 +349,6 @@ router.delete(
 );
 
 //---UNAPPROVED PROJECTS---\\
-
-//Approve a project
-router.patch(
-  '/projects/{id}/approve',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.approveProject),
-);
-
-//Unapprove a project
-router.patch(
-  '/projects/{id}/unapprove',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.unapproveProject),
-);
 
 //Get all unapproved projects
 router.get(

@@ -28,12 +28,22 @@ const requestApprovalController = async (req: AuthenticatedRequest, res: Respons
     return;
   }
 
+  if (result === 'CONFLICT') {
+    const resBody: ApiResponse = {
+      status: 409,
+      error: 'Project is already awaiting request',
+      data: null,
+    };
+    res.status(409).json(resBody);
+    return;
+  }
+
   const resBody: ApiResponse = {
-    status: 201,
+    status: 200,
     error: null,
     data: null,
   };
-  res.status(201).json(resBody);
+  res.status(200).json(resBody);
 };
 
 export default requestApprovalController;

@@ -73,11 +73,11 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
-      status: 404,
+      status: 401,
       error: 'User not found',
       data: null,
     };
-    response.status(404).json(resBody);
+    response.status(401).json(resBody);
     return;
   }
 
