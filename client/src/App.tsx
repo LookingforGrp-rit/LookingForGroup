@@ -13,7 +13,7 @@ import MyProjects from './components/pages/MyProjects';
 import Profile from './components/pages/Profile';
 import Project from './components/pages/Project';
 // import ProjectPostPage from './components/pages/ProjectPostPage';
-import { Discover, Meet } from './components/pages/DiscoverAndMeet';
+import { Discover, Meet, DiscoverPage } from './components/pages/DiscoverAndMeet';
 //import Settings from './components/pages/Settings'; -- Commented in clean up 26-20-01 
 import NewSettings from './components/pages/NewSettings';
 import NotFound from './components/pages/NotFound';
@@ -70,7 +70,7 @@ function App() {
         </a>
         {!hideSidebar && <SideBar /*avatarImage={avatarImage} setAvatarImage={setAvatarImage} theme={theme}  -- Commented in clean up 26-20-01 */ />}
         <Routes>
-          <Route path={paths.routes.DEFAULT} element={<Discover />} />
+          <Route path={paths.routes.DEFAULT} element={<DiscoverPage />} />
           <Route path={paths.routes.LOGIN} element={<Login />} />
           <Route
             path={paths.routes.SIGNUP}
@@ -86,7 +86,7 @@ function App() {
           <Route path={paths.routes.FORGOTPASSWORD} element={<ForgotPassword />} />
           <Route path={paths.routes.RESETPASSWORD} element={<ResetPassword />} />
 
-          <Route path={paths.routes.HOME} element={<Discover  />} />
+          <Route path={paths.routes.HOME} element={<DiscoverPage  />} />
           <Route path={paths.routes.MEET} element={<Meet />} />
           {/* <Route path={paths.routes.MESSAGES} element={<Messages />} /> */}
           <Route path={paths.routes.MYPROJECTS} element={<MyProjects  />} />

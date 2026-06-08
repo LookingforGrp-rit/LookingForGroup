@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, ChangeEvent } from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -377,7 +377,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const getShowcaseDetails = async (projectList: ProjectPreview[], usedCache: NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList: ProjectWithFollowers[] = [];
 
-    console.log(projectList);
+    //console.log(projectList);
     // remove projects without open positions
     // const filteredProjectList = projectList.filter(a => a.jobs.length > 1);
 
@@ -709,7 +709,7 @@ export const Meet = () => {
 };
 
 
-const DiscoverPage = () => {
+export const DiscoverPage = () => {
   // --------------------
   // Components
   // --------------------
@@ -718,7 +718,6 @@ const DiscoverPage = () => {
   // Full data and displayed data based on filter/search query
   const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
   const [projectCache, setProjectCache] = useState<NumberDictionary<StructuredProjectInfo>>({});
-  const [fetchedProjects, setFetchedProjects] = useState<boolean>(false);
 
   const [filteredProjectList, setFilteredProjectList] = useState<ProjectPreview[]>([]);
   const [projectSearchData, setProjectSearchData] = useState<ProjectPreview[]>([]);
@@ -734,10 +733,23 @@ const DiscoverPage = () => {
 
   // Pagination state for projects
   const [currentProjectPage, setCurrentProjectPage] = useState(1);
+  const PROJECTS_PER_PAGE = 6;
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = <DiscoverCarousel dataList={heroProjectList} />
+
+  /**
+ * Changes what items are shown to the user whenever a filter has been added or changed
+ * @param activeTagFilters Tags that are shown to the user now
+ */
+  const updateItemList = async (activeTagFilters: Tag[]) => {
+    return updateProjectList(activeTagFilters);
+  };
+
+  const totalProjectPages = Math.max(1, Math.ceil(filteredProjectList.length / PROJECTS_PER_PAGE));
+  const startIndex = (currentProjectPage - 1) * PROJECTS_PER_PAGE;
+  const paginatedProjects = filteredProjectList.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
 
   // --------------------
   // Helper functions
@@ -773,50 +785,7 @@ const DiscoverPage = () => {
     }
   };
 
-    // Set the necessary data for project mode
-  const setupProjectData = async (projects: ApiResponse<ProjectPreview[]>): Promise<void> => {
-    if (!projects.data) return;
-
-    const newProjectCache = projectCache;
-    for (let project of projects.data) {
-
-      const cachedProject = newProjectCache[project.projectId];
-      if (!cachedProject) {
-        newProjectCache[project.projectId] = { preview: project };
-      }
-      else {
-        cachedProject.preview = project;
-      }
-
-    }
-
-    // Pre-fetch full details for the first visible batch to avoid flashing like/count state
-    const INITIAL_LOAD_COUNT = 25;
-    for (let i = 0; i < Math.min(INITIAL_LOAD_COUNT, projects.data.length); i++) {
-      const projectPreview = projects.data[i] as ProjectPreview;
-      const projectId = projectPreview.projectId;
-      if (!newProjectCache[projectId]?.full) {
-        try {
-          const projectData = await getByID(projectId);
-          if (projectData.data) {
-            newProjectCache[projectId].full = projectData.data;
-          }
-        } catch (error) {
-          console.error(`Error preloading project ${projectId}:`, error);
-        }
-      }
-    }
-
-    setFullProjectList(projects.data);
-    setFilteredProjectList(projects.data);
-
-    setProjectSearchData(projects.data);
-
-    getShowcaseDetails(projects.data, newProjectCache);
-    setProjectCache(newProjectCache);
-  };
-
-    // Update the showcased projects after getting more info from the server
+  // Update the showcased projects after getting more info from the server
   const getShowcaseDetails = async (projectList: ProjectPreview[], usedCache: NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList: ProjectWithFollowers[] = [];
 
@@ -859,12 +828,183 @@ const DiscoverPage = () => {
     setHeroProjectList(focusProjectDetailsList);
   }
 
+  // Set the necessary data for project mode
+  const setupProjectData = async (): Promise<void> => {
+    const projectRes = await getProjects();
+
+    if (!projectRes.data) return;
+
+    const newProjectCache = projectCache;
+    for (let project of projectRes.data) {
+
+      const cachedProject = newProjectCache[project.projectId];
+      if (!cachedProject) {
+        newProjectCache[project.projectId] = { preview: project };
+      }
+      else {
+        cachedProject.preview = project;
+      }
+
+    }
+
+    // Pre-fetch full details for the first visible batch to avoid flashing like/count state
+    const INITIAL_LOAD_COUNT = 25;
+    for (let i = 0; i < Math.min(INITIAL_LOAD_COUNT, projectRes.data.length); i++) {
+      const projectPreview = projectRes.data[i] as ProjectPreview;
+      const projectId = projectPreview.projectId;
+      if (!newProjectCache[projectId]?.full) {
+        try {
+          const projectData = await getByID(projectId);
+          if (projectData.data) {
+            newProjectCache[projectId].full = projectData.data;
+          }
+        } catch (error) {
+          console.error(`Error preloading project ${projectId}:`, error);
+        }
+      }
+    }
+
+    setFullProjectList(projectRes.data);
+    setFilteredProjectList(projectRes.data);
+
+    setProjectSearchData(projectRes.data);
+
+    getShowcaseDetails(projectRes.data, newProjectCache);
+    setProjectCache(newProjectCache);
+  };
+
+  useMemo(() => setupProjectData, []);
+
+  /**
+  * Updates the filtered project list with new search information
+  * @param searchResults
+  */
+  const searchProjects = useCallback((searchResults: any[][]) => {
+    if (!searchResults || !Array.isArray(searchResults)) return;
+
+    // Flatten the nested arrays
+    const flatResults = searchResults.flat();
+    const matches: ProjectPreview[] = [];
+    const matchIds: number[] = [];
+
+    for (const result of flatResults) {
+      const resultName = result?.title || result?.name || result?.value || '';
+      if (!resultName) continue;
+
+      const matchIndex = projectSearchData.findIndex(
+        (item) => item.title === resultName
+      );
+
+      if (matchIndex !== -1 && fullProjectList[matchIndex]) {
+        const projectPreview = fullProjectList[matchIndex];
+        matches.push(projectPreview);
+        matchIds.push(projectPreview.projectId);
+      }
+    }
+
+    setFilteredProjectList(matches);
+    setCurrentProjectPage(1);
+
+    // Preload full project data for search results so the like icon state is available immediately.
+    (async () => {
+      const newCache = projectCache;
+      for (const projectId of matchIds) {
+        if (!newCache[projectId]?.full) {
+          try {
+            const projectData = await getByID(projectId);
+            if (projectData.data) {
+              newCache[projectId].full = projectData.data;
+            }
+          } catch (error) {
+            console.error(`Error preloading search project ${projectId}:`, error);
+          }
+        }
+      }
+      setProjectCache(newCache);
+    })();
+  }, [projectSearchData, fullProjectList, projectCache]);
+
+  //gets the discover carousel items
+  let discoverPanelContents: React.ReactElement
+  if (filteredProjectList.length === 0) {
+    discoverPanelContents = (
+      <div className='placeholder-spacing'>
+        <div className='spinning-loader'></div>
+      </div>
+    );
+  } else {
+    discoverPanelContents = (
+      <div className="pagination-wrapper">
+        <PanelBox
+          category={'projects'}
+          itemList={paginatedProjects}
+          itemAddInterval={PROJECTS_PER_PAGE}
+          projectCache={projectCache}
+          followedProjectIds={followedProjectIds}
+          userId={currentUserId ?? -1}
+        />
+
+        {/* Pagination Controls */}
+        {filteredProjectList.length > 0 && (
+          <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '2rem', paddingBottom: '2rem' }}>
+            <button
+              className="pagination-btn"
+              onClick={() => setCurrentProjectPage(prev => Math.max(prev - 1, 1))}
+              disabled={currentProjectPage === 1}
+
+            >
+              Previous
+            </button>
+
+            <span>Page {currentProjectPage} of {totalProjectPages}</span>
+
+            <button
+              className="pagination-btn"
+              onClick={() => setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages))}
+              disabled={currentProjectPage === totalProjectPages}
+
+            >
+              Next
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  };
+
+
   return (
-    <div></div>
+    <div className="page" tabIndex={-1}>
+      {/* Search bar and profile/notification buttons */}
+      <Header dataSets={projectDataSet}
+        onSearch={searchProjects}
+        value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
+        setCurrentUserId={getAuth} />
+      {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
+      {heroContent}
+
+      {/* 
+        Contains tag filters & button to access more filters 
+        When page loads, determine if project tags or profile tags should be used
+        Clicking a tag filter adds it to a list & updates panel display based on that list
+        Changes to filters via filter menu are only applied after a confirmation
+      */}
+      <main id="main" tabIndex={-1} aria-label='main content'>
+        <DiscoverFilters category={'projects'} updateItemList={updateItemList} />
+
+        {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
+        <div id="discover-panel-box">
+          {/* If filteredItemList isn't done loading, display a loading bar */}
+          {discoverPanelContents}
+        </div>
+      </main>
+      <CreditsFooter />
+      <ToTopButton />
+    </div>
   );
 }
 
-const ProfileMeetPage = () => {
+export const ProfileMeetPage = () => {
   //banner for the meets page
   const profileHero = (
     <div id='discover-hero'>
@@ -916,5 +1056,7 @@ const ProfileMeetPage = () => {
     </div>
   );
 
-
+  return (
+    <div></div>
+  );
 }
