@@ -47,7 +47,7 @@ export const createNewUser = async (
 
   const response = await POST(apiURL, userData);
   
-  if (response.error) console.log(`Error in createUser: ${response.error} session data: ${JSON.stringify(response.data)}`);
+  if (response.error) console.log(`Error in createUser: ${response.error}`);
   return response as ApiResponse<MePrivate>;
 };
 
@@ -308,7 +308,7 @@ export const updateProjectVisibility = async (
  * @return 201 if successful, 400 if not
  */
 export const leaveProject = async (projectID: number): Promise<ApiResponse<null>> => {
-  const url = `me/projects/${projectID}/leave`;
+  const url = `/me/projects/${projectID}/leave`;
   const response = await DELETE(url);
 
   // if (response.error) //console.log(`Error in leaveProject: ${response.error}`);

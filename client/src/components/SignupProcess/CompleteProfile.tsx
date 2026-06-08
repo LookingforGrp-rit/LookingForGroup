@@ -1,17 +1,14 @@
-import { CreateUserInput, Major, Skill, AcademicYear } from '@looking-for-group/shared';
-import { MouseEventHandler, useMemo, useState } from 'react';
-import LabelInputBox from '../LabelInputBox';
-import { Select, SelectButton, SelectOptions } from '../Select';
+import {
+	CreateUserInput,
+	Major,
+	Skill
+} from "@looking-for-group/shared";
+import { MouseEventHandler, useMemo, useState } from "react";
+import LabelInputBox from "../LabelInputBox";
+import { Select, SelectButton, SelectOptions } from "../Select";
 import { getMajors } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
-import { ThemeIcon } from '../ThemeIcon';
-enum AcademicYears {
-  Freshman = "Freshman",
-  Sophomore = "Sophomore",
-  Junior = "Junior",
-  Senior = "Senior",
-  Graduate = "Graduate"
-};
+import { AcademicYear } from "@looking-for-group/shared/enums";
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -27,7 +24,7 @@ interface CompleteProfileProps {
 	location: string;
 	funFact: string;
 	major: Major[];
-  academicYear: AcademicYear | undefined;
+	academicYear: AcademicYear | undefined;
 	setBio: React.Dispatch<React.SetStateAction<string>>;
 	setPronouns: React.Dispatch<React.SetStateAction<string>>;
 	setHeadline: React.Dispatch<React.SetStateAction<string>>;
@@ -36,7 +33,9 @@ interface CompleteProfileProps {
 	setLocation: React.Dispatch<React.SetStateAction<string>>;
 	setFunFact: React.Dispatch<React.SetStateAction<string>>;
 	setMajor: React.Dispatch<React.SetStateAction<Major[]>>;
-	setAcademicYear: React.Dispatch<React.SetStateAction<AcademicYear | undefined>>;
+	setAcademicYear: React.Dispatch<
+		React.SetStateAction<AcademicYear | undefined>
+	>;
 	profileImage: File;
 	setProfileImage: React.Dispatch<React.SetStateAction<File>>;
 }
@@ -63,56 +62,55 @@ interface CompleteProfileProps {
  * @returns HTML - user can implement their bio, pronouns, profile image upload, button to use avatar,
  * and navigation buttons like “Back” and “Next”.
  */
-const CompleteProfile : React.FC<CompleteProfileProps> = ({
-  show,
-  onNext,
-  onBack,
-  // avatarImage,
-  userInfo,
-  selectedSkills,
-  bio,
-  pronouns,
-  headline,
-  phoneNumber,
-  title,
-  location,
-  funFact,
-  major,
-  profileImage,
-  academicYear,
-  setBio,
-  setHeadline,
-  setPhoneNumber,
-  setTitle,
-  setLocation,
-  setFunFact,
-  setMajor,
-  setAcademicYear,
-  setPronouns,
-  setProfileImage,
+const CompleteProfile: React.FC<CompleteProfileProps> = ({
+	show,
+	onNext,
+	onBack,
+	// avatarImage,
+	userInfo,
+	selectedSkills,
+	bio,
+	pronouns,
+	headline,
+	phoneNumber,
+	title,
+	location,
+	funFact,
+	major,
+	profileImage,
+	academicYear,
+	setBio,
+	setHeadline,
+	setPhoneNumber,
+	setTitle,
+	setLocation,
+	setFunFact,
+	setMajor,
+	setAcademicYear,
+	setPronouns,
+	setProfileImage
 }) => {
 	// make each skill tag a different color
 	// matches the colors in the design/background
 	const tagColors = ["#9FACFF", "#97E5AB", "#99E6EA", "#F18067", "#239EF7"];
 
-  const [allMajors, setAllMajors] = useState<Major[]>([]);
+	const [allMajors, setAllMajors] = useState<Major[]>([]);
 
-  const [displayImg, setDisplayImg] = useState<string>();
+	const [displayImg, setDisplayImg] = useState<string>();
 
-  useMemo(() => {
-      const fetchMajors = async () => {
-      const response = await getMajors();
-  
-      if (response.data === undefined || !response.data) {
-        return;
-      }
-      setAllMajors(response.data);
-      };
-      if (allMajors.length === 0) {
-      fetchMajors();
-      }
-    }, []);
+	useMemo(() => {
+		const fetchMajors = async () => {
+			const response = await getMajors();
 
+			if (response.data === undefined || !response.data) {
+				return;
+			}
+			setAllMajors(response.data);
+		};
+		if (allMajors.length === 0) {
+			fetchMajors();
+		}
+	}, []);
 
 	useMemo(() => {
 		const fetchMajors = async () => {
@@ -139,7 +137,7 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 					setDisplayImg(event.target.result as string);
 				}
 			};
-      setProfileImage(target.files[0]);
+			setProfileImage(target.files[0]);
 			reader.readAsDataURL(target.files[0]);
 		}
 	};
@@ -167,15 +165,10 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 					<div id="completeProfile-input-container">
 						<div id="profile-details">
 							{/* Profile picture container */}
-							<div
-								id="profile-pic">
+							<div id="profile-pic">
 								{/* image is profile image, if empty/null display avatar image */}
 								<img
-									src={
-										displayImg
-											? displayImg
-											: placeholder
-									}
+									src={displayImg ? displayImg : placeholder}
 									alt="profile-pic"
 								/>
 								{/* <img src={profileImage} alt="profile-pic" /> */}
@@ -195,7 +188,14 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 								</label>
 
 								{/* button to use avatar as profile picture */}
-								{<button onClick={() => setDisplayImg(placeholder)}>Use Avatar</button>}
+								{
+									<button
+										onClick={() =>
+											setDisplayImg(placeholder)
+										}>
+										Use Avatar
+									</button>
+								}
 							</div>
 						</div>
 
@@ -280,17 +280,22 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 						/>
 
 						{/* Academic Year */}
-            {/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
+						{/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
 						<div id="academicYear-input">
 							<Select>
 								<SelectButton
 									placeholder="Academic Year (required)"
 									type={"input"}
-                  initialVal={academicYear}
+									initialVal={academicYear}
 								/>
 								<SelectOptions
-                  callback={(e) => setAcademicYear((e.target as HTMLButtonElement).value as AcademicYear)}
-									options={Object.values(AcademicYears).map(
+									callback={(e) =>
+										setAcademicYear(
+											(e.target as HTMLButtonElement)
+												.value as AcademicYear
+										)
+									}
+									options={Object.values(AcademicYear).map(
 										(yr) => {
 											return {
 												value: yr,
@@ -304,53 +309,61 @@ const CompleteProfile : React.FC<CompleteProfileProps> = ({
 						</div>
 
 						{/* Major */}
-            {/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
 						<div id="major-input">
 							<Select>
 								<SelectButton
 									placeholder="Major (required)"
 									type={"input"}
-                  initialVal={major[0]?.label}
-                  searchable={true}
+									initialVal={major[0]?.label}
+									searchable={true}
 								/>
-                <SelectOptions 
-                  callback={(e) => { //praying this works so i can migrate it to users
-                    const maj = allMajors.find((m) => m.label = (e.target as HTMLButtonElement).value)
-                    if(maj) setMajor([maj]);
-                  }}
+								<SelectOptions
+									callback={(e) => {
+										//praying this works so i can migrate it to users
+										const maj = allMajors.find(
+											(m) =>
+												m.label ===
+												(e.target as HTMLButtonElement)
+													.value
+										);
+										if (maj) setMajor([maj]);
+									}}
 									options={allMajors.map((m) => ({
 										value: m.label,
 										markup: <>{m.label}</>,
 										disabled: false
 									}))}
-                />
+								/>
 							</Select>
 						</div>
 
-            {/* Bio */}
-            <LabelInputBox
-              label={"Bio"}
-              inputType={"multi"}
-              maxLength={100}
-              id="bio-input"
-              placeholder={"Bio"}
-              onChange={(e) => setBio(e.target.value)}
-              value={bio}
-              hideUnsaved={true}
-            />
-          </div>
-          <div id="signupProcess-btns">
-            <button id="signup-backBtn" onClick={onBack}>
-              Back
-            </button>
-            <button id="signup-nextBtn" onClick={onNext} disabled={!(major && academicYear)}>
-              Next
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
+						{/* Bio */}
+						<LabelInputBox
+							label={"Bio"}
+							inputType={"multi"}
+							maxLength={100}
+							id="bio-input"
+							placeholder={"Bio"}
+							onChange={(e) => setBio(e.target.value)}
+							value={bio}
+							hideUnsaved={true}
+						/>
+					</div>
+					<div id="signupProcess-btns">
+						<button id="signup-backBtn" onClick={onBack}>
+							Back
+						</button>
+						<button
+							id="signup-nextBtn"
+							onClick={onNext}
+							disabled={!(major && academicYear)}>
+							Next
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+	);
 };
 
 export default CompleteProfile;

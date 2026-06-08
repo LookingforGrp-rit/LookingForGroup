@@ -1,7 +1,8 @@
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { ProjectPanel } from './ProjectPanel';
 import { ProfilePanel } from './ProfilePanel';
 import { ProjectWithFollowers, UserPreview, NumberDictionary, StructuredProjectInfo } from '@looking-for-group/shared';
+import { createImmutableStateInvariantMiddleware } from '@reduxjs/toolkit';
 
 // Item list should use "useState" so that it'll re-render on the fly
 // And so that no search functionality needs to be included in this component
@@ -16,56 +17,47 @@ import { ProjectWithFollowers, UserPreview, NumberDictionary, StructuredProjectI
  * @param itemAddInterval - Number of items to add to the display when scrolling.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache, followedProjectIds, userId }: { category: string, itemList: unknown[], itemAddInterval: number, projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
+export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache, followedProjectIds, userId }:
+  {
+    category: string, itemList: unknown[], itemAddInterval: number, projectCache?: NumberDictionary<StructuredProjectInfo>,
+    followedProjectIds?: Set<number>, userId: number,
+  }) => {
+  //console.log(itemList);
   // Don't display all items at first, load them in periodically
   // Currently rendered subset of items. Initially displays only a portion (controlled by itemAddInterval).
   const [displayedItems, setDisplayedItems] = useState(itemList.slice(0, itemAddInterval));
   // Keeps a copy of the incoming itemList prop to detect updates from API or parent component.
   const [itemListCopy, setItemListCopy] = useState(itemList);
+  //console.log(itemList !== itemListCopy);
 
   // Make sure displayedItems gets updated when itemList receives API data
-  if (itemList !== itemListCopy) {
-    setDisplayedItems(itemList.slice(0, itemAddInterval));
-    setItemListCopy(itemList);
-  }
+  useEffect(() => {
+    //console.log(displayedItems);
+    if (itemList !== itemListCopy) {
+      setDisplayedItems(itemList.slice(0, itemAddInterval));
+      setItemListCopy(itemList);
+    }
+  }, [itemList])
 
-  /**
-   * Appends more items to the displayed list when the user scrolls to the bottom.
-   * 
-   * Steps:
-   * 1. Reads scrollTop, clientHeight, and scrollHeight from the panel container.
-   * 2. Checks if the scroll position indicates the user has reached the bottom.
-   * 3. Slices the next `itemAddInterval` items from the full itemList and appends them
-   *    to the displayedItems array.
-   * 
-   * Important notes:
-   * - Uses `document.querySelector` to locate the scroll container (can be replaced by useRef for better React practices)
-   * - The original `startIndex` calculation should be `displayedItems.length` to avoid skipping items.
-   */
-  const addItems = () => {
-    const panelBoxName = `${category === 'projects' ? 'project' : 'profile'}-panel-box`;
-    const { scrollTop, scrollHeight, clientHeight } = document.querySelector(panelBoxName)!;
+  // Updated to use native react events
+  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
 
-    // Check if the user has scrolled to the bottom of the panel box
-    if (scrollTop + clientHeight >= scrollHeight) {
-      const startIndex = displayedItems.length - 1;
-      const newItems = itemList.slice(startIndex, startIndex + itemAddInterval);
-      setDisplayedItems(displayedItems.concat(newItems));
+    if (Math.ceil(scrollTop) + clientHeight >= scrollHeight - 5) {
+      const startIndex = displayedItems.length;
+      
+      // Only add if there is something left
+      if (startIndex < itemList.length) {
+        const newItems = itemList.slice(startIndex, startIndex + itemAddInterval);
+        setDisplayedItems(prevItems => prevItems.concat(newItems));
+      }
     }
   };
 
-  /**
-   * Renders the list of ProjectPanel components inside a scrollable container.
-   * Attaches the addItems scroll handler to implement lazy loading.
-   * 
-   * @returns JSX element containing the project panels
-   */
-  const ProjectPanelBox = () => {
+  // Return directly instead of deferring
+  if (category === 'projects') {
     return (
-      <div
-        className="project-panel-box"
-        onScroll={addItems}
-      >
+      <div className="project-panel-box" onScroll={handleScroll}>
         {displayedItems.length > 0 ? (
           displayedItems.map((item) => {
             const projectId = (item as ProjectWithFollowers).projectId;
@@ -84,30 +76,22 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache
         )}
       </div>
     );
-  };
+  }
 
-  /**
-   * Renders the list of ProfilePanel components inside a scrollable container.
-   * Attaches the addItems scroll handler to implement lazy loading.
-   * 
-   * @returns JSX element containing the profile panels
-   */
-  const ProfilePanelBox = () => {
-    return (
-      <div
-        className="profile-panel-box"
-        onScroll={addItems}
-      >
-        {displayedItems.length > 0 ? (
-          displayedItems.map((profile) => (
-            <ProfilePanel profileData={profile as UserPreview} currentUserId={userId} key={(profile as UserPreview).userId} />
-          ))
-        ) : (
-          <>Sorry, no people here</>
-        )}
-      </div>
-    );
-  };
-
-  return category === 'projects' ? <ProjectPanelBox /> : <ProfilePanelBox />;
+  // Functional else statement
+  return (
+    <div className="profile-panel-box" onScroll={handleScroll}>
+      {displayedItems.length > 0 ? (
+        displayedItems.map((profile) => (
+          <ProfilePanel 
+            profileData={profile as UserPreview} 
+            currentUserId={userId} 
+            key={(profile as UserPreview).userId} 
+          />
+        ))
+      ) : (
+        <>Sorry, no people here</>
+      )}
+    </div>
+  );
 };

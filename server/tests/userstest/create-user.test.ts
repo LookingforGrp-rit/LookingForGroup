@@ -37,6 +37,7 @@ describe('createUserService', async () => {
       preferredName: 'Gold',
       ritEmail: 'goldleaf@rit.edu',
       profileImage: null,
+      displayPhone: false,
       headline: '',
       pronouns: '',
       title: '',
@@ -95,6 +96,7 @@ describe('createUserService', async () => {
       profileImage: null,
       designer: false,
       developer: false,
+      displayPhone: false,
       apiUrl: '',
     };
 

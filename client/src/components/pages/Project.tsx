@@ -27,7 +27,7 @@ import AboutFooter from "../AboutFooter";
  * Project page. Renders the project page with all project details, team member information, and available positions.
  * @returns JSX Element
  */
-const Project = () => {
+const Project = (userProfile : any) => {
   //Navigation hook
   const navigate = useNavigate();
 
@@ -279,12 +279,10 @@ const Project = () => {
           const memberUser = member.user; //so i don't have to go user.user.userId or anything
 
           return (
-            <button
+            <a
               key={memberUser.userId}
               className="project-contributor"
-              onClick={() =>
-                navigate(`${paths.routes.PROFILE}?userID=${memberUser.userId}`)
-              }
+              href={`${paths.routes.PROFILE}?userID=${memberUser.userId}`}
             >
               <img
                 className="project-contributor-profile"
@@ -302,7 +300,7 @@ const Project = () => {
                 </div>
                 <div className="team-member-role">{member.role.label}</div>
               </div>
-            </button>
+            </a>
           );
         })}
       </>

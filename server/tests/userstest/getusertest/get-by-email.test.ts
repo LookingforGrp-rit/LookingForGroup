@@ -43,6 +43,7 @@ describe('getUserByEmailService', () => {
       profileImage: null,
       mentor: false,
       designer: false,
+      displayPhone: false,
       developer: false,
       headline: '',
       pronouns: '',

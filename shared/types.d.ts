@@ -608,6 +608,17 @@ export interface UserPreview {
   /**
    * Location of this resource on the server
    */
+
+  /**
+   * The user's preference on whether or not they wish to display their phone number on their profile
+   */
+  displayPhone: boolean;
+
+  /**
+   * The user's phone number (only filled is displayPhone is true)
+   */
+  phoneNumber?: string | null;
+
   apiUrl: string;
 }
 
@@ -821,6 +832,11 @@ export interface MePrivate extends MeDetail {
    * The logged-in user's phone number, null if unset
    */
   phoneNumber: string | null;
+
+  /**
+   * Whether or not to display the user's phone number 
+   */
+  displayPhone: boolean
 
   /**
    * The logged-in user's UID
@@ -1193,7 +1209,6 @@ export type CreateUserInput = Partial<
   googleId?: string;
   username: string;
   ritEmail: string;
-  majors: Major[];
 };
 
 export type SessionUserData = Partial<{
