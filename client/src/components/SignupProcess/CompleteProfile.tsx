@@ -1,22 +1,14 @@
 import {
 	CreateUserInput,
 	Major,
-	Skill,
-	AcademicYear
+	Skill
 } from "@looking-for-group/shared";
 import { MouseEventHandler, useMemo, useState } from "react";
 import LabelInputBox from "../LabelInputBox";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { getMajors } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
-import { ThemeIcon } from "../ThemeIcon";
-enum AcademicYears {
-	Freshman = "Freshman",
-	Sophomore = "Sophomore",
-	Junior = "Junior",
-	Senior = "Senior",
-	Graduate = "Graduate"
-}
+import { AcademicYear } from "@looking-for-group/shared/enums";
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -303,7 +295,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 												.value as AcademicYear
 										)
 									}
-									options={Object.values(AcademicYears).map(
+									options={Object.values(AcademicYear).map(
 										(yr) => {
 											return {
 												value: yr,
