@@ -262,7 +262,7 @@ model Users {
   displayPhone      Boolean             @default(false) @map("display_phone")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
-  phoneNumber       String?             @unique @map("phone_number") @db.VarChar(20)
+  phoneNumber       String?             @map("phone_number") @db.VarChar(20)
   googleId          String              @unique(map: "google_id_UNIQUE") @default("bill of rights") @map("google_id")
   preferredName     String              @default("") @map("preferred_name") @db.VarChar(50)
   members           Members[]
