@@ -1189,6 +1189,7 @@ export type UpdateUserInput = Partial<
     | "bio"
     | "phoneNumber"
     | 'privacy'
+    | 'displayPhone'
   > & {
     profileImage?: File;
     mentor?: "true" | "false";
@@ -1207,6 +1208,7 @@ export type CreateUserInput = Partial<
     | "phoneNumber"
     | 'username'
     | 'privacy'
+    | 'displayPhone'
   > & {
     profileImage?: string;
     mentor?: true | false;
