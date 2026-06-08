@@ -190,6 +190,38 @@ Profile Panel component style rules
   opacity: 1;
 }
 
+@media (max-width: 660px){
+  .profile-panel{
+    width: clamp(200px, 300px, 300px) !important;
+    display: flex;
+
+    img {
+      border-radius: 10px !important;
+      object-fit: contain !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+  }
+}
+
+@media (max-width: 799px){
+  .profile-panel{
+    width: clamp(200px, 250px, 250px) !important;
+    display: flex;
+  
+
+    img {
+      border-radius: 10px !important;
+      object-fit: contain !important;
+      margin-left: auto !important;
+      margin-right: auto !important;
+    }
+  }
+}
+
+
+
+
 /* #endregion */
 
 /*
