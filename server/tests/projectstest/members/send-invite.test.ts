@@ -98,6 +98,7 @@ const prismaProject: ProjectWithFollowers = {
     firstName: '',
     funFact: '',
     displayPhone: false,
+    privacy: 'public' as Visibility,
     headline: '',
     lastName: '',
     location: '',
