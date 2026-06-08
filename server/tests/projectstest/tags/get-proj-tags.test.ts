@@ -1,4 +1,4 @@
-import type { ProjectPurpose, ProjectStatus, Tag } from '@looking-for-group/shared';
+import type { ProjectPurpose, ProjectStatus, Tag, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getProjectTagsService from '#services/projects/tags/get-proj-tags.ts';
@@ -44,6 +44,7 @@ const prismaProject = {
   projectId: 100,
   purpose: 'Academic' as ProjectPurpose,
   status: 'Planning' as ProjectStatus,
+  globalVisibility: 'public' as Visibility,
   thumbnailId: 0,
   title: 'test 1',
   updatedAt: now,

@@ -24,7 +24,7 @@ import { deleteSocial } from '#controllers/me/socials/delete-social.ts';
 import { getSocials } from '#controllers/me/socials/get-socials.ts';
 import { updateSocial } from '#controllers/me/socials/update-social.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
-import { updateProjectVisibilityController } from '#controllers/me/update-project-visibility.ts';
+import { updateProjectProfileVisibilityController } from '#controllers/me/update-project-profile-visibility.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -104,7 +104,7 @@ router.put(
   '/projects/:id/visibility',
   projectExistsAt('path', 'id'),
   authenticated(userAttributeExistsAt('project', 'path', 'id')),
-  authenticated(updateProjectVisibilityController),
+  authenticated(updateProjectProfileVisibilityController),
 );
 //Report project
 router.post(

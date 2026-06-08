@@ -21,7 +21,7 @@ components:
           type: string
         bio:
           type: string
-        visibility:
+        privacy:
           $ref: 'enums.yaml#/components/schemas/Visibility'
         phoneNumber:
           type: string

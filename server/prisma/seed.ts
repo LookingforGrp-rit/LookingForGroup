@@ -1,3 +1,4 @@
+import type { Visibility } from '@looking-for-group/shared';
 import { PrismaClient } from '../src/models/generated/prisma/index.js';
 
 const prisma = new PrismaClient();
@@ -126,6 +127,7 @@ async function main() {
         purpose: 'Personal',
         userId: 1,
         status: 'Development',
+        globalVisibility: 'public' as Visibility,
       },
       {
         title: 'Changeling',
@@ -133,6 +135,7 @@ async function main() {
         description: 'Have you ever needed a Changeling?',
         audience: 'Everybody',
         purpose: 'Personal',
+        globalVisibility: 'public' as Visibility,
         userId: 2,
         status: 'Development',
       },
@@ -140,6 +143,7 @@ async function main() {
         title: 'Manhattan Project',
         hook: 'You can make an ATOMIC BOMB',
         description: 'Have you ever needed to nuke a country?',
+        globalVisibility: 'public' as Visibility,
         audience: 'Everybody',
         purpose: 'Personal',
         userId: 3,

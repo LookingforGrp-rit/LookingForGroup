@@ -1,7 +1,7 @@
 import type { ProjectMember, UserPreview } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
-import { MembersProfileVisibility } from '#prisma-models/index.js';
+import { Visibility } from '#prisma-models/index.js';
 import getMemberService from '#services/projects/members/get-members.ts';
 import { transformProjectMember } from '#services/transformers/projects/parts/project-member.ts';
 
@@ -38,7 +38,7 @@ const testMembers = [
     userId: 29,
     roleId: 31,
     label: 'Test',
-    profileVisibility: 'Public' as MembersProfileVisibility,
+    profileVisibility: 'public' as Visibility,
     createdAt: now,
     users: {
       firstName: 'Alice',
@@ -49,7 +49,7 @@ const testMembers = [
     userId: 76,
     roleId: 52,
     label: 'Test 2',
-    profileVisibility: 'Public' as MembersProfileVisibility,
+    profileVisibility: 'public' as Visibility,
     createdAt: now,
     users: {
       firstName: 'Eric',

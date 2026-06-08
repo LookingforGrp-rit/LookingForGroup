@@ -41,9 +41,9 @@ const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggle
         }}
       >
         <ThemeIcon
-          id={membershipData.visibility === "Public" ? "eye" : "eye-line"}
+          id={membershipData.profileVisibility === "public" ? "eye" : "eye-line"}
           width={19}
-          height={membershipData.visibility === "Public" ? 13 : 18}
+          height={membershipData.profileVisibility === "public" ? 13 : 18}
           className={"mono-fill-invert"}
           ariaLabel={"Toggle visibility"}
         />
@@ -86,13 +86,13 @@ export const ProjectsTab = ({
     projectId: number,
     newVisibility: Visibility
   ) => {
-    dataManager?.updateProjectVisibility({
+    dataManager?.updateProjectProfileVisibility({
       id: {
         type: "canon",
         value: projectId,
       },
       data: {
-        visibility: newVisibility,
+        profileVisibility: newVisibility,
       },
     });
 
@@ -129,7 +129,7 @@ export const ProjectsTab = ({
       // If it doesn't exist in the original array, or visibility has changed
       if (!original) 
         return true;
-      return current.visibility !== original.visibility;
+      return current.profileVisibility !== original.profileVisibility;
     });
   }, [profile.projects, unmodifiedProfile?.projects]);
 
@@ -155,7 +155,7 @@ export const ProjectsTab = ({
               onVisibilityToggled={(_project_id : number) =>
                 onProjectVisibilityChanged(
                   _project_id,
-                  membership.visibility === "Public" ? "Private" : "Public"
+                  membership.profileVisibility === "public" ? "private" : "public" //oh it's a toggle... looks wweird but go off i guess
                 )
               }
             />
