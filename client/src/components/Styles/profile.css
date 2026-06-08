@@ -1292,6 +1292,10 @@ New Profile page style rules
       gap: 7px;
       flex-wrap: wrap;
       overflow-y: auto;
+      margin-top: -30px;
+      padding: 15px 0;
+      --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+      mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
     }
 
     #profile-email a,
