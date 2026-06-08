@@ -1,4 +1,5 @@
 import prisma from '#config/prisma.ts';
+import { UserPreviewSelector } from '#services/selectors/users/user-preview.ts';
 import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
 
 //Gets the blacklist and returns it as an array of UserPreviews
@@ -12,37 +13,7 @@ export const getBlacklistedUsersService = async () => {
           in: blacklist.map((b) => b.googleId),
         },
       },
-      select: {
-        userId: true,
-        username: true,
-        firstName: true,
-        lastName: true,
-        preferredName: true,
-        profileImage: true,
-        mentor: true,
-        headline: true,
-        pronouns: true,
-        title: true,
-        location: true,
-        funFact: true,
-        majors: {
-          select: {
-            majorId: true,
-            label: true,
-          },
-        },
-        userSkills: {
-          select: {
-            skills: {
-              select: {
-                skillId: true,
-                label: true,
-                type: true,
-              },
-            },
-          },
-        },
-      },
+      select: UserPreviewSelector,
     });
 
     //Alphabetize array by first name ascending
