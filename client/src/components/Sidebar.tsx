@@ -196,6 +196,20 @@ const SideBar = () => {
       window.location.reload();
     }
   };
+
+  const returnProfileAccess = async () => {
+    // navigate to Profile, attach userID
+    const res = await getCurrentUsername();
+    const userId = res.data?.userId;
+    if (userId) return `${paths.routes.PROFILE}?userID=${userId}`;
+    else return paths.routes.LOGIN;
+
+    // Collapse the dropwdown if coming from another user's page
+    if (window.location.href.includes("profile")) {
+      window.location.reload();
+    }
+  };
+
   /**
    * Handles window resize events and updates width state.
    */
@@ -220,7 +234,6 @@ const SideBar = () => {
                     : "sidebar-btn"
                 }
                 href={paths.routes.HOME}
-                onClick={() => handleTextChange("Discover", paths.routes.HOME)}
               >
                 <ThemeIcon id={'compass'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} />
               </a>
@@ -230,7 +243,6 @@ const SideBar = () => {
                   activePage === "Meet" ? "active sidebar-btn" : "sidebar-btn"
                 }
                 href={paths.routes.MEET}
-                onClick={() => handleTextChange("Meet", paths.routes.MEET)}
               >
                 <ThemeIcon id={'meet'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'} />
               </a>
@@ -248,9 +260,6 @@ const SideBar = () => {
                     : "sidebar-btn"
                 }
                 href={paths.routes.MYPROJECTS}
-                onClick={() =>
-                  handleTextChange("My Projects", paths.routes.MYPROJECTS)
-                }
               >
                 <ThemeIcon id={'folder'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
               </a>
@@ -261,22 +270,22 @@ const SideBar = () => {
                     ? "active sidebar-btn"
                     : "sidebar-btn"
                 }
-                href={paths.routes.PROFILE}
+                href={`${returnProfileAccess()}`}
                 onClick={() =>
                   handleProfileAccess()
                 }
               >
                 <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
               </a>
-              <button
+              <a
                 id={"about-sidebar-btn"}
                 className={
                   activePage === "About" ? "active sidebar-btn" : "sidebar-btn"
                 }
-                onClick={() => handleTextChange("About", paths.routes.ABOUT)}
+                href={paths.routes.ABOUT}
               >
                 <ThemeIcon id={'info'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'about'}/>
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -294,7 +303,6 @@ const SideBar = () => {
           {/* Must be a button to be focusable and meet accessibility guidelines */}
           <a
             href={paths.routes.HOME}
-            onClick={() => handleTextChange("Discover", paths.routes.HOME)}
           >
             <h1>
               lfg.
@@ -309,7 +317,6 @@ const SideBar = () => {
               activePage === "Discover" ? "active sidebar-btn" : "sidebar-btn"
             }
             href={paths.routes.HOME}
-            onClick={() => handleTextChange("Discover", paths.routes.HOME)}
           >
             <ThemeIcon id={'compass'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'discover'} />
             Discover
@@ -320,7 +327,6 @@ const SideBar = () => {
               activePage === "Meet" ? "active sidebar-btn" : "sidebar-btn"
             }
             href={paths.routes.MEET}
-            onClick={() => handleTextChange("Meet", paths.routes.MEET)}
           >
             <ThemeIcon id={'meet'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'meet'} />
             Meet
@@ -333,9 +339,6 @@ const SideBar = () => {
                 : "sidebar-btn"
             }
             href={paths.routes.MYPROJECTS}
-            onClick={() =>
-              handleTextChange("My Projects", paths.routes.MYPROJECTS)
-            }
           >
             <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
             My Projects

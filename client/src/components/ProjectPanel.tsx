@@ -151,7 +151,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   };
 
   return (
-    <a className={'project-panel'} href={projectURL} onClick={() => navigate(projectURL)}>
+    <a className={'project-panel'} href={projectURL}>
       <div className="project-image-container">
         <img
           src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}

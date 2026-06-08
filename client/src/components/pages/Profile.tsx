@@ -201,11 +201,10 @@ const Profile = () => {
       {displayedProfile?.socials && (
         <div id="about-me-buttons">
           {displayedProfile?.socials.map((link) => (
-            <button
+            <a
               key={link.websiteId}
-              onClick={() => {
-                window.open(link.url, "_blank");
-              }}
+              href={link.url}
+              target="_blank"
             >
               <ThemeIcon
                 id={link.label === "Other" ? "link" : link.label.toLowerCase()}
@@ -214,7 +213,7 @@ const Profile = () => {
                 className={"color-fill"}
                 ariaLabel={link.label}
               />
-            </button>
+            </a>
           ))}
         </div>
       )}

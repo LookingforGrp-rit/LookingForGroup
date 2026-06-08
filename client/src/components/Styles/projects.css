@@ -3510,6 +3510,7 @@ button#positions-popup-list-item-active {
   width: calc(50% - 45px);
   min-width: 234px;
   border-width: 0;
+  text-decoration: none;
 }
 
 .project-contributor-profile {

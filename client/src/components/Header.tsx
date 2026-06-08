@@ -117,6 +117,19 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
       window.location.reload();
     }
   };
+  const returnProfileAccess = async () => {
+    // navigate to Profile, attach userID
+    const res = await getCurrentUsername();
+    const userId = res.data?.userId;
+    if (userId) return (`${paths.routes.PROFILE}?userID=${userId}`);
+    return paths.routes.LOGIN;
+    
+
+    // Collapse the dropwdown if coming from another user's page
+    if (window.location.href.includes("profile")) {
+      window.location.reload();
+    }
+  };
 
   // Toggle between light and dark mode
   const switchTheme = () => {
@@ -209,7 +222,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 </button>{' '}
 
                 {/* LOG IN Button */}
-                <a href={paths.routes.LOGIN} onClick={() => navigate(paths.routes.LOGIN, { state: { from: location.pathname } })}>
+                <a href={paths.routes.LOGIN}>
                   <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
                   Log In
                 </a>
@@ -219,7 +232,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
               <div id="header-profile-dropdown" style={{ height: 200 }}>
 
                 {/* Profile Icon (if user has one) */}
-                <button onClick={() => handleProfileAccess()} id="header-profile-user">
+                <a href={`${returnProfileAccess()}`} id="header-profile-user">
                   {
                     <img
                       src={`${profileImg || profilePicture}`}
@@ -234,7 +247,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                     <br />
                     <p id="header-profile-email">{email}</p>
                   </div>
-                </button>
+                </a>
 
                 <hr />
 
@@ -245,10 +258,10 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 </button>{' '}
 
                 {/* Settings Link */}
-                <button onClick={() => handlePageChange(paths.routes.SETTINGS)}>
+                <a href={paths.routes.SETTINGS}>
                   <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'}/>
                   Settings
-                </button>
+                </a>
 
                 {/* LOG OUT Button */}
                 <button onClick={() => {
