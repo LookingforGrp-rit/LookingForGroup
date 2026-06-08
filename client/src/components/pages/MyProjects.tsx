@@ -2,7 +2,7 @@
 import { useState, useMemo, ChangeEvent, useCallback, useEffect } from 'react';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
-import CreditsFooter from '../CreditsFooter';
+import AboutFooter from '../AboutFooter.tsx';
 import MyProjectsDisplayList from '../MyProjectsDisplayList';
 import MyProjectsDisplayGrid from '../MyProjectsDisplayGrid';
 import { Header } from '../Header';
@@ -589,7 +589,7 @@ const MyProjects = (userProfile: any) => {
           )
         )}
       </main>
-      <CreditsFooter />
+      <AboutFooter />
       <ToTopButton />
     </div>
   );

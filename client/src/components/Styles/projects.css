@@ -19,9 +19,9 @@ Project Panel component style rules
 
 #discover-panel-box {
   width: 90%;
+  max-width: 1200px;
   margin: 0 auto 20px;
-  display: flex;
-  justify-content: center;
+  display: block;
 }
 
 /*
@@ -33,14 +33,19 @@ Project Panel component style rules
 */
 .project-panel-box {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(min(280px, 100%), 1fr));
-  justify-content: space-between;
-  align-content: start;
+  grid-auto-flow: row;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  justify-items: stretch;
+  align-items: stretch;
   gap: 20px;
   width: 100%;
+  padding-bottom: 10px;
+  max-height: 100%;
+  overflow-y: scroll;
 }
 
 .project-panel {
+  width: 100%;
   height: 240px;
   border: none;
   border-radius: 10px;
@@ -50,6 +55,7 @@ Project Panel component style rules
   position: relative;
   max-width: none;
   overflow: hidden;
+  text-decoration: none;
 
   .project-image-container {
     position: relative;
@@ -278,7 +284,7 @@ Project Creator and Editor Popup style rules
   border-radius: 10px;
   color: var(--main-text);
   max-height: 100%;
-  overflow: hidden;
+  overflow: scroll;
 }
 
 #project-editor-tabs {
@@ -652,17 +658,10 @@ Project Creator and Editor Popup style rules
   grid-area: desc;
   display: flex;
   flex-direction: column;
-  overflow: hidden;
+  overflow: auto;
   min-height: 150px;
   flex: 1 1 auto;
-  overflow-y: auto;
-}
-
-#project-editor-description-input textarea {
-  min-height: 150px;
-  max-height: 250px;
-  width: 100%;
-  box-sizing: border-box;
+  overflow-y: visible;
 }
 
 /* Project Editor/Creator Media Tab */
@@ -2789,7 +2788,8 @@ Project Carousel style rules
   margin-right: 1.5vw;
 
   .carousel-contents {
-    /* height: 370px; */
+    height: 370px;
+    max-height: 370px;
     width: 100%;
   }
 
@@ -2807,6 +2807,7 @@ Project Carousel style rules
     flex-direction: row;
     transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
     min-width: 100%;
+    height: 100%;
   }
 
   .project-carousel-btn {
@@ -2836,10 +2837,18 @@ Project Carousel style rules
     transform: rotate(-90deg);
   }
 
+  @media only screen and (max-width: 700px) {
+    .project-carousel-btn {
+      display: none;
+    }
+  }
+
   img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
     aspect-ratio: 16/9;
   }
 
@@ -3509,6 +3518,7 @@ button#positions-popup-list-item-active {
   width: calc(50% - 45px);
   min-width: 234px;
   border-width: 0;
+  text-decoration: none;
 }
 
 .project-contributor-profile {

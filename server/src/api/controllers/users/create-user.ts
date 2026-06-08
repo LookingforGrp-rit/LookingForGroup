@@ -12,8 +12,6 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
   const devInfo: CreateUserInput = {} as CreateUserInput;
   const sessionInfo: SessionUserData = JSON.parse(req.session.data || '{}') as SessionUserData;
 
-  console.log(sessionInfo);
-
   // This is for creating a dev user via the swagger docs
   if ((envConfig.env === 'development' || envConfig.env === 'test') && !sessionInfo.googleId) {
     /// Fudge for development
@@ -76,7 +74,7 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     const resBody: ApiResponse = {
       status: 400,
       error: 'Missing Google credentials',
-      data: null,
+      data: sessionInfo,
     };
     res.status(400).json(resBody);
     return;
@@ -145,17 +143,18 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
     return;
   }
 
+  // Removing user information from session because it's not needed anymore.
+  const userInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
+  userInfo.email = '';
+  userInfo.firstName = '';
+  userInfo.lastName = '';
+  userInfo.userExists = true;
+  req.session.data = JSON.stringify(userInfo);
+
   const resBody: ApiResponse<typeof result> = {
     status: 201,
     error: null,
     data: result,
   };
   res.status(201).json(resBody);
-
-  // Removing user information from session because it's not needed anymore.
-  const userInfo: SessionUserData = JSON.parse(req.session.data || '') as SessionUserData;
-  userInfo.email = '';
-  userInfo.firstName = '';
-  userInfo.lastName = '';
-  req.session.data = JSON.stringify(userInfo);
 };

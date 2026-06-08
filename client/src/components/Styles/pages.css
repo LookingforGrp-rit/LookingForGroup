@@ -37,6 +37,20 @@
   }
 }
 
+.discover-page {
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.discover-main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  overflow: hidden;
+}
+
 @media only screen and (max-width: 799px) {
   .page {
     left: 0px;

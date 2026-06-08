@@ -1,5 +1,5 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
-import CreditsFooter from '../CreditsFooter';
+import { useMemo, useState, useCallback, ChangeEvent } from 'react';
+import AboutFooter from '../AboutFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
@@ -124,9 +124,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     return [{ data: userSearchData }];
   }, [userSearchData]);
 
-  // Pagination state for projects
-  const [currentProjectPage, setCurrentProjectPage] = useState(1);
-  const PROJECTS_PER_PAGE = 6;
+  const PROJECTS_PER_PAGE = 12;
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
@@ -315,7 +313,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     }
 
     setFilteredProjectList(matches);
-    setCurrentProjectPage(1);
 
     // Preload full project data for search results so the like icon state is available immediately.
     (async () => {
@@ -378,7 +375,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const getShowcaseDetails = async (projectList: ProjectPreview[], usedCache: NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList: ProjectWithFollowers[] = [];
 
-    //console.log(projectList);
     // remove projects without open positions
     // const filteredProjectList = projectList.filter(a => a.jobs.length > 1);
 
@@ -502,7 +498,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
     // Set displayed projects
     setFilteredProjectList(tagFilteredList);
-    setCurrentProjectPage(1);
   };
 
   /**
@@ -602,11 +597,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     setFilteredUserList(tagFilteredList);
   };
 
-  const totalProjectPages = Math.max(1, Math.ceil(filteredProjectList.length / PROJECTS_PER_PAGE));
-  const startIndex = (currentProjectPage - 1) * PROJECTS_PER_PAGE;
-  const paginatedProjects = filteredProjectList.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
-
-  let discoverPanelContents: React.ReactElement;
+  let discoverPanelContents : React.ReactElement;
   if (category == 'projects') {
     if (!dataLoaded && filteredProjectList.length === 0) {
       discoverPanelContents = (
@@ -617,41 +608,14 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     }
     else {
       discoverPanelContents = (
-        <div className="pagination-wrapper">
-          <PanelBox
-            category={category}
-            itemList={paginatedProjects}
-            itemAddInterval={PROJECTS_PER_PAGE}
-            projectCache={projectCache}
-            followedProjectIds={followedProjectIds}
-            userId={currentUserId ?? -1}
-          />
-
-          {/* Pagination Controls */}
-          {filteredProjectList.length > 0 && (
-            <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '2rem', paddingBottom: '2rem' }}>
-              <button
-                className="pagination-btn"
-                onClick={() => setCurrentProjectPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentProjectPage === 1}
-
-              >
-                Previous
-              </button>
-
-              <span>Page {currentProjectPage} of {totalProjectPages}</span>
-
-              <button
-                className="pagination-btn"
-                onClick={() => setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages))}
-                disabled={currentProjectPage === totalProjectPages}
-
-              >
-                Next
-              </button>
-            </div>
-          )}
-        </div>
+        <PanelBox
+          category={category}
+          itemList={filteredProjectList} 
+          itemAddInterval={PROJECTS_PER_PAGE} 
+          projectCache={projectCache}
+          followedProjectIds={followedProjectIds}
+          userId={currentUserId ?? -1}
+        />
       );
     }
   } else {
@@ -669,7 +633,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
   // Main render function
   return (
-    <div className="page" tabIndex={-1}>
+    <div className="page discover-page" tabIndex={-1} >
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={category == 'projects' ? projectDataSet : userDataSet}
         onSearch={category == 'projects' ? searchProjects : searchUsers}
@@ -684,7 +648,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         Clicking a tag filter adds it to a list & updates panel display based on that list
         Changes to filters via filter menu are only applied after a confirmation
       */}
-      <main id="main" tabIndex={-1} aria-label='main content'>
+      <main id="main" className="discover-main" tabIndex={-1} aria-label='main content'>
         <DiscoverFilters category={category} updateItemList={updateItemList} />
 
         {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
@@ -693,7 +657,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           {discoverPanelContents}
         </div>
       </main>
-      <CreditsFooter />
+      <AboutFooter />
       <ToTopButton />
     </div>
   );

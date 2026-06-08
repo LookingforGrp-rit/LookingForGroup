@@ -53,20 +53,27 @@ const createUserService = async (
     majorlessUserData.googleId = session.googleId;
     majorlessUserData.username = session.email.substring(0, session.email.indexOf('@'));
 
-    console.log(majorlessUserData);
-
-    //majors are a relation so i gotta do this for em
-    const result = await prisma.users.create({
-      data: {
-        ...majorlessUserData,
-        majors: {
-          connect: {
-            majorId: majors[0].majorId,
+    let result;
+    if (majors.length !== 0) {
+      //majors are a relation so i gotta do this for em
+      result = await prisma.users.create({
+        data: {
+          ...majorlessUserData,
+          majors: {
+            connect: {
+              majorId: majors[0].majorId,
+            },
           },
         },
-      },
-      select: MePrivateSelector,
-    });
+        select: MePrivateSelector,
+      });
+    } else {
+      //majors are a relation so i gotta do this for em
+      result = await prisma.users.create({
+        data: majorlessUserData,
+        select: MePrivateSelector,
+      });
+    }
 
     return transformMeToPrivate(result);
   } catch (e) {

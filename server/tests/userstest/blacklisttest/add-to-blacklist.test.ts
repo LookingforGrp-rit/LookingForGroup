@@ -34,6 +34,7 @@ const prismaUser: Users = {
   mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),
+  displayPhone: false,
   location: '',
   funFact: '',
   bio: '',

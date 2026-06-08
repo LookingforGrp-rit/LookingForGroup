@@ -102,6 +102,7 @@ const prismaUser = {
   username: 'goldleaf',
   firstName: 'Gold',
   lastName: 'Leaf',
+  displayPhone: false,
   preferredName: 'Leafleaf',
   ritEmail: 'gold@rit.edu',
   profileImage: null,

@@ -286,7 +286,7 @@ input:checked+.slider:before {
     font-size: 2.0625rem;
     font-weight: 600;
     color: var(--primary-color);
-    margin-bottom: 27px;
+    margin-bottom: 5px;
   }
 
   label {
@@ -295,11 +295,14 @@ input:checked+.slider:before {
     color: var(--primary-color);
   }
 
-
+  .project-back-btn {
+    flex-shrink: 0;
+    margin-bottom: 20px;
+  }
 
   #back {
     position: relative;
-    margin-bottom: 30px;
+    margin-bottom: 50px;
   }
 
   @media (max-width: 420px) {
@@ -319,13 +322,14 @@ input:checked+.slider:before {
 
   .settings-row {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     margin: 0px min(8.47vw, 128px) 0px min(3.17vw, 48px);
     justify-content: flex-start;
   }
 
   .settings-column {
-    margin: 0px min(1vw, 20px)
+    margin: 0px 20px;
+    
   }
 
   @media (max-width: 1100px) {
@@ -336,6 +340,7 @@ input:checked+.slider:before {
   }
 
   .subsection {
+    margin-top: 24px;
     margin-bottom: 24px;
   }
 
@@ -390,7 +395,7 @@ input:checked+.slider:before {
   #options-visibility-btn .input-container:hover {
     background-color: var(--invert-text);
     box-shadow: 0 0 5px 0 var(--primary-color);
-
+    
     input {
       background-color: var(--invert-text);
     }
@@ -444,6 +449,10 @@ input:checked+.slider:before {
   .options-dropdown-button.end {
     border-bottom-left-radius: 10px;
     border-bottom-right-radius: 10px;
+  }
+
+  .delete-button {
+
   }
 
   .small-popup {
@@ -553,12 +562,14 @@ input:checked+.slider:before {
       min-width: 106px;
       width: fit-content;
       border-radius: 55px;
+      color: var(--primary-color);
     }
 
+    /*                  Removing this-- the gray looks out of place
     .deny-btn:hover {
       background-color: var(--neutral-gray);
       color: var(--invert-text);
-    }
+    }*/
 
     .confirm-msg {
       margin: 5px 0 15px 0;

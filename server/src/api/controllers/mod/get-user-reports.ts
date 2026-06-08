@@ -1,21 +1,16 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import deleteProjectReportService from '#services/projects/delete-project-report.ts';
+import getUserReportService from '#services/users/get-user-reports.ts';
 
-//DELETE api/mod/project-report/{id}
-//deletes a project report (moderator action)
-export const deleteProjectReport = async (
-  req: AuthenticatedRequest,
-  res: Response,
-): Promise<void> => {
-  const reportId = parseInt(req.params.id);
-
-  const result = await deleteProjectReportService(reportId);
+//GET api/mod/user-report/
+//gets all user reports
+export const getUserReports = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const result = await getUserReportService();
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Report not found',
+      error: 'User not found',
       data: null,
     };
     res.status(404).json(resBody);
@@ -34,7 +29,7 @@ export const deleteProjectReport = async (
   const resBody: ApiResponse = {
     status: 200,
     error: null,
-    data: null,
+    data: result,
   };
   res.status(200).json(resBody);
 };

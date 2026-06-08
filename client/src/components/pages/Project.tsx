@@ -20,6 +20,7 @@ import {
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import AboutFooter from "../AboutFooter";
 
 //Main component for the project page
 /**
@@ -278,12 +279,10 @@ const Project = (userProfile : any) => {
           const memberUser = member.user; //so i don't have to go user.user.userId or anything
 
           return (
-            <button
+            <a
               key={memberUser.userId}
               className="project-contributor"
-              onClick={() =>
-                navigate(`${paths.routes.PROFILE}?userID=${memberUser.userId}`)
-              }
+              href={`${paths.routes.PROFILE}?userID=${memberUser.userId}`}
             >
               <img
                 className="project-contributor-profile"
@@ -301,7 +300,7 @@ const Project = (userProfile : any) => {
                 </div>
                 <div className="team-member-role">{member.role.label}</div>
               </div>
-            </button>
+            </a>
           );
         })}
       </>
@@ -566,6 +565,7 @@ const Project = (userProfile : any) => {
           </div>
         </main>
       )}
+    <AboutFooter />
     </div>
   );
 };
