@@ -553,14 +553,12 @@ input:checked+.slider:before {
       min-width: 106px;
       width: fit-content;
       border-radius: 55px;
-      color: var(--primary-color);
     }
 
-    /*                  Removing this-- the gray looks out of place
     .deny-btn:hover {
       background-color: var(--neutral-gray);
       color: var(--invert-text);
-    }*/
+    }
 
     .confirm-msg {
       margin: 5px 0 15px 0;
