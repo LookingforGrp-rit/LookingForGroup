@@ -26,12 +26,12 @@ const AboutFooter = () => {
 
   return (
     <div className="FooterContainer">
-      <button
+      <a
         className={isAbout === true ? 'shown' : ''} //Highlight if active
-        onClick={() => toggleCredits(true, paths.routes.ABOUT)}
+        href={paths.routes.ABOUT}
       >
         About
-      </button>
+      </a>
     </div>
   );
 };

@@ -9,6 +9,7 @@ import { getUserByGoogleId } from '#controllers/users/get-user/get-by-google-id.
 import { getUserById } from '#controllers/users/get-user/get-by-id.ts';
 import { getUserByUsername } from '#controllers/users/get-user/get-by-username.ts';
 import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
+import { getBlacklistedUsers } from '../controllers/users/get-blacklisted-users.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 
@@ -36,6 +37,11 @@ router.get(
 router.get('/:id/followings/people', userExistsAt('path', 'id'), requiresLogin, getUserFollowing);
 //Gets users that follow this user
 router.get('/:id/followers', userExistsAt('path', 'id'), requiresLogin, getUserFollowers);
+
+// GET BLACKLIST ROUTES
+
+//Gets users on the blacklist
+router.get('/blacklist', requiresLogin, getBlacklistedUsers);
 
 // GET USER ROUTES
 
