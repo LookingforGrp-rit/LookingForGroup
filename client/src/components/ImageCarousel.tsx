@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, ReactNode, TransitionEvent, KeyboardEvent } from 'react';
+import { createContext, useContext, useEffect, useRef, useState, ReactNode, TransitionEvent, KeyboardEvent, TouchEvent } from 'react';
 import { ThemeIcon } from './ThemeIcon';
 
 // This post was used to help create this component (found by Ben Gomez)
@@ -148,21 +148,47 @@ export const CarouselTabs = ({ className = '' }: { className?: string }) => {
  * @returns A JSX div element containing carousel content elements
  */
 export const CarouselContent = ({ className = '' }: { className?: string }) => {
-    const { displayIndex, animate, handleHover, handleTransitionEnd, dataList, slideRefs } =
+    const { displayIndex, animate, handleStep, handleHover, handleTransitionEnd, dataList, slideRefs } =
         useContext(CarouselContext);
 
     const hasClones = dataList.length > 1;
-    // [cloneOfLast, ...slides, cloneOfFirst] when there is more than one slide.
     const slides = hasClones
             ? [dataList[dataList.length - 1], ...dataList, dataList[0]]
             : dataList;
 
+    // Touch tracking for mobile swipe navigation.
+    const touchStartX = useRef<number | null>(null);
+    const touchStartY = useRef<number | null>(null);
+    const SWIPE_THRESHOLD = 50;
+
+    const handleTouchStart = (e: TouchEvent<HTMLDivElement>) => {
+        touchStartX.current = e.touches[0].clientX;
+        touchStartY.current = e.touches[0].clientY;
+    };
+
+    const handleTouchEnd = (e: TouchEvent<HTMLDivElement>) => {
+        if (touchStartX.current === null || touchStartY.current === null) return;
+        const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+        const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+        touchStartX.current = null;
+        touchStartY.current = null;
+        // Treat as a swipe only when horizontal motion dominates and clears the threshold,
+        // so vertical scroll gestures aren't hijacked.
+        if (Math.abs(deltaX) > SWIPE_THRESHOLD && Math.abs(deltaX) > Math.abs(deltaY)) {
+            handleStep(deltaX < 0 ? 1 : -1);
+        }
+    };
+
     return (
-        <div className="carousel-contents" onTransitionEnd={handleTransitionEnd}>
+        <div
+            className="carousel-contents"
+            onTransitionEnd={handleTransitionEnd}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+        >
             {slides.map((data, index) => {
                 const isActive = index === displayIndex;
                 
-                // Calculate logical index. Only assign refs to the actual slides, not clones.
                 const logicalIndex = hasClones ? index - 1 : index;
                 const isRealSlide = logicalIndex >= 0 && logicalIndex < dataList.length;
 
