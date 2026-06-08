@@ -19,7 +19,7 @@ const getUnapprovedProjectByIdController = async (request: Request, response: Re
   if (result === 'NOT_FOUND') {
     const res: ApiResponse = {
       status: 404,
-      error: 'Project Not Found',
+      error: 'Project has been approved or does not exist',
       data: null,
     };
     response.status(404).json(res);

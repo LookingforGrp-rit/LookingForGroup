@@ -30,49 +30,11 @@ export const authenticated = (
 //Receive all projects
 router.get('/', PROJECT.getProjects);
 
-//Get all unapproved projects
-router.get(
-  '/unapproved',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  authenticated(PROJECT.getUnapprovedProjects),
-);
-
 //Create a new project
 router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
 
-//Place a project on the list of projects awaiting approval.
-router.post(
-  '/unapproved/:id',
-  requiresLogin,
-  injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.requestApproval),
-);
-
-//Remove a project from the list of projects awaiting approval without approving it.
-router.delete(
-  '/unapproved/:id',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.rejectProject),
-);
-
 //Get a specific project
 router.get('/:id', PROJECT.getProjectByID);
-
-//Get a specific unapproved project
-router.get(
-  '/unapproved/:id',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  projectExistsAt('path', 'id'),
-  PROJECT.getUnapprovedProjectById,
-);
 
 //Get a specific project's members
 router.get('/:id/members', projectExistsAt('path', 'id'), PROJECT.getMembers);
@@ -85,26 +47,6 @@ router.patch(
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   authenticated(PROJECT.updateProject),
-);
-
-//Approve a project
-router.patch(
-  '/projects/{id}/approve',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.approveProject),
-);
-
-//Unapprove a project
-router.patch(
-  '/projects/{id}/unapprove',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.unapproveProject),
 );
 
 //Deletes project through a specific id
@@ -384,6 +326,66 @@ router.delete(
   projectAttributeExistsAt('job', { type: 'path', key: 'id' }, { type: 'path', key: 'jobId' }),
   authenticated(requiresProjectOwner),
   PROJECT.deleteJobController,
+);
+
+//---UNAPPROVED PROJECTS---\\
+
+//Approve a project
+router.patch(
+  '/projects/{id}/approve',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.approveProject),
+);
+
+//Unapprove a project
+router.patch(
+  '/projects/{id}/unapprove',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.unapproveProject),
+);
+
+//Get all unapproved projects
+router.get(
+  '/unapproved',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  authenticated(PROJECT.getUnapprovedProjects),
+);
+
+//Get a specific unapproved project
+router.get(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.getUnapprovedProjectById),
+);
+
+//Place a project on the list of projects awaiting approval.
+router.post(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.requestApproval),
+);
+
+//Remove a project from the list of projects awaiting approval without approving it.
+router.delete(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.rejectProject),
 );
 
 export default router;
