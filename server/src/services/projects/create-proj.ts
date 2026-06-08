@@ -18,6 +18,7 @@ const createProjectService = async (
         title: data.title,
         hook: data.hook || undefined,
         description: data.description || undefined,
+        globalVisibility: data.globalVisibility || 'public',
         status: data.status || undefined,
         audience: data.audience || undefined,
         purpose: data.purpose,

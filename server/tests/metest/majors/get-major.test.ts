@@ -1,4 +1,4 @@
-import type { MyMajor, Major } from '@looking-for-group/shared';
+import type { MyMajor, Major, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getUserMajorsService from '#services/me/majors/get-majors.ts';
@@ -34,7 +34,7 @@ const prismaUser = {
   location: '',
   funFact: '',
   bio: '',
-  visibility: 1,
+  privacy: 'public' as Visibility,
   mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),

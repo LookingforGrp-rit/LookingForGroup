@@ -26,7 +26,7 @@ import type {
   UserFollowsList,
   ProjectDetail,
   ProjectFollowsList,
-  UpdateUserProjectVisibilityInput,
+  UpdateProjectProfileVisibilityInput,
   MyMember,
   SessionUserData,
   CreateUserInput,
@@ -287,13 +287,13 @@ export const getVisibleProjects = async (
  * @param _visibility - either "public" or "private", set visibility
  * @return 201 if successful, 400 if not
  */
-export const updateProjectVisibility = async (
+export const updateProjectProfileVisibility = async (
   projectID: number,
-  visibility: UpdateUserProjectVisibilityInput
+  visibility: UpdateProjectProfileVisibilityInput
 ): Promise<ApiResponse<MyMember>> => {
   const url = `/me/projects/${projectID}/visibility`;
   const response = await PUT(url, {
-    visibility,
+    profileVisibility: visibility,
   });
 
   // if (response.error)
@@ -592,7 +592,7 @@ export default {
   deleteUserFollowing,
   getProjectsByUser,
   getVisibleProjects,
-  updateProjectVisibility,
+  updateProjectProfileVisibility,
   leaveProject,
   getProjectFollowing,
   addProjectFollowing,

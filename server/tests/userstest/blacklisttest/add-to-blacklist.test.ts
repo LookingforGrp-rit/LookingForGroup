@@ -1,3 +1,4 @@
+import type { Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Users } from '#prisma-models/index.js';
@@ -38,7 +39,7 @@ const prismaUser: Users = {
   location: '',
   funFact: '',
   bio: '',
-  visibility: 0,
+  privacy: 'public' as Visibility,
   phoneNumber: null,
 };
 

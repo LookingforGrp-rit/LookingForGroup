@@ -1,6 +1,7 @@
 import type { ProjectFollowsList } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
+import type { Visibility } from '#prisma-models/index.js';
 import { transformProjectToPreview } from '#services/transformers/projects/project-preview.ts';
 import { getProjectFollowingService } from '#services/users/followings/get-proj-following.ts';
 
@@ -45,6 +46,7 @@ describe('getProjectFollowingService', () => {
       apiUrl: '/api/projects/99',
       hook: 'test-hook',
       thumbnailId: 1,
+      globalVisibility: 'public' as Visibility,
       owner: {
         userId: 1,
         username: 'test-owner',
@@ -57,6 +59,7 @@ describe('getProjectFollowingService', () => {
         mentor: false,
         designer: false,
         developer: false,
+        privacy: 'public' as Visibility,
         headline: 'Test headline',
         displayPhone: false,
         pronouns: 'they/them',
