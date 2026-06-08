@@ -263,6 +263,12 @@ Image carousel style rules
   margin-right: min(18px, calc(100vw * (18 / 1512)));
 }
 
+@media only screen and (max-width: 700px) {
+  .discover-carousel-btn {
+    display: none;
+  }
+}
+
 .carousel-contents {
   display: flex;
   flex-wrap: nowrap;
