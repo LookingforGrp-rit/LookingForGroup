@@ -79,9 +79,6 @@ const Login: React.FC = () => {
       return;
     }
 
-    console.log('userdata: '+ JSON.stringify(res.data));
-    console.log('test');
-
     const body = await res.data as {userExists: boolean};
     
     if (body.userExists) { navigate(paths.routes.HOME); }

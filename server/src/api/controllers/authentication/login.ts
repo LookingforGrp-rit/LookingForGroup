@@ -43,7 +43,7 @@ export const login = async (request: Request, response: Response) => {
   }
 
   request.session.gid = userData.googleId || '';
-  request.session.data = !userData.userExists ? JSON.stringify(userData) : '';
+  request.session.data = userData.userExists ? JSON.stringify(userData) : '';
 
   const resBody: ApiResponse = {
     status: 200,
