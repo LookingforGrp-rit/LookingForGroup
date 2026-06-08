@@ -60,40 +60,40 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 		// setSearchResults(results);
 		// show no results
 		if (!results || results.length === 0 || results[0].length === 0) {
-		setSearchedSkills([]);
+			setSearchedSkills([]);
 		} else {
-		setSearchedSkills(results[0]);
+			setSearchedSkills(results[0]);
 		}
 	}, []);
 
 	// load skills
 	useMemo(() => {
 		const fetchSkills = async () => {
-		const response = await getSkills();
+			const response = await getSkills();
 
-		if (response.data === undefined || !response.data) {
-			return;
-		}
-		setAllSkills(response.data);
+			if (response.data === undefined || !response.data) {
+				return;
+			}
+			setAllSkills(response.data);
 		};
 		if (allSkills.length === 0) {
-		fetchSkills();
+			fetchSkills();
 		}
 	}, []);
 
 	// Update skills shown for search bar
 	const currentDataSet = useMemo(() => {
 		switch (currentSkillsTab) {
-		case 0:
-			return [{ data: allSkills.filter((s) => s.type === "Developer") }];
-		case 1:
-			return [{ data: allSkills.filter((s) => s.type === "Designer") }];
-		case 2:
-			return [{ data: allSkills.filter((s) => s.type === "Soft") }];
-		case 3:
-			return [{ data: allSkills.filter((s) => s.type === "Audio") }];
-		default:
-			return [{ data: [] }];
+			case 0:
+				return [{ data: allSkills.filter((s) => s.type === "Developer") }];
+			case 1:
+				return [{ data: allSkills.filter((s) => s.type === "Designer") }];
+			case 2:
+				return [{ data: allSkills.filter((s) => s.type === "Soft") }];
+			case 3:
+				return [{ data: allSkills.filter((s) => s.type === "Audio") }];
+			default:
+				return [{ data: [] }];
 		}
 	}, [currentSkillsTab, allSkills]);
 
@@ -105,11 +105,11 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 		if (selectedSkills?.some((skill) => skill.skillId === id)) return "selected";
 		return "unselected";
 	}
-	
+
 	const sensors = useSensors(
 		useSensor(PointerSensor),
 		useSensor(KeyboardSensor, {
-		coordinateGetter: sortableKeyboardCoordinates,
+			coordinateGetter: sortableKeyboardCoordinates,
 		})
 	);
 	/**
@@ -118,23 +118,23 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 	* tag-position column, so the order resets to the server's order on reload.
 	* @param e Drag end event with the active (dragged) and over (target) tag ids.
 	*/
-    const handleDragEnd = (e: DragEndEvent) => {
-      const { active, over } = e;
-      if (!over || active.id === over.id) return;
-  
-      const oldIndex = selectedSkills?.findIndex((s) => s.skillId === Number(active.id));
-      const newIndex = selectedSkills?.findIndex((s) => s.skillId === Number(over.id));
-      if (oldIndex === -1 || newIndex === -1) return;
-  
-      const reorderedSkills = arrayMove([...selectedSkills as Skill[]], oldIndex as number, newIndex as number).map(
-        (skill, index) => ({
-          ...skill,
-          position: index,
-        })
-      );
+	const handleDragEnd = (e: DragEndEvent) => {
+		const { active, over } = e;
+		if (!over || active.id === over.id) return;
 
-	  setSelectedSkills(reorderedSkills);
-    };
+		const oldIndex = selectedSkills?.findIndex((s) => s.skillId === Number(active.id));
+		const newIndex = selectedSkills?.findIndex((s) => s.skillId === Number(over.id));
+		if (oldIndex === -1 || newIndex === -1) return;
+
+		const reorderedSkills = arrayMove([...selectedSkills as Skill[]], oldIndex as number, newIndex as number).map(
+			(skill, index) => ({
+				...skill,
+				position: index,
+			})
+		);
+
+		setSelectedSkills(reorderedSkills);
+	};
 	/**
 	* Toggles a skill as selected or unselected
 	*/
@@ -145,27 +145,27 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 			const skillToToggle = allSkills?.find((potentialMatch) => potentialMatch.skillId === skillId);
 
 			if (!skillToToggle) return;
-	
+
 			if (isSelected) {
-			setSelectedSkills(selectedSkills.filter((s) => 
-				s.skillId !== skillToToggle.skillId
-			));
-			setSelectedSkillIds(selectedSkillIds.filter((s) => 
-				s !== skillToToggle.skillId
-			));
+				setSelectedSkills(selectedSkills.filter((s) =>
+					s.skillId !== skillToToggle.skillId
+				));
+				setSelectedSkillIds(selectedSkillIds.filter((s) =>
+					s !== skillToToggle.skillId
+				));
 			}
 			else {
-			setSelectedSkills([
-				...selectedSkills,
-				skillToToggle
-			]);
-			setSelectedSkillIds([
-				...selectedSkillIds,
-				skillToToggle.skillId
-			]);
+				setSelectedSkills([
+					...selectedSkills,
+					skillToToggle
+				]);
+				setSelectedSkillIds([
+					...selectedSkillIds,
+					skillToToggle.skillId
+				]);
 			}
 		}
-	, [isSkillSelected, selectedSkills, ] );
+		, [isSkillSelected, selectedSkills,]);
 
 	// Components
 	/**
@@ -174,16 +174,16 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 	 */
 	const SkillSearchTabs = () => {
 		const tabs = skillTabs.map((skill, i) => {
-		return (
-			<button
-			key={skill}
-			type="button"
-			onClick={() => setCurrentSkillsTab(i)}
-			className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
-			>
-			{skill}
-			</button>
-		);
+			return (
+				<button
+					key={skill}
+					type="button"
+					onClick={() => setCurrentSkillsTab(i)}
+					className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
+				>
+					{skill}
+				</button>
+			);
 		});
 		return <div id="project-editor-tag-search-tabs">{tabs}</div>;
 	};
@@ -193,100 +193,100 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
    * Each tag button shows a plus or lose icon depending on selection status and is colored based on skill type.
    * @returns JSX Element
    */
-  const renderSkills = useCallback(() => {
-    // no search item, render all skills
-    if (searchedSkills && searchedSkills.length !== 0) {
-      return searchedSkills.map((skill) => (
-        <Tag
-          key={skill.skillId}
-          onClick={() => handleSkillToggle(skill.skillId)}
-          type={skill.type.toLowerCase() + " skill"}
-          selected={isSkillSelected(skill.skillId) === "selected"}
-        >
-          <i
-            className={
-              isSkillSelected(skill.skillId) === "selected"
-                ? "fa fa-close"
-                : "fa fa-plus"
-            }
-          ></i>
-          <p>&nbsp;{skill.label}</p>
-        </Tag>
-      ));
-    } else if (searchedSkills && searchedSkills.length === 0) {
-      return <div className="no-results-message">No results found!</div>;
-    }
-	
-    // Developer Skill
-    if (currentSkillsTab === 0) {
-      return allSkills
-        .filter((anySkill) => anySkill.type === "Developer")
-        .map((developerSkill) => (
-          <Tag
-            key={developerSkill.skillId}
-            onClick={() => handleSkillToggle(developerSkill.skillId)}
-            type="developer skill"
-          >
-            <i
-              className={
-                isSkillSelected(developerSkill.skillId) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>&nbsp;{developerSkill.label}</p>
-          </Tag>
-        ));
-    }
-    //design skill tab
-    else if (currentSkillsTab === 1) {
-      return allSkills
-        .filter((anySkill) => anySkill.type === "Designer")
-        .map((designerSkill) => (
-          <Tag
-            key={designerSkill.skillId}
-            onClick={() => handleSkillToggle(designerSkill.skillId)}
-            type="designer skill"
-          >
-            <i
-              className={
-                isSkillSelected(designerSkill.skillId) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>&nbsp;{designerSkill.label}</p>
-          </Tag>
-        ));
-    }
-    //returns the soft skills
-    else {
-      return allSkills
-        .filter((anySkill) => anySkill.type === "Soft")
-        .map((softSkill) => (
-          <Tag
-            key={softSkill.skillId}
-            onClick={() => handleSkillToggle(softSkill.skillId)}
-            type="soft skill"
-          >
-            <i
-              className={
-                isSkillSelected(softSkill.skillId) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>&nbsp;{softSkill.label}</p>
-          </Tag>
-        ));
-    }
-  }, [
-    searchedSkills,
-    currentSkillsTab,
-    isSkillSelected,
-    handleSkillToggle,
-    allSkills,
-  ]);
+	const renderSkills = useCallback(() => {
+		// no search item, render all skills
+		if (searchedSkills && searchedSkills.length !== 0) {
+			return searchedSkills.map((skill) => (
+				<Tag
+					key={skill.skillId}
+					onClick={() => handleSkillToggle(skill.skillId)}
+					type={skill.type.toLowerCase() + " skill"}
+					selected={isSkillSelected(skill.skillId) === "selected"}
+				>
+					<i
+						className={
+							isSkillSelected(skill.skillId) === "selected"
+								? "fa fa-close"
+								: "fa fa-plus"
+						}
+					></i>
+					<p>&nbsp;{skill.label}</p>
+				</Tag>
+			));
+		} else if (searchedSkills && searchedSkills.length === 0) {
+			return <div className="no-results-message">No results found!</div>;
+		}
+
+		// Developer Skill
+		if (currentSkillsTab === 0) {
+			return allSkills
+				.filter((anySkill) => anySkill.type === "Developer")
+				.map((developerSkill) => (
+					<Tag
+						key={developerSkill.skillId}
+						onClick={() => handleSkillToggle(developerSkill.skillId)}
+						type="developer skill"
+					>
+						<i
+							className={
+								isSkillSelected(developerSkill.skillId) === "selected"
+									? "fa fa-close"
+									: "fa fa-plus"
+							}
+						></i>
+						<p>&nbsp;{developerSkill.label}</p>
+					</Tag>
+				));
+		}
+		//design skill tab
+		else if (currentSkillsTab === 1) {
+			return allSkills
+				.filter((anySkill) => anySkill.type === "Designer")
+				.map((designerSkill) => (
+					<Tag
+						key={designerSkill.skillId}
+						onClick={() => handleSkillToggle(designerSkill.skillId)}
+						type="designer skill"
+					>
+						<i
+							className={
+								isSkillSelected(designerSkill.skillId) === "selected"
+									? "fa fa-close"
+									: "fa fa-plus"
+							}
+						></i>
+						<p>&nbsp;{designerSkill.label}</p>
+					</Tag>
+				));
+		}
+		//returns the soft skills
+		else {
+			return allSkills
+				.filter((anySkill) => anySkill.type === "Soft")
+				.map((softSkill) => (
+					<Tag
+						key={softSkill.skillId}
+						onClick={() => handleSkillToggle(softSkill.skillId)}
+						type="soft skill"
+					>
+						<i
+							className={
+								isSkillSelected(softSkill.skillId) === "selected"
+									? "fa fa-close"
+									: "fa fa-plus"
+							}
+						></i>
+						<p>&nbsp;{softSkill.label}</p>
+					</Tag>
+				));
+		}
+	}, [
+		searchedSkills,
+		currentSkillsTab,
+		isSkillSelected,
+		handleSkillToggle,
+		allSkills,
+	]);
 
 	// if the modal is not shown, return null
 	if (!show) {
@@ -295,80 +295,80 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 
 	// render the page
 	return (
-	<div className="signupProcess-background">
-		<div className="signupProcess-modal">
-			<div className="ChooseSkills">
-				<h1 id="signupProcess-title">
-					Choose At Least 3 Skills
-				</h1>
-				<p id="signupProcess-subTitle">You can edit them later</p>
-				<div id="profile-editor-tags">
-				<div id="project-editor-selected-tags">
-				<div className="project-editor-section-header">
-					Selected Skills
-				</div>
-				<div className="project-editor-extra-info">
-					Drag and drop to reorder
-				</div>
-				<DndContext
-					sensors={sensors}
-					collisionDetection={closestCenter}
-					onDragEnd={handleDragEnd}
-				>
-					<SortableContext
-						items={selectedSkills.map((t) => t.skillId)}
-						strategy={verticalListSortingStrategy}
-					>
-						<div id="project-editor-selected-tags-container">
-							{selectedSkills.map((skill) => (
-							<Fragment key={skill.skillId}>
-								<SortableTag
-									id={skill.skillId}
-									tag={{
-										tagId: skill.skillId,
-										label: skill.label,
-										type: skill.type as TagType,
-									}}
-									onRemove={handleSkillToggle}
-								/>
-							</Fragment>
-							))}
+		<div className="signupProcess-background">
+			<div className="signupProcess-modal">
+				<div className="ChooseSkills">
+					<h1 id="signupProcess-title">
+						Choose At Least 3 Skills
+					</h1>
+					<p id="signupProcess-subTitle">You can edit them later</p>
+					<div id="profile-editor-tags">
+						<div id="project-editor-selected-tags">
+							<div className="project-editor-section-header">
+								Selected Skills
+							</div>
+							<div className="project-editor-extra-info">
+								Drag and drop to reorder
+							</div>
+							<DndContext
+								sensors={sensors}
+								collisionDetection={closestCenter}
+								onDragEnd={handleDragEnd}
+							>
+								<SortableContext
+									items={selectedSkills.map((t) => t.skillId)}
+									strategy={verticalListSortingStrategy}
+								>
+									<div id="project-editor-selected-tags-container">
+										{selectedSkills.map((skill) => (
+											<Fragment key={skill.skillId}>
+												<SortableTag
+													id={skill.skillId}
+													tag={{
+														tagId: skill.skillId,
+														label: skill.label,
+														type: skill.type as TagType,
+													}}
+													onRemove={handleSkillToggle}
+												/>
+											</Fragment>
+										))}
+									</div>
+								</SortableContext>
+							</DndContext>
 						</div>
-					</SortableContext>
-				</DndContext>
-				</div>
-				<div id="project-editor-tag-search">
-					<SearchBar
-						key={currentSkillsTab}
-						dataSets={currentDataSet}
-						onSearch={(results) =>
-						handleSearch(results as unknown[][] as Skill[][])
-						}
-					/>
-					<div id="project-editor-tag-wrapper">
-						<SkillSearchTabs />
-						<hr id="tag-search-divider" />
+						<div id="project-editor-tag-search">
+							<SearchBar
+								key={currentSkillsTab}
+								dataSets={currentDataSet}
+								onSearch={(results) =>
+									handleSearch(results as unknown[][] as Skill[][])
+								}
+							/>
+							<div id="project-editor-tag-wrapper">
+								<SkillSearchTabs />
+								<hr id="tag-search-divider" />
+							</div>
+							<div id="project-editor-tag-search-container">{renderSkills()}</div>
+						</div>
 					</div>
-					<div id="project-editor-tag-search-container">{renderSkills()}</div>
-				</div>
-				</div>
-				<div id="signupProcess-btns">
-					<button id="signup-backBtn" onClick={onBack}>
-						Back
-					</button>
-					<button
-						id="signup-nextBtn"
-						onClick={onNext}
-						// disable the next button if the user has not selected 5 skills
-						// this is to prevent the user from moving to the next modal without selecting the required number of skills
-						// the user can only move to the next modal when they have selected 5 skills
-						disabled={selectedSkills.length < 3}>
-						Next
-					</button>
+					<div id="signupProcess-btns">
+						<button id="signup-backBtn" onClick={onBack}>
+							Back
+						</button>
+						<button
+							id="signup-nextBtn"
+							onClick={onNext}
+							// disable the next button if the user has not selected 5 skills
+							// this is to prevent the user from moving to the next modal without selecting the required number of skills
+							// the user can only move to the next modal when they have selected 5 skills
+							disabled={selectedSkills.length < 3}>
+							Next
+						</button>
+					</div>
 				</div>
 			</div>
 		</div>
-	</div>
 	);
 };
 

@@ -340,23 +340,24 @@ Signup process modal style rules
 .signupProcess-modal {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--hero-gradient);
+  background: var(--modal-gradient);
   background-repeat: no-repeat;
   z-index: 10;
+  overflow-y: scroll;
+  overflow-x: hidden;
 }
 
-#create-profile-redirect-modal {
-
-  top: auto;
-  left: auto;
-  justify-self: center;
+#create-profile-redirect-modal,
+#complete-profile-modal,
+#get-started-modal {
+  justify-content: center;
 }
 
 .CreateProfileRedirect,
@@ -366,22 +367,58 @@ Signup process modal style rules
 .CompleteProfile,
 .GetStarted {
   background: var(--bg-color);
-  margin: auto;
+  margin: 20px auto;
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 820px;
-  width: 1000px;
+  height: max-content;
+  width: min(1000px, 85%);
+  max-width: 1000px;
   border-radius: 4px;
   padding: 20px;
   box-shadow: 0px 0px 10px 0px var(--border-color);
-
   flex-direction: column;
   z-index: 1;
 
+  #create-profile-redirect-text {
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
+
   #profile-editor-tags {
     height: 70%;
+
+    #project-editor-tag-wrapper {
+      gap: 0px;
+    }
+
+    #project-editor-tag-search {
+      height: 420px;
+      margin-bottom: 100px;
+    }
+
+    #project-editor-selected-tags {
+      max-height: 75%;
+    }
+
+    #project-editor-tag-search-tabs {
+      margin: 0;
+      height: 100px;
+    }
   }
+}
+
+.CreateProfileRedirect {
+  height: 70%;
+}
+
+.ChooseSkills {
+  padding-bottom: 0;
 }
 
 #signupProcess-title {
@@ -402,14 +439,13 @@ Signup process modal style rules
 #signupProcess-skills-subTitle {
   color: var(--primary-color);
   font-size: 1.25rem;
-  margin: 40px 10px 0 10px;
   font-weight: 400;
 }
 
 /* buttons */
 #signupProcess-btns {
-  margin-top: 2.5%;
-  width: 900px;
+  margin-top: 0;
+  width: min(900px, 85%);
   display: flex;
   justify-content: space-between;
 
@@ -425,6 +461,11 @@ Signup process modal style rules
     padding-right: 7px;
     color: var(--primary-color)
   }
+}
+
+#create-profile-redirect-modal #signupProcess-btns {
+  position: absolute;
+  margin-top: 500px;
 }
 
 #signup-nextBtn:disabled {
@@ -490,6 +531,10 @@ Signup process modal style rules
   background-color: var(--header-color);
   border: 10px solid var(--header-color);
   border-radius: 5px;
+}
+
+#getStarted-select {
+  height: 315px;
 }
 
 .edit-interest-container {
@@ -804,6 +849,7 @@ Signup process modal style rules
   font-size: 1rem;
   grid-area: bio;
   height: 100%;
+  max-width: 100%;
 
   div textarea {
     margin-top: 0px;
@@ -821,7 +867,7 @@ Signup process modal style rules
   border: 2px solid var(--lightGray);
   border-radius: 12px;
   background-color: var(--primary-color);
-  color: black;
+  color: var(--invert-text);
   font-weight: 600;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   display: flex;
@@ -830,19 +876,17 @@ Signup process modal style rules
   align-items: center;
   gap: 20px;
 
-  img {
-    filter: invert(1);
-  }
+
 }
 
 #new-project-btn:hover,
 #join-project-btn:hover {
-  background-color: var(--orange);
+  background-color: var(--border-color);
   color: var(--main-text);
-  border: 2px solid var(--orange);
+  border: 2px solid var(--border-color);
 
   img {
-    filter: invert(0);
+    filter: invert(1);
   }
 }
 
@@ -855,7 +899,7 @@ Signup process modal style rules
 
 @media screen and (max-width: 1020px) {
   #signupProcess-btns {
-    width: 700px;
+    width: max(700px, 85%);
   }
 
   .CreateProfileRedirect,
@@ -864,13 +908,14 @@ Signup process modal style rules
   .ChooseProficiencies,
   .CompleteProfile,
   .GetStarted {
-    width: 800px;
+    width: max(700px, 85vw);
   }
 }
 
 @media screen and (max-width: 820px) {
   #signupProcess-btns {
-    width: 500px;
+    width: max(460px, 85%);
+    margin-top: 40px;
   }
 
   .CreateProfileRedirect,
@@ -879,8 +924,62 @@ Signup process modal style rules
   .ChooseProficiencies,
   .CompleteProfile,
   .GetStarted {
-    width: 550px;
+    width: max(480px, 85%);
+
+    #profile-editor-tags {
+      display: flex;
+      flex-wrap: nowrap;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    #project-editor-selected-tags {
+      width: calc(100% - 42px);
+    }
   }
+
+  #getStarted-select {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    min-height: 335px;
+    flex-shrink: 1;
+    width: 80%;
+  }
+
+  #join-project-btn,
+  #new-project-btn {
+    height: 150px;
+    width: 180px;
+    font-size: 1.4rem;
+    margin: 20px;
+  }
+}
+
+@media screen and (max-width:700px) {
+  #completeProfile-input-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    #pronouns-input,
+    #headline-input,
+    #phoneNumber-input,
+    #jobTitle-input,
+    #location-input,
+    #funFact-input {
+      max-width: 100%;
+    }
+
+    #profile-details {
+      max-width: 70%;
+      align-self: center;
+    }
+  }
+
+  #complete-profile-modal {
+    justify-content: flex-start;
+  }
+
 }
 
 @media screen and (max-width: 550px) {
@@ -899,7 +998,19 @@ Signup process modal style rules
   .CompleteProfile,
   .GetStarted {
     box-shadow: none;
-    width: 100%;
+    width: max(440px, 85%);
+
+    #project-editor-tag-search-tabs {
+      overflow-x: visible;
+    }
+
+    #project-editor-selected-tags {
+      width: calc(100vw - 90px);
+    }
+
+    #getStarted-select {
+      flex-direction: column;
+    }
   }
 }
 
