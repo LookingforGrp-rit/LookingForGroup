@@ -29,6 +29,8 @@ Profile Panel component style rules
   align-content: start;
   gap: 20px;
   width: 100%;
+  max-height: 35vh;
+  overflow-y: scroll;
 }
 
 .profile-column {
@@ -1255,6 +1257,62 @@ New Profile page style rules
   }
 }
 
+#profile-extra {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  width: 100%;
+  margin: 20px 0;
+  height: fit-content;
+
+  #socials, #skills {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    background-color: var(--header-color);
+    border-radius: 10px;
+    padding: 10px 10px 10px 20px;
+    height: 200px;
+
+    #title {
+      color: var(--primary-color);
+      font-size: clamp(1rem, 8vw, 2rem);
+      font-weight: bold;
+      font-style: normal;
+      text-align: left;
+      margin: 0;
+      width: fit-content;
+      text-wrap: wrap;
+      margin-bottom: 5px;
+    }
+
+    #skill-block {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      overflow-y: auto;
+      margin-top: -30px;
+      padding: 15px 0;
+      --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+      mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+    }
+
+    #profile-email a,
+    #profile-number a {
+      display: flex;
+      align-items: center;
+      font-style: italic;
+      gap: 10px;
+      text-decoration: none;
+    }
+  }
+
+  #socials {
+    width: 33%;
+  }
+}
+
 
 @media only screen and (max-width: 1100px) {
   #profile-hero {
@@ -1701,6 +1759,7 @@ New Profile page style rules
   font-size: medium;
   flex-shrink: 0;
   height: fit-content;
+  width: fit-content;
   /* Fixes weird issue where height is way taller than text for some reason */
 
   color: var(--tag-text-selected);

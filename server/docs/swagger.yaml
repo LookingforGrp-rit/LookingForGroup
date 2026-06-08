@@ -539,21 +539,14 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/users/{id}/followers:
+  /api/users/blacklist:
     get:
       tags:
         - Users
-      summary: Get list of users that are following the specified user
-      parameters:
-        - name: id
-          in: path
-          description: User ID
-          required: true
-          schema:
-            type: integer
+      summary: Get list of users that is banned/on the blacklist
       responses:
         '200':
-          description: List of users following the current user
+          description: List of users that are banned/on the blacklist
           content:
             application/json:
               schema:
@@ -567,9 +560,9 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserFollowsList'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+                    type: array
+                    nullable: true
+                    example: []
         '404':
           $ref: '#/components/responses/NotFound'
         '500':

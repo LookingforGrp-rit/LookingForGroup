@@ -834,6 +834,11 @@ export interface MePrivate extends MeDetail {
   phoneNumber: string | null;
 
   /**
+   * Whether or not to display the user's phone number 
+   */
+  displayPhone: boolean
+
+  /**
    * The logged-in user's UID
    */
   googleId: string;
@@ -1204,7 +1209,6 @@ export type CreateUserInput = Partial<
   googleId?: string;
   username: string;
   ritEmail: string;
-  majors: Major[];
 };
 
 export type SessionUserData = Partial<{

@@ -1,17 +1,14 @@
-import { CreateUserInput, Major, Skill, AcademicYear } from '@looking-for-group/shared';
-import { MouseEventHandler, useMemo, useState } from 'react';
-import LabelInputBox from '../LabelInputBox';
-import { Select, SelectButton, SelectOptions } from '../Select';
+import {
+	CreateUserInput,
+	Major,
+	Skill
+} from "@looking-for-group/shared";
+import { MouseEventHandler, useMemo, useState } from "react";
+import LabelInputBox from "../LabelInputBox";
+import { Select, SelectButton, SelectOptions } from "../Select";
 import { getMajors } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
-import { ThemeIcon } from '../ThemeIcon';
-enum AcademicYears {
-	Freshman = "Freshman",
-	Sophomore = "Sophomore",
-	Junior = "Junior",
-	Senior = "Senior",
-	Graduate = "Graduate"
-};
+import { AcademicYear } from "@looking-for-group/shared/enums";
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -36,7 +33,9 @@ interface CompleteProfileProps {
 	setLocation: React.Dispatch<React.SetStateAction<string>>;
 	setFunFact: React.Dispatch<React.SetStateAction<string>>;
 	setMajor: React.Dispatch<React.SetStateAction<Major[]>>;
-	setAcademicYear: React.Dispatch<React.SetStateAction<AcademicYear | undefined>>;
+	setAcademicYear: React.Dispatch<
+		React.SetStateAction<AcademicYear | undefined>
+	>;
 	profileImage: File;
 	setProfileImage: React.Dispatch<React.SetStateAction<File>>;
 }
@@ -89,7 +88,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	setMajor,
 	setAcademicYear,
 	setPronouns,
-	setProfileImage,
+	setProfileImage
 }) => {
 	// make each skill tag a different color
 	// matches the colors in the design/background
@@ -112,7 +111,6 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 			fetchMajors();
 		}
 	}, []);
-
 
 	useMemo(() => {
 		const fetchMajors = async () => {
@@ -167,15 +165,10 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 					<div id="completeProfile-input-container">
 						<div id="profile-details">
 							{/* Profile picture container */}
-							<div
-								id="profile-pic">
+							<div id="profile-pic">
 								{/* image is profile image, if empty/null display avatar image */}
 								<img
-									src={
-										displayImg
-											? displayImg
-											: placeholder
-									}
+									src={displayImg ? displayImg : placeholder}
 									alt="profile-pic"
 								/>
 								{/* <img src={profileImage} alt="profile-pic" /> */}
@@ -195,7 +188,14 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 								</label>
 
 								{/* button to use avatar as profile picture */}
-								{<button onClick={() => setDisplayImg(placeholder)}>Use Avatar</button>}
+								{
+									<button
+										onClick={() =>
+											setDisplayImg(placeholder)
+										}>
+										Use Avatar
+									</button>
+								}
 							</div>
 						</div>
 
@@ -289,8 +289,13 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 									initialVal={academicYear}
 								/>
 								<SelectOptions
-									callback={(e) => setAcademicYear((e.target as HTMLButtonElement).value as AcademicYear)}
-									options={Object.values(AcademicYears).map(
+									callback={(e) =>
+										setAcademicYear(
+											(e.target as HTMLButtonElement)
+												.value as AcademicYear
+										)
+									}
+									options={Object.values(AcademicYear).map(
 										(yr) => {
 											return {
 												value: yr,
@@ -304,7 +309,6 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						</div>
 
 						{/* Major */}
-						{/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
 						<div id="major-input">
 							<Select>
 								<SelectButton
@@ -314,8 +318,14 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 									searchable={true}
 								/>
 								<SelectOptions
-									callback={(e) => { //praying this works so i can migrate it to users
-										const maj = allMajors.find((m) => m.label = (e.target as HTMLButtonElement).value)
+									callback={(e) => {
+										//praying this works so i can migrate it to users
+										const maj = allMajors.find(
+											(m) =>
+												m.label ===
+												(e.target as HTMLButtonElement)
+													.value
+										);
 										if (maj) setMajor([maj]);
 									}}
 									options={allMajors.map((m) => ({
@@ -343,7 +353,10 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<button id="signup-backBtn" onClick={onBack}>
 							Back
 						</button>
-						<button id="signup-nextBtn" onClick={onNext} disabled={!(major && academicYear)}>
+						<button
+							id="signup-nextBtn"
+							onClick={onNext}
+							disabled={!(major && academicYear)}>
 							Next
 						</button>
 					</div>

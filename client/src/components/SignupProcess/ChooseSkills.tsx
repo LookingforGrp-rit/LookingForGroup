@@ -360,7 +360,8 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 							id="signup-nextBtn"
 							onClick={onNext}
 							// disable the next button if the user has not selected 5 skills
-							// this is to prevent the user from moving to the next modal without selecting the required number of skills
+							// this is to prevent the user from moving to the next modal without selecting 
+							// the required number of skills
 							// the user can only move to the next modal when they have selected 5 skills
 							disabled={selectedSkills.length < 3}>
 							Next
