@@ -209,10 +209,10 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 </button>{' '}
 
                 {/* LOG IN Button */}
-                <button onClick={() => navigate(paths.routes.LOGIN, { state: { from: location.pathname } })}>
+                <a href={paths.routes.LOGIN} onClick={() => navigate(paths.routes.LOGIN, { state: { from: location.pathname } })}>
                   <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
                   Log In
-                </button>
+                </a>
               </div>
 
             ) : (

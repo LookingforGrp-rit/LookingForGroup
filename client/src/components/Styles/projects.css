@@ -53,6 +53,7 @@ Project Panel component style rules
   position: relative;
   max-width: none;
   overflow: hidden;
+  text-decoration: none;
 
   .project-image-container {
     position: relative;

@@ -151,7 +151,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   };
 
   return (
-    <button className={'project-panel'} onClick={() => navigate(projectURL)}>
+    <a className={'project-panel'} href={projectURL} onClick={() => navigate(projectURL)}>
       <div className="project-image-container">
         <img
           src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
@@ -205,6 +205,6 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
           )}
         </div>
       </div>
-    </button>
+    </a>
   );
 };
