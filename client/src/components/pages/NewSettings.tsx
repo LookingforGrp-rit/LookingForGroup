@@ -571,7 +571,19 @@ const Settings = () => {
                   </div>
                   <div id="phone-number-visibility">
                     <label htmlFor="toggle-phone-checkbox">Show Phone Number on your Profile?</label>
-                    <input type="checkbox" id="toggle-phone-checkbox"></input>
+                    <input
+                      type="checkbox"
+                      id="toggle-phone-checkbox"
+                      onChange={async (e) => {
+                        const tempInfo = {...userInfo};
+                        tempInfo.displayPhone = e.target.checked;
+                        setUserInfo(tempInfo);
+                        //await editUser({displayPhone: e.target.checked});
+                      }}
+                    >
+                    </input>
+                    {/* This is temporary so I can see the value */}
+                    {userInfo.displayPhone ? "True" : "False"}
                   </div>
                 </div>
               </div>
