@@ -150,17 +150,31 @@ model Projects {
 }
 
 model ReportProject {
-  reportId      Int       @id @default(autoincrement()) @map("report_id")
-  userId        Int       @map("user_id")
-  projectId     Int       @map("project_id")
-  reportText    String    @map("report_text")
-  users         Users     @relation(fields: [userId], references: [userId], map: "FK_project_report_users")
-  projects      Projects  @relation(fields: [projectId], references: [projectId], map: "FK_project_report_projects")
+  reportId   Int      @id @default(autoincrement()) @map("report_id")
+  userId     Int      @map("user_id")
+  projectId  Int      @map("project_id")
+  reportText String   @map("report_text")
+  users      Users    @relation(fields: [userId], references: [userId], map: "FK_project_report_users")
+  projects   Projects @relation(fields: [projectId], references: [projectId], map: "FK_project_report_projects")
 
   @@unique([userId, projectId])
   @@index([userId], map: "FK_project_report_users")
   @@index([projectId], map: "FK_project_report_projects")
   @@map("report_project")
+}
+
+model ReportUser {
+  reportId      Int       @id @default(autoincrement()) @map("report_id")
+  reporterId    Int       @map("reporter_id")
+  reportedId    Int       @map("reported_id")
+  reportText    String    @map("report_text")
+  reporter      Users     @relation("reporter_id", fields: [reporterId], references: [userId], map: "FK_user_report_reporter")
+  reported      Users     @relation("reported_id", fields: [reportedId], references: [userId], map: "FK_user_report_reported")
+
+  @@unique([reporterId, reportedId])
+  @@index([reporterId], map: "FK_user_report_reporter")
+  @@index([reportedId], map: "FK_user_report_reported")
+  @@map("report_user")
 }
 
 model Socials {
@@ -245,6 +259,7 @@ model Users {
   bio               String              @default("") @db.VarChar(600)
   visibility        Int                 @default(1) @db.TinyInt
   mentor            Boolean             @default(false)
+  displayPhone      Boolean             @default(false) @map("display_phone")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt         DateTime            @updatedAt @map("updated_at") @db.Timestamp(0)
   phoneNumber       String?             @unique @map("phone_number") @db.VarChar(20)
@@ -258,7 +273,9 @@ model Users {
   userSkills        UserSkills[]
   userSocials       UserSocials[]
   majors            Majors[]
-  report            ReportProject[]
+  reportProject     ReportProject[]
+  reporter          ReportUser[]        @relation("reporter_id")
+  reported          ReportUser[]        @relation("reported_id")
 
   @@map("users")
 }
@@ -276,9 +293,11 @@ model Skills {
 model Session {
   id        String   @id
   sid       String   @unique
-  data      String
+  data      String   @db.Text
   gid       String   @default("federalist papers")
   expiresAt DateTime
+
+  @@map("session")
 }
 
 enum JobsAvailability {

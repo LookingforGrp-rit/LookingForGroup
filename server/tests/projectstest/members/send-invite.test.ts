@@ -54,6 +54,7 @@ const prismaRoles = [
 const prismaUser = {
   userId: 1,
   username: '',
+  displayPhone: false,
   ritEmail: 'email@rit.edu',
   firstName: '',
   lastName: '',
@@ -94,6 +95,7 @@ const prismaProject: ProjectWithFollowers = {
     developer: true,
     firstName: '',
     funFact: '',
+    displayPhone: false,
     headline: '',
     lastName: '',
     location: '',
