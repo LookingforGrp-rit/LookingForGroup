@@ -1,6 +1,7 @@
 generator client {
-  provider = "prisma-client-js"
-  output   = "../src/models/generated/prisma"
+  provider        = "prisma-client-js"
+  output          = "../src/models/generated/prisma"
+  previewFeatures = ["relationJoins"]
 }
 
 datasource db {
@@ -273,7 +274,7 @@ model Session {
 }
 
 model ProjectsAwaitingApproval {
-  projectId Int     @id
+  projectId Int     @id @map("project_id")
   project Projects  @relation(fields: [projectId], references: [projectId], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("projects_awaiting_approval")

@@ -12,10 +12,44 @@ const sampleProjectPreview = prisma.projects.findMany({
   select: ProjectPreviewSelector,
 });
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const sampleUnapprovedPreview = prisma.projectsAwaitingApproval.findMany({
+  include: {
+    project: {
+      select: ProjectPreviewSelector,
+    },
+  },
+});
+
 type ProjectsGetPayload = Awaited<typeof sampleProjectPreview>[number];
+type AwaitApprovalPayload = Awaited<typeof sampleUnapprovedPreview>[number];
 
 //map to shared type
 export const transformProjectToPreview = (project: ProjectsGetPayload): ProjectPreview => {
+  const transformedObj = {
+    projectId: project.projectId,
+    title: project.title,
+    hook: project.hook,
+    tags: project.tags.map((tag) =>
+      transformProjectTag(project.projectId, {
+        label: tag.tag.label,
+        tagId: tag.tagId,
+        type: tag.tag.type as TagType,
+        displayOrder: tag.displayOrder,
+      }),
+    ),
+    owner: transformUserToPreview(project.users),
+    mediums: project.mediums.map((medium) => transformProjectMedium(project.projectId, medium)),
+    apiUrl: `/api/projects/${project.projectId.toString()}`,
+  } as unknown as ProjectPreview;
+
+  if (project.thumbnail)
+    transformedObj.thumbnail = transformProjectImage(project.projectId, project.thumbnail);
+  return transformedObj;
+};
+
+export const transformUnapprovedToPreview = (payload: AwaitApprovalPayload): ProjectPreview => {
+  const project = payload.project;
   const transformedObj = {
     projectId: project.projectId,
     title: project.title,
