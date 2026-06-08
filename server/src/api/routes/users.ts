@@ -49,6 +49,6 @@ router.get('/search-email/:email', getUserByEmail);
 // GET BLACKLIST ROUTES
 
 //Gets users on the blacklist
-router.get('/blacklist', () => { console.log("endpoint function list thing called"); }, requiresLogin, getBlacklistedUsers);
+router.get('/blacklist', requiresLogin, getBlacklistedUsers);
 
 export default router;

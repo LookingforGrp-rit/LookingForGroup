@@ -15,21 +15,21 @@ export const getBlacklistedUsersService = async () => {
     try {
         const blacklist = await prisma.userBlacklist.findMany();
 
-        const allUsersInBlacklist = blacklist.map(async (user) => await prisma.users.findUnique({
+        let allUsersInBlacklist = blacklist.map(async (user) => await prisma.users.findUnique({
             where: { googleId: user.googleId }
         }));
 
-        let transformedBlacklist = allUsersInBlacklist.map((user) => transformUserToPreview(user as any));
+        // let transformedBlacklist = allUsersInBlacklist.map((user) => transformUserToPreview(user));
 
         //Alphabetize array by first name ascending
-        transformedBlacklist = transformedBlacklist.toSorted((user1, user2) =>
-            user1.firstName.charCodeAt(0) - user2.firstName.charCodeAt(0));
+        // allUsersInBlacklist = allUsersInBlacklist.toSorted((user1, user2) =>
+        //     user1.firstName.charCodeAt(0) - user2.firstName.charCodeAt(0));
 
         //For when preferredName is implemented
         // transformedBlacklist = transformedBlacklist.toSorted((user1, user2) =>
         //     user1.preferredName.charCodeAt(0) - user2.preferredName.charCodeAt(0));
 
-        return transformedBlacklist;
+        return allUsersInBlacklist;
     } catch (e) {
         console.error('Error in addBlacklistService:', e);
         return 'INTERNAL_ERROR';
