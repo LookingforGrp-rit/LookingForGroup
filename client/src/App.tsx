@@ -13,7 +13,9 @@ import MyProjects from './components/pages/MyProjects';
 import Profile from './components/pages/Profile';
 import Project from './components/pages/Project';
 // import ProjectPostPage from './components/pages/ProjectPostPage';
-import { Discover, Meet, DiscoverPage, ProfileMeetPage } from './components/pages/DiscoverAndMeet';
+import { Discover, Meet} from './components/pages/DiscoverAndMeet';
+import {DiscoverPage} from './components/pages/Discover';
+import {ProfileMeetPage} from './components/pages/Meet';
 //import Settings from './components/pages/Settings'; -- Commented in clean up 26-20-01 
 import NewSettings from './components/pages/NewSettings';
 import NotFound from './components/pages/NotFound';
