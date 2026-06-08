@@ -1,5 +1,5 @@
 import React, { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
-import CreditsFooter from '../CreditsFooter';
+import AboutFooter from '../AboutFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
@@ -130,6 +130,7 @@ export const DiscoverPage = () => {
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
     const projectRes = await getProjects();
+    console.log(projectRes);
 
     if (!projectRes.data) return;
 
@@ -392,7 +393,7 @@ export const DiscoverPage = () => {
           {discoverPanelContents}
         </div>
       </main>
-      <CreditsFooter />
+      <AboutFooter />
       <ToTopButton />
     </div>
   );
