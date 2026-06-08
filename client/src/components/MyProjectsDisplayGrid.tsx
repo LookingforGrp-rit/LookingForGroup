@@ -41,7 +41,7 @@ const MyProjectsDisplayGrid = ({
   //Navigation hook
   const navigate = useNavigate();
   // Context providing project ID, ownership status, and reload function
-  const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
+  const { projId, isOwner, reloadProjects, removeProject } = useContext(LeaveDeleteContext);
 
   //const [status, setStatus] = useState<string>();
   const [optionsShown, _setOptionsShown] = useState(false);
@@ -74,6 +74,7 @@ const MyProjectsDisplayGrid = ({
     setRequestType("leave");
     setResultObj(response);
     setShowResult(true);
+    if (response.status === 200) setTimeout(() => removeProject(projId), 1500);
   };
 
   /**
@@ -87,6 +88,7 @@ const MyProjectsDisplayGrid = ({
     setRequestType("delete");
     setResultObj(response);
     setShowResult(true);
+    if (response.status === 200) setTimeout(() => removeProject(projId), 1500);
   };
 
   return (

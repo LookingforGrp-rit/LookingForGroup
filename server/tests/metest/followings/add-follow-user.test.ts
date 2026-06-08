@@ -36,6 +36,7 @@ const transformedUserPreview: UserPreview = {
   apiUrl: 'api/users/2',
   designer: false,
   developer: true,
+  displayPhone: false,
   firstName: 'Eric',
   preferredName: 'Eric',
   funFact: '',

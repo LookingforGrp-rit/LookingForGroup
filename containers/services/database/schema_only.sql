@@ -16,36 +16,36 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `_majorstousers`
+-- Table structure for table `_MajorsToUsers`
 --
 
-DROP TABLE IF EXISTS `_majorstousers`;
+DROP TABLE IF EXISTS `_MajorsToUsers`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `_majorstousers` (
+CREATE TABLE `_MajorsToUsers` (
   `A` int NOT NULL,
   `B` int NOT NULL,
-  UNIQUE KEY `_majorstousers_AB_unique` (`A`,`B`),
-  KEY `_majorstousers_B_index` (`B`),
-  CONSTRAINT `_majorstousers_A_fkey` FOREIGN KEY (`A`) REFERENCES `majors` (`major_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `_majorstousers_B_fkey` FOREIGN KEY (`B`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `_MajorsToUsers_AB_unique` (`A`,`B`),
+  KEY `_MajorsToUsers_B_index` (`B`),
+  CONSTRAINT `_MajorsToUsers_A_fkey` FOREIGN KEY (`A`) REFERENCES `majors` (`major_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `_MajorsToUsers_B_fkey` FOREIGN KEY (`B`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Table structure for table `_mediumstoprojects`
+-- Table structure for table `_MediumsToProjects`
 --
 
-DROP TABLE IF EXISTS `_mediumstoprojects`;
+DROP TABLE IF EXISTS `_MediumsToProjects`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `_mediumstoprojects` (
+CREATE TABLE `_MediumsToProjects` (
   `A` int NOT NULL,
   `B` int NOT NULL,
-  UNIQUE KEY `_mediumstoprojects_AB_unique` (`A`,`B`),
-  KEY `_mediumstoprojects_B_index` (`B`),
-  CONSTRAINT `_mediumstoprojects_A_fkey` FOREIGN KEY (`A`) REFERENCES `mediums` (`medium_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `_mediumstoprojects_B_fkey` FOREIGN KEY (`B`) REFERENCES `projects` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE KEY `_MediumsToProjects_AB_unique` (`A`,`B`),
+  KEY `_MediumsToProjects_B_index` (`B`),
+  CONSTRAINT `_MediumsToProjects_A_fkey` FOREIGN KEY (`A`) REFERENCES `mediums` (`medium_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `_MediumsToProjects_B_fkey` FOREIGN KEY (`B`) REFERENCES `projects` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -66,23 +66,6 @@ CREATE TABLE `_prisma_migrations` (
   `started_at` datetime(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
   `applied_steps_count` int unsigned NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-/*!40101 SET character_set_client = @saved_cs_client */;
-
---
--- Table structure for table `_projectstotags`
---
-
-DROP TABLE IF EXISTS `_projectstotags`;
-/*!40101 SET @saved_cs_client     = @@character_set_client */;
-/*!50503 SET character_set_client = utf8mb4 */;
-CREATE TABLE `_projectstotags` (
-  `A` int NOT NULL,
-  `B` int NOT NULL,
-  UNIQUE KEY `_projectstotags_AB_unique` (`A`,`B`),
-  KEY `_projectstotags_B_index` (`B`),
-  CONSTRAINT `_projectstotags_A_fkey` FOREIGN KEY (`A`) REFERENCES `projects` (`project_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT `_projectstotags_B_fkey` FOREIGN KEY (`B`) REFERENCES `tags` (`tag_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

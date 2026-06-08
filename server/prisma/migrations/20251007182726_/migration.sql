@@ -200,30 +200,21 @@ CREATE TABLE `skills` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `_mediumstoprojects` (
+CREATE TABLE `_MediumsToProjects` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
-    UNIQUE INDEX `_mediumstoprojects_AB_unique`(`A`, `B`),
-    INDEX `_mediumstoprojects_B_index`(`B`)
+    UNIQUE INDEX `_MediumsToProjects_AB_unique`(`A`, `B`),
+    INDEX `_MediumsToProjects_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `_majorstousers` (
+CREATE TABLE `_MajorsToUsers` (
     `A` INTEGER NOT NULL,
     `B` INTEGER NOT NULL,
 
-    UNIQUE INDEX `_majorstousers_AB_unique`(`A`, `B`),
-    INDEX `_majorstousers_B_index`(`B`)
-) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateTable
-CREATE TABLE `_projectstotags` (
-    `A` INTEGER NOT NULL,
-    `B` INTEGER NOT NULL,
-
-    UNIQUE INDEX `_projectstotags_AB_unique`(`A`, `B`),
-    INDEX `_projectstotags_B_index`(`B`)
+    UNIQUE INDEX `_MajorsToUsers_AB_unique`(`A`, `B`),
+    INDEX `_MajorsToUsers_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
@@ -281,22 +272,16 @@ ALTER TABLE `user_socials` ADD CONSTRAINT `FK_user_socials_socials` FOREIGN KEY 
 ALTER TABLE `user_socials` ADD CONSTRAINT `FK_user_socials_users` FOREIGN KEY (`user_id`) REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_mediumstoprojects` ADD CONSTRAINT `_mediumstoprojects_A_fkey` FOREIGN KEY (`A`) REFERENCES `mediums`(`medium_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_MediumsToProjects` ADD CONSTRAINT `_MediumsToProjects_A_fkey` FOREIGN KEY (`A`) REFERENCES `mediums`(`medium_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_mediumstoprojects` ADD CONSTRAINT `_mediumstoprojects_B_fkey` FOREIGN KEY (`B`) REFERENCES `projects`(`project_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_MediumsToProjects` ADD CONSTRAINT `_MediumsToProjects_B_fkey` FOREIGN KEY (`B`) REFERENCES `projects`(`project_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_majorstousers` ADD CONSTRAINT `_majorstousers_A_fkey` FOREIGN KEY (`A`) REFERENCES `majors`(`major_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_MajorsToUsers` ADD CONSTRAINT `_MajorsToUsers_A_fkey` FOREIGN KEY (`A`) REFERENCES `majors`(`major_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE `_majorstousers` ADD CONSTRAINT `_majorstousers_B_fkey` FOREIGN KEY (`B`) REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_projectstotags` ADD CONSTRAINT `_projectstotags_A_fkey` FOREIGN KEY (`A`) REFERENCES `projects`(`project_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
-ALTER TABLE `_projectstotags` ADD CONSTRAINT `_projectstotags_B_fkey` FOREIGN KEY (`B`) REFERENCES `tags`(`tag_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `_MajorsToUsers` ADD CONSTRAINT `_MajorsToUsers_B_fkey` FOREIGN KEY (`B`) REFERENCES `users`(`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- MySQL dump 10.13  Distrib 8.0.42, for Win64 (x86_64)
 --

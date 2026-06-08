@@ -5,6 +5,7 @@ import { getUserFollowers } from '#controllers/users/followings/get-user-followe
 import { getUserFollowing } from '#controllers/users/followings/get-user-following.ts';
 import { getAllUsers } from '#controllers/users/get-all.ts';
 import { getUserByEmail } from '#controllers/users/get-user/get-by-email.ts';
+import { getUserByGoogleId } from '#controllers/users/get-user/get-by-google-id.ts';
 import { getUserById } from '#controllers/users/get-user/get-by-id.ts';
 import { getUserByUsername } from '#controllers/users/get-user/get-by-username.ts';
 import { getOtherUserProjects } from '#controllers/users/get-user-proj.ts';
@@ -18,7 +19,7 @@ const router = Router();
 router.get('/', getAllUsers);
 
 //Creates a new user
-router.post('/', requiresLogin, createUser);
+router.post('/', createUser);
 
 //Gets another user's projects
 router.get('/:id/projects/', getOtherUserProjects);
@@ -50,5 +51,7 @@ router.get('/:id', getUserById);
 router.get('/search-username/:username', getUserByUsername);
 // Gets users by email
 router.get('/search-email/:email', getUserByEmail);
+//Get ysers by google id
+router.get('/search-google/:id', getUserByGoogleId);
 
 export default router;

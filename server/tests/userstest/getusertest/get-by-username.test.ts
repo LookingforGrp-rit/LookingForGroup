@@ -43,6 +43,7 @@ describe('getUserByUsernameService', () => {
       mentor: false,
       designer: false,
       developer: false,
+      displayPhone: false,
       headline: '',
       pronouns: '',
       title: '',
