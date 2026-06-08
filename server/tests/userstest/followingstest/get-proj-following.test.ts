@@ -59,6 +59,7 @@ describe('getProjectFollowingService', () => {
         mentor: false,
         designer: false,
         developer: false,
+        privacy: 'public' as Visibility,
         headline: 'Test headline',
         displayPhone: false,
         pronouns: 'they/them',

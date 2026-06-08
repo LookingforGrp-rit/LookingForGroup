@@ -22,7 +22,7 @@ export const transformUserMember = ({
 }: UserMembersGetPayload): UserMember => {
   return {
     project: transformProjectToPreview(projects),
-    visibility: profileVisibility === 'private' ? 'Private' : 'Public',
+    profileVisibility: profileVisibility,
     role: transformRole(roles),
     memberSince: createdAt,
     apiUrl: `/api/projects/${projects.projectId.toString()}/members/${userId.toString()}`,

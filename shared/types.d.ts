@@ -615,6 +615,11 @@ export interface UserPreview {
    * The user's preference on whether or not they wish to display their phone number on their profile
    */
   displayPhone: boolean;
+  
+  /**
+   * The user's preference on whether or not they wish to display their phone number on their profile
+   */
+  privacy: Visibility;
 
   /**
    * The user's phone number (only filled is displayPhone is true)
