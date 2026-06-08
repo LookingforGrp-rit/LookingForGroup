@@ -359,7 +359,8 @@ const Profile = () => {
                 </div>
 
                 <div id="profile-phone-number">
-                  0
+                  {displayedProfile?.displayPhone ? "True" : "False"}
+                  {displayedProfile?.phoneNumber}
                 </div>
 
                 {/* <div id="profile-interest">

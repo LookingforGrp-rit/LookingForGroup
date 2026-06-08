@@ -270,6 +270,10 @@ export const LinksTab: React.FC<LinksTabProps> = ({
           </button>
         </div>
       </div>
+      <div id="toggle-phone-visibility">
+        <label htmlFor="toggle-phone-checkbox">Show Phone Number on Profile?</label>
+        <input type="checkbox" id="toggle-phone-checkbox"></input>
+      </div>
     </div>
   );
 };

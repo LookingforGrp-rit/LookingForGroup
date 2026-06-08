@@ -115,3 +115,15 @@
   align-items: center;
   gap: 8px;
 }
+
+#toggle-phone-visibility{
+  display: flex;
+  flex-direction: row;
+  justify-content: start;
+  margin-top: 1em;
+}
+
+#toggle-phone-visibility input{
+  width: 2em;
+  margin-left: 1em;
+}
