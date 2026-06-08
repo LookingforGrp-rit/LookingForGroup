@@ -285,6 +285,7 @@ components:
         ritEmail: mhr2964@rit.edu
         visibility: 1
         phoneNumber: null
+        displayPhone: false
         googleId: 11111111
         createdAt: 2038-01-19 03:14:07
         updatedAt: 2038-01-19 03:14:07
