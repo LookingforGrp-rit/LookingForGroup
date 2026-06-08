@@ -20,7 +20,7 @@ import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
  * My Projects page. Creates a customizable page that showcases the user's projects.
  * @returns JSX Element
  */
-const MyProjects = () => {
+const MyProjects = (userProfile: any) => {
 
   //const navigate = useNavigate();
 

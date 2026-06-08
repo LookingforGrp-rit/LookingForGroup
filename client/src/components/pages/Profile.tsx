@@ -37,7 +37,7 @@ type Project = ProjectPreview;
  * Profile page with user information collected from profileID.
  * @returns JSX Element
  */
-const Profile = () => {
+const Profile = (userProfile : any) => {
   // --------------------
   // Global variables
   // --------------------
