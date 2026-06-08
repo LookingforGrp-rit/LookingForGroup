@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent } from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
 import CreditsFooter from '../CreditsFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -747,10 +747,6 @@ export const DiscoverPage = () => {
     return updateProjectList(activeTagFilters);
   };
 
-  const totalProjectPages = Math.max(1, Math.ceil(filteredProjectList.length / PROJECTS_PER_PAGE));
-  const startIndex = (currentProjectPage - 1) * PROJECTS_PER_PAGE;
-  const paginatedProjects = filteredProjectList.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
-
   // --------------------
   // Helper functions
   // --------------------
@@ -789,7 +785,6 @@ export const DiscoverPage = () => {
   const getShowcaseDetails = async (projectList: ProjectPreview[], usedCache: NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList: ProjectWithFollowers[] = [];
 
-    console.log(projectList);
     // remove projects without open positions
     // const filteredProjectList = projectList.filter(a => a.jobs.length > 1);
 
@@ -831,6 +826,7 @@ export const DiscoverPage = () => {
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
     const projectRes = await getProjects();
+    console.log(projectRes);
 
     if (!projectRes.data) return;
 
@@ -873,7 +869,97 @@ export const DiscoverPage = () => {
     setProjectCache(newProjectCache);
   };
 
-  useMemo(() => setupProjectData, []);
+  /**
+  * Changes what projects are shown to the user whenever a filter has been added or changed
+  * @param activeTagFilters Tags that are shown to the user now
+  */
+  const updateProjectList = async (activeTagFilters: Tag[]) => {
+    const projectList = fullProjectList;
+    // Get project and user info to match with tags
+    const items: ProjectWithFollowers[] = [];
+    for (let item of projectList) {
+      if (projectCache[item.projectId].full != undefined) {
+        items.push(projectCache[item.projectId].full as ProjectWithFollowers);
+      }
+      else {
+        const projectData = await getByID(item.projectId);
+        if (projectData.data) {
+          items.push(projectData.data);
+          projectCache[item.projectId].full = projectData.data;
+        } else {
+          console.error("Error getting project data from " + item.projectId);
+        }
+      }
+    }
+
+    let tagFilteredList = items.filter((item) => {
+      if (activeTagFilters.length === 0) return true;
+      //let matchesAny = false;
+      let matchesAll = true;
+      for (const tag of activeTagFilters) {
+        // Check project type by name since IDs are not unique relative to tags
+        // Project Type tag
+        if (tag.type === 'Project Type' && Array.isArray(item.mediums)) {
+          const projectTypes = item.mediums.map((t) => t.label.toLowerCase());
+          if (tag.label === `New`) {
+            //change the subtraction to change the 
+            const cutOff = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
+            const date = Date.parse(item.createdAt.toString());
+            if (date < cutOff) {
+              //matchesAny = true;
+              matchesAll = false;
+            }
+          }
+          else if (!projectTypes.includes(tag.label.toLowerCase())) {
+            //matchesAny = true;
+            matchesAll = false;
+          }
+        }
+        // Purpose tag 
+        else if (tag.type === 'Purpose' && item.purpose) {
+          const projectPurpose = item.purpose.toLowerCase();
+          if (!projectPurpose.includes(tag.label.toLowerCase())) {
+            //matchesAny = true;
+            matchesAll = false;
+          }
+        }
+        // Tag check can be done by ID: Genre
+        else if (tag.tagId && item.tags) {
+          const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
+
+          if (!tagIDs.includes(tag.tagId)) {
+            //matchesAny = true;
+            matchesAll = false;
+          }
+        }
+
+
+      }
+      //return matchesAny;
+      return matchesAll;
+    });
+
+    // If no tags are currently selected, render all projects
+    // !! Needs to be skipped if searchbar has any input !!
+    if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
+      tagFilteredList = JSON.parse(JSON.stringify(fullProjectList));
+
+      setProjectSearchData(fullProjectList);
+      setFilteredProjectList(fullProjectList);
+      return;
+    }
+
+    //doing both updates messes with the display updating
+    //setProjectSearchData(tagFilteredList);
+
+    // Set displayed projects
+    setFilteredProjectList(tagFilteredList);
+    setCurrentProjectPage(1);
+  };
+
+  useEffect(()=>{
+    setupProjectData();
+  },[]);
 
   /**
   * Updates the filtered project list with new search information
@@ -924,9 +1010,14 @@ export const DiscoverPage = () => {
     })();
   }, [projectSearchData, fullProjectList, projectCache]);
 
-  //gets the discover carousel items
+  
+  const totalProjectPages = Math.max(1, Math.ceil(filteredProjectList.length / PROJECTS_PER_PAGE));
+  const startIndex = (currentProjectPage - 1) * PROJECTS_PER_PAGE;
+  const paginatedProjects = filteredProjectList.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
+
+  //gets teh discover stuff at the bottom
   let discoverPanelContents: React.ReactElement
-  if (filteredProjectList.length === 0) {
+  if (filteredProjectList.length === 0 && !fullProjectList) {
     discoverPanelContents = (
       <div className='placeholder-spacing'>
         <div className='spinning-loader'></div>

@@ -31,6 +31,7 @@ interface ProjectPanelProps {
  * @returns JSX element rendering a clickable project preview panel with follow functionality
  */
 export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: ProjectPanelProps) => {
+  console.log(project);
   const navigate = useNavigate();
   const projectURL = `${paths.routes.PROJECT}?projectID=${project.projectId}`;
 
