@@ -139,6 +139,7 @@ model Projects {
   projectFollowings ProjectFollowings[]
   projectImages     ProjectImages[]     @relation("ProjectImages")
   projectSocials    ProjectSocials[]
+  visibility        Int                 @default(1) @db.TinyInt
   mediums           Mediums[]
   // tags              Tags[]
   users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")

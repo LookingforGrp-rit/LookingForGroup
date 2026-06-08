@@ -1256,6 +1256,13 @@ export type UpdateUserProjectVisibilityInput = {
 // PROJECTS inputs
 
 /**
+ * Data required to show or hide a project on a user's profile
+ */
+export type UpdateProjectVisibilityInput = {
+  visibility: Visibility;
+};
+
+/**
  * Data required to create a new project
  */
 export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
