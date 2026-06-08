@@ -37,7 +37,7 @@ components:
 
     Visibility:
       type: integer
-      enum: [0, 1]
+      enum: ['public', 'private']
       example: 1
 
     SkillProficiency:

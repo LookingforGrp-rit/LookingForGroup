@@ -236,7 +236,7 @@ components:
           properties:
             ritEmail:
               type: string
-            visibility:
+            privacy:
               $ref: 'enums.yaml#/components/schemas/Visibility'
             phoneNumber:
               type: string
@@ -315,6 +315,6 @@ components:
         role:
           roleId: 1
           label: Full-Stack Developer
-        visibility: Private
+        visibility: private
         memberSince: 2038-01-19 03:14:07
         apiUrl: /api/me/projects/1
