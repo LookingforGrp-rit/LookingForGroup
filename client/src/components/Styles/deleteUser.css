@@ -22,7 +22,7 @@
 
 /* Successfully deleted user popup button */
 #continue-button {
-  width: 110px;
+  width: fit-content;
   height: 40px;
   /* margin: 20px auto 0px auto; */
   padding: 5px 16px;
