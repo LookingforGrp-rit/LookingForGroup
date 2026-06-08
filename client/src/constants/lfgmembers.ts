@@ -307,7 +307,7 @@ export const members = [
     },
     {
         'name': 'Mat Wargacki',
-        'role': 'Full Stack Developer',
+        'role': 'Front-End Developer',
         'photo': '/assets/creditProfiles/Base.png'
     },
     {
