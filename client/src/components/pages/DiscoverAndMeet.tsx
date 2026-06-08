@@ -14,7 +14,6 @@ import {
   UserDetail, ProjectWithFollowers,
   MePrivate
 } from '@looking-for-group/shared';
-import { userDataManager } from '../../api/data-managers/user-data-manager';
 
 //import api utils
 // Current auth and follow state are loaded with getCurrentAccount/getProjectFollowing
@@ -123,8 +122,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const userDataSet = useMemo(() => {
     return [{ data: userSearchData }];
   }, [userSearchData]);
-
-  const PROJECTS_PER_PAGE = 6;
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
@@ -611,7 +608,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         <PanelBox
           category={category}
           itemList={filteredProjectList} 
-          itemAddInterval={PROJECTS_PER_PAGE} 
           projectCache={projectCache}
           followedProjectIds={followedProjectIds}
           userId={currentUserId ?? -1}
@@ -627,7 +623,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       );
     }
     else {
-      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} userId={currentUserId ?? -1} />);
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} userId={currentUserId ?? -1}/>);
     }
   }
 
