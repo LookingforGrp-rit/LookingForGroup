@@ -80,13 +80,17 @@
   border-radius: 6px;
 }
 
+#url-input {
+  height: fit-content;
+}
+
 /* Container for link inputs */
 #editor-link-list {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  /* height: 100%; */
 }
-
 
 /* Container for Select and Input components */
 .editor-link-item {
@@ -95,6 +99,7 @@
   justify-items: center;
   /* align-items: flex-start; */
   align-self: stretch;
+  height: 100%;
 }
 
 @media only screen and (max-width: 700px){
@@ -107,6 +112,11 @@
 .editor-link-item>.select-container {
   width: 100%;
   max-width: 166px;
+  
+  .select-options {
+    max-height: min(300px, calc(100vh - 600px));
+    min-height: 100%;
+  }
 }
 
 /* Container for content of Select component */
