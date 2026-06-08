@@ -8,4 +8,5 @@ export const MePrivateSelector = Object.freeze({
   googleId: true,
   createdAt: true,
   updatedAt: true,
+  displayPhone: true,
 });

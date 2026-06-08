@@ -430,7 +430,7 @@ Signup process modal style rules
 #signup-nextBtn:disabled {
   border: none;
   border-radius: 14px;
-  height: 45px;
+  height: 90px;
   width: 100px;
   font-size: 1.125rem;
   font-weight: 600;
@@ -446,7 +446,7 @@ Signup process modal style rules
 #signup-nextBtn {
   border: none;
   border-radius: 14px;
-  height: 45px;
+  height: 90px;
   width: 100px;
   font-size: 1.125rem;
   font-weight: 800;
@@ -462,7 +462,7 @@ Signup process modal style rules
 #signup-backBtn {
   border: none;
   border-radius: 14px;
-  height: 45px;
+  height: 90px;
   width: 100px;
   font-size: 1.125rem;
   font-weight: 800;

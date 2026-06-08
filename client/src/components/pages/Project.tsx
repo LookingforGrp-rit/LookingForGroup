@@ -27,7 +27,7 @@ import AboutFooter from "../AboutFooter";
  * Project page. Renders the project page with all project details, team member information, and available positions.
  * @returns JSX Element
  */
-const Project = () => {
+const Project = (userProfile : any) => {
   //Navigation hook
   const navigate = useNavigate();
 
