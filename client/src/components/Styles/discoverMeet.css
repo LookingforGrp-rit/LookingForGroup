@@ -407,9 +407,22 @@ Image carousel style rules
     padding: 23px max(16px, calc(100vw * (16 / 375)));
     width: calc(100% - (max(16px, calc(100vw * (16 / 375))) * 2));
     height: fit-content;
+    position: relative;
+
+    > :not(.discover-link) {
+      display: none;
+    }
+
+    .discover-link {
+      display: block;
+      margin: 0;
+    }
 
     .learn-more {
-      right: max(16px, calc(100vw * (16 / 375)));
+      right: auto;
+      bottom: auto;
+      position: relative;
+      margin-top: 12px;
     }
   }
 }
