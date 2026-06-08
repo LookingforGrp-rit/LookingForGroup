@@ -310,6 +310,7 @@ projectAfterLinkChanges = structuredClone(projectData);
               {url && (<div id="base-url">{url}</div>)}
               <Input
                 type="single"
+                id="url-input"
                 style={{
                   opacity: !social.label ? 0.4 : 1,
                   cursor: !social.label ? 'not-allowed' : 'text'
