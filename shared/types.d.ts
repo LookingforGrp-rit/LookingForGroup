@@ -1204,7 +1204,6 @@ export type CreateUserInput = Partial<
   googleId?: string;
   username: string;
   ritEmail: string;
-  majors: Major[];
 };
 
 export type SessionUserData = Partial<{
