@@ -36,9 +36,9 @@ components:
       example: Freshman
 
     Visibility:
-      type: integer
+      type: string
       enum: ['public', 'private']
-      example: 1
+      example: public
 
     SkillProficiency:
       type: string

@@ -297,9 +297,9 @@ components:
           $ref: 'projects.yaml#/components/schemas/ProjectPreview'
         role:
           $ref: 'datasets.yaml#/components/schemas/Role'
-        visibility:
+        profileVisibility:
           type: string
-          enum: [Public, Private]
+          enum: [public, private]
         memberSince:
           type: string
           format: date-time
