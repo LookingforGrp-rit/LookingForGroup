@@ -155,7 +155,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	// render the page
 	return (
 		<div className="signupProcess-background">
-			<div className="signupProcess-modal">
+			<div className="signupProcess-modal" id="complete-profile-modal">
 				<div className="CompleteProfile">
 					<h1 id="signupProcess-title">Complete Your Profile!</h1>
 					<p id="signupProcess-subTitle">
