@@ -623,7 +623,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
         <div className="pagination-wrapper">
           <PanelBox
             category={category}
-            itemList={paginatedProjects} 
+            itemList={filteredProjectList} 
             itemAddInterval={PROJECTS_PER_PAGE} 
             projectCache={projectCache}
             followedProjectIds={followedProjectIds}
