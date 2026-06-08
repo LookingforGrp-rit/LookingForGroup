@@ -8,8 +8,7 @@ components:
         role:
           $ref: 'datasets.yaml#/components/schemas/Role'
         profileVisibility:
-          type: string
-          enum: [Public, Private]
+          $ref: 'enums.yaml#/components/schemas/Visibility'
         memberSince:
           type: string
           format: date-time

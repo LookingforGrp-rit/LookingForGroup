@@ -169,6 +169,9 @@ components:
           type: integer
         title:
           type: string
+        globalVisibility:
+          type: string
+          enum: ['public', 'private']
         hook:
           type: string
         thumbnail:

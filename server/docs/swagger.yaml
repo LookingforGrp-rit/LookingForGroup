@@ -871,7 +871,7 @@ paths:
             schema:
               type: object
               properties:
-                visibility:
+                profileVisibility:
                   type: string
                   example: 'public'
       responses:
