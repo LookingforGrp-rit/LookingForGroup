@@ -2835,6 +2835,12 @@ Project Carousel style rules
     transform: rotate(-90deg);
   }
 
+  @media only screen and (max-width: 700px) {
+    .project-carousel-btn {
+      display: none;
+    }
+  }
+
   img {
     max-width: 100%;
     max-height: 100%;
