@@ -43,8 +43,12 @@ const Settings = () => {
   // Take the user ID and delete it
   const deleteAccountPressed = async () => {
     await deleteUser();
-    navigate(paths.routes.HOME);
   };
+
+  // Used after user exits successful account delete popup
+  const navHome = () => {
+    navigate(paths.routes.HOME);
+  }
 
   // TODO: Function needed to check password!
   // TODO: Function needed to check field validity (e.g. is this actually an email?)
@@ -695,18 +699,30 @@ const Settings = () => {
                 <Popup>
                   <PopupButton className="delete-button">Delete Account</PopupButton>
                   <PopupContent>
-                    <div className="delete-user-title">Delete Account</div>
-                    <div className="delete-user-extra-info">
-                      Are you sure you want to delete your account? This action cannot be undone.
-                    </div>
-                    <div className="delete-user-button-pair">
-                      <button className="delete-button" onClick={deleteAccountPressed}>
-                        Delete
-                      </button>
-                      <PopupButton buttonId="cancel-button" className="button-reset">
-                        Cancel
-                      </PopupButton>
-                    </div>
+                      <div className="small-popup">
+                        <div className="delete-user-title">Delete Account</div>
+                        <div className="delete-user-extra-info">
+                          Are you sure you want to delete your account? This action cannot be undone.
+                        </div>
+                        <div className="delete-user-button-pair">
+                          {/* Popup if user presses delete account to show successful delete action */}
+                          <Popup>
+                            <PopupButton className="delete-button" callback={deleteAccountPressed}>Delete Account</PopupButton>
+                            <PopupContent callback={navHome}>
+                              <div className="small-popup">
+                              <div id="delete-success-title">Success!</div>
+                              <div id="delete-success-extra-info">
+                                Successfully deleted account! Redirecting to the Discover page.
+                              </div>
+                              <PopupButton buttonId="continue-button" callback={navHome}>Continue</PopupButton>
+                              </div>
+                            </PopupContent>
+                          </Popup>
+                          <PopupButton buttonId="cancel-button" className="button-reset">
+                            Cancel
+                          </PopupButton>
+                        </div>
+                      </div>
                   </PopupContent>
                 </Popup>
               </div>
