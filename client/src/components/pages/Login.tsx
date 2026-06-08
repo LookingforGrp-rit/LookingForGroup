@@ -72,12 +72,17 @@ const Login: React.FC = () => {
   }, [navigate])
 
   async function handleGoogle(response: any){
-
     const res = await googleLogin({credential: response.credential});
+    //Display error to user
+    if(res.error){
+      setError(res.error);
+      return;
+    }
+
     const body = await res.data as {userExists: boolean};
     
     if (body.userExists) { navigate(paths.routes.HOME); }
-    else { navigate(paths.routes.SIGNUP); }
+    else { navigate(paths.routes.SIGNUP, {replace: true}); }
   }
 
 
@@ -185,15 +190,22 @@ const Login: React.FC = () => {
           <h2>Log In</h2>
           <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="login-form-inputs">
-            <input
+            {/* <input
               id='main'
               className="login-input"
               type="text"
               placeholder="Username or email"
               value={loginInput}
               onChange={(e) => setLoginInput(e.target.value)}
-            />
+            /> */}
             <div id="googleBtn"></div>
+<<<<<<< HEAD
+=======
+            <span className="spacer"> </span>
+            {/* <button onClick={handleTest}>
+              Press me to test sessions!!!
+            </button> */}
+>>>>>>> origin/dev
             <div className="mobile-signup">
               <p>No account? </p>
               <p id="signup-btn-mobile" onClick={() => navigate(paths.routes.SIGNUP)}>
@@ -201,9 +213,9 @@ const Login: React.FC = () => {
               </p>
             </div>
           </div>
-          <button id="main-loginsignup-btn" onClick={handleLogin} disabled={isLoading}>
+          {/* <button id="main-loginsignup-btn" onClick={handleLogin} disabled={isLoading}>
             {isLoading ? 'Loading...' : 'Log In'}
-          </button>
+          </button> */}
         </div>
         {/*************************************************************
 
@@ -217,7 +229,7 @@ const Login: React.FC = () => {
             lightSrc={'/assets/bannerImages/login_light.png'}
             darkSrc={'/assets/bannerImages/login_dark.png'}
           />
-          <button onClick={() => navigate(paths.routes.SIGNUP)}>Sign Up</button>
+          <button onClick={() => navigate(paths.routes.SIGNUP, {replace: true})}>Sign Up</button>
         </div>
       </div>
     </div>

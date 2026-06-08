@@ -17,10 +17,11 @@ const hasSkillOfType = (type: SkillType): ((skill: { skills: { type: string } })
 
 //map to shared type
 export const transformUserToPreview = (user: UsersGetPayload): UserPreview => {
-  return {
+  const userPreview = {
     userId: user.userId,
     firstName: user.firstName,
     lastName: user.lastName,
+    preferredName: user.preferredName,
     username: user.username,
     profileImage: user.profileImage ?? null,
     headline: user.headline,
@@ -28,10 +29,16 @@ export const transformUserToPreview = (user: UsersGetPayload): UserPreview => {
     location: user.location,
     title: user.title,
     funFact: user.funFact,
+    displayPhone: user.displayPhone,
     majors: user.majors.map(transformMajor),
     mentor: user.mentor,
     developer: user.userSkills.some(hasSkillOfType('Developer')),
     designer: user.userSkills.some(hasSkillOfType('Designer')),
     apiUrl: `api/users/${user.userId.toString()}`,
-  };
+  } as UserPreview;
+
+  if (user.displayPhone) {
+    userPreview.phoneNumber = user.phoneNumber;
+  }
+  return userPreview;
 };

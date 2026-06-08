@@ -13,6 +13,8 @@ import { leaveProjectController } from '#controllers/me/leave-project.ts';
 import addUserMajor from '#controllers/me/majors/add-major.ts';
 import { deleteMajor } from '#controllers/me/majors/delete-major.ts';
 import { getUserMajors } from '#controllers/me/majors/get-majors.ts';
+import { reportProjectController } from '#controllers/me/report-proj.ts';
+import { reportUserController } from '#controllers/me/report-user.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
 import { deleteSkill } from '#controllers/me/skills/delete-skills.ts';
 import { getSkills } from '#controllers/me/skills/get-skills.ts';
@@ -104,6 +106,12 @@ router.put(
   authenticated(userAttributeExistsAt('project', 'path', 'id')),
   authenticated(updateProjectVisibilityController),
 );
+//Report project
+router.post(
+  '/projects/report/:id/:report',
+  projectExistsAt('path', 'id'),
+  authenticated(reportProjectController),
+);
 
 // SKILLS ROUTES
 
@@ -152,5 +160,12 @@ router.delete('/', authenticated(deleteUser));
 
 //Gets username by shib ID
 router.get('/get-username', authenticated(getUsernameByGoogle));
+
+//Report user
+router.post(
+  '/users/report/:id/:report',
+  projectExistsAt('path', 'id'),
+  authenticated(reportUserController),
+);
 
 export default router;

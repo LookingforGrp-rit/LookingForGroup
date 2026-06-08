@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import * as paths from '../../constants/routes';
+import CreateProfileRedirect from '../SignupProcess/CreateProfileRedirect';
 // import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
 import ChooseSkills from '../SignupProcess/ChooseSkills';
 // import ChooseProficiencies from "../SignupProcess/ChooseProficiencies";
@@ -9,22 +10,27 @@ import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
-import { addUserSkill, createNewUser, getCurrentUsername, googleLogin } from '../../api/users';
-import { CreateUserInput, SessionUserData } from '@looking-for-group/shared';
+import { addUserSkill, createNewUser, getCurrentUsername, googleLogin, editUser, addUserMajor } from '../../api/users';
+import { AcademicYear, CreateUserInput, Major, SessionUserData, Skill } from '@looking-for-group/shared';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
+interface SignUpProps {
+  profileImage: File;
+  setProfileImage: React.Dispatch<React.SetStateAction<File>>;
+}
 /**
  * Sign up page. Records user input, validates user-given information with server data, and records it to server if valid.
  * @param profileImage Uploaded profile image to use for user creation.
  * @param setProfileImage Sets the profile image variable
  * @returns JSX Element
  */
-const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
+const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation
 
   // State variables
   const [firstName, setFirstName] = useState(''); // User's first name
   const [lastName, setLastName] = useState(''); // User's last name
+  const [preferredName, setPreferredName] = useState(''); // User's preferred name
   const [email, setEmail] = useState('');
   const [sessionData, setSessionData] = useState<SessionUserData>();
   // const [username, setUsername] = useState('');
@@ -36,6 +42,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
 
   // State variables for modals
   // const [showAvatarModal, setShowAvatarModal] = useState(false);
+  const [showCreateProfileRedirectModal, setShowCreateProfileRedirectModal] = useState(false);
   const [showSkillsModal, setShowSkillsModal] = useState(false);
   // const [showProficienciesModal, setShowProficienciesModal] = useState(false);
   // const [showInterestsModal, setShowInterestsModal] = useState(false);
@@ -45,23 +52,40 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   // State variables for selected buttons
   // to remeber the user's choices when they go back and forth between modals
   // const [selectedProficiencies, setSelectedProficiencies] = useState<string[]>([]); // State variable for the selected proficiencies
-  const [selectedSkills, setSelectedSkills] = useState<string[]>([]); // State variable for the selected skills
+  const [selectedSkills, setSelectedSkills] = useState<Skill[]>([]); // State variable for the selected skills
   const [selectedSkillIds, setSelectedSkillIds] = useState<number[]>([]); // State variable for the ids of the selected skills
   // const [selectedInterests, setSelectedInterests] = useState<string[]>([]); // State variable for the selected interests
   const [pronouns, setPronouns] = useState(''); // State variable for the user's pronouns
   const [bio, setBio] = useState(''); // State variable for the user's bio
+  const [headline, setHeadline] = useState(''); // State variable for the user's headline
+  const [phoneNumber, setPhoneNumber] = useState(''); // State variable for the user's Phone Number
+  const [title, setTitle] = useState(''); // State variable for the user's current Job Title
+  const [location, setLocation] = useState(''); // State variable for the user's Location
+  const [funFact, setFunFact] = useState(''); // State variable for the user's bio
+  const [majors, setMajors] = useState<Major[]>([]); // State variable for user's major //it's an array because it's stored as an array on the backend, to allow for multiple
+  const [academicYear, setAcademicYear] = useState<AcademicYear>()
   const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
+
+  const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
   // user info to be sent to the backend
   //we will add more to this once the frontend components can handle them
   const userInfo = {
     firstName: firstName,
     lastName: lastName,
+    preferredName: preferredName, // default to first name for now
     ritEmail: email,
+    googleId: sessionData?.googleId,
     username: '',
     pronouns: pronouns,
+    academicYear: academicYear as AcademicYear,
     bio: bio,
-    profileImage: profileImage, // if they upload their own image
+    headline: headline,
+    phoneNumber: phoneNumber,
+    title: title,
+    location: location,
+    funFact: funFact,
+    mentor: false,
   } as CreateUserInput;
 
   // Redirect the user to the homepage if they are currently logged in
@@ -89,38 +113,46 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     let googleBtnTheme = new String("");
 
     //If we're in dark mode, we use filled_black.
-    if(theme == 'dark'){
+    if (theme == 'dark') {
       googleBtnTheme = "filled_black";
     }
     //Light mode uses outline.
-    else if(theme == 'light'){
+    else if (theme == 'light') {
       googleBtnTheme = "outline";
     }
     //The filled_blue option shows up in case something goes wrong.
-    else{
+    else {
       googleBtnTheme = "filled_blue";
     }
 
     // @ts-expect-error google
     google.accounts.id.renderButton(
       document.getElementById("googleBtn"),
-      { theme: googleBtnTheme, size: "large" , shape: 'pill', text: "signup_with"}
+      { theme: googleBtnTheme, size: "large", shape: 'pill', text: "signup_with" }
     );
-  async function handleGoogle(response: any){
-    const sessionData = await googleLogin({credential: response.credential})
-    setSessionData(sessionData.data); 
-    //now we display the message that corresponds to whatever happened
-    //not even gonna bother reading the react one because react variables update whenever they feel like it and not right when you tell them to
-    if(!sessionData.data.userExists) {
-      setFirstName(sessionData.data.firstName);
-      setLastName(sessionData.data.lastName);
-      setEmail(sessionData.data.email);
-      setShowSkillsModal(true);
+    async function handleGoogle(response: any) {
+      const sessionData = await googleLogin({ credential: response.credential })
+      if (sessionData.error) {
+        setError(sessionData.error)
+        return;
+      }
+      setError('');
+      console.log(sessionData);
+      setSessionData(sessionData.data);
+      //now we display the message that corresponds to whatever happened
+      //not even gonna bother reading the react one because react variables update whenever they feel like it and not right when you tell them to
+      if (!sessionData.data.userExists) {
+        setFirstName(sessionData.data.firstName);
+        setLastName(sessionData.data.lastName);
+        setPreferredName(sessionData.data.firstName);  // default preferred name to first name
+        setEmail(sessionData.data.email);
+        //setShowSkillsModal(true);
+        setShowCreateProfileRedirectModal(true);
+      }
+      else {
+        navigate(paths.routes.HOME);
+      }
     }
-    else {
-      navigate(paths.routes.HOME);
-    }
-  }
   }, [navigate]);
 
 
@@ -130,10 +162,10 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    */
   //we don't need any of this do we since literally all of it is gonna be through google...
   const handleSignup = async () => {
-    if(!sessionData) {
+    if (!sessionData) {
       setMessage('No email entered')
     }
-    else{
+    else {
       setShowSkillsModal(true);
     }
     // Check if any of the fields are empty
@@ -197,7 +229,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
     //   setMessage('Please wait...');
     //   // Send info to begin account activation
     //   /*
-          //obsolete
+    //obsolete
     //   await signUp({
     //     email: email,
     //     password: password,
@@ -219,12 +251,12 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
    * @param pass Password
    * @returns String message of remaining requirements to be met
    */
-  
-    //oauth will handle this since we're logging in with rit emails
-    //if google has all of our account auth info and we aren't storing our own
-    //we don't need to store passwords ourselves at all, google will completely handle that right
-    //i guess for the login page we can simply have a google oauth button there
-    //or dress up google's oauth form in our lfg colors or smth... is that possible? no idea
+
+  //oauth will handle this since we're logging in with rit emails
+  //if google has all of our account auth info and we aren't storing our own
+  //we don't need to store passwords ourselves at all, google will completely handle that right
+  //i guess for the login page we can simply have a google oauth button there
+  //or dress up google's oauth form in our lfg colors or smth... is that possible? no idea
 
   // const validatePassword = (pass : string) => {
   //   // Don't check password if there's nothing there
@@ -255,9 +287,9 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
   //   const output : boolean | any[] = schema.validate(pass, { details: true });
   //   let passMsg = '';
 
-	//   if (output == false) {
+  //   if (output == false) {
   //     return '';
-	//   }
+  //   }
 
   //   const result : any[] = output as any[];
 
@@ -304,8 +336,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
         <div className="signup-form column">
 
           <h2>Sign Up</h2>
-
-          <div className="error" aria-live="assertive" role="alert">{message}</div>
+          <p>Sign up using your RIT email.</p>
+          <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="signup-form-inputs">
             {/* we wouldn't need any of the other fields either would we?? */}
             {/* <div className="row">
@@ -335,7 +367,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
               value={email}
               onChange={(e) => setEmail(e.target.value)}
             /> */}
-            <p>Sign up using your RIT email.</p>
+
             <div id="googleBtn"></div>
 
             <span className="spacer"> </span>
@@ -406,7 +438,14 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             selectedProficiencies={selectedProficiencies}
             setSelectedProficiencies={setSelectedProficiencies}
           /> */}
-
+          <CreateProfileRedirect show={showCreateProfileRedirectModal}
+            onNext={() => {
+              setShowCreateProfileRedirectModal(false);
+              setShowSkillsModal(true);
+            }}
+            onBack={() => {
+              setShowCreateProfileRedirectModal(false);
+            }} />
           <ChooseSkills
             onNext={() => {
               setShowSkillsModal(false);
@@ -414,6 +453,8 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             }}
             onBack={() => {
               setShowSkillsModal(false);
+              setShowCreateProfileRedirectModal(true);
+
             }} // if we are using the proficiencies modal, add setShowProficienciesModal(true); to the end
             show={showSkillsModal}
             selectedSkills={selectedSkills}
@@ -421,9 +462,6 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             selectedSkillIds={selectedSkillIds}
             setSelectedSkillIds={setSelectedSkillIds}
             mode="signup"
-            onClose={() => {
-              setShowSkillsModal(false);
-            }}
           />
 
           {/* <ChooseInterests
@@ -477,8 +515,22 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             selectedSkills={selectedSkills}
             bio={bio}
             pronouns={pronouns}
+            headline={headline}
+            phoneNumber={phoneNumber}
+            title={title}
+            major={majors}
+            academicYear={academicYear}
+            location={location}
+            funFact={funFact}
             setBio={setBio}
             setPronouns={setPronouns}
+            setHeadline={setHeadline}
+            setPhoneNumber={setPhoneNumber}
+            setTitle={setTitle}
+            setLocation={setLocation}
+            setFunFact={setFunFact}
+            setMajor={setMajors}
+            setAcademicYear={setAcademicYear}
             profileImage={profileImage}
             setProfileImage={setProfileImage}
           />
@@ -492,17 +544,21 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             onCreateProject={async () => {
 
               await createNewUser(userInfo); //populating this with all of the things we selected
-              for(const id of selectedSkillIds){
-                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+              majors.map(async (m) => await addUserMajor({majorId: m.majorId})); //major route. i feel silly
+              for (const id of selectedSkillIds) {
+                await addUserSkill({ skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice' })
               }
+              await editUser({ profileImage: profileImage });
               setShowGetStartedModal(false);
               navigate(paths.routes.MYPROJECTS);
             }}
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected
-              for(const id of selectedSkillIds){
-                await addUserSkill({skillId: id, position: 0, proficiency: 'Novice'})
+              majors.map(async (m) => await addUserMajor({majorId: m.majorId})); //major route that has literally existed the ENTIRE time
+              for (const id of selectedSkillIds) {
+                await addUserSkill({ skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice' })
               }
+              await editUser({ profileImage: profileImage });
               setShowGetStartedModal(false);
               navigate(paths.routes.HOME);
             }}
@@ -520,7 +576,7 @@ const SignUp = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage
             lightSrc={'/assets/bannerImages/signup_light.png'}
             darkSrc={'/assets/bannerImages/signup_dark.png'}
           />
-          <button onClick={() => navigate(paths.routes.LOGIN)}>Log In</button>
+          <button onClick={() => navigate(paths.routes.LOGIN, { replace: true })}>Log In</button>
         </div>
       </div>
     </div>

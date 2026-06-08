@@ -34,8 +34,6 @@ const createUserService = async (
     userData.googleId = session.googleId;
     userData.username = session.email.substring(0, session.email.indexOf('@'));
 
-    console.log(userData);
-
     const result = await prisma.users.create({
       data: userData,
       select: MePrivateSelector,
@@ -43,6 +41,7 @@ const createUserService = async (
 
     return transformMeToPrivate(result);
   } catch (e) {
+    console.log(e);
     console.error(`Error in createUserService: ${JSON.stringify(e)}`);
 
     if (e instanceof PrismaClientKnownRequestError) {

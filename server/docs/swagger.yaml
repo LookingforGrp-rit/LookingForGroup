@@ -394,6 +394,40 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/users/search-google/{id}:
+    get:
+      summary: Get user by google ID
+      tags:
+        - Users
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: The Google ID of the user to retrieve
+      responses:
+        '200':
+          description: User found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserPreview'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/users/{id}/projects:
     get:
       summary: Get another user's projects
@@ -505,21 +539,14 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/users/{id}/followers:
+  /api/users/blacklist:
     get:
       tags:
         - Users
-      summary: Get list of users that are following the specified user
-      parameters:
-        - name: id
-          in: path
-          description: User ID
-          required: true
-          schema:
-            type: integer
+      summary: Get list of users that is banned/on the blacklist
       responses:
         '200':
-          description: List of users following the current user
+          description: List of users that are banned/on the blacklist
           content:
             application/json:
               schema:
@@ -533,9 +560,9 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#/components/schemas/UserFollowsList'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+                    type: array
+                    nullable: true
+                    example: []
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -874,6 +901,60 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/me/projects/report/{id}/{report}:
+    post:
+      summary: Report a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the project to report
+          schema:
+            type: integer
+        - name: report
+          in: path
+          required: true
+          description: Report message
+          schema:
+            type: string
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Project reported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/me/socials:
     get:
       summary: Get current user's socials
@@ -1041,6 +1122,60 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '404':
           $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/me/users/report/{id}/{report}:
+    post:
+      summary: Report a user
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Me
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of the user to report
+          schema:
+            type: integer
+        - name: report
+          in: path
+          required: true
+          description: Report message
+          schema:
+            type: string
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: User reported successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullable: true
+                    example: null
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -3169,7 +3304,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/mod/ban-user/{googleId}:
+  /api/mod/ban-user/{googleId}/{reason}:
     put:
       summary: Bans a user by adding them to a blacklist
       tags:
@@ -3181,6 +3316,12 @@ paths:
           in: path
           required: true
           description: Google ID of the user to be banned
+          schema:
+            type: string
+        - name: reason
+          in: path
+          required: false
+          description: Reason the user is to be banned
           schema:
             type: string
         - in: query
@@ -3240,6 +3381,147 @@ paths:
       responses:
         '200':
           description: User unbanned successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/project-report/:
+    get:
+      summary: Get a list of all project reports
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      responses:
+        '200':
+          description: Project reports acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    nullable: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/user-report/:
+    get:
+      summary: Get a list of all user reports
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+
+      responses:
+        '200':
+          description: User reports acquired successfully
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/project-report/{id}:
+    delete:
+      summary: Removes a project report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of report to delete
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Project reports acquired successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    nullabe: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/mod/user-report/{id}:
+    delete:
+      summary: Removes a user report
+      tags:
+        - Mod
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID of report to delete
+          schema:
+            type: integer
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Project reports acquired successfully
           content:
             application/json:
               schema:
@@ -3361,23 +3643,7 @@ paths:
       responses:
         '200':
           description: Project successfully rejected.
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: object
-                    nullable: true
-                    example: null
-        '400':
+          '400':
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
@@ -3403,18 +3669,8 @@ paths:
       responses:
         '200':
           description: Approval Request Sent
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
         '409':
           $ref: '#/components/responses/Conflict'
         '500':

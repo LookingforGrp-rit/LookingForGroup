@@ -6,18 +6,13 @@ import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext, SetStateAction, useEffect } from 'react';
 import { Header } from '../Header';
-import CreditsFooter from '../CreditsFooter';
+import AboutFooter from '../AboutFooter';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
 import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser } from '../../api/users';
 import { MePrivate, UpdateUserInput } from '@looking-for-group/shared';
 type JsonData = Record<string, unknown>;
-
-// Take the user ID and delete it
-const deleteAccountPressed = async () => {
-  await deleteUser();
-};
 
 /**
  * Settings page. Renders the settings page interface with options for updating user account information, appearance preferences, and account settings
@@ -44,6 +39,16 @@ const Settings = () => {
   // --------------------
   // Helper functions
   // --------------------
+
+  // Take the user ID and delete it
+  const deleteAccountPressed = async () => {
+    await deleteUser();
+  };
+
+  // Used after user exits successful account delete popup
+  const navHome = () => {
+    navigate(paths.routes.HOME);
+  }
 
   // TODO: Function needed to check password!
   // TODO: Function needed to check field validity (e.g. is this actually an email?)
@@ -492,6 +497,7 @@ const Settings = () => {
 
             {/* Top Row: Personal and Email Settings */}
             <div className="settings-row" id='main'>
+              <h2 className="settings-header">Account</h2>
               {/* Personal Settings 
               <div className="settings-column">
                 <h2 className="settings-header">Personal</h2>
@@ -532,7 +538,6 @@ const Settings = () => {
               </div> */}
               {/* Email Settings */}
               <div className="settings-column">
-                <h2 className="settings-header">Email</h2>
                 <div className="subsection">
                   <label htmlFor="option-rit-email">RIT Email</label>
                   <div className="input-container disabled">
@@ -548,7 +553,6 @@ const Settings = () => {
 
               {/* Phone Settings */}
               <div className="settings-column">
-                <h2 className="settings-header">Contact</h2>
                 <div className="subsection">
                   <label htmlFor="option-primary-phone">Phone Number</label>
                   <div className="input-container">
@@ -570,10 +574,11 @@ const Settings = () => {
             </div>
 
             {/* Bottom row: Appearance and Account Visibility */}
+            <hr/>
             <div className="settings-row">
               {/* Appearance */}
+              <h2 className="settings-header">Appearance</h2>
               <div className="settings-column">
-                <h2 className="settings-header">Appearance</h2>
                 <div className="subsection">
                   <label htmlFor="option-theme">Current Theme</label>
                   <Dropdown>
@@ -687,24 +692,37 @@ const Settings = () => {
                 </div> */}
               </div>
             </div>
+            <hr/>
             <div className="settings-row">
               {/* Account Deletion */}
               <div className="subsection">
                 <Popup>
                   <PopupButton className="delete-button">Delete Account</PopupButton>
                   <PopupContent>
-                    <div className="delete-user-title">Delete Account</div>
-                    <div className="delete-user-extra-info">
-                      Are you sure you want to delete your account? This action cannot be undone.
-                    </div>
-                    <div className="delete-user-button-pair">
-                      <button className="delete-button" onClick={deleteAccountPressed}>
-                        Delete
-                      </button>
-                      <PopupButton buttonId="cancel-button" className="button-reset">
-                        Cancel
-                      </PopupButton>
-                    </div>
+                      <div className="small-popup">
+                        <div className="delete-user-title">Delete Account</div>
+                        <div className="delete-user-extra-info">
+                          Are you sure you want to delete your account? This action cannot be undone.
+                        </div>
+                        <div className="delete-user-button-pair">
+                          {/* Popup if user presses delete account to show successful delete action */}
+                          <Popup>
+                            <PopupButton className="delete-button" callback={deleteAccountPressed}>Delete Account</PopupButton>
+                            <PopupContent callback={navHome}>
+                              <div className="small-popup">
+                              <div id="delete-success-title">Success!</div>
+                              <div id="delete-success-extra-info">
+                                Successfully deleted account! Redirecting to the Discover page.
+                              </div>
+                              <PopupButton buttonId="continue-button" callback={navHome}>Continue</PopupButton>
+                              </div>
+                            </PopupContent>
+                          </Popup>
+                          <PopupButton buttonId="cancel-button" className="button-reset">
+                            Cancel
+                          </PopupButton>
+                        </div>
+                      </div>
                   </PopupContent>
                 </Popup>
               </div>
@@ -712,7 +730,7 @@ const Settings = () => {
           </div>
         )}
       </div>
-      <CreditsFooter />
+      <AboutFooter />
       <ToTopButton />
     </div>
   );
