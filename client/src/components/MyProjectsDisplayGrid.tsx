@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
@@ -7,11 +7,13 @@ import { LeaveDeleteContext } from "../contexts/LeaveDeleteContext";
 import { PagePopup } from "./PagePopup";
 import { deleteProject } from "../api/projects";
 import { ApiResponse, ProjectDetail } from "@looking-for-group/shared";
-import { leaveProject, updateProjectVisibility } from "../api/users";
+import users, { getProjectVisibility, getVisibleProjects, leaveProject, updateProjectVisibility } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
 import placeholderThumbnail from "../images/project_temp.png";
 import usePreloadedImage from "../functions/imageLoad";
 import { json } from "body-parser";
+import { Visibility } from "@looking-for-group/shared/enums";
+import { getCurrentUsername } from "../api/users";
 
 //backend base url for getting images
 
@@ -43,7 +45,7 @@ const MyProjectsDisplayGrid = ({
   const navigate = useNavigate();
   // Context providing project ID, ownership status, and reload function
   const { projId, isOwner, reloadProjects } = useContext(LeaveDeleteContext);
-
+const [userId, setUserId] = useState(Number);
   //const [status, setStatus] = useState<string>();
   const [optionsShown, _setOptionsShown] = useState(false);
   // State variable for displaying output of API request, whether success or failure
@@ -61,10 +63,70 @@ const MyProjectsDisplayGrid = ({
     return savedValue ? JSON.parse(savedValue) : true;
   });;
 
+  const project = useState();
+
   useEffect(() => {
+    getUserID();
+    // let visibleProjs = getVisibleProjects(userId);
+    // console.log(visibleProjs)
+    if(isVisible)
+      {
+        updateProjectVisibility(projId, Visibility.Public);
+      }
+      else
+        {
+          updateProjectVisibility(projId, Visibility.Private);
+        }
+        
+        getProjectVisibility(projId);
     localStorage.setItem("project_" + projId + "_visibilty", JSON.stringify(isVisible));
   }, [isVisible]);
 
+  const getUserID = async () => {
+    try 
+    {
+      const res = await getCurrentUsername();
+  
+      // Checks if the user is logged in and grabs their id
+      if (res.data) 
+      {
+        // User's ID
+        setUserId(res.data.userId);
+      } 
+      else 
+      {
+        // Guest ID just in case
+        setUserId(-1);
+      }
+  
+    } 
+    catch (e) 
+    {
+        console.error('Error getting userID', e);
+    }
+  }
+
+  // const getProjectData = async () => {
+  //   try 
+  //   {
+  //     const res = await getVisibleProjects(userId);
+
+  //     if(res.data)
+  //     console.log(res.data);
+      
+  //   } 
+  //   catch (error) 
+  //   {
+  //     if (error instanceof Error) 
+  //     {
+  //       console.error(error.message);
+  //     } 
+  //     else 
+  //     {
+  //       console.log(`Unknown error: ${error}`);
+  //     }
+  //   }
+  // };
   /**
    * toggleOptions
    * - Toggles the visibility of the dropdown menu for project actions.
@@ -100,11 +162,7 @@ const MyProjectsDisplayGrid = ({
     setShowResult(true);
   };
 
-  // Should hide/show the project by changing it's visibilty
-  const handleProjectVisibility = async () => {
-    setIsVisible(!isVisible);
-    updateProjectVisibility(projId, isVisible);
-  }
+  
 
   return (
     <div className="my-project-grid-card">
@@ -140,7 +198,7 @@ const MyProjectsDisplayGrid = ({
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div className={`card-options-list ${optionsShown ? "show" : ""}`}>
-              <button className="card-leave-button" onClick={() => handleProjectVisibility()}>
+              <button className="card-leave-button" onClick={() => setIsVisible(!isVisible)}>
                   <ThemeIcon
                     id={"pencil"}
                     width={21}
@@ -151,7 +209,7 @@ const MyProjectsDisplayGrid = ({
                   Edit Project
               </button>
               {isVisible ? (
-              <button className="card-leave-button" onClick={() => handleProjectVisibility()}>
+              <button className="card-leave-button" onClick={() => setIsVisible(!isVisible)}>
                   <ThemeIcon
                     id={"eye"}
                     width={21}

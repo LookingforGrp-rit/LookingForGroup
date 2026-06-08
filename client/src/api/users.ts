@@ -1,3 +1,4 @@
+import { Visibility } from "@looking-for-group/shared/enums";
 import { GET, POST, PUT, DELETE, PATCH } from "./index";
 import type {
   ApiResponse,
@@ -26,7 +27,6 @@ import type {
   UserFollowsList,
   ProjectDetail,
   ProjectFollowsList,
-  UpdateUserProjectVisibilityInput,
   MyMember,
   SessionUserData,
   CreateUserInput,
@@ -286,7 +286,7 @@ export const getVisibleProjects = async (
  */
 export const updateProjectVisibility = async (
   projectID: number,
-  visibility: UpdateUserProjectVisibilityInput
+  visibility: Visibility
 ): Promise<ApiResponse<MyMember>> => {
   const url = `/me/projects/${projectID}/visibility`;
   const response = await PUT(url, {
@@ -294,8 +294,20 @@ export const updateProjectVisibility = async (
   });
 
   // if (response.error)
-    //console.log(`Error in updateProjectVisibility: ${response.error}`);
-  //console.log(response);
+  //   console.log(`Error in updateProjectVisibility: ${response.error}`);
+  // console.log(response);
+  return response as ApiResponse<MyMember>;
+};
+
+export const getProjectVisibility = async (
+  projectID: number
+): Promise<ApiResponse<MyMember>> => {
+  const url = `/me/projects/${projectID}/visibility`;
+  const response = await GET(url);
+
+  if (response.error)
+    console.log(`Error in getProjectVisibility: ${response.error}`);
+  console.log(response);
   return response as ApiResponse<MyMember>;
 };
 
@@ -590,6 +602,7 @@ export default {
   getProjectsByUser,
   getVisibleProjects,
   updateProjectVisibility,
+  getProjectVisibility,
   leaveProject,
   getProjectFollowing,
   addProjectFollowing,
