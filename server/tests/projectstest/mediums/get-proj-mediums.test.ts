@@ -1,4 +1,9 @@
-import type { ProjectPurpose, ProjectStatus, ProjectMedium } from '@looking-for-group/shared';
+import type {
+  ProjectPurpose,
+  ProjectStatus,
+  ProjectMedium,
+  Visibility,
+} from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getProjectMediumsService from '#services/projects/mediums/get-proj-mediums.ts';
@@ -44,6 +49,7 @@ const prismaProject = {
   projectId: 1,
   purpose: 'Academic' as ProjectPurpose,
   status: 'Planning' as ProjectStatus,
+  globalVisibility: 'public' as Visibility,
   thumbnailId: 0,
   title: 'test 1',
   updatedAt: now,
