@@ -244,7 +244,6 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                     />}
                   <div id="header-profile-user-info">
                     <p id="header-profile-username">{username}</p>
-                    <br />
                     <p id="header-profile-email">{email}</p>
                   </div>
                 </a>
