@@ -1,37 +1,62 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
-import type { UserPreview } from '@looking-for-group/shared';
-import { getUserByIdService } from '../get-user/get-by-id.ts';
-import { getUserByGoogleService } from "../../me/get-user-google.ts";
-import { UserPreviewSelector } from '#services/selectors/users/user-preview.ts';
-
-type GetBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 //Gets the blacklist and returns it as an array of UserPreviews
 export const getBlacklistedUsersService = async () => {
-    console.log("service function called");
+  try {
+    const blacklist = await prisma.userBlacklist.findMany();
 
-    try {
-        const blacklist = await prisma.userBlacklist.findMany();
+    const allUsersInBlacklist = await prisma.users.findMany({
+      where: {
+        googleId: {
+          in: blacklist.map((b) => b.googleId),
+        },
+      },
+      select: {
+        userId: true,
+        username: true,
+        firstName: true,
+        lastName: true,
+        preferredName: true,
+        profileImage: true,
+        mentor: true,
+        headline: true,
+        pronouns: true,
+        title: true,
+        location: true,
+        funFact: true,
+        majors: {
+          select: {
+            majorId: true,
+            label: true,
+          },
+        },
+        userSkills: {
+          select: {
+            skills: {
+              select: {
+                skillId: true,
+                label: true,
+                type: true,
+              },
+            },
+          },
+        },
+      },
+    });
 
-        const allUsersInBlacklist = blacklist.map(async (user) => await prisma.users.findUnique({
-            where: { googleId: user.googleId }
-        }));
+    //Alphabetize array by first name ascending
+    const transformedBlacklist = allUsersInBlacklist
+      .map(transformUserToPreview)
+      .toSorted((user1, user2) => user1.firstName.charCodeAt(0) - user2.firstName.charCodeAt(0));
 
-        let transformedBlacklist = allUsersInBlacklist.map((user) => transformUserToPreview(user as any));
+    //For when preferredName is implemented
+    // transformedBlacklist = transformedBlacklist.toSorted((user1, user2) =>
+    //     user1.preferredName.charCodeAt(0) - user2.preferredName.charCodeAt(0));
 
-        //Alphabetize array by first name ascending
-        transformedBlacklist = transformedBlacklist.toSorted((user1, user2) =>
-            user1.firstName.charCodeAt(0) - user2.firstName.charCodeAt(0));
-
-        //For when preferredName is implemented
-        // transformedBlacklist = transformedBlacklist.toSorted((user1, user2) =>
-        //     user1.preferredName.charCodeAt(0) - user2.preferredName.charCodeAt(0));
-
-        return transformedBlacklist;
-    } catch (e) {
-        console.error('Error in addBlacklistService:', e);
-        return 'INTERNAL_ERROR';
-    }
-}
+    return transformedBlacklist;
+  } catch (e) {
+    console.error('Error in addBlacklistService:', e);
+    return 'INTERNAL_ERROR';
+  }
+};
