@@ -337,33 +337,30 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							</Select>
 						</div>
 
-						{/* Bio */}
-						<LabelInputBox
-							label={"Bio"}
-							inputType={"multi"}
-							maxLength={100}
-							id="bio-input"
-							placeholder={"Bio"}
-							onChange={(e) => setBio(e.target.value)}
-							value={bio}
-							hideUnsaved={true}
-						/>
-					</div>
-					<div id="signupProcess-btns">
-						<button id="signup-backBtn" onClick={onBack}>
-							Back
-						</button>
-						<button
-							id="signup-nextBtn"
-							onClick={onNext}
-							disabled={!(major && academicYear)}>
-							Next
-						</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+            {/* Bio */}
+            <LabelInputBox
+              label={"Bio"}
+              inputType={"multi"}
+              maxLength={100}
+              id="bio-input"
+              placeholder={"Bio"}
+              onChange={(e) => setBio(e.target.value)}
+              value={bio}
+              hideUnsaved={true}
+            />
+          </div>
+		  <div id="signupProcess-btns">
+            <button id="signup-backBtn" onClick={onBack}>
+              Back
+            </button>
+            <button id="signup-nextBtn" onClick={onNext} disabled={!(major && academicYear)}>
+              Next
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default CompleteProfile;

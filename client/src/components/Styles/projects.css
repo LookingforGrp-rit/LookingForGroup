@@ -715,6 +715,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   gap: 10px;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 #tag-search-divider,
