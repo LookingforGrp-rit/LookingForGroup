@@ -21,5 +21,6 @@ export const transformMeToPrivate = (user: UsersGetPayload): MePrivate => {
     googleId: user.googleId,
     createdAt: user.createdAt,
     updatedAt: user.updatedAt,
+    displayPhone: user.displayPhone,
   };
 };
