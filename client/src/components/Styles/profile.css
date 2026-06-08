@@ -29,8 +29,6 @@ Profile Panel component style rules
   align-content: start;
   gap: 20px;
   width: 100%;
-  max-height: 35vh;
-  overflow-y: scroll;
 }
 
 .profile-column {
