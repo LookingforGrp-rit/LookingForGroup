@@ -565,6 +565,10 @@ const Settings = () => {
                       </PopupContent>
                     </Popup>
                   </div>
+                  <div id="phone-number-visibility">
+                    <label htmlFor="toggle-phone-checkbox">Show Phone Number on your Profile?</label>
+                    <input type="checkbox" id="toggle-phone-checkbox"></input>
+                  </div>
                 </div>
               </div>
             </div>
