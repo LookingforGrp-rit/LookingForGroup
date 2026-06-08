@@ -17,25 +17,27 @@ import { createImmutableStateInvariantMiddleware } from '@reduxjs/toolkit';
  * @param itemAddInterval - Number of items to add to the display when scrolling.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache, followedProjectIds, userId }: 
-  { category: string, itemList: unknown[], itemAddInterval: number, projectCache?: NumberDictionary<StructuredProjectInfo>, 
-    followedProjectIds?: Set<number>, userId: number, }) => {
-  console.log(itemList);
+export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache, followedProjectIds, userId }:
+  {
+    category: string, itemList: unknown[], itemAddInterval: number, projectCache?: NumberDictionary<StructuredProjectInfo>,
+    followedProjectIds?: Set<number>, userId: number,
+  }) => {
+  //console.log(itemList);
   // Don't display all items at first, load them in periodically
   // Currently rendered subset of items. Initially displays only a portion (controlled by itemAddInterval).
   const [displayedItems, setDisplayedItems] = useState(itemList.slice(0, itemAddInterval));
   // Keeps a copy of the incoming itemList prop to detect updates from API or parent component.
   const [itemListCopy, setItemListCopy] = useState(itemList);
   //console.log(itemList !== itemListCopy);
-  
+
   // Make sure displayedItems gets updated when itemList receives API data
-  useEffect(()=>{
+  useEffect(() => {
+    //console.log(displayedItems);
     if (itemList !== itemListCopy) {
-    setDisplayedItems(itemList.slice(0, itemAddInterval));
-    setItemListCopy(itemList);
-    console.log(displayedItems);
-  }
-  },[displayedItems, itemListCopy])
+      setDisplayedItems(itemList.slice(0, itemAddInterval));
+      setItemListCopy(itemList);
+    }
+  }, [itemList])
 
   /**
    * Appends more items to the displayed list when the user scrolls to the bottom.
@@ -69,7 +71,7 @@ export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache
    * @returns JSX element containing the project panels
    */
   const ProjectPanelBox = () => {
-    //console.log(displayedItems);
+    //console.log(itemListCopy);
     return (
       <div
         className="project-panel-box"
