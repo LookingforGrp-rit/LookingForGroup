@@ -40,6 +40,8 @@ Project Panel component style rules
   gap: 20px;
   width: 100%;
   padding-bottom: 10px;
+  max-height: 100%;
+  overflow-y: scroll;
 }
 
 .project-panel {
