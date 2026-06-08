@@ -58,6 +58,7 @@ describe('getProjectFollowingService', () => {
         designer: false,
         developer: false,
         headline: 'Test headline',
+        displayPhone: false,
         pronouns: 'they/them',
         timezone: 'UTC',
         bio: 'Test bio',

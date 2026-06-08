@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import getProjectReportService from '#services/projects/get-project-reports.ts';
 
 //GET api/mod/project-report/
-//removes user from blacklist
+//gets all project reports
 export const getProjectReports = async (
   req: AuthenticatedRequest,
   res: Response,
