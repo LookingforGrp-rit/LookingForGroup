@@ -96,6 +96,7 @@ describe('createUserService', async () => {
       profileImage: null,
       designer: false,
       developer: false,
+      displayPhone: false,
       apiUrl: '',
     };
 

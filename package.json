@@ -41,7 +41,7 @@
     "husky": "^9.1.7",
     "lint-staged": "^16.1.2",
     "prisma": "^6.19.3",
-    "vite-plugin-node-polyfills": "^0.28.0"
+    "vite-plugin-node-polyfills": "^0.2.0"
   },
   "engines": {
     "node": ">=v23.6.0"

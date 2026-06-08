@@ -37,7 +37,7 @@ type Project = ProjectPreview;
  * Profile page with user information collected from profileID.
  * @returns JSX Element
  */
-const Profile = () => {
+const Profile = (userProfile : any) => {
   // --------------------
   // Global variables
   // --------------------
@@ -197,27 +197,6 @@ const Profile = () => {
   // --------------------
   const aboutMeButtons = (
     <>
-      {/* Add social links if present */}
-      {displayedProfile?.socials && (
-        <div id="about-me-buttons">
-          {displayedProfile?.socials.map((link) => (
-            <a
-              key={link.websiteId}
-              href={link.url}
-              target="_blank"
-            >
-              <ThemeIcon
-                id={link.label === "Other" ? "link" : link.label.toLowerCase()}
-                width={25}
-                height={25}
-                className={"color-fill"}
-                ariaLabel={link.label}
-              />
-            </a>
-          ))}
-        </div>
-      )}
-
       {/* If the displayed user is the user's profile */}
       {isUsersProfile ? (
         <>
@@ -363,39 +342,84 @@ const Profile = () => {
                   />
                 </div> */}
               </div>
+            </div>
+          </div>
 
-              <div id="profile-skills">
-                {displayedProfile?.skills !== undefined && (
-                  /* Will take in a list of tags the user has selected, then */
-                  /* use a map function to generate tags to fill this div */
-                  displayedProfile?.skills.sort((a, b) => a.position - b.position).map((tag) => {
-                    let category: string;
-                    switch (tag.type) {
-                      case "Designer":
-                        category = "red";
-                        break;
-                      case "Developer":
-                        category = "yellow";
-                        break;
-                      case "Soft":
-                        category = "purple";
-                        break;
-                      case "Audio":
-                        category = "periwinkle";
-                        break;
-                      default:
-                        category = "grey";
-                    }
-                    return (
-                      <div
-                        key={`${tag.skillId}`}
-                        className={`skill-tag-label label-${category}`}
-                      >
-                        {tag.label}
-                      </div>
-                    );
-                  })
-                )}
+          <div id="profile-extra">
+            <div id="socials">
+              <p id="title">Contact Me</p>
+              <div id="profile-email">
+                {/* TODO: make icon for email and phone */}
+                {displayedProfile?.username ? 
+                <a href={`mailto:${displayedProfile?.username}@g.rit.edu`}>  
+                <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
+                {displayedProfile?.username}@g.rit.edu</a>
+                : <a><ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
+              </div>
+              <div id="profile-number">
+                {displayedProfile?.phoneNumber && displayedProfile.displayPhone?
+                <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>  
+                <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
+                {displayedProfile.phoneNumber}</a>
+                //dead link when no number
+                : <a><ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no phone number</a>}
+              </div>
+              {/* Add social links if present */}
+              {displayedProfile?.socials && (
+                <div id="about-me-buttons">
+                  {displayedProfile?.socials.map((link) => (
+                    <a
+                      key={link.websiteId}
+                      href={link.url}
+                      target="_blank"
+                    >
+                      <ThemeIcon
+                        id={link.label === "Other" ? "link" : link.label.toLowerCase()}
+                        width={25}
+                        height={25}
+                        className={"color-fill"}
+                        ariaLabel={link.label}
+                      />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div id="skills">
+              <p id="title">Skills</p>
+              <div id="skill-block">
+              {displayedProfile?.skills !== undefined && (
+                /* Will take in a list of tags the user has selected, then */
+                /* use a map function to generate tags to fill this div */
+                displayedProfile?.skills.sort((a, b) => a.position - b.position).map((tag) => {
+                  let category: string;
+                  switch (tag.type) {
+                    case "Designer":
+                      category = "red";
+                      break;
+                    case "Developer":
+                      category = "yellow";
+                      break;
+                    case "Soft":
+                      category = "purple";
+                      break;
+                    case "Audio":
+                      category = "periwinkle";
+                      break;
+                    default:
+                      category = "grey";
+                  }
+                  return (
+                    <div
+                      key={`${tag.skillId}`}
+                      className={`skill-tag-label label-${category}`}
+                    >
+                      {tag.label}
+                    </div>
+                  );
+                })
+              )}
               </div>
             </div>
           </div>
