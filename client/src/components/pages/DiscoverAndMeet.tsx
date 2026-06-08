@@ -123,7 +123,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
   // Pagination state for projects
   const [currentProjectPage, setCurrentProjectPage] = useState(1);
-  const PROJECTS_PER_PAGE = 6;
+  const [PROJECTS_PER_PAGE, setPROJECTS_PER_PAGE] = useState(12);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)

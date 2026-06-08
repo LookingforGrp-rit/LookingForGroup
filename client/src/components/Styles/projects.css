@@ -20,7 +20,9 @@ Project Panel component style rules
 #discover-panel-box {
   width: 90%;
   margin: 0 auto 20px;
-  display: flex;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
   justify-content: center;
 }
 
