@@ -40,6 +40,8 @@ Project Panel component style rules
   gap: 20px;
   width: 100%;
   padding-bottom: 10px;
+  max-height: 100%;
+  overflow-y: scroll;
 }
 
 .project-panel {
@@ -53,6 +55,7 @@ Project Panel component style rules
   position: relative;
   max-width: none;
   overflow: hidden;
+  text-decoration: none;
 
   .project-image-container {
     position: relative;
@@ -3515,6 +3518,7 @@ button#positions-popup-list-item-active {
   width: calc(50% - 45px);
   min-width: 234px;
   border-width: 0;
+  text-decoration: none;
 }
 
 .project-contributor-profile {

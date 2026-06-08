@@ -25,15 +25,18 @@ Credits link footer style rules
   background-color: var(--header-color);
 }
 
-.FooterContainer button {
+.FooterContainer button,
+.FooterContainer a {
   border: 0px;
   background: 0px;
   font-size: 1.125rem;
   font-weight: bold;
   margin: 2px;
+  text-decoration: none;
 }
 
-.FooterContainer button:hover {
+.FooterContainer button:hover,
+.FooterContainer a:hover {
   opacity: 0.7;
 }
 
@@ -43,7 +46,8 @@ Credits link footer style rules
     background-color: var(--bg-color);
   }
 
-  .FooterContainer button {
+  .FooterContainer button,
+  .FooterContainer a {
     background-color: var(--primary-color);
     color: var(--invert-text);
     padding: 15px;
