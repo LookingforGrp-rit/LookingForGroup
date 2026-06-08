@@ -48,6 +48,8 @@ export type JobDuration = "ShortTerm" | "LongTerm";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
 export type Visibility = "Public" | "Private";
+//do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
+//a problem for another day, i really don't feel like fixing it right now
 
 // Structures for type management
 export interface StringDictionary<T> {
@@ -401,7 +403,7 @@ export interface MyMember {
   /**
    * Is this project visible on the logged-in user's profile?
    */
-  visibility: Visibility;
+  profileVisibility: Visibility;
 
   /**
    * The date the logged-in user became a member
@@ -1093,6 +1095,11 @@ export interface ProjectPreview {
   title: string;
 
   /**
+   * The project's sitewide visibility
+   */
+  globalVisibility: Visibility
+
+  /**
    * The tags attached to the project
    */
   tags: ProjectTag[];
@@ -1249,16 +1256,16 @@ export type AddUserMajorInput = Pick<Major, "majorId">;
  * Data required to show or hide a project on a user's profile
  */
 export type UpdateUserProjectVisibilityInput = {
-  visibility: Visibility;
+  profileVisibility: Visibility;
 };
 
 // PROJECTS inputs
 
 /**
- * Data required to show or hide a project on a user's profile
+ * Data required to show or hide a project on the website
  */
 export type UpdateProjectVisibilityInput = {
-  visibility: Visibility;
+  globalVisibility: Visibility; 
 };
 
 /**

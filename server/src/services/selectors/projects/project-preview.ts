@@ -6,6 +6,7 @@ export const ProjectPreviewSelector = Object.freeze({
   projectId: true,
   title: true,
   hook: true,
+  visibility: true,
   users: {
     select: UserPreviewSelector,
   },

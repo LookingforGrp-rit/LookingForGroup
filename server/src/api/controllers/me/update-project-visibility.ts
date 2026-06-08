@@ -1,6 +1,6 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import { updateProjectVisibility } from '#services/me/update-project-visibility.ts';
+import { updateProjectVisibility } from '#services/me/update-project-profile-visibility.ts';
 
 /**
  * Handles PUT api/me/projects/:id/visibility requests

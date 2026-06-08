@@ -7,7 +7,7 @@ import type {
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
-import { updateProjectVisibility } from '#services/me/update-project-visibility.ts';
+import { updateProjectVisibility } from '#services/me/update-project-profile-visibility.ts';
 import { MyMemberSelector } from '#services/selectors/me/parts/my-member.ts';
 import { transformMyMember } from '#services/transformers/me/parts/my-member.ts';
 
