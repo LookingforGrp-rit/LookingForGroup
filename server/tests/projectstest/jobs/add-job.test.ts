@@ -119,7 +119,6 @@ const prismaUser = {
   location: '',
   funFact: '',
   bio: '',
-  visibility: 0,
   phoneNumber: null,
 };
 
