@@ -1,4 +1,4 @@
-import { useMemo, useState, useCallback, ChangeEvent } from 'react';
+import { useMemo, useState, useCallback, ChangeEvent, useEffect, useRef } from 'react';
 import AboutFooter from '../AboutFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
@@ -123,7 +123,27 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
   // Pagination state for projects
   const [currentProjectPage, setCurrentProjectPage] = useState(1);
-  const PROJECTS_PER_PAGE = 6;
+  const [projectsPerPage, setProjectsPerPage] = useState(9); // Dynamic state
+  const panelBoxRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const calculateProjectsPerPage = () => {
+      // The grid container width (fallback to 90vw if ref is unattached initially)
+      const containerWidth = panelBoxRef.current ? panelBoxRef.current.clientWidth : window.innerWidth * 0.9;
+
+      // Grid configuration: min 280px width, 20px gap.
+      // Columns = floor((containerWidth + gap) / (minColumnWidth + gap))
+      let columns = Math.floor((containerWidth + 20) / 300);
+      columns = Math.max(1, columns); // Ensure at least 1 column
+
+      // Output 3 rows of projects exactly
+      setProjectsPerPage(columns * 3);
+    };
+
+    calculateProjectsPerPage();
+    window.addEventListener('resize', calculateProjectsPerPage);
+    return () => window.removeEventListener('resize', calculateProjectsPerPage);
+  }, []);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
@@ -606,13 +626,15 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     setFilteredUserList(tagFilteredList);
   };
 
-  const totalProjectPages = Math.max(1, Math.ceil(filteredProjectList.length / PROJECTS_PER_PAGE));
-  const startIndex = (currentProjectPage - 1) * PROJECTS_PER_PAGE;
-  const paginatedProjects = filteredProjectList.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
+  const totalProjectPages = Math.max(1, Math.ceil(filteredProjectList.length / projectsPerPage));
+  // Bound current page immediately incase it ends up exceeding page boundaries during resize
+  const boundedCurrentProjectPage = Math.min(currentProjectPage, totalProjectPages);
+  const startIndex = (boundedCurrentProjectPage - 1) * projectsPerPage;
+  const paginatedProjects = filteredProjectList.slice(startIndex, startIndex + projectsPerPage);
 
-  let discoverPanelContents : React.ReactElement;
+  let discoverPanelContents: React.ReactElement;
   if (category == 'projects') {
-    if(!dataLoaded && filteredProjectList.length === 0) {
+    if (!dataLoaded && filteredProjectList.length === 0) {
       discoverPanelContents = (
         <div className='placeholder-spacing'>
           <div className='spinning-loader'></div>
@@ -621,35 +643,33 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     }
     else {
       discoverPanelContents = (
-        <div className="pagination-wrapper">
+        <div className="pagination-wrapper" style={{ width: '100%' }}>
           <PanelBox
             category={category}
-            itemList={paginatedProjects} 
-            itemAddInterval={PROJECTS_PER_PAGE} 
+            itemList={paginatedProjects}
+            itemAddInterval={projectsPerPage}
             projectCache={projectCache}
             followedProjectIds={followedProjectIds}
             userId={currentUserId ?? -1}
           />
-          
+
           {/* Pagination Controls */}
           {filteredProjectList.length > 0 && (
             <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '2rem', paddingBottom: '2rem' }}>
               <button
-              className="pagination-btn" 
+                className="pagination-btn"
                 onClick={() => setCurrentProjectPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentProjectPage === 1}
-                
+                disabled={boundedCurrentProjectPage === 1}
               >
                 Previous
               </button>
-              
-              <span>Page {currentProjectPage} of {totalProjectPages}</span>
-              
-              <button 
-              className="pagination-btn"
-                onClick={() => setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages))}
-                disabled={currentProjectPage === totalProjectPages}
 
+              <span>Page {boundedCurrentProjectPage} of {totalProjectPages}</span>
+
+              <button
+                className="pagination-btn"
+                onClick={() => setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages))}
+                disabled={boundedCurrentProjectPage === totalProjectPages}
               >
                 Next
               </button>
@@ -659,7 +679,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       );
     }
   } else {
-    if(!dataLoaded && filteredUserList.length === 0) {
+    if (!dataLoaded && filteredUserList.length === 0) {
       discoverPanelContents = (
         <div className='placeholder-spacing'>
           <div className='spinning-loader'></div>
@@ -667,7 +687,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       );
     }
     else {
-      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} userId={currentUserId ?? -1}/>);
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} itemAddInterval={25} userId={currentUserId ?? -1} />);
     }
   }
 

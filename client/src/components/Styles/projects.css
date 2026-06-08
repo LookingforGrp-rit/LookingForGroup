@@ -4417,6 +4417,10 @@ My projects page style rules
   }
 }
 
+#pagination-wrapper {
+  width: '100%'
+}
+
 .pagination-btn {
   padding: 0.5rem 1rem;
   background-color: var(--primary-color);
