@@ -1523,6 +1523,8 @@ Header style rules
   margin: 0;
   flex-shrink: 0;
   color: var(--main-text);
+  padding: 1px 4px;
+  font-size: 0.9375rem;
 }
 
 #header-profile-dropdown a {
@@ -1536,7 +1538,7 @@ Header style rules
   flex-shrink: 0;
   color: var(--main-text);
   text-decoration: none;
-  padding: 1px 4px;
+  padding: 7px 4px;
   font-size: 0.9375rem;
 }
 

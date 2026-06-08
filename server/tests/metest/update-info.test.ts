@@ -119,6 +119,7 @@ const transformed: MePrivate = {
   userId: 1,
   username: '',
   privacy: 'public' as Visibility,
+  displayPhone: false,
 };
 
 describe('updateUserInfoService', () => {

@@ -48,6 +48,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   // Avoid looping useEffect by separating projectId
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
 
+
   /**
    * Formats the follow count for display
    * - Uses "K" notation for thousands
