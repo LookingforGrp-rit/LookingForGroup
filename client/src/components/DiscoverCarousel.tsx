@@ -18,6 +18,36 @@ type DiscoverCarouselProps = {
  */
 export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [] }) => {
 
+  if (dataList.length === 0) {
+    return (
+      <Carousel dataList={
+        [
+        <div style={{width: "100%", height: "301px"}}>
+        </div>
+        ]
+      }>
+        <div className='discover-carousel'>
+          <div className='carousel-row'>
+            <CarouselButton
+              direction='left'
+              className='discover-carousel-btn'
+              size='large'
+            />
+            <CarouselContent className='discover-carousel-content' />
+            <CarouselButton
+              direction='right'
+              className='discover-carousel-btn'
+              size='large'
+            />
+          </div>
+          <div className='carousel-row'>
+            <CarouselTabs className='discover-carousel-tabs' />
+          </div>
+        </div>
+      </Carousel>
+    );
+  }
+
   // Generate the content slides for the carousel based on the project data
   const carouselContents = dataList.map((project: ProjectWithFollowers) => {
     return (

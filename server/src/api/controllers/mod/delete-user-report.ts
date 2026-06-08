@@ -1,16 +1,13 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import deleteProjectReportService from '#services/projects/delete-project-report.ts';
+import deleteUserReportService from '#services/users/delete-user-report.ts';
 
-//DELETE api/mod/project-report/{id}
-//deletes a project report (moderator action)
-export const deleteProjectReport = async (
-  req: AuthenticatedRequest,
-  res: Response,
-): Promise<void> => {
+//DELETE api/mod/user-report/{id}
+//deletes a user report (moderator action)
+export const deleteUserReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const reportId = parseInt(req.params.id);
 
-  const result = await deleteProjectReportService(reportId);
+  const result = await deleteUserReportService(reportId);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
