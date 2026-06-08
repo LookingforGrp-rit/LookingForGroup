@@ -11,6 +11,7 @@ type GetBlacklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 export const getBlacklistedUsers = async (req: Request, res: Response):
     Promise<GetBlacklistServiceSuccess | GetBlacklistServiceError> => {
 
+    console.log("main function called");
     const result = await getBlacklistedUsersService();
 
     if (result === 'INTERNAL_ERROR') {

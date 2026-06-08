@@ -10,6 +10,8 @@ type GetBlacklistServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 //Gets the blacklist and returns it as an array of UserPreviews
 export const getBlacklistedUsersService = async () => {
+    console.log("service function called");
+
     try {
         const blacklist = await prisma.userBlacklist.findMany();
 
