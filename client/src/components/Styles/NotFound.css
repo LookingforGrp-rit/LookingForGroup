@@ -65,4 +65,11 @@
 
 .error-header{color: var(--text-color); font-size: 1.875rem;}
 
-
+@media only screen and (max-width: 799px) {
+  .error-button-container button>#compass{
+    margin: 0% !important;
+    padding: 0% !important;
+    width: 30px !important;
+    height: 30px !important;
+  }
+}
