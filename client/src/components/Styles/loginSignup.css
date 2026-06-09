@@ -376,6 +376,7 @@ Signup process modal style rules
   justify-content: center;
   align-items: center;
   height: fit-content;
+  max-height: 80vh;
   width: min(calc(90vw - 20px), 880px);
   border-radius: 4px;
   padding: 20px;
@@ -490,6 +491,8 @@ Signup process modal style rules
 #proficiency-select,
 #getStarted-select {
   height: 515px;
+  width: 90%;
+  gap: 10%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
@@ -542,7 +545,8 @@ Signup process modal style rules
 #profile-pic {
   width: 100%;
   height: auto;
-  border: 6px solid var(--main-text);
+  border: 3px solid var(--primary-color);
+  border-radius: 10px;
 
   img {
     width: 100%;
@@ -577,6 +581,11 @@ Signup process modal style rules
     font-weight: 700;
     text-align: center;
     box-shadow: 0px 0px 10px 0px var(--shadow-color);
+  }
+  button,
+  input
+  {
+    height: 100%;
   }
 
   button:hover,
@@ -785,6 +794,7 @@ Signup process modal style rules
   .select-container,
   .select-button-input {
     height: 100%;
+    min-height: fit-content;
     width: 100%;
 
     div {
@@ -825,23 +835,38 @@ Signup process modal style rules
 #join-project-btn {
   width: 240px;
   height: 200px;
-  margin: 20px 40px;
   padding: 5px 10px;
   font-size: 1.5rem;
-  border: 2px solid var(--lightGray);
   border-radius: 12px;
   background-color: var(--primary-color);
-  color: black;
   font-weight: 600;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   display: flex;
   flex-direction: column;
+  color: var(--invert-text);
   justify-content: center;
+  border: none;
   align-items: center;
-  gap: 20px;
 
+  /* for dark mode */
   img {
     filter: invert(1);
+  }
+}
+
+/* for light mode */
+[data-theme='light'] {
+  #new-project-btn,
+  #join-project-btn {
+    img {
+      filter: invert(0);
+    }
+  }
+  #new-project-btn:hover,
+  #join-project-btn:hover {
+    img {
+      filter: invert(1);
+    }
   }
 }
 
@@ -849,8 +874,8 @@ Signup process modal style rules
 #join-project-btn:hover {
   background-color: var(--orange);
   color: var(--main-text);
-  border: 2px solid var(--orange);
 
+  /* for dark mode */
   img {
     filter: invert(0);
   }
@@ -863,9 +888,10 @@ Signup process modal style rules
   cursor: pointer;
 }
 
+/* Mobile css to individual signup pages */
 @media screen and (max-width: 700px)
 {
-  .ChooseSkills
+  .ChooseSkills, .CompleteProfile, .GetStarted
   {
     height: 80vh;
   }
@@ -875,9 +901,41 @@ Signup process modal style rules
       display: flex;
       flex-direction: column;
       align-items: center;
-      width: 90%;
+      width: 100%;
+      overflow-y: scroll;
+    }
+    #completeProfile-input-container div {
+      width: 100%;
+    }
+    #academicYear-input, #major-input
+    {
+      height: 50px;
+      .select-container
+      {
+        height: 100%;
+        min-height: 45px;
+      }
+    }
+    /* Profile picture editor */
+    #completeProfile-input-container #profile-details
+    {
+      width: 60%;
     }
   }
+  .GetStarted
+  {
+    overflow-x: hidden;   /* prevents x scrollbar */
+  }
+  #getStarted-select
+    {
+      gap: 2%;
+      width: 95%;
+      margin: 0;
+    }
+    #new-project-btn, #join-project-btn
+    {
+      margin: 0;
+    }
 }
 
 @media screen and (max-width: 550px) {
