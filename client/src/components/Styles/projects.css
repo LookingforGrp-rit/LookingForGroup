@@ -64,8 +64,10 @@ Project Panel component style rules
   position: relative;
   max-width: none;
   overflow: hidden;
-  text-decoration: none;
-
+  
+  a {
+    text-decoration: none;
+  }
   .project-image-container {
     position: relative;
     display: flex;
@@ -124,6 +126,10 @@ Project Panel component style rules
         font-feature-settings: "tnum";
       }
 
+      svg {
+        cursor: pointer;
+      }
+
       .follow-amt.following {
         color: #f14f76;
       }
@@ -150,7 +156,6 @@ Project Panel component style rules
 .project-panel:hover {
   transition: 0.2s;
   border-radius: 10px;
-  cursor: pointer;
   filter: drop-shadow(2px 2px 10px var(--shadow-color));
   /* z-index: 2; */
 
