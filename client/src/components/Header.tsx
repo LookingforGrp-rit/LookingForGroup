@@ -279,7 +279,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 {/* LOG OUT Button */}
                 <button onClick={() => {
                   if(userId) googleLogout(userId);
-                  navigate(paths.routes.HOME);
+                  navigate(paths.routes.HOME, {replace: true});
                   
                   }}>
                   <ThemeIcon id={'logout'} width={25} height={25} className={'mono-fill'} ariaLabel={'log out'}/>

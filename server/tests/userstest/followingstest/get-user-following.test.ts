@@ -36,7 +36,7 @@ describe('getProjectFollowingService', () => {
       thumbnailId: null,
       purpose: null,
       status: 'Planning',
-      globalVisibility: 'public' as Visibility,
+      globalVisibility: 'public',
       audience: '',
       userId: 1,
       createdAt: new Date(),
@@ -87,7 +87,7 @@ describe('getProjectFollowingService', () => {
     };
 
     vi.mocked(prisma.projectFollowings.findMany).mockResolvedValue(prismaResult as any);
-    vi.mocked(transformProjectToPreview).mockReturnValue(transformed as any);
+    vi.mocked(transformProjectToPreview).mockReturnValue(transformed);
 
     const result = await getProjectFollowingService(42);
 

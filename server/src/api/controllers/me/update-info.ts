@@ -85,6 +85,11 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     updates.privacy = body.privacy;
   }
 
+  if (body.displayPhone !== undefined) {
+    updates.displayPhone = body.displayPhone.toString() === 'true';
+    //weird workaround bc the boolean passes through here as a string
+  }
+
   const result = await updateUserInfoService(req.currentUser.userId, updates);
 
   if (result === 'NOT_FOUND') {

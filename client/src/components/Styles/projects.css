@@ -64,8 +64,10 @@ Project Panel component style rules
   position: relative;
   max-width: none;
   overflow: hidden;
-  text-decoration: none;
-
+  
+  a {
+    text-decoration: none;
+  }
   .project-image-container {
     position: relative;
     display: flex;
@@ -124,6 +126,10 @@ Project Panel component style rules
         font-feature-settings: "tnum";
       }
 
+      svg {
+        cursor: pointer;
+      }
+
       .follow-amt.following {
         color: #f14f76;
       }
@@ -150,7 +156,6 @@ Project Panel component style rules
 .project-panel:hover {
   transition: 0.2s;
   border-radius: 10px;
-  cursor: pointer;
   filter: drop-shadow(2px 2px 10px var(--shadow-color));
   /* z-index: 2; */
 
@@ -724,6 +729,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   gap: 10px;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 #tag-search-divider,
@@ -1814,9 +1820,39 @@ Project page style rules
   grid-area: tags;
   display: flex;
   justify-content: baseline;
+  flex-wrap: wrap;
   gap: 10px;
   padding-right: 1vw;
   padding-left: 1vw;
+  width: 94%;
+  align-items:baseline;
+
+  #tags {
+    display: flex;
+    justify-content: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 80%;
+    align-items: center;
+  }
+
+  .tag-extend,
+  .tag-contract {
+    position: relative;
+    right: -5vw;
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--main-text);
+    border-radius: 100px;
+    background: none;
+    p {
+      font-size: 1.2rem;
+      margin: 0;
+      margin-top: -2px;
+      font-weight: 800;
+      color: var(--main-text);
+    }
+  }
 }
 
 .project-tag {
