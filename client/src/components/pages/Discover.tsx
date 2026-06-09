@@ -35,10 +35,6 @@ export const DiscoverPage = () => {
     return [{ data: projectSearchData }];
   }, [projectSearchData]);
 
-  // Pagination state for projects
-  const [currentProjectPage, setCurrentProjectPage] = useState(1);
-  const PROJECTS_PER_PAGE = 6;
-
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = <DiscoverCarousel dataList={heroProjectList} />
@@ -258,7 +254,6 @@ export const DiscoverPage = () => {
 
     // Set displayed projects
     setFilteredProjectList(tagFilteredList);
-    setCurrentProjectPage(1);
   };
 
   useEffect(() => {
@@ -293,7 +288,6 @@ export const DiscoverPage = () => {
     }
 
     setFilteredProjectList(matches);
-    setCurrentProjectPage(1);
 
     // Preload full project data for search results so the like icon state is available immediately.
     (async () => {
@@ -314,12 +308,7 @@ export const DiscoverPage = () => {
     })();
   }, [projectSearchData, fullProjectList, projectCache]);
 
-
-  const totalProjectPages = Math.max(1, Math.ceil(filteredProjectList.length / PROJECTS_PER_PAGE));
-  const startIndex = (currentProjectPage - 1) * PROJECTS_PER_PAGE;
-  const paginatedProjects = filteredProjectList.slice(startIndex, startIndex + PROJECTS_PER_PAGE);
-
-  //gets teh discover stuff at the bottom
+  //gets the discover stuff at the bottom
   let discoverPanelContents: React.ReactElement
   if (filteredProjectList.length === 0 && !fullProjectList) {
     discoverPanelContents = (
@@ -329,41 +318,13 @@ export const DiscoverPage = () => {
     );
   } else {
     discoverPanelContents = (
-      <div className="pagination-wrapper">
-        <PanelBox
-          category={'projects'}
-          itemList={paginatedProjects}
-          itemAddInterval={PROJECTS_PER_PAGE}
-          projectCache={projectCache}
-          followedProjectIds={followedProjectIds}
-          userId={currentUserId ?? -1}
-        />
-
-        {/* Pagination Controls */}
-        {filteredProjectList.length > 0 && (
-          <div className="pagination-controls" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1.5rem', marginTop: '2rem', paddingBottom: '2rem' }}>
-            <button
-              className="pagination-btn"
-              onClick={() => setCurrentProjectPage(prev => Math.max(prev - 1, 1))}
-              disabled={currentProjectPage === 1}
-
-            >
-              Previous
-            </button>
-
-            <span>Page {currentProjectPage} of {totalProjectPages}</span>
-
-            <button
-              className="pagination-btn"
-              onClick={() => setCurrentProjectPage(prev => Math.min(prev + 1, totalProjectPages))}
-              disabled={currentProjectPage === totalProjectPages}
-
-            >
-              Next
-            </button>
-          </div>
-        )}
-      </div>
+      <PanelBox
+        category={'projects'}
+        itemList={filteredProjectList}
+        projectCache={projectCache}
+        followedProjectIds={followedProjectIds}
+        userId={currentUserId ?? -1}
+      />
     );
   };
 
