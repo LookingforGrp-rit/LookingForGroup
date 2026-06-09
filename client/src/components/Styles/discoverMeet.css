@@ -296,6 +296,7 @@ Image carousel style rules
   border-radius: 10px 0px 0px 10px;
   /* width: 57.2%; */
   min-width: 0;
+  max-width: 57.2%;
   height: 100%;
   width: auto;
   overflow: hidden;

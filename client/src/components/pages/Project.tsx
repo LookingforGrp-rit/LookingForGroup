@@ -49,6 +49,8 @@ const Project = (userProfile : any) => {
   const [isMember, setIsMember] = useState(false);
   const [viewedPosition, setViewedPosition] = useState(0);
 
+  const [shownTags, setShownTags] = useState(3);
+
   /**
    * Checks in the current user is following a project
    * @returns true if user is following the project
@@ -450,6 +452,7 @@ const Project = (userProfile : any) => {
                 </Popup>
               </div>
               <div id="project-tags">
+                <div id="tags">
                 {
                   //If more tag types are usable, use commented code for cases
                   //Also, check to see how many additional tags a project has
@@ -457,7 +460,7 @@ const Project = (userProfile : any) => {
                     /* let category : string;
                     switch (tag.type) {
                     } */
-                    if (index < 3) {
+                    if (index < shownTags) {
                       return (
                         <TagElement
                           type={tag.type.toLowerCase()}
@@ -466,14 +469,18 @@ const Project = (userProfile : any) => {
                           <p>{tag.label}</p>
                         </TagElement>
                       );
-                    } else if (index === 3) {
-                      return (
-                        <TagElement key={index} selected={true}>
-                          <p>+{displayedProject.tags.length - 3}</p>
-                        </TagElement>
-                      );
                     }
                   })
+                }
+                </div>
+                {shownTags === 999 ? 
+                  <button key={shownTags} className="tag-contract" onClick={() => setShownTags(3)}>
+                    <p>-</p>
+                  </button> 
+                : 
+                  <button key={shownTags} className="tag-extend" onClick={() => setShownTags(999)}>
+                    <p>+</p>
+                  </button>
                 }
               </div>
             </div>
