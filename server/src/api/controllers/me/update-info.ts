@@ -24,6 +24,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'privacy',
     'phoneNumber',
     'mentor',
+    'displayPhone',
   ];
 
   //validate update fields
