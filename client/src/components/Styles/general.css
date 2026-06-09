@@ -1374,7 +1374,7 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
 }
 
 
@@ -1462,7 +1462,6 @@ Header style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border: none;
   padding: 10px;
-
   /* color: var(--primary-color); */
   hr {
     border: 0;
