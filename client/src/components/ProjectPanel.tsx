@@ -152,8 +152,9 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   };
 
   return (
-    <a className={'project-panel'} href={projectURL}>
+    <div className={'project-panel'}>
       <div className="project-image-container">
+        <a href={projectURL}>
         <img
           src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
           alt={'project image'}
@@ -179,10 +180,10 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
           </div>
           <div id="quote">{project.hook}</div>
         </div>
+        </a>
       </div>
-      
       <div className='project-title-likes'>
-        <h2>{project.title}</h2>
+        <h2><a href={projectURL}>{project.title}</a></h2>
         <div className='project-likes'>
           <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
             {formatFollowCount(followCount)}
@@ -206,6 +207,6 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
           )}
         </div>
       </div>
-    </a>
+    </div>
   );
 };
