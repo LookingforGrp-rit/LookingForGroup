@@ -84,11 +84,6 @@ const Login: React.FC = () => {
     if (body.userExists) { navigate(paths.routes.HOME); }
     else { navigate(paths.routes.SIGNUP, {replace: true}); }
   }
-  async function handleTest() {
-    const res = await testLogin()
-
-    console.log(res);
-  }
 
 
   /**

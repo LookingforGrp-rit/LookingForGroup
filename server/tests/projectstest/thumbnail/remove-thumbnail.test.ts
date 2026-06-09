@@ -31,6 +31,7 @@ const prismaProject: Projects = {
   title: 'test 1',
   updatedAt: now,
   userId: 1,
+  approved: true,
 };
 
 const prismaProjectNoThumb: Projects = {
@@ -46,6 +47,7 @@ const prismaProjectNoThumb: Projects = {
   title: 'test 1',
   updatedAt: now,
   userId: 1,
+  approved: true,
 };
 
 describe('removeThumbnailService', async () => {

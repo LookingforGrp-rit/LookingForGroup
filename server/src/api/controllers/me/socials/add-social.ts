@@ -11,7 +11,7 @@ import { addSocialService } from '#services/me/socials/add-social.ts';
 export const addSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const social: AddUserSocialInput = req.body as AddUserSocialInput;
 
-  const result = await addSocialService(social, req.currentUser);
+  const result = await addSocialService(social, req.currentUser.userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
