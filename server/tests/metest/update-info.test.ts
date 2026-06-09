@@ -118,7 +118,8 @@ const transformed: MePrivate = {
   updatedAt: new Date(),
   userId: 1,
   username: '',
-  visibility: 'Public' as Visibility,
+  privacy: 'public' as Visibility,
+  displayPhone: false,
 };
 
 describe('updateUserInfoService', () => {

@@ -1,4 +1,4 @@
-import type { UserPreview } from '@looking-for-group/shared';
+import type { UserPreview, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
@@ -41,6 +41,7 @@ describe('getUserByUsernameService', () => {
       preferredName: '',
       profileImage: null,
       mentor: false,
+      privacy: 'public' as Visibility,
       designer: false,
       developer: false,
       displayPhone: false,

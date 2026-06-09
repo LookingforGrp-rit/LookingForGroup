@@ -1,4 +1,4 @@
-import type { ProjectFollowsList } from '@looking-for-group/shared';
+import type { ProjectFollowsList, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Projects } from '#prisma-models/index.js';
@@ -36,6 +36,7 @@ describe('getProjectFollowingService', () => {
       thumbnailId: null,
       purpose: null,
       status: 'Planning',
+      globalVisibility: 'public' as Visibility,
       audience: '',
       userId: 1,
       createdAt: new Date(),
@@ -53,6 +54,7 @@ describe('getProjectFollowingService', () => {
       projectId: 99,
       title: 'sky forge',
       hook: 'forge a sky',
+      globalVisibility: 'public' as Visibility,
       owner: {
         userId: 1,
         username: 'testuser',
@@ -61,6 +63,7 @@ describe('getProjectFollowingService', () => {
         preferredName: 'Test',
         profileImage: null,
         mentor: false,
+        privacy: 'public' as Visibility,
         verified: false,
         designer: false,
         developer: false,

@@ -81,7 +81,7 @@ describe('getUserByIdService', () => {
       firstName: '',
       lastName: '',
       preferredName: '',
-      visibility: 'Public' as Visibility,
+      privacy: 'public' as Visibility,
       phoneNumber: null,
       googleId: '2222222222',
       createdAt: new Date('2026-05-20 13:25:14'),
@@ -118,6 +118,7 @@ describe('getUserByIdService', () => {
       funFact: '',
       location: '',
       majors: [],
+      displayPhone: false,
     };
 
     vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser as any);

@@ -40,6 +40,8 @@ Project Panel component style rules
   gap: 20px;
   width: 100%;
   padding-bottom: 10px;
+  max-height: 100%;
+  overflow-y: scroll;
 }
 
 .project-panel {
@@ -53,6 +55,7 @@ Project Panel component style rules
   position: relative;
   max-width: none;
   overflow: hidden;
+  text-decoration: none;
 
   .project-image-container {
     position: relative;
@@ -507,7 +510,7 @@ Project Creator and Editor Popup style rules
   }
 
   #project-editor-selected-tags {
-    width: 100%;
+    width: 60%;
   }
 }
 
@@ -1220,11 +1223,11 @@ Project Creator and Editor Popup style rules
   grid-area: role-select;
 }
 
-#project-team-add-member-message-label{
+#project-team-add-member-message-label {
   grid-area: message-label;
 }
 
-#project-team-add-member-message-text{
+#project-team-add-member-message-text {
   grid-area: message-text;
   min-height: 12em;
 }
@@ -1646,7 +1649,7 @@ button.edit-position-contact .project-member-image {
   width: 70%;
   text-align: center;
 
-  #project-crop-header{
+  #project-crop-header {
     display: block;
     padding-top: 1em;
   }
@@ -1669,7 +1672,7 @@ button.edit-position-contact .project-member-image {
 
   #zoom-row,
   #xTrans-row,
-  #yTrans-row{
+  #yTrans-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -2805,6 +2808,8 @@ Project Carousel style rules
     transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
     min-width: 100%;
     height: 100%;
+    align-items: center;
+    justify-content: center;
   }
 
   .project-carousel-btn {
@@ -2834,18 +2839,11 @@ Project Carousel style rules
     transform: rotate(-90deg);
   }
 
-  @media only screen and (max-width: 700px) {
-    .project-carousel-btn {
-      display: none;
-    }
-  }
-
   img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
+    object-position: center;
     aspect-ratio: 16/9;
   }
 
@@ -3515,6 +3513,7 @@ button#positions-popup-list-item-active {
   width: calc(50% - 45px);
   min-width: 234px;
   border-width: 0;
+  text-decoration: none;
 }
 
 .project-contributor-profile {
@@ -3557,7 +3556,7 @@ button#positions-popup-list-item-active {
 }
 
 
-#project-open-positions .centerer{
+#project-open-positions .centerer {
   grid-area: positions;
   margin-top: 20px;
   margin-bottom: 20px;

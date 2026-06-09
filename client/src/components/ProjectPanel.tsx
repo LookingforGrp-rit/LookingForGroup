@@ -48,6 +48,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   // Avoid looping useEffect by separating projectId
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
 
+
   /**
    * Formats the follow count for display
    * - Uses "K" notation for thousands
@@ -151,7 +152,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   };
 
   return (
-    <button className={'project-panel'} onClick={() => navigate(projectURL)}>
+    <a className={'project-panel'} href={projectURL}>
       <div className="project-image-container">
         <img
           src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
@@ -205,6 +206,6 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
           )}
         </div>
       </div>
-    </button>
+    </a>
   );
 };

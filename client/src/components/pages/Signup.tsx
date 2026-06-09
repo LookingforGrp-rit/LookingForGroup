@@ -10,7 +10,7 @@ import CompleteProfile from '../SignupProcess/CompleteProfile';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
-import { addUserSkill, createNewUser, getCurrentUsername, googleLogin, editUser } from '../../api/users';
+import { addUserSkill, createNewUser, getCurrentUsername, googleLogin, editUser, addUserMajor } from '../../api/users';
 import { AcademicYear, CreateUserInput, Major, SessionUserData, Skill } from '@looking-for-group/shared';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
@@ -62,7 +62,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
   const [title, setTitle] = useState(''); // State variable for the user's current Job Title
   const [location, setLocation] = useState(''); // State variable for the user's Location
   const [funFact, setFunFact] = useState(''); // State variable for the user's bio
-  const [major, setMajor] = useState<Major[]>([]); // State variable for user's major //it's an array because it's stored as an array on the backend, to allow for multiple
+  const [majors, setMajors] = useState<Major[]>([]); // State variable for user's major //it's an array because it's stored as an array on the backend, to allow for multiple
   const [academicYear, setAcademicYear] = useState<AcademicYear>()
   const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
@@ -78,7 +78,6 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
     googleId: sessionData?.googleId,
     username: '',
     pronouns: pronouns,
-    majors: major, //called "majors" because it can hold multiple, the ui just doesn't support that yet
     academicYear: academicYear as AcademicYear,
     bio: bio,
     headline: headline,
@@ -519,7 +518,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             headline={headline}
             phoneNumber={phoneNumber}
             title={title}
-            major={major}
+            major={majors}
             academicYear={academicYear}
             location={location}
             funFact={funFact}
@@ -530,7 +529,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             setTitle={setTitle}
             setLocation={setLocation}
             setFunFact={setFunFact}
-            setMajor={setMajor}
+            setMajor={setMajors}
             setAcademicYear={setAcademicYear}
             profileImage={profileImage}
             setProfileImage={setProfileImage}
@@ -545,6 +544,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             onCreateProject={async () => {
 
               await createNewUser(userInfo); //populating this with all of the things we selected
+              majors.map(async (m) => await addUserMajor({majorId: m.majorId})); //major route. i feel silly
               for (const id of selectedSkillIds) {
                 await addUserSkill({ skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice' })
               }
@@ -554,6 +554,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             }}
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected
+              majors.map(async (m) => await addUserMajor({majorId: m.majorId})); //major route that has literally existed the ENTIRE time
               for (const id of selectedSkillIds) {
                 await addUserSkill({ skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice' })
               }
