@@ -578,13 +578,11 @@ const Settings = (userProfile : any) => {
                         const tempInfo = {...userInfo};
                         tempInfo.displayPhone = e.target.checked;
                         setUserInfo(tempInfo);
-                        await editUser({displayPhone: e.target.checked});
+                        await editUser({displayPhone: tempInfo.displayPhone as boolean}); //this typecast does nothing. it still passes as a string
                       }}
                       checked={userInfo.displayPhone ?? false}
                     >
                     </input>
-                    {/* This is temporary so I can see the value */}
-                    {userInfo.displayPhone ? "True" : "False"}
                   </div>
                 </div>
               </div>

@@ -144,7 +144,9 @@ export const editUser = async (
   const form = new FormData();
 
   for (const [name, value] of Object.entries(userData)) {
-    if (value !== null) form.append(name, value);
+    if (value !== null) form.append(name, value); 
+    //ohhhh i see, it auto appends a string for the displayPhone because this can't take booleans for some reason...
+    //this has to be a FormData to allow images so i can't change that, guess i'll have to stick with the weird parse on the backend
   }
 
   const response = await PATCH(apiURL, form);
