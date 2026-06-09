@@ -133,10 +133,8 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
       window.location.reload();
     }
   };
-  const returnProfileAccess = async () => {
+  const returnProfileAccess = () => {
     // navigate to Profile, attach userID
-    const res = await getCurrentUsername();
-    const userId = res.data?.userId;
     if (userId) return (`${paths.routes.PROFILE}?userID=${userId}`);
     return paths.routes.LOGIN;
     

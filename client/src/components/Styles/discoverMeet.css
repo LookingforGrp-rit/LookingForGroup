@@ -497,7 +497,7 @@ Filters / Tags Style Rules
   box-sizing: border-box;
   position: sticky;
   top: 80px;
-  z-index: 999;
+  z-index: 1;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
 }
