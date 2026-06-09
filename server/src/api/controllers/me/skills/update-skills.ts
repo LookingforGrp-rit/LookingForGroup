@@ -20,7 +20,7 @@ const updateSkillsController = async (req: AuthenticatedRequest, res: Response) 
   const skillId = parseInt(req.params.id);
 
   //update the skills they wanna update
-  const result = await updateSkillsService(req.currentUser, skillId, data);
+  const result = await updateSkillsService(req.currentUser.userId, skillId, data);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

@@ -1,4 +1,9 @@
-import type { ProjectSocial, ProjectPurpose, ProjectStatus } from '@looking-for-group/shared';
+import type {
+  ProjectSocial,
+  ProjectPurpose,
+  ProjectStatus,
+  Visibility,
+} from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getProjectSocialsService from '#services/projects/socials/get-proj-socials.ts';
@@ -52,10 +57,12 @@ const prismaProject = {
   purpose: 'Academic' as ProjectPurpose,
   status: 'Planning' as ProjectStatus,
   thumbnailId: 8,
+  globalVisibility: 'public' as Visibility,
   title: 'test 1',
   updatedAt: now,
   userId: 1,
   projectSocials: [testSocial1, testSocial2],
+  approved: true,
 };
 
 const transformedSocials: ProjectSocial[] = [

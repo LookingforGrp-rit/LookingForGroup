@@ -1,4 +1,4 @@
-import type { ProjectPurpose, ProjectStatus } from '@looking-for-group/shared';
+import type { ProjectPurpose, ProjectStatus, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { deleteMemberService } from '#services/projects/members/delete-member.ts';
@@ -24,12 +24,14 @@ const prismaProject = {
   description: '',
   hook: '',
   projectId: 100,
+  globalVisibility: 'public' as Visibility,
   purpose: 'Academic' as ProjectPurpose,
   status: 'Planning' as ProjectStatus,
   thumbnailId: 8,
   title: 'test 1',
   updatedAt: now,
   userId: 1,
+  approved: true,
 };
 
 describe('addProjectMemberService', async () => {

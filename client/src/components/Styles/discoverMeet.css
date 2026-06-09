@@ -288,23 +288,26 @@ Image carousel style rules
   min-width: 100%;
   height: 100%;
   transition: 0.5s cubic-bezier(0.39, 0.575, 0.565, 1);
+  align-items: center;
+  justify-content: center;
 }
 
 .discover-project-image {
   border-radius: 10px 0px 0px 10px;
-  width: 57.2%;
+  /* width: 57.2%; */
+  min-width: 0;
   height: 100%;
+  width: auto;
   overflow: hidden;
   display: flex;
   align-items: center;
   justify-content: center;
 
   img {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
-    height: auto;
+    width: 100%;
+    height: 100%;
     object-fit: contain;
+    object-position: center;
   }
 }
 
@@ -314,9 +317,11 @@ Image carousel style rules
   width: 42.8%;
   height: 100%;
   overflow-wrap: break-word;
+  /* display: flex;
+  flex-direction: column; */
 
   h2 {
-    margin: 0 0 20px;
+    margin: 20px 0 20px;
     font-size: 2rem;
     font-weight: 700;
     color: var(--primary-color);
@@ -411,9 +416,26 @@ Image carousel style rules
     padding: 23px max(16px, calc(100vw * (16 / 375)));
     width: calc(100% - (max(16px, calc(100vw * (16 / 375))) * 2));
     height: fit-content;
+    position: relative;
+
+    h2 {
+      margin: 0 0 20px;
+    }
+
+    > :not(.discover-link) {
+      display: none;
+    }
+
+    .discover-link {
+      display: block;
+      margin: 0;
+    }
 
     .learn-more {
-      right: max(16px, calc(100vw * (16 / 375)));
+      right: auto;
+      bottom: auto;
+      position: relative;
+      margin-top: 12px;
     }
   }
 }
@@ -426,10 +448,10 @@ Image carousel style rules
 }
 
 /* mobile changes */
-@media only screen {
+@media only screen and (max-width: 1020px){
   .discover-project-image {
-    height: auto;
-    width: 100%;
+    height: 100%;
+    width: auto;
   }
 }
 
@@ -469,16 +491,26 @@ Filters / Tags Style Rules
 */
 /*#region tag styles*/
 
+#discover-filters-parent {
+  width: 100%;
+  /* margin: 20px calc(100vw * (65 / 1512)); */
+  box-sizing: border-box;
+  position: sticky;
+  top: 80px;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
+}
+
 #discover-filters {
   width: 90%;
-  /* margin: 20px calc(100vw * (65 / 1512)); */
   margin: 20px auto;
-  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
 }
+
 /*
 @media only screen and (max-width: 700px) {
   #discover-filters {

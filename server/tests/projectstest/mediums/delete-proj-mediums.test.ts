@@ -1,4 +1,4 @@
-import type { ProjectPurpose, ProjectStatus } from '@looking-for-group/shared';
+import type { ProjectPurpose, ProjectStatus, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { deleteMediumsService } from '#services/projects/mediums/delete-proj-mediums.ts';
@@ -22,11 +22,13 @@ const prismaProject = {
   projectId: 1,
   purpose: 'Academic' as ProjectPurpose,
   status: 'Planning' as ProjectStatus,
+  globalVisibility: 'public' as Visibility,
   thumbnailId: 0,
   title: 'test 1',
   updatedAt: now,
   userId: 1,
   mediums: [testMedium],
+  approved: true,
 };
 
 vi.mock('#config/prisma.ts', () => ({

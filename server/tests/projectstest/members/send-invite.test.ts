@@ -2,6 +2,7 @@ import type {
   ProjectWithFollowers,
   ProjectPurpose,
   ProjectStatus,
+  Visibility,
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
@@ -67,12 +68,13 @@ const prismaUser = {
   location: '',
   funFact: '',
   bio: '',
-  visibility: 1,
+  privacy: 'public' as Visibility,
   mentor: false,
   createdAt: now,
   updatedAt: now,
   phoneNumber: null,
   googleId: '',
+  moderator: true,
 };
 
 const prismaProject: ProjectWithFollowers = {
@@ -80,6 +82,7 @@ const prismaProject: ProjectWithFollowers = {
   audience: '',
   createdAt: now,
   description: '',
+  globalVisibility: 'public' as Visibility,
   followers: {
     apiUrl: '',
     count: 0,
@@ -96,6 +99,7 @@ const prismaProject: ProjectWithFollowers = {
     firstName: '',
     funFact: '',
     displayPhone: false,
+    privacy: 'public' as Visibility,
     headline: '',
     lastName: '',
     location: '',

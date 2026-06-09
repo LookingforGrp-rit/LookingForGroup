@@ -47,7 +47,9 @@ export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
 export type JobDuration = "ShortTerm" | "LongTerm";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
-export type Visibility = "Public" | "Private";
+export type Visibility = "public" | "private";
+//do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
+//a problem for another day, i really don't feel like fixing it right now
 
 // Structures for type management
 export interface StringDictionary<T> {
@@ -99,7 +101,7 @@ export interface UserAndProjectInfo {
  * Used for routes that make changes to a logged-in user
  */
 export interface AuthenticatedRequest extends Request {
-  currentUser: number;
+  currentUser: { username: string; userId: number; isMod: boolean };
 }
 
 //API RESPONSE
@@ -261,7 +263,7 @@ export interface UserMember {
   /**
    * Is this project visible on the user's profile?
    */
-  visibility: Visibility;
+  profileVisibility: Visibility;
 
   /**
    * The date the user became a member
@@ -401,7 +403,7 @@ export interface MyMember {
   /**
    * Is this project visible on the logged-in user's profile?
    */
-  visibility: Visibility;
+  profileVisibility: Visibility;
 
   /**
    * The date the logged-in user became a member
@@ -613,6 +615,11 @@ export interface UserPreview {
    * The user's preference on whether or not they wish to display their phone number on their profile
    */
   displayPhone: boolean;
+  
+  /**
+   * The user's preference on whether or not they wish to display their phone number on their profile
+   */
+  privacy: Visibility;
 
   /**
    * The user's phone number (only filled is displayPhone is true)
@@ -825,8 +832,7 @@ export interface MePrivate extends MeDetail {
   /**
    * Whether the logged-in user has set their profile to be Public or Private
    */
-  // TODO implement or remove
-  visibility: Visibility;
+  privacy: Visibility;
 
   /**
    * The logged-in user's phone number, null if unset
@@ -1098,6 +1104,11 @@ export interface ProjectPreview {
   title: string;
 
   /**
+   * The project's sitewide visibility
+   */
+  globalVisibility: Visibility
+
+  /**
    * The tags attached to the project
    */
   tags: ProjectTag[];
@@ -1177,11 +1188,11 @@ export type UpdateUserInput = Partial<
     | "funFact"
     | "bio"
     | "phoneNumber"
+    | 'privacy'
+    | 'displayPhone'
   > & {
     profileImage?: File;
     mentor?: "true" | "false";
-    // TODO update to use Visibility enum
-    visibility?: "1" | "0";
   }
 >;
 export type CreateUserInput = Partial<
@@ -1196,11 +1207,11 @@ export type CreateUserInput = Partial<
     | "bio"
     | "phoneNumber"
     | 'username'
+    | 'privacy'
+    | 'displayPhone'
   > & {
     profileImage?: string;
     mentor?: true | false;
-    // TODO update to use Visibility enum
-    visibility?: 1 | 0;
   }
 > & {
   firstName: string;
@@ -1253,8 +1264,8 @@ export type AddUserMajorInput = Pick<Major, "majorId">;
 /**
  * Data required to show or hide a project on a user's profile
  */
-export type UpdateUserProjectVisibilityInput = {
-  visibility: Visibility;
+export type UpdateProjectProfileVisibilityInput = {
+  profileVisibility: Visibility;
 };
 
 // PROJECTS inputs
@@ -1266,7 +1277,7 @@ export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
   Partial<
     Pick<
       ProjectDetail,
-      "hook" | "description" | "status" | "audience" | "purpose"
+      "hook" | "description" | "status" | "audience" | "purpose" | 'globalVisibility'
     >
   >;
 

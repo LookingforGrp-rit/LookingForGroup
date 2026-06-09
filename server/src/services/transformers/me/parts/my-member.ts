@@ -21,7 +21,7 @@ export const transformMyMember = ({
 }: UserMembersGetPayload): MyMember => {
   return {
     project: transformProjectToPreview(projects),
-    visibility: profileVisibility === 'private' ? 'Private' : 'Public',
+    profileVisibility: profileVisibility,
     role: transformRole(roles),
     memberSince: createdAt,
     apiUrl: `/api/me/projects/${projects.projectId.toString()}}`,

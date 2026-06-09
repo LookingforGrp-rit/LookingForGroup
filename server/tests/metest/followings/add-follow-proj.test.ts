@@ -4,6 +4,7 @@ import type {
   ProjectPreview,
   ProjectTag,
   UserPreview,
+  Visibility,
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
@@ -37,6 +38,7 @@ const prismaProject = {
 const transformedProjectPreview: ProjectPreview = {
   apiUrl: 'api/projects/1',
   hook: '',
+  globalVisibility: 'public' as Visibility,
   mediums: [
     {
       apiUrl: 'api/projects/mediums/1',

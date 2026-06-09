@@ -4,6 +4,7 @@ import type {
   ProjectStatus,
   ProjectDetail,
   UpdateProjectInput,
+  Visibility,
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
@@ -74,8 +75,10 @@ const prismaProject: Projects = {
   status: 'Planning' as ProjectStatus,
   thumbnailId: 0,
   title: 'test 1',
+  globalVisibility: 'public' as Visibility,
   updatedAt: now,
   userId: 1,
+  approved: true,
 };
 
 const transformed: ProjectDetail = {
@@ -88,6 +91,7 @@ const transformed: ProjectDetail = {
   mediums: [],
   members: [],
   owner: { userId: 1 } as UserPreview,
+  globalVisibility: 'public' as Visibility,
   projectId: 1,
   projectImages: [],
   projectSocials: [],

@@ -8,7 +8,7 @@ export const deleteSocial = async (req: AuthenticatedRequest, res: Response): Pr
   //the one you're deleting
   const social = parseInt(req.params.websiteId);
 
-  const result = await deleteSocialService(social, req.currentUser);
+  const result = await deleteSocialService(social, req.currentUser.userId);
 
   //not found
   if (result === 'NOT_FOUND') {

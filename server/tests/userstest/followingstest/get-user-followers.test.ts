@@ -1,4 +1,4 @@
-import type { UserFollowsList } from '@looking-for-group/shared';
+import type { UserFollowsList, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Users } from '#prisma-models/index.js';
@@ -46,12 +46,13 @@ describe('getUserFollowersService', () => {
       funFact: '',
       bio: '',
       displayPhone: false,
-      visibility: 0,
+      privacy: 'public' as Visibility,
       mentor: false,
       createdAt: new Date(),
       updatedAt: new Date(),
       phoneNumber: null,
       googleId: '',
+      moderator: false,
     };
 
     const prismaResult = [
@@ -80,6 +81,7 @@ describe('getUserFollowersService', () => {
       bio: '',
       designer: false,
       developer: false,
+      privacy: 'public' as Visibility,
       majors: [],
       apiUrl: '/api/users/2',
     };

@@ -1,14 +1,16 @@
 import {
 	CreateUserInput,
 	Major,
-	Skill
+	Skill,
+	AcademicYear
 } from "@looking-for-group/shared";
 import { MouseEventHandler, useMemo, useState } from "react";
 import LabelInputBox from "../LabelInputBox";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { getMajors } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
-import { AcademicYear } from "@looking-for-group/shared/enums";
+//why do these 2 things have the same name??
+import { AcademicYear as AcademicYears } from "@looking-for-group/shared/enums";
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -155,7 +157,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	// render the page
 	return (
 		<div className="signupProcess-background">
-			<div className="signupProcess-modal">
+			<div className="signupProcess-modal" id="complete-profile-modal">
 				<div className="CompleteProfile">
 					<h1 id="signupProcess-title">Complete Your Profile!</h1>
 					<p id="signupProcess-subTitle">
@@ -295,7 +297,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 												.value as AcademicYear
 										)
 									}
-									options={Object.values(AcademicYear).map(
+									options={Object.values(AcademicYears).map(
 										(yr) => {
 											return {
 												value: yr,

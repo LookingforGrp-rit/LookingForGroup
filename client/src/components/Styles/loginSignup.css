@@ -343,24 +343,23 @@ Signup process modal style rules
 .signupProcess-modal {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: var(--hero-gradient);
+  background: var(--modal-gradient);
   background-repeat: no-repeat;
   z-index: 10;
   margin: 0 auto;
 }
 
-#create-profile-redirect-modal {
-
-  top: auto;
-  left: auto;
-  justify-self: center;
+#create-profile-redirect-modal,
+#complete-profile-modal,
+#get-started-modal {
+  justify-content: center;
 }
 
 .CreateProfileRedirect,
@@ -383,6 +382,16 @@ Signup process modal style rules
   box-shadow: 0px 0px 10px 0px var(--border-color);
   z-index: 1;
   overflow-y: scroll;
+
+  #create-profile-redirect-text {
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 30px;
+    white-space: normal;
+    overflow-wrap: break-word;
+  }
 
   #profile-editor-tags {
     height: fit-content;
@@ -413,7 +422,6 @@ Signup process modal style rules
 #signupProcess-skills-subTitle {
   color: var(--primary-color);
   font-size: 1.25rem;
-  margin: 40px 10px 0 10px;
   font-weight: 400;
 }
 
@@ -436,6 +444,11 @@ Signup process modal style rules
     padding-right: 7px;
     color: var(--primary-color)
   }
+}
+
+#create-profile-redirect-modal #signupProcess-btns {
+  position: absolute;
+  margin-top: 500px;
 }
 
 #signup-nextBtn:disabled {
@@ -503,6 +516,10 @@ Signup process modal style rules
   background-color: var(--header-color);
   border: 10px solid var(--header-color);
   border-radius: 5px;
+}
+
+#getStarted-select {
+  height: 315px;
 }
 
 .edit-interest-container {
@@ -824,6 +841,7 @@ Signup process modal style rules
   font-size: 1rem;
   grid-area: bio;
   height: 100%;
+  max-width: 100%;
 
   div textarea {
     margin-top: 0px;
@@ -839,6 +857,7 @@ Signup process modal style rules
   font-size: 1.5rem;
   border-radius: 12px;
   background-color: var(--primary-color);
+  color: var(--invert-text);
   font-weight: 600;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   display: flex;
@@ -872,12 +891,12 @@ Signup process modal style rules
 
 #new-project-btn:hover,
 #join-project-btn:hover {
-  background-color: var(--orange);
+  background-color: var(--border-color);
   color: var(--main-text);
 
   /* for dark mode */
   img {
-    filter: invert(0);
+    filter: invert(1);
   }
 }
 
@@ -936,6 +955,33 @@ Signup process modal style rules
     {
       margin: 0;
     }
+}
+
+@media screen and (max-width:700px) {
+  #completeProfile-input-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+
+    #pronouns-input,
+    #headline-input,
+    #phoneNumber-input,
+    #jobTitle-input,
+    #location-input,
+    #funFact-input {
+      max-width: 100%;
+    }
+
+    #profile-details {
+      max-width: 70%;
+      align-self: center;
+    }
+  }
+
+  #complete-profile-modal {
+    justify-content: flex-start;
+  }
+
 }
 
 @media screen and (max-width: 550px) {

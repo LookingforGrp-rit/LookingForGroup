@@ -1,10 +1,46 @@
-import { useState } from 'react';
+import { VirtuosoMasonry } from '@virtuoso.dev/masonry';
 import { ProjectPanel } from './ProjectPanel';
 import { ProfilePanel } from './ProfilePanel';
 import { ProjectWithFollowers, UserPreview, NumberDictionary, StructuredProjectInfo } from '@looking-for-group/shared';
+import { useMediaQuery } from './UseMediaQuery';
 
-// Item list should use "useState" so that it'll re-render on the fly
-// And so that no search functionality needs to be included in this component
+interface MasonryContext {
+  category: string;
+  projectCache?: NumberDictionary<StructuredProjectInfo>;
+  followedProjectIds?: Set<number>;
+  userId: number;
+}
+
+// This is the actual thing that will be rendered
+// It is defined outside the function so that it doesn't have to keep remounting
+const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryContext }) => {
+  const { category, projectCache, followedProjectIds, userId } = context;
+
+  if (category === 'projects') {
+    const projectId = (item as ProjectWithFollowers).projectId;
+    const project = projectCache?.[projectId]?.full || (item as ProjectWithFollowers);
+    
+    // Masonry doesn't like grid gaps, so this forces padding instead
+    return (
+      <div style={{ padding: '10px' }}>
+        <ProjectPanel
+          project={project}
+          initialIsFollowing={followedProjectIds?.has(projectId)}
+          currentUserId={userId}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div style={{ padding: '10px' }}>
+      <ProfilePanel 
+        profileData={item as UserPreview} 
+        currentUserId={userId} 
+      />
+    </div>
+  );
+};
 
 /**
  * PanelBox component dynamically renders a scrollable list of either project panels or profile panels.
@@ -13,75 +49,38 @@ import { ProjectWithFollowers, UserPreview, NumberDictionary, StructuredProjectI
  *
  * @param category - Determines whether to render ProjectPanels or ProfilePanels.
  * @param itemList - List of items (projects or profiles) to render.
- * @param itemAddInterval - Number of items to add to the display when scrolling.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, itemAddInterval = 0, projectCache, followedProjectIds, userId }: { category: string, itemList: unknown[], itemAddInterval: number, projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
-  // Don't display all items at first, load them in periodically
-  // Currently rendered subset of items. Initially displays only a portion (controlled by itemAddInterval).
-  const [displayedItems, setDisplayedItems] = useState(itemList.slice(0, itemAddInterval));
-  // Keeps a copy of the incoming itemList prop to detect updates from API or parent component.
-  const [itemListCopy, setItemListCopy] = useState(itemList);
+export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId }: { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
+  // Test these
+  const isMobile = useMediaQuery('(max-width: 500px)');
+  const isTablet = useMediaQuery('(max-width: 1000px)');
 
-  // Make sure displayedItems gets updated when itemList receives API data
-  if (itemList !== itemListCopy) {
-    setDisplayedItems(itemList.slice(0, itemAddInterval));
-    setItemListCopy(itemList);
+  // Early return
+  if (!itemList || itemList.length === 0) {
+    return <>{category === 'projects' ? 'Sorry, no projects here' : 'Sorry, no people here'}</>;
   }
 
-  // Updated to use native react events
-  const handleScroll = (e: React.UIEvent<HTMLDivElement>) => {
-    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+  // Dynamically determine column count
+  let columns = 3; // Default for desktop
+  if (isMobile) columns = 1;
+  else if (isTablet) columns = 2;
 
-    if (Math.ceil(scrollTop) + clientHeight >= scrollHeight - 5) {
-      const startIndex = displayedItems.length;
-      
-      // Only add if there is something left
-      if (startIndex < itemList.length) {
-        const newItems = itemList.slice(startIndex, startIndex + itemAddInterval);
-        setDisplayedItems(prevItems => prevItems.concat(newItems));
-      }
-    }
+  const masonryContext: MasonryContext = {
+    category,
+    projectCache,
+    followedProjectIds,
+    userId
   };
 
-  // Return directly instead of deferring
-  if (category === 'projects') {
-    return (
-      <div className="project-panel-box" onScroll={handleScroll}>
-        {displayedItems.length > 0 ? (
-          displayedItems.map((item) => {
-            const projectId = (item as ProjectWithFollowers).projectId;
-            const project = projectCache?.[projectId]?.full || (item as ProjectWithFollowers);
-            return (
-              <ProjectPanel
-                project={project}
-                initialIsFollowing={followedProjectIds?.has(projectId)}
-                key={projectId}
-                currentUserId={userId}
-              />
-            );
-          })
-        ) : (
-          <>Sorry, no projects here</>
-        )}
-      </div>
-    );
-  }
-
-  // Functional else statement
+  // Finally! A masonry grid!
   return (
-    <div className="profile-panel-box" onScroll={handleScroll}>
-      {displayedItems.length > 0 ? (
-        displayedItems.map((profile) => (
-          <ProfilePanel 
-            profileData={profile as UserPreview} 
-            currentUserId={userId} 
-            key={(profile as UserPreview).userId} 
-          />
-        ))
-      ) : (
-        <>Sorry, no people here</>
-      )}
-    </div>
+    <VirtuosoMasonry
+      data={itemList}
+      columnCount={columns}
+      className="masonry"
+      context={masonryContext}
+      ItemContent={MasonryItem}
+    />
   );
 };
