@@ -29,6 +29,7 @@ const prismaProject = {
   title: 'test 1',
   updatedAt: now,
   userId: 1,
+  approved: true,
 };
 
 vi.mock('#config/prisma.ts', () => ({

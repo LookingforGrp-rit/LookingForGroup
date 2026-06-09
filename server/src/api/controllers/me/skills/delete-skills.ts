@@ -8,7 +8,7 @@ export const deleteSkill = async (req: AuthenticatedRequest, res: Response): Pro
   //the one you're deleting
   const skill = parseInt(req.params.id);
 
-  const result = await deleteSkillService(skill, req.currentUser);
+  const result = await deleteSkillService(skill, req.currentUser.userId);
 
   //not found
   if (result === 'NOT_FOUND') {

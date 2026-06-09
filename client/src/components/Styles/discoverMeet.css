@@ -491,16 +491,26 @@ Filters / Tags Style Rules
 */
 /*#region tag styles*/
 
+#discover-filters-parent {
+  width: 100%;
+  /* margin: 20px calc(100vw * (65 / 1512)); */
+  box-sizing: border-box;
+  position: sticky;
+  top: 80px;
+  z-index: 999;
+  background-color: rgba(0, 0, 0, 0);
+  background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
+}
+
 #discover-filters {
   width: 90%;
-  /* margin: 20px calc(100vw * (65 / 1512)); */
   margin: 20px auto;
-  box-sizing: border-box;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
   align-items: center;
 }
+
 /*
 @media only screen and (max-width: 700px) {
   #discover-filters {

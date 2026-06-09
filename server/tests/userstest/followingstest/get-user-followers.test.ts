@@ -52,6 +52,7 @@ describe('getUserFollowersService', () => {
       updatedAt: new Date(),
       phoneNumber: null,
       googleId: '',
+      moderator: false,
     };
 
     const prismaResult = [
