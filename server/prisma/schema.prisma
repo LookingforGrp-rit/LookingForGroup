@@ -59,7 +59,7 @@ model Members {
   projectId         Int                      @map("project_id")
   userId            Int                      @map("user_id")
   roleId            Int                      @map("title_id")
-  profileVisibility MembersProfileVisibility @default(public) @map("profile_visibility")
+  profileVisibility Visibility               @default(public) @map("profile_visibility")
   createdAt         DateTime                 @default(now()) @map("created_at") @db.Timestamp(0)
   roles             Roles                    @relation(fields: [roleId], references: [roleId], map: "FK_members_job_titles")
   projects          Projects                 @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_members_projects")
@@ -140,8 +140,8 @@ model Projects {
   projectFollowings ProjectFollowings[]
   projectImages     ProjectImages[]     @relation("ProjectImages")
   projectSocials    ProjectSocials[]
+  globalVisibility  Visibility          @map("global_visibility")
   mediums           Mediums[]
-  // tags              Tags[]
   users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")
   tags              ProjectTags[]
   approved          Boolean             @default(false)
@@ -263,7 +263,7 @@ model Users {
   location          String              @default("") @db.VarChar(150)
   funFact           String              @default("") @map("fun_fact") @db.VarChar(100)
   bio               String              @default("") @db.VarChar(600)
-  visibility        Int                 @default(1) @db.TinyInt
+  privacy           Visibility          @default(public)
   mentor            Boolean             @default(false)
   displayPhone      Boolean             @default(false) @map("display_phone")
   createdAt         DateTime            @default(now()) @map("created_at") @db.Timestamp(0)
@@ -363,11 +363,9 @@ enum ProjectsStatus {
   @@map("projects_status")
 }
 
-enum MembersProfileVisibility {
+enum Visibility {
   private
   public
-
-  @@map("members_profile_visibility")
 }
 
 enum UsersAcademicYear {

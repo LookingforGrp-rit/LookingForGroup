@@ -5,6 +5,7 @@ import type {
   ProjectStatus,
   UserPreview,
   ProjectImage,
+  Visibility,
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
@@ -47,6 +48,7 @@ const prismaProjects: ProjectDetail[] = [
     projectId: 1,
     projectImages: [],
     projectSocials: [],
+    globalVisibility: 'public' as Visibility,
     purpose: 'Academic' as ProjectPurpose,
     status: 'Planning' as ProjectStatus,
     tags: [],
@@ -64,6 +66,7 @@ const prismaProjects: ProjectDetail[] = [
     jobs: [],
     mediums: [],
     members: [],
+    globalVisibility: 'public' as Visibility,
     owner: { userId: 2 } as UserPreview,
     projectId: 2,
     projectImages: [],
@@ -90,6 +93,7 @@ const transformed: ProjectDetail[] = [
     members: [],
     owner: { userId: 1 } as UserPreview,
     projectId: 1,
+    globalVisibility: 'public' as Visibility,
     projectImages: [],
     projectSocials: [],
     purpose: 'Academic' as ProjectPurpose,
@@ -111,6 +115,7 @@ const transformed: ProjectDetail[] = [
     members: [],
     owner: { userId: 2 } as UserPreview,
     projectId: 2,
+    globalVisibility: 'public' as Visibility,
     projectImages: [],
     projectSocials: [],
     purpose: 'Academic' as ProjectPurpose,
@@ -138,6 +143,7 @@ describe('getMyProjectsService', () => {
       hook: p.hook as string,
       jobs: [],
       mediums: p.mediums as ProjectMedium[],
+      globalVisibility: 'public' as Visibility,
       members: [],
       owner: p.owner as UserPreview,
       projectId: p.projectId as number,

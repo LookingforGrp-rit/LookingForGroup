@@ -7,9 +7,8 @@ components:
           $ref: 'projects.yaml#/components/schemas/ProjectPreview'
         role:
           $ref: 'datasets.yaml#/components/schemas/Role'
-        visibility:
-          type: string
-          enum: [Public, Private]
+        profileVisibility:
+          $ref: 'enums.yaml#/components/schemas/Visibility'
         memberSince:
           type: string
           format: date-time
@@ -26,7 +25,7 @@ components:
         role:
           roleId: 1
           label: Full-Stack Developer
-        visibility: Private
+        privacy: private
         memberSince: 2038-01-19 03:14:07
         apiUrl: /api/projects/1/members/1
 
@@ -151,6 +150,9 @@ components:
           type: boolean
         apiUrl:
           type: string
+        privacy:
+          $ref: 'enums.yaml#/components/schemas/Visibility'
+
       example:
         userId: 1
         firstName: Michael

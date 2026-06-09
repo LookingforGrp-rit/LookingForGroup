@@ -1,4 +1,9 @@
-import type { ProjectImage, ProjectStatus, ProjectPurpose } from '@looking-for-group/shared';
+import type {
+  ProjectImage,
+  ProjectStatus,
+  ProjectPurpose,
+  Visibility,
+} from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Projects } from '#prisma-models/index.js';
@@ -33,6 +38,7 @@ const prismaProject: Projects = {
   projectId: 100,
   purpose: 'Academic' as ProjectPurpose,
   status: 'Planning' as ProjectStatus,
+  globalVisibility: 'public' as Visibility,
   thumbnailId: 8,
   title: 'test 1',
   updatedAt: now,

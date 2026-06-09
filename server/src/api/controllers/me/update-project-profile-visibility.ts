@@ -1,13 +1,16 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
-import { updateProjectVisibility } from '#services/me/update-project-visibility.ts';
+import { updateProjectProfileVisibility } from '#services/me/update-project-profile-visibility.ts';
 
 /**
  * Handles PUT api/me/projects/:id/visibility requests
  * Allows authenticated users to update their project's visibility on their profile
  * Does NOT update the entire project's visibility, only toggles whether or not it's seen on the user's account
  */
-const updateProjectVisibilityController = async (req: AuthenticatedRequest, res: Response) => {
+export const updateProjectProfileVisibilityController = async (
+  req: AuthenticatedRequest,
+  res: Response,
+) => {
   console.log('BODY:', req.body);
   console.log('QUERY:', req.query);
 
@@ -23,7 +26,11 @@ const updateProjectVisibilityController = async (req: AuthenticatedRequest, res:
 
   const visibility = typeof rawVisibility === 'string' ? rawVisibility : rawVisibility?.visibility;
 
-  const result = await updateProjectVisibility(projectId, req.currentUser.userId, visibility);
+  const result = await updateProjectProfileVisibility(
+    projectId,
+    req.currentUser.userId,
+    visibility,
+  );
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
@@ -52,5 +59,3 @@ const updateProjectVisibilityController = async (req: AuthenticatedRequest, res:
   };
   res.status(200).json(resBody);
 };
-
-export { updateProjectVisibilityController };

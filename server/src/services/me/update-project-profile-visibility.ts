@@ -3,9 +3,8 @@ import prisma from '#config/prisma.ts';
 import { MyMemberSelector } from '#services/selectors/me/parts/my-member.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformMyMember } from '#services/transformers/me/parts/my-member.ts';
-//import { MembersProfileVisibility } from '@prisma/client';
 
-type UpdateProjectVisibilityServiceError = ServiceErrorSubset<
+type UpdateProjectProfileVisibilityServiceError = ServiceErrorSubset<
   'INTERNAL_ERROR' | 'NOT_FOUND' | 'FORBIDDEN'
 >;
 
@@ -13,11 +12,11 @@ type UpdateProjectVisibilityServiceError = ServiceErrorSubset<
  * PUT api/me/projects/{id}/visibility
  * Allows a user to hide a project on their profile by updating their profile visibility to private
  */
-export const updateProjectVisibility = async (
+export const updateProjectProfileVisibility = async (
   projectId: number,
   userId: number,
   visibility: 'private' | 'public' | undefined,
-): Promise<UpdateProjectVisibilityServiceError | MyMember> => {
+): Promise<UpdateProjectProfileVisibilityServiceError | MyMember> => {
   try {
     // First verify the user is actually a member of the project
     const existingMember = await prisma.members.findUnique({
@@ -38,8 +37,6 @@ export const updateProjectVisibility = async (
       return transformMyMember(existingMember);
     }
 
-    const normalized = visibility.toLowerCase();
-
     // Update the member's visibility
     const updatedMember = await prisma.members.update({
       where: {
@@ -49,14 +46,14 @@ export const updateProjectVisibility = async (
         },
       },
       data: {
-        profileVisibility: normalized === 'public' ? 'public' : 'private',
+        profileVisibility: visibility,
       },
       select: MyMemberSelector,
     });
 
     return transformMyMember(updatedMember);
   } catch (error: unknown) {
-    console.error('Error in updateProjectVisibilityService:', error);
+    console.error('Error in updateProjectProfileVisibilityService:', error);
 
     if (error instanceof Object && 'code' in error) {
       if (error.code === 'P2025') {

@@ -1,13 +1,7 @@
-import type {
-  MyMember,
-  ProjectPreview,
-  Role,
-  UserPreview,
-  Visibility,
-} from '@looking-for-group/shared';
+import type { MyMember, ProjectPreview, Role, UserPreview } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
-import { updateProjectVisibility } from '#services/me/update-project-visibility.ts';
+import { updateProjectProfileVisibility } from '#services/me/update-project-profile-visibility.ts';
 import { MyMemberSelector } from '#services/selectors/me/parts/my-member.ts';
 import { transformMyMember } from '#services/transformers/me/parts/my-member.ts';
 
@@ -62,10 +56,10 @@ const transformed: MyMember = {
     roleId: 1,
     label: 'Member',
   } as Role,
-  visibility: 'Private' as Visibility,
+  profileVisibility: 'private',
 };
 
-describe('updateProjectVisibilityService', () => {
+describe('updateProjectProfileVisibilityService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -73,7 +67,7 @@ describe('updateProjectVisibilityService', () => {
   it('returns NOT_FOUND when user is not a member of the project', async () => {
     vi.mocked(prisma.members.findUnique).mockResolvedValue(null);
 
-    const result = await updateProjectVisibility(1, 1, 'private');
+    const result = await updateProjectProfileVisibility(1, 1, 'private');
 
     expect(result).toBe('NOT_FOUND');
   });
@@ -83,7 +77,7 @@ describe('updateProjectVisibilityService', () => {
     vi.mocked(prisma.members.update).mockResolvedValue(prismaMember as any);
     vi.mocked(transformMyMember).mockReturnValue(transformed);
 
-    const result = await updateProjectVisibility(1, 1, undefined);
+    const result = await updateProjectProfileVisibility(1, 1, undefined);
 
     expect(result).toBe(transformed);
   });
@@ -96,7 +90,7 @@ describe('updateProjectVisibilityService', () => {
     vi.mocked(prisma.members.update).mockResolvedValue(prismaMemberUpdated as any);
     vi.mocked(transformMyMember).mockReturnValue(transformed);
 
-    const result = await updateProjectVisibility(1, 1, 'private');
+    const result = await updateProjectProfileVisibility(1, 1, 'private');
 
     expect(prisma.members.update).toHaveBeenCalledWith({
       where: {
@@ -116,7 +110,7 @@ describe('updateProjectVisibilityService', () => {
   it('returns INTERNAL_ERROR when prisma throws', async () => {
     vi.mocked(prisma.members.findUnique).mockRejectedValue(new Error('db cursed'));
 
-    const result = await updateProjectVisibility(1, 1, 'private');
+    const result = await updateProjectProfileVisibility(1, 1, 'private');
 
     expect(result).toBe('INTERNAL_ERROR');
   });
