@@ -19,9 +19,11 @@ Project Panel component style rules
 
 #discover-panel-box {
   width: 90%;
-  max-width: 1200px;
   margin: 0 auto 20px;
-  display: block;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  justify-content: center;
 }
 
 /*
@@ -722,6 +724,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   gap: 10px;
   overflow-x: auto;
+  overflow-y: hidden;
 }
 
 #tag-search-divider,
@@ -3887,7 +3890,7 @@ My projects page style rules
 
 .my-projects-grid {
   width: 90%;
-  margin: 30px auto;
+  margin: 30px auto 60px;
   gap: 20px;
   display: flex;
   flex-wrap: wrap;
@@ -4055,7 +4058,7 @@ My projects page style rules
 
 .my-projects-list {
   box-sizing: border-box;
-  margin-bottom: 30px;
+  margin-bottom: 60px;
   padding-left: 60px;
   padding-right: 64px;
 
