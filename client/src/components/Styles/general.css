@@ -1097,7 +1097,7 @@ Page popup style rules
   height: 40px !important;
   background: none !important;
   margin: 0 !important;
-  z-index: 0;
+  z-index: 4;
   padding: 8px 18px 0px 0px;
 }
 
@@ -1357,13 +1357,13 @@ Header style rules
   align-items: center;
   text-align: left;
   grid-template: 'search buttons' 90px / auto max-content;
-  background-color: rgba(0, 0, 0, 0);
+  background-color: rgba(0,0,0,0);
   /* 
         Please don't comment the background-image rule out unless there is a good reason for it
         It makes a smooth color transition for the header to the page content, and works with light/dark mode
         from what I've tested. I see no reason to not use it.
     */
-  background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
+  background-image: linear-gradient(var(--bg-color) 90%, rgba(0, 0, 0, 0));
 
   /* these values account for the width of the scroll bar */
   padding-left: calc(5vw - 10px);

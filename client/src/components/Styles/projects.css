@@ -31,17 +31,24 @@ Project Panel component style rules
   }
 }
 */
+
+/* Cheap way to work around the padding */
+.masonry {
+  margin: 0 -10px; 
+  height: 100%;
+  width: calc(100% + 20px);
+  margin-bottom: 60px;
+}
+
 .project-panel-box {
   display: grid;
   grid-auto-flow: row;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   justify-items: stretch;
   align-items: stretch;
   gap: 20px;
   width: 100%;
   padding-bottom: 10px;
-  max-height: 100%;
-  overflow-y: scroll;
 }
 
 .project-panel {

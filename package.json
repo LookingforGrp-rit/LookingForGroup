@@ -56,6 +56,7 @@
     "@quixo3/prisma-session-store": "^3.1.19",
     "@types/cors": "^2.8.19",
     "@types/express-session": "^1.19.0",
+    "@virtuoso.dev/masonry": "^1.4.3",
     "balanced-match": "^4.0.4",
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
@@ -68,6 +69,7 @@
     "google-auth-library": "^10.6.2",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.10",
+    "react-virtuoso": "^4.18.7",
     "rollup": "^4.61.0",
     "swagger-parser": "^10.0.3",
     "tsx": "^4.20.5"
