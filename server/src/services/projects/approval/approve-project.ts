@@ -1,9 +1,9 @@
 import prisma from '#config/prisma.ts';
 import type { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type ApproveProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type ApproveProjectServiceSuccess = ServiceSuccessSusbet<'OK'>;
+type ApproveProjectServiceSuccess = ServiceSuccessSubset<'OK'>;
 
 //PATCH api/projects/approve/:id
 export const approveProjectService = async (
