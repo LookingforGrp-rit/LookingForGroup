@@ -1,4 +1,4 @@
-import type { Tag, TagType } from '@looking-for-group/shared';
+import type { Tag } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getTagsService from '#services/datasets/get-tags.ts';
@@ -25,13 +25,13 @@ describe('getTagsService', () => {
 
   it('returns transformed tag when found', async () => {
     const prismaTags: Tag[] = [
-      { tagId: 1, label: 'Indie', type: 'Creative' as TagType },
-      { tagId: 181, label: 'Innovation', type: 'Soft Skill' as TagType },
+      { tagId: 1, label: 'Indie', type: 'Creative' },
+      { tagId: 181, label: 'Innovation', type: 'Soft Skill' },
     ];
 
     const transformed: Tag[] = [
-      { tagId: 1, label: 'Indie', type: 'Creative' as TagType },
-      { tagId: 181, label: 'Innovation', type: 'Soft Skill' as TagType },
+      { tagId: 1, label: 'Indie', type: 'Creative' },
+      { tagId: 181, label: 'Innovation', type: 'Soft Skill' },
     ];
 
     vi.mocked(prisma.tags.findMany).mockResolvedValue(prismaTags);
