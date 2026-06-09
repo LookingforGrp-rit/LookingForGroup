@@ -269,9 +269,6 @@ const SideBar = () => {
                 }
               >
                 <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
-<<<<<<< HEAD
-              </button>
-=======
               </a>
               <a
                 id={"about-sidebar-btn"}
@@ -282,7 +279,6 @@ const SideBar = () => {
               >
                 <ThemeIcon id={'info'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'about'}/>
               </a>
->>>>>>> origin/dev
             </div>
           </div>
         </div>
@@ -339,11 +335,7 @@ const SideBar = () => {
           >
             <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
             My Projects
-<<<<<<< HEAD
-          </button>
-=======
           </a>
->>>>>>> origin/dev
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
             <img

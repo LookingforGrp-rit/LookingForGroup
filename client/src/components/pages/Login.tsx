@@ -199,13 +199,10 @@ const Login: React.FC = () => {
               onChange={(e) => setLoginInput(e.target.value)}
             /> */}
             <div id="googleBtn"></div>
-<<<<<<< HEAD
-=======
             <span className="spacer"> </span>
             {/* <button onClick={handleTest}>
               Press me to test sessions!!!
             </button> */}
->>>>>>> origin/dev
             <div className="mobile-signup">
               <p>No account? </p>
               <p id="signup-btn-mobile" onClick={() => navigate(paths.routes.SIGNUP)}>

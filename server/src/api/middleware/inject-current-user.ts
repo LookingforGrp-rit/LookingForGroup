@@ -6,7 +6,6 @@ import { userIsMod } from '#services/authentication/user-is-mod.ts';
 import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 
 const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
-  console.log('injectCurrentUser tapped');
   const authenticatedRequest = request as AuthenticatedRequest;
 
   if (envConfig.env === 'development' || envConfig.env === 'test') {

@@ -6,7 +6,6 @@ const requiresModerator = (
   response: Response,
   next: NextFunction,
 ) => {
-  console.log('requiresModerator tapped');
   //current user ID
   const user = request.currentUser;
 
