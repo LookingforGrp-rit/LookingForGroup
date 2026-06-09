@@ -431,7 +431,6 @@ const Profile = (userProfile : any) => {
               <PanelBox
                 category={"projects"}
                 itemList={displayedProjects}
-                itemAddInterval={25}
                 userId={userID as number}
               />
             ) : (
