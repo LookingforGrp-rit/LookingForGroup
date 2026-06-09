@@ -63,6 +63,7 @@ const prismaProject = {
   updatedAt: now,
   userId: 1,
   projectImages: [prismaImage2, prismaImage1],
+  approved: true,
 };
 
 vi.mock('#config/prisma.ts', () => ({
