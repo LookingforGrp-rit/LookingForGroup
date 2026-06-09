@@ -1100,7 +1100,7 @@ Page popup style rules
   height: 40px !important;
   background: none !important;
   margin: 0 !important;
-  z-index: 0;
+  z-index: 4;
   padding: 8px 18px 0px 0px;
 }
 
