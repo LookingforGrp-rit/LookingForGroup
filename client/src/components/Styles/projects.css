@@ -3890,7 +3890,7 @@ My projects page style rules
 
 .my-projects-grid {
   width: 90%;
-  margin: 30px auto;
+  margin: 30px auto 60px;
   gap: 20px;
   display: flex;
   flex-wrap: wrap;
@@ -4058,7 +4058,7 @@ My projects page style rules
 
 .my-projects-list {
   box-sizing: border-box;
-  margin-bottom: 30px;
+  margin-bottom: 60px;
   padding-left: 60px;
   padding-right: 64px;
 
