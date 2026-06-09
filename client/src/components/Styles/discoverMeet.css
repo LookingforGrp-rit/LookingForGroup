@@ -294,9 +294,10 @@ Image carousel style rules
 
 .discover-project-image {
   border-radius: 10px 0px 0px 10px;
-  width: 57.2%;
+  /* width: 57.2%; */
   min-width: 0;
   height: 100%;
+  width: auto;
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -316,9 +317,11 @@ Image carousel style rules
   width: 42.8%;
   height: 100%;
   overflow-wrap: break-word;
+  /* display: flex;
+  flex-direction: column; */
 
   h2 {
-    margin: 0 0 20px;
+    margin: 20px 0 20px;
     font-size: 2rem;
     font-weight: 700;
     color: var(--primary-color);
@@ -415,6 +418,10 @@ Image carousel style rules
     height: fit-content;
     position: relative;
 
+    h2 {
+      margin: 0 0 20px;
+    }
+
     > :not(.discover-link) {
       display: none;
     }
@@ -441,10 +448,10 @@ Image carousel style rules
 }
 
 /* mobile changes */
-@media only screen {
+@media only screen and (max-width: 1020px){
   .discover-project-image {
-    height: auto;
-    width: 100%;
+    height: 100%;
+    width: auto;
   }
 }
 
