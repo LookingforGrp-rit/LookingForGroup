@@ -10,7 +10,7 @@ export const addProjectFollowing = async (
 ): Promise<void> => {
   const projectId = parseInt(req.params.id);
 
-  const result = await addProjectFollowingService(req.currentUser, projectId);
+  const result = await addProjectFollowingService(req.currentUser.userId, projectId);
 
   if (result === 'CONFLICT') {
     const resBody: ApiResponse = {

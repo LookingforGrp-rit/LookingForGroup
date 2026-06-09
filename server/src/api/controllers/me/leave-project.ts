@@ -10,7 +10,7 @@ import { leaveProjectService } from '#services/me/leave-project.ts';
 const leaveProjectController = async (req: AuthenticatedRequest, res: Response) => {
   const projectId = parseInt(req.params.id);
 
-  const result = await leaveProjectService(projectId, req.currentUser);
+  const result = await leaveProjectService(projectId, req.currentUser.userId);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

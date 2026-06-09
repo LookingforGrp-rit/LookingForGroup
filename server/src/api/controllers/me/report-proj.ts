@@ -10,7 +10,7 @@ const reportProjectController = async (req: AuthenticatedRequest, res: Response)
   const projectId = parseInt(req.params.id);
   const report = req.params.report;
 
-  const result = await reportProjectService(req.currentUser, projectId, report);
+  const result = await reportProjectService(req.currentUser.userId, projectId, report);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

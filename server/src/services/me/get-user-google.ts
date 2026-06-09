@@ -7,7 +7,7 @@ type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 //get username by google id now
 export const getUserByGoogleService = async (
   googleId: string,
-): Promise<{ username: string; userId: number } | GetUserServiceError> => {
+): Promise<{ username: string; userId: number; isMod: boolean } | GetUserServiceError> => {
   try {
     //findUnique
     const user = await prisma.users.findFirst({
@@ -15,12 +15,17 @@ export const getUserByGoogleService = async (
       select: {
         username: true,
         userId: true,
+        moderator: true,
       },
     });
 
     if (!user) return 'NOT_FOUND';
 
-    return user;
+    return {
+      username: user.username,
+      userId: user.userId,
+      isMod: user.moderator,
+    };
   } catch (e) {
     console.error(`Error in getUserByGoogleService: ${JSON.stringify(e)}`);
     return 'INTERNAL_ERROR';
