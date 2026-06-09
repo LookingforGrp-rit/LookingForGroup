@@ -12,14 +12,14 @@ Credits link footer style rules
 
 .FooterContainer {
   display: flex;
-  position: sticky;
-  top: 100%;
+  position: fixed;
+  bottom: 0;
 
   text-align: center;
   justify-content: center;
   align-items: center;
   height: 50px;
-  width: 100%;
+  width: calc(100% - 220px);
 
   z-index: 0;
   background-color: var(--header-color);
@@ -44,6 +44,7 @@ Credits link footer style rules
   .FooterContainer {
     align-content: start;
     background-color: var(--bg-color);
+    position: relative;
   }
 
   .FooterContainer button,
