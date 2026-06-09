@@ -1,4 +1,3 @@
-import type { ProjectPurpose, ProjectStatus, Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Projects } from '#prisma-models/index.js';
@@ -28,12 +27,12 @@ const prismaProjects: Projects[] = [
     description: '',
     hook: '',
     projectId: 100,
-    purpose: 'Academic' as ProjectPurpose,
-    status: 'Planning' as ProjectStatus,
+    purpose: 'Academic',
+    status: 'Planning',
     thumbnailId: 0,
     title: 'test 1',
     updatedAt: now,
-    globalVisibility: 'public' as Visibility,
+    globalVisibility: 'public',
     userId: 1,
     approved: true,
   },
@@ -43,9 +42,9 @@ const prismaProjects: Projects[] = [
     description: '',
     hook: '',
     projectId: 200,
-    purpose: 'Academic' as ProjectPurpose,
-    status: 'Planning' as ProjectStatus,
-    globalVisibility: 'public' as Visibility,
+    purpose: 'Academic',
+    status: 'Planning',
+    globalVisibility: 'public',
     thumbnailId: 0,
     title: 'test 2',
     updatedAt: now,

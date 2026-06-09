@@ -27,7 +27,7 @@ describe('deleteMajorService', () => {
   });
 
   it('returns NOT_FOUND if major does not exist', async () => {
-    vi.mocked(prisma.users.update).mockRejectedValue({ code: 'P2025' } as any);
+    vi.mocked(prisma.users.update).mockRejectedValue({ code: 'P2025' });
 
     const result = await deleteMajorService(1, 1);
 

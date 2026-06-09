@@ -84,7 +84,7 @@ describe('getProjectFollowingService', () => {
     };
 
     vi.mocked(prisma.projectFollowings.findMany).mockResolvedValue(prismaResult as any);
-    vi.mocked(transformProjectToPreview).mockReturnValue(transformed as any);
+    vi.mocked(transformProjectToPreview).mockReturnValue(transformed);
 
     const result = await getProjectFollowingService(42);
 

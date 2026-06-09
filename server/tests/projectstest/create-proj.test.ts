@@ -1,10 +1,4 @@
-import type {
-  ProjectDetail,
-  UserPreview,
-  ProjectPurpose,
-  ProjectStatus,
-  Visibility,
-} from '@looking-for-group/shared';
+import type { ProjectDetail, UserPreview } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 //import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
@@ -54,9 +48,9 @@ describe('createProjectService', async () => {
       description: '',
       hook: '',
       projectId: 1,
-      purpose: 'Academic' as ProjectPurpose,
-      status: 'Planning' as ProjectStatus,
-      globalVisibility: 'public' as Visibility,
+      purpose: 'Academic',
+      status: 'Planning',
+      globalVisibility: 'public',
       thumbnailId: 0,
       title: 'test 1',
       updatedAt: now,
@@ -74,12 +68,12 @@ describe('createProjectService', async () => {
       mediums: [],
       members: [],
       owner: { userId: 1 } as UserPreview,
-      globalVisibility: 'public' as Visibility,
+      globalVisibility: 'public',
       projectId: 1,
       projectImages: [],
       projectSocials: [],
-      purpose: 'Academic' as ProjectPurpose,
-      status: 'Planning' as ProjectStatus,
+      purpose: 'Academic',
+      status: 'Planning',
       tags: [],
       thumbnail: null,
       thumbnailId: 0,
