@@ -277,15 +277,7 @@ const SideBar = () => {
               >
                 <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
               </a>
-              <a
-                id={"about-sidebar-btn"}
-                className={
-                  activePage === "About" ? "active sidebar-btn" : "sidebar-btn"
-                }
-                href={paths.routes.ABOUT}
-              >
-                <ThemeIcon id={'info'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'about'}/>
-              </a>
+
             </div>
           </div>
         </div>
