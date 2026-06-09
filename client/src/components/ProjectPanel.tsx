@@ -159,28 +159,10 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
           alt={'project image'}
         />
         <div className={'project-panel-hover'}>
-          <div id="project-panel-tags">
-            {project.mediums.map((medium: ProjectMedium, index) => {
-              if (index < 2) {
-                return (
-                  <TagElement
-                    type="medium" key={index} selected={true}>
-                    <p>{medium.label}</p>
-                  </TagElement>
-                );
-              } else if (index === 2) {
-                return (
-                  <TagElement key={index} selected={true}>
-                    <p>+{project.mediums.length - 2}</p>
-                  </TagElement>
-                );
-              }
-            })}
-          </div>
           <div id="quote">{project.hook}</div>
         </div>
       </div>
-      
+
       <div className='project-title-likes'>
         <h2>{project.title}</h2>
         <div className='project-likes'>
@@ -205,6 +187,39 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
             />
           )}
         </div>
+      </div>
+
+      <div className='project-panel-meta'>
+        {project.mediums?.[0] && (
+          <TagElement type="medium" selected={true}>
+            <p>{(project.mediums[0] as ProjectMedium).label}</p>
+          </TagElement>
+        )}
+        {(() => {
+          const extraMediums = (project.mediums ?? []).slice(1);
+          const extraTags = project.tags ?? [];
+          const remaining = extraMediums.length + extraTags.length;
+          if (remaining <= 0) return null;
+          return (
+            <>
+              <TagElement selected={true} className='project-panel-meta-plus'>
+                <p>+{remaining}</p>
+              </TagElement>
+              <div className='project-panel-meta-extra'>
+                {extraMediums.map((m, i) => (
+                  <TagElement key={`m-${i}`} type="medium" selected={true}>
+                    <p>{(m as ProjectMedium).label}</p>
+                  </TagElement>
+                ))}
+                {extraTags.map((t, i) => (
+                  <TagElement key={`t-${i}`} type={t.type?.toLowerCase()} selected={true}>
+                    <p>{t.label}</p>
+                  </TagElement>
+                ))}
+              </div>
+            </>
+          );
+        })()}
       </div>
     </a>
   );
