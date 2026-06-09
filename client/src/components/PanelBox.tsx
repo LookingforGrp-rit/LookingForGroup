@@ -53,8 +53,8 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
  */
 export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId }: { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
   // Test these
-  const isMobile = useMediaQuery('(max-width: 600px)');
-  const isTablet = useMediaQuery('(max-width: 800px)');
+  const isMobile = useMediaQuery('(max-width: 500px)');
+  const isTablet = useMediaQuery('(max-width: 1000px)');
 
   // Early return
   if (!itemList || itemList.length === 0) {
