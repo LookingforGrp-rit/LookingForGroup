@@ -142,7 +142,7 @@ model Projects {
   projectSocials    ProjectSocials[]
   globalVisibility  Visibility          @map("global_visibility")
   mediums           Mediums[]
-  users             Users               @relation(fields: [userId], references: [userId], map: "FK_user_id")
+  users             Users               @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_user_id")
   tags              ProjectTags[]
   approved          Boolean             @default(false)
 
