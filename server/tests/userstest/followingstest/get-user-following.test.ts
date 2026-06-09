@@ -41,6 +41,7 @@ describe('getProjectFollowingService', () => {
       userId: 1,
       createdAt: new Date(),
       updatedAt: new Date(),
+      approved: true,
     };
 
     const prismaResult = [

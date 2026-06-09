@@ -1,8 +1,8 @@
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type UnapproveProjectServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
-type ChangeProjectApprovalServiceSuccess = ServiceSuccessSusbet<'OK'>;
+type ChangeProjectApprovalServiceSuccess = ServiceSuccessSubset<'OK'>;
 
 //PATCH api/projects/unapprove/:id
 export const unapproveProjectService = async (

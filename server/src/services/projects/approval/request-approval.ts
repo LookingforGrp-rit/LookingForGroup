@@ -1,10 +1,10 @@
 //POST api/projects/unapproved
 
 import prisma from '#config/prisma.ts';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type RequestApprovalServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type RequestApprovalServiceSuccess = ServiceSuccessSusbet<'CREATED'>;
+type RequestApprovalServiceSuccess = ServiceSuccessSubset<'CREATED'>;
 
 //POST api/projects/unapproved/:id
 export const requestApprovalService = async (

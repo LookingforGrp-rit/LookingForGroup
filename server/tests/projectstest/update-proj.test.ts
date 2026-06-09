@@ -78,6 +78,7 @@ const prismaProject: Projects = {
   globalVisibility: 'public' as Visibility,
   updatedAt: now,
   userId: 1,
+  approved: true,
 };
 
 const transformed: ProjectDetail = {

@@ -43,6 +43,7 @@ const prismaProject: Projects = {
   title: 'test 1',
   updatedAt: now,
   userId: 1,
+  approved: true,
 };
 
 describe('deleteProjectService', async () => {

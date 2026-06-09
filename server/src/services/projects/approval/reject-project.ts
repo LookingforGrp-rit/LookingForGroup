@@ -1,9 +1,9 @@
 import prisma from '#config/prisma.ts';
 import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
-import type { ServiceErrorSubset, ServiceSuccessSusbet } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type rejectProjectServiceError = ServiceErrorSubset<'NOT_FOUND' | 'INTERNAL_ERROR'>;
-type rejectProjectServiceSuccess = ServiceSuccessSusbet<'NO_CONTENT'>;
+type rejectProjectServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //DELETE /api/projects/unapproved/:id
 export const rejectProjectService = async (
