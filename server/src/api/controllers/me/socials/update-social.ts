@@ -13,7 +13,7 @@ export const updateSocial = async (req: AuthenticatedRequest, res: Response): Pr
   const social: UpdateUserSocialInput = { url: req.params.url } as UpdateUserSocialInput;
   const websiteId = parseInt(req.params.websiteId);
 
-  const result = await updateSocialService({ ...social, websiteId }, req.currentUser);
+  const result = await updateSocialService({ ...social, websiteId }, req.currentUser.userId);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

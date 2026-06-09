@@ -3409,14 +3409,6 @@ paths:
         - Mod
       security:
         - shibbolethAuth: []
-      parameters:
-        - in: query
-          name: devId
-          schema:
-            type: integer
-          required: false
-          description: The user ID to be used as the current user
-
       responses:
         '200':
           description: Project reports acquired successfully
@@ -3433,8 +3425,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    type: object
-                    nullabe: true
+                    nullable: true
                     example: null
         '404':
           $ref: '#/components/responses/NotFound'
@@ -3459,22 +3450,6 @@ paths:
       responses:
         '200':
           description: User reports acquired successfully
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  status:
-                    type: integer
-                    example: 200
-                  error:
-                    type: string
-                    nullable: true
-                    example: null
-                  data:
-                    type: object
-                    nullabe: true
-                    example: null
         '404':
           $ref: '#/components/responses/NotFound'
         '500':
@@ -3568,6 +3543,224 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  # UNAPPROVED
+  /api/projects/unapproved:
+    get:
+      summary: Get all unapproved projects awaiting approval
+      tags:
+        - Unapproved Projects
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      description: Retrieves a list of all projects awaiting approval.
+      responses:
+        '200':
+          description: A list of projects awaiting approval
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectPreview'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/unapproved/{id}:
+    get:
+      summary: Get a specific unapproved project awaiting approval.
+      tags:
+        - Unapproved Projects
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: The project's id.
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      description: Retrieves a list of all projects awaiting approval.
+      responses:
+        '204':
+          description: A list of projects awaiting approval
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectDetail'
+        '400':
+          $ref: '#components/response/Conflict'
+        '401':
+          $ref: '#components/response/Unauthorized'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Reject a project approval request.
+      tags:
+        - Unapproved Projects
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: The id of the project being rejected.
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Project successfully rejected.
+          '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Request approval for a project
+      tags:
+        - Unapproved Projects
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: The id of the project requesting approval.
+        - name: devId
+          in: query
+          schema:
+            type: integer
+          required: true
+          description: The user Id to be used as the current user.
+      security:
+        shibbolethAuth: []
+      responses:
+        '200':
+          description: Approval Request Sent
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/approve:
+    patch:
+      summary: Approves a project awaiting approval.
+      tags:
+        - Unapproved Projects
+      description: Removes a project from the list of projects awaiting approval and sets its approval status as 'true'.
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: Project to be approved
+        - name: devId
+          in: query
+          schema:
+            type: integer
+          required: true
+          description: User id to be used. Use a user id from a moderator.
+      responses:
+        '204':
+          description: Project approved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 204
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: Project Approved
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '403':
+          $ref: '#components/responses/Forbidden'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+
+  /api/projects/{id}/unapprove:
+    patch:
+      summary: Unapproves a project, removing it from the public eye.
+      tags:
+        - Unapproved Projects
+      description: Removes a project from the public eye by setting it's approval status as 'not approved.'
+      parameters:
+        - name: id
+          in: path
+          schema:
+            type: integer
+          required: true
+          description: Project to be unapproved
+        - name: devId
+          in: query
+          schema:
+            type: integer
+          required: true
+          description: User id to be used. Use a user id from a moderator.
+      responses:
+        '204':
+          description: Project unapproved
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 204
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: Project Approved
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '403':
+          $ref: '#components/responses/Forbidden'
+        '500':
+          $ref: '#components/responses/InternalServerError'
   # IMAGES
   /api/images/{image}:
     get:
@@ -3789,6 +3982,18 @@ components:
               value:
                 status: 401
                 error: Unauthorized
+                data: null
+    Forbidden:
+      description: Proper credentials have been provided, but such credentials are not authorized to access this resource.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorMessage'
+          examples:
+            default:
+              value:
+                status: 409
+                error: Forbidden
                 data: null
     Conflict:
       description: Conflict to show resource already exists

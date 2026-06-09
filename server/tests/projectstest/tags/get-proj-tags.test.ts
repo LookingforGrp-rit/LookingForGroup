@@ -61,6 +61,7 @@ const prismaProject = {
       tag: tag2,
     },
   ],
+  approved: true,
 };
 
 describe('getProjectTagsService', async () => {

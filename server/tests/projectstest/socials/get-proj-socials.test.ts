@@ -62,6 +62,7 @@ const prismaProject = {
   updatedAt: now,
   userId: 1,
   projectSocials: [testSocial1, testSocial2],
+  approved: true,
 };
 
 const transformedSocials: ProjectSocial[] = [

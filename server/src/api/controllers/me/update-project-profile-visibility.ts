@@ -26,7 +26,11 @@ export const updateProjectProfileVisibilityController = async (
 
   const visibility = typeof rawVisibility === 'string' ? rawVisibility : rawVisibility?.visibility;
 
-  const result = await updateProjectProfileVisibility(projectId, req.currentUser, visibility);
+  const result = await updateProjectProfileVisibility(
+    projectId,
+    req.currentUser.userId,
+    visibility,
+  );
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

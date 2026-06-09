@@ -10,7 +10,7 @@ const reportUserController = async (req: AuthenticatedRequest, res: Response) =>
   const reportedId = parseInt(req.params.id);
   const report = req.params.report;
 
-  const result = await reportUserService(req.currentUser, reportedId, report);
+  const result = await reportUserService(req.currentUser.userId, reportedId, report);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

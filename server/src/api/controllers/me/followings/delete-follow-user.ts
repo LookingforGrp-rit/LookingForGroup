@@ -11,7 +11,7 @@ export const deleteUserFollowing = async (
   const followingId = parseInt(req.params.id);
 
   //call service
-  const result = await deleteUserFollowService(req.currentUser, followingId);
+  const result = await deleteUserFollowService(req.currentUser.userId, followingId);
 
   //not found
   if (result === 'NOT_FOUND') {

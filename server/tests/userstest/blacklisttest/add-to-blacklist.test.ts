@@ -41,6 +41,7 @@ const prismaUser: Users = {
   bio: '',
   privacy: 'public' as Visibility,
   phoneNumber: null,
+  moderator: false,
 };
 
 describe('addBlacklistService', async () => {
