@@ -1,4 +1,4 @@
-import type { MyMember, ProjectPreview, Role, UserPreview } from '@looking-for-group/shared';
+import type { MyMember, ProjectPreview, UserPreview } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { updateProjectProfileVisibility } from '#services/me/update-project-profile-visibility.ts';
@@ -55,7 +55,7 @@ const transformed: MyMember = {
   role: {
     roleId: 1,
     label: 'Member',
-  } as Role,
+  },
   profileVisibility: 'private',
 };
 

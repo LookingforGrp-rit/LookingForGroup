@@ -35,7 +35,7 @@ describe('getSocialsService', () => {
     ];
 
     vi.mocked(prisma.socials.findMany).mockResolvedValue(prismaSocials);
-    vi.mocked(transformSocial).mockImplementation((social) => social as Social);
+    vi.mocked(transformSocial).mockImplementation((social) => social);
 
     const result = await getSocialsService();
 
