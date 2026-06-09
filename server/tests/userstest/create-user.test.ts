@@ -50,6 +50,7 @@ describe('createUserService', async () => {
       bio: '',
       privacy: 'public' as Visibility,
       phoneNumber: null,
+      moderator: false,
     };
 
     const mePrivate: MePrivate = {

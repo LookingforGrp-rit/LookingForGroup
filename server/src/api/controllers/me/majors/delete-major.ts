@@ -8,7 +8,7 @@ export const deleteMajor = async (req: AuthenticatedRequest, res: Response): Pro
   //the one you're deleting
   const major = parseInt(req.params.id);
 
-  const result = await deleteMajorService(req.currentUser, major);
+  const result = await deleteMajorService(req.currentUser.userId, major);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

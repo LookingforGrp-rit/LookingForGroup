@@ -14,6 +14,9 @@ const getProjectsService = async (): Promise<ProjectPreview[] | GetServiceError>
       orderBy: {
         createdAt: 'desc',
       },
+      where: {
+        approved: true,
+      },
     });
 
     //return transformed projects

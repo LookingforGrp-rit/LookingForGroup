@@ -35,6 +35,7 @@ const prismaProjects: Projects[] = [
     updatedAt: now,
     globalVisibility: 'public' as Visibility,
     userId: 1,
+    approved: true,
   },
   {
     audience: '',
@@ -49,6 +50,7 @@ const prismaProjects: Projects[] = [
     title: 'test 2',
     updatedAt: now,
     userId: 2,
+    approved: true,
   },
 ];
 

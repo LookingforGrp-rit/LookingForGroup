@@ -98,13 +98,6 @@ const SideBar = () => {
     // case '/messages':
     //   startingPage = 'Messages';
     //   break;
-    case "/about":
-      startingPage = "About";
-      for (const i of sidebarBtns) {
-        i.classList.remove("active");
-      }
-      document.querySelector("#about-sidebar-btn")?.classList.add("active");
-      break;
     default:
       startingPage = localStorage.getItem("lastActiveTab") || "Discover";
       for (const i of sidebarBtns) {

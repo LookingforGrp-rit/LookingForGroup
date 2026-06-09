@@ -31,6 +31,7 @@ const prismaProject = {
   title: 'test 1',
   updatedAt: now,
   userId: 1,
+  approved: true,
 };
 
 describe('addProjectMemberService', async () => {

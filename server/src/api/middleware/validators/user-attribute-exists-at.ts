@@ -34,7 +34,7 @@ export const userAttributeExistsAt = (
       return;
     }
 
-    const rawUserId = req.currentUser;
+    const rawUserId = req.currentUser.userId;
 
     const userId = rawUserId;
 

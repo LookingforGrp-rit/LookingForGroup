@@ -74,6 +74,7 @@ const prismaUser = {
   updatedAt: now,
   phoneNumber: null,
   googleId: '',
+  moderator: true,
 };
 
 const prismaProject: ProjectWithFollowers = {
