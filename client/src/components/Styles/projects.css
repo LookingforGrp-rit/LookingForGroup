@@ -1820,9 +1820,39 @@ Project page style rules
   grid-area: tags;
   display: flex;
   justify-content: baseline;
+  flex-wrap: wrap;
   gap: 10px;
   padding-right: 1vw;
   padding-left: 1vw;
+  width: 94%;
+  align-items:baseline;
+
+  #tags {
+    display: flex;
+    justify-content: baseline;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 80%;
+    align-items: center;
+  }
+
+  .tag-extend,
+  .tag-contract {
+    position: relative;
+    right: -5vw;
+    width: 30px;
+    height: 30px;
+    border: 2px solid var(--main-text);
+    border-radius: 100px;
+    background: none;
+    p {
+      font-size: 1.2rem;
+      margin: 0;
+      margin-top: -2px;
+      font-weight: 800;
+      color: var(--main-text);
+    }
+  }
 }
 
 .project-tag {
