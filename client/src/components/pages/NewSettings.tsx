@@ -578,8 +578,9 @@ const Settings = (userProfile : any) => {
                         const tempInfo = {...userInfo};
                         tempInfo.displayPhone = e.target.checked;
                         setUserInfo(tempInfo);
-                        //await editUser({displayPhone: e.target.checked});
+                        await editUser({displayPhone: e.target.checked});
                       }}
+                      checked={userInfo.displayPhone ?? false}
                     >
                     </input>
                     {/* This is temporary so I can see the value */}
