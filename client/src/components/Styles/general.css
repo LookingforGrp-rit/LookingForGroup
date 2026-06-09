@@ -232,7 +232,8 @@ used for the more options dropdown menu and notifications
   margin: 0;
 }
 
-a:link, a:visited{
+a:link,
+a:visited {
   color: var(--primary-color);
 }
 
@@ -606,14 +607,14 @@ Sidebar Nav style rules
   flex-direction: column;
   align-items: center;
   cursor: pointer;
-  gap: 10px;
+  gap: 15px;
   /*background-color: var(--primary-blue);*/
 }
 
 .containerButtonSideBar>button,
 .containerButtonSideBar>a {
   color: var(--main-text);
-  width: 194px;
+  width: 174px;
   height: 55px;
   /*background-color: var(--primary-blue);*/
   background-color: rgb(0, 0, 0, 0);
@@ -791,11 +792,12 @@ Sidebar Nav style rules
     align-items: center;
     justify-content: space-evenly;
     height: 80px;
-    width:100%;
+    width: 100%;
     background-color: var(--border-color);
   }
 
   .containerButtonSideBar>button,
+  .containerButtonSideBar>a,
   /*mobile view btn*/
   .containerButtonSideBar .my-projects-create-btn {
     width: 15vw;
@@ -804,32 +806,28 @@ Sidebar Nav style rules
     background-color: var(--border-color);
   }
 
-  .containerButtonSideBar>.my-projects-create-btn>#project-info-create{
+  .containerButtonSideBar>.my-projects-create-btn>#project-info-create {
     background-image: var(--create-gradient);
     width: 90px !important;
     height: 90px !important;
     border-radius: 50% !important;
-    padding:0% !important;
+    padding: 0% !important;
     margin-bottom: 30%;
     border-width: 5px !important;
     border-color: var(--border-color) !important;
     background-color: var(--border-color);
-    border:solid;
+    border: solid;
   }
 
-  .containerButtonSideBar>.my-projects-create-btn>#project-info-create>#create{
+  .containerButtonSideBar>.my-projects-create-btn>#project-info-create>#create {
     margin: 0% !important;
-    padding:0% !important;
+    padding: 0% !important;
     width: 55px !important;
     height: 55px !important;
   }
 
-  /*temporary, until mobile sidebar layout is decided on*/
-  #about-sidebar-btn {
-    display: none;
-  }
-
-  .containerButtonSideBar>button {
+  .containerButtonSideBar>button,
+  .containerButtonSideBar>a {
     padding-left: calc((100vw - 160px) / 14);
     padding-right: calc((100vw - 160px) / 14);
     border: none;
@@ -838,12 +836,12 @@ Sidebar Nav style rules
     align-items: center;
   }
 
-  .containerButtonSideBar>.my-projects-create-btn{
+  .containerButtonSideBar>.my-projects-create-btn {
     border: none;
     text-align: left;
     display: flex;
     align-items: center;
-    width:auto;
+    width: auto;
   }
 
   .containerButtonSideBar>button:hover {
@@ -863,18 +861,20 @@ Sidebar Nav style rules
     }
   }
 
-  .sidebar-btn,#my-profile-sidebar-btn{
+  .sidebar-btn,
+  #my-profile-sidebar-btn {
     height: 55px !important;
     width: 55px !important;
     border-radius: 50% !important;
     border-width: 2% !important;
-    padding:0% !important;
-    
+    padding: 0% !important;
+
   }
 
-  .sidebar-icon,.containerButtonSideBar>#my-profile-sidebar-btn>#profile{
+  .sidebar-icon,
+  .containerButtonSideBar>#my-profile-sidebar-btn>#profile {
     margin: 0% !important;
-    padding:25% !important;
+    padding: 25% !important;
     width: auto !important;
     height: auto !important;
   }
@@ -929,7 +929,7 @@ Page popup style rules
   /* height: 849px; */
 }
 
-.popup:has(.small-popup){
+.popup:has(.small-popup) {
   max-width: 800px;
   height: 40vh;
 }
@@ -951,8 +951,7 @@ Page popup style rules
   padding: 24px 56px;
   box-sizing: border-box;
 
-  .confirm-msg
-  {
+  .confirm-msg {
     width: 80%;
   }
 }
@@ -1017,15 +1016,13 @@ Page popup style rules
   }
 
   /* Popup container with a smaller popup inside (for leave/delete project specifically) */
-  .popup:has(.small-popup)
-  {
+  .popup:has(.small-popup) {
     width: 95vw;
     height: 50vh;
     max-width: 500px;
   }
 
-  .popup-container:has(.popup .small-popup)
-  {
+  .popup-container:has(.popup .small-popup) {
     align-items: center;
     justify-content: center;
   }
@@ -1559,7 +1556,7 @@ Footer style rules
 /* #region header */
 
 @media (max-width: 799px) {
-  .FooterContainer{
+  .FooterContainer {
     margin-bottom: 3%;
   }
 }
