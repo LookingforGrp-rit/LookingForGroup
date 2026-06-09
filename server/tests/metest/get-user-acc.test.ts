@@ -81,7 +81,7 @@ describe('getUserByIdService', () => {
       firstName: '',
       lastName: '',
       preferredName: '',
-      visibility: 'Public' as Visibility,
+      privacy: 'public' as Visibility,
       phoneNumber: null,
       googleId: '2222222222',
       createdAt: new Date('2026-05-20 13:25:14'),

@@ -98,6 +98,22 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
     fetchUsername();
   }, []);
 
+  //loads in the data for the header
+  // useEffect(() => {
+  //   console.log(userProfile);
+  //   if (userProfile.username !== '') {
+  //     loggedIn = true
+  //     setUsername(userProfile.username);
+  //     setEmail(userProfile.ritEmail);
+  //     setProfileImg(userProfile.profileImage ?? '');
+  //   } else {
+  //     loggedIn = false
+  //     setUsername('Guest');
+  //     setEmail('');
+  //     setProfileImg('');
+  //   }
+  // },[]);
+
   // Navigate to a page and optionally update sidebar (if implemented)
   const handlePageChange = (path: string) => {
     //Have code to update sidebar display (unsure of how to do this yet)
@@ -151,8 +167,8 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
       {/* Conditional rendering for search bar */}
       {(!hideSearchBar) && (
         <div id="header-searchbar">
-          <SearchBar 
-            dataSets={dataSets} 
+          <SearchBar
+            dataSets={dataSets}
             onSearch={onSearch}
             value={value}
             onChange={onChange}
@@ -189,14 +205,14 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 }}
               />
             ) : (
-              <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
+              <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'} />
             )}
             <ThemeIcon
               id={'dropdown-arrow'}
               width={15}
               height={12}
               className={'color-fill'}
-              ariaLabel={'dropdown arrow'}/>
+              ariaLabel={'dropdown arrow'} />
           </DropdownButton>
 
           {/* These are its elements once opened (unique for logged out/in) */}
@@ -206,7 +222,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* (Blank) Profile Icon */}
                 <button id="header-profile-user">
-                  <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'}/>
+                  <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'} />
                   <div id="header-profile-user-info">
                     <p id="header-profile-username">{username}</p>
                     <p id="header-profile-email">{email}</p>
@@ -217,7 +233,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
-                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'}/>
+                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'} />
                   {modeToggle}
                 </button>{' '}
 
@@ -252,7 +268,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
-                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'}/>
+                  <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'} />
                   {modeToggle}
                 </button>{' '}
 

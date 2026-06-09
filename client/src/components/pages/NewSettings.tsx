@@ -18,7 +18,7 @@ type JsonData = Record<string, unknown>;
  * Settings page. Renders the settings page interface with options for updating user account information, appearance preferences, and account settings
  * @returns JSX Element
  */
-const Settings = () => {
+const Settings = (userProfile : any) => {
   // --------------------
   // Global variables
   // --------------------

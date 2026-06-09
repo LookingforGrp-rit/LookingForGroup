@@ -7,6 +7,7 @@ import type {
   JobLocation,
   JobCompensation,
   UserPreview,
+  Visibility,
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
@@ -68,6 +69,7 @@ const prismaProject = {
   projectId: 1,
   purpose: 'Academic' as ProjectPurpose,
   status: 'Planning' as ProjectStatus,
+  globalVisibility: 'public' as Visibility,
   thumbnailId: 0,
   title: 'test 1',
   updatedAt: now,
@@ -105,6 +107,7 @@ const prismaUser = {
   displayPhone: false,
   preferredName: 'Leafleaf',
   ritEmail: 'gold@rit.edu',
+  privacy: 'public' as Visibility,
   profileImage: null,
   headline: '',
   pronouns: '',
@@ -116,7 +119,6 @@ const prismaUser = {
   location: '',
   funFact: '',
   bio: '',
-  visibility: 0,
   phoneNumber: null,
 };
 
