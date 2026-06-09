@@ -24,6 +24,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'privacy',
     'phoneNumber',
     'mentor',
+    'displayPhone',
   ];
 
   //validate update fields
@@ -84,7 +85,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     updates.privacy = body.privacy;
   }
 
-  const result = await updateUserInfoService(req.currentUser, updates);
+  const result = await updateUserInfoService(req.currentUser.userId, updates);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {

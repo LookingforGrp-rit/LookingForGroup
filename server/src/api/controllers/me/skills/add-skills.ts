@@ -13,7 +13,7 @@ const addSkill = async (req: AuthenticatedRequest, res: Response) => {
 
   const skillWithUserId = {
     ...data,
-    userId: req.currentUser,
+    userId: req.currentUser.userId,
   };
 
   //add the skill they wanna add

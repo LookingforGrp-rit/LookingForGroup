@@ -74,6 +74,7 @@ const prismaProject = {
   title: 'test 1',
   updatedAt: now,
   userId: 1,
+  approved: true,
 };
 
 vi.mock('#config/prisma.ts', () => ({
@@ -120,6 +121,7 @@ const prismaUser = {
   funFact: '',
   bio: '',
   phoneNumber: null,
+  moderator: false,
 };
 
 vi.mock('#services/transformers/projects/parts/project-job.ts', () => ({

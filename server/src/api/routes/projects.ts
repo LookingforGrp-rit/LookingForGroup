@@ -3,6 +3,7 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
+import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -25,6 +26,26 @@ export const authenticated = (
     res: Response,
     next: NextFunction,
   ) => void | Promise<void>;
+
+//Approve a project
+router.patch(
+  '/:id/approve',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.approveProject),
+);
+
+//Unapprove a project
+router.patch(
+  '/:id/unapprove',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.unapproveProject),
+);
 
 //Receive all projects
 router.get('/', PROJECT.getProjects);
@@ -326,6 +347,46 @@ router.delete(
   projectAttributeExistsAt('job', { type: 'path', key: 'id' }, { type: 'path', key: 'jobId' }),
   authenticated(requiresProjectOwner),
   PROJECT.deleteJobController,
+);
+
+//---UNAPPROVED PROJECTS---\\
+
+//Get all unapproved projects
+router.get(
+  '/unapproved',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  authenticated(PROJECT.getUnapprovedProjects),
+);
+
+//Get a specific unapproved project
+router.get(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.getUnapprovedProjectById),
+);
+
+//Place a project on the list of projects awaiting approval.
+router.post(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.requestApproval),
+);
+
+//Remove a project from the list of projects awaiting approval without approving it.
+router.delete(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.rejectProject),
 );
 
 export default router;

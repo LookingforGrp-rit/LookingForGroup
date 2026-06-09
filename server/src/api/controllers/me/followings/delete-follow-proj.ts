@@ -11,7 +11,7 @@ export const deleteProjectFollowing = async (
   const projectId = parseInt(req.params.id);
 
   //call service
-  const result = await deleteProjectFollowService(req.currentUser, projectId);
+  const result = await deleteProjectFollowService(req.currentUser.userId, projectId);
 
   //internal error
   if (result === 'INTERNAL_ERROR') {

@@ -61,6 +61,7 @@ describe('createProjectService', async () => {
       title: 'test 1',
       updatedAt: now,
       userId: 1,
+      approved: true,
     };
 
     const transformed: ProjectDetail = {

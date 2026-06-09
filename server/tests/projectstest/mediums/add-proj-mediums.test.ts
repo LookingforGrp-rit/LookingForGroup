@@ -55,6 +55,7 @@ const prismaProject = {
   updatedAt: now,
   userId: 1,
   mediums: [testMedium1, testMedium2],
+  approved: true,
 };
 
 vi.mock('#config/prisma.ts', () => ({
