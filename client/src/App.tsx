@@ -27,6 +27,7 @@ import AcceptInvitation from './components/pages/AcceptInvitation';
 import Credits from './components/pages/CreditsPage';
 import AccountActivation from './components/pages/AccountActivation';
 import { ThemeContext } from './contexts/ThemeContext';
+import AboutPage from './components/pages/About';
 
 import uselocalstorage from 'use-local-storage';
 import { getCurrentAccount } from './api/users';
@@ -112,6 +113,7 @@ function App() {
           <Route path={paths.routes.NOTFOUND} element={<NotFound />} />
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
           <Route path={paths.routes.CREDITS} element={<Credits />} />
+          <Route path={paths.routes.ABOUT} element={<AboutPage />} />
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
         </Routes>
         {/* <CreditsFooter /> */}
