@@ -56,3 +56,18 @@ Email Confirmation page style rules
     height: 40vh;
   }
 }
+
+#manual-redirect-link {
+  display: inline-block;
+  transition: all 0.2s ease-in-out;
+}
+
+#manual-redirect-link:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+#manual-redirect-link:active {
+  transform: translateY(0px);
+  opacity: 1;
+}

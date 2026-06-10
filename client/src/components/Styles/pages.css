@@ -21,20 +21,36 @@
   position: absolute;
   width: calc(100% - 220px);
   height: 100%;
-  /* set min height to avoid bottom white gap on short pages */
   min-height: 100vh;
   top: 0px;
   left: 220px;
   background-color: var(--bg-color);
   font-family: 'Inter', sans-serif;
-  /* padding-right: 500px; */
-
-  /* hide horizontal scrollbar, looses scroll functionality */
   overflow-x: hidden;
 
   .fa {
     color: var(--primary-color);
   }
+}
+
+.page button,
+.page a,
+.page .icon-button,
+.page [role="button"] {
+  transition: all 0.2s ease-in-out;
+}
+
+.page button:hover,
+.page a:hover,
+.page .icon-button:hover {
+  transform: translateY(-1px);
+  opacity: 0.95;
+}
+
+.page button:active,
+.page a:active,
+.page .icon-button:active {
+  transform: translateY(0px);
 }
 
 .discover-page {

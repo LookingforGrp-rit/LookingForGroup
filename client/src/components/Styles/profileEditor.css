@@ -83,6 +83,32 @@ textarea {
   position: relative;
 }
 
+.editor-input-item button,
+#profile-editor-add-link,
+.close-btn,
+#profile-editor-tags button,
+.project-editor-tab {
+  transition: all 0.2s ease-in-out;
+}
+
+.editor-input-item button:hover,
+#profile-editor-add-link:hover,
+.close-btn:hover,
+#profile-editor-tags button:hover,
+.project-editor-tab:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.editor-input-item button:active,
+#profile-editor-add-link:active,
+.close-btn:active,
+#profile-editor-tags button:active,
+.project-editor-tab:active {
+  transform: translateY(0);
+  opacity: 1;
+}
+
 /* Skills Tabs */
 #profile-editor-tags {
   display: grid;
@@ -102,12 +128,9 @@ textarea {
 }
 
 @media only screen and (max-width: 800px) {
-
   #profile-editor-tags #project-editor-tag-search-tabs {
     gap: 20px;
-
   }
-
 }
 
 @media only screen and (max-width: 700px) {
