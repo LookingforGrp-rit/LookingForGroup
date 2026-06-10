@@ -68,6 +68,7 @@
     "eslint": "^9.39.4",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
+    "google": "^2.1.0",
     "google-auth-library": "^10.6.2",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.10",
