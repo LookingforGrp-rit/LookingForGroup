@@ -55,7 +55,7 @@ Project Panel component style rules
 
 .project-panel {
   width: 100%;
-  height: 240px;
+  height: 280px;
   border: none;
   border-radius: 10px;
   background-color: var(--header-color);
@@ -64,6 +64,51 @@ Project Panel component style rules
   position: relative;
   max-width: none;
   overflow: hidden;
+  text-decoration: none;
+
+  .project-panel-meta {
+    position: relative;
+    padding: 0 20px 12px 20px;
+    margin: 0;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    gap: 6px;
+    min-width: 0;
+
+    .project-panel-meta-ghost {
+      position: absolute;
+      top: 0;
+      left: 0;
+      visibility: hidden;
+      pointer-events: none;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+
+    .tag,
+    .project-panel-meta-plus {
+      font-size: 0.75rem;
+      padding: 0 6px;
+      line-height: 1;
+    }
+
+    .tag p {
+      font-size: 0.75rem;
+      line-height: 1;
+      margin: 0;
+    }
+
+    .project-panel-meta-extra {
+      display: none;
+    }
+  }
+
   
   a {
     text-decoration: none;
@@ -167,6 +212,14 @@ Project Panel component style rules
     visibility: visible;
     opacity: 1;
     cursor: pointer;
+  }
+
+  .project-panel-meta > .project-panel-meta-plus {
+    display: none;
+  }
+
+  .project-panel-meta-extra {
+    display: contents;
   }
 }
 
