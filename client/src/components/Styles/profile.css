@@ -1448,6 +1448,12 @@ New Profile page style rules
   }
 }
 
+@media only screen and (max-width: 555px) {
+  #socials {
+    width: auto !important;
+  }
+}
+
 #profile-page-content h2 {
   color: var(--primary-color);
 }
