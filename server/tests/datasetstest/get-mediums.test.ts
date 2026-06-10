@@ -1,4 +1,3 @@
-import type { Medium } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getMediumsService from '#services/datasets/get-mediums.ts';
@@ -29,7 +28,7 @@ describe('getMediumsService', () => {
       { mediumId: 1, label: 'Video Game' },
     ];
 
-    vi.mocked(prisma.mediums.findMany).mockResolvedValue(prismaMediums as Medium[]);
+    vi.mocked(prisma.mediums.findMany).mockResolvedValue(prismaMediums);
     vi.mocked(transformMedium).mockImplementation((medium) => ({ ...medium, transformed: true }));
 
     const result = await getMediumsService();

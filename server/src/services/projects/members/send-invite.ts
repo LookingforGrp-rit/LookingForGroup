@@ -1,4 +1,4 @@
-import type { SendProjectInviteInput, EmailInput, UserEmail } from '@looking-for-group/shared';
+import type { SendProjectInviteInput, EmailInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import getRolesService from '#services/datasets/get-roles.ts';
 import { sendEmail } from '#services/mailer.ts';
@@ -62,8 +62,8 @@ const sendInviteService = async (
       `&roleId=${String(role.roleId)}`;
 
     const email: EmailInput = {
-      inviter: inviter as UserEmail,
-      invitee: invitee as UserEmail,
+      inviter: inviter,
+      invitee: invitee,
       subject: `Invitation to join ${project.title}`,
       textBody: `
                 Hello ${invitee.firstName},

@@ -2,7 +2,6 @@ import type {
   ProjectMember,
   CreateProjectMemberInput,
   CreateProjectOwnerInput,
-  SendProjectInviteInput,
 } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import sendInviteService from '#services/projects/members/send-invite.ts';
@@ -58,7 +57,7 @@ const addMemberService = async (
         inviteeUserId: data.inviteeUserId,
         roleId: data.roleId,
         message: data.message ?? '',
-      } as SendProjectInviteInput);
+      });
 
       if (
         emailResult === 'INTERNAL_ERROR' ||

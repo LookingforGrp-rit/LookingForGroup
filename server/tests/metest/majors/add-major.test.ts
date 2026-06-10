@@ -1,4 +1,4 @@
-import type { MyMajor, Major, Visibility } from '@looking-for-group/shared';
+import type { MyMajor, Major } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import addUserMajorService from '#services/me/majors/add-major.ts';
@@ -37,7 +37,7 @@ const prismaUpdatedUser = {
   location: '',
   funFact: '',
   bio: '',
-  privacy: 'public' as Visibility,
+  privacy: 'public',
   mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),
@@ -76,7 +76,7 @@ describe('addUserMajorService', () => {
   });
 
   it('returns NOT_FOUND when major is not found', async () => {
-    vi.mocked(prisma.users.update).mockRejectedValue({ code: 'P2025' } as any);
+    vi.mocked(prisma.users.update).mockRejectedValue({ code: 'P2025' });
 
     const result = await addUserMajorService({
       majorId: 1,
@@ -87,7 +87,7 @@ describe('addUserMajorService', () => {
   });
 
   it('returns CONFLICT when major is already added', async () => {
-    vi.mocked(prisma.users.update).mockRejectedValue({ code: 'P2002' } as any);
+    vi.mocked(prisma.users.update).mockRejectedValue({ code: 'P2002' });
 
     const result = await addUserMajorService({
       majorId: 1,

@@ -569,6 +569,21 @@ const Settings = (userProfile : any) => {
                       </PopupContent>
                     </Popup>
                   </div>
+                  <div id="phone-number-visibility">
+                    <label htmlFor="toggle-phone-checkbox">Show Phone Number on your Profile?</label>
+                    <input
+                      type="checkbox"
+                      id="toggle-phone-checkbox"
+                      onChange={async (e) => {
+                        const tempInfo = {...userInfo};
+                        tempInfo.displayPhone = e.target.checked;
+                        setUserInfo(tempInfo);
+                        await editUser({displayPhone: tempInfo.displayPhone as boolean}); //this typecast does nothing. it still passes as a string
+                      }}
+                      checked={userInfo.displayPhone ?? false}
+                    >
+                    </input>
+                  </div>
                 </div>
               </div>
             </div>

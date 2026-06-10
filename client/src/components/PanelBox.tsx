@@ -15,6 +15,8 @@ interface MasonryContext {
 // It is defined outside the function so that it doesn't have to keep remounting
 const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryContext }) => {
   const { category, projectCache, followedProjectIds, userId } = context;
+  //seems there is sometimes undefined elements in the list that the data takes
+  if (item === undefined) return;
 
   if (category === 'projects') {
     const projectId = (item as ProjectWithFollowers).projectId;

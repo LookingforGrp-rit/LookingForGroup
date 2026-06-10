@@ -1,4 +1,4 @@
-import type { Visibility, MePrivate, AcademicYear } from '@looking-for-group/shared';
+import type { MePrivate } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { getUserAccountService } from '#services/me/get-user-acc.ts';
@@ -81,12 +81,12 @@ describe('getUserByIdService', () => {
       firstName: '',
       lastName: '',
       preferredName: '',
-      privacy: 'public' as Visibility,
+      privacy: 'public',
       phoneNumber: null,
       googleId: '2222222222',
       createdAt: new Date('2026-05-20 13:25:14'),
       updatedAt: new Date('2026-05-20 13:25:14'),
-      academicYear: 'Sophomore' as AcademicYear,
+      academicYear: 'Sophomore',
       bio: '',
       projects: [],
       skills: [],
