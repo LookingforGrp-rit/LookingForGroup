@@ -374,7 +374,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<button
 							id="signup-nextBtn"
 							onClick={onNext}
-							disabled={!(major.length > 0 && academicYear && validPhoneNum)}>
+							disabled={!(major && academicYear && validPhoneNum)}>
 							Next
 						</button>
 					</div>
