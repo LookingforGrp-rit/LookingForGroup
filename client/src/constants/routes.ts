@@ -13,6 +13,7 @@ export const routes = {
   NEWPROJECT: '/newProject',
   // PROJECTPOST: '/projectPost',
   CREATEPROJECT: '/createProject',
+  ACCEPTINVITATION: '/projects/:projectId/members/:roleId/invite',
   // MESSAGEHISTORY: '/messageHistory',
   DISCOVERANDMEET: '/discoverAndMeet',
   SETTINGS: '/settings',

@@ -9,8 +9,8 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type SendInviteServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type SendInviteServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
-//POST api/projects/{id}/members/invite
-//sends an invite to a user to join a project
+// Used in addMemberService
+// sends an invite to a user to join a project
 const sendInviteService = async (
   projectId: number,
   data: SendProjectInviteInput,
@@ -54,12 +54,9 @@ const sendInviteService = async (
 
     const msg = data.message.length === 0 ? 'No message included.' : data.message;
 
-    const clientUrl = process.env.CLIENT_URL ?? '';
+    const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    const inviteUrl =
-      `${clientUrl}/projects/${String(projectId)}/members/invite` +
-      `?userId=${String(invitee.userId)}` +
-      `&roleId=${String(role.roleId)}`;
+    const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
 
     const email: EmailInput = {
       inviter: inviter,

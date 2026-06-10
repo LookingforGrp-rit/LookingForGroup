@@ -51,38 +51,44 @@ const Login: React.FC = () => {
     let googleBtnTheme = new String("");
 
     //If we're in dark mode, we use filled_black.
-    if(theme == 'dark'){
+    if (theme == 'dark') {
       googleBtnTheme = "filled_black";
     }
     //Light mode uses outline.
-    else if(theme == 'light'){
+    else if (theme == 'light') {
       googleBtnTheme = "outline";
     }
     //The filled_blue option shows up in case something goes wrong.
-    else{
+    else {
       googleBtnTheme = "filled_blue";
     }
 
     // @ts-expect-error google
     google.accounts.id.renderButton(
       document.getElementById("googleBtn"),
-      { theme: googleBtnTheme, size: "large" , shape: 'pill'}
+      { theme: googleBtnTheme, size: "large", shape: 'pill' }
     );
 
   }, [navigate])
 
-  async function handleGoogle(response: any){
-    const res = await googleLogin({credential: response.credential});
+  async function handleGoogle(response: any) {
+    const res = await googleLogin({ credential: response.credential });
     //Display error to user
-    if(res.error){
+    if (res.error) {
       setError(res.error);
       return;
     }
 
-    const body = await res.data as {userExists: boolean};
-    
+    const body = await res.data as { userExists: boolean };
+
+    if (body.userExists && from && from.pathname.includes('invite')) {
+      console.log('returning to previous page: ' + from.pathname);
+      navigate(from.pathname, { replace: true });
+      return;
+    }
+
     if (body.userExists) { navigate(paths.routes.HOME); }
-    else { navigate(paths.routes.SIGNUP, {replace: true}); }
+    else { navigate(paths.routes.SIGNUP, { replace: true }); }
   }
 
 
@@ -104,48 +110,48 @@ const Login: React.FC = () => {
     // Check if the login credentials are associated with an account
     let data;
     if (loginInput.includes('@') && loginInput.includes('.')) {
-    // search input as email
-        const resp = await getUserByEmail(loginInput);
-        data = resp.data;
-    } 
+      // search input as email
+      const resp = await getUserByEmail(loginInput);
+      data = resp.data;
+    }
     else {
-    // search input as username
+      // search input as username
       const resp = await getUserByUsername(loginInput);
       data = resp.data;
     }
-      try {
-        if (data) {
-          // try login 
-          try {
-            //SEND THIS THROUGH TO AUTHENTICATE ROUTE (OR MAKE A /LOGIN THAT TAKES THIS)
-            //the reason this doesn't work is it doesn't go anywhere
-            sendPost('/api/login', { loginInput }, (response: LoginResponse) => {
-              if (response.error) {
-                setError(response.error);
-                return false;
-              }
-              // Success message
-              setError('Logging in');
-            });
-            return true; // Prevent executing additional code after login attempt
-          } catch (err) {
-            setError('An error occurred during login');
-            console.log(err);
-            return false;
-          }
+    try {
+      if (data) {
+        // try login 
+        try {
+          //SEND THIS THROUGH TO AUTHENTICATE ROUTE (OR MAKE A /LOGIN THAT TAKES THIS)
+          //the reason this doesn't work is it doesn't go anywhere
+          sendPost('/api/login', { loginInput }, (response: LoginResponse) => {
+            if (response.error) {
+              setError(response.error);
+              return false;
+            }
+            // Success message
+            setError('Logging in');
+          });
+          return true; // Prevent executing additional code after login attempt
+        } catch (err) {
+          setError('An error occurred during login');
+          console.log(err);
+          return false;
         }
-      } catch (err) {
-        setError('An error occurred during login');
-        console.log(err);
-        return false;
       }
+    } catch (err) {
+      setError('An error occurred during login');
+      console.log(err);
+      return false;
     }
-  
-    // // Sends the user to the create project popup if they successfully logged in
-    // if(error == 'Logging in')
-    // {
-    //   navigate(paths.routes.CREATEPROJECT);
-    // }
+  }
+
+  // // Sends the user to the create project popup if they successfully logged in
+  // if(error == 'Logging in')
+  // {
+  //   navigate(paths.routes.CREATEPROJECT);
+  // }
 
   /**
    * Triggers the login function when the Enter key is pressed while focus is in the form.
@@ -163,9 +169,9 @@ const Login: React.FC = () => {
       <div className="login-signup-container" onKeyDown={handleKeyPress}>
         {/*************************************************************
 
-                    Login Form inputs
+          Login Form inputs
 
-                *************************************************************/}
+        *************************************************************/}
         <div className="login-form column">
           <ThemeIcon //Back button to return to the previous page
             id={'back'}
@@ -226,7 +232,7 @@ const Login: React.FC = () => {
             lightSrc={'/assets/bannerImages/login_light.png'}
             darkSrc={'/assets/bannerImages/login_dark.png'}
           />
-          <button onClick={() => navigate(paths.routes.SIGNUP, {replace: true})}>Sign Up</button>
+          <button onClick={() => navigate(paths.routes.SIGNUP, { replace: true })}>Sign Up</button>
         </div>
       </div>
     </div>
