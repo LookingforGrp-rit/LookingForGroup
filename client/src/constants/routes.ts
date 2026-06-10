@@ -6,6 +6,7 @@ export const routes = {
   RESETPASSWORD: '/resetPassword/:token',
   HOME: '/discover',
   MEET: '/meet',
+  ABOUT: '/about',
   // MESSAGES: '/messages',
   MYPROJECTS: '/myProjects',
   PROFILE: '/profile',
@@ -16,7 +17,7 @@ export const routes = {
   // MESSAGEHISTORY: '/messageHistory',
   DISCOVERANDMEET: '/discoverAndMeet',
   SETTINGS: '/settings',
-  CREDITS: '/credits',
+  //CREDITS: '/credits',
   ACCOUNTACTIVATE: '/activation/:token',
   NOTFOUND: '/*',
 };
