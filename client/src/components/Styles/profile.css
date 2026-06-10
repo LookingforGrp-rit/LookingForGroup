@@ -190,10 +190,11 @@ Profile Panel component style rules
   opacity: 1;
 }
 
-@media (max-width: 660px){
+@media (max-width: 499px){
   .profile-panel{
-    width: clamp(200px, 300px, 300px) !important;
+    width: clamp(180px, 250px, 250px) !important;
     display: flex;
+  
 
     img {
       border-radius: 10px !important;
@@ -204,9 +205,17 @@ Profile Panel component style rules
   }
 }
 
-@media (max-width: 799px){
+@media (min-width: 500px) and (max-width: 555px){
   .profile-panel{
-    width: clamp(200px, 250px, 250px) !important;
+    width: 98% !important;
+    display: flex;
+    
+  }
+}
+
+@media (min-width: 556px) and (max-width: 799px){
+  .profile-panel{
+    width: clamp(180px, 250px, 250px) !important;
     display: flex;
   
 
@@ -1335,6 +1344,11 @@ New Profile page style rules
       font-style: italic;
       gap: 10px;
       text-decoration: none;
+    }
+
+    #profile-email a:hover,
+    #profile-number a:hover {
+      text-decoration: underline;
     }
   }
 

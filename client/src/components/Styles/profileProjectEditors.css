@@ -55,7 +55,7 @@
   border-radius: 6px;
   text-decoration: none;
   color: var(--text-primary, #333333);
-  transition: all 0.2s ease;
+  transition: all 0.2s ease-in-out;
 }
 
 .contact-social-link:hover {
