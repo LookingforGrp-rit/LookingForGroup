@@ -51,9 +51,13 @@
     position: absolute;
     bottom: 9px;
     right: 9px;
+    transition: all 0.2s ease-in-out;
 }
 
 .camera-button:hover {
-    transition-duration: 0.2s;
-    scale: 1.1;
+    transform: translateY(-1px);
+}
+
+.camera-button:active {
+  transform: translateY(0px);
 }

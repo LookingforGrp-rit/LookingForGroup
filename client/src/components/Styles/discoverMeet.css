@@ -240,6 +240,7 @@ Image carousel style rules
   margin-left: min(18px, calc(100vw * (18 / 1512)));
   padding: 0px;
   height: fit-content;
+  transition: all 0.2s ease-in-out;
 
   img {
     width: 100%;
@@ -247,19 +248,51 @@ Image carousel style rules
   }
 }
 
-.discover-carousel-btn:hover {
+
+/* Old carousel hover*/
+/*.discover-carousel-btn:hover {
   transition-duration: 0.2s;
   scale: 1.1;
 
   img {
     max-height: calc(68px * 1.1);
   }
+}*/
+
+/* 1. Base button settings */
+.carousel-btn-left,
+.carousel-btn-right {
+  transition: all 0.2s ease-in-out;
 }
 
+/* 2. Permanent mirror lock for the left button */
 .carousel-btn-left {
-  transform: rotateY(180deg);
   margin-left: 0px;
   margin-right: min(18px, calc(100vw * (18 / 1512)));
+  transform: scaleX(-1); 
+}
+
+/* 3. General hover / active for right button */
+.discover-carousel-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+
+.discover-carousel-btn:active {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+/* 4. FORCED SPECIFICITY: Double-classing ensures the left button NEVER loses its mirror on hover/active */
+.discover-carousel-btn.carousel-btn-left:hover {
+  transform: scaleX(-1) translateY(-1px) !important;
+  opacity: 0.85;
+}
+
+.discover-carousel-btn.carousel-btn-left:active {
+  transform: scaleX(-1) translateY(0px) !important;
+  opacity: 1;
 }
 
 @media only screen and (max-width: 700px) {
@@ -337,10 +370,19 @@ Image carousel style rules
     background: none;
     box-shadow: none;
     text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
   }
 
   .discover-link:hover {
     text-decoration: underline;
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .discover-link:active {
+    transform: translateY(0px);
+    opacity: 1;
   }
 
   .learn-more {
@@ -383,11 +425,22 @@ Image carousel style rules
   width: 14px;
   height: 14px;
   background-color: var(--header-color);
+  transition: all 0.2s ease-in-out;
 }
 
 .carousel-tab:hover,
 .carousel-tab-active {
   background-color: var(--primary-color);
+}
+
+.carousel-tab:hover {
+  transform: translateY(-1px);
+  opacity: 0.85;
+}
+
+.carousel-tab:active {
+  transform: translateY(0px);
+  opacity: 1;
 }
 
 @media screen and (max-width: 1020px) {
@@ -626,6 +679,7 @@ Filters / Tags Style Rules
   margin: 0 5px;
   border-radius: 30px;
   flex-shrink: 0;
+  transition: all 0.2s ease-in-out;
 }
 
 #discover-more-filters-container {
@@ -639,6 +693,14 @@ Filters / Tags Style Rules
 #discover-more-filters:hover {
   background-color: var(--header-color);
   color: var(--main-text);
+  transform: translateY(-1px);
+  opacity: 0.85;
+}
+
+.discover-tag-filter:active,
+#discover-more-filters:active {
+  transform: translateY(0px);
+  opacity: 1;
 }
 
 .discover-tag-filter-selected {
@@ -659,6 +721,7 @@ Filters / Tags Style Rules
   background: none;
   border: none;
   border-radius: 30px;
+  transition: all 0.2s ease-in-out;
 
   img {
     height: 30px;
@@ -733,6 +796,7 @@ Filters / Tags Style Rules
   font-size: medium;
   flex-shrink: 0;
   text-align: left;
+  transition: all 0.2s ease-in-out;
 
   p {
     margin: 0px;
@@ -1038,7 +1102,13 @@ Filters / Tags Style Rules
 
 .tag-button:hover {
   cursor: pointer;
-  transition: 0.2s;
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.tag-button:active {
+  transform: translateY(0px);
+  opacity: 1;
 }
 
 .tag-label:hover {
