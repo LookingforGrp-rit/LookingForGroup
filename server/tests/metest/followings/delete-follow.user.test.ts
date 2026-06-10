@@ -3,7 +3,6 @@ import prisma from '#config/prisma.ts';
 import { deleteUserFollowService } from '#services/me/followings/delete-follow-user.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -25,7 +24,7 @@ describe('deleteProjectFollowService', () => {
   });
 
   it('returns NOT_FOUND if user does not exist', async () => {
-    vi.mocked(prisma.userFollowings.delete).mockRejectedValue({ code: 'P2025' } as any);
+    vi.mocked(prisma.userFollowings.delete).mockRejectedValue({ code: 'P2025' });
 
     const result = await deleteUserFollowService(1, 2);
 

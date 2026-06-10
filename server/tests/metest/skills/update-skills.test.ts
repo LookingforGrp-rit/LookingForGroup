@@ -52,7 +52,7 @@ const transformed: MySkill = {
   proficiency: 'Advanced',
   label: '',
   skillId: 1,
-  type: 'Designer' as SkillType,
+  type: 'Designer',
 };
 
 describe('updateSkillsService', () => {
@@ -67,7 +67,7 @@ describe('updateSkillsService', () => {
 
     const result = await updateSkillsService(1, 1, {
       position: 2,
-      proficiency: 'Advanced' as SkillProficiency,
+      proficiency: 'Advanced',
     });
 
     expect(result).toBe(transformed);
@@ -78,7 +78,7 @@ describe('updateSkillsService', () => {
 
     const result = await updateSkillsService(1, 1, {
       position: 2,
-      proficiency: 'Advanced' as SkillProficiency,
+      proficiency: 'Advanced',
     });
 
     expect(result).toBe('NOT_FOUND');
@@ -86,22 +86,22 @@ describe('updateSkillsService', () => {
 
   it('returns NOT_FOUND if skill does not exist', async () => {
     vi.mocked(getSkillsService).mockResolvedValue(skills);
-    vi.mocked(prisma.userSkills.update).mockRejectedValue({ code: 'P2025' } as any);
+    vi.mocked(prisma.userSkills.update).mockRejectedValue({ code: 'P2025' });
 
     const result = await updateSkillsService(1, 1, {
       position: 2,
-      proficiency: 'Advanced' as SkillProficiency,
+      proficiency: 'Advanced',
     });
 
     expect(result).toBe('NOT_FOUND');
   });
 
   it('returns CONFLICT if proficiency and/or position is causing conflicts', async () => {
-    vi.mocked(prisma.userSkills.update).mockRejectedValue({ code: 'P2002' } as any);
+    vi.mocked(prisma.userSkills.update).mockRejectedValue({ code: 'P2002' });
 
     const result = await updateSkillsService(1, 1, {
       position: 2,
-      proficiency: 'Advanced' as SkillProficiency,
+      proficiency: 'Advanced',
     });
 
     expect(result).toBe('CONFLICT');
@@ -112,7 +112,7 @@ describe('updateSkillsService', () => {
 
     const result = await updateSkillsService(1, 1, {
       position: 2,
-      proficiency: 'Advanced' as SkillProficiency,
+      proficiency: 'Advanced',
     });
 
     expect(result).toBe('INTERNAL_ERROR');

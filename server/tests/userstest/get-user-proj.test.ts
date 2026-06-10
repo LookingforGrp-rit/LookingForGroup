@@ -1,4 +1,3 @@
-import type { Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { transformProjectToPreview } from '#services/transformers/projects/project-preview.ts';
@@ -52,7 +51,7 @@ describe('getuserProjectsService', () => {
       thumbnail: p.thumbnail,
       mediums: p.mediums,
       thumbnailId: p.thumbnailId ?? null,
-      globalVisibility: 'public' as Visibility,
+      globalVisibility: 'public',
       apiUrl: p.apiUrl ?? '',
     }));
   });

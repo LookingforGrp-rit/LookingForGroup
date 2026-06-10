@@ -1,11 +1,10 @@
-import type { MySkill, UserSkill, SkillType } from '@looking-for-group/shared';
+import type { MySkill, UserSkill } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import addSkillService from '#services/me/skills/add-skills.ts';
 import { transformMySkill } from '#services/transformers/me/parts/my-skill.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 
 vi.mock('#config/prisma.ts', () => ({
   default: {
@@ -24,7 +23,7 @@ const prismaUserSkill: UserSkill = {
   proficiency: 'Novice',
   label: '',
   skillId: 1,
-  type: 'Designer' as SkillType,
+  type: 'Designer',
 };
 
 const transformed: MySkill = {
@@ -52,7 +51,7 @@ describe('addSkillService', () => {
   });
 
   it('returns NOT_FOUND if skill does not exist', async () => {
-    vi.mocked(prisma.userSkills.create).mockRejectedValue({ code: 'P2025' } as any);
+    vi.mocked(prisma.userSkills.create).mockRejectedValue({ code: 'P2025' });
 
     const result = await addSkillService({
       position: 1,
@@ -65,7 +64,7 @@ describe('addSkillService', () => {
   });
 
   it('returns CONFLICT if user skill already exists', async () => {
-    vi.mocked(prisma.userSkills.create).mockRejectedValue({ code: 'P2002' } as any);
+    vi.mocked(prisma.userSkills.create).mockRejectedValue({ code: 'P2002' });
 
     const result = await addSkillService({
       position: 1,

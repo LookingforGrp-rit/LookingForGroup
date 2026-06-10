@@ -1,11 +1,4 @@
-import type {
-  UserPreview,
-  ProjectPurpose,
-  ProjectStatus,
-  ProjectDetail,
-  UpdateProjectInput,
-  Visibility,
-} from '@looking-for-group/shared';
+import type { UserPreview, ProjectDetail, UpdateProjectInput } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Projects } from '#prisma-models/index.js';
@@ -71,11 +64,11 @@ const prismaProject: Projects = {
   description: '',
   hook: '',
   projectId: 1,
-  purpose: 'Academic' as ProjectPurpose,
-  status: 'Planning' as ProjectStatus,
+  purpose: 'Academic',
+  status: 'Planning',
   thumbnailId: 0,
   title: 'test 1',
-  globalVisibility: 'public' as Visibility,
+  globalVisibility: 'public',
   updatedAt: now,
   userId: 1,
   approved: true,
@@ -91,12 +84,12 @@ const transformed: ProjectDetail = {
   mediums: [],
   members: [],
   owner: { userId: 1 } as UserPreview,
-  globalVisibility: 'public' as Visibility,
+  globalVisibility: 'public',
   projectId: 1,
   projectImages: [],
   projectSocials: [],
-  purpose: 'Academic' as ProjectPurpose,
-  status: 'Planning' as ProjectStatus,
+  purpose: 'Academic',
+  status: 'Planning',
   tags: [],
   thumbnail: null,
   thumbnailId: 0,

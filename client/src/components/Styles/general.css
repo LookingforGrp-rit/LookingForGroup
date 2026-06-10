@@ -871,7 +871,7 @@ Sidebar Nav style rules
 
   }
 
-  .sidebar-icon,
+  .containerButtonSideBar>.sidebar-btn>.sidebar-icon,
   .containerButtonSideBar>#my-profile-sidebar-btn>#profile {
     margin: 0% !important;
     padding: 25% !important;
