@@ -35,7 +35,7 @@
   },
   "devDependencies": {
     "@types/nodemailer": "^8.0.0",
-    "concurrently": "^9.2.0",
+    "concurrently": "^10.0.3",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
     "husky": "^9.1.7",
