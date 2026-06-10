@@ -221,8 +221,7 @@ Image carousel style rules
 
 /* Desktop width */
 @media screen and (min-width: 1020px) {
-  .discover-project-about p
-  {
+  .discover-project-about p {
     height: fit-content;
   }
 }
@@ -395,11 +394,12 @@ Image carousel style rules
   .discover-carousel {
     max-width: 95%;
   }
+
   .carousel-contents {
     height: auto;
   }
-  .carousel-row:first-child
-  {
+
+  .carousel-row:first-child {
     height: 100%;
   }
 
@@ -449,7 +449,7 @@ Image carousel style rules
 }
 
 /* mobile changes */
-@media only screen and (max-width: 1020px){
+@media only screen and (max-width: 1020px) {
   .discover-project-image {
     height: 100%;
     width: auto;
@@ -498,7 +498,8 @@ Filters / Tags Style Rules
   box-sizing: border-box;
   position: sticky;
   top: 80px;
-  z-index: 1;
+  /*changing z-index affects .SideBarContainer*/
+  z-index: 3;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
 }
@@ -565,8 +566,7 @@ Filters / Tags Style Rules
   background-image: linear-gradient(to right, #00000000 30%, var(--bg-color) 70%);
 }
 
-#more-filters-scroll-container
-{
+#more-filters-scroll-container {
   display: flex;
   flex-wrap: nowrap;
 }
@@ -578,6 +578,7 @@ Filters / Tags Style Rules
   width: 40px;
   flex-shrink: 0;
 }
+
 .more-filters-scroller.hide {
   display: block !important;
   visibility: hidden;
@@ -856,7 +857,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-blue)!important;
+    color: var(--tag-text-unselected-blue) !important;
   }
 }
 
@@ -876,7 +877,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-purple)!important;
+    color: var(--tag-text-unselected-purple) !important;
   }
 }
 
@@ -896,7 +897,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-grey)!important;
+    color: var(--tag-text-unselected-grey) !important;
   }
 }
 
@@ -916,13 +917,13 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-periwinkle)!important;
+    color: var(--tag-text-unselected-periwinkle) !important;
   }
 }
 
 .tag-unselected:hover {
   p {
-    color: var(--tag-text-selected); 
+    color: var(--tag-text-selected);
   }
 
   .fa {
@@ -936,7 +937,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-red-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -950,7 +951,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-orange-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -964,7 +965,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-yellow-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -978,7 +979,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-green-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -992,7 +993,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-blue-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -1006,7 +1007,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-purple-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -1020,7 +1021,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-grey-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
 }
