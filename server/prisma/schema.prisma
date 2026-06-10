@@ -100,8 +100,8 @@ model ProjectImages {
 
 model ProjectVideos {
   videoId    Int       @id @default(autoincrement()) @map("video_id")
-  videoUrl   String    @db.VarChar(100)
-  altText    String    @db.VarChar(150)
+  videoUrl   String    @db.VarChar(100) @map("video_url")
+  title      String    @db.VarChar(150)
   position   Int
   projectId  Int       @map("project_id")
   projects   Projects  @relation("ProjectVideos", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_videos_projects")
