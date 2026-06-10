@@ -1,4 +1,4 @@
-import type { CreateUserInput, MePrivate, Visibility } from '@looking-for-group/shared';
+import type { MePrivate } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 //import { PrismaClientKnownRequestError } from '#prisma-models/runtime/library.js';
@@ -48,7 +48,7 @@ describe('createUserService', async () => {
       location: '',
       funFact: '',
       bio: '',
-      privacy: 'public' as Visibility,
+      privacy: 'public',
       phoneNumber: null,
       moderator: false,
     };
@@ -61,7 +61,7 @@ describe('createUserService', async () => {
       preferredName: 'Gold',
       ritEmail: 'goldleaf@rit.edu',
       googleId: '1234',
-      privacy: 'public' as Visibility,
+      privacy: 'public',
       phoneNumber: null,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -112,7 +112,7 @@ describe('createUserService', async () => {
         preferredName: 'Gold',
         ritEmail: 'goldleaf@rit.edu',
         googleId: '1234',
-      } as CreateUserInput,
+      },
       {},
     );
 

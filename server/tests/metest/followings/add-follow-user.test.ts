@@ -1,4 +1,4 @@
-import type { MyFollowing, UserPreview, Visibility } from '@looking-for-group/shared';
+import type { MyFollowing, UserPreview } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { addUserFollowingService } from '#services/me/followings/add-follow-user.ts';
@@ -37,7 +37,7 @@ const transformedUserPreview: UserPreview = {
   designer: false,
   developer: true,
   displayPhone: false,
-  privacy: 'public' as Visibility,
+  privacy: 'public',
   firstName: 'Eric',
   preferredName: 'Eric',
   funFact: '',

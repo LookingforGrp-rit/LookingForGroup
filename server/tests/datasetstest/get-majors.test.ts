@@ -1,4 +1,3 @@
-import type { Major } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getMajorsService from '#services/datasets/get-majors.ts';
@@ -29,7 +28,7 @@ describe('getMajorsService', () => {
       { majorId: 2, label: 'Computer Engineering' },
     ];
 
-    vi.mocked(prisma.majors.findMany).mockResolvedValue(prismaMajor as Major[]);
+    vi.mocked(prisma.majors.findMany).mockResolvedValue(prismaMajor);
     vi.mocked(transformMajor).mockImplementation((major) => ({ ...major, transformed: true }));
 
     const result = await getMajorsService();

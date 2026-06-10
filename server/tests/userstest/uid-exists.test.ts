@@ -1,4 +1,3 @@
-import type { Visibility } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Users } from '#prisma-models/index.js';
@@ -43,7 +42,7 @@ describe('uidExists test service,', async () => {
       location: '',
       funFact: '',
       bio: '',
-      privacy: 'public' as Visibility,
+      privacy: 'public',
       phoneNumber: null,
       moderator: false,
     };
