@@ -330,7 +330,7 @@ export const DiscoverPage = () => {
 
 
   return (
-    <div className="page" tabIndex={-1}>
+    <div className="page discover-page" tabIndex={-1}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
