@@ -478,10 +478,11 @@ const Project = (userProfile : any) => {
                     <p>-</p>
                   </button> 
                 : 
+                displayedProject.tags.length > 3 ?
                   <button key={shownTags} className="tag-extend" onClick={() => setShownTags(999)}>
                     <p>+</p>
                   </button>
-                }
+                : ""}
               </div>
             </div>
 
