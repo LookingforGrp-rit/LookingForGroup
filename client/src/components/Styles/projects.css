@@ -811,6 +811,7 @@ Project Creator and Editor Popup style rules
   border: none;
   background: transparent;
   right: 9px;
+  --main-text: white;
 }
 
 #selected-thumbnail {
