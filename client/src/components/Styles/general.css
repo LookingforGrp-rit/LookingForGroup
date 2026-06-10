@@ -539,7 +539,8 @@ Sidebar Nav style rules
   top: 0px;
   left: 0px;
   /* box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 16px; */
-  z-index: 2;
+  /*changing z-index affects #discover-filters-parent*/
+  z-index: 4;
   color: var(--dark-lighttheme);
   background-color: var(--bg-color);
   /*background-image: url("../../../public/images/nav-background.png");*/
@@ -907,7 +908,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 2;
+  z-index: 4;
 }
 
 /*rules for the popup itself*/
@@ -925,7 +926,7 @@ Page popup style rules
   max-height: min(849px, 90vh);
   overflow-y: auto;
   opacity: 100%;
-  z-index: 3;
+  z-index: 5;
   /* height: 849px; */
 }
 
@@ -947,7 +948,7 @@ Page popup style rules
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   opacity: 100%;
-  z-index: 3;
+  z-index: 5;
   padding: 24px 56px;
   box-sizing: border-box;
 
@@ -987,7 +988,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 3;
+  z-index: 5;
   border-radius: 10px;
 }
 
@@ -1042,9 +1043,10 @@ Page popup style rules
   background: none;
 }
 
+/* 
 .onFront {
   z-index: 5;
-}
+} */
 
 .popup-back {
   position: absolute;
@@ -1097,7 +1099,7 @@ Page popup style rules
   height: 40px !important;
   background: none !important;
   margin: 0 !important;
-  z-index: 4;
+  z-index: 6;
   padding: 8px 18px 0px 0px;
 }
 
@@ -1357,7 +1359,7 @@ Header style rules
   align-items: center;
   text-align: left;
   grid-template: 'search buttons' 90px / auto max-content;
-  background-color: rgba(0,0,0,0);
+  background-color: rgba(0, 0, 0, 0);
   /* 
         Please don't comment the background-image rule out unless there is a good reason for it
         It makes a smooth color transition for the header to the page content, and works with light/dark mode
@@ -1462,6 +1464,7 @@ Header style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border: none;
   padding: 10px;
+
   /* color: var(--primary-color); */
   hr {
     border: 0;
