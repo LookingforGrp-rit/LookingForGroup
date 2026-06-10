@@ -1336,6 +1336,11 @@ New Profile page style rules
       gap: 10px;
       text-decoration: none;
     }
+
+    #profile-email a:hover,
+    #profile-number a:hover {
+      text-decoration: underline;
+    }
   }
 
   #socials {
