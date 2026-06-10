@@ -210,7 +210,7 @@ export const TagsTab = ({
       case 3:
         return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DESIGNER) }];
       case 4:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.AUD)}]
+        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.AUD) }]
       case 5:
         return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.SOFT) }];
       default:
@@ -244,7 +244,8 @@ export const TagsTab = ({
         case 1: // Genre
         case 2: // Developer Skills
         case 3: // Designer Skills
-        case 4: // Soft Skills
+        case 4: // Audio Skills
+        case 5:// Soft Skills
           return projectData.tags.some(
             (t) => t.tagId === id && t.label === label
           ) ?
@@ -590,7 +591,7 @@ export const TagsTab = ({
                 setCurrentTagsTab(0);
               }}
               className={`button-reset medium-tag-tab project-editor-tag-search-tab ${currentTagsTab === 0 ? "tag-search-tab-active" : ""}`}
-              //Data from genres
+            //Data from genres
             >
               Medium
             </button>
@@ -635,7 +636,7 @@ export const TagsTab = ({
                 setCurrentTagsTab(5);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 5 ? "tag-search-tab-active" : ""}`}
-              //Data from skills (type=Soft)
+            //Data from skills (type=Soft)
             >
               Soft Skills
             </button>
