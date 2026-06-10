@@ -447,7 +447,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                             className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
                             onClick={(e) => {
                               const element = e.target as HTMLElement;
-                              const selecIndex = isTagEnabled(tag, searchedTags.color);
+                              const selectIndex = isTagEnabled(tag, searchedTags.color);
                               let tempEnabled = enabledFilters;
 
                               if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
@@ -470,7 +470,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                                 }
                               }
 
-                              if (selecIndex === -1) {
+                              if (selectIndex === -1) {
                                 // Creates an object to store text and category
                                 //setEnabledFilters([...enabledFilters, { tag, color: searchedTags.color }]);
                                 setEnabledFilters([
@@ -483,7 +483,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                                 );
                               } else {
                                 // Remove tag from list of enabled filters
-                                setEnabledFilters(tempEnabled.toSpliced(selecIndex, 1));
+                                setEnabledFilters(tempEnabled.toSpliced(selectIndex, 1));
                                 element.classList.replace(
                                   `tag-button-${searchedTags.color}-selected`,
                                   `tag-button-${searchedTags.color}-unselected`
