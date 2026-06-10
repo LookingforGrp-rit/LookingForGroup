@@ -260,7 +260,7 @@ export const ProfileMeetPage = () => {
       </div>
     );
   } else {
-    discoverPanelContents = (<PanelBox category={'profiles'} itemList={filteredUserList} itemAddInterval={25} userId={currentUserId ?? -1} />);
+    discoverPanelContents = (<PanelBox category={'profiles'} itemList={filteredUserList} userId={currentUserId ?? -1} />);
   }
 
   return (

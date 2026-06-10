@@ -1,4 +1,3 @@
-import type { Role } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getRolesService from '#services/datasets/get-roles.ts';
@@ -29,7 +28,7 @@ describe('getRolesService', () => {
       { roleId: 2, label: 'Front-End Developer' },
     ];
 
-    vi.mocked(prisma.roles.findMany).mockResolvedValue(prismaRoles as Role[]);
+    vi.mocked(prisma.roles.findMany).mockResolvedValue(prismaRoles);
     vi.mocked(transformRole).mockImplementation((role) => ({ ...role, transformed: true }));
 
     const result = await getRolesService();

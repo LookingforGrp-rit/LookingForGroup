@@ -25,6 +25,7 @@
     flex-direction: column;
     text-align: center;
     padding-top: 200px;
+    padding-bottom: 50px;
 }
 
 #error-image {
@@ -74,3 +75,22 @@
 .errorFrog{max-width: 25vh; width: auto; align-self: center;}
 
 .error-header{color: var(--text-color); font-size: 1.875rem;}
+@media only screen and (max-width: 799px) {
+  .error-button-container button>#compass{
+    margin: 0% !important;
+    padding: 0% !important;
+    width: 30px !important;
+    height: 30px !important;
+  }
+}
+@media only screen and (max-width: 800px) {
+  .error-box {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
+
+  .error-header {
+    width: 90%;
+    align-self: center;
+  }
+}

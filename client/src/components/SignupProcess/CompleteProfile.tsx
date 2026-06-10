@@ -100,6 +100,10 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 
 	const [displayImg, setDisplayImg] = useState<string>();
 
+    const [errorMsg, setError] = useState('');
+
+	const [validPhoneNum, setValidPhoneNum] = useState(true);
+
 	useMemo(() => {
 		const fetchMajors = async () => {
 			const response = await getMajors();
@@ -163,6 +167,8 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 					<p id="signupProcess-subTitle">
 						You can add more and edit later
 					</p>
+
+					<div className="error">{errorMsg}</div>
 
 					<div id="completeProfile-input-container">
 						<div id="profile-details">
@@ -241,7 +247,17 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							id="phoneNumber-input"
 							value={phoneNumber}
 							placeholder={"Phone Number"}
-							onChange={(e) => setPhoneNumber(e.target.value)}
+							onChange={(e) => {
+								const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+								if (e.target.value.length != 0 && !phoneRegex.test(e.target.value)) {
+									setError('*Please enter a valid phone number.');
+									setValidPhoneNum(false);
+								} else {
+									setError('');
+									setValidPhoneNum(true);
+								}
+								setPhoneNumber(e.target.value);
+							}}
 							hideUnsaved={true}
 						/>
 
@@ -358,7 +374,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<button
 							id="signup-nextBtn"
 							onClick={onNext}
-							disabled={!(major && academicYear)}>
+							disabled={!(major.length > 0 && academicYear && validPhoneNum)}>
 							Next
 						</button>
 					</div>

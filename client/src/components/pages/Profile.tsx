@@ -125,7 +125,8 @@ const Profile = (userProfile : any) => {
     for (const result of searchResults[0]) {
       for (const proj of projectSearchData) {
         if (result === proj.name) {
-          tempProjList.push(fullProjectList[projectSearchData.indexOf(proj)]);
+          if(fullProjectList[projectSearchData.indexOf(proj)].globalVisibility === "public")
+            tempProjList.push(fullProjectList[projectSearchData.indexOf(proj)]);
           continue;
         }
       }
@@ -302,22 +303,26 @@ const Profile = (userProfile : any) => {
                 </div>
 
                 <div id="profile-extras">
+                  {displayedProfile?.title ?
                   <div className="profile-extra">
                     <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
-                    {displayedProfile?.title}
-                  </div>
+                    {displayedProfile.title}
+                  </div> : ""}
+                  {displayedProfile?.academicYear ? 
                   <div className="profile-extra">
                     <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
                     {majorsArr.join(", ")} {displayedProfile?.academicYear}
-                  </div>
+                  </div> : ""}
+                  {displayedProfile?.location ?
                   <div className="profile-extra">
                     <ThemeIcon id={'location'} width={12} height={22} className={'mono-fill'} ariaLabel={'Location'} />
                     {displayedProfile?.location}
-                  </div>
+                  </div> : ""}
+                  {displayedProfile?.pronouns ?
                   <div className="profile-extra">
                     <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
                     {displayedProfile?.pronouns}
-                  </div>
+                  </div> : ""}
                   {/* Only show mentor status if user is a mentor */}
                   {displayedProfile?.mentor &&
                     <div className="profile-extra">
@@ -335,6 +340,7 @@ const Profile = (userProfile : any) => {
                   </span>
                   {displayedProfile?.funFact}
                 </div>
+
                 {/* <div id="profile-interest">
                   <ProfileInterests
                     user={{ interests: displayedProfile.interests || [] }}
@@ -357,7 +363,7 @@ const Profile = (userProfile : any) => {
                 : <a><ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
               </div>
               <div id="profile-number">
-                {displayedProfile?.phoneNumber && displayedProfile.displayPhone?
+                {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
                 <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>  
                 <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
                 {displayedProfile.phoneNumber}</a>
@@ -423,21 +429,15 @@ const Profile = (userProfile : any) => {
               </div>
             </div>
           </div>
-
+          {displayedProjects.length > 0 ?
           <div id="profile-projects">
             <h2>Projects</h2>
-            {/* Probably fine to use 25 for itemAddInterval */}
-            {displayedProjects ? (
               <PanelBox
                 category={"projects"}
                 itemList={displayedProjects}
-                itemAddInterval={25}
                 userId={userID as number}
               />
-            ) : (
-              <div>No projects to display</div>
-            )}
-          </div>
+          </div> : ""}
         </div>
       </main>
       <AboutFooter />

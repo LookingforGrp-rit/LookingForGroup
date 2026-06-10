@@ -15,6 +15,8 @@ interface MasonryContext {
 // It is defined outside the function so that it doesn't have to keep remounting
 const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryContext }) => {
   const { category, projectCache, followedProjectIds, userId } = context;
+  //seems there is sometimes undefined elements in the list that the data takes
+  if (item === undefined) return;
 
   if (category === 'projects') {
     const projectId = (item as ProjectWithFollowers).projectId;
@@ -55,6 +57,9 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
   // Test these
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 1000px)');
+  const isTabletProfile = useMediaQuery('(max-width: 1040px)');
+  const isSmallDesktop = useMediaQuery('(max-width: 1360px');
+  const isMediumDesktop = useMediaQuery('(max-width: 1640px');
 
   // Early return
   if (!itemList || itemList.length === 0) {
@@ -63,8 +68,19 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
 
   // Dynamically determine column count
   let columns = 3; // Default for desktop
-  if (isMobile) columns = 1;
-  else if (isTablet) columns = 2;
+
+  if(category == 'profiles'){
+    columns = 5; // large desktop
+    if (isMediumDesktop) columns = 4;
+    if (isSmallDesktop) columns = 3;
+    if (isMobile) columns = 1;
+    else if (isTabletProfile) columns = 2;
+  }
+  //This is for projects
+  else{
+    if (isMobile) columns = 1;
+    else if (isTablet) columns = 2;
+  }
 
   const masonryContext: MasonryContext = {
     category,
