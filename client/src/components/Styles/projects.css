@@ -758,7 +758,7 @@ Project Creator and Editor Popup style rules
 #project-editor-image-ui {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 14px;
   margin: 10px 0;
   max-width: 100%;
 }
