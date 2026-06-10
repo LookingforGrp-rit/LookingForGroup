@@ -1,4 +1,4 @@
-import { MouseEventHandler, useRef } from 'react';
+import React, { MouseEventHandler, useRef, useState } from 'react';
 
 interface TermsOfServiceProps {
   show: boolean;
@@ -20,8 +20,10 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
     return null;
   }
 
-  // Reference to the TOS checkbox to check its value
-  const acceptCheckbox = useRef<HTMLInputElement>(null);
+  const nextBtn = useRef<HTMLButtonElement>(null);
+
+  /* Used to activate the next button when user agrees to ToS */
+  const [isChecked, setIsChecked] = useState(false);
 
   // render the page
   return (
@@ -57,10 +59,10 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
               Back
             </button>
             <div id="accept-tos-section">
-                <input type="checkbox" onChange={e => e.target.checked} id="tos-checkbox" name="tos" ref={acceptCheckbox}/>
+                <input type="checkbox" id="tos-checkbox" name="tos" onChange={() => setIsChecked(!isChecked)}/>
                 <label htmlFor="tos-checkbox" id="tos-accept-label">I accept the Terms of Service</label>
             </div>
-            <button id="signup-nextBtn" onClick={onNext} disabled={!(acceptCheckbox.current?.checked)}>
+            <button id="signup-nextBtn" onClick={onNext} ref={nextBtn} disabled={!isChecked}>
               Next
             </button>
           </div>
