@@ -3817,9 +3817,16 @@ My projects page style rules
 
   .my-projects-action-buttons {
     margin: 0 auto;
+    display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: center;
+  }
+
+  .my-projects-action-buttons>.select-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
   }
 }
 

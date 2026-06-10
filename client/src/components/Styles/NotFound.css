@@ -25,6 +25,7 @@
     flex-direction: column;
     text-align: center;
     padding-top: 200px;
+    padding-bottom: 50px;
 }
 
 #error-image {
@@ -33,8 +34,6 @@
   width: auto;
   align-self: center;
 }
-
-
 
 .error-button-container button:hover {
   transition-duration: 0.25s;
@@ -65,4 +64,14 @@
 
 .error-header{color: var(--text-color); font-size: 1.875rem;}
 
+@media only screen and (max-width: 800px) {
+  .error-box {
+    padding-top: 0px;
+    padding-bottom: 0px;
+  }
 
+  .error-header {
+    width: 90%;
+    align-self: center;
+  }
+}
