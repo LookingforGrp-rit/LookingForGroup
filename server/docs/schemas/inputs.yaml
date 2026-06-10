@@ -121,6 +121,17 @@ components:
         - altText
         - image
 
+    CreateProjectVideoInput:
+      type: object
+      properties:
+        title:
+          type: string
+        videoUrl:
+          type: string
+      required:
+        - title
+        - videoUrl
+
     UpdateProjectImageInput:
       type: object
       properties:

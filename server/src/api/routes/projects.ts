@@ -128,6 +128,17 @@ router.put(
   PROJECT.reorderImages,
 );
 
+// VIDEO ROUTES
+
+router.post(
+  '/:id/videos',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.addVideo,
+);
+
 // THUMBNAIL ROUTES
 
 //Gets a project's thumbnail
