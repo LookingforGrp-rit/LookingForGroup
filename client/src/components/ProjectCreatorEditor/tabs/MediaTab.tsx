@@ -124,8 +124,8 @@ export const MediaTab = ({
     }
     initializeImages();
     tempImage.current?.addEventListener("load", updateCanvas);
-    fileReader.onload = () => setCropImg({...cropImg, image: fileReader.result} as PendingProjectImage);
-    fileReader.onerror = () => setCropImg({...cropImg, image: placeholder} as ProjectImage);
+    fileReader.onload = () => setCropImg({ ...cropImg, image: fileReader.result } as PendingProjectImage);
+    fileReader.onerror = () => setCropImg({ ...cropImg, image: placeholder } as ProjectImage);
   }, [tempImage, dX, dY, zoom, cropImg, fileReader, placeholder, setCropImg]);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
@@ -155,7 +155,7 @@ export const MediaTab = ({
       } else {
         if (file.name === image.image?.name && file.size === image.image?.size && file.webkitRelativePath === image.image?.webkitRelativePath) {
           // TODO: add error to show users cannot add duplicate image
-           setImageError("*Sorry, no duplicate images here!*")
+          setImageError("*Sorry, no duplicate images here!*")
           return;
         }
       }
@@ -196,9 +196,9 @@ export const MediaTab = ({
       if (!projectAfterMediaChanges.thumbnail || projectAfterMediaChanges.projectImages.length == 1) {
         // Update dataManager
         const thumbObj = {
-            localId: ++localIdIncrement,
-            image: fullImg.image,
-            altText: fullImg.altText,
+          localId: ++localIdIncrement,
+          image: fullImg.image,
+          altText: fullImg.altText,
         } as PendingProjectImage;
         dataManager.updateThumbnail({
           id: {
@@ -217,7 +217,7 @@ export const MediaTab = ({
       }
       // TODO: check if image needs to be cropped at all
       await updatePendingProject(projectAfterMediaChanges);
-      setCropImg({...fullImg, localId: localId});
+      setCropImg({ ...fullImg, localId: localId });
       fileReader.readAsDataURL(fullImg.image);
     } catch (err) {
       console.error(err);
@@ -232,10 +232,10 @@ export const MediaTab = ({
     const ctx = canvas.current?.getContext("2d");
     ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
     if (tempImage.current && canvas.current)
-    ctx?.drawImage(
-      tempImage.current, 
-      dX, dY,
-      tempImage.current.width / 100 * zoom, tempImage.current.height / 100 * zoom);
+      ctx?.drawImage(
+        tempImage.current,
+        dX, dY,
+        tempImage.current.width / 100 * zoom, tempImage.current.height / 100 * zoom);
   }, [tempImage, dX, dY, zoom, canvas]);
 
   const UpdateImage = useCallback(
@@ -267,33 +267,33 @@ export const MediaTab = ({
       };
       updatePendingProject(projectAfterMediaChanges);
       setCropImg(undefined);
-      }, "images/png", 1)
-  , [canvas, cropImg, updatePendingProject, projectAfterMediaChanges]);
+    }, "images/png", 1)
+    , [canvas, cropImg, updatePendingProject, projectAfterMediaChanges]);
 
   // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
     async (projectImage: ProjectImage | PendingProjectImage) => {
       if (!projectId) return;
-      
 
-      const thumbId = typeof projectImage.image === 'string'  
-          ? (projectImage as ProjectImage).imageId //canon id since the project image already exists
-          : (projectImage as PendingProjectImage).localId ?? ++localIdIncrement; //pending project id for new images
+
+      const thumbId = typeof projectImage.image === 'string'
+        ? (projectImage as ProjectImage).imageId //canon id since the project image already exists
+        : (projectImage as PendingProjectImage).localId ?? ++localIdIncrement; //pending project id for new images
 
       //pendingprojectimage uses a file, projectimage uses a string
       //so this exists to get the different pieces of the projectImage 
       //if it's a string, make it a project image
-      if (typeof projectImage.image === 'string'){
-      
-      dataManager.updateThumbnail({
-        id: {
-          value: projectId,
-          type: "canon",
-        },
-        data: { 
-          thumbnail: thumbId
-        },
-      });
+      if (typeof projectImage.image === 'string') {
+
+        dataManager.updateThumbnail({
+          id: {
+            value: projectId,
+            type: "canon",
+          },
+          data: {
+            thumbnail: thumbId
+          },
+        });
         projectAfterMediaChanges = {
           ...projectAfterMediaChanges,
           thumbnail: projectImage
@@ -302,23 +302,23 @@ export const MediaTab = ({
       //if it's not, set it as the canon project image
       else {
         const imageFile = projectImage.image;
-      dataManager.updateThumbnail({
-        id: {
-          value: projectId,
-          type: "canon",
-        },
-        data: { 
-          thumbnail: thumbId
-        },
-      });
-      projectAfterMediaChanges = {
-        ...projectAfterMediaChanges,
-        thumbnail: {
-          localId: thumbId,
-          image: imageFile,
-          altText: "project thumbnail",
-        },
-      }
+        dataManager.updateThumbnail({
+          id: {
+            value: projectId,
+            type: "canon",
+          },
+          data: {
+            thumbnail: thumbId
+          },
+        });
+        projectAfterMediaChanges = {
+          ...projectAfterMediaChanges,
+          thumbnail: {
+            localId: thumbId,
+            image: imageFile,
+            altText: "project thumbnail",
+          },
+        }
       }
 
       updatePendingProject(projectAfterMediaChanges);
@@ -334,9 +334,9 @@ export const MediaTab = ({
       let updateThumbnail = false;
 
       // check if image is thumbnail
-      if (projectAfterMediaChanges.thumbnail === projectImage || 
+      if (projectAfterMediaChanges.thumbnail === projectImage ||
         ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
-      ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId)) {
+        ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId)) {
         // update after image is deleted and projectImages is updated
         updateThumbnail = true;
       }
@@ -428,7 +428,7 @@ export const MediaTab = ({
               altText: "project thumbnail",
             },
           };
-        }  
+        }
       }
 
       // update hooks
@@ -440,185 +440,185 @@ export const MediaTab = ({
   // --- Complete component ---
   return (
     <Popup startOpen={true}>
-    {cropImg !== undefined ?
-    <PopupContent confirmation={true} callback={() => setCropImg(undefined)}>
-      <div className="project-crop">
-        <label id="project-crop-header">Crop image for thumbnail usage</label>
-        <canvas ref={canvas} id="canvas" width={1600} height={900}></canvas>
-        <img ref={tempImage} id="test12" src={cropImg?.image as string} alt={cropImg?.altText as string} />
-        <div id="zoom-row">
-          <input 
-            type="range" ref={inputZoom}
-            id="zoom" name="zoom" 
-            onChange={() => {
-              setZoom(inputZoom.current?.valueAsNumber as number);
-              updateCanvas();
-            }}
-            min={1} max={1000}
-            defaultValue={zoom}/>
-          <label className="slider-text" htmlFor="zoom">Zoom</label>
-        </div>
-        <div id="xTrans-row">
-          <input 
-            type="range" ref={inputX}
-            id="xTrans" name="xTrans" 
-            onChange={() => {
-              setDX(inputX.current?.valueAsNumber as number);
-              updateCanvas();
-            }}
-            min={canvas.current ? -canvas.current.width: -100} 
-            max={canvas.current ?  canvas.current.width:  100}
-            defaultValue={dX}/>
-          <label className="slider-text" htmlFor="xtrans">Xpos</label>
-        </div>
-        <div id="yTrans-row">
-          <input  
-            type="range" ref={inputY}
-            id="yTrans" name="yTrans" 
-            onChange={() => {
-              setDY(inputY.current?.valueAsNumber as number);
-              updateCanvas();
-            }}
-            min={canvas.current ? -canvas.current.height: -100} 
-            max={canvas.current ?  canvas.current.height:  100}
-            defaultValue={dY}/>
-          <label className="slider-text" htmlFor="yTrans">Ypos</label>
-        </div>
-        <div className="project-crop-extra-info">
-          Crop Image to fit the site's 16:9 ratio, or skip. Not cropping may cause the image to display in other places.
-        </div>
-        <div className="confirm-project-crop">
-          {/* TODO: impliment saving the cropped image */}
-          <PopupButton buttonId="project-crop-save" callback={UpdateImage} doNotClose={() => true}>Crop Image</PopupButton>
-          <PopupButton buttonId="project-crop-cancel" callback={() => setCropImg(undefined)}className="project-info-buttons" doNotClose={() => true}>Skip</PopupButton>
-        </div>
-      </div>
-    </PopupContent> : "" }
-    <div id="project-editor-media">
-      <label>Project Images</label>
-      <div className="project-editor-extra-info">
-        Upload images that showcase your project. Select one image to be used as
-        the main thumbnail on the project's discover card.
-      </div>
-
-      {/* Display warning upon duplicate image */}
-      {imageError && (
-        <div id="invalid-input-error">
-          <p>{imageError}</p>
-        </div>
-      )}
-
-      <div id="project-editor-image-ui">
-        {projectAfterMediaChanges.projectImages?.map((projectImage) => (
-          <div
-            className="project-editor-image-container"
-            key={
-              (projectImage as ProjectImage).imageId ??
-              "pending-" + (projectImage as PendingProjectImage).localId
-            }
-          >
-            {/* Present image from database or local storage */}
-            {(projectImage as ProjectImage).imageId ? (
-              <img
-                src={(projectImage as ProjectImage).image}
-                alt={(projectImage as ProjectImage).altText}
-                onError={(e) => {
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = placeholder;
+      {cropImg !== undefined ?
+        <PopupContent confirmation={true} callback={() => setCropImg(undefined)}>
+          <div className="project-crop">
+            <label id="project-crop-header">Crop image for thumbnail usage</label>
+            <canvas ref={canvas} id="canvas" width={1600} height={900}></canvas>
+            <img ref={tempImage} id="test12" src={cropImg?.image as string} alt={cropImg?.altText as string} />
+            <div id="zoom-row">
+              <input
+                type="range" ref={inputZoom}
+                id="zoom" name="zoom"
+                onChange={() => {
+                  setZoom(inputZoom.current?.valueAsNumber as number);
+                  updateCanvas();
                 }}
-              />
-            ) : (
-              <FileImage
-                file={(projectImage as PendingProjectImage).image!}
-                alt={
-                  (projectImage as PendingProjectImage).altText ??
-                  ""
-                }
-              />
-            )}
+                min={1} max={1000}
+                defaultValue={zoom} />
+              <label className="slider-text" htmlFor="zoom">Zoom</label>
+            </div>
+            <div id="xTrans-row">
+              <input
+                type="range" ref={inputX}
+                id="xTrans" name="xTrans"
+                onChange={() => {
+                  setDX(inputX.current?.valueAsNumber as number);
+                  updateCanvas();
+                }}
+                min={canvas.current ? -canvas.current.width : -100}
+                max={canvas.current ? canvas.current.width : 100}
+                defaultValue={dX} />
+              <label className="slider-text" htmlFor="xtrans">Xpos</label>
+            </div>
+            <div id="yTrans-row">
+              <input
+                type="range" ref={inputY}
+                id="yTrans" name="yTrans"
+                onChange={() => {
+                  setDY(inputY.current?.valueAsNumber as number);
+                  updateCanvas();
+                }}
+                min={canvas.current ? -canvas.current.height : -100}
+                max={canvas.current ? canvas.current.height : 100}
+                defaultValue={dY} />
+              <label className="slider-text" htmlFor="yTrans">Ypos</label>
+            </div>
+            <div className="project-crop-extra-info">
+              Crop Image to fit the site's 16:9 ratio, or skip. Not cropping may cause the image to display in other places.
+            </div>
+            <div className="confirm-project-crop">
+              {/* TODO: impliment saving the cropped image */}
+              <PopupButton buttonId="project-crop-save" callback={UpdateImage} doNotClose={() => true}>Crop Image</PopupButton>
+              <PopupButton buttonId="project-crop-cancel" callback={() => setCropImg(undefined)} className="project-info-buttons" doNotClose={() => true}>Skip</PopupButton>
+            </div>
+          </div>
+        </PopupContent> : ""}
+      <div id="project-editor-media">
+        <label>Project Images</label>
+        <div className="project-editor-extra-info">
+          Upload images that showcase your project. Star an image for it to be used as
+          this project's thumbnail on the Discover and My Projects pages.
+        </div>
 
-            {/* Add thumbnail star if it is a thumbnail */}
-            {/* it checks against the image itself now */}
-            {projectAfterMediaChanges.thumbnail?.image === projectImage.image && (
-              <ThemeIcon
-                id="star"
-                className="star filled-star"
-                width={26}
-                height={26}
-                ariaLabel="star"
-              />
-            )}
+        {/* Display warning upon duplicate image */}
+        {imageError && (
+          <div id="invalid-input-error">
+            <p>{imageError}</p>
+          </div>
+        )}
 
-            {/* Hover element */}
-            <div className="project-image-hover">
-              {projectAfterMediaChanges.thumbnail === projectImage || 
-              ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
-              ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId) ?
+        <div id="project-editor-image-ui">
+          {projectAfterMediaChanges.projectImages?.map((projectImage) => (
+            <div
+              className="project-editor-image-container"
+              key={
+                (projectImage as ProjectImage).imageId ??
+                "pending-" + (projectImage as PendingProjectImage).localId
+              }
+            >
+              {/* Present image from database or local storage */}
+              {(projectImage as ProjectImage).imageId ? (
+                <img
+                  src={(projectImage as ProjectImage).image}
+                  alt={(projectImage as ProjectImage).altText}
+                  onError={(e) => {
+                    const profileImg = e.target as HTMLImageElement;
+                    profileImg.src = placeholder;
+                  }}
+                />
+              ) : (
+                <FileImage
+                  file={(projectImage as PendingProjectImage).image!}
+                  alt={
+                    (projectImage as PendingProjectImage).altText ??
+                    ""
+                  }
+                />
+              )}
+
+              {/* Add thumbnail star if it is a thumbnail */}
+              {/* it checks against the image itself now */}
+              {projectAfterMediaChanges.thumbnail?.image === projectImage.image && (
                 <ThemeIcon
                   id="star"
                   className="star filled-star"
                   width={26}
                   height={26}
-                  ariaLabel="thumbnail"
-                /> :
-                <ThemeIcon
-                  id="star"
-                  className="star empty-star"
-                  width={26}
-                  height={26}
-                  ariaLabel="change thumbnail"
-                  onClick={() => handleThumbnailChange(projectImage)}
+                  ariaLabel="star"
                 />
-              }
+              )}
 
-              {/* Delete icon */}
-              <ThemeIcon
-                id="trash"
-                className="mono-stroke-invert delete-image"
-                width={22}
-                height={22}
-                ariaLabel="delete"
-                onClick={() => handleImageDelete(projectImage)}
-              />
+              {/* Hover element */}
+              <div className="project-image-hover">
+                {projectAfterMediaChanges.thumbnail === projectImage ||
+                  ("imageId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.imageId) ||
+                  ("localId" in projectImage && projectAfterMediaChanges.thumbnailId === projectImage.localId) ?
+                  <ThemeIcon
+                    id="star"
+                    className="star filled-star"
+                    width={26}
+                    height={26}
+                    ariaLabel="thumbnail"
+                  /> :
+                  <ThemeIcon
+                    id="star"
+                    className="star empty-star"
+                    width={26}
+                    height={26}
+                    ariaLabel="change thumbnail"
+                    onClick={() => handleThumbnailChange(projectImage)}
+                  />
+                }
+
+                {/* Delete icon */}
+                <ThemeIcon
+                  id="trash"
+                  className="mono-stroke-invert delete-image"
+                  width={22}
+                  height={22}
+                  ariaLabel="delete"
+                  onClick={() => handleImageDelete(projectImage)}
+                />
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
 
-        {/* Image uploader */}
-        <div id="project-editor-add-image">
-          <ProjectImageUploader onFileSelected={handleImageUpload} />
+          {/* Image uploader */}
+          <div id="project-editor-add-image">
+            <ProjectImageUploader onFileSelected={handleImageUpload} />
+          </div>
+        </div>
+
+        {/* Save button */}
+        <div id="general-save-info">
+          <Popup>
+            {saveable ? "" :
+              <div id="invalid-input-error" className={"save-error-msg-general"}>
+                <p>*{message}*</p>
+              </div>}
+            <PopupButton
+              buttonId="project-editor-save"
+              doNotClose={() => failCheck}
+              disabled={!saveable}
+              className={!saveable ? "disabled" : ""}
+            >
+              Save Changes
+            </PopupButton>
+            <PopupContent useClose={false}>
+              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+              <div id="confirm-editor-save">
+                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                  Confirm
+                </PopupButton>
+                <PopupButton buttonId="team-edit-member-cancel-button" >
+                  Cancel
+                </PopupButton>
+              </div>
+            </PopupContent>
+          </Popup>
         </div>
       </div>
-
-      {/* Save button */}
-      <div id="general-save-info">
-        <Popup>
-          {saveable ? "" :
-          <div id="invalid-input-error" className={"save-error-msg-general"}>
-            <p>*{message}*</p>
-          </div>}
-          <PopupButton
-            buttonId="project-editor-save"
-            doNotClose={() => failCheck}
-            disabled={!saveable}
-            className={!saveable ? "disabled" : ""}
-          >
-            Save Changes
-          </PopupButton>
-          <PopupContent useClose={false}>
-            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-            <div id="confirm-editor-save">
-              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                Confirm
-              </PopupButton>
-              <PopupButton buttonId="team-edit-member-cancel-button" >
-                Cancel
-              </PopupButton>
-            </div>
-          </PopupContent>
-        </Popup>
-      </div>
-    </div>
     </Popup>
   );
 };
