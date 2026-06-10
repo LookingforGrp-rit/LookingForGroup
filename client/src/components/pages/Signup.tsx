@@ -7,6 +7,7 @@ import ChooseSkills from '../SignupProcess/ChooseSkills';
 // import ChooseProficiencies from "../SignupProcess/ChooseProficiencies";
 // import ChooseInterests from '../SignupProcess/ChooseInterests';
 import CompleteProfile from '../SignupProcess/CompleteProfile';
+import TermsOfService from '../SignupProcess/TermsOfService';
 import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
@@ -48,6 +49,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
   // const [showInterestsModal, setShowInterestsModal] = useState(false);
   const [showCompleteProfileModal, setShowCompleteProfileModal] = useState(false);
   const [showGetStartedModal, setShowGetStartedModal] = useState(false);
+  const [showTOSModal, setShowTOSModal] = useState(false);
 
   // State variables for selected buttons
   // to remeber the user's choices when they go back and forth between modals
@@ -502,7 +504,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
           <CompleteProfile
             onNext={() => {
               setShowCompleteProfileModal(false);
-              setShowGetStartedModal(true);
+              setShowTOSModal(true);
             }}
             onBack={() => {
               setShowCompleteProfileModal(false);
@@ -535,11 +537,24 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             setProfileImage={setProfileImage}
           />
 
+          <TermsOfService
+          show={showTOSModal}
+          onNext={() => {
+            setShowGetStartedModal(true);
+            setShowTOSModal(false);
+          }}
+          onBack={() => {
+            setShowCompleteProfileModal(true);
+            setShowTOSModal(false);
+          }}
+
+          ></TermsOfService>
+
           <GetStarted
             show={showGetStartedModal}
             onBack={() => {
+              setShowTOSModal(true);
               setShowGetStartedModal(false);
-              setShowCompleteProfileModal(true);
             }}
             onCreateProject={async () => {
 
