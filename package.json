@@ -34,9 +34,8 @@
     "format:server": "npm run format --workspace=server"
   },
   "devDependencies": {
-    "@swc/core": "^1.15.40",
     "@types/nodemailer": "^8.0.0",
-    "concurrently": "^10.0.3",
+    "concurrently": "^9.2.0",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
     "husky": "^9.1.7",
@@ -57,6 +56,7 @@
     "@prisma/client": "^6.19.3",
     "@quixo3/prisma-session-store": "^3.1.19",
     "@types/cors": "^2.8.19",
+    "@types/express-serve-static-core": "^5.0.7",
     "@types/express-session": "^1.19.0",
     "@virtuoso.dev/masonry": "^1.4.3",
     "balanced-match": "^4.0.4",
@@ -68,7 +68,6 @@
     "eslint": "^9.39.4",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "fast-uri": "^4.0.0",
     "google-auth-library": "^10.6.2",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.10",

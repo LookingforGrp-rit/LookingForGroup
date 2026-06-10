@@ -592,3 +592,19 @@ input:checked+.slider:before {
 }
 
 /* #endregion */
+
+#phone-number-visibility{
+  margin-top: 1em;
+  display: flex;
+  flex-direction: row;
+  justify-items: start;
+}
+
+#phone-number-visibility label{
+  font-size: 1.25rem;
+}
+
+#phone-number-visibility input{
+  width: 1em;
+  margin-left: 1em;
+}

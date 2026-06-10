@@ -2,14 +2,10 @@ import type {
   AcademicYear,
   MePrivate,
   MyFollowing,
-  MyFollowsList,
   MyMajor,
   MyMember,
-  MyProjectFollowsList,
   MySkill,
   MySocial,
-  UserFollowsList,
-  Visibility,
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
@@ -87,18 +83,18 @@ const transformed: MePrivate = {
     users: [],
     count: 0,
     apiUrl: '',
-  } as UserFollowsList,
+  },
   following: {
     usersFollowing: {
       users: [] as MyFollowing[],
       count: 0,
       apiUrl: '',
-    } as MyFollowsList,
+    },
     projectsFollowing: {
       projects: [],
       count: 0,
       apiUrl: '',
-    } as MyProjectFollowsList,
+    },
   },
   funFact: '',
   headline: '',
@@ -118,7 +114,7 @@ const transformed: MePrivate = {
   updatedAt: new Date(),
   userId: 1,
   username: '',
-  privacy: 'public' as Visibility,
+  privacy: 'public',
   displayPhone: false,
 };
 
