@@ -3192,7 +3192,6 @@ Project Carousel style rules
   align-content: center;
   width: 100%;
   max-width: 1141px;
-  margin: 40px;
   height: 849px;
   max-height: 849px;
   padding: 20px 25px;
@@ -3322,7 +3321,7 @@ button#positions-popup-list-item-active {
   box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   min-height: 400px;
-  max-width: 75%;
+  width: 75%;
 }
 
 @media only screen and (max-width: 1068px) {
@@ -3660,7 +3659,6 @@ button#positions-popup-list-item-active {
   grid-area: positions;
   margin-top: 20px;
   margin-bottom: 20px;
-  display: none;
 }
 
 @media only screen and (max-width: 700px) {
