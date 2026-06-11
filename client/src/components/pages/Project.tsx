@@ -21,6 +21,7 @@ import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import AboutFooter from "../AboutFooter";
+import usePreloadedImage from '../../functions/imageLoad';
 
 //Main component for the project page
 /**
@@ -282,6 +283,13 @@ const Project = (userProfile : any) => {
           // }
           const memberUser = member.user; //so i don't have to go user.user.userId or anything
 
+          // Use placeholder image if user does not have a profile picture
+          let userProfile = memberUser.profileImage
+          if(!memberUser.profileImage)
+          {
+            userProfile = profileImage;
+          }
+
           return (
             <a
               key={memberUser.userId}
@@ -290,9 +298,8 @@ const Project = (userProfile : any) => {
             >
               <img
                 className="project-contributor-profile"
-                src={memberUser.profileImage ?? profileImage}
+                src={userProfile!}
                 alt="contributor profile"
-                // Cannot use usePreloadedImage function because this is in a callback
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
                   profileImg.src = profileImage;
