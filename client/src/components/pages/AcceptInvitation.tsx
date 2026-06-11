@@ -23,6 +23,8 @@ const AcceptInvitation = () => {
     // Project info
     const [projectTitle, setProjectTitle] = useState<string | null>(null);
     const [role, setRole] = useState<Role | null>(null);
+    const [ownerFirstName, setOwnerFirstName] = useState<String | null>(null);
+    const [ownerLastName, setOwnerLastName] = useState<String | null>(null);
 
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
@@ -50,6 +52,9 @@ const AcceptInvitation = () => {
 
             if (res.data) {
                 setProjectTitle(res.data.title);
+                setOwnerFirstName(res.data.owner.firstName);
+                setOwnerLastName(res.data.owner.lastName);
+                
             }
         } catch (err) {
             setError('Fetch Project Error: ' + err);
@@ -127,7 +132,8 @@ const AcceptInvitation = () => {
                         <div id="accept-invite-container">
                             <div id="accept-invite-info">
                                 <h1>Hi, {firstName}!</h1>
-                                <h2>You are invited to <h2 id="project-title">{projectTitle?.toUpperCase() ?? " a project"}</h2></h2>
+                                <h2>{ownerFirstName ?? "The Owner"} {ownerLastName ?? ""} 
+                                    invited you to join <h2 id="project-title">{projectTitle?.toUpperCase() ?? " a project"}</h2></h2>
                                 <p>Your role will be {role?.label ?? "Member"}</p>
                                 <div id="accept-invite-btns">
                                     <button id="decline-button" onClick={handleDecline}>Decline Invite</button>
