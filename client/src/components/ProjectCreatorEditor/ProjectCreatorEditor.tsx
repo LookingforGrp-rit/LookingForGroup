@@ -257,12 +257,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const deleteNoSave = useCallback(() => {
     if (!open) return;
     // Only delete if this is a new project AND it was not saved yet
-    if (projectData && newProject) {
+    if (projectData && newProject && !saved) {
       deleteProject(projectData?.projectId);
       setOpen(false);
       setSaved(true);
     }
-  }, [open, projectData, newProject]);
+  }, [saved, open, projectData, newProject]);
 
   useEffect(() => {
     //for chrome
