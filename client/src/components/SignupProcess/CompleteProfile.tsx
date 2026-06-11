@@ -2,15 +2,16 @@ import {
 	CreateUserInput,
 	Major,
 	Skill,
-	AcademicYear
+	AcademicYear,
+	Role
 } from "@looking-for-group/shared";
 import { MouseEventHandler, useMemo, useState } from "react";
 import LabelInputBox from "../LabelInputBox";
 import { Select, SelectButton, SelectOptions } from "../Select";
-import { getMajors } from "../../api/users";
+import { getMajors, getJobTitles } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
 //why do these 2 things have the same name??
-import { AcademicYear as AcademicYears } from "@looking-for-group/shared/enums";
+import { AcademicYear as AcademicYears, } from "@looking-for-group/shared/enums";
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -97,6 +98,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	const tagColors = ["#9FACFF", "#97E5AB", "#99E6EA", "#F18067", "#239EF7"];
 
 	const [allMajors, setAllMajors] = useState<Major[]>([]);
+	const [roles, setRoles] = useState<Role[]>();
 
 	const [displayImg, setDisplayImg] = useState<string>();
 
@@ -113,8 +115,19 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 			}
 			setAllMajors(response.data);
 		};
+		const fetchRoles = async () => {
+			const response = await getJobTitles();
+
+			if (response.data === undefined || !response.data) {
+				return;
+			}
+			setRoles(response.data);
+		}
 		if (allMajors.length === 0) {
 			fetchMajors();
+		}
+		if (roles?.length === 0) {
+			fetchRoles();
 		}
 	}, []);
 
@@ -123,12 +136,13 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 			const res = await getMajors();
 			if (res.data) setAllMajors(res.data);
 		};
-		// const fetchRoles = async () => {
-		// 	const res = await getJobTitles();
-		// 	if (res.data) setRoles(res.data);
-		// };
+		const fetchRoles = async () => {
+			const response = await getJobTitles();
+
+			if (response.data) setRoles(response.data);
+		}
 		fetchMajors();
-		//fetchRoles();
+		fetchRoles();
 	}, []);
 
 	// Loads and utilizes an imported function for setting a profile picture
@@ -262,16 +276,32 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						/>
 
 						{/* Current Job Title */}
-						<LabelInputBox
-							label={"Add Job Title"}
-							inputType={"single"}
-							maxLength={50}
-							id="jobTitle-input"
-							value={title}
-							placeholder={"Current Job Title"}
-							onChange={(e) => setTitle(e.target.value)}
-							hideUnsaved={true}
-						/>
+						<div id="jobTitle-input">
+							<Select>
+								<SelectButton
+									placeholder={"Add a Job Title"}
+									initialVal={title ?? ""}
+									callback={(e) => e.preventDefault()}
+									buttonId="jobTitle-input"
+									type={"input"}
+									searchable={true}
+								/>
+								<SelectOptions
+									callback={(e) => {
+										const newTitle = (
+											e.target as HTMLButtonElement
+										).value;
+
+										setTitle(newTitle)
+									}}
+									options={(roles as Role[]).map((r) => ({
+										value: r.label,
+										markup: <>{r.label}</>,
+										disabled: false
+									}))}
+								/>
+							</Select>
+						</div>
 
 						{/* Location */}
 						<LabelInputBox
