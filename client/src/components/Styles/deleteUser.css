@@ -41,3 +41,18 @@
     align-items: center;
     gap: 10px;
 }
+
+#continue-button {
+  transition: all 0.2s ease-in-out;
+}
+
+#continue-button:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+
+#continue-button:active {
+  transform: translateY(0px);
+  opacity: 1;
+}

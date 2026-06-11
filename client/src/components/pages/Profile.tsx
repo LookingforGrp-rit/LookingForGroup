@@ -362,14 +362,15 @@ const Profile = (userProfile : any) => {
                 {displayedProfile?.username}@g.rit.edu</a>
                 : <a><ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
               </div>
-              <div id="profile-number">
-                {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
-                <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>  
-                <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
-                {displayedProfile.phoneNumber}</a>
-                //dead link when no number
-                : <a><ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no phone number</a>}
-              </div>
+              {/* Show phone number if present */}
+              {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
+                <div id="profile-number">
+                  <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>  
+                  <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
+                  {displayedProfile.phoneNumber}</a>
+                </div>
+              //dead link when no number
+              : <></>}
               {/* Add social links if present */}
               {displayedProfile?.socials && (
                 <div id="about-me-buttons">

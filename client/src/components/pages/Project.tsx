@@ -132,17 +132,19 @@ const Project = (userProfile : any) => {
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
-      const toggleFollow = !(await checkFollow());
+      const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
       if (toggleFollow) {
-        await addProjectFollowing(projectID);
         setFollowCount(followCount + 1);
+        await addProjectFollowing(projectID);
       } else {
-        await deleteProjectFollowing(projectID);
         setFollowCount(followCount - 1);
+        await deleteProjectFollowing(projectID);
       }
     }
   };
+
+  checkFollow();
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
@@ -441,6 +443,7 @@ const Project = (userProfile : any) => {
                     day: "numeric",
                   })}
                 </div>
+                {displayedProject.jobs.length > 0 ?
                 <Popup>
                   <PopupButton buttonId="project-open-positions-button">
                     Open Positions
@@ -450,6 +453,7 @@ const Project = (userProfile : any) => {
                       viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
                   </PopupContent>
                 </Popup>
+                : "" }
               </div>
               <div id="project-tags">
                 <div id="tags">
@@ -555,7 +559,9 @@ const Project = (userProfile : any) => {
 
             <div id="project-open-positions">
               <div className="centerer">
+                {displayedProject.jobs.length > 0 ?
                 <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
+                : ""}
               </div>
 
               <div id="project-open-positions-list">

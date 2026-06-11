@@ -358,7 +358,8 @@ Signup process modal style rules
 
 #create-profile-redirect-modal,
 #complete-profile-modal,
-#get-started-modal {
+#get-started-modal,
+#tos-modal {
   justify-content: center;
 }
 
@@ -367,6 +368,7 @@ Signup process modal style rules
 .ChooseInterests,
 .ChooseProficiencies,
 .CompleteProfile,
+.TermsOfService,
 .GetStarted {
   background: var(--bg-color);
   margin: 0 auto;
@@ -462,7 +464,9 @@ Signup process modal style rules
   transform: scale(1);
 }
 
-#signup-nextBtn {
+#signup-nextBtn, 
+#signup-backBtn,
+#accept-tos-btn {
   border: none;
   border-radius: 14px;
   height: 90px;
@@ -473,23 +477,14 @@ Signup process modal style rules
   color: var(--primary-color);
 }
 
-#signup-nextBtn:hover {
-  transform: scale(1.1);
-  transition: 0.2s;
+#accept-tos-btn
+{
+  width: fit-content;
 }
 
-#signup-backBtn {
-  border: none;
-  border-radius: 14px;
-  height: 90px;
-  width: 100px;
-  font-size: 1.125rem;
-  font-weight: 800;
-  background: none;
-  color: var(--primary-color);
-}
-
-#signup-backBtn:hover {
+#signup-nextBtn:hover, 
+#signup-backBtn:hover,
+#accept-tos-btn {
   transform: scale(1.1);
   transition: 0.2s;
 }
@@ -839,6 +834,58 @@ Signup process modal style rules
   }
 }
 
+/* === Terms of Service === */
+
+#terms-of-service-text {
+  display: flex;
+  flex-direction: column;
+  padding: 26px 31px;
+  gap: 17px;
+  background-color: var(--bg-color);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+  border-radius: 10px;
+  width: 75%;
+  min-width: 150px;
+  max-height: 548px;
+  overflow-y: scroll;
+
+  h2 {
+    text-align: center;
+  }
+  p {
+    text-align: left;
+  }
+}
+
+#tos-checkbox
+{
+  border-radius: 14px;
+  margin: 0 5px;
+  height: 1.125rem;
+  width: 1.125rem;
+  /*border: 2px solid var(--primary-color);*/   /* does not work */
+}
+
+#tos-accept-label
+{
+  font-size: 1.125rem;
+  font-weight: 800;
+  color: var(--primary-color);
+}
+
+#accept-tos-section
+{
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+}
+
+
+/* ======================== */
+
 #new-project-btn,
 #join-project-btn {
   width: 240px;
@@ -951,6 +998,41 @@ Signup process modal style rules
   .ChooseSkills #project-editor-selected-tags
   {
     width: 100%;
+  }
+
+  /* === TOS === */
+  .TermsOfService #signupProcess-btns
+  {
+    display: grid;
+    height: fit-content;
+    grid-template-columns: 1fr 1.5fr 1fr;
+    grid-template-rows: 1fr 1fr;
+  }
+  .TermsOfService #signup-backBtn
+  {
+    justify-self: center;
+    align-self: center;
+    grid-column: 1/2;
+    grid-row: 2/3;
+  }
+  .TermsOfService #signup-nextBtn
+  {
+    justify-self: center;
+    align-self: center;
+    grid-column: 3/4;
+    grid-row: 2/3;
+  }
+  .TermsOfService #accept-tos-section
+  {
+    justify-self: center;
+    align-self: center;
+    grid-column: 1/4;
+    grid-row: 1/2;
+  }
+  #tos-accept-label
+  {
+    font-size: 1rem;
+    text-align: center;
   }
 }
 

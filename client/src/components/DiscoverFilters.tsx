@@ -1,4 +1,4 @@
-import React, {useState, Fragment, useEffect, useRef} from 'react';
+import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
@@ -70,7 +70,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(false);
 
-    // Dynamically show/hide arrows for pop-up filters
+  // Dynamically show/hide arrows for pop-up filters
   const popupTagFiltersRef = useRef<HTMLDivElement>(null);
   const [showPopupLeftArrow, setShowPopupLeftArrow] = useState(false);
   const [showPopupRightArrow, setShowPopupRightArrow] = useState(false);
@@ -133,9 +133,9 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
       // Construct the finalized version of the data to be moved into filterPopupTabs
       const tabs = JSON.parse(JSON.stringify(category === 'projects' ? projectTabs : peopleTabs));
       Object.values(tabs).forEach((tab: any) => tab.categoryTags = tab.categoryTags || []);
- 
+
       // Map tag types to correct tab categories
-      const typeMap : StringDictionary<string> = category === 'projects' ? {
+      const typeMap: StringDictionary<string> = category === 'projects' ? {
         Games: 'Genre',
         Multimedia: 'Genre',
         Music: 'Genre',
@@ -144,24 +144,24 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         Technical: 'Genre',
         Purpose: 'Purpose',
         Medium: 'Project Type',
-        } : {
+      } : {
         Designer: 'Designer Skill',
         Developer: 'Developer Skill',
         Soft: 'Soft Skill',
         Audio: 'Audio Skill',
         Role: 'Role',
         Major: 'Major',
-        };
+      };
 
-      const tag_data : Tag[] = data as Tag[];
+      const tag_data: Tag[] = data as Tag[];
 
       tag_data?.forEach((tag: Tag) => {
         const filterTag: Tag = { ...tag };
         const mappedType = typeMap[tag.type] || tag.type;
 
-      if (tabs[mappedType]) {
-        tabs[mappedType].categoryTags.push(filterTag);
-      } 
+        if (tabs[mappedType]) {
+          tabs[mappedType].categoryTags.push(filterTag);
+        }
       });
 
       setFilterPopupTabs(Object.values(tabs));
@@ -179,7 +179,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   }, [dataLoaded]);
   //Displays the correct tabs depending on the value of activeTabId.
   useEffect(() => {
-    if(filterPopupTabs[activeTabId]) {
+    if (filterPopupTabs[activeTabId]) {
       const currentTab = filterPopupTabs[activeTabId];
       setCurrentTags(currentTab.categoryTags);
       setDataSet([{ data: currentTab.categoryTags }]);
@@ -200,22 +200,22 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
    */
   const toggleTag = (event: any, tag: Tag) => {
     let newActiveTags: Tag[];
-    
+
     const discoverFilters = document.getElementsByClassName('discover-tag-filter');
     for (let i = 0; i < discoverFilters.length; i++) {
       discoverFilters[i].classList.remove('discover-tag-filter-selected');
     }
 
     if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
-      newActiveTags = []; 
-    } else { 
-      newActiveTags = [tag]; 
+      newActiveTags = [];
+    } else {
+      newActiveTags = [tag];
       event.currentTarget.classList.add('discover-tag-filter-selected');
     }
 
     setActiveTagFilters(newActiveTags);
     updateItemList(newActiveTags);
-};
+  };
 
   /**
    * Checks the scroll position and container width to determine if 
@@ -224,21 +224,21 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   const checkScrollVisibility = () => {
     if (tagFiltersRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = tagFiltersRef.current;
-      
+
       setShowLeftArrow(scrollLeft > 0);
       setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1);
     }
   };
 
-    /**
-     * === For Popup Filters ===
-   * Checks the scroll position and container width to determine if 
-   * there is more content to the left or right.
-   */
+  /**
+   * === For Popup Filters ===
+ * Checks the scroll position and container width to determine if 
+ * there is more content to the left or right.
+ */
   const checkPopupScrollVisibility = () => {
     if (popupTagFiltersRef.current) {
       const { scrollLeft, scrollWidth, clientWidth } = popupTagFiltersRef.current;
-      
+
       setShowPopupLeftArrow(scrollLeft > 0);
       setShowPopupRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1);
     }
@@ -252,7 +252,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     if (tagFiltersRef.current) {
       // 80% of width. Feel free to fiddle with
       const scrollAmt = tagFiltersRef.current.clientWidth * 0.8;
-      
+
       if (direction === 'left') {
         tagFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
       } else if (direction === 'right') {
@@ -269,7 +269,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     if (popupTagFiltersRef.current) {
       // 80% of width. Feel free to fiddle with
       const scrollAmt = popupTagFiltersRef.current.clientWidth * 0.8;
-      
+
       if (direction === 'left') {
         popupTagFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
       } else if (direction === 'right') {
@@ -282,7 +282,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   useEffect(() => {
     checkScrollVisibility(); // initial
     checkPopupScrollVisibility();
-    
+
     let windowTimeout: NodeJS.Timeout;
     let popupTimeout: NodeJS.Timeout;
     const handleResize = () => {
@@ -337,19 +337,19 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
           >
             <i className="fa fa-caret-left"></i>
           </button>
-          <div 
-            id="discover-tag-filters" 
+          <div
+            id="discover-tag-filters"
             tabIndex={-1}
             ref={tagFiltersRef}
             onScroll={checkScrollVisibility}
           >
             { /* make each tag button have proper label & type */}
             {tagList.map(tagLabel => {
-              const label = tagLabel === 'Developers' ? 'Developer' : 
-                tagLabel === 'Designers' ? 'Designer' : 
-                tagLabel === 'Audio Creators' ? 'Audio' : 
-                //tagLabel === 'Soft Skills' ? "Soft" :
-                tagLabel;
+              const label = tagLabel === 'Developers' ? 'Developer' :
+                tagLabel === 'Designers' ? 'Designer' :
+                  tagLabel === 'Audio Creators' ? 'Audio' :
+                    //tagLabel === 'Soft Skills' ? "Soft" :
+                    tagLabel;
               const type = category === 'projects' ? 'Project Type' : tagLabel === 'Other' ? 'Major' : 'Role';
               const tagObj: Tag = { tagId: 0, label, type };
               return (
@@ -368,7 +368,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
             {/* === Additional filters popup === */}
             <Popup>
               <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
-                <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'}/>
+                <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'} />
               </PopupButton>
               {/* 
                             When page loads, get all necessary tag lists based on page category.
@@ -381,8 +381,8 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
               <PopupContent useClose={false}>
                 {/* Close Button */}
                 <PopupButton className="popup-close">
-                    <img alt="close" src="/src/icons/cancel.png" onClick={() => {setActivePopup(false);}}></img>
-                  </PopupButton>
+                  <img alt="close" src="/src/icons/cancel.png" onClick={() => { setActivePopup(false); }}></img>
+                </PopupButton>
                 <div id="filters-popup">
                   <h2>{category === 'projects' ? 'Project Filters' : 'People Filters'}</h2>
                   <div id="filters" className="popup-section">
@@ -436,72 +436,72 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                       </button>
                     </div>
                     <hr />
-                      <div id="filter-tags">
-                        {searchedTags.tags.length === 0 ? (
-                          <p>No tags found. Please try a different search term.</p>
-                        ) : (
-                          searchedTags.tags.map((tag) => (
-                            <button
-                              key={`${tag.label}-${tag.type}`}
-                              // className={`tag-button tag-button-${searchedTags.color}-unselected`}
-                              className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
-                              onClick={(e) => {
-                                const element = e.target as HTMLElement;
-                                const selecIndex = isTagEnabled(tag, searchedTags.color);
-                                let tempEnabled = enabledFilters;
+                    <div id="filter-tags">
+                      {searchedTags.tags.length === 0 ? (
+                        <p>No tags found. Please try a different search term.</p>
+                      ) : (
+                        searchedTags.tags.map((tag) => (
+                          <button
+                            key={`${tag.label}-${tag.type}`}
+                            // className={`tag-button tag-button-${searchedTags.color}-unselected`}
+                            className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
+                            onClick={(e) => {
+                              const element = e.target as HTMLElement;
+                              const selectIndex = isTagEnabled(tag, searchedTags.color);
+                              let tempEnabled = enabledFilters;
 
-                                if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
-                                  // Remove all other tags of the same type except the one selected
-                                  const filterTags = document.querySelector('#filter-tags')!;
-                                  const tagList : HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
+                              if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
+                                // Remove all other tags of the same type except the one selected
+                                const filterTags = document.querySelector('#filter-tags')!;
+                                const tagList: HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
 
-                                  for (let i = 0; i < tagList.length; i++) {
-                                    const tagObj : Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
-                                    const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
+                                for (let i = 0; i < tagList.length; i++) {
+                                  const tagObj: Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
+                                  const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
 
-                                    if (tagList[i].innerText.trim() !== tag.label) {
-                                      tagList[i].classList.replace(
-                                        `tag-button-${searchedTags.color}-selected`,
-                                        `tag-button-${searchedTags.color}-unselected`
-                                      );
+                                  if (tagList[i].innerText.trim() !== tag.label) {
+                                    tagList[i].classList.replace(
+                                      `tag-button-${searchedTags.color}-selected`,
+                                      `tag-button-${searchedTags.color}-unselected`
+                                    );
 
-                                      tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
-                                    }
+                                    tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
                                   }
                                 }
+                              }
 
-                                if (selecIndex === -1) {
-                                  // Creates an object to store text and category
-                                  //setEnabledFilters([...enabledFilters, { tag, color: searchedTags.color }]);
-                                  setEnabledFilters([
-                                    ...tempEnabled,
-                                    { tag, color: searchedTags.color },
-                                  ]);
-                                  element.classList.replace(
-                                    `tag-button-${searchedTags.color}-unselected`,
-                                    `tag-button-${searchedTags.color}-selected`
-                                  );
-                                } else {
-                                  // Remove tag from list of enabled filters
-                                  setEnabledFilters(tempEnabled.toSpliced(selecIndex, 1));
-                                  element.classList.replace(
-                                    `tag-button-${searchedTags.color}-selected`,
-                                    `tag-button-${searchedTags.color}-unselected`
-                                  );
-                                }
-                              }}
-                            >
-                              <i
-                                className={
-                                  isTagEnabled(tag, searchedTags.color) !== -1
-                                    ? 'fa fa-check'
-                                    : 'fa fa-plus'
-                                }
-                              ></i>
-                              <p>{tag.label}</p>
-                            </button>
-                          ))
-                        )}
+                              if (selectIndex === -1) {
+                                // Creates an object to store text and category
+                                //setEnabledFilters([...enabledFilters, { tag, color: searchedTags.color }]);
+                                setEnabledFilters([
+                                  ...tempEnabled,
+                                  { tag, color: searchedTags.color },
+                                ]);
+                                element.classList.replace(
+                                  `tag-button-${searchedTags.color}-unselected`,
+                                  `tag-button-${searchedTags.color}-selected`
+                                );
+                              } else {
+                                // Remove tag from list of enabled filters
+                                setEnabledFilters(tempEnabled.toSpliced(selectIndex, 1));
+                                element.classList.replace(
+                                  `tag-button-${searchedTags.color}-selected`,
+                                  `tag-button-${searchedTags.color}-unselected`
+                                );
+                              }
+                            }}
+                          >
+                            <i
+                              className={
+                                isTagEnabled(tag, searchedTags.color) !== -1
+                                  ? 'fa fa-check'
+                                  : 'fa fa-plus'
+                              }
+                            ></i>
+                            <p>{tag.label}</p>
+                          </button>
+                        ))
+                      )}
                     </div>
                   </div>
                   <div id="selected-section" className="popup-section">

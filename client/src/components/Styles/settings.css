@@ -129,12 +129,13 @@ Settings page style rules
   border-radius: 10px;
   outline: solid var(--primary-blue) 2px;
   font-weight: 900;
+  transition: all 0.2s ease-in-out;
 }
 
 .settingsBtns:hover {
   background-color: var(--primary-blue);
   color: var(--main-text);
-  transition: 0.2s;
+  transform: translateY(-1px);
 }
 
 .displayName {
@@ -430,11 +431,13 @@ input:checked+.slider:before {
     flex-direction: row;
     gap: 10px;
     align-items: center;
+    transition: all 0.2s ease-in-out;
   }
 
   .options-dropdown-button:hover {
     background-color: var(--panel-hover);
     color: var(--invert-text);
+    transform: translateY(-1px);
 
     .fa-solid {
       color: var(--invert-text) !important;

@@ -20,6 +20,7 @@
     aspect-ratio: 1 / 1;
     box-sizing: border-box;
     overflow: hidden;
+    transition: all 0.2s ease-in-out;
 
     img {
         box-sizing: border-box;
@@ -57,7 +58,16 @@
       display: flex;
       justify-content: center;
       align-items: center;
+      transition: all 0.2s ease-in-out;
     }
+    .project-visibility-button:hover {
+      transform: translateY(-1px);
+      scale: 1.1;
+    }
+}
+
+.projectTile:hover {
+    transform: translateY(-2px);
 }
 
 /* "Hide project" icon is visibile (white) in light mode */
