@@ -202,14 +202,17 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     let newActiveTags: Tag[];
 
     const discoverFilters = document.getElementsByClassName('discover-tag-filter');
-    for (let i = 0; i < discoverFilters.length; i++) {
-      discoverFilters[i].classList.remove('discover-tag-filter-selected');
-    }
+    //for (let i = 0; i < discoverFilters.length; i++) {
+    //  discoverFilters[i].classList.remove('discover-tag-filter-selected');
+    //}
 
     if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
-      newActiveTags = [];
+      // Remove the tag from the active list
+      newActiveTags = activeTagFilters.filter(t => t.label !== tag.label || t.type !== tag.type);
+      event.currentTarget.classList.remove('discover-tag-filter-selected');
     } else {
-      newActiveTags = [tag];
+      // Add the tag to the active list
+      newActiveTags = [...activeTagFilters, tag];
       event.currentTarget.classList.add('discover-tag-filter-selected');
     }
 
@@ -450,25 +453,25 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                               const selectIndex = isTagEnabled(tag, searchedTags.color);
                               let tempEnabled = enabledFilters;
 
-                              if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
-                                // Remove all other tags of the same type except the one selected
-                                const filterTags = document.querySelector('#filter-tags')!;
-                                const tagList: HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
-
-                                for (let i = 0; i < tagList.length; i++) {
-                                  const tagObj: Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
-                                  const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
-
-                                  if (tagList[i].innerText.trim() !== tag.label) {
-                                    tagList[i].classList.replace(
-                                      `tag-button-${searchedTags.color}-selected`,
-                                      `tag-button-${searchedTags.color}-unselected`
-                                    );
-
-                                    tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
-                                  }
-                                }
-                              }
+                              //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
+                              //  // Remove all other tags of the same type except the one selected
+                              //  const filterTags = document.querySelector('#filter-tags')!;
+                              //  const tagList: HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
+//
+                              //  for (let i = 0; i < tagList.length; i++) {
+                              //    const tagObj: Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
+                              //    const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
+//
+                              //    if (tagList[i].innerText.trim() !== tag.label) {
+                              //      tagList[i].classList.replace(
+                              //        `tag-button-${searchedTags.color}-selected`,
+                              //        `tag-button-${searchedTags.color}-unselected`
+                              //      );
+//
+                              //      tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
+                              //    }
+                              //  }
+                              //}
 
                               if (selectIndex === -1) {
                                 // Creates an object to store text and category

@@ -61,7 +61,7 @@
 }
 
 .discover-page #header {
-  position: static;
+  position: sticky;
   width: 100%;
   box-sizing: border-box;
 }
@@ -75,10 +75,8 @@
 
 @media only screen and (max-width: 799px) {
   .page {
-    position: static;
     left: 0px;
     width: 100%;
-    height: auto;
     min-height: calc(100% - 50px);
     padding-bottom: 80px;
     overflow-y: visible;

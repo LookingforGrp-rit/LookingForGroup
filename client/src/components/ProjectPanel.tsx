@@ -190,8 +190,9 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
           )}
         </div>
       </div>
-
-      <ProjectPanelMeta project={project} />
+      <a href={projectURL}>
+        <ProjectPanelMeta project={project} />
+      </a>
     </div>
   );
 };

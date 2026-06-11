@@ -180,41 +180,42 @@ export const ProfileMeetPage = () => {
 
     let tagFilteredList = items.filter((item) => {
       if (activeTagFilters.length === 0) return true;
-      let matchesAny = false;
+      //let matchesAny = false;
+      let matchesAll = true;
 
       for (const tag of activeTagFilters) {
         // Check for tag label Developer
-        if (tag.label === 'Developer' && item.developer) {
-          matchesAny = true;
+        if (tag.label === 'Developer' && !item.developer) {
+          matchesAll = false;
         }
         // Check for specific skills
         else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio') {
           const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (userSkills.includes(tag.label.toLowerCase().trim())) {
-            matchesAny = true;
+          if (!(userSkills.includes(tag.label.toLowerCase().trim()))) {
+            matchesAll = false;
           }
         }
-        else if (tag.label === 'Designer' && item.designer) {
-          matchesAny = true;
+        else if (tag.label === 'Designer' && !item.designer) {
+          matchesAll = false;
         }
         else if (tag.label === 'Audio') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
+          if (!(userSkills.includes(tag.label.toLowerCase().trim()))) matchesAll = false;
         }
         else if (tag.label === 'Soft') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
+          if (!(userSkills.includes(tag.label.toLowerCase().trim()))) matchesAll = false;
         }
-        else if (tag.label === 'Other' && !item.designer && !item.developer) {
-          matchesAny = true;
+        else if (tag.label === 'Other' && (item.designer || item.developer)) {
+          matchesAll = false;
         }
         // Check role and major by name since IDs are not unique relative to tags
         /* it seems roles are not yet implimented
@@ -226,12 +227,12 @@ export const ProfileMeetPage = () => {
         else if (tag.type === 'Major' && item.majors) {
           const userMajors = item.majors?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
-          if (userMajors.includes(tag.label.toLowerCase())) {
-            matchesAny = true;
+          if (!(userMajors.includes(tag.label.toLowerCase()))) {
+            matchesAll = false;
           }
         }
       }
-      return matchesAny;
+      return matchesAll;
     });
 
     // If no tags are currently selected, render all projects
