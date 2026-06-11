@@ -132,7 +132,7 @@ const Project = (userProfile : any) => {
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
-      const toggleFollow = !(await checkFollow());
+      const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
       if (toggleFollow) {
         await addProjectFollowing(projectID);
@@ -143,6 +143,8 @@ const Project = (userProfile : any) => {
       }
     }
   };
+
+  checkFollow();
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
