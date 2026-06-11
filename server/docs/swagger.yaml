@@ -539,6 +539,40 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/users/{id}/followers:
+    get:
+      tags:
+        - Users
+      summary: Get list of users that follow the specified user
+      parameters:
+        - name: id
+          in: path
+          description: User ID
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: List of users following current user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#/components/schemas/UserFollowsList'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/users/blacklist:
     get:
       tags:
