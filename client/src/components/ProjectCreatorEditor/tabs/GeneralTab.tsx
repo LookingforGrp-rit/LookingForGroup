@@ -328,7 +328,7 @@ export const GeneralTab = ({
           <PopupContent useClose={false}>
             <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
             <div id="confirm-editor-save">
-              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-confirm"
+              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save"
                   ref={saveButtonRef} >
                 Confirm
               </PopupButton>
