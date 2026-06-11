@@ -105,10 +105,12 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
       </div>
 
       <div className='profile-panel-hover'>
-        <div className='name-and-heart'>
           <h2>
             {profileData.firstName} {profileData.lastName}
           </h2>
+          <h3>{majorsArr.join(', ') || ''}</h3>
+          <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
+          
           {isFollow ? <ThemeIcon
             width={30}
             height={27}
@@ -123,10 +125,6 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             ariaLabel="follow profile"
             onClick={(e) => {toggleFollow(); e.stopPropagation();}} // stopPropagation cancels the redirect of the parent
           /> : ""}
-        </div>
-
-        <h3>{majorsArr.join(', ') || ''}</h3>
-        <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
         
         {/* List of items */}
         {profileData.title ?

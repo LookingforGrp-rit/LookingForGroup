@@ -198,7 +198,8 @@ Profile Panel component style rules
 
   #heart-empty,
   #heart-filled {
-    position: fixed;
+    position: absolute;
+    top: 14px;
     right: 14px;
     opacity: 0;
     transition: opacity 0.2s;
