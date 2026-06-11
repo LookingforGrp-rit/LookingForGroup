@@ -41,6 +41,11 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
         color: var(--invert-text);
         font-weight: 700;
     }
+    button:hover
+    {
+        transform: scale(1.1);
+        transition: 0.2s;
+    }
     #decline-button
     {
         background-color: var(--error-delete-color) !important;
