@@ -96,53 +96,71 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
         alt='profile image'
       />
 
-      <div className={'profile-panel-hover'}>
+      <div className={'profile-panel-extras'}>
         <h2>
           {profileData.firstName} {profileData.lastName}
         </h2>
         <h3>{majorsArr.join(', ') || ''}</h3>
         <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
+      </div>
 
-        {isFollow ? <ThemeIcon
-          width={30}
-          height={27}
-          id={"heart-filled"}
-          ariaLabel="unfollow profile"
-          onClick={(e) => {toggleFollow(); e.stopPropagation();}} // stopPropagation cancels the redirect of the parent
-        />
-        : <ThemeIcon
-          width={30}
-          height={27}
-          id={"heart-empty"}
-          ariaLabel="follow profile"
-          onClick={(e) => {toggleFollow(); e.stopPropagation();}} // stopPropagation cancels the redirect of the parent
-        />}
+      <div className='profile-panel-hover'>
+        <div className='name-and-heart'>
+          <h2>
+            {profileData.firstName} {profileData.lastName}
+          </h2>
+          {isFollow ? <ThemeIcon
+            width={30}
+            height={27}
+            id={"heart-filled"}
+            ariaLabel="unfollow profile"
+            onClick={(e) => {toggleFollow(); e.stopPropagation();}} // stopPropagation cancels the redirect of the parent
+          />
+          : profileData.userId !== userId ? <ThemeIcon
+            width={30}
+            height={27}
+            id={"heart-empty"}
+            ariaLabel="follow profile"
+            onClick={(e) => {toggleFollow(); e.stopPropagation();}} // stopPropagation cancels the redirect of the parent
+          /> : ""}
+        </div>
+
+        <h3>{majorsArr.join(', ') || ''}</h3>
+        <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
         
         {/* List of items */}
+        {profileData.title ?
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
             <ThemeIcon id={'role'} width={20} height={20} className={'color-fill undefined'} ariaLabel={'Profession'}/>
           </div>
-          <p>{profileData.title ? profileData.title : 'None specified'}</p>
-        </div>
+          <p>{profileData.title}</p>
+        </div> : "" }
+        {profileData.location ?
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
             <ThemeIcon id={'location'} width={12} height={16} className={'color-fill undefined'} ariaLabel={'Location'} />
           </div>
-          <p>{profileData.location ? profileData.location : 'None specified'}</p>
-        </div>
+          <p>{profileData.location}</p>
+        </div> : "" }
+        {profileData.pronouns ?
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
             <ThemeIcon id={'pronouns'} width={22} height={22} className={'color-fill undefined'} ariaLabel={'Pronouns'} />
           </div>
-          <p>{profileData.pronouns ? profileData.pronouns : 'None specified'}</p>
-        </div>
+          <p>{profileData.pronouns}</p>
+        </div> : "" }
+        {profileData.funFact ?
         <div className={'profile-panel-hover-item'}>
           <div className={'icon-box'}>
             <ThemeIcon id={'funfact'} width={24} height={24} className={'color-fill undefined'} ariaLabel={'Fun Fact'} />
           </div>
-          <p>{profileData.funFact ? profileData.funFact : 'None specified'}</p>
-        </div>
+          <p>{profileData.funFact}</p>
+        </div> : "" }
+        {!(profileData.title && profileData.location && profileData.pronouns && profileData.funFact) ? 
+        <div className='profile-panel-hover-item'>
+          <p>No extra information</p>
+        </div> : ""}
       </div>
     </button>
   );
