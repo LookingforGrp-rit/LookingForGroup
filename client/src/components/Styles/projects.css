@@ -1874,7 +1874,7 @@ Project page style rules
 #project-tags {
   grid-area: tags;
   display: flex;
-  justify-content: baseline;
+  justify-content: space-between;
   flex-wrap: wrap;
   gap: 10px;
   padding-right: 1vw;
@@ -1894,7 +1894,7 @@ Project page style rules
   .tag-extend,
   .tag-contract {
     position: relative;
-    right: -5vw;
+    right: 0;
     width: 30px;
     height: 30px;
     border: 2px solid var(--main-text);
@@ -2975,14 +2975,14 @@ Project Carousel style rules
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  gap: 5px;
+  gap: 30px;
   background-color: var(--header-color);
   border-radius: 10px;
   text-align: left;
   padding: 20px 10px;
   max-width: calc(100vw - 340px);
   margin-bottom: 1vw;
-  aspect-ratio: 16/9;
+  align-self: start;
 
   #project-info-top {
     display: flex;
