@@ -223,11 +223,11 @@ Profile Panel component style rules
   opacity: 1;
 }
 
-@media (max-width: 499px){
-  .profile-panel{
+@media (max-width: 499px) {
+  .profile-panel {
     width: clamp(180px, 250px, 250px) !important;
     display: flex;
-  
+
 
     img {
       border-radius: 10px !important;
@@ -238,19 +238,19 @@ Profile Panel component style rules
   }
 }
 
-@media (min-width: 500px) and (max-width: 555px){
-  .profile-panel{
+@media (min-width: 500px) and (max-width: 555px) {
+  .profile-panel {
     width: 98% !important;
     display: flex;
-    
+
   }
 }
 
-@media (min-width: 556px) and (max-width: 799px){
-  .profile-panel{
+@media (min-width: 556px) and (max-width: 799px) {
+  .profile-panel {
     width: clamp(180px, 250px, 250px) !important;
     display: flex;
-  
+
 
     img {
       border-radius: 10px !important;
@@ -1337,7 +1337,8 @@ New Profile page style rules
   margin: 20px 0;
   height: fit-content;
 
-  #socials, #skills {
+  #socials,
+  #skills {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -1493,11 +1494,14 @@ New Profile page style rules
       margin-right: 20px;
     }
   }
-}
 
-@media only screen and (max-width: 555px) {
-  #socials {
-    width: auto !important;
+  #profile-extra {
+    flex-direction: column;
+
+    #socials,
+    #skills {
+      width: auto;
+    }
   }
 }
 
