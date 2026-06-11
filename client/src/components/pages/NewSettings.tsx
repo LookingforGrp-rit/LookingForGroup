@@ -25,8 +25,11 @@ const Settings = (userProfile : any) => {
   // Variables regarding pulling user data
   const [dataLoaded, setDataLoaded] = useState(false);
   const [userInfo, setUserInfo] = useState<MePrivate>();
+  const [deleteResponseText, setdeleteResponseText] = useState<String | null>(null);
 
   const navigate = useNavigate();
+
+  const successMessage = "Successfully deleted account! Redirecting to the Discover page.";
 
   // Pull stateful theme variable and setter via context
   const theme = useContext(ThemeContext)['theme'];
@@ -42,7 +45,12 @@ const Settings = (userProfile : any) => {
 
   // Take the user ID and delete it
   const deleteAccountPressed = async () => {
-    await deleteUser();
+    const response = await deleteUser();
+    let responseText = response.error;
+    if(responseText === null || responseText === undefined){
+      responseText = successMessage;
+    }
+    setdeleteResponseText(responseText);
   };
 
   // Used after user exits successful account delete popup
@@ -723,13 +731,20 @@ const Settings = (userProfile : any) => {
                           {/* Popup if user presses delete account to show successful delete action */}
                           <Popup>
                             <PopupButton className="delete-button" callback={deleteAccountPressed}>Delete Account</PopupButton>
-                            <PopupContent callback={navHome}>
+                            <PopupContent>
                               <div className="small-popup">
-                              <div id="delete-success-title">Success!</div>
-                              <div id="delete-success-extra-info">
-                                Successfully deleted account! Redirecting to the Discover page.
+                              <div id="delete-success-title">{
+                                  deleteResponseText === null ? "Loading..." : (
+                                    deleteResponseText === successMessage ? "Success!" : "Error"
+                                  )
+                                }
                               </div>
-                              <PopupButton buttonId="continue-button" callback={navHome}>Continue</PopupButton>
+                              <div id="delete-success-extra-info">
+                                {deleteResponseText}
+                              </div>
+                              <PopupButton buttonId="continue-button" className = {
+                                deleteResponseText === successMessage ? "" : "button-reset"
+                              } callback={deleteResponseText === successMessage ? navHome : ()=>{}}>Continue</PopupButton>
                               </div>
                             </PopupContent>
                           </Popup>

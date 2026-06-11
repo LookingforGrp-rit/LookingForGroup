@@ -38,25 +38,24 @@ Profile Panel component style rules
 }
 
 .profile-panel {
+  display: flex;
   width: 240px;
   flex-shrink: 0;
-  height: 280px;
+  height: auto;
   border: none;
   border-radius: 10px;
   background-color: var(--header-color);
   position: relative;
-  display: flex;
   flex-direction: column;
   /* justify-content: start; */
   /* align-items: center; */
   text-align: left;
-  padding: 0;
+  padding: 0 0 20px 0;
   margin: 0 auto;
   overflow: hidden;
 
   img {
     width: 100%;
-    height: 180px;
     object-fit: cover;
     align-self: center;
     /* background-color: var(--primary-color); */
@@ -98,8 +97,8 @@ Profile Panel component style rules
   }
 }
 
-.profile-panel-hover {
-  position: absolute;
+.profile-panel-extras {
+  position: relative;
   border-radius: 0 0 10px 10px;
   background-color: var(--header-color);
   color: var(--main-text);
@@ -109,33 +108,20 @@ Profile Panel component style rules
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translateY(calc(100% - 105px));
-  transition: transform 0.25s ease-out;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   gap: 10px;
   text-align: left;
-  padding: 0 0 10px 0;
+  padding: 0;
   overflow: hidden;
-  box-sizing: border-box;
+  box-sizing: content-box;
+}
 
-  #heart-empty,
-  #heart-filled {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  #heart-empty {
-    stroke: #F14F76;
-  }
-
-  #heart-filled {
-    fill: #F14F76;
-  }
+.profile-panel-hover {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
 }
 
 @media only screen and (hover: none) {
@@ -180,8 +166,55 @@ Profile Panel component style rules
   }
 }
 
+.profile-panel-hover:hover {
+  opacity: 1;
+}
+
 .profile-panel:hover .profile-panel-hover {
-  transform: translateY(0);
+  position: absolute;
+  border-radius: 0 0 10px 10px;
+  background-color: var(--header-color);
+  color: var(--main-text);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  text-align: left;
+  padding: 0 0 10px 0;
+  overflow: hidden;
+  box-sizing: content-box;
+
+  .name-and-heart {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  #heart-empty,
+  #heart-filled {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  #heart-empty {
+    stroke: #F14F76;
+  }
+
+  #heart-filled {
+    fill: #F14F76;
+  }
+}
+
+.profile-panel:hover .profile-panel-extras {
   cursor: pointer;
 }
 
