@@ -25,7 +25,6 @@ const AcceptInvitation = () => {
     const [role, setRole] = useState<Role | null>(null);
 
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
-    const errorDisplay = useRef<HTMLDivElement>(null);
 
     //#region Helper Methods
     const fetchRole = async () => {
@@ -96,14 +95,6 @@ const AcceptInvitation = () => {
         if (result.error) {
             setError(result.error);
         }
-        else
-        {
-            /* Removes error display if there isn't an error */
-            if (errorDisplay.current)
-            {
-                errorDisplay.current.style.display = "none";
-            }
-        }
         navigate(paths.routes.HOME);
     };
 
@@ -123,14 +114,6 @@ const AcceptInvitation = () => {
         if (result.error) {
             setError(result.error);
         }
-        else {
-            /* Removes error display if there isn't an error */
-            if (errorDisplay.current)
-            {
-                errorDisplay.current.style.display = "none";
-            }
-           
-        }
         navigate(`${paths.routes.PROJECT}?projectID=${projectId}`);
     };
     //#endregion
@@ -138,7 +121,7 @@ const AcceptInvitation = () => {
     return (
         <>
             <div className="background-cover">
-                <div className="error" aria-live="assertive" ref={errorDisplay} role="alert">{error}</div>
+                <div className="error" aria-live="assertive" role="alert">{error}</div>
                 {
                     loggedIn && 
                         <div id="accept-invite-container">

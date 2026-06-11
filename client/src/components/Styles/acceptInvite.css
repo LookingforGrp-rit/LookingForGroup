@@ -6,6 +6,11 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
 
 /* only the AcceptInvite.tsx background-cover */
 .background-cover:has(#accept-invite-container){
+    /* fixes random guideline issue - this may need to be adjusted in the future */
+    .error
+    {
+        display: none;
+    }
 }
 
 #accept-invite-container
