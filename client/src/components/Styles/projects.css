@@ -3931,6 +3931,7 @@ My projects page style rules
   padding-left: calc((100vw - 160px) / 14);
   padding-right: calc((100vw - 160px) / 14);
   background: var(--sidebar-gradient);
+  z-index: 10;
 
   svg {
     filter: invert(1) saturate(0) brightness(1);
@@ -4118,6 +4119,7 @@ My projects page style rules
   border: 0px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
+  z-index: 1;
 }
 
 .card-options-list {
