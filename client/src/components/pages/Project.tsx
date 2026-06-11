@@ -135,11 +135,11 @@ const Project = (userProfile : any) => {
       const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
       if (toggleFollow) {
-        await addProjectFollowing(projectID);
         setFollowCount(followCount + 1);
+        await addProjectFollowing(projectID);
       } else {
-        await deleteProjectFollowing(projectID);
         setFollowCount(followCount - 1);
+        await deleteProjectFollowing(projectID);
       }
     }
   };
