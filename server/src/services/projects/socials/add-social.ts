@@ -24,6 +24,7 @@ export const addProjectSocialService = async (
     //can't add multiple socials of the same type
     const hasSocial = await prisma.projectSocials.findFirst({
       where: {
+        projectId: projectId,
         websiteId: data.websiteId,
       },
     });
