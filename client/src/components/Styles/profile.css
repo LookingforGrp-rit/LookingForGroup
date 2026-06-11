@@ -1346,7 +1346,7 @@ New Profile page style rules
     background-color: var(--header-color);
     border-radius: 10px;
     padding: 10px 10px 10px 20px;
-    height: 200px;
+    height: auto;
 
     #title {
       color: var(--primary-color);
