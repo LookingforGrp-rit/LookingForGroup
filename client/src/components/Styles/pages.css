@@ -61,7 +61,7 @@
 }
 
 .discover-page #header {
-  position: static;
+  position: sticky;
   width: 100%;
   box-sizing: border-box;
 }

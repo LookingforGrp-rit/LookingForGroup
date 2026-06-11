@@ -552,7 +552,7 @@ Filters / Tags Style Rules
   position: sticky;
   top: 80px;
   /*changing z-index affects .SideBarContainer*/
-  z-index: 3;
+  z-index: 1;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
 }
