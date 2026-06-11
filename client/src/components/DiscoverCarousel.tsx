@@ -4,6 +4,8 @@ import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { ProjectWithFollowers } from "@looking-for-group/shared";
 
+import usePreloadedImage from '../functions/imageLoad.tsx';
+
 type DiscoverCarouselProps = {
   dataList?: ProjectWithFollowers[]
 };
@@ -55,7 +57,7 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
         <div className='discover-project-image'>
           <a href={`${paths.routes.PROJECT}?projectID=${project.projectId}`} tabIndex={-1}>
             <img
-              src={project.thumbnail?.image ?? placeholderThumbnail}
+              src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
               alt={'project image'}
             />
           </a>
