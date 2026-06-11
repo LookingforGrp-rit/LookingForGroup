@@ -64,6 +64,11 @@ Credits link footer style rules
     border-radius: 10px;
 
   }
+
+  .FooterContainer a:link,
+  .FooterContainer a:visited{
+    color: var(--invert-text);
+  }
 }
 
 /*
