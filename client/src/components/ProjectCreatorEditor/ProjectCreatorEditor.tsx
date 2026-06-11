@@ -141,6 +141,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setSaved(true);
     setOpen(true);
     setConfirm(false);
+    setMessage("Project is missing a medium!");
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
       //redirect user to login if they aren't logged in
@@ -184,7 +185,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     if (startButton.current) {
       (startButton.current as unknown as HTMLElement).focus();
     }
-    updateMessage();
   }
 
   buttonCallback = createOrEdit;
