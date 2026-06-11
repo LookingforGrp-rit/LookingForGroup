@@ -779,6 +779,13 @@ Signup process modal style rules
 
 #jobTitle-input {
   grid-area: jobTitle;
+
+  .select-container div {
+    margin-top: 0px;
+    background-color: var(--header-color);
+
+    max-height: 500%;
+  }
 }
 
 #location-input {
