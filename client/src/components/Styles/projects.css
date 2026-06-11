@@ -115,7 +115,7 @@ Project Panel component style rules
   }
   .project-image-container {
     position: relative;
-    display: flex;
+    /* display: flex; */
     width: 100%;
     flex: 1 1 auto;
     min-height: 0;
