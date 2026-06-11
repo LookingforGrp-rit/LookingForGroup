@@ -132,8 +132,7 @@ const AcceptInvitation = () => {
                         <div id="accept-invite-container">
                             <div id="accept-invite-info">
                                 <h1>Hi, {firstName}!</h1>
-                                <h2>{ownerFirstName ?? "The Owner"} {ownerLastName ?? ""} 
-                                    invited you to join <h2 id="project-title">{projectTitle?.toUpperCase() ?? " a project"}</h2></h2>
+                                <h2>{ownerFirstName ?? "The Owner"} {ownerLastName ?? ""} invited you to join <h2 id="project-title">{projectTitle?.toUpperCase() ?? "a project"}</h2></h2>
                                 <p>Your role will be {role?.label ?? "Member"}</p>
                                 <div id="accept-invite-btns">
                                     <button id="decline-button" onClick={handleDecline}>Decline Invite</button>
