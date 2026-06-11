@@ -358,15 +358,15 @@ const Profile = (userProfile : any) => {
                 {/* TODO: make icon for email and phone */}
                 {displayedProfile?.username ? 
                 <a href={`mailto:${displayedProfile?.username}@g.rit.edu`}>  
-                <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
+                <ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
                 {displayedProfile?.username}@g.rit.edu</a>
-                : <a><ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
+                : <a><ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
               </div>
               {/* Show phone number if present */}
               {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
                 <div id="profile-number">
                   <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>  
-                  <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
+                  <ThemeIcon id={'phone'} width={25} height={25} className={'mono-fill'} ariaLabel={'phone'}/>
                   {displayedProfile.phoneNumber}</a>
                 </div>
               //dead link when no number
