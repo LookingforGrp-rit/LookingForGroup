@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import { getByID, updatePendingMember, deleteMember } from '../../api/projects';
 import { getCurrentAccount, getJobTitles } from '../../api/users';
 import { Role } from '@looking-for-group/shared';
+import "../Styles/acceptInvite.css";
 
 const AcceptInvitation = () => {
     const navigate = useNavigate(); // Hook for navigation
@@ -24,6 +25,7 @@ const AcceptInvitation = () => {
     const [role, setRole] = useState<Role | null>(null);
 
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
+    const errorDisplay = useRef<HTMLDivElement>(null);
 
     //#region Helper Methods
     const fetchRole = async () => {
@@ -94,6 +96,14 @@ const AcceptInvitation = () => {
         if (result.error) {
             setError(result.error);
         }
+        else
+        {
+            /* Removes error display if there isn't an error */
+            if (errorDisplay.current)
+            {
+                errorDisplay.current.style.display = "none";
+            }
+        }
         navigate(paths.routes.HOME);
     };
 
@@ -113,6 +123,14 @@ const AcceptInvitation = () => {
         if (result.error) {
             setError(result.error);
         }
+        else {
+            /* Removes error display if there isn't an error */
+            if (errorDisplay.current)
+            {
+                errorDisplay.current.style.display = "none";
+            }
+           
+        }
         navigate(`${paths.routes.PROJECT}?projectID=${projectId}`);
     };
     //#endregion
@@ -120,15 +138,20 @@ const AcceptInvitation = () => {
     return (
         <>
             <div className="background-cover">
-                <div className="error" aria-live="assertive" role="alert">{error}</div>
+                <div className="error" aria-live="assertive" ref={errorDisplay} role="alert">{error}</div>
                 {
-                    loggedIn && <div>
-                        <h1>Hi, {firstName}!</h1>
-                        <h2>You are invited to {projectTitle}</h2>
-                        <p>Your role will be {role?.label}</p>
-                        <button onClick={handleDecline}>Decline Invite</button>
-                        <button onClick={handleAccept}>Accept Invite</button>
-                    </div>
+                    loggedIn && 
+                        <div id="accept-invite-container">
+                            <div id="accept-invite-info">
+                                <h1>Hi, {firstName}!</h1>
+                                <h2>You are invited to <h2 id="project-title">{projectTitle?.toUpperCase()}</h2></h2>
+                                <p>Your role will be {role?.label}.</p>
+                                <div id="accept-invite-btns">
+                                    <button id="decline-button" onClick={handleDecline}>Decline Invite</button>
+                                    <button onClick={handleAccept}>Accept Invite</button>
+                                </div>
+                            </div>
+                        </div>
                 }
             </div>
         </>
