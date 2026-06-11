@@ -441,6 +441,7 @@ const Project = (userProfile : any) => {
                     day: "numeric",
                   })}
                 </div>
+                {displayedProject.jobs.length > 0 ?
                 <Popup>
                   <PopupButton buttonId="project-open-positions-button">
                     Open Positions
@@ -450,6 +451,7 @@ const Project = (userProfile : any) => {
                       viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
                   </PopupContent>
                 </Popup>
+                : "" }
               </div>
               <div id="project-tags">
                 <div id="tags">
@@ -555,7 +557,9 @@ const Project = (userProfile : any) => {
 
             <div id="project-open-positions">
               <div className="centerer">
+                {displayedProject.jobs.length > 0 ?
                 <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
+                : ""}
               </div>
 
               <div id="project-open-positions-list">
