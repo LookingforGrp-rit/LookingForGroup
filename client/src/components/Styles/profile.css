@@ -168,7 +168,12 @@ Profile Panel component style rules
 
 .profile-panel-hover:hover {
   opacity: 1;
+
+  h2 {
+    text-decoration: underline 3px;
+  }
 }
+
 
 .profile-panel:hover .profile-panel-hover {
   position: absolute;

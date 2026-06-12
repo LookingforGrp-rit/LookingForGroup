@@ -1237,6 +1237,7 @@ Page popup style rules
     transition: none;
     padding: 1px;
     text-align: center;
+    text-decoration: underline;
   }
 
   .filter-tab.selected {
