@@ -1722,6 +1722,7 @@ button.edit-position-contact .project-member-image {
   width: 100%;
   text-align: center;
   height: 1100px;
+  margin: 0 20px;
 
   #project-crop-header {
     display: block;
@@ -1740,7 +1741,7 @@ button.edit-position-contact .project-member-image {
   }
 
   input[type="range"] {
-    width: 50%;
+    width: 400px;
     background: none;
     margin: 0.5em;
   }

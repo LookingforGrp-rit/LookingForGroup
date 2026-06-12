@@ -542,6 +542,14 @@ Signup process modal style rules
   align-items: center;
   flex-wrap: wrap;
   grid-area: profileImage;
+
+  #img-view {
+    border: 2px dashed var(--main-text);
+
+    .camera-button {
+      filter: invert(100%);
+    }
+  }
 }
 
 #profile-pic {

@@ -69,6 +69,20 @@ const ImageUploader = ({
 
   const [aspectRatio, setAspectRatio] = useState<string>('4/3');
 
+  /**
+   * updates the canvas element for cropping images
+   */
+  const updateCanvas = useCallback(() => {
+    const ctx = canvas.current?.getContext("2d");
+    ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
+    if (tempImage.current && canvas.current)
+      ctx?.drawImage(
+        tempImage.current,
+        dX, dY,
+        tempImage.current.width / 100 * zoom,
+        tempImage.current.height / 100 * zoom);
+  }, [tempImage, dX, dY, zoom, canvas]);
+
   // Validate file type and handle image input change
   // If keepImage is true, only allows PNG/JPEG
   const handleImgChange = useCallback(async () => {
@@ -92,12 +106,13 @@ const ImageUploader = ({
   }, [keepImage, setCropFile, fileReader]);
 
   const sendImg = useCallback(
-    () => canvas.current?.toBlob((blob) => {
+    () => canvas.current?.toBlob(async(blob) => {
       const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
-      console.log(newFile)
+      await updateCanvas();
+      console.log(newFile);
       onFileSelected(newFile);
       setCropImg(undefined);
-  }), [onFileSelected, setCropImg, cropFile, canvas]);
+  }, cropFile?.type), [onFileSelected, setCropImg, updateCanvas, cropFile, canvas]);
 
   // Effect for cleanup if needed; currently just removes event listeners 
   useEffect(() => {
@@ -108,23 +123,9 @@ const ImageUploader = ({
     const input = inputRef.current;
     if (!input) return;
 
-    return () => input.removeEventListener('change', handleImgChange);
-  }, [handleImgChange, fileReader, placeholder, setCropImg]);
+    return () => input.removeEventListener('change', sendImg);
+  }, [sendImg, fileReader, placeholder, setCropImg]);
   
-  /**
-   * updates the canvas element for cropping images
-   */
-  const updateCanvas = useCallback(() => {
-    const ctx = canvas.current?.getContext("2d");
-    ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
-    if (tempImage.current && canvas.current)
-      ctx?.drawImage(
-        tempImage.current,
-        dX, dY,
-        tempImage.current.width / 100 * zoom,
-        tempImage.current.height / 100 * zoom);
-  }, [tempImage, dX, dY, zoom, canvas]);
-
   const cropPopup = (
     <Popup startOpen={true}>
     {cropImg !== undefined ?
@@ -174,7 +175,7 @@ const ImageUploader = ({
             .map(
             (ratio) => {
               return {
-              value: ratio.toString(),
+              value: ratio,
               markup: <>{ratio}</>,
               disabled: false
               };

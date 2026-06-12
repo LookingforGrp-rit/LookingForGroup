@@ -112,14 +112,13 @@ export const MediaTab = ({
   }, []);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
-  const handleImageUpload = useCallback(async () => {
+  const handleImageUpload = useCallback(async (file: File) => {
     // Get image in input element
     const imageUploader = document.getElementById(
       "image-uploader"
     ) as HTMLInputElement;
     if (!imageUploader?.files?.length) return;
 
-    const file = imageUploader.files[0];
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
 
     if (!projectId) return;
