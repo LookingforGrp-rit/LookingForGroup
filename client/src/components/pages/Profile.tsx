@@ -268,12 +268,12 @@ const Profile = (userProfile : any) => {
         hideSearchBar={true}
         onChange={() => { }}
         setCurrentUserId={getProfileData} //brother you're not even passing anything
+        hideBackButton={false}
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
       <main id="main" tabIndex={-1}>
         <div id="profile-page-content">
-          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="profile-hero">
             <div id="profile-img-container">
               <img

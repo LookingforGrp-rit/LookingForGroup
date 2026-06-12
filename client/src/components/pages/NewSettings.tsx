@@ -492,7 +492,6 @@ const Settings = (userProfile : any) => {
       {/* Search bar is not used in settings */}
       <div id="settings-page">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <h1 className="page-title">Settings</h1>
           <Header dataSets={[]} onSearch={() => { }} hideSearchBar />
         </div>
