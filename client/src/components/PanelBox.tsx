@@ -24,7 +24,7 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
     
     // Masonry doesn't like grid gaps, so this forces padding instead
     return (
-      <div style={{ padding: '10px' }}>
+      <div>
         <ProjectPanel
           project={project}
           initialIsFollowing={followedProjectIds?.has(projectId)}
@@ -35,7 +35,7 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
   }
 
   return (
-    <div style={{ padding: '10px' }}>
+    <div>
       <ProfilePanel 
         profileData={item as UserPreview} 
         currentUserId={userId} 

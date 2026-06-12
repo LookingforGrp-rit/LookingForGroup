@@ -22,7 +22,6 @@ Project Panel component style rules
   margin: 0 auto 20px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
   justify-content: center;
 }
 
@@ -36,10 +35,9 @@ Project Panel component style rules
 
 /* Cheap way to work around the padding */
 .masonry {
-  margin: 0 -10px; 
+  width: 100%;
   height: 100%;
-  width: calc(100% + 20px);
-  margin-bottom: 60px;
+  gap: 10px;
 }
 
 .project-panel-box {
