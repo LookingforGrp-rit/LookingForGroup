@@ -141,6 +141,15 @@ router.post(
 
 router.get('/:id/videos', projectExistsAt('path', 'id'), PROJECT.getVideos);
 
+router.delete(
+  '/:id/videos/:videoId',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.deleteVideo,
+);
+
 // THUMBNAIL ROUTES
 
 //Gets a project's thumbnail

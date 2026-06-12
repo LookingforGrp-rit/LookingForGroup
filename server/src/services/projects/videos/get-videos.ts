@@ -16,7 +16,7 @@ const getVideosService = async (
   projectId: number,
 ): Promise<ProjectVideo[] | AddVideoServiceError> => {
   try {
-    //add video
+    //get video
     const stuff = await prisma.projectVideos.findMany({
       where: {
         projectId,
