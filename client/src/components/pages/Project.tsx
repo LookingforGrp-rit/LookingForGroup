@@ -439,7 +439,9 @@ const Project = (userProfile : any) => {
                 <div id="project-creation">
                   Created by:{" "}
                   <span className="project-info-highlight">
-                    {projectLead?.firstName} {projectLead?.lastName}
+                    <a href={`${paths.routes.PROFILE}?userID=${projectLead?.userId}`}>
+                      {projectLead?.firstName} {projectLead?.lastName}
+                    </a>
                   </span>
                   <br />
                   {new Date(
