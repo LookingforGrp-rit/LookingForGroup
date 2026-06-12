@@ -67,6 +67,7 @@ export const ProfileMeetPage = () => {
   );
 
   //all of the needed states
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [currentSearch, setCurrentSearch] = useState('');
   const [fullUserList, setFullUserList] = useState<UserPreview[]>([]);
   const [userCache, setUserCache] = useState<NumberDictionary<StructuredUserInfo>>({});
@@ -116,6 +117,8 @@ export const ProfileMeetPage = () => {
     setFilteredUserList(userRes.data);
 
     setUserSearchData(userRes.data);
+
+    setLoaded(true);
   };
 
   /**
@@ -254,7 +257,7 @@ export const ProfileMeetPage = () => {
   useMemo(() => setupUserData(), []);
 
   let discoverPanelContents: React.ReactElement;
-  if (filteredUserList.length === 0 && !fullUserList) {
+  if (!loaded) {
     discoverPanelContents = (
       <div className='placeholder-spacing'>
         <div className='spinning-loader'></div>
