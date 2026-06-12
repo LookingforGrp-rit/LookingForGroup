@@ -225,6 +225,15 @@ used for the more options dropdown menu and notifications
   font-style: italic;
 }
 
+#main
+{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  margin: 0 auto;
+}
+
 .button-reset {
   background-color: transparent;
   border: none;
