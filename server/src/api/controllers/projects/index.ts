@@ -38,6 +38,7 @@ import removeThumbnail from './thumbnail/remove-thumbnail.ts';
 import updateThumbnail from './thumbnail/update-thumbnail.ts';
 import updateProject from './update-project.ts';
 import addVideo from './videos/add-video.ts';
+import getVideos from './videos/get-videos.ts';
 
 //index file for all project routes
 //no other route group has this
@@ -67,6 +68,7 @@ export default {
   removeImage,
   reorderImages,
   addVideo,
+  getVideos,
   getTags,
   deleteTag,
   updateTag,

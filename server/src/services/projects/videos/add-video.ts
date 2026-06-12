@@ -7,7 +7,7 @@ type AddVideoServiceSuccess = ServiceSuccessSubset<'CREATED'>;
 
 //POST api/projects/{id}/videos
 //adds an image to a project
-const addImageService = async (
+const addVideoService = async (
   data: Prisma.ProjectVideosCreateInput,
 ): Promise<AddVideoServiceSuccess | AddVideoServiceError> => {
   try {
@@ -28,4 +28,4 @@ const addImageService = async (
   }
 };
 
-export default addImageService;
+export default addVideoService;

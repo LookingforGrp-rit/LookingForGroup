@@ -139,6 +139,8 @@ router.post(
   PROJECT.addVideo,
 );
 
+router.get('/:id/videos', projectExistsAt('path', 'id'), PROJECT.getVideos);
+
 // THUMBNAIL ROUTES
 
 //Gets a project's thumbnail
