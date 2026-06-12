@@ -323,7 +323,15 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     //  });
     //}
     setActivePopup(true);
-    setEnabledFilters([]);
+
+    // loads in current filters
+    const seeded: EnabledFilter[] = activeTagFilters.map((tag) => {
+      const tab = filterPopupTabs.find((t) =>
+        t.categoryTags.some((ct) => ct.label === tag.label && ct.type === tag.type)
+      );
+      return { tag, color: tab?.color ?? 'grey' };
+    });
+    setEnabledFilters(seeded);
   };
 
   // --------------------
