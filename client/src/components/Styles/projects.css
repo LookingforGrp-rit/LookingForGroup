@@ -18,20 +18,13 @@ Project Panel component style rules
 /* #region project-panel */
 
 #discover-panel-box {
-  width: 90%;
-  margin: 0 auto 20px;
+  width: calc(100% - 40px);
+  padding: 0 20px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   justify-content: center;
+  align-items: center;
 }
-
-/*
-@media only screen and (max-width: 700px) {
-  #discover-panel-box {
-    margin: 0 20px;
-  }
-}
-*/
 
 /* Cheap way to work around the padding */
 .masonry {
@@ -40,6 +33,13 @@ Project Panel component style rules
   gap: 10px;
 }
 
+/* each item in the masonry --- goes masonry (parent) -> virtuoso list (child) -> data index (child) */
+.masonry > * > *
+{
+  justify-self: center;
+  padding: 10px;
+}
+/* not in use
 .project-panel-box {
   display: grid;
   grid-auto-flow: row;
@@ -49,7 +49,7 @@ Project Panel component style rules
   gap: 20px;
   width: 100%;
   padding-bottom: 10px;
-}
+}*/
 
 .project-panel {
   width: 100%;
@@ -63,6 +63,7 @@ Project Panel component style rules
   max-width: none;
   overflow: hidden;
   text-decoration: none;
+  margin: 10px 0;
 
   .project-panel-meta {
     position: relative;

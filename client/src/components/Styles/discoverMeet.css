@@ -18,7 +18,7 @@ Meet page hero style rules
 /*#region meet page hero*/
 
 #discover-hero {
-  width: 90%;
+  width: calc(100% - 40px);
   margin: 0 auto;
   background-image: var(--hero-gradient);
   border-radius: 10px;
@@ -212,11 +212,13 @@ Image carousel style rules
 /*#region image carousel*/
 
 .discover-carousel {
-  max-width: 100%;
+  width: calc(100% - 40px);
   margin: 0 auto;
   /* TEMPORARY, should change after more styling is done */
   display: flex;
   flex-direction: column;
+  align-items: center;
+  padding: 0 20px;
 }
 
 /* Desktop width */
@@ -231,6 +233,7 @@ Image carousel style rules
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .discover-carousel-btn {
@@ -307,7 +310,7 @@ Image carousel style rules
   overflow: hidden;
   height: 370px;
   max-height: 370px;
-  width: 90%;
+  width: fit-content;
   border-radius: 10px;
   background-color: var(--header-color);
   /*max-width: calc(100vw - 320px);*/
@@ -444,10 +447,6 @@ Image carousel style rules
 }
 
 @media screen and (max-width: 1020px) {
-  .discover-carousel {
-    max-width: 95%;
-  }
-
   .carousel-contents {
     height: auto;
   }
@@ -547,7 +546,8 @@ Filters / Tags Style Rules
 
 
 #discover-filters-parent {
-  width: 100%;
+  width: calc(100% - 40px);
+  margin: 0 auto;
   /* margin: 20px calc(100vw * (65 / 1512)); */
   box-sizing: border-box;
   position: sticky;
@@ -558,7 +558,7 @@ Filters / Tags Style Rules
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 800px) {
   .discover-page {
     #discover-filters-parent {
       top: -35px;
@@ -567,7 +567,7 @@ Filters / Tags Style Rules
 }
 
 #discover-filters {
-  width: 90%;
+  width: 100%;
   margin: 20px auto;
   display: flex;
   flex-direction: row;

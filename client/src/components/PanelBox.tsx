@@ -22,7 +22,6 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
     const projectId = (item as ProjectWithFollowers).projectId;
     const project = projectCache?.[projectId]?.full || (item as ProjectWithFollowers);
     
-    // Masonry doesn't like grid gaps, so this forces padding instead
     return (
       <div>
         <ProjectPanel

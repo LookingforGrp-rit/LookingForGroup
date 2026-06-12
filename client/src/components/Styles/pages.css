@@ -63,8 +63,9 @@
 
 .discover-page #header {
   position: sticky;
-  width: 100%;
+  width: calc(100% - 40px);
   box-sizing: border-box;
+  margin: 0 auto;
 }
 
 .discover-main {
@@ -94,8 +95,9 @@
     width: 100%;
     transform: none;
     z-index: 20;
-    padding-left: 20px;
-    padding-right: 20px;
+    margin: 0 auto;
+    padding: 0 40px;
+    
   }
 
   .discover-main {
