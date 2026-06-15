@@ -12,6 +12,7 @@ import { getMajors, getJobTitles } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
 //why do these 2 things have the same name??
 import { AcademicYear as AcademicYears, } from "@looking-for-group/shared/enums";
+import { ProfileImageUploader } from "../ImageUploader";
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -146,20 +147,16 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	}, []);
 
 	// Loads and utilizes an imported function for setting a profile picture
-	const handleUploadPfp = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleUploadPfp = (file: File) => {
 		console.log("uploading pfp");
-
-		const target = e.target as HTMLInputElement;
-		if (target && target.files && target.files[0]) {
-			const reader = new FileReader();
-			reader.onload = (event) => {
-				if (event.target && event.target.result) {
-					setDisplayImg(event.target.result as string);
-				}
-			};
-			setProfileImage(target.files[0]);
-			reader.readAsDataURL(target.files[0]);
-		}
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target && event.target.result) {
+        setDisplayImg(event.target.result as string);
+      }
+    };
+    setProfileImage(file);
+    reader.readAsDataURL(file);
 	};
 
 	// Utilizes an imported function for setting a customizable avatar as their profile image
@@ -186,38 +183,13 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 
 					<div id="completeProfile-input-container">
 						<div id="profile-details">
-							{/* Profile picture container */}
-							<div id="profile-pic">
-								{/* image is profile image, if empty/null display avatar image */}
-								<img
-									src={displayImg ? displayImg : placeholder}
-									alt="profile-pic"
-								/>
-								{/* <img src={profileImage} alt="profile-pic" /> */}
-							</div>
-							<div className="profile-pic-option">
-								{/* <button>Upload Picture</button> */}
-								{/* input to upload picture */}
-								<input
-									type="file"
-									id="upload-pfp"
-									accept="image/*"
-									hidden
-									onChange={handleUploadPfp}
-								/>
-								<label htmlFor="upload-pfp">
-									Upload Picture
-								</label>
-
-								{/* button to use avatar as profile picture */}
-								{
-									<button
-										onClick={() =>
-											setDisplayImg(placeholder)
-										}>
-										Use Avatar
-									</button>
-								}
+							<div
+							id="profile-editor-add-image"
+							className="edit-profile-image">
+							<ProfileImageUploader
+								onFileSelected={handleUploadPfp}
+								initialImageFile={profileImage}
+							/>
 							</div>
 						</div>
 
