@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { Dispatch, SetStateAction } from "react";
+import { Dispatch, SetStateAction, useState } from "react";
 import { ProjectWithFollowers } from "@looking-for-group/shared";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
@@ -22,6 +22,26 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
   //Find first member with the job title of 'Project Lead'
   //If no such member exists, use first member in project member list
   const projectLead = displayedProject?.owner;
+
+  // Local state for the Quick Apply UI. Delivery (email / notification / etc.)
+  // is not wired up yet — the click handler currently only flips local state.
+  // TODO: replace the console.log below with the real send call once the delivery
+  // mechanism is decided.
+  const [joinMessage, setJoinMessage] = useState("");
+  const [quickApplyOpen, setQuickApplyOpen] = useState(false);
+  const [requestSent, setRequestSent] = useState(false);
+
+  const handleQuickApply = () => {
+    const viewedRole = displayedProject.jobs?.[viewedPosition]?.role?.label;
+    console.log("[Quick Apply] would notify owner", {
+      projectId: displayedProject.projectId,
+      projectTitle: displayedProject.title,
+      ownerUserId: projectLead?.userId,
+      viewedRole,
+      message: joinMessage,
+    });
+    setRequestSent(true);
+  };
 
   return <div id="project-open-positions-popup">
     <div id="positions-popup-header">Join The Team</div>
@@ -122,23 +142,58 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
         </div>
 
         <div id="position-contact">
-          If interested, please contact:{" "}
-          <span
-            onClick={() =>
-              navigate(
-                `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
-              )
-            }
-            id="position-contact-link"
-          >
-            {/* {FIXME: get project lead profile image in a different way} */}
-            {/* <img src={(projectLead?.profile_image) 
-            ? `images/profiles/${projectLead?.profile_image}` 
-            : profilePicture} 
-            /> */}
-            {projectLead?.firstName} {projectLead?.lastName}
-          </span>
+          {requestSent ? (
+            <span id="position-join-request-confirmation">
+              Request sent! {projectLead?.firstName} will be in touch.
+            </span>
+          ) : (
+            <>
+              Message{" "}
+              <span
+                onClick={() =>
+                  navigate(
+                    `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
+                  )
+                }
+                id="position-contact-link"
+              >
+                {projectLead?.firstName} {projectLead?.lastName}
+              </span>
+              {" "}or{" "}
+              <button
+                type="button"
+                id="position-join-request-button"
+                onClick={() => {
+                  if (quickApplyOpen) {
+                    handleQuickApply();
+                  } else {
+                    setQuickApplyOpen(true);
+                  }
+                }}
+              >
+                {quickApplyOpen ? "Send" : "Quick Apply"}
+              </button>
+            </>
+          )}
         </div>
+
+        {quickApplyOpen && !requestSent && (
+          <div id="position-join-request">
+            <label
+              htmlFor="position-join-request-message"
+              id="position-join-request-label"
+            >
+              Add a message (optional)
+            </label>
+            <textarea
+              id="position-join-request-message"
+              placeholder={`Let ${projectLead?.firstName ?? "the owner"} know why you'd be a good fit...`}
+              value={joinMessage}
+              onChange={(e) => setJoinMessage(e.target.value)}
+              maxLength={500}
+            />
+          </div>
+        )}
       </div>
     </div>
 
