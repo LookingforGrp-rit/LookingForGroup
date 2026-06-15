@@ -2,7 +2,9 @@
 import { useCallback, useEffect, useState, useContext, useRef } from "react";
 import {
   CreateProjectImageInput,
+  CreateProjectVideoInput,
   ProjectImage,
+  ProjectVideo,
   ProjectWithFollowers,
   UpdateProjectImageInput,
 } from "@looking-for-group/shared";
@@ -13,6 +15,7 @@ import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
 import { FileImage } from "../../FileImage";
 import placeholder from "../../../images/project_temp.png";
 import { ThemeIcon } from "../../ThemeIcon";
+import { getVideos } from "../../../api/projects";
 
 let projectAfterMediaChanges: PendingProject;
 
@@ -79,6 +82,9 @@ export const MediaTab = ({
   const [dY, setDY] = useState(0);
 
   const [cropImg, setCropImg] = useState<ProjectImage | PendingProjectImage>();
+  const [videos, setVideos] = useState<ProjectVideo[]>();
+  const [newVideoTitle, setNewVideoTitle] = useState("");
+  const [newVideoUrl, setNewVideoUrl] = useState("");
 
   const tempImage = useRef<HTMLImageElement>(null);
   const canvas = useRef<HTMLCanvasElement>(null);
@@ -127,6 +133,17 @@ export const MediaTab = ({
     fileReader.onload = () => setCropImg({...cropImg, image: fileReader.result} as PendingProjectImage);
     fileReader.onerror = () => setCropImg({...cropImg, image: placeholder} as ProjectImage);
   }, [tempImage, dX, dY, zoom, cropImg, fileReader, placeholder, setCropImg]);
+
+  useEffect(() => {
+      async function fetchVideos() {
+        const res = await getVideos(unmodifiedProject.projectId);
+        if (res.data) {
+          setVideos(res.data);
+        }
+      }
+  
+      fetchVideos();
+    }, [unmodifiedProject.projectId]);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async () => {
@@ -269,6 +286,45 @@ export const MediaTab = ({
       setCropImg(undefined);
       }, "images/png", 1)
   , [canvas, cropImg, updatePendingProject, projectAfterMediaChanges]);
+
+  const handleAddVideo = useCallback(() => {
+    if (!newVideoTitle.trim() || !newVideoUrl.trim()) return;
+
+    const localId = ++localIdIncrement;
+    
+    const newVideoData: CreateProjectVideoInput = {
+      title: newVideoTitle,
+      videoUrl: newVideoUrl,
+    };
+
+    // Create it
+    dataManager.createVideo({
+      id: { value: localId, type: "local" },
+      data: newVideoData
+    });
+
+    // Update UI immediately
+    const pendingVideo = { videoId: localId, isLocal: true, ...newVideoData };
+    setVideos((prev) => (prev ? [...prev, pendingVideo as any] : [pendingVideo as any]));
+
+    // Clear inputes
+    setNewVideoTitle("");
+    setNewVideoUrl("");
+  }, [newVideoTitle, newVideoUrl, dataManager, setVideos]);
+
+  const handleDeleteVideo = useCallback((video: any) => {
+    // Delete it
+    dataManager.deleteVideo({
+      id: { 
+        value: video.videoId, 
+        type: video.isLocal ? "local" : "canon" 
+      },
+      data: null
+    });
+
+    // Remove from current UI
+    setVideos((prev) => (prev || []).filter((v: any) => v.videoId !== video.videoId));
+  }, [dataManager, setVideos]);
 
   // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
@@ -587,6 +643,24 @@ export const MediaTab = ({
         {/* Image uploader */}
         <div id="project-editor-add-image">
           <ProjectImageUploader onFileSelected={handleImageUpload} />
+        </div>
+      </div>
+
+      <label>Project Videos</label>
+      <div className="project-editor-extra-info">
+        Link YouTube videos to be embedded on your project page.
+      </div>
+
+      <div id="project-editor-image-ui">
+        <div id="project-editor-add-image">
+          <label htmlFor="image-uploader" id="project-image-uploader" className="drop-area">
+            <div id="img-view" className="project-uploader">
+              <svg xmlns="http://www.w3.org/2000/svg" width={38} height={39} viewBox="0 0 448 512">
+                <path d="M256 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 160-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l160 0 0 160c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160 160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0 0-160z" fill="var(--neutral-gray)"/>
+              </svg>
+              <p className="project-editor-extra-info">Click here to add a new video</p>
+            </div>
+          </label>
         </div>
       </div>
 

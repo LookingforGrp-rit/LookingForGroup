@@ -100,6 +100,7 @@ const Project = (userProfile : any) => {
     }
   };
 
+  // Fetch attached videos (for now)
   useEffect(() => {
     async function fetchVideos() {
       const res = await getVideos(projectID);
@@ -423,7 +424,7 @@ const Project = (userProfile : any) => {
         <main id="main" tabIndex={-1} aria-label="main content" >
           <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="project-page-content">
-            <ProjectCarousel project={displayedProject}></ProjectCarousel>
+            <ProjectCarousel project={displayedProject} videos={videos}></ProjectCarousel>
             <div id="project-info-panel">
               <div id="project-info-top">
                 <div id="project-info-header">
