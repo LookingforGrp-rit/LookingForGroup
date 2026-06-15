@@ -7,7 +7,7 @@ import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import users, {
+import {
   getJobTitles,
   getUsers,
   getUsersById,
@@ -23,7 +23,6 @@ import {
   JobCompensation,
   Role,
   ProjectWithFollowers,
-  SendProjectInviteInput,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -75,7 +74,7 @@ const emptyJob: Pending<ProjectJob> = {
 let localIdIncrement = 0;
 
 type TeamTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   //setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
@@ -87,6 +86,7 @@ type TeamTabProps = {
   saveable: boolean;
   failCheck: boolean;
   message: string;
+  messages: string[];
 };
 
 
@@ -115,6 +115,7 @@ export const TeamTab = ({
   saveable,
   failCheck,
   message,
+  messages,
 }: TeamTabProps) => {
   // --- Hooks ---
   // State for storing all available roles from the API.
@@ -485,7 +486,7 @@ export const TeamTab = ({
 
       if ("localId" in currentMember) (currentMember as PendingProjectMember).localId = ++localIdIncrement;
 
-      dataManager.createMember({
+      dataManager?.createMember({
         id: {
           value: (currentMember as PendingProjectMember).localId ?? ++localIdIncrement,
           type: "local",
@@ -498,6 +499,8 @@ export const TeamTab = ({
           message: messageText,
         },
       });
+
+      messages.push(messageText);
 
       const localProjectMember: PendingProjectMember = {
         user: currentMember.user,
@@ -644,7 +647,7 @@ export const TeamTab = ({
 
       if ("jobId" in currentJob) {
         //isLocal = false;
-        dataManager.deleteJob({
+        dataManager?.deleteJob({
           id: {
             type: "canon",
             value: currentJob.jobId,
@@ -652,7 +655,7 @@ export const TeamTab = ({
           data: null,
         });
       } else {
-        dataManager.deleteJob({
+        dataManager?.deleteJob({
           id: {
             type: "local",
             value: currentJob.localId!,
@@ -721,7 +724,7 @@ export const TeamTab = ({
       }
 
 
-      dataManager.createJob({
+      dataManager?.createJob({
         id: {
           value: (currentJob as Pending<ProjectJob>).localId ?? ++localIdIncrement,
           type: "local",
@@ -752,7 +755,7 @@ export const TeamTab = ({
       return;
     }
 
-    dataManager.updateJob({
+    dataManager?.updateJob({
       id: {
         value: (currentJob as ProjectJob).jobId,
         type: "canon",
@@ -1380,7 +1383,7 @@ export const TeamTab = ({
                         if (isNullOrUndefined(currentMember.user)) return;
 
                         // update member in data manager
-                        dataManager.updateMember({
+                        dataManager?.updateMember({
                           id: {
                             type:
                               "localId" in currentMember ? "local" : "canon",
@@ -1449,7 +1452,7 @@ export const TeamTab = ({
                               };
 
                               if ("localId" in currentMember) {
-                                dataManager.deleteMember({
+                                dataManager?.deleteMember({
                                   id: {
                                     type: "local",
                                     value: currentMember.user.userId,
@@ -1457,7 +1460,7 @@ export const TeamTab = ({
                                   data: null,
                                 });
                               } else {
-                                dataManager.deleteMember({
+                                dataManager?.deleteMember({
                                   id: {
                                     type: "canon",
                                     value: currentMember.user.userId,

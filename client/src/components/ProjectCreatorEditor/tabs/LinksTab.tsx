@@ -2,7 +2,7 @@
 import { useEffect, useState, useContext, useMemo } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
-import { AddProjectSocialInput, ProjectSocial, ProjectWithFollowers, Social, UserDetail } from "@looking-for-group/shared";
+import { ProjectSocial, ProjectWithFollowers, Social, UserDetail } from "@looking-for-group/shared";
 import { Input } from "../../Input";
 import { getSocials, getUsersById } from "../../../api/users";
 import { ThemeIcon } from "../../ThemeIcon";
@@ -12,7 +12,7 @@ import { BaseSocialUrl } from "@looking-for-group/shared/enums";
 
 // --- Variables ---
 type LinksTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
@@ -146,12 +146,12 @@ projectAfterLinkChanges = structuredClone(projectData);
       if (isEmpty) {
         // Delete on backend
         if ("localId" in social) {
-          dataManager.deleteSocial({
+          dataManager?.deleteSocial({
             id: { type: 'local', value: social.localId as number },
             data: null
           });
         } else if (social.websiteId) {
-          dataManager.deleteSocial({
+          dataManager?.deleteSocial({
             id: { type: 'canon', value: social.websiteId },
             data: null
           });

@@ -18,8 +18,8 @@ import {
 
 import { getProjectsByUser } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
-import { PendingProject } from "../../../types/types";
-import { ProjectWithFollowers, } from '@looking-for-group/shared';
+import { Pending, PendingProject, PendingProjectMember, PendingProjectTag } from "../../../types/types";
+import { Medium, ProjectFollower, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectSocial, ProjectWithFollowers, Tag, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 import { getCurrentUsername } from "../../api/users";
 
@@ -64,6 +64,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   // Tracks temporary project data changes before saving: compared against projectData
   const [modifiedProject, setModifiedProject] = useState<PendingProject>();
 
+  const [projectMessages, setProjectMessages] = useState<string[]>([]);
+
   // Indicates if the data validation has failed: prevents saving when invalid
   const [failCheck, setFailCheck] = useState(false);
 
@@ -94,6 +96,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const exitButton = useRef(null);
   const startButton = useRef(null);
 
+  const [currentUserID, setCurrentUserID] = useState<number>();
+
   // Check if the current project can be saved
   let valid = false;
   if (modifiedProject?.title != "" && modifiedProject?.title != undefined) {
@@ -103,7 +107,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       }
     }
   }
-  if (modifiedProject?.tags.length == 0 || modifiedProject?.mediums.length == 0) {
+  if (modifiedProject?.tags?.length == 0 || modifiedProject?.mediums?.length == 0) {
     valid = false;
   }
   if (valid != saveable) {
@@ -150,6 +154,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       navigate(paths.routes.LOGIN);
       return;
     }
+    setCurrentUserID(res.data.userId);
 
     if (!newProject && projectID) {
 
@@ -170,17 +175,39 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     else if (newProject) {
       // Setup default project for creation
       try {
-        const response = await createNewProject({ title: "My Project" });
-        if (!response.error && response.data) {
-          dataManager = await projectDataManager(response.data.projectId);
-
-          const data = dataManager.getSavedProject();
-
-          setProjectData(data);
-          setModifiedProject(data);
-          setProjectID(data.projectId);
-          console.log(projectData);
-        }
+        await setProjectData({ 
+          title: "My Project",
+          description: "",
+          purpose: "Academic",
+          status: "Planning",
+          audience: "",
+          projectImages: [] as ProjectImage[],
+          projectSocials: [] as ProjectSocial[],
+          jobs: [] as ProjectJob[],
+          members: [] as ProjectMember[],
+          createdAt: new Date(Date.now()),
+          updatedAt: new Date(Date.now()),
+          followers: {} as ProjectFollowers,
+          tags: [] as Tag[],
+          mediums: [] as Medium[],
+        } as ProjectWithFollowers);
+        await setModifiedProject({ 
+          title: "My Project",
+          description: "",
+          purpose: "Academic",
+          status: "Planning",
+          audience: "",
+          projectImages: [] as ProjectImage[],
+          projectSocials: [] as ProjectSocial[],
+          jobs: [] as ProjectJob[],
+          members: [] as ProjectMember[],
+          createdAt: new Date(Date.now()),
+          updatedAt: new Date(Date.now()),
+          followers: {} as ProjectFollowers,
+          tags: [] as Tag[],
+          mediums: [] as Medium[],
+        } as ProjectWithFollowers);
+        console.log(projectData);
       } catch (err) {
         console.error("Error creating new project:", err);
       }
@@ -369,27 +396,131 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     // Prevent duplicate project names in the user's project list.
     // If the title collides with another of their projects, auto-rename it
     // (e.g. "ProjectTitle" -> "ProjectTitle(1)").
-    const currentProjectId = dataManager.getSavedProject().projectId;
     const uniqueTitle = await getUniqueProjectTitle(
       modifiedProject.title,
-      currentProjectId
+      projectID
     );
     if (uniqueTitle !== modifiedProject.title) {
       dataManager.updateFields({
-        id: { value: currentProjectId, type: "canon" },
+        id: { value: projectID, type: "canon" },
         data: { title: uniqueTitle },
       });
       setModifiedProject({ ...modifiedProject, title: uniqueTitle });
     }
 
     try {
-      await dataManager.saveChanges();
-
       // EXISTING PROJECT
       if (!newProject && projectID) {
+        await dataManager.saveChanges();
 
         if (updateDisplayedProject) {
           updateDisplayedProject(dataManager.getSavedProject());
+        }
+      }
+      else if (newProject) {
+        const response = await createNewProject({
+          title: modifiedProject?.title as string,
+          hook: modifiedProject?.hook,
+          description: modifiedProject?.description,
+          status: modifiedProject?.status,
+          audience: modifiedProject?.audience as string,
+          purpose: modifiedProject?.purpose,
+          globalVisibility: modifiedProject?.globalVisibility as Visibility,
+        });
+        if (!response.error && response.data) {
+          dataManager = await projectDataManager(response.data.projectId);
+          setProjectID(response.data.projectId);
+
+          /* PROJECT IMAGES */
+          for (let image of modifiedProject.projectImages) {
+            dataManager.createImage({
+              id: { 
+                type: "canon", 
+                value: (image as ProjectImage).imageId
+              },
+              data: {
+                image: image.image as File,
+                altText: (image as ProjectImage).altText,
+              }
+            })
+          }
+          dataManager.updateThumbnail({
+          id: {
+            value: projectID,
+            type: "canon",
+          },
+          data: {
+            thumbnail: (modifiedProject.thumbnail as ProjectImage).imageId as number
+          }
+        });
+
+          /* PROJECT TAGS */
+          for (let tag of modifiedProject.tags) {
+            dataManager.addTag({
+              id: {
+                type: "canon",
+                value: tag.tagId,
+              },
+              data: {
+                tagId: tag.tagId,
+                displayOrder: modifiedProject.tags.indexOf(tag),
+              }
+            });
+          }
+
+          /* PROJECT MEDIUMS */
+          for (let medium of modifiedProject.mediums) {
+            dataManager.addMedium({
+              id: {
+                type: "canon",
+                value: medium.mediumId,
+              },
+              data: {
+                mediumId: medium.mediumId,
+              }
+            })
+          }
+
+          /* PROJECT JOBS */
+          for (let job of modifiedProject.jobs) {
+            dataManager.createJob({
+              id: {
+                type: "canon",
+                value: (job as Pending<ProjectJob>).localId as number,
+              },
+              data: {
+                availability: (job as ProjectJob).availability,
+                compensation: (job as ProjectJob).compensation,
+                contactUserId: (job as ProjectJob).contact.userId,
+                duration: (job as ProjectJob).duration,
+                location: (job as ProjectJob).location,
+                roleId: (job as ProjectJob).role.roleId,
+                description: job.description ?? undefined,
+              }
+            })
+          }
+
+          /* PROJECT MEMBERS */
+          for (let member of modifiedProject.members) {
+            dataManager.createMember({
+              id: {
+                type: "canon",
+                value: (member as PendingProjectMember).localId as number,
+              },
+              data: {
+                inviteeUserId: (member as PendingProjectMember).user?.userId as number,
+                // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
+                inviterUserId: (currentUserID ?? modifiedProject.owner?.userId) as number,
+                roleId: member.role?.roleId as number,
+                message: projectMessages[modifiedProject.members.indexOf(member)],
+              }
+            })
+          }
+
+          /* PROJECT SOCIALS */
+          // to be done
+
+          await dataManager.saveChanges();
         }
       }
 
@@ -409,7 +540,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }
 
   const generalTabInvalid = !modifiedProject?.title || !modifiedProject?.hook || !modifiedProject?.description;
-  const tagsTabInvalid = modifiedProject?.tags.length === 0 || modifiedProject?.mediums.length === 0;
+  const tagsTabInvalid = modifiedProject?.tags?.length === 0 || modifiedProject?.mediums?.length === 0;
   const teamTabInvalid = errorAddMember !== "" || errorAddPosition !== "";
   const linksTabInvalid = errorLinks !== "";
 
@@ -547,6 +678,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 saveable={saveable}
                 failCheck={failCheck}
                 message={message}
+                messages={projectMessages}
               />
             ) : currentTab === 4 ? (
               <LinksTab
