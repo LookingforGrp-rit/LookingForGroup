@@ -917,6 +917,28 @@ export interface ProjectFollowers {
   apiUrl: string;
 }
 
+export interface ProjectVideo {
+  /**
+   * UniqueID for the video
+   */
+  videoId: number;
+
+  /**
+   * URL to the video
+   */
+  videoUrl: string;
+
+  /**
+   * Order in which videos are displayed on project
+   */
+  position: number;
+
+  /**
+   * Alt title for screen readers
+   */
+  title: string;
+}
+
 /**
  * Represents a user who is a member of a known project
  */
@@ -1062,6 +1084,11 @@ export interface ProjectDetail extends ProjectPreview {
    * The images attached to the project
    */
   projectImages: ProjectImage[];
+
+  /**
+   * The youtube links attached to the project
+   */
+  projectVideos: ProjectVideo[];
 
   /**
    * The social media accounts related to the project
@@ -1285,6 +1312,14 @@ export type CreateProjectInput = Required<Pick<ProjectDetail, "title">> &
  * Data required to update an existing project
  */
 export type UpdateProjectInput = Partial<CreateProjectInput>;
+
+/**
+ * Data required to upload a new image to a project
+ */
+export type CreateProjectVideoInput = {
+  title: string;
+  videoUrl: string;
+};
 
 /**
  * Data required to upload a new image to a project
