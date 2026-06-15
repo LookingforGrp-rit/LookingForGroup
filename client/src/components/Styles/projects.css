@@ -803,6 +803,18 @@ Project Creator and Editor Popup style rules
   bottom: 0;
 }
 
+.project-video-hover {
+  background-color: transparent;
+  pointer-events: none;
+  position: absolute;
+  border-radius: 10px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 9px;
+}
+
 #selected-thumbnail,
 .star,
 .star-filled,
@@ -823,6 +835,17 @@ Project Creator and Editor Popup style rules
 
 .delete-image {
   bottom: 9px;
+}
+
+.delete-video {
+  pointer-events: all;
+  position: absolute;
+  border: none;
+  border-radius: 32px;
+  padding: 8px;
+  bottom: 9px;
+  right: 9px;
+  background-color: var(--main-text);
 }
 
 #project-editor-add-image {

@@ -24,6 +24,7 @@ import {
   addProjectSocial,
   addProjectTag,
   addVideo,
+  deleteVideo as deleteVideoAPI,
   deleteMember as deleteMemberAPI,
   deletePic,
   deleteProjectJob,
@@ -446,6 +447,17 @@ export const projectDataManager = async (projectId: number) => {
         "Deleting project image",
         deletes.projectImages,
         ({ id }) => deletePic(projectId, id.value)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    // project videos
+    try {
+      await runAndCollectErrors<null>(
+        "Deleting project video",
+        deletes.projectVideos,
+        ({ id }) => deleteVideoAPI(projectId, id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;

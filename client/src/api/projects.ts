@@ -189,16 +189,27 @@ export const addVideo = async (
   videoData: CreateProjectVideoInput
 ): Promise<ApiResponse<ProjectVideo>> => {
   const apiURL = `/projects/${projectID}/videos`;
-
-  const form = new FormData();
-  for (const [name, value] of Object.entries(videoData)) {
-    if (value !== null) form.append(name, value);
-  }
-
-  const response = await POST(apiURL, form);
+  const response = await POST(apiURL, videoData);
 
   if (response.error) console.log(`Error in addVideo: ${response.error}`);
   return response as ApiResponse<ProjectVideo>;
+};
+
+/**
+ * Deletes a video attached to a project
+ * @param projectID - ID of the target project
+ * @param videoId - ID of the video to delete
+ * @returns Response status
+ */
+export const deleteVideo = async (
+  projectID: number,
+  videoId: number
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/${projectID}/videos/${videoId}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in deleteVideo: ${response.error}`);
+  return response as ApiResponse<null>;
 };
 
 // Get project thumbnail
