@@ -17,6 +17,7 @@ export const DiscoverPage = () => {
   // --------------------
   // Components
   // --------------------
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [currentSearch, setCurrentSearch] = useState('');
 
   // Full data and displayed data based on filter/search query
@@ -156,6 +157,8 @@ export const DiscoverPage = () => {
 
     getShowcaseDetails(projectRes.data, newProjectCache);
     setProjectCache(newProjectCache);
+
+    setLoaded(true);
   };
 
   /**
@@ -298,7 +301,7 @@ export const DiscoverPage = () => {
 
   //gets the discover stuff at the bottom
   let discoverPanelContents: React.ReactElement
-  if (filteredProjectList.length === 0 && !fullProjectList) {
+  if (!loaded) {
     discoverPanelContents = (
       <div className='placeholder-spacing'>
         <div className='spinning-loader'></div>

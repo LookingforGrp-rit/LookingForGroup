@@ -45,6 +45,7 @@ Credits link footer style rules
   opacity: 0.85;
   transform: translateY(-1px);
   cursor: pointer;
+  text-decoration: underline solid 3px;
 }
 
 @media only screen and (max-width: 799px) {

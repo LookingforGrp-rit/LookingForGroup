@@ -412,13 +412,13 @@ const Project = (userProfile : any) => {
         value={undefined}
         onChange={undefined}
         setCurrentUserId={getProjectData}
+        hideBackButton={false}
       />
 
       {displayedProject === undefined ? (
         loadingProject
       ) : (
         <main id="main" tabIndex={-1} aria-label="main content" >
-          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="project-page-content">
             <ProjectCarousel project={displayedProject}></ProjectCarousel>
             <div id="project-info-panel">
@@ -439,7 +439,9 @@ const Project = (userProfile : any) => {
                 <div id="project-creation">
                   Created by:{" "}
                   <span className="project-info-highlight">
-                    {projectLead?.firstName} {projectLead?.lastName}
+                    <a href={`${paths.routes.PROFILE}?userID=${projectLead?.userId}`}>
+                      {projectLead?.firstName} {projectLead?.lastName}
+                    </a>
                   </span>
                   <br />
                   {new Date(
