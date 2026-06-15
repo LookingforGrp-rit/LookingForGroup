@@ -728,10 +728,13 @@ Project Creator and Editor Popup style rules
   grid-area: desc;
   display: flex;
   flex-direction: column;
-  overflow: auto;
   min-height: 150px;
   flex: 1 1 auto;
   overflow-y: visible;
+
+  .input-multiline-container {
+    overflow-y: auto;
+  }
 }
 
 /* Project Editor/Creator Media Tab */
