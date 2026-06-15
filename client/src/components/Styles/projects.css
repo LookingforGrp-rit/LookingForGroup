@@ -3559,6 +3559,62 @@ button#positions-popup-list-item-active {
   border-radius: 50%;
 }
 
+/* Quick Apply lives inline in #position-contact next to the owner link.
+   When expanded, the optional message textarea drops in just below. */
+#position-join-request-button {
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+  border: none;
+  border-radius: 30px;
+  padding: 6px 14px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-style: normal;
+  cursor: pointer;
+  transition: transform 0.15s ease-in-out, filter 0.15s ease-in-out;
+}
+
+#position-join-request-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+#position-join-request {
+  margin: 0 20px 20px auto;
+  width: 320px;
+  max-width: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+#position-join-request-label {
+  font-size: 0.875rem;
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+#position-join-request-message {
+  width: 100%;
+  min-height: 70px;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--main-text);
+  font-size: 0.9375rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+#position-join-request-confirmation {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-style: normal;
+}
+
 #positions-popup-close {
   grid-area: close;
   border: none;
