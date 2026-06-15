@@ -291,6 +291,7 @@ export const MediaTab = ({
 
   const handleAddVideo = useCallback(() => {
     if (!newVideoTitle.trim() || !newVideoUrl.trim()) return;
+    if (!getYouTubeEmbedURL(newVideoUrl)) return;
 
     const localId = ++localIdIncrement;
     
@@ -666,7 +667,6 @@ export const MediaTab = ({
                 <iframe
                   src={embedUrl}
                   title={video.title}
-                  frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   style={{ width: '100%', height: '100%', aspectRatio: '16/9', border: 'none', display: 'block' }}
@@ -695,26 +695,26 @@ export const MediaTab = ({
 
         {videoPopupOpen 
         ? 
-          <div style={{width: "100%", height: "100%", background: "var(--invert-text)"}}>
-            <div style={{ display: "flex", flexDirection: "column", gap: "15px", margin: "20px 0", textAlign: "left" }}>
+          <div className="add-video">
+            <div className="add-video-form">
               <div>
-                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>Video Title</label>
+                <label className="add-video-title">Video Title</label>
                 <input 
                   type="text" 
                   value={newVideoTitle}
                   onChange={(e) => setNewVideoTitle(e.target.value)}
                   placeholder="e.g., Gameplay Trailer"
-                  style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid var(--neutral-gray)" }}
+                  className="add-video-input"
                 />
               </div>
               <div>
-                <label style={{ display: "block", marginBottom: "5px", fontWeight: "bold" }}>YouTube URL</label>
+                <label className="add-video-title">YouTube URL</label>
                 <input 
                   type="text" 
                   value={newVideoUrl}
                   onChange={(e) => setNewVideoUrl(e.target.value)}
                   placeholder="https://www.youtube.com/watch?v=..."
-                  style={{ width: "100%", padding: "10px", borderRadius: "5px", border: "1px solid var(--neutral-gray)" }}
+                  className="add-video-input"
                 />
               </div>
             </div>

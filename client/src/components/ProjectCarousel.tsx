@@ -23,7 +23,6 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
                 key={`video-${index}`}
                 src={embedUrl}
                 title={video.title}
-                frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
                 style={{ width: '100%', height: '100%', aspectRatio: '16/9', border: 'none', objectFit: 'cover' }}
