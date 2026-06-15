@@ -221,8 +221,7 @@ Image carousel style rules
 
 /* Desktop width */
 @media screen and (min-width: 1020px) {
-  .discover-project-about p
-  {
+  .discover-project-about p {
     height: fit-content;
   }
 }
@@ -241,6 +240,7 @@ Image carousel style rules
   margin-left: min(18px, calc(100vw * (18 / 1512)));
   padding: 0px;
   height: fit-content;
+  transition: all 0.2s ease-in-out;
 
   img {
     width: 100%;
@@ -248,19 +248,51 @@ Image carousel style rules
   }
 }
 
-.discover-carousel-btn:hover {
+
+/* Old carousel hover*/
+/*.discover-carousel-btn:hover {
   transition-duration: 0.2s;
   scale: 1.1;
 
   img {
     max-height: calc(68px * 1.1);
   }
+}*/
+
+/* 1. Base button settings */
+.carousel-btn-left,
+.carousel-btn-right {
+  transition: all 0.2s ease-in-out;
 }
 
+/* 2. Permanent mirror lock for the left button */
 .carousel-btn-left {
-  transform: rotateY(180deg);
   margin-left: 0px;
   margin-right: min(18px, calc(100vw * (18 / 1512)));
+  transform: scaleX(-1); 
+}
+
+/* 3. General hover / active for right button */
+.discover-carousel-btn:hover {
+  opacity: 0.85;
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+
+.discover-carousel-btn:active {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
+/* 4. FORCED SPECIFICITY: Double-classing ensures the left button NEVER loses its mirror on hover/active */
+.discover-carousel-btn.carousel-btn-left:hover {
+  transform: scaleX(-1) translateY(-1px) !important;
+  opacity: 0.85;
+}
+
+.discover-carousel-btn.carousel-btn-left:active {
+  transform: scaleX(-1) translateY(0px) !important;
+  opacity: 1;
 }
 
 @media only screen and (max-width: 700px) {
@@ -300,14 +332,14 @@ Image carousel style rules
   height: 100%;
   width: auto;
   overflow: hidden;
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: center;
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
   }
 }
@@ -338,10 +370,19 @@ Image carousel style rules
     background: none;
     box-shadow: none;
     text-decoration: none;
+    transition: all 0.2s ease-in-out;
+    display: inline-block;
   }
 
   .discover-link:hover {
     text-decoration: underline;
+    opacity: 0.85;
+    transform: translateY(-1px);
+  }
+
+  .discover-link:active {
+    transform: translateY(0px);
+    opacity: 1;
   }
 
   .learn-more {
@@ -384,6 +425,7 @@ Image carousel style rules
   width: 14px;
   height: 14px;
   background-color: var(--header-color);
+  transition: all 0.2s ease-in-out;
 }
 
 .carousel-tab:hover,
@@ -391,15 +433,26 @@ Image carousel style rules
   background-color: var(--primary-color);
 }
 
+.carousel-tab:hover {
+  transform: translateY(-1px);
+  opacity: 0.85;
+}
+
+.carousel-tab:active {
+  transform: translateY(0px);
+  opacity: 1;
+}
+
 @media screen and (max-width: 1020px) {
   .discover-carousel {
     max-width: 95%;
   }
+
   .carousel-contents {
     height: auto;
   }
-  .carousel-row:first-child
-  {
+
+  .carousel-row:first-child {
     height: 100%;
   }
 
@@ -449,7 +502,7 @@ Image carousel style rules
 }
 
 /* mobile changes */
-@media only screen and (max-width: 1020px){
+@media only screen and (max-width: 1020px) {
   .discover-project-image {
     height: 100%;
     width: auto;
@@ -492,15 +545,25 @@ Filters / Tags Style Rules
 */
 /*#region tag styles*/
 
+
 #discover-filters-parent {
   width: 100%;
   /* margin: 20px calc(100vw * (65 / 1512)); */
   box-sizing: border-box;
   position: sticky;
   top: 80px;
+  /*changing z-index affects .SideBarContainer*/
   z-index: 1;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
+}
+
+@media only screen and (max-width: 700px) {
+  .discover-page {
+    #discover-filters-parent {
+      top: -35px;
+    }
+  }
 }
 
 #discover-filters {
@@ -565,8 +628,7 @@ Filters / Tags Style Rules
   background-image: linear-gradient(to right, #00000000 30%, var(--bg-color) 70%);
 }
 
-#more-filters-scroll-container
-{
+#more-filters-scroll-container {
   display: flex;
   flex-wrap: nowrap;
 }
@@ -578,6 +640,7 @@ Filters / Tags Style Rules
   width: 40px;
   flex-shrink: 0;
 }
+
 .more-filters-scroller.hide {
   display: block !important;
   visibility: hidden;
@@ -625,6 +688,7 @@ Filters / Tags Style Rules
   margin: 0 5px;
   border-radius: 30px;
   flex-shrink: 0;
+  transition: all 0.2s ease-in-out;
 }
 
 #discover-more-filters-container {
@@ -638,6 +702,14 @@ Filters / Tags Style Rules
 #discover-more-filters:hover {
   background-color: var(--header-color);
   color: var(--main-text);
+  transform: translateY(-1px);
+  opacity: 0.85;
+}
+
+.discover-tag-filter:active,
+#discover-more-filters:active {
+  transform: translateY(0px);
+  opacity: 1;
 }
 
 .discover-tag-filter-selected {
@@ -658,6 +730,7 @@ Filters / Tags Style Rules
   background: none;
   border: none;
   border-radius: 30px;
+  transition: all 0.2s ease-in-out;
 
   img {
     height: 30px;
@@ -732,6 +805,7 @@ Filters / Tags Style Rules
   font-size: medium;
   flex-shrink: 0;
   text-align: left;
+  transition: all 0.2s ease-in-out;
 
   p {
     margin: 0px;
@@ -856,7 +930,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-blue)!important;
+    color: var(--tag-text-unselected-blue) !important;
   }
 }
 
@@ -876,7 +950,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-purple)!important;
+    color: var(--tag-text-unselected-purple) !important;
   }
 }
 
@@ -896,7 +970,7 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-grey)!important;
+    color: var(--tag-text-unselected-grey) !important;
   }
 }
 
@@ -916,13 +990,13 @@ Filters / Tags Style Rules
   }
 
   .fa {
-    color: var(--tag-text-unselected-periwinkle)!important;
+    color: var(--tag-text-unselected-periwinkle) !important;
   }
 }
 
 .tag-unselected:hover {
   p {
-    color: var(--tag-text-selected); 
+    color: var(--tag-text-selected);
   }
 
   .fa {
@@ -936,7 +1010,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-red-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -950,7 +1024,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-orange-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -964,7 +1038,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-yellow-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -978,7 +1052,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-green-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -992,7 +1066,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-blue-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -1006,7 +1080,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-purple-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
   .fa {
@@ -1020,7 +1094,7 @@ Filters / Tags Style Rules
   border-color: var(--tag-grey-selected);
 
   p {
-    color: var(--tag-text-selected) !important; 
+    color: var(--tag-text-selected) !important;
   }
 
 }
@@ -1037,7 +1111,13 @@ Filters / Tags Style Rules
 
 .tag-button:hover {
   cursor: pointer;
-  transition: 0.2s;
+  opacity: 0.85;
+  transform: translateY(-1px);
+}
+
+.tag-button:active {
+  transform: translateY(0px);
+  opacity: 1;
 }
 
 .tag-label:hover {

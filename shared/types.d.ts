@@ -615,7 +615,7 @@ export interface UserPreview {
    * The user's preference on whether or not they wish to display their phone number on their profile
    */
   displayPhone: boolean;
-  
+
   /**
    * The user's preference on whether or not they wish to display their phone number on their profile
    */
@@ -1378,8 +1378,9 @@ export type EmailInput = {
  * Data required to change a member's role in a project
  */
 export type UpdateProjectMemberInput = Partial<
-  Pick<CreateProjectMemberInput, "roleId">
->;
+  Pick<CreateProjectMemberInput, "roleId">> & {
+    profileVisibility?: Visibility;
+  };
 
 /**
  * Data required to add a social media link to a project

@@ -268,12 +268,12 @@ const Profile = (userProfile : any) => {
         hideSearchBar={true}
         onChange={() => { }}
         setCurrentUserId={getProfileData} //brother you're not even passing anything
+        hideBackButton={false}
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
       <main id="main" tabIndex={-1}>
         <div id="profile-page-content">
-          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="profile-hero">
             <div id="profile-img-container">
               <img
@@ -358,18 +358,19 @@ const Profile = (userProfile : any) => {
                 {/* TODO: make icon for email and phone */}
                 {displayedProfile?.username ? 
                 <a href={`mailto:${displayedProfile?.username}@g.rit.edu`}>  
-                <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
+                <ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
                 {displayedProfile?.username}@g.rit.edu</a>
-                : <a><ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
+                : <a><ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
               </div>
-              <div id="profile-number">
-                {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
-                <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>  
-                <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
-                {displayedProfile.phoneNumber}</a>
-                //dead link when no number
-                : <a><ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no phone number</a>}
-              </div>
+              {/* Show phone number if present */}
+              {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
+                <div id="profile-number">
+                  <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>  
+                  <ThemeIcon id={'phone'} width={25} height={25} className={'mono-fill'} ariaLabel={'phone'}/>
+                  {displayedProfile.phoneNumber}</a>
+                </div>
+              //dead link when no number
+              : <></>}
               {/* Add social links if present */}
               {displayedProfile?.socials && (
                 <div id="about-me-buttons">

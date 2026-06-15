@@ -38,25 +38,24 @@ Profile Panel component style rules
 }
 
 .profile-panel {
+  display: flex;
   width: 240px;
   flex-shrink: 0;
-  height: 280px;
+  height: auto;
   border: none;
   border-radius: 10px;
   background-color: var(--header-color);
   position: relative;
-  display: flex;
   flex-direction: column;
   /* justify-content: start; */
   /* align-items: center; */
   text-align: left;
-  padding: 0;
+  padding: 0 0 20px 0;
   margin: 0 auto;
   overflow: hidden;
 
   img {
     width: 100%;
-    height: 180px;
     object-fit: cover;
     align-self: center;
     /* background-color: var(--primary-color); */
@@ -98,8 +97,8 @@ Profile Panel component style rules
   }
 }
 
-.profile-panel-hover {
-  position: absolute;
+.profile-panel-extras {
+  position: relative;
   border-radius: 0 0 10px 10px;
   background-color: var(--header-color);
   color: var(--main-text);
@@ -109,33 +108,20 @@ Profile Panel component style rules
   bottom: 0;
   left: 0;
   right: 0;
-  transform: translateY(calc(100% - 105px));
-  transition: transform 0.25s ease-out;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
   gap: 10px;
   text-align: left;
-  padding: 0 0 10px 0;
+  padding: 0;
   overflow: hidden;
-  box-sizing: border-box;
+  box-sizing: content-box;
+}
 
-  #heart-empty,
-  #heart-filled {
-    position: absolute;
-    top: 14px;
-    right: 14px;
-    opacity: 0;
-    transition: opacity 0.2s;
-  }
-
-  #heart-empty {
-    stroke: #F14F76;
-  }
-
-  #heart-filled {
-    fill: #F14F76;
-  }
+.profile-panel-hover {
+  display: none;
+  opacity: 0;
+  transition: opacity 0.15s ease-in-out;
 }
 
 @media only screen and (hover: none) {
@@ -180,8 +166,60 @@ Profile Panel component style rules
   }
 }
 
+.profile-panel-hover:hover {
+  opacity: 1;
+
+  h2 {
+    text-decoration: underline 3px;
+  }
+}
+
+
 .profile-panel:hover .profile-panel-hover {
-  transform: translateY(0);
+  position: absolute;
+  border-radius: 0 0 10px 10px;
+  background-color: var(--header-color);
+  color: var(--main-text);
+  height: 100%;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  text-align: left;
+  padding: 0 0 10px 0;
+  overflow: hidden;
+  box-sizing: content-box;
+
+  .name-and-heart {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+  }
+
+  #heart-empty,
+  #heart-filled {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  #heart-empty {
+    stroke: #F14F76;
+  }
+
+  #heart-filled {
+    fill: #F14F76;
+  }
+}
+
+.profile-panel:hover .profile-panel-extras {
   cursor: pointer;
 }
 
@@ -190,10 +228,11 @@ Profile Panel component style rules
   opacity: 1;
 }
 
-@media (max-width: 660px){
-  .profile-panel{
-    width: clamp(200px, 300px, 300px) !important;
+@media (max-width: 499px) {
+  .profile-panel {
+    width: clamp(180px, 250px, 250px) !important;
     display: flex;
+
 
     img {
       border-radius: 10px !important;
@@ -204,11 +243,19 @@ Profile Panel component style rules
   }
 }
 
-@media (max-width: 799px){
-  .profile-panel{
-    width: clamp(200px, 250px, 250px) !important;
+@media (min-width: 500px) and (max-width: 555px) {
+  .profile-panel {
+    width: 98% !important;
     display: flex;
-  
+
+  }
+}
+
+@media (min-width: 556px) and (max-width: 799px) {
+  .profile-panel {
+    width: clamp(180px, 250px, 250px) !important;
+    display: flex;
+
 
     img {
       border-radius: 10px !important;
@@ -1295,7 +1342,8 @@ New Profile page style rules
   margin: 20px 0;
   height: fit-content;
 
-  #socials, #skills {
+  #socials,
+  #skills {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -1303,7 +1351,7 @@ New Profile page style rules
     background-color: var(--header-color);
     border-radius: 10px;
     padding: 10px 10px 10px 20px;
-    height: 200px;
+    height: auto;
 
     #title {
       color: var(--primary-color);
@@ -1335,6 +1383,11 @@ New Profile page style rules
       font-style: italic;
       gap: 10px;
       text-decoration: none;
+    }
+
+    #profile-email a:hover,
+    #profile-number a:hover {
+      text-decoration: underline;
     }
   }
 
@@ -1444,6 +1497,15 @@ New Profile page style rules
     #profile-buttons,
     #profile-extras {
       margin-right: 20px;
+    }
+  }
+
+  #profile-extra {
+    flex-direction: column;
+
+    #socials,
+    #skills {
+      width: auto;
     }
   }
 }

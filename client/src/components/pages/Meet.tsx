@@ -67,17 +67,17 @@ export const ProfileMeetPage = () => {
   );
 
   //all of the needed states
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [currentSearch, setCurrentSearch] = useState('');
   const [fullUserList, setFullUserList] = useState<UserPreview[]>([]);
   const [userCache, setUserCache] = useState<NumberDictionary<StructuredUserInfo>>({});
 
   const [filteredUserList, setFilteredUserList] = useState<UserPreview[]>([]);
-  const [userSearchData, setUserSearchData] = useState<UserPreview[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   const userDataSet = useMemo(() => {
-    return [{ data: userSearchData }];
-  }, [userSearchData]);
+    return [{ data: fullUserList }];
+  }, [fullUserList]);
 
   /**
  * Loads the current user and their followed projects so follow icons render immediately.
@@ -116,6 +116,8 @@ export const ProfileMeetPage = () => {
     setFilteredUserList(userRes.data);
 
     setUserSearchData(userRes.data);
+
+    setLoaded(true);
   };
 
   /**
@@ -133,7 +135,7 @@ export const ProfileMeetPage = () => {
       const resultName = result?.username || result?.value || '';
       if (!resultName) continue;
 
-      const matchIndex = userSearchData.findIndex(
+      const matchIndex = fullUserList.findIndex(
         (item) => item.username === resultName
       );
 
@@ -143,15 +145,7 @@ export const ProfileMeetPage = () => {
     }
 
     setFilteredUserList(matches);
-  }, [userSearchData, fullUserList]);
-
-  /**
- * Changes what items are shown to the user whenever a filter has been added or changed
- * @param activeTagFilters Tags that are shown to the user now
- */
-  const updateItemList = async (activeTagFilters: Tag[]) => {
-    return updateUserList(activeTagFilters);
-  };
+  }, [fullUserList]);
 
   /**
  * Changes what items are shown to the user whenever a filter has been added or changed
@@ -180,41 +174,42 @@ export const ProfileMeetPage = () => {
 
     let tagFilteredList = items.filter((item) => {
       if (activeTagFilters.length === 0) return true;
-      let matchesAny = false;
+      //let matchesAny = false;
+      let matchesAll = true;
 
       for (const tag of activeTagFilters) {
         // Check for tag label Developer
-        if (tag.label === 'Developer' && item.developer) {
-          matchesAny = true;
+        if (tag.label === 'Developer' && !item.developer) {
+          matchesAll = false;
         }
         // Check for specific skills
         else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio') {
           const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (userSkills.includes(tag.label.toLowerCase().trim())) {
-            matchesAny = true;
+          if (!(userSkills.includes(tag.label.toLowerCase().trim()))) {
+            matchesAll = false;
           }
         }
-        else if (tag.label === 'Designer' && item.designer) {
-          matchesAny = true;
+        else if (tag.label === 'Designer' && !item.designer) {
+          matchesAll = false;
         }
         else if (tag.label === 'Audio') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
+          if (!(userSkills.includes(tag.label.toLowerCase().trim()))) matchesAll = false;
         }
         else if (tag.label === 'Soft') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (userSkills.includes(tag.label.toLowerCase().trim())) matchesAny = true;
+          if (!(userSkills.includes(tag.label.toLowerCase().trim()))) matchesAll = false;
         }
-        else if (tag.label === 'Other' && !item.designer && !item.developer) {
-          matchesAny = true;
+        else if (tag.label === 'Other' && (item.designer || item.developer)) {
+          matchesAll = false;
         }
         // Check role and major by name since IDs are not unique relative to tags
         /* it seems roles are not yet implimented
@@ -226,12 +221,12 @@ export const ProfileMeetPage = () => {
         else if (tag.type === 'Major' && item.majors) {
           const userMajors = item.majors?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
-          if (userMajors.includes(tag.label.toLowerCase())) {
-            matchesAny = true;
+          if (!(userMajors.includes(tag.label.toLowerCase()))) {
+            matchesAll = false;
           }
         }
       }
-      return matchesAny;
+      return matchesAll;
     });
 
     // If no tags are currently selected, render all projects
@@ -239,7 +234,6 @@ export const ProfileMeetPage = () => {
     if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
       tagFilteredList = JSON.parse(JSON.stringify(fullUserList));
 
-      setUserSearchData(fullUserList);
       setFilteredUserList(fullUserList);
       return;
     }
@@ -253,7 +247,7 @@ export const ProfileMeetPage = () => {
   useMemo(() => setupUserData(), []);
 
   let discoverPanelContents: React.ReactElement;
-  if (filteredUserList.length === 0 && !fullUserList) {
+  if (!loaded) {
     discoverPanelContents = (
       <div className='placeholder-spacing'>
         <div className='spinning-loader'></div>
@@ -280,7 +274,7 @@ export const ProfileMeetPage = () => {
         Changes to filters via filter menu are only applied after a confirmation
       */}
       <main id="main" tabIndex={-1} aria-label='main content'>
-        <DiscoverFilters category={'profiles'} updateItemList={updateItemList} />
+        <DiscoverFilters category={'profiles'} updateItemList={updateUserList} />
 
         {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
         <div id="discover-panel-box">

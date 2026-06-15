@@ -27,6 +27,7 @@ type HeaderProps = {
   value? : string;
   onChange? : (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar? : boolean;
+  hideBackButton? : boolean;
   setCurrentUserId?: (data: MePrivate | undefined) => Promise<void>;
 };
 
@@ -45,7 +46,7 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, setCurrentUserId}) => {
+export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, hideBackButton = true, setCurrentUserId}) => {
   // User info state
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -173,6 +174,12 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
           />
         </div>
       )}
+
+      {/* Conditional rendering for back button*/}
+      {(!hideBackButton) && (<div className="project-back-btn-header">
+        <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
+      </div>)}
+
       <div id="header-buttons">
         {/* Notififcations not being used rn */}
         {/* <Dropdown>
@@ -277,10 +284,12 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 </a>
 
                 {/* LOG OUT Button */}
-                <button onClick={() => {
-                  if(userId) googleLogout(userId);
-                  navigate(paths.routes.HOME, {replace: true});
-                  
+                <button onClick={async () => {
+                  if(userId) {
+                    await googleLogout(userId);
+                    navigate(paths.routes.HOME);
+                    window.location.reload();
+                  }
                   }}>
                   <ThemeIcon id={'logout'} width={25} height={25} className={'mono-fill'} ariaLabel={'log out'}/>
                   Log Out

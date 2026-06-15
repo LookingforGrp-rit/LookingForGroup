@@ -21,6 +21,7 @@ import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import AboutFooter from "../AboutFooter";
+import usePreloadedImage from '../../functions/imageLoad';
 
 //Main component for the project page
 /**
@@ -145,17 +146,19 @@ const Project = (userProfile : any) => {
     if (!loggedIn) {
       navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
     } else {
-      const toggleFollow = !(await checkFollow());
+      const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
       if (toggleFollow) {
-        await addProjectFollowing(projectID);
         setFollowCount(followCount + 1);
+        await addProjectFollowing(projectID);
       } else {
-        await deleteProjectFollowing(projectID);
         setFollowCount(followCount - 1);
+        await deleteProjectFollowing(projectID);
       }
     }
   };
+
+  checkFollow();
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
@@ -293,6 +296,13 @@ const Project = (userProfile : any) => {
           // }
           const memberUser = member.user; //so i don't have to go user.user.userId or anything
 
+          // Use placeholder image if user does not have a profile picture
+          let userProfile = memberUser.profileImage
+          if(!memberUser.profileImage)
+          {
+            userProfile = profileImage;
+          }
+
           return (
             <a
               key={memberUser.userId}
@@ -301,9 +311,8 @@ const Project = (userProfile : any) => {
             >
               <img
                 className="project-contributor-profile"
-                src={memberUser.profileImage ?? profileImage}
+                src={userProfile!}
                 alt="contributor profile"
-                // Cannot use usePreloadedImage function because this is in a callback
                 onError={(e) => {
                   const profileImg = e.target as HTMLImageElement;
                   profileImg.src = profileImage;
@@ -416,13 +425,13 @@ const Project = (userProfile : any) => {
         value={undefined}
         onChange={undefined}
         setCurrentUserId={getProjectData}
+        hideBackButton={false}
       />
 
       {displayedProject === undefined ? (
         loadingProject
       ) : (
         <main id="main" tabIndex={-1} aria-label="main content" >
-          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="project-page-content">
             <ProjectCarousel project={displayedProject} videos={videos}></ProjectCarousel>
             <div id="project-info-panel">
@@ -443,7 +452,9 @@ const Project = (userProfile : any) => {
                 <div id="project-creation">
                   Created by:{" "}
                   <span className="project-info-highlight">
-                    {projectLead?.firstName} {projectLead?.lastName}
+                    <a href={`${paths.routes.PROFILE}?userID=${projectLead?.userId}`}>
+                      {projectLead?.firstName} {projectLead?.lastName}
+                    </a>
                   </span>
                   <br />
                   {new Date(
@@ -454,6 +465,7 @@ const Project = (userProfile : any) => {
                     day: "numeric",
                   })}
                 </div>
+                {displayedProject.jobs.length > 0 ?
                 <Popup>
                   <PopupButton buttonId="project-open-positions-button">
                     Open Positions
@@ -463,6 +475,7 @@ const Project = (userProfile : any) => {
                       viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
                   </PopupContent>
                 </Popup>
+                : "" }
               </div>
               <div id="project-tags">
                 <div id="tags">
@@ -568,7 +581,9 @@ const Project = (userProfile : any) => {
 
             <div id="project-open-positions">
               <div className="centerer">
+                {displayedProject.jobs.length > 0 ?
                 <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
+                : ""}
               </div>
 
               <div id="project-open-positions-list">

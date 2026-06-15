@@ -166,6 +166,8 @@ components:
       properties:
         roleId:
           type: number
+        profileVisibility:
+          type: string
 
     AddProjectSocialInput:
       type: object

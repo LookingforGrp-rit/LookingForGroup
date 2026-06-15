@@ -22,10 +22,12 @@ import NotFound from './components/pages/NotFound';
 import SideBar from './components/Sidebar';
 // import MessageHistory from './components/pages/MessageHistory';
 import CreateProject from './components/pages/CreateProject';
+import AcceptInvitation from './components/pages/AcceptInvitation';
 //import CreditsFooter from './components/CreditsFooter';  -- Commented in clean up 26-20-01 
 import Credits from './components/pages/CreditsPage';
 import AccountActivation from './components/pages/AccountActivation';
 import { ThemeContext } from './contexts/ThemeContext';
+import AboutPage from './components/pages/About';
 
 import uselocalstorage from 'use-local-storage';
 import { getCurrentAccount } from './api/users';
@@ -94,6 +96,7 @@ function App() {
           <Route path={paths.routes.PROFILE} element={<Profile  />} />
           <Route path={paths.routes.PROJECT} element={<Project  />} />
           <Route path={paths.routes.CREATEPROJECT} element={<CreateProject />} />
+          <Route path={paths.routes.ACCEPTINVITATION} element={<AcceptInvitation />} />
           {/* <Route path={paths.routes.PROJECTPOST} element={<ProjectPostPage />} /> */}
           {/* <Route
             path={paths.routes.SETTINGS}
@@ -110,6 +113,7 @@ function App() {
           <Route path={paths.routes.NOTFOUND} element={<NotFound />} />
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
           <Route path={paths.routes.CREDITS} element={<Credits />} />
+          <Route path={paths.routes.ABOUT} element={<AboutPage />} />
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
         </Routes>
         {/* <CreditsFooter /> */}

@@ -26,6 +26,7 @@
   background-color: transparent;
   border: none;
   font-size: 1rem;
+  transition: all 0.2s ease-in-out;
   padding: 10px;
 }
 #profile-editor-add-link > * {
@@ -46,7 +47,14 @@
 ** No other instances to reference either.
 */
 #profile-editor-add-link:hover {
-  /* background-color: var(--bg-color); */
+  opacity: 0.85;
+  transform: translateY(-1px);
+  cursor: pointer;
+}
+
+#profile-editor-add-link:active {
+  transform: translateY(0px);
+  opacity: 1;
 }
 
 .link-input-wrapper {
@@ -65,6 +73,18 @@
   right: 12px;
   top: 0;
   transform: translateX(-10%) translateY(90%);
+  transition: all 0.2s ease-in-out;
+}
+
+.close-btn:hover {
+  opacity: 0.85;
+  transform: translateX(-10%) translateY(calc(90% - 1px));
+  cursor: pointer;
+}
+
+.close-btn:active {
+  transform: translateX(-10%) translateY(90%);
+  opacity: 1;
 }
 
 .close-btn>.fa-minus {

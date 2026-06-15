@@ -359,6 +359,25 @@ export const updateMember = async (
 };
 
 /**
+ * Updates an existing pending member in a project
+ * @param projectID - ID of the target project
+ * @param userId - database ID of the member
+ * @param memberData - Data with which to add a member
+ * @returns Response status
+ */
+export const updatePendingMember = async (
+  projectID: number,
+  userId: number,
+  memberData: UpdateProjectMemberInput
+): Promise<ApiResponse<ProjectMember>> => {
+  const apiURL = `/projects/${projectID}/members/${userId}/accept`;
+  const response = await PATCH(apiURL, memberData);
+
+  if (response.error) console.log(`Error in updatePendingMember: ${response.error}`);
+  return response as ApiResponse<ProjectMember>;
+};
+
+/**
  * Removes a member from a project
  * @param projectID - ID of the target project
  * @param userId - ID of the target user

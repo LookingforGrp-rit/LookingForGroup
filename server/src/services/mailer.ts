@@ -1,24 +1,29 @@
 import type { EmailInput } from '@looking-for-group/shared';
 import nodemailer from 'nodemailer';
+import envConfig from '#config/env.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type SendEmailServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 type SendEmailServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
+// For development testing, this uses mailpit as the SMTP
+// install from https://mailpit.axllent.org
+// run `mailpit` in terminal to start mailpit
 // open http://localhost:8025 in browser to see webUI
 
 //Make sure this only happens once
 //Create a transporter using SMTP
-//Using local for now
 const transporter = nodemailer.createTransport({
-  host: 'localhost',
-  port: 1025, // mailpit default SMTP port
+  host: envConfig.env === 'development' ? 'localhost' : 'smtp.resend.com',
+  port: envConfig.env === 'development' ? 1025 : 587, // 1025 is mailpit default SMTP port
   secure: false, // use STARTTLS (upgrade connection to TLS after connecting)
-
-  // auth: {
-  //   user: process.env.SMTP_USER,
-  //   pass: process.env.SMTP_PASS,
-  // },
+  auth:
+    envConfig.env === 'development'
+      ? {}
+      : {
+          user: process.env.SMTP_USER,
+          pass: process.env.SMTP_PASS,
+        },
 });
 
 /**
@@ -40,8 +45,12 @@ const sendEmail = async (
 
   try {
     const info = await transporter.sendMail({
-      from: `"${email.inviter.firstName} ${email.inviter.lastName}" <${email.inviter.ritEmail}>`, // sender address
-      to: `"${email.invitee.firstName} ${email.invitee.lastName}" <${email.invitee.ritEmail}>`, // recipient
+      from:
+        envConfig.env === 'development'
+          ? `"${email.inviter.firstName} ${email.inviter.lastName}" <${email.inviter.ritEmail}>`
+          : `"Looking For Group" <lfg@lfg.gccis.rit.edu>`,
+      replyTo: `"${email.inviter.firstName} ${email.inviter.lastName}" <${email.inviter.ritEmail}>`, // inviter
+      to: `"${email.invitee.firstName} ${email.invitee.lastName}" <${email.invitee.ritEmail}>`, // invitee
       subject: email.subject, // subject line
       text: email.textBody, // plain text body
       html: email.HTMLBody, // HTML body

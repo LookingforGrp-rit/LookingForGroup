@@ -17,6 +17,7 @@ export const DiscoverPage = () => {
   // --------------------
   // Components
   // --------------------
+  const [loaded, setLoaded] = useState<boolean>(false);
   const [currentSearch, setCurrentSearch] = useState('');
 
   // Full data and displayed data based on filter/search query
@@ -24,7 +25,6 @@ export const DiscoverPage = () => {
   const [projectCache, setProjectCache] = useState<NumberDictionary<StructuredProjectInfo>>({});
 
   const [filteredProjectList, setFilteredProjectList] = useState<ProjectPreview[]>([]);
-  const [projectSearchData, setProjectSearchData] = useState<ProjectPreview[]>([]);
   const [heroProjectList, setHeroProjectList] = useState<ProjectWithFollowers[]>([]);
 
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
@@ -32,20 +32,12 @@ export const DiscoverPage = () => {
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
-    return [{ data: projectSearchData }];
-  }, [projectSearchData]);
+    return [{ data: fullProjectList }];
+  }, [fullProjectList]);
 
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = <DiscoverCarousel dataList={heroProjectList} />
-
-  /**
- * Changes what items are shown to the user whenever a filter has been added or changed
- * @param activeTagFilters Tags that are shown to the user now
- */
-  const updateItemList = async (activeTagFilters: Tag[]) => {
-    return updateProjectList(activeTagFilters);
-  };
 
   // --------------------
   // Helper functions
@@ -126,7 +118,7 @@ export const DiscoverPage = () => {
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
     const projectRes = await getProjects();
-    console.log(projectRes);
+    console.log(projectDataSet);
 
     if (!projectRes.data) return;
 
@@ -163,10 +155,10 @@ export const DiscoverPage = () => {
     setFullProjectList(projectRes.data);
     setFilteredProjectList(projectRes.data);
 
-    setProjectSearchData(projectRes.data);
-
     getShowcaseDetails(projectRes.data, newProjectCache);
     setProjectCache(newProjectCache);
+
+    setLoaded(true);
   };
 
   /**
@@ -244,7 +236,6 @@ export const DiscoverPage = () => {
     if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
       tagFilteredList = JSON.parse(JSON.stringify(fullProjectList));
 
-      setProjectSearchData(fullProjectList);
       setFilteredProjectList(fullProjectList);
       return;
     }
@@ -276,7 +267,7 @@ export const DiscoverPage = () => {
       const resultName = result?.title || result?.name || result?.value || '';
       if (!resultName) continue;
 
-      const matchIndex = projectSearchData.findIndex(
+      const matchIndex = fullProjectList.findIndex(
         (item) => item.title === resultName
       );
 
@@ -306,11 +297,11 @@ export const DiscoverPage = () => {
       }
       setProjectCache(newCache);
     })();
-  }, [projectSearchData, fullProjectList, projectCache]);
+  }, [fullProjectList, projectCache]);
 
   //gets the discover stuff at the bottom
   let discoverPanelContents: React.ReactElement
-  if (filteredProjectList.length === 0 && !fullProjectList) {
+  if (!loaded) {
     discoverPanelContents = (
       <div className='placeholder-spacing'>
         <div className='spinning-loader'></div>
@@ -330,7 +321,7 @@ export const DiscoverPage = () => {
 
 
   return (
-    <div className="page" tabIndex={-1}>
+    <div className="page discover-page" tabIndex={-1}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
@@ -346,7 +337,7 @@ export const DiscoverPage = () => {
         Changes to filters via filter menu are only applied after a confirmation
       */}
       <main id="main" tabIndex={-1} aria-label='main content'>
-        <DiscoverFilters category={'projects'} updateItemList={updateItemList} />
+        <DiscoverFilters category={'projects'} updateItemList={updateProjectList} />
 
         {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
         <div id="discover-panel-box">

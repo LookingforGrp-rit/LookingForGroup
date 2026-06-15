@@ -52,12 +52,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const navigate = useNavigate();
-  const projectID = urlParams.get("projectID");
 
   // --- Hooks ---
 
   // Stores current project data: represents actual data from the server
   const [projectData, setProjectData] = useState<ProjectWithFollowers>();
+
+  // Stores current project id
+  const [projectID, setProjectID] = useState<number>(0);
 
   // Tracks temporary project data changes before saving: compared against projectData
   const [modifiedProject, setModifiedProject] = useState<PendingProject>();
@@ -141,6 +143,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setSaved(true);
     setOpen(true);
     setConfirm(false);
+    setMessage("Project is missing a medium!");
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
       //redirect user to login if they aren't logged in
@@ -175,6 +178,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           setProjectData(data);
           setModifiedProject(data);
+          setProjectID(data.projectId);
           console.log(projectData);
         }
       } catch (err) {
@@ -184,7 +188,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     if (startButton.current) {
       (startButton.current as unknown as HTMLElement).focus();
     }
-    updateMessage();
   }
 
   buttonCallback = createOrEdit;
@@ -196,13 +199,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    * @returns void
    */
   const updateLinks = async () => {
-    if (newProject || !projectID) return; // Only for existing projects
-
-    const projectNumID = Number(projectID);
-
     try {
       // Get current socials from database
-      const currentSocialsResponse = await getProjectSocials(projectNumID);
+      const currentSocialsResponse = await getProjectSocials(projectID);
       const currentSocials = currentSocialsResponse.data || [];
 
       // Process each social in the modified project
@@ -215,11 +214,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         if (existingSocial) {
           // Update existing social if URL changed
           if (existingSocial.url !== social.url) {
-            await updateProjectSocial(projectNumID, social.websiteId, { url: social.url });
+            await updateProjectSocial(projectID, social.websiteId, { url: social.url });
           }
         } else {
           // Create new social
-          await addProjectSocial(projectNumID, { websiteId: social.websiteId, url: social.url });
+          await addProjectSocial(projectID, { websiteId: social.websiteId, url: social.url });
         }
       }
 
@@ -230,7 +229,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       for (const currentSocial of currentSocials) {
         if (!modifiedSocialIds.includes(currentSocial.websiteId)) {
-          await deleteProjectSocial(projectNumID, currentSocial.websiteId);
+          await deleteProjectSocial(projectID, currentSocial.websiteId);
         }
       }
     } catch (error) {
@@ -245,7 +244,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     if (!open) return;
     if (!saved) {
       toggleConfirm();
-      return; 
+      return;
     }
     // Only delete if this is a new project AND it was not saved yet
     if (projectData && newProject) {
@@ -258,19 +257,22 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const deleteNoSave = useCallback(() => {
     if (!open) return;
     // Only delete if this is a new project AND it was not saved yet
-    if (projectData && newProject) {
+    if (projectData && newProject && !saved) {
       deleteProject(projectData?.projectId);
       setOpen(false);
       setSaved(true);
     }
-  }, [open, projectData, newProject]);
+  }, [saved, open, projectData, newProject]);
 
   useEffect(() => {
     //for chrome
-    window.addEventListener("beforeunload", deleteNoSave, {once: true, passive: false});
-    
+    window.addEventListener("beforeunload", deleteNoSave, { once: true, passive: false });
+
     //for firefox
-    window.addEventListener("pagehide", deleteNoSave, {once: true, passive: false});
+    window.addEventListener("pagehide", deleteNoSave, { once: true, passive: false });
+
+    // if not a new project, get project id from url (existing project)
+    if (!newProject) setProjectID(Number(urlParams.get("projectID")));
   }, [open, projectID, newProject]);
 
   const toggleConfirm = async () => {
