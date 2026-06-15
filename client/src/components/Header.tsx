@@ -223,7 +223,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
           {/* These are its elements once opened (unique for logged out/in) */}
           <DropdownContent rightAlign={true}>
             {!loggedIn ? (
-              <div id="header-profile-dropdown" style={{ height: 150 }}>
+              <div id="header-profile-dropdown">
 
                 {/* (Blank) Profile Icon */}
                 <button id="header-profile-user">
@@ -246,6 +246,12 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 <a href={paths.routes.LOGIN}>
                   <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
                   Log In
+                </a>
+
+                {/* SIGN UP Button */}
+                <a href={paths.routes.SIGNUP}>
+                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
+                  Sign Up
                 </a>
               </div>
 
