@@ -98,6 +98,18 @@ model ProjectImages {
   @@map("project_images")
 }
 
+model ProjectVideos {
+  videoId    Int       @id @default(autoincrement()) @map("video_id")
+  videoUrl   String    @db.VarChar(100) @map("video_url")
+  title      String    @db.VarChar(150)
+  position   Int
+  projectId  Int       @map("project_id")
+  projects   Projects  @relation("ProjectVideos", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_videos_projects")
+
+  @@index([projectId], map: "FK_project_videos_projects")
+  @@map("project_videos")
+}
+
 model ProjectSocials {
   projectId Int      @map("project_id")
   websiteId Int      @map("website_id")
@@ -139,6 +151,7 @@ model Projects {
   members           Members[]
   projectFollowings ProjectFollowings[]
   projectImages     ProjectImages[]     @relation("ProjectImages")
+  projectVideos     ProjectVideos[]     @relation("ProjectVideos")
   projectSocials    ProjectSocials[]
   globalVisibility  Visibility          @map("global_visibility")
   mediums           Mediums[]

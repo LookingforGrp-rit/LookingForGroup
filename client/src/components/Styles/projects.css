@@ -36,7 +36,7 @@ Project Panel component style rules
 
 /* Cheap way to work around the padding */
 .masonry {
-  margin: 0 -10px; 
+  margin: 0 -10px;
   height: 100%;
   width: calc(100% + 20px);
   margin-bottom: 60px;
@@ -109,10 +109,11 @@ Project Panel component style rules
     }
   }
 
-  
+
   a {
     text-decoration: none;
   }
+
   .project-image-container {
     position: relative;
     /* display: flex; */
@@ -153,6 +154,10 @@ Project Panel component style rules
       word-break: break-word;
     }
 
+    h2:hover {
+      text-decoration: underline 3px;
+    }
+
     .project-likes {
       display: flex;
       flex-direction: row-reverse;
@@ -187,6 +192,8 @@ Project Panel component style rules
       #heart-filled:hover {
         transform: scale(1.2);
       }
+
+
     }
   }
 
@@ -214,7 +221,7 @@ Project Panel component style rules
     cursor: pointer;
   }
 
-  .project-panel-meta > .project-panel-meta-plus {
+  .project-panel-meta>.project-panel-meta-plus {
     display: none;
   }
 
@@ -575,10 +582,6 @@ Project Creator and Editor Popup style rules
   #project-team-add-member-name input {
     padding-bottom: 30px;
   }
-
-  #project-editor-selected-tags {
-    width: 60%;
-  }
 }
 
 #project-editor-content select {
@@ -725,10 +728,13 @@ Project Creator and Editor Popup style rules
   grid-area: desc;
   display: flex;
   flex-direction: column;
-  overflow: auto;
   min-height: 150px;
   flex: 1 1 auto;
   overflow-y: visible;
+
+  .input-multiline-container {
+    overflow-y: auto;
+  }
 }
 
 /* Project Editor/Creator Media Tab */
@@ -940,7 +946,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   max-height: 347px;
   padding-bottom: 26px;
-  
+
   .error {
     margin-top: 15px;
   }
@@ -1716,8 +1722,10 @@ button.edit-position-contact .project-member-image {
 }
 
 .project-crop {
-  width: 70%;
+  width: 100%;
   text-align: center;
+  height: 1100px;
+  margin: 0 20px;
 
   #project-crop-header {
     display: block;
@@ -1727,7 +1735,8 @@ button.edit-position-contact .project-member-image {
   #canvas {
     border: 3px solid var(--main-text);
     margin: 1vw 0;
-    width: 100%;
+    object-fit: cover;
+    height: 400px;
   }
 
   img {
@@ -1735,18 +1744,23 @@ button.edit-position-contact .project-member-image {
   }
 
   input[type="range"] {
-    width: 50%;
+    width: 400px;
     background: none;
     margin: 0.5em;
   }
 
   #zoom-row,
   #xTrans-row,
-  #yTrans-row {
+  #yTrans-row,
+  #aspect-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+  }
+
+  #aspect-row .select-container {
+    width: 85px;
   }
 
   .project-crop-extra-info {
@@ -1880,7 +1894,7 @@ Project page style rules
   padding-right: 1vw;
   padding-left: 1vw;
   width: 94%;
-  align-items:baseline;
+  align-items: baseline;
 
   #tags {
     display: flex;
@@ -1900,6 +1914,7 @@ Project page style rules
     border: 2px solid var(--main-text);
     border-radius: 100px;
     background: none;
+
     p {
       font-size: 1.2rem;
       margin: 0;
@@ -3347,10 +3362,6 @@ button#positions-popup-list-item-active {
   #edit-position-details-right {
     flex-wrap: nowrap;
   }
-
-  .positions-popup-info-wrapper {
-    max-width: 100%;
-  }
 }
 
 @media only screen and (max-width: 395px) {
@@ -3404,6 +3415,7 @@ button#positions-popup-list-item-active {
   .positions-popup-info-wrapper {
     margin-right: 0%;
     min-height: fit-content;
+    width: 100%;
   }
 
   /* #project-team-open-positions-info {
@@ -4152,6 +4164,12 @@ My projects page style rules
 
   button:hover {
     background-color: var(--header-color);
+  }
+}
+
+@media (max-width: 799px) and (max-height:850px) {
+  .my-projects-grid {
+    padding-bottom: 20%;
   }
 }
 

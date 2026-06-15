@@ -78,7 +78,7 @@ export const AboutTab = ({
 	/**
 	 * Saves the uploaded image to the profile.
 	 */
-	const handleFileSelected = useCallback(async () => {
+	const handleFileSelected = useCallback(async (file: File) => {
 		//get the image uploader element
 		const imageUploader = document.getElementById(
 			"image-uploader"
@@ -86,8 +86,6 @@ export const AboutTab = ({
 
 		if (!imageUploader?.files?.length) return;
 
-		//get the image itself (there will always be only one)
-		const file = imageUploader.files[0];
 		if (!["image/jpeg", "image/png"].includes(file.type)) return;
 
 		//and we got it!

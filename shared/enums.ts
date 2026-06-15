@@ -91,3 +91,11 @@ export interface BaseUrlValidation { //a surprise tool that'll help us later
   Itch: '.itch.io',
   Other: 'https://' //idk what imma do with this but for now we'll just make sure it's a working link (TERRIBLE! AWFUL IDEA!)
 }
+
+export enum AspectRatios {
+  '16/9',
+  '4/3',
+  '1/1',
+  '2/3',
+  '6/13',
+}
