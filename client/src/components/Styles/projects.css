@@ -4069,7 +4069,7 @@ My projects page style rules
   }
 }
 
-.page#my-projects hr {
+.page#my-projects #my-projects-hr {
   box-sizing: border-box;
   border-color: var(--header-color);
   margin: 0 5vw;
