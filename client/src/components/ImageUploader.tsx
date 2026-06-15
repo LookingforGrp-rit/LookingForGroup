@@ -233,7 +233,7 @@ const ImageUploader = ({
           <label className="slider-text" htmlFor="yTrans">Ypos</label>
         </div>
         <div className="project-crop-extra-info">
-          Crop your image and change ratio that better matches the site.
+          Crop your image to a set ratio that better matches the site.
         </div>
         <div className="confirm-project-crop">
           <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
