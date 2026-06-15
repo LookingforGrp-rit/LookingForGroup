@@ -43,6 +43,7 @@ const getProjectsService = async (
     transformedProjects = transformedProjects.toSorted(
       (project1, project2) => project1.title.charCodeAt(0) - project2.title.charCodeAt(0),
     );
+
     return transformedProjects;
   } catch (e) {
     console.error(`Error in getProjectsService: ${JSON.stringify(e)}`);
