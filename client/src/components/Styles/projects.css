@@ -4067,6 +4067,8 @@ My projects page style rules
   padding: 10px;
   border-radius: 10px;
   border: none;
+  color: var(--neutral-gray);
+  bg-color: var(--bg-color);
 }
 
 .add-video {
