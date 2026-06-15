@@ -23,6 +23,7 @@ export type TagType =
   | "Designer Skill"
   | "Soft Skill"
   | "Audio Skill";
+export type TagCategory = 'Game Genre' | "Media Genre" | 'Theme' | 'Music Genre' | 'Software' | 'Feature' | 'Coding Language' | 'Other';
 export type AcademicYear =
   | "Freshman"
   | "Sophomore"
