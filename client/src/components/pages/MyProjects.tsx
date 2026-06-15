@@ -567,7 +567,7 @@ const MyProjects = (userProfile: any) => {
         </div>
       </div>
 
-      <hr />
+      <hr id='my-projects-hr'/>
 
       {/* Project Grid/List */}
       <main id="main">
