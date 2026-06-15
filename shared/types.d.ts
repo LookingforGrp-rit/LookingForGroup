@@ -1,3 +1,4 @@
+import type prisma = require("#prisma-models/index");
 import type { Request } from "express";
 import type url = require("url");
 
@@ -888,6 +889,36 @@ export interface ProjectImage {
 }
 
 /**
+ * An video displayed on a project
+ */
+export interface ProjectVideo {
+  /**
+   * The database ID corresponding with the video
+   */
+  videoId: number;
+
+  /**
+   * The URL of the video
+   */
+  videoUrl: string;
+
+  /**
+   * The video title
+   */
+  title: string;
+
+  /**
+   * The position of the video
+   */
+  position: number;
+
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+}
+
+/**
  * Represents a medium tied to a project
  */
 export interface ProjectMedium extends Medium {
@@ -1062,6 +1093,11 @@ export interface ProjectDetail extends ProjectPreview {
    * The images attached to the project
    */
   projectImages: ProjectImage[];
+
+  /**
+   * The images attached to the project
+   */
+  projectVideos: ProjectVideo[];
 
   /**
    * The social media accounts related to the project
