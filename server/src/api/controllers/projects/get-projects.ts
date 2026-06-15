@@ -1,11 +1,17 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import getService from '#services/projects/get-projects.ts';
+import getProjectsService from '#services/projects/get-projects.ts';
 
 //GET api/projects
 //gets all projects
-const getProjectsController = async (_req: Request, res: Response): Promise<void> => {
-  const result = await getService();
+const getProjectsController = async (req: Request, res: Response): Promise<void> => {
+  let result;
+  if (req.query.lastProject) {
+    const cursor = parseInt(req.query.lastProject as string);
+    result = await getProjectsService(cursor);
+  } else {
+    result = await getProjectsService();
+  }
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

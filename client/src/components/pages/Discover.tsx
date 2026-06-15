@@ -92,7 +92,7 @@ export const DiscoverPage = () => {
     const carouselProjectList = projectList.slice();
 
     // Go through carouselProjectList and only keep 3 projects with open positions
-    for (let projectPreview of carouselProjectList.sort(() => Math.random() - 0.5)) {
+    for (const projectPreview of carouselProjectList.sort(() => Math.random() - 0.5)) {
       const cachedFull = usedCache[projectPreview.projectId].full;
 
       if (cachedFull != undefined) {
@@ -125,13 +125,13 @@ export const DiscoverPage = () => {
 
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
-    const projectRes = await getProjects();
+    const projectRes = await getProjects(); //now this is only five projects
     console.log(projectRes);
 
     if (!projectRes.data) return;
 
     const newProjectCache = projectCache;
-    for (let project of projectRes.data) {
+    for (const project of projectRes.data) {
 
       const cachedProject = newProjectCache[project.projectId];
       if (!cachedProject) {
@@ -177,7 +177,7 @@ export const DiscoverPage = () => {
     const projectList = fullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
-    for (let item of projectList) {
+    for (const item of projectList) {
       if (projectCache[item.projectId].full != undefined) {
         items.push(projectCache[item.projectId].full as ProjectWithFollowers);
       }

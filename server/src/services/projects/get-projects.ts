@@ -7,17 +7,34 @@ import { transformProjectToPreview } from '#services/transformers/projects/proje
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 //GET api/projects
-const getProjectsService = async (): Promise<ProjectPreview[] | GetServiceError> => {
+const getProjectsService = async (
+  lastProj: null | number = null,
+): Promise<ProjectPreview[] | GetServiceError> => {
   try {
-    const result = await prisma.projects.findMany({
-      select: ProjectPreviewSelector,
-      orderBy: {
-        createdAt: 'desc',
-      },
-      where: {
-        approved: true,
-      },
-    });
+    const result = lastProj
+      ? await prisma.projects.findMany({
+          select: ProjectPreviewSelector,
+          take: 5,
+          cursor: {
+            projectId: lastProj,
+          },
+          orderBy: {
+            createdAt: 'desc',
+          },
+          where: {
+            approved: true,
+          },
+        })
+      : await prisma.projects.findMany({
+          select: ProjectPreviewSelector,
+          take: 5,
+          orderBy: {
+            createdAt: 'desc',
+          },
+          where: {
+            approved: true,
+          },
+        });
 
     //return transformed projects
     let transformedProjects = result.map(transformProjectToPreview);
