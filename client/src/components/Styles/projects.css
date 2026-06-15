@@ -3354,10 +3354,6 @@ button#positions-popup-list-item-active {
   #edit-position-details-right {
     flex-wrap: nowrap;
   }
-
-  .positions-popup-info-wrapper {
-    max-width: 100%;
-  }
 }
 
 @media only screen and (max-width: 395px) {
@@ -3411,6 +3407,7 @@ button#positions-popup-list-item-active {
   .positions-popup-info-wrapper {
     margin-right: 0%;
     min-height: fit-content;
+    width: 100%;
   }
 
   /* #project-team-open-positions-info {
