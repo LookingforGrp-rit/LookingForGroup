@@ -305,6 +305,7 @@ model Skills {
   skillId    Int          @id @default(autoincrement()) @map("skill_id")
   label      String       @db.VarChar(50)
   type       String       @db.VarChar(50)
+  category   String       @db.VarChar(50)
   userSkills UserSkills[]
 
   @@unique([label, type])

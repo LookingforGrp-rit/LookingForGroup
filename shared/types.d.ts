@@ -3,6 +3,7 @@ import type url = require("url");
 
 // Enums for better typing
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
+export type SkillCategory = 'Software' | 'Talent' | 'Coding Language' | 'Other';
 export type TagType =
   | "Creative"
   | "Technical"
@@ -227,6 +228,11 @@ export interface Skill {
    * The type of skill, such as "Designer"
    */
   type: SkillType;
+
+  /**
+   * The category of the skill, such as "Software"
+   */
+  category: SkillCategory;
 }
 
 /**
