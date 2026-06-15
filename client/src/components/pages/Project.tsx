@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -10,7 +10,7 @@ import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
 import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
-import { getByID } from "../../api/projects";
+import { getByID, getVideos } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import {
   deleteProjectFollowing,
@@ -18,7 +18,7 @@ import {
   getProjectFollowing,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
+import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import AboutFooter from "../AboutFooter";
 import usePreloadedImage from '../../functions/imageLoad';
@@ -51,6 +51,7 @@ const Project = (userProfile : any) => {
   const [viewedPosition, setViewedPosition] = useState(0);
 
   const [shownTags, setShownTags] = useState(3);
+  const [videos, setVideos] = useState<ProjectVideo[]>();
 
   /**
    * Checks in the current user is following a project
@@ -99,6 +100,18 @@ const Project = (userProfile : any) => {
 
     }
   };
+
+  // Fetch attached videos (for now)
+  useEffect(() => {
+    async function fetchVideos() {
+      const res = await getVideos(projectID);
+      if (res.data) {
+        setVideos(res.data);
+      }
+    }
+
+    fetchVideos();
+  }, [projectID]);
 
   //Checks to see whether or not the current user is the maker/owner of the project being displayed
   //oh do i need this too
@@ -420,7 +433,7 @@ const Project = (userProfile : any) => {
       ) : (
         <main id="main" tabIndex={-1} aria-label="main content" >
           <div id="project-page-content">
-            <ProjectCarousel project={displayedProject}></ProjectCarousel>
+            <ProjectCarousel project={displayedProject} videos={videos}></ProjectCarousel>
             <div id="project-info-panel">
               <div id="project-info-top">
                 <div id="project-info-header">
