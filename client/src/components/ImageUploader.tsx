@@ -1,5 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { FileImage } from './FileImage';
+import { Popup, PopupButton, PopupContent } from './Popup';
+import { Select, SelectButton, SelectOptions } from './Select';
+import placeholder from "../images/blue_frog.png"
+import { AspectRatios } from '@looking-for-group/shared/enums';
 //import { sendPost } from '../functions/fetch'; //Not fixing, is this something to be implemented later?
 
 interface ImageUploaderProps {
@@ -49,32 +53,201 @@ const ImageUploader = ({
   // Ref for reading selected files
   const inputRef = useRef<HTMLInputElement | null>(null);
 
+  const [zoom, setZoom] = useState(100);
+  const [dX, setDX] = useState(0);
+  const [dY, setDY] = useState(0);
+
+  const [cropFile, setCropFile] = useState<File>();
+  const [cropImg, setCropImg] = useState<string>();
+
+  const tempImage = useRef<HTMLImageElement>(null);
+  const canvas = useRef<HTMLCanvasElement>(null);
+  const inputX = useRef<HTMLInputElement>(null);
+  const inputY = useRef<HTMLInputElement>(null);
+  const inputZoom = useRef<HTMLInputElement>(null);
+  const fileReader = new FileReader();
+
+  const [aspectRatio, setAspectRatio] = useState<string>('4/3');
+
+  /**
+   * updates the canvas element for cropping images
+   */
+  const updateCanvas = useCallback(() => {
+    const ctx = canvas.current?.getContext("2d");
+    ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
+    if (tempImage.current && canvas.current)
+      ctx?.drawImage(
+        tempImage.current,
+        dX, dY,
+        tempImage.current.width / 100 * zoom,
+        tempImage.current.height / 100 * zoom);
+  }, [tempImage, dX, dY, zoom, canvas]);
 
   // Validate file type and handle image input change
   // If keepImage is true, only allows PNG/JPEG
-  const handleImgChange = useCallback(() => {
+  const handleImgChange = useCallback(async () => {
     const file = inputRef.current?.files?.[0];
     if (!file) return;
+    if (file.size > 1000000 && type === "profile") {
+      alert("File too large");
+      return;
+    }
+    else if (file.size > 2000000) {
+      alert("File too large");
+      return;
+    }
 
     if (keepImage && (file.type === "image/png" || file.type === "image/jpeg")) {
-      onFileSelected(file);
+      setCropFile(file);
+      fileReader.readAsDataURL(file);
     } else {
       alert("File type not supported: Please use .PNG or .JPG");
     }
-  }, [keepImage, onFileSelected]);
+  }, [keepImage, setCropFile, fileReader]);
+
+  const sendImg = useCallback(
+    () => canvas.current?.toBlob(async(blob) => {
+      const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
+      onFileSelected(newFile);
+      setCropImg(undefined);
+  }, cropFile?.type), [onFileSelected, setCropImg, updateCanvas, cropFile, canvas]);
 
   // Effect for cleanup if needed; currently just removes event listeners 
   useEffect(() => {
+    tempImage.current?.addEventListener("load", updateCanvas);
+    fileReader.onload = () => setCropImg(fileReader.result as string);
+    fileReader.onerror = () => setCropImg(placeholder);
     
     const input = inputRef.current;
     if (!input) return;
 
-    return () => input.removeEventListener('change', handleImgChange);
-  }, [handleImgChange]);
+    return () => input.removeEventListener('change', sendImg);
+  }, [sendImg, fileReader, placeholder, setCropImg]);
+  
+  const cropPopup = (
+    <Popup startOpen={true}>
+    {cropImg !== undefined ?
+      <PopupContent confirmation={true} callback={() => setCropImg(undefined)}>
+        <div className="project-crop">
+        <label id="project-crop-header">Crop image for thumbnail usage</label>
+        <canvas ref={canvas} id="canvas"
+          width={
+          aspectRatio === "16/9" ? 1600 :
+          aspectRatio === "4/3" ? 800 :
+          aspectRatio === "1/1" ? 800 :
+          aspectRatio === "2/3" ? 600 :
+          600}
+          
+          height={
+          aspectRatio === "16/9" ? 900 :
+          aspectRatio === "4/3" ? 600 :
+          aspectRatio === "1/1" ? 800 :
+          aspectRatio === "2/3" ? 900 :
+          1300}
+          
+          style={{aspectRatio:aspectRatio}}
+        ></canvas>
+        <img ref={tempImage} id="refImage" src={cropImg} alt={cropImg} />
+        <div id="aspect-row">
+          <Select>
+          <SelectButton
+            placeholder={"Select an aspect Ratio"}
+            initialVal={aspectRatio}
+            callback={(e) => e.preventDefault()}
+            buttonId="aspect-input"
+            type={"input"}
+            searchable={false}
+          />
+          <SelectOptions
+            callback={async (e) => {
+            const ratio = (
+              e.target as HTMLButtonElement
+            ).value;
+  
+            await setAspectRatio(ratio);
+            updateCanvas();
+            }}
+            options={
+            Object.values(AspectRatios)
+            .filter((ratio) => ratio !== 0 && ratio !== 1 && ratio !== 2 && ratio !== 3 && ratio !== 4)
+            .map(
+            (ratio) => {
+              return {
+              value: ratio,
+              markup: <>{ratio}</>,
+              disabled: false
+              };
+            }
+            )}
+          />
+          </Select>
+        </div>
+        <div id="zoom-row">
+          <input
+          type="range" ref={inputZoom}
+          id="zoom" name="zoom"
+          onChange={() => {
+            setZoom(inputZoom.current?.valueAsNumber as number);
+            updateCanvas();
+          }}
+          onInput={() => {
+            setZoom(inputZoom.current?.valueAsNumber as number);
+            updateCanvas();
+          }}
+          min={1} max={1000}
+          defaultValue={zoom} />
+          <label className="slider-text" htmlFor="zoom">Zoom</label>
+        </div>
+        <div id="xTrans-row">
+          <input
+          type="range" ref={inputX}
+          id="xTrans" name="xTrans"
+          onChange={() => {
+            setDX(inputX.current?.valueAsNumber as number);
+            updateCanvas();
+          }}
+          onInput={() => {
+            setDX(inputX.current?.valueAsNumber as number);
+            updateCanvas();
+          }}
+          min={canvas.current ? -canvas.current.width : -100}
+          max={canvas.current ? canvas.current.width : 100}
+          defaultValue={dX} />
+          <label className="slider-text" htmlFor="xtrans">Xpos</label>
+        </div>
+        <div id="yTrans-row">
+          <input
+          type="range" ref={inputY}
+          id="yTrans" name="yTrans"
+          onChange={() => {
+            setDY(inputY.current?.valueAsNumber as number);
+            updateCanvas();
+          }}
+          onInput={() => {
+            setDY(inputY.current?.valueAsNumber as number);
+            updateCanvas();
+          }}
+          min={canvas.current ? -canvas.current.height : -100}
+          max={canvas.current ? canvas.current.height : 100}
+          defaultValue={dY} />
+          <label className="slider-text" htmlFor="yTrans">Ypos</label>
+        </div>
+        <div className="project-crop-extra-info">
+          Crop your image to a set ratio that better matches the site.
+        </div>
+        <div className="confirm-project-crop">
+          <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" callback={() => setCropImg(undefined)} className="project-info-buttons" doNotClose={() => true}>Skip</PopupButton>
+        </div>
+        </div>
+      </PopupContent>: ""}
+    </Popup>
+  );
 
   const profileVariant = (
     <label htmlFor="image-uploader" id="profile-image-uploader" className="drop-area">
-      <input type="file" name="image" id="image-uploader" accept="image/png, image/jpg" ref={inputRef} onChange={handleImgChange} hidden />
+      {cropPopup}
+      <input type="file" name="image" id="image-uploader" accept=".png, .jpg" ref={inputRef} onChange={handleImgChange} hidden />
       {initialImageFile ?
         <div id="img-view">
           <FileImage
@@ -113,6 +286,7 @@ const ImageUploader = ({
 
   const projectVariant = (
     <label htmlFor="image-uploader" id="project-image-uploader" className="drop-area">
+      {cropPopup}
       <input
         type="file"
         name="image"

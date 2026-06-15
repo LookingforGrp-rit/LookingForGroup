@@ -30,6 +30,8 @@ const SideBar = () => {
   const [width, setWidth] = React.useState(window.innerWidth); // Current window width
   const breakpoint = useSelector((state: any) => state.page.MOBILE_BREAKPOINT); // Mobile breakpoint
 
+  const [userId, setUserId] = useState<number>();
+
   // const [headerText, setHeaderText] = useState('Group'); // State to manage the h1 text
   const navigate = useNavigate(); // Hook for navigation
 
@@ -212,6 +214,21 @@ const SideBar = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    const fetchUserId = async () => {
+      try {
+        const res = await getCurrentUsername();
+        if (res.status === 200 && res.data?.userId) {
+          setUserId(res.data.userId);
+        }
+      } catch (err) {
+        console.error("Error fetching user ID:", err);
+      }
+    };
+
+    fetchUserId();
+  }, []);
+
   // Mobile layout
   if (width < breakpoint) {
     return (
@@ -263,10 +280,10 @@ const SideBar = () => {
                     ? "active sidebar-btn"
                     : "sidebar-btn"
                 }
-                href={`${returnProfileAccess()}`}
-                onClick={() =>
-                  handleProfileAccess()
-                }
+                href={userId ? `${paths.routes.PROFILE}?userID=${userId}` : `${paths.routes.LOGIN}`}
+                //onClick={() =>
+                //  handleProfileAccess()
+                //}
               >
                 <ThemeIcon id={'profile'} width={30} height={30} className={'mono-fill'} ariaLabel={'my profile'} />
               </a>

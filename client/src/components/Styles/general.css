@@ -1237,6 +1237,7 @@ Page popup style rules
     transition: none;
     padding: 1px;
     text-align: center;
+    text-decoration: underline;
   }
 
   .filter-tab.selected {
@@ -2069,16 +2070,17 @@ Image Carousel style rules
   width: 40px;
   height: 40px;
   text-align: center;
-  background: none;
-  border: none;
+  background: var(--header-color);
+  border: 2px solid var(--main-text);
   border-radius: 50px;
+
 
   animation: fadeIn 0.15s ease-in-out;
 
 }
 
 .to-top-button:hover {
-  background-color: var(--header-color);
+  box-shadow: 0px 0px 5px 1px;
 }
 
 .hidden {

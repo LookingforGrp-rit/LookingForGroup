@@ -17,6 +17,26 @@ components:
         altText: cat yawning
         apiUrl: /api/projects/1/images/1
 
+    ProjectVideo:
+      type: object
+      properties:
+        videoId:
+          type: integer
+        videoUrl:
+          type: string
+        position:
+          type: integer
+        title:
+          type: string
+        projectId:
+          type: integer
+      example:
+        videoId: 1
+        videoUrl: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+        position: 0
+        title: Never Gonna Give You Up
+        projectId: 1
+
     ProjectMedium:
       allOf:
         - $ref: 'datasets.yaml#/components/schemas/Medium'

@@ -62,8 +62,8 @@ const AboutPage = () => {
                 value={searchQuery}
                 onChange={handleSearchChange}
                 hideSearchBar={true}
+                hideBackButton={false}
             />
-            <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
 
             <main id="main" tabIndex={-1} aria-labelledby='about-header'>
                 <section className="about-container" tabIndex={-1} style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
