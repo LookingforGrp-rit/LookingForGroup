@@ -3301,6 +3301,153 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/videos:
+    post:
+      summary: Add a new video to a project
+      description: Creates a new video entry associated with a specific project.
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the project to add a video to
+          required: true
+          schema:
+            type: integer
+            example: 42
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateProjectVideoInput'
+      responses:
+        '201':
+          description: Video added successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    nullable: true
+                    example: null
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    get:
+      summary: Gets all videos for a project
+      description: Gets all videos for a project associated with a specific project.
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the project to add a video to
+          required: true
+          schema:
+            type: integer
+            example: 42
+      responses:
+        '200':
+          description: Videos gotten successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectVideo'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/videos/{videoId}:
+    delete:
+      summary: Add a new video to a project
+      description: Creates a new video entry associated with a specific project.
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - name: id
+          in: path
+          description: The ID of the project to delete a video from
+          required: true
+          schema:
+            type: integer
+            example: 5
+        - name: videoId
+          in: path
+          description: The ID of the video
+          required: true
+          schema:
+            type: integer
+            example: 42
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Video deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    nullable: true
+                    example: null
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   # MOD
   /api/mod/clear-profile/{id}:
     patch:
@@ -3964,6 +4111,8 @@ components:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectDetail'
     ProjectWithFollowers:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectWithFollowers'
+    ProjectVideo:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectVideo'
 
     UpdateUserInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/UpdateUserInput'
@@ -4005,6 +4154,8 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectJobInput'
     UpdateProjectJobInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectJobInput'
+    CreateProjectVideoInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectVideoInput'
 
     ErrorMessage:
       type: object

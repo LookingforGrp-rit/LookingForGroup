@@ -1722,8 +1722,10 @@ button.edit-position-contact .project-member-image {
 }
 
 .project-crop {
-  width: 70%;
+  width: 100%;
   text-align: center;
+  height: 1100px;
+  margin: 0 20px;
 
   #project-crop-header {
     display: block;
@@ -1733,7 +1735,8 @@ button.edit-position-contact .project-member-image {
   #canvas {
     border: 3px solid var(--main-text);
     margin: 1vw 0;
-    width: 100%;
+    object-fit: cover;
+    height: 400px;
   }
 
   img {
@@ -1741,18 +1744,23 @@ button.edit-position-contact .project-member-image {
   }
 
   input[type="range"] {
-    width: 50%;
+    width: 400px;
     background: none;
     margin: 0.5em;
   }
 
   #zoom-row,
   #xTrans-row,
-  #yTrans-row {
+  #yTrans-row,
+  #aspect-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+  }
+
+  #aspect-row .select-container {
+    width: 85px;
   }
 
   .project-crop-extra-info {

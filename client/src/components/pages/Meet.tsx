@@ -115,8 +115,6 @@ export const ProfileMeetPage = () => {
     setFullUserList(userRes.data);
     setFilteredUserList(userRes.data);
 
-    setUserSearchData(userRes.data);
-
     setLoaded(true);
   };
 

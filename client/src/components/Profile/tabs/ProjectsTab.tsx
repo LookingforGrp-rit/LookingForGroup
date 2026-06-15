@@ -19,8 +19,10 @@ interface ProjectTileProps {
 const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggled }) => {
   const projectData = membershipData.project;
 
+  const isHidden = membershipData.profileVisibility !== "public";
+
   return (
-    <div key={projectData.projectId}>
+    <div key={projectData.projectId} className={isHidden ? "project-tile-hidden" : ""}>
       <div className="projectTile">
         <img
         src={usePreloadedImage(
@@ -31,8 +33,7 @@ const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggle
           projectData.thumbnail?.altText || `Thumbnail for ${projectData.title}`
         }
       />
-      {/*TODO: use visibility here*/}
-      {/* isVisible && <div className='image-overlay'/> */}
+      {isHidden && <div className="image-overlay" />}
       <button
         className="project-visibility-button"
         onClick={(e) => {
@@ -49,7 +50,7 @@ const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggle
         />
       </button>
       </div>
-      
+
       <p className="project-tile-title">{projectData.title}</p>
     </div>
   );
@@ -101,7 +102,7 @@ export const ProjectsTab = ({
       if (membership.project.projectId === projectId) {
         return {
           ...membership,
-          visibility: newVisibility,
+          profileVisibility: newVisibility,
         };
       }
       return membership;

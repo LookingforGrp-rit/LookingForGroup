@@ -294,13 +294,10 @@ export const updateProjectProfileVisibility = async (
   visibility: UpdateProjectProfileVisibilityInput
 ): Promise<ApiResponse<MyMember>> => {
   const url = `/me/projects/${projectID}/visibility`;
-  const response = await PUT(url, {
-    profileVisibility: visibility,
-  });
+  const response = await PUT(url, visibility);
 
-  // if (response.error)
-    //console.log(`Error in updateProjectVisibility: ${response.error}`);
-  //console.log(response);
+  if (response.error)
+    console.log(`Error in updateProjectVisibility: ${response.error}`);
   return response as ApiResponse<MyMember>;
 };
 

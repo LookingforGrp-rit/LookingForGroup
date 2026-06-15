@@ -15,6 +15,7 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
 import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
+import { deleteProject } from '../../api/projects.ts';
 
 /**
  * My Projects page. Creates a customizable page that showcases the user's projects.
@@ -66,7 +67,7 @@ const MyProjects = (userProfile: any) => {
   const getUserProjects = async () => {
     try {
       const res = await getCurrentUsername();
-      setUserProjects({...res.data} as MePrivate)
+      setUserProjects({ ...res.data } as MePrivate)
 
     } catch (e) {
       console.error('error getting projects', e);
@@ -78,18 +79,36 @@ const MyProjects = (userProfile: any) => {
     // User is logged in, pull their data
     if (data) {
       setLoggedIn(data.userId);
-      const projectsRes = await getProjectsByUser();
+      let projectsRes = await getProjectsByUser();
 
-      if (projectsRes.data && projectsRes.data !== undefined) setProjectsList(projectsRes.data);
+      //Get invalid projects
+      const invalidProjects = projectsRes.data?.filter((project) =>
+        project.title === "My Project" && project.hook.length === 0 && project.description.length === 0);
 
-      //console.log(projectsRes.data);
+      //Delete invalid projects
+      //If invalidProjects is undefined, there are none
+      if (invalidProjects !== undefined) {
+        for (let i = 0; i < invalidProjects?.length; i++) {
+          //Delete the project from the database
+          deleteProject(invalidProjects[i].projectId);
+
+          //Removes the deleted project from projectsRes so it's not displayed
+          projectsRes.data = projectsRes.data?.filter((project) => !invalidProjects.includes(project));
+        }
+      }
+
+      if (projectsRes.data && projectsRes.data !== undefined) {
+        setProjectsList(projectsRes.data)
+      };
+
+      console.log(projectsRes.data);
       setUserId(data.username);
-      
     } else {
       //guest
       setUserId("guest");
       setLoggedIn(0);
     }
+
     setDataLoaded(true);
   }
 
@@ -406,7 +425,7 @@ const MyProjects = (userProfile: any) => {
   const projectsModeSwitch = useCallback((newMode: string) => {
     const newFilteredProjects = projectsList.filter((item) => {
       if (newMode === "All") return true;
-      
+
       if (newMode === "Joined") {
         for (let member of item.members) {
           if (member.user.username === userId && item.owner.username !== userId) return true;
@@ -418,7 +437,7 @@ const MyProjects = (userProfile: any) => {
 
       return false;
     });
-    
+
     setProjectMode(newMode);
     setFilteredProjects(newFilteredProjects);
   }, [projectMode, filteredProjects, userId, projectsList]);
