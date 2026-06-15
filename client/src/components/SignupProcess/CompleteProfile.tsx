@@ -182,13 +182,15 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 					<div className="error">{errorMsg}</div>
 
 					<div id="completeProfile-input-container">
-						<div id="profile-details"
-            className="edit-profile-image">
-              <ProfileImageUploader
-                onFileSelected={handleUploadPfp}
-                initialImageUrl={placeholder}
-                initialImageFile={profileImage}
-              />
+						<div id="profile-details">
+							<div
+							id="profile-editor-add-image"
+							className="edit-profile-image">
+							<ProfileImageUploader
+								onFileSelected={handleUploadPfp}
+								initialImageFile={profileImage}
+							/>
+							</div>
 						</div>
 
 						{/* <div className="signup-fullname">

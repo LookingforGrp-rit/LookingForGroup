@@ -108,8 +108,6 @@ const ImageUploader = ({
   const sendImg = useCallback(
     () => canvas.current?.toBlob(async(blob) => {
       const newFile = new File([blob as Blob], cropFile?.name as string, {type:cropFile?.type});
-      await updateCanvas();
-      console.log(newFile);
       onFileSelected(newFile);
       setCropImg(undefined);
   }, cropFile?.type), [onFileSelected, setCropImg, updateCanvas, cropFile, canvas]);
