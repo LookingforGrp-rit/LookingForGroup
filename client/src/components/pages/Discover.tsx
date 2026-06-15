@@ -7,8 +7,7 @@ import { PanelBox } from '../PanelBox';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
 import { getProjectFollowing } from '../../api/users';
-import {
-  ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
+import { Tag, NumberDictionary, StructuredProjectInfo,
   ProjectPreview, ProjectWithFollowers,
   MePrivate
 } from '@looking-for-group/shared';
@@ -77,40 +76,52 @@ export const DiscoverPage = () => {
   const getShowcaseDetails = async (projectList: ProjectPreview[], usedCache: NumberDictionary<StructuredProjectInfo>) => {
     const focusProjectDetailsList: ProjectWithFollowers[] = [];
 
-    // remove projects without open positions
-    // const filteredProjectList = projectList.filter(a => a.jobs.length > 1);
+    const MAX_HERO_PROJECTS = 6;
 
-    // create a copy of the array for the carousel
-    const carouselProjectList = projectList.slice();
+    // gets random projects order
+    const shuffled = projectList.slice().sort(() => Math.random() - 0.5);
 
-    // Go through carouselProjectList and only keep 3 projects with open positions
-    for (const projectPreview of carouselProjectList.sort(() => Math.random() - 0.5)) {
-      const cachedFull = usedCache[projectPreview.projectId].full;
+    //cache fetch helper
+    const fetchFull = async (preview: ProjectPreview) => {
+      const cacheEntry = usedCache[preview.projectId] ?? (usedCache[preview.projectId] = {});
+      if (cacheEntry.full) return cacheEntry.full;
 
-      if (cachedFull != undefined) {
-        if (cachedFull.jobs.length > 0) {
-          focusProjectDetailsList.push(cachedFull);
-        }
+      const response = await getByID(preview.projectId);
+      if (!response.data) return undefined;
+
+      cacheEntry.full = response.data;
+      return response.data;
+    };
+
+    // get only projects with open jobs
+    for (const preview of shuffled) {
+      const full = await fetchFull(preview);
+      if (full && full.jobs.length > 0) {
+        focusProjectDetailsList.push(full);
       }
-      else {
-        const projectRequest: ApiResponse<ProjectWithFollowers> = await getByID(projectPreview.projectId);
+      if (focusProjectDetailsList.length >= MAX_HERO_PROJECTS) break;
+    }
 
-        if (projectRequest.data) {
-          if (projectRequest.data.jobs.length > 0) {
-            focusProjectDetailsList.push(projectRequest.data);
-          }
-          usedCache[projectPreview.projectId].full = projectRequest.data;
-        } else {
-          console.error("Error getting project data from " + projectPreview.projectId);
-          return {} as ProjectWithFollowers;
+    //Error check to make sure we have designated number of projects with open positions. 
+    // If not, fill remaining slots with random projects until we have it
+    // or run out of projects.
+    if (focusProjectDetailsList.length < MAX_HERO_PROJECTS) {
+      for (const preview of shuffled) {
+        const full = await fetchFull(preview);
+        if (!full) continue;
+
+        // prevent duplicates
+        if (!focusProjectDetailsList.some(p => p.projectId === full.projectId)) {
+          focusProjectDetailsList.push(full);
         }
-      }
 
-      // Once 3 projects have been added to carousel, break out of loop
-      if (focusProjectDetailsList.length == 3) {
-        break;
+        if (focusProjectDetailsList.length >= MAX_HERO_PROJECTS) break;
       }
     }
+
+    // Debug
+    // console.log("Final count:", focusProjectDetailsList.length);
+    // console.log("Titles:", focusProjectDetailsList.map(p => p.title));
 
     setHeroProjectList(focusProjectDetailsList);
   }

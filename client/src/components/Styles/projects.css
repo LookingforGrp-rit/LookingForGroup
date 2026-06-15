@@ -53,6 +53,22 @@ Project Panel component style rules
   padding-bottom: 10px;
 }
 
+.add-video {
+  height: 100%;
+  width: 323px;
+  max-width: 100%;
+  max-height: 182px;
+  border: 2px dashed #BDBDBD;
+  border-radius: 10px;
+}
+
+.add-video-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
 .project-panel {
   width: 100%;
   height: 280px;
@@ -536,7 +552,7 @@ Project Creator and Editor Popup style rules
   }
 }
 
-#project-editor-content label:not(.drop-area),
+#project-editor-content label:not(.drop-area, .add-video-form),
 #project-team-add-member-title,
 #team-add-member-cancel-button,
 #project-team-edit-member-title,
@@ -817,7 +833,7 @@ Project Creator and Editor Popup style rules
 #project-editor-image-ui {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 12px;
   margin: 10px 0;
   max-width: 100%;
 }
@@ -862,6 +878,18 @@ Project Creator and Editor Popup style rules
   bottom: 0;
 }
 
+.project-video-hover {
+  background-color: transparent;
+  pointer-events: none;
+  position: absolute;
+  border-radius: 10px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 9px;
+}
+
 #selected-thumbnail,
 .star,
 .star-filled,
@@ -883,6 +911,17 @@ Project Creator and Editor Popup style rules
 
 .delete-image {
   bottom: 9px;
+}
+
+.delete-video {
+  pointer-events: all;
+  position: absolute;
+  border: none;
+  border-radius: 32px;
+  padding: 8px;
+  bottom: 9px;
+  right: 9px;
+  background-color: var(--main-text);
 }
 
 #project-editor-add-image {
@@ -3520,6 +3559,62 @@ button#positions-popup-list-item-active {
   border-radius: 50%;
 }
 
+/* Quick Apply lives inline in #position-contact next to the owner link.
+   When expanded, the optional message textarea drops in just below. */
+#position-join-request-button {
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+  border: none;
+  border-radius: 30px;
+  padding: 6px 14px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-style: normal;
+  cursor: pointer;
+  transition: transform 0.15s ease-in-out, filter 0.15s ease-in-out;
+}
+
+#position-join-request-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+#position-join-request {
+  margin: 0 20px 20px auto;
+  width: 320px;
+  max-width: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+#position-join-request-label {
+  font-size: 0.875rem;
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+#position-join-request-message {
+  width: 100%;
+  min-height: 70px;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--main-text);
+  font-size: 0.9375rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+#position-join-request-confirmation {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-style: normal;
+}
+
 #positions-popup-close {
   grid-area: close;
   border: none;
@@ -3974,7 +4069,7 @@ My projects page style rules
   }
 }
 
-.page#my-projects hr {
+.page#my-projects #my-projects-hr {
   box-sizing: border-box;
   border-color: var(--header-color);
   margin: 0 5vw;
@@ -4019,7 +4114,61 @@ My projects page style rules
   }
 }
 
+.add-video-title {
+  font-size: 1rem !important;
+}
 
+.add-video-input {
+  font-size: 0.875rem;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  color: var(--neutral-gray);
+  bg-color: var(--main-text);
+}
+
+.add-video {
+  .confirm-deny-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .confirm-btn {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 28px;
+    color: var(--invert-text);
+    background-color: var(--primary-color);
+    padding: 4px 18px;
+    border-radius: 55px;
+    min-width: 106px;
+    width: fit-content;
+  }
+
+  .confirm-btn:hover {
+    box-shadow: 0px 0px 10px 0px var(--shadow-color);
+  }
+
+  .deny-btn {
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    min-width: 106px;
+    width: fit-content;
+    border-radius: 55px;
+    padding-left: 19px;
+    padding-right: 19px;
+  }
+}
 
 .grid-card-image {
   grid-area: image;
