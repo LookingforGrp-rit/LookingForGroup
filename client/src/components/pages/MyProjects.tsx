@@ -79,16 +79,21 @@ const MyProjects = (userProfile: any) => {
     // User is logged in, pull their data
     if (data) {
       setLoggedIn(data.userId);
-      const projectsRes = await getProjectsByUser();
+      let projectsRes = await getProjectsByUser();
 
       //Get invalid projects
       const invalidProjects = projectsRes.data?.filter((project) =>
         project.title === "My Project" && project.hook.length === 0 && project.description.length === 0);
 
       //Delete invalid projects
+      //If invalidProjects is undefined, there are none
       if (invalidProjects !== undefined) {
         for (let i = 0; i < invalidProjects?.length; i++) {
+          //Delete the project from the database
           deleteProject(invalidProjects[i].projectId);
+
+          //Removes the deleted project from projectsRes so it's not displayed
+          projectsRes.data = projectsRes.data?.filter((project) => !invalidProjects.includes(project));
         }
       }
 
