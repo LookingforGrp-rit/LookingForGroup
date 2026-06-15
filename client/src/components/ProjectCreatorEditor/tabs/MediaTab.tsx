@@ -77,22 +77,10 @@ export const MediaTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
-  const [zoom, setZoom] = useState(100);
-  const [dX, setDX] = useState(0);
-  const [dY, setDY] = useState(0);
-
-  const [cropImg, setCropImg] = useState<ProjectImage | PendingProjectImage>();
   const [videos, setVideos] = useState<ProjectVideo[]>();
   const [newVideoTitle, setNewVideoTitle] = useState("");
   const [newVideoUrl, setNewVideoUrl] = useState("");
   const [videoPopupOpen, setVideoPopupOpen] = useState(false);
-
-  const tempImage = useRef<HTMLImageElement>(null);
-  const canvas = useRef<HTMLCanvasElement>(null);
-  const inputX = useRef<HTMLInputElement>(null);
-  const inputY = useRef<HTMLInputElement>(null);
-  const inputZoom = useRef<HTMLInputElement>(null);
-  const fileReader = new FileReader();
 
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
