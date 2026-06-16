@@ -202,7 +202,7 @@ export interface Tag {
   /**
    * The category of tag, such as "Game"
    */
-  category: TagCategory
+  category: TagCategory;
 }
 
 /**
@@ -1012,7 +1012,7 @@ export interface ProjectMember {
 }
 
 /**
- * Represents a tag tied to a project
+ * Represents a social tied to a project
  */
 export interface ProjectSocial extends Social {
   /**

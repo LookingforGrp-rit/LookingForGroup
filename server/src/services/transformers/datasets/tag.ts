@@ -1,4 +1,4 @@
-import type { Tag, TagType } from '@looking-for-group/shared';
+import type { Tag, TagCategory, TagType } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { TagSelector } from '#services/selectors/datasets/tag.ts';
 
@@ -16,6 +16,7 @@ export const transformTag = ({ tagId, label, type, category }: TagsGetPayload): 
     tagId,
     label,
     type: type as TagType,
-    category: category,
+
+    category: category as TagCategory,
   };
 };
