@@ -1763,6 +1763,112 @@ New Profile page style rules
   width: 120px;
 }
 
+/* Invite-to-Project trigger under "Contact Me" on someone else's profile. */
+#profile-invite-button {
+  margin-top: 8px;
+  align-self: flex-start;
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+  border: none;
+  border-radius: 30px;
+  padding: 8px 18px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease-in-out, filter 0.15s ease-in-out;
+}
+
+#profile-invite-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+#profile-invite-title {
+  color: var(--primary-color);
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+#profile-invite-empty {
+  color: var(--main-text);
+  font-style: italic;
+  padding: 12px 0;
+}
+
+#profile-invite-success {
+  color: var(--primary-color);
+  font-weight: 600;
+  padding: 12px 0;
+}
+
+#profile-invite-form {
+  display: grid;
+  grid-template-columns: 1fr 4fr;
+  column-gap: 16px;
+  row-gap: 12px;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.profile-invite-label {
+  color: var(--main-text);
+  font-weight: 600;
+  text-align: right;
+}
+
+#profile-invite-message {
+  grid-column: 2;
+  min-height: 80px;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--main-text);
+  font-size: 0.9375rem;
+  outline: none;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+#profile-invite-project .select-button,
+#profile-invite-role .select-button {
+  background-color: var(--header-color);
+  padding: 0 15px;
+}
+
+#profile-invite-error {
+  margin-bottom: 8px;
+}
+
+#profile-invite-send {
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+  border: none;
+  border-radius: 8px;
+  padding: 10px 18px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+#profile-invite-send:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+@media only screen and (max-width: 500px) {
+  #profile-invite-form {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+  }
+  .profile-invite-label {
+    text-align: left;
+  }
+}
+
 #profile-menu-dropdown,
 #project-info-dropdown {
   display: flex;
