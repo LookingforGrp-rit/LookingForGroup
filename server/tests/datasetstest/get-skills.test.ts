@@ -25,13 +25,13 @@ describe('getSkillsService', () => {
 
   it('returns transformed skill when found', async () => {
     const prismaSkills: Skill[] = [
-      { skillId: 1, label: 'C++', type: 'Developer' },
-      { skillId: 44, label: 'Canva', type: 'Designer' },
+      { skillId: 1, label: 'C++', type: 'Developer', category: 'Coding Language' },
+      { skillId: 44, label: 'Canva', type: 'Designer', category: 'Software' },
     ];
 
     const transformed: Skill[] = [
-      { skillId: 1, label: 'C++', type: 'Developer' },
-      { skillId: 44, label: 'Canva', type: 'Designer' },
+      { skillId: 1, label: 'C++', type: 'Developer', category: 'Coding Language' },
+      { skillId: 44, label: 'Canva', type: 'Designer', category: 'Software' },
     ];
 
     vi.mocked(prisma.skills.findMany).mockResolvedValue(prismaSkills);

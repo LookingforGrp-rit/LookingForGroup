@@ -11,7 +11,6 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "./SortableItem";
 import { Fragment } from "react";
-import { data } from "react-router-dom";
 
 // --- Constant ---
 const TAG_TYPES = {
@@ -19,7 +18,9 @@ const TAG_TYPES = {
   DESIGNER: "Designer Skill" as TagType,
   SOFT: "Soft Skill" as TagType,
   AUD: "Audio Skill" as TagType,
-  GENRE: ["Creative", "Technical", "Games", "Multimedia", "Music", "Other"] as TagType[],
+  GENRE: 'Genre' as TagType,
+  FORM: 'Form' as TagType,
+  OTHER: 'Other' as TagType,
   MEDIUM: "Medium",
 };
 

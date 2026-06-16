@@ -4,17 +4,15 @@ import type url = require("url");
 
 // Enums for better typing
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
+export type SkillCategory = 'Software' | 'Discipline' | 'Coding Language' | 'Talent' | 'Other';
 export type TagType =
-  | "Creative"
-  | "Technical"
-  | "Games"
-  | "Multimedia"
-  | "Music"
   | "Other"
   | "Developer"
   | "Designer"
   | "Soft"
   | "Audio"
+  | 'Form'
+  | 'Genre'
   | "Purpose"
   | "Project Type"
   | "Role"
@@ -23,7 +21,15 @@ export type TagType =
   | "Designer Skill"
   | "Soft Skill"
   | "Audio Skill";
-export type AcademicYear =
+//wow.
+export type GenreCategory = 'Game' | "Story" | 'Music';
+export type FormCategory = 'Visual' | 'Structural';
+export type DeveloperCategory = 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Other' | 'Discipline';
+export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' | 'Other' | 'Discipline';
+export type SoftCategory = 'Personal' | 'Team' | 'Other';
+export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
+export type TagCategory = GenreCategory | FormCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
+  export type AcademicYear = 
   | "Freshman"
   | "Sophomore"
   | "Junior"
@@ -192,6 +198,11 @@ export interface Tag {
    * The type of tag, such as "Purpose"
    */
   type: TagType;
+
+  /**
+   * The category of tag, such as "Game"
+   */
+  category: TagCategory;
 }
 
 /**
@@ -228,6 +239,11 @@ export interface Skill {
    * The type of skill, such as "Designer"
    */
   type: SkillType;
+
+  /**
+   * The category of the skill, such as "Software"
+   */
+  category: SkillCategory;
 }
 
 /**
@@ -996,7 +1012,7 @@ export interface ProjectMember {
 }
 
 /**
- * Represents a tag tied to a project
+ * Represents a social tied to a project
  */
 export interface ProjectSocial extends Social {
   /**
