@@ -1,19 +1,18 @@
+import type prisma = require("#prisma-models/index");
 import type { Request } from "express";
 import type url = require("url");
 
 // Enums for better typing
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
+export type SkillCategory = 'Software' | 'Discipline' | 'Coding Language' | 'Talent' | 'Other';
 export type TagType =
-  | "Creative"
-  | "Technical"
-  | "Games"
-  | "Multimedia"
-  | "Music"
   | "Other"
   | "Developer"
   | "Designer"
   | "Soft"
   | "Audio"
+  | 'Form'
+  | 'Genre'
   | "Purpose"
   | "Project Type"
   | "Role"
@@ -22,7 +21,15 @@ export type TagType =
   | "Designer Skill"
   | "Soft Skill"
   | "Audio Skill";
-export type AcademicYear =
+//wow.
+export type GenreCategory = 'Game' | "Story" | 'Music';
+export type FormCategory = 'Visual' | 'Structural';
+export type DeveloperCategory = 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Other' | 'Discipline';
+export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' | 'Other' | 'Discipline';
+export type SoftCategory = 'Personal' | 'Team' | 'Other';
+export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
+export type TagCategory = GenreCategory | FormCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
+  export type AcademicYear = 
   | "Freshman"
   | "Sophomore"
   | "Junior"
@@ -193,6 +200,11 @@ export interface Tag {
    * The type of tag, such as "Purpose"
    */
   type: TagType;
+
+  /**
+   * The category of tag, such as "Game"
+   */
+  category: TagCategory;
 }
 
 /**
@@ -229,6 +241,11 @@ export interface Skill {
    * The type of skill, such as "Designer"
    */
   type: SkillType;
+
+  /**
+   * The category of the skill, such as "Software"
+   */
+  category: SkillCategory;
 }
 
 /**
@@ -890,6 +907,36 @@ export interface ProjectImage {
 }
 
 /**
+ * An video displayed on a project
+ */
+export interface ProjectVideo {
+  /**
+   * The database ID corresponding with the video
+   */
+  videoId: number;
+
+  /**
+   * The URL of the video
+   */
+  videoUrl: string;
+
+  /**
+   * The video title
+   */
+  title: string;
+
+  /**
+   * The position of the video
+   */
+  position: number;
+
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+}
+
+/**
  * Represents a medium tied to a project
  */
 export interface ProjectMedium extends Medium {
@@ -967,7 +1014,7 @@ export interface ProjectMember {
 }
 
 /**
- * Represents a tag tied to a project
+ * Represents a social tied to a project
  */
 export interface ProjectSocial extends Social {
   /**
@@ -1369,8 +1416,8 @@ export type SendProjectInviteInput = Required<CreateProjectMemberInput>;
  * Data required to send invitation email to user
  */
 export type EmailInput = {
-  inviter: UserEmail;
-  invitee: UserEmail;
+  sender: UserEmail;
+  receiver: UserEmail;
   subject: string;
   textBody: string;
   HTMLBody: string;

@@ -1,4 +1,4 @@
-import type { ProjectTag, TagType } from '@looking-for-group/shared';
+import type { ProjectTag, TagCategory, TagType } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectTagSelector } from '#services/selectors/projects/parts/project-tag.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -33,6 +33,7 @@ const getProjectTagsService = async (
         label: tag.tag.label,
         tagId: tag.tagId,
         type: tag.tag.type as TagType,
+        category: tag.tag.category as TagCategory,
         displayOrder: tag.displayOrder,
       }),
     );

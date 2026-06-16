@@ -1,4 +1,4 @@
-import type { Skill, SkillType } from '@looking-for-group/shared';
+import type { Skill, SkillCategory, SkillType } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { SkillSelector } from '#services/selectors/datasets/skill.ts';
 
@@ -11,10 +11,11 @@ const sampleSkills = prisma.skills.findMany({
 type SkillsGetPayload = Awaited<typeof sampleSkills>[number];
 
 //map to shared type
-export const transformSkill = ({ skillId, label, type }: SkillsGetPayload): Skill => {
+export const transformSkill = ({ skillId, label, type, category }: SkillsGetPayload): Skill => {
   return {
     skillId,
     label,
     type: type as SkillType,
+    category: category as SkillCategory,
   };
 };

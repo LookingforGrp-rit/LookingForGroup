@@ -136,12 +136,9 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
 
       // Map tag types to correct tab categories
       const typeMap: StringDictionary<string> = category === 'projects' ? {
-        Games: 'Genre',
-        Multimedia: 'Genre',
-        Music: 'Genre',
-        Other: 'Genre',
-        Creative: 'Genre',
-        Technical: 'Genre',
+        Form: 'Form',
+        Other: 'Other',
+        Genre: 'Genre',
         Purpose: 'Purpose',
         Medium: 'Project Type',
       } : {

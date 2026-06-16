@@ -24,6 +24,7 @@ const prismaUserSkill: UserSkill = {
   label: '',
   skillId: 1,
   type: 'Designer',
+  category: 'Other',
 };
 
 const transformed: MySkill = {

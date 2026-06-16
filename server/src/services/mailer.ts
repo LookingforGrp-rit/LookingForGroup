@@ -28,8 +28,7 @@ const transporter = nodemailer.createTransport({
 
 /**
  * Async function that sends the email properly
- * The kind property has not been fully implemented yet
- * @param EmailInvite email object to read info from and send
+ * @param email email object to read info from and send
  */
 //Change any to email once imports/exports are figured out
 const sendEmail = async (
@@ -47,10 +46,10 @@ const sendEmail = async (
     const info = await transporter.sendMail({
       from:
         envConfig.env === 'development'
-          ? `"${email.inviter.firstName} ${email.inviter.lastName}" <${email.inviter.ritEmail}>`
+          ? `"${email.sender.firstName} ${email.sender.lastName}" <${email.sender.ritEmail}>`
           : `"Looking For Group" <lfg@lfg.gccis.rit.edu>`,
-      replyTo: `"${email.inviter.firstName} ${email.inviter.lastName}" <${email.inviter.ritEmail}>`, // inviter
-      to: `"${email.invitee.firstName} ${email.invitee.lastName}" <${email.invitee.ritEmail}>`, // invitee
+      replyTo: `"${email.sender.firstName} ${email.sender.lastName}" <${email.sender.ritEmail}>`, // sender
+      to: `"${email.receiver.firstName} ${email.receiver.lastName}" <${email.receiver.ritEmail}>`, // receiver
       subject: email.subject, // subject line
       text: email.textBody, // plain text body
       html: email.HTMLBody, // HTML body
