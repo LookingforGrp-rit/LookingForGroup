@@ -225,6 +225,28 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							hideUnsaved={true}
 						/>
 
+						{/* Phone Number */}
+						<LabelInputBox
+							label={"Add Phone Number"}
+							inputType={"single"}
+							maxLength={15}
+							id="phoneNumber-input"
+							value={phoneNumber}
+							placeholder={"Phone Number (Optional)"}
+							onChange={(e) => {
+								const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+								if (e.target.value.length != 0 && !phoneRegex.test(e.target.value)) {
+									setError('*Please enter a valid phone number.');
+									setValidPhoneNum(false);
+								} else {
+									setError('');
+									setValidPhoneNum(true);
+								}
+								setPhoneNumber(e.target.value);
+							}}
+							hideUnsaved={true}
+						/>
+
 						{/* Current Job Title */}
 						<div id="jobTitle-input">
 							<Select>
@@ -252,6 +274,30 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 								/>
 							</Select>
 						</div>
+
+						{/* Location */}
+						<LabelInputBox
+							label={"Add Location"}
+							inputType={"single"}
+							maxLength={50}
+							id="location-input"
+							value={location}
+							placeholder={"Location (Optional)"}
+							onChange={(e) => setLocation(e.target.value)}
+							hideUnsaved={true}
+						/>
+
+						{/* Fun Fact */}
+						<LabelInputBox
+							label={"Add Fun Fact"}
+							inputType={"single"}
+							maxLength={50}
+							id="funFact-input"
+							value={funFact}
+							placeholder={"Fun Fact (Optional)"}
+							onChange={(e) => setFunFact(e.target.value)}
+							hideUnsaved={true}
+						/>
 
 						{/* Academic Year */}
 						{/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
@@ -310,52 +356,6 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 								/>
 							</Select>
 						</div>
-
-						{/* Phone Number */}
-						<LabelInputBox
-							label={"Add Phone Number"}
-							inputType={"single"}
-							maxLength={15}
-							id="phoneNumber-input"
-							value={phoneNumber}
-							placeholder={"Phone Number (Optional)"}
-							onChange={(e) => {
-								const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
-								if (e.target.value.length != 0 && !phoneRegex.test(e.target.value)) {
-									setError('*Please enter a valid phone number.');
-									setValidPhoneNum(false);
-								} else {
-									setError('');
-									setValidPhoneNum(true);
-								}
-								setPhoneNumber(e.target.value);
-							}}
-							hideUnsaved={true}
-						/>
-
-						{/* Location */}
-						<LabelInputBox
-							label={"Add Location"}
-							inputType={"single"}
-							maxLength={50}
-							id="location-input"
-							value={location}
-							placeholder={"Location (Optional)"}
-							onChange={(e) => setLocation(e.target.value)}
-							hideUnsaved={true}
-						/>
-
-						{/* Fun Fact */}
-						<LabelInputBox
-							label={"Add Fun Fact"}
-							inputType={"single"}
-							maxLength={50}
-							id="funFact-input"
-							value={funFact}
-							placeholder={"Fun Fact (Optional)"}
-							onChange={(e) => setFunFact(e.target.value)}
-							hideUnsaved={true}
-						/>
 
 						{/* Bio */}
 						<LabelInputBox

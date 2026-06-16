@@ -106,9 +106,6 @@
   .editor-link-item {
     flex-wrap: wrap;
   }
-
-  html, body {margin: 0; height: 100%; overflow: hidden}
-
 }
 
 /* Select component wrapper */

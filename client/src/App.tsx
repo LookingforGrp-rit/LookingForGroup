@@ -29,7 +29,7 @@ import AccountActivation from './components/pages/AccountActivation';
 import { ThemeContext } from './contexts/ThemeContext';
 import AboutPage from './components/pages/About';
 
-import { useLocalStorage } from 'usehooks-ts';
+import uselocalstorage from 'use-local-storage';
 import { getCurrentAccount } from './api/users';
 
 function App() {
@@ -38,7 +38,7 @@ function App() {
 
   // https://css-tricks.com/easy-dark-mode-and-multiple-color-themes-in-react/
   const defaultDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const [theme, setTheme] = useLocalStorage('theme', defaultDark ? 'dark' : 'light');
+  const [theme, setTheme] = uselocalstorage('theme', defaultDark ? 'dark' : 'light');
 
   const location = useLocation();
   const sidebarlessPages = ['/login', '/signup', '/forgotPassword'];
