@@ -1,6 +1,10 @@
-import type { SendProjectInviteInput } from '@looking-for-group/shared';
+import type { SendProjectInviteInput, EmailInput } from '@looking-for-group/shared';
+import { createElement } from 'react';
+import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
+import InviteEmail from '#email-templates/invite-email.ts';
 import getRolesService from '#services/datasets/get-roles.ts';
+import { sendEmail } from '#services/mailer.ts';
 import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 import getProjectByIdService from '../get-proj-id.ts';
@@ -54,15 +58,55 @@ export const requestToJoinService = async (
       return project;
     }
 
-    // Setting up the email
-    //const msg = data.message.length === 0 ? 'No message included.' : data.message;
+    //Set up email
+    const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    //const clientUrl = process.env.CLIENT_URL ?? 'localhost';
+    const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
 
-    // place in endpoint for accepting a request.
-    //const acceptUrl = `${clientUrl}/projects/${String(projectId)}/members/`
+    const receiverImg = requester.profileImage
+      ? `https://lookingforgrp.com${requester.profileImage}`
+      : 'https://lookingforgrp.com/api/images/blue_frog.png';
 
-    // Send message here
+    const projectImg = project.thumbnail
+      ? `https://lookingforgrp.com${project.thumbnail.image}`
+      : 'https://lookingforgrp.com/api/images/project_temp.png';
+
+    const html = await pretty(
+      await render(
+        createElement(InviteEmail, {
+          receiverName: {
+            firstName: requester.firstName,
+            lastName: requester.lastName,
+          },
+          receiverImage: receiverImg,
+          senderName: {
+            firstName: owner.firstName,
+            lastName: owner.lastName,
+          },
+          senderEmail: owner.ritEmail,
+          senderMessage: data.message,
+          projectName: project.title,
+          projectImage: projectImg,
+          inviteLink: inviteUrl,
+        }),
+      ),
+    );
+
+    const text = toPlainText(html);
+
+    const email: EmailInput = {
+      sender: owner,
+      receiver: requester,
+      subject: `Invitation to join ${project.title}`,
+      textBody: text,
+      HTMLBody: html,
+    };
+
+    //send email
+    const emailResult = await sendEmail(email);
+    if (emailResult === 'INTERNAL_ERROR') {
+      return emailResult;
+    }
 
     return 'NO_CONTENT';
   } catch (e) {
