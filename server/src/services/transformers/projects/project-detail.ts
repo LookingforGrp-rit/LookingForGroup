@@ -23,6 +23,7 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
     purpose: project.purpose,
     status: project.status,
     audience: project.audience,
+    projectVideos: project.projectVideos,
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
     projectImages: project.projectImages.map((image) =>

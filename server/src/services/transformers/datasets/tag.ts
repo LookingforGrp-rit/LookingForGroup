@@ -11,10 +11,11 @@ const sampleTags = prisma.tags.findMany({
 type TagsGetPayload = Awaited<typeof sampleTags>[number];
 
 //map to shared type
-export const transformTag = ({ tagId, label, type }: TagsGetPayload): Tag => {
+export const transformTag = ({ tagId, label, type, category }: TagsGetPayload): Tag => {
   return {
     tagId,
     label,
     type: type as TagType,
+    category: category,
   };
 };
