@@ -29,7 +29,7 @@ const sendInviteService = async (
     }
 
     const inviter = await prisma.users.findUnique({
-      where: { userId: data.inviterUserId },
+      where: { userId: data.ownerUserId },
       select: UserEmailSelector,
     });
 
@@ -38,7 +38,7 @@ const sendInviteService = async (
     }
 
     const invitee = await prisma.users.findUnique({
-      where: { userId: data.inviteeUserId },
+      where: { userId: data.prospectiveMemberId },
       select: UserEmailSelector,
     });
 

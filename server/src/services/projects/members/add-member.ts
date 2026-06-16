@@ -42,7 +42,7 @@ const addMemberService = async (
       const newMember = await prisma.members.create({
         data: {
           projects: { connect: { projectId } },
-          users: { connect: { userId: data.inviteeUserId } },
+          users: { connect: { userId: data.prospectiveMemberId } },
           roles: { connect: { label: 'Pending' } },
           profileVisibility: 'private', // hide from profile until invitee accept the invite
         },
@@ -54,8 +54,8 @@ const addMemberService = async (
 
       // send invite email to invitee
       const emailResult = await sendInviteService(projectId, {
-        inviterUserId: data.inviterUserId,
-        inviteeUserId: data.inviteeUserId,
+        ownerUserId: data.ownerUserId,
+        prospectiveMemberId: data.prospectiveMemberId,
         roleId: data.roleId,
         message: data.message ?? '',
       });

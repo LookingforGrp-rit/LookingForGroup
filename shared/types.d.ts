@@ -1344,8 +1344,8 @@ export type ReorderProjectImagesInput = {
  * Data required to add a user as a member of a project, role defaults to "Member"
  */
 export type CreateProjectMemberInput = {
-  inviterUserId: number;
-  inviteeUserId: number;
+  ownerUserId: number;
+  prospectiveMemberId: number;
   roleId: number;
   message?: string;
 };
