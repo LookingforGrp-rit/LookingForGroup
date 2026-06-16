@@ -3,4 +3,5 @@ export const UserEmailSelector = Object.freeze({
   firstName: true,
   lastName: true,
   ritEmail: true,
+  profileImage: true,
 });
