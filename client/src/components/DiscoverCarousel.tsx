@@ -57,8 +57,13 @@ export const DiscoverCarousel: React.FC<DiscoverCarouselProps> = ({ dataList = [
         <div className='discover-project-image'>
           <a href={`${paths.routes.PROJECT}?projectID=${project.projectId}`} tabIndex={-1}>
             <img
-              src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-              alt={'project image'}
+            // This checks if the image value for the project is null, and if so, uses a placeholder image
+            // If there is a project image value, but the image doesnt exist or the value leads to nothing, 
+            // this will break and return no image, forcing the alt text to display
+              src={project.thumbnail?.image ?? placeholderThumbnail}
+            // A fix for this would be to usePreloadedImage, but for some reason this sometimes displays images of different projects
+            // src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
+              alt={project.title}
             />
           </a>
         </div>
