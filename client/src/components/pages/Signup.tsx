@@ -80,7 +80,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
     googleId: sessionData?.googleId,
     username: '',
     pronouns: pronouns,
-    academicYear: academicYear as AcademicYear,
+    ritStatus: academicYear as AcademicYear,
     bio: bio,
     headline: headline,
     phoneNumber: phoneNumber,
