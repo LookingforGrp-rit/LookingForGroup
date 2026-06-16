@@ -1524,10 +1524,10 @@ export const TeamTab = ({
               className="header-color-fill"
               ariaLabel="add member"
             />
-            <div id="project-team-add-member-text">Add Member</div>
+            <div id="project-team-add-member-text">Invite Member</div>
           </PopupButton>
           <PopupContent useClose={true}>
-            <div id="project-team-add-member-title">Add Member</div>
+            <div id="project-team-add-member-title">Invite Member</div>
             <div
               className={successAddMember ? "success" : "error"}
               id="error-add-member"
@@ -1611,7 +1611,7 @@ export const TeamTab = ({
                 callback={() => handleNewMember()}
                 doNotClose={() => !closePopup}
               >
-                Add
+                Invite
               </PopupButton>
               <PopupButton
                 buttonId="team-add-member-cancel-button"

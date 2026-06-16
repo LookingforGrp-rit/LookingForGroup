@@ -32,6 +32,7 @@ import {
   MySkill,
   MeDetail,
   UpdateUserProjectVisibilityInput,
+  CreateProjectVideoInput,
 } from "@looking-for-group/shared";
 
 /**
@@ -109,6 +110,11 @@ interface ProjectChangesCreates {
   projectImages: CRUDRequest<CreateProjectImageInput>[];
 
   /**
+   * All project videos to be created
+   */
+  projectVideos: CRUDRequest<CreateProjectVideoInput>[];
+
+  /**
    * All project socials to be created
    */
   projectSocials: CRUDRequest<AddProjectSocialInput>[];
@@ -182,6 +188,11 @@ interface ProjectChangesDeletes {
    * All project images to be deleted
    */
   projectImages: CRUDRequest<null>[];
+
+  /**
+   * All project videos to be deleted
+   */
+  projectVideos: CRUDRequest<null>[];
 
   /**
    * All project socials to be deleted

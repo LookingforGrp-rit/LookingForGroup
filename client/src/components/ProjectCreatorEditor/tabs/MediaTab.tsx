@@ -2,7 +2,9 @@
 import { useCallback, useEffect, useState, useContext} from "react";
 import {
   CreateProjectImageInput,
+  CreateProjectVideoInput,
   ProjectImage,
+  ProjectVideo,
   ProjectWithFollowers,
 } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
@@ -12,6 +14,8 @@ import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
 import { FileImage } from "../../FileImage";
 import placeholder from "../../../images/project_temp.png";
 import { ThemeIcon } from "../../ThemeIcon";
+import { getVideos } from "../../../api/projects";
+import { getYouTubeEmbedURL } from "../../../functions/parseYoutube";
 
 let projectAfterMediaChanges: PendingProject;
 
@@ -73,6 +77,11 @@ export const MediaTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
+  const [videos, setVideos] = useState<ProjectVideo[]>();
+  const [newVideoTitle, setNewVideoTitle] = useState("");
+  const [newVideoUrl, setNewVideoUrl] = useState("");
+  const [videoPopupOpen, setVideoPopupOpen] = useState(false);
+
   projectAfterMediaChanges = structuredClone(projectData);
   const projectId = projectData.projectId!;
 
@@ -110,6 +119,17 @@ export const MediaTab = ({
     }
     initializeImages();
   }, []);
+
+  useEffect(() => {
+      async function fetchVideos() {
+        const res = await getVideos(unmodifiedProject.projectId);
+        if (res.data) {
+          setVideos(res.data);
+        }
+      }
+  
+      fetchVideos();
+    }, [unmodifiedProject.projectId]);
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async (file: File) => {
@@ -204,6 +224,46 @@ export const MediaTab = ({
 
     imageUploader.value = "";
   }, [dataManager, projectId, updatePendingProject]);
+
+  const handleAddVideo = useCallback(() => {
+    if (!newVideoTitle.trim() || !newVideoUrl.trim()) return;
+    if (!getYouTubeEmbedURL(newVideoUrl)) return;
+
+    const localId = ++localIdIncrement;
+    
+    const newVideoData: CreateProjectVideoInput = {
+      title: newVideoTitle,
+      videoUrl: newVideoUrl,
+    };
+
+    // Create it
+    dataManager.createVideo({
+      id: { value: localId, type: "local" },
+      data: newVideoData
+    });
+
+    // Update UI immediately
+    const pendingVideo = { videoId: localId, isLocal: true, ...newVideoData };
+    setVideos((prev) => (prev ? [...prev, pendingVideo as any] : [pendingVideo as any]));
+
+    // Clear inputes
+    setNewVideoTitle("");
+    setNewVideoUrl("");
+  }, [newVideoTitle, newVideoUrl, dataManager, setVideos]);
+
+  const handleDeleteVideo = useCallback((video: any) => {
+    // Delete it
+    dataManager.deleteVideo({
+      id: { 
+        value: video.videoId, 
+        type: video.isLocal ? "local" : "canon" 
+      },
+      data: null
+    });
+
+    // Remove from current UI
+    setVideos((prev) => (prev || []).filter((v: any) => v.videoId !== video.videoId));
+  }, [dataManager, setVideos]);
 
   // Checks whether the thumbnail has been modified and updates modifiedProject
   const handleThumbnailChange = useCallback(
@@ -468,6 +528,112 @@ export const MediaTab = ({
         <div id="project-editor-add-image">
           <ProjectImageUploader onFileSelected={handleImageUpload} />
         </div>
+      </div>
+
+      <label>Project Videos</label>
+      <div className="project-editor-extra-info">
+        Link YouTube videos to be embedded on your project page.
+      </div>
+
+      <div id="project-editor-image-ui">
+        {videos?.map((video: any) => {
+          const embedUrl = getYouTubeEmbedURL(video.videoUrl);
+
+          return (
+            <div 
+              className="project-editor-image-container" 
+              key={video.videoId} 
+            >
+              {embedUrl ? (
+                <iframe
+                  src={embedUrl}
+                  title={video.title}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ width: '100%', height: '100%', aspectRatio: '16/9', border: 'none', display: 'block' }}
+                ></iframe>
+              ) : (
+                <div style={{ padding: "15px" }}>
+                  <p style={{ fontWeight: "bold", margin: "0 0 5px 0" }}>{video.title}</p>
+                  <p style={{ fontSize: "0.8em", wordBreak: "break-all", margin: 0, opacity: 0.7 }}>{video.url}</p>
+                </div>
+              )}
+              
+              {/* Delete Overlay */}
+              <div className="project-video-hover">
+                <ThemeIcon
+                  id="trash"
+                  className="mono-stroke-invert delete-video"
+                  width={22}
+                  height={22}
+                  ariaLabel="delete"
+                  onClick={() => handleDeleteVideo(video)}
+                />
+              </div>
+            </div>
+          );
+        })}
+
+        {videoPopupOpen 
+        ? 
+          <div className="add-video">
+            <div className="add-video-form">
+              <div>
+                <label className="add-video-title">Video Title</label>
+                <input 
+                  type="text" 
+                  value={newVideoTitle}
+                  onChange={(e) => setNewVideoTitle(e.target.value)}
+                  placeholder="e.g., Gameplay Trailer"
+                  className="add-video-input"
+                />
+              </div>
+              <div>
+                <label className="add-video-title">YouTube URL</label>
+                <input 
+                  type="text" 
+                  value={newVideoUrl}
+                  onChange={(e) => setNewVideoUrl(e.target.value)}
+                  placeholder="https://www.youtube.com/watch?v=..."
+                  className="add-video-input"
+                />
+              </div>
+            </div>
+            
+            <div className="confirm-deny-btns">
+              <button 
+                className="confirm-btn" 
+                onClick={() => {
+                  handleAddVideo();
+                  setVideoPopupOpen(false);
+                }}
+              >
+                Add Video
+              </button>
+              <button 
+                className="deny-btn"
+                onClick={() => {
+                  setNewVideoTitle("");
+                  setNewVideoUrl("");
+                  setVideoPopupOpen(false);
+                }}
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        : 
+          <div id="project-editor-add-image">
+            <button id="project-video-uploader" className="drop-area" onClick={() => setVideoPopupOpen(!videoPopupOpen)}>
+              <div id="img-view" className="project-uploader">
+                <svg xmlns="http://www.w3.org/2000/svg" width={38} height={39} viewBox="0 0 448 512">
+                  <path d="M256 64c0-17.7-14.3-32-32-32s-32 14.3-32 32l0 160-160 0c-17.7 0-32 14.3-32 32s14.3 32 32 32l160 0 0 160c0 17.7 14.3 32 32 32s32-14.3 32-32l0-160 160 0c17.7 0 32-14.3 32-32s-14.3-32-32-32l-160 0 0-160z" fill="var(--neutral-gray)"/>
+                </svg>
+                <p className="project-editor-extra-info">Click here to add a new video</p>
+              </div>
+            </button>
+          </div>
+        }
       </div>
 
       {/* Save button */}

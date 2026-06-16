@@ -58,8 +58,8 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
     const newQuery = event.target.value.toLowerCase();
 
     // If onChange is passed in, call it
-     if (onChange) {
-      onChange(event); 
+    if (onChange) {
+      onChange(event);
     } else {
       setInternalQuery(newQuery);
     }
@@ -76,28 +76,28 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
   const handleSearch = useCallback((searchQuery: string) => {
     const filteredResults = dataSets.map((dataSet) =>
       dataSet.data.filter((item) => {
-      if (typeof item === 'object') {
-        // ONLY return fields we want to match, this avoids unintended searchbar behavior
-        // Search using all string props on the item
-        const includesInValue = (val: unknown): boolean => {
-          if (typeof val === 'string') {
-            return val.toLowerCase().includes(searchQuery);
-          }
-          if (Array.isArray(val)) {
-            return val.some((el) => typeof el === 'string' && el.toLowerCase().includes(searchQuery));
-          }
-          if (val && typeof val === 'object') {
-            return Object.values(val).some(includesInValue);
-          }
-          return false;
-        };
+        if (typeof item === 'object') {
+          // ONLY return fields we want to match, this avoids unintended searchbar behavior
+          // Search using all string props on the item
+          const includesInValue = (val: unknown): boolean => {
+            if (typeof val === 'string') {
+              return val.toLowerCase().includes(searchQuery);
+            }
+            if (Array.isArray(val)) {
+              return val.some((el) => typeof el === 'string' && el.toLowerCase().includes(searchQuery));
+            }
+            if (val && typeof val === 'object') {
+              return Object.values(val).some(includesInValue);
+            }
+            return false;
+          };
 
-        if (item === null) return false;
-        return Object.values(item).some(includesInValue);
-      }
-      else {
+          if (item === null) return false;
+          return Object.values(item).some(includesInValue);
+        }
+        else {
           return String(item).toLowerCase().includes(searchQuery)
-      }
+        }
       })
     );
 
@@ -119,12 +119,12 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
         <input
           className="search-input"
           type="text"
-          placeholder="Search"
+          placeholder="Search by Name"
           value={query}
           onChange={handleChange}
           tabIndex={2}
           onKeyDown={(e) => {
-            {/* Prevent odd popup behavior on enter click */}
+            {/* Prevent odd popup behavior on enter click */ }
             if (e.key === 'Enter') {
               e.preventDefault();
             }

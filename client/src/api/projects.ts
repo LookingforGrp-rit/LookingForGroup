@@ -26,6 +26,8 @@ import type {
   CreateProjectJobInput,
   UpdateProjectJobInput,
   UpdateProjectThumbnailInput,
+  ProjectVideo,
+  CreateProjectVideoInput,
 } from "@looking-for-group/shared";
 
 //const navigate = useNavigate();
@@ -162,6 +164,53 @@ export const addPic = async (
   return response as ApiResponse<ProjectImage>;
 };
 
+/**
+ * Gets the videos used attached to a project
+ * @param projectID - ID of the target project
+ * @returns Array of video objects if valid, "400" if not
+ */
+export const getVideos = async (
+  projectID: number
+): Promise<ApiResponse<ProjectVideo[]>> => {
+  const apiURL = `/projects/${projectID}/videos`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getVideos: ${response.error}`);
+  return response;
+};
+
+/**
+ * Attahces a video to a project
+ * @param projectID - ID of the target project
+ * @returns Response status
+ */
+export const addVideo = async (
+  projectID: number,
+  videoData: CreateProjectVideoInput
+): Promise<ApiResponse<ProjectVideo>> => {
+  const apiURL = `/projects/${projectID}/videos`;
+  const response = await POST(apiURL, videoData);
+
+  if (response.error) console.log(`Error in addVideo: ${response.error}`);
+  return response as ApiResponse<ProjectVideo>;
+};
+
+/**
+ * Deletes a video attached to a project
+ * @param projectID - ID of the target project
+ * @param videoId - ID of the video to delete
+ * @returns Response status
+ */
+export const deleteVideo = async (
+  projectID: number,
+  videoId: number
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/${projectID}/videos/${videoId}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in deleteVideo: ${response.error}`);
+  return response as ApiResponse<null>;
+};
 
 // Get project thumbnail
 /**

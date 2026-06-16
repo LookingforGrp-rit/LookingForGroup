@@ -36,7 +36,7 @@ const GetStarted: React.FC<GetStartedProps> = ({ show, onBack, onCreateProject, 
               <img src="/images/icons/nav/projects.png" alt="folder" />
             </button>
             <button id="join-project-btn" onClick={onJoinProject}>
-              Join Project
+              Browse Projects
               <img src="/images/icons/nav/discover.png" alt="compass" />
             </button>
           </div>
