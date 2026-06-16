@@ -3,18 +3,15 @@ import type url = require("url");
 
 // Enums for better typing
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
-export type SkillCategory = 'Software' | 'Talent' | 'Coding Language' | 'Other';
+export type SkillCategory = 'Software' | 'Discipline' | 'Coding Language' | 'Talent' | 'Other';
 export type TagType =
-  | "Creative"
-  | "Technical"
-  | "Games"
-  | "Multimedia"
-  | "Music"
   | "Other"
   | "Developer"
   | "Designer"
   | "Soft"
   | "Audio"
+  | 'Form'
+  | 'Genre'
   | "Purpose"
   | "Project Type"
   | "Role"
@@ -23,8 +20,15 @@ export type TagType =
   | "Designer Skill"
   | "Soft Skill"
   | "Audio Skill";
-export type TagCategory = 'Game Genre' | "Media Genre" | 'Theme' | 'Music Genre' | 'Software' | 'Feature' | 'Coding Language' | 'Other';
-export type AcademicYear =
+//wow.
+export type GenreCategory = 'Game' | "Story" | 'Music';
+export type FormCategory = 'Visual' | 'Structural';
+export type DeveloperCategory = 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Other' | 'Discipline';
+export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' | 'Other' | 'Discipline';
+export type SoftCategory = 'Personal' | 'Team' | 'Other';
+export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
+export type TagCategory = GenreCategory | FormCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
+  export type AcademicYear = 
   | "Freshman"
   | "Sophomore"
   | "Junior"
