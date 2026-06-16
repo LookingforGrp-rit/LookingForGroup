@@ -1125,5 +1125,116 @@ Filters / Tags Style Rules
   transition: 0.2s;
 }
 
-
 /*#endregion tag styles*/
+
+/*Fixing Filter Popup*/
+
+#filters-popup {
+  position: fixed;
+  top: 50%;
+  left: calc(50% + 115px); 
+  transform: translate(-50%, -50%);
+  
+  width: 90vw;
+  max-width: 820px;        
+  height: auto;
+  
+  /* Clamped to 88vh so it avoids hitting the browser address bar edges */
+  max-height: 88vh;        
+  
+  background-color: #1a1923; 
+  border-radius: 16px;
+  padding: 32px 24px 20px 24px;           
+  box-sizing: border-box;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
+  z-index: 10000;
+  
+  display: flex;
+  flex-direction: column;
+  gap: 12px;               
+}
+
+/* Header Text Style */
+#filters-popup h2 {
+  text-align: center;
+  margin: 0 0 4px 0;       
+  font-size: 1.5rem;
+  color: #f3be9b;
+}
+
+/* Main Content Panel (Search, Categories, Tags) */
+#filters.popup-section {
+  width: 100% !important;
+  max-width: 100% !important;
+  box-sizing: border-box;
+  background-color: #0c0b11;
+  border-radius: 12px;
+  padding: 22px 24px !important; 
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;              
+  max-height: none !important;
+  gap: 4px !important;
+}
+
+/* Category Tabs */
+#filter-tabs {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: center !important;
+  align-content: flex-start !important; 
+  gap: 8px 40px !important;            
+  margin: 14px auto 0 auto !important;
+  padding: 0 0 10px 0 !important;
+  width: 100%;
+  max-width: 660px;
+  height: auto !important;              
+  overflow: visible !important;
+}
+
+#filter-tabs > * {
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: #a5a3b3;
+  cursor: pointer;
+}
+
+#filter-tabs > *:hover,
+#filter-tabs > .active {
+  color: #f3be9b;
+  text-shadow: 0 0 0.65px currentColor, 0 0 0.65px currentColor; 
+}
+
+#filter-tags {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  gap: 10px 12px !important;
+  
+  /*Replaces fluid min/max rules with a completely locked layout height footprint */
+  height: 170px !important;             
+  overflow-y: auto !important;        
+  padding: 4px 0 !important;
+}
+
+/* Selected Items Tray (Footer Container) */
+#selected-section.popup-section {
+  width: 100% !important;
+  box-sizing: border-box;
+  background-color: #0c0b11;
+  border-radius: 12px;
+  padding: 18px 24px !important;        
+  display: flex !important;
+  flex-direction: column !important;
+  
+  height: auto !important;
+  min-height: 85px !important;         
+}
+
+#filters-popup #primary-btn {
+  width: 100%;
+  max-width: 140px;       
+  margin: 4px auto 0 auto;              
+  display: block;
+  flex-shrink: 0;
+}
