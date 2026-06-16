@@ -1,5 +1,8 @@
 import type { SendProjectInviteInput, EmailInput } from '@looking-for-group/shared';
+import { pretty, render, toPlainText } from '@react-email/components';
+import { createElement } from 'react';
 import prisma from '#config/prisma.ts';
+import InviteEmail from '#email/InviteEmail.ts';
 import getRolesService from '#services/datasets/get-roles.ts';
 import { sendEmail } from '#services/mailer.ts';
 import getProjectByIdService from '#services/projects/get-proj-id.ts';
@@ -52,56 +55,47 @@ const sendInviteService = async (
       return project;
     }
 
-    const msg = data.message.length === 0 ? 'No message included.' : data.message;
-
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
     const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
 
+    const receiverImg = invitee.profileImage
+      ? `https://lookingforgrp.com${invitee.profileImage}`
+      : 'https://lookingforgrp.com/api/images/blue_frog.png';
+
+    const projectImg = project.thumbnail
+      ? `https://lookingforgrp.com${project.thumbnail.image}`
+      : 'https://lookingforgrp.com/api/images/project_temp.png';
+
+    const html = await pretty(
+      await render(
+        createElement(InviteEmail, {
+          receiverName: {
+            firstName: invitee.firstName,
+            lastName: invitee.lastName,
+          },
+          receiverImage: receiverImg,
+          senderName: {
+            firstName: inviter.firstName,
+            lastName: inviter.lastName,
+          },
+          senderEmail: inviter.ritEmail,
+          senderMessage: data.message,
+          projectName: project.title,
+          projectImage: projectImg,
+          inviteLink: inviteUrl,
+        }),
+      ),
+    );
+
+    const text = toPlainText(html);
+
     const email: EmailInput = {
-      inviter: inviter,
-      invitee: invitee,
+      sender: inviter,
+      receiver: invitee,
       subject: `Invitation to join ${project.title}`,
-      textBody: `
-                Hello ${invitee.firstName},
-                \n\n
-                You've been invited to join the project "${project.title}" as a ${role.label} by ${inviter.firstName} ${inviter.lastName}. 
-                If you don't want to join the project or believe this is a mistake, you may safely ignore this email.
-                \n
-                Here is the message from the inviter if they included one:
-                \n
-                ${msg}
-                \n
-                Click the link below to view the project and accept the invite:
-                \n
-                ${inviteUrl}
-                \n\n
-                Best,
-                \n
-                Looking For Group Team`,
-      HTMLBody: `
-                <div>
-                  <p>Hello ${invitee.firstName},</p>
-                  <p>
-                    You've been invited to join the project "<strong>${project.title}</strong>"
-                    as a <strong>${role.label}</strong> by
-                    ${inviter.firstName} ${inviter.lastName}.
-                  </p>
-                  <p>
-                    If you don't want to join the project or believe this is a mistake,
-                    you may safely ignore this email.
-                  </p>
-                  <p>Here is the message from the inviter if they included one:</p>
-                  <p>${msg}</p>
-                  <p>Click the link below to view the project and accept the invite:</p>
-                  <a href="${inviteUrl}" target="_blank">
-                    Accept Invite to Join ${project.title}
-                  </a>
-                  <p>
-                    Best,<br>
-                    Looking For Group Team
-                  </p>
-                </div>`,
+      textBody: text,
+      HTMLBody: html,
     };
 
     const emailResult = await sendEmail(email);

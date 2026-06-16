@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "jsx": "react-jsx",
     "noEmit": true,
     "target": "esnext",
     "module": "nodenext",
@@ -15,6 +16,7 @@
       "#app.ts": ["./src/app.ts"],
       "#prisma-models/*": ["./src/models/generated/prisma/*"],
       "#config/*.ts": ["./src/config/*.ts"],
+      "#email/*.ts": ["./src/email/*.ts"],
       "#services/*.ts": ["./src/services/*.ts"],
       "#controllers/*.ts": ["./src/api/controllers/*.ts"],
       "#routes/*.ts": ["./src/api/routes/*.ts"],
