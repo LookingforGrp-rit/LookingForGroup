@@ -29,11 +29,13 @@ const tag1: Tag = {
   tagId: 70,
   label: 'Test',
   type: 'Developer',
+  category: 'Other',
 };
 const tag2: Tag = {
   tagId: 71,
   label: 'Test 2',
   type: 'Designer',
+  category: 'Other',
 };
 
 const prismaProject = {
