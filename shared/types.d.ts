@@ -1367,8 +1367,8 @@ export type SendProjectInviteInput = Required<CreateProjectMemberInput>;
  * Data required to send invitation email to user
  */
 export type EmailInput = {
-  inviter: UserEmail;
-  invitee: UserEmail;
+  sender: UserEmail;
+  receiver: UserEmail;
   subject: string;
   textBody: string;
   HTMLBody: string;
