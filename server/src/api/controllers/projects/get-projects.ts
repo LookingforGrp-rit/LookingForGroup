@@ -6,6 +6,7 @@ import getProjectsService from '#services/projects/get-projects.ts';
 //gets all projects
 const getProjectsController = async (req: Request, res: Response): Promise<void> => {
   let result;
+
   if (req.query.lastProject) {
     const cursor = parseInt(req.query.lastProject as string);
     result = await getProjectsService(cursor);
@@ -19,6 +20,7 @@ const getProjectsController = async (req: Request, res: Response): Promise<void>
       error: 'Internal Server Error',
       data: null,
     };
+
     res.status(500).json(resBody);
     return;
   }
@@ -28,6 +30,7 @@ const getProjectsController = async (req: Request, res: Response): Promise<void>
     error: null,
     data: result,
   };
+
   res.status(200).json(resBody);
 };
 
