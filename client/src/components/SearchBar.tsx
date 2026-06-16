@@ -74,17 +74,21 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
    * @param searchQuery - lowercased search string
    */
   const handleSearch = useCallback((searchQuery: string) => {
+    const splitSearchQuery = searchQuery.trim().split(' ');
+    let currentQuery = splitSearchQuery[0];
+    debugger;
     const filteredResults = dataSets.map((dataSet) =>
       dataSet.data.filter((item) => {
         if (typeof item === 'object') {
           // ONLY return fields we want to match, this avoids unintended searchbar behavior
           // Search using all string props on the item
           const includesInValue = (val: unknown): boolean => {
+            if(val === null) return false;
             if (typeof val === 'string') {
-              return val.toLowerCase().includes(searchQuery);
+              return val.toLowerCase().includes(currentQuery);
             }
             if (Array.isArray(val)) {
-              return val.some((el) => typeof el === 'string' && el.toLowerCase().includes(searchQuery));
+              return val.some((el) => typeof el === 'string' && el.toLowerCase().includes(currentQuery));
             }
             if (val && typeof val === 'object') {
               return Object.values(val).some(includesInValue);
@@ -93,10 +97,37 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           };
 
           if (item === null) return false;
-          return Object.values(item).some(includesInValue);
+
+          //Force typing to remove extra data and only check for relevant data
+          type RelevantData = {
+            firstName: string,
+            lastName: string,
+            preferredName: string,
+            email: string,
+            title: string,
+            label: string,
+          };
+          const proccessedItem = item as RelevantData;
+          const finalItem = {
+            firstName: proccessedItem.firstName ?? null,
+            lastName: proccessedItem.lastName ?? null,
+            preferredName: proccessedItem.preferredName ?? null,
+            email: proccessedItem.email ?? null,
+            title: proccessedItem.title ?? null,
+            label: proccessedItem.label ?? null,
+          };
+
+          for(let q of splitSearchQuery){
+            currentQuery = q;
+            if(!Object.values(finalItem).some(includesInValue)) return false;
+          }
+          return true;
         }
         else {
-          return String(item).toLowerCase().includes(searchQuery)
+          for(let q of splitSearchQuery){
+            if(!String(item).toLowerCase().includes(q)) return false;
+          }
+          return true;
         }
       })
     );
