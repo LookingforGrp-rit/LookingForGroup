@@ -76,7 +76,6 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
   const handleSearch = useCallback((searchQuery: string) => {
     const splitSearchQuery = searchQuery.trim().split(' ');
     let currentQuery = splitSearchQuery[0];
-    debugger;
     const filteredResults = dataSets.map((dataSet) =>
       dataSet.data.filter((item) => {
         if (typeof item === 'object') {
