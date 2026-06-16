@@ -95,6 +95,7 @@ const transformed: ProjectDetail = {
   thumbnailId: 0,
   title: 'test 1',
   updatedAt: now,
+  projectVideos: [],
 };
 
 describe('deleteProjectService', async () => {
