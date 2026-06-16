@@ -34,7 +34,10 @@
     "format:server": "npm run format --workspace=server"
   },
   "devDependencies": {
+    "@types/css-tree": "^2.3.11",
+    "@types/html-to-text": "^9.0.4",
     "@types/nodemailer": "^8.0.0",
+    "@types/prismjs": "^1.26.6",
     "concurrently": "^10.0.3",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
