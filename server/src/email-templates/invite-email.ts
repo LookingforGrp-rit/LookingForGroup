@@ -19,19 +19,19 @@ import {
 
 interface InviteEmailProps {
   receiverName: {
-    firstName?: string;
-    lastName?: string;
+    firstName: string;
+    lastName: string;
   };
-  receiverImage?: string;
+  receiverImage: string;
   senderName: {
-    firstName?: string;
-    lastName?: string;
+    firstName: string;
+    lastName: string;
   };
-  senderEmail?: string;
-  senderMessage?: string;
-  projectName?: string;
-  projectImage?: string;
-  inviteLink?: string;
+  senderEmail: string;
+  senderMessage: string;
+  projectName: string;
+  projectImage: string;
+  inviteLink: string;
 }
 
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
