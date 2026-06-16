@@ -1402,11 +1402,34 @@ Header style rules
   grid-area: buttons;
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
   translate: -10px 0;
 
   .dropdown-container {
     padding: 0 10px;
   }
+}
+
+#header-buttons #about-btn {
+  width: 45px;
+  height: 45px;
+  padding: 0;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--header-color);
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--main-text);
+  transition: 0.2s;
+}
+
+#header-buttons #about-btn:hover {
+  background-color: var(--invert-text);
+  color: var(--bg-color);
 }
 
 #header-buttons button {
