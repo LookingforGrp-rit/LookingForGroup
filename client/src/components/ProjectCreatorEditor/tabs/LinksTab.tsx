@@ -21,7 +21,7 @@ type LinksTabProps = {
   saveable: boolean;
   failCheck: boolean;
   message: string;
-  currentUser: number;
+  currentUser: UserDetail;
 }
 
 let localIdIncrement = 0;
@@ -120,18 +120,16 @@ projectAfterLinkChanges = structuredClone(projectData);
           if (response?.data) {
             setProjectOwner(response.data);
           }
-          else {
-            const user = await getUsersById(currentUser)
-            if (user?.data)
-              setProjectOwner(user.data);
-          }
         } catch (err) {
           console.error("Error fetching project owner details:", err);
         }
       }
+      else {
+        setProjectOwner(currentUser);
+      }
     };
     fetchProjectOwner();
-  }, [projectData?.owner?.userId]);
+  }, [projectData?.owner?.userId, currentUser, setProjectOwner]);
 
   const handleDeleteSocial = (index: number) => {
     const targetSocial = (projectData.projectSocials || [])[index];

@@ -1,4 +1,4 @@
-import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback } from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction, useEffect} from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -13,13 +13,12 @@ import {
   updateProjectSocial,
   addProjectSocial,
   deleteProjectSocial,
-  deleteProject,
 } from "../../api/projects";
 
-import { getProjectsByUser, } from "../../api/users";
+import { getCurrentAccount, getProjectsByUser, getUsersById, } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectSocial, ProjectVideo, ProjectWithFollowers, Tag, UserIdentifiers, Visibility, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectSocial, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 import { getCurrentUsername } from "../../api/users";
 
@@ -86,17 +85,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   // Tracks whether the project was successfully saved (prevents deletion on cleanup after save)
   const [saved, setSaved] = useState(true);
 
+  // Tracks if to show the confirmation popup when closing without saving
   const [confirm, setConfirm] = useState(false);
 
+  // Tracks the error message to display when missing required fields
   const [message, setMessage] = useState("");
-
-  const [open, setOpen] = useState(false);
 
   // Component Refs
   const exitButton = useRef(null);
   const startButton = useRef(null);
 
-  const [currentUser, setCurrentUser] = useState<UserIdentifiers>();
+  // Tracks details on the current user, used when creating a project, not when editing
+  const [currentUser, setCurrentUser] = useState<UserDetail>();
 
   // Check if the current project can be saved
   let valid = false;
@@ -134,28 +134,30 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    */
   const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
     let newMessage = "Project is missing hate";
-    if (updatedPendingProject?.title === "" || updatedPendingProject?.title === undefined) newMessage = "Project is missing a title!";
-    else if (updatedPendingProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
-    else if (updatedPendingProject?.tags.length == 0) newMessage = "Project is missing tags!";
-    else if (updatedPendingProject?.hook === "" || updatedPendingProject?.hook === undefined) newMessage = "Project is missing a Short Description!";
-    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing a Project Overview!";
+    if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
+    else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
+    else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
+    else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
     setMessage(newMessage);
   }
 
   // Start editing the project creator
   const createOrEdit = async () => {
-    setSaved(true);
-    setOpen(true);
-    setConfirm(false);
-    setMessage("Project is missing a medium!");
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
       //redirect user to login if they aren't logged in
       navigate(paths.routes.LOGIN);
       return;
     }
-    setCurrentUser(res.data);
-
+    else {
+      const user = await getUsersById(res.data.userId);
+      if (user.data)
+        await setCurrentUser(user.data);
+    }
+    setSaved(true);
+    setConfirm(false);
+    setMessage("Project is missing a medium!");
 
     if (!newProject && projectID) {
 
@@ -164,7 +166,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         // const response = await getByID(Number(projectID));
         // if (!response.data) return;
 
-        dataManager = await projectDataManager(Number(projectID));
+        dataManager = await projectDataManager(projectID);
 
         const data = dataManager.getSavedProject();
         setProjectData(data);
@@ -181,23 +183,29 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           purpose: "Academic",
           status: "Planning",
           audience: "",
+          globalVisibility: "public",
           projectImages: [] as ProjectImage[],
           projectSocials: [] as ProjectSocial[],
           projectVideos: [] as ProjectVideo[],
           jobs: [] as ProjectJob[],
-          members: [] as ProjectMember[],
+          members: [{
+            user: currentUser ?? (await getCurrentAccount()).data,
+            role: {
+              roleId: 77,
+              label: "owner"
+            },
+            memberSince: new Date(Date.now()),
+            apiUrl: "api/user/" + currentUser?.userId
+          }] as ProjectMember[],
           createdAt: new Date(Date.now()),
           updatedAt: new Date(Date.now()),
           followers: {} as ProjectFollowers,
           tags: [] as Tag[],
           mediums: [] as Medium[],
-        } as ProjectWithFollowers
-      try {
-        await setProjectData(newData);
-        await setModifiedProject(newData);
-      } catch (err) {
-        console.error("Error creating new project:", err);
-      }
+        } as ProjectWithFollowers;
+
+      await setProjectData(newData);
+      await setModifiedProject(newData);
     }
     if (startButton.current) {
       (startButton.current as unknown as HTMLElement).focus();
@@ -253,42 +261,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
   };
 
-  //this deletes the newly created project when the create window is manually closed
-  //this is called below as the PopupContent's callback function (that only calls when it's closed so should it just be called onClose?)
-  const closeWithoutSaving = async () => {
-    if (!open) return;
-    if (!saved) {
-      toggleConfirm();
-      return;
-    }
-    // Only delete if this is a new project AND it was not saved yet
-    if (projectData && newProject) {
-      await deleteProject(projectData?.projectId);
-      setOpen(false);
-      setSaved(true);
-    }
-  }
-
-  const deleteNoSave = useCallback(() => {
-    if (!open) return;
-    // Only delete if this is a new project AND it was not saved yet
-    if (projectData && newProject && !saved) {
-      deleteProject(projectData?.projectId);
-      setOpen(false);
-      setSaved(true);
-    }
-  }, [saved, open, projectData, newProject]);
-
   useEffect(() => {
-    //for chrome
-    window.addEventListener("beforeunload", deleteNoSave, { once: true, passive: false });
-
-    //for firefox
-    window.addEventListener("pagehide", deleteNoSave, { once: true, passive: false });
+    window.onbeforeunload = () => {if (!saved) return ' '};
 
     // if not a new project, get project id from url (existing project)
     if (!newProject) setProjectID(Number(urlParams.get("projectID")));
-  }, [open, projectID, newProject]);
+  }, [open, projectID, newProject, saved]);
 
   const toggleConfirm = async () => {
     setConfirm(!confirm);
@@ -494,6 +472,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
         /* PROJECT MEMBERS */
         for (let member of modifiedProject.members) {
+          if (member.user?.userId === currentUser?.userId) continue;
           dataManager.createMember({
             id: {
               type: "canon",
@@ -545,8 +524,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
-      setOpen(false);
-      navigate(`${paths.routes.PROJECT}?projectID=${projectID}`);
+      navigate(`${paths.routes.PROJECT}?projectID=${projectID !== 0 ? projectID : dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
@@ -584,11 +562,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         </PopupButton>
       )}
 
-      <PopupContent callback={closeWithoutSaving} closeButtonRef={exitButton} confirmation={!saved}>
+      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
-            <PopupButton doNotClose={() => false} callback={deleteNoSave} buttonId="project-editor-save">
+            <PopupButton doNotClose={() => false} callback={toggleConfirm} buttonId="project-editor-save">
               Confirm
             </PopupButton>
             <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >
@@ -706,7 +684,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 saveable={saveable}
                 failCheck={failCheck}
                 message={message}
-                currentUser={currentUser?.userId as number}
+                currentUser={currentUser as UserDetail}
               />
             ) : (
               <></>
