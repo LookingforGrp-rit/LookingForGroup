@@ -126,6 +126,9 @@ export const MediaTab = ({
         if (res.data) {
           setVideos(res.data);
         }
+        else {
+          setVideos(projectAfterMediaChanges.projectVideos as ProjectVideo[]);
+        }
       }
   
       fetchVideos();
@@ -140,8 +143,6 @@ export const MediaTab = ({
     if (!imageUploader?.files?.length) return;
 
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
-
-    if (!projectId) return;
 
     // Check if it is a duplicate image
     for (const image of projectAfterMediaChanges.projectImages) {
@@ -237,15 +238,29 @@ export const MediaTab = ({
     };
 
     // Create it
-    dataManager.createVideo({
+    dataManager?.createVideo({
       id: { value: localId, type: "local" },
       data: newVideoData
     });
+
+    projectAfterMediaChanges = {
+      ...projectAfterMediaChanges,
+      projectVideos: [
+        ...projectAfterMediaChanges.projectVideos as ProjectVideo[],
+        {
+          videoId: localId,
+          videoUrl: newVideoData.videoUrl,
+          position: projectAfterMediaChanges.projectVideos?.length as number,
+          title: newVideoData.title,
+        }
+      ]
+    }
 
     // Update UI immediately
     const pendingVideo = { videoId: localId, isLocal: true, ...newVideoData };
     setVideos((prev) => (prev ? [...prev, pendingVideo as any] : [pendingVideo as any]));
 
+    updatePendingProject(projectAfterMediaChanges);
     // Clear inputes
     setNewVideoTitle("");
     setNewVideoUrl("");
@@ -253,14 +268,22 @@ export const MediaTab = ({
 
   const handleDeleteVideo = useCallback((video: any) => {
     // Delete it
-    dataManager.deleteVideo({
+    dataManager?.deleteVideo({
       id: { 
         value: video.videoId, 
         type: video.isLocal ? "local" : "canon" 
       },
       data: null
     });
+    
+    projectAfterMediaChanges.projectVideos =
+      (projectAfterMediaChanges.projectVideos as ProjectVideo[]).filter(
+        (projectVideo) =>
+        (video as ProjectVideo).videoId !==
+        (projectVideo)?.videoId
+      );
 
+    updatePendingProject(projectAfterMediaChanges);
     // Remove from current UI
     setVideos((prev) => (prev || []).filter((v: any) => v.videoId !== video.videoId));
   }, [dataManager, setVideos]);

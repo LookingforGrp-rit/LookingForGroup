@@ -87,6 +87,7 @@ type TeamTabProps = {
   failCheck: boolean;
   message: string;
   messages: string[];
+  setMessages: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 
@@ -116,6 +117,7 @@ export const TeamTab = ({
   failCheck,
   message,
   messages,
+  setMessages,
 }: TeamTabProps) => {
   // --- Hooks ---
   // State for storing all available roles from the API.
@@ -500,7 +502,10 @@ export const TeamTab = ({
         },
       });
 
-      messages.push(messageText);
+      setMessages([
+        ...messages,
+        messageText
+      ]);
 
       const localProjectMember: PendingProjectMember = {
         user: currentMember.user,

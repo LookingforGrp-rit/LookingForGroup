@@ -353,9 +353,9 @@ enum JobsLocation {
 
 enum ProjectsPurpose {
   Personal
-  PortfolioPiece @map("Portfolio Piece")
+  PortfolioPiece
   Academic
-  CoOp           @map("Co-op")
+  CoOp
 
   @@map("projects_purpose")
 }
@@ -370,7 +370,7 @@ enum JobsCompensation {
 enum ProjectsStatus {
   Planning
   Development
-  PostProduction @map("Post-Production")
+  PostProduction
   Complete
 
   @@map("projects_status")

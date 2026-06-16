@@ -21,6 +21,7 @@ type LinksTabProps = {
   saveable: boolean;
   failCheck: boolean;
   message: string;
+  currentUser: number;
 }
 
 let localIdIncrement = 0;
@@ -50,6 +51,7 @@ export const LinksTab = ({
   saveable,
   failCheck,
   message,
+  currentUser,
 }: LinksTabProps) => {
 
 projectAfterLinkChanges = structuredClone(projectData);
@@ -117,6 +119,11 @@ projectAfterLinkChanges = structuredClone(projectData);
           const response = await getUsersById(projectData.owner.userId);
           if (response?.data) {
             setProjectOwner(response.data);
+          }
+          else {
+            const user = await getUsersById(currentUser)
+            if (user?.data)
+              setProjectOwner(user.data);
           }
         } catch (err) {
           console.error("Error fetching project owner details:", err);
