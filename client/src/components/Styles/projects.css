@@ -42,6 +42,11 @@ Project Panel component style rules
   margin-bottom: 60px;
 }
 
+.project-link {
+  text-decoration: none;
+  cursor: pointer !important;
+}
+
 .project-panel-box {
   display: grid;
   grid-auto-flow: row;
