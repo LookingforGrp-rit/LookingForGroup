@@ -13,6 +13,8 @@ import {
   updateProjectSocial,
   addProjectSocial,
   deleteProjectSocial,
+  deleteProject,
+  getByID,
 } from "../../api/projects";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, } from "../../api/users";
@@ -382,11 +384,15 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     try {
       // EXISTING PROJECT
       if (!newProject && projectID) {
-        updateLinks();
+        //Updates display automatically when adding members        updateLinks();
         await dataManager.saveChanges();
 
         if (updateDisplayedProject) {
-          updateDisplayedProject(dataManager.getSavedProject());
+          const freshResp = await getByID(projectID);
+          if (freshResp.data) {
+            updateDisplayedProject(freshResp.data);
+          } else {
+            updateDisplayedProject(dataManager.getSavedProject());
         }
       }
       else if (newProject) {
@@ -520,6 +526,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         }
 
         await dataManager.saveChanges();
+          }
       }
     }
 

@@ -507,9 +507,16 @@ export const TeamTab = ({
         messageText
       ]);
 
+      setMessages([
+        ...messages,
+        messageText
+      ]);
+
+
+      const pendingRole = allRoles.find((r) => r.label === "Pending") ?? currentMember.role;
       const localProjectMember: PendingProjectMember = {
         user: currentMember.user,
-        role: currentMember.role,
+        role: pendingRole,
         localId: (currentMember as PendingProjectMember).localId ?? ++localIdIncrement,
       };
 
