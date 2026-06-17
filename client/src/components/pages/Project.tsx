@@ -20,7 +20,6 @@ import {
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
-import AboutFooter from "../AboutFooter";
 import usePreloadedImage from '../../functions/imageLoad';
 
 //Main component for the project page
