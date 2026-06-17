@@ -69,10 +69,10 @@ export const getAllUsersService = async (
         },
       });
     }
-    if (filters.academicYear !== undefined) {
+    if (filters.ritStatus !== undefined) {
       parsedFilters.push({
-        academicYear: {
-          in: filters.academicYear,
+        ritStatus: {
+          in: filters.ritStatus,
         },
       });
     }
