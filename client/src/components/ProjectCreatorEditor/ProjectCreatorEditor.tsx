@@ -180,7 +180,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       const newData = { 
           title: "My Project",
           description: "",
-          purpose: "Academic",
+          purpose: null,
           status: "Planning",
           audience: "",
           globalVisibility: "public",
