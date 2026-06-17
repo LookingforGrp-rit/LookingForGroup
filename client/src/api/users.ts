@@ -258,7 +258,7 @@ export const deleteUserFollowing = async (id: number) => {
 /* PROJECT FOLLOWINGS/VISIBILITY */
 
 //Get the current user's projects
-export const getProjectsByUser = async (): Promise<
+export const getMyProjects = async (): Promise<
   ApiResponse<ProjectDetail[]>
 > => {
   const url = `/me/projects`;
@@ -267,6 +267,24 @@ export const getProjectsByUser = async (): Promise<
   //console.log(response);
   return response;
 };
+
+/**
+ * Get projects by a user searched by ID
+ * @param userID - user ID to be searched for
+ * @return - array of projects, or 400 if fails
+*/
+
+export const getUserProjects = async (
+  userID: number
+): Promise<ApiResponse<ProjectDetail[]>
+> => {
+  const url = `/users/${userID}/projects`;
+  const response = await GET(url);
+
+  //console.log(response);
+  return response;
+}
+
 
 /**
  * Get all projects the user is a member of and has set to be public for the profile page
@@ -589,7 +607,8 @@ export default {
   getUserFollowers,
   addUserFollowing,
   deleteUserFollowing,
-  getProjectsByUser,
+  getMyProjects,
+  getUserProjects,
   getVisibleProjects,
   updateProjectProfileVisibility,
   leaveProject,
