@@ -1,4 +1,4 @@
-import { useState, useRef, FC, Dispatch, SetStateAction, useEffect} from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback} from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -261,6 +261,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
   };
 
+  const close = useCallback(() => {
+    setConfirm(false);
+    setSaved(true);
+  }, []);
+
   useEffect(() => {
     window.onbeforeunload = () => {if (!saved) return ' '};
 
@@ -435,7 +440,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
               value: video.videoId, 
               type: "local" 
             },
-            data: video,
+            data: {...video},
           });
         }
 
@@ -562,7 +567,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
-            <PopupButton doNotClose={() => false} callback={toggleConfirm} buttonId="project-editor-save">
+            <PopupButton doNotClose={() => false} callback={close} buttonId="project-editor-save">
               Confirm
             </PopupButton>
             <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >

@@ -252,6 +252,7 @@ export const MediaTab = ({
           videoUrl: newVideoData.videoUrl,
           position: projectAfterMediaChanges.projectVideos?.length as number,
           title: newVideoData.title,
+          apiUrl: ""
         }
       ]
     }
