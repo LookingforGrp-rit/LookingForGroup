@@ -3666,6 +3666,16 @@ button#positions-popup-list-item-active {
   margin: 10px 0;
 }
 
+#project-overview-text {
+  color: var(--main-text);
+  font-size: 1rem;
+  line-height: 150%;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: none;
+}
+
 #project-overview-links-section {
   display: flex;
   flex-direction: column;
