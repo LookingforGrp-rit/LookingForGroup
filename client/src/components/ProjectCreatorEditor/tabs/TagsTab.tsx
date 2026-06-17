@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getProjectTypes, getTags } from "../../../api/users";
-import { Tag, Medium, TagType, ProjectWithFollowers } from "@looking-for-group/shared";
+import { Tag, Medium, TagType, ProjectWithFollowers, TagCategory } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { PendingProject } from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
@@ -351,7 +351,59 @@ export const TagsTab = ({
   const renderTags = useCallback(() => {
     // no search item, render all tags
     if (searchedTags && searchedTags.length !== 0) {
-      return searchedTags.map((tagOrMedium) => {
+
+      let tagsToDisplay = searchedTags;
+
+      //Common Category names that VS Code will yell at me for not defining here.
+      let other;
+      let disciplines;
+
+      switch (currentTagsTab){
+        case 1:
+          //Genres
+          let game = searchedTags.filter((tag) => (tag as Tag).category === "Game");
+          let story = searchedTags.filter((tag) => (tag as Tag).category === "Story");
+          let music = searchedTags.filter((tag) => (tag as Tag).category === "Music");
+          tagsToDisplay = game.concat(story, music);
+          break;
+        case 2:
+          //Developer Skills
+          let frameworks = searchedTags.filter((tag) => (tag as Tag).category === "Framework");
+          let software = searchedTags.filter((tag) => (tag as Tag).category === "Software");
+          let codingLanguages = searchedTags.filter((tag) => (tag as Tag).category === "Coding Language");
+          let operatingSystems = searchedTags.filter((tag) => (tag as Tag).category === "Operating System");
+          other = searchedTags.filter((tag) => (tag as Tag).category === "Other");
+          disciplines = searchedTags.filter((tag) => (tag as Tag).category === "Discipline");
+          tagsToDisplay = frameworks.concat(software, codingLanguages, operatingSystems, other, disciplines);
+          break;
+        case 3:
+          //Designer Skills
+          let design = searchedTags.filter((tag) => (tag as Tag).category === "Design");
+          let artAnimation = searchedTags.filter((tag) => (tag as Tag).category === "Art and Animation");
+          let photoEditing = searchedTags.filter((tag) => (tag as Tag).category === "Photo Editing");
+          other = searchedTags.filter((tag) => (tag as Tag).category === "Other");
+          disciplines = searchedTags.filter((tag) => (tag as Tag).category === "Discipline");
+          tagsToDisplay = design.concat(artAnimation, photoEditing, other, disciplines);
+          break;
+        case 4:
+          //Audio Skills
+          let dawAudioEditors = searchedTags.filter((tag) => (tag as Tag).category === "DAW/Audio Editor");
+          let notation = searchedTags.filter((tag) => (tag as Tag).category === "Notation");
+          let middleware = searchedTags.filter((tag) => (tag as Tag).category === "Middleware");
+          disciplines = searchedTags.filter((tag) => (tag as Tag).category === "Discipline");
+          other = searchedTags.filter((tag) => (tag as Tag).category === "Other");
+          tagsToDisplay = dawAudioEditors.concat(notation, middleware, disciplines, other);
+          break;
+        case 5:
+          //Soft Skills
+          let personal = searchedTags.filter((tag) => (tag as Tag).category === "Personal");
+          let team = searchedTags.filter((tag) => (tag as Tag).category === "Team");
+          other = searchedTags.filter((tag) => (tag as Tag).category === "Other");
+          tagsToDisplay = personal.concat(team, other);
+          break;
+      }
+
+      return tagsToDisplay.map((tagOrMedium) => {
         // get id according to type of tag
         let id: number = -1; // bad default value
         let isTag;
