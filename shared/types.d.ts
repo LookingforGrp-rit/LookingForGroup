@@ -23,12 +23,12 @@ export type TagType =
   | "Audio Skill";
 //wow.
 export type GenreCategory = 'Game' | "Story" | 'Music';
-export type FormCategory = 'Visual' | 'Structural';
+export type StyleCategory = 'Visual' | 'Structural';
 export type DeveloperCategory = 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Other' | 'Discipline';
-export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' | 'Other' | 'Discipline';
+export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' | 'Other' | 'Discipline' | 'Writing Software';
 export type SoftCategory = 'Personal' | 'Team' | 'Other';
 export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
-export type TagCategory = GenreCategory | FormCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
+export type TagCategory = GenreCategory | StyleCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
   export type RITStatus = 
   | "Freshman"
   | "Sophomore"
@@ -185,7 +185,7 @@ export interface Tag {
   /**
    * The category of tag, such as "Game"
    */
-  category: TagCategory;
+  category?: TagCategory;
 }
 
 /**
@@ -226,13 +226,13 @@ export interface Skill {
   /**
    * The category of the skill, such as "Software"
    */
-  category: SkillCategory;
+  category?: SkillCategory;
 }
 
 /**
- * Project types refer to the type of the project, like a game or an analog application.
+ * Mediums refer to the medium through which the project is experienced
  */
-export interface AppType {
+export interface Medium {
   /**
    * The database ID corresponding to the type
    */
@@ -920,7 +920,7 @@ export interface ProjectVideo {
 /**
  * Represents a medium tied to a project
  */
-export interface ProjectType extends AppType {
+export interface ProjectMedium extends Medium {
   /**
    * The location of this resource on the server
    */
@@ -1192,9 +1192,9 @@ export interface ProjectPreview {
   thumbnailId: number;
 
   /**
-   * The types attached to the project
+   * The mediums attached to the project
    */
-  types: ProjectType[];
+  mediums: ProjectMedium[];
 
   /**
    * The location of this resource on the server
@@ -1443,7 +1443,7 @@ export type UpdateProjectTagInput = Partial<AddProjectTagInput>;
 /**
  * Data required to add a type to a project
  */
-export type AddProjectTypeInput = Pick<ProjectType, "typeId">;
+export type AddProjectMediumInput = Pick<ProjectMedium, "typeId">;
 
 /**
  * Data required to create a job listing on a project

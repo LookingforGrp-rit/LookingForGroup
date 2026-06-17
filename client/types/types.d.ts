@@ -1,5 +1,5 @@
 import {
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   AddProjectSocialInput,
   AddProjectTagInput,
   CreateProjectImageInput,
@@ -132,7 +132,7 @@ interface ProjectChangesCreates {
   /**
    * All mediums to be created
    */
-  mediums: CRUDRequest<AddProjectMediumsInput>[];
+  mediums: CRUDRequest<AddProjectMediumInput>[];
 }
 
 /**
