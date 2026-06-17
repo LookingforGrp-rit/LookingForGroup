@@ -2,7 +2,7 @@
 import { useEffect, useState, useContext, useMemo } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
-import { AddProjectSocialInput, ProjectSocial, ProjectWithFollowers, Social, UserDetail } from "@looking-for-group/shared";
+import { ProjectSocial, ProjectWithFollowers, Social, UserDetail } from "@looking-for-group/shared";
 import { Input } from "../../Input";
 import { getSocials, getUsersById } from "../../../api/users";
 import { ThemeIcon } from "../../ThemeIcon";
@@ -12,7 +12,7 @@ import { BaseSocialUrl } from "@looking-for-group/shared/enums";
 
 // --- Variables ---
 type LinksTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   updatePendingProject: (updatedPendingProject: PendingProject) => void;
@@ -21,6 +21,7 @@ type LinksTabProps = {
   saveable: boolean;
   failCheck: boolean;
   message: string;
+  currentUser: UserDetail;
 }
 
 let localIdIncrement = 0;
@@ -50,6 +51,7 @@ export const LinksTab = ({
   saveable,
   failCheck,
   message,
+  currentUser,
 }: LinksTabProps) => {
 
 projectAfterLinkChanges = structuredClone(projectData);
@@ -122,9 +124,12 @@ projectAfterLinkChanges = structuredClone(projectData);
           console.error("Error fetching project owner details:", err);
         }
       }
+      else {
+        setProjectOwner(currentUser);
+      }
     };
     fetchProjectOwner();
-  }, [projectData?.owner?.userId]);
+  }, [projectData?.owner?.userId, currentUser, setProjectOwner]);
 
   const handleDeleteSocial = (index: number) => {
     const targetSocial = (projectData.projectSocials || [])[index];
@@ -146,12 +151,12 @@ projectAfterLinkChanges = structuredClone(projectData);
       if (isEmpty) {
         // Delete on backend
         if ("localId" in social) {
-          dataManager.deleteSocial({
+          dataManager?.deleteSocial({
             id: { type: 'local', value: social.localId as number },
             data: null
           });
         } else if (social.websiteId) {
-          dataManager.deleteSocial({
+          dataManager?.deleteSocial({
             id: { type: 'canon', value: social.websiteId },
             data: null
           });

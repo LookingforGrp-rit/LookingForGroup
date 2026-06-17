@@ -19,7 +19,7 @@ import {
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
-import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { ProjectPurpose, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
 
 //Main component for the project page
@@ -520,7 +520,7 @@ const Project = (userProfile : any) => {
               {displayedProject.purpose && (
                 <>
                   <div className="project-overview-section-header">Purpose</div>
-                  <div>{displayedProject.purpose}</div>
+                  <div>{ProjectPurpose[displayedProject.purpose]}</div>
                 </>
               )}
               {displayedProject.audience?.trim() && (
