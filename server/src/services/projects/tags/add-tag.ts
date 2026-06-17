@@ -1,4 +1,9 @@
-import type { AddProjectTagInput, ProjectTag, TagType } from '@looking-for-group/shared';
+import type {
+  AddProjectTagInput,
+  ProjectTag,
+  TagCategory,
+  TagType,
+} from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectTagSelector } from '#services/selectors/projects/parts/project-tag.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -26,6 +31,7 @@ const addTagService = async (
       label: newTag.tag.label,
       tagId: newTag.tagId,
       type: newTag.tag.type as TagType,
+      category: newTag.tag.category as TagCategory,
       displayOrder: newTag.displayOrder,
     });
   } catch (e) {

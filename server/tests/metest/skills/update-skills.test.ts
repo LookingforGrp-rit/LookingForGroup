@@ -1,4 +1,9 @@
-import type { MySkill, SkillType, SkillProficiency } from '@looking-for-group/shared';
+import type {
+  MySkill,
+  SkillType,
+  SkillProficiency,
+  SkillCategory,
+} from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { getSkillsService } from '#services/me/skills/get-skills.ts';
@@ -32,6 +37,7 @@ const prismaUserSkills = {
     skillId: 1,
     label: '',
     type: 'Designer' as SkillType,
+    category: 'Other' as SkillCategory,
   },
 };
 
@@ -43,6 +49,7 @@ const skills = [
     skillId: 1,
     label: '',
     type: 'Designer' as SkillType,
+    category: 'Other' as SkillCategory,
   },
 ];
 
@@ -53,6 +60,7 @@ const transformed: MySkill = {
   label: '',
   skillId: 1,
   type: 'Designer',
+  category: 'Other',
 };
 
 describe('updateSkillsService', () => {

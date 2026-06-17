@@ -80,7 +80,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
     googleId: sessionData?.googleId,
     username: '',
     pronouns: pronouns,
-    academicYear: academicYear as AcademicYear,
+    ritStatus: academicYear as AcademicYear,
     bio: bio,
     headline: headline,
     phoneNumber: phoneNumber,
@@ -104,34 +104,36 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
 
     checkSessionAndRedirect();
 
-    //google things
-    // @ts-expect-error google
-    google.accounts.id.initialize({
-      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-      callback: handleGoogle,
-    });
+    const initialize = async () => {
+      //Sets the string for the Google Sign Up button.
+      let googleBtnTheme = new String("");
 
-    //Sets the string for the Google Sign Up button.
-    let googleBtnTheme = new String("");
+      //If we're in dark mode, we use filled_black.
+      if (theme == 'dark') {
+        googleBtnTheme = "filled_black";
+      }
+      //Light mode uses outline.
+      else if (theme == 'light') {
+        googleBtnTheme = "outline";
+      }
+      //The filled_blue option shows up in case something goes wrong.
+      else {
+        googleBtnTheme = "filled_blue";
+      }
 
-    //If we're in dark mode, we use filled_black.
-    if (theme == 'dark') {
-      googleBtnTheme = "filled_black";
-    }
-    //Light mode uses outline.
-    else if (theme == 'light') {
-      googleBtnTheme = "outline";
-    }
-    //The filled_blue option shows up in case something goes wrong.
-    else {
-      googleBtnTheme = "filled_blue";
-    }
+      //google things
+      // @ts-expect-error google
+      google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: handleGoogle,
+      });
 
-    // @ts-expect-error google
-    google.accounts.id.renderButton(
-      document.getElementById("googleBtn"),
-      { theme: googleBtnTheme, size: "large", shape: 'pill', text: "signup_with" }
-    );
+      // @ts-expect-error google
+      google.accounts.id.renderButton(
+        document.getElementById("googleBtn"),
+        { theme: googleBtnTheme, size: "large", shape: 'pill', text: "signup_with" }
+      );
+    }
     async function handleGoogle(response: any) {
       const sessionData = await googleLogin({ credential: response.credential })
       if (sessionData.error) {
@@ -155,6 +157,13 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         navigate(paths.routes.HOME);
       }
     }
+    //for some browsers this works
+    window.onload = initialize;
+    try {
+      //for other browsers telling the window to just shut up and do it works
+      initialize();
+    }
+    catch {}
   }, [navigate]);
 
 

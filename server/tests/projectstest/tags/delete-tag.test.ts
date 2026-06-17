@@ -27,6 +27,7 @@ const tag: Tag = {
   tagId: 71,
   label: 'Test 2',
   type: 'Designer',
+  category: 'Other',
 };
 
 const prismaProjectTag = {

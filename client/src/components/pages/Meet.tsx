@@ -73,12 +73,11 @@ export const ProfileMeetPage = () => {
   const [userCache, setUserCache] = useState<NumberDictionary<StructuredUserInfo>>({});
 
   const [filteredUserList, setFilteredUserList] = useState<UserPreview[]>([]);
-  const [userSearchData, setUserSearchData] = useState<UserPreview[]>([]);
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
 
   const userDataSet = useMemo(() => {
-    return [{ data: userSearchData }];
-  }, [userSearchData]);
+    return [{ data: fullUserList }];
+  }, [fullUserList]);
 
   /**
  * Loads the current user and their followed projects so follow icons render immediately.
@@ -116,8 +115,6 @@ export const ProfileMeetPage = () => {
     setFullUserList(userRes.data);
     setFilteredUserList(userRes.data);
 
-    setUserSearchData(userRes.data);
-
     setLoaded(true);
   };
 
@@ -136,7 +133,7 @@ export const ProfileMeetPage = () => {
       const resultName = result?.username || result?.value || '';
       if (!resultName) continue;
 
-      const matchIndex = userSearchData.findIndex(
+      const matchIndex = fullUserList.findIndex(
         (item) => item.username === resultName
       );
 
@@ -146,15 +143,7 @@ export const ProfileMeetPage = () => {
     }
 
     setFilteredUserList(matches);
-  }, [userSearchData, fullUserList]);
-
-  /**
- * Changes what items are shown to the user whenever a filter has been added or changed
- * @param activeTagFilters Tags that are shown to the user now
- */
-  const updateItemList = async (activeTagFilters: Tag[]) => {
-    return updateUserList(activeTagFilters);
-  };
+  }, [fullUserList]);
 
   /**
  * Changes what items are shown to the user whenever a filter has been added or changed
@@ -243,7 +232,6 @@ export const ProfileMeetPage = () => {
     if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
       tagFilteredList = JSON.parse(JSON.stringify(fullUserList));
 
-      setUserSearchData(fullUserList);
       setFilteredUserList(fullUserList);
       return;
     }
@@ -284,7 +272,7 @@ export const ProfileMeetPage = () => {
         Changes to filters via filter menu are only applied after a confirmation
       */}
       <main id="main" tabIndex={-1} aria-label='main content'>
-        <DiscoverFilters category={'profiles'} updateItemList={updateItemList} />
+        <DiscoverFilters category={'profiles'} updateItemList={updateUserList} />
 
         {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
         <div id="discover-panel-box">

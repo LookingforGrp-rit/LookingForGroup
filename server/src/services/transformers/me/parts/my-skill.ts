@@ -15,12 +15,12 @@ type UserSkillsGetPayload = Awaited<typeof sampleSkills>[number];
 export const transformMySkill = ({
   proficiency,
   position,
-  skills: { skillId, label, type },
+  skills: { skillId, label, type, category },
 }: UserSkillsGetPayload): MySkill => {
   return {
     apiUrl: `api/me/skills/${skillId.toString()}`,
     proficiency,
     position,
-    ...transformSkill({ skillId, label, type }),
+    ...transformSkill({ skillId, label, type, category }),
   };
 };

@@ -14,6 +14,7 @@ import {
   addProjectSocial,
   deleteProjectSocial,
   deleteProject,
+  getByID,
 } from "../../api/projects";
 
 import { getProjectsByUser } from "../../api/users";
@@ -244,7 +245,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     if (!open) return;
     if (!saved) {
       toggleConfirm();
-      return; 
+      return;
     }
     // Only delete if this is a new project AND it was not saved yet
     if (projectData && newProject) {
@@ -266,10 +267,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
   useEffect(() => {
     //for chrome
-    window.addEventListener("beforeunload", deleteNoSave, {once: true, passive: false});
-    
+    window.addEventListener("beforeunload", deleteNoSave, { once: true, passive: false });
+
     //for firefox
-    window.addEventListener("pagehide", deleteNoSave, {once: true, passive: false});
+    window.addEventListener("pagehide", deleteNoSave, { once: true, passive: false });
 
     // if not a new project, get project id from url (existing project)
     if (!newProject) setProjectID(Number(urlParams.get("projectID")));
@@ -387,9 +388,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // EXISTING PROJECT
       if (!newProject && projectID) {
-
+        //Updates display automatically when adding members
         if (updateDisplayedProject) {
-          updateDisplayedProject(dataManager.getSavedProject());
+          const freshResp = await getByID(projectID);
+          if (freshResp.data) {
+            updateDisplayedProject(freshResp.data);
+          } else {
+            updateDisplayedProject(dataManager.getSavedProject());
+          }
         }
       }
 

@@ -50,24 +50,7 @@ Credits link footer style rules
 
 @media only screen and (max-width: 799px) {
   .FooterContainer {
-    align-content: start;
-    background-color: var(--bg-color);
-    position: relative;
-    margin: 15px auto;
-  }
-
-  .FooterContainer button,
-  .FooterContainer a {
-    background-color: var(--primary-color);
-    color: var(--invert-text);
-    padding: 15px;
-    border-radius: 10px;
-
-  }
-
-  .FooterContainer a:link,
-  .FooterContainer a:visited {
-    color: var(--invert-text);
+    display: none;
   }
 }
 

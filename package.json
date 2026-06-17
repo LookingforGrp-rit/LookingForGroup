@@ -34,7 +34,10 @@
     "format:server": "npm run format --workspace=server"
   },
   "devDependencies": {
+    "@types/css-tree": "^2.3.11",
+    "@types/html-to-text": "^9.0.4",
     "@types/nodemailer": "^8.0.0",
+    "@types/prismjs": "^1.26.6",
     "concurrently": "^10.0.3",
     "cross-env": "^7.0.3",
     "dotenv-cli": "^8.0.0",
@@ -71,9 +74,11 @@
     "google-auth-library": "^10.6.2",
     "multer": "^2.1.1",
     "nodemailer": "^8.0.10",
+    "react-email": "^6.6.1",
     "react-virtuoso": "^4.18.7",
     "rollup": "^4.61.0",
     "swagger-parser": "^10.0.3",
-    "tsx": "^4.20.5"
+    "tsx": "^4.20.5",
+    "usehooks-ts": "^3.1.1"
   }
 }

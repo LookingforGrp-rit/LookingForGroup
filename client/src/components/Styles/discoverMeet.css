@@ -332,14 +332,14 @@ Image carousel style rules
   height: 100%;
   width: auto;
   overflow: hidden;
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: center;
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
   }
 }

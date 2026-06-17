@@ -25,7 +25,8 @@ export enum AcademicYear {
   Sophomore = "Sophomore",
   Junior = "Junior",
   Senior = "Senior",
-  Graduate = "Graduate"
+  Graduate = "Graduate",
+  Faculty = "Faculty"
 };
 export enum Visibility {
   Public = "Public",
@@ -55,8 +56,11 @@ export enum JobAvailability {
   Flexible = "Flexible"
 }
 export enum JobDuration {
-  ShortTerm = "Short-term",
-  LongTerm = "Long-term"
+  Days = "Days",
+  Weeks = "Weeks",
+  Months = "Months",
+  Semesters = "Semesters",
+  Years = "Years"
 }
 export enum JobLocation {
   OnSite = "On-Site",
@@ -90,4 +94,12 @@ export interface BaseUrlValidation { //a surprise tool that'll help us later
   Steam: 'https://steamcommunity.com/' | 'https://store.steampowered.com/app/',
   Itch: '.itch.io',
   Other: 'https://' //idk what imma do with this but for now we'll just make sure it's a working link (TERRIBLE! AWFUL IDEA!)
+}
+
+export enum AspectRatios {
+  '16/9',
+  '4/3',
+  '1/1',
+  '2/3',
+  '6/13',
 }
