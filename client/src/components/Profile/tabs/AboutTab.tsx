@@ -5,7 +5,7 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 import LabelInputBox from "../../LabelInputBox";
 import { PendingUserProfile } from "../../../../types/types";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
-import { AcademicYear as RitStatus } from "@looking-for-group/shared/enums";
+import { AcademicYear as AcademicYear } from "@looking-for-group/shared/enums";
 import { Major, MePrivate, Role } from "@looking-for-group/shared";
 import { getJobTitles, getMajors } from "../../../api/users";
 
@@ -338,15 +338,15 @@ export const AboutTab = ({
 						label={"RIT Status"}
 						inputType={"none"}
 						forceUnsaved={
-							profile.ritStatus !==
-							unmodifiedProfile.ritStatus
+							profile.academicYear !==
+							unmodifiedProfile.academicYear
 						}>
 						<Select>
 							<SelectButton
 								placeholder="Select"
 								initialVal={
-									profile.ritStatus
-										? profile.ritStatus
+									profile.academicYear
+										? profile.academicYear
 										: ""
 								}
 								callback={(e) => e.preventDefault()}
@@ -355,11 +355,11 @@ export const AboutTab = ({
 							<SelectOptions
 								callback={(e) => {
 									const year = (e.target as HTMLButtonElement)
-										.value as RitStatus;
+										.value as AcademicYear;
 
 									profileAfterAboutChanges = {
 										...profileAfterAboutChanges,
-										ritStatus: year as RitStatus
+										academicYear: year as AcademicYear
 									};
 
 									//Use this for checking what happens when the year is changed
@@ -375,11 +375,11 @@ export const AboutTab = ({
 											type: "canon"
 										},
 										data: {
-											ritStatus: year as RitStatus
+											academicYear: year as AcademicYear
 										}
 									});
 								}}
-								options={Object.values(RitStatus).map(
+								options={Object.values(AcademicYear).map(
 									(yr) => {
 										return {
 											value: yr,

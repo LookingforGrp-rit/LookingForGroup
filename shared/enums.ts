@@ -25,8 +25,7 @@ export enum AcademicYear {
   Sophomore = "Sophomore",
   Junior = "Junior",
   Senior = "Senior",
-  Graduate = "Graduate",
-  Faculty = "Faculty"
+  Graduate = "Graduate"
 };
 export enum Visibility {
   Public = "Public",
@@ -56,11 +55,8 @@ export enum JobAvailability {
   Flexible = "Flexible"
 }
 export enum JobDuration {
-  Days = "Days",
-  Weeks = "Weeks",
-  Months = "Months",
-  Semesters = "Semesters",
-  Years = "Years"
+  ShortTerm = "Short-term",
+  LongTerm = "Long-Term"
 }
 export enum JobLocation {
   OnSite = "On-Site",
