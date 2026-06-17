@@ -34,7 +34,9 @@ export type TagCategory = GenreCategory | FormCategory | DesignerCategory | Deve
   | "Sophomore"
   | "Junior"
   | "Senior"
-  | "Graduate";
+  | "Graduate"
+  | "Faculty"
+  ;
 export type SkillProficiency =
   | "Novice"
   | "Intermediate"
@@ -51,7 +53,7 @@ export type ProjectStatus =
   | "PostProduction"
   | "Complete";
 export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
-export type JobDuration = "ShortTerm" | "LongTerm";
+export type JobDuration = "Days" | "Weeks" | "Months" | "Semesters" | "Years";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
 export type Visibility = "public" | "private";
@@ -779,7 +781,7 @@ export interface MeDetail extends MePreview {
   /**
    * The logged-in user's academic year, or null if unset
    */
-  academicYear: AcademicYear;
+  ritStatus: AcademicYear;
 
   /**
    * The logged-in user's location, such as "Rochester, NY"
@@ -1257,7 +1259,7 @@ export type UpdateUserInput = Partial<
     | "headline"
     | "pronouns"
     | "title"
-    | "academicYear"
+    | "ritStatus"
     | "location"
     | "funFact"
     | "bio"
