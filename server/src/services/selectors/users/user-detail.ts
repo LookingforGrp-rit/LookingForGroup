@@ -17,7 +17,7 @@ export const UserDetailSelector = Object.freeze({
   headline: true,
   pronouns: true,
   bio: true,
-  academicYear: true,
+  ritStatus: true,
   location: true,
   funFact: true,
   title: true,

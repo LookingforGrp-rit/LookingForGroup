@@ -20,7 +20,7 @@ export const transformUserToDetail = (user: UsersGetPayload): UserDetail => {
   return {
     ...transformUserToPreview(user),
     bio: user.bio,
-    academicYear: user.academicYear,
+    ritStatus: user.ritStatus,
     skills: user.userSkills.map(
       ({ position, proficiency, skills }): UserSkill => ({
         ...transformSkill(skills),

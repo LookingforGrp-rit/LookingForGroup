@@ -164,7 +164,7 @@ components:
           roleId: 1
           label: Full-Stack Developer
         availability: FullTime
-        duration: ShortTerm
+        duration: Days
         location: OnSite
         compensation: Unpaid
         contact:

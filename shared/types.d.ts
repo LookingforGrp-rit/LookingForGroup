@@ -29,7 +29,7 @@ export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' 
 export type SoftCategory = 'Personal' | 'Team' | 'Other';
 export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
 export type TagCategory = GenreCategory | FormCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
-  export type AcademicYear = 
+  export type RitStatus = 
   | "Freshman"
   | "Sophomore"
   | "Junior"
@@ -653,9 +653,9 @@ export interface UserPreview {
  */
 export interface UserDetail extends UserPreview {
   /**
-   * The user's academic year, or null if unset
+   * The user's RIT status, or null if unset
    */
-  academicYear: AcademicYear | null;
+  ritStatus: RitStatus | null;
 
   /**
    * The user's bio
@@ -779,9 +779,9 @@ export interface MeDetail extends MePreview {
   majors: MyMajor[];
 
   /**
-   * The logged-in user's academic year, or null if unset
+   * The logged-in user's RIT Status, or null if unset
    */
-  ritStatus: AcademicYear;
+  ritStatus: RitStatus;
 
   /**
    * The logged-in user's location, such as "Rochester, NY"
@@ -1063,7 +1063,7 @@ export interface ProjectJob {
   availability: JobAvailability;
 
   /**
-   * The duration of the position, such as "Short-Term"
+   * The duration of the position, such as "Days"
    */
   duration: JobDuration;
 
@@ -1277,7 +1277,7 @@ export type CreateUserInput = Partial<
     | "headline"
     | "pronouns"
     | "title"
-    | "academicYear"
+    | "ritStatus"
     | "location"
     | "funFact"
     | "bio"
@@ -1491,7 +1491,7 @@ export type FilterRequest = {
   developer?: boolean;
   skills?: number[];
   majors?: number[];
-  academicYear?: string[];
+  ritStatus?: string[];
   socials?: number[];
   strictness?: 'any' | 'all';
 }

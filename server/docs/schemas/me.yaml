@@ -162,8 +162,8 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/MyMajor'
-            academicYear:
-              $ref: 'enums.yaml#/components/schemas/AcademicYear'
+            ritStatus:
+              $ref: 'enums.yaml#/components/schemas/RitStatus'
             location:
               type: string
             funFact:
@@ -207,7 +207,7 @@ components:
         headline: Hello world
         pronouns: they/them
         title: Student
-        academicYear:
+        ritStatus:
         location: Rochester, NY
         funFact: Loves Prisma
         bio: This is an example user.
@@ -261,7 +261,7 @@ components:
         headline: Hello world
         pronouns: they/them
         title: Student
-        academicYear:
+        ritStatus:
         location: Rochester, NY
         funFact: Loves Prisma
         bio: This is an example user.

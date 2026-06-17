@@ -34,7 +34,7 @@ describe('uidExists test service,', async () => {
       pronouns: 'they/them',
       title: 'Student',
       displayPhone: false,
-      academicYear: null,
+      ritStatus: null,
       mentor: false,
       createdAt: new Date(),
       updatedAt: new Date(),
