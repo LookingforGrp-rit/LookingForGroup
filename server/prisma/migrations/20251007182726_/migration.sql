@@ -171,7 +171,7 @@ CREATE TABLE `users` (
     `headline` VARCHAR(100) NOT NULL DEFAULT '',
     `pronouns` VARCHAR(20) NOT NULL DEFAULT '',
     `title` VARCHAR(50) NOT NULL DEFAULT '',
-    `academic_year` ENUM('Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate') NULL,
+    `rit_status` ENUM('Freshman', 'Sophomore', 'Junior', 'Senior', 'Graduate') NULL,
     `location` VARCHAR(150) NOT NULL DEFAULT '',
     `fun_fact` VARCHAR(100) NOT NULL DEFAULT '',
     `bio` VARCHAR(600) NOT NULL DEFAULT '',

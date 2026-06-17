@@ -1,6 +1,6 @@
-import type { AcademicYear, ApiResponse, FilterRequest } from '@looking-for-group/shared';
+import type { RITStatus, ApiResponse, FilterRequest } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { UsersAcademicYear } from '#prisma-models/index.js';
+import { UsersRITStatus } from '#prisma-models/index.js';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
 
 //GET api/users
@@ -51,8 +51,8 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
   if (req.query.majors) {
     filters.majors = (req.query.majors as string).split(',').map((val) => parseInt(val));
   }
-  if (req.query.academicYear) {
-    filters.academicYear = (req.query.academicYear as string).split(',');
+  if (req.query.ritStatus) {
+    filters.ritStatus = (req.query.ritStatus as string).split(',');
   }
   if (req.query.socials) {
     filters.socials = (req.query.socials as string).split(',').map((val) => parseInt(val));
@@ -73,14 +73,14 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     return;
   }
 
-  //year checks using UsersAcademicYear
-  const years = filters.academicYear as string[];
-  if (filters.academicYear !== undefined) {
+  //year checks using UsersRITStatus
+  const years = filters.ritStatus as string[];
+  if (filters.ritStatus !== undefined) {
     years.forEach((year) => {
-      if (!Object.values(UsersAcademicYear).includes(year as AcademicYear)) {
+      if (!Object.values(UsersRITStatus).includes(year as RITStatus)) {
         const resBody: ApiResponse = {
           status: 400,
-          error: 'Invalid academic year(s)',
+          error: 'Invalid RIT status(s)',
           data: null,
         };
         res.status(400).json(resBody);

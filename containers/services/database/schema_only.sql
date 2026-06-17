@@ -364,7 +364,7 @@ CREATE TABLE `users` (
   `headline` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `pronouns` text COLLATE utf8mb4_unicode_ci,
   `title` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
-  `academic_year` enum('Freshman','Sophomore','Junior','Senior','Grad1','Grad2') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `rit_status` enum('Freshman','Sophomore','Junior','Senior','Grad1','Grad2') COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `location` varchar(150) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `fun_fact` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `bio` varchar(600) COLLATE utf8mb4_unicode_ci DEFAULT NULL,

@@ -2,7 +2,7 @@ import {
 	CreateUserInput,
 	Major,
 	Skill,
-	AcademicYear,
+	RITStatus,
 	Role
 } from "@looking-for-group/shared";
 import { MouseEventHandler, useMemo, useState } from "react";
@@ -11,7 +11,7 @@ import { Select, SelectButton, SelectOptions } from "../Select";
 import { getMajors, getJobTitles } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
 //why do these 2 things have the same name??
-import { AcademicYear as AcademicYears, } from "@looking-for-group/shared/enums";
+import { RITStatus as RITStatusEnum, } from "@looking-for-group/shared/enums";
 import { ProfileImageUploader } from "../ImageUploader";
 
 interface CompleteProfileProps {
@@ -28,7 +28,7 @@ interface CompleteProfileProps {
 	location: string;
 	funFact: string;
 	major: Major[];
-	academicYear: AcademicYear | undefined;
+	ritStatus: RITStatus | undefined;
 	setBio: React.Dispatch<React.SetStateAction<string>>;
 	setPronouns: React.Dispatch<React.SetStateAction<string>>;
 	setHeadline: React.Dispatch<React.SetStateAction<string>>;
@@ -37,8 +37,8 @@ interface CompleteProfileProps {
 	setLocation: React.Dispatch<React.SetStateAction<string>>;
 	setFunFact: React.Dispatch<React.SetStateAction<string>>;
 	setMajor: React.Dispatch<React.SetStateAction<Major[]>>;
-	setAcademicYear: React.Dispatch<
-		React.SetStateAction<AcademicYear | undefined>
+	setRITStatus: React.Dispatch<
+		React.SetStateAction<RITStatus | undefined>
 	>;
 	profileImage: File;
 	setProfileImage: React.Dispatch<React.SetStateAction<File>>;
@@ -82,7 +82,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	funFact,
 	major,
 	profileImage,
-	academicYear,
+	ritStatus,
 	setBio,
 	setHeadline,
 	setPhoneNumber,
@@ -90,7 +90,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	setLocation,
 	setFunFact,
 	setMajor,
-	setAcademicYear,
+	setRITStatus,
 	setPronouns,
 	setProfileImage
 }) => {
@@ -253,23 +253,23 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							</Select>
 						</div>
 
-						{/* Academic Year */}
+						{/* RIT Status */}
 						{/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
-						<div id="academicYear-input">
+						<div id="ritStatus-input">
 							<Select>
 								<SelectButton
-									placeholder="Academic Year (Required)"
+									placeholder="RIT Status (Required)"
 									type={"input"}
-									initialVal={academicYear}
+									initialVal={ritStatus}
 								/>
 								<SelectOptions
 									callback={(e) =>
-										setAcademicYear(
+										setRITStatus(
 											(e.target as HTMLButtonElement)
-												.value as AcademicYear
+												.value as RITStatus
 										)
 									}
-									options={Object.values(AcademicYears).map(
+									options={Object.values(RITStatusEnum).map(
 										(yr) => {
 											return {
 												value: yr,
@@ -376,7 +376,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<button
 							id="signup-nextBtn"
 							onClick={onNext}
-							disabled={!(major.length > 0 && academicYear && validPhoneNum)}>
+							disabled={!(major.length > 0 && ritStatus && validPhoneNum)}>
 							Next
 						</button>
 					</div>

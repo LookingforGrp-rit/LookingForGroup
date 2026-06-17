@@ -25,7 +25,7 @@ components:
         - Purpose
       example: Creative
 
-    AcademicYear:
+    RITStatus:
       type: string
       enum:
         - Freshman

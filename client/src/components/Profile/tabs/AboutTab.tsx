@@ -5,7 +5,7 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 import LabelInputBox from "../../LabelInputBox";
 import { PendingUserProfile } from "../../../../types/types";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
-import { AcademicYear as RitStatus } from "@looking-for-group/shared/enums";
+import { RITStatus as RitStatus } from "@looking-for-group/shared/enums";
 import { Major, MePrivate, Role } from "@looking-for-group/shared";
 import { getJobTitles, getMajors } from "../../../api/users";
 

@@ -106,7 +106,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [filteredUserList, setFilteredUserList] = useState<UserPreview[]>([]);
 
   // List that holds trimmed data for searching. Empty before fullItemList is initialized
-  //const [itemSearchData, setItemSearchData] = useState<UserAndProjectInfo[]>([]);
   const [projectSearchData, setProjectSearchData] = useState<ProjectPreview[]>([]);
   const [userSearchData, setUserSearchData] = useState<UserPreview[]>([]);
 

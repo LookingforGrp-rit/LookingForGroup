@@ -29,13 +29,14 @@ export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' 
 export type SoftCategory = 'Personal' | 'Team' | 'Other';
 export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
 export type TagCategory = GenreCategory | FormCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
-  export type AcademicYear = 
+  export type RITStatus = 
   | "Freshman"
   | "Sophomore"
   | "Junior"
   | "Senior"
   | "Graduate"
   | "Faculty"
+  | 'Staff'
   ;
 export type SkillProficiency =
   | "Novice"
@@ -69,9 +70,6 @@ export interface NumberDictionary<T> {
   [key: number]: T;
 }
 
-interface ProjectType {
-  project_type: string;
-}
 
 export type ProjectInfoStage = "Preview" | "Detail" | "Full";
 
@@ -84,23 +82,6 @@ export interface StructuredProjectInfo {
 export interface StructuredUserInfo {
   preview?: UserPreview;
   detail?: UserDetail;
-}
-
-export interface UserAndProjectInfo {
-  tags?: Tag[];
-  title?: string;
-  hook?: string;
-  project_types?: ProjectType[];
-  job_title?: string;
-  major?: string;
-  skills?: Skill[];
-  first_name?: string;
-  last_name?: string;
-  username?: string;
-  name?: string;
-  bio?: string;
-  projectId?: number;
-  userId?: number;
 }
 
 //API REQUEST
@@ -249,16 +230,16 @@ export interface Skill {
 }
 
 /**
- * Mediums refer to the medium through which a project is experienced.
+ * Project types refer to the type of the project, like a game or an analog application.
  */
-export interface Medium {
+export interface AppType {
   /**
-   * The database ID corresponding to the medium
+   * The database ID corresponding to the type
    */
-  mediumId: number;
+  typeId: number;
 
   /**
-   * The name of the medium, such as "Video Game"
+   * The name of the type, such as "Video Game"
    */
   label: string;
 }
@@ -653,9 +634,9 @@ export interface UserPreview {
  */
 export interface UserDetail extends UserPreview {
   /**
-   * The user's academic year, or null if unset
+   * The user's RIT status (like freshman or faculty), or null if unset
    */
-  academicYear: AcademicYear | null;
+  ritStatus: RITStatus | null;
 
   /**
    * The user's bio
@@ -779,9 +760,9 @@ export interface MeDetail extends MePreview {
   majors: MyMajor[];
 
   /**
-   * The logged-in user's academic year, or null if unset
+   * The logged-in user's RIT status, or null if unset
    */
-  ritStatus: AcademicYear;
+  ritStatus: RITStatus;
 
   /**
    * The logged-in user's location, such as "Rochester, NY"
@@ -939,7 +920,7 @@ export interface ProjectVideo {
 /**
  * Represents a medium tied to a project
  */
-export interface ProjectMedium extends Medium {
+export interface ProjectType extends AppType {
   /**
    * The location of this resource on the server
    */
@@ -1211,9 +1192,9 @@ export interface ProjectPreview {
   thumbnailId: number;
 
   /**
-   * The mediums attached to the project
+   * The types attached to the project
    */
-  mediums: ProjectMedium[];
+  types: ProjectType[];
 
   /**
    * The location of this resource on the server
@@ -1277,7 +1258,7 @@ export type CreateUserInput = Partial<
     | "headline"
     | "pronouns"
     | "title"
-    | "academicYear"
+    | "ritStatus"
     | "location"
     | "funFact"
     | "bio"
@@ -1460,10 +1441,9 @@ export type AddProjectTagInput = Pick<ProjectTag, "tagId" | "displayOrder">;
 export type UpdateProjectTagInput = Partial<AddProjectTagInput>;
 
 /**
- * Data required to add a medium to a project
+ * Data required to add a type to a project
  */
-// TODO rename to AddProjectMediumInput (no plural)
-export type AddProjectMediumsInput = Pick<ProjectMedium, "mediumId">;
+export type AddProjectTypeInput = Pick<ProjectType, "typeId">;
 
 /**
  * Data required to create a job listing on a project
@@ -1491,7 +1471,7 @@ export type FilterRequest = {
   developer?: boolean;
   skills?: number[];
   majors?: number[];
-  academicYear?: string[];
+  ritStatus?: string[];
   socials?: number[];
   strictness?: 'any' | 'all';
 }

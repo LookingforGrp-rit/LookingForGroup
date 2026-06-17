@@ -273,7 +273,7 @@ model Users {
   headline          String              @default("") @db.VarChar(100)
   pronouns          String              @default("") @db.VarChar(20)
   title             String              @default("") @db.VarChar(50)
-  academicYear      UsersAcademicYear?  @map("academic_year")
+  ritStatus      UsersRITStatus?  @map("rit_status")
   location          String              @default("") @db.VarChar(150)
   funFact           String              @default("") @map("fun_fact") @db.VarChar(100)
   bio               String              @default("") @db.VarChar(600)
@@ -383,14 +383,16 @@ enum Visibility {
   public
 }
 
-enum UsersAcademicYear {
+enum UsersRITStatus {
   Freshman
   Sophomore
   Junior
   Senior
   Graduate
+  Faculty
+  Staff
 
-  @@map("users_academic_year")
+  @@map("users_rit_status")
 }
 
 enum SkillProficiency {

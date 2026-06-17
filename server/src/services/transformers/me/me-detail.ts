@@ -1,4 +1,4 @@
-import type { MeDetail, MyMajor, AcademicYear } from '@looking-for-group/shared';
+import type { MeDetail, MyMajor, RITStatus } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { MeDetailSelector } from '#services/selectors/me/me-detail.ts';
 import { transformProjectToPreview } from '../projects/project-preview.ts';
@@ -23,7 +23,7 @@ export const transformMeToDetail = (user: UsersGetPayload): MeDetail => {
     headline: user.headline,
     pronouns: user.pronouns,
     bio: user.bio,
-    academicYear: user.academicYear as AcademicYear,
+    ritStatus: user.ritStatus as RITStatus,
     location: user.location,
     funFact: user.funFact,
     title: user.title,
