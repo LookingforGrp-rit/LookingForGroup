@@ -14,6 +14,7 @@ import {
   addProjectSocial,
   deleteProjectSocial,
   deleteProject,
+  getByID,
 } from "../../api/projects";
 
 import { getProjectsByUser } from "../../api/users";
@@ -387,9 +388,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // EXISTING PROJECT
       if (!newProject && projectID) {
-
+        //Updates display automatically when adding members
         if (updateDisplayedProject) {
-          updateDisplayedProject(dataManager.getSavedProject());
+          const freshResp = await getByID(projectID);
+          if (freshResp.data) {
+            updateDisplayedProject(freshResp.data);
+          } else {
+            updateDisplayedProject(dataManager.getSavedProject());
+          }
         }
       }
 
