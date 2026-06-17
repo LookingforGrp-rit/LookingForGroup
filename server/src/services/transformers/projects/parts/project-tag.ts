@@ -4,17 +4,11 @@ import { transformTag } from '#services/transformers/datasets/tag.ts';
 //map to shared type
 export const transformProjectTag = (
   projectId: number,
-  // tag: ProjectTag
-  {
-    label,
-    tagId,
-    type,
-    displayOrder,
-  }: Pick<ProjectTag, 'label' | 'tagId' | 'type' | 'displayOrder'>,
+  tag: Pick<ProjectTag, 'category' | 'displayOrder' | 'tagId' | 'label' | 'type'>,
 ): ProjectTag => {
   return {
-    apiUrl: `/api/projects/${projectId.toString()}/tags/${tagId.toString()}`,
-    ...transformTag({ label: label, tagId: tagId, type: type }),
-    displayOrder: displayOrder,
+    apiUrl: `/api/projects/${projectId.toString()}/tags/${tag.tagId.toString()}`,
+    ...transformTag(tag),
+    displayOrder: tag.displayOrder,
   };
 };

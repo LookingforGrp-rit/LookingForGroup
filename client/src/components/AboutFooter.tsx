@@ -27,7 +27,7 @@ const AboutFooter = () => {
   return (
     <div className="FooterContainer">
       <a
-        className={isAbout === true ? 'shown' : ''} //Highlight if active
+        className={isAbout === true ? 'shown about-left' : 'about-left'}
         href={paths.routes.ABOUT}
       >
         About

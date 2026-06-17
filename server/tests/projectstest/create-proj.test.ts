@@ -79,6 +79,7 @@ describe('createProjectService', async () => {
       thumbnailId: 0,
       title: 'test 1',
       updatedAt: now,
+      projectVideos: [],
     };
 
     vi.mocked(prisma.projects.create).mockResolvedValue(prismaProject);

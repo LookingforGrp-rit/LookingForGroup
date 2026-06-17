@@ -172,7 +172,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     if (!projects.data) return;
 
     const newProjectCache = projectCache;
-    for (let project of projects.data) {
+    for (const project of projects.data) {
 
       const cachedProject = newProjectCache[project.projectId];
       if (!cachedProject) {
@@ -217,7 +217,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     }
 
     const newUserCache = userCache;
-    for (let user of users.data) {
+    for (const user of users.data) {
 
       const cachedUser = newUserCache[user.userId];
       if (!cachedUser) {
@@ -379,7 +379,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     const carouselProjectList = projectList.slice();
 
     // Go through carouselProjectList and only keep 3 projects with open positions
-    for (let projectPreview of carouselProjectList.sort(() => Math.random() - 0.5)) {
+    for (const projectPreview of carouselProjectList.sort(() => Math.random() - 0.5)) {
       const cachedFull = usedCache[projectPreview.projectId].full;
 
       if (cachedFull != undefined) {
@@ -418,7 +418,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     const projectList = fullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
-    for (let item of projectList) {
+    for (const item of projectList) {
       if (projectCache[item.projectId].full != undefined) {
         items.push(projectCache[item.projectId].full as ProjectWithFollowers);
       }
@@ -506,7 +506,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
 
     // Get user info to match with tags
     const items: UserDetail[] = [];
-    for (let item of userList) {
+    for (const item of userList) {
       if (userCache[item.userId].detail != undefined) {
         items.push(userCache[item.userId].detail as UserDetail);
         //return;

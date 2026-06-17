@@ -18,7 +18,9 @@ const TAG_TYPES = {
   DESIGNER: "Designer Skill" as TagType,
   SOFT: "Soft Skill" as TagType,
   AUD: "Audio Skill" as TagType,
-  GENRE: ["Creative", "Technical", "Games", "Multimedia", "Music", "Other"] as TagType[],
+  GENRE: 'Genre' as TagType,
+  FORM: 'Form' as TagType,
+  OTHER: 'Other' as TagType,
   MEDIUM: "Medium",
 };
 
