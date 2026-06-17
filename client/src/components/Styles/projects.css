@@ -114,8 +114,11 @@ Project Panel component style rules
     .tag,
     .project-panel-meta-plus {
       font-size: 0.75rem;
-      padding: 0 6px;
+      padding: 0 7px 0 5px;
       line-height: 1;
+      min-width: 16px;
+      align-items: center;
+      justify-content: center;
     }
 
     .tag p {
