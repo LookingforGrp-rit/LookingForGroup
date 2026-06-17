@@ -601,7 +601,6 @@ const Project = (userProfile : any) => {
           </div>
         </main>
       )}
-    <AboutFooter />
     </div>
   );
 };

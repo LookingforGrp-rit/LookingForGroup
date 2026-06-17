@@ -6,7 +6,6 @@ import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext, SetStateAction, useEffect } from 'react';
 import { Header } from '../Header';
-import AboutFooter from '../AboutFooter';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
@@ -759,7 +758,6 @@ const Settings = (userProfile : any) => {
           </div>
         )}
       </div>
-      <AboutFooter />
       <ToTopButton />
     </div>
   );
