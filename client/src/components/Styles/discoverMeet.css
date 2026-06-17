@@ -1238,3 +1238,59 @@ Filters / Tags Style Rules
   display: block;
   flex-shrink: 0;
 }
+
+/* Mobile Fixes*/
+
+@media (max-width: 850px) {
+  #filters-popup {
+    /* removes offset that accounts for ui sidebar*/
+    left: 50% !important;
+    width: 94vw !important;
+    max-height: 82vh !important;
+    
+    /* Slightly trimmer padding to save mobile screen space */
+    padding: 20px 16px 14px 16px !important; 
+    gap: 10px !important;
+  }
+
+  /* Header scaling for smaller viewports */
+  #filters-popup h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 2px !important;
+  }
+
+  /* Upper Panel Mobile Breathing Room */
+  #filters.popup-section {
+    padding: 16px 12px !important;
+    gap: 4px !important;
+  }
+
+  #filter-tabs {
+    gap: 6px 16px !important;
+    margin: 10px auto 0 auto !important;
+    padding-bottom: 8px !important;
+  }
+  
+  #filter-tabs > * {
+    font-size: 0.9rem !important;
+  }
+
+  #filter-tags {
+    height: 135px !important;    
+    gap: 8px 8px !important; 
+  }
+
+  #selected-section.popup-section {
+    padding: 12px 14px !important;
+    min-height: 75px !important;
+  }
+  
+  #selected-section.popup-section p {
+    font-size: 0.85rem !important;
+  }
+
+  #filters-popup #primary-btn {
+    margin-top: 2px !important;
+    padding: 8px 16px !important;
+  }
+}
