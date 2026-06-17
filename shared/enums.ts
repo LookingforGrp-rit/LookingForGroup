@@ -20,7 +20,7 @@ export enum TagType {
   SoftSkill = "Soft Skill",
   Purpose = "Purpose"
 }
-export enum RITStatus {
+export enum RitStatus {
   Freshman = "Freshman",
   Sophomore = "Sophomore",
   Junior = "Junior",

@@ -37,7 +37,7 @@ const updateJobController = async (req: Request, res: Response): Promise<void> =
     updates.availability = body.availability;
   }
 
-  if (body.duration && ['ShortTerm', 'LongTerm'].includes(body.duration)) {
+  if (body.duration && ['Days', 'Weeks', 'Months', 'Semesters', 'Years'].includes(body.duration)) {
     updates.duration = body.duration;
   }
 

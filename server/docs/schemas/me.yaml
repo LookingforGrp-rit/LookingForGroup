@@ -163,7 +163,7 @@ components:
               items:
                 $ref: '#/components/schemas/MyMajor'
             ritStatus:
-              $ref: 'enums.yaml#/components/schemas/RITStatus'
+              $ref: 'enums.yaml#/components/schemas/RitStatus'
             location:
               type: string
             funFact:

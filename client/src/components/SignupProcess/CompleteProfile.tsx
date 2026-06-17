@@ -2,7 +2,7 @@ import {
 	CreateUserInput,
 	Major,
 	Skill,
-	RITStatus,
+	RitStatus,
 	Role
 } from "@looking-for-group/shared";
 import { MouseEventHandler, useMemo, useState } from "react";
@@ -11,7 +11,7 @@ import { Select, SelectButton, SelectOptions } from "../Select";
 import { getMajors, getJobTitles } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
 //why do these 2 things have the same name??
-import { RITStatus as RITStatusEnum, } from "@looking-for-group/shared/enums";
+import { RitStatus as RitStatuses, } from "@looking-for-group/shared/enums";
 import { ProfileImageUploader } from "../ImageUploader";
 
 interface CompleteProfileProps {
@@ -28,7 +28,7 @@ interface CompleteProfileProps {
 	location: string;
 	funFact: string;
 	major: Major[];
-	ritStatus: RITStatus | undefined;
+	ritStatus: RitStatus | undefined;
 	setBio: React.Dispatch<React.SetStateAction<string>>;
 	setPronouns: React.Dispatch<React.SetStateAction<string>>;
 	setHeadline: React.Dispatch<React.SetStateAction<string>>;
@@ -37,8 +37,8 @@ interface CompleteProfileProps {
 	setLocation: React.Dispatch<React.SetStateAction<string>>;
 	setFunFact: React.Dispatch<React.SetStateAction<string>>;
 	setMajor: React.Dispatch<React.SetStateAction<Major[]>>;
-	setRITStatus: React.Dispatch<
-		React.SetStateAction<RITStatus | undefined>
+	setRitStatus: React.Dispatch<
+		React.SetStateAction<RitStatus | undefined>
 	>;
 	profileImage: File;
 	setProfileImage: React.Dispatch<React.SetStateAction<File>>;
@@ -90,7 +90,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	setLocation,
 	setFunFact,
 	setMajor,
-	setRITStatus,
+	setRitStatus,
 	setPronouns,
 	setProfileImage
 }) => {
@@ -264,12 +264,12 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 								/>
 								<SelectOptions
 									callback={(e) =>
-										setRITStatus(
+										setRitStatus(
 											(e.target as HTMLButtonElement)
-												.value as RITStatus
+												.value as RitStatus
 										)
 									}
-									options={Object.values(RITStatusEnum).map(
+									options={Object.values(RitStatuses).map(
 										(yr) => {
 											return {
 												value: yr,

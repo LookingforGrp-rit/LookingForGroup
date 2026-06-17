@@ -180,7 +180,7 @@ components:
               items:
                 $ref: 'datasets.yaml#/components/schemas/Major'
             ritStatus:
-              $ref: 'enums.yaml#/components/schemas/RITStatus'
+              $ref: 'enums.yaml#/components/schemas/RitStatus'
               nullable: true
             location:
               type: string

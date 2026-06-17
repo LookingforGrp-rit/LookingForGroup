@@ -27,7 +27,6 @@ import { getUsersById } from "../../api/users";
 import { addMember } from "../../api/projects";
 import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, Role, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
-import AboutFooter from "../AboutFooter";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -666,7 +665,6 @@ const Profile = (userProfile : any) => {
           </div> : ""}
         </div>
       </main>
-      <AboutFooter />
     </div>
   );
 };

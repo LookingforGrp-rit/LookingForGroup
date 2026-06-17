@@ -2074,8 +2074,8 @@ Image Carousel style rules
 
 .ToTopContainer {
   position: fixed;
-  right: 7px;
-  bottom: 55px;
+  right: 15px;
+  bottom: 15px;
   width: fit-content;
   height: fit-content;
   font-size: 3rem;

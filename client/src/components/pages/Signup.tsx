@@ -12,7 +12,7 @@ import GetStarted from '../SignupProcess/GetStarted';
 import { ThemeIcon, ThemeImage } from '../ThemeIcon';
 //import passwordValidator from 'password-validator';
 import { addUserSkill, createNewUser, getCurrentUsername, googleLogin, editUser, addUserMajor } from '../../api/users';
-import { RITStatus, CreateUserInput, Major, SessionUserData, Skill } from '@looking-for-group/shared';
+import { RitStatus, CreateUserInput, Major, SessionUserData, Skill } from '@looking-for-group/shared';
 import { ThemeContext } from '../../contexts/ThemeContext';
 
 interface SignUpProps {
@@ -65,7 +65,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
   const [location, setLocation] = useState(''); // State variable for the user's Location
   const [funFact, setFunFact] = useState(''); // State variable for the user's bio
   const [majors, setMajors] = useState<Major[]>([]); // State variable for user's major //it's an array because it's stored as an array on the backend, to allow for multiple
-  const [ritStatus, setRITStatus] = useState<RITStatus>()
+  const [ritStatus, setRitStatus] = useState<RitStatus>()
   const { theme } = useContext(ThemeContext); //The theme value from ThemeContext.
 
   const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
@@ -80,7 +80,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
     googleId: sessionData?.googleId,
     username: '',
     pronouns: pronouns,
-    ritStatus: ritStatus as RITStatus,
+    ritStatus: ritStatus as RitStatus,
     bio: bio,
     headline: headline,
     phoneNumber: phoneNumber,
@@ -541,7 +541,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             setLocation={setLocation}
             setFunFact={setFunFact}
             setMajor={setMajors}
-            setRITStatus={setRITStatus}
+            setRitStatus={setRitStatus}
             profileImage={profileImage}
             setProfileImage={setProfileImage}
           />

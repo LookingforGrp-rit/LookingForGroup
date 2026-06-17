@@ -27,7 +27,7 @@ import {
   UpdateUserInput,
   UpdateUserSocialInput,
   UpdateUserSkillInput,
-  RITStatus,
+  RitStatus,
   MyMember,
   MySkill,
   MeDetail,
@@ -379,7 +379,7 @@ interface PendingUserMember extends Exclude<MyMember, "apiUrl"> {
 interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
   profileImage: string | null | PendingProfileImage;
   majors: (MyMajor | PendingMajor)
-  ritStatus: RITStatus | null;
+  ritStatus: RitStatus | null;
   projects: (MyMember | PendingUserMember)[];
   skills: (MySkill | PendingUserSkill)[];
   socials: (MySocial | PendingUserSocial)[];

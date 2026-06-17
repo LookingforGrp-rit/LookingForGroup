@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
-import AboutFooter from '../AboutFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
@@ -357,7 +356,6 @@ export const DiscoverPage = () => {
           {discoverPanelContents}
         </div>
       </main>
-      <AboutFooter />
       <ToTopButton />
     </div>
   );

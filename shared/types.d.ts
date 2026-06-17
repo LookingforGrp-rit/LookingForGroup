@@ -28,8 +28,8 @@ export type DeveloperCategory = 'Framework' | 'Software' | 'Coding Language' | '
 export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' | 'Other' | 'Discipline' | 'Writing Software';
 export type SoftCategory = 'Personal' | 'Team' | 'Other';
 export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
-export type TagCategory = GenreCategory | StyleCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
-  export type RITStatus = 
+export type TagCategory = GenreCategory | FormCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
+  export type RitStatus = 
   | "Freshman"
   | "Sophomore"
   | "Junior"
@@ -634,9 +634,9 @@ export interface UserPreview {
  */
 export interface UserDetail extends UserPreview {
   /**
-   * The user's RIT status (like freshman or faculty), or null if unset
+   * The user's RIT status, or null if unset
    */
-  ritStatus: RITStatus | null;
+  ritStatus: RitStatus | null;
 
   /**
    * The user's bio
@@ -760,9 +760,9 @@ export interface MeDetail extends MePreview {
   majors: MyMajor[];
 
   /**
-   * The logged-in user's RIT status, or null if unset
+   * The logged-in user's RIT Status, or null if unset
    */
-  ritStatus: RITStatus;
+  ritStatus: RitStatus;
 
   /**
    * The logged-in user's location, such as "Rochester, NY"
@@ -1044,7 +1044,7 @@ export interface ProjectJob {
   availability: JobAvailability;
 
   /**
-   * The duration of the position, such as "Short-Term"
+   * The duration of the position, such as "Days"
    */
   duration: JobDuration;
 

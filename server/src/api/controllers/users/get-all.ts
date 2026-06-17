@@ -1,6 +1,6 @@
-import type { RITStatus, ApiResponse, FilterRequest } from '@looking-for-group/shared';
+import type { RitStatus, ApiResponse, FilterRequest } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { UsersRITStatus } from '#prisma-models/index.js';
+import { UsersRitStatus } from '#prisma-models/index.js';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
 
 //GET api/users
@@ -73,14 +73,14 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     return;
   }
 
-  //year checks using UsersRITStatus
-  const years = filters.ritStatus as string[];
+  //ritStatus checks using UsersRitStatus
+  const ritStatuses = filters.ritStatus as string[];
   if (filters.ritStatus !== undefined) {
-    years.forEach((year) => {
-      if (!Object.values(UsersRITStatus).includes(year as RITStatus)) {
+    ritStatuses.forEach((status) => {
+      if (!Object.values(UsersRitStatus).includes(status as RitStatus)) {
         const resBody: ApiResponse = {
           status: 400,
-          error: 'Invalid RIT status(s)',
+          error: 'Invalid RIT status(es)',
           data: null,
         };
         res.status(400).json(resBody);
