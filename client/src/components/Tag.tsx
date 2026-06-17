@@ -29,13 +29,12 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
       break;
     
     // The genre type is very split
-    case "creative":
-    case "technical":
-    case "games":
-    case "multimedia":
-    case "music":
-    case "other":
+    case "genre":
       color = "green";
+      break;
+
+    case 'other':
+      color = 'grey';
       break;
     
     case "developer skill":

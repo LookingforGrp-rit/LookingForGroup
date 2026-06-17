@@ -117,6 +117,7 @@ const prismaProject: ProjectWithFollowers = {
   thumbnailId: 0,
   title: '',
   updatedAt: now,
+  projectVideos: [],
 };
 
 describe('sendInviteService', () => {

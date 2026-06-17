@@ -1,7 +1,7 @@
-import type { UserPreview } from '@looking-for-group/shared';
+import type { UserDetail } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
-import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
+import { transformUserToDetail } from '#services/transformers/users/user-detail.ts';
 import { getUserByGoogleIdService } from '#services/users/get-user/get-by-google-id.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
@@ -12,13 +12,40 @@ import { getUserByGoogleIdService } from '#services/users/get-user/get-by-google
 vi.mock('#config/prisma.ts', () => ({
   default: {
     users: {
-      findFirst: vi.fn(),
+      findUnique: vi.fn(),
+    },
+    skills: {
+      findMany: vi.fn(),
+    },
+    socials: {
+      findMany: vi.fn(),
+    },
+    projectImages: {
+      findMany: vi.fn(),
+    },
+    mediums: {
+      findMany: vi.fn(),
+    },
+    tags: {
+      findMany: vi.fn(),
+    },
+    projects: {
+      findMany: vi.fn(),
+    },
+    projectsAwaitingApproval: {
+      findMany: vi.fn(),
+    },
+    roles: {
+      findMany: vi.fn(),
+    },
+    members: {
+      findMany: vi.fn(),
     },
   },
 }));
 
-vi.mock('#services/transformers/users/user-preview.ts', () => ({
-  transformUserToPreview: vi.fn(),
+vi.mock('#services/transformers/users/user-detail.ts', () => ({
+  transformUserToDetail: vi.fn(),
 }));
 
 describe('getUserByUsernameService', () => {
@@ -33,51 +60,36 @@ describe('getUserByUsernameService', () => {
       googleId: '300',
     };
 
-    const transformed: UserPreview = {
+    const transformed: UserDetail = {
       userId: 3,
       username: 'emberfox',
       apiUrl: '/api/users/3',
-      firstName: '',
-      lastName: '',
-      preferredName: '',
-      profileImage: null,
-      displayPhone: false,
-      mentor: false,
-      designer: false,
-      privacy: 'public',
-      developer: false,
-      headline: '',
-      pronouns: '',
-      title: '',
-      funFact: '',
-      location: '',
-      majors: [],
-    };
+    } as UserDetail;
 
-    vi.mocked(prisma.users.findFirst).mockResolvedValue(prismaUser as any);
-    vi.mocked(transformUserToPreview).mockReturnValue(transformed);
+    vi.mocked(prisma.users.findUnique).mockResolvedValue(prismaUser as any);
+    vi.mocked(transformUserToDetail).mockReturnValue(transformed);
 
     const result = await getUserByGoogleIdService('300');
 
-    const calls = vi.mocked(prisma.users.findFirst).mock.calls;
+    const calls = vi.mocked(prisma.users.findUnique).mock.calls;
     const [args] = calls[0];
 
-    expect(args?.where).toEqual({ googleId: '300' });
-    expect(args?.select).toEqual(expect.any(Object));
+    expect(args.where).toEqual({ googleId: '300' });
+    expect(args.select).toEqual(expect.any(Object));
 
-    expect(transformUserToPreview).toHaveBeenCalledWith(prismaUser);
+    expect(transformUserToDetail).toHaveBeenCalledWith(prismaUser);
 
     expect(result).toEqual(transformed);
   });
 
   it('returns NOT_FOUND when user does not exist', async () => {
-    vi.mocked(prisma.users.findFirst).mockResolvedValue(null);
+    vi.mocked(prisma.users.findUnique).mockResolvedValue(null);
     const result = await getUserByGoogleIdService('300');
     expect(result).toBe('NOT_FOUND');
   });
 
   it('returns INTERNAL_ERROR when prisma throws', async () => {
-    vi.mocked(prisma.users.findFirst).mockRejectedValue(new Error('db exploded'));
+    vi.mocked(prisma.users.findUnique).mockRejectedValue(new Error('db exploded'));
 
     const result = await getUserByGoogleIdService('300');
 
