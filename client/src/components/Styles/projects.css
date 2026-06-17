@@ -39,7 +39,6 @@ Project Panel component style rules
   margin: 0 -10px;
   height: 100%;
   width: calc(100% + 20px);
-  margin-bottom: 60px;
 }
 
 .project-panel-box {
@@ -4324,7 +4323,6 @@ My projects page style rules
 
 .my-projects-list {
   box-sizing: border-box;
-  margin-bottom: 60px;
   padding-left: 60px;
   padding-right: 64px;
 

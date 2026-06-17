@@ -20,7 +20,6 @@ import {
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
-import AboutFooter from "../AboutFooter";
 import usePreloadedImage from '../../functions/imageLoad';
 
 //Main component for the project page
@@ -601,7 +600,6 @@ const Project = (userProfile : any) => {
           </div>
         </main>
       )}
-    <AboutFooter />
     </div>
   );
 };
