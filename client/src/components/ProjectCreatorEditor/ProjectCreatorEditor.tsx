@@ -1,4 +1,4 @@
-import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback } from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback} from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -16,11 +16,11 @@ import {
   deleteProject,
   getByID,
 } from "../../api/projects";
-
-import { getProjectsByUser } from "../../api/users";
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { getCurrentAccount, getProjectsByUser, getUsersById, } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
-import { PendingProject } from "../../../types/types";
-import { ProjectWithFollowers, } from '@looking-for-group/shared';
+import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 import { getCurrentUsername } from "../../api/users";
 
@@ -65,6 +65,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   // Tracks temporary project data changes before saving: compared against projectData
   const [modifiedProject, setModifiedProject] = useState<PendingProject>();
 
+  const [projectMessages, setProjectMessages] = useState<string[]>([]);
+
   // Indicates if the data validation has failed: prevents saving when invalid
   const [failCheck, setFailCheck] = useState(false);
 
@@ -85,15 +87,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   // Tracks whether the project was successfully saved (prevents deletion on cleanup after save)
   const [saved, setSaved] = useState(true);
 
+  // Tracks if to show the confirmation popup when closing without saving
   const [confirm, setConfirm] = useState(false);
 
+  // Tracks the error message to display when missing required fields
   const [message, setMessage] = useState("");
-
-  const [open, setOpen] = useState(false);
 
   // Component Refs
   const exitButton = useRef(null);
   const startButton = useRef(null);
+
+  // Tracks details on the current user, used when creating a project, not when editing
+  const [currentUser, setCurrentUser] = useState<UserDetail>();
 
   // Check if the current project can be saved
   let valid = false;
@@ -104,7 +109,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       }
     }
   }
-  if (modifiedProject?.tags.length == 0 || modifiedProject?.mediums.length == 0) {
+  if (modifiedProject?.tags?.length == 0 || modifiedProject?.mediums?.length == 0) {
     valid = false;
   }
   if (valid != saveable) {
@@ -131,26 +136,30 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    */
   const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
     let newMessage = "Project is missing hate";
-    if (updatedPendingProject?.title === "" || updatedPendingProject?.title === undefined) newMessage = "Project is missing a title!";
-    else if (updatedPendingProject?.mediums.length == 0) newMessage = "Project is missing a medium!";
-    else if (updatedPendingProject?.tags.length == 0) newMessage = "Project is missing tags!";
-    else if (updatedPendingProject?.hook === "" || updatedPendingProject?.hook === undefined) newMessage = "Project is missing a Short Description!";
-    else if (updatedPendingProject?.description === "" || updatedPendingProject?.description === undefined) newMessage = "Project is missing a Project Overview!";
+    if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
+    else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
+    else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
+    else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
     setMessage(newMessage);
   }
 
   // Start editing the project creator
   const createOrEdit = async () => {
-    setSaved(true);
-    setOpen(true);
-    setConfirm(false);
-    setMessage("Project is missing a medium!");
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
       //redirect user to login if they aren't logged in
       navigate(paths.routes.LOGIN);
       return;
     }
+    else {
+      const user = await getUsersById(res.data.userId);
+      if (user.data)
+        await setCurrentUser(user.data);
+    }
+    setSaved(true);
+    setConfirm(false);
+    setMessage("Project is missing a medium!");
 
     if (!newProject && projectID) {
 
@@ -159,7 +168,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         // const response = await getByID(Number(projectID));
         // if (!response.data) return;
 
-        dataManager = await projectDataManager(Number(projectID));
+        dataManager = await projectDataManager(projectID);
 
         const data = dataManager.getSavedProject();
         setProjectData(data);
@@ -170,21 +179,35 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
     else if (newProject) {
       // Setup default project for creation
-      try {
-        const response = await createNewProject({ title: "My Project" });
-        if (!response.error && response.data) {
-          dataManager = await projectDataManager(response.data.projectId);
+      const newData = { 
+          title: "My Project",
+          description: "",
+          purpose: null,
+          status: "Planning",
+          audience: "",
+          globalVisibility: "public",
+          projectImages: [] as ProjectImage[],
+          projectSocials: [] as ProjectSocial[],
+          projectVideos: [] as ProjectVideo[],
+          jobs: [] as ProjectJob[],
+          members: [{
+            user: currentUser ?? (await getCurrentAccount()).data,
+            role: {
+              roleId: 77,
+              label: "owner"
+            },
+            memberSince: new Date(Date.now()),
+            apiUrl: "api/user/" + currentUser?.userId
+          }] as ProjectMember[],
+          createdAt: new Date(Date.now()),
+          updatedAt: new Date(Date.now()),
+          followers: {} as ProjectFollowers,
+          tags: [] as Tag[],
+          mediums: [] as Medium[],
+        } as ProjectWithFollowers;
 
-          const data = dataManager.getSavedProject();
-
-          setProjectData(data);
-          setModifiedProject(data);
-          setProjectID(data.projectId);
-          console.log(projectData);
-        }
-      } catch (err) {
-        console.error("Error creating new project:", err);
-      }
+      await setProjectData(newData);
+      await setModifiedProject(newData);
     }
     if (startButton.current) {
       (startButton.current as unknown as HTMLElement).focus();
@@ -200,6 +223,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    * @returns void
    */
   const updateLinks = async () => {
+    if (!projectID) return;
     try {
       // Get current socials from database
       const currentSocialsResponse = await getProjectSocials(projectID);
@@ -239,42 +263,17 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
   };
 
-  //this deletes the newly created project when the create window is manually closed
-  //this is called below as the PopupContent's callback function (that only calls when it's closed so should it just be called onClose?)
-  const closeWithoutSaving = async () => {
-    if (!open) return;
-    if (!saved) {
-      toggleConfirm();
-      return;
-    }
-    // Only delete if this is a new project AND it was not saved yet
-    if (projectData && newProject) {
-      await deleteProject(projectData?.projectId);
-      setOpen(false);
-      setSaved(true);
-    }
-  }
-
-  const deleteNoSave = useCallback(() => {
-    if (!open) return;
-    // Only delete if this is a new project AND it was not saved yet
-    if (projectData && newProject && !saved) {
-      deleteProject(projectData?.projectId);
-      setOpen(false);
-      setSaved(true);
-    }
-  }, [saved, open, projectData, newProject]);
+  const close = useCallback(() => {
+    setConfirm(false);
+    setSaved(true);
+  }, []);
 
   useEffect(() => {
-    //for chrome
-    window.addEventListener("beforeunload", deleteNoSave, { once: true, passive: false });
-
-    //for firefox
-    window.addEventListener("pagehide", deleteNoSave, { once: true, passive: false });
+    window.onbeforeunload = () => {if (!saved) return ' '};
 
     // if not a new project, get project id from url (existing project)
     if (!newProject) setProjectID(Number(urlParams.get("projectID")));
-  }, [open, projectID, newProject]);
+  }, [open, projectID, newProject, saved]);
 
   const toggleConfirm = async () => {
     setConfirm(!confirm);
@@ -326,7 +325,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setFailCheck(false);
 
     // save if on link tab
-    if (currentTab === 4) await updateLinks();
+    //if (currentTab === 4) await updateLinks();
 
     //Error Handling
     if (errorAddMember !== "" || errorAddPosition !== "" || errorLinks !== "") {
@@ -370,39 +369,170 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     // Prevent duplicate project names in the user's project list.
     // If the title collides with another of their projects, auto-rename it
     // (e.g. "ProjectTitle" -> "ProjectTitle(1)").
-    const currentProjectId = dataManager.getSavedProject().projectId;
     const uniqueTitle = await getUniqueProjectTitle(
       modifiedProject.title,
-      currentProjectId
+      projectID
     );
     if (uniqueTitle !== modifiedProject.title) {
       dataManager.updateFields({
-        id: { value: currentProjectId, type: "canon" },
+        id: { value: projectID, type: "canon" },
         data: { title: uniqueTitle },
       });
       setModifiedProject({ ...modifiedProject, title: uniqueTitle });
     }
 
     try {
-      await dataManager.saveChanges();
-
       // EXISTING PROJECT
       if (!newProject && projectID) {
-        //Updates display automatically when adding members
+        //Updates display automatically when adding members        updateLinks();
+        await dataManager.saveChanges();
+
         if (updateDisplayedProject) {
           const freshResp = await getByID(projectID);
           if (freshResp.data) {
             updateDisplayedProject(freshResp.data);
           } else {
             updateDisplayedProject(dataManager.getSavedProject());
-          }
         }
       }
+      else if (newProject) {
+        const newStatus = Object.keys(ProjectStatusEnums).find(
+          key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === modifiedProject.status)
+        const newPurpose = Object.keys(ProjectPurposeEnums).find(
+          key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === modifiedProject.purpose)
+
+        const response = await createNewProject({
+          title: modifiedProject?.title as string,
+          hook: modifiedProject?.hook,
+          description: modifiedProject?.description,
+          audience: modifiedProject?.audience as string,
+          globalVisibility: modifiedProject?.globalVisibility as Visibility,
+          status: newStatus as ProjectStatus,
+          purpose: newPurpose as ProjectPurpose,
+        });
+
+        if (!response.error && response.data) {
+          dataManager = await projectDataManager(response.data.projectId);
+          await setProjectID(response.data.projectId);
+
+          /* PROJECT IMAGES */
+          for (let image of modifiedProject.projectImages) {
+            await dataManager.createImage({
+              id: { 
+                type: "local", 
+                value: (image as ProjectImage).imageId
+              },
+              data: {
+                image: image.image as File,
+                altText: (image as ProjectImage).altText,
+              }
+            })
+          }
+          if (modifiedProject.thumbnail)
+          await dataManager.updateThumbnail({
+          id: {
+            value: projectID,
+            type: "local",
+          },
+          data: {
+            thumbnail: (modifiedProject.thumbnail as ProjectImage).imageId as number
+          }
+        });
+
+        /* PROJECT VIDEOS */
+        for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
+          await dataManager?.createVideo({
+            id: { 
+              value: video.videoId, 
+              type: "local" 
+            },
+            data: {...video},
+          });
+        }
+
+        /* PROJECT TAGS */
+        for (let tag of modifiedProject.tags) {
+          await dataManager.addTag({
+            id: {
+              type: "local",
+              value: tag.tagId,
+            },
+            data: {
+              tagId: tag.tagId,
+              displayOrder: modifiedProject.tags.indexOf(tag),
+            }
+          });
+        }
+
+        /* PROJECT MEDIUMS */
+        for (let medium of modifiedProject.mediums) {
+          await dataManager.addMedium({
+            id: {
+              type: "local",
+              value: medium.mediumId,
+            },
+            data: {
+              mediumId: medium.mediumId,
+            }
+          })
+        }
+
+        /* PROJECT MEMBERS */
+        for (let member of modifiedProject.members) {
+          if (member.user?.userId === currentUser?.userId) continue;
+          dataManager.createMember({
+            id: {
+              type: "canon",
+              value: (member as PendingProjectMember).localId as number,
+            },
+            data: {
+              inviteeUserId: (member as PendingProjectMember).user?.userId as number,
+              // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
+              inviterUserId: (currentUser?.userId ?? modifiedProject.owner?.userId) as number,
+              roleId: member.role?.roleId as number,
+              message: projectMessages[modifiedProject.members.indexOf(member)],
+            }
+          })
+        }
+
+        /* PROJECT JOBS */
+        for (let job of modifiedProject.jobs) {
+          await dataManager.createJob({
+            id: {
+              type: "local",
+              value: (job as Pending<ProjectJob>).localId as number,
+            },
+            data: {
+              availability: (job as ProjectJob).availability,
+              compensation: (job as ProjectJob).compensation,
+              contactUserId: (job as ProjectJob).contact.userId,
+              duration: (job as ProjectJob).duration,
+              location: (job as ProjectJob).location,
+              roleId: (job as ProjectJob).role.roleId,
+              description: job.description ?? undefined,
+            }
+          })
+        }
+
+        /* PROJECT SOCIALS */
+        for (let link of modifiedProject.projectSocials) {
+          await dataManager.addSocial({
+            id: {
+              type: "local",
+              value: link.websiteId as number,
+            },
+            data: link as ProjectSocial,
+          })
+        }
+
+        await dataManager.saveChanges();
+          }
+      }
+    }
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
-      setOpen(false);
-      navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
+      navigate(`${paths.routes.PROJECT}?projectID=${projectID !== 0 ? projectID : dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
@@ -415,7 +545,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }
 
   const generalTabInvalid = !modifiedProject?.title || !modifiedProject?.hook || !modifiedProject?.description;
-  const tagsTabInvalid = modifiedProject?.tags.length === 0 || modifiedProject?.mediums.length === 0;
+  const tagsTabInvalid = modifiedProject?.tags?.length === 0 || modifiedProject?.mediums?.length === 0;
   const teamTabInvalid = errorAddMember !== "" || errorAddPosition !== "";
   const linksTabInvalid = errorLinks !== "";
 
@@ -440,11 +570,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         </PopupButton>
       )}
 
-      <PopupContent callback={closeWithoutSaving} closeButtonRef={exitButton} confirmation={!saved}>
+      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
-            <PopupButton doNotClose={() => false} callback={deleteNoSave} buttonId="project-editor-save">
+            <PopupButton doNotClose={() => false} callback={close} buttonId="project-editor-save">
               Confirm
             </PopupButton>
             <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >
@@ -457,7 +587,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <button
               id="general-tab"
               onClick={() => {
-                if (currentTab === 4) updateLinks();
                 setCurrentTab(0);
               }}
               className={`project-editor-tab ${currentTab === 0 ? "project-editor-tab-active" : ""}`}
@@ -468,7 +597,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <button
               id="media-tab"
               onClick={() => {
-                if (currentTab === 4) updateLinks();
                 setCurrentTab(1);
               }}
               className={`project-editor-tab ${currentTab === 1 ? "project-editor-tab-active" : ""}`}
@@ -478,7 +606,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <button
               id="tags-tab"
               onClick={() => {
-                if (currentTab === 4) updateLinks();
                 setCurrentTab(2);
               }}
               className={`project-editor-tab ${currentTab === 2 ? "project-editor-tab-active" : ""}`}
@@ -488,7 +615,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <button
               id="team-tab"
               onClick={() => {
-                if (currentTab === 4) updateLinks();
                 setCurrentTab(3);
               }}
               className={`project-editor-tab ${currentTab === 3 ? "project-editor-tab-active" : ""}`}
@@ -498,7 +624,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <button
               id="links-tab"
               onClick={() => {
-                if (currentTab === 4) updateLinks();
                 setCurrentTab(4);
               }}
               className={`project-editor-tab ${currentTab === 4 ? "project-editor-tab-active" : ""}`}
@@ -553,6 +678,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 saveable={saveable}
                 failCheck={failCheck}
                 message={message}
+                messages={projectMessages}
+                setMessages={setProjectMessages}
               />
             ) : currentTab === 4 ? (
               <LinksTab
@@ -565,6 +692,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 saveable={saveable}
                 failCheck={failCheck}
                 message={message}
+                currentUser={currentUser as UserDetail}
               />
             ) : (
               <></>

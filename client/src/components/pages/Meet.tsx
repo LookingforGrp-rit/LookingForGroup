@@ -1,5 +1,4 @@
 import React, { useMemo, useState, useCallback, ChangeEvent} from 'react';
-import AboutFooter from '../AboutFooter';
 import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
@@ -280,7 +279,6 @@ export const ProfileMeetPage = () => {
           {discoverPanelContents}
         </div>
       </main>
-      <AboutFooter />
       <ToTopButton />
     </div>
   );

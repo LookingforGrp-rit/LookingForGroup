@@ -22,7 +22,7 @@ let projectAfterMediaChanges: PendingProject;
 let localIdIncrement = 0;
 
 type MediaTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
@@ -126,6 +126,9 @@ export const MediaTab = ({
         if (res.data) {
           setVideos(res.data);
         }
+        else {
+          setVideos(projectAfterMediaChanges.projectVideos as ProjectVideo[]);
+        }
       }
   
       fetchVideos();
@@ -140,8 +143,6 @@ export const MediaTab = ({
     if (!imageUploader?.files?.length) return;
 
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
-
-    if (!projectId) return;
 
     // Check if it is a duplicate image
     for (const image of projectAfterMediaChanges.projectImages) {
@@ -174,7 +175,7 @@ export const MediaTab = ({
 
       const localId = ++localIdIncrement;
 
-      dataManager.createImage({
+      dataManager?.createImage({
         id: {
           value: localId,
           type: "local",
@@ -202,7 +203,7 @@ export const MediaTab = ({
           image: fullImg.image,
           altText: fullImg.altText,
         } as PendingProjectImage;
-        dataManager.updateThumbnail({
+        dataManager?.updateThumbnail({
           id: {
             value: projectId,
             type: "canon",
@@ -237,15 +238,30 @@ export const MediaTab = ({
     };
 
     // Create it
-    dataManager.createVideo({
+    dataManager?.createVideo({
       id: { value: localId, type: "local" },
       data: newVideoData
     });
+
+    projectAfterMediaChanges = {
+      ...projectAfterMediaChanges,
+      projectVideos: [
+        ...projectAfterMediaChanges.projectVideos as ProjectVideo[],
+        {
+          videoId: localId,
+          videoUrl: newVideoData.videoUrl,
+          position: projectAfterMediaChanges.projectVideos?.length as number,
+          title: newVideoData.title,
+          apiUrl: ""
+        }
+      ]
+    }
 
     // Update UI immediately
     const pendingVideo = { videoId: localId, isLocal: true, ...newVideoData };
     setVideos((prev) => (prev ? [...prev, pendingVideo as any] : [pendingVideo as any]));
 
+    updatePendingProject(projectAfterMediaChanges);
     // Clear inputes
     setNewVideoTitle("");
     setNewVideoUrl("");
@@ -253,14 +269,22 @@ export const MediaTab = ({
 
   const handleDeleteVideo = useCallback((video: any) => {
     // Delete it
-    dataManager.deleteVideo({
+    dataManager?.deleteVideo({
       id: { 
         value: video.videoId, 
         type: video.isLocal ? "local" : "canon" 
       },
       data: null
     });
+    
+    projectAfterMediaChanges.projectVideos =
+      (projectAfterMediaChanges.projectVideos as ProjectVideo[]).filter(
+        (projectVideo) =>
+        (video as ProjectVideo).videoId !==
+        (projectVideo)?.videoId
+      );
 
+    updatePendingProject(projectAfterMediaChanges);
     // Remove from current UI
     setVideos((prev) => (prev || []).filter((v: any) => v.videoId !== video.videoId));
   }, [dataManager, setVideos]);
@@ -280,7 +304,7 @@ export const MediaTab = ({
       //if it's a string, make it a project image
       if (typeof projectImage.image === 'string') {
 
-        dataManager.updateThumbnail({
+        dataManager?.updateThumbnail({
           id: {
             value: projectId,
             type: "canon",
@@ -297,7 +321,7 @@ export const MediaTab = ({
       //if it's not, set it as the canon project image
       else {
         const imageFile = projectImage.image;
-        dataManager.updateThumbnail({
+        dataManager?.updateThumbnail({
           id: {
             value: projectId,
             type: "canon",
@@ -338,7 +362,7 @@ export const MediaTab = ({
 
       // delete server image
       if ((projectImage as ProjectImage).imageId) {
-        dataManager.deleteImage({
+        dataManager?.deleteImage({
           id: {
             value: (projectImage as ProjectImage).imageId,
             type: "canon",
@@ -356,7 +380,7 @@ export const MediaTab = ({
 
       // delete local image
       else {
-        dataManager.deleteImage({
+        dataManager?.deleteImage({
           id: {
             value: (projectImage as PendingProjectImage).localId!,
             type: "local",
@@ -381,7 +405,7 @@ export const MediaTab = ({
           const thumbId = (projectAfterMediaChanges.projectImages[0] as ProjectImage).imageId
 
           // Update dataManager
-          dataManager.updateThumbnail({
+          dataManager?.updateThumbnail({
             id: {
               value: projectId,
               type: "canon",
@@ -404,7 +428,7 @@ export const MediaTab = ({
           const thumbId = (projectImage as PendingProjectImage).localId ?? ++localIdIncrement
 
           // Update dataManager
-          dataManager.updateThumbnail({
+          dataManager?.updateThumbnail({
             id: {
               value: projectId,
               type: "canon",
