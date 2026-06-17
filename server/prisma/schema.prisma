@@ -72,6 +72,21 @@ model Members {
   @@map("members")
 }
 
+model Notifications {
+  notificationId  Int               @id @default(UUID()) @map("notification_id") @unique
+  senderId        Int               @map("sender_id")
+  recieverId      Int               @map("reciever_id")
+  subjectLine     String            @map("subject_line")
+  message         String            @map("message")
+  event           NotificationEvent @default(Other)
+  sender          Users             @relation(fields: [senderId], references: [userId], onDelete: NoAction, onUpdate: Cascade)
+  reciever        Users             @relation(fields: [recieverId], references: [userId], onDelete: NoAction, onUpdate: Cascade)
+
+  @@index([senderId], map: "FK_sender_to_notification")
+  @@index([recieverId], map: "FK_reciever_to_notification")
+  @@map("notifications")
+}
+
 model ProjectFollowings {
   userId     Int      @map("user_id")
   projectId  Int      @map("project_id")
@@ -167,6 +182,13 @@ model Projects {
   @@map("projects")
 }
 
+model ProjectsAwaitingApproval {
+  projectId Int     @id @map("project_id")
+  project Projects  @relation(fields: [projectId], references: [projectId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("projects_awaiting_approval")
+}
+
 model ReportProject {
   reportId   Int      @id @default(autoincrement()) @map("report_id")
   userId     Int      @map("user_id")
@@ -202,6 +224,26 @@ model Socials {
   userSocials    UserSocials[]
 
   @@map("socials")
+}
+
+model Skills {
+  skillId    Int          @id @default(autoincrement()) @map("skill_id")
+  label      String       @db.VarChar(50)
+  type       String       @db.VarChar(50)
+  userSkills UserSkills[]
+
+  @@unique([label, type])
+  @@map("skills")
+}
+
+model Session {
+  id        String   @id
+  sid       String   @unique
+  data      String   @db.Text
+  gid       String   @default("federalist papers")
+  expiresAt DateTime
+
+  @@map("session")
 }
 
 model Tags {
@@ -301,33 +343,6 @@ model Users {
   @@map("users")
 }
 
-model Skills {
-  skillId    Int          @id @default(autoincrement()) @map("skill_id")
-  label      String       @db.VarChar(50)
-  type       String       @db.VarChar(50)
-  userSkills UserSkills[]
-
-  @@unique([label, type])
-  @@map("skills")
-}
-
-model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String   @db.Text
-  gid       String   @default("federalist papers")
-  expiresAt DateTime
-
-  @@map("session")
-}
-
-model ProjectsAwaitingApproval {
-  projectId Int     @id @map("project_id")
-  project Projects  @relation(fields: [projectId], references: [projectId], onDelete: Cascade, onUpdate: Cascade)
-
-  @@map("projects_awaiting_approval")
-}
-
 enum JobsAvailability {
   FullTime @map("Full-time")
   PartTime @map("Part-time")
@@ -396,4 +411,15 @@ enum SkillProficiency {
   Intermediate
   Advanced
   Expert
+}
+
+enum NotificationEvent {
+  Other
+  ProjectRejected
+  ProjectApproved
+  ProjectTakenDown
+  InvitationRecieved
+  InvitationRejected
+  RequestToJoinRecieved
+  RequestToJoinRejected
 }
