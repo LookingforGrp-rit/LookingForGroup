@@ -14,11 +14,11 @@ import {
   addProjectSocial,
   deleteProjectSocial,
 } from "../../api/projects";
-
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectSocial, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 import { getCurrentUsername } from "../../api/users";
 
@@ -385,28 +385,24 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         }
       }
       else if (newProject) {
+        const newStatus = Object.keys(ProjectStatusEnums).find(
+          key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === modifiedProject.status)
+        const newPurpose = Object.keys(ProjectPurposeEnums).find(
+          key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === modifiedProject.purpose)
+
         const response = await createNewProject({
           title: modifiedProject?.title as string,
           hook: modifiedProject?.hook,
           description: modifiedProject?.description,
           audience: modifiedProject?.audience as string,
           globalVisibility: modifiedProject?.globalVisibility as Visibility,
+          status: newStatus as ProjectStatus,
+          purpose: newPurpose as ProjectPurpose,
         });
 
         if (!response.error && response.data) {
           dataManager = await projectDataManager(response.data.projectId);
           await setProjectID(response.data.projectId);
-
-          dataManager.updateFields({
-            id: {
-              value: projectID,
-              type: "canon",
-            },
-            data: {
-              status: modifiedProject.status,
-              purpose: modifiedProject.purpose,
-            },
-          });
 
           /* PROJECT IMAGES */
           for (let image of modifiedProject.projectImages) {
