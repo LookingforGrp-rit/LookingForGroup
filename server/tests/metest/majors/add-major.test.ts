@@ -33,7 +33,7 @@ const prismaUpdatedUser = {
   headline: '',
   pronouns: '',
   title: '',
-  academicYear: null,
+  ritStatus: null,
   location: '',
   funFact: '',
   bio: '',

@@ -59,7 +59,7 @@ const prismaUser = {
   headline: '',
   pronouns: '',
   title: '',
-  academicYear: null,
+  ritStatus: null,
   location: '',
   funFact: '',
   bio: '',

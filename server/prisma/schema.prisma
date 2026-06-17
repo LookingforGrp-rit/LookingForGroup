@@ -273,7 +273,7 @@ model Users {
   headline          String              @default("") @db.VarChar(100)
   pronouns          String              @default("") @db.VarChar(20)
   title             String              @default("") @db.VarChar(50)
-  academicYear      UsersAcademicYear?  @map("academic_year")
+  ritStatus      UsersRitStatus?  @map("rit_status")
   location          String              @default("") @db.VarChar(150)
   funFact           String              @default("") @map("fun_fact") @db.VarChar(100)
   bio               String              @default("") @db.VarChar(600)
@@ -339,8 +339,11 @@ enum JobsAvailability {
 }
 
 enum JobsDuration {
-  ShortTerm @map("Short-term")
-  LongTerm  @map("Long-term")
+  Days @map("Days")
+  Weeks  @map("Weeks")
+  Months  @map("Months")
+  Semesters  @map("Semesters")
+  Years  @map("Years")
 
   @@map("jobs_duration")
 }
@@ -383,14 +386,15 @@ enum Visibility {
   public
 }
 
-enum UsersAcademicYear {
+enum UsersRitStatus {
   Freshman
   Sophomore
   Junior
   Senior
   Graduate
+  Faculty
 
-  @@map("users_academic_year")
+  @@map("users_rit_status")
 }
 
 enum SkillProficiency {

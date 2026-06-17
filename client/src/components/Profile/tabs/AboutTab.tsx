@@ -5,7 +5,7 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 import LabelInputBox from "../../LabelInputBox";
 import { PendingUserProfile } from "../../../../types/types";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
-import { AcademicYear as RitStatus } from "@looking-for-group/shared/enums";
+import { RitStatus as RitStatus } from "@looking-for-group/shared/enums";
 import { Major, MePrivate, Role } from "@looking-for-group/shared";
 import { getJobTitles, getMajors } from "../../../api/users";
 
@@ -354,28 +354,28 @@ export const AboutTab = ({
 							/>
 							<SelectOptions
 								callback={(e) => {
-									const year = (e.target as HTMLButtonElement)
+									const status = (e.target as HTMLButtonElement)
 										.value as RitStatus;
 
 									profileAfterAboutChanges = {
 										...profileAfterAboutChanges,
-										ritStatus: year as RitStatus
+										ritStatus: status as RitStatus
 									};
 
-									//Use this for checking what happens when the year is changed
+									//Use this for checking what happens when the RIT status is changed
 									//debugger;
 									updatePendingProfile(
 										profileAfterAboutChanges
 									);
 
-									//dataManager is undefined for some reason when changing the year
+									//dataManager is undefined for some reason when changing the RIT status
 									dataManager.updateFields({
 										id: {
 											value: userId,
 											type: "canon"
 										},
 										data: {
-											ritStatus: year as RitStatus
+											ritStatus: status as RitStatus
 										}
 									});
 								}}

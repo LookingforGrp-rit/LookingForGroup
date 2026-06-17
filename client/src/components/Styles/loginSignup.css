@@ -743,7 +743,7 @@ Signup process modal style rules
   grid-template-columns: 1.5fr 1fr 1.5fr 1fr;
   grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
-    'profileImage pronouns academicYear headline'
+    'profileImage pronouns ritStatus headline'
     'profileImage phoneNumber major bio'
     'profileImage jobTitle jobTitle bio'
     'profileImage location location bio'
@@ -800,8 +800,8 @@ Signup process modal style rules
   grid-area: funFact;
 }
 
-#academicYear-input {
-  grid-area: academicYear;
+#ritStatus-input {
+  grid-area: ritStatus;
   height: 50px;
 
   .select-container,
@@ -980,7 +980,7 @@ Signup process modal style rules
     #completeProfile-input-container div {
       width: 100%;
     }
-    #academicYear-input, #major-input, #jobTitle-input
+    #ritStatus-input, #major-input, #jobTitle-input
     {
       height: 50px;
       .select-container
