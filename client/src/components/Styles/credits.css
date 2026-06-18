@@ -54,6 +54,7 @@ Credits link footer style rules
     background-color: var(--bg-color);
     position: relative;
     margin: 15px auto;
+    padding-bottom: 90px;
   }
 
   .FooterContainer button,
