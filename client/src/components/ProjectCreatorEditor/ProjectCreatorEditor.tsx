@@ -1,4 +1,4 @@
-import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback} from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -179,32 +179,32 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
     else if (newProject) {
       // Setup default project for creation
-      const newData = { 
-          title: "My Project",
-          description: "",
-          purpose: null,
-          status: "Planning",
-          audience: "",
-          globalVisibility: "public",
-          projectImages: [] as ProjectImage[],
-          projectSocials: [] as ProjectSocial[],
-          projectVideos: [] as ProjectVideo[],
-          jobs: [] as ProjectJob[],
-          members: [{
-            user: currentUser ?? (await getCurrentAccount()).data,
-            role: {
-              roleId: 77,
-              label: "owner"
-            },
-            memberSince: new Date(Date.now()),
-            apiUrl: "api/user/" + currentUser?.userId
-          }] as ProjectMember[],
-          createdAt: new Date(Date.now()),
-          updatedAt: new Date(Date.now()),
-          followers: {} as ProjectFollowers,
-          tags: [] as Tag[],
-          mediums: [] as Medium[],
-        } as ProjectWithFollowers;
+      const newData = {
+        title: "My Project",
+        description: "",
+        purpose: null,
+        status: "Planning",
+        audience: "",
+        globalVisibility: "public",
+        projectImages: [] as ProjectImage[],
+        projectSocials: [] as ProjectSocial[],
+        projectVideos: [] as ProjectVideo[],
+        jobs: [] as ProjectJob[],
+        members: [{
+          user: currentUser ?? (await getCurrentAccount()).data,
+          role: {
+            roleId: 77,
+            label: "owner"
+          },
+          memberSince: new Date(Date.now()),
+          apiUrl: "api/user/" + currentUser?.userId
+        }] as ProjectMember[],
+        createdAt: new Date(Date.now()),
+        updatedAt: new Date(Date.now()),
+        followers: {} as ProjectFollowers,
+        tags: [] as Tag[],
+        mediums: [] as Medium[],
+      } as ProjectWithFollowers;
 
       await setProjectData(newData);
       await setModifiedProject(newData);
@@ -269,7 +269,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }, []);
 
   useEffect(() => {
-    window.onbeforeunload = () => {if (!saved) return ' '};
+    window.onbeforeunload = () => { if (!saved) return ' ' };
 
     // if not a new project, get project id from url (existing project)
     if (!newProject) setProjectID(Number(urlParams.get("projectID")));
@@ -393,9 +393,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             updateDisplayedProject(freshResp.data);
           } else {
             updateDisplayedProject(dataManager.getSavedProject());
+          }
         }
-      }
-      else if (newProject) {
+      } else if (newProject) {
         const newStatus = Object.keys(ProjectStatusEnums).find(
           key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === modifiedProject.status)
         const newPurpose = Object.keys(ProjectPurposeEnums).find(
@@ -418,8 +418,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           /* PROJECT IMAGES */
           for (let image of modifiedProject.projectImages) {
             await dataManager.createImage({
-              id: { 
-                type: "local", 
+              id: {
+                type: "local",
                 value: (image as ProjectImage).imageId
               },
               data: {
@@ -429,106 +429,105 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             })
           }
           if (modifiedProject.thumbnail)
-          await dataManager.updateThumbnail({
-          id: {
-            value: projectID,
-            type: "local",
-          },
-          data: {
-            thumbnail: (modifiedProject.thumbnail as ProjectImage).imageId as number
+            await dataManager.updateThumbnail({
+              id: {
+                value: projectID,
+                type: "local",
+              },
+              data: {
+                thumbnail: (modifiedProject.thumbnail as ProjectImage).imageId as number
+              }
+            });
+
+          /* PROJECT VIDEOS */
+          for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
+            await dataManager?.createVideo({
+              id: {
+                value: video.videoId,
+                type: "local"
+              },
+              data: { ...video },
+            });
           }
-        });
 
-        /* PROJECT VIDEOS */
-        for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
-          await dataManager?.createVideo({
-            id: { 
-              value: video.videoId, 
-              type: "local" 
-            },
-            data: {...video},
-          });
-        }
-
-        /* PROJECT TAGS */
-        for (let tag of modifiedProject.tags) {
-          await dataManager.addTag({
-            id: {
-              type: "local",
-              value: tag.tagId,
-            },
-            data: {
-              tagId: tag.tagId,
-              displayOrder: modifiedProject.tags.indexOf(tag),
-            }
-          });
-        }
-
-        /* PROJECT MEDIUMS */
-        for (let medium of modifiedProject.mediums) {
-          await dataManager.addMedium({
-            id: {
-              type: "local",
-              value: medium.mediumId,
-            },
-            data: {
-              mediumId: medium.mediumId,
-            }
-          })
-        }
-
-        /* PROJECT MEMBERS */
-        for (let member of modifiedProject.members) {
-          if (member.user?.userId === currentUser?.userId) continue;
-          dataManager.createMember({
-            id: {
-              type: "canon",
-              value: (member as PendingProjectMember).localId as number,
-            },
-            data: {
-              inviteeUserId: (member as PendingProjectMember).user?.userId as number,
-              // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
-              inviterUserId: (currentUser?.userId ?? modifiedProject.owner?.userId) as number,
-              roleId: member.role?.roleId as number,
-              message: projectMessages[modifiedProject.members.indexOf(member)],
-            }
-          })
-        }
-
-        /* PROJECT JOBS */
-        for (let job of modifiedProject.jobs) {
-          await dataManager.createJob({
-            id: {
-              type: "local",
-              value: (job as Pending<ProjectJob>).localId as number,
-            },
-            data: {
-              availability: (job as ProjectJob).availability,
-              compensation: (job as ProjectJob).compensation,
-              contactUserId: (job as ProjectJob).contact.userId,
-              duration: (job as ProjectJob).duration,
-              location: (job as ProjectJob).location,
-              roleId: (job as ProjectJob).role.roleId,
-              description: job.description ?? undefined,
-            }
-          })
-        }
-
-        /* PROJECT SOCIALS */
-        for (let link of modifiedProject.projectSocials) {
-          await dataManager.addSocial({
-            id: {
-              type: "local",
-              value: link.websiteId as number,
-            },
-            data: link as ProjectSocial,
-          })
-        }
-
-        await dataManager.saveChanges();
+          /* PROJECT TAGS */
+          for (let tag of modifiedProject.tags) {
+            await dataManager.addTag({
+              id: {
+                type: "local",
+                value: tag.tagId,
+              },
+              data: {
+                tagId: tag.tagId,
+                displayOrder: modifiedProject.tags.indexOf(tag),
+              }
+            });
           }
+
+          /* PROJECT MEDIUMS */
+          for (let medium of modifiedProject.mediums) {
+            await dataManager.addMedium({
+              id: {
+                type: "local",
+                value: medium.mediumId,
+              },
+              data: {
+                mediumId: medium.mediumId,
+              }
+            })
+          }
+
+          /* PROJECT MEMBERS */
+          for (let member of modifiedProject.members) {
+            if (member.user?.userId === currentUser?.userId) continue;
+            dataManager.createMember({
+              id: {
+                type: "canon",
+                value: (member as PendingProjectMember).localId as number,
+              },
+              data: {
+                inviteeUserId: (member as PendingProjectMember).user?.userId as number,
+                // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
+                inviterUserId: (currentUser?.userId ?? modifiedProject.owner?.userId) as number,
+                roleId: member.role?.roleId as number,
+                message: projectMessages[modifiedProject.members.indexOf(member)],
+              }
+            })
+          }
+
+          /* PROJECT JOBS */
+          for (let job of modifiedProject.jobs) {
+            await dataManager.createJob({
+              id: {
+                type: "local",
+                value: (job as Pending<ProjectJob>).localId as number,
+              },
+              data: {
+                availability: (job as ProjectJob).availability,
+                compensation: (job as ProjectJob).compensation,
+                contactUserId: (job as ProjectJob).contact.userId,
+                duration: (job as ProjectJob).duration,
+                location: (job as ProjectJob).location,
+                roleId: (job as ProjectJob).role.roleId,
+                description: job.description ?? undefined,
+              }
+            })
+          }
+
+          /* PROJECT SOCIALS */
+          for (let link of modifiedProject.projectSocials) {
+            await dataManager.addSocial({
+              id: {
+                type: "local",
+                value: link.websiteId as number,
+              },
+              data: link as ProjectSocial,
+            })
+          }
+
+          await dataManager.saveChanges();
+        }
       }
-    }
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);

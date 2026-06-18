@@ -164,7 +164,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
           </div>
         </div>
 
-        <div className='project-title-likes'>
+        <div className='project-title-likes-tabs'>
           <h2>{project.title}</h2>
           <div className='project-likes'>
             <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
@@ -190,8 +190,8 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
             )}
             </a>
           </div>
+          <ProjectPanelMeta project={project}/>
         </div>
-        <ProjectPanelMeta project={project} />
       </div>
     </a>
   );

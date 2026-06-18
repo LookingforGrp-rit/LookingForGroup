@@ -1436,7 +1436,6 @@ Header style rules
 }
 
 #header-buttons #about-btn:hover {
-  background-color: var(--invert-text);
   color: var(--bg-color);
 }
 
@@ -2252,6 +2251,7 @@ Theme Icons style rules
 .gradient-color-fill>use {
   fill: var(--modal-gradient-start);
 }
+
 
 /* Star SVG (Following icon and Thumbnail indicator) */
 .star {
