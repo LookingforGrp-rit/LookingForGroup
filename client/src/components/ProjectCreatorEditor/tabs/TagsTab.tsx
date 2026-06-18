@@ -10,6 +10,7 @@ import { Tag as TagElement } from "../../Tag";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "./SortableItem";
+import { clampDragWithinContainer } from "./dragModifiers";
 import { Fragment } from "react";
 
 // --- Constant ---
@@ -561,6 +562,7 @@ export const TagsTab = ({
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
+          modifiers={[clampDragWithinContainer]}
         >
           <SortableContext
             items={projectAfterTagsChanges.tags.map((t) => t.tagId)}
