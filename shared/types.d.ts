@@ -1,6 +1,4 @@
-import type prisma = require("#prisma-models/index");
 import type { Request } from "express";
-import type url = require("url");
 
 // Enums for better typing
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
@@ -185,7 +183,7 @@ export interface Tag {
   /**
    * The category of tag, such as "Game"
    */
-  category?: TagCategory;
+  category: TagCategory;
 }
 
 /**
@@ -226,7 +224,7 @@ export interface Skill {
   /**
    * The category of the skill, such as "Software"
    */
-  category?: SkillCategory;
+  category: SkillCategory;
 }
 
 /**
