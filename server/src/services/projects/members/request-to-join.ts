@@ -105,9 +105,9 @@ export const requestToJoinService = async (
     const text = toPlainText(html);
 
     const email: EmailInput = {
-      sender: owner,
-      receiver: requester,
-      subject: `Invitation to join ${project.title}`,
+      sender: requester,
+      receiver: owner,
+      subject: `Request to join ${project.title}`,
       textBody: text,
       HTMLBody: html,
     };
