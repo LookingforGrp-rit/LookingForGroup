@@ -6,6 +6,7 @@ import { Skill, TagType } from "@looking-for-group/shared";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
+import { clampDragWithinContainer } from "../ProjectCreatorEditor/tabs/dragModifiers";
 
 const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
 
