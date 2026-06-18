@@ -39,7 +39,11 @@ Project Panel component style rules
   margin: 0 -10px;
   height: 100%;
   width: calc(100% + 20px);
-  margin-bottom: 60px;
+}
+
+.project-link {
+  text-decoration: none;
+  cursor: pointer !important;
 }
 
 .project-panel-box {
@@ -110,8 +114,11 @@ Project Panel component style rules
     .tag,
     .project-panel-meta-plus {
       font-size: 0.75rem;
-      padding: 0 6px;
+      padding: 0 7px 0 5px;
       line-height: 1;
+      min-width: 16px;
+      align-items: center;
+      justify-content: center;
     }
 
     .tag p {
@@ -3666,6 +3673,16 @@ button#positions-popup-list-item-active {
   margin: 10px 0;
 }
 
+#project-overview-text {
+  color: var(--main-text);
+  font-size: 1rem;
+  line-height: 150%;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: none;
+}
+
 #project-overview-links-section {
   display: flex;
   flex-direction: column;
@@ -4324,7 +4341,6 @@ My projects page style rules
 
 .my-projects-list {
   box-sizing: border-box;
-  margin-bottom: 60px;
   padding-left: 60px;
   padding-right: 64px;
 

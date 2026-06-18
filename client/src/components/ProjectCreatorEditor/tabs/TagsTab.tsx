@@ -29,7 +29,7 @@ let projectAfterTagsChanges: PendingProject;
 
 // --- Props ---
 type TagsTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
@@ -120,7 +120,7 @@ export const TagsTab = ({
 
     projectAfterTagsChanges.tags = reorderedTags;
 
-    dataManager.updateTag({
+    dataManager?.updateTag({
       id: {
         type: "canon",
         value: reorderedTags[newIndex].tagId,
@@ -264,7 +264,7 @@ export const TagsTab = ({
       );
 
       if (selected) {
-        dataManager.deleteMedium({
+        dataManager?.deleteMedium({
           id: {
             value: mediumId,
             type: "canon",
@@ -281,7 +281,7 @@ export const TagsTab = ({
         return;
       }
 
-      dataManager.addMedium({
+      dataManager?.addMedium({
         id: {
           value: mediumId,
           type: "canon",
@@ -309,7 +309,7 @@ export const TagsTab = ({
       );
 
       if (selected) {
-        dataManager.deleteTag({
+        dataManager?.deleteTag({
           id: {
             value: tagId,
             type: "canon",
@@ -325,7 +325,7 @@ export const TagsTab = ({
         return;
       }
 
-      dataManager.addTag({
+      dataManager?.addTag({
         id: {
           value: tagId,
           type: "canon",

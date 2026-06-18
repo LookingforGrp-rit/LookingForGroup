@@ -38,7 +38,7 @@ const getProjectTagsService = async (
       }),
     );
   } catch (e) {
-    console.error(`Error in getProjectTagsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectTagsService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

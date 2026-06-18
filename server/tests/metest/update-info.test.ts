@@ -1,5 +1,5 @@
 import type {
-  AcademicYear,
+  RitStatus,
   MePrivate,
   MyFollowing,
   MyMajor,
@@ -71,7 +71,7 @@ const prismaUser = {
 };
 
 const transformed: MePrivate = {
-  academicYear: '' as AcademicYear,
+  ritStatus: '' as RitStatus,
   apiUrl: 'api/me',
   bio: '',
   createdAt: new Date(),

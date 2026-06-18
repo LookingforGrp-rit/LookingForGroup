@@ -42,7 +42,7 @@ export const getProjectFollowingService = async (
 
     return followings;
   } catch (e) {
-    console.error(`Error in getProjectFollowingService: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectFollowingService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

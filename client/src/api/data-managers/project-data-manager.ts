@@ -1,5 +1,5 @@
 import {
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   AddProjectSocialInput,
   AddProjectTagInput,
   ApiResponse,
@@ -365,7 +365,7 @@ export const projectDataManager = async (projectId: number) => {
 
     // project mediums
     try {
-      await runAndCollectErrors<AddProjectMediumsInput>(
+      await runAndCollectErrors<AddProjectMediumInput>(
         "Adding project medium",
         creates.mediums,
         ({ data }) => addProjectMedium(projectId, data)
@@ -553,7 +553,7 @@ export const projectDataManager = async (projectId: number) => {
    * Adds a new medium to the project
    * @param medium The medium to be added
    */
-  const addMedium = (medium: CRUDRequest<AddProjectMediumsInput>) => {
+  const addMedium = (medium: CRUDRequest<AddProjectMediumInput>) => {
     if (changes.create.mediums.some(({ id }) => id.value === medium.id.value)) {
       changes.create.mediums = [
         ...changes.create.mediums.filter(

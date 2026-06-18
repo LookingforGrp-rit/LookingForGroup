@@ -25,7 +25,7 @@ components:
         - Purpose
       example: Creative
 
-    AcademicYear:
+    RitStatus:
       type: string
       enum:
         - Freshman
@@ -33,6 +33,7 @@ components:
         - Junior
         - Senior
         - Graduate
+        - Faculty
       example: Freshman
 
     Visibility:
@@ -78,9 +79,12 @@ components:
     JobDuration:
       type: string
       enum:
-        - ShortTerm
-        - LongTerm
-      example: ShortTerm
+        - Days
+        - Weeks
+        - Months
+        - Semesters
+        - Years
+      example: Days
 
     JobLocation:
       type: string

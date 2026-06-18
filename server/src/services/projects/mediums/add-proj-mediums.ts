@@ -1,4 +1,4 @@
-import type { AddProjectMediumsInput, ProjectMedium } from '@looking-for-group/shared';
+import type { AddProjectMediumInput, ProjectMedium } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectMediumSelector } from '#services/selectors/projects/parts/project-medium.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -12,7 +12,7 @@ type AddMediumsServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' 
 //this connects that relation by updating the project
 const addMediumsService = async (
   projectId: number,
-  data: AddProjectMediumsInput,
+  data: AddProjectMediumInput,
 ): Promise<ProjectMedium[] | AddMediumsServiceError> => {
   try {
     const result = await prisma.projects.update({

@@ -110,7 +110,7 @@ export const getMyProjectsService = async (
 
     return fullProject;
   } catch (e) {
-    console.error(`Error in getMyProjectsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getMyProjectsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

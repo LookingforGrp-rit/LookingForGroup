@@ -18,7 +18,7 @@ const getUserReportsService = async (): Promise<ReportUser[] | GetServiceError> 
 
     return reports;
   } catch (e) {
-    console.error(`Error in getUserReportsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getUserReportsService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

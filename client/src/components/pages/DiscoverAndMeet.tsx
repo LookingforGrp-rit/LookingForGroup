@@ -1,5 +1,4 @@
 import { useMemo, useState, useCallback, ChangeEvent } from 'react';
-import AboutFooter from '../AboutFooter';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
@@ -106,7 +105,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
   const [filteredUserList, setFilteredUserList] = useState<UserPreview[]>([]);
 
   // List that holds trimmed data for searching. Empty before fullItemList is initialized
-  //const [itemSearchData, setItemSearchData] = useState<UserAndProjectInfo[]>([]);
   const [projectSearchData, setProjectSearchData] = useState<ProjectPreview[]>([]);
   const [userSearchData, setUserSearchData] = useState<UserPreview[]>([]);
 
@@ -653,7 +651,6 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           {discoverPanelContents}
         </div>
       </main>
-      <AboutFooter />
       <ToTopButton />
     </div>
   );
