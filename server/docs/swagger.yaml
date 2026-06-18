@@ -2306,6 +2306,59 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/members/send-invite:
+    post:
+      summary: Send an invite to a prospective member
+      description: Sends an invitation to a prospective member
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMemberRequestInput'
+      responses:
+        '201':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    nullable: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/projects/{id}/members/request-to-join:
     post:
       summary: Request to join from a prospective member
