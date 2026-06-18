@@ -82,6 +82,7 @@ General style rules
   --tag-purple-selected: #d7bed3;
   --tag-grey-selected: #d0d0d0;
   --tag-periwinkle-selected: #A2ADF9;
+  --tag-pink-selected: #e191e8;
 
   --tag-red-unselected: #0e0e0e;
   --tag-orange-unselected: #0e0e0e;
@@ -91,6 +92,7 @@ General style rules
   --tag-purple-unselected: #0e0e0e;
   --tag-grey-unselected: #0e0e0e;
   --tag-periwinkle-unselected: #0e0e0e;
+  --tag-pink-unselected: #0e0e0e;
 
   --tag-red-unselected-border: #ffa0b0;
   --tag-orange-unselected-border: #ffa281;
@@ -100,6 +102,7 @@ General style rules
   --tag-purple-unselected-border: #d7bed3;
   --tag-grey-unselected-border: #d0d0d0;
   --tag-periwinkle-unselected-border: #A2ADF9;
+  --tag-pink-unselected-border: #e191e8;
 
   --tag-text-selected: black;
 
@@ -111,6 +114,7 @@ General style rules
   --tag-text-unselected-purple: #d7bed3;
   --tag-text-unselected-grey: #d0d0d0;
   --tag-text-unselected-periwinkle: #A2ADF9;
+  --tag-text-unselected-pink: #e191e8;
 
   --modal-gradient-start: #0a0a0a;
   --modal-gradient-end: #2c2a3a;
@@ -159,6 +163,7 @@ General style rules
   --tag-purple-selected: #d7bed3;
   --tag-grey-selected: #d0d0d0;
   --tag-periwinkle-selected: #A2ADF9;
+  --tag-pink-selected: #e191e8;
 
   --tag-red-unselected: #ffd9df;
   --tag-orange-unselected: #ffdacd;
@@ -168,6 +173,7 @@ General style rules
   --tag-purple-unselected: #efe5ed;
   --tag-grey-unselected: #ececec;
   --tag-periwinkle-unselected: #d1d6fc;
+  --tag-pink-unselected: #f0c8f4;
 
   --tag-red-unselected-border: #ffd9df;
   --tag-orange-unselected-border: #ffdacd;
@@ -177,6 +183,7 @@ General style rules
   --tag-purple-unselected-border: #efe5ed;
   --tag-grey-unselected-border: #ececec;
   --tag-periwinkle-unselected-border: #d1d6fc;
+  --tag-pink-unselected-border: #f0c8f4;
 
   --tag-text-selected: black;
 
@@ -188,6 +195,7 @@ General style rules
   --tag-text-unselected-purple: black;
   --tag-text-unselected-grey: black;
   --tag-text-unselected-periwinkle: black;
+  --tag-text-unselected-pink: black;
 
   --modal-gradient-start: #ffffff;
   --modal-gradient-end: #d3d3ff;

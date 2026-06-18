@@ -994,6 +994,27 @@ Filters / Tags Style Rules
   }
 }
 
+.tag-pink,
+.tag-pink.tag-selected,
+.tag-button-pink-selected {
+  background-color: var(--tag-pink-selected);
+  border-color: var(--tag-pink-selected);
+}
+
+.tag-pink.tag-unselected,
+.tag-button-pink-unselected {
+  background-color: var(--tag-pink-unselected);
+  border-color: var(--tag-pink-unselected-border);
+
+  p {
+    color: var(--tag-text-unselected-pink);
+  }
+
+  .fa {
+    color: var(--tag-text-unselected-pink) !important;
+  }
+}
+
 .tag-unselected:hover {
   p {
     color: var(--tag-text-selected);
@@ -1103,6 +1124,16 @@ Filters / Tags Style Rules
 .tag-button-periwinkle-unselected:hover {
   background-color: var(--tag-periwinkle-selected);
   border-color: var(--tag-periwinkle-selected);
+
+  p {
+    color: var(--tag-text-selected) !important;
+  }
+}
+
+.tag-pink.tag-unselected:hover,
+.tag-button-pink-unselected:hover {
+  background-color: var(--tag-pink-selected);
+  border-color: var(--tag-pink-selected);
 
   p {
     color: var(--tag-text-selected) !important;
