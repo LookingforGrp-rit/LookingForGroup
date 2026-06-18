@@ -165,7 +165,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
         </div>
 
         <div className='project-title-likes'>
-          <a href={projectURL}><h2>{project.title}</h2></a>
+          <h2>{project.title}</h2>
           <div className='project-likes'>
             <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
               {formatFollowCount(followCount)}
@@ -191,9 +191,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
             </a>
           </div>
         </div>
-        <a href={projectURL}>
-          <ProjectPanelMeta project={project} />
-        </a>
+        <ProjectPanelMeta project={project} />
       </div>
     </a>
   );
