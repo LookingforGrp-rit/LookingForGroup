@@ -1424,7 +1424,6 @@ Header style rules
   cursor: pointer;
   text-decoration: none;
   color: var(--primary-color);
-  stroke: var(--primary-color);
   transition: 0.2s;
 }
 
@@ -1828,7 +1827,7 @@ Select style rules
 
   .mono-stroke use {
     /* Important overrides theme specificity */
-    stroke: var(--invert-text);
+    stroke: var(--invert-text) !important;
   }
 
   .mono-fill use {
@@ -2244,6 +2243,7 @@ Theme Icons style rules
 .gradient-color-fill>use {
   fill: var(--modal-gradient-start);
 }
+
 
 /* Star SVG (Following icon and Thumbnail indicator) */
 .star {
