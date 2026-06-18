@@ -72,6 +72,22 @@ model Members {
   @@map("members")
 }
 
+model MemberRequests {
+  requestId             Int                   @id @default(autoincrement()) @map("request_id")
+  prospectiveMemberId   Int                   @map("prospective_member_id")
+  projectId             Int                   @map("project_id")
+  roleId                Int                   @map("role_id")
+  sentFromProject       Boolean               @map("sent_from_project")
+  requestStatus         MemberRequestStatus   @map("request_status")
+  projects              Projects              @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "request_project_id")
+  users                 Users                 @relation(fields: [prospectiveMemberId], references: [userId], onDelete: Cascade, map: "request_prospective_id")
+
+  @@unique([prospectiveMemberId, projectId, roleId])
+  @@index([projectId], map: "request_project_id")
+  @@index([prospectiveMemberId], map: "request_prospective_id")
+  @@map("member_request")        
+}
+
 model ProjectFollowings {
   userId     Int      @map("user_id")
   projectId  Int      @map("project_id")
@@ -396,4 +412,10 @@ enum SkillProficiency {
   Intermediate
   Advanced
   Expert
+}
+
+enum MemberRequestStatus {
+  Accepted
+  Declined
+  Pending
 }
