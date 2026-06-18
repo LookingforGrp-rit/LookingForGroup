@@ -1423,12 +1423,12 @@ Header style rules
   border: none;
   cursor: pointer;
   text-decoration: none;
-  color: var(--main-text);
+  color: var(--primary-color);
+  stroke: var(--primary-color);
   transition: 0.2s;
 }
 
 #header-buttons #about-btn:hover {
-  background-color: var(--invert-text);
   color: var(--bg-color);
 }
 
@@ -1828,7 +1828,7 @@ Select style rules
 
   .mono-stroke use {
     /* Important overrides theme specificity */
-    stroke: var(--invert-text) !important;
+    stroke: var(--invert-text);
   }
 
   .mono-fill use {
