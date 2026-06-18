@@ -103,6 +103,7 @@ const sendInviteService = async (
       return emailResult;
     }
 
+    //TODO: Update database
     return 'NO_CONTENT';
   } catch (e) {
     if (e instanceof Object && 'code' in e) {

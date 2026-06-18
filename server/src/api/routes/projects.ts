@@ -243,6 +243,29 @@ router.patch(
   authenticated(requiresPendingProjectMember),
   PROJECT.updateMember,
 );
+
+//Sends an invite to a prospective member
+router.patch(
+  '/:id/members/send-invite',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  userExistsAt('body', 'prospectiveMemberId'),
+  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  PROJECT.sendInvite,
+);
+
+//Sends an invite to a prospective member
+router.patch(
+  '/:id/members/request-to-join',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  userExistsAt('body', 'ownerUserId'),
+  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  PROJECT.sendInvite,
+);
+
 //Removes a member from a specific project through project and user ID
 router.delete(
   '/:id/members/:userId',

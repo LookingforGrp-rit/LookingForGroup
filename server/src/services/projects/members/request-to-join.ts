@@ -108,6 +108,8 @@ export const requestToJoinService = async (
       return emailResult;
     }
 
+    //TODO: Update database
+
     return 'NO_CONTENT';
   } catch (e) {
     console.error(`There was an error in requestToJoinService: `, e);
