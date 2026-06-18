@@ -236,7 +236,7 @@ export interface Medium {
   /**
    * The database ID corresponding to the type
    */
-  typeId: number;
+  mediumId: number;
 
   /**
    * The name of the type, such as "Video Game"
@@ -1443,7 +1443,7 @@ export type UpdateProjectTagInput = Partial<AddProjectTagInput>;
 /**
  * Data required to add a type to a project
  */
-export type AddProjectMediumInput = Pick<ProjectMedium, "typeId">;
+export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
 
 /**
  * Data required to create a job listing on a project
