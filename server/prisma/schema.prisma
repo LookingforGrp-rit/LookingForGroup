@@ -85,7 +85,7 @@ model MemberRequests {
   @@unique([prospectiveMemberId, projectId, roleId])
   @@index([projectId], map: "request_project_id")
   @@index([prospectiveMemberId], map: "request_prospective_id")
-  @@map("member_request")        
+  @@map("member_requests")        
 }
 
 model ProjectFollowings {

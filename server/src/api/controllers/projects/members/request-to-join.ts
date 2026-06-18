@@ -30,6 +30,16 @@ const requestJoinController = async (req: Request, res: Response) => {
     return;
   }
 
+  if (result === 'CONFLICT') {
+    const resBody: ApiResponse = {
+      status: 409,
+      error: 'Request already exists',
+      data: null,
+    };
+    res.status(409).json(resBody);
+    return;
+  }
+
   const resBody: ApiResponse = {
     status: 201,
     error: null,
