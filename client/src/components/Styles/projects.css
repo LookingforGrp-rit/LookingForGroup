@@ -87,8 +87,8 @@ Project Panel component style rules
   text-decoration: none;
 
   .project-panel-meta {
+    grid-area: tags;
     position: relative;
-    padding: 0 20px 12px 20px;
     margin: 0;
     flex-shrink: 0;
     display: flex;
@@ -156,16 +156,22 @@ Project Panel component style rules
     background-color: var(--header-color);
   }
 
-  .project-title-likes {
+  .project-title-likes-tabs { 
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
-    display: flex;
+    display: grid;
+    grid-template:  
+    'title heart' 1fr
+    'tags heart' auto / 5fr 1fr;
+    row-gap: 4px;
+    /* display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; */
 
     h2 {
+      grid-area: title;
       padding: 0;
       margin: 0;
       font-size: 1.375rem;
@@ -182,11 +188,13 @@ Project Panel component style rules
     }
 
     .project-likes {
+      grid-area: heart;
       display: flex;
       flex-direction: row-reverse;
       gap: 8px;
       align-items: center;
       padding-left: 8px;
+      height: 100%;
 
       .follow-amt {
         margin: 0;
@@ -201,6 +209,7 @@ Project Panel component style rules
 
       svg {
         cursor: pointer;
+        transform: scale(1.2);
       }
 
       .follow-amt.following {
@@ -213,10 +222,29 @@ Project Panel component style rules
 
       #heart-empty:hover,
       #heart-filled:hover {
-        transform: scale(1.2);
+        transform: scale(1.6);
       }
 
 
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    .project-title-likes-tabs { 
+      grid-template:  
+      'title heart' 1fr
+      'tags heart' auto / 4fr 1fr;
+
+      .project-likes {
+
+        a {
+          padding-right: 4px;
+        }
+
+        svg {
+          transform: scale(1.6);
+        }
+      }
     }
   }
 
