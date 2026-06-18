@@ -2,9 +2,9 @@ import type { ApiResponse, SendProjectInviteInput } from '@looking-for-group/sha
 import type { Request, Response } from 'express';
 import { requestToJoinService } from '#services/projects/members/request-to-join.ts';
 
-//POST api/projects/{id}/members
-//adds a member to the project
-const sendInviteController = async (req: Request, res: Response) => {
+//POST api/projects/{id}/members/request-to-join
+//A user requests to join the project
+const requestJoinController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
   const memberData: SendProjectInviteInput = req.body as SendProjectInviteInput;
 
@@ -38,4 +38,4 @@ const sendInviteController = async (req: Request, res: Response) => {
   res.status(201).json(resBody);
 };
 
-export default sendInviteController;
+export default requestJoinController;

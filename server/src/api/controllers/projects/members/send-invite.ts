@@ -2,8 +2,8 @@ import type { ApiResponse, SendProjectInviteInput } from '@looking-for-group/sha
 import type { Request, Response } from 'express';
 import sendInviteService from '#services/projects/members/send-invite.ts';
 
-//POST api/projects/{id}/members
-//adds a member to the project
+//POST api/projects/{id}/members/send-invite
+//Sends invite to join the project
 const sendInviteController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
   const memberData: SendProjectInviteInput = req.body as SendProjectInviteInput;
