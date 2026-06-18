@@ -28,7 +28,7 @@ const getProjectsService = async (): Promise<ProjectPreview[] | GetServiceError>
     );
     return transformedProjects;
   } catch (e) {
-    console.error(`Error in getProjectsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectsService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

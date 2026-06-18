@@ -208,7 +208,7 @@ model Tags {
   tagId       Int           @id @default(autoincrement()) @map("tag_id")
   label       String        @db.VarChar(50)
   type        String        @db.VarChar(50)
-  category    String        @db.VarChar(50)
+  category    String?       @db.VarChar(50)
   // projects    Projects[]
   projectTags ProjectTags[]
 
@@ -306,7 +306,7 @@ model Skills {
   skillId    Int          @id @default(autoincrement()) @map("skill_id")
   label      String       @db.VarChar(50)
   type       String       @db.VarChar(50)
-  category   String       @db.VarChar(50)
+  category   String?       @db.VarChar(50)
   userSkills UserSkills[]
 
   @@unique([label, type])
@@ -393,6 +393,7 @@ enum UsersRitStatus {
   Senior
   Graduate
   Faculty
+  Staff
 
   @@map("users_rit_status")
 }
