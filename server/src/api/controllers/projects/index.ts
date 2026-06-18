@@ -6,6 +6,7 @@ import requestApproval from './approval/request-approval.ts';
 import unapproveProject from './approval/unapprove-proj.ts';
 import createProject from './create-proj.ts';
 import deleteProject from './delete-proj.ts';
+import getPaginatedProjects from './get-paginated-projects.ts';
 import getProjectByID from './get-proj-id.ts';
 import { getProjectFollowers } from './get-project-followers.ts';
 import getProjects from './get-projects.ts';
@@ -51,6 +52,7 @@ export default {
   deleteJobController,
   getProjectFollowers,
   getProjects,
+  getPaginatedProjects,
   getProjectByID,
   getProjectImages,
   createProject,
