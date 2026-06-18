@@ -23,7 +23,7 @@ const getSocialsService = async (): Promise<Social[] | GetSocialsServiceError> =
     );
     return socials.map(transformSocial);
   } catch (e) {
-    console.error(`Error in getSocialsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getSocialsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

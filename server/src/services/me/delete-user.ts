@@ -29,7 +29,7 @@ export const deleteUserService = async (
 
     return 'NO_CONTENT';
   } catch (e) {
-    console.error(`Error in deleteUserService: ${JSON.stringify(e)}`);
+    console.error(`Error in deleteUserService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

@@ -21,7 +21,7 @@ const getRolesService = async (): Promise<Role[] | GetRolesServiceError> => {
     roles = roles.toSorted((roleA, roleB) => roleA.label.charCodeAt(0) - roleB.label.charCodeAt(0));
     return roles.map(transformRole);
   } catch (e) {
-    console.error(`Error in getRolesService: ${JSON.stringify(e)}`);
+    console.error(`Error in getRolesService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

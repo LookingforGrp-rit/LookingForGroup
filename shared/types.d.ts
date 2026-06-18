@@ -28,7 +28,7 @@ export type DeveloperCategory = 'Framework' | 'Software' | 'Coding Language' | '
 export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' | 'Other' | 'Discipline' | 'Writing Software';
 export type SoftCategory = 'Personal' | 'Team' | 'Other';
 export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
-export type TagCategory = GenreCategory | FormCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
+export type TagCategory = GenreCategory | StyleCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
   export type RitStatus = 
   | "Freshman"
   | "Sophomore"

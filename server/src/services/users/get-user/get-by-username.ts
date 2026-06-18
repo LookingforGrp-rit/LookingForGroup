@@ -21,7 +21,7 @@ export const getUserByUsernameService = async (
 
     return transformUserToPreview(user);
   } catch (e) {
-    console.error(`Error in getUserByUsernameService: ${JSON.stringify(e)}`);
+    console.error(`Error in getUserByUsernameService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

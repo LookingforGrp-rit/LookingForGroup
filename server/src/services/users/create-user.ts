@@ -42,7 +42,7 @@ const createUserService = async (
     return transformMeToPrivate(result);
   } catch (e) {
     console.log(e);
-    console.error(`Error in createUserService: ${JSON.stringify(e)}`);
+    console.error(`Error in createUserService: ${e as Error}`);
 
     if (e instanceof PrismaClientKnownRequestError) {
       switch (e.code) {

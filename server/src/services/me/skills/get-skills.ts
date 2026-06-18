@@ -28,7 +28,7 @@ export const getSkillsService = async (userId: number): Promise<MySkill[] | GetS
     );
     return skills.map(transformMySkill);
   } catch (e) {
-    console.error(`Error in getSkillsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getSkillsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };
