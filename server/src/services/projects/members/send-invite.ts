@@ -19,6 +19,16 @@ const sendInviteService = async (
   data: SendProjectInviteInput,
 ): Promise<SendInviteServiceSuccess | SendInviteServiceError> => {
   try {
+    //check if request exists
+    const req = await prisma.memberRequests.findFirst({
+      where: {
+        projectId,
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+      },
+    });
+    if (req) return 'CONFLICT';
+
     const roles = await getRolesService();
 
     if (roles === 'INTERNAL_ERROR') {
@@ -103,7 +113,17 @@ const sendInviteService = async (
       return emailResult;
     }
 
-    //TODO: Update database
+    //update db
+    await prisma.memberRequests.create({
+      data: {
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+        sentFromProject: true,
+        requestStatus: 'Pending',
+        projectId,
+      },
+    });
+
     return 'NO_CONTENT';
   } catch (e) {
     if (e instanceof Object && 'code' in e) {

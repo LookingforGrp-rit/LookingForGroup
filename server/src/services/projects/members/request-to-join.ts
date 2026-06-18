@@ -9,7 +9,7 @@ import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 import getProjectByIdService from '../get-proj-id.ts';
 
-type RequestToJoinServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type RequestToJoinServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type RequestToJoinServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 //
@@ -18,6 +18,16 @@ export const requestToJoinService = async (
   data: SendProjectInviteInput,
 ): Promise<RequestToJoinServiceSuccess | RequestToJoinServiceError> => {
   try {
+    //check if request exists
+    const req = await prisma.memberRequests.findFirst({
+      where: {
+        projectId,
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+      },
+    });
+    if (req) return 'CONFLICT';
+
     // grabbing the requested role
     const roles = await getRolesService();
 
@@ -108,7 +118,16 @@ export const requestToJoinService = async (
       return emailResult;
     }
 
-    //TODO: Update database
+    //update db
+    await prisma.memberRequests.create({
+      data: {
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+        sentFromProject: false,
+        requestStatus: 'Pending',
+        projectId,
+      },
+    });
 
     return 'NO_CONTENT';
   } catch (e) {
