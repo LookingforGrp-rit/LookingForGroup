@@ -1423,7 +1423,7 @@ Header style rules
   border: none;
   cursor: pointer;
   text-decoration: none;
-  color: var(--primary-color);
+  color: var(--main-text);
   transition: 0.2s;
 }
 
