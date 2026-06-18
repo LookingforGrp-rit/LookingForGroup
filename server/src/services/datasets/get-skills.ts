@@ -11,25 +11,30 @@ type GetSkillsServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 //GET api/datasets/skills
 const getSkillsService = async (): Promise<Skill[] | GetSkillsServiceError> => {
-  let skills = await prisma.skills.findMany({
-    select: SkillSelector,
+  try {
+    let skills = await prisma.skills.findMany({
+      select: SkillSelector,
 
-    orderBy: [
-      {
-        type: 'asc',
-      },
+      orderBy: [
+        {
+          type: 'asc',
+        },
 
-      {
-        label: 'asc',
-      },
-    ],
-  });
+        {
+          label: 'asc',
+        },
+      ],
+    });
 
-  //Should sort the array in alphabetical order
-  skills = skills.toSorted(
-    (skill1, skill2) => skill1.label.charCodeAt(0) - skill2.label.charCodeAt(0),
-  );
-  return skills.map(transformSkill);
+    //Should sort the array in alphabetical order
+    skills = skills.toSorted(
+      (skill1, skill2) => skill1.label.charCodeAt(0) - skill2.label.charCodeAt(0),
+    );
+    return skills.map(transformSkill);
+  } catch (e) {
+    console.error(`Error in getSkillsService: ${e as Error}`);
+    return 'INTERNAL_ERROR';
+  }
 };
 
 export default getSkillsService;
