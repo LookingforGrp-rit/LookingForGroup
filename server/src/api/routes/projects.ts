@@ -51,6 +51,9 @@ router.patch(
 //Receive all projects
 router.get('/', PROJECT.getProjects);
 
+//Receive paginated projects
+router.get('/:count/:id', PROJECT.getPaginatedProjects);
+
 //Create a new project
 router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
 
