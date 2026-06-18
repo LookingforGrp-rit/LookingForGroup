@@ -1085,6 +1085,15 @@ export interface ProjectJob {
   apiUrl: string;
 }
 
+// NOTIFICATIONS
+
+/**
+ * The preview of what the user sees when they first see a notification
+ */
+export interface NotificationPreview {
+  
+}
+
 // PROJECTS
 
 /**

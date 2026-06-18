@@ -99,13 +99,3 @@ export enum AspectRatios {
   '2/3',
   '6/13',
 }
-
-export enum NotificationEvent {
-  ProjectRejected,
-  ProjectApproved,
-  ProjectTakenDown,
-  InvitationRecieved,
-  InvitationRejected,
-  JoinRequestRecieved,
-  JoinRequestRejected
-}

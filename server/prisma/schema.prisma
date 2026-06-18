@@ -74,12 +74,11 @@ model Members {
 
 model Notifications {
   notificationId  String            @id @default(uuid()) @map("notification_id") @unique
-  senderId        Int               @map("sender_id")
   receiverId      Int               @map("receiver_id")
+  timeSent        DateTime          @map("time_sent")
   subjectLine     String            @map("subject_line")
   message         String            @map("message")
-  event           NotificationEvent @default(Other)
-  sender          Users             @relation(name: "FK_sender_to_notification", fields: [senderId], references: [userId], onDelete: NoAction, onUpdate: Cascade)
+  hasBeenRead     Boolean           @default(false) @map("has_been_read")
   receiver        Users             @relation(name: "FK_receiver_to_notification", fields: [receiverId], references: [userId], onDelete: NoAction, onUpdate: Cascade)
 
   @@map("notifications")
@@ -235,11 +234,11 @@ model Skills {
 }
 
 model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String   @db.Text
-  gid       String   @default("federalist papers")
-  expiresAt DateTime
+  id                String    @id
+  sid               String    @unique
+  data              String    @db.Text
+  gid               String    @default("federalist papers")
+  expiresAt         DateTime
 
   @@map("session")
 }
@@ -339,7 +338,6 @@ model Users {
   reported          ReportUser[]        @relation("reported_id")
 
   // here because prisma doesn't support one-way relationships
-  sender            Notifications[]      @relation(name: "FK_sender_to_notification")
   receiver          Notifications[]      @relation(name: "FK_receiver_to_notification")
 
   @@map("users")
@@ -413,15 +411,4 @@ enum SkillProficiency {
   Intermediate
   Advanced
   Expert
-}
-
-enum NotificationEvent {
-  Other
-  ProjectRejected
-  ProjectApproved
-  ProjectTakenDown
-  InvitationRecieved
-  InvitationRejected
-  RequestToJoinRecieved
-  RequestToJoinRejected
 }
