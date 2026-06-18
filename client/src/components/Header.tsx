@@ -307,7 +307,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
         {/* About button */}
         <a id="about-btn" href={paths.routes.ABOUT} title="About">
-          <ThemeIcon id={'info'} width={24} height={24} className={'color-fill'} ariaLabel={'about'} />
+          <ThemeIcon id={'info'} width={30} height={30} className={'color-stroke'} ariaLabel={'about'} />
         </a>
       </div>
     </div >
