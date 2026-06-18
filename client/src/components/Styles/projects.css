@@ -990,7 +990,7 @@ Project Creator and Editor Popup style rules
   grid-area: select;
   display: flex;
   flex-direction: column;
-  max-height: 347px;
+  max-height: 423px;
   padding-bottom: 26px;
 
   .error {

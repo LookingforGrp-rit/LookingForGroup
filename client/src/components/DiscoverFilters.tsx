@@ -136,7 +136,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
 
       // Map tag types to correct tab categories
       const typeMap: StringDictionary<string> = category === 'projects' ? {
-        Form: 'Form',
+        Style: 'Style',
         Other: 'Other',
         Genre: 'Genre',
         Purpose: 'Purpose',
@@ -359,7 +359,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                     //tagLabel === 'Soft Skills' ? "Soft" :
                     tagLabel;
               const type = category === 'projects' ? 'Project Type' : tagLabel === 'Other' ? 'Major' : 'Role';
-              const tagObj: Tag = { tagId: 0, label, type };
+              const tagObj: Tag = { tagId: 0, label, type, category: "Other" };
               return (
                 <button key={`${type}-${label}`}
                   className="discover-tag-filter"

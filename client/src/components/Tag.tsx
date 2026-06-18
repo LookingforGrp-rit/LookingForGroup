@@ -33,6 +33,10 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
       color = "green";
       break;
 
+    case "style":
+      color = "pink"
+      break;
+
     case 'other':
       color = 'grey';
       break;
