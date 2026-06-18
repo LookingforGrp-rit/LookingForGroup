@@ -1,5 +1,5 @@
 import {
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   AddProjectSocialInput,
   AddProjectTagInput,
   CreateProjectImageInput,
@@ -27,7 +27,7 @@ import {
   UpdateUserInput,
   UpdateUserSocialInput,
   UpdateUserSkillInput,
-  AcademicYear,
+  RitStatus,
   MyMember,
   MySkill,
   MeDetail,
@@ -132,7 +132,7 @@ interface ProjectChangesCreates {
   /**
    * All mediums to be created
    */
-  mediums: CRUDRequest<AddProjectMediumsInput>[];
+  mediums: CRUDRequest<AddProjectMediumInput>[];
 }
 
 /**
@@ -379,7 +379,7 @@ interface PendingUserMember extends Exclude<MyMember, "apiUrl"> {
 interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
   profileImage: string | null | PendingProfileImage;
   majors: (MyMajor | PendingMajor)
-  academicYear: AcademicYear | null;
+  ritStatus: RitStatus | null;
   projects: (MyMember | PendingUserMember)[];
   skills: (MySkill | PendingUserSkill)[];
   socials: (MySocial | PendingUserSocial)[];

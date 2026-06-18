@@ -17,7 +17,7 @@ export const updateUserInfo = async (req: AuthenticatedRequest, res: Response): 
     'headline',
     'pronouns',
     'title',
-    'academicYear',
+    'ritStatus',
     'location',
     'funFact',
     'bio',

@@ -11,7 +11,6 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "./SortableItem";
 import { Fragment } from "react";
-import { data } from "react-router-dom";
 
 // --- Constant ---
 const TAG_TYPES = {
@@ -19,7 +18,9 @@ const TAG_TYPES = {
   DESIGNER: "Designer Skill" as TagType,
   SOFT: "Soft Skill" as TagType,
   AUD: "Audio Skill" as TagType,
-  GENRE: ["Creative", "Technical", "Games", "Multimedia", "Music", "Other"] as TagType[],
+  GENRE: 'Genre' as TagType,
+  FORM: 'Form' as TagType,
+  OTHER: 'Other' as TagType,
   MEDIUM: "Medium",
 };
 
@@ -28,7 +29,7 @@ let projectAfterTagsChanges: PendingProject;
 
 // --- Props ---
 type TagsTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
@@ -119,7 +120,7 @@ export const TagsTab = ({
 
     projectAfterTagsChanges.tags = reorderedTags;
 
-    dataManager.updateTag({
+    dataManager?.updateTag({
       id: {
         type: "canon",
         value: reorderedTags[newIndex].tagId,
@@ -263,7 +264,7 @@ export const TagsTab = ({
       );
 
       if (selected) {
-        dataManager.deleteMedium({
+        dataManager?.deleteMedium({
           id: {
             value: mediumId,
             type: "canon",
@@ -280,7 +281,7 @@ export const TagsTab = ({
         return;
       }
 
-      dataManager.addMedium({
+      dataManager?.addMedium({
         id: {
           value: mediumId,
           type: "canon",
@@ -308,7 +309,7 @@ export const TagsTab = ({
       );
 
       if (selected) {
-        dataManager.deleteTag({
+        dataManager?.deleteTag({
           id: {
             value: tagId,
             type: "canon",
@@ -324,7 +325,7 @@ export const TagsTab = ({
         return;
       }
 
-      dataManager.addTag({
+      dataManager?.addTag({
         id: {
           value: tagId,
           type: "canon",

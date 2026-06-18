@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { addProjectFollowing, deleteProjectFollowing, getCurrentAccount, getProjectFollowing } from '../api/users.ts';
@@ -152,48 +152,48 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   };
 
   return (
-    <div className={'project-panel'}>
-      <div className="project-image-container">
-        <a href={projectURL}>
-        <img
-          src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
-          alt={'project image'}
-        />
-        <div className={'project-panel-hover'}>
-          <div id="quote">{project.hook}</div>
+    <a href={projectURL} className='project-link'>
+      <div className={'project-panel'}>
+        <div className="project-image-container">
+          <img
+            src={usePreloadedImage(`${project.thumbnail?.image}`, placeholderThumbnail)}
+            alt={'project image'}
+          />
+          <div className={'project-panel-hover'}>
+            <div id="quote">{project.hook}</div>
+          </div>
         </div>
-        </a>
-      </div>
 
-      <div className='project-title-likes'>
-        <h2><a href={projectURL}>{project.title}</a></h2>
-        <div className='project-likes'>
-          <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
-            {formatFollowCount(followCount)}
-          </p>
-          {isFollowing ? (
-            <ThemeIcon
-              width={28}
-              height={25}
-              id={"heart-filled"}
-              ariaLabel="following"
-              onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
-            />
-          ) : (
-            <ThemeIcon
-              width={28}
-              height={25}
-              id={"heart-empty"}
-              ariaLabel="following"
-              onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
-            />
-          )}
+        <div className='project-title-likes'>
+          <h2>{project.title}</h2>
+          <div className='project-likes'>
+            <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
+              {formatFollowCount(followCount)}
+            </p>
+            <a href="javascript:void(0)">
+            {isFollowing ? (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-filled"}
+                ariaLabel="following"
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+              />
+            ) : (
+              <ThemeIcon
+                width={28}
+                height={25}
+                id={"heart-empty"}
+                ariaLabel="following"
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+              />
+            )}
+            </a>
+          </div>
         </div>
-      </div>
-      <a href={projectURL}>
         <ProjectPanelMeta project={project} />
-      </a>
-    </div>
+      </div>
+    </a>
   );
 };
 

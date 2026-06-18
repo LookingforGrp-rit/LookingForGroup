@@ -25,7 +25,7 @@ export const deleteProjectService = async (
 
     return 'NO_CONTENT';
   } catch (e) {
-    console.error(`Error in deleteProjectService: ${JSON.stringify(e)}`);
+    console.error(`Error in deleteProjectService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

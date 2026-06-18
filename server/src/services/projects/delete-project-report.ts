@@ -25,7 +25,7 @@ const deleteProjectReportService = async (
 
     return 'NO_CONTENT';
   } catch (e) {
-    console.error(`Error in deleteProjectReportService: ${JSON.stringify(e)}`);
+    console.error(`Error in deleteProjectReportService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

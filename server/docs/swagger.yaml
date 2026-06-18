@@ -209,7 +209,7 @@ paths:
           schema:
             type: string
         - in: query
-          name: academicYear
+          name: ritStatus
           required: false
           schema:
             type: string

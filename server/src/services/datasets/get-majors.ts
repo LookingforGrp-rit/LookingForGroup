@@ -22,7 +22,7 @@ const getMajorsService = async (): Promise<Major[] | GetMajorsServiceError> => {
     );
     return majors.map(transformMajor);
   } catch (e) {
-    console.error(`Error in getMajorsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getMajorsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

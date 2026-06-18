@@ -27,7 +27,6 @@ import { getUsersById } from "../../api/users";
 import { addMember } from "../../api/projects";
 import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, Role, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
-import AboutFooter from "../AboutFooter";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -407,10 +406,10 @@ const Profile = (userProfile : any) => {
                     <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
                     {displayedProfile.title}
                   </div> : ""}
-                  {displayedProfile?.academicYear ? 
+                  {displayedProfile?.ritStatus ? 
                   <div className="profile-extra">
                     <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
-                    {majorsArr.join(", ")} {displayedProfile?.academicYear}
+                    {majorsArr.join(", ")} {displayedProfile?.ritStatus}
                   </div> : ""}
                   {displayedProfile?.location ?
                   <div className="profile-extra">
@@ -666,7 +665,6 @@ const Profile = (userProfile : any) => {
           </div> : ""}
         </div>
       </main>
-      <AboutFooter />
     </div>
   );
 };

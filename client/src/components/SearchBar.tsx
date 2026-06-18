@@ -82,7 +82,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           // ONLY return fields we want to match, this avoids unintended searchbar behavior
           // Search using all string props on the item
           const includesInValue = (val: unknown): boolean => {
-            if(val === null) return false;
+            if (val === null) return false;
             if (typeof val === 'string') {
               return val.toLowerCase().includes(currentQuery);
             }
@@ -116,15 +116,15 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
             label: proccessedItem.label ?? null,
           };
 
-          for(let q of splitSearchQuery){
+          for (let q of splitSearchQuery) {
             currentQuery = q;
-            if(!Object.values(finalItem).some(includesInValue)) return false;
+            if (!Object.values(finalItem).some(includesInValue)) return false;
           }
           return true;
         }
         else {
-          for(let q of splitSearchQuery){
-            if(!String(item).toLowerCase().includes(q)) return false;
+          for (let q of splitSearchQuery) {
+            if (!String(item).toLowerCase().includes(q)) return false;
           }
           return true;
         }
@@ -156,6 +156,9 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           onKeyDown={(e) => {
             {/* Prevent odd popup behavior on enter click */ }
             if (e.key === 'Enter') {
+              e.preventDefault();
+            } else if (e.key === ' ') {
+              e.currentTarget.value += ' ';
               e.preventDefault();
             }
           }}

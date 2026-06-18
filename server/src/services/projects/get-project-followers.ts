@@ -34,7 +34,7 @@ const getProjectFollowersService = async (
 
     return transformedFollowers;
   } catch (e) {
-    console.error(`Error in getProjectsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectsService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

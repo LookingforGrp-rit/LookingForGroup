@@ -31,7 +31,7 @@ export const reportProjectService = async (
 
     return 'OK';
   } catch (e) {
-    console.error(`Error in reportProjectService: ${JSON.stringify(e)}`);
+    console.error(`Error in reportProjectService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

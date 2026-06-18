@@ -6,12 +6,12 @@ import { ThemeIcon } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
 import { useState, useContext, SetStateAction, useEffect } from 'react';
 import { Header } from '../Header';
-import AboutFooter from '../AboutFooter';
 //import PasswordValidator from 'password-validator';
 import ToTopButton from '../ToTopButton';
 import * as paths from '../../constants/routes';
 import { getUserByEmail, getUserByUsername, getCurrentAccount, deleteUser, editUser } from '../../api/users';
 import { MePrivate, UpdateUserInput } from '@looking-for-group/shared';
+import { ProfileEditPopup } from '../Profile/ProfileEditPopup';
 type JsonData = Record<string, unknown>;
 
 /**
@@ -715,7 +715,11 @@ const Settings = (userProfile : any) => {
               </div>
             </div>
             <hr/>
-            <div className="settings-row">
+            <div className="settings-row settings-row-actions">
+              {/* Edit Profile — opens the same editor popup used on the profile page */}
+              <div className="subsection">
+                <ProfileEditPopup />
+              </div>
               {/* Account Deletion */}
               <div className="subsection">
                 <Popup>
@@ -759,7 +763,6 @@ const Settings = (userProfile : any) => {
           </div>
         )}
       </div>
-      <AboutFooter />
       <ToTopButton />
     </div>
   );
