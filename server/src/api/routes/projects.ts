@@ -269,6 +269,23 @@ router.post(
   PROJECT.requestToJoin,
 );
 
+//Get all applications to a project
+router.get(
+  '/:id/members/applications',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresProjectOwner),
+  PROJECT.getApplications,
+);
+
+//Get all invitations for a user
+router.get(
+  '/members/invitations',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.getInvitations),
+);
+
 //Removes a member from a specific project through project and user ID
 router.delete(
   '/:id/members/:userId',

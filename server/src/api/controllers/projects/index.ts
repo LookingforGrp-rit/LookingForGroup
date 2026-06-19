@@ -24,6 +24,8 @@ import getProjectMediums from './mediums/get-proj-mediums.ts';
 import addMember from './members/add-member.ts';
 import deleteMember from './members/delete-member.ts';
 import getMembers from './members/get-members.ts';
+import getApplications from './members/get-proj-applications.ts';
+import getInvitations from './members/get-user-invitations.ts';
 import requestToJoin from './members/request-to-join.ts';
 import sendInvite from './members/send-invite.ts';
 import updateMember from './members/update-member.ts';
@@ -91,4 +93,6 @@ export default {
   requestApproval,
   sendInvite,
   requestToJoin,
+  getApplications,
+  getInvitations,
 };
