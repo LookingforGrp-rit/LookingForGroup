@@ -145,6 +145,7 @@ textarea {
       #project-editor-selected-tags {
         width: 93%;
         height: 40%;
+        overflow-y: scroll;
       }
 
       #project-editor-tag-search {
