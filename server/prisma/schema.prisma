@@ -427,4 +427,6 @@ enum MemberRequestStatus {
   Accepted
   Declined
   Pending
+
+  @@map("request_status")
 }

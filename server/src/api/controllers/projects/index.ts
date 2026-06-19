@@ -29,6 +29,7 @@ import getApplications from './members/get-proj-applications.ts';
 import getInvitations from './members/get-user-invitations.ts';
 import requestToJoin from './members/request-to-join.ts';
 import sendInvite from './members/send-invite.ts';
+import updateMemberRequest from './members/update-member-request.ts';
 import updateMember from './members/update-member.ts';
 import { addProjectSocial } from './socials/add-social.ts';
 import { deleteProjectSocial } from './socials/delete-proj-social.ts';
@@ -97,4 +98,5 @@ export default {
   getApplications,
   getInvitations,
   deleteMemberRequestController,
+  updateMemberRequest,
 };

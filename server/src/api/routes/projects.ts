@@ -286,12 +286,20 @@ router.get(
   authenticated(PROJECT.getInvitations),
 );
 
-//Get all invitations for a user
+//Delete a member request
 router.delete(
   '/members/requests/:id',
   requiresLogin,
   injectCurrentUser,
   authenticated(PROJECT.deleteMemberRequestController),
+);
+
+//Update the status of a member request
+router.patch(
+  '/members/requests/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.updateMemberRequest),
 );
 
 //Removes a member from a specific project through project and user ID
