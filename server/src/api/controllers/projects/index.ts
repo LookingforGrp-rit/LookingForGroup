@@ -22,6 +22,7 @@ import addMediums from './mediums/add-proj-mediums.ts';
 import deleteMediums from './mediums/delete-proj-mediums.ts';
 import getProjectMediums from './mediums/get-proj-mediums.ts';
 import addMember from './members/add-member.ts';
+import deleteMemberRequestController from './members/delete-member-request.ts';
 import deleteMember from './members/delete-member.ts';
 import getMembers from './members/get-members.ts';
 import getApplications from './members/get-proj-applications.ts';
@@ -95,4 +96,5 @@ export default {
   requestToJoin,
   getApplications,
   getInvitations,
+  deleteMemberRequestController,
 };
