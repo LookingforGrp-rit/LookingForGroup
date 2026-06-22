@@ -34,8 +34,8 @@ vi.mock('#services/projects/members/send-invite.ts', () => ({
 }));
 
 const data: CreateProjectMemberInput = {
-  inviterUserId: 1,
-  inviteeUserId: 29,
+  ownerUserId: 1,
+  prospectiveMemberId: 29,
   roleId: 31,
   message: '',
 };
