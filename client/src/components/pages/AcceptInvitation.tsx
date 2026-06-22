@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { getByID, updateMemberRequest } from '../../api/projects';
+import { getByID, updateMemberRequest, getRequestByID } from '../../api/projects';
 import { getCurrentAccount, getJobTitles } from '../../api/users';
 import { Role } from '@looking-for-group/shared';
 import "../Styles/acceptInvite.css";
@@ -20,6 +20,7 @@ const AcceptInvitation = () => {
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
     // Project info
+    const [projectId, setProjectId] = useState<number>(0);
     const [projectTitle, setProjectTitle] = useState<string | null>(null);
     const [role, setRole] = useState<Role | null>(null);
     const [ownerFirstName, setOwnerFirstName] = useState<String | null>(null);
@@ -53,7 +54,6 @@ const AcceptInvitation = () => {
                 setProjectTitle(res.data.title);
                 setOwnerFirstName(res.data.owner.firstName);
                 setOwnerLastName(res.data.owner.lastName);
-
             }
         } catch (err) {
             setError('Fetch Project Error: ' + err);
@@ -65,10 +65,10 @@ const AcceptInvitation = () => {
             const res = await getRequestByID(requestId);
 
             if (res.data) {
-                setProjectTitle(res.data.title);
-                setOwnerFirstName(res.data.owner.firstName);
-                setOwnerLastName(res.data.owner.lastName);
+                await fetchProject(res.data.projectId);
+                await fetchRole(res.data.roleId);
 
+                setProjectId(res.data.projectId);
             }
         } catch (err) {
             setError('Fetch Project Error: ' + err);
@@ -85,10 +85,7 @@ const AcceptInvitation = () => {
                 setUserId(res.data.userId);
                 setFirstName(res.data.firstName);
 
-                const request = await fetchMemberRequest(requestId);
-
-                await fetchProject(request.projectId);
-                await fetchRole(request.roleId);
+                await fetchMemberRequest(requestIdNum);
             } else {
                 navigate(paths.routes.LOGIN, {
                     state: { from: location }
@@ -116,8 +113,7 @@ const AcceptInvitation = () => {
         }
 
         const result = await updateMemberRequest(
-            projectIdNum,
-            userId,
+            requestIdNum,
             { newStatus }
         );
 
@@ -143,11 +139,11 @@ const AcceptInvitation = () => {
                     <div id="accept-invite-container">
                         <div id="accept-invite-info">
                             <h1>Hi, {firstName}!</h1>
-                            <h2>{ownerFirstName ?? "The Owner"} {ownerLastName ?? ""} invited you to join <h2 id="project-title">{projectTitle?.toUpperCase() ?? "a project"}</h2></h2>
+                            <h2>{ownerFirstName ?? "The owner"} {ownerLastName ?? ""} invited you to join <h2 id="project-title">{projectTitle?.toUpperCase() ?? "a project"}</h2></h2>
                             <p>Your role will be {role?.label ?? "Member"}</p>
                             <div id="accept-invite-btns">
-                                <button id="decline-button" onClick={() => {handleMemberRequest('Declined')}}>Decline Invite</button>
-                                <button onClick={() => {handleMemberRequest('Accepted')}}>Accept Invite</button>
+                                <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Invite</button>
+                                <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Invite</button>
                             </div>
                         </div>
                     </div>

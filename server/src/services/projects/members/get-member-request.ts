@@ -9,18 +9,17 @@ const getMemberRequestService = async (
   requestId: number,
 ): Promise<MemberRequests | GetServiceError> => {
   try {
-    const members = await prisma.memberRequests.findUnique({
+    const request = await prisma.memberRequests.findUnique({
       where: {
         requestId,
-        sentFromProject: true,
       },
     });
 
-    if (!members) {
+    if (!request) {
       return 'NOT_FOUND';
     }
 
-    return members;
+    return request;
   } catch (e) {
     console.error(`Error in getMemberRequestService: ${e as Error}`);
 

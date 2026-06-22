@@ -12,7 +12,7 @@ import getProjectByIdService from '../get-proj-id.ts';
 type RequestToJoinServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type RequestToJoinServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
-//
+// POST api/projects/:id/members/request-to-join
 export const requestToJoinService = async (
   projectId: number,
   data: RequestToJoinInput,

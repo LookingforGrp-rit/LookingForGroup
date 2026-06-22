@@ -12,8 +12,8 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 type SendInviteServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type SendInviteServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-// Used in addMemberService
-// sends an invite to a user to join a project
+// POST api/projects/:id/members/send-invite
+// Sends an invite to a user to join a project
 const sendInviteService = async (
   projectId: number,
   data: SendProjectInviteInput,
@@ -65,9 +65,20 @@ const sendInviteService = async (
       return project;
     }
 
+    //update db
+    const result = await prisma.memberRequests.create({
+      data: {
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+        sentFromProject: true,
+        requestStatus: 'Pending',
+        projectId,
+      },
+    });
+
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
+    const inviteUrl = `${clientUrl}/acceptInvite/${result.requestId}`;
 
     const receiverImg = invitee.profileImage
       ? `https://lookingforgrp.com${invitee.profileImage}`
@@ -112,17 +123,6 @@ const sendInviteService = async (
     if (emailResult === 'INTERNAL_ERROR') {
       return emailResult;
     }
-
-    //update db
-    await prisma.memberRequests.create({
-      data: {
-        roleId: data.roleId,
-        prospectiveMemberId: data.prospectiveMemberId,
-        sentFromProject: true,
-        requestStatus: 'Pending',
-        projectId,
-      },
-    });
 
     return 'OK';
   } catch (e) {

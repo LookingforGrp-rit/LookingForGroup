@@ -31,6 +31,7 @@ import type {
   CreateProjectVideoInput,
   SendProjectInviteInput,
   RequestToJoinInput,
+  MemberRequests,
 } from "@looking-for-group/shared";
 
 //const navigate = useNavigate();
@@ -82,8 +83,8 @@ export const getByID = async (
 
 export const getRequestByID = async (
   requestID: number
-): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${projectID}`;
+): Promise<ApiResponse<MemberRequests>> => {
+  const apiURL = `/projects/members/requests/${requestID}`;
   const response = await GET(apiURL);
 
   if (response.error) console.log(`Error in getByID: ${response.error}`);
@@ -357,7 +358,7 @@ export const addMember = async (
  * Sends an invitation to a prospective member
  * @param projectID ID of the target project
  * @param memberData Data with which to add a member
- * @returns null if success
+ * @returns Response status
  */
 export const sendInvite = async (
   projectID: number,
@@ -374,7 +375,7 @@ export const sendInvite = async (
  * Sends a request to join email to project owner
  * @param projectID ID of the target project
  * @param memberData Data with which to add a member
- * @returns null if success
+ * @returns Response status
  */
 export const requestToJoin = async (
   projectID: number,
@@ -407,22 +408,20 @@ export const updateMember = async (
 };
 
 /**
- * Updates an existing pending member in a project
- * @param projectID - ID of the target project
+ * Updates an existing member request
  * @param requestID - Database ID of the request
- * @param memberData - Data with which to add a member
+ * @param memberData - Data to update a member request
  * @returns Response status
  */
 export const updateMemberRequest = async (
-  projectID: number,
   requestID: number,
   memberData: UpdateMemberRequestInput
-): Promise<ApiResponse<ProjectMember>> => {
-  const apiURL = `/projects/${projectID}/members/requests/${requestID}`;
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/members/requests/${requestID}`;
   const response = await PATCH(apiURL, memberData);
 
   if (response.error) console.log(`Error in updatePendingMember: ${response.error}`);
-  return response as ApiResponse<ProjectMember>;
+  return response as ApiResponse<null>;
 };
 
 /**
@@ -724,6 +723,7 @@ export default {
   sendInvite,
   requestToJoin,
   updateMember,
+  getRequestByID,
   updateMemberRequest,
   deleteMember,
   getProjectSocials,

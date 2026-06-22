@@ -2501,6 +2501,48 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   /api/projects/members/requests/{id}:
+    get:
+      summary: Gets a member request
+      description: Checks that the user is the receiver of the request, then updates it if it is
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the request
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectMemberRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
     patch:
       summary: Updates a member request
       description: Checks that the user is the receiver of the request, then updates it if it is
@@ -4399,6 +4441,8 @@ components:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollower'
     ProjectMember:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectMember'
+    ProjectMemberRequest:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectMemberRequest'
     ProjectSocial:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectSocial'
     ProjectTag:
