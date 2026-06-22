@@ -240,6 +240,7 @@ used for the more options dropdown menu and notifications
   align-items: center;
   max-width: 100%;
   margin: 0 auto;
+  width: calc(100% - 40px);
 }
 
 .button-reset {
@@ -1388,18 +1389,19 @@ Header style rules
   gap: 10px;
 
   width: calc(100% - 40px);
-  margin: 0;
+  padding: 0 40px;
+  margin: 0 auto;
   height: 90px;
   position: sticky;
   top: 0;
   z-index: 3;
+  box-sizing: border-box;
 }
 
 
 @media screen and (max-width: 800px) {
   #header {
-    padding: 0 20px;
-    width: calc(100% - 40px);
+    padding: 0;
     margin: 0 auto;
   }
 }
@@ -1407,6 +1409,7 @@ Header style rules
 #header-searchbar {
   grid-area: search;
   width: 100%;
+  align-items: left;
 }
 
 #header-searchbar>.search-wrapper>.search-bar {
@@ -1420,7 +1423,6 @@ Header style rules
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
-  translate: -10px 0;
   width: 100%;
 }
 
@@ -1448,7 +1450,6 @@ Header style rules
   background-color: var(--header-color);
   border-radius: 50px;
   border: none;
-  margin-left: 10px;
   height: 45px;
 }
 
@@ -1468,10 +1469,6 @@ Header style rules
   align-items: center;
   justify-content: center;
   width: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 5px;
 
   #profile-img-icon {
     width: 32px;

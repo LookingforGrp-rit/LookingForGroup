@@ -27,6 +27,9 @@
   background-color: var(--bg-color);
   font-family: 'Inter', sans-serif;
   overflow-x: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   .fa {
     color: var(--primary-color);
@@ -57,17 +60,6 @@
   min-height: 100vh;
   max-width: 100%;
   overflow-y: visible;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.discover-page #header {
-  position: sticky;
-  width: calc(100% - 40px);
-  padding: 0 40px;
-  box-sizing: border-box;
-  margin: 0 auto;
 }
 
 .discover-main {

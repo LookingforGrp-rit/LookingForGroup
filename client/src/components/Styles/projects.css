@@ -18,12 +18,24 @@ Project Panel component style rules
 /* #region project-panel */
 
 #discover-panel-box {
-  width: calc(100% - 40px);
-  padding: 0 20px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   justify-content: center;
   align-items: center;
+  width: calc(100% - 40px - 10px);
+  margin: 0 auto;
+
+  /* cancels out offset of scrollbar */
+  translate: 5px 0;
+}
+
+@media screen and (max-width: 800px)
+{
+  #discover-panel-box {
+    margin: 0;
+    width: 100%;
+    translate: 0;
+  }
 }
 
 /* Cheap way to work around the padding */
@@ -3885,13 +3897,14 @@ My projects page style rules
 
 .projects-banner-outer {
   box-sizing: border-box;
-  margin: 0 5vw;
+  margin: 0 auto;
+  width: calc(100% - 120px);
 }
 
 .my-projects-header-row {
   box-sizing: border-box;
-  width: auto;
-  margin: 30px 5vw;
+  width: calc(100% - 120px);
+  margin: 30px auto;
 
   display: flex;
   flex-direction: row;
@@ -3947,9 +3960,9 @@ My projects page style rules
 
 @media only screen and (max-width: 700px) {
   .my-projects-header-row {
-    margin: 30px 5vw;
+    margin: 30px auto;
     flex-direction: column;
-    max-width: calc(100vw - 50px);
+    width: calc(100% - 40px);
     align-items: baseline;
   }
 
@@ -4139,11 +4152,12 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: 90%;
+  width: calc(100% - 80px);
   margin: 30px auto 60px;
   gap: 20px;
   display: flex;
   flex-wrap: wrap;
+  box-sizing: border-box;
 }
 
 .my-project-grid-card {
