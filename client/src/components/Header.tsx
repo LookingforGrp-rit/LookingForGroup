@@ -242,16 +242,10 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                   {modeToggle}
                 </button>{' '}
 
-                {/* LOG IN Button */}
+                {/* Single unified auth entry point (logs in existing users, signs up new ones) */}
                 <a href={paths.routes.LOGIN}>
-                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
-                  Log In
-                </a>
-
-                {/* SIGN UP Button */}
-                <a href={paths.routes.SIGNUP}>
-                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
-                  Sign Up
+                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'}/>
+                  Log In / Sign Up
                 </a>
               </div>
 
