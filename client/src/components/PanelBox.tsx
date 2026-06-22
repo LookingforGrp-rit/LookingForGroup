@@ -22,9 +22,8 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
     const projectId = (item as ProjectWithFollowers).projectId;
     const project = projectCache?.[projectId]?.full || (item as ProjectWithFollowers);
     
-    // Masonry doesn't like grid gaps, so this forces padding instead
     return (
-      <div style={{ padding: '10px' }}>
+      <div>
         <ProjectPanel
           project={project}
           initialIsFollowing={followedProjectIds?.has(projectId)}
@@ -35,7 +34,7 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
   }
 
   return (
-    <div style={{ padding: '10px' }}>
+    <div>
       <ProfilePanel 
         profileData={item as UserPreview} 
         currentUserId={userId} 
@@ -53,7 +52,7 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
  * @param itemList - List of items (projects or profiles) to render.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId }: { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
+export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, }: { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
   // Test these
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 1000px)');
@@ -86,7 +85,7 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
     category,
     projectCache,
     followedProjectIds,
-    userId
+    userId,
   };
 
   // Finally! A masonry grid!

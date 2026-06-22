@@ -18,11 +18,11 @@ Meet page hero style rules
 /*#region meet page hero*/
 
 #discover-hero {
-  width: 90%;
-  margin: 0 auto;
+  width: calc(100% - 120px);
+  margin: 0 40px;
   background-image: var(--hero-gradient);
   border-radius: 10px;
-
+  box-sizing: border-box;
 }
 
 @media only screen and (max-width: 1100px) {
@@ -212,11 +212,15 @@ Image carousel style rules
 /*#region image carousel*/
 
 .discover-carousel {
-  max-width: 100%;
+  width: calc(100% - 40px);
   margin: 0 auto;
-  /* TEMPORARY, should change after more styling is done */
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+#carousel {
+  width: 100%;
 }
 
 /* Desktop width */
@@ -231,6 +235,7 @@ Image carousel style rules
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .discover-carousel-btn {
@@ -269,7 +274,7 @@ Image carousel style rules
 .carousel-btn-left {
   margin-left: 0px;
   margin-right: min(18px, calc(100vw * (18 / 1512)));
-  transform: scaleX(-1); 
+  transform: scaleX(-1);
 }
 
 /* 3. General hover / active for right button */
@@ -307,7 +312,7 @@ Image carousel style rules
   overflow: hidden;
   height: 370px;
   max-height: 370px;
-  width: 90%;
+  width: fit-content;
   border-radius: 10px;
   background-color: var(--header-color);
   /*max-width: calc(100vw - 320px);*/
@@ -444,10 +449,6 @@ Image carousel style rules
 }
 
 @media screen and (max-width: 1020px) {
-  .discover-carousel {
-    max-width: 95%;
-  }
-
   .carousel-contents {
     height: auto;
   }
@@ -547,7 +548,6 @@ Filters / Tags Style Rules
 
 
 #discover-filters-parent {
-  width: 100%;
   /* margin: 20px calc(100vw * (65 / 1512)); */
   box-sizing: border-box;
   position: sticky;
@@ -556,18 +556,24 @@ Filters / Tags Style Rules
   z-index: 1;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
+  width: 100%;
+  padding: 0 40px;
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 800px) {
   .discover-page {
     #discover-filters-parent {
       top: -35px;
     }
   }
+
+  #discover-filters-parent {
+    padding: 0;
+  }
 }
 
 #discover-filters {
-  width: 90%;
+  width: 100%;
   margin: 20px auto;
   display: flex;
   flex-direction: row;
@@ -994,6 +1000,27 @@ Filters / Tags Style Rules
   }
 }
 
+.tag-pink,
+.tag-pink.tag-selected,
+.tag-button-pink-selected {
+  background-color: var(--tag-pink-selected);
+  border-color: var(--tag-pink-selected);
+}
+
+.tag-pink.tag-unselected,
+.tag-button-pink-unselected {
+  background-color: var(--tag-pink-unselected);
+  border-color: var(--tag-pink-unselected-border);
+
+  p {
+    color: var(--tag-text-unselected-pink);
+  }
+
+  .fa {
+    color: var(--tag-text-unselected-pink) !important;
+  }
+}
+
 .tag-unselected:hover {
   p {
     color: var(--tag-text-selected);
@@ -1109,6 +1136,16 @@ Filters / Tags Style Rules
   }
 }
 
+.tag-pink.tag-unselected:hover,
+.tag-button-pink-unselected:hover {
+  background-color: var(--tag-pink-selected);
+  border-color: var(--tag-pink-selected);
+
+  p {
+    color: var(--tag-text-selected) !important;
+  }
+}
+
 .tag-button:hover {
   cursor: pointer;
   opacity: 0.85;
@@ -1132,32 +1169,32 @@ Filters / Tags Style Rules
 #filters-popup {
   position: fixed;
   top: 50%;
-  left: calc(50% + 115px); 
+  left: calc(50% + 115px);
   transform: translate(-50%, -50%);
-  
+
   width: 90vw;
-  max-width: 820px;        
+  max-width: 820px;
   height: auto;
-  
+
   /* Clamped to 88vh so it avoids hitting the browser address bar edges */
-  max-height: 88vh;        
-  
-  background-color: #1a1923; 
+  max-height: 88vh;
+
+  background-color: var(--bg-color);
   border-radius: 16px;
-  padding: 32px 24px 20px 24px;           
+  padding: 32px 24px 20px 24px;
   box-sizing: border-box;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
   z-index: 10000;
-  
+
   display: flex;
   flex-direction: column;
-  gap: 12px;               
+  gap: 12px;
 }
 
 /* Header Text Style */
 #filters-popup h2 {
   text-align: center;
-  margin: 0 0 4px 0;       
+  margin: 0 0 4px 0;
   font-size: 1.5rem;
   color: #f3be9b;
 }
@@ -1169,10 +1206,10 @@ Filters / Tags Style Rules
   box-sizing: border-box;
   background-color: #0c0b11;
   border-radius: 12px;
-  padding: 22px 24px !important; 
+  padding: 22px 24px !important;
   display: flex !important;
   flex-direction: column !important;
-  height: auto !important;              
+  height: auto !important;
   max-height: none !important;
   gap: 4px !important;
 }
@@ -1182,27 +1219,27 @@ Filters / Tags Style Rules
   display: flex !important;
   flex-wrap: wrap !important;
   justify-content: center !important;
-  align-content: flex-start !important; 
-  gap: 8px 40px !important;            
+  align-content: flex-start !important;
+  gap: 8px 40px !important;
   margin: 14px auto 0 auto !important;
   padding: 0 0 10px 0 !important;
   width: 100%;
   max-width: 660px;
-  height: auto !important;              
+  height: auto !important;
   overflow: visible !important;
 }
 
-#filter-tabs > * {
+#filter-tabs>* {
   flex-shrink: 0;
   white-space: nowrap;
   color: #a5a3b3;
   cursor: pointer;
 }
 
-#filter-tabs > *:hover,
-#filter-tabs > .active {
+#filter-tabs>*:hover,
+#filter-tabs>.active {
   color: #f3be9b;
-  text-shadow: 0 0 0.65px currentColor, 0 0 0.65px currentColor; 
+  text-shadow: 0 0 0.65px currentColor, 0 0 0.65px currentColor;
 }
 
 #filter-tags {
@@ -1210,10 +1247,10 @@ Filters / Tags Style Rules
   flex-wrap: wrap !important;
   justify-content: flex-start !important;
   gap: 10px 12px !important;
-  
+
   /*Replaces fluid min/max rules with a completely locked layout height footprint */
-  height: 170px !important;             
-  overflow-y: auto !important;        
+  height: 170px !important;
+  overflow-y: auto !important;
   padding: 4px 0 !important;
 }
 
@@ -1223,18 +1260,18 @@ Filters / Tags Style Rules
   box-sizing: border-box;
   background-color: #0c0b11;
   border-radius: 12px;
-  padding: 18px 24px !important;        
+  padding: 18px 24px !important;
   display: flex !important;
   flex-direction: column !important;
-  
+
   height: auto !important;
-  min-height: 85px !important;         
+  min-height: 85px !important;
 }
 
 #filters-popup #primary-btn {
   width: 100%;
-  max-width: 140px;       
-  margin: 4px auto 0 auto;              
+  max-width: 140px;
+  margin: 4px auto 0 auto;
   display: block;
   flex-shrink: 0;
 }
@@ -1247,9 +1284,9 @@ Filters / Tags Style Rules
     left: 50% !important;
     width: 94vw !important;
     max-height: 82vh !important;
-    
+
     /* Slightly trimmer padding to save mobile screen space */
-    padding: 20px 16px 14px 16px !important; 
+    padding: 20px 16px 14px 16px !important;
     gap: 10px !important;
   }
 
@@ -1270,21 +1307,21 @@ Filters / Tags Style Rules
     margin: 10px auto 0 auto !important;
     padding-bottom: 8px !important;
   }
-  
-  #filter-tabs > * {
+
+  #filter-tabs>* {
     font-size: 0.9rem !important;
   }
 
   #filter-tags {
-    height: 135px !important;    
-    gap: 8px 8px !important; 
+    height: 135px !important;
+    gap: 8px 8px !important;
   }
 
   #selected-section.popup-section {
     padding: 12px 14px !important;
     min-height: 75px !important;
   }
-  
+
   #selected-section.popup-section p {
     font-size: 0.85rem !important;
   }

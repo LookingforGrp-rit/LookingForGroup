@@ -6,6 +6,7 @@ import requestApproval from './approval/request-approval.ts';
 import unapproveProject from './approval/unapprove-proj.ts';
 import createProject from './create-proj.ts';
 import deleteProject from './delete-proj.ts';
+import getPaginatedProjects from './get-paginated-projects.ts';
 import getProjectByID from './get-proj-id.ts';
 import { getProjectFollowers } from './get-project-followers.ts';
 import getProjects from './get-projects.ts';
@@ -22,8 +23,14 @@ import addMediums from './mediums/add-proj-mediums.ts';
 import deleteMediums from './mediums/delete-proj-mediums.ts';
 import getProjectMediums from './mediums/get-proj-mediums.ts';
 import addMember from './members/add-member.ts';
+import deleteMemberRequestController from './members/delete-member-request.ts';
 import deleteMember from './members/delete-member.ts';
 import getMembers from './members/get-members.ts';
+import getApplications from './members/get-proj-applications.ts';
+import getInvitations from './members/get-user-invitations.ts';
+import requestToJoin from './members/request-to-join.ts';
+import sendInvite from './members/send-invite.ts';
+import updateMemberRequest from './members/update-member-request.ts';
 import updateMember from './members/update-member.ts';
 import { addProjectSocial } from './socials/add-social.ts';
 import { deleteProjectSocial } from './socials/delete-proj-social.ts';
@@ -51,6 +58,7 @@ export default {
   deleteJobController,
   getProjectFollowers,
   getProjects,
+  getPaginatedProjects,
   getProjectByID,
   getProjectImages,
   createProject,
@@ -87,4 +95,10 @@ export default {
   getUnapprovedProjectById,
   rejectProject,
   requestApproval,
+  sendInvite,
+  requestToJoin,
+  getApplications,
+  getInvitations,
+  deleteMemberRequestController,
+  updateMemberRequest,
 };

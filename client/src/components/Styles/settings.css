@@ -272,10 +272,6 @@ input:checked+.slider:before {
   height: 100px;
 }
 
-@media only screen and (max-width: 800px) {
-  /*responsiveness goes here*/
-}
-
 /* Settings page redesign styling */
 #settings-page {
   hr {
@@ -382,6 +378,11 @@ input:checked+.slider:before {
     background-color: var(--header-color);
     outline: none;
     width: 100%;
+
+  }
+  #project-editor-save
+  {
+    width: max-content;
   }
 
   #options-theme-btn,
@@ -610,4 +611,39 @@ input:checked+.slider:before {
 #phone-number-visibility input{
   width: 1em;
   margin-left: 1em;
+}
+
+/* edit and delete buttons */
+#settings-page .settings-row.settings-row-actions {
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 16px;
+}
+
+#settings-page .settings-row.settings-row-actions .subsection {
+  margin: 0;
+}
+
+/* Edit Profile button on the Settings page. */
+#settings-page #project-info-edit {
+  border: none;
+  border-radius: 30px;
+  padding: 6px 20px;
+  background-color: #fead81 !important;
+  color: black;
+  font-size: 2ch;
+  width: max-content;
+  margin: auto min(1vw, 10px);
+  font-weight: 700;
+}
+
+#settings-page #project-info-edit:hover {
+  box-shadow: 0px 0px 10px 0px var(--shadow-color);
+}
+
+#settings-page #project-info-edit:focus-visible {
+  outline-offset: 2px;
+  outline: 3px solid var(--primary-color);
+  transition: 0s;
 }

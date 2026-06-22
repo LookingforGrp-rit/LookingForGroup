@@ -9,6 +9,7 @@
 export const projectTabs = {
   'Project Type': { categoryTags: [], categoryName: 'Project Type', color: 'blue' },
   'Genre': { categoryTags: [], categoryName: 'Genre', color: 'green' },
+  'Style' : { categoryTags: [], categoryName: 'Style', color: 'pink'},
   'Purpose': { categoryTags: [], categoryName: 'Purpose', color: 'grey' },
   'Developer Skill': { categoryTags: [], categoryName: 'Developer Skills', color: 'yellow' },
   'Designer Skill': { categoryTags: [], categoryName: 'Designer Skills', color: 'red' },

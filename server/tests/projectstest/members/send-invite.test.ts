@@ -133,8 +133,8 @@ describe('sendInviteService', () => {
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });
@@ -147,8 +147,8 @@ describe('sendInviteService', () => {
     vi.mocked(getRolesService).mockRejectedValue('INTERNAL_ERROR');
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });
@@ -160,8 +160,8 @@ describe('sendInviteService', () => {
     vi.mocked(getRolesService).mockResolvedValue([]);
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });
@@ -174,8 +174,8 @@ describe('sendInviteService', () => {
     vi.mocked(prisma.users.findUnique).mockResolvedValue(null);
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });
@@ -191,8 +191,8 @@ describe('sendInviteService', () => {
     vi.mocked(getProjectByIdService).mockRejectedValue('INTERNAL_ERROR');
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });
@@ -208,8 +208,8 @@ describe('sendInviteService', () => {
     vi.mocked(getProjectByIdService).mockRejectedValue('NOT_FOUND');
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });
@@ -226,8 +226,8 @@ describe('sendInviteService', () => {
     vi.mocked(sendEmail).mockResolvedValue('INTERNAL_ERROR');
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });
@@ -241,8 +241,8 @@ describe('sendInviteService', () => {
     vi.mocked(prisma.users.findUnique).mockRejectedValue({ code: 'P2025' });
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });
@@ -255,8 +255,8 @@ describe('sendInviteService', () => {
     vi.mocked(prisma.users.findUnique).mockRejectedValue({ code: 'P2002' });
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });
@@ -269,8 +269,8 @@ describe('sendInviteService', () => {
     vi.mocked(prisma.users.findUnique).mockRejectedValue(new Error('db on fire'));
 
     const result = await sendInviteService(1, {
-      inviterUserId: 1,
-      inviteeUserId: 2,
+      ownerUserId: 1,
+      prospectiveMemberId: 2,
       message: 'hello',
       roleId: 1,
     });

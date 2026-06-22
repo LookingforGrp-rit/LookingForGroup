@@ -19,7 +19,7 @@ import type {
   UpdateProjectSocialInput,
   AddProjectTagInput,
   UpdateProjectTagInput,
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   ReorderProjectImagesInput,
   ProjectFollowers,
   ProjectJob,
@@ -59,6 +59,23 @@ export const getProjects = async (): Promise<ApiResponse<ProjectPreview[]>> => {
   const response = await GET(apiURL);
 
   if (response.error) console.log(`Error in getProjects: ${response.error}`);
+  return response;
+};
+
+/**
+ * Retrieves a paginated list of projects.
+ * @param count The maximum number of projects to return.
+ * @param projectId The project ID cursor. Projects after this ID will be returned. Use 0 to start from the beginning.
+ * @returns Array of project previews.
+ */
+export const getPaginatedProjects = async (
+  count: number,
+  projectId: number
+): Promise<ApiResponse<ProjectPreview[]>> => {
+  const apiURL = `/projects/${count}/${projectId}`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getPaginatedProjects: ${response.error}`);
   return response;
 };
 
@@ -525,7 +542,7 @@ export const getProjectMediums = async (
  */
 export const addProjectMedium = async (
   projectID: number,
-  mediumData: AddProjectMediumsInput
+  mediumData: AddProjectMediumInput
 ): Promise<ApiResponse<ProjectMedium>> => {
   const apiURL = `/projects/${projectID}/mediums`;
   const response = await POST(apiURL, mediumData);

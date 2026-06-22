@@ -448,7 +448,7 @@ export const Carousel = ({
                 slideRefs,
             }}
         >
-            <div onKeyDown={handleGlobalCarouselArrows}>
+            <div onKeyDown={handleGlobalCarouselArrows} id="carousel">
                 {children}
             </div>
         </CarouselContext.Provider>

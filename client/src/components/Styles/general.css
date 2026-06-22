@@ -82,6 +82,7 @@ General style rules
   --tag-purple-selected: #d7bed3;
   --tag-grey-selected: #d0d0d0;
   --tag-periwinkle-selected: #A2ADF9;
+  --tag-pink-selected: #e191e8;
 
   --tag-red-unselected: #0e0e0e;
   --tag-orange-unselected: #0e0e0e;
@@ -91,6 +92,7 @@ General style rules
   --tag-purple-unselected: #0e0e0e;
   --tag-grey-unselected: #0e0e0e;
   --tag-periwinkle-unselected: #0e0e0e;
+  --tag-pink-unselected: #0e0e0e;
 
   --tag-red-unselected-border: #ffa0b0;
   --tag-orange-unselected-border: #ffa281;
@@ -100,6 +102,7 @@ General style rules
   --tag-purple-unselected-border: #d7bed3;
   --tag-grey-unselected-border: #d0d0d0;
   --tag-periwinkle-unselected-border: #A2ADF9;
+  --tag-pink-unselected-border: #e191e8;
 
   --tag-text-selected: black;
 
@@ -111,6 +114,7 @@ General style rules
   --tag-text-unselected-purple: #d7bed3;
   --tag-text-unselected-grey: #d0d0d0;
   --tag-text-unselected-periwinkle: #A2ADF9;
+  --tag-text-unselected-pink: #e191e8;
 
   --modal-gradient-start: #0a0a0a;
   --modal-gradient-end: #2c2a3a;
@@ -159,6 +163,7 @@ General style rules
   --tag-purple-selected: #d7bed3;
   --tag-grey-selected: #d0d0d0;
   --tag-periwinkle-selected: #A2ADF9;
+  --tag-pink-selected: #e191e8;
 
   --tag-red-unselected: #ffd9df;
   --tag-orange-unselected: #ffdacd;
@@ -168,6 +173,7 @@ General style rules
   --tag-purple-unselected: #efe5ed;
   --tag-grey-unselected: #ececec;
   --tag-periwinkle-unselected: #d1d6fc;
+  --tag-pink-unselected: #f0c8f4;
 
   --tag-red-unselected-border: #ffd9df;
   --tag-orange-unselected-border: #ffdacd;
@@ -177,6 +183,7 @@ General style rules
   --tag-purple-unselected-border: #efe5ed;
   --tag-grey-unselected-border: #ececec;
   --tag-periwinkle-unselected-border: #d1d6fc;
+  --tag-pink-unselected-border: #f0c8f4;
 
   --tag-text-selected: black;
 
@@ -188,6 +195,7 @@ General style rules
   --tag-text-unselected-purple: black;
   --tag-text-unselected-grey: black;
   --tag-text-unselected-periwinkle: black;
+  --tag-text-unselected-pink: black;
 
   --modal-gradient-start: #ffffff;
   --modal-gradient-end: #d3d3ff;
@@ -223,6 +231,15 @@ used for the more options dropdown menu and notifications
   font-weight: 500;
   font-size: 0.875rem;
   font-style: italic;
+}
+
+#main {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 100%;
+  margin: 0 auto;
+  width: calc(100% - 40px);
 }
 
 .button-reset {
@@ -1368,29 +1385,30 @@ Header style rules
     */
   background-image: linear-gradient(var(--bg-color) 90%, rgba(0, 0, 0, 0));
 
-  /* these values account for the width of the scroll bar */
-  padding-left: calc(5vw - 10px);
-  padding-right: calc(5vw + 10px);
+  gap: 10px;
 
-  width: 90%;
-  margin: 0;
+  width: calc(100% - 40px);
+  padding: 0 40px;
+  margin: 0 auto;
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 3;
+  z-index: 1;
+  box-sizing: border-box;
 }
 
 
 @media screen and (max-width: 800px) {
   #header {
-    padding: 0 20px;
+    padding: 0;
     margin: 0 auto;
   }
 }
 
 #header-searchbar {
   grid-area: search;
-  padding: 0 10px;
+  width: 100%;
+  align-items: left;
 }
 
 #header-searchbar>.search-wrapper>.search-bar {
@@ -1404,11 +1422,7 @@ Header style rules
   justify-content: flex-end;
   align-items: center;
   gap: 10px;
-  translate: -10px 0;
-
-  .dropdown-container {
-    padding: 0 10px;
-  }
+  width: 100%;
 }
 
 #header-buttons #about-btn {
@@ -1428,7 +1442,6 @@ Header style rules
 }
 
 #header-buttons #about-btn:hover {
-  background-color: var(--invert-text);
   color: var(--bg-color);
 }
 
@@ -1436,7 +1449,6 @@ Header style rules
   background-color: var(--header-color);
   border-radius: 50px;
   border: none;
-  margin-left: 10px;
   height: 45px;
 }
 
@@ -1456,11 +1468,6 @@ Header style rules
   align-items: center;
   justify-content: center;
   width: 100%;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  gap: 5px;
-  padding: 5px 5px 5px 6px;
 
   #profile-img-icon {
     width: 32px;
@@ -2053,6 +2060,7 @@ Image Carousel style rules
   border-radius: 50%;
   width: 14px;
   height: 14px;
+  padding: 0;
   background-color: var(--header-color);
 }
 
@@ -2244,6 +2252,7 @@ Theme Icons style rules
 .gradient-color-fill>use {
   fill: var(--modal-gradient-start);
 }
+
 
 /* Star SVG (Following icon and Thumbnail indicator) */
 .star {
