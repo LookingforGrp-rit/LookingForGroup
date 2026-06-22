@@ -1,4 +1,5 @@
 import React, { MouseEventHandler, useRef, useState } from 'react';
+import arrow from '../../../public/images/icons/s-arrow.png';
 
 interface TermsOfServiceProps {
   show: boolean;
@@ -56,6 +57,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
 
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
+              <img src={arrow} alt="Left arrow" id="signup-leftArw"></img>
               Back
             </button>
             <div id="accept-tos-section">
@@ -64,6 +66,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
             </div>
             <button id="signup-nextBtn" onClick={onNext} ref={nextBtn} disabled={!isChecked}>
               Next
+              <img src={arrow} alt="Right arrow" id="signup-rightArw"></img>
             </button>
           </div>
         </div>

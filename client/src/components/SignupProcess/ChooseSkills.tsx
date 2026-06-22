@@ -7,6 +7,8 @@ import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, us
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
 import { clampDragWithinContainer } from "../ProjectCreatorEditor/tabs/dragModifiers";
+import arrow from '../../../public/images/icons/s-arrow.png';
+
 
 const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
 
@@ -355,6 +357,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 					</div>
 					<div id="signupProcess-btns">
 						<button id="signup-backBtn" onClick={onBack}>
+							<img src={arrow} alt="Left arrow" id="signup-leftArw"></img>
 							Back
 						</button>
 						<button
@@ -366,6 +369,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 							// the user can only move to the next modal when they have selected 5 skills
 							disabled={selectedSkills.length < 3}>
 							Next
+							<img src={arrow} alt="Right arrow" id="signup-rightArw"></img>
 						</button>
 					</div>
 				</div>

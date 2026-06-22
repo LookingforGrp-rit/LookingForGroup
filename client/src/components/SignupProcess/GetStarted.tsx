@@ -1,4 +1,5 @@
 import { MouseEventHandler } from 'react';
+import arrow from '../../../public/images/icons/s-arrow.png';
 
 interface GetStartedProps {
   show: boolean;
@@ -43,6 +44,7 @@ const GetStarted: React.FC<GetStartedProps> = ({ show, onBack, onCreateProject, 
 
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
+              <img src={arrow} alt="Left arrow" id="signup-leftArw"></img>
               Back
             </button>
           </div>
