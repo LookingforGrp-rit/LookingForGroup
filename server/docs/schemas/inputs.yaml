@@ -259,3 +259,15 @@ components:
           type: number
         contactUserId:
           type: number
+
+    CreateMemberRequestInput:
+      type: object
+      properties:
+        ownerUserId:
+          type: number
+        prospectiveMemberId:
+          type: number
+        roleId:
+          type: number
+        message:
+          type: string

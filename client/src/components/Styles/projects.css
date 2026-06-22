@@ -192,9 +192,10 @@ Project Panel component style rules
       display: flex;
       flex-direction: row-reverse;
       gap: 8px;
-      align-items: center;
+      align-items: start;
       padding-left: 8px;
       height: 100%;
+      padding-top: 15px;
 
       .follow-amt {
         margin: 0;
@@ -224,7 +225,10 @@ Project Panel component style rules
       #heart-filled:hover {
         transform: scale(1.6);
       }
-
+      
+      p {
+        padding-top: 6px;
+      }
 
     }
   }
@@ -1019,7 +1023,7 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   max-height: 423px;
-  padding-bottom: 26px;
+  padding: 26px 31px;
 
   .error {
     margin-top: 15px;
