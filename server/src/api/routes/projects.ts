@@ -4,7 +4,6 @@ import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
-import requiresPendingProjectMember from '../middleware/authorization/requires-pending-project-member.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -52,7 +51,7 @@ router.patch(
 router.get('/', PROJECT.getProjects);
 
 //Receive paginated projects
-router.get('/:count/:id', PROJECT.getPaginatedProjects);
+router.get('/paginated/:count/:id', PROJECT.getPaginatedProjects);
 
 //Create a new project
 router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
@@ -234,18 +233,65 @@ router.patch(
   authenticated(requiresProjectOwner),
   PROJECT.updateMember,
 );
-//Updates pending member of a specific project through id
-router.patch(
-  '/:id/members/:userId/accept',
+
+//Sends an invite to a prospective member
+router.post(
+  '/:id/members/send-invite',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresProjectOwner),
+  projectExistsAt('path', 'id'),
+  userExistsAt('body', 'prospectiveMemberId'),
+  userExistsAt('body', 'ownerUserId'),
+  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  PROJECT.sendInvite,
+);
+
+//Request to join a prospective member
+router.post(
+  '/:id/members/request-to-join',
   requiresLogin,
   injectCurrentUser,
   projectExistsAt('path', 'id'),
-  userExistsAt('path', 'userId'),
-  projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
+  userExistsAt('body', 'prospectiveMemberId'),
+  userExistsAt('body', 'ownerUserId'),
   skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
-  authenticated(requiresPendingProjectMember),
-  PROJECT.updateMember,
+  PROJECT.requestToJoin,
 );
+
+//Get all applications to a project
+router.get(
+  '/:id/members/applications',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresProjectOwner),
+  PROJECT.getApplications,
+);
+
+//Get all invitations for a user
+router.get(
+  '/members/invitations',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.getInvitations),
+);
+
+//Delete a member request
+router.delete(
+  '/members/requests/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.deleteMemberRequestController),
+);
+
+//Update the status of a member request
+router.patch(
+  '/members/requests/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.updateMemberRequest),
+);
+
 //Removes a member from a specific project through project and user ID
 router.delete(
   '/:id/members/:userId',

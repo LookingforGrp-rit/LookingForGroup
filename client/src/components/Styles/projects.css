@@ -204,9 +204,10 @@ Project Panel component style rules
       display: flex;
       flex-direction: row-reverse;
       gap: 8px;
-      align-items: center;
+      align-items: start;
       padding-left: 8px;
       height: 100%;
+      padding-top: 15px;
 
       .follow-amt {
         margin: 0;
@@ -236,7 +237,10 @@ Project Panel component style rules
       #heart-filled:hover {
         transform: scale(1.6);
       }
-
+      
+      p {
+        padding-top: 6px;
+      }
 
     }
   }
@@ -1031,7 +1035,7 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-direction: column;
   max-height: 423px;
-  padding-bottom: 26px;
+  padding: 26px 31px;
 
   .error {
     margin-top: 15px;
@@ -1822,7 +1826,8 @@ button.edit-position-contact .project-member-image {
     border: 3px solid var(--main-text);
     margin: 1vw 0;
     object-fit: cover;
-    height: 400px;
+    max-width: 95%;
+    max-height: 400px;
   }
 
   img {
@@ -1830,7 +1835,7 @@ button.edit-position-contact .project-member-image {
   }
 
   input[type="range"] {
-    width: 400px;
+    max-width: 400px;
     background: none;
     margin: 0.5em;
   }
@@ -1843,6 +1848,11 @@ button.edit-position-contact .project-member-image {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+
+    label{
+      margin-right: 0.5em;
+      font-size: clamp(1.15rem, 3vw, 1.25rem);
+    }
   }
 
   #aspect-row .select-container {
