@@ -78,7 +78,7 @@ const sendInviteService = async (
 
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    const inviteUrl = `${clientUrl}/acceptInvite/${result.requestId}`;
+    const inviteUrl = `${clientUrl}/acceptInvite/${String(result.requestId)}`;
 
     const receiverImg = invitee.profileImage
       ? `https://lookingforgrp.com${invitee.profileImage}`
