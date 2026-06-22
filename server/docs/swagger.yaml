@@ -1757,7 +1757,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/projects/{count}/{id}:
+  /api/projects/paginated/{count}/{id}:
     get:
       summary: Get paginated projects
       tags:
