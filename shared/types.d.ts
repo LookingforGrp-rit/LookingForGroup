@@ -1073,6 +1073,11 @@ export interface ProjectJob {
   createdAt: Date;
 
   /**
+   * The skills the listing is looking for
+   */
+  jobSkills: Skill[];
+
+  /**
    * The date the listing was last updated
    */
   updatedAt: Date;
@@ -1460,7 +1465,7 @@ export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
  * Data required to create a job listing on a project
  */
 export type CreateProjectJobInput = Required<
-  Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
+  Pick<ProjectJob, "availability" | "duration" | "location" | "compensation" | "jobSkills">
 > &
   Partial<Pick<ProjectJob, "description">> & {
     roleId: number;

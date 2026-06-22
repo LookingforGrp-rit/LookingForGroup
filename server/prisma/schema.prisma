@@ -41,6 +41,7 @@ model Jobs {
   updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)
   projects      Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
   roles         Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
+  jobSkills     Skills[]         @relation(map: "job_skills")
 
   @@index([projectId], map: "FK2_project_id")
   @@index([roleId], map: "FK_jobs_job_titles")
@@ -326,6 +327,7 @@ model Skills {
   type       String       @db.VarChar(50)
   category   String?       @db.VarChar(50)
   userSkills UserSkills[]
+  jobSkills  Jobs         @relation(fields: [skillId], references: [jobId])
 
   @@unique([label, type])
   @@map("skills")
