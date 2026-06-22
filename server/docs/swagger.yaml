@@ -2375,7 +2375,7 @@ paths:
             schema:
               $ref: '#/components/schemas/CreateMemberRequestInput'
       responses:
-        '201':
+        '200':
           description: Request Successful
           content:
             application/json:

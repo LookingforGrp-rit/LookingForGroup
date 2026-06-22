@@ -10,7 +10,7 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 import getProjectByIdService from '../get-proj-id.ts';
 
 type RequestToJoinServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type RequestToJoinServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
+type RequestToJoinServiceSuccess = ServiceSuccessSubset<'OK'>;
 
 // POST api/projects/:id/members/request-to-join
 export const requestToJoinService = async (
@@ -129,7 +129,7 @@ export const requestToJoinService = async (
       },
     });
 
-    return 'NO_CONTENT';
+    return 'OK';
   } catch (e) {
     console.error(`There was an error in requestToJoinService: `, e);
     return 'INTERNAL_ERROR';
