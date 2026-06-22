@@ -2060,6 +2060,7 @@ Image Carousel style rules
   border-radius: 50%;
   width: 14px;
   height: 14px;
+  padding: 0;
   background-color: var(--header-color);
 }
 
