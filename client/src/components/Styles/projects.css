@@ -33,6 +33,11 @@ Project Panel component style rules
   gap: 10px;
 }
 
+.project-link {
+  text-decoration: none;
+  cursor: pointer !important;
+}
+
 /* each item in the masonry --- goes masonry (parent) -> virtuoso list (child) -> data index (child) */
 .masonry > * > *
 {
@@ -51,6 +56,22 @@ Project Panel component style rules
   padding-bottom: 10px;
 }*/
 
+.add-video {
+  height: 100%;
+  width: 323px;
+  max-width: 100%;
+  max-height: 182px;
+  border: 2px dashed #BDBDBD;
+  border-radius: 10px;
+}
+
+.add-video-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 10px;
+}
+
 .project-panel {
   width: 100%;
   height: 280px;
@@ -66,8 +87,8 @@ Project Panel component style rules
   margin: 10px 0;
 
   .project-panel-meta {
+    grid-area: tags;
     position: relative;
-    padding: 0 20px 12px 20px;
     margin: 0;
     flex-shrink: 0;
     display: flex;
@@ -93,8 +114,11 @@ Project Panel component style rules
     .tag,
     .project-panel-meta-plus {
       font-size: 0.75rem;
-      padding: 0 6px;
+      padding: 0 7px 0 5px;
       line-height: 1;
+      min-width: 16px;
+      align-items: center;
+      justify-content: center;
     }
 
     .tag p {
@@ -108,10 +132,11 @@ Project Panel component style rules
     }
   }
 
-  
+
   a {
     text-decoration: none;
   }
+
   .project-image-container {
     position: relative;
     /* display: flex; */
@@ -131,16 +156,22 @@ Project Panel component style rules
     background-color: var(--header-color);
   }
 
-  .project-title-likes {
+  .project-title-likes-tabs { 
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
-    display: flex;
+    display: grid;
+    grid-template:  
+    'title heart' 1fr
+    'tags heart' auto / 5fr 1fr;
+    row-gap: 4px;
+    /* display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; */
 
     h2 {
+      grid-area: title;
       padding: 0;
       margin: 0;
       font-size: 1.375rem;
@@ -152,12 +183,18 @@ Project Panel component style rules
       word-break: break-word;
     }
 
+    h2:hover {
+      text-decoration: underline 3px;
+    }
+
     .project-likes {
+      grid-area: heart;
       display: flex;
       flex-direction: row-reverse;
       gap: 8px;
       align-items: center;
       padding-left: 8px;
+      height: 100%;
 
       .follow-amt {
         margin: 0;
@@ -172,6 +209,7 @@ Project Panel component style rules
 
       svg {
         cursor: pointer;
+        transform: scale(1.2);
       }
 
       .follow-amt.following {
@@ -184,7 +222,28 @@ Project Panel component style rules
 
       #heart-empty:hover,
       #heart-filled:hover {
-        transform: scale(1.2);
+        transform: scale(1.6);
+      }
+
+
+    }
+  }
+
+  @media only screen and (max-width: 800px) {
+    .project-title-likes-tabs { 
+      grid-template:  
+      'title heart' 1fr
+      'tags heart' auto / 4fr 1fr;
+
+      .project-likes {
+
+        a {
+          padding-right: 4px;
+        }
+
+        svg {
+          transform: scale(1.6);
+        }
       }
     }
   }
@@ -213,7 +272,7 @@ Project Panel component style rules
     cursor: pointer;
   }
 
-  .project-panel-meta > .project-panel-meta-plus {
+  .project-panel-meta>.project-panel-meta-plus {
     display: none;
   }
 
@@ -528,7 +587,7 @@ Project Creator and Editor Popup style rules
   }
 }
 
-#project-editor-content label:not(.drop-area),
+#project-editor-content label:not(.drop-area, .add-video-form),
 #project-team-add-member-title,
 #team-add-member-cancel-button,
 #project-team-edit-member-title,
@@ -573,10 +632,6 @@ Project Creator and Editor Popup style rules
   #project-editor-content textarea,
   #project-team-add-member-name input {
     padding-bottom: 30px;
-  }
-
-  #project-editor-selected-tags {
-    width: 60%;
   }
 }
 
@@ -724,10 +779,13 @@ Project Creator and Editor Popup style rules
   grid-area: desc;
   display: flex;
   flex-direction: column;
-  overflow: auto;
   min-height: 150px;
   flex: 1 1 auto;
   overflow-y: visible;
+
+  .input-multiline-container {
+    overflow-y: auto;
+  }
 }
 
 /* Project Editor/Creator Media Tab */
@@ -810,7 +868,7 @@ Project Creator and Editor Popup style rules
 #project-editor-image-ui {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 12px;
   margin: 10px 0;
   max-width: 100%;
 }
@@ -855,6 +913,18 @@ Project Creator and Editor Popup style rules
   bottom: 0;
 }
 
+.project-video-hover {
+  background-color: transparent;
+  pointer-events: none;
+  position: absolute;
+  border-radius: 10px;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 9px;
+}
+
 #selected-thumbnail,
 .star,
 .star-filled,
@@ -876,6 +946,17 @@ Project Creator and Editor Popup style rules
 
 .delete-image {
   bottom: 9px;
+}
+
+.delete-video {
+  pointer-events: all;
+  position: absolute;
+  border: none;
+  border-radius: 32px;
+  padding: 8px;
+  bottom: 9px;
+  right: 9px;
+  background-color: var(--main-text);
 }
 
 #project-editor-add-image {
@@ -937,9 +1018,9 @@ Project Creator and Editor Popup style rules
   grid-area: select;
   display: flex;
   flex-direction: column;
-  max-height: 347px;
+  max-height: 423px;
   padding-bottom: 26px;
-  
+
   .error {
     margin-top: 15px;
   }
@@ -1715,8 +1796,10 @@ button.edit-position-contact .project-member-image {
 }
 
 .project-crop {
-  width: 70%;
+  width: 100%;
   text-align: center;
+  height: 1100px;
+  margin: 0 20px;
 
   #project-crop-header {
     display: block;
@@ -1726,7 +1809,8 @@ button.edit-position-contact .project-member-image {
   #canvas {
     border: 3px solid var(--main-text);
     margin: 1vw 0;
-    width: 100%;
+    object-fit: cover;
+    height: 400px;
   }
 
   img {
@@ -1734,18 +1818,23 @@ button.edit-position-contact .project-member-image {
   }
 
   input[type="range"] {
-    width: 50%;
+    width: 400px;
     background: none;
     margin: 0.5em;
   }
 
   #zoom-row,
   #xTrans-row,
-  #yTrans-row {
+  #yTrans-row,
+  #aspect-row {
     display: flex;
     flex-direction: row;
     justify-content: center;
     align-items: center;
+  }
+
+  #aspect-row .select-container {
+    width: 85px;
   }
 
   .project-crop-extra-info {
@@ -1879,7 +1968,7 @@ Project page style rules
   padding-right: 1vw;
   padding-left: 1vw;
   width: 94%;
-  align-items:baseline;
+  align-items: baseline;
 
   #tags {
     display: flex;
@@ -1899,6 +1988,7 @@ Project page style rules
     border: 2px solid var(--main-text);
     border-radius: 100px;
     background: none;
+
     p {
       font-size: 1.2rem;
       margin: 0;
@@ -3346,10 +3436,6 @@ button#positions-popup-list-item-active {
   #edit-position-details-right {
     flex-wrap: nowrap;
   }
-
-  .positions-popup-info-wrapper {
-    max-width: 100%;
-  }
 }
 
 @media only screen and (max-width: 395px) {
@@ -3403,6 +3489,7 @@ button#positions-popup-list-item-active {
   .positions-popup-info-wrapper {
     margin-right: 0%;
     min-height: fit-content;
+    width: 100%;
   }
 
   /* #project-team-open-positions-info {
@@ -3507,6 +3594,62 @@ button#positions-popup-list-item-active {
   border-radius: 50%;
 }
 
+/* Quick Apply lives inline in #position-contact next to the owner link.
+   When expanded, the optional message textarea drops in just below. */
+#position-join-request-button {
+  background-color: var(--primary-color);
+  color: var(--invert-text);
+  border: none;
+  border-radius: 30px;
+  padding: 6px 14px;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  font-style: normal;
+  cursor: pointer;
+  transition: transform 0.15s ease-in-out, filter 0.15s ease-in-out;
+}
+
+#position-join-request-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+}
+
+#position-join-request {
+  margin: 0 20px 20px auto;
+  width: 320px;
+  max-width: calc(100% - 40px);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 6px;
+}
+
+#position-join-request-label {
+  font-size: 0.875rem;
+  color: var(--neutral-gray);
+  font-style: italic;
+}
+
+#position-join-request-message {
+  width: 100%;
+  min-height: 70px;
+  resize: vertical;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-color);
+  color: var(--main-text);
+  font-size: 0.9375rem;
+  outline: none;
+  box-sizing: border-box;
+}
+
+#position-join-request-confirmation {
+  color: var(--primary-color);
+  font-weight: 600;
+  font-style: normal;
+}
+
 #positions-popup-close {
   grid-area: close;
   border: none;
@@ -3556,6 +3699,16 @@ button#positions-popup-list-item-active {
   color: var(--primary-color);
   font-weight: 600;
   margin: 10px 0;
+}
+
+#project-overview-text {
+  color: var(--main-text);
+  font-size: 1rem;
+  line-height: 150%;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  hyphens: none;
 }
 
 #project-overview-links-section {
@@ -3961,7 +4114,7 @@ My projects page style rules
   }
 }
 
-.page#my-projects hr {
+.page#my-projects #my-projects-hr {
   box-sizing: border-box;
   border-color: var(--header-color);
   margin: 0 5vw;
@@ -4006,7 +4159,61 @@ My projects page style rules
   }
 }
 
+.add-video-title {
+  font-size: 1rem !important;
+}
 
+.add-video-input {
+  font-size: 0.875rem;
+  padding: 10px;
+  border-radius: 10px;
+  border: none;
+  color: var(--neutral-gray);
+  bg-color: var(--main-text);
+}
+
+.add-video {
+  .confirm-deny-btns {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .confirm-btn {
+    border: none;
+    outline: none;
+    box-shadow: none;
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 28px;
+    color: var(--invert-text);
+    background-color: var(--primary-color);
+    padding: 4px 18px;
+    border-radius: 55px;
+    min-width: 106px;
+    width: fit-content;
+  }
+
+  .confirm-btn:hover {
+    box-shadow: 0px 0px 10px 0px var(--shadow-color);
+  }
+
+  .deny-btn {
+    background: none;
+    border: none;
+    outline: none;
+    box-shadow: none;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    min-width: 106px;
+    width: fit-content;
+    border-radius: 55px;
+    padding-left: 19px;
+    padding-right: 19px;
+  }
+}
 
 .grid-card-image {
   grid-area: image;
@@ -4154,9 +4361,14 @@ My projects page style rules
   }
 }
 
+@media (max-width: 799px) and (max-height:850px) {
+  .my-projects-grid {
+    padding-bottom: 20%;
+  }
+}
+
 .my-projects-list {
   box-sizing: border-box;
-  margin-bottom: 60px;
   padding-left: 60px;
   padding-right: 64px;
 

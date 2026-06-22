@@ -1,11 +1,12 @@
 import {
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   AddProjectSocialInput,
   AddProjectTagInput,
   ApiResponse,
   CreateProjectImageInput,
   CreateProjectJobInput,
   CreateProjectMemberInput,
+  CreateProjectVideoInput,
   ProjectWithFollowers,
   UpdateProjectImageInput,
   UpdateProjectInput,
@@ -22,6 +23,8 @@ import {
   addProjectMedium,
   addProjectSocial,
   addProjectTag,
+  addVideo,
+  deleteVideo as deleteVideoAPI,
   deleteMember as deleteMemberAPI,
   deletePic,
   deleteProjectJob,
@@ -74,6 +77,7 @@ export const projectDataManager = async (projectId: number) => {
         tags: [],
         projectImages: [],
         projectSocials: [],
+        projectVideos: [],
         jobs: [],
         members: [],
         mediums: [],
@@ -103,6 +107,7 @@ export const projectDataManager = async (projectId: number) => {
         tags: [],
         projectImages: [],
         projectSocials: [],
+        projectVideos: [],
         jobs: [],
         members: [],
         mediums: [],
@@ -336,6 +341,17 @@ export const projectDataManager = async (projectId: number) => {
       errorMessage += (error as { message: string }).message;
     }
 
+    // project videos
+    try {
+      await runAndCollectErrors<CreateProjectVideoInput>(
+        "Creating project video",
+        creates.projectVideos,
+        ({ data }) => addVideo(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
     // project members
     try {
       await runAndCollectErrors<CreateProjectMemberInput>(
@@ -349,7 +365,7 @@ export const projectDataManager = async (projectId: number) => {
 
     // project mediums
     try {
-      await runAndCollectErrors<AddProjectMediumsInput>(
+      await runAndCollectErrors<AddProjectMediumInput>(
         "Adding project medium",
         creates.mediums,
         ({ data }) => addProjectMedium(projectId, data)
@@ -431,6 +447,17 @@ export const projectDataManager = async (projectId: number) => {
         "Deleting project image",
         deletes.projectImages,
         ({ id }) => deletePic(projectId, id.value)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    // project videos
+    try {
+      await runAndCollectErrors<null>(
+        "Deleting project video",
+        deletes.projectVideos,
+        ({ id }) => deleteVideoAPI(projectId, id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -526,7 +553,7 @@ export const projectDataManager = async (projectId: number) => {
    * Adds a new medium to the project
    * @param medium The medium to be added
    */
-  const addMedium = (medium: CRUDRequest<AddProjectMediumsInput>) => {
+  const addMedium = (medium: CRUDRequest<AddProjectMediumInput>) => {
     if (changes.create.mediums.some(({ id }) => id.value === medium.id.value)) {
       changes.create.mediums = [
         ...changes.create.mediums.filter(
@@ -580,6 +607,25 @@ export const projectDataManager = async (projectId: number) => {
     }
 
     changes.create.projectImages.push(image);
+  };
+
+  /**
+   * Adds a new video to the project
+   * @param video The video to be created
+   */
+  const createVideo = (video: CRUDRequest<CreateProjectVideoInput>) => {
+    if (
+      changes.create.projectVideos.some(({ id }) => id.value === video.id.value)
+    ) {
+      changes.create.projectVideos = [
+        ...changes.create.projectVideos.filter(
+          ({ id }) => id.value !== video.id.value
+        ),
+        video,
+      ];
+      return;
+    }
+    changes.create.projectVideos.push(video);
   };
 
   /**
@@ -851,6 +897,31 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   /**
+   * Removes an existing video from a project
+   * @param video The video to delete
+   */
+  const deleteVideo = (video: CRUDRequest<null>) => {
+    // if we were gonna create this video, don't
+    if (
+      video.id.type === "local" &&
+      changes.create.projectVideos.some(({ id }) => id.value === video.id.value)
+    ) {
+      changes.create.projectVideos = changes.create.projectVideos.filter(
+        ({ id }) => id.value !== video.id.value
+      );
+      return;
+    }
+
+    // otherwise, delete this video
+    if (
+      video.id.type === "canon" &&
+      !changes.delete.projectVideos.some(({ id }) => id.value === video.id.value)
+    ) {
+      changes.delete.projectVideos.push(video);
+    }
+  };
+
+  /**
    * Deletes an existing social of a project
    * @param social The social to delete
    */
@@ -993,6 +1064,7 @@ export const projectDataManager = async (projectId: number) => {
     createImage,
     createMember,
     createJob,
+    createVideo,
     updateFields,
     updateImage,
     updateTag,
@@ -1003,6 +1075,7 @@ export const projectDataManager = async (projectId: number) => {
     deleteTag,
     deleteImage,
     deleteSocial,
+    deleteVideo,
     deleteJob,
     deleteMember,
     deleteMedium,

@@ -54,7 +54,8 @@ const transformedProjectPreview: ProjectPreview = {
     {
       label: '',
       tagId: 1,
-      type: 'Creative',
+      type: 'Other',
+      category: 'Other',
       apiUrl: 'api/projects/tags/1',
       displayOrder: 0,
     },

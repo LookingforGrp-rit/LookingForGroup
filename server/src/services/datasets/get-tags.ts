@@ -26,7 +26,7 @@ const getTagsService = async (): Promise<Tag[] | GetTagsServiceError> => {
     tags = tags.toSorted((tag1, tag2) => tag1.label.charCodeAt(0) - tag2.label.charCodeAt(0));
     return tags.map(transformTag);
   } catch (e) {
-    console.error(`Error in getTagsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getTagsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

@@ -14,13 +14,11 @@ Credits link footer style rules
   display: flex;
   position: fixed;
   bottom: 0;
-
   text-align: center;
   justify-content: center;
   align-items: center;
   height: 50px;
   width: calc(100% - 220px);
-
   z-index: 0;
   background-color: var(--header-color);
 }
@@ -47,27 +45,12 @@ Credits link footer style rules
   opacity: 0.85;
   transform: translateY(-1px);
   cursor: pointer;
+  text-decoration: underline solid 3px;
 }
 
 @media only screen and (max-width: 799px) {
   .FooterContainer {
-    align-content: start;
-    background-color: var(--bg-color);
-    position: relative;
-  }
-
-  .FooterContainer button,
-  .FooterContainer a {
-    background-color: var(--primary-color);
-    color: var(--invert-text);
-    padding: 15px;
-    border-radius: 10px;
-
-  }
-
-  .FooterContainer a:link,
-  .FooterContainer a:visited{
-    color: var(--invert-text);
+    display: none;
   }
 }
 
@@ -82,7 +65,7 @@ Credits style rules
 #credits-title {
   color: var(--primary-color);
   text-align: left;
-  margin-left: clamp(20px,5vw,50px);
+  margin-left: clamp(20px, 5vw, 50px);
   font-size: 1.5rem;
   font-weight: 600;
 }
@@ -98,7 +81,7 @@ Credits style rules
 }
 
 .lfg-contributor {
-  flex: 0 1 clamp(180px, 45vw, 245px);   
+  flex: 0 1 clamp(180px, 45vw, 245px);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -110,7 +93,7 @@ Credits style rules
 }
 
 .no-members {
-  margin-left: clamp(20px,5vw,50px);
+  margin-left: clamp(20px, 5vw, 50px);
 }
 
 /* switches from grid to flexbox for mobile display */

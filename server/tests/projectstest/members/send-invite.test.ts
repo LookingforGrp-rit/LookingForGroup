@@ -59,7 +59,7 @@ const prismaUser = {
   headline: '',
   pronouns: '',
   title: '',
-  academicYear: null,
+  ritStatus: null,
   location: '',
   funFact: '',
   bio: '',
@@ -117,6 +117,7 @@ const prismaProject: ProjectWithFollowers = {
   thumbnailId: 0,
   title: '',
   updatedAt: now,
+  projectVideos: [],
 };
 
 describe('sendInviteService', () => {

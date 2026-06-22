@@ -24,7 +24,7 @@ let projectAfterGeneralChanges: PendingProject;
 // };
 
 type GeneralTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
@@ -105,7 +105,7 @@ export const GeneralTab = ({
             return;
           }
 
-          dataManager.updateFields({
+          dataManager?.updateFields({
             id: {
               value: projectId,
               type: "canon",
@@ -148,7 +148,7 @@ export const GeneralTab = ({
 
                 const key = Object.keys(ProjectStatusEnums).find(key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === status)
 
-                dataManager.updateFields({
+                dataManager?.updateFields({
                   id: {
                     value: projectId,
                     type: "canon",
@@ -202,7 +202,7 @@ export const GeneralTab = ({
 
                 const key = Object.keys(ProjectPurposeEnums).find(key => ProjectPurposeEnums[key as keyof typeof ProjectPurposeEnums] === purpose)
 
-                dataManager.updateFields({
+                dataManager?.updateFields({
                   id: {
                     value: projectId,
                     type: "canon",
@@ -240,7 +240,7 @@ export const GeneralTab = ({
           };
           updatePendingProject(projectAfterGeneralChanges);
 
-          dataManager.updateFields({
+          dataManager?.updateFields({
             id: {
               value: projectId,
               type: "canon",
@@ -268,7 +268,7 @@ export const GeneralTab = ({
             return;
           }
 
-          dataManager.updateFields({
+          dataManager?.updateFields({
             id: {
               value: projectId,
               type: "canon",
@@ -298,7 +298,7 @@ export const GeneralTab = ({
             return;
           }
 
-          dataManager.updateFields({
+          dataManager?.updateFields({
             id: {
               value: projectId,
               type: "canon",

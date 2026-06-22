@@ -36,7 +36,7 @@ const getProjectSocialsService = async (
     );
     return project.projectSocials.map((social) => transformProjectSocial(projectId, social));
   } catch (e) {
-    console.error(`Error in getProjectSocialsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectSocialsService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

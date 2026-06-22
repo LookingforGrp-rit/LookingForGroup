@@ -27,7 +27,7 @@ export const getUserByGoogleService = async (
       isMod: user.moderator,
     };
   } catch (e) {
-    console.error(`Error in getUserByGoogleService: ${JSON.stringify(e)}`);
+    console.error(`Error in getUserByGoogleService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

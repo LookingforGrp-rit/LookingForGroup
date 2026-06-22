@@ -5,6 +5,7 @@ import { transformProjectImage } from './parts/project-image.ts';
 import { transformProjectJob } from './parts/project-job.ts';
 import { transformProjectMember } from './parts/project-member.ts';
 import { transformProjectSocial } from './parts/project-social.ts';
+import { transformProjectVideo } from './parts/project-video.ts';
 import { transformProjectToPreview } from './project-preview.ts';
 
 //sample project from prisma to be mapped
@@ -30,6 +31,9 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
     ),
     projectSocials: project.projectSocials.map((social) =>
       transformProjectSocial(project.projectId, social),
+    ),
+    projectVideos: project.projectVideos.map((video) =>
+      transformProjectVideo(project.projectId, video),
     ),
     jobs: project.jobs.map((job) => transformProjectJob(project.projectId, job)),
     members: project.members.map((member) => transformProjectMember(project.projectId, member)),

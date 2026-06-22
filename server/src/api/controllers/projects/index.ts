@@ -6,6 +6,7 @@ import requestApproval from './approval/request-approval.ts';
 import unapproveProject from './approval/unapprove-proj.ts';
 import createProject from './create-proj.ts';
 import deleteProject from './delete-proj.ts';
+import getPaginatedProjects from './get-paginated-projects.ts';
 import getProjectByID from './get-proj-id.ts';
 import { getProjectFollowers } from './get-project-followers.ts';
 import getProjects from './get-projects.ts';
@@ -37,6 +38,9 @@ import getThumbnail from './thumbnail/get-thumbnail.ts';
 import removeThumbnail from './thumbnail/remove-thumbnail.ts';
 import updateThumbnail from './thumbnail/update-thumbnail.ts';
 import updateProject from './update-project.ts';
+import addVideo from './videos/add-video.ts';
+import deleteVideo from './videos/delete-video.ts';
+import getVideos from './videos/get-videos.ts';
 
 //index file for all project routes
 //no other route group has this
@@ -48,6 +52,7 @@ export default {
   deleteJobController,
   getProjectFollowers,
   getProjects,
+  getPaginatedProjects,
   getProjectByID,
   getProjectImages,
   createProject,
@@ -65,6 +70,9 @@ export default {
   deleteMember,
   removeImage,
   reorderImages,
+  addVideo,
+  getVideos,
+  deleteVideo,
   getTags,
   deleteTag,
   updateTag,

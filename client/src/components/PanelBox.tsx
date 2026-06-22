@@ -52,7 +52,7 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
  * @param itemList - List of items (projects or profiles) to render.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId }: { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
+export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, }: { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
   // Test these
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 1000px)');
@@ -85,7 +85,7 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
     category,
     projectCache,
     followedProjectIds,
-    userId
+    userId,
   };
 
   // Finally! A masonry grid!

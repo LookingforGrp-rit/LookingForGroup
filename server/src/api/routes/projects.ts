@@ -51,6 +51,9 @@ router.patch(
 //Receive all projects
 router.get('/', PROJECT.getProjects);
 
+//Receive paginated projects
+router.get('/:count/:id', PROJECT.getPaginatedProjects);
+
 //Create a new project
 router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
 
@@ -127,6 +130,28 @@ router.put(
   projectExistsAt('path', 'id'),
   authenticated(requiresProjectOwner),
   PROJECT.reorderImages,
+);
+
+// VIDEO ROUTES
+
+router.post(
+  '/:id/videos',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.addVideo,
+);
+
+router.get('/:id/videos', projectExistsAt('path', 'id'), PROJECT.getVideos);
+
+router.delete(
+  '/:id/videos/:videoId',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.deleteVideo,
 );
 
 // THUMBNAIL ROUTES

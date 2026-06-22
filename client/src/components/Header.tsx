@@ -27,6 +27,7 @@ type HeaderProps = {
   value? : string;
   onChange? : (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar? : boolean;
+  hideBackButton? : boolean;
   setCurrentUserId?: (data: MePrivate | undefined) => Promise<void>;
 };
 
@@ -45,7 +46,7 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, setCurrentUserId}) => {
+export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, hideBackButton = true, setCurrentUserId}) => {
   // User info state
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -173,6 +174,12 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
           />
         </div>
       )}
+
+      {/* Conditional rendering for back button*/}
+      {(!hideBackButton) && (<div className="project-back-btn-header">
+        <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
+      </div>)}
+
       <div id="header-buttons">
         {/* Notififcations not being used rn */}
         {/* <Dropdown>
@@ -216,7 +223,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
           {/* These are its elements once opened (unique for logged out/in) */}
           <DropdownContent rightAlign={true}>
             {!loggedIn ? (
-              <div id="header-profile-dropdown" style={{ height: 150 }}>
+              <div id="header-profile-dropdown">
 
                 {/* (Blank) Profile Icon */}
                 <button id="header-profile-user">
@@ -239,6 +246,12 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
                 <a href={paths.routes.LOGIN}>
                   <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
                   Log In
+                </a>
+
+                {/* SIGN UP Button */}
+                <a href={paths.routes.SIGNUP}>
+                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in'}/>
+                  Sign Up
                 </a>
               </div>
 
@@ -291,6 +304,11 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
             )}
           </DropdownContent>
         </Dropdown>
+
+        {/* About button */}
+        <a id="about-btn" href={paths.routes.ABOUT} title="About">
+          <ThemeIcon id={'info'} width={30} height={30} className={'color-stroke'} ariaLabel={'about'} />
+        </a>
       </div>
     </div >
   );

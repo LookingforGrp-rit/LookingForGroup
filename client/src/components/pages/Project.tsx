@@ -1,4 +1,4 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -10,7 +10,7 @@ import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
 import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
-import { getByID } from "../../api/projects";
+import { getByID, getVideos } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import {
   deleteProjectFollowing,
@@ -18,9 +18,8 @@ import {
   getProjectFollowing,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate, ProjectWithFollowers } from "@looking-for-group/shared";
-import { ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
-import AboutFooter from "../AboutFooter";
+import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
+import { ProjectPurpose, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
 
 //Main component for the project page
@@ -51,6 +50,7 @@ const Project = (userProfile : any) => {
   const [viewedPosition, setViewedPosition] = useState(0);
 
   const [shownTags, setShownTags] = useState(3);
+  const [videos, setVideos] = useState<ProjectVideo[]>();
 
   /**
    * Checks in the current user is following a project
@@ -99,6 +99,18 @@ const Project = (userProfile : any) => {
 
     }
   };
+
+  // Fetch attached videos (for now)
+  useEffect(() => {
+    async function fetchVideos() {
+      const res = await getVideos(projectID);
+      if (res.data) {
+        setVideos(res.data);
+      }
+    }
+
+    fetchVideos();
+  }, [projectID]);
 
   //Checks to see whether or not the current user is the maker/owner of the project being displayed
   //oh do i need this too
@@ -412,15 +424,15 @@ const Project = (userProfile : any) => {
         value={undefined}
         onChange={undefined}
         setCurrentUserId={getProjectData}
+        hideBackButton={false}
       />
 
       {displayedProject === undefined ? (
         loadingProject
       ) : (
         <main id="main" tabIndex={-1} aria-label="main content" >
-          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="project-page-content">
-            <ProjectCarousel project={displayedProject}></ProjectCarousel>
+            <ProjectCarousel project={displayedProject} videos={videos}></ProjectCarousel>
             <div id="project-info-panel">
               <div id="project-info-top">
                 <div id="project-info-header">
@@ -439,7 +451,9 @@ const Project = (userProfile : any) => {
                 <div id="project-creation">
                   Created by:{" "}
                   <span className="project-info-highlight">
-                    {projectLead?.firstName} {projectLead?.lastName}
+                    <a href={`${paths.routes.PROFILE}?userID=${projectLead?.userId}`}>
+                      {projectLead?.firstName} {projectLead?.lastName}
+                    </a>
                   </span>
                   <br />
                   {new Date(
@@ -506,7 +520,7 @@ const Project = (userProfile : any) => {
               {displayedProject.purpose && (
                 <>
                   <div className="project-overview-section-header">Purpose</div>
-                  <div>{displayedProject.purpose}</div>
+                  <div>{ProjectPurpose[displayedProject.purpose]}</div>
                 </>
               )}
               {displayedProject.audience?.trim() && (
@@ -586,7 +600,6 @@ const Project = (userProfile : any) => {
           </div>
         </main>
       )}
-    <AboutFooter />
     </div>
   );
 };

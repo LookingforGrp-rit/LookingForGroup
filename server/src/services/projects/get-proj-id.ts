@@ -22,7 +22,7 @@ const getProjectByIdService = async (
     //return transformed project
     return transformProjectToWithFollowers(project);
   } catch (e) {
-    console.error(`Error in getProjectByIdService: ${JSON.stringify(e)}`);
+    console.error(`Error in getProjectByIdService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

@@ -32,7 +32,7 @@ const getSkillsService = async (): Promise<Skill[] | GetSkillsServiceError> => {
     );
     return skills.map(transformSkill);
   } catch (e) {
-    console.error(`Error in getSkillsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getSkillsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

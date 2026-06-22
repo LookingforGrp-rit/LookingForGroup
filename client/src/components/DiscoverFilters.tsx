@@ -136,12 +136,9 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
 
       // Map tag types to correct tab categories
       const typeMap: StringDictionary<string> = category === 'projects' ? {
-        Games: 'Genre',
-        Multimedia: 'Genre',
-        Music: 'Genre',
-        Other: 'Genre',
-        Creative: 'Genre',
-        Technical: 'Genre',
+        Style: 'Style',
+        Other: 'Other',
+        Genre: 'Genre',
         Purpose: 'Purpose',
         Medium: 'Project Type',
       } : {
@@ -323,7 +320,15 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
     //  });
     //}
     setActivePopup(true);
-    setEnabledFilters([]);
+
+    // loads in current filters
+    const seeded: EnabledFilter[] = activeTagFilters.map((tag) => {
+      const tab = filterPopupTabs.find((t) =>
+        t.categoryTags.some((ct) => ct.label === tag.label && ct.type === tag.type)
+      );
+      return { tag, color: tab?.color ?? 'grey' };
+    });
+    setEnabledFilters(seeded);
   };
 
   // --------------------
@@ -354,7 +359,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                     //tagLabel === 'Soft Skills' ? "Soft" :
                     tagLabel;
               const type = category === 'projects' ? 'Project Type' : tagLabel === 'Other' ? 'Major' : 'Role';
-              const tagObj: Tag = { tagId: 0, label, type };
+              const tagObj: Tag = { tagId: 0, label, type, category: "Other" };
               return (
                 <button key={`${type}-${label}`}
                   className="discover-tag-filter"

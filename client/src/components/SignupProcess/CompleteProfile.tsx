@@ -2,15 +2,17 @@ import {
 	CreateUserInput,
 	Major,
 	Skill,
-	AcademicYear
+	RitStatus,
+	Role
 } from "@looking-for-group/shared";
 import { MouseEventHandler, useMemo, useState } from "react";
 import LabelInputBox from "../LabelInputBox";
 import { Select, SelectButton, SelectOptions } from "../Select";
-import { getMajors } from "../../api/users";
+import { getMajors, getJobTitles } from "../../api/users";
 import placeholder from "../../images/blue_frog.png";
 //why do these 2 things have the same name??
-import { AcademicYear as AcademicYears } from "@looking-for-group/shared/enums";
+import { RitStatus as RitStatuses, } from "@looking-for-group/shared/enums";
+import { ProfileImageUploader } from "../ImageUploader";
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -26,7 +28,7 @@ interface CompleteProfileProps {
 	location: string;
 	funFact: string;
 	major: Major[];
-	academicYear: AcademicYear | undefined;
+	ritStatus: RitStatus | undefined;
 	setBio: React.Dispatch<React.SetStateAction<string>>;
 	setPronouns: React.Dispatch<React.SetStateAction<string>>;
 	setHeadline: React.Dispatch<React.SetStateAction<string>>;
@@ -35,8 +37,8 @@ interface CompleteProfileProps {
 	setLocation: React.Dispatch<React.SetStateAction<string>>;
 	setFunFact: React.Dispatch<React.SetStateAction<string>>;
 	setMajor: React.Dispatch<React.SetStateAction<Major[]>>;
-	setAcademicYear: React.Dispatch<
-		React.SetStateAction<AcademicYear | undefined>
+	setRitStatus: React.Dispatch<
+		React.SetStateAction<RitStatus | undefined>
 	>;
 	profileImage: File;
 	setProfileImage: React.Dispatch<React.SetStateAction<File>>;
@@ -80,7 +82,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	funFact,
 	major,
 	profileImage,
-	academicYear,
+	ritStatus,
 	setBio,
 	setHeadline,
 	setPhoneNumber,
@@ -88,7 +90,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	setLocation,
 	setFunFact,
 	setMajor,
-	setAcademicYear,
+	setRitStatus,
 	setPronouns,
 	setProfileImage
 }) => {
@@ -97,10 +99,11 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	const tagColors = ["#9FACFF", "#97E5AB", "#99E6EA", "#F18067", "#239EF7"];
 
 	const [allMajors, setAllMajors] = useState<Major[]>([]);
+	const [roles, setRoles] = useState<Role[]>();
 
 	const [displayImg, setDisplayImg] = useState<string>();
 
-    const [errorMsg, setError] = useState('');
+	const [errorMsg, setError] = useState('');
 
 	const [validPhoneNum, setValidPhoneNum] = useState(true);
 
@@ -113,8 +116,19 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 			}
 			setAllMajors(response.data);
 		};
+		const fetchRoles = async () => {
+			const response = await getJobTitles();
+
+			if (response.data === undefined || !response.data) {
+				return;
+			}
+			setRoles(response.data);
+		}
 		if (allMajors.length === 0) {
 			fetchMajors();
+		}
+		if (roles?.length === 0) {
+			fetchRoles();
 		}
 	}, []);
 
@@ -123,29 +137,26 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 			const res = await getMajors();
 			if (res.data) setAllMajors(res.data);
 		};
-		// const fetchRoles = async () => {
-		// 	const res = await getJobTitles();
-		// 	if (res.data) setRoles(res.data);
-		// };
+		const fetchRoles = async () => {
+			const response = await getJobTitles();
+
+			if (response.data) setRoles(response.data);
+		}
 		fetchMajors();
-		//fetchRoles();
+		fetchRoles();
 	}, []);
 
 	// Loads and utilizes an imported function for setting a profile picture
-	const handleUploadPfp = (e: React.ChangeEvent<HTMLInputElement>) => {
+	const handleUploadPfp = (file: File) => {
 		console.log("uploading pfp");
-
-		const target = e.target as HTMLInputElement;
-		if (target && target.files && target.files[0]) {
-			const reader = new FileReader();
-			reader.onload = (event) => {
-				if (event.target && event.target.result) {
-					setDisplayImg(event.target.result as string);
-				}
-			};
-			setProfileImage(target.files[0]);
-			reader.readAsDataURL(target.files[0]);
-		}
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (event.target && event.target.result) {
+        setDisplayImg(event.target.result as string);
+      }
+    };
+    setProfileImage(file);
+    reader.readAsDataURL(file);
 	};
 
 	// Utilizes an imported function for setting a customizable avatar as their profile image
@@ -172,38 +183,13 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 
 					<div id="completeProfile-input-container">
 						<div id="profile-details">
-							{/* Profile picture container */}
-							<div id="profile-pic">
-								{/* image is profile image, if empty/null display avatar image */}
-								<img
-									src={displayImg ? displayImg : placeholder}
-									alt="profile-pic"
-								/>
-								{/* <img src={profileImage} alt="profile-pic" /> */}
-							</div>
-							<div className="profile-pic-option">
-								{/* <button>Upload Picture</button> */}
-								{/* input to upload picture */}
-								<input
-									type="file"
-									id="upload-pfp"
-									accept="image/*"
-									hidden
-									onChange={handleUploadPfp}
-								/>
-								<label htmlFor="upload-pfp">
-									Upload Picture
-								</label>
-
-								{/* button to use avatar as profile picture */}
-								{
-									<button
-										onClick={() =>
-											setDisplayImg(placeholder)
-										}>
-										Use Avatar
-									</button>
-								}
+							<div
+							id="profile-editor-add-image"
+							className="edit-profile-image">
+							<ProfileImageUploader
+								onFileSelected={handleUploadPfp}
+								initialImageFile={profileImage}
+							/>
 							</div>
 						</div>
 
@@ -222,7 +208,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							maxLength={20}
 							id="pronouns-input"
 							value={pronouns}
-							placeholder={"Pronouns"}
+							placeholder={"Pronouns (Optional)"}
 							onChange={(e) => setPronouns(e.target.value)}
 							hideUnsaved={true}
 						/>
@@ -234,86 +220,56 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							maxLength={20}
 							id="headline-input"
 							value={headline}
-							placeholder={"Headline"}
+							placeholder={"Headline (Optional)"}
 							onChange={(e) => setHeadline(e.target.value)}
 							hideUnsaved={true}
 						/>
 
-						{/* Phone Number */}
-						<LabelInputBox
-							label={"Add Phone Number"}
-							inputType={"single"}
-							maxLength={15}
-							id="phoneNumber-input"
-							value={phoneNumber}
-							placeholder={"Phone Number"}
-							onChange={(e) => {
-								const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
-								if (e.target.value.length != 0 && !phoneRegex.test(e.target.value)) {
-									setError('*Please enter a valid phone number.');
-									setValidPhoneNum(false);
-								} else {
-									setError('');
-									setValidPhoneNum(true);
-								}
-								setPhoneNumber(e.target.value);
-							}}
-							hideUnsaved={true}
-						/>
-
 						{/* Current Job Title */}
-						<LabelInputBox
-							label={"Add Job Title"}
-							inputType={"single"}
-							maxLength={50}
-							id="jobTitle-input"
-							value={title}
-							placeholder={"Current Job Title"}
-							onChange={(e) => setTitle(e.target.value)}
-							hideUnsaved={true}
-						/>
-
-						{/* Location */}
-						<LabelInputBox
-							label={"Add Location (Optional)"}
-							inputType={"single"}
-							maxLength={50}
-							id="location-input"
-							value={location}
-							placeholder={"Location (Optional)"}
-							onChange={(e) => setLocation(e.target.value)}
-							hideUnsaved={true}
-						/>
-
-						{/* Fun Fact */}
-						<LabelInputBox
-							label={"Add Fun Fact"}
-							inputType={"single"}
-							maxLength={50}
-							id="funFact-input"
-							value={funFact}
-							placeholder={"Fun Fact"}
-							onChange={(e) => setFunFact(e.target.value)}
-							hideUnsaved={true}
-						/>
-
-						{/* Academic Year */}
-						{/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
-						<div id="academicYear-input">
+						<div id="jobTitle-input">
 							<Select>
 								<SelectButton
-									placeholder="Academic Year (required)"
+									placeholder={"Add a Job Title (Optional)"}
+									initialVal={title ?? ""}
+									callback={(e) => e.preventDefault()}
+									buttonId="jobTitle-input"
 									type={"input"}
-									initialVal={academicYear}
+									searchable={true}
+								/>
+								<SelectOptions
+									callback={(e) => {
+										const newTitle = (
+											e.target as HTMLButtonElement
+										).value;
+
+										setTitle(newTitle)
+									}}
+									options={(roles as Role[]).map((r) => ({
+										value: r.label,
+										markup: <>{r.label}</>,
+										disabled: false
+									}))}
+								/>
+							</Select>
+						</div>
+
+						{/* RIT Status */}
+						{/*TODO: fix styling on this, the text is at the top of the box and you can't see any of the dropdown*/}
+						<div id="ritStatus-input">
+							<Select>
+								<SelectButton
+									placeholder="RIT Status (Required)"
+									type={"input"}
+									initialVal={ritStatus}
 								/>
 								<SelectOptions
 									callback={(e) =>
-										setAcademicYear(
+										setRitStatus(
 											(e.target as HTMLButtonElement)
-												.value as AcademicYear
+												.value as RitStatus
 										)
 									}
-									options={Object.values(AcademicYears).map(
+									options={Object.values(RitStatuses).map(
 										(yr) => {
 											return {
 												value: yr,
@@ -330,7 +286,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<div id="major-input">
 							<Select>
 								<SelectButton
-									placeholder="Major (required)"
+									placeholder="Major (Required)"
 									type={"input"}
 									initialVal={major[0]?.label}
 									searchable={true}
@@ -355,13 +311,59 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							</Select>
 						</div>
 
+						{/* Phone Number */}
+						<LabelInputBox
+							label={"Add Phone Number"}
+							inputType={"single"}
+							maxLength={15}
+							id="phoneNumber-input"
+							value={phoneNumber}
+							placeholder={"Phone Number (Optional)"}
+							onChange={(e) => {
+								const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
+								if (e.target.value.length != 0 && !phoneRegex.test(e.target.value)) {
+									setError('*Please enter a valid phone number.');
+									setValidPhoneNum(false);
+								} else {
+									setError('');
+									setValidPhoneNum(true);
+								}
+								setPhoneNumber(e.target.value);
+							}}
+							hideUnsaved={true}
+						/>
+
+						{/* Location */}
+						<LabelInputBox
+							label={"Add Location"}
+							inputType={"single"}
+							maxLength={50}
+							id="location-input"
+							value={location}
+							placeholder={"Location (Optional)"}
+							onChange={(e) => setLocation(e.target.value)}
+							hideUnsaved={true}
+						/>
+
+						{/* Fun Fact */}
+						<LabelInputBox
+							label={"Add Fun Fact"}
+							inputType={"single"}
+							maxLength={50}
+							id="funFact-input"
+							value={funFact}
+							placeholder={"Fun Fact (Optional)"}
+							onChange={(e) => setFunFact(e.target.value)}
+							hideUnsaved={true}
+						/>
+
 						{/* Bio */}
 						<LabelInputBox
 							label={"Bio"}
 							inputType={"multi"}
 							maxLength={100}
 							id="bio-input"
-							placeholder={"Bio"}
+							placeholder={"Bio (Optional)"}
 							onChange={(e) => setBio(e.target.value)}
 							value={bio}
 							hideUnsaved={true}
@@ -374,7 +376,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<button
 							id="signup-nextBtn"
 							onClick={onNext}
-							disabled={!(major.length > 0 && academicYear && validPhoneNum)}>
+							disabled={!(major.length > 0 && ritStatus && validPhoneNum)}>
 							Next
 						</button>
 					</div>

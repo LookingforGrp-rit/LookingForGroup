@@ -13,8 +13,8 @@ components:
           type: string
         title:
           type: string
-        academicYear:
-          $ref: 'enums.yaml#/components/schemas/AcademicYear'
+        ritStatus:
+          $ref: 'enums.yaml#/components/schemas/RitStatus'
         location:
           type: string
         funFact:
@@ -120,6 +120,17 @@ components:
       required:
         - altText
         - image
+
+    CreateProjectVideoInput:
+      type: object
+      properties:
+        title:
+          type: string
+        videoUrl:
+          type: string
+      required:
+        - title
+        - videoUrl
 
     UpdateProjectImageInput:
       type: object

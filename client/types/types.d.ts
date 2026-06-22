@@ -1,5 +1,5 @@
 import {
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   AddProjectSocialInput,
   AddProjectTagInput,
   CreateProjectImageInput,
@@ -27,11 +27,12 @@ import {
   UpdateUserInput,
   UpdateUserSocialInput,
   UpdateUserSkillInput,
-  AcademicYear,
+  RitStatus,
   MyMember,
   MySkill,
   MeDetail,
   UpdateUserProjectVisibilityInput,
+  CreateProjectVideoInput,
 } from "@looking-for-group/shared";
 
 /**
@@ -109,6 +110,11 @@ interface ProjectChangesCreates {
   projectImages: CRUDRequest<CreateProjectImageInput>[];
 
   /**
+   * All project videos to be created
+   */
+  projectVideos: CRUDRequest<CreateProjectVideoInput>[];
+
+  /**
    * All project socials to be created
    */
   projectSocials: CRUDRequest<AddProjectSocialInput>[];
@@ -126,7 +132,7 @@ interface ProjectChangesCreates {
   /**
    * All mediums to be created
    */
-  mediums: CRUDRequest<AddProjectMediumsInput>[];
+  mediums: CRUDRequest<AddProjectMediumInput>[];
 }
 
 /**
@@ -182,6 +188,11 @@ interface ProjectChangesDeletes {
    * All project images to be deleted
    */
   projectImages: CRUDRequest<null>[];
+
+  /**
+   * All project videos to be deleted
+   */
+  projectVideos: CRUDRequest<null>[];
 
   /**
    * All project socials to be deleted
@@ -368,7 +379,7 @@ interface PendingUserMember extends Exclude<MyMember, "apiUrl"> {
 interface PendingUserProfile extends Exclude<MeDetail, "apiUrl"> {
   profileImage: string | null | PendingProfileImage;
   majors: (MyMajor | PendingMajor)
-  academicYear: AcademicYear | null;
+  ritStatus: RitStatus | null;
   projects: (MyMember | PendingUserMember)[];
   skills: (MySkill | PendingUserSkill)[];
   socials: (MySocial | PendingUserSocial)[];

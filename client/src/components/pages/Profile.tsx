@@ -9,22 +9,24 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
 import { PanelBox } from "../PanelBox";
 import { ProfileEditPopup } from "../Profile/ProfileEditPopup";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
+import { Popup, PopupButton, PopupContent } from "../Popup";
+import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing } from "../../api/users";
+import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getJobTitles } from "../../api/users";
 import { getUsersById } from "../../api/users";
-import { MeDetail, MePrivate, ProjectPreview, UserDetail } from '@looking-for-group/shared';
+import { addMember } from "../../api/projects";
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, Role, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
-import AboutFooter from "../AboutFooter";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -62,6 +64,18 @@ const Profile = (userProfile : any) => {
   const [displayedProjects, setDisplayedProjects] = useState<ProjectPreview[]>([]);
 
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
+
+  // ---- Invite-to-project popup state (only used when viewing someone else) ----
+  // Projects the current logged-in user owns; populated lazily so we don't fetch
+  // for guests or for the user's own profile.
+  const [myOwnedProjects, setMyOwnedProjects] = useState<ProjectDetail[]>([]);
+  const [allRoles, setAllRoles] = useState<Role[]>([]);
+  const [inviteProjectId, setInviteProjectId] = useState<number | null>(null);
+  const [inviteRoleId, setInviteRoleId] = useState<number | null>(null);
+  const [inviteMessage, setInviteMessage] = useState<string>("");
+  const [inviteError, setInviteError] = useState<string>("");
+  const [inviteSuccess, setInviteSuccess] = useState<boolean>(false);
+  const [inviteSending, setInviteSending] = useState<boolean>(false);
 
   const projectSearchData = fullProjectList?.map(
     (project: Project) => {
@@ -193,6 +207,90 @@ const Profile = (userProfile : any) => {
   };
     
 
+  // Load the logged-in user's owned projects + role list once we know who is
+  // viewing and that it isn't their own profile. Used to populate the
+  // "Invite to project" popup.
+  useEffect(() => {
+    if (isUsersProfile) return;
+    if (userID === undefined || userID === -1) return;
+
+    let cancelled = false;
+    const loadInviteOptions = async () => {
+      try {
+        const [projResp, roleResp] = await Promise.all([
+          getProjectsByUser(),
+          getJobTitles(),
+        ]);
+        if (cancelled) return;
+        const owned = (projResp.data ?? []).filter(
+          (p) => p.owner?.userId === userID
+        );
+        setMyOwnedProjects(owned);
+        if (roleResp.data) setAllRoles(roleResp.data);
+      } catch (e) {
+        console.error("Failed to load invite options", e);
+      }
+    };
+    loadInviteOptions();
+    return () => {
+      cancelled = true;
+    };
+  }, [isUsersProfile, userID]);
+
+  // Resets the invite form to its initial state. Called when the popup opens
+  // or closes so a previous send doesn't bleed into the next one.
+  const resetInviteForm = () => {
+    setInviteProjectId(null);
+    setInviteRoleId(null);
+    setInviteMessage("");
+    setInviteError("");
+    setInviteSuccess(false);
+    setInviteSending(false);
+  };
+
+  const handleSendInvite = async () => {
+    setInviteError("");
+    if (!userID || userID === -1) {
+      setInviteError("You must be logged in to invite someone.");
+      return;
+    }
+    if (!displayedProfile?.userId) {
+      setInviteError("Could not determine who to invite.");
+      return;
+    }
+    if (!inviteProjectId) {
+      setInviteError("Pick a project.");
+      return;
+    }
+    if (!inviteRoleId) {
+      setInviteError("Pick a role.");
+      return;
+    }
+
+    setInviteSending(true);
+    const result = await addMember(inviteProjectId, {
+      inviterUserId: userID,
+      inviteeUserId: displayedProfile.userId,
+      roleId: inviteRoleId,
+      message: inviteMessage,
+    });
+    setInviteSending(false);
+
+    if (result.error) {
+      // 409 from the server means a pending/active invite already exists for
+      // this user on this project.
+      if (result.status === 409) {
+        setInviteError(
+          `${displayedProfile.firstName} already has an invite or is a member of that project.`
+        );
+      } else {
+        setInviteError(result.error);
+      }
+      return;
+    }
+    setInviteSuccess(true);
+  };
+
   // --------------------
   // Components
   // --------------------
@@ -268,12 +366,12 @@ const Profile = (userProfile : any) => {
         hideSearchBar={true}
         onChange={() => { }}
         setCurrentUserId={getProfileData} //brother you're not even passing anything
+        hideBackButton={false}
       />
 
       {/* Checks if we have profile data to use, then determines what to render */}
       <main id="main" tabIndex={-1}>
         <div id="profile-page-content">
-          <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
           <div id="profile-hero">
             <div id="profile-img-container">
               <img
@@ -308,10 +406,10 @@ const Profile = (userProfile : any) => {
                     <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
                     {displayedProfile.title}
                   </div> : ""}
-                  {displayedProfile?.academicYear ? 
+                  {displayedProfile?.ritStatus ? 
                   <div className="profile-extra">
                     <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
-                    {majorsArr.join(", ")} {displayedProfile?.academicYear}
+                    {majorsArr.join(", ")} {displayedProfile?.ritStatus}
                   </div> : ""}
                   {displayedProfile?.location ?
                   <div className="profile-extra">
@@ -358,15 +456,15 @@ const Profile = (userProfile : any) => {
                 {/* TODO: make icon for email and phone */}
                 {displayedProfile?.username ? 
                 <a href={`mailto:${displayedProfile?.username}@g.rit.edu`}>  
-                <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
+                <ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
                 {displayedProfile?.username}@g.rit.edu</a>
-                : <a><ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
+                : <a><ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
               </div>
               {/* Show phone number if present */}
               {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
                 <div id="profile-number">
                   <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>  
-                  <ThemeIcon id={'link'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
+                  <ThemeIcon id={'phone'} width={25} height={25} className={'mono-fill'} ariaLabel={'phone'}/>
                   {displayedProfile.phoneNumber}</a>
                 </div>
               //dead link when no number
@@ -390,6 +488,132 @@ const Profile = (userProfile : any) => {
                     </a>
                   ))}
                 </div>
+              )}
+
+              {/* Invite-to-project: only shown when a logged-in user is
+                  viewing someone else's profile. */}
+              {!isUsersProfile && userID !== undefined && userID !== -1 && (
+                <Popup>
+                  <PopupButton
+                    buttonId="profile-invite-button"
+                    callback={resetInviteForm}
+                  >
+                    Invite to Project
+                  </PopupButton>
+                  <PopupContent useClose={true}>
+                    <div id="profile-invite-title">
+                      Invite {displayedProfile?.firstName} to a project
+                    </div>
+                    {myOwnedProjects.length === 0 ? (
+                      <div id="profile-invite-empty">
+                        You don't own any projects yet. Create one to start
+                        inviting people.
+                      </div>
+                    ) : inviteSuccess ? (
+                      <div id="profile-invite-success">
+                        Invite sent! {displayedProfile?.firstName} will get an
+                        email to accept or decline.
+                      </div>
+                    ) : (
+                      <>
+                        <div id="profile-invite-form">
+                          <label
+                            className="profile-invite-label"
+                            htmlFor="profile-invite-project"
+                          >
+                            Project
+                          </label>
+                          <div id="profile-invite-project">
+                            <Select>
+                              <SelectButton
+                                placeholder="Select a project"
+                                searchable={true}
+                                type="input"
+                              />
+                              <SelectOptions
+                                callback={(e) => {
+                                  const value = (e.target as HTMLButtonElement)
+                                    .value;
+                                  const proj = myOwnedProjects.find(
+                                    (p) => p.title === value
+                                  );
+                                  setInviteProjectId(proj?.projectId ?? null);
+                                }}
+                                options={myOwnedProjects.map((proj) => ({
+                                  markup: <>{proj.title}</>,
+                                  value: proj.title,
+                                  disabled: false,
+                                }))}
+                              />
+                            </Select>
+                          </div>
+
+                          <label
+                            className="profile-invite-label"
+                            htmlFor="profile-invite-role"
+                          >
+                            Role
+                          </label>
+                          <div id="profile-invite-role">
+                            <Select>
+                              <SelectButton
+                                placeholder="Select a role"
+                                searchable={true}
+                                type="input"
+                              />
+                              <SelectOptions
+                                callback={(e) => {
+                                  const value = (e.target as HTMLButtonElement)
+                                    .value;
+                                  const role = allRoles.find(
+                                    (r) => r.label === value
+                                  );
+                                  setInviteRoleId(role?.roleId ?? null);
+                                }}
+                                options={allRoles.map((role) => ({
+                                  markup: <>{role.label}</>,
+                                  value: role.label,
+                                  disabled: false,
+                                }))}
+                              />
+                            </Select>
+                          </div>
+
+                          <label
+                            className="profile-invite-label"
+                            htmlFor="profile-invite-message"
+                          >
+                            Message
+                          </label>
+                          <textarea
+                            id="profile-invite-message"
+                            placeholder={`Optional note to ${displayedProfile?.firstName ?? "them"}...`}
+                            value={inviteMessage}
+                            onChange={(e) => setInviteMessage(e.target.value)}
+                            maxLength={500}
+                          />
+                        </div>
+
+                        {inviteError && (
+                          <div className="error" id="profile-invite-error">
+                            {inviteError}
+                          </div>
+                        )}
+
+                        <div className="project-editor-button-pair">
+                          <PopupButton
+                            buttonId="profile-invite-send"
+                            callback={handleSendInvite}
+                            doNotClose={() => !inviteSuccess}
+                            disabled={inviteSending}
+                          >
+                            {inviteSending ? "Sending..." : "Send Invite"}
+                          </PopupButton>
+                        </div>
+                      </>
+                    )}
+                  </PopupContent>
+                </Popup>
               )}
             </div>
 
@@ -441,7 +665,6 @@ const Profile = (userProfile : any) => {
           </div> : ""}
         </div>
       </main>
-      <AboutFooter />
     </div>
   );
 };

@@ -1,19 +1,16 @@
 import type { Request } from "express";
-import type url = require("url");
 
 // Enums for better typing
 export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
+export type SkillCategory = 'Software' | 'Discipline' | 'Coding Language' | 'Talent' | 'Other';
 export type TagType =
-  | "Creative"
-  | "Technical"
-  | "Games"
-  | "Multimedia"
-  | "Music"
   | "Other"
   | "Developer"
   | "Designer"
   | "Soft"
   | "Audio"
+  | 'Style'
+  | 'Genre'
   | "Purpose"
   | "Project Type"
   | "Role"
@@ -22,12 +19,23 @@ export type TagType =
   | "Designer Skill"
   | "Soft Skill"
   | "Audio Skill";
-export type AcademicYear =
+//wow.
+export type GenreCategory = 'Game' | "Story" | 'Music';
+export type StyleCategory = 'Visual' | 'Structural';
+export type DeveloperCategory = 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Other' | 'Discipline';
+export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' | 'Other' | 'Discipline' | 'Writing Software';
+export type SoftCategory = 'Personal' | 'Team' | 'Other';
+export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
+export type TagCategory = GenreCategory | StyleCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
+  export type RitStatus = 
   | "Freshman"
   | "Sophomore"
   | "Junior"
   | "Senior"
-  | "Graduate";
+  | "Graduate"
+  | "Faculty"
+  | 'Staff'
+  ;
 export type SkillProficiency =
   | "Novice"
   | "Intermediate"
@@ -44,7 +52,7 @@ export type ProjectStatus =
   | "PostProduction"
   | "Complete";
 export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
-export type JobDuration = "ShortTerm" | "LongTerm";
+export type JobDuration = "Days" | "Weeks" | "Months" | "Semesters" | "Years";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
 export type Visibility = "public" | "private";
@@ -60,9 +68,6 @@ export interface NumberDictionary<T> {
   [key: number]: T;
 }
 
-interface ProjectType {
-  project_type: string;
-}
 
 export type ProjectInfoStage = "Preview" | "Detail" | "Full";
 
@@ -75,23 +80,6 @@ export interface StructuredProjectInfo {
 export interface StructuredUserInfo {
   preview?: UserPreview;
   detail?: UserDetail;
-}
-
-export interface UserAndProjectInfo {
-  tags?: Tag[];
-  title?: string;
-  hook?: string;
-  project_types?: ProjectType[];
-  job_title?: string;
-  major?: string;
-  skills?: Skill[];
-  first_name?: string;
-  last_name?: string;
-  username?: string;
-  name?: string;
-  bio?: string;
-  projectId?: number;
-  userId?: number;
 }
 
 //API REQUEST
@@ -191,6 +179,11 @@ export interface Tag {
    * The type of tag, such as "Purpose"
    */
   type: TagType;
+
+  /**
+   * The category of tag, such as "Game"
+   */
+  category: TagCategory;
 }
 
 /**
@@ -227,19 +220,24 @@ export interface Skill {
    * The type of skill, such as "Designer"
    */
   type: SkillType;
+
+  /**
+   * The category of the skill, such as "Software"
+   */
+  category: SkillCategory;
 }
 
 /**
- * Mediums refer to the medium through which a project is experienced.
+ * Mediums refer to the medium through which the project is experienced
  */
 export interface Medium {
   /**
-   * The database ID corresponding to the medium
+   * The database ID corresponding to the type
    */
   mediumId: number;
 
   /**
-   * The name of the medium, such as "Video Game"
+   * The name of the type, such as "Video Game"
    */
   label: string;
 }
@@ -634,9 +632,9 @@ export interface UserPreview {
  */
 export interface UserDetail extends UserPreview {
   /**
-   * The user's academic year, or null if unset
+   * The user's RIT status, or null if unset
    */
-  academicYear: AcademicYear | null;
+  ritStatus: RitStatus | null;
 
   /**
    * The user's bio
@@ -760,9 +758,9 @@ export interface MeDetail extends MePreview {
   majors: MyMajor[];
 
   /**
-   * The logged-in user's academic year, or null if unset
+   * The logged-in user's RIT Status, or null if unset
    */
-  academicYear: AcademicYear;
+  ritStatus: RitStatus;
 
   /**
    * The logged-in user's location, such as "Rochester, NY"
@@ -888,6 +886,36 @@ export interface ProjectImage {
 }
 
 /**
+ * An video displayed on a project
+ */
+export interface ProjectVideo {
+  /**
+   * The database ID corresponding with the video
+   */
+  videoId: number;
+
+  /**
+   * The URL of the video
+   */
+  videoUrl: string;
+
+  /**
+   * The video title
+   */
+  title: string;
+
+  /**
+   * The position of the video
+   */
+  position: number;
+
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+}
+
+/**
  * Represents a medium tied to a project
  */
 export interface ProjectMedium extends Medium {
@@ -917,6 +945,28 @@ export interface ProjectFollowers {
   apiUrl: string;
 }
 
+export interface ProjectVideo {
+  /**
+   * UniqueID for the video
+   */
+  videoId: number;
+
+  /**
+   * URL to the video
+   */
+  videoUrl: string;
+
+  /**
+   * Order in which videos are displayed on project
+   */
+  position: number;
+
+  /**
+   * Alt title for screen readers
+   */
+  title: string;
+}
+
 /**
  * Represents a user who is a member of a known project
  */
@@ -943,7 +993,7 @@ export interface ProjectMember {
 }
 
 /**
- * Represents a tag tied to a project
+ * Represents a social tied to a project
  */
 export interface ProjectSocial extends Social {
   /**
@@ -992,7 +1042,7 @@ export interface ProjectJob {
   availability: JobAvailability;
 
   /**
-   * The duration of the position, such as "Short-Term"
+   * The duration of the position, such as "Days"
    */
   duration: JobDuration;
 
@@ -1062,6 +1112,11 @@ export interface ProjectDetail extends ProjectPreview {
    * The images attached to the project
    */
   projectImages: ProjectImage[];
+
+  /**
+   * The youtube links attached to the project
+   */
+  projectVideos: ProjectVideo[];
 
   /**
    * The social media accounts related to the project
@@ -1183,7 +1238,7 @@ export type UpdateUserInput = Partial<
     | "headline"
     | "pronouns"
     | "title"
-    | "academicYear"
+    | "ritStatus"
     | "location"
     | "funFact"
     | "bio"
@@ -1201,7 +1256,7 @@ export type CreateUserInput = Partial<
     | "headline"
     | "pronouns"
     | "title"
-    | "academicYear"
+    | "ritStatus"
     | "location"
     | "funFact"
     | "bio"
@@ -1289,6 +1344,14 @@ export type UpdateProjectInput = Partial<CreateProjectInput>;
 /**
  * Data required to upload a new image to a project
  */
+export type CreateProjectVideoInput = {
+  title: string;
+  videoUrl: string;
+};
+
+/**
+ * Data required to upload a new image to a project
+ */
 export type CreateProjectImageInput = Pick<ProjectImage, "altText"> & {
   image: File;
 };
@@ -1332,8 +1395,8 @@ export type SendProjectInviteInput = Required<CreateProjectMemberInput>;
  * Data required to send invitation email to user
  */
 export type EmailInput = {
-  inviter: UserEmail;
-  invitee: UserEmail;
+  sender: UserEmail;
+  receiver: UserEmail;
   subject: string;
   textBody: string;
   HTMLBody: string;
@@ -1376,10 +1439,9 @@ export type AddProjectTagInput = Pick<ProjectTag, "tagId" | "displayOrder">;
 export type UpdateProjectTagInput = Partial<AddProjectTagInput>;
 
 /**
- * Data required to add a medium to a project
+ * Data required to add a type to a project
  */
-// TODO rename to AddProjectMediumInput (no plural)
-export type AddProjectMediumsInput = Pick<ProjectMedium, "mediumId">;
+export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
 
 /**
  * Data required to create a job listing on a project
@@ -1407,7 +1469,7 @@ export type FilterRequest = {
   developer?: boolean;
   skills?: number[];
   majors?: number[];
-  academicYear?: string[];
+  ritStatus?: string[];
   socials?: number[];
   strictness?: 'any' | 'all';
 }

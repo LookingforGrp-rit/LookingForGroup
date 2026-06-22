@@ -98,6 +98,18 @@ model ProjectImages {
   @@map("project_images")
 }
 
+model ProjectVideos {
+  videoId    Int       @id @default(autoincrement()) @map("video_id")
+  videoUrl   String    @db.VarChar(100) @map("video_url")
+  title      String    @db.VarChar(150)
+  position   Int
+  projectId  Int       @map("project_id")
+  projects   Projects  @relation("ProjectVideos", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_videos_projects")
+
+  @@index([projectId], map: "FK_project_videos_projects")
+  @@map("project_videos")
+}
+
 model ProjectSocials {
   projectId Int      @map("project_id")
   websiteId Int      @map("website_id")
@@ -139,6 +151,7 @@ model Projects {
   members           Members[]
   projectFollowings ProjectFollowings[]
   projectImages     ProjectImages[]     @relation("ProjectImages")
+  projectVideos     ProjectVideos[]     @relation("ProjectVideos")
   projectSocials    ProjectSocials[]
   globalVisibility  Visibility          @map("global_visibility")
   mediums           Mediums[]
@@ -195,6 +208,7 @@ model Tags {
   tagId       Int           @id @default(autoincrement()) @map("tag_id")
   label       String        @db.VarChar(50)
   type        String        @db.VarChar(50)
+  category    String?       @db.VarChar(50)
   // projects    Projects[]
   projectTags ProjectTags[]
 
@@ -259,7 +273,7 @@ model Users {
   headline          String              @default("") @db.VarChar(100)
   pronouns          String              @default("") @db.VarChar(20)
   title             String              @default("") @db.VarChar(50)
-  academicYear      UsersAcademicYear?  @map("academic_year")
+  ritStatus      UsersRitStatus?  @map("rit_status")
   location          String              @default("") @db.VarChar(150)
   funFact           String              @default("") @map("fun_fact") @db.VarChar(100)
   bio               String              @default("") @db.VarChar(600)
@@ -292,6 +306,7 @@ model Skills {
   skillId    Int          @id @default(autoincrement()) @map("skill_id")
   label      String       @db.VarChar(50)
   type       String       @db.VarChar(50)
+  category   String?       @db.VarChar(50)
   userSkills UserSkills[]
 
   @@unique([label, type])
@@ -324,8 +339,11 @@ enum JobsAvailability {
 }
 
 enum JobsDuration {
-  ShortTerm @map("Short-term")
-  LongTerm  @map("Long-term")
+  Days @map("Days")
+  Weeks  @map("Weeks")
+  Months  @map("Months")
+  Semesters  @map("Semesters")
+  Years  @map("Years")
 
   @@map("jobs_duration")
 }
@@ -368,14 +386,16 @@ enum Visibility {
   public
 }
 
-enum UsersAcademicYear {
+enum UsersRitStatus {
   Freshman
   Sophomore
   Junior
   Senior
   Graduate
+  Faculty
+  Staff
 
-  @@map("users_academic_year")
+  @@map("users_rit_status")
 }
 
 enum SkillProficiency {

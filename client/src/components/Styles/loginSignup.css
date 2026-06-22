@@ -535,13 +535,17 @@ Signup process modal style rules
 }
 
 #profile-details {
-  margin: 0 20px 0 20px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   flex-wrap: wrap;
   grid-area: profileImage;
+
+  #profile-editor-add-image {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 #profile-pic {
@@ -736,10 +740,10 @@ Signup process modal style rules
 
 #completeProfile-input-container {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1.5fr 1fr;
   grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
-    'profileImage pronouns academicYear headline'
+    'profileImage pronouns ritStatus headline'
     'profileImage phoneNumber major bio'
     'profileImage jobTitle jobTitle bio'
     'profileImage location location bio'
@@ -779,6 +783,13 @@ Signup process modal style rules
 
 #jobTitle-input {
   grid-area: jobTitle;
+
+  .select-container div {
+    margin-top: 0px;
+    background-color: var(--header-color);
+
+    max-height: 570%;
+  }
 }
 
 #location-input {
@@ -789,8 +800,8 @@ Signup process modal style rules
   grid-area: funFact;
 }
 
-#academicYear-input {
-  grid-area: academicYear;
+#ritStatus-input {
+  grid-area: ritStatus;
   height: 50px;
 
   .select-container,
@@ -810,14 +821,21 @@ Signup process modal style rules
   grid-area: major;
   height: 50px;
 
-  .select-container,
+  /* .select-container,
   .select-button-input {
     height: 100%;
     width: 100%;
 
     div {
       background-color: var(--header-color);
+      overflow: hidden;
     }
+  } */
+  .select-container div {
+    margin-top: 0px;
+    background-color: var(--header-color);
+
+    max-height: 800%;
   }
 }
 
@@ -944,7 +962,7 @@ Signup process modal style rules
 }
 
 /* Mobile css to individual signup pages */
-@media screen and (max-width: 700px)
+@media screen and (max-width: 1000px)
 {
   .ChooseSkills, .CompleteProfile, .GetStarted
   {
@@ -962,13 +980,19 @@ Signup process modal style rules
     #completeProfile-input-container div {
       width: 100%;
     }
-    #academicYear-input, #major-input
+    #ritStatus-input, #major-input, #jobTitle-input
     {
       height: 50px;
       .select-container
       {
         height: 100%;
         min-height: 45px;
+      }
+      .select-container div {
+        margin-top: 0px;
+        background-color: var(--header-color);
+
+        max-height: 400%;
       }
     }
     /* Profile picture editor */

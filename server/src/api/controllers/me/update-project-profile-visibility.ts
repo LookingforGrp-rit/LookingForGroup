@@ -11,20 +11,17 @@ export const updateProjectProfileVisibilityController = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  console.log('BODY:', req.body);
-  console.log('QUERY:', req.query);
-
   const projectId = parseInt(req.params.id);
 
-  // Validate request body - expecting { visibility: 'private' or 'public' }
+  // Request body shape: { profileVisibility: 'private' | 'public' }
+  // (kept a fallback to `visibility` for older clients)
   type VisibilityBody = {
-    visibility?: 'private' | 'public' | { visibility?: 'private' | 'public' };
+    profileVisibility?: 'private' | 'public';
+    visibility?: 'private' | 'public';
   };
 
   const body = req.body as VisibilityBody;
-  const rawVisibility = body.visibility;
-
-  const visibility = typeof rawVisibility === 'string' ? rawVisibility : rawVisibility?.visibility;
+  const visibility = body.profileVisibility ?? body.visibility;
 
   const result = await updateProjectProfileVisibility(
     projectId,

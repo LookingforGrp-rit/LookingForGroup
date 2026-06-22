@@ -107,9 +107,10 @@ export const getMyProjectsService = async (
     fullProject = fullProject.toSorted(
       (project1, project2) => project1.title.charCodeAt(0) - project2.title.charCodeAt(0),
     );
+
     return fullProject;
   } catch (e) {
-    console.error(`Error in getMyProjectsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getMyProjectsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

@@ -30,7 +30,7 @@ const getUserMajorsService = async (userId: number): Promise<MyMajor[] | GetServ
     );
     return result.majors.map((major) => transformMyMajor(major));
   } catch (e) {
-    console.error(`Error in getMajorService: ${JSON.stringify(e)}`);
+    console.error(`Error in getMajorService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }
