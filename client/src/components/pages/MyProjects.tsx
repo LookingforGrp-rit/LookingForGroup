@@ -1,5 +1,6 @@
 // import { profiles } from "../../constants/fakeData";
 import { useState, useMemo, ChangeEvent, useCallback, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 // import { PagePopup, openClosePopup } from "../PagePopup";
 import ToTopButton from '../ToTopButton';
 import MyProjectsDisplayList from '../MyProjectsDisplayList';
@@ -51,6 +52,20 @@ const MyProjects = (userProfile: any) => {
   // Here to prevent reloading data after every re-render
   const [dataLoaded, setDataLoaded] = useState(false);
   const [loggedIn, setLoggedIn] = useState(0);
+
+  // If we arrived here with ?create=1 (e.g. the user clicked "Create Project"
+  // while logged out and just finished signing in), open the create editor
+  // immediately. Read it once on mount, then strip it from the URL so a refresh
+  // or closing the editor doesn't reopen it.
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [autoStartCreate] = useState(searchParams.get('create') === '1');
+  useEffect(() => {
+    if (searchParams.get('create') === '1') {
+      searchParams.delete('create');
+      setSearchParams(searchParams, { replace: true });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [_createError, setCreateError] = useState(false);
 
@@ -580,6 +595,7 @@ const MyProjects = (userProfile: any) => {
             <ProjectCreatorEditor
               newProject={true}
               mobileView={false}
+              autoStart={autoStartCreate}
             />
           </div>
         </div>

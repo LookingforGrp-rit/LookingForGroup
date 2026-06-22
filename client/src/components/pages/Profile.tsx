@@ -269,8 +269,8 @@ const Profile = (userProfile : any) => {
 
     setInviteSending(true);
     const result = await addMember(inviteProjectId, {
-      inviterUserId: userID,
-      inviteeUserId: displayedProfile.userId,
+      ownerUserId: userID,
+      prospectiveMemberId: displayedProfile.userId,
       roleId: inviteRoleId,
       message: inviteMessage,
     });

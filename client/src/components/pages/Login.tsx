@@ -90,14 +90,24 @@ const Login: React.FC = () => {
 
     const body = await res.data as { userExists: boolean };
 
-    if (body.userExists && from && from.pathname.includes('invite')) {
-      console.log('returning to previous page: ' + from.pathname);
-      navigate(from.pathname, { replace: true });
-      return;
-    }
+    // `from` can be a plain pathname string or a location-like object with
+    // pathname/search. Normalize it into a single return path.
+    const fromPath =
+      typeof from === 'string'
+        ? from
+        : from?.pathname
+          ? `${from.pathname}${from.search ?? ''}`
+          : undefined;
 
-    if (body.userExists) { navigate(paths.routes.HOME); }
-    else { navigate(paths.routes.SIGNUP, { replace: true }); }
+    if (body.userExists) {
+      // Existing user: send them back where they came from (invite link,
+      // "Create Project", a protected page, etc.) or home if there's nowhere to return to.
+      console.log('returning to previous page: ' + (fromPath ?? paths.routes.HOME));
+      navigate(fromPath ?? paths.routes.HOME, { replace: true });
+    } else {
+      // New user: continue to signup, preserving the return target.
+      navigate(paths.routes.SIGNUP, { replace: true, state: { from } });
+    }
   }
 
 
