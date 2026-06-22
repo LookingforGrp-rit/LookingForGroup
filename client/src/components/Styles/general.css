@@ -233,8 +233,7 @@ used for the more options dropdown menu and notifications
   font-style: italic;
 }
 
-#main
-{
+#main {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -1394,7 +1393,7 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 3;
+  z-index: 1;
   box-sizing: border-box;
 }
 
