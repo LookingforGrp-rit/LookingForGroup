@@ -4,7 +4,6 @@ import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
-import requiresPendingProjectMember from '../middleware/authorization/requires-pending-project-member.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -229,18 +228,6 @@ router.patch(
   projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
   skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
   authenticated(requiresProjectOwner),
-  PROJECT.updateMember,
-);
-//Updates pending member of a specific project through id
-router.patch(
-  '/:id/members/:userId/accept',
-  requiresLogin,
-  injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  userExistsAt('path', 'userId'),
-  projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
-  skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
-  authenticated(requiresPendingProjectMember),
   PROJECT.updateMember,
 );
 

@@ -1,6 +1,7 @@
 import prisma from '#config/prisma.ts';
 import type { MemberRequestStatus } from '#prisma-models/index.js';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
+import addMemberService from './add-member.ts';
 
 type DeleteServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'FORBIDDEN'>;
 type DeleteServiceSuccess = ServiceSuccessSubset<'OK'>;
@@ -53,6 +54,15 @@ const updateMemberRequestStatusService = async (
         requestStatus: newStatus,
       },
     });
+
+    //add member if accepted
+    if (newStatus === 'Accepted') {
+      await addMemberService(request.projectId, {
+        prospectiveMemberId: request.prospectiveMemberId,
+        ownerUserId: ownerId.userId,
+        roleId: request.roleId,
+      });
+    }
 
     return 'OK';
   } catch (e) {
