@@ -630,8 +630,6 @@ input:checked+.slider:before {
   border: none;
   border-radius: 30px;
   padding: 6px 20px;
-  background-color: #fead81 !important;
-  color: black;
   font-size: 2ch;
   width: max-content;
   margin: auto min(1vw, 10px);

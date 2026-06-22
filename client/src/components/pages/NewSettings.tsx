@@ -718,7 +718,7 @@ const Settings = (userProfile : any) => {
             <div className="settings-row settings-row-actions">
               {/* Edit Profile — opens the same editor popup used on the profile page */}
               <div className="subsection">
-                <ProfileEditPopup />
+                <ProfileEditPopup/>
               </div>
               {/* Account Deletion */}
               <div className="subsection">
