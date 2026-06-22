@@ -1,8 +1,8 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { getByID, updatePendingMember, deleteMember } from '../../api/projects';
-import { getCurrentAccount, getJobTitles, getUserByEmail } from '../../api/users';
+import { getByID, updateMemberRequest, getRequestByID } from '../../api/projects';
+import { getCurrentAccount, getJobTitles } from '../../api/users';
 import { Role } from '@looking-for-group/shared';
 import "../Styles/acceptInvite.css";
 
@@ -11,9 +11,8 @@ const AcceptInvitation = () => {
     const location = useLocation(); // Hook to access the current location
 
     // Route and query params
-    const { projectId, roleId } = useParams();
-    const projectIdNum = Number(projectId);
-    const roleIdNum = Number(roleId);
+    const { requestId } = useParams();
+    const requestIdNum = Number(requestId);
 
     // User info state
     const [firstName, setFirstName] = useState<string | null>(null);
@@ -21,6 +20,7 @@ const AcceptInvitation = () => {
     const [loggedIn, setLoggedIn] = useState<boolean>(false);
 
     // Project info
+    const [projectId, setProjectId] = useState<number>(0);
     const [projectTitle, setProjectTitle] = useState<string | null>(null);
     const [role, setRole] = useState<Role | null>(null);
     const [ownerFirstName, setOwnerFirstName] = useState<String | null>(null);
@@ -29,14 +29,14 @@ const AcceptInvitation = () => {
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
     //#region Helper Methods
-    const fetchRole = async () => {
+    const fetchRole = async (roleId: number) => {
         try {
             const res = await getJobTitles();
 
             if (res.data) {
-                const role = res.data.find((r, i) => r.roleId === roleIdNum);
+                const role = res.data.find((r) => r.roleId === roleId);
                 if (!role) {
-                    setError(`No role found with ID: ${roleIdNum}`);
+                    setError(`No role found with ID: ${roleId}`);
                     return;
                 }
                 setRole(role);
@@ -54,7 +54,21 @@ const AcceptInvitation = () => {
                 setProjectTitle(res.data.title);
                 setOwnerFirstName(res.data.owner.firstName);
                 setOwnerLastName(res.data.owner.lastName);
-                
+            }
+        } catch (err) {
+            setError('Fetch Project Error: ' + err);
+        }
+    };
+
+    const fetchMemberRequest = async (requestId: number) => {
+        try {
+            const res = await getRequestByID(requestId);
+
+            if (res.data) {
+                await fetchProject(res.data.projectId);
+                await fetchRole(res.data.roleId);
+
+                setProjectId(res.data.projectId);
             }
         } catch (err) {
             setError('Fetch Project Error: ' + err);
@@ -71,8 +85,7 @@ const AcceptInvitation = () => {
                 setUserId(res.data.userId);
                 setFirstName(res.data.firstName);
 
-                await fetchProject(projectIdNum);
-                await fetchRole();
+                await fetchMemberRequest(requestIdNum);
             } else {
                 navigate(paths.routes.LOGIN, {
                     state: { from: location }
@@ -91,35 +104,29 @@ const AcceptInvitation = () => {
     }, [navigate]);
 
     //#region Handlers
-    const handleDecline = async () => {
+    const handleMemberRequest = async (
+        newStatus: 'Accepted' | 'Declined'
+    ) => {
         if (!userId) {
             setError('Not Logged In');
             return;
         }
-        const result = await deleteMember(projectIdNum, userId);
-        if (result.error) {
-            setError(result.error);
-        }
-        navigate(paths.routes.HOME);
-    };
 
-    const handleAccept = async () => {
-        if (!userId) {
-            setError('Not Logged In');
-            return;
-        }
-        const result = await updatePendingMember(
-            projectIdNum,
-            userId,
-            {
-                roleId: roleIdNum,
-                profileVisibility: 'public'    // set to private when invited
-            }
+        const result = await updateMemberRequest(
+            requestIdNum,
+            { newStatus }
         );
+
         if (result.error) {
             setError(result.error);
+            return;
         }
-        navigate(`${paths.routes.PROJECT}?projectID=${projectId}`);
+
+        navigate(
+            newStatus === 'Accepted'
+                ? `${paths.routes.PROJECT}?projectID=${projectId}`
+                : paths.routes.HOME
+        );
     };
     //#endregion
 
@@ -128,18 +135,18 @@ const AcceptInvitation = () => {
             <div className="background-cover">
                 <div className="error" aria-live="assertive" role="alert">{error}</div>
                 {
-                    loggedIn && 
-                        <div id="accept-invite-container">
-                            <div id="accept-invite-info">
-                                <h1>Hi, {firstName}!</h1>
-                                <h2>{ownerFirstName ?? "The Owner"} {ownerLastName ?? ""} invited you to join <h2 id="project-title">{projectTitle?.toUpperCase() ?? "a project"}</h2></h2>
-                                <p>Your role will be {role?.label ?? "Member"}</p>
-                                <div id="accept-invite-btns">
-                                    <button id="decline-button" onClick={handleDecline}>Decline Invite</button>
-                                    <button onClick={handleAccept}>Accept Invite</button>
-                                </div>
+                    loggedIn &&
+                    <div id="accept-invite-container">
+                        <div id="accept-invite-info">
+                            <h1>Hi, {firstName}!</h1>
+                            <h2>{ownerFirstName ?? "The owner"} {ownerLastName ?? ""} invited you to join <h2 id="project-title">{projectTitle?.toUpperCase() ?? "a project"}</h2></h2>
+                            <p>Your role will be {role?.label ?? "Member"}</p>
+                            <div id="accept-invite-btns">
+                                <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Invite</button>
+                                <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Invite</button>
                             </div>
                         </div>
+                    </div>
                 }
             </div>
         </>
