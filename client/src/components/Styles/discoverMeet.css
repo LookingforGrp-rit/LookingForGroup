@@ -18,11 +18,11 @@ Meet page hero style rules
 /*#region meet page hero*/
 
 #discover-hero {
-  width: 90%;
-  margin: 0 auto;
+  width: calc(100% - 120px);
+  margin: 0 40px;
   background-image: var(--hero-gradient);
   border-radius: 10px;
-
+  box-sizing: border-box;
 }
 
 @media only screen and (max-width: 1100px) {
@@ -212,11 +212,16 @@ Image carousel style rules
 /*#region image carousel*/
 
 .discover-carousel {
-  max-width: 100%;
+  width: calc(100% - 40px);
   margin: 0 auto;
-  /* TEMPORARY, should change after more styling is done */
   display: flex;
   flex-direction: column;
+  align-items: center;
+}
+
+#carousel
+{
+  width: 100%;
 }
 
 /* Desktop width */
@@ -231,6 +236,7 @@ Image carousel style rules
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  width: 100%;
 }
 
 .discover-carousel-btn {
@@ -307,7 +313,7 @@ Image carousel style rules
   overflow: hidden;
   height: 370px;
   max-height: 370px;
-  width: 90%;
+  width: fit-content;
   border-radius: 10px;
   background-color: var(--header-color);
   /*max-width: calc(100vw - 320px);*/
@@ -444,10 +450,6 @@ Image carousel style rules
 }
 
 @media screen and (max-width: 1020px) {
-  .discover-carousel {
-    max-width: 95%;
-  }
-
   .carousel-contents {
     height: auto;
   }
@@ -547,7 +549,6 @@ Filters / Tags Style Rules
 
 
 #discover-filters-parent {
-  width: 100%;
   /* margin: 20px calc(100vw * (65 / 1512)); */
   box-sizing: border-box;
   position: sticky;
@@ -556,18 +557,23 @@ Filters / Tags Style Rules
   z-index: 1;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
+  width: 100%;
+  padding: 0 40px;
 }
 
-@media only screen and (max-width: 700px) {
+@media only screen and (max-width: 800px) {
   .discover-page {
     #discover-filters-parent {
       top: -35px;
     }
   }
+  #discover-filters-parent {
+    padding: 0;
+  }
 }
 
 #discover-filters {
-  width: 90%;
+  width: 100%;
   margin: 20px auto;
   display: flex;
   flex-direction: row;
@@ -994,6 +1000,27 @@ Filters / Tags Style Rules
   }
 }
 
+.tag-pink,
+.tag-pink.tag-selected,
+.tag-button-pink-selected {
+  background-color: var(--tag-pink-selected);
+  border-color: var(--tag-pink-selected);
+}
+
+.tag-pink.tag-unselected,
+.tag-button-pink-unselected {
+  background-color: var(--tag-pink-unselected);
+  border-color: var(--tag-pink-unselected-border);
+
+  p {
+    color: var(--tag-text-unselected-pink);
+  }
+
+  .fa {
+    color: var(--tag-text-unselected-pink) !important;
+  }
+}
+
 .tag-unselected:hover {
   p {
     color: var(--tag-text-selected);
@@ -1103,6 +1130,16 @@ Filters / Tags Style Rules
 .tag-button-periwinkle-unselected:hover {
   background-color: var(--tag-periwinkle-selected);
   border-color: var(--tag-periwinkle-selected);
+
+  p {
+    color: var(--tag-text-selected) !important;
+  }
+}
+
+.tag-pink.tag-unselected:hover,
+.tag-button-pink-unselected:hover {
+  background-color: var(--tag-pink-selected);
+  border-color: var(--tag-pink-selected);
 
   p {
     color: var(--tag-text-selected) !important;

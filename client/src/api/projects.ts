@@ -67,6 +67,23 @@ export const getProjects = async (): Promise<ApiResponse<ProjectPreview[]>> => {
 };
 
 /**
+ * Retrieves a paginated list of projects.
+ * @param count The maximum number of projects to return.
+ * @param projectId The project ID cursor. Projects after this ID will be returned. Use 0 to start from the beginning.
+ * @returns Array of project previews.
+ */
+export const getPaginatedProjects = async (
+  count: number,
+  projectId: number
+): Promise<ApiResponse<ProjectPreview[]>> => {
+  const apiURL = `/projects/${count}/${projectId}`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getPaginatedProjects: ${response.error}`);
+  return response;
+};
+
+/**
  * Retrieves data of a project by its ID
  * @param projectID -  ID of project to retrieve
  * @returns - A project object if valid, 400 if not

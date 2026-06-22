@@ -4,7 +4,6 @@ import './components/Styles/master.css';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import * as paths from './constants/routes';
 import { useEffect, useMemo, useState } from 'react';
-import Login from './components/pages/Login';
 import SignUp from './components/pages/Signup';
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
@@ -74,7 +73,18 @@ function App() {
         {!hideSidebar && <SideBar /*avatarImage={avatarImage} setAvatarImage={setAvatarImage} theme={theme}  -- Commented in clean up 26-20-01 */ />}
         <Routes>
           <Route path={paths.routes.DEFAULT} element={<DiscoverPage />} />
-          <Route path={paths.routes.LOGIN} element={<Login />} />
+          {/* Google OAuth is the only auth method, so login and signup are a single
+              unified flow. Both routes render the same page: it logs in existing
+              users and starts the signup flow for new ones. */}
+          <Route
+            path={paths.routes.LOGIN}
+            element={
+              <SignUp
+                profileImage={profileImage as File}
+                setProfileImage={setProfileImage as React.Dispatch<React.SetStateAction<File>>}
+              />
+            }
+          />
           <Route
             path={paths.routes.SIGNUP}
             element={

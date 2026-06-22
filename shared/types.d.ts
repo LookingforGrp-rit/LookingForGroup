@@ -9,7 +9,7 @@ export type TagType =
   | "Designer"
   | "Soft"
   | "Audio"
-  | 'Form'
+  | 'Style'
   | 'Genre'
   | "Purpose"
   | "Project Type"

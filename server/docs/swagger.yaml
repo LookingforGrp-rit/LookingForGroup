@@ -1757,6 +1757,47 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/paginated/{count}/{id}:
+    get:
+      summary: Get paginated projects
+      tags:
+        - Projects
+      description: Retrieves a list of paginated projects.
+      parameters:
+        - in: path
+          name: count
+          required: true
+          schema:
+            type: integer
+          description: The maximum number of projects to return
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The project ID cursor. Projects after this ID will be returned. Use 0 to start from the beginning.
+      responses:
+        '200':
+          description: A list of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectPreview'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/projects/{id}:
     get:
       summary: Get project by ID
