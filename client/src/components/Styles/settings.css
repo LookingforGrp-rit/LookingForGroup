@@ -272,10 +272,6 @@ input:checked+.slider:before {
   height: 100px;
 }
 
-@media only screen and (max-width: 800px) {
-  /*responsiveness goes here*/
-}
-
 /* Settings page redesign styling */
 #settings-page {
   hr {
@@ -382,6 +378,11 @@ input:checked+.slider:before {
     background-color: var(--header-color);
     outline: none;
     width: 100%;
+
+  }
+  #project-editor-save
+  {
+    width: max-content;
   }
 
   #options-theme-btn,

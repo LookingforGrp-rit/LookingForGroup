@@ -399,8 +399,7 @@ Signup process modal style rules
   }
 }
 
-.ChooseSkills #profile-editor-tags
-{
+.ChooseSkills #profile-editor-tags {
   width: 90%;
   overflow-y: scroll;
 }
@@ -411,6 +410,8 @@ Signup process modal style rules
   width: 90%;
   font-weight: 600;
   text-align: center;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 #signupProcess-subTitle {
@@ -463,7 +464,7 @@ Signup process modal style rules
   transform: scale(1);
 }
 
-#signup-nextBtn, 
+#signup-nextBtn,
 #signup-backBtn,
 #accept-tos-btn {
   border: none;
@@ -476,12 +477,11 @@ Signup process modal style rules
   color: var(--primary-color);
 }
 
-#accept-tos-btn
-{
+#accept-tos-btn {
   width: fit-content;
 }
 
-#signup-nextBtn:hover, 
+#signup-nextBtn:hover,
 #signup-backBtn:hover,
 #accept-tos-btn {
   transform: scale(1.1);
@@ -588,9 +588,9 @@ Signup process modal style rules
     text-align: center;
     box-shadow: 0px 0px 10px 0px var(--shadow-color);
   }
+
   button,
-  input
-  {
+  input {
     height: 100%;
   }
 
@@ -870,29 +870,28 @@ Signup process modal style rules
   h2 {
     text-align: center;
   }
+
   p {
     text-align: left;
   }
 }
 
-#tos-checkbox
-{
+#tos-checkbox {
   border-radius: 14px;
   margin: 0 5px;
   height: 1.125rem;
   width: 1.125rem;
-  /*border: 2px solid var(--primary-color);*/   /* does not work */
+  /*border: 2px solid var(--primary-color);*/
+  /* does not work */
 }
 
-#tos-accept-label
-{
+#tos-accept-label {
   font-size: 1.125rem;
   font-weight: 800;
   color: var(--primary-color);
 }
 
-#accept-tos-section
-{
+#accept-tos-section {
   display: flex;
   flex-wrap: nowrap;
   align-items: center;
@@ -929,12 +928,14 @@ Signup process modal style rules
 
 /* for light mode */
 [data-theme='light'] {
+
   #new-project-btn,
   #join-project-btn {
     img {
       filter: invert(0);
     }
   }
+
   #new-project-btn:hover,
   #join-project-btn:hover {
     img {
@@ -962,14 +963,15 @@ Signup process modal style rules
 }
 
 /* Mobile css to individual signup pages */
-@media screen and (max-width: 1000px)
-{
-  .ChooseSkills, .CompleteProfile, .GetStarted
-  {
+@media screen and (max-width: 1000px) {
+
+  .ChooseSkills,
+  .CompleteProfile,
+  .GetStarted {
     height: 80vh;
   }
-  .CompleteProfile
-  {
+
+  .CompleteProfile {
     #completeProfile-input-container {
       display: flex;
       flex-direction: column;
@@ -977,17 +979,21 @@ Signup process modal style rules
       width: 100%;
       overflow-y: scroll;
     }
+
     #completeProfile-input-container div {
       width: 100%;
     }
-    #ritStatus-input, #major-input, #jobTitle-input
-    {
+
+    #ritStatus-input,
+    #major-input,
+    #jobTitle-input {
       height: 50px;
-      .select-container
-      {
+
+      .select-container {
         height: 100%;
         min-height: 45px;
       }
+
       .select-container div {
         margin-top: 0px;
         background-color: var(--header-color);
@@ -995,65 +1001,67 @@ Signup process modal style rules
         max-height: 400%;
       }
     }
+
     /* Profile picture editor */
-    #completeProfile-input-container #profile-details
-    {
+    #completeProfile-input-container #profile-details {
       width: 60%;
     }
   }
-  .GetStarted, .ChooseSkills #profile-editor-tags
-  {
-    overflow-x: hidden;   /* prevents x scrollbar */
+
+  .GetStarted,
+  .ChooseSkills #profile-editor-tags {
+    overflow-x: hidden;
+    /* prevents x scrollbar */
   }
-  #getStarted-select
-  {
+
+  #getStarted-select {
     gap: 2%;
     width: 95%;
     margin: 0;
   }
-  #new-project-btn, #join-project-btn
-  {
+
+  #new-project-btn,
+  #join-project-btn {
     width: 90%;
     max-width: 240px;
     height: 45%;
     margin: 0;
   }
-  .ChooseSkills #project-editor-selected-tags
-  {
+
+  .ChooseSkills #project-editor-selected-tags {
     width: 100%;
   }
 
   /* === TOS === */
-  .TermsOfService #signupProcess-btns
-  {
+  .TermsOfService #signupProcess-btns {
     display: grid;
     height: fit-content;
     grid-template-columns: 1fr 1.5fr 1fr;
     grid-template-rows: 1fr 1fr;
   }
-  .TermsOfService #signup-backBtn
-  {
+
+  .TermsOfService #signup-backBtn {
     justify-self: center;
     align-self: center;
     grid-column: 1/2;
     grid-row: 2/3;
   }
-  .TermsOfService #signup-nextBtn
-  {
+
+  .TermsOfService #signup-nextBtn {
     justify-self: center;
     align-self: center;
     grid-column: 3/4;
     grid-row: 2/3;
   }
-  .TermsOfService #accept-tos-section
-  {
+
+  .TermsOfService #accept-tos-section {
     justify-self: center;
     align-self: center;
     grid-column: 1/4;
     grid-row: 1/2;
   }
-  #tos-accept-label
-  {
+
+  #tos-accept-label {
     font-size: 1rem;
     text-align: center;
   }
