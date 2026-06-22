@@ -18,27 +18,31 @@ Project Panel component style rules
 /* #region project-panel */
 
 #discover-panel-box {
-  width: 90%;
-  margin: 0 auto 20px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
   justify-content: center;
+  align-items: center;
+  width: calc(100% - 40px - 10px);
+  margin: 0 auto;
+
+  /* cancels out offset of scrollbar */
+  translate: 5px 0;
 }
 
-/*
-@media only screen and (max-width: 700px) {
+@media screen and (max-width: 800px)
+{
   #discover-panel-box {
-    margin: 0 20px;
+    margin: 0;
+    width: 100%;
+    translate: 0;
   }
 }
-*/
 
 /* Cheap way to work around the padding */
 .masonry {
-  margin: 0 -10px;
+  width: 100%;
   height: 100%;
-  width: calc(100% + 20px);
+  gap: 10px;
 }
 
 .project-link {
@@ -46,6 +50,13 @@ Project Panel component style rules
   cursor: pointer !important;
 }
 
+/* each item in the masonry --- goes masonry (parent) -> virtuoso list (child) -> data index (child) */
+.masonry > * > *
+{
+  justify-self: center;
+  padding: 10px;
+}
+/* not in use
 .project-panel-box {
   display: grid;
   grid-auto-flow: row;
@@ -55,7 +66,7 @@ Project Panel component style rules
   gap: 20px;
   width: 100%;
   padding-bottom: 10px;
-}
+}*/
 
 .add-video {
   height: 100%;
@@ -85,6 +96,7 @@ Project Panel component style rules
   max-width: none;
   overflow: hidden;
   text-decoration: none;
+  margin: 10px 0;
 
   .project-panel-meta {
     grid-area: tags;
@@ -3895,13 +3907,14 @@ My projects page style rules
 
 .projects-banner-outer {
   box-sizing: border-box;
-  margin: 0 5vw;
+  margin: 0 auto;
+  width: calc(100% - 120px);
 }
 
 .my-projects-header-row {
   box-sizing: border-box;
-  width: auto;
-  margin: 30px 5vw;
+  width: calc(100% - 120px);
+  margin: 30px auto;
 
   display: flex;
   flex-direction: row;
@@ -3957,9 +3970,9 @@ My projects page style rules
 
 @media only screen and (max-width: 700px) {
   .my-projects-header-row {
-    margin: 30px 5vw;
+    margin: 30px auto;
     flex-direction: column;
-    max-width: calc(100vw - 50px);
+    width: calc(100% - 40px);
     align-items: baseline;
   }
 
@@ -4149,11 +4162,12 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: 90%;
+  width: calc(100% - 80px);
   margin: 30px auto 60px;
   gap: 20px;
   display: flex;
   flex-wrap: wrap;
+  box-sizing: border-box;
 }
 
 .my-project-grid-card {
