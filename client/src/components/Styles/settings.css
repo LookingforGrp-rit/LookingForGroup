@@ -272,10 +272,6 @@ input:checked+.slider:before {
   height: 100px;
 }
 
-@media only screen and (max-width: 800px) {
-  /*responsiveness goes here*/
-}
-
 /* Settings page redesign styling */
 #settings-page {
   hr {
