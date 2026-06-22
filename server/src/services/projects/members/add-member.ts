@@ -43,7 +43,6 @@ const addMemberService = async (
           projects: { connect: { projectId } },
           users: { connect: { userId: data.prospectiveMemberId } },
           roles: { connect: { roleId: data.roleId } },
-          profileVisibility: 'private', // hide from profile until invitee accept the invite
         },
         select: {
           ...ProjectMemberSelector,
