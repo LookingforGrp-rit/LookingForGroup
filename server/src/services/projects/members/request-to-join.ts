@@ -1,4 +1,4 @@
-import type { SendProjectInviteInput, EmailInput } from '@looking-for-group/shared';
+import type { RequestToJoinInput, EmailInput } from '@looking-for-group/shared';
 import { createElement } from 'react';
 import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
@@ -15,7 +15,7 @@ type RequestToJoinServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 //
 export const requestToJoinService = async (
   projectId: number,
-  data: SendProjectInviteInput,
+  data: RequestToJoinInput,
 ): Promise<RequestToJoinServiceSuccess | RequestToJoinServiceError> => {
   try {
     //check if request exists

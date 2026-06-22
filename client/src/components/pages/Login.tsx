@@ -90,7 +90,7 @@ const Login: React.FC = () => {
 
     const body = await res.data as { userExists: boolean };
 
-    if (body.userExists && from && from.pathname.includes('invite')) {
+    if (body.userExists && from && from.pathname.includes('acceptInvite')) {
       console.log('returning to previous page: ' + from.pathname);
       navigate(from.pathname, { replace: true });
       return;

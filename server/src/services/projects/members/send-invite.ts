@@ -10,7 +10,7 @@ import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type SendInviteServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type SendInviteServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
+type SendInviteServiceSuccess = ServiceSuccessSubset<'OK'>;
 
 // Used in addMemberService
 // sends an invite to a user to join a project
@@ -124,7 +124,7 @@ const sendInviteService = async (
       },
     });
 
-    return 'NO_CONTENT';
+    return 'OK';
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {

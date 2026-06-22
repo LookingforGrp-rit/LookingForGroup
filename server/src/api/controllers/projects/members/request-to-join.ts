@@ -1,4 +1,4 @@
-import type { ApiResponse, SendProjectInviteInput } from '@looking-for-group/shared';
+import type { ApiResponse, RequestToJoinInput } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { requestToJoinService } from '#services/projects/members/request-to-join.ts';
 
@@ -6,7 +6,7 @@ import { requestToJoinService } from '#services/projects/members/request-to-join
 //A user requests to join the project
 const requestJoinController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id);
-  const memberData: SendProjectInviteInput = req.body as SendProjectInviteInput;
+  const memberData: RequestToJoinInput = req.body as RequestToJoinInput;
 
   const result = await requestToJoinService(projectId, memberData);
 

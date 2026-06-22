@@ -1,5 +1,5 @@
+import type { MemberRequestStatus } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import type { MemberRequestStatus } from '#prisma-models/index.js';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 import addMemberService from './add-member.ts';
 
@@ -66,7 +66,7 @@ const updateMemberRequestStatusService = async (
 
     return 'OK';
   } catch (e) {
-    console.error(`Error in getApplicationsService: ${e as Error}`);
+    console.error(`Error in updateMemberRequestStatusService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }
