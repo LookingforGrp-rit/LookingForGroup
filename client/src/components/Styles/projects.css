@@ -848,6 +848,10 @@ Project Creator and Editor Popup style rules
   /*For scrolling*/
   max-height: 370px;
   overflow-y: auto;
+
+  #tag-category-header{
+    width: 100%;
+  }
 }
 
 #project-editor-tag-wrapper {

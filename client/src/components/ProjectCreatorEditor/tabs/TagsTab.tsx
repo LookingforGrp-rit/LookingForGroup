@@ -362,13 +362,19 @@ export const TagsTab = ({
 
       switch (currentTagsTab){
         case 1:
-          //Genres
+          //Genre
           let game = searchedTags.filter((tag) => (tag as Tag).category === "Game");
           let story = searchedTags.filter((tag) => (tag as Tag).category === "Story");
           let music = searchedTags.filter((tag) => (tag as Tag).category === "Music");
           tagsToDisplay = game.concat(story, music);
           break;
         case 2:
+          //Style
+          let visual = searchedTags.filter((tag) => (tag as Tag).category === "Visual");
+          let structural = searchedTags.filter((tag) => (tag as Tag).category === "Structural");
+          tagsToDisplay = visual.concat(structural);
+          break;
+        case 3:
           //Developer Skills
           let frameworks = searchedTags.filter((tag) => (tag as Tag).category === "Framework");
           let software = searchedTags.filter((tag) => (tag as Tag).category === "Software");
@@ -378,7 +384,7 @@ export const TagsTab = ({
           disciplines = searchedTags.filter((tag) => (tag as Tag).category === "Discipline");
           tagsToDisplay = frameworks.concat(software, codingLanguages, operatingSystems, other, disciplines);
           break;
-        case 3:
+        case 4:
           //Designer Skills
           let design = searchedTags.filter((tag) => (tag as Tag).category === "Design");
           let artAnimation = searchedTags.filter((tag) => (tag as Tag).category === "Art and Animation");
@@ -388,7 +394,7 @@ export const TagsTab = ({
           let writingSoftware = searchedTags.filter((tag) => (tag as Tag).category === "Writing Software");
           tagsToDisplay = design.concat(artAnimation, photoEditing, other, disciplines, writingSoftware);
           break;
-        case 4:
+        case 5:
           //Audio Skills
           let dawAudioEditors = searchedTags.filter((tag) => (tag as Tag).category === "DAW/Audio Editor");
           let notation = searchedTags.filter((tag) => (tag as Tag).category === "Notation");
@@ -397,7 +403,7 @@ export const TagsTab = ({
           other = searchedTags.filter((tag) => (tag as Tag).category === "Other");
           tagsToDisplay = dawAudioEditors.concat(notation, middleware, disciplines, other);
           break;
-        case 5:
+        case 6:
           //Soft Skills
           let personal = searchedTags.filter((tag) => (tag as Tag).category === "Personal");
           let team = searchedTags.filter((tag) => (tag as Tag).category === "Team");
@@ -425,8 +431,11 @@ export const TagsTab = ({
 
         return (
           <Fragment key={id}>
-            {index > 0 && ((array[index - 1] as Tag).category != (array[index] as Tag).category)
-            ? <hr></hr>
+            {index === 0 || ((array[index - 1] as Tag).category != (array[index] as Tag).category)
+            ? <div id="tag-category-header">
+                <p>{(array[index] as Tag).category}</p>
+                <hr></hr>
+              </div>
             : <></>}
             <TagElement
               type={isTag
