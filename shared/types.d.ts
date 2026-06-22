@@ -1,4 +1,5 @@
 import type prisma = require("#prisma-models/index");
+import UUID = require("crypto");
 import type { Request } from "express";
 import type url = require("url");
 
@@ -1091,7 +1092,25 @@ export interface ProjectJob {
  * The preview of what the user sees when they first see a notification
  */
 export interface NotificationPreview {
+  /**
+   * ID of the notification
+   */
+  notificationId: string;
   
+  /**
+   * The time the notification was sent.
+   */
+  timeSent: Date;
+
+  /**
+   * The subject of the notification.
+   */
+  subjectLine: string;
+
+  /**
+   * Whether or not the notification has been read by its receiver.
+   */
+  hasBeenRead: boolean;
 }
 
 // PROJECTS

@@ -13,6 +13,7 @@ import { leaveProjectController } from '#controllers/me/leave-project.ts';
 import addUserMajor from '#controllers/me/majors/add-major.ts';
 import { deleteMajor } from '#controllers/me/majors/delete-major.ts';
 import { getUserMajors } from '#controllers/me/majors/get-majors.ts';
+import { getNotifications } from '#controllers/me/notifications/get-notifications.ts';
 import { reportProjectController } from '#controllers/me/report-proj.ts';
 import { reportUserController } from '#controllers/me/report-user.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
@@ -167,5 +168,8 @@ router.post(
   projectExistsAt('path', 'id'),
   authenticated(reportUserController),
 );
+
+// NOTIFICATIONS ROUTES
+router.get('/notifications', authenticated(getNotifications));
 
 export default router;

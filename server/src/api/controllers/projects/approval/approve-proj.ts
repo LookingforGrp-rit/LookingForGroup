@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import { approveProjectService } from '#services/projects/approval/approve-project.ts';
 
 const approveProjectController = async (request: AuthenticatedRequest, response: Response) => {
-  const projectId = parseInt(request.params.id);
+  const projectId = parseInt(request.params.id as string);
   const result = await approveProjectService(projectId);
 
   if (result === 'INTERNAL_ERROR') {
@@ -32,6 +32,8 @@ const approveProjectController = async (request: AuthenticatedRequest, response:
     data: 'Project approved',
   };
   response.status(204).json(res);
+
+  //const render = compile('../../../notification-templates', {var: 'john', let: 'harry'});
 };
 
 export default approveProjectController;
