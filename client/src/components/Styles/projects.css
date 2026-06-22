@@ -1814,7 +1814,8 @@ button.edit-position-contact .project-member-image {
     border: 3px solid var(--main-text);
     margin: 1vw 0;
     object-fit: cover;
-    height: 400px;
+    max-width: 95%;
+    max-height: 400px;
   }
 
   img {
@@ -1822,7 +1823,7 @@ button.edit-position-contact .project-member-image {
   }
 
   input[type="range"] {
-    width: 400px;
+    max-width: 400px;
     background: none;
     margin: 0.5em;
   }
@@ -1835,6 +1836,11 @@ button.edit-position-contact .project-member-image {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+
+    label{
+      margin-right: 0.5em;
+      font-size: clamp(1.15rem, 3vw, 1.25rem);
+    }
   }
 
   #aspect-row .select-container {
