@@ -57,8 +57,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
 
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
-              <img src={arrow} alt="Left arrow" id="signup-leftArw"></img>
-              Back
+              <svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
             </button>
             <div id="accept-tos-section">
                 <input type="checkbox" id="tos-checkbox" name="tos" onChange={() => setIsChecked(!isChecked)}/>

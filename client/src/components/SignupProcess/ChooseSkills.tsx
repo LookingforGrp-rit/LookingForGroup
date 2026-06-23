@@ -357,8 +357,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 					</div>
 					<div id="signupProcess-btns">
 						<button id="signup-backBtn" onClick={onBack}>
-							<img src={arrow} alt="Left arrow" id="signup-leftArw"></img>
-							Back
+							<svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
 						</button>
 						<button
 							id="signup-nextBtn"
