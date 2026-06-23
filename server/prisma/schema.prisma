@@ -321,15 +321,15 @@ model Users {
   @@map("users")
 }
 model JobSkills {
-  skillId    Int          @id @default(autoincrement()) @map("skill_id")
+  skillId    Int          @map("skill_id")
   jobId      Int          @map("job_id")
-  label      String       @db.VarChar(50)
-  type       String       @db.VarChar(50)
-  category   String?      @db.VarChar(50)
-  skills     Skills       @relation(fields: [skillId], references: [skillId], onDelete: NoAction, map: "FK_job_skills_skills")
-  jobs       Jobs         @relation(fields: [skillId], references: [jobId])
+  proficiency SkillProficiency
+  skill      Skills       @relation(fields: [skillId], references: [skillId], onDelete: NoAction, map: "FK_job_skills_skills")
+  jobs       Jobs         @relation(fields: [jobId], references: [jobId])
 
-  @@unique([label, type])
+  @@id([jobId, skillId])
+  @@index([skillId], map: "FK_job_skills_skills")
+  @@index([jobId], map: "FK_job_skills_jobs")
   @@map("job_skills")
 }
 
@@ -337,7 +337,7 @@ model Skills {
   skillId    Int          @id @default(autoincrement()) @map("skill_id")
   label      String       @db.VarChar(50)
   type       String       @db.VarChar(50)
-  category   String?       @db.VarChar(50)
+  category   String?      @db.VarChar(50)
   userSkills UserSkills[]
   jobSkills  JobSkills[]
 

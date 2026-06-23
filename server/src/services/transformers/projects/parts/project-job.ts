@@ -3,6 +3,7 @@ import prisma from '#config/prisma.ts';
 import { ProjectJobSelector } from '#services/selectors/projects/parts/project-job.ts';
 import { transformRole } from '#services/transformers/datasets/role.ts';
 import { transformUserToPreview } from '#services/transformers/users/user-preview.ts';
+import { transformJobSkill } from './job-skill.ts';
 
 //sample project from prisma to be mapped
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -21,6 +22,7 @@ export const transformProjectJob = (
     contact: { users },
     createdAt,
     description,
+    jobSkills,
     duration,
     jobId,
     location,
@@ -33,6 +35,7 @@ export const transformProjectJob = (
     compensation,
     createdAt,
     description,
+    jobSkills: jobSkills.map((s) => transformJobSkill(projectId, jobId, s)),
     contact: transformUserToPreview(users),
     duration,
     jobId,

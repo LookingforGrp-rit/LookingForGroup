@@ -299,7 +299,12 @@ export interface JobSkill extends Skill {
   /**
    * The proficiency in the skill the job is searching for
    */
-  proficiency: SkillProficiency; //more hardcoding until the rest of the stuff exists for this :cinema:
+  proficiency: SkillProficiency;
+
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
 
   //anything else we would want these to have would go in here
 
@@ -1145,11 +1150,6 @@ export interface ProjectDetail extends ProjectPreview {
   projectSocials: ProjectSocial[];
 
   /**
-   * The open job positions the project is looking to fill
-   */
-  jobs: ProjectJob[];
-
-  /**
    * All members of the project, including the creator
    */
   members: ProjectMember[];
@@ -1198,6 +1198,11 @@ export interface ProjectPreview {
    * The creator of the project
    */
   owner: UserPreview;
+
+  /**
+   * The open job positions the project is looking to fill
+   */
+  jobs: ProjectJob[];
 
   /**
    * The project thumbnail, null if unset
@@ -1497,6 +1502,9 @@ export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
  * Data required to add a skill to a project
  */
 export type AddJobSkillInput = Pick<JobSkill, "skillId" | "proficiency">
+
+export type UpdateJobSkillInput = Partial<Pick<JobSkill, "proficiency"> //more things if we want to add more things
+>;
 
 /**
  * Data required to filter request
