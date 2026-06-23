@@ -486,9 +486,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 value: (member as PendingProjectMember).localId as number,
               },
               data: {
-                inviteeUserId: (member as PendingProjectMember).user?.userId as number,
+                prospectiveMemberId: (member as PendingProjectMember).user?.userId as number,
                 // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
-                inviterUserId: (currentUser?.userId ?? modifiedProject.owner?.userId) as number,
+                ownerUserId: (currentUser?.userId ?? modifiedProject.owner?.userId) as number,
                 roleId: member.role?.roleId as number,
                 message: projectMessages[modifiedProject.members.indexOf(member)],
               }
