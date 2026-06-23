@@ -37,7 +37,7 @@ interface JoinEmailProps {
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 const arrowUrl = 'https://lookingforgrp.com/api/images/arrow.png';
 
-const InviteEmail = ({
+const RequestEmail = ({
   receiverName,
   receiverImage,
   senderName,
@@ -278,4 +278,4 @@ const InviteEmail = ({
   );
 };
 
-export default InviteEmail;
+export default RequestEmail;
