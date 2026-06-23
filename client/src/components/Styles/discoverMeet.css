@@ -1236,6 +1236,32 @@ Filters / Tags Style Rules
   text-shadow: 0 0 0.65px currentColor, 0 0 0.65px currentColor;
 }
 
+.filter-tab.selected {
+  background-color: var(--header-color);
+}
+
+
+.filter-tab {
+  margin-bottom: 0px;
+  padding-top: 2% !important;
+  padding-bottom: 2% !important;
+  padding-left: 1%;
+  padding-right: 1%;
+  background-color: var(--header-color);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  word-break: break-word;
+}
+
+#filter-divider{
+  height: 2px;
+  min-height: 2px;
+  width: 100%;
+  border: none;
+  background-color: var(--header-color);
+  margin-top: 0;
+}
+
 #filter-tags {
   display: flex !important;
   flex-wrap: wrap !important;
