@@ -243,7 +243,7 @@ used for the more options dropdown menu and notifications
   flex-direction: column;
   align-items: center;
   max-width: 100%;
-  margin: 0 auto;
+  margin: 0 auto 50px;
   width: calc(100% - 40px);
 }
 
@@ -546,6 +546,10 @@ orange-button class makes the button orange, white-button class makes the button
 @media screen and (max-width: 700px) {
   .project-back-btn {
     margin: 10px 0px;
+  }
+  
+  #main {
+    margin: 0 auto 100px;
   }
 }
 

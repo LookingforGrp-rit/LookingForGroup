@@ -1163,7 +1163,7 @@ New Profile page style rules
 */
 /* #region new profile page */
 #profile-page-content {
-  margin: 0 auto 50px;
+  margin: 0 auto;
   width: 100%;
 }
 
@@ -1471,7 +1471,7 @@ New Profile page style rules
 @media only screen and (max-width: 700px) {
 
   #profile-page-content {
-    margin: 0 20px 100px;
+    margin: 0 20px;
   }
 }
 
