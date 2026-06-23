@@ -579,8 +579,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               }
               await editUser({ profileImage: profileImage });
               setShowGetStartedModal(false);
-              // The user chose "Create Project", so drop them straight into the editor.
-              navigate(`${paths.routes.MYPROJECTS}?create=1`);
+              navigate(paths.routes.MYPROJECTS);
             }}
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected

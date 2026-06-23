@@ -1,7 +1,7 @@
 import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useContext, ChangeEvent, FocusEvent } from 'react';
+import { useState, useEffect, useContext, ChangeEvent } from 'react';
 import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
@@ -29,7 +29,6 @@ type HeaderProps = {
   hideSearchBar? : boolean;
   hideBackButton? : boolean;
   setCurrentUserId?: (data: MePrivate | undefined) => Promise<void>;
-  searchOnFocus? : (e: FocusEvent<HTMLInputElement>) => void;
 };
 
 /**
@@ -47,7 +46,7 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, hideBackButton = true, setCurrentUserId, searchOnFocus}) => {
+export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, hideBackButton = true, setCurrentUserId}) => {
   // User info state
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -172,7 +171,6 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
             onSearch={onSearch}
             value={value}
             onChange={onChange}
-            onFocus={searchOnFocus}
           />
         </div>
       )}

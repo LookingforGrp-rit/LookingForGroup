@@ -100,7 +100,6 @@ const ImageUploader = ({
     if (keepImage && (file.type === "image/png" || file.type === "image/jpeg")) {
       setCropFile(file);
       fileReader.readAsDataURL(file);
-      setCropImg(fileReader.result as string)
     } else {
       alert("File type not supported: Please use .PNG or .JPG");
     }
@@ -238,8 +237,7 @@ const ImageUploader = ({
         </div>
         <div className="confirm-project-crop">
           <PopupButton buttonId="project-crop-save" callback={sendImg} doNotClose={() => true}>Crop Image</PopupButton>
-          {/* If the action is canceled, no picture is uploaded */}
-          <PopupButton buttonId="project-crop-cancel" callback={() => setCropImg(undefined)} className="project-info-buttons" doNotClose={() => true}>Cancel</PopupButton>
+          <PopupButton buttonId="project-crop-cancel" callback={() => setCropImg(undefined)} className="project-info-buttons" doNotClose={() => true}>Skip</PopupButton>
         </div>
         </div>
       </PopupContent>: ""}
@@ -249,9 +247,7 @@ const ImageUploader = ({
   const profileVariant = (
     <label htmlFor="image-uploader" id="profile-image-uploader" className="drop-area">
       {cropPopup}
-      <input type="file" name="image" id="image-uploader" 
-      accept=".png, .jpg" ref={inputRef} 
-      onChange={handleImgChange} disabled={cropImg !== undefined} hidden />
+      <input type="file" name="image" id="image-uploader" accept=".png, .jpg" ref={inputRef} onChange={handleImgChange} hidden />
       {initialImageFile ?
         <div id="img-view">
           <FileImage
@@ -298,7 +294,6 @@ const ImageUploader = ({
         multiple accept=".png, .jpg"
         ref={inputRef}
         onChange={handleImgChange}
-        disabled={cropImg !== undefined}
         hidden
       />
       <div id="img-view" className="project-uploader">

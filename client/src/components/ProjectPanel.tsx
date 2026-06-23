@@ -170,14 +170,14 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
             <p className={`follow-amt ${isFollowing ? 'following' : ''}`}>
               {formatFollowCount(followCount)}
             </p>
-            
+            <a href="javascript:void(0)">
             {isFollowing ? (
               <ThemeIcon
                 width={28}
                 height={25}
                 id={"heart-filled"}
                 ariaLabel="following"
-                onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
               />
             ) : (
               <ThemeIcon
@@ -185,10 +185,10 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
                 height={25}
                 id={"heart-empty"}
                 ariaLabel="following"
-                onClick={(e) => {e.stopPropagation(); e.preventDefault(); handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>);}}
+                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
               />
             )}
-            
+            </a>
           </div>
           <ProjectPanelMeta project={project}/>
         </div>
