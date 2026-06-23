@@ -1255,7 +1255,7 @@ Filters / Tags Style Rules
   padding-bottom: 2% !important;
   padding-left: 1%;
   padding-right: 1%;
-  background-color: var(--second-tab-color);
+  background-color: var(--header-color);
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   word-break: break-word;
