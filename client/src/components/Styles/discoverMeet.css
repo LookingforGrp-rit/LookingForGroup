@@ -561,12 +561,6 @@ Filters / Tags Style Rules
 }
 
 @media only screen and (max-width: 800px) {
-  .discover-page {
-    #discover-filters-parent {
-      top: -35px;
-    }
-  }
-
   #discover-filters-parent {
     padding: 0;
   }

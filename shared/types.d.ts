@@ -1393,6 +1393,18 @@ export type CreateProjectOwnerInput = {
 export type SendProjectInviteInput = Required<CreateProjectMemberInput>;
 
 /**
+ * Data required to request to join a project
+ */
+export type RequestToJoinInput = Required<CreateProjectMemberInput>;
+
+/**
+ * Data required to update member request
+ */
+export type UpdateMemberRequestInput = {
+  newStatus: MemberRequestStatus,
+};
+
+/**
  * Data required to send invitation email to user
  */
 export type EmailInput = {
