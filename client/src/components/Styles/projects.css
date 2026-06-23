@@ -22,20 +22,8 @@ Project Panel component style rules
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   justify-content: center;
   align-items: center;
-  width: calc(100% - 40px - 10px);
+  width: calc(100% - 55px);
   margin: 0 auto;
-
-  /* cancels out offset of scrollbar */
-  translate: 5px 0;
-}
-
-@media screen and (max-width: 800px)
-{
-  #discover-panel-box {
-    margin: 0;
-    width: 100%;
-    translate: 0;
-  }
 }
 
 /* Cheap way to work around the padding */
@@ -43,6 +31,8 @@ Project Panel component style rules
   width: 100%;
   height: 100%;
   gap: 10px;
+  /* removes masonry built-in scroll bar */
+  overflow-y: hidden !important;
 }
 
 .project-link {
@@ -400,6 +390,19 @@ Project Panel component style rules
 @media only screen and (max-width: 700px) {
   .projects-banner-outer {
     display: none;
+  }
+}
+
+@media screen and (max-width: 800px)
+{
+  #discover-panel-box {
+    margin: 0;
+    width: 100%;
+  }
+  .masonry > * > *
+  {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
@@ -1815,6 +1818,12 @@ button.edit-position-contact .project-member-image {
   border: none;
 }
 
+/* hides horizontal scroll bar for the crop image popup */
+.popup:has(.project-crop)
+{
+  overflow-x: hidden;
+}
+
 .project-crop {
   width: 100%;
   text-align: center;
@@ -1827,7 +1836,8 @@ button.edit-position-contact .project-member-image {
   }
 
   #canvas {
-    border: 3px solid var(--main-text);
+    border: 3px solid var(--primary-color);
+    border-radius: 10px;
     margin: 1vw 0;
     object-fit: cover;
     max-width: 95%;

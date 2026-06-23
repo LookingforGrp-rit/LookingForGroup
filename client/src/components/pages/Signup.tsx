@@ -161,7 +161,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         // return them to it; otherwise go to the home page.
         const from = routerLocation.state?.from;
         const fromPath = typeof from === 'string' ? from : from?.pathname;
-        if (fromPath && fromPath.includes('invite')) {
+        if (fromPath && fromPath.includes('acceptInvite')) {
           navigate(fromPath, { replace: true });
         } else {
           navigate(paths.routes.HOME);
@@ -579,7 +579,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               }
               await editUser({ profileImage: profileImage });
               setShowGetStartedModal(false);
-              navigate(paths.routes.MYPROJECTS);
+              // The user chose "Create Project", so drop them straight into the editor.
+              navigate(`${paths.routes.MYPROJECTS}?create=1`);
             }}
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected

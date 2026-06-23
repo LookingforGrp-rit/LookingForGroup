@@ -47,7 +47,7 @@ const sendEmail = async (
       from:
         envConfig.env === 'development'
           ? `"${email.sender.firstName} ${email.sender.lastName}" <${email.sender.ritEmail}>`
-          : `"Looking For Group" <lfg@lfg.gccis.rit.edu>`,
+          : `"Looking For Group" <no-reply@lookingforgrp.com>`,
       replyTo: `"${email.sender.firstName} ${email.sender.lastName}" <${email.sender.ritEmail}>`, // sender
       to: `"${email.receiver.firstName} ${email.receiver.lastName}" <${email.receiver.ritEmail}>`, // receiver
       subject: email.subject, // subject line
