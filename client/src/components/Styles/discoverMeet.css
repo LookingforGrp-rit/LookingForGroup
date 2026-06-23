@@ -556,8 +556,12 @@ Filters / Tags Style Rules
   z-index: 1;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
-  width: 100%;
-  padding: 0 40px;
+  /* Extend the sticky background 8px past #main on each side so cards don't
+     bleed at the edges. The negative margin + extra padding keep the filter
+     row in the exact same position; only the opaque background grows. */
+  width: calc(100% + 16px);
+  margin: 0 -8px;
+  padding: 0 48px;
 }
 
 @media only screen and (max-width: 800px) {
@@ -1297,7 +1301,7 @@ Filters / Tags Style Rules
   }
 
   #filter-tabs {
-    gap: 6px 16px !important;
+    gap: 6px 65px !important;
     margin: 10px auto 0 auto !important;
     padding-bottom: 8px !important;
   }

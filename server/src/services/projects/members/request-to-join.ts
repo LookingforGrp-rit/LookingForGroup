@@ -1,4 +1,4 @@
-import type { SendProjectInviteInput, EmailInput } from '@looking-for-group/shared';
+import type { RequestToJoinInput, EmailInput } from '@looking-for-group/shared';
 import { createElement } from 'react';
 import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
@@ -10,12 +10,12 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 import getProjectByIdService from '../get-proj-id.ts';
 
 type RequestToJoinServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type RequestToJoinServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
+type RequestToJoinServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-//
+// POST api/projects/:id/members/request-to-join
 export const requestToJoinService = async (
   projectId: number,
-  data: SendProjectInviteInput,
+  data: RequestToJoinInput,
 ): Promise<RequestToJoinServiceSuccess | RequestToJoinServiceError> => {
   try {
     //check if request exists
@@ -129,7 +129,7 @@ export const requestToJoinService = async (
       },
     });
 
-    return 'NO_CONTENT';
+    return 'OK';
   } catch (e) {
     console.error(`There was an error in requestToJoinService: `, e);
     return 'INTERNAL_ERROR';

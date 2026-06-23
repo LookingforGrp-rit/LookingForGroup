@@ -100,3 +100,11 @@ components:
         - Unpaid
         - Paid
       example: Unpaid
+
+    MemberRequestStatus:
+      type: string
+      enum:
+        - Pending
+        - Accepted
+        - Declined
+      example: Pending

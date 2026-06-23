@@ -1,6 +1,9 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  UpdateMemberRequestInput,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
-import type { MemberRequestStatus } from '#prisma-models/index.js';
 import updateMemberRequestStatusService from '#services/projects/members/update-member-request.ts';
 
 //DELETE api/projects/members/requests/{requestId}
@@ -9,8 +12,7 @@ const updateMemberRequest = async (req: AuthenticatedRequest, res: Response) => 
   const requestId = parseInt(req.params.id);
   const userId = req.currentUser.userId;
 
-  type BodyContent = { newStatus: MemberRequestStatus };
-  const body = req.body as BodyContent;
+  const body = req.body as UpdateMemberRequestInput;
 
   const result = await updateMemberRequestStatusService(requestId, userId, body.newStatus);
 
