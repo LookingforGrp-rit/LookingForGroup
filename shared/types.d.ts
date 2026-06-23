@@ -1,23 +1,16 @@
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
+export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio";
 export type TagType =
   | "Other"
-  | "Developer"
-  | "Designer"
-  | "Soft"
-  | "Audio"
   | 'Style'
   | 'Genre'
   | "Purpose"
   | "Project Type"
   | "Role"
   | "Major"
-  | "Developer Skill"
-  | "Designer Skill"
-  | "Soft Skill"
-  | "Audio Skill";
+  | "Game Engine"
 //wow.
 export type GenreCategory = 'Game' | "Story" | 'Music';
 export type StyleCategory = 'Visual' | 'Film/Video';
@@ -27,8 +20,8 @@ export type DeveloperCategory = 'Discipline' | 'Framework' | 'Software' | 'Codin
 export type SoftCategory = 'Discipline' | 'Personal' | 'Team';
 export type AudioCategory = 'Discipline' | 'DAW/Audio Editor' | 'Notation' | 'Middleware';
 export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware'
-export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory;
-export type TagCategory = GenreCategory | StyleCategory | GameEngine;
+export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
+export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
   export type RitStatus = 
   | "Freshman"
   | "Sophomore"
