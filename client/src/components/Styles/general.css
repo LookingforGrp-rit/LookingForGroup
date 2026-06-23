@@ -945,6 +945,7 @@ Page popup style rules
   opacity: 100%;
   z-index: 5;
   /* height: 849px; */
+
 }
 
 .popup:has(.small-popup) {
@@ -968,6 +969,7 @@ Page popup style rules
   z-index: 5;
   padding: 24px 56px;
   box-sizing: border-box;
+  
 
   .confirm-msg {
     width: 80%;
