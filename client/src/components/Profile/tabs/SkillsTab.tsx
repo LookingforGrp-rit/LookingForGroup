@@ -7,7 +7,7 @@ import { useState, useEffect, useMemo, useCallback, Fragment } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
-import { MySkill, Skill, MePrivate, TagType } from "@looking-for-group/shared";
+import { MySkill, Skill, MePrivate, TagType, SkillType } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
@@ -209,7 +209,10 @@ export const SkillsTab = ({
   const renderSkills = useCallback(() => {
     // no search item, render all skills
     if (searchedSkills && searchedSkills.length !== 0) {
-      return searchedSkills.map((skill) => (
+
+      let skillsToDisplay = searchedSkills;
+
+      return skillsToDisplay.map((skill) => (
         <Tag
           key={skill.skillId}
           onClick={() => handleSkillToggle(skill.skillId)}
@@ -381,9 +384,10 @@ export const SkillsTab = ({
                   <SortableTag
                     id={skill.skillId}
                     tag={{
-                      tagId: skill.skillId,
+                      skillId: skill.skillId,
                       label: skill.label,
-                      type: skill.type as TagType,
+                      type: skill.type as SkillType,
+                      category: skill.category
                     }}
                     onRemove={handleSkillToggle}
                   />
