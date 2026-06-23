@@ -60,6 +60,7 @@ const Profile = (userProfile: any) => {
 
   // stores all followed users to display on personal user profile
   const [followedProfilesList, setFollowedProfilesList] = useState<UserPreview[]>([]);
+  const [followedProjectsList, setFollowedProjectsList] = useState<ProjectPreview[]>([]);
 
   //boolean if likes tab is displaying projects
   const [isProjectLikesTab, setIsProjectLikesTab] = useState<boolean>(true);
@@ -235,25 +236,36 @@ const Profile = (userProfile: any) => {
   // viewing and that it isn't their own profile. Used to populate the
   // "Invite to project" popup.
   useEffect(() => {
+    if (userID === undefined || userID === -1) return;
     if (isUsersProfile) {
-      //if this is the user's profile, display their liked users in the liked section
+      //if this is the user's profile, display their liked profiles/projects in the liked section
       const displayFollowedProfiles = async () => {
         const tempFollowProfileArray = [];
-        if (userID !== -1 && userID !== undefined) {
-          const followings = (await getUserFollowing(userID)).data?.users;
-          if (followings !== undefined) {
-            for (const follower of followings) {
-              tempFollowProfileArray.push(follower.user);
-            }
+        const profileFollowings = (await getUserFollowing(userID)).data?.users;
+        if (profileFollowings !== undefined) {
+          for (const follower of profileFollowings) {
+            tempFollowProfileArray.push(follower.user);
           }
-          setFollowedProfilesList(tempFollowProfileArray);
         }
+        setFollowedProfilesList(tempFollowProfileArray);
       };
+      //get followed projects to display
+      const displayFollowedProjects = async () => {
+        const tempFollowProjectArray = [];
+        const projectFollowings = ((await getProjectFollowing(userID)).data?.projects);
+        if (projectFollowings !== undefined) {
+          for (const follower of projectFollowings) {
+            tempFollowProjectArray.push(follower.project);
+          }
+        }
+        setFollowedProjectsList(tempFollowProjectArray);
+        console.log((await getProjectFollowing(userID)).data?.projects);
+      }
       displayFollowedProfiles();
+      displayFollowedProjects();
       switchTab(true);
       return;
     }
-    if (userID === undefined || userID === -1) return;
 
     let cancelled = false;
     const loadInviteOptions = async () => {
@@ -711,7 +723,7 @@ const Profile = (userProfile: any) => {
 
                         <PanelBox
                           category={"projects"}
-                          itemList={followedProfilesList}
+                          itemList={followedProjectsList}
                           userId={userID as number}
                         />
                         : <p>You have no saved projects!</p>)
