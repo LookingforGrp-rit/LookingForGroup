@@ -18,27 +18,21 @@ Project Panel component style rules
 /* #region project-panel */
 
 #discover-panel-box {
-  width: 90%;
-  margin: 0 auto 20px;
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
   justify-content: center;
+  align-items: center;
+  width: calc(100% - 55px);
+  margin: 0 auto;
 }
-
-/*
-@media only screen and (max-width: 700px) {
-  #discover-panel-box {
-    margin: 0 20px;
-  }
-}
-*/
 
 /* Cheap way to work around the padding */
 .masonry {
-  margin: 0 -10px;
+  width: 100%;
   height: 100%;
-  width: calc(100% + 20px);
+  gap: 10px;
+  /* removes masonry built-in scroll bar */
+  overflow-y: hidden !important;
 }
 
 .project-link {
@@ -46,6 +40,13 @@ Project Panel component style rules
   cursor: pointer !important;
 }
 
+/* each item in the masonry --- goes masonry (parent) -> virtuoso list (child) -> data index (child) */
+.masonry > * > *
+{
+  justify-self: center;
+  padding: 10px;
+}
+/* not in use
 .project-panel-box {
   display: grid;
   grid-auto-flow: row;
@@ -55,7 +56,7 @@ Project Panel component style rules
   gap: 20px;
   width: 100%;
   padding-bottom: 10px;
-}
+}*/
 
 .add-video {
   height: 100%;
@@ -85,10 +86,11 @@ Project Panel component style rules
   max-width: none;
   overflow: hidden;
   text-decoration: none;
+  margin: 10px 0;
 
   .project-panel-meta {
+    grid-area: tags;
     position: relative;
-    padding: 0 20px 12px 20px;
     margin: 0;
     flex-shrink: 0;
     display: flex;
@@ -156,16 +158,22 @@ Project Panel component style rules
     background-color: var(--header-color);
   }
 
-  .project-title-likes {
+  .project-title-likes-tabs { 
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
-    display: flex;
+    display: grid;
+    grid-template:  
+    'title heart' 1fr
+    'tags heart' auto / 5fr 1fr;
+    row-gap: 4px;
+    /* display: flex;
     flex-direction: row;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; */
 
     h2 {
+      grid-area: title;
       padding: 0;
       margin: 0;
       font-size: 1.375rem;
@@ -182,11 +190,14 @@ Project Panel component style rules
     }
 
     .project-likes {
+      grid-area: heart;
       display: flex;
       flex-direction: row-reverse;
       gap: 8px;
-      align-items: center;
+      align-items: start;
       padding-left: 8px;
+      height: 100%;
+      padding-top: 15px;
 
       .follow-amt {
         margin: 0;
@@ -201,6 +212,7 @@ Project Panel component style rules
 
       svg {
         cursor: pointer;
+        transform: scale(1.2);
       }
 
       .follow-amt.following {
@@ -213,10 +225,32 @@ Project Panel component style rules
 
       #heart-empty:hover,
       #heart-filled:hover {
-        transform: scale(1.2);
+        transform: scale(1.6);
+      }
+      
+      p {
+        padding-top: 6px;
       }
 
+    }
+  }
 
+  @media only screen and (max-width: 800px) {
+    .project-title-likes-tabs { 
+      grid-template:  
+      'title heart' 1fr
+      'tags heart' auto / 4fr 1fr;
+
+      .project-likes {
+
+        a {
+          padding-right: 4px;
+        }
+
+        svg {
+          transform: scale(1.6);
+        }
+      }
     }
   }
 
@@ -356,6 +390,19 @@ Project Panel component style rules
 @media only screen and (max-width: 700px) {
   .projects-banner-outer {
     display: none;
+  }
+}
+
+@media screen and (max-width: 800px)
+{
+  #discover-panel-box {
+    margin: 0;
+    width: 100%;
+  }
+  .masonry > * > *
+  {
+    padding-left: 0;
+    padding-right: 0;
   }
 }
 
@@ -994,8 +1041,8 @@ Project Creator and Editor Popup style rules
   grid-area: select;
   display: flex;
   flex-direction: column;
-  max-height: 347px;
-  padding-bottom: 26px;
+  max-height: 423px;
+  padding: 26px 31px;
 
   .error {
     margin-top: 15px;
@@ -1803,6 +1850,12 @@ button.edit-position-contact .project-member-image {
   border: none;
 }
 
+/* hides horizontal scroll bar for the crop image popup */
+.popup:has(.project-crop)
+{
+  overflow-x: hidden;
+}
+
 .project-crop {
   width: 100%;
   text-align: center;
@@ -1815,10 +1868,12 @@ button.edit-position-contact .project-member-image {
   }
 
   #canvas {
-    border: 3px solid var(--main-text);
+    border: 3px solid var(--primary-color);
+    border-radius: 10px;
     margin: 1vw 0;
     object-fit: cover;
-    height: 400px;
+    max-width: 95%;
+    max-height: 400px;
   }
 
   img {
@@ -1826,7 +1881,7 @@ button.edit-position-contact .project-member-image {
   }
 
   input[type="range"] {
-    width: 400px;
+    max-width: 400px;
     background: none;
     margin: 0.5em;
   }
@@ -1839,6 +1894,11 @@ button.edit-position-contact .project-member-image {
     flex-direction: row;
     justify-content: center;
     align-items: center;
+
+    label{
+      margin-right: 0.5em;
+      font-size: clamp(1.15rem, 3vw, 1.25rem);
+    }
   }
 
   #aspect-row .select-container {
@@ -3893,13 +3953,14 @@ My projects page style rules
 
 .projects-banner-outer {
   box-sizing: border-box;
-  margin: 0 5vw;
+  margin: 0 auto;
+  width: calc(100% - 120px);
 }
 
 .my-projects-header-row {
   box-sizing: border-box;
-  width: auto;
-  margin: 30px 5vw;
+  width: calc(100% - 120px);
+  margin: 30px auto;
 
   display: flex;
   flex-direction: row;
@@ -3955,9 +4016,9 @@ My projects page style rules
 
 @media only screen and (max-width: 700px) {
   .my-projects-header-row {
-    margin: 30px 5vw;
+    margin: 30px auto;
     flex-direction: column;
-    max-width: calc(100vw - 50px);
+    width: calc(100% - 40px);
     align-items: baseline;
   }
 
@@ -4147,11 +4208,12 @@ My projects page style rules
 }
 
 .my-projects-grid {
-  width: 90%;
+  width: calc(100% - 80px);
   margin: 30px auto 60px;
   gap: 20px;
   display: flex;
   flex-wrap: wrap;
+  box-sizing: border-box;
 }
 
 .my-project-grid-card {

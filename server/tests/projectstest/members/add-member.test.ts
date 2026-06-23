@@ -34,8 +34,8 @@ vi.mock('#services/projects/members/send-invite.ts', () => ({
 }));
 
 const data: CreateProjectMemberInput = {
-  inviterUserId: 1,
-  inviteeUserId: 29,
+  ownerUserId: 1,
+  prospectiveMemberId: 29,
   roleId: 31,
   message: '',
 };
@@ -67,7 +67,7 @@ describe('addProjectMemberService', async () => {
 
   it('returns the member when add is successful', async () => {
     vi.mocked(prisma.members.create).mockResolvedValue(testMember);
-    vi.mocked(sendInviteService).mockResolvedValue('NO_CONTENT');
+    vi.mocked(sendInviteService).mockResolvedValue('OK');
     vi.mocked(transformProjectMember).mockReturnValue(transformedMember);
     const result = await addMemberService(1, data);
 

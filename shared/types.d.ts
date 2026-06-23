@@ -9,7 +9,7 @@ export type TagType =
   | "Designer"
   | "Soft"
   | "Audio"
-  | 'Form'
+  | 'Style'
   | 'Genre'
   | "Purpose"
   | "Project Type"
@@ -55,6 +55,7 @@ export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
 export type JobDuration = "Days" | "Weeks" | "Months" | "Semesters" | "Years";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
+export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
 export type Visibility = "public" | "private";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
@@ -1372,8 +1373,8 @@ export type ReorderProjectImagesInput = {
  * Data required to add a user as a member of a project, role defaults to "Member"
  */
 export type CreateProjectMemberInput = {
-  inviterUserId: number;
-  inviteeUserId: number;
+  ownerUserId: number;
+  prospectiveMemberId: number;
   roleId: number;
   message?: string;
 };
@@ -1389,7 +1390,19 @@ export type CreateProjectOwnerInput = {
 /**
  * Data required to invite a user to join a project
  */
-export type SendProjectInviteInput = Required<CreateProjectMemberInput>;
+export type SendProjectInviteInput = CreateProjectMemberInput;
+
+/**
+ * Data required to request to join a project
+ */
+export type RequestToJoinInput = CreateProjectMemberInput;
+
+/**
+ * Data required to update member request
+ */
+export type UpdateMemberRequestInput = {
+  newStatus: MemberRequestStatus,
+};
 
 /**
  * Data required to send invitation email to user
@@ -1409,6 +1422,18 @@ export type UpdateProjectMemberInput = Partial<
   Pick<CreateProjectMemberInput, "roleId">> & {
     profileVisibility?: Visibility;
   };
+
+/**
+ * Data stored in a member request
+ */
+export type MemberRequests = {
+    requestId: number;
+    prospectiveMemberId: number;
+    projectId: number;
+    roleId: number;
+    sentFromProject: boolean;
+    requestStatus: MemberRequestStatus;
+}
 
 /**
  * Data required to add a social media link to a project

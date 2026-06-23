@@ -1757,6 +1757,47 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/paginated/{count}/{id}:
+    get:
+      summary: Get paginated projects
+      tags:
+        - Projects
+      description: Retrieves a list of paginated projects.
+      parameters:
+        - in: path
+          name: count
+          required: true
+          schema:
+            type: integer
+          description: The maximum number of projects to return
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: The project ID cursor. Projects after this ID will be returned. Use 0 to start from the beginning.
+      responses:
+        '200':
+          description: A list of projects
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectPreview'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/projects/{id}:
     get:
       summary: Get project by ID
@@ -2303,6 +2344,348 @@ paths:
                   data:
                     type: object
                     $ref: '#/components/schemas/ProjectMember'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/members/send-invite:
+    post:
+      summary: Send an invite to a prospective member
+      description: Sends an invitation to a prospective member
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMemberRequestInput'
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    nullable: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/members/request-to-join:
+    post:
+      summary: Request to join from a prospective member
+      description: Sends a request to join a project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMemberRequestInput'
+      responses:
+        '201':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 201
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    nullable: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/members/applications:
+    get:
+      summary: Gets all member request applications to a project
+      description: Gets all applications to a project
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CreateMemberRequestInput'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/members/invitations:
+    get:
+      summary: Gets all member request invitations for a user
+      description: Gets all invitations for a user
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/CreateMemberRequestInput'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/members/requests/{id}:
+    get:
+      summary: Gets a member request
+      description: Checks that the user is the receiver of the request, then updates it if it is
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the request
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectMemberRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    patch:
+      summary: Updates a member request
+      description: Checks that the user is the receiver of the request, then updates it if it is
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the request
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                newStatus:
+                  type: string
+                  enum:
+                    - Accepted
+                    - Declined
+                    - Pending
+                  example: Pending
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    nullable: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Deletes a member request
+      description: Checks that the user is the sender of the request, then deletes it if it is
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the request
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    nullable: true
+                    example: null
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '403':
+          $ref: '#/components/responses/Forbidden'
         '500':
           $ref: '#/components/responses/InternalServerError'
 
@@ -4099,6 +4482,8 @@ components:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectFollower'
     ProjectMember:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectMember'
+    ProjectMemberRequest:
+      $ref: 'schemas/projects.yaml#/components/schemas/ProjectMemberRequest'
     ProjectSocial:
       $ref: 'schemas/projects.yaml#/components/schemas/ProjectSocial'
     ProjectTag:
@@ -4156,6 +4541,8 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/UpdateProjectJobInput'
     CreateProjectVideoInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectVideoInput'
+    CreateMemberRequestInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/CreateMemberRequestInput'
 
     ErrorMessage:
       type: object

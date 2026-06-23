@@ -1,23 +1,22 @@
-import type { SendProjectInviteInput, EmailInput } from '@looking-for-group/shared';
+import type { RequestToJoinInput, EmailInput } from '@looking-for-group/shared';
 import { createElement } from 'react';
 import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
 import InviteEmail from '#email-templates/invite-email.ts';
 import getRolesService from '#services/datasets/get-roles.ts';
 import { sendEmail } from '#services/mailer.ts';
-import getProjectByIdService from '#services/projects/get-proj-id.ts';
 import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
+import getProjectByIdService from '../get-proj-id.ts';
 
-type SendInviteServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type SendInviteServiceSuccess = ServiceSuccessSubset<'OK'>;
+type RequestToJoinServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
+type RequestToJoinServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-// POST api/projects/:id/members/send-invite
-// Sends an invite to a user to join a project
-const sendInviteService = async (
+// POST api/projects/:id/members/request-to-join
+export const requestToJoinService = async (
   projectId: number,
-  data: SendProjectInviteInput,
-): Promise<SendInviteServiceSuccess | SendInviteServiceError> => {
+  data: RequestToJoinInput,
+): Promise<RequestToJoinServiceSuccess | RequestToJoinServiceError> => {
   try {
     //check if request exists
     const req = await prisma.memberRequests.findFirst({
@@ -29,6 +28,7 @@ const sendInviteService = async (
     });
     if (req) return 'CONFLICT';
 
+    // grabbing the requested role
     const roles = await getRolesService();
 
     if (roles === 'INTERNAL_ERROR') {
@@ -41,47 +41,40 @@ const sendInviteService = async (
       return 'NOT_FOUND';
     }
 
-    const inviter = await prisma.users.findUnique({
-      where: { userId: data.ownerUserId },
-      select: UserEmailSelector,
-    });
-
-    if (!inviter) {
-      return 'NOT_FOUND';
-    }
-
-    const invitee = await prisma.users.findUnique({
+    // grabbing the requester
+    const requester = await prisma.users.findUnique({
       where: { userId: data.prospectiveMemberId },
       select: UserEmailSelector,
     });
 
-    if (!invitee) {
+    if (!requester) {
       return 'NOT_FOUND';
     }
 
+    // grabbing the project owner
+    const owner = await prisma.users.findUnique({
+      where: { userId: data.ownerUserId },
+      select: UserEmailSelector,
+    });
+
+    if (!owner) {
+      return 'NOT_FOUND';
+    }
+
+    // grabbing the project
     const project = await getProjectByIdService(projectId);
 
-    if (project === 'INTERNAL_ERROR' || project === 'NOT_FOUND') {
+    if (project === 'NOT_FOUND' || project === 'INTERNAL_ERROR') {
       return project;
     }
 
-    //update db
-    const result = await prisma.memberRequests.create({
-      data: {
-        roleId: data.roleId,
-        prospectiveMemberId: data.prospectiveMemberId,
-        sentFromProject: true,
-        requestStatus: 'Pending',
-        projectId,
-      },
-    });
-
+    //Set up email
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    const inviteUrl = `${clientUrl}/acceptInvite/${String(result.requestId)}`;
+    const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
 
-    const receiverImg = invitee.profileImage
-      ? `https://lookingforgrp.com${invitee.profileImage}`
+    const receiverImg = requester.profileImage
+      ? `https://lookingforgrp.com${requester.profileImage}`
       : 'https://lookingforgrp.com/api/images/blue_frog.png';
 
     const projectImg = project.thumbnail
@@ -94,15 +87,15 @@ const sendInviteService = async (
       await render(
         createElement(InviteEmail, {
           receiverName: {
-            firstName: invitee.firstName,
-            lastName: invitee.lastName,
+            firstName: requester.firstName,
+            lastName: requester.lastName,
           },
           receiverImage: receiverImg,
           senderName: {
-            firstName: inviter.firstName,
-            lastName: inviter.lastName,
+            firstName: owner.firstName,
+            lastName: owner.lastName,
           },
-          senderEmail: inviter.ritEmail,
+          senderEmail: owner.ritEmail,
           senderMessage: msg,
           projectName: project.title,
           projectImage: projectImg,
@@ -114,33 +107,33 @@ const sendInviteService = async (
     const text = toPlainText(html);
 
     const email: EmailInput = {
-      sender: inviter,
-      receiver: invitee,
-      subject: `Invitation to join ${project.title}`,
+      sender: requester,
+      receiver: owner,
+      subject: `Request to join ${project.title}`,
       textBody: text,
       HTMLBody: html,
     };
 
+    //send email
     const emailResult = await sendEmail(email);
     if (emailResult === 'INTERNAL_ERROR') {
       return emailResult;
     }
 
+    //update db
+    await prisma.memberRequests.create({
+      data: {
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+        sentFromProject: false,
+        requestStatus: 'Pending',
+        projectId,
+      },
+    });
+
     return 'OK';
   } catch (e) {
-    if (e instanceof Object && 'code' in e) {
-      if (e.code === 'P2025') {
-        return 'NOT_FOUND';
-      }
-
-      if (e.code === 'P2002') {
-        return 'CONFLICT';
-      }
-    }
-
-    console.error('Error in sendInviteService:', e);
+    console.error(`There was an error in requestToJoinService: `, e);
     return 'INTERNAL_ERROR';
   }
 };
-
-export default sendInviteService;

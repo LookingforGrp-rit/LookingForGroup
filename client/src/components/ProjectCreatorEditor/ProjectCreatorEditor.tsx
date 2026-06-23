@@ -1,4 +1,4 @@
-import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback} from "react";
+import { useState, useRef, FC, Dispatch, SetStateAction, useEffect, useCallback } from "react";
 import { Popup, PopupButton, PopupContent } from "../Popup";
 import { GeneralTab } from "./tabs/GeneralTab";
 import { MediaTab } from "./tabs/MediaTab";
@@ -33,6 +33,10 @@ interface Props {
   //created for styling of bottom navbar in mobile view
   mobileView: boolean;
 
+  // If true, open the creation editor automatically on mount (used to drop a
+  // user straight into project creation, e.g. right after they sign in).
+  autoStart?: boolean;
+
   // Not a real property, set to a variable to a function in the code
   buttonCallback?: () => void;
 
@@ -49,7 +53,7 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
  * The component is accessed via either the 'edit project' button on project pages or the 'create' button in the sidebar.
  * @returns React component Popup - Renders a modal for creating or editing projects
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, buttonCallback = () => { }, updateDisplayedProject }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, autoStart = false, buttonCallback = () => { }, updateDisplayedProject }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const navigate = useNavigate();
@@ -148,8 +152,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const createOrEdit = async () => {
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
-      //redirect user to login if they aren't logged in
-      navigate(paths.routes.LOGIN);
+      //redirect user to login if they aren't logged in, remembering that they
+      //wanted to create a project so we can drop them straight into the editor
+      //once they're signed in
+      navigate(paths.routes.LOGIN, {
+        state: { from: { pathname: paths.routes.MYPROJECTS, search: '?create=1' } },
+      });
       return;
     }
     else {
@@ -179,32 +187,32 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
     else if (newProject) {
       // Setup default project for creation
-      const newData = { 
-          title: "My Project",
-          description: "",
-          purpose: null,
-          status: "Planning",
-          audience: "",
-          globalVisibility: "public",
-          projectImages: [] as ProjectImage[],
-          projectSocials: [] as ProjectSocial[],
-          projectVideos: [] as ProjectVideo[],
-          jobs: [] as ProjectJob[],
-          members: [{
-            user: currentUser ?? (await getCurrentAccount()).data,
-            role: {
-              roleId: 77,
-              label: "owner"
-            },
-            memberSince: new Date(Date.now()),
-            apiUrl: "api/user/" + currentUser?.userId
-          }] as ProjectMember[],
-          createdAt: new Date(Date.now()),
-          updatedAt: new Date(Date.now()),
-          followers: {} as ProjectFollowers,
-          tags: [] as Tag[],
-          mediums: [] as Medium[],
-        } as ProjectWithFollowers;
+      const newData = {
+        title: "My Project",
+        description: "",
+        purpose: null,
+        status: "Planning",
+        audience: "",
+        globalVisibility: "public",
+        projectImages: [] as ProjectImage[],
+        projectSocials: [] as ProjectSocial[],
+        projectVideos: [] as ProjectVideo[],
+        jobs: [] as ProjectJob[],
+        members: [{
+          user: currentUser ?? (await getCurrentAccount()).data,
+          role: {
+            roleId: 77,
+            label: "owner"
+          },
+          memberSince: new Date(Date.now()),
+          apiUrl: "api/user/" + currentUser?.userId
+        }] as ProjectMember[],
+        createdAt: new Date(Date.now()),
+        updatedAt: new Date(Date.now()),
+        followers: {} as ProjectFollowers,
+        tags: [] as Tag[],
+        mediums: [] as Medium[],
+      } as ProjectWithFollowers;
 
       await setProjectData(newData);
       await setModifiedProject(newData);
@@ -215,6 +223,17 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }
 
   buttonCallback = createOrEdit;
+
+  // When asked to auto-start (e.g. the user just signed in after clicking
+  // "Create Project"), initialize and open the creation editor once on mount.
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (autoStart && newProject && !autoStarted.current) {
+      autoStarted.current = true;
+      createOrEdit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart, newProject]);
 
   /**
    * Collects and validates all link information from the LinksTab
@@ -269,7 +288,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }, []);
 
   useEffect(() => {
-    window.onbeforeunload = () => {if (!saved) return ' '};
+    window.onbeforeunload = () => { if (!saved) return ' ' };
 
     // if not a new project, get project id from url (existing project)
     if (!newProject) setProjectID(Number(urlParams.get("projectID")));
@@ -393,9 +412,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             updateDisplayedProject(freshResp.data);
           } else {
             updateDisplayedProject(dataManager.getSavedProject());
+          }
         }
-      }
-      else if (newProject) {
+      } else if (newProject) {
         const newStatus = Object.keys(ProjectStatusEnums).find(
           key => ProjectStatusEnums[key as keyof typeof ProjectStatusEnums] === modifiedProject.status)
         const newPurpose = Object.keys(ProjectPurposeEnums).find(
@@ -418,8 +437,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           /* PROJECT IMAGES */
           for (let image of modifiedProject.projectImages) {
             await dataManager.createImage({
-              id: { 
-                type: "local", 
+              id: {
+                type: "local",
                 value: (image as ProjectImage).imageId
               },
               data: {
@@ -429,106 +448,105 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             })
           }
           if (modifiedProject.thumbnail)
-          await dataManager.updateThumbnail({
-          id: {
-            value: projectID,
-            type: "local",
-          },
-          data: {
-            thumbnail: (modifiedProject.thumbnail as ProjectImage).imageId as number
+            await dataManager.updateThumbnail({
+              id: {
+                value: projectID,
+                type: "local",
+              },
+              data: {
+                thumbnail: (modifiedProject.thumbnail as ProjectImage).imageId as number
+              }
+            });
+
+          /* PROJECT VIDEOS */
+          for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
+            await dataManager?.createVideo({
+              id: {
+                value: video.videoId,
+                type: "local"
+              },
+              data: { ...video },
+            });
           }
-        });
 
-        /* PROJECT VIDEOS */
-        for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
-          await dataManager?.createVideo({
-            id: { 
-              value: video.videoId, 
-              type: "local" 
-            },
-            data: {...video},
-          });
-        }
-
-        /* PROJECT TAGS */
-        for (let tag of modifiedProject.tags) {
-          await dataManager.addTag({
-            id: {
-              type: "local",
-              value: tag.tagId,
-            },
-            data: {
-              tagId: tag.tagId,
-              displayOrder: modifiedProject.tags.indexOf(tag),
-            }
-          });
-        }
-
-        /* PROJECT MEDIUMS */
-        for (let medium of modifiedProject.mediums) {
-          await dataManager.addMedium({
-            id: {
-              type: "local",
-              value: medium.mediumId,
-            },
-            data: {
-              mediumId: medium.mediumId,
-            }
-          })
-        }
-
-        /* PROJECT MEMBERS */
-        for (let member of modifiedProject.members) {
-          if (member.user?.userId === currentUser?.userId) continue;
-          dataManager.createMember({
-            id: {
-              type: "canon",
-              value: (member as PendingProjectMember).localId as number,
-            },
-            data: {
-              inviteeUserId: (member as PendingProjectMember).user?.userId as number,
-              // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
-              inviterUserId: (currentUser?.userId ?? modifiedProject.owner?.userId) as number,
-              roleId: member.role?.roleId as number,
-              message: projectMessages[modifiedProject.members.indexOf(member)],
-            }
-          })
-        }
-
-        /* PROJECT JOBS */
-        for (let job of modifiedProject.jobs) {
-          await dataManager.createJob({
-            id: {
-              type: "local",
-              value: (job as Pending<ProjectJob>).localId as number,
-            },
-            data: {
-              availability: (job as ProjectJob).availability,
-              compensation: (job as ProjectJob).compensation,
-              contactUserId: (job as ProjectJob).contact.userId,
-              duration: (job as ProjectJob).duration,
-              location: (job as ProjectJob).location,
-              roleId: (job as ProjectJob).role.roleId,
-              description: job.description ?? undefined,
-            }
-          })
-        }
-
-        /* PROJECT SOCIALS */
-        for (let link of modifiedProject.projectSocials) {
-          await dataManager.addSocial({
-            id: {
-              type: "local",
-              value: link.websiteId as number,
-            },
-            data: link as ProjectSocial,
-          })
-        }
-
-        await dataManager.saveChanges();
+          /* PROJECT TAGS */
+          for (let tag of modifiedProject.tags) {
+            await dataManager.addTag({
+              id: {
+                type: "local",
+                value: tag.tagId,
+              },
+              data: {
+                tagId: tag.tagId,
+                displayOrder: modifiedProject.tags.indexOf(tag),
+              }
+            });
           }
+
+          /* PROJECT MEDIUMS */
+          for (let medium of modifiedProject.mediums) {
+            await dataManager.addMedium({
+              id: {
+                type: "local",
+                value: medium.mediumId,
+              },
+              data: {
+                mediumId: medium.mediumId,
+              }
+            })
+          }
+
+          /* PROJECT MEMBERS */
+          for (let member of modifiedProject.members) {
+            if (member.user?.userId === currentUser?.userId) continue;
+            dataManager.createMember({
+              id: {
+                type: "canon",
+                value: (member as PendingProjectMember).localId as number,
+              },
+              data: {
+                prospectiveMemberId: (member as PendingProjectMember).user?.userId as number,
+                // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
+                ownerUserId: (currentUser?.userId ?? modifiedProject.owner?.userId) as number,
+                roleId: member.role?.roleId as number,
+                message: projectMessages[modifiedProject.members.indexOf(member)],
+              }
+            })
+          }
+
+          /* PROJECT JOBS */
+          for (let job of modifiedProject.jobs) {
+            await dataManager.createJob({
+              id: {
+                type: "local",
+                value: (job as Pending<ProjectJob>).localId as number,
+              },
+              data: {
+                availability: (job as ProjectJob).availability,
+                compensation: (job as ProjectJob).compensation,
+                contactUserId: (job as ProjectJob).contact.userId,
+                duration: (job as ProjectJob).duration,
+                location: (job as ProjectJob).location,
+                roleId: (job as ProjectJob).role.roleId,
+                description: job.description ?? undefined,
+              }
+            })
+          }
+
+          /* PROJECT SOCIALS */
+          for (let link of modifiedProject.projectSocials) {
+            await dataManager.addSocial({
+              id: {
+                type: "local",
+                value: link.websiteId as number,
+              },
+              data: link as ProjectSocial,
+            })
+          }
+
+          await dataManager.saveChanges();
+        }
       }
-    }
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
@@ -550,7 +568,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const linksTabInvalid = errorLinks !== "";
 
   return (
-    <Popup>
+    <Popup startOpen={autoStart && newProject}>
       {newProject ? (
         <PopupButton callback={buttonCallback} buttonId="project-info-create">
           {" "}

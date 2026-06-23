@@ -12,6 +12,7 @@ import {
   UserDetail,
   MePrivate
 } from '@looking-for-group/shared';
+import { DiscoverProfiles } from '../DiscoverProfiles';
 
 export const ProfileMeetPage = () => {
   //banner for the meets page
@@ -271,7 +272,7 @@ export const ProfileMeetPage = () => {
         Changes to filters via filter menu are only applied after a confirmation
       */}
       <main id="main" tabIndex={-1} aria-label='main content'>
-        <DiscoverFilters category={'profiles'} updateItemList={updateUserList} />
+        <DiscoverProfiles updateItemList={updateUserList} />
 
         {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
         <div id="discover-panel-box">

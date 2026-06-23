@@ -11,6 +11,7 @@ import {
   ProjectPreview, ProjectWithFollowers,
   MePrivate
 } from '@looking-for-group/shared';
+import { DiscoverProjects } from '../DiscoverProjects';
 
 export const DiscoverPage = () => {
   // --------------------
@@ -348,7 +349,7 @@ export const DiscoverPage = () => {
         Changes to filters via filter menu are only applied after a confirmation
       */}
       <main id="main" tabIndex={-1} aria-label='main content'>
-        <DiscoverFilters category={'projects'} updateItemList={updateProjectList} />
+        <DiscoverProjects updateItemList={updateProjectList} />
 
         {/* Panel container. itemAddInterval can be whatever. 25 feels good for now */}
         <div id="discover-panel-box">

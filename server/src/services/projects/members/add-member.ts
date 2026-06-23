@@ -4,7 +4,6 @@ import type {
   CreateProjectOwnerInput,
 } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import sendInviteService from '#services/projects/members/send-invite.ts';
 import { ProjectMemberSelector } from '#services/selectors/projects/parts/project-member.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectMember } from '#services/transformers/projects/parts/project-member.ts';
@@ -42,31 +41,14 @@ const addMemberService = async (
       const newMember = await prisma.members.create({
         data: {
           projects: { connect: { projectId } },
-          users: { connect: { userId: data.inviteeUserId } },
-          roles: { connect: { label: 'Pending' } },
-          profileVisibility: 'private', // hide from profile until invitee accept the invite
+          users: { connect: { userId: data.prospectiveMemberId } },
+          roles: { connect: { roleId: data.roleId } },
         },
         select: {
           ...ProjectMemberSelector,
           projectId: true,
         },
       });
-
-      // send invite email to invitee
-      const emailResult = await sendInviteService(projectId, {
-        inviterUserId: data.inviterUserId,
-        inviteeUserId: data.inviteeUserId,
-        roleId: data.roleId,
-        message: data.message ?? '',
-      });
-
-      if (
-        emailResult === 'INTERNAL_ERROR' ||
-        emailResult === 'NOT_FOUND' ||
-        emailResult === 'CONFLICT'
-      ) {
-        return emailResult;
-      }
 
       result = transformProjectMember(newMember.projectId, newMember);
     }

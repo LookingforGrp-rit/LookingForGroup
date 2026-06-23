@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import * as paths from '../../constants/routes';
 import CreateProfileRedirect from '../SignupProcess/CreateProfileRedirect';
 // import MakeAvatarModal from '../AvatarCreation/MakeAvatarModal';
@@ -27,6 +27,7 @@ interface SignUpProps {
  */
 const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profileImage, setProfileImage }) => {
   const navigate = useNavigate(); // Hook for navigation
+  const routerLocation = useLocation(); // Hook to access navigation state (e.g. a Google session handed off from the login page)
 
   // State variables
   const [firstName, setFirstName] = useState(''); // User's first name
@@ -131,7 +132,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
       // @ts-expect-error google
       google.accounts.id.renderButton(
         document.getElementById("googleBtn"),
-        { theme: googleBtnTheme, size: "large", shape: 'pill', text: "signup_with" }
+        // Neutral wording: this single button both logs in and signs up.
+        { theme: googleBtnTheme, size: "large", shape: 'pill', text: "continue_with" }
       );
     }
     async function handleGoogle(response: any) {
@@ -146,6 +148,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
       //now we display the message that corresponds to whatever happened
       //not even gonna bother reading the react one because react variables update whenever they feel like it and not right when you tell them to
       if (!sessionData.data.userExists) {
+        // New user: start the signup flow inline.
         setFirstName(sessionData.data.firstName);
         setLastName(sessionData.data.lastName);
         setPreferredName(sessionData.data.firstName);  // default preferred name to first name
@@ -154,7 +157,15 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         setShowCreateProfileRedirectModal(true);
       }
       else {
-        navigate(paths.routes.HOME);
+        // Existing user: log in. If they were sent here from an invite link,
+        // return them to it; otherwise go to the home page.
+        const from = routerLocation.state?.from;
+        const fromPath = typeof from === 'string' ? from : from?.pathname;
+        if (fromPath && fromPath.includes('acceptInvite')) {
+          navigate(fromPath, { replace: true });
+        } else {
+          navigate(paths.routes.HOME);
+        }
       }
     }
     //for some browsers this works
@@ -346,8 +357,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         *************************************************************/}
         <div className="signup-form column">
 
-          <h2>Sign Up</h2>
-          <p>Sign up using your RIT email.</p>
+          <h2>Welcome</h2>
+          <p>Continue with your RIT email to log in or sign up.</p>
           <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="signup-form-inputs">
             {/* we wouldn't need any of the other fields either would we?? */}
@@ -428,12 +439,6 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
             /> */}
-            <div className="mobile-login">
-              <p>Already have an account? </p>
-              <p id="login-btn-mobile" onClick={() => navigate(paths.routes.LOGIN)}>
-                Log In
-              </p>
-            </div>
           </div>
 
           {/*************************************************************
@@ -574,7 +579,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               }
               await editUser({ profileImage: profileImage });
               setShowGetStartedModal(false);
-              navigate(paths.routes.MYPROJECTS);
+              // The user chose "Create Project", so drop them straight into the editor.
+              navigate(`${paths.routes.MYPROJECTS}?create=1`);
             }}
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected
@@ -594,13 +600,10 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
 
         *************************************************************/}
         <div className="directory column">
-          {/* <h1>Welcome!</h1>
-                    <p>Already have an account?</p> */}
           <ThemeImage
             lightSrc={'/assets/bannerImages/signup_light.png'}
             darkSrc={'/assets/bannerImages/signup_dark.png'}
           />
-          <button onClick={() => navigate(paths.routes.LOGIN, { replace: true })}>Log In</button>
         </div>
       </div>
     </div>
