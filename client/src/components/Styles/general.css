@@ -60,6 +60,8 @@ General style rules
   /* for error messages and delete buttons */
   --shadow-color: rgba(255, 255, 255, 0.2);
   /* for shadows */
+  --liked-section-bg: #2c2a3a;
+  /* bg color of liked section on personal user's pg*/
 
   /* text colors */
   --main-text: white;
@@ -143,6 +145,7 @@ General style rules
   --border-color: #d3d3ff;
   --error-delete-color: #ff3859;
   --shadow-color: rgba(0, 0, 0, 0.2);
+  --liked-section-bg: white;
 
   --main-text: black;
   --invert-text: white;

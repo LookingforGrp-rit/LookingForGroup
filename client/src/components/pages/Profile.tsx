@@ -22,10 +22,10 @@ import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/blue_frog.png";
-import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getJobTitles } from "../../api/users";
+import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
 import { getUsersById } from "../../api/users";
 import { sendInvite } from "../../api/projects";
-import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, Role, UserDetail } from '@looking-for-group/shared';
+import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
 
 type Profile = MeDetail;
@@ -39,7 +39,7 @@ type Project = ProjectPreview;
  * Profile page with user information collected from profileID.
  * @returns JSX Element
  */
-const Profile = (userProfile : any) => {
+const Profile = (userProfile: any) => {
   // --------------------
   // Global variables
   // --------------------
@@ -57,6 +57,12 @@ const Profile = (userProfile : any) => {
   const [userID, setUserID] = useState<number>();
 
   const [isFollow, setIsFollow] = useState<boolean>(false); //for the buttons specifically
+
+  // stores all followed users to display on personal user profile
+  const [followedProfilesList, setFollowedProfilesList] = useState<UserPreview[]>([]);
+
+  //boolean if likes tab is displaying projects
+  const [isProjectLikesTab, setIsProjectLikesTab] = useState<boolean>(true);
 
   // Stores all projects
   const [fullProjectList, setFullProjectList] = useState<ProjectPreview[]>([]);
@@ -139,7 +145,7 @@ const Profile = (userProfile : any) => {
     for (const result of searchResults[0]) {
       for (const proj of projectSearchData) {
         if (result === proj.name) {
-          if(fullProjectList[projectSearchData.indexOf(proj)].globalVisibility === "public")
+          if (fullProjectList[projectSearchData.indexOf(proj)].globalVisibility === "public")
             tempProjList.push(fullProjectList[projectSearchData.indexOf(proj)]);
           continue;
         }
@@ -180,8 +186,8 @@ const Profile = (userProfile : any) => {
   // Gets the profile data
   const getProfileData = async (data: MePrivate | undefined) => {
     // Get the userID for our current user
-    if (data) { 
-      setUserID(data.userId);  
+    if (data) {
+      setUserID(data.userId);
       setIsUsersProfile(data.userId.toString() === profileID);
     }
     else setUserID(-1);
@@ -205,13 +211,48 @@ const Profile = (userProfile : any) => {
       }
     }
   };
-    
+
+  //switches likes tab on personal profile to projects or users
+  const switchTab = (switchTo: boolean) => {
+    const projectsTabElement = document.querySelector("#likes-projects") as HTMLButtonElement;
+    const profileTabElement = document.querySelector("#likes-profiles") as HTMLButtonElement;
+
+    setIsProjectLikesTab(switchTo);
+    if (switchTo === true) { //   
+      profileTabElement.style.opacity = String(.5);
+      projectsTabElement.style.opacity = String(1);
+      console.log("project select");
+
+    } else {
+      projectsTabElement.style.opacity = String(.5);
+      profileTabElement.style.opacity = String(1);
+      console.log("profile select");
+
+    }
+  }
 
   // Load the logged-in user's owned projects + role list once we know who is
   // viewing and that it isn't their own profile. Used to populate the
   // "Invite to project" popup.
   useEffect(() => {
-    if (isUsersProfile) return;
+    if (isUsersProfile) {
+      //if this is the user's profile, display their liked users in the liked section
+      const displayFollowedProfiles = async () => {
+        const tempFollowProfileArray = [];
+        if (userID !== -1 && userID !== undefined) {
+          const followings = (await getUserFollowing(userID)).data?.users;
+          if (followings !== undefined) {
+            for (const follower of followings) {
+              tempFollowProfileArray.push(follower.user);
+            }
+          }
+          setFollowedProfilesList(tempFollowProfileArray);
+        }
+      };
+      displayFollowedProfiles();
+      switchTab(true);
+      return;
+    }
     if (userID === undefined || userID === -1) return;
 
     let cancelled = false;
@@ -402,25 +443,25 @@ const Profile = (userProfile : any) => {
 
                 <div id="profile-extras">
                   {displayedProfile?.title ?
-                  <div className="profile-extra">
-                    <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
-                    {displayedProfile.title}
-                  </div> : ""}
-                  {displayedProfile?.ritStatus ? 
-                  <div className="profile-extra">
-                    <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
-                    {majorsArr.join(", ")} {displayedProfile?.ritStatus}
-                  </div> : ""}
+                    <div className="profile-extra">
+                      <ThemeIcon id={'role'} width={20} height={20} className={'mono-fill'} ariaLabel={'Profession'} />
+                      {displayedProfile.title}
+                    </div> : ""}
+                  {displayedProfile?.ritStatus ?
+                    <div className="profile-extra">
+                      <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
+                      {majorsArr.join(", ")} {displayedProfile?.ritStatus}
+                    </div> : ""}
                   {displayedProfile?.location ?
-                  <div className="profile-extra">
-                    <ThemeIcon id={'location'} width={12} height={22} className={'mono-fill'} ariaLabel={'Location'} />
-                    {displayedProfile?.location}
-                  </div> : ""}
+                    <div className="profile-extra">
+                      <ThemeIcon id={'location'} width={12} height={22} className={'mono-fill'} ariaLabel={'Location'} />
+                      {displayedProfile?.location}
+                    </div> : ""}
                   {displayedProfile?.pronouns ?
-                  <div className="profile-extra">
-                    <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
-                    {displayedProfile?.pronouns}
-                  </div> : ""}
+                    <div className="profile-extra">
+                      <ThemeIcon id={'pronouns'} width={22} height={22} className={'mono-fill'} ariaLabel={'Pronouns'} />
+                      {displayedProfile?.pronouns}
+                    </div> : ""}
                   {/* Only show mentor status if user is a mentor */}
                   {displayedProfile?.mentor &&
                     <div className="profile-extra">
@@ -450,219 +491,256 @@ const Profile = (userProfile : any) => {
           </div>
 
           <div id="profile-extra">
-            <div id="socials">
-              <p id="title">Contact Me</p>
-              <div id="profile-email">
-                {/* TODO: make icon for email and phone */}
-                {displayedProfile?.username ? 
-                <a href={`mailto:${displayedProfile?.username}@g.rit.edu`}>  
-                <ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>
-                {displayedProfile?.username}@g.rit.edu</a>
-                : <a><ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'}/>no email</a>}
-              </div>
-              {/* Show phone number if present */}
-              {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
-                <div id="profile-number">
-                  <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>  
-                  <ThemeIcon id={'phone'} width={25} height={25} className={'mono-fill'} ariaLabel={'phone'}/>
-                  {displayedProfile.phoneNumber}</a>
+            <div id="contact-and-skills">
+              <div id="socials">
+                <p id="title">Contact Me</p>
+                <div id="profile-email">
+                  {/* TODO: make icon for email and phone */}
+                  {displayedProfile?.username ?
+                    <a href={`mailto:${displayedProfile?.username}@g.rit.edu`}>
+                      <ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'} />
+                      {displayedProfile?.username}@g.rit.edu</a>
+                    : <a><ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'} />no email</a>}
                 </div>
-              //dead link when no number
-              : <></>}
-              {/* Add social links if present */}
-              {displayedProfile?.socials && (
-                <div id="about-me-buttons">
-                  {displayedProfile?.socials.map((link) => (
-                    <a
-                      key={link.websiteId}
-                      href={link.url}
-                      target="_blank"
-                    >
-                      <ThemeIcon
-                        id={link.label === "Other" ? "link" : link.label.toLowerCase()}
-                        width={25}
-                        height={25}
-                        className={"color-fill"}
-                        ariaLabel={link.label}
-                      />
-                    </a>
-                  ))}
-                </div>
-              )}
+                {/* Show phone number if present */}
+                {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
+                  <div id="profile-number">
+                    <a id="profile-number" href={`sms:${displayedProfile.phoneNumber}`}>
+                      <ThemeIcon id={'phone'} width={25} height={25} className={'mono-fill'} ariaLabel={'phone'} />
+                      {displayedProfile.phoneNumber}</a>
+                  </div>
+                  //dead link when no number
+                  : <></>}
+                {/* Add social links if present */}
+                {displayedProfile?.socials && (
+                  <div id="about-me-buttons">
+                    {displayedProfile?.socials.map((link) => (
+                      <a
+                        key={link.websiteId}
+                        href={link.url}
+                        target="_blank"
+                      >
+                        <ThemeIcon
+                          id={link.label === "Other" ? "link" : link.label.toLowerCase()}
+                          width={25}
+                          height={25}
+                          className={"color-fill"}
+                          ariaLabel={link.label}
+                        />
+                      </a>
+                    ))}
+                  </div>
+                )}
 
-              {/* Invite-to-project: only shown when a logged-in user is
+                {/* Invite-to-project: only shown when a logged-in user is
                   viewing someone else's profile. */}
-              {!isUsersProfile && userID !== undefined && userID !== -1 && (
-                <Popup>
-                  <PopupButton
-                    buttonId="profile-invite-button"
-                    callback={resetInviteForm}
-                  >
-                    Invite to Project
-                  </PopupButton>
-                  <PopupContent useClose={true}>
-                    <div id="profile-invite-title">
-                      Invite {displayedProfile?.firstName} to a project
-                    </div>
-                    {myOwnedProjects.length === 0 ? (
-                      <div id="profile-invite-empty">
-                        You don't own any projects yet. Create one to start
-                        inviting people.
-                      </div>
-                    ) : inviteSuccess ? (
-                      <div id="profile-invite-success">
-                        Invite sent! {displayedProfile?.firstName} will get an
-                        email to accept or decline.
-                      </div>
-                    ) : (
-                      <>
-                        <div id="profile-invite-form">
-                          <label
-                            className="profile-invite-label"
-                            htmlFor="profile-invite-project"
-                          >
-                            Project
-                          </label>
-                          <div id="profile-invite-project">
-                            <Select>
-                              <SelectButton
-                                placeholder="Select a project"
-                                searchable={true}
-                                type="input"
-                              />
-                              <SelectOptions
-                                callback={(e) => {
-                                  const value = (e.target as HTMLButtonElement)
-                                    .value;
-                                  const proj = myOwnedProjects.find(
-                                    (p) => p.title === value
-                                  );
-                                  setInviteProjectId(proj?.projectId ?? null);
-                                }}
-                                options={myOwnedProjects.map((proj) => ({
-                                  markup: <>{proj.title}</>,
-                                  value: proj.title,
-                                  disabled: false,
-                                }))}
-                              />
-                            </Select>
-                          </div>
-
-                          <label
-                            className="profile-invite-label"
-                            htmlFor="profile-invite-role"
-                          >
-                            Role
-                          </label>
-                          <div id="profile-invite-role">
-                            <Select>
-                              <SelectButton
-                                placeholder="Select a role"
-                                searchable={true}
-                                type="input"
-                              />
-                              <SelectOptions
-                                callback={(e) => {
-                                  const value = (e.target as HTMLButtonElement)
-                                    .value;
-                                  const role = allRoles.find(
-                                    (r) => r.label === value
-                                  );
-                                  setInviteRoleId(role?.roleId ?? null);
-                                }}
-                                options={allRoles.map((role) => ({
-                                  markup: <>{role.label}</>,
-                                  value: role.label,
-                                  disabled: false,
-                                }))}
-                              />
-                            </Select>
-                          </div>
-
-                          <label
-                            className="profile-invite-label"
-                            htmlFor="profile-invite-message"
-                          >
-                            Message
-                          </label>
-                          <textarea
-                            id="profile-invite-message"
-                            placeholder={`Optional note to ${displayedProfile?.firstName ?? "them"}...`}
-                            value={inviteMessage}
-                            onChange={(e) => setInviteMessage(e.target.value)}
-                            maxLength={500}
-                          />
-                        </div>
-
-                        {inviteError && (
-                          <div className="error" id="profile-invite-error">
-                            {inviteError}
-                          </div>
-                        )}
-
-                        <div className="project-editor-button-pair">
-                          <PopupButton
-                            buttonId="profile-invite-send"
-                            callback={handleSendInvite}
-                            doNotClose={() => !inviteSuccess}
-                            disabled={inviteSending}
-                          >
-                            {inviteSending ? "Sending..." : "Send Invite"}
-                          </PopupButton>
-                        </div>
-                      </>
-                    )}
-                  </PopupContent>
-                </Popup>
-              )}
-            </div>
-
-            <div id="skills">
-              <p id="title">Skills</p>
-              <div id="skill-block">
-              {displayedProfile?.skills !== undefined && (
-                /* Will take in a list of tags the user has selected, then */
-                /* use a map function to generate tags to fill this div */
-                displayedProfile?.skills.sort((a, b) => a.position - b.position).map((tag) => {
-                  let category: string;
-                  switch (tag.type) {
-                    case "Designer":
-                      category = "red";
-                      break;
-                    case "Developer":
-                      category = "yellow";
-                      break;
-                    case "Soft":
-                      category = "purple";
-                      break;
-                    case "Audio":
-                      category = "periwinkle";
-                      break;
-                    default:
-                      category = "grey";
-                  }
-                  return (
-                    <div
-                      key={`${tag.skillId}`}
-                      className={`skill-tag-label label-${category}`}
+                {!isUsersProfile && userID !== undefined && userID !== -1 && (
+                  <Popup>
+                    <PopupButton
+                      buttonId="profile-invite-button"
+                      callback={resetInviteForm}
                     >
-                      {tag.label}
-                    </div>
-                  );
-                })
-              )}
+                      Invite to Project
+                    </PopupButton>
+                    <PopupContent useClose={true}>
+                      <div id="profile-invite-title">
+                        Invite {displayedProfile?.firstName} to a project
+                      </div>
+                      {myOwnedProjects.length === 0 ? (
+                        <div id="profile-invite-empty">
+                          You don't own any projects yet. Create one to start
+                          inviting people.
+                        </div>
+                      ) : inviteSuccess ? (
+                        <div id="profile-invite-success">
+                          Invite sent! {displayedProfile?.firstName} will get an
+                          email to accept or decline.
+                        </div>
+                      ) : (
+                        <>
+                          <div id="profile-invite-form">
+                            <label
+                              className="profile-invite-label"
+                              htmlFor="profile-invite-project"
+                            >
+                              Project
+                            </label>
+                            <div id="profile-invite-project">
+                              <Select>
+                                <SelectButton
+                                  placeholder="Select a project"
+                                  searchable={true}
+                                  type="input"
+                                />
+                                <SelectOptions
+                                  callback={(e) => {
+                                    const value = (e.target as HTMLButtonElement)
+                                      .value;
+                                    const proj = myOwnedProjects.find(
+                                      (p) => p.title === value
+                                    );
+                                    setInviteProjectId(proj?.projectId ?? null);
+                                  }}
+                                  options={myOwnedProjects.map((proj) => ({
+                                    markup: <>{proj.title}</>,
+                                    value: proj.title,
+                                    disabled: false,
+                                  }))}
+                                />
+                              </Select>
+                            </div>
+
+                            <label
+                              className="profile-invite-label"
+                              htmlFor="profile-invite-role"
+                            >
+                              Role
+                            </label>
+                            <div id="profile-invite-role">
+                              <Select>
+                                <SelectButton
+                                  placeholder="Select a role"
+                                  searchable={true}
+                                  type="input"
+                                />
+                                <SelectOptions
+                                  callback={(e) => {
+                                    const value = (e.target as HTMLButtonElement)
+                                      .value;
+                                    const role = allRoles.find(
+                                      (r) => r.label === value
+                                    );
+                                    setInviteRoleId(role?.roleId ?? null);
+                                  }}
+                                  options={allRoles.map((role) => ({
+                                    markup: <>{role.label}</>,
+                                    value: role.label,
+                                    disabled: false,
+                                  }))}
+                                />
+                              </Select>
+                            </div>
+
+                            <label
+                              className="profile-invite-label"
+                              htmlFor="profile-invite-message"
+                            >
+                              Message
+                            </label>
+                            <textarea
+                              id="profile-invite-message"
+                              placeholder={`Optional note to ${displayedProfile?.firstName ?? "them"}...`}
+                              value={inviteMessage}
+                              onChange={(e) => setInviteMessage(e.target.value)}
+                              maxLength={500}
+                            />
+                          </div>
+
+                          {inviteError && (
+                            <div className="error" id="profile-invite-error">
+                              {inviteError}
+                            </div>
+                          )}
+
+                          <div className="project-editor-button-pair">
+                            <PopupButton
+                              buttonId="profile-invite-send"
+                              callback={handleSendInvite}
+                              doNotClose={() => !inviteSuccess}
+                              disabled={inviteSending}
+                            >
+                              {inviteSending ? "Sending..." : "Send Invite"}
+                            </PopupButton>
+                          </div>
+                        </>
+                      )}
+                    </PopupContent>
+                  </Popup>
+                )}
+              </div>
+
+              <div id="skills">
+                <p id="title">Skills</p>
+                <div id="skill-block">
+                  {displayedProfile?.skills !== undefined && (
+                    /* Will take in a list of tags the user has selected, then */
+                    /* use a map function to generate tags to fill this div */
+                    displayedProfile?.skills.sort((a, b) => a.position - b.position).map((tag) => {
+                      let category: string;
+                      switch (tag.type) {
+                        case "Designer":
+                          category = "red";
+                          break;
+                        case "Developer":
+                          category = "yellow";
+                          break;
+                        case "Soft":
+                          category = "purple";
+                          break;
+                        case "Audio":
+                          category = "periwinkle";
+                          break;
+                        default:
+                          category = "grey";
+                      }
+                      return (
+                        <div
+                          key={`${tag.skillId}`}
+                          className={`skill-tag-label label-${category}`}
+                        >
+                          {tag.label}
+                        </div>
+                      );
+                    })
+                  )}
+                </div>
               </div>
             </div>
+            {isUsersProfile ?
+              <div id="profile-likes">
+                <p id="title">Likes</p>
+                <div id="likes-block">
+                  <div id="likes-tabs">
+                    <button id="likes-projects" onClick={() => switchTab(true)}>Projects</button>
+                    <button id="likes-profiles" onClick={() => switchTab(false)}>Users</button>
+
+                  </div>
+                  <div id="likes-container">
+                    {isProjectLikesTab === true ?
+                      (followedProfilesList.length > 0 ?
+
+                        <PanelBox
+                          category={"projects"}
+                          itemList={followedProfilesList}
+                          userId={userID as number}
+                        />
+                        : <p>You have no saved projects!</p>)
+                      :
+                      (followedProfilesList.length > 0 ?
+
+                        <PanelBox
+                          category={"profiles"}
+                          itemList={followedProfilesList}
+                          userId={userID as number}
+                        />
+                        : <p>You have no saved users!</p>)
+
+
+                    }
+                  </div>
+                </div>
+              </div> : ""}
           </div>
+
           {displayedProjects.length > 0 ?
-          <div id="profile-projects">
-            <h2>Projects</h2>
+            <div id="profile-projects">
+              <h2>Projects</h2>
               <PanelBox
                 category={"projects"}
                 itemList={displayedProjects}
                 userId={userID as number}
               />
-          </div> : ""}
+            </div> : ""}
         </div>
       </main>
     </div>
