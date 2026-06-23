@@ -1439,6 +1439,11 @@ New Profile page style rules
     max-height: 500px;
     overflow-y: scroll;
     overflow-x: hidden;
+
+    .no-saved-items {
+      margin-left: 1.5rem;
+      color: var(--main-text);
+    }
   }
 
   #likes-projects,

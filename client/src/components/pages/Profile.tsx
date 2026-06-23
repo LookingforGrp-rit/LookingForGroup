@@ -719,14 +719,14 @@ const Profile = (userProfile: any) => {
                   </div>
                   <div id="likes-container">
                     {isProjectLikesTab === true ?
-                      (followedProfilesList.length > 0 ?
+                      (followedProjectsList.length > 0 ?
 
                         <PanelBox
                           category={"projects"}
                           itemList={followedProjectsList}
                           userId={userID as number}
                         />
-                        : <p>You have no saved projects!</p>)
+                        : <p className="no-saved-items">You have no saved projects!</p>)
                       :
                       (followedProfilesList.length > 0 ?
 
@@ -735,7 +735,7 @@ const Profile = (userProfile: any) => {
                           itemList={followedProfilesList}
                           userId={userID as number}
                         />
-                        : <p>You have no saved users!</p>)
+                        : <p className="no-saved-items">You have no saved users!</p>)
 
 
                     }
