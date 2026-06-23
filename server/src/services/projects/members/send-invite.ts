@@ -10,10 +10,10 @@ import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type SendInviteServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type SendInviteServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
+type SendInviteServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-// Used in addMemberService
-// sends an invite to a user to join a project
+// POST api/projects/:id/members/send-invite
+// Sends an invite to a user to join a project
 const sendInviteService = async (
   projectId: number,
   data: SendProjectInviteInput,
@@ -65,9 +65,20 @@ const sendInviteService = async (
       return project;
     }
 
+    //update db
+    const result = await prisma.memberRequests.create({
+      data: {
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+        sentFromProject: true,
+        requestStatus: 'Pending',
+        projectId,
+      },
+    });
+
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
+    const inviteUrl = `${clientUrl}/acceptInvite/${String(result.requestId)}`;
 
     const receiverImg = invitee.profileImage
       ? `https://lookingforgrp.com${invitee.profileImage}`
@@ -113,18 +124,7 @@ const sendInviteService = async (
       return emailResult;
     }
 
-    //update db
-    await prisma.memberRequests.create({
-      data: {
-        roleId: data.roleId,
-        prospectiveMemberId: data.prospectiveMemberId,
-        sentFromProject: true,
-        requestStatus: 'Pending',
-        projectId,
-      },
-    });
-
-    return 'NO_CONTENT';
+    return 'OK';
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {

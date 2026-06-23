@@ -24,7 +24,7 @@ import { ShareButton } from "../ShareButton";
 import profilePicture from "../../images/blue_frog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getJobTitles } from "../../api/users";
 import { getUsersById } from "../../api/users";
-import { addMember } from "../../api/projects";
+import { sendInvite } from "../../api/projects";
 import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, Role, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
 
@@ -268,7 +268,7 @@ const Profile = (userProfile : any) => {
     }
 
     setInviteSending(true);
-    const result = await addMember(inviteProjectId, {
+    const result = await sendInvite(inviteProjectId, {
       ownerUserId: userID,
       prospectiveMemberId: displayedProfile.userId,
       roleId: inviteRoleId,
