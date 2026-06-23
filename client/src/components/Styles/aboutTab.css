@@ -131,7 +131,7 @@ select {
     flex-wrap: wrap;
     gap: 20px;
     width: 100%;
-    justify-content: space-evenly;
+    justify-content: space-between;
 
     .label-input-box {
       width: 30%;
