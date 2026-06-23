@@ -443,7 +443,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                         <i className="fa fa-caret-right"></i>
                       </button>
                     </div>
-                    <hr />
+                    <hr id="filter-divider"/>
                     <div id="filter-tags">
                       {searchedTags.tags.length === 0 ? (
                         <p>No tags found. Please try a different search term.</p>
