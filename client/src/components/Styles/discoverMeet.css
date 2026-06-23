@@ -1301,7 +1301,7 @@ Filters / Tags Style Rules
   }
 
   #filter-tabs {
-    gap: 6px 16px !important;
+    gap: 6px 65px !important;
     margin: 10px auto 0 auto !important;
     padding-bottom: 8px !important;
   }
