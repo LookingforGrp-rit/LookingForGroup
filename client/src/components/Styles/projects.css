@@ -1814,6 +1814,12 @@ button.edit-position-contact .project-member-image {
   border: none;
 }
 
+/* hides horizontal scroll bar for the crop image popup */
+.popup:has(.project-crop)
+{
+  overflow-x: hidden;
+}
+
 .project-crop {
   width: 100%;
   text-align: center;
@@ -1826,7 +1832,8 @@ button.edit-position-contact .project-member-image {
   }
 
   #canvas {
-    border: 3px solid var(--main-text);
+    border: 3px solid var(--primary-color);
+    border-radius: 10px;
     margin: 1vw 0;
     object-fit: cover;
     max-width: 95%;

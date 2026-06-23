@@ -501,6 +501,7 @@ const Profile = (userProfile : any) => {
                     Invite to Project
                   </PopupButton>
                   <PopupContent useClose={true}>
+                    <div className="small-popup">
                     <div id="profile-invite-title">
                       Invite {displayedProfile?.firstName} to a project
                     </div>
@@ -612,6 +613,7 @@ const Profile = (userProfile : any) => {
                         </div>
                       </>
                     )}
+                         </div>
                   </PopupContent>
                 </Popup>
               )}

@@ -494,9 +494,9 @@ export const TeamTab = ({
           type: "local",
         },
         data: {
-          ownerUserId: currentMember.user.userId,
+          prospectiveMemberId: currentMember.user.userId,
           // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
-          prospectiveMemberId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
+          ownerUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
           roleId: currentMember.role.roleId,
           message: messageText,
         },
