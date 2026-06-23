@@ -2965,7 +2965,7 @@ New Project Page style rules
     'carousel info' auto
     'overview people' auto
     'overview positions' auto / 17fr 15fr;
-  margin: 0 50px;
+  margin: 0 auto;
   gap: 0;
   padding-bottom: 100px;
 }

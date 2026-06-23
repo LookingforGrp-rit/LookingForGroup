@@ -242,6 +242,14 @@ used for the more options dropdown menu and notifications
   width: calc(100% - 40px);
 }
 
+#settings-page
+{
+  #main
+  {
+    align-items: flex-start;
+  }
+}
+
 .button-reset {
   background-color: transparent;
   border: none;
