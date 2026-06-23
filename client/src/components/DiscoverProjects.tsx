@@ -492,6 +492,33 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     </div>
                                 </div>
                                 <PopupButton
+                                  className={'delete-button'}
+                                  doNotClose={() => true}
+                                  callback={() => {
+                                    // Reset tag filters before adding results in
+                                    const newActiveTags = enabledFilters.map(f => f.tag)
+                                    setActiveTagFilters(newActiveTags);
+                                    const discoverFilters = document.getElementsByClassName('discover-tag-filter');
+                            
+                                    // Remove any/all other clicked discover tags
+                                    for (let i = 0; i < discoverFilters.length; i++) {
+                                      discoverFilters[i].classList.remove('discover-tag-filter-selected');
+                                    }
+
+                                    setAppliedFiltersDisplay(enabledFilters);
+                            
+                                    // Update the project list
+                                    updateItemList(newActiveTags);
+                            
+                                    //Add "Applied Filters" div if it is missing and if the paragraph exists
+                                    if (newActiveTags.length > 0) {
+                                      setDisplayFiltersText(newActiveTags.some(tag => tag.type !== 'Project Type'));
+                                    }
+                                  }}
+                                >
+                                  Reset Filters
+                                </PopupButton>
+                                <PopupButton
                                     buttonId={'primary-btn'}
                                     callback={() => {
                                         // Reset tag filters before adding results in

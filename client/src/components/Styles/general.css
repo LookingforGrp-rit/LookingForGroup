@@ -1194,6 +1194,18 @@ Page popup style rules
     transition: 0.2s;
   }
 
+  .delete-button {
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  background-color: var(--error-delete-color) !important;
+  color: var(--invert-text);
+  font-size: 2ch;
+  width: max-content;
+  margin: auto min(1vw, 10px);
+  font-weight: 700;
+}
+
   h2 {
     font-size: 1.5rem;
     margin-top: min(3.46vh, 34px);
