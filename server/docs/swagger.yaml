@@ -4101,39 +4101,6 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/me/notifications/{id}/message:
-    get:
-      summary: Gets the message (as HTML) from a specific notification.
-      tags:
-        - Me
-      description: Gets the message (as HTML) from a specific notification.
-      parameters:
-        - in: path
-          name: id
-          required: true
-          schema:
-            type: string
-          description: Id of the notification.
-        - in: query
-          name: devId
-          required: true
-          schema:
-            type: integer
-          description: Id used as 'me'.
-      responses:
-        '200':
-          description: Notification message returned.
-          content:
-            text/html:
-              schema:
-                type: string
-                example: <h1>This is an example</h1>
-
-        '404':
-          $ref: '#/components/responses/NotFound'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
 # COMPONENTS
 components:
   securitySchemes:
