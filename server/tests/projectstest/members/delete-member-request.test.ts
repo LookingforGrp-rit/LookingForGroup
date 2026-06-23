@@ -58,7 +58,7 @@ const prismaInvitationRequest = {
   sentFromProject: true,
 };
 
-describe('addProjectMemberService', async () => {
+describe('deleteMemberRequestService', async () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
