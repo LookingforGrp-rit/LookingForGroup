@@ -546,17 +546,28 @@ const Profile = (userProfile: any) => {
 
                 {/* Invite-to-project: only shown when a logged-in user is
                   viewing someone else's profile. */}
-                {!isUsersProfile && userID !== undefined && userID !== -1 && (
-                  <Popup>
-                    <PopupButton
-                      buttonId="profile-invite-button"
-                      callback={resetInviteForm}
-                    >
-                      Invite to Project
-                    </PopupButton>
-                    <PopupContent useClose={true}>
-                      <div id="profile-invite-title">
-                        Invite {displayedProfile?.firstName} to a project
+  {!isUsersProfile && userID !== undefined && userID !== -1 && (
+                <Popup>
+                  <PopupButton
+                    buttonId="profile-invite-button"
+                    callback={resetInviteForm}
+                  >
+                    Invite to Project
+                  </PopupButton>
+                  <PopupContent useClose={true}>
+                    <div className="small-popup">
+                    <div id="profile-invite-title">
+                      Invite {displayedProfile?.firstName} to a project
+                    </div>
+                    {myOwnedProjects.length === 0 ? (
+                      <div id="profile-invite-empty">
+                        You don't own any projects yet. Create one to start
+                        inviting people.
+                      </div>
+                    ) : inviteSuccess ? (
+                      <div id="profile-invite-success">
+                        Invite sent! {displayedProfile?.firstName} will get an
+                        email to accept or decline.
                       </div>
                       {myOwnedProjects.length === 0 ? (
                         <div id="profile-invite-empty">
@@ -702,10 +713,65 @@ const Profile = (userProfile: any) => {
                         >
                           {tag.label}
                         </div>
-                      );
-                    })
-                  )}
-                </div>
+
+                        {inviteError && (
+                          <div className="error" id="profile-invite-error">
+                            {inviteError}
+                          </div>
+                        )}
+
+                        <div className="project-editor-button-pair">
+                          <PopupButton
+                            buttonId="profile-invite-send"
+                            callback={handleSendInvite}
+                            doNotClose={() => !inviteSuccess}
+                            disabled={inviteSending}
+                          >
+                            {inviteSending ? "Sending..." : "Send Invite"}
+                          </PopupButton>
+                        </div>
+                      </>
+                    )}
+                         </div>
+                  </PopupContent>
+                </Popup>
+              )}
+            </div>
+
+            <div id="skills">
+              <p id="title">Skills</p>
+              <div id="skill-block">
+              {displayedProfile?.skills !== undefined && (
+                /* Will take in a list of tags the user has selected, then */
+                /* use a map function to generate tags to fill this div */
+                displayedProfile?.skills.sort((a, b) => a.position - b.position).map((tag) => {
+                  let category: string;
+                  switch (tag.type) {
+                    case "Designer":
+                      category = "red";
+                      break;
+                    case "Developer":
+                      category = "yellow";
+                      break;
+                    case "Soft":
+                      category = "purple";
+                      break;
+                    case "Audio":
+                      category = "periwinkle";
+                      break;
+                    default:
+                      category = "grey";
+                  }
+                  return (
+                    <div
+                      key={`${tag.skillId}`}
+                      className={`skill-tag-label label-${category}`}
+                    >
+                      {tag.label}
+                    </div>
+                  );
+                })
+              )}
               </div>
             </div>
             {isUsersProfile ?

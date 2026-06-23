@@ -33,6 +33,10 @@ interface Props {
   //created for styling of bottom navbar in mobile view
   mobileView: boolean;
 
+  // If true, open the creation editor automatically on mount (used to drop a
+  // user straight into project creation, e.g. right after they sign in).
+  autoStart?: boolean;
+
   // Not a real property, set to a variable to a function in the code
   buttonCallback?: () => void;
 
@@ -49,7 +53,7 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
  * The component is accessed via either the 'edit project' button on project pages or the 'create' button in the sidebar.
  * @returns React component Popup - Renders a modal for creating or editing projects
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, buttonCallback = () => { }, updateDisplayedProject }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, autoStart = false, buttonCallback = () => { }, updateDisplayedProject }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const navigate = useNavigate();
@@ -148,8 +152,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const createOrEdit = async () => {
     const res = await getCurrentUsername();
     if (!(res.status === 200 && res.data?.username)) {
-      //redirect user to login if they aren't logged in
-      navigate(paths.routes.LOGIN);
+      //redirect user to login if they aren't logged in, remembering that they
+      //wanted to create a project so we can drop them straight into the editor
+      //once they're signed in
+      navigate(paths.routes.LOGIN, {
+        state: { from: { pathname: paths.routes.MYPROJECTS, search: '?create=1' } },
+      });
       return;
     }
     else {
@@ -215,6 +223,17 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }
 
   buttonCallback = createOrEdit;
+
+  // When asked to auto-start (e.g. the user just signed in after clicking
+  // "Create Project"), initialize and open the creation editor once on mount.
+  const autoStarted = useRef(false);
+  useEffect(() => {
+    if (autoStart && newProject && !autoStarted.current) {
+      autoStarted.current = true;
+      createOrEdit();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoStart, newProject]);
 
   /**
    * Collects and validates all link information from the LinksTab
@@ -486,9 +505,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 value: (member as PendingProjectMember).localId as number,
               },
               data: {
-                inviteeUserId: (member as PendingProjectMember).user?.userId as number,
+                prospectiveMemberId: (member as PendingProjectMember).user?.userId as number,
                 // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
-                inviterUserId: (currentUser?.userId ?? modifiedProject.owner?.userId) as number,
+                ownerUserId: (currentUser?.userId ?? modifiedProject.owner?.userId) as number,
                 roleId: member.role?.roleId as number,
                 message: projectMessages[modifiedProject.members.indexOf(member)],
               }
@@ -549,7 +568,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const linksTabInvalid = errorLinks !== "";
 
   return (
-    <Popup>
+    <Popup startOpen={autoStart && newProject}>
       {newProject ? (
         <PopupButton callback={buttonCallback} buttonId="project-info-create">
           {" "}
