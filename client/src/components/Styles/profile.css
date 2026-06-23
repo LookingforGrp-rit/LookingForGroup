@@ -1417,6 +1417,8 @@ New Profile page style rules
   #likes-block {
     flex-direction: column;
     gap: 0px;
+    padding-right: 10px;
+    padding-bottom: 10px;
 
     .unselected {
       opacity: 0.5;
