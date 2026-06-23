@@ -962,6 +962,13 @@ Signup process modal style rules
   cursor: pointer;
 }
 
+.ritEmailText
+{
+  color: var(--primary-color);
+  /* color: #F76902; */
+  font-weight: 750;
+}
+
 /* Mobile css to individual signup pages */
 @media screen and (max-width: 1000px) {
 
