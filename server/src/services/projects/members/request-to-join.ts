@@ -73,6 +73,8 @@ export const requestToJoinService = async (
 
     const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
 
+    const profileUrl = `${clientUrl}/profile?userID=${String(requester.userId)}`;
+
     const receiverImg = requester.profileImage
       ? `https://lookingforgrp.com${requester.profileImage}`
       : 'https://lookingforgrp.com/api/images/blue_frog.png';
@@ -93,6 +95,7 @@ export const requestToJoinService = async (
             firstName: owner.firstName,
             lastName: owner.lastName,
           },
+          senderProfileLink: profileUrl,
           senderEmail: owner.ritEmail,
           senderMessage: data.message,
           projectName: project.title,
