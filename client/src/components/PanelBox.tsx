@@ -15,6 +15,8 @@ interface MasonryContext {
 // It is defined outside the function so that it doesn't have to keep remounting
 const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryContext }) => {
   const { category, projectCache, followedProjectIds, userId } = context;
+  //seems there is sometimes undefined elements in the list that the data takes
+  if (item === undefined) return;
 
   if (category === 'projects') {
     const projectId = (item as ProjectWithFollowers).projectId;
@@ -58,9 +60,6 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
   const isSmallDesktop = useMediaQuery('(max-width: 1360px');
   const isMediumDesktop = useMediaQuery('(max-width: 1640px');
 
-  // Sanitize the list
-  const validItemList = itemList?.filter(item => item !== undefined) || [];
-
   // Early return
   if (!itemList || itemList.length === 0) {
     return <>{category === 'projects' ? 'Sorry, no projects here' : 'Sorry, no people here'}</>;
@@ -89,17 +88,9 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
     userId,
   };
 
-  /* 
-  * This key will regenerate every time the list changes
-  * Forcing Virtuoso to remount
-  */
-  const firstItemId = (validItemList[0] as any)?.projectId || (validItemList[0] as any)?.userId || 'empty';
-  const masonryKey = `${category}-grid-${validItemList.length}-${firstItemId}`;
-
   // Finally! A masonry grid!
   return (
     <VirtuosoMasonry
-      key={masonryKey}
       data={itemList}
       columnCount={columns}
       className="masonry"

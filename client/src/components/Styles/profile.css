@@ -1163,8 +1163,7 @@ New Profile page style rules
 */
 /* #region new profile page */
 #profile-page-content {
-  margin: 0 auto;
-  width: 100%;
+  margin: 0 50px;
 }
 
 #profile-hero {

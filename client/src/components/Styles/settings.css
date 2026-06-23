@@ -37,9 +37,8 @@ Settings page style rules
 #settings-page {
   /* display: flex;
   align-items: center;
-  flex-direction: column;*/
-  width: 100%;
-  margin: 0 auto;
+  flex-direction: column;
+  width: 100%; */
   /* border: 1px solid lightsalmon; */
   /* height: auto;
   margin-bottom: 200px; */
@@ -323,12 +322,18 @@ input:checked+.slider:before {
     flex-direction: column;
     margin: 0px min(8.47vw, 128px) 0px min(3.17vw, 48px);
     justify-content: flex-start;
-    align-items: flex-start;
   }
 
   .settings-column {
     margin: 0px 20px;
     
+  }
+
+  @media (max-width: 1100px) {
+    .settings-row {
+      flex-direction: column;
+      margin: 0px auto 0px min(3.17vw, 48px);
+    }
   }
 
   .subsection {
@@ -614,7 +619,6 @@ input:checked+.slider:before {
   align-items: center;
   justify-content: flex-start;
   gap: 16px;
-  width: fit-content;
 }
 
 #settings-page .settings-row.settings-row-actions .subsection {
@@ -640,48 +644,4 @@ input:checked+.slider:before {
   outline-offset: 2px;
   outline: 3px solid var(--primary-color);
   transition: 0s;
-}
-
-/* Settings page mobile css */
-@media screen and (max-width: 1100px) {
-
-  #settings-page {
-    width: 100%;
-        
-    .subsection {
-      width: 100%;
-    }
-    .input-container
-    {
-      width: 90%;
-      max-width: 500px; /* arbitrary value */
-    }
-    .settings-column{
-      width: 100%;
-      margin: 0;
-      
-      #options-theme-btn, .dropdown {
-      width: 100%;
-      }
-    }
-    .settings-row {
-      margin: 0 auto;
-      justify-content: center;
-      width: 100%;
-    }
-    .settings-row.settings-row-actions
-    {
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto;
-      flex-wrap: wrap;
-      width: 90%;
-
-      .subsection
-      {
-        width: fit-content;
-        margin: 0 auto;
-      }
-    }
-  }
 }
