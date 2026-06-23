@@ -46,6 +46,9 @@ General style rules
   /* hover color for profile cards */
   --header-color: #1a1921;
   /* search bar, header button background, profile page background, etc. */
+  --tab-color: rgba(26, 25, 33, 0.500);
+  --second-tab-color: rgba(26, 25, 33, 0.650);
+  /* background colors for non-selected tabs */
   --dropdown-color: #0e0e0e;
   /* dropdown/small modal background color */
   --sidebar-gradient: linear-gradient(180deg, #2c2a3a 30%, #fead81 100%);
@@ -131,10 +134,12 @@ General style rules
 /*light mode color scheme*/
 [data-theme='light'] {
   --bg-color: #fff;
+  --bg-partial-color: rgba(255, 255, 255, 0.700);
 
   --primary-color: #271d66;
   --panel-hover: rgba(39, 29, 102, 0.9);
   --header-color: #ececf7;
+  --tab-color: rgba(236, 236, 247, 0.500);
   --dropdown-color: #fff;
   --sidebar-gradient: linear-gradient(180deg, #d3d3ff 0%, #ffceb4 100%);
   --create-gradient: linear-gradient(180deg, #b0b0fc 0%, #fead81 100%);
@@ -240,6 +245,14 @@ used for the more options dropdown menu and notifications
   max-width: 100%;
   margin: 0 auto;
   width: calc(100% - 40px);
+}
+
+#settings-page
+{
+  #main
+  {
+    align-items: flex-start;
+  }
 }
 
 .button-reset {

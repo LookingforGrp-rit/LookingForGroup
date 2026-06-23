@@ -81,6 +81,8 @@ export const requestToJoinService = async (
       ? `https://lookingforgrp.com${project.thumbnail.image}`
       : 'https://lookingforgrp.com/api/images/project_temp.png';
 
+    const msg = data.message ? data.message : '';
+
     const html = await pretty(
       await render(
         createElement(InviteEmail, {
@@ -94,7 +96,7 @@ export const requestToJoinService = async (
             lastName: owner.lastName,
           },
           senderEmail: owner.ritEmail,
-          senderMessage: data.message,
+          senderMessage: msg,
           projectName: project.title,
           projectImage: projectImg,
           inviteLink: inviteUrl,
