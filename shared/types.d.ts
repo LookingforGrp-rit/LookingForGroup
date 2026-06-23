@@ -1113,6 +1113,13 @@ export interface NotificationPreview {
   hasBeenRead: boolean;
 }
 
+export interface NotificationDetail extends NotificationPreview {
+  /**
+   * The message within the notification.
+   */
+  message: string;
+}
+
 // PROJECTS
 
 /**
