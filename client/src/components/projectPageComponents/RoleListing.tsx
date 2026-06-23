@@ -44,7 +44,8 @@ export const RoleListing = (props) => {
     const descInput = document.getElementById('role-desc-edit-' + i);
 
     //hide/show different elements inside listParent
-    //The below errors are due to typescript. It would take so many different checks to make sure they're not 'undefined', so I'm not doing them.
+    //The below errors are due to typescript. It would take so many different checks to make sure they're not 'undefined',
+    //  so I'm not doing them.
     listParent.querySelector('.role-list-name').classList.toggle('hide');
     listParent.querySelector('.role-list-num').classList.toggle('hide');
     listParent.querySelector('.role-list-edit').classList.toggle('hide');

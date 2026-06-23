@@ -3,12 +3,16 @@ import { Dispatch, SetStateAction, useState } from "react";
 import { ProjectWithFollowers } from "@looking-for-group/shared";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
+
 import {
   JobAvailability as JobAvailabilityEnums,
   JobDuration as JobDurationEnums,
   JobLocation as JobLocationEnums,
   JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
+
+import { projectDataManager } from "../api/data-managers/project-data-manager";
+import { PendingProjectMember } from "../../types/types";
 
 interface TeamPositionsPanelProps {
   displayedProject: ProjectWithFollowers;
@@ -17,6 +21,7 @@ interface TeamPositionsPanelProps {
 }
 
 export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewedPosition }: TeamPositionsPanelProps) => {
+  const dataManager = projectDataManager(displayedProject.projectId);
   const navigate = useNavigate();
 
   //Find first member with the job title of 'Project Lead'
@@ -31,8 +36,10 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
   const [quickApplyOpen, setQuickApplyOpen] = useState(false);
   const [requestSent, setRequestSent] = useState(false);
 
-  const handleQuickApply = () => {
+  const handleQuickApply = async () => {
+    const currentMember = await getUserAccountService();
     const viewedRole = displayedProject.jobs?.[viewedPosition]?.role?.label;
+
     console.log("[Quick Apply] would notify owner", {
       projectId: displayedProject.projectId,
       projectTitle: displayedProject.title,
@@ -40,6 +47,21 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
       viewedRole,
       message: joinMessage,
     });
+
+    // (await dataManager).createMember({
+    //   id: {
+    //     value: (currentMember as PendingProjectMember).localId ?? ++localIdIncrement,
+    //     type: "local",
+    //   },
+    //   data: {
+    //     prospectiveMemberId: currentMember.user.userId,
+    //     // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
+    //     ownerUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
+    //     roleId: currentMember.role.roleId,
+    //     message: joinMessage,
+    //   },
+    // });
+
     setRequestSent(true);
   };
 

@@ -54,7 +54,7 @@ export const ProjectInfo = (props) => {
               className="icon-button"
               onClick={projectPageHelper.toggleOptionDisplay}
             >
-              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'...'}/>
+              <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill'} ariaLabel={'...'} />
             </button>
             {/* <div id="more-options-popup" className="hide">
               <button className="white-button" onClick={projectPageHelper.blockProject}>

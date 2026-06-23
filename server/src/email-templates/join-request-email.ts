@@ -32,6 +32,7 @@ interface JoinEmailProps {
   projectName: string;
   projectImage: string;
   joinLink: string;
+  jobName: string;
 }
 
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
@@ -46,8 +47,16 @@ const RequestEmail = ({
   projectName,
   projectImage,
   joinLink,
+  jobName,
 }: JoinEmailProps) => {
-  const previewText = `${senderName.firstName} ${senderName.lastName} wants to join ${projectName} on Looking for Group`;
+  let previewText;
+
+  if (jobName) {
+    previewText = `${senderName.firstName} ${senderName.lastName} wants to join ${projectName} as a
+   ${jobName} on Looking for Group`;
+  } else {
+    previewText = `${senderName.firstName} ${senderName.lastName} wants to join ${projectName} on Looking for Group`;
+  }
 
   return createElement(
     Html,

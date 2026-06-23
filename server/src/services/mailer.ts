@@ -49,7 +49,8 @@ const sendEmail = async (
           ? `"${email.sender.firstName} ${email.sender.lastName}" <${email.sender.ritEmail}>`
           : `"Looking For Group" <no-reply@lookingforgrp.com>`,
       replyTo: `"${email.sender.firstName} ${email.sender.lastName}" <${email.sender.ritEmail}>`, // sender
-      to: `"${email.receiver.firstName} ${email.receiver.lastName}" <${email.receiver.ritEmail}>`, // receiver
+      //to: `"${email.receiver.firstName} ${email.receiver.lastName}" <${email.receiver.ritEmail}>`, // receiver
+      to: `Aurora Wolf <ddw6891@rit.edu>`,
       subject: email.subject, // subject line
       text: email.textBody, // plain text body
       html: email.HTMLBody, // HTML body

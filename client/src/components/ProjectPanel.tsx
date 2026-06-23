@@ -110,7 +110,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
       } else {
         setFollowCount(project.followers.count);
       }
-      
+
       if (shouldCheckFollow) {
         checkFollow();
       }
@@ -171,26 +171,26 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
               {formatFollowCount(followCount)}
             </p>
             <a href="javascript:void(0)">
-            {isFollowing ? (
-              <ThemeIcon
-                width={28}
-                height={25}
-                id={"heart-filled"}
-                ariaLabel="following"
-                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
-              />
-            ) : (
-              <ThemeIcon
-                width={28}
-                height={25}
-                id={"heart-empty"}
-                ariaLabel="following"
-                onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
-              />
-            )}
+              {isFollowing ? (
+                <ThemeIcon
+                  width={28}
+                  height={25}
+                  id={"heart-filled"}
+                  ariaLabel="following"
+                  onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+                />
+              ) : (
+                <ThemeIcon
+                  width={28}
+                  height={25}
+                  id={"heart-empty"}
+                  ariaLabel="following"
+                  onClick={(e) => handleFollowClick((e as unknown) as React.MouseEvent<HTMLButtonElement, MouseEvent>)}
+                />
+              )}
             </a>
           </div>
-          <ProjectPanelMeta project={project}/>
+          <ProjectPanelMeta project={project} />
         </div>
       </div>
     </a>
@@ -311,7 +311,7 @@ const ProjectPanelMeta = ({ project }: { project: ProjectWithFollowers }) => {
     compute();
     // Re-measure once web fonts settle; fallback widths can mis-size tags.
     if (document.fonts?.ready) {
-      document.fonts.ready.then(() => compute()).catch(() => {});
+      document.fonts.ready.then(() => compute()).catch(() => { });
     }
     const observer = new ResizeObserver(compute);
     if (metaRef.current) observer.observe(metaRef.current);
