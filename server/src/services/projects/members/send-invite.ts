@@ -80,6 +80,8 @@ const sendInviteService = async (
 
     const inviteUrl = `${clientUrl}/acceptInvite/${String(result.requestId)}`;
 
+    const profileUrl = `${clientUrl}/profile?userID=${String(inviter.userId)}`;
+
     const receiverImg = invitee.profileImage
       ? `https://lookingforgrp.com${invitee.profileImage}`
       : 'https://lookingforgrp.com/api/images/blue_frog.png';
@@ -87,6 +89,8 @@ const sendInviteService = async (
     const projectImg = project.thumbnail
       ? `https://lookingforgrp.com${project.thumbnail.image}`
       : 'https://lookingforgrp.com/api/images/project_temp.png';
+
+    const msg = data.message ? data.message : '';
 
     const html = await pretty(
       await render(
@@ -100,8 +104,9 @@ const sendInviteService = async (
             firstName: inviter.firstName,
             lastName: inviter.lastName,
           },
+          senderProfileLink: profileUrl,
           senderEmail: inviter.ritEmail,
-          senderMessage: data.message,
+          senderMessage: msg,
           projectName: project.title,
           projectImage: projectImg,
           inviteLink: inviteUrl,

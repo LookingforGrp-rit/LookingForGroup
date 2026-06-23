@@ -556,8 +556,12 @@ Filters / Tags Style Rules
   z-index: 1;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
-  width: 100%;
-  padding: 0 40px;
+  /* Extend the sticky background 8px past #main on each side so cards don't
+     bleed at the edges. The negative margin + extra padding keep the filter
+     row in the exact same position; only the opaque background grows. */
+  width: calc(100% + 16px);
+  margin: 0 -8px;
+  padding: 0 48px;
 }
 
 @media only screen and (max-width: 800px) {
@@ -1205,22 +1209,26 @@ Filters / Tags Style Rules
   flex-direction: column !important;
   height: auto !important;
   max-height: none !important;
-  gap: 4px !important;
+  gap: 0px !important;
+  overflow-x: hidden !important;
 }
 
 /* Category Tabs */
 #filter-tabs {
   display: flex !important;
-  flex-wrap: wrap !important;
-  justify-content: center !important;
-  align-content: flex-start !important;
-  gap: 8px 40px !important;
+  flex-wrap: nowrap !important;
+  justify-content: left !important;
+  align-content: flex-start !important; 
+  gap: 8px 10px !important;            
   margin: 14px auto 0 auto !important;
-  padding: 0 0 10px 0 !important;
+  padding: 0 0 0px 0 !important;
+  font-size: 1rem;
+  font-weight: 400;
+  word-break: normal;
+  max-width: 100%;
   width: 100%;
-  max-width: 660px;
-  height: auto !important;
-  overflow: visible !important;
+  height: auto !important;              
+  overflow-x: scroll !important;
 }
 
 #filter-tabs>* {
@@ -1234,6 +1242,32 @@ Filters / Tags Style Rules
 #filter-tabs>.active {
   color: #f3be9b;
   text-shadow: 0 0 0.65px currentColor, 0 0 0.65px currentColor;
+}
+
+.filter-tab.selected {
+  background-color: var(--header-color);
+}
+
+
+.filter-tab {
+  margin-bottom: 0px;
+  padding-top: 2% !important;
+  padding-bottom: 2% !important;
+  padding-left: 1%;
+  padding-right: 1%;
+  background-color: var(--header-color);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  word-break: break-word;
+}
+
+#filter-divider{
+  height: 2px;
+  min-height: 2px;
+  width: 100%;
+  border: none;
+  background-color: var(--header-color);
+  margin-top: 0;
 }
 
 #filter-tags {
@@ -1284,6 +1318,10 @@ Filters / Tags Style Rules
     gap: 10px !important;
   }
 
+  #filters.popup-section {
+    gap: 0px !important;
+  }
+
   /* Header scaling for smaller viewports */
   #filters-popup h2 {
     font-size: 1.3rem !important;
@@ -1293,17 +1331,23 @@ Filters / Tags Style Rules
   /* Upper Panel Mobile Breathing Room */
   #filters.popup-section {
     padding: 16px 12px !important;
-    gap: 4px !important;
+    gap: 0px !important;
   }
 
   #filter-tabs {
-    gap: 6px 16px !important;
+    gap: 6px 65px !important;
     margin: 10px auto 0 auto !important;
-    padding-bottom: 8px !important;
+    padding-bottom: 0px !important;
   }
 
   #filter-tabs>* {
     font-size: 0.9rem !important;
+  }
+
+  .filter-tab{
+    width: fit-content !important;
+    padding-left: 1% !important;
+    padding-right: 1% !important;
   }
 
   #filter-tags {
