@@ -3755,9 +3755,9 @@ button#positions-popup-list-item-active {
 }
 
 .project-overview-section-header {
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: var(--primary-color);
-  font-weight: 600;
+  font-weight: 500;
   margin: 10px 0;
 }
 

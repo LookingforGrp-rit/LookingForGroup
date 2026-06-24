@@ -1526,6 +1526,7 @@ Header style rules
   align-items: center;
   justify-content: center;
   width: 100%;
+  gap: 5px;
 
   #profile-img-icon {
     width: 32px;
