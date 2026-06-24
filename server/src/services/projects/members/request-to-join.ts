@@ -1,4 +1,4 @@
-import type { SendProjectInviteInput, EmailInput } from '@looking-for-group/shared';
+import type { RequestToJoinInput, EmailInput } from '@looking-for-group/shared';
 import { createElement } from 'react';
 import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
@@ -10,12 +10,12 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 import getProjectByIdService from '../get-proj-id.ts';
 
 type RequestToJoinServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type RequestToJoinServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
+type RequestToJoinServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-//
+// POST api/projects/:id/members/request-to-join
 export const requestToJoinService = async (
   projectId: number,
-  data: SendProjectInviteInput,
+  data: RequestToJoinInput,
 ): Promise<RequestToJoinServiceSuccess | RequestToJoinServiceError> => {
   try {
     //check if request exists
@@ -73,6 +73,8 @@ export const requestToJoinService = async (
 
     const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
 
+    const profileUrl = `${clientUrl}/profile?userID=${String(requester.userId)}`;
+
     const receiverImg = requester.profileImage
       ? `https://lookingforgrp.com${requester.profileImage}`
       : 'https://lookingforgrp.com/api/images/blue_frog.png';
@@ -80,6 +82,8 @@ export const requestToJoinService = async (
     const projectImg = project.thumbnail
       ? `https://lookingforgrp.com${project.thumbnail.image}`
       : 'https://lookingforgrp.com/api/images/project_temp.png';
+
+    const msg = data.message ? data.message : '';
 
     const html = await pretty(
       await render(
@@ -93,8 +97,9 @@ export const requestToJoinService = async (
             firstName: owner.firstName,
             lastName: owner.lastName,
           },
+          senderProfileLink: profileUrl,
           senderEmail: owner.ritEmail,
-          senderMessage: data.message,
+          senderMessage: msg,
           projectName: project.title,
           projectImage: projectImg,
           inviteLink: inviteUrl,
@@ -129,7 +134,7 @@ export const requestToJoinService = async (
       },
     });
 
-    return 'NO_CONTENT';
+    return 'OK';
   } catch (e) {
     console.error(`There was an error in requestToJoinService: `, e);
     return 'INTERNAL_ERROR';

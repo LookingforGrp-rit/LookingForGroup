@@ -1,4 +1,5 @@
 import { MouseEventHandler } from 'react';
+import arrow from '../../../public/images/icons/s-arrow.png';
 
 interface CreateProfileRedirectProps {
     show: boolean;
@@ -21,10 +22,10 @@ const CreateProfileRedirect: React.FC<CreateProfileRedirectProps> = ({ show, onN
 
                     <div id="signupProcess-btns">
                         <button id="signup-backBtn" onClick={onBack}>
-                            Back
+                            <svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
                         </button>
                         <button id="signup-nextBtn" onClick={onNext}>
-                            Next
+                            <svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
                         </button>
                     </div>
                 </div>

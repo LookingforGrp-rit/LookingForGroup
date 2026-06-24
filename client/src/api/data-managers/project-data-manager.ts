@@ -6,6 +6,7 @@ import {
   CreateProjectImageInput,
   CreateProjectJobInput,
   CreateProjectMemberInput,
+  SendProjectInviteInput,
   CreateProjectVideoInput,
   ProjectWithFollowers,
   UpdateProjectImageInput,
@@ -17,7 +18,7 @@ import {
   UpdateProjectThumbnailInput,
 } from "@looking-for-group/shared";
 import {
-  addMember,
+  sendInvite,
   addPic,
   addProjectJob,
   addProjectMedium,
@@ -354,10 +355,10 @@ export const projectDataManager = async (projectId: number) => {
 
     // project members
     try {
-      await runAndCollectErrors<CreateProjectMemberInput>(
-        "Creating project member",
+      await runAndCollectErrors<SendProjectInviteInput>(
+        "Sending project invitation to prospective member ",
         creates.members,
-        ({ data }) => addMember(projectId, data)
+        ({ data }) => sendInvite(projectId, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;

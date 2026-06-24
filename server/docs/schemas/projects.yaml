@@ -103,6 +103,23 @@ components:
         memberSince: 2038-01-19 03:14:07
         apiUrl: /api/projects/1/members/1
 
+    ProjectMemberRequest:
+      type: object
+      properties:
+        requestId: integer
+        prospectiveMemberId: integer
+        projectId: integer
+        roleId: integer
+        sentFromProject: boolean
+        requestStatus: 'enums.yaml#/components/schemas/MemberRequestStatus'
+      example:
+        requestId: 1
+        prospectiveMemberId: 2
+        projectId: 1
+        roleId: 3
+        sentFromProject: true
+        requestStatus: 'Pending'
+
     ProjectSocial:
       allOf:
         - $ref: 'datasets.yaml#/components/schemas/Social'
