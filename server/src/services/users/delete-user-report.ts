@@ -25,7 +25,7 @@ const deleteUserReportService = async (
 
     return 'NO_CONTENT';
   } catch (e) {
-    console.error(`Error in deleteUserReportService: ${JSON.stringify(e)}`);
+    console.error(`Error in deleteUserReportService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

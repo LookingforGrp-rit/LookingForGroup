@@ -26,7 +26,8 @@ vi.mock('#services/projects/tags/get-proj-tags.ts', () => ({
 const tag: Tag = {
   tagId: 71,
   label: 'Test 2',
-  type: 'Designer',
+  type: 'Genre',
+  category: 'Other',
 };
 
 const prismaProjectTag = {
@@ -49,7 +50,7 @@ describe('deleteTagsService', async () => {
     vi.mocked(prisma.tags.findMany).mockResolvedValue([tag]);
 
     vi.mocked(getTagsService).mockResolvedValue([
-      { tagId: 71, label: 'Test 2', type: 'Designer', displayOrder: 1 } as ProjectTag,
+      { tagId: 71, label: 'Test 2', type: 'Style', displayOrder: 1 } as ProjectTag,
     ]);
 
     const result = await deleteTagService(100, 70);

@@ -10,8 +10,8 @@ import { Tag as TagElement } from "../../Tag";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "./SortableItem";
+import { clampDragWithinContainer } from "./dragModifiers";
 import { Fragment } from "react";
-import { data } from "react-router-dom";
 
 // --- Constant ---
 const TAG_TYPES = {
@@ -19,7 +19,9 @@ const TAG_TYPES = {
   DESIGNER: "Designer Skill" as TagType,
   SOFT: "Soft Skill" as TagType,
   AUD: "Audio Skill" as TagType,
-  GENRE: ["Creative", "Technical", "Games", "Multimedia", "Music", "Other"] as TagType[],
+  GENRE: 'Genre' as TagType,
+  FORM: 'Style' as TagType,
+  OTHER: 'Other' as TagType,
   MEDIUM: "Medium",
 };
 
@@ -28,7 +30,7 @@ let projectAfterTagsChanges: PendingProject;
 
 // --- Props ---
 type TagsTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   saveProject?: () => Promise<void>;
@@ -119,7 +121,7 @@ export const TagsTab = ({
 
     projectAfterTagsChanges.tags = reorderedTags;
 
-    dataManager.updateTag({
+    dataManager?.updateTag({
       id: {
         type: "canon",
         value: reorderedTags[newIndex].tagId,
@@ -202,16 +204,16 @@ export const TagsTab = ({
       case 0:
         return [{ data: allMediums }];
       case 1:
-        return [{
-          data: allTags.filter(tag => TAG_TYPES.GENRE.includes(tag.type as TagType))
-        }];
+        return [{ data: allTags.filter(tag => TAG_TYPES.GENRE.includes(tag.type as TagType)) }];
       case 2:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DEV) }];
+        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.FORM) }];
       case 3:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DESIGNER) }];
+        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DEV) }];
       case 4:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.AUD) }]
+        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DESIGNER) }];
       case 5:
+        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.AUD) }];
+      case 6:
         return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.SOFT) }];
       default:
         return [{ data: [] }];
@@ -242,10 +244,11 @@ export const TagsTab = ({
             "selected" :
             "unselected";
         case 1: // Genre
-        case 2: // Developer Skills
-        case 3: // Designer Skills
-        case 4: // Audio Skills
-        case 5:// Soft Skills
+        case 2: // Style
+        case 3: // Developer Skills
+        case 4: // Designer Skills
+        case 5: // Audio Skills
+        case 6: // Soft Skills
           return projectData.tags.some(
             (t) => t.tagId === id && t.label === label
           ) ?
@@ -263,7 +266,7 @@ export const TagsTab = ({
       );
 
       if (selected) {
-        dataManager.deleteMedium({
+        dataManager?.deleteMedium({
           id: {
             value: mediumId,
             type: "canon",
@@ -280,7 +283,7 @@ export const TagsTab = ({
         return;
       }
 
-      dataManager.addMedium({
+      dataManager?.addMedium({
         id: {
           value: mediumId,
           type: "canon",
@@ -308,7 +311,7 @@ export const TagsTab = ({
       );
 
       if (selected) {
-        dataManager.deleteTag({
+        dataManager?.deleteTag({
           id: {
             value: tagId,
             type: "canon",
@@ -324,7 +327,7 @@ export const TagsTab = ({
         return;
       }
 
-      dataManager.addTag({
+      dataManager?.addTag({
         id: {
           value: tagId,
           type: "canon",
@@ -437,6 +440,28 @@ export const TagsTab = ({
         });
     } else if (currentTagsTab === 2) {
       return allTags
+        .filter((tag) => tag.type === "Style")
+        .map((styleTag) => {
+          const selected = isTagSelected(styleTag.tagId, styleTag.label, currentTagsTab) === "selected";
+
+          return <TagElement
+            key={styleTag.tagId}
+            type={"Style"}
+            selected={selected}
+            onClick={() => handleTagSelect(styleTag.tagId)}
+          >
+            <i
+              className={
+                selected
+                  ? "fa fa-close"
+                  : "fa fa-plus"
+              }
+            ></i>
+            <p>{styleTag.label}</p>
+          </TagElement>;
+        });
+    } else if (currentTagsTab === 3) {
+      return allTags
         .filter((tag) => tag.type === "Developer Skill")
         .map((developerSkillTag) => {
           const selected = isTagSelected(developerSkillTag.tagId, developerSkillTag.label, currentTagsTab) === "selected";
@@ -452,7 +477,7 @@ export const TagsTab = ({
             <p>{developerSkillTag.label}</p>
           </TagElement>;
         });
-    } else if (currentTagsTab === 3) {
+    } else if (currentTagsTab === 4) {
       return allTags
         .filter((tag) => tag.type === "Designer Skill")
         .map((designerSkillTag) => {
@@ -560,6 +585,7 @@ export const TagsTab = ({
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
+          modifiers={[clampDragWithinContainer]}
         >
           <SortableContext
             items={projectAfterTagsChanges.tags.map((t) => t.tagId)}
@@ -611,31 +637,40 @@ export const TagsTab = ({
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 2 ? "tag-search-tab-active" : ""}`}
             //Data from skills (type=Developer)
             >
-              Developer Skills
+              Style
             </button>
             <button
               onClick={() => {
                 setCurrentTagsTab(3);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 3 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Designer)
+            //Data from skills (type=Developer)
             >
-              Designer Skills
+              Developer Skills
             </button>
             <button
               onClick={() => {
                 setCurrentTagsTab(4);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 4 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Soft)
+            //Data from skills (type=Designer)
             >
-              Audio Skills
+              Designer Skills
             </button>
             <button
               onClick={() => {
                 setCurrentTagsTab(5);
               }}
               className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 5 ? "tag-search-tab-active" : ""}`}
+            //Data from skills (type=Soft)
+            >
+              Audio Skills
+            </button>
+            <button
+              onClick={() => {
+                setCurrentTagsTab(6);
+              }}
+              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 6 ? "tag-search-tab-active" : ""}`}
             //Data from skills (type=Soft)
             >
               Soft Skills

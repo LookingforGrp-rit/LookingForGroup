@@ -2,12 +2,12 @@
 import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
-import profileImage from "../../../images/blue_frog.png";
+import profileImage from "../../../images/lfrog.png";
 import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
-import users, {
+import {
   getJobTitles,
   getUsers,
   getUsersById,
@@ -23,7 +23,6 @@ import {
   JobCompensation,
   Role,
   ProjectWithFollowers,
-  SendProjectInviteInput,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -75,7 +74,7 @@ const emptyJob: Pending<ProjectJob> = {
 let localIdIncrement = 0;
 
 type TeamTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   //setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
@@ -87,6 +86,8 @@ type TeamTabProps = {
   saveable: boolean;
   failCheck: boolean;
   message: string;
+  messages: string[];
+  setMessages: React.Dispatch<React.SetStateAction<string[]>>;
 };
 
 
@@ -115,6 +116,8 @@ export const TeamTab = ({
   saveable,
   failCheck,
   message,
+  messages,
+  setMessages,
 }: TeamTabProps) => {
   // --- Hooks ---
   // State for storing all available roles from the API.
@@ -485,23 +488,29 @@ export const TeamTab = ({
 
       if ("localId" in currentMember) (currentMember as PendingProjectMember).localId = ++localIdIncrement;
 
-      dataManager.createMember({
+      dataManager?.createMember({
         id: {
           value: (currentMember as PendingProjectMember).localId ?? ++localIdIncrement,
           type: "local",
         },
         data: {
-          inviteeUserId: currentMember.user.userId,
+          prospectiveMemberId: currentMember.user.userId,
           // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
-          inviterUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
+          ownerUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
           roleId: currentMember.role.roleId,
           message: messageText,
         },
       });
 
+      setMessages([
+        ...messages,
+        messageText
+      ]);
+
+      const pendingRole = allRoles.find((r) => r.label === "Pending") ?? currentMember.role;
       const localProjectMember: PendingProjectMember = {
         user: currentMember.user,
-        role: currentMember.role,
+        role: pendingRole,
         localId: (currentMember as PendingProjectMember).localId ?? ++localIdIncrement,
       };
 
@@ -644,7 +653,7 @@ export const TeamTab = ({
 
       if ("jobId" in currentJob) {
         //isLocal = false;
-        dataManager.deleteJob({
+        dataManager?.deleteJob({
           id: {
             type: "canon",
             value: currentJob.jobId,
@@ -652,7 +661,7 @@ export const TeamTab = ({
           data: null,
         });
       } else {
-        dataManager.deleteJob({
+        dataManager?.deleteJob({
           id: {
             type: "local",
             value: currentJob.localId!,
@@ -721,7 +730,7 @@ export const TeamTab = ({
       }
 
 
-      dataManager.createJob({
+      dataManager?.createJob({
         id: {
           value: (currentJob as Pending<ProjectJob>).localId ?? ++localIdIncrement,
           type: "local",
@@ -752,7 +761,7 @@ export const TeamTab = ({
       return;
     }
 
-    dataManager.updateJob({
+    dataManager?.updateJob({
       id: {
         value: (currentJob as ProjectJob).jobId,
         type: "canon",
@@ -1100,6 +1109,11 @@ export const TeamTab = ({
                 className="edit-position-contact"
                 placeholder="Select"
                 type="input"
+                initialVal={
+                  currentJob?.contact 
+                    ? `${currentJob.contact.firstName} ${currentJob.contact.lastName}` 
+                    : ""
+                }
               />
               <SelectOptions
                 className="edit-position-contact"
@@ -1380,7 +1394,7 @@ export const TeamTab = ({
                         if (isNullOrUndefined(currentMember.user)) return;
 
                         // update member in data manager
-                        dataManager.updateMember({
+                        dataManager?.updateMember({
                           id: {
                             type:
                               "localId" in currentMember ? "local" : "canon",
@@ -1449,7 +1463,7 @@ export const TeamTab = ({
                               };
 
                               if ("localId" in currentMember) {
-                                dataManager.deleteMember({
+                                dataManager?.deleteMember({
                                   id: {
                                     type: "local",
                                     value: currentMember.user.userId,
@@ -1457,7 +1471,7 @@ export const TeamTab = ({
                                   data: null,
                                 });
                               } else {
-                                dataManager.deleteMember({
+                                dataManager?.deleteMember({
                                   id: {
                                     type: "canon",
                                     value: currentMember.user.userId,
@@ -1643,7 +1657,7 @@ export const TeamTab = ({
                 }
                 className="team-positions-button"
               >
-                <img src="/images/icons/drag.png" alt="positions" />
+               
                 <button
                   className="positions-popup-list-item"
                   data-id={"jobId" in job ? job.jobId : job.localId}

@@ -25,13 +25,13 @@ describe('getTagsService', () => {
 
   it('returns transformed tag when found', async () => {
     const prismaTags: Tag[] = [
-      { tagId: 1, label: 'Indie', type: 'Creative' },
-      { tagId: 181, label: 'Innovation', type: 'Soft Skill' },
+      { tagId: 1, label: 'Indie', type: 'Other', category: 'Other' },
+      { tagId: 13, label: 'Action', type: 'Genre', category: 'Story' },
     ];
 
     const transformed: Tag[] = [
-      { tagId: 1, label: 'Indie', type: 'Creative' },
-      { tagId: 181, label: 'Innovation', type: 'Soft Skill' },
+      { tagId: 1, label: 'Indie', type: 'Other', category: 'Other' },
+      { tagId: 13, label: 'Action', type: 'Genre', category: 'Story' },
     ];
 
     vi.mocked(prisma.tags.findMany).mockResolvedValue(prismaTags);

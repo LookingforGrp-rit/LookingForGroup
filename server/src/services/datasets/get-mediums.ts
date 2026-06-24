@@ -23,7 +23,7 @@ const getMediumsService = async (): Promise<Medium[] | GetMediumsServiceError> =
     );
     return mediums.map(transformMedium);
   } catch (e) {
-    console.error(`Error in getMediumsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getMediumsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

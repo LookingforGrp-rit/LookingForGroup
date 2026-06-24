@@ -29,7 +29,7 @@ export const getSocialsService = async (userId: number): Promise<MySocial[] | Ge
     );
     return socials.map(transformMySocial);
   } catch (e) {
-    console.error(`Error in getSocialsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getSocialsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

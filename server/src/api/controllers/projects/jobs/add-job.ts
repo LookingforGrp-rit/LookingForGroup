@@ -9,7 +9,7 @@ import type { Request, Response } from 'express';
 import addJobService, { type JobInput } from '#services/projects/jobs/add-job.ts';
 
 const validAvailabilities: JobAvailability[] = ['FullTime', 'PartTime', 'Flexible'];
-const validDurations: JobDuration[] = ['ShortTerm', 'LongTerm'];
+const validDurations: JobDuration[] = ['Days', 'Weeks', 'Months', 'Semesters', 'Years'];
 const validLocations: JobLocation[] = ['OnSite', 'Remote', 'Hybrid'];
 const validCompensations: JobCompensation[] = ['Unpaid', 'Paid'];
 

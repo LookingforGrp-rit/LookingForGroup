@@ -47,6 +47,7 @@ describe('getProjectFollowingService', () => {
       hook: 'test-hook',
       thumbnailId: 1,
       globalVisibility: 'public' as Visibility,
+      jobs: [],
       owner: {
         userId: 1,
         username: 'test-owner',

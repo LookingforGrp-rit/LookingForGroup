@@ -1,11 +1,12 @@
 import {
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   AddProjectSocialInput,
   AddProjectTagInput,
   ApiResponse,
   CreateProjectImageInput,
   CreateProjectJobInput,
   CreateProjectMemberInput,
+  SendProjectInviteInput,
   CreateProjectVideoInput,
   ProjectWithFollowers,
   UpdateProjectImageInput,
@@ -17,7 +18,7 @@ import {
   UpdateProjectThumbnailInput,
 } from "@looking-for-group/shared";
 import {
-  addMember,
+  sendInvite,
   addPic,
   addProjectJob,
   addProjectMedium,
@@ -354,10 +355,10 @@ export const projectDataManager = async (projectId: number) => {
 
     // project members
     try {
-      await runAndCollectErrors<CreateProjectMemberInput>(
-        "Creating project member",
+      await runAndCollectErrors<SendProjectInviteInput>(
+        "Sending project invitation to prospective member ",
         creates.members,
-        ({ data }) => addMember(projectId, data)
+        ({ data }) => sendInvite(projectId, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -365,7 +366,7 @@ export const projectDataManager = async (projectId: number) => {
 
     // project mediums
     try {
-      await runAndCollectErrors<AddProjectMediumsInput>(
+      await runAndCollectErrors<AddProjectMediumInput>(
         "Adding project medium",
         creates.mediums,
         ({ data }) => addProjectMedium(projectId, data)
@@ -553,7 +554,7 @@ export const projectDataManager = async (projectId: number) => {
    * Adds a new medium to the project
    * @param medium The medium to be added
    */
-  const addMedium = (medium: CRUDRequest<AddProjectMediumsInput>) => {
+  const addMedium = (medium: CRUDRequest<AddProjectMediumInput>) => {
     if (changes.create.mediums.some(({ id }) => id.value === medium.id.value)) {
       changes.create.mediums = [
         ...changes.create.mediums.filter(

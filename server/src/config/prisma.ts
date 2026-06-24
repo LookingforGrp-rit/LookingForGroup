@@ -1,7 +1,5 @@
 import { PrismaClient } from '#prisma-models/index.js';
-import envConfig from './env.ts';
-
-console.log('databaseUrl =', envConfig.databaseUrl);
+//import envConfig from './env.ts';
 
 const prisma = new PrismaClient();
 

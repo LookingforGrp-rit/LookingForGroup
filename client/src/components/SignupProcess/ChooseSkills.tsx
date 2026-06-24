@@ -6,8 +6,12 @@ import { Skill, TagType } from "@looking-for-group/shared";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
+import { clampDragWithinContainer } from "../ProjectCreatorEditor/tabs/dragModifiers";
+import arrow from '../../../public/images/icons/s-arrow.png';
+import { string } from "css-tree";
 
-const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
+
+const skillTabs = ["Developer", "Design", "Soft", "Audio"] as String[];
 
 // list of skills to choose from
 // technologies, arts, tools, and soft skills
@@ -354,7 +358,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 					</div>
 					<div id="signupProcess-btns">
 						<button id="signup-backBtn" onClick={onBack}>
-							Back
+							<svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
 						</button>
 						<button
 							id="signup-nextBtn"
@@ -364,7 +368,8 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 							// the required number of skills
 							// the user can only move to the next modal when they have selected 5 skills
 							disabled={selectedSkills.length < 3}>
-							Next
+							<svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
+
 						</button>
 					</div>
 				</div>

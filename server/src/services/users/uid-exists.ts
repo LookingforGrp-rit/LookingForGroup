@@ -9,7 +9,7 @@ const uidExistsService = async (uid: number): Promise<boolean | UIDExistsService
 
     return result !== null;
   } catch (e) {
-    console.error(`Error in uidExistsService: ${JSON.stringify(e)}`);
+    console.error(`Error in uidExistsService: ${e as Error}`);
 
     return 'INTERNAL_ERROR';
   }

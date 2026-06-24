@@ -1,8 +1,9 @@
-import type { ProjectPreview, TagType } from '@looking-for-group/shared';
+import type { ProjectPreview, TagCategory, TagType } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
 import { transformUserToPreview } from '../users/user-preview.ts';
 import { transformProjectImage } from './parts/project-image.ts';
+import { transformProjectJob } from './parts/project-job.ts';
 import { transformProjectMedium } from './parts/project-medium.ts';
 import { transformProjectTag } from './parts/project-tag.ts';
 
@@ -37,9 +38,11 @@ export const transformProjectToPreview = (project: ProjectsGetPayload): ProjectP
         tagId: tag.tagId,
         type: tag.tag.type as TagType,
         displayOrder: tag.displayOrder,
+        category: tag.tag.category as TagCategory,
       }),
     ),
     owner: transformUserToPreview(project.users),
+    jobs: project.jobs.map((job) => transformProjectJob(project.projectId, job)),
     mediums: project.mediums.map((medium) => transformProjectMedium(project.projectId, medium)),
     apiUrl: `/api/projects/${project.projectId.toString()}`,
   } as unknown as ProjectPreview;
@@ -57,10 +60,11 @@ export const transformUnapprovedToPreview = (payload: AwaitApprovalPayload): Pro
     hook: project.hook,
     tags: project.tags.map((tag) =>
       transformProjectTag(project.projectId, {
-        label: tag.tag.label,
+        label: tag.tag.label, //tag.tag :cinema:
         tagId: tag.tagId,
         type: tag.tag.type as TagType,
         displayOrder: tag.displayOrder,
+        category: tag.tag.category as TagCategory,
       }),
     ),
     owner: transformUserToPreview(project.users),

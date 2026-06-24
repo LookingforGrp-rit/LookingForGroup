@@ -15,11 +15,12 @@ import type {
   UpdateProjectImageInput,
   CreateProjectMemberInput,
   UpdateProjectMemberInput,
+  UpdateMemberRequestInput,
   AddProjectSocialInput,
   UpdateProjectSocialInput,
   AddProjectTagInput,
   UpdateProjectTagInput,
-  AddProjectMediumsInput,
+  AddProjectMediumInput,
   ReorderProjectImagesInput,
   ProjectFollowers,
   ProjectJob,
@@ -28,6 +29,12 @@ import type {
   UpdateProjectThumbnailInput,
   ProjectVideo,
   CreateProjectVideoInput,
+  AddJobSkillInput,
+  JobSkill,
+  UpdateJobSkillInput,
+  SendProjectInviteInput,
+  RequestToJoinInput,
+  MemberRequests,
 } from "@looking-for-group/shared";
 
 //const navigate = useNavigate();
@@ -63,6 +70,23 @@ export const getProjects = async (): Promise<ApiResponse<ProjectPreview[]>> => {
 };
 
 /**
+ * Retrieves a paginated list of projects.
+ * @param count The maximum number of projects to return.
+ * @param projectId The project ID cursor. Projects after this ID will be returned. Use 0 to start from the beginning.
+ * @returns Array of project previews.
+ */
+export const getPaginatedProjects = async (
+  count: number,
+  projectId: number
+): Promise<ApiResponse<ProjectPreview[]>> => {
+  const apiURL = `/projects/${count}/${projectId}`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getPaginatedProjects: ${response.error}`);
+  return response;
+};
+
+/**
  * Retrieves data of a project by its ID
  * @param projectID -  ID of project to retrieve
  * @returns - A project object if valid, 400 if not
@@ -76,6 +100,17 @@ export const getByID = async (
   if (response.error) console.log(`Error in getByID: ${response.error}`);
   return response;
 };
+
+export const getRequestByID = async (
+  requestID: number
+): Promise<ApiResponse<MemberRequests>> => {
+  const apiURL = `/projects/members/requests/${requestID}`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getByID: ${response.error}`);
+  return response;
+};
+
 /**
  * Retrieves data of a project by its ID
  * @param projectID -  ID of project to retrieve
@@ -329,14 +364,48 @@ export const getMembers = async (
  * @returns Response status
  */
 export const addMember = async (
-  ID: number,
+  projectID: number,
   memberData: CreateProjectMemberInput
 ): Promise<ApiResponse<ProjectMember>> => {
-  const apiURL = `/projects/${ID}/members`;
+  const apiURL = `/projects/${projectID}/members`;
   const response = await POST(apiURL, memberData);
 
   if (response.error) console.log(`Error in addMember: ${response.error}`);
   return response as ApiResponse<ProjectMember>;
+};
+
+/**
+ * Sends an invitation to a prospective member
+ * @param projectID ID of the target project
+ * @param memberData Data with which to add a member
+ * @returns Response status
+ */
+export const sendInvite = async (
+  projectID: number,
+  memberData: SendProjectInviteInput
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/${projectID}/members/send-invite`;
+  const response = await POST(apiURL, memberData);
+
+  if (response.error) console.log(`Error in sendInvite: ${response.error}`);
+  return response as ApiResponse<null>;
+};
+
+/**
+ * Sends a request to join email to project owner
+ * @param projectID ID of the target project
+ * @param memberData Data with which to add a member
+ * @returns Response status
+ */
+export const requestToJoin = async (
+  projectID: number,
+  memberData: RequestToJoinInput
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/${projectID}/members/request-to-join`;
+  const response = await POST(apiURL, memberData);
+
+  if (response.error) console.log(`Error in requestToJoin: ${response.error}`);
+  return response as ApiResponse<null>;
 };
 
 /**
@@ -359,22 +428,20 @@ export const updateMember = async (
 };
 
 /**
- * Updates an existing pending member in a project
- * @param projectID - ID of the target project
- * @param userId - database ID of the member
- * @param memberData - Data with which to add a member
+ * Updates an existing member request
+ * @param requestID - Database ID of the request
+ * @param memberData - Data to update a member request
  * @returns Response status
  */
-export const updatePendingMember = async (
-  projectID: number,
-  userId: number,
-  memberData: UpdateProjectMemberInput
-): Promise<ApiResponse<ProjectMember>> => {
-  const apiURL = `/projects/${projectID}/members/${userId}/accept`;
+export const updateMemberRequest = async (
+  requestID: number,
+  memberData: UpdateMemberRequestInput
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/members/requests/${requestID}`;
   const response = await PATCH(apiURL, memberData);
 
   if (response.error) console.log(`Error in updatePendingMember: ${response.error}`);
-  return response as ApiResponse<ProjectMember>;
+  return response as ApiResponse<null>;
 };
 
 /**
@@ -525,7 +592,7 @@ export const getProjectMediums = async (
  */
 export const addProjectMedium = async (
   projectID: number,
-  mediumData: AddProjectMediumsInput
+  mediumData: AddProjectMediumInput
 ): Promise<ApiResponse<ProjectMedium>> => {
   const apiURL = `/projects/${projectID}/mediums`;
   const response = await POST(apiURL, mediumData);
@@ -566,7 +633,7 @@ export const getProjectJobs = async (
 // Add a project job
 /**
  * @param projectID - ID of the project
- * @param jobData - Data with which to create the joob
+ * @param jobData - Data with which to create the job
  */
 export const addProjectJob = async (
   projectID: number,
@@ -578,6 +645,77 @@ export const addProjectJob = async (
   if (response.error) console.log(`Error in addProjectJob: ${response.error}`);
   return response as ApiResponse<ProjectJob>;
 };
+
+//Add a job skill to a job
+/**
+ * @param projectID - ID of the project
+ * @param jobID - ID of the job
+ * @param skillData - Data with which to create the job skill
+ */
+export const addJobSkill = async (
+  projectID: number,
+  jobID: number,
+  skillData: AddJobSkillInput
+): Promise<ApiResponse<JobSkill>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills`;
+  const response = await POST(apiURL, skillData);
+
+  if (response.error) console.log(`Error in addJobSkill: ${response.error}`);
+  return response as ApiResponse<JobSkill>;
+};
+
+//Get all skills attached to a job
+/**
+ * @param projectID - ID of the project
+ * @param jobID - ID of the job
+ * @param skillData - Data with which to create the job skill
+ */
+export const getJobSkills = async (
+  projectID: number,
+  jobID: number
+): Promise<ApiResponse<JobSkill[]>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getJobSkills: ${response.error}`);
+  return response as ApiResponse<JobSkill[]>;
+};
+
+/**
+ * @param projectID - ID of the project
+ * @param jobID - ID of the job
+ * @param skillData - Data with which to create the job skill
+ */
+export const updateJobSkill = async (
+  projectID: number,
+  jobID: number,
+  skillID: number,
+  skillData: UpdateJobSkillInput
+): Promise<ApiResponse<JobSkill>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const response = await PATCH(apiURL, skillData);
+
+  if (response.error) console.log(`Error in updateJobSkill: ${response.error}`);
+  return response as ApiResponse<JobSkill>;
+};
+
+/**
+ * @param projectID - ID of the project
+ * @param jobID - ID of the job
+ * @param skillData - Data with which to create the job skill
+ */
+export const deleteJobSkill = async (
+  projectID: number,
+  jobID: number,
+  skillID: number
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in deleteJobSkill: ${response.error}`);
+  return response as ApiResponse<null>;
+};
+
 
 // Update a project tag
 /**
@@ -673,7 +811,11 @@ export default {
   updatePic,
   deletePic,
   addMember,
+  sendInvite,
+  requestToJoin,
   updateMember,
+  getRequestByID,
+  updateMemberRequest,
   deleteMember,
   getProjectSocials,
   addProjectSocial,
@@ -690,5 +832,9 @@ export default {
   addProjectMedium,
   deleteProjectMedium,
   reorderProjectImages,
+  addJobSkill,
+  getJobSkills,
+  updateJobSkill, 
+  deleteJobSkill
   // getImageByFileName,
 };

@@ -1,4 +1,4 @@
-import type { Tag, TagType } from '@looking-for-group/shared';
+import type { Tag, TagCategory, TagType } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { TagSelector } from '#services/selectors/datasets/tag.ts';
 
@@ -11,10 +11,12 @@ const sampleTags = prisma.tags.findMany({
 type TagsGetPayload = Awaited<typeof sampleTags>[number];
 
 //map to shared type
-export const transformTag = ({ tagId, label, type }: TagsGetPayload): Tag => {
+export const transformTag = ({ tagId, label, type, category }: TagsGetPayload): Tag => {
   return {
     tagId,
     label,
     type: type as TagType,
+
+    category: category as TagCategory,
   };
 };

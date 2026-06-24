@@ -5,7 +5,7 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 import LabelInputBox from "../../LabelInputBox";
 import { PendingUserProfile } from "../../../../types/types";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
-import { AcademicYear } from "@looking-for-group/shared/enums";
+import { RitStatus as RitStatus } from "@looking-for-group/shared/enums";
 import { Major, MePrivate, Role } from "@looking-for-group/shared";
 import { getJobTitles, getMajors } from "../../../api/users";
 
@@ -41,7 +41,7 @@ export const AboutTab = ({
 	const [previewUrl, setPreviewUrl] = useState<string>(
 		usePreloadedImage(
 			`${profile.profileImage}`,
-			"/src/images/blue_frog.png"
+			"/src/images/lfrog.png"
 		)
 	);
 
@@ -335,18 +335,18 @@ export const AboutTab = ({
 					}
 
 					<LabelInputBox
-						label={"Year"}
+						label={"RIT Status"}
 						inputType={"none"}
 						forceUnsaved={
-							profile.academicYear !==
-							unmodifiedProfile.academicYear
+							profile.ritStatus !==
+							unmodifiedProfile.ritStatus
 						}>
 						<Select>
 							<SelectButton
 								placeholder="Select"
 								initialVal={
-									profile.academicYear
-										? profile.academicYear
+									profile.ritStatus
+										? profile.ritStatus
 										: ""
 								}
 								callback={(e) => e.preventDefault()}
@@ -354,32 +354,32 @@ export const AboutTab = ({
 							/>
 							<SelectOptions
 								callback={(e) => {
-									const year = (e.target as HTMLButtonElement)
-										.value as AcademicYear;
+									const status = (e.target as HTMLButtonElement)
+										.value as RitStatus;
 
 									profileAfterAboutChanges = {
 										...profileAfterAboutChanges,
-										academicYear: year as AcademicYear
+										ritStatus: status as RitStatus
 									};
 
-									//Use this for checking what happens when the year is changed
+									//Use this for checking what happens when the RIT status is changed
 									//debugger;
 									updatePendingProfile(
 										profileAfterAboutChanges
 									);
 
-									//dataManager is undefined for some reason when changing the year
+									//dataManager is undefined for some reason when changing the RIT status
 									dataManager.updateFields({
 										id: {
 											value: userId,
 											type: "canon"
 										},
 										data: {
-											academicYear: year as AcademicYear
+											ritStatus: status as RitStatus
 										}
 									});
 								}}
-								options={Object.values(AcademicYear).map(
+								options={Object.values(RitStatus).map(
 									(yr) => {
 										return {
 											value: yr,

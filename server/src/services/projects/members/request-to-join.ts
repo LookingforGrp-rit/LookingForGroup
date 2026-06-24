@@ -1,0 +1,142 @@
+import type { RequestToJoinInput, EmailInput } from '@looking-for-group/shared';
+import { createElement } from 'react';
+import { pretty, render, toPlainText } from 'react-email';
+import prisma from '#config/prisma.ts';
+import InviteEmail from '#email-templates/invite-email.ts';
+import getRolesService from '#services/datasets/get-roles.ts';
+import { sendEmail } from '#services/mailer.ts';
+import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
+import getProjectByIdService from '../get-proj-id.ts';
+
+type RequestToJoinServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
+type RequestToJoinServiceSuccess = ServiceSuccessSubset<'OK'>;
+
+// POST api/projects/:id/members/request-to-join
+export const requestToJoinService = async (
+  projectId: number,
+  data: RequestToJoinInput,
+): Promise<RequestToJoinServiceSuccess | RequestToJoinServiceError> => {
+  try {
+    //check if request exists
+    const req = await prisma.memberRequests.findFirst({
+      where: {
+        projectId,
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+      },
+    });
+    if (req) return 'CONFLICT';
+
+    // grabbing the requested role
+    const roles = await getRolesService();
+
+    if (roles === 'INTERNAL_ERROR') {
+      return roles;
+    }
+
+    const role = roles.find((r) => r.roleId === data.roleId);
+
+    if (!role) {
+      return 'NOT_FOUND';
+    }
+
+    // grabbing the requester
+    const requester = await prisma.users.findUnique({
+      where: { userId: data.prospectiveMemberId },
+      select: UserEmailSelector,
+    });
+
+    if (!requester) {
+      return 'NOT_FOUND';
+    }
+
+    // grabbing the project owner
+    const owner = await prisma.users.findUnique({
+      where: { userId: data.ownerUserId },
+      select: UserEmailSelector,
+    });
+
+    if (!owner) {
+      return 'NOT_FOUND';
+    }
+
+    // grabbing the project
+    const project = await getProjectByIdService(projectId);
+
+    if (project === 'NOT_FOUND' || project === 'INTERNAL_ERROR') {
+      return project;
+    }
+
+    //Set up email
+    const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
+
+    const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
+
+    const profileUrl = `${clientUrl}/profile?userID=${String(requester.userId)}`;
+
+    const receiverImg = requester.profileImage
+      ? `https://lookingforgrp.com${requester.profileImage}`
+      : 'https://lookingforgrp.com/api/images/blue_frog.png';
+
+    const projectImg = project.thumbnail
+      ? `https://lookingforgrp.com${project.thumbnail.image}`
+      : 'https://lookingforgrp.com/api/images/project_temp.png';
+
+    const msg = data.message ? data.message : '';
+
+    const html = await pretty(
+      await render(
+        createElement(InviteEmail, {
+          receiverName: {
+            firstName: requester.firstName,
+            lastName: requester.lastName,
+          },
+          receiverImage: receiverImg,
+          senderName: {
+            firstName: owner.firstName,
+            lastName: owner.lastName,
+          },
+          senderProfileLink: profileUrl,
+          senderEmail: owner.ritEmail,
+          senderMessage: msg,
+          projectName: project.title,
+          projectImage: projectImg,
+          inviteLink: inviteUrl,
+        }),
+      ),
+    );
+
+    const text = toPlainText(html);
+
+    const email: EmailInput = {
+      sender: requester,
+      receiver: owner,
+      subject: `Request to join ${project.title}`,
+      textBody: text,
+      HTMLBody: html,
+    };
+
+    //send email
+    const emailResult = await sendEmail(email);
+    if (emailResult === 'INTERNAL_ERROR') {
+      return emailResult;
+    }
+
+    //update db
+    await prisma.memberRequests.create({
+      data: {
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+        sentFromProject: false,
+        requestStatus: 'Pending',
+        projectId,
+      },
+    });
+
+    return 'OK';
+  } catch (e) {
+    console.error(`There was an error in requestToJoinService: `, e);
+    return 'INTERNAL_ERROR';
+  }
+};

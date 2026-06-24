@@ -43,7 +43,7 @@ export const getUserProjectsService = async (
     );
     return result;
   } catch (e) {
-    console.error(`Error in getUserProjectsService: ${JSON.stringify(e)}`);
+    console.error(`Error in getUserProjectsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };

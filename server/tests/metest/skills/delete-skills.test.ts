@@ -1,4 +1,4 @@
-import type { SkillProficiency, SkillType } from '@looking-for-group/shared';
+import type { SkillCategory, SkillProficiency, SkillType } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import { deleteSkillService } from '#services/me/skills/delete-skills.ts';
@@ -28,6 +28,7 @@ const prismaUserSkill = {
   skillId: 1,
   position: 1,
   proficiency: 'Novice' as SkillProficiency,
+  category: 'Other' as SkillCategory,
 };
 
 const skills = [

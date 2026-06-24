@@ -30,7 +30,7 @@ const prismaUser: Users = {
   headline: '',
   pronouns: '',
   title: '',
-  academicYear: null,
+  ritStatus: null,
   mentor: false,
   createdAt: new Date(),
   updatedAt: new Date(),

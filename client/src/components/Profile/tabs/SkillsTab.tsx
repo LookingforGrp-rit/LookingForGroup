@@ -7,12 +7,13 @@ import { useState, useEffect, useMemo, useCallback, Fragment } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
-import { MySkill, Skill, MePrivate, TagType } from "@looking-for-group/shared";
+import { MySkill, Skill, MePrivate, SkillType } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
 import { PendingUserProfile } from "../../../../types/types";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../../ProjectCreatorEditor/tabs/SortableItem";
+import { clampDragWithinContainer } from "../../ProjectCreatorEditor/tabs/dragModifiers";
 
 const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
 
@@ -368,6 +369,7 @@ export const SkillsTab = ({
           sensors={sensors}
           collisionDetection={closestCenter}
           onDragEnd={handleDragEnd}
+          modifiers={[clampDragWithinContainer]}
         >
           <SortableContext
             items={selectedSkills.map((t) => t.skillId)}
@@ -379,9 +381,10 @@ export const SkillsTab = ({
                   <SortableTag
                     id={skill.skillId}
                     tag={{
-                      tagId: skill.skillId,
+                      skillId: skill.skillId,
                       label: skill.label,
-                      type: skill.type as TagType,
+                      type: skill.type as SkillType,
+                      category: skill.category
                     }}
                     onRemove={handleSkillToggle}
                   />

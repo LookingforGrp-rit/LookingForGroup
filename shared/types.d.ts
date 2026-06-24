@@ -1,35 +1,36 @@
-import type prisma = require("#prisma-models/index");
-import UUID = require("crypto");
 import type { Request } from "express";
-import type url = require("url");
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
+export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio";
 export type TagType =
-  | "Creative"
-  | "Technical"
-  | "Games"
-  | "Multimedia"
-  | "Music"
   | "Other"
-  | "Developer"
-  | "Designer"
-  | "Soft"
-  | "Audio"
+  | 'Style'
+  | 'Genre'
   | "Purpose"
   | "Project Type"
   | "Role"
   | "Major"
-  | "Developer Skill"
-  | "Designer Skill"
-  | "Soft Skill"
-  | "Audio Skill";
-export type AcademicYear =
+  | "Game Engine"
+//wow.
+export type GenreCategory = 'Game' | "Story" | 'Music';
+export type StyleCategory = 'Visual' | 'Film/Video';
+export type GameEngine = 'Unity' | 'Unreal Engine' | 'Godot' | 'Twine' | 'MonoGame'
+export type DesignerCategory = 'Discipline' | 'Design Software' | 'Art and Animation' | 'Photo Editing' |  'Video Software';
+export type DeveloperCategory = 'Discipline' | 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Game Engine';
+export type SoftCategory = 'Discipline' | 'Personal' | 'Team';
+export type AudioCategory = 'Discipline' | 'DAW/Audio Editor' | 'Notation' | 'Middleware';
+export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware'
+export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
+export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
+  export type RitStatus = 
   | "Freshman"
   | "Sophomore"
   | "Junior"
   | "Senior"
-  | "Graduate";
+  | "Graduate"
+  | "Faculty"
+  | 'Staff'
+  ;
 export type SkillProficiency =
   | "Novice"
   | "Intermediate"
@@ -46,9 +47,10 @@ export type ProjectStatus =
   | "PostProduction"
   | "Complete";
 export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
-export type JobDuration = "ShortTerm" | "LongTerm";
+export type JobDuration = "Days" | "Weeks" | "Months" | "Semesters" | "Years";
 export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
+export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
 export type Visibility = "public" | "private";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
@@ -62,9 +64,6 @@ export interface NumberDictionary<T> {
   [key: number]: T;
 }
 
-interface ProjectType {
-  project_type: string;
-}
 
 export type ProjectInfoStage = "Preview" | "Detail" | "Full";
 
@@ -77,23 +76,6 @@ export interface StructuredProjectInfo {
 export interface StructuredUserInfo {
   preview?: UserPreview;
   detail?: UserDetail;
-}
-
-export interface UserAndProjectInfo {
-  tags?: Tag[];
-  title?: string;
-  hook?: string;
-  project_types?: ProjectType[];
-  job_title?: string;
-  major?: string;
-  skills?: Skill[];
-  first_name?: string;
-  last_name?: string;
-  username?: string;
-  name?: string;
-  bio?: string;
-  projectId?: number;
-  userId?: number;
 }
 
 //API REQUEST
@@ -193,6 +175,11 @@ export interface Tag {
    * The type of tag, such as "Purpose"
    */
   type: TagType;
+
+  /**
+   * The category of tag, such as "Game"
+   */
+  category: TagCategory;
 }
 
 /**
@@ -229,19 +216,24 @@ export interface Skill {
    * The type of skill, such as "Designer"
    */
   type: SkillType;
+
+  /**
+   * The category of the skill, such as "Software"
+   */
+  category: SkillCategory;
 }
 
 /**
- * Mediums refer to the medium through which a project is experienced.
+ * Mediums refer to the medium through which the project is experienced
  */
 export interface Medium {
   /**
-   * The database ID corresponding to the medium
+   * The database ID corresponding to the type
    */
   mediumId: number;
 
   /**
-   * The name of the medium, such as "Video Game"
+   * The name of the type, such as "Video Game"
    */
   label: string;
 }
@@ -291,6 +283,24 @@ export interface UserSkill extends Skill {
    * What position should this skill be ordered in on the user's profile
    */
   position: number;
+}
+
+/**
+ * Represents all info for a skill that a user has
+ */
+export interface JobSkill extends Skill {
+  /**
+   * The proficiency in the skill the job is searching for
+   */
+  proficiency: SkillProficiency;
+
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  //anything else we would want these to have would go in here
+
 }
 
 /**
@@ -636,9 +646,9 @@ export interface UserPreview {
  */
 export interface UserDetail extends UserPreview {
   /**
-   * The user's academic year, or null if unset
+   * The user's RIT status, or null if unset
    */
-  academicYear: AcademicYear | null;
+  ritStatus: RitStatus | null;
 
   /**
    * The user's bio
@@ -762,9 +772,9 @@ export interface MeDetail extends MePreview {
   majors: MyMajor[];
 
   /**
-   * The logged-in user's academic year, or null if unset
+   * The logged-in user's RIT Status, or null if unset
    */
-  academicYear: AcademicYear;
+  ritStatus: RitStatus;
 
   /**
    * The logged-in user's location, such as "Rochester, NY"
@@ -997,7 +1007,7 @@ export interface ProjectMember {
 }
 
 /**
- * Represents a tag tied to a project
+ * Represents a social tied to a project
  */
 export interface ProjectSocial extends Social {
   /**
@@ -1046,7 +1056,7 @@ export interface ProjectJob {
   availability: JobAvailability;
 
   /**
-   * The duration of the position, such as "Short-Term"
+   * The duration of the position, such as "Days"
    */
   duration: JobDuration;
 
@@ -1074,6 +1084,11 @@ export interface ProjectJob {
    * The date the listing was created
    */
   createdAt: Date;
+
+  /**
+   * The skills the listing is looking for
+   */
+  jobSkills: JobSkill[];
 
   /**
    * The date the listing was last updated
@@ -1185,11 +1200,6 @@ export interface ProjectDetail extends ProjectPreview {
   projectSocials: ProjectSocial[];
 
   /**
-   * The open job positions the project is looking to fill
-   */
-  jobs: ProjectJob[];
-
-  /**
    * All members of the project, including the creator
    */
   members: ProjectMember[];
@@ -1238,6 +1248,11 @@ export interface ProjectPreview {
    * The creator of the project
    */
   owner: UserPreview;
+
+  /**
+   * The open job positions the project is looking to fill
+   */
+  jobs: ProjectJob[];
 
   /**
    * The project thumbnail, null if unset
@@ -1299,7 +1314,7 @@ export type UpdateUserInput = Partial<
     | "headline"
     | "pronouns"
     | "title"
-    | "academicYear"
+    | "ritStatus"
     | "location"
     | "funFact"
     | "bio"
@@ -1317,7 +1332,7 @@ export type CreateUserInput = Partial<
     | "headline"
     | "pronouns"
     | "title"
-    | "academicYear"
+    | "ritStatus"
     | "location"
     | "funFact"
     | "bio"
@@ -1433,8 +1448,8 @@ export type ReorderProjectImagesInput = {
  * Data required to add a user as a member of a project, role defaults to "Member"
  */
 export type CreateProjectMemberInput = {
-  inviterUserId: number;
-  inviteeUserId: number;
+  ownerUserId: number;
+  prospectiveMemberId: number;
   roleId: number;
   message?: string;
 };
@@ -1450,7 +1465,19 @@ export type CreateProjectOwnerInput = {
 /**
  * Data required to invite a user to join a project
  */
-export type SendProjectInviteInput = Required<CreateProjectMemberInput>;
+export type SendProjectInviteInput = CreateProjectMemberInput;
+
+/**
+ * Data required to request to join a project
+ */
+export type RequestToJoinInput = CreateProjectMemberInput;
+
+/**
+ * Data required to update member request
+ */
+export type UpdateMemberRequestInput = {
+  newStatus: MemberRequestStatus,
+};
 
 /**
  * Data required to send invitation email to user
@@ -1470,6 +1497,18 @@ export type UpdateProjectMemberInput = Partial<
   Pick<CreateProjectMemberInput, "roleId">> & {
     profileVisibility?: Visibility;
   };
+
+/**
+ * Data stored in a member request
+ */
+export type MemberRequests = {
+    requestId: number;
+    prospectiveMemberId: number;
+    projectId: number;
+    roleId: number;
+    sentFromProject: boolean;
+    requestStatus: MemberRequestStatus;
+}
 
 /**
  * Data required to add a social media link to a project
@@ -1500,10 +1539,9 @@ export type AddProjectTagInput = Pick<ProjectTag, "tagId" | "displayOrder">;
 export type UpdateProjectTagInput = Partial<AddProjectTagInput>;
 
 /**
- * Data required to add a medium to a project
+ * Data required to add a type to a project
  */
-// TODO rename to AddProjectMediumInput (no plural)
-export type AddProjectMediumsInput = Pick<ProjectMedium, "mediumId">;
+export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
 
 /**
  * Data required to create a job listing on a project
@@ -1523,6 +1561,14 @@ export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
 
 
 /**
+ * Data required to add a skill to a project
+ */
+export type AddJobSkillInput = Pick<JobSkill, "skillId" | "proficiency">
+
+export type UpdateJobSkillInput = Partial<Pick<JobSkill, "proficiency"> //more things if we want to add more things
+>;
+
+/**
  * Data required to filter request
  */
 export type FilterRequest = {
@@ -1531,7 +1577,7 @@ export type FilterRequest = {
   developer?: boolean;
   skills?: number[];
   majors?: number[];
-  academicYear?: string[];
+  ritStatus?: string[];
   socials?: number[];
   strictness?: 'any' | 'all';
 }

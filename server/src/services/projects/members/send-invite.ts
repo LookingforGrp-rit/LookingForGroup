@@ -10,15 +10,25 @@ import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type SendInviteServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type SendInviteServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
+type SendInviteServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-// Used in addMemberService
-// sends an invite to a user to join a project
+// POST api/projects/:id/members/send-invite
+// Sends an invite to a user to join a project
 const sendInviteService = async (
   projectId: number,
   data: SendProjectInviteInput,
 ): Promise<SendInviteServiceSuccess | SendInviteServiceError> => {
   try {
+    //check if request exists
+    const req = await prisma.memberRequests.findFirst({
+      where: {
+        projectId,
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+      },
+    });
+    if (req) return 'CONFLICT';
+
     const roles = await getRolesService();
 
     if (roles === 'INTERNAL_ERROR') {
@@ -32,7 +42,7 @@ const sendInviteService = async (
     }
 
     const inviter = await prisma.users.findUnique({
-      where: { userId: data.inviterUserId },
+      where: { userId: data.ownerUserId },
       select: UserEmailSelector,
     });
 
@@ -41,7 +51,7 @@ const sendInviteService = async (
     }
 
     const invitee = await prisma.users.findUnique({
-      where: { userId: data.inviteeUserId },
+      where: { userId: data.prospectiveMemberId },
       select: UserEmailSelector,
     });
 
@@ -55,17 +65,32 @@ const sendInviteService = async (
       return project;
     }
 
+    //update db
+    const result = await prisma.memberRequests.create({
+      data: {
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+        sentFromProject: true,
+        requestStatus: 'Pending',
+        projectId,
+      },
+    });
+
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
+    const inviteUrl = `${clientUrl}/acceptInvite/${String(result.requestId)}`;
+
+    const profileUrl = `${clientUrl}/profile?userID=${String(inviter.userId)}`;
 
     const receiverImg = invitee.profileImage
       ? `https://lookingforgrp.com${invitee.profileImage}`
-      : 'https://lookingforgrp.com/api/images/blue_frog.png';
+      : 'https://lookingforgrp.com/api/images/lfrog.png';
 
     const projectImg = project.thumbnail
       ? `https://lookingforgrp.com${project.thumbnail.image}`
       : 'https://lookingforgrp.com/api/images/project_temp.png';
+
+    const msg = data.message ? data.message : '';
 
     const html = await pretty(
       await render(
@@ -79,8 +104,9 @@ const sendInviteService = async (
             firstName: inviter.firstName,
             lastName: inviter.lastName,
           },
+          senderProfileLink: profileUrl,
           senderEmail: inviter.ritEmail,
-          senderMessage: data.message,
+          senderMessage: msg,
           projectName: project.title,
           projectImage: projectImg,
           inviteLink: inviteUrl,
@@ -103,7 +129,7 @@ const sendInviteService = async (
       return emailResult;
     }
 
-    return 'NO_CONTENT';
+    return 'OK';
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {

@@ -22,7 +22,7 @@ const prismaJob = {
   createdAt: now,
   updatedAt: now,
   availability: 'FullTime' as JobAvailability,
-  duration: 'ShortTerm' as JobDuration,
+  duration: 'Days' as JobDuration,
   location: 'Hybrid' as JobLocation,
   compensation: 'Paid' as JobCompensation,
   description: 'test job',

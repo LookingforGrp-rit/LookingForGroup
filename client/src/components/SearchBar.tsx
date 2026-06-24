@@ -1,4 +1,4 @@
-import { memo, FC, ChangeEvent, useState, useCallback, useEffect } from 'react';
+import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback, useEffect } from 'react';
 
 export interface DataSet {
   data: unknown[];
@@ -27,6 +27,9 @@ interface SearchBarProps {
    * updating internal state.
    */
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+
+  
+  onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
 }
 
 /**
@@ -42,7 +45,7 @@ interface SearchBarProps {
  * @returns JSX element containing a styled search input with icon
  */
 //FIXME: create way to update results if a new dataset is provided: discover page filter and project editor tag filters do not save search state
-export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange }) => {
+export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, onFocus }) => {
   // Internal query state for uncontrolled mode
   const [internalQuery, setInternalQuery] = useState('');
   const query = value ?? internalQuery;
@@ -82,7 +85,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           // ONLY return fields we want to match, this avoids unintended searchbar behavior
           // Search using all string props on the item
           const includesInValue = (val: unknown): boolean => {
-            if(val === null) return false;
+            if (val === null) return false;
             if (typeof val === 'string') {
               return val.toLowerCase().includes(currentQuery);
             }
@@ -116,15 +119,15 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
             label: proccessedItem.label ?? null,
           };
 
-          for(let q of splitSearchQuery){
+          for (const q of splitSearchQuery) {
             currentQuery = q;
-            if(!Object.values(finalItem).some(includesInValue)) return false;
+            if (!Object.values(finalItem).some(includesInValue)) return false;
           }
           return true;
         }
         else {
-          for(let q of splitSearchQuery){
-            if(!String(item).toLowerCase().includes(q)) return false;
+          for (const q of splitSearchQuery) {
+            if (!String(item).toLowerCase().includes(q)) return false;
           }
           return true;
         }
@@ -152,10 +155,16 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           placeholder="Search by Name"
           value={query}
           onChange={handleChange}
+          onFocus={onFocus}
           tabIndex={2}
           onKeyDown={(e) => {
             {/* Prevent odd popup behavior on enter click */ }
             if (e.key === 'Enter') {
+              e.preventDefault();
+              // Dismiss the mobile keyboard when the user hits Enter/Return.
+              e.currentTarget.blur();
+            } else if (e.key === ' ') {
+              e.currentTarget.value += ' ';
               e.preventDefault();
             }
           }}

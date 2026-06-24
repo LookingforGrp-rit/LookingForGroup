@@ -15,16 +15,13 @@ interface MasonryContext {
 // It is defined outside the function so that it doesn't have to keep remounting
 const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryContext }) => {
   const { category, projectCache, followedProjectIds, userId } = context;
-  //seems there is sometimes undefined elements in the list that the data takes
-  if (item === undefined) return;
 
   if (category === 'projects') {
     const projectId = (item as ProjectWithFollowers).projectId;
     const project = projectCache?.[projectId]?.full || (item as ProjectWithFollowers);
     
-    // Masonry doesn't like grid gaps, so this forces padding instead
     return (
-      <div style={{ padding: '10px' }}>
+      <div>
         <ProjectPanel
           project={project}
           initialIsFollowing={followedProjectIds?.has(projectId)}
@@ -35,7 +32,7 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
   }
 
   return (
-    <div style={{ padding: '10px' }}>
+    <div>
       <ProfilePanel 
         profileData={item as UserPreview} 
         currentUserId={userId} 
@@ -53,13 +50,16 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
  * @param itemList - List of items (projects or profiles) to render.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId }: { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
+export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, }: { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
   // Test these
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 1000px)');
-  const isTabletProfile = useMediaQuery('(max-width: 1040px)');
+  const isTabletProfile = useMediaQuery('(max-width: 1050px)');
   const isSmallDesktop = useMediaQuery('(max-width: 1360px');
   const isMediumDesktop = useMediaQuery('(max-width: 1640px');
+
+  // Sanitize the list
+  const validItemList = itemList?.filter(item => item !== undefined) || [];
 
   // Early return
   if (!itemList || itemList.length === 0) {
@@ -86,12 +86,20 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
     category,
     projectCache,
     followedProjectIds,
-    userId
+    userId,
   };
+
+  /* 
+  * This key will regenerate every time the list changes
+  * Forcing Virtuoso to remount
+  */
+  const firstItemId = (validItemList[0] as any)?.projectId || (validItemList[0] as any)?.userId || 'empty';
+  const masonryKey = `${category}-grid-${validItemList.length}-${firstItemId}`;
 
   // Finally! A masonry grid!
   return (
     <VirtuosoMasonry
+      key={masonryKey}
       data={itemList}
       columnCount={columns}
       className="masonry"

@@ -50,11 +50,13 @@ const transformedProjectPreview: ProjectPreview = {
     userId: 1,
   } as UserPreview,
   projectId: 1,
+  jobs: [],
   tags: [
     {
       label: '',
       tagId: 1,
-      type: 'Creative',
+      type: 'Other',
+      category: 'Other',
       apiUrl: 'api/projects/tags/1',
       displayOrder: 0,
     },

@@ -46,7 +46,7 @@ export const getUserFollowersService = async (
 
     return followings;
   } catch (e) {
-    console.error(`Error in getUserFollowersService: ${JSON.stringify(e)}`);
+    console.error(`Error in getUserFollowersService: ${e as Error}`);
     return 'INTERNAL_ERROR';
   }
 };
