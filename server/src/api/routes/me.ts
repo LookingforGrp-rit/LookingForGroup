@@ -15,6 +15,7 @@ import { deleteMajor } from '#controllers/me/majors/delete-major.ts';
 import { getUserMajors } from '#controllers/me/majors/get-majors.ts';
 import { getNotification } from '#controllers/me/notifications/get-notification.ts';
 import { getNotifications } from '#controllers/me/notifications/get-notifications.ts';
+import { readNotification } from '#controllers/me/notifications/read-notification.ts';
 import { reportProjectController } from '#controllers/me/report-proj.ts';
 import { reportUserController } from '#controllers/me/report-user.ts';
 import addSkills from '#controllers/me/skills/add-skills.ts';
@@ -174,5 +175,7 @@ router.post(
 router.get('/notifications', authenticated(getNotifications));
 
 router.get('/notifications/:id', authenticated(getNotification));
+
+router.patch('/notifications/:id/read', authenticated(readNotification));
 
 export default router;
