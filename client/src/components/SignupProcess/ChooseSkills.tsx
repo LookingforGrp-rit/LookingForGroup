@@ -8,9 +8,10 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSo
 import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
 import { clampDragWithinContainer } from "../ProjectCreatorEditor/tabs/dragModifiers";
 import arrow from '../../../public/images/icons/s-arrow.png';
+import { string } from "css-tree";
 
 
-const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
+const skillTabs = ["Developer", "Design", "Soft", "Audio"] as String[];
 
 // list of skills to choose from
 // technologies, arts, tools, and soft skills
