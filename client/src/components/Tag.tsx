@@ -41,16 +41,16 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
       color = 'grey';
       break;
     
-    case "developer skill":
+    case "developer":
       color = "yellow";
       break;
-    case "designer skill":
+    case "designer":
       color = "red";
       break;
-    case "soft skill":
+    case "soft":
       color = "purple";
       break;
-    case "audio skill":
+    case "audio":
       color = "periwinkle";
       break;
     default:

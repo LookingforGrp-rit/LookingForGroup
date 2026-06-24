@@ -15,10 +15,6 @@ import { Fragment } from "react";
 
 // --- Constant ---
 const TAG_TYPES = {
-  DEV: "Developer Skill" as TagType,
-  DESIGNER: "Designer Skill" as TagType,
-  SOFT: "Soft Skill" as TagType,
-  AUD: "Audio Skill" as TagType,
   GENRE: 'Genre' as TagType,
   FORM: 'Style' as TagType,
   OTHER: 'Other' as TagType,
@@ -82,7 +78,7 @@ export const TagsTab = ({
   // sets error when adding a link to the project
   // const [error, setError] = useState('');
 
-  // Tracks which category tab is currently viewed: 0 - medium, 1 - genre, 2 - dev skills, 3 - design skills, 4 - soft skills
+  // Tracks which category tab is currently viewed: 0 - medium, 1 - genre, 2 - style
   const [currentTagsTab, setCurrentTagsTab] = useState(0);
 
   // Filtered results from tag search bar
@@ -184,8 +180,6 @@ export const TagsTab = ({
     if (allMediums.length === 0) {
       fetchMediums();
     }
-  }, [allMediums]);
-  useEffect(() => {
     const getAllTags = async () => {
       const response = await getTags();
       if (!response.data) {
@@ -196,7 +190,7 @@ export const TagsTab = ({
     if (allTags.length === 0) {
       getAllTags();
     }
-  }, [allTags]);
+  }, [allMediums, allTags]);
 
   // Update tags shown for search bar
   const currentDataSet = useMemo(() => {
@@ -207,14 +201,6 @@ export const TagsTab = ({
         return [{ data: allTags.filter(tag => TAG_TYPES.GENRE.includes(tag.type as TagType)) }];
       case 2:
         return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.FORM) }];
-      case 3:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DEV) }];
-      case 4:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DESIGNER) }];
-      case 5:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.AUD) }];
-      case 6:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.SOFT) }];
       default:
         return [{ data: [] }];
     }
@@ -460,57 +446,7 @@ export const TagsTab = ({
             <p>{styleTag.label}</p>
           </TagElement>;
         });
-    } else if (currentTagsTab === 3) {
-      return allTags
-        .filter((tag) => tag.type === "Developer Skill")
-        .map((developerSkillTag) => {
-          const selected = isTagSelected(developerSkillTag.tagId, developerSkillTag.label, currentTagsTab) === "selected";
-          return <TagElement
-            key={developerSkillTag.tagId}
-            type={"developer skill"}
-            selected={selected}
-            onClick={() => handleTagSelect(developerSkillTag.tagId)}
-          >
-            <i
-              className={selected ? "fa fa-close" : "fa fa-plus"}
-            ></i>
-            <p>{developerSkillTag.label}</p>
-          </TagElement>;
-        });
-    } else if (currentTagsTab === 4) {
-      return allTags
-        .filter((tag) => tag.type === "Designer Skill")
-        .map((designerSkillTag) => {
-          const selected = isTagSelected(designerSkillTag.tagId, designerSkillTag.label, currentTagsTab) === "selected";
-          return <TagElement
-            key={designerSkillTag.tagId}
-            type={"designer skill"}
-            selected={selected}
-            onClick={() => handleTagSelect(designerSkillTag.tagId)}
-          >
-            <i
-              className={selected ? "fa fa-close" : "fa fa-plus"}
-            ></i>
-            <p>{designerSkillTag.label}</p>
-          </TagElement>;
-        });
-    }
-    return allTags
-      .filter((tag) => tag.type === "Soft Skill")
-      .map((softSkillTag) => {
-        const selected = isTagSelected(softSkillTag.tagId, softSkillTag.label, currentTagsTab) === "selected";
-        return <TagElement
-          key={softSkillTag.tagId}
-          type={"soft skill"}
-          selected={selected}
-          onClick={() => handleTagSelect(softSkillTag.tagId)}
-        >
-          <i
-            className={selected ? "fa fa-close" : "fa fa-plus"}
-          ></i>
-          <p>{softSkillTag.label}</p>
-        </TagElement>;
-      });
+    } 
   }, [
     searchedTags,
     currentTagsTab,
@@ -638,42 +574,6 @@ export const TagsTab = ({
             //Data from skills (type=Developer)
             >
               Style
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(3);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 3 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Developer)
-            >
-              Developer Skills
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(4);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 4 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Designer)
-            >
-              Designer Skills
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(5);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 5 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Soft)
-            >
-              Audio Skills
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(6);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 6 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Soft)
-            >
-              Soft Skills
             </button>
           </div>
           <hr id="tag-search-divider" />
