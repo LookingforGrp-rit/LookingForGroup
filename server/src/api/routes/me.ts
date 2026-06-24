@@ -179,6 +179,6 @@ router.get('/notifications/:id', authenticated(getNotification));
 
 router.patch('/notifications/:id/read', authenticated(readNotification));
 
-router.delete('/notification/:id', authenticated(deleteNotification));
+router.delete('/notifications/:id', authenticated(deleteNotification));
 
 export default router;
