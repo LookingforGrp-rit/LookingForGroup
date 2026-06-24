@@ -18,6 +18,10 @@ import updateImage from './images/update-image.ts';
 import addJobController from './jobs/add-job.ts';
 import deleteJobController from './jobs/delete-job.ts';
 import getJobsController from './jobs/get-all-jobs.ts';
+import addJobSkill from './jobs/skills/add-job-skill.ts';
+import deleteJobSkill from './jobs/skills/delete-job-skill.ts';
+import getJobSkills from './jobs/skills/get-job-skills.ts';
+import updateJobSkill from './jobs/skills/update-job-skill.ts';
 import updateJobController from './jobs/update-job.ts';
 import addMediums from './mediums/add-proj-mediums.ts';
 import deleteMediums from './mediums/delete-proj-mediums.ts';
@@ -51,6 +55,7 @@ import getVideos from './videos/get-videos.ts';
 
 //index file for all project routes
 //no other route group has this
+//why does this group have this but none of the others do
 
 export default {
   getJobsController,
@@ -88,6 +93,10 @@ export default {
   updateProjectSocial,
   deleteProjectSocial,
   getProjectMediums,
+  addJobSkill,
+  getJobSkills,
+  updateJobSkill,
+  deleteJobSkill,
   addMediums,
   deleteMediums,
   approveProject,

@@ -28,13 +28,13 @@ const now = new Date();
 const tag1: Tag = {
   tagId: 70,
   label: 'Test',
-  type: 'Developer',
+  type: 'Genre',
   category: 'Other',
 };
 const tag2: Tag = {
   tagId: 71,
   label: 'Test 2',
-  type: 'Designer',
+  type: 'Genre',
   category: 'Other',
 };
 

@@ -135,7 +135,7 @@ export const DiscoverPage = () => {
     if (!projectRes.data) return;
 
     const newProjectCache = projectCache;
-    for (let project of projectRes.data) {
+    for (const project of projectRes.data) {
 
       const cachedProject = newProjectCache[project.projectId];
       if (!cachedProject) {
@@ -181,7 +181,7 @@ export const DiscoverPage = () => {
     const projectList = fullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
-    for (let item of projectList) {
+    for (const item of projectList) {
       if (projectCache[item.projectId].full != undefined) {
         items.push(projectCache[item.projectId].full as ProjectWithFollowers);
       }

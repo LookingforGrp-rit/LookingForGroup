@@ -1,32 +1,27 @@
 import type { Request } from "express";
 
 // Enums for better typing
-export type SkillType = "Developer" | "Designer" | "Artist" | "Music" | "Soft" | "Audio";
-export type SkillCategory = 'Software' | 'Discipline' | 'Coding Language' | 'Talent' | 'Other';
+export type SkillType = "Developer" | "Designer" | "Engineer" | "Soft" | "Audio";
 export type TagType =
   | "Other"
-  | "Developer"
-  | "Designer"
-  | "Soft"
-  | "Audio"
   | 'Style'
   | 'Genre'
   | "Purpose"
   | "Project Type"
   | "Role"
   | "Major"
-  | "Developer Skill"
-  | "Designer Skill"
-  | "Soft Skill"
-  | "Audio Skill";
+  | "Game Engine"
 //wow.
 export type GenreCategory = 'Game' | "Story" | 'Music';
-export type StyleCategory = 'Visual' | 'Structural';
-export type DeveloperCategory = 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Other' | 'Discipline';
-export type DesignerCategory = 'Design' | 'Art and Animation' | 'Photo Editing' | 'Other' | 'Discipline' | 'Writing Software';
-export type SoftCategory = 'Personal' | 'Team' | 'Other';
-export type AudioCategory = 'DAW/Audio Editor' | 'Notation' | 'Middleware' | 'Discipline' | 'Other';
-export type TagCategory = GenreCategory | StyleCategory | DesignerCategory | DeveloperCategory | SoftCategory | AudioCategory;
+export type StyleCategory = 'Visual' | 'Film/Video';
+export type GameEngine = 'Unity' | 'Unreal Engine' | 'Godot' | 'Twine' | 'MonoGame'
+export type DesignerCategory = 'Discipline' | 'Design Software' | 'Art and Animation' | 'Photo Editing' |  'Video Software';
+export type DeveloperCategory = 'Discipline' | 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Game Engine';
+export type SoftCategory = 'Discipline' | 'Personal' | 'Team';
+export type AudioCategory = 'Discipline' | 'DAW/Audio Editor' | 'Notation' | 'Middleware';
+export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware'
+export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
+export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
   export type RitStatus = 
   | "Freshman"
   | "Sophomore"
@@ -288,6 +283,24 @@ export interface UserSkill extends Skill {
    * What position should this skill be ordered in on the user's profile
    */
   position: number;
+}
+
+/**
+ * Represents all info for a skill that a user has
+ */
+export interface JobSkill extends Skill {
+  /**
+   * The proficiency in the skill the job is searching for
+   */
+  proficiency: SkillProficiency;
+
+  /**
+   * The location of this resource on the server
+   */
+  apiUrl: string;
+
+  //anything else we would want these to have would go in here
+
 }
 
 /**
@@ -1073,6 +1086,11 @@ export interface ProjectJob {
   createdAt: Date;
 
   /**
+   * The skills the listing is looking for
+   */
+  jobSkills: JobSkill[];
+
+  /**
    * The date the listing was last updated
    */
   updatedAt: Date;
@@ -1125,11 +1143,6 @@ export interface ProjectDetail extends ProjectPreview {
   projectSocials: ProjectSocial[];
 
   /**
-   * The open job positions the project is looking to fill
-   */
-  jobs: ProjectJob[];
-
-  /**
    * All members of the project, including the creator
    */
   members: ProjectMember[];
@@ -1178,6 +1191,11 @@ export interface ProjectPreview {
    * The creator of the project
    */
   owner: UserPreview;
+
+  /**
+   * The open job positions the project is looking to fill
+   */
+  jobs: ProjectJob[];
 
   /**
    * The project thumbnail, null if unset
@@ -1484,6 +1502,14 @@ export type CreateProjectJobInput = Required<
  */
 export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
 
+
+/**
+ * Data required to add a skill to a project
+ */
+export type AddJobSkillInput = Pick<JobSkill, "skillId" | "proficiency">
+
+export type UpdateJobSkillInput = Partial<Pick<JobSkill, "proficiency"> //more things if we want to add more things
+>;
 
 /**
  * Data required to filter request

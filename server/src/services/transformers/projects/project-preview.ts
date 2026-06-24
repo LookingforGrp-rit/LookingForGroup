@@ -3,6 +3,7 @@ import prisma from '#config/prisma.ts';
 import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
 import { transformUserToPreview } from '../users/user-preview.ts';
 import { transformProjectImage } from './parts/project-image.ts';
+import { transformProjectJob } from './parts/project-job.ts';
 import { transformProjectMedium } from './parts/project-medium.ts';
 import { transformProjectTag } from './parts/project-tag.ts';
 
@@ -41,6 +42,7 @@ export const transformProjectToPreview = (project: ProjectsGetPayload): ProjectP
       }),
     ),
     owner: transformUserToPreview(project.users),
+    jobs: project.jobs.map((job) => transformProjectJob(project.projectId, job)),
     mediums: project.mediums.map((medium) => transformProjectMedium(project.projectId, medium)),
     apiUrl: `/api/projects/${project.projectId.toString()}`,
   } as unknown as ProjectPreview;
