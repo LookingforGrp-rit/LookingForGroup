@@ -246,10 +246,6 @@ Project Panel component style rules
         a {
           padding-right: 4px;
         }
-
-        svg {
-          transform: scale(1.6);
-        }
       }
     }
   }
