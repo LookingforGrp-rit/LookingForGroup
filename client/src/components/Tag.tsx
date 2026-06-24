@@ -28,7 +28,6 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
       color = "blue";
       break;
     
-    // The genre type is very split
     case "genre":
       color = "green";
       break;
@@ -41,17 +40,20 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
       color = 'grey';
       break;
     
-    case "developer":
+    case "developer skill":
       color = "yellow";
       break;
-    case "designer":
+    case "designer skill":
       color = "red";
       break;
-    case "soft":
+    case "soft skill":
       color = "purple";
       break;
-    case "audio":
+    case "audio skill":
       color = "periwinkle";
+      break;
+    case "engineer skill":
+      color = "the engineer skill color"; //not yet defined
       break;
     default:
       if (type == "") break;
