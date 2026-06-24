@@ -84,7 +84,7 @@ const sendInviteService = async (
 
     const receiverImg = invitee.profileImage
       ? `https://lookingforgrp.com${invitee.profileImage}`
-      : 'https://lookingforgrp.com/api/images/blue_frog.png';
+      : 'https://lookingforgrp.com/api/images/lfrog.png';
 
     const projectImg = project.thumbnail
       ? `https://lookingforgrp.com${project.thumbnail.image}`
