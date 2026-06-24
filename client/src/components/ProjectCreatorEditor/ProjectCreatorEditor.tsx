@@ -403,7 +403,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     try {
       // EXISTING PROJECT
       if (!newProject && projectID) {
-        //Updates display automatically when adding members        updateLinks();
+        //Updates display automatically when adding members        
+        await updateLinks();
         await dataManager.saveChanges();
 
         if (updateDisplayedProject) {
