@@ -151,14 +151,14 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	// Loads and utilizes an imported function for setting a profile picture
 	const handleUploadPfp = (file: File) => {
 		console.log("uploading pfp");
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target && event.target.result) {
-        setDisplayImg(event.target.result as string);
-      }
-    };
-    setProfileImage(file);
-    reader.readAsDataURL(file);
+		const reader = new FileReader();
+		reader.onload = (event) => {
+			if (event.target && event.target.result) {
+				setDisplayImg(event.target.result as string);
+			}
+		};
+		setProfileImage(file);
+		reader.readAsDataURL(file);
 	};
 
 	// Utilizes an imported function for setting a customizable avatar as their profile image
@@ -186,12 +186,12 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 					<div id="completeProfile-input-container">
 						<div id="profile-details">
 							<div
-							id="profile-editor-add-image"
-							className="edit-profile-image">
-							<ProfileImageUploader
-								onFileSelected={handleUploadPfp}
-								initialImageFile={profileImage}
-							/>
+								id="profile-editor-add-image"
+								className="edit-profile-image">
+								<ProfileImageUploader
+									onFileSelected={handleUploadPfp}
+									initialImageFile={profileImage}
+								/>
 							</div>
 						</div>
 
@@ -379,8 +379,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							id="signup-nextBtn"
 							onClick={onNext}
 							disabled={!(major.length > 0 && ritStatus && validPhoneNum)}>
-							Next
-							<img src={arrow} alt="Right arrow" id="signup-rightArw"></img>
+							<svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
 						</button>
 					</div>
 				</div>
