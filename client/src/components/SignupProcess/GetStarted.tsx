@@ -1,4 +1,5 @@
 import { MouseEventHandler } from 'react';
+import arrow from '../../../public/images/icons/s-arrow.png';
 
 interface GetStartedProps {
   show: boolean;
@@ -43,7 +44,7 @@ const GetStarted: React.FC<GetStartedProps> = ({ show, onBack, onCreateProject, 
 
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
-              Back
+              <svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
             </button>
           </div>
         </div>

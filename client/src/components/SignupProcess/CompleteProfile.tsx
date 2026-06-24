@@ -13,6 +13,8 @@ import placeholder from "../../images/blue_frog.png";
 //why do these 2 things have the same name??
 import { RitStatus as RitStatuses, } from "@looking-for-group/shared/enums";
 import { ProfileImageUploader } from "../ImageUploader";
+import arrow from '../../../public/images/icons/s-arrow.png';
+
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -149,14 +151,14 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	// Loads and utilizes an imported function for setting a profile picture
 	const handleUploadPfp = (file: File) => {
 		console.log("uploading pfp");
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      if (event.target && event.target.result) {
-        setDisplayImg(event.target.result as string);
-      }
-    };
-    setProfileImage(file);
-    reader.readAsDataURL(file);
+		const reader = new FileReader();
+		reader.onload = (event) => {
+			if (event.target && event.target.result) {
+				setDisplayImg(event.target.result as string);
+			}
+		};
+		setProfileImage(file);
+		reader.readAsDataURL(file);
 	};
 
 	// Utilizes an imported function for setting a customizable avatar as their profile image
@@ -184,12 +186,12 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 					<div id="completeProfile-input-container">
 						<div id="profile-details">
 							<div
-							id="profile-editor-add-image"
-							className="edit-profile-image">
-							<ProfileImageUploader
-								onFileSelected={handleUploadPfp}
-								initialImageFile={profileImage}
-							/>
+								id="profile-editor-add-image"
+								className="edit-profile-image">
+								<ProfileImageUploader
+									onFileSelected={handleUploadPfp}
+									initialImageFile={profileImage}
+								/>
 							</div>
 						</div>
 
@@ -371,13 +373,13 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 					</div>
 					<div id="signupProcess-btns">
 						<button id="signup-backBtn" onClick={onBack}>
-							Back
+							<svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
 						</button>
 						<button
 							id="signup-nextBtn"
 							onClick={onNext}
 							disabled={!(major.length > 0 && ritStatus && validPhoneNum)}>
-							Next
+							<svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
 						</button>
 					</div>
 				</div>

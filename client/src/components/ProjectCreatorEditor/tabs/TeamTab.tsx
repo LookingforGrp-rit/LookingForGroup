@@ -1109,6 +1109,11 @@ export const TeamTab = ({
                 className="edit-position-contact"
                 placeholder="Select"
                 type="input"
+                initialVal={
+                  currentJob?.contact 
+                    ? `${currentJob.contact.firstName} ${currentJob.contact.lastName}` 
+                    : ""
+                }
               />
               <SelectOptions
                 className="edit-position-contact"

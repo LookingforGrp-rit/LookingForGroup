@@ -434,6 +434,11 @@ Signup process modal style rules
   display: flex;
   justify-content: space-between;
 
+  input {
+    accent-color: var(--primary-color);
+    margin-right: 10px;
+  }
+
   #back {
     position: relative;
     top: 0;
@@ -446,22 +451,6 @@ Signup process modal style rules
     padding-right: 7px;
     color: var(--primary-color)
   }
-}
-
-#signup-nextBtn:disabled {
-  border: none;
-  border-radius: 14px;
-  height: 90px;
-  width: 100px;
-  font-size: 1.125rem;
-  font-weight: 600;
-  background: none;
-  color: var(--neutral-gray);
-  cursor: not-allowed;
-}
-
-#signup-nextBtn:disabled:hover {
-  transform: scale(1);
 }
 
 #signup-nextBtn,
@@ -477,6 +466,23 @@ Signup process modal style rules
   color: var(--primary-color);
 }
 
+#signup-nextBtn:disabled {
+  border: none;
+  border-radius: 14px;
+  height: 90px;
+  width: 100px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  background: none;
+
+  .color-fill>use {
+    fill: var(--neutral-gray);
+    opacity: 0.5;
+  }
+
+  cursor: not-allowed;
+}
+
 #accept-tos-btn {
   width: fit-content;
 }
@@ -486,6 +492,10 @@ Signup process modal style rules
 #accept-tos-btn {
   transform: scale(1.1);
   transition: 0.2s;
+}
+
+#signup-nextBtn:disabled:hover {
+  transform: scale(1);
 }
 
 #skill-select,
@@ -960,6 +970,12 @@ Signup process modal style rules
   top: 20px;
   left: 20px;
   cursor: pointer;
+}
+
+.ritEmailText {
+  color: var(--primary-color);
+  /* color: #F76902; */
+  font-weight: 750;
 }
 
 /* Mobile css to individual signup pages */

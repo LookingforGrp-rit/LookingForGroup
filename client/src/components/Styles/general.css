@@ -63,6 +63,8 @@ General style rules
   /* for error messages and delete buttons */
   --shadow-color: rgba(255, 255, 255, 0.2);
   /* for shadows */
+  --liked-section-bg: #2c2a3a;
+  /* bg color of liked section on personal user's pg*/
 
   /* text colors */
   --main-text: white;
@@ -148,6 +150,7 @@ General style rules
   --border-color: #d3d3ff;
   --error-delete-color: #ff3859;
   --shadow-color: rgba(0, 0, 0, 0.2);
+  --liked-section-bg: white;
 
   --main-text: black;
   --invert-text: white;
@@ -243,14 +246,12 @@ used for the more options dropdown menu and notifications
   flex-direction: column;
   align-items: center;
   max-width: 100%;
-  margin: 0 auto;
+  margin: 0 auto 50px;
   width: calc(100% - 40px);
 }
 
-#settings-page
-{
-  #main
-  {
+#settings-page {
+  #main {
     align-items: flex-start;
   }
 }
@@ -546,6 +547,10 @@ orange-button class makes the button orange, white-button class makes the button
 @media screen and (max-width: 700px) {
   .project-back-btn {
     margin: 10px 0px;
+  }
+  
+  #main {
+    margin: 0 auto 100px;
   }
 }
 
@@ -982,7 +987,7 @@ Page popup style rules
   z-index: 5;
   padding: 24px 56px;
   box-sizing: border-box;
-  
+
 
   .confirm-msg {
     width: 80%;
@@ -1176,7 +1181,7 @@ Page popup style rules
   align-items: center;
 
   #primary-btn {
-    width: 104px;
+    width: fit-content;
     height: 40px;
     padding: 5px 16px;
     font-size: 1.25rem;
@@ -1185,6 +1190,18 @@ Page popup style rules
     background-color: var(--primary-color);
     color: var(--invert-text);
     font-weight: 700;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #filters-btns-section
+  {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 90%;
+    gap: 20px;
     margin-top: min(3.67vh, 36px);
     margin-bottom: min(2.65vh, 26px);
   }
@@ -1192,6 +1209,26 @@ Page popup style rules
   #primary-btn:hover {
     transform: scale(1.1);
     transition: 0.2s;
+  }
+
+  .delete-button {
+    border: none;
+    border-radius: 30px;
+    padding: 5px 16px;
+    background-color: var(--error-delete-color) !important;
+    color: var(--invert-text);
+    font-size: 2ch;
+    width: fit-content;
+    height: 40px;
+    font-weight: 700;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  .delete-button:hover {
+    transform: scale(1.1);
+    transition: 0.2s;
+    box-shadow: none;
   }
 
   h2 {
@@ -1408,7 +1445,7 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 1;
+  z-index: 2;
   box-sizing: border-box;
 }
 

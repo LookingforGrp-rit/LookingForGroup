@@ -358,7 +358,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         <div className="signup-form column">
 
           <h2>Welcome</h2>
-          <p>Continue with your RIT email to log in or sign up.</p>
+          <p>Continue with your <span className="ritEmailText">RIT email</span> to log in or sign up.</p>
           <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="signup-form-inputs">
             {/* we wouldn't need any of the other fields either would we?? */}
@@ -391,9 +391,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             /> */}
 
             <div id="googleBtn"></div>
-
             <span className="spacer"> </span>
-
             {/* <input
               className="signup-input"
               autoComplete="off"
@@ -440,6 +438,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               onChange={(e) => setConfirm(e.target.value)}
             /> */}
           </div>
+          
 
           {/*************************************************************
 

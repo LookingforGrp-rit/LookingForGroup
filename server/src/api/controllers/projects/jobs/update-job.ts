@@ -19,6 +19,7 @@ const updateJobController = async (req: Request, res: Response): Promise<void> =
   // Parse and validate the request body
   const body = req.body as Partial<{
     roleId: number;
+    contactUserId: number;
     availability: JobAvailability;
     duration: JobDuration;
     location: JobLocation;
@@ -31,6 +32,17 @@ const updateJobController = async (req: Request, res: Response): Promise<void> =
 
   if (typeof body.roleId === 'number') {
     updates.roles = { connect: { roleId: body.roleId } };
+  }
+
+  if (typeof body.contactUserId === 'number') {
+    updates.contact = {
+      connect: {
+        projectId_userId: {
+          projectId: projectId,
+          userId: body.contactUserId,
+        },
+      },
+    };
   }
 
   if (body.availability && ['FullTime', 'PartTime', 'Flexible'].includes(body.availability)) {
