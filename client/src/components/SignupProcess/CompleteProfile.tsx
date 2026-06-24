@@ -13,6 +13,8 @@ import placeholder from "../../images/blue_frog.png";
 //why do these 2 things have the same name??
 import { RitStatus as RitStatuses, } from "@looking-for-group/shared/enums";
 import { ProfileImageUploader } from "../ImageUploader";
+import arrow from '../../../public/images/icons/s-arrow.png';
+
 
 interface CompleteProfileProps {
 	show: boolean;
@@ -371,13 +373,14 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 					</div>
 					<div id="signupProcess-btns">
 						<button id="signup-backBtn" onClick={onBack}>
-							Back
+							<svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
 						</button>
 						<button
 							id="signup-nextBtn"
 							onClick={onNext}
 							disabled={!(major.length > 0 && ritStatus && validPhoneNum)}>
 							Next
+							<img src={arrow} alt="Right arrow" id="signup-rightArw"></img>
 						</button>
 					</div>
 				</div>

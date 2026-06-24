@@ -477,6 +477,15 @@ Signup process modal style rules
   color: var(--primary-color);
 }
 
+#signup-rightArw,
+#signup-leftArw {
+  color: var(--primary-color);
+  width: 20px;
+}
+
+#signup-rightArw {
+  transform: rotate(0.5turn);
+}
 #accept-tos-btn {
   width: fit-content;
 }
@@ -960,6 +969,13 @@ Signup process modal style rules
   top: 20px;
   left: 20px;
   cursor: pointer;
+}
+
+.ritEmailText
+{
+  color: var(--primary-color);
+  /* color: #F76902; */
+  font-weight: 750;
 }
 
 /* Mobile css to individual signup pages */
