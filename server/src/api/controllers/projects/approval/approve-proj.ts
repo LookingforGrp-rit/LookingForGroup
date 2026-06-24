@@ -32,8 +32,6 @@ const approveProjectController = async (request: AuthenticatedRequest, response:
     data: 'Project approved',
   };
   response.status(204).json(res);
-
-  //const render = compile('../../../notification-templates', {var: 'john', let: 'harry'});
 };
 
 export default approveProjectController;

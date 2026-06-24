@@ -7,14 +7,14 @@ type GetNotificationServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FO
 
 const getNotificationService = async (
   notificationId: string,
-  userId: number,
+  receiverId: number,
 ): Promise<NotificationDetail | GetNotificationServiceError> => {
   try {
     const result = await prisma.notifications.findFirst({
       select: NotificationDetailSelector,
       where: {
         notificationId,
-        receiverId: userId,
+        receiverId,
       },
     });
 
