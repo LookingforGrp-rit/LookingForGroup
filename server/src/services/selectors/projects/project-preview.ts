@@ -1,4 +1,5 @@
 import { UserPreviewSelector } from '../users/user-preview.ts';
+import { ProjectJobSelector } from './parts/project-job.ts';
 import { ProjectMediumSelector } from './parts/project-medium.ts';
 import { ProjectTagSelector } from './parts/project-tag.ts';
 
@@ -7,6 +8,9 @@ export const ProjectPreviewSelector = Object.freeze({
   title: true,
   hook: true,
   globalVisibility: true,
+  jobs: {
+    select: ProjectJobSelector,
+  },
   users: {
     select: UserPreviewSelector,
   },

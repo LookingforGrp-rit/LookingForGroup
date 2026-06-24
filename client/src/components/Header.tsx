@@ -6,7 +6,7 @@ import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
-import profilePicture from '../images/blue_frog.png';
+import profilePicture from '../images/lfrog.png';
 
 //user utils
 import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
@@ -22,14 +22,14 @@ export let loggedIn = false;
 //(logout = logout the user and send them to home page or equivalent)
 
 type HeaderProps = {
-  dataSets : DataSet[];
-  onSearch : (results : unknown[][]) => void;
-  value? : string;
-  onChange? : (e: ChangeEvent<HTMLInputElement>) => void;
-  hideSearchBar? : boolean;
-  hideBackButton? : boolean;
+  dataSets: DataSet[];
+  onSearch: (results: unknown[][]) => void;
+  value?: string;
+  onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+  hideSearchBar?: boolean;
+  hideBackButton?: boolean;
   setCurrentUserId?: (data: MePrivate | undefined) => Promise<void>;
-  searchOnFocus? : (e: FocusEvent<HTMLInputElement>) => void;
+  searchOnFocus?: (e: FocusEvent<HTMLInputElement>) => void;
 };
 
 /**
@@ -47,7 +47,7 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, hideBackButton = true, setCurrentUserId, searchOnFocus}) => {
+export const Header: React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, hideBackButton = true, setCurrentUserId, searchOnFocus }) => {
   // User info state
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -68,7 +68,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
   useEffect(() => {
     const fetchUsername = async () => {
       try {
-        if(userId === -1) return;
+        if (userId === -1) return;
         const res = await getCurrentAccount();
 
         if (res.status == 200 && res.data?.username) {
@@ -90,7 +90,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
         console.log('Error fetching username: ' + err);
         loggedIn = false;
         setUserId(-1);
-          if (setCurrentUserId) setCurrentUserId(undefined);
+        if (setCurrentUserId) setCurrentUserId(undefined);
         setUsername('Guest');
         setEmail('');
         setProfileImg('');
@@ -139,7 +139,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
     // navigate to Profile, attach userID
     if (userId) return (`${paths.routes.PROFILE}?userID=${userId}`);
     return paths.routes.LOGIN;
-    
+
 
     // Collapse the dropwdown if coming from another user's page
     if (window.location.href.includes("profile")) {
@@ -153,14 +153,14 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
     setTheme(theme === 'dark' ? 'light' : 'dark');
   };
 
-  useEffect(()=>{
-    if(theme === 'dark') {
+  useEffect(() => {
+    if (theme === 'dark') {
       setModeToggle('Light Mode');
-     } 
-     else {
-      setModeToggle('Dark Mode'); 
     }
-  },[theme]);
+    else {
+      setModeToggle('Dark Mode');
+    }
+  }, [theme]);
 
   return (
     <div id="header">
@@ -246,7 +246,7 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* Single unified auth entry point (logs in existing users, signs up new ones) */}
                 <a href={paths.routes.LOGIN}>
-                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'}/>
+                  <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'} />
                   Log In / Sign Up
                 </a>
               </div>
@@ -281,19 +281,19 @@ export const Header : React.FC<HeaderProps> = ({ dataSets, onSearch, value = "",
 
                 {/* Settings Link */}
                 <a href={paths.routes.SETTINGS}>
-                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'}/>
+                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
                   Settings
                 </a>
 
                 {/* LOG OUT Button */}
                 <button onClick={async () => {
-                  if(userId) {
+                  if (userId) {
                     await googleLogout(userId);
                     navigate(paths.routes.HOME);
                     window.location.reload();
                   }
-                  }}>
-                  <ThemeIcon id={'logout'} width={25} height={25} className={'mono-fill'} ariaLabel={'log out'}/>
+                }}>
+                  <ThemeIcon id={'logout'} width={25} height={25} className={'mono-fill'} ariaLabel={'log out'} />
                   Log Out
                 </button>
               </div>

@@ -49,6 +49,7 @@ const transformedJob: ProjectJob = {
     roleId: 23,
     label: '',
   },
+  jobSkills: [],
   contact: { userId: 6 } as UserPreview,
   jobId: 390,
   createdAt: now,
