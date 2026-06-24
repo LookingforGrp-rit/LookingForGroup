@@ -27,10 +27,8 @@ interface SearchBarProps {
    * updating internal state.
    */
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
-  /**
-   * Optional focus handler for the input. Used by pages that need to react to
-   * the search bar gaining focus (e.g. scrolling results into view on mobile).
-   */
+
+  
   onFocus?: (e: FocusEvent<HTMLInputElement>) => void;
 }
 
@@ -163,6 +161,8 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
             {/* Prevent odd popup behavior on enter click */ }
             if (e.key === 'Enter') {
               e.preventDefault();
+              // Dismiss the mobile keyboard when the user hits Enter/Return.
+              e.currentTarget.blur();
             } else if (e.key === ' ') {
               e.currentTarget.value += ' ';
               e.preventDefault();

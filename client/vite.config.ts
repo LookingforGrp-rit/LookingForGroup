@@ -10,6 +10,10 @@ export default defineConfig(({ mode }) => {
   return {
     server: {
       open: true,
+      // Expose the dev server on the local network so it can be opened on a
+      // phone (same Wi-Fi) for real mobile testing — safe-area insets, touch
+      // keyboard, etc. Vite prints a "Network:" URL on startup.
+      host: true,
       proxy: {
         "/api": {
           target: `http://localhost:${apiPort}`,
