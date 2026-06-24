@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { ProjectWithFollowers } from "@looking-for-group/shared";
+import profileImage from "../images/blue_frog.png";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
 import {
@@ -140,8 +141,22 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
                 }
                 id="position-contact-link"
               >
+                 <img
+                  className="project-member-image"
+                  src={
+                    jobContact?.profileImage ?? profileImage
+                  }
+                  alt="profile picture"
+                  onError={(e) => {
+                    // default profile picture if user image doesn't load
+                    // Cannot use usePreloadedImage function because this is in a callback
+                    const profileImg = e.target as HTMLImageElement;
+                    profileImg.src = profileImage;
+                  }}
+                />
                 {jobContact?.firstName} {jobContact?.lastName}
               </span>
+
               {" "}or{" "}
               <button
                 type="button"
