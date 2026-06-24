@@ -13,6 +13,7 @@ import { leaveProjectController } from '#controllers/me/leave-project.ts';
 import addUserMajor from '#controllers/me/majors/add-major.ts';
 import { deleteMajor } from '#controllers/me/majors/delete-major.ts';
 import { getUserMajors } from '#controllers/me/majors/get-majors.ts';
+import { checkForUnreadNotifications } from '#controllers/me/notifications/check-for-unread-notifications.ts';
 import { deleteNotification } from '#controllers/me/notifications/delete-notification.ts';
 import { getNotification } from '#controllers/me/notifications/get-notification.ts';
 import { getNotifications } from '#controllers/me/notifications/get-notifications.ts';
@@ -180,5 +181,7 @@ router.get('/notifications/:id', authenticated(getNotification));
 router.patch('/notifications/:id/read', authenticated(readNotification));
 
 router.delete('/notifications/:id', authenticated(deleteNotification));
+
+router.get('/notifications/unread', authenticated(checkForUnreadNotifications));
 
 export default router;
