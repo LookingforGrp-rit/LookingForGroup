@@ -136,13 +136,11 @@ export const MediaTab = ({
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async (file: File) => {
-    // Get image in input element
-    const imageUploader = document.getElementById(
-      "image-uploader"
-    ) as HTMLInputElement;
-    if (!imageUploader?.files?.length) return;
-
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
+    else if (file.size > 2000000) {
+      setImageError("File too large");
+      return;
+    }
 
     // Check if it is a duplicate image
     for (const image of projectAfterMediaChanges.projectImages) {
@@ -222,8 +220,6 @@ export const MediaTab = ({
     } catch (err) {
       console.error(err);
     }
-
-    imageUploader.value = "";
   }, [dataManager, projectId, updatePendingProject]);
 
   const handleAddVideo = useCallback(() => {
