@@ -57,6 +57,7 @@ const transformedJob: ProjectJob = {
   },
   contact: { userId: 6 } as UserPreview,
   jobId: 390,
+  jobSkills: [],
   createdAt: now,
   updatedAt: now,
   availability: 'FullTime',

@@ -401,7 +401,20 @@ Signup process modal style rules
 
 .ChooseSkills #profile-editor-tags {
   width: 90%;
-  overflow-y: scroll;
+  overflow-y: hidden;
+  display: flex;
+
+  #project-editor-tag-wrapper,
+  #project-editor-selected-tags-container {
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--header-color) !important;
+    /*not working*/
+  }
+
+  #project-editor-tag-wrapper {
+    min-height: fit-content;
+  }
 }
 
 #signupProcess-title {
@@ -1036,6 +1049,10 @@ Signup process modal style rules
     margin: 0;
   }
 
+  .getStarted-btn-imgs {
+    margin-top: 20px;
+  }
+
   #new-project-btn,
   #join-project-btn {
     width: 90%;
@@ -1080,6 +1097,36 @@ Signup process modal style rules
   #tos-accept-label {
     font-size: 1rem;
     text-align: center;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+
+  .ChooseSkills {
+    #profile-editor-tags {
+      display: flex;
+      /* flex-wrap: wrap; */
+      flex-direction: column;
+
+      #project-editor-selected-tags {
+        /* width: 93%; */
+        height: 40%;
+        overflow-y: scroll;
+        order: 2;
+        width: auto;
+      }
+
+      #project-editor-tag-search {
+        /* width: 93%; */
+        height: 80%;
+        overflow-y: scroll;
+        max-width: auto;
+      }
+    }
+
+    #signupProcess-btns {
+      margin-top: 0;
+    }
   }
 }
 

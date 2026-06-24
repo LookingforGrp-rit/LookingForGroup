@@ -138,15 +138,17 @@ textarea {
   #project-editor-content {
     /* height: 70%; */
 
-      #profile-editor-tags {
+    #profile-editor-tags {
       display: flex;
       /* flex-wrap: wrap; */
       flex-direction: column;
+
 
       #project-editor-selected-tags {
         /* width: 93%; */
         height: 40%;
         overflow-y: scroll;
+        order: 2;
       }
 
       #project-editor-tag-search {

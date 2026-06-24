@@ -1,4 +1,10 @@
-import type { ProjectPurpose, ProjectStatus, Tag, Visibility } from '@looking-for-group/shared';
+import type {
+  ProjectPurpose,
+  ProjectStatus,
+  Tag,
+  Visibility,
+  TagType,
+} from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach, type Mock } from 'vitest';
 import prisma from '#config/prisma.ts';
 import getProjectTagsService from '#services/projects/tags/get-proj-tags.ts';
@@ -28,13 +34,13 @@ const now = new Date();
 const tag1: Tag = {
   tagId: 70,
   label: 'Test',
-  type: 'Developer',
+  type: 'Developer' as TagType,
   category: 'Other',
 };
 const tag2: Tag = {
   tagId: 71,
   label: 'Test 2',
-  type: 'Designer',
+  type: 'Designer' as TagType,
   category: 'Other',
 };
 

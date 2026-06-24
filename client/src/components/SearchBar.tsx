@@ -119,14 +119,14 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
             label: proccessedItem.label ?? null,
           };
 
-          for (let q of splitSearchQuery) {
+          for (const q of splitSearchQuery) {
             currentQuery = q;
             if (!Object.values(finalItem).some(includesInValue)) return false;
           }
           return true;
         }
         else {
-          for (let q of splitSearchQuery) {
+          for (const q of splitSearchQuery) {
             if (!String(item).toLowerCase().includes(q)) return false;
           }
           return true;

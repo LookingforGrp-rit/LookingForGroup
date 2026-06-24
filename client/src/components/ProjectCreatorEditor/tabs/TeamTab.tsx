@@ -2,7 +2,7 @@
 import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
-import profileImage from "../../../images/blue_frog.png";
+import profileImage from "../../../images/lfrog.png";
 import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
@@ -1657,7 +1657,7 @@ export const TeamTab = ({
                 }
                 className="team-positions-button"
               >
-                <img src="/images/icons/drag.png" alt="positions" />
+               
                 <button
                   className="positions-popup-list-item"
                   data-id={"jobId" in job ? job.jobId : job.localId}

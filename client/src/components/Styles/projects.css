@@ -41,11 +41,11 @@ Project Panel component style rules
 }
 
 /* each item in the masonry --- goes masonry (parent) -> virtuoso list (child) -> data index (child) */
-.masonry > * > *
-{
+.masonry>*>* {
   justify-self: center;
   padding: 10px;
 }
+
 /* not in use
 .project-panel-box {
   display: grid;
@@ -158,14 +158,14 @@ Project Panel component style rules
     background-color: var(--header-color);
   }
 
-  .project-title-likes-tabs { 
+  .project-title-likes-tabs {
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
     display: grid;
-    grid-template:  
-    'title heart' 1fr
-    'tags heart' auto / 5fr 1fr;
+    grid-template:
+      'title heart' 1fr
+      'tags heart' auto / 5fr 1fr;
     row-gap: 4px;
     /* display: flex;
     flex-direction: row;
@@ -227,7 +227,7 @@ Project Panel component style rules
       #heart-filled:hover {
         transform: scale(1.6);
       }
-      
+
       p {
         padding-top: 6px;
       }
@@ -236,19 +236,15 @@ Project Panel component style rules
   }
 
   @media only screen and (max-width: 800px) {
-    .project-title-likes-tabs { 
-      grid-template:  
-      'title heart' 1fr
-      'tags heart' auto / 4fr 1fr;
+    .project-title-likes-tabs {
+      grid-template:
+        'title heart' 1fr
+        'tags heart' auto / 4fr 1fr;
 
       .project-likes {
 
         a {
           padding-right: 4px;
-        }
-
-        svg {
-          transform: scale(1.6);
         }
       }
     }
@@ -393,14 +389,13 @@ Project Panel component style rules
   }
 }
 
-@media screen and (max-width: 800px)
-{
+@media screen and (max-width: 800px) {
   #discover-panel-box {
     margin: 0;
     width: 100%;
   }
-  .masonry > * > *
-  {
+
+  .masonry>*>* {
     padding-left: 0;
     padding-right: 0;
   }
@@ -870,7 +865,7 @@ Project Creator and Editor Popup style rules
   background-color: var(--header-color);
 }
 
-#tag-search-divider{
+#tag-search-divider {
   margin-top: 0;
 }
 
@@ -1120,7 +1115,7 @@ Project Creator and Editor Popup style rules
   }
 }
 
-#project-editor-tag-search-tabs{
+#project-editor-tag-search-tabs {
   gap: 10px !important;
   margin: 0 !important;
   border-bottom-width: 20px !important;
@@ -1129,7 +1124,7 @@ Project Creator and Editor Popup style rules
 
 .project-editor-tag-search-tab {
   margin-bottom: 0px;
-  padding: 1%;
+  padding: 5px 9px;
   color: var(--neutral-gray);
   font-size: 1rem;
   font-weight: 400;
@@ -1138,14 +1133,14 @@ Project Creator and Editor Popup style rules
   background-color: var(--tab-color);
   border-top-left-radius: 25%;
   border-top-right-radius: 25%;
-  
+
 }
 
 .medium-tag-tab {
   margin-right: 5%;
 }
 
-.tag-search-tab-active{
+.tag-search-tab-active {
   background-color: var(--header-color);
 }
 
@@ -1170,7 +1165,7 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
 }
 
-.team-tab-active{
+.team-tab-active {
   background-color: var(--bg-color);
 }
 
@@ -1851,8 +1846,7 @@ button.edit-position-contact .project-member-image {
 }
 
 /* hides horizontal scroll bar for the crop image popup */
-.popup:has(.project-crop)
-{
+.popup:has(.project-crop) {
   overflow-x: hidden;
 }
 
@@ -1895,7 +1889,7 @@ button.edit-position-contact .project-member-image {
     justify-content: center;
     align-items: center;
 
-    label{
+    label {
       margin-right: 0.5em;
       font-size: clamp(1.15rem, 3vw, 1.25rem);
     }
@@ -3761,9 +3755,9 @@ button#positions-popup-list-item-active {
 }
 
 .project-overview-section-header {
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: var(--primary-color);
-  font-weight: 600;
+  font-weight: 500;
   margin: 10px 0;
 }
 

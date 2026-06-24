@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { FileImage } from './FileImage';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { Select, SelectButton, SelectOptions } from './Select';
-import placeholder from "../images/blue_frog.png"
+import placeholder from "../images/lfrog.png"
 import { AspectRatios } from '@looking-for-group/shared/enums';
 //import { sendPost } from '../functions/fetch'; //Not fixing, is this something to be implemented later?
 

@@ -160,8 +160,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         // Existing user: log in. If they were sent here from an invite link,
         // return them to it; otherwise go to the home page.
         const from = routerLocation.state?.from;
-        const fromPath = typeof from === 'string' ? from : from?.pathname;
-        if (fromPath && fromPath.includes('acceptInvite')) {
+        const fromPath = typeof from === 'string' ? from : from?.pathname + from?.search;
+        if (fromPath){// && fromPath.includes('acceptInvite')) {
           navigate(fromPath, { replace: true });
         } else {
           navigate(paths.routes.HOME);

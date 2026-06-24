@@ -41,7 +41,7 @@ export const AboutTab = ({
 	const [previewUrl, setPreviewUrl] = useState<string>(
 		usePreloadedImage(
 			`${profile.profileImage}`,
-			"/src/images/blue_frog.png"
+			"/src/images/lfrog.png"
 		)
 	);
 
