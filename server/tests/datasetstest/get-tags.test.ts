@@ -30,8 +30,8 @@ describe('getTagsService', () => {
     ];
 
     const transformed: Tag[] = [
-      { tagId: 1, label: 'Indie', type: 'Other', category: 'Other' },
       { tagId: 13, label: 'Action', type: 'Genre', category: 'Story' },
+      { tagId: 1, label: 'Indie', type: 'Other', category: 'Other' },
     ];
 
     vi.mocked(prisma.tags.findMany).mockResolvedValue(prismaTags);

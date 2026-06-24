@@ -9,7 +9,7 @@ import type { Users } from '#prisma-models/index.js';
 import getRolesService from '#services/datasets/get-roles.ts';
 import { sendEmail } from '#services/mailer.ts';
 import getProjectByIdService from '#services/projects/get-proj-id.ts';
-import sendInviteService from '#services/projects/members/send-invite.ts';
+import { requestToJoinService } from '#services/projects/members/request-to-join.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
 
@@ -84,7 +84,7 @@ describe('requestToJoinService', async () => {
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
     vi.mocked(prisma.memberRequests.create).mockResolvedValue(prismaApplicationRequest);
 
-    const result = await sendInviteService(100, requestData);
+    const result = await requestToJoinService(100, requestData);
     expect(result).toBe('OK');
   });
 
@@ -97,7 +97,7 @@ describe('requestToJoinService', async () => {
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
     vi.mocked(prisma.memberRequests.create).mockResolvedValue(prismaApplicationRequest);
 
-    const result = await sendInviteService(100, requestData);
+    const result = await requestToJoinService(100, requestData);
     expect(result).toBe('CONFLICT');
   });
 
@@ -110,7 +110,7 @@ describe('requestToJoinService', async () => {
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
     vi.mocked(prisma.memberRequests.create).mockResolvedValue(prismaApplicationRequest);
 
-    const result = await sendInviteService(100, requestData);
+    const result = await requestToJoinService(100, requestData);
     expect(result).toBe('NOT_FOUND');
   });
 
@@ -123,7 +123,7 @@ describe('requestToJoinService', async () => {
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
     vi.mocked(prisma.memberRequests.create).mockResolvedValue(prismaApplicationRequest);
 
-    const result = await sendInviteService(100, requestData);
+    const result = await requestToJoinService(100, requestData);
     expect(result).toBe('NOT_FOUND');
   });
 
@@ -136,7 +136,7 @@ describe('requestToJoinService', async () => {
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
     vi.mocked(prisma.memberRequests.create).mockResolvedValue(prismaApplicationRequest);
 
-    const result = await sendInviteService(100, requestData);
+    const result = await requestToJoinService(100, requestData);
     expect(result).toBe('NOT_FOUND');
   });
 
@@ -149,7 +149,7 @@ describe('requestToJoinService', async () => {
     vi.mocked(sendEmail).mockResolvedValue('NO_CONTENT');
     vi.mocked(prisma.memberRequests.create).mockRejectedValue(new Error('womp womp'));
 
-    const result = await sendInviteService(100, requestData);
+    const result = await requestToJoinService(100, requestData);
     expect(result).toBe('INTERNAL_ERROR');
   });
 });

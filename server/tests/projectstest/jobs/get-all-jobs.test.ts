@@ -36,6 +36,7 @@ const prismaJob1 = {
     roleId: 23,
     label: 'Artist',
   },
+  jobSkills: [],
 };
 
 const prismaJob2 = {
@@ -54,6 +55,7 @@ const prismaJob2 = {
     roleId: 25,
     label: 'Programmer',
   },
+  jobSkills: [],
 };
 
 const transformedJobs: ProjectJob[] = [
