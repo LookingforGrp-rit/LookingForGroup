@@ -17,8 +17,9 @@ const addJobSkillService = async (
       data,
       select: JobSkillSelector,
     });
+    const apiUrl = `/api/projects/${data.projectId.toString()}/jobs/${data.jobId.toString()}/skills/${result.skill.skillId.toString()}`;
 
-    return transformJobSkill(data.projectId, data.jobId, result);
+    return transformJobSkill(apiUrl, result);
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {

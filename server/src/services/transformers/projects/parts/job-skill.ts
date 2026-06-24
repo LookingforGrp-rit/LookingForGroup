@@ -12,12 +12,11 @@ type JobSkillGetPayload = Awaited<typeof sampleJobSkill>[number];
 
 //map to shared type
 export const transformJobSkill = (
-  projectId: number,
-  jobId: number,
+  apiUrl: string,
   { proficiency, skill: { category, skillId, label, type } }: JobSkillGetPayload,
 ): JobSkill => {
   return {
-    apiUrl: `/api/projects/${projectId.toString()}/jobs/${jobId.toString()}/skills/${skillId.toString()}`,
+    apiUrl,
     ...transformSkill({ category, skillId, label, type }),
     proficiency,
   };

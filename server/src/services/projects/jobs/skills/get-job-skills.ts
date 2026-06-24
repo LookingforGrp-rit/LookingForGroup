@@ -24,7 +24,12 @@ const getJobSkillsService = async (jobId: number): Promise<JobSkill[] | GetServi
       return 'NOT_FOUND';
     }
 
-    return job.jobSkills.map((skill) => transformJobSkill(job.projectId, job.jobId, skill));
+    const transformedSkills = job.jobSkills.map((skill) => {
+      const apiUrl = `/api/projects/${job.projectId.toString()}/jobs/${job.jobId.toString()}/skills/${skill.skill.skillId.toString()}`;
+      return transformJobSkill(apiUrl, skill);
+    });
+
+    return transformedSkills;
   } catch (e) {
     console.error(`Error in getJobSkillsService: ${e as Error}`);
     return 'INTERNAL_ERROR';
