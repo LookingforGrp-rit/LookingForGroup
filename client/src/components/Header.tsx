@@ -6,7 +6,7 @@ import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
-import profilePicture from '../images/blue_frog.png';
+import profilePicture from '../images/lfrog.png';
 
 //user utils
 import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';

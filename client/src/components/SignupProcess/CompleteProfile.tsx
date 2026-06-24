@@ -9,7 +9,7 @@ import { MouseEventHandler, useMemo, useState } from "react";
 import LabelInputBox from "../LabelInputBox";
 import { Select, SelectButton, SelectOptions } from "../Select";
 import { getMajors, getJobTitles } from "../../api/users";
-import placeholder from "../../images/blue_frog.png";
+import placeholder from "../../images/lfrog.png";
 //why do these 2 things have the same name??
 import { RitStatus as RitStatuses, } from "@looking-for-group/shared/enums";
 import { ProfileImageUploader } from "../ImageUploader";
