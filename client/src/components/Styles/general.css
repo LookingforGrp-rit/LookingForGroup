@@ -892,8 +892,9 @@ Sidebar Nav style rules
     color: var(--invert-text);
 
 
-    img {
-      filter: invert(1);
+    img,
+    svg {
+      filter: invert(1) !important;
     }
   }
 
@@ -904,15 +905,17 @@ Sidebar Nav style rules
     border-radius: 50% !important;
     border-width: 2% !important;
     padding: 0% !important;
-
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   .containerButtonSideBar>.sidebar-btn>.sidebar-icon,
   .containerButtonSideBar>#my-profile-sidebar-btn>#profile {
     margin: 0% !important;
-    padding: 25% !important;
-    width: auto !important;
-    height: auto !important;
+    padding: 0% !important; 
+    width: 30px !important;
+    height: 30px !important;
   }
 }
 
