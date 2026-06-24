@@ -55,6 +55,10 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 	// filtered results from skill search bar
 	const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
+	/* ONLY used for the deleting tags button. This is needed to re-render
+	the selected skills section when reseting tags */
+	const [skills, setSkills] = useState<Skill[]>(selectedSkills);
+
 	mode;
 	/**
 	 * Updates the searchedTags stat based on search results from the SearchBar.
@@ -340,6 +344,17 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 									</div>
 								</SortableContext>
 							</DndContext>
+							<button 
+            					type="button"
+								hidden={selectedSkills.length === 0} 
+            					className="delete-tags-btn" 
+            					onClick={() => {
+									setSkills(selectedSkills.splice(0));
+								}}
+            					title="Remove all selected tags"
+          					>
+        					    <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        					</button>
 						</div>
 						<div id="project-editor-tag-search">
 							<SearchBar

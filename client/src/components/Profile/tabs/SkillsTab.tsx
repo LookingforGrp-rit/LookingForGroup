@@ -393,6 +393,14 @@ export const SkillsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <button 
+            type="button" 
+            className="delete-tags-btn" 
+            onClick={() => true}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        </button>
       </div>
 
       <div id="project-editor-tag-search">

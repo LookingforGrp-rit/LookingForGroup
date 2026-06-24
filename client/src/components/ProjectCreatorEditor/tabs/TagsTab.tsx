@@ -90,6 +90,11 @@ export const TagsTab = ({
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
+  /* ONLY used for the deleting tags button. This is needed to re-render
+    the selected mediums and tags section when reseting */
+    const [mediums, setMediums] = useState<Medium[]>(projectData.mediums);
+    const [tags, setTags] = useState<Tag[]>(projectData.tags);
+
   // Drag-and-drop sensors for the sortable selected-tags list.
   // Pointer for mouse/touch, Keyboard for accessible reordering.
   const sensors = useSensors(
@@ -563,6 +568,15 @@ export const TagsTab = ({
             </TagElement>
           ))}
         </div>
+        <button 
+            type="button" 
+            className="delete-tags-btn"
+            hidden={projectData.mediums.length === 0 || projectData.mediums == undefined} 
+            onClick={() => setMediums(projectData.mediums.splice(0))}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        </button>
       </div>
 
       <div id="project-editor-selected-tags">
@@ -602,6 +616,15 @@ export const TagsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <button 
+            type="button" 
+            className="delete-tags-btn"
+            hidden={projectData.tags.length === 0 || projectData.tags == undefined}
+            onClick={() => setTags(projectData.tags.splice(0))}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        </button>
       </div>
 
       <div id="project-editor-tag-search">

@@ -1040,6 +1040,8 @@ Signup process modal style rules
   .GetStarted,
   .ChooseSkills #profile-editor-tags {
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
     /* prevents x scrollbar */
   }
 
@@ -1062,7 +1064,7 @@ Signup process modal style rules
   }
 
   .ChooseSkills #project-editor-selected-tags {
-    width: 100%;
+    width: calc(100% - 62px - 1.818px);
   }
 
   /* === TOS === */
