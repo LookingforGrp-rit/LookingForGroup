@@ -1652,7 +1652,7 @@ export const TeamTab = ({
                 }
                 className="team-positions-button"
               >
-                <img src="/images/icons/drag.png" alt="positions" />
+               
                 <button
                   className="positions-popup-list-item"
                   data-id={"jobId" in job ? job.jobId : job.localId}
