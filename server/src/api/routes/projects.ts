@@ -441,6 +441,38 @@ router.delete(
   PROJECT.deleteJobController,
 );
 
+//gets all of a project job's skills
+router.get('/:id/jobs/:jobId/skills', projectExistsAt('path', 'id'), PROJECT.getJobSkills);
+//adds a skill to a job
+router.post(
+  '/:id/jobs/:jobId/skills',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  PROJECT.addJobSkill,
+);
+//updates a job skill's proficiency or other parameters
+router.patch(
+  '/:id/jobs/:jobId/skills/:skillId',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  projectAttributeExistsAt('job', { type: 'path', key: 'id' }, { type: 'path', key: 'jobId' }),
+  authenticated(requiresProjectOwner),
+  PROJECT.updateJobSkill,
+);
+//deletes a skill from a job
+router.delete(
+  '/:id/jobs/:jobId/skills/:skillId',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  projectAttributeExistsAt('job', { type: 'path', key: 'id' }, { type: 'path', key: 'jobId' }),
+  authenticated(requiresProjectOwner),
+  PROJECT.deleteJobSkill,
+);
+
 //---UNAPPROVED PROJECTS---\\
 
 //Get all unapproved projects

@@ -54,7 +54,7 @@ export const PanelBox = ({ category, itemList, projectCache, followedProjectIds,
   // Test these
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 1000px)');
-  const isTabletProfile = useMediaQuery('(max-width: 1040px)');
+  const isTabletProfile = useMediaQuery('(max-width: 1050px)');
   const isSmallDesktop = useMediaQuery('(max-width: 1360px');
   const isMediumDesktop = useMediaQuery('(max-width: 1640px');
 

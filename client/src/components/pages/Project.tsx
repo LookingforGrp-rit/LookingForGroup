@@ -4,7 +4,7 @@ import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
 import { ProjectCreatorEditor } from "../ProjectCreatorEditor/ProjectCreatorEditor";
 import { Popup, PopupButton, PopupContent } from "../Popup";
-import profileImage from "../../images/blue_frog.png";
+import profileImage from "../../images/lfrog.png";
 import { ProjectCarousel } from "../ProjectCarousel";
 import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
@@ -564,24 +564,11 @@ const Project = (userProfile : any) => {
               </div>
             </div>
 
-            <div id="project-people">
-              <div id="project-people-tabs">
-                <div id="project-people-tab" // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
-                  
-                //onClick={() => setDisplayedPeople("People")} wow this button is now useless
-                >
-                  The Team
-                </div>
-                {/* If contributors are added as a site feature, use the commented code below */}
-                {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
-              </div>
-              <div id="project-people-content">{peopleContent}</div>
-            </div>
-
-            <div id="project-open-positions">
+             <div id="project-open-positions">
               <div className="centerer">
                 {displayedProject.jobs.length > 0 ?
-                <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
+                // <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
+                <div id="project-people-tab">Open Positions</div>
                 : ""}
               </div>
 
@@ -596,6 +583,20 @@ const Project = (userProfile : any) => {
                   </button>
                 ))}
               </div>
+            </div>
+
+            <div id="project-people">
+              <div id="project-people-tabs">
+                <div id="project-people-tab" // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
+                  
+                //onClick={() => setDisplayedPeople("People")} wow this button is now useless
+                >
+                  The Team
+                </div>
+                {/* If contributors are added as a site feature, use the commented code below */}
+                {/* <button className={`project-people-tab ${displayedPeople === 'Contributors' ? 'project-people-tab-active' : ''}`} onClick={(e) => setDisplayedPeople('Contributors')}>Contributors</button> */}
+              </div>
+              <div id="project-people-content">{peopleContent}</div>
             </div>
           </div>
         </main>
