@@ -414,7 +414,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     onClick={(e) => {
                                                         const element = e.target as HTMLElement;
                                                         const selectIndex = isTagEnabled(tag, searchedTags.color);
-                                                        let tempEnabled = enabledFilters;
+                                                        const tempEnabled = enabledFilters;
 
                                                         //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
                                                         //  // Remove all other tags of the same type except the one selected
@@ -478,7 +478,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                             <button
                                                 key={`${tag.tag.label}-${tag.color}`}
                                                 className={`tag-button tag-button-${tag.color}-selected`}
-                                                onClick={(_e) => {
+                                                onClick={() => {
                                                     // Remove tag from list of enabled filters, re-rendering component
                                                     setEnabledFilters(
                                                         enabledFilters.toSpliced(isTagEnabled(tag.tag, tag.color), 1)
@@ -500,7 +500,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         // Reset tag filters before adding results in
 
                                         // Clears all active filters
-                                        setEnabledFilters(new Array());
+                                        setEnabledFilters([]);
                                         const newActiveTags = enabledFilters.map(f => f.tag);
                                         setActiveTagFilters(newActiveTags);
                                         const discoverFilters = document.getElementsByClassName('discover-tag-filter');
@@ -586,7 +586,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                             <button
                                 key={filter.tag.label}
                                 className={`tag-button tag-button-${filter.color}-selected`}
-                                onClick={(_e) => {
+                                onClick={() => {
 
                                     // Remove tag from list of enabled filters, re-rendering component
                                     const tempList = appliedFiltersDisplay.toSpliced(index, 1);
