@@ -30,7 +30,6 @@ const transporter = nodemailer.createTransport({
  * Async function that sends the email properly
  * @param email email object to read info from and send
  */
-//Change any to email once imports/exports are figured out
 const sendEmail = async (
   email: EmailInput,
 ): Promise<SendEmailServiceError | SendEmailServiceSuccess> => {

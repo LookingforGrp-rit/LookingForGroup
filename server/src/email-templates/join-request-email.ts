@@ -38,7 +38,7 @@ interface JoinEmailProps {
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
 const arrowUrl = 'https://lookingforgrp.com/api/images/arrow.png';
 
-const RequestEmail = ({
+export const RequestEmail = ({
   receiverName,
   receiverImage,
   senderName,

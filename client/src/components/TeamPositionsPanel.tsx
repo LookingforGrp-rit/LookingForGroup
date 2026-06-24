@@ -1,6 +1,6 @@
-import { useNavigate } from "react-router-dom";
+import { data, useNavigate } from "react-router-dom";
 import { Dispatch, SetStateAction, useState } from "react";
-import { ProjectWithFollowers } from "@looking-for-group/shared";
+import { EmailInput, ProjectWithFollowers, RequestToJoinInput } from "@looking-for-group/shared";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
 
@@ -11,8 +11,9 @@ import {
   JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 
-import { projectDataManager } from "../api/data-managers/project-data-manager";
-import { PendingProjectMember } from "../../types/types";
+import requestJoinController from "../../../server/src/api/controllers/projects/members/request-to-join"
+import { getCurrentAccount } from "../api/users";
+import { requestToJoinService } from "../../../server/src/services/projects/members/request-to-join";
 
 interface TeamPositionsPanelProps {
   displayedProject: ProjectWithFollowers;
@@ -21,7 +22,6 @@ interface TeamPositionsPanelProps {
 }
 
 export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewedPosition }: TeamPositionsPanelProps) => {
-  const dataManager = projectDataManager(displayedProject.projectId);
   const navigate = useNavigate();
 
   //Find first member with the job title of 'Project Lead'
@@ -37,7 +37,6 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
   const [requestSent, setRequestSent] = useState(false);
 
   const handleQuickApply = async () => {
-    const currentMember = await getUserAccountService();
     const viewedRole = displayedProject.jobs?.[viewedPosition]?.role?.label;
 
     console.log("[Quick Apply] would notify owner", {
@@ -48,19 +47,21 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
       message: joinMessage,
     });
 
-    // (await dataManager).createMember({
-    //   id: {
-    //     value: (currentMember as PendingProjectMember).localId ?? ++localIdIncrement,
-    //     type: "local",
-    //   },
-    //   data: {
-    //     prospectiveMemberId: currentMember.user.userId,
-    //     // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
-    //     ownerUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
-    //     roleId: currentMember.role.roleId,
-    //     message: joinMessage,
-    //   },
-    // });
+    const currentUserId = (await getCurrentAccount()).data?.userId;
+    let requestInfo;
+
+    if (currentUserId) {
+      requestInfo = {
+        ownerUserId: projectLead.userId,
+        prospectiveMemberId: currentUserId,
+        roleId: displayedProject.jobs?.[viewedPosition]?.role.roleId,
+        message: joinMessage
+      };
+    }
+
+    if (requestInfo) {
+      requestToJoinService(displayedProject.projectId, requestInfo);
+    }
 
     setRequestSent(true);
   };
