@@ -1299,7 +1299,6 @@ Filters / Tags Style Rules
 #filters-popup #primary-btn {
   width: 100%;
   max-width: 140px;
-  margin: 4px auto 0 auto;
   display: block;
   flex-shrink: 0;
 }
@@ -1362,10 +1361,5 @@ Filters / Tags Style Rules
 
   #selected-section.popup-section p {
     font-size: 0.85rem !important;
-  }
-
-  #filters-popup #primary-btn {
-    margin-top: 2px !important;
-    padding: 8px 16px !important;
   }
 }
