@@ -367,8 +367,8 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 							// the required number of skills
 							// the user can only move to the next modal when they have selected 5 skills
 							disabled={selectedSkills.length < 3}>
-							Next
-							<img src={arrow} alt="Right arrow" id="signup-rightArw"></img>
+							<svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
+
 						</button>
 					</div>
 				</div>
