@@ -46,6 +46,10 @@ export const SkillsTab = ({
   // filtered results from skill search bar
   const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
+  /* ONLY used for the deleting tags button. This is needed to re-render
+	the selected skills section when reseting tags */
+	const [skills, setSkills] = useState<Skill[]>([]);
+
   // load skills
   useMemo(() => {
     const fetchSkills = async () => {
@@ -395,8 +399,9 @@ export const SkillsTab = ({
         </DndContext>
         <button 
             type="button" 
-            className="delete-tags-btn" 
-            onClick={() => true}
+            className="delete-tags-btn"
+            hidden={selectedSkills.length === 0}
+            onClick={() => setSkills(selectedSkills.splice(0))}
             title="Remove all selected tags"
           >
             <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
