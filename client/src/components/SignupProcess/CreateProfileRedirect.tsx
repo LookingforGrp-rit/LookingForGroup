@@ -25,8 +25,7 @@ const CreateProfileRedirect: React.FC<CreateProfileRedirectProps> = ({ show, onN
                             <svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
                         </button>
                         <button id="signup-nextBtn" onClick={onNext}>
-                            Next
-                            <img src={arrow} alt="Right arrow" id="signup-rightArw"></img>
+                            <svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
                         </button>
                     </div>
                 </div>
