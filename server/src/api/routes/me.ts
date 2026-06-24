@@ -182,6 +182,6 @@ router.patch('/notifications/:id/read', authenticated(readNotification));
 
 router.delete('/notifications/:id', authenticated(deleteNotification));
 
-router.get('/notifications/unread', authenticated(checkForUnreadNotifications));
+router.get('/notifications/checkformessages', authenticated(checkForUnreadNotifications));
 
 export default router;
