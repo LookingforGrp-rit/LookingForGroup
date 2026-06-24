@@ -111,6 +111,16 @@ export const SelectButton: React.FC<SelectButtonProps> = ({
                     onChange={(e) => setSearchTerm(e.target.value)}
                     placeholder="Search..."
                     onClick={(e) => e.stopPropagation()}
+                    onKeyDown={(e) => {
+                        // Dismiss the mobile keyboard on Enter/Return without
+                        // bubbling up to the wrapper (which would toggle the
+                        // dropdown closed); keep the dropdown open to pick a result.
+                        if (e.key === 'Enter') {
+                            e.preventDefault();
+                            e.stopPropagation();
+                            e.currentTarget.blur();
+                        }
+                    }}
                 />
             ) : (value || initialVal) ? (
                 <div className='value'>{(value) ? value : initialVal}</div>
