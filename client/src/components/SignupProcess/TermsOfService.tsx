@@ -1,4 +1,5 @@
 import React, { MouseEventHandler, useRef, useState } from 'react';
+import arrow from '../../../public/images/icons/s-arrow.png';
 
 interface TermsOfServiceProps {
   show: boolean;
@@ -56,7 +57,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
 
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
-              Back
+              <svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
             </button>
             <div id="accept-tos-section">
                 <input type="checkbox" id="tos-checkbox" name="tos" onChange={() => setIsChecked(!isChecked)}/>
@@ -64,6 +65,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
             </div>
             <button id="signup-nextBtn" onClick={onNext} ref={nextBtn} disabled={!isChecked}>
               Next
+              <img src={arrow} alt="Right arrow" id="signup-rightArw"></img>
             </button>
           </div>
         </div>
