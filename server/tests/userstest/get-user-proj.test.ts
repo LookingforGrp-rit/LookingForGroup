@@ -47,6 +47,7 @@ describe('getuserProjectsService', () => {
       title: p.title,
       hook: p.hook,
       owner: p.users,
+      jobs: p.jobs,
       tags: p.tags,
       thumbnail: p.thumbnail,
       mediums: p.mediums,

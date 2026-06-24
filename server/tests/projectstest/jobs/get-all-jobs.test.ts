@@ -62,6 +62,7 @@ const transformedJobs: ProjectJob[] = [
       roleId: 23,
       label: '',
     },
+    jobSkills: [],
     contact: { userId: 6 } as UserPreview,
     jobId: 390,
     createdAt: now,
@@ -78,6 +79,7 @@ const transformedJobs: ProjectJob[] = [
       roleId: 25,
       label: '',
     },
+    jobSkills: [],
     contact: { userId: 7 } as UserPreview,
     jobId: 391,
     createdAt: now,
@@ -120,6 +122,7 @@ describe('getJobsService', async () => {
           location,
           roleId,
           updatedAt,
+          jobSkills,
         },
       ): ProjectJob => {
         return {
@@ -127,6 +130,7 @@ describe('getJobsService', async () => {
           compensation,
           createdAt,
           description,
+          jobSkills,
           contact: { userId: contactUserId } as UserPreview,
           duration,
           jobId,
