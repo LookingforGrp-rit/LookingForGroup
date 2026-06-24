@@ -35,7 +35,9 @@ export const transformProjectJob = (
     compensation,
     createdAt,
     description,
-    jobSkills: jobSkills.map((s) => transformJobSkill(projectId, jobId, s)),
+    jobSkills: jobSkills.map((s) =>
+      transformJobSkill(`/api/projects/${projectId.toString()}/jobs/${jobId.toString()}`, s),
+    ),
     contact: transformUserToPreview(users),
     duration,
     jobId,
