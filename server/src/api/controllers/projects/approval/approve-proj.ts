@@ -36,15 +36,9 @@ const approveProjectController = async (request: AuthenticatedRequest, response:
   response.status(204).json(res);
 
   // Sending the notification
-  sendNotificationService(new ProjectApprovedMessageBuilder(), request)
-    .then((e: string) => {
-      if (e !== 'CREATED') {
-        throw new Error(e);
-      }
-    })
-    .catch((e: unknown) => {
-      console.error('There was an internal error while sending a notification: ', e);
-    });
+  sendNotificationService(new ProjectApprovedMessageBuilder(), request).catch((e: unknown) => {
+    console.error('There was an internal error while sending a notification: ', e);
+  });
 };
 
 export default approveProjectController;
