@@ -491,7 +491,7 @@ const Settings = (userProfile : any) => {
 
       {/* Search bar is not used in settings */}
       <div id="settings-page">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <div id="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <h1 className="page-title">Settings</h1>
           <Header dataSets={[]} onSearch={() => { }} hideSearchBar />
         </div>
@@ -500,10 +500,10 @@ const Settings = (userProfile : any) => {
           <p>You aren't logged in!</p>
         ) : (
 
-          <div>
+          <div id='main'>
 
             {/* Top Row: Personal and Email Settings */}
-            <div className="settings-row" id='main'>
+            <div className="settings-row">
               <h2 className="settings-header">Account</h2>
               {/* Personal Settings 
               <div className="settings-column">
@@ -718,7 +718,7 @@ const Settings = (userProfile : any) => {
             <div className="settings-row settings-row-actions">
               {/* Edit Profile — opens the same editor popup used on the profile page */}
               <div className="subsection">
-                <ProfileEditPopup />
+                <ProfileEditPopup/>
               </div>
               {/* Account Deletion */}
               <div className="subsection">

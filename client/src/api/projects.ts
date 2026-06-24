@@ -15,6 +15,7 @@ import type {
   UpdateProjectImageInput,
   CreateProjectMemberInput,
   UpdateProjectMemberInput,
+  UpdateMemberRequestInput,
   AddProjectSocialInput,
   UpdateProjectSocialInput,
   AddProjectTagInput,
@@ -31,6 +32,9 @@ import type {
   AddJobSkillInput,
   JobSkill,
   UpdateJobSkillInput,
+  SendProjectInviteInput,
+  RequestToJoinInput,
+  MemberRequests,
 } from "@looking-for-group/shared";
 
 //const navigate = useNavigate();
@@ -96,6 +100,17 @@ export const getByID = async (
   if (response.error) console.log(`Error in getByID: ${response.error}`);
   return response;
 };
+
+export const getRequestByID = async (
+  requestID: number
+): Promise<ApiResponse<MemberRequests>> => {
+  const apiURL = `/projects/members/requests/${requestID}`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getByID: ${response.error}`);
+  return response;
+};
+
 /**
  * Retrieves data of a project by its ID
  * @param projectID -  ID of project to retrieve
@@ -349,14 +364,48 @@ export const getMembers = async (
  * @returns Response status
  */
 export const addMember = async (
-  ID: number,
+  projectID: number,
   memberData: CreateProjectMemberInput
 ): Promise<ApiResponse<ProjectMember>> => {
-  const apiURL = `/projects/${ID}/members`;
+  const apiURL = `/projects/${projectID}/members`;
   const response = await POST(apiURL, memberData);
 
   if (response.error) console.log(`Error in addMember: ${response.error}`);
   return response as ApiResponse<ProjectMember>;
+};
+
+/**
+ * Sends an invitation to a prospective member
+ * @param projectID ID of the target project
+ * @param memberData Data with which to add a member
+ * @returns Response status
+ */
+export const sendInvite = async (
+  projectID: number,
+  memberData: SendProjectInviteInput
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/${projectID}/members/send-invite`;
+  const response = await POST(apiURL, memberData);
+
+  if (response.error) console.log(`Error in sendInvite: ${response.error}`);
+  return response as ApiResponse<null>;
+};
+
+/**
+ * Sends a request to join email to project owner
+ * @param projectID ID of the target project
+ * @param memberData Data with which to add a member
+ * @returns Response status
+ */
+export const requestToJoin = async (
+  projectID: number,
+  memberData: RequestToJoinInput
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/${projectID}/members/request-to-join`;
+  const response = await POST(apiURL, memberData);
+
+  if (response.error) console.log(`Error in requestToJoin: ${response.error}`);
+  return response as ApiResponse<null>;
 };
 
 /**
@@ -379,22 +428,20 @@ export const updateMember = async (
 };
 
 /**
- * Updates an existing pending member in a project
- * @param projectID - ID of the target project
- * @param userId - database ID of the member
- * @param memberData - Data with which to add a member
+ * Updates an existing member request
+ * @param requestID - Database ID of the request
+ * @param memberData - Data to update a member request
  * @returns Response status
  */
-export const updatePendingMember = async (
-  projectID: number,
-  userId: number,
-  memberData: UpdateProjectMemberInput
-): Promise<ApiResponse<ProjectMember>> => {
-  const apiURL = `/projects/${projectID}/members/${userId}/accept`;
+export const updateMemberRequest = async (
+  requestID: number,
+  memberData: UpdateMemberRequestInput
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/members/requests/${requestID}`;
   const response = await PATCH(apiURL, memberData);
 
   if (response.error) console.log(`Error in updatePendingMember: ${response.error}`);
-  return response as ApiResponse<ProjectMember>;
+  return response as ApiResponse<null>;
 };
 
 /**
@@ -764,7 +811,11 @@ export default {
   updatePic,
   deletePic,
   addMember,
+  sendInvite,
+  requestToJoin,
   updateMember,
+  getRequestByID,
+  updateMemberRequest,
   deleteMember,
   getProjectSocials,
   addProjectSocial,

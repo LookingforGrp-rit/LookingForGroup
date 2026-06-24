@@ -276,12 +276,20 @@ router.get(
   authenticated(PROJECT.getInvitations),
 );
 
+//Get a member request
+router.get(
+  '/members/requests/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(PROJECT.getMemberRequest),
+);
+
 //Delete a member request
 router.delete(
   '/members/requests/:id',
   requiresLogin,
   injectCurrentUser,
-  authenticated(PROJECT.deleteMemberRequestController),
+  authenticated(PROJECT.deleteMemberRequest),
 );
 
 //Update the status of a member request

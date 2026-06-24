@@ -27,6 +27,7 @@ interface InviteEmailProps {
     firstName: string;
     lastName: string;
   };
+  senderProfileLink: string;
   senderEmail: string;
   senderMessage: string;
   projectName: string;
@@ -41,6 +42,7 @@ const InviteEmail = ({
   receiverName,
   receiverImage,
   senderName,
+  senderProfileLink,
   senderEmail,
   senderMessage,
   projectName,
@@ -94,16 +96,16 @@ const InviteEmail = ({
           createElement(
             Text,
             { className: 'text-[14px] text-black leading-[24px]' },
-            createElement('strong', null, `${senderName.firstName} ${senderName.lastName}`),
-            ' (',
             createElement(
               Link,
               {
-                href: `mailto:${senderEmail}`,
+                href: senderProfileLink,
                 className: 'text-blue-600 no-underline',
               },
-              senderEmail,
+              createElement('strong', null, `${senderName.firstName} ${senderName.lastName}`),
             ),
+            ' (',
+            senderEmail,
             ') has invited you to the ',
             createElement('strong', null, projectName),
             ' on ',
