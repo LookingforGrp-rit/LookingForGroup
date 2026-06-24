@@ -1,22 +1,25 @@
+import type { Request } from 'express';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
+import type { NotificationBuilder } from '../../notification-templates/notification-builder.ts';
 
 type SendNotificationServiceError = ServiceErrorSubset<'CONFLICT' | 'INTERNAL_ERROR'>;
 type SendNotificationServiceSuccess = ServiceSuccessSubset<'CREATED'>;
 
 const sendNotificationService = async (
-  receiverId: number,
-  subjectLine: string,
-  message: string,
+  builder: NotificationBuilder,
+  request: Request,
 ): Promise<SendNotificationServiceError | SendNotificationServiceSuccess> => {
   // notification is created in the database
   try {
+    const notification = await builder.buildNotification(request);
+
     await prisma.notifications.create({
       data: {
-        receiverId,
-        subjectLine,
-        message,
-        timeSent: Date.now().toString(),
+        receiverId: notification.receiverId,
+        subjectLine: notification.subjectLine,
+        message: notification.message,
+        timeSent: new Date(Date.now()),
       },
     });
 

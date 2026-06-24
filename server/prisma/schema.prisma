@@ -75,7 +75,7 @@ model Members {
 model Notifications {
   notificationId  String            @id @default(uuid()) @map("notification_id") @unique
   receiverId      Int               @map("receiver_id")
-  timeSent        DateTime          @map("time_sent")
+  timeSent        DateTime          @map("time_sent") @default(current_timestamp())
   subjectLine     String            @map("subject_line")
   message         String            @map("message")
   hasBeenRead     Boolean           @default(false) @map("has_been_read")

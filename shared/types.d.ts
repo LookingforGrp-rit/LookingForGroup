@@ -1089,7 +1089,7 @@ export interface ProjectJob {
 // NOTIFICATIONS
 
 /**
- * The preview of what the user sees when they first see a notification
+ * The preview of what the user sees when they first see a notification.
  */
 export interface NotificationPreview {
   /**
@@ -1113,9 +1113,32 @@ export interface NotificationPreview {
   hasBeenRead: boolean;
 }
 
+/**
+ * The full extent of the notification when the user clicks on it.
+ */
 export interface NotificationDetail extends NotificationPreview {
   /**
    * The message within the notification.
+   */
+  message: string;
+}
+
+/**
+ * Returned by NotificationBuilders to be used by the sendNotification service.
+ */
+export interface NotificationBuilderResult {
+  /**
+   * UserId of the receiver.
+   */
+  receiverId: number;
+
+  /**
+   * Line that appears in the list of notifications.
+   */
+  subjectLine: string;
+
+  /**
+   * Full extent of the notification's message.
    */
   message: string;
 }

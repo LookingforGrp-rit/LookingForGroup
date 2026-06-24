@@ -1,6 +1,8 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
+import sendNotificationService from '#services/notifications/send-notification.ts';
 import { approveProjectService } from '#services/projects/approval/approve-project.ts';
+import { ProjectApprovedMessageBuilder } from '../../../../notification-templates/project-approved-message-builder.ts';
 
 const approveProjectController = async (request: AuthenticatedRequest, response: Response) => {
   const projectId = parseInt(request.params.id as string);
@@ -32,6 +34,17 @@ const approveProjectController = async (request: AuthenticatedRequest, response:
     data: 'Project approved',
   };
   response.status(204).json(res);
+
+  // Sending the notification
+  sendNotificationService(new ProjectApprovedMessageBuilder(), request)
+    .then((e: string) => {
+      if (e !== 'CREATED') {
+        throw new Error(e);
+      }
+    })
+    .catch((e: unknown) => {
+      console.error('There was an internal error while sending a notification: ', e);
+    });
 };
 
 export default approveProjectController;
