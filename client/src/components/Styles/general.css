@@ -279,6 +279,9 @@ a:focus-visible {
   outline: 3px solid var(--primary-color);
   outline-offset: 2px;
 }
+svg:focus{
+  outline:none;
+}
 
 /*give sections of the page a drop shadow*/
 section {
