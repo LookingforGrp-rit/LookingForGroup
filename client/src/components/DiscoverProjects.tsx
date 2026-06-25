@@ -2,9 +2,9 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
-import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
-import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
-import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
+import { tags, projectTabs } from '../constants/tags';
+import { getProjectTypes, getTags} from '../api/users';
+import { Tag, StringDictionary, Medium } from '@looking-for-group/shared';
 
 
 interface DiscoverProjectsProps {
@@ -136,10 +136,6 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const toggleTag = (event: any, tag: Tag) => {
         let newActiveTags: Tag[];
 
-        const discoverFilters = document.getElementsByClassName('discover-tag-filter');
-        //for (let i = 0; i < discoverFilters.length; i++) {
-        //  discoverFilters[i].classList.remove('discover-tag-filter-selected');
-        //}
 
         if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
             // Remove the tag from the active list

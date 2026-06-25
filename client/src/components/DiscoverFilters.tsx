@@ -2,7 +2,7 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
-import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
+import { tags, projectTabs, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
 import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
 
@@ -146,7 +146,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         Developer: 'Developer Skill',
         Soft: 'Soft Skill',
         Audio: 'Audio Skill',
-        Entineer: 'Engineer Skill',
+        Engineer: 'Engineer Skill',
         Role: 'Role',
         Major: 'Major',
       };
