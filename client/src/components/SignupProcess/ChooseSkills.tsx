@@ -169,7 +169,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 				]);
 			}
 		}
-		, [isSkillSelected, selectedSkills,]);
+		, [isSkillSelected, selectedSkills]);
 
 	// Components
 	/**
@@ -340,6 +340,18 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 									</div>
 								</SortableContext>
 							</DndContext>
+							<button 
+            					type="button"
+								hidden={selectedSkills.length === 0} 
+            					className="delete-tags-btn" 
+            					onClick={() => {
+									setSelectedSkills([]);
+									setSelectedSkillIds([]);
+								}}
+            					title="Remove all selected tags"
+          					>
+        					    <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        					</button>
 						</div>
 						<div id="project-editor-tag-search">
 							<SearchBar
@@ -363,10 +375,10 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 						<button
 							id="signup-nextBtn"
 							onClick={onNext}
-							// disable the next button if the user has not selected 5 skills
+							// disable the next button if the user has not selected 3 skills
 							// this is to prevent the user from moving to the next modal without selecting 
 							// the required number of skills
-							// the user can only move to the next modal when they have selected 5 skills
+							// the user can only move to the next modal when they have selected 3 skills
 							disabled={selectedSkills.length < 3}>
 							<svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
 

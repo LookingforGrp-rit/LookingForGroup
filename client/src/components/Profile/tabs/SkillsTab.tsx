@@ -46,6 +46,10 @@ export const SkillsTab = ({
   // filtered results from skill search bar
   const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
+  /* ONLY used for the deleting tags button. This is needed to re-render
+	the selected skills section when reseting tags */
+	const [skills, setSkills] = useState<Skill[]>(unmodifiedProfile.skills);
+
   // load skills
   useMemo(() => {
     const fetchSkills = async () => {
@@ -152,7 +156,7 @@ export const SkillsTab = ({
 
       const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
 
-      console.log(skillToToggle);
+      /*console.log(skillToToggle);*/
 
       if (!skillToToggle) return;
 
@@ -395,6 +399,32 @@ export const SkillsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <button 
+            type="button" 
+            className="delete-tags-btn"
+            hidden={profile.skills.length === 0 || profile.skills == undefined}
+            onClick={() => {
+              /* deletes all skills in the data manager for the user */
+                for (let i = 0; i < profile.skills.length; i++)
+                {
+                    dataManager.deleteSkill({
+                    id: {
+                      type: "canon",
+                      value: profile.skills[i].skillId,
+                    },
+                    data: null,
+                  })
+                }
+
+                /* re-renders the current popup with 0 skills remaining and updates
+                user profile */
+                setSkills(profile.skills.splice(0));
+              updatePendingProfile({...profile});
+            }}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        </button>
       </div>
 
       <div id="project-editor-tag-search">
