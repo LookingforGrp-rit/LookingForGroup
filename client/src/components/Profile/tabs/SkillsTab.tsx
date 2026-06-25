@@ -48,7 +48,7 @@ export const SkillsTab = ({
 
   /* ONLY used for the deleting tags button. This is needed to re-render
 	the selected skills section when reseting tags */
-	const [skills, setSkills] = useState<Skill[]>([]);
+	const [skills, setSkills] = useState<Skill[]>(unmodifiedProfile.skills);
 
   // load skills
   useMemo(() => {
@@ -400,8 +400,11 @@ export const SkillsTab = ({
         <button 
             type="button" 
             className="delete-tags-btn"
-            hidden={selectedSkills.length === 0}
-            onClick={() => setSkills(selectedSkills.splice(0))}
+            hidden={profile.skills.length === 0 || profile.skills == undefined}
+            onClick={() => {
+              setSkills(profile.skills.splice(0));
+              updatePendingProfile({...profile});
+            }}
             title="Remove all selected tags"
           >
             <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
