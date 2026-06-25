@@ -5,7 +5,7 @@ import { updateProjectSocialService } from '#services/projects/socials/update-pr
 //PATCH api/projects/{id}/socials/{socialId}
 //updates a social associated with a project
 export const updateProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const websiteId = parseInt(req.params.websiteId);
+  const websiteId = parseInt(req.params.websiteId as string);
   const projectId = parseInt(req.params.id as string);
   const social: UpdateProjectSocialInput = req.body as UpdateProjectSocialInput;
 
