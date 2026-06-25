@@ -1064,8 +1064,8 @@ Project Creator and Editor Popup style rules
 
 #project-editor-type-tags-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
   align-items: flex-start;
   gap: 8px;
   overflow-y: auto;

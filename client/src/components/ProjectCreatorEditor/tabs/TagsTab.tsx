@@ -571,8 +571,11 @@ export const TagsTab = ({
         <button 
             type="button" 
             className="delete-tags-btn"
-            hidden={projectData.mediums.length === 0 || projectData.mediums == undefined} 
-            onClick={() => setMediums(projectData.mediums.splice(0))}
+            hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined} 
+            onClick={() => {
+              setMediums(projectAfterTagsChanges.mediums.splice(0));
+              updatePendingProject(projectAfterTagsChanges);
+            }}
             title="Remove all selected tags"
           >
             <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
@@ -619,8 +622,11 @@ export const TagsTab = ({
         <button 
             type="button" 
             className="delete-tags-btn"
-            hidden={projectData.tags.length === 0 || projectData.tags == undefined}
-            onClick={() => setTags(projectData.tags.splice(0))}
+            hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined} 
+            onClick={() => {
+              setTags(projectAfterTagsChanges.tags.splice(0));
+              updatePendingProject(projectAfterTagsChanges);
+            }}
             title="Remove all selected tags"
           >
             <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
