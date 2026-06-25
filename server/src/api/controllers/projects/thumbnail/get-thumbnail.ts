@@ -5,7 +5,7 @@ import getThumbnailService from '#services/projects/thumbnail/get-thumbnail.ts';
 //GET api/projects/{id}/thumbnail
 //gets the thumbnail of a project
 const getThumbnail = async (req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(req.params.id);
+  const projID = parseInt(req.params.id as string);
 
   const result = await getThumbnailService(projID);
 

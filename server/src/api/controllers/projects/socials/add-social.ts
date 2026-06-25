@@ -6,7 +6,7 @@ import { addProjectSocialService } from '#services/projects/socials/add-social.t
 //adds a social to the project
 export const addProjectSocial = async (req: Request, res: Response): Promise<void> => {
   const social: AddProjectSocialInput = req.body as AddProjectSocialInput;
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
 
   const result = await addProjectSocialService(social, id);
 

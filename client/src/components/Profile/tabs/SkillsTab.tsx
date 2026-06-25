@@ -46,6 +46,10 @@ export const SkillsTab = ({
   // filtered results from skill search bar
   const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
+  /* ONLY used for the deleting tags button. This is needed to re-render
+	the selected skills section when reseting tags */
+	const [skills, setSkills] = useState<Skill[]>(unmodifiedProfile.skills);
+
   // load skills
   useMemo(() => {
     const fetchSkills = async () => {
@@ -111,39 +115,39 @@ export const SkillsTab = ({
      * tag-position column, so the order resets to the server's order on reload.
      * @param e Drag end event with the active (dragged) and over (target) tag ids.
      */
-    const handleDragEnd = (e: DragEndEvent) => {
-      const { active, over } = e;
-      if (!over || active.id === over.id) return;
-  
-      const skills = profile.skills;
-      const oldIndex = skills.findIndex((s) => s.skillId === Number(active.id));
-      const newIndex = skills.findIndex((s) => s.skillId === Number(over.id));
-      if (oldIndex === -1 || newIndex === -1) return;
-  
-      const reorderedSkills = arrayMove([...skills], oldIndex, newIndex).map(
-        (skill, index) => ({
-          ...skill,
-          position: index,
-        })
-      );
+  const handleDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
 
-      const updatedProfile = {
-        ...profile,
-        skills: reorderedSkills,
-      };
+    const skills = profile.skills;
+    const oldIndex = skills.findIndex((s) => s.skillId === Number(active.id));
+    const newIndex = skills.findIndex((s) => s.skillId === Number(over.id));
+    if (oldIndex === -1 || newIndex === -1) return;
 
-      dataManager.updateSkill({
-        id: {
-          type: "canon",
-          value: reorderedSkills[newIndex].skillId,
-        },
-        data: {
-          position: reorderedSkills[newIndex].position,
-        },
-      });
+    const reorderedSkills = arrayMove([...skills], oldIndex, newIndex).map(
+      (skill, index) => ({
+        ...skill,
+        position: index,
+      })
+    );
 
-      updatePendingProfile(updatedProfile);
+    const updatedProfile = {
+      ...profile,
+      skills: reorderedSkills,
     };
+
+    dataManager.updateSkill({
+      id: {
+        type: "canon",
+        value: reorderedSkills[newIndex].skillId,
+      },
+      data: {
+        position: reorderedSkills[newIndex].position,
+      },
+    });
+
+    updatePendingProfile(updatedProfile);
+  };
 
   /**
    * Toggles a skill as selected or unselected
@@ -153,6 +157,8 @@ export const SkillsTab = ({
       const isSelected = isSkillSelected(skillId) === "selected";
 
       const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
+
+      /*console.log(skillToToggle);*/
 
       if (!skillToToggle) return;
 
@@ -395,6 +401,32 @@ export const SkillsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <button 
+            type="button" 
+            className="delete-tags-btn"
+            hidden={profile.skills.length === 0 || profile.skills == undefined}
+            onClick={() => {
+              /* deletes all skills in the data manager for the user */
+                for (let i = 0; i < profile.skills.length; i++)
+                {
+                    dataManager.deleteSkill({
+                    id: {
+                      type: "canon",
+                      value: profile.skills[i].skillId,
+                    },
+                    data: null,
+                  })
+                }
+
+                /* re-renders the current popup with 0 skills remaining and updates
+                user profile */
+                setSkills(profile.skills.splice(0));
+              updatePendingProfile({...profile});
+            }}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        </button>
       </div>
 
       <div id="project-editor-tag-search">

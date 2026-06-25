@@ -21,9 +21,9 @@ import { Select, SelectButton, SelectOptions } from "../Select";
 import { ThemeIcon } from "../ThemeIcon";
 import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
-import profilePicture from "../../images/blue_frog.png";
+import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
-import { getUsersById } from "../../api/users";
+import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
 import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
@@ -89,6 +89,40 @@ const Profile = (userProfile: any) => {
       return { name: project.title, description: project.hook };
     }
   );
+
+  // --------------------
+  // Page redirect
+  // --------------------
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const me = await getCurrentAccount();
+        if (!me.data) {
+          setUserID(-1);
+          return;
+        }
+        await getProfileData(me.data);
+      } catch (e) {
+        console.error("Failed to load profile:", e);
+        setUserID(-1);
+      }
+    };
+    load();
+  }, [profileID]);
+
+  useEffect(() => {
+    if (userID === undefined) return;
+
+    if (!profileID) {
+      if (userID !== -1) {
+        navigate(`/profile?userID=${userID}`, { replace: true });
+      } else {
+        navigate(paths.routes.LOGIN, { replace: true });
+      }
+    }
+  }, [profileID, userID, navigate]);
+
+
 
   // --------------------
   // Helper functions

@@ -76,7 +76,7 @@ Project Panel component style rules
 
 .project-panel {
   width: 100%;
-  height: 280px;
+  height: auto;
   border: none;
   border-radius: 10px;
   background-color: var(--header-color);
@@ -130,7 +130,7 @@ Project Panel component style rules
     }
 
     .project-panel-meta-extra {
-      display: none;
+      display: contents;
     }
   }
 
@@ -143,15 +143,15 @@ Project Panel component style rules
     position: relative;
     /* display: flex; */
     width: 100%;
-    flex: 1 1 auto;
-    min-height: 0;
+    height: auto;
     overflow: hidden;
     border-radius: 10px 10px 0 0;
   }
 
   img {
-    object-fit: cover;
-    height: 100%;
+    display: block;
+    /* object-fit: cover; */
+    height: auto;
     width: 100%;
     border-radius: 10px 10px 0 0;
     align-self: center;
@@ -159,6 +159,7 @@ Project Panel component style rules
   }
 
   .project-title-likes-tabs {
+    position: relative;
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
@@ -246,10 +247,6 @@ Project Panel component style rules
         a {
           padding-right: 4px;
         }
-
-        svg {
-          transform: scale(1.6);
-        }
       }
     }
   }
@@ -276,14 +273,6 @@ Project Panel component style rules
     visibility: visible;
     opacity: 1;
     cursor: pointer;
-  }
-
-  .project-panel-meta>.project-panel-meta-plus {
-    display: none;
-  }
-
-  .project-panel-meta-extra {
-    display: contents;
   }
 }
 
@@ -827,6 +816,7 @@ Project Creator and Editor Popup style rules
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 20px;
+  position: relative;
 }
 
 #project-editor-tag-search {
@@ -1042,6 +1032,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   max-height: 423px;
   padding: 26px 31px;
+  min-width: fit-content;
 
   .error {
     margin-top: 15px;
@@ -1062,8 +1053,8 @@ Project Creator and Editor Popup style rules
 
 #project-editor-type-tags-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
   align-items: flex-start;
   gap: 8px;
   overflow-y: auto;
@@ -1842,6 +1833,15 @@ button.edit-position-contact .project-member-image {
   background: none;
   border: none;
   cursor: pointer;
+}
+.delete-tags-btn {
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 
 .popup-trigger-invisible {
@@ -3636,7 +3636,7 @@ button#positions-popup-list-item-active {
   color: var(--primary-color);
   border-radius: 30px;
   padding: 5px 10px 5px 5px;
-  height: 100%;
+  height: 50%;
   width: fit-content;
   display: flex;
   align-items: center;
@@ -3656,6 +3656,13 @@ button#positions-popup-list-item-active {
   height: 32px;
   width: 32px;
   border-radius: 50%;
+}
+@media only screen and (max-width: 800px) {
+
+  #position-contact{
+    margin-left: 20px;
+  }
+
 }
 
 /* Quick Apply lives inline in #position-contact next to the owner link.
@@ -3759,9 +3766,9 @@ button#positions-popup-list-item-active {
 }
 
 .project-overview-section-header {
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: var(--primary-color);
-  font-weight: 600;
+  font-weight: 500;
   margin: 10px 0;
 }
 
@@ -4155,7 +4162,7 @@ My projects page style rules
   padding-left: calc((100vw - 160px) / 14);
   padding-right: calc((100vw - 160px) / 14);
   background: var(--sidebar-gradient);
-  z-index: 10;
+  z-index: 3;
 
   svg {
     filter: invert(1) saturate(0) brightness(1);

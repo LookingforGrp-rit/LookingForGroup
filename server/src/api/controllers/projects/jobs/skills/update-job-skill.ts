@@ -13,9 +13,9 @@ import updateJobSkillService from '#services/projects/jobs/skills/update-job-ski
 */
 const updateJobSkill = async (req: Request, res: Response) => {
   const data: UpdateJobSkillInput = req.body as UpdateJobSkillInput;
-  const projectId = parseInt(req.params.idd);
-  const skillId = parseInt(req.params.skillId);
-  const jobId = parseInt(req.params.jobId);
+  const projectId = parseInt(req.params.idd as string);
+  const skillId = parseInt(req.params.skillId as string);
+  const jobId = parseInt(req.params.jobId as string);
 
   //update the skills they wanna update
   const result = await updateJobSkillService(projectId, jobId, skillId, data);
