@@ -5,7 +5,7 @@ import addMediumsService from '#services/projects/mediums/add-proj-mediums.ts';
 //POST api/projects/{id}/mediums
 //add a medium to the project
 const addMediumsController = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   const data: AddProjectMediumInput = req.body as AddProjectMediumInput;
 
   const result = await addMediumsService(id, data);

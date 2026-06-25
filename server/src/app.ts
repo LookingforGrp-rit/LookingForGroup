@@ -23,6 +23,8 @@ if (envConfig.env === 'production') {
   app.set('trust proxy', 1);
 }
 
+app.set('view engine', 'pug');
+
 app.use(
   // See express session documentation to understand what any of it means.
   session({
