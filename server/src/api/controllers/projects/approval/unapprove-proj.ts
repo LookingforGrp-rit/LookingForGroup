@@ -3,7 +3,7 @@ import type { Response } from 'express';
 import { unapproveProjectService } from '#services/projects/approval/unapprove-project.ts';
 
 const unapproveProjectController = async (request: AuthenticatedRequest, response: Response) => {
-  const projectId = parseInt(request.params.id);
+  const projectId = parseInt(request.params.id as string);
   const result = await unapproveProjectService(projectId);
 
   if (result === 'INTERNAL_ERROR') {

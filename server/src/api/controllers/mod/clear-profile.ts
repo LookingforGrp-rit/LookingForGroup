@@ -30,7 +30,7 @@ export const clearProfile = async (req: AuthenticatedRequest, res: Response): Pr
     profileImage: '',
   } as ClearUserInfo;
 
-  const userId = parseInt(req.params.id);
+  const userId = parseInt(req.params.id as string);
 
   const result = await updateUserInfoService(userId, clearing);
 

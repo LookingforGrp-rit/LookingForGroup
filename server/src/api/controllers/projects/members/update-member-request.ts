@@ -9,7 +9,7 @@ import updateMemberRequestStatusService from '#services/projects/members/update-
 //DELETE api/projects/members/requests/{requestId}
 //adds a member to the project
 const updateMemberRequest = async (req: AuthenticatedRequest, res: Response) => {
-  const requestId = parseInt(req.params.id);
+  const requestId = parseInt(req.params.id as string);
   const userId = req.currentUser.userId;
 
   const body = req.body as UpdateMemberRequestInput;

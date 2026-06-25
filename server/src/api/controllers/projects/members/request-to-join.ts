@@ -5,7 +5,7 @@ import { requestToJoinService } from '#services/projects/members/request-to-join
 //POST api/projects/{id}/members/request-to-join
 //A user requests to join the project
 const requestJoinController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const memberData: RequestToJoinInput = req.body as RequestToJoinInput;
 
   const result = await requestToJoinService(projectId, memberData);

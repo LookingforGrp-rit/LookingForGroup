@@ -22,7 +22,7 @@ const requiresProjectOwner = async (
     return;
   }
 
-  const projectId = parseInt(request.params.id);
+  const projectId = parseInt(request.params.id as string);
 
   //check if project id is number
   if (isNaN(projectId)) {

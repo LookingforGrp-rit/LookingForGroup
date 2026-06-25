@@ -5,7 +5,7 @@ import { deleteProjectService } from '#services/projects/delete-proj.ts';
 //DELETE api/mod/delete-project/{id}
 //deletes a project (moderator action)
 export const deleteProject = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
 
   const result = await deleteProjectService(projectId);
 

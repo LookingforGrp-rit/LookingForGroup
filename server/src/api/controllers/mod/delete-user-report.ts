@@ -5,7 +5,7 @@ import deleteUserReportService from '#services/users/delete-user-report.ts';
 //DELETE api/mod/user-report/{id}
 //deletes a user report (moderator action)
 export const deleteUserReport = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const reportId = parseInt(req.params.id);
+  const reportId = parseInt(req.params.id as string);
 
   const result = await deleteUserReportService(reportId);
 

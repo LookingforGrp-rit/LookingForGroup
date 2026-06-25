@@ -15,7 +15,7 @@ export const attributeExistsAt = (
 
     switch (type) {
       case 'path':
-        rawAttributeId = req.params[key];
+        rawAttributeId = req.params[key] as string;
         break;
       case 'body':
         rawAttributeId = (req.body as Record<string, unknown>)[key] as string;

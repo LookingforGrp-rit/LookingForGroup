@@ -7,8 +7,8 @@ import { reportProjectService } from '#services/me/report-proj.ts';
  * Allows authenticated users to report a project
  */
 const reportProjectController = async (req: AuthenticatedRequest, res: Response) => {
-  const projectId = parseInt(req.params.id);
-  const report = req.params.report;
+  const projectId = parseInt(req.params.id as string);
+  const report = req.params.report as string;
 
   const result = await reportProjectService(req.currentUser.userId, projectId, report);
 

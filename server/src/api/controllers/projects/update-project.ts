@@ -9,7 +9,7 @@ const updateProjectsController = async (
   res: Response,
 ): Promise<void> => {
   const updates = req.body as Omit<UpdateProjectInput, 'thumbnail'>;
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
 
   const updateFields = ['title', 'hook', 'description', 'purpose', 'status', 'audience'];
 
