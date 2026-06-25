@@ -4151,7 +4151,7 @@ My projects page style rules
   padding-left: calc((100vw - 160px) / 14);
   padding-right: calc((100vw - 160px) / 14);
   background: var(--sidebar-gradient);
-  z-index: 10;
+  z-index: 3;
 
   svg {
     filter: invert(1) saturate(0) brightness(1);
