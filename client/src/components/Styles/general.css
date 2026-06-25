@@ -805,7 +805,7 @@ Sidebar Nav style rules
     position: fixed;
     bottom: 10px;
     background-color: var(--border-color);
-    z-index: 10;
+    z-index: 3;
   }
 
   .ProfileContainer {
