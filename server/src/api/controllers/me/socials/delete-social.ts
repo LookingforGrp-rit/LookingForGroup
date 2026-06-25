@@ -6,7 +6,7 @@ import { deleteSocialService } from '#services/me/socials/delete-social.ts';
 //delete a social from user profile
 export const deleteSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //the one you're deleting
-  const social = parseInt(req.params.websiteId);
+  const social = parseInt(req.params.websiteId as string);
 
   const result = await deleteSocialService(social, req.currentUser.userId);
 

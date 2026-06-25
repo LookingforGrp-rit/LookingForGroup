@@ -5,7 +5,7 @@ import deleteBlacklistService from '#services/users/blacklist/delete-from-blackl
 //DELETE api/mod/unban-user/{googleId}
 //removes user from blacklist
 export const unbanUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const googleId = req.params.googleId;
+  const googleId = req.params.googleId as string;
 
   const result = await deleteBlacklistService(googleId);
 

@@ -1101,6 +1101,63 @@ export interface ProjectJob {
   apiUrl: string;
 }
 
+// NOTIFICATIONS
+
+/**
+ * The preview of what the user sees when they first see a notification.
+ */
+export interface NotificationPreview {
+  /**
+   * ID of the notification
+   */
+  notificationId: string;
+  
+  /**
+   * The time the notification was sent.
+   */
+  timeSent: Date;
+
+  /**
+   * The subject of the notification.
+   */
+  subjectLine: string;
+
+  /**
+   * Whether or not the notification has been read by its receiver.
+   */
+  hasBeenRead: boolean;
+}
+
+/**
+ * The full extent of the notification when the user clicks on it.
+ */
+export interface NotificationDetail extends NotificationPreview {
+  /**
+   * The message within the notification.
+   */
+  message: string;
+}
+
+/**
+ * Returned by NotificationBuilders to be used by the sendNotification service.
+ */
+export interface NotificationBuilderResult {
+  /**
+   * UserId of the receiver.
+   */
+  receiverId: number;
+
+  /**
+   * Line that appears in the list of notifications.
+   */
+  subjectLine: string;
+
+  /**
+   * Full extent of the notification's message.
+   */
+  message: string;
+}
+
 // PROJECTS
 
 /**

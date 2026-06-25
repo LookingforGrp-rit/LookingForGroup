@@ -5,7 +5,7 @@ import getMembersService from '#services/projects/members/get-members.ts';
 //GET api/projects/{id}/members
 //gets the members associated with a project
 const getMembers = async (req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(req.params.id);
+  const projID = parseInt(req.params.id as string);
 
   const result = await getMembersService(projID);
 

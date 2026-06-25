@@ -9,6 +9,6 @@ export const deleteImage = async (req: Request, res: Response): Promise<void> =>
     return;
   }
 
-  const result = await deleteImageService(req.params.image);
+  const result = await deleteImageService(req.params.image as string);
   res.status(200).json({ result });
 };
