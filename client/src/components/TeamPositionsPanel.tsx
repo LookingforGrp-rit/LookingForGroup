@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { ProjectWithFollowers } from "@looking-for-group/shared";
-import profileImage from "../images/blue_frog.png";
+import profileImage from "../images/lfrog.png";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
 import {
