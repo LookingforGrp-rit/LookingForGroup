@@ -1,11 +1,11 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
 import { Popup, PopupButton, PopupContent } from "./Popup";
 import { LeaveDeleteContext } from "../contexts/LeaveDeleteContext";
 import { PagePopup } from "./PagePopup";
-import { deleteProject } from "../api/projects";
+import { deleteProject, projectApprovalRequestExists } from "../api/projects";
 import { ApiResponse, ProjectDetail } from "@looking-for-group/shared";
 import { leaveProject } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
@@ -53,7 +53,10 @@ const MyProjectsDisplayGrid = ({
     data: null,
     error: "Not initialized",
   });
-
+  const [approvalSymbol, setApprovalSymbol] = useState<string>('');
+  const [approvalText, setApprovalText] = useState<string>('');
+  const [approvalStatus, setApprovalStatus] = useState<string>('');
+  // console.log(projectData.title + ' is approved: ' + projectData.approved);
   /**
    * toggleOptions
    * - Toggles the visibility of the dropdown menu for project actions.
@@ -63,6 +66,58 @@ const MyProjectsDisplayGrid = ({
 
   //Constructs url linking to relevant project page
   const projectURL = `${paths.routes.PROJECT}?projectID=${projectData.projectId}`;
+
+  useEffect(() => {
+    const checkApprovalRequest = async () => {
+      try {
+        const result = await projectApprovalRequestExists(projectData.projectId);
+
+        const status = projectData.approved
+          ? 'approved'
+          : result
+            ? 'under-review'
+            : 'not-approved';
+
+        setApprovalStatus(status);
+
+        setApprovalText(
+          status === 'approved'
+            ? 'Approved'
+            : status === 'under-review'
+              ? 'Under Review'
+              : 'Not Approved'
+        );
+
+        setApprovalSymbol(
+          status === 'approved'
+            ? '✓'
+            : status === 'under-review'
+              ? '?'
+              : 'x'
+        );
+      } catch {
+        const status = projectData.approved
+          ? 'approved'
+          : 'not-approved';
+
+        setApprovalStatus(status);
+
+        setApprovalText(
+          status === 'approved'
+            ? 'Approved'
+            : 'Not Approved'
+        );
+
+        setApprovalSymbol(
+          status === 'approved'
+            ? '✓'
+            : 'x'
+        );
+      }
+    };
+
+    checkApprovalRequest();
+  }, [projectData.projectId]);
 
   /**
    * handleLeaveProject
@@ -95,6 +150,14 @@ const MyProjectsDisplayGrid = ({
     <div className="my-project-grid-card">
       {/* Thumbnail */}
       <button className="grid-card-image-button" onClick={() => navigate(projectURL)}>
+        <div className={approvalStatus}>
+          <div className="symbol">
+            {approvalSymbol}
+          </div>
+          <div className="txt">
+            {approvalText}
+          </div>
+        </div>
         <img
           className="grid-card-image"
           src={usePreloadedImage(
@@ -125,14 +188,14 @@ const MyProjectsDisplayGrid = ({
           <DropdownContent rightAlign={true}>
             <div className={`card-options-list ${optionsShown ? "show" : ""}`}>
               <button className="card-leave-button" onClick={() => navigate(projectURL)}>
-                  <ThemeIcon
-                    id={"pencil"}
-                    width={21}
-                    height={21}
-                    ariaLabel={"Leave project"}
-                    className="mono-fill"
-                  />
-                  Edit Project
+                <ThemeIcon
+                  id={"pencil"}
+                  width={21}
+                  height={21}
+                  ariaLabel={"Leave project"}
+                  className="mono-fill"
+                />
+                Edit Project
               </button>
               <Popup>
                 <PopupButton className="card-leave-button">

@@ -4226,7 +4226,6 @@ My projects page style rules
   display: flex;
   flex-direction: column;
   align-content: start;
-
 }
 
 @media only screen and (max-width: 768px) {
@@ -4303,6 +4302,62 @@ My projects page style rules
   cursor: pointer;
 }
 
+.approved, .not-approved, .under-review {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 45px;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 10px; 
+  box-sizing: border-box;
+}
+
+.txt {
+  font-size: 12px;
+  font-weight: bold;
+  color: white;
+}
+
+.symbol {
+  position: absolute;
+  top: -20px;
+  
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  font-weight: bold;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  color: white;
+  
+  background-color: inherit; 
+}
+
+.approved {
+  background-color: #15dd00;
+}
+
+.not-approved {
+  background-color: #ff2a2a;
+}
+
+.under-review {
+  background-color: #ffcc00;
+  color: black;
+}
+
+.approved .txt, .approved .symbol, .under-review .txt, .under-review .symbol {
+  color: black;
+}
+
 .grid-card-image-button {
   border-radius: 10px;
   width: 200px;
@@ -4315,6 +4370,9 @@ My projects page style rules
   padding: 0;
   border-width: 0;
   outline-width: 0;
+
+  position: relative;
+  overflow: hidden;
 }
 
 .grid-card-image-button:focus {
