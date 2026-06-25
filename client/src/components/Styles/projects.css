@@ -246,10 +246,6 @@ Project Panel component style rules
         a {
           padding-right: 4px;
         }
-
-        svg {
-          transform: scale(1.6);
-        }
       }
     }
   }
@@ -3759,9 +3755,9 @@ button#positions-popup-list-item-active {
 }
 
 .project-overview-section-header {
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: var(--primary-color);
-  font-weight: 600;
+  font-weight: 500;
   margin: 10px 0;
 }
 
