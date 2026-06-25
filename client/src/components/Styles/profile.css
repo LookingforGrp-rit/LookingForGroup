@@ -19,6 +19,18 @@ Profile Panel component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+.back-btn, 
+#profile-page .back-arrow,
+.edit-profile-body .back-btn {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.back-btn:hover, 
+#profile-page .back-arrow:hover,
+.edit-profile-body .back-btn:hover {
+  transform: translateY(-2px);
+}
 /* #region profile page component */
 
 .profile-panel-box {

@@ -475,18 +475,64 @@ Signup process modal style rules
   font-weight: 800;
   background: none;
   color: var(--primary-color);
+  transition: transform 0.2s ease; 
 }
 
 #accept-tos-btn {
   width: fit-content;
 }
 
+/* The absolute top-left back button arrow */
+#back {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#main-loginsignup-btn,
+.directory button {
+  transition: transform 0.2s ease;
+}
+
+
 #signup-nextBtn:hover,
 #signup-backBtn:hover,
-#accept-tos-btn {
-  transform: scale(1.1);
-  transition: 0.2s;
+#accept-tos-btn:hover,
+#back:hover,
+#main-loginsignup-btn:hover,
+.directory button:hover {
+  transform: translateY(-2px);
 }
+
+
+#signup-nextBtn:active,
+#signup-backBtn:active,
+#accept-tos-btn:active,
+#back:active,
+#main-loginsignup-btn:active,
+.directory button:active {
+  transform: translateY(0);
+}
+
+#signup-nextBtn:disabled {
+  border: none;
+  border-radius: 14px;
+  height: 90px;
+  width: 100px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  background: none;
+  color: var(--neutral-gray);
+  cursor: not-allowed;
+}
+
+#signup-nextBtn:disabled:hover {
+  transform: translateY(0);
+}
+
+/* ========================================== */
 
 #skill-select,
 #interest-select,
