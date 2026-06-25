@@ -3632,7 +3632,7 @@ button#positions-popup-list-item-active {
   color: var(--primary-color);
   border-radius: 30px;
   padding: 5px 10px 5px 5px;
-  height: 100%;
+  height: 50%;
   width: fit-content;
   display: flex;
   align-items: center;
@@ -3652,6 +3652,13 @@ button#positions-popup-list-item-active {
   height: 32px;
   width: 32px;
   border-radius: 50%;
+}
+@media only screen and (max-width: 800px) {
+
+  #position-contact{
+    margin-left: 20px;
+  }
+
 }
 
 /* Quick Apply lives inline in #position-contact next to the owner link.
