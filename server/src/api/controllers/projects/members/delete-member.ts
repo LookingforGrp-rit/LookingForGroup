@@ -5,8 +5,8 @@ import { deleteMemberService } from '#services/projects/members/delete-member.ts
 //DELETE api/projects/{id}/members/{userId}
 //deletes a member from a project
 const deleteMemberController = async (req: AuthenticatedRequest, res: Response) => {
-  const projectId = parseInt(req.params.id);
-  const memberId = parseInt(req.params.userId);
+  const projectId = parseInt(req.params.id as string);
+  const memberId = parseInt(req.params.userId as string);
 
   const result = await deleteMemberService(projectId, memberId);
 

@@ -5,7 +5,7 @@ import getProjectSocialsService from '#services/projects/socials/get-proj-social
 //GET api/projects/{id}/socials
 //gets the socials associated with a project
 const getProjectSocialsController = async (req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(req.params.id);
+  const projID = parseInt(req.params.id as string);
 
   const result = await getProjectSocialsService(projID);
 

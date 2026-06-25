@@ -5,8 +5,8 @@ import updateTagService from '#services/projects/tags/update-tag.ts';
 //PATCH api/projects/{id}/tags/{tagId}
 //updates a tag for the project
 const updateTagController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
-  const tagId = parseInt(req.params.tagId);
+  const projectId = parseInt(req.params.id as string);
+  const tagId = parseInt(req.params.tagId as string);
   const tag: UpdateProjectTagInput = req.body as UpdateProjectTagInput;
 
   const result = await updateTagService(projectId, tagId, tag);

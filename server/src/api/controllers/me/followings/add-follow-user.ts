@@ -6,7 +6,7 @@ import { addUserFollowingService } from '#services/me/followings/add-follow-user
 //add user to follow list
 export const addUserFollowing = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   const senderId = req.currentUser.userId; //keeping this definition bc it has semantic meaning
-  const receiverId = parseInt(req.params.id);
+  const receiverId = parseInt(req.params.id as string);
 
   const result = await addUserFollowingService(senderId, receiverId);
 

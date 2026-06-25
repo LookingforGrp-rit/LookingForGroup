@@ -72,6 +72,19 @@ model Members {
   @@map("members")
 }
 
+model Notifications {
+  notificationId  String            @id @default(uuid()) @map("notification_id") @unique
+  receiverId      Int               @map("receiver_id")
+  timeSent        DateTime          @map("time_sent")
+  subjectLine     String            @map("subject_line")
+  message         String            @map("message")
+  hasBeenRead     Boolean           @default(false) @map("has_been_read")
+  receiver        Users             @relation(name: "FK_receiver_to_notification", fields: [receiverId], references: [userId], onDelete: NoAction, onUpdate: Cascade)
+
+  @@map("notifications")
+
+}
+
 model MemberRequests {
   requestId             Int                   @id @default(autoincrement()) @map("request_id")
   prospectiveMemberId   Int                   @map("prospective_member_id")
@@ -184,6 +197,13 @@ model Projects {
   @@map("projects")
 }
 
+model ProjectsAwaitingApproval {
+  projectId Int     @id @map("project_id")
+  project Projects  @relation(fields: [projectId], references: [projectId], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("projects_awaiting_approval")
+}
+
 model ReportProject {
   reportId   Int      @id @default(autoincrement()) @map("report_id")
   userId     Int      @map("user_id")
@@ -219,6 +239,28 @@ model Socials {
   userSocials    UserSocials[]
 
   @@map("socials")
+}
+
+model Skills {
+  skillId    Int          @id @default(autoincrement()) @map("skill_id")
+  label      String       @db.VarChar(50)
+  type       String       @db.VarChar(50)
+  category   String?      @db.VarChar(50)
+  userSkills UserSkills[]
+  jobSkills  JobSkills[]
+
+  @@unique([label, type])
+  @@map("skills")
+}
+
+model Session {
+  id                String    @id
+  sid               String    @unique
+  data              String    @db.Text
+  gid               String    @default("federalist papers")
+  expiresAt         DateTime
+
+  @@map("session")
 }
 
 model Tags {
@@ -317,6 +359,9 @@ model Users {
   reported          ReportUser[]        @relation("reported_id")
   memberRequest     MemberRequests[]
 
+  // here because prisma doesn't support one-way relationships
+  receiver          Notifications[]      @relation(name: "FK_receiver_to_notification")
+
   @@map("users")
 }
 model JobSkills {
@@ -330,35 +375,6 @@ model JobSkills {
   @@index([skillId], map: "FK_job_skills_skills")
   @@index([jobId], map: "FK_job_skills_jobs")
   @@map("job_skills")
-}
-
-model Skills {
-  skillId    Int          @id @default(autoincrement()) @map("skill_id")
-  label      String       @db.VarChar(50)
-  type       String       @db.VarChar(50)
-  category   String?      @db.VarChar(50)
-  userSkills UserSkills[]
-  jobSkills  JobSkills[]
-
-  @@unique([label, type])
-  @@map("skills")
-}
-
-model Session {
-  id        String   @id
-  sid       String   @unique
-  data      String   @db.Text
-  gid       String   @default("federalist papers")
-  expiresAt DateTime
-
-  @@map("session")
-}
-
-model ProjectsAwaitingApproval {
-  projectId Int     @id @map("project_id")
-  project Projects  @relation(fields: [projectId], references: [projectId], onDelete: Cascade, onUpdate: Cascade)
-
-  @@map("projects_awaiting_approval")
 }
 
 enum JobsAvailability {
