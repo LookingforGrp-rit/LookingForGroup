@@ -1,4 +1,4 @@
-import profilePicture from '../images/blue_frog.png';
+import profilePicture from '../images/lfrog.png';
 import { useNavigate } from 'react-router-dom';
 import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
@@ -82,7 +82,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
   };
 
   return (
-    <button className={'profile-panel'} onClick={() => navigate(profileURL)}>
+    <a className={'profile-panel'} href={profileURL}>
       <img
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt='profile image'
@@ -152,6 +152,6 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             <p>No extra information</p>
           </div> : ""}
       </div>
-    </button>
+    </a>
   );
 };

@@ -605,6 +605,7 @@ export const userDataManager = async () => {
 
   return {
     saveChanges,
+    resetChanges,
     addMajor,
     addSkill,
     addSocial,

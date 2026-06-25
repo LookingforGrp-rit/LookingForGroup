@@ -5,7 +5,7 @@ import { getUserByEmailService } from '#services/users/get-user/get-by-email.ts'
 //GET api/users/search-email/{email}
 //get the user by the email
 export const getUserByEmail = async (req: Request, res: Response): Promise<void> => {
-  const result = await getUserByEmailService(req.params.email);
+  const result = await getUserByEmailService(req.params.email as string);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

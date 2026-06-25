@@ -5,8 +5,8 @@ import { deleteJobSkillService } from '#services/projects/jobs/skills/delete-job
 //DELETE api/projects/{id}/jobs/{jobId}/skills/{skillId}
 //deletes a job skill from a job
 const deleteJobSkill = async (req: Request, res: Response) => {
-  const skillId = parseInt(req.params.skillId);
-  const jobId = parseInt(req.params.jobId);
+  const skillId = parseInt(req.params.skillId as string);
+  const jobId = parseInt(req.params.jobId as string);
 
   const result = await deleteJobSkillService(skillId, jobId);
 

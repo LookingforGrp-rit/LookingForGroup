@@ -13,7 +13,7 @@ const addVideoController = async (req: Request, res: Response) => {
     position: 0,
     projects: {
       connect: {
-        projectId: parseInt(req.params.id),
+        projectId: parseInt(req.params.id as string),
       },
     },
   };

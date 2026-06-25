@@ -5,7 +5,7 @@ import getService from '#services/projects/members/add-member.ts';
 //POST api/projects/{id}/members
 //adds a member to the project
 const addMemberController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const memberData: CreateProjectMemberInput = req.body as CreateProjectMemberInput;
 
   const result = await getService(projectId, memberData);

@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { FileImage } from './FileImage';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { Select, SelectButton, SelectOptions } from './Select';
-import placeholder from "../images/blue_frog.png"
+import placeholder from "../images/lfrog.png"
 import { AspectRatios } from '@looking-for-group/shared/enums';
 //import { sendPost } from '../functions/fetch'; //Not fixing, is this something to be implemented later?
 
@@ -89,11 +89,11 @@ const ImageUploader = ({
     const file = inputRef.current?.files?.[0];
     if (!file) return;
     if (file.size > 1000000 && type === "profile") {
-      alert("File too large");
+      onFileSelected(file);
       return;
     }
     else if (file.size > 2000000) {
-      alert("File too large");
+      onFileSelected(file);
       return;
     }
 

@@ -5,7 +5,7 @@ import getJobSkillsService from '#services/projects/jobs/skills/get-job-skills.t
 //GET api/projects/{id}/jobs/{jobId}/skills
 //get the skills associated with a job
 const getJobSkills = async (req: Request, res: Response): Promise<void> => {
-  const jobId = parseInt(req.params.jobId);
+  const jobId = parseInt(req.params.jobId as string);
 
   const result = await getJobSkillsService(jobId);
 

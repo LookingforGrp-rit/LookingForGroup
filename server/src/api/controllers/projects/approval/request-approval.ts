@@ -5,7 +5,7 @@ import { requestApprovalService } from '#services/projects/approval/request-appr
 //POST api/projects/unapproved
 //requests a project be approved
 const requestApprovalController = async (req: AuthenticatedRequest, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const result = await requestApprovalService(projectId);
 
   if (result === 'INTERNAL_ERROR') {
