@@ -1371,6 +1371,9 @@ New Profile page style rules
     flex-direction: column;
     gap: 20px;
     width: 100%;
+    /* Include the padding in the 100% width so the boxes line up with the
+       others instead of overflowing ~30px past the right edge. */
+    box-sizing: border-box;
     background-color: var(--header-color);
     border-radius: 10px;
     padding: 10px 10px 10px 20px;
@@ -1576,9 +1579,25 @@ New Profile page style rules
   #profile-extra {
     flex-direction: column;
 
+    /* Stack the contact + skills boxes vertically on mobile so each spans the
+       full width, instead of the desktop side-by-side layout where #socials was
+       capped at 33% — that cap squished "Contact Me" onto two lines and pushed
+       the email outside the box. */
+    #contact-and-skills {
+      flex-direction: column;
+    }
+
     #socials,
     #skills {
       width: auto;
+      max-width: 100%;
+    }
+
+    /* Let a long email/phone wrap inside the box instead of overflowing it. */
+    #profile-email a,
+    #profile-number a {
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
   }
 }
