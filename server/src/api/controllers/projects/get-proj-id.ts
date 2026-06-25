@@ -5,7 +5,7 @@ import getService from '#services/projects/get-proj-id.ts';
 //GET api/projects/{id}
 //gets a project by its id
 const getProjectByIDController = async (req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(req.params.id);
+  const projID = parseInt(req.params.id as string);
 
   const result = await getService(projID);
 

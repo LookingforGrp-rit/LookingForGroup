@@ -6,7 +6,7 @@ import { deleteMajorService } from '#services/me/majors/delete-major.ts';
 //delete a major from user profile
 export const deleteMajor = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //the one you're deleting
-  const major = parseInt(req.params.id);
+  const major = parseInt(req.params.id as string);
 
   const result = await deleteMajorService(req.currentUser.userId, major);
 

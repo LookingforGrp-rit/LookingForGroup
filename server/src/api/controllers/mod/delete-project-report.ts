@@ -8,7 +8,7 @@ export const deleteProjectReport = async (
   req: AuthenticatedRequest,
   res: Response,
 ): Promise<void> => {
-  const reportId = parseInt(req.params.id);
+  const reportId = parseInt(req.params.id as string);
 
   const result = await deleteProjectReportService(reportId);
 

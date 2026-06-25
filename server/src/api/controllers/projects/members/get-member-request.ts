@@ -5,7 +5,7 @@ import getMemberRequestService from '#services/projects/members/get-member-reque
 //GET api/projects/members/requests/:id
 //gets the member request associated with the request id
 const getInvitations = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const requestId = parseInt(req.params.id);
+  const requestId = parseInt(req.params.id as string);
 
   const result = await getMemberRequestService(requestId);
 
