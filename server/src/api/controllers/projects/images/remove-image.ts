@@ -6,7 +6,7 @@ import { removeImageService } from '#services/projects/images/remove-image.ts';
 //removes an image from a project
 const removeImageController = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id as string);
-  const imageId = parseInt(req.params.imageId);
+  const imageId = parseInt(req.params.imageId as string);
 
   const result = await removeImageService(projectId, imageId);
 

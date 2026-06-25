@@ -6,7 +6,7 @@ import getService from '#services/projects/members/update-member.ts';
 //PATCH api/projects/{id}/members/{userId}
 //updates a project member
 const updateMemberController = async (req: Request, res: Response) => {
-  const userIdReal = parseInt(req.params.userId);
+  const userIdReal = parseInt(req.params.userId as string);
   const projectIdReal = parseInt(req.params.id as string);
 
   const memberId: Prisma.MembersProjectIdUserIdCompoundUniqueInput = {
