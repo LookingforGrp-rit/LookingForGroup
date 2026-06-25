@@ -5,8 +5,8 @@ import getService from '#services/projects/get-paginated-projects.ts';
 //GET api/projects/:count/:id
 //gets 10 projects
 const getPaginatedProjectsController = async (req: Request, res: Response): Promise<void> => {
-  const count = parseInt(req.params.count);
-  const projectId = parseInt(req.params.id);
+  const count = parseInt(req.params.count as string);
+  const projectId = parseInt(req.params.id as string);
   const result = await getService(count, projectId);
 
   if (result === 'INTERNAL_ERROR') {

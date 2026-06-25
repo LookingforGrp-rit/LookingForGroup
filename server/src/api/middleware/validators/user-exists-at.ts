@@ -10,7 +10,7 @@ export const userExistsAt = (type: ParameterLocation, key: string): RequestHandl
 
     switch (type) {
       case 'path':
-        rawUserId = req.params[key];
+        rawUserId = req.params[key] as string;
         break;
       case 'body':
         rawUserId = (req.body as Record<string, unknown>)[key] as string;

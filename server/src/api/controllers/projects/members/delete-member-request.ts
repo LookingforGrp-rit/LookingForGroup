@@ -5,7 +5,7 @@ import deleteMemberRequestService from '#services/projects/members/delete-member
 //DELETE api/projects/members/requests/{requestId}
 //adds a member to the project
 const deleteMemberRequestController = async (req: AuthenticatedRequest, res: Response) => {
-  const requestId = parseInt(req.params.id);
+  const requestId = parseInt(req.params.id as string);
   const userId = req.currentUser.userId;
 
   const result = await deleteMemberRequestService(requestId, userId);

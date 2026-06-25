@@ -13,7 +13,7 @@ interface UpdateImageInfo {
 const updateImageController = async (req: Request, res: Response): Promise<void> => {
   const updates: UpdateImageInfo = req.body as UpdateImageInfo;
 
-  const imageId = parseInt(req.params.id);
+  const imageId = parseInt(req.params.id as string);
 
   const allowedFields = ['image', 'altText'];
   const invalidFields = Object.keys(updates).filter((field) => !allowedFields.includes(field));

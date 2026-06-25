@@ -14,7 +14,7 @@ type ImageOrder = {
 const reorderImagesController = async (req: Request, res: Response): Promise<void> => {
   const imageOrder: ImageOrder = req.body as ImageOrder;
 
-  const projId = parseInt(req.params.id);
+  const projId = parseInt(req.params.id as string);
 
   const result = await reorderImagesService(projId, imageOrder);
 
