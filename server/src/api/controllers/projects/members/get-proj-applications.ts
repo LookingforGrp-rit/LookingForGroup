@@ -5,7 +5,7 @@ import getApplicationsService from '#services/projects/members/get-proj-applicat
 //GET api/projects/{id}/members/applications
 //gets the member application requests associated with a project
 const getApplications = async (req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(req.params.id);
+  const projID = parseInt(req.params.id as string);
 
   const result = await getApplicationsService(projID);
 

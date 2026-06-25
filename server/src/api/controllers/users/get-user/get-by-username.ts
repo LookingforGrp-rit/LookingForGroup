@@ -5,7 +5,7 @@ import { getUserByUsernameService } from '#services/users/get-user/get-by-userna
 //GET api/users/search-username/{username}
 //get the user by the username
 export const getUserByUsername = async (req: Request, res: Response): Promise<void> => {
-  const result = await getUserByUsernameService(req.params.username);
+  const result = await getUserByUsernameService(req.params.username as string);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

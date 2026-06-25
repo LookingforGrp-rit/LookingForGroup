@@ -5,7 +5,7 @@ import { getUserByGoogleIdService } from '#services/users/get-user/get-by-google
 //GET api/users/search-google/{id}
 //get user by google id
 export const getUserByGoogleId = async (req: Request, res: Response): Promise<void> => {
-  const id = req.params.id;
+  const id = req.params.id as string;
 
   const result = await getUserByGoogleIdService(id);
 

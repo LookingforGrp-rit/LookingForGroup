@@ -5,7 +5,7 @@ import { getUserByIdService } from '#services/users/get-user/get-by-id.ts';
 //GET api/users/{id}
 //get user by id
 export const getUserById = async (req: Request, res: Response): Promise<void> => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
 
   const result = await getUserByIdService(id);
 

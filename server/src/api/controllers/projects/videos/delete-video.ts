@@ -5,7 +5,7 @@ import deleteVideoService from '#services/projects/videos/delete-video.ts';
 //DELETE api/projects/{id}/videos/{videoId}
 //adds a video to the project
 const getVideoController = async (req: Request, res: Response) => {
-  const videoId = parseInt(req.params.videoId);
+  const videoId = parseInt(req.params.videoId as string);
   //add the video to the project
   const result = await deleteVideoService(videoId);
 
