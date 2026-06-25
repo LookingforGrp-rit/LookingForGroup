@@ -156,7 +156,7 @@ export const SkillsTab = ({
 
       const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
 
-      console.log(skillToToggle);
+      /*console.log(skillToToggle);*/
 
       if (!skillToToggle) return;
 
@@ -404,7 +404,21 @@ export const SkillsTab = ({
             className="delete-tags-btn"
             hidden={profile.skills.length === 0 || profile.skills == undefined}
             onClick={() => {
-              setSkills(profile.skills.splice(0));
+              /* deletes all skills in the data manager for the user */
+                for (let i = 0; i < profile.skills.length; i++)
+                {
+                    dataManager.deleteSkill({
+                    id: {
+                      type: "canon",
+                      value: profile.skills[i].skillId,
+                    },
+                    data: null,
+                  })
+                }
+
+                /* re-renders the current popup with 0 skills remaining and updates
+                user profile */
+                setSkills(profile.skills.splice(0));
               updatePendingProfile({...profile});
             }}
             title="Remove all selected tags"
