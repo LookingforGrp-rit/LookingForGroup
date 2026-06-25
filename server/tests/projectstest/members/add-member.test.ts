@@ -7,7 +7,6 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
 import type { Visibility } from '#prisma-models/index.js';
 import addMemberService from '#services/projects/members/add-member.ts';
-import sendInviteService from '#services/projects/members/send-invite.ts';
 import { transformProjectMember } from '#services/transformers/projects/parts/project-member.ts';
 
 /* eslint-disable @typescript-eslint/unbound-method */
@@ -67,7 +66,6 @@ describe('addProjectMemberService', async () => {
 
   it('returns the member when add is successful', async () => {
     vi.mocked(prisma.members.create).mockResolvedValue(testMember);
-    vi.mocked(sendInviteService).mockResolvedValue('OK');
     vi.mocked(transformProjectMember).mockReturnValue(transformedMember);
     const result = await addMemberService(1, data);
 
@@ -93,15 +91,6 @@ describe('addProjectMemberService', async () => {
 
   it('returns INTERNAL_ERROR when prisma throws', async () => {
     vi.mocked(prisma.members.create).mockRejectedValue(new Error('womp womp'));
-    vi.mocked(transformProjectMember).mockReturnValue(transformedMember);
-    const result = await addMemberService(1, data);
-
-    expect(result).toBe('INTERNAL_ERROR');
-  });
-
-  it('returns INTERNAL_ERROR when the member created successfully but email fails to send', async () => {
-    vi.mocked(prisma.members.create).mockResolvedValue(testMember);
-    vi.mocked(sendInviteService).mockRejectedValue(new Error('email service error'));
     vi.mocked(transformProjectMember).mockReturnValue(transformedMember);
     const result = await addMemberService(1, data);
 

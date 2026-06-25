@@ -279,6 +279,9 @@ a:focus-visible {
   outline: 3px solid var(--primary-color);
   outline-offset: 2px;
 }
+svg:focus{
+  outline:none;
+}
 
 /*give sections of the page a drop shadow*/
 section {
@@ -589,13 +592,6 @@ Sidebar Nav style rules
   width: 80px;
 }
 
-/* .ProfileContainer {
-    width: 220px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-} */
-
 /* Container for logo and notification bell */
 .headerContainer {
   display: flex;
@@ -644,7 +640,6 @@ Sidebar Nav style rules
   align-items: center;
   cursor: pointer;
   gap: 15px;
-  /*background-color: var(--primary-blue);*/
 }
 
 .containerButtonSideBar>button,
@@ -652,7 +647,6 @@ Sidebar Nav style rules
   color: var(--main-text);
   width: 174px;
   height: 55px;
-  /*background-color: var(--primary-blue);*/
   background-color: rgb(0, 0, 0, 0);
   border: none;
   border-radius: 30px;
@@ -662,9 +656,9 @@ Sidebar Nav style rules
   padding-right: auto;
   display: flex;
   align-items: center;
-  /*color: var(--dark-lighttheme);*/
   gap: 15px;
   text-decoration: none;
+  transition: transform 0.2s ease, background-color 0.25s ease, color 0.25s ease;
 
   img {
     width: 30px;
@@ -674,10 +668,14 @@ Sidebar Nav style rules
 
 .containerButtonSideBar>button:hover,
 .containerButtonSideBar>a:hover {
-  transition-duration: 0.25s;
   background-color: var(--invert-text);
+  transform: translateY(-2px);
 }
 
+.containerButtonSideBar>button:active,
+.containerButtonSideBar>a:active {
+  transform: translateY(0);
+}
 
 .containerButtonSideBar>button.active,
 .containerButtonSideBar>a.active {
@@ -701,7 +699,6 @@ Sidebar Nav style rules
   border-radius: 4px;
   display: flex;
   border: none;
-  /* box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.25); */
   margin-bottom: 14px;
   object-fit: cover;
   overflow: hidden;
@@ -713,7 +710,6 @@ Sidebar Nav style rules
 }
 
 /*logout button*/
-/*!!!May be removed later!!!*/
 .Logout {
   display: flex;
   align-items: center;
@@ -731,22 +727,18 @@ Sidebar Nav style rules
   font-size: 1.125rem;
   border: none;
   border-radius: 12px;
-  /* outline: solid var(--orange) 2px; */
   font-weight: 600;
+  transition: transform 0.2s ease, background-color 0.2s ease;
 }
 
 .Logout button:hover {
   background-color: rgb(199, 198, 198);
+  transform: translateY(-2px);
 }
 
-/* .Logout button:hover {
-    transition-duration: 0.25s;
-    background-color: var(--orange);
-    color: white;
-    outline: solid var(--orange) 2px;
-    cursor: pointer;
-} */
-
+.Logout button:active {
+  transform: translateY(0);
+}
 
 /*create button*/
 .Create {
@@ -773,12 +765,11 @@ Sidebar Nav style rules
   width: 194px;
   height: 55px;
   font-size: 1.25rem;
-  /* padding-bottom: 5px; */
   border: none;
   border-radius: 30px;
-  /* outline: solid var(--orange) 2px; */
   font-weight: bold;
-
+  transition: transform 0.2s ease, background-color 0.25s ease, filter 0.25s ease;
+  
   p {
     margin-left: 15px;
     color: var(--create-text);
@@ -789,18 +780,21 @@ Sidebar Nav style rules
   background-color: var(--create-text);
   color: var(--create-bg);
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
-  transition: 0.25s;
+  transform: translateY(-2px);
   border: 2px solid var(--create-bg);
-
+  
   svg {
     filter: invert(1) saturate(0) brightness(0.5);
     transition: 0.25s;
   }
-
   p {
     color: var(--create-bg);
     transition: 0.25s;
   }
+}
+
+.Create>button:active {
+  transform: translateY(0); 
 }
 
 /*responsive stuff for sidebar*/
@@ -808,12 +802,10 @@ Sidebar Nav style rules
   .sideBarContainer {
     width: 100vw;
     height: 50px;
-    /*border: solid black 2px;*/
     position: fixed;
     bottom: 10px;
     background-color: var(--border-color);
     z-index: 10;
-    /*box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 16px;*/
   }
 
   .ProfileContainer {
@@ -823,7 +815,6 @@ Sidebar Nav style rules
   .containerButtonSideBar {
     display: flex;
     flex-direction: row;
-    /* cursor: pointer; */
     gap: 15px;
     align-items: center;
     justify-content: space-evenly;
@@ -834,7 +825,6 @@ Sidebar Nav style rules
 
   .containerButtonSideBar>button,
   .containerButtonSideBar>a,
-  /*mobile view btn*/
   .containerButtonSideBar .my-projects-create-btn {
     width: 15vw;
     height: 45px;
@@ -883,6 +873,7 @@ Sidebar Nav style rules
   .containerButtonSideBar>button:hover {
     transition-duration: 0.25s;
     color: var(--primary-color);
+    transform: none;
   }
 
   .containerButtonSideBar>button.active {
@@ -898,8 +889,7 @@ Sidebar Nav style rules
     }
   }
 
-  .sidebar-btn,
-  #my-profile-sidebar-btn {
+  .sidebar-btn, #my-profile-sidebar-btn {
     height: 55px !important;
     width: 55px !important;
     border-radius: 50% !important;
@@ -1523,6 +1513,7 @@ Header style rules
   align-items: center;
   justify-content: center;
   width: 100%;
+  gap: 5px;
 
   #profile-img-icon {
     width: 32px;

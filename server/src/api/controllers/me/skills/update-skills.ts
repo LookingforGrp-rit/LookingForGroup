@@ -17,7 +17,7 @@ import updateSkillsService from '#services/me/skills/update-skills.ts';
 */
 const updateSkillsController = async (req: AuthenticatedRequest, res: Response) => {
   const data: UpdateUserSkillInput = req.body as UpdateUserSkillInput;
-  const skillId = parseInt(req.params.id);
+  const skillId = parseInt(req.params.id as string);
 
   //update the skills they wanna update
   const result = await updateSkillsService(req.currentUser.userId, skillId, data);

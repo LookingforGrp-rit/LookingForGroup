@@ -6,7 +6,7 @@ import { deleteSkillService } from '#services/me/skills/delete-skills.ts';
 //delete a skill from user profile
 export const deleteSkill = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //the one you're deleting
-  const skill = parseInt(req.params.id);
+  const skill = parseInt(req.params.id as string);
 
   const result = await deleteSkillService(skill, req.currentUser.userId);
 

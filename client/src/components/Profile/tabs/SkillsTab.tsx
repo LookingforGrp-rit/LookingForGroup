@@ -113,39 +113,39 @@ export const SkillsTab = ({
      * tag-position column, so the order resets to the server's order on reload.
      * @param e Drag end event with the active (dragged) and over (target) tag ids.
      */
-    const handleDragEnd = (e: DragEndEvent) => {
-      const { active, over } = e;
-      if (!over || active.id === over.id) return;
-  
-      const skills = profile.skills;
-      const oldIndex = skills.findIndex((s) => s.skillId === Number(active.id));
-      const newIndex = skills.findIndex((s) => s.skillId === Number(over.id));
-      if (oldIndex === -1 || newIndex === -1) return;
-  
-      const reorderedSkills = arrayMove([...skills], oldIndex, newIndex).map(
-        (skill, index) => ({
-          ...skill,
-          position: index,
-        })
-      );
+  const handleDragEnd = (e: DragEndEvent) => {
+    const { active, over } = e;
+    if (!over || active.id === over.id) return;
 
-      const updatedProfile = {
-        ...profile,
-        skills: reorderedSkills,
-      };
+    const skills = profile.skills;
+    const oldIndex = skills.findIndex((s) => s.skillId === Number(active.id));
+    const newIndex = skills.findIndex((s) => s.skillId === Number(over.id));
+    if (oldIndex === -1 || newIndex === -1) return;
 
-      dataManager.updateSkill({
-        id: {
-          type: "canon",
-          value: reorderedSkills[newIndex].skillId,
-        },
-        data: {
-          position: reorderedSkills[newIndex].position,
-        },
-      });
+    const reorderedSkills = arrayMove([...skills], oldIndex, newIndex).map(
+      (skill, index) => ({
+        ...skill,
+        position: index,
+      })
+    );
 
-      updatePendingProfile(updatedProfile);
+    const updatedProfile = {
+      ...profile,
+      skills: reorderedSkills,
     };
+
+    dataManager.updateSkill({
+      id: {
+        type: "canon",
+        value: reorderedSkills[newIndex].skillId,
+      },
+      data: {
+        position: reorderedSkills[newIndex].position,
+      },
+    });
+
+    updatePendingProfile(updatedProfile);
+  };
 
   /**
    * Toggles a skill as selected or unselected
@@ -155,6 +155,8 @@ export const SkillsTab = ({
       const isSelected = isSkillSelected(skillId) === "selected";
 
       const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
+
+      console.log(skillToToggle);
 
       if (!skillToToggle) return;
 

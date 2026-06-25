@@ -20,7 +20,7 @@ export const projectAttributeExistsAt = (
 
     switch (attribute.type) {
       case 'path':
-        rawAttributeId = req.params[attribute.key];
+        rawAttributeId = req.params[attribute.key] as string;
         break;
       case 'body':
         rawAttributeId = (req.body as Record<string, unknown>)[attribute.key] as string;
@@ -43,7 +43,7 @@ export const projectAttributeExistsAt = (
 
     switch (project.type) {
       case 'path':
-        rawProjectId = req.params[project.key];
+        rawProjectId = req.params[project.key] as string;
         break;
       case 'body':
         rawProjectId = (req.body as Record<string, unknown>)[project.key] as string;

@@ -89,11 +89,11 @@ const ImageUploader = ({
     const file = inputRef.current?.files?.[0];
     if (!file) return;
     if (file.size > 1000000 && type === "profile") {
-      alert("File too large");
+      onFileSelected(file);
       return;
     }
     else if (file.size > 2000000) {
-      alert("File too large");
+      onFileSelected(file);
       return;
     }
 

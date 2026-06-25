@@ -5,7 +5,7 @@ import getProjectImagesService from '#services/projects/images/get-proj-images.t
 //GET api/projects/{id}/images
 //gets the images associated with a project
 const getProjectImagesController = async (req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(req.params.id);
+  const projID = parseInt(req.params.id as string);
 
   const result = await getProjectImagesService(projID);
 
