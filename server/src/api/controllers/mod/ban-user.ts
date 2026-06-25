@@ -5,8 +5,8 @@ import addBlacklistService from '#services/users/blacklist/add-to-blacklist.ts';
 //PUT api/mod/ban-user/{googleId}/{reason}
 //bans a user, by logging them out, then adding them to a blacklist to prevent signing in
 export const banUser = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const googleId: string = req.params.googleId;
-  const reason: string = req.params.reason;
+  const googleId: string = req.params.googleId as string;
+  const reason: string = req.params.reason as string;
 
   //TODO: Implement log out
 

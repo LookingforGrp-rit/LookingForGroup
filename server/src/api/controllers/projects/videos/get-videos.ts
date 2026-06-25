@@ -5,7 +5,7 @@ import getVideosService from '#services/projects/videos/get-videos.ts';
 //POST api/projects/{id}/videos
 //adds a video to the project
 const getVideoController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
 
   //add the video to the project
   const result = await getVideosService(projectId);

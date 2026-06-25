@@ -5,7 +5,7 @@ import sendInviteService from '#services/projects/members/send-invite.ts';
 //POST api/projects/{id}/members/send-invite
 //Sends invite to join the project
 const sendInviteController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const memberData: SendProjectInviteInput = req.body as SendProjectInviteInput;
 
   const result = await sendInviteService(projectId, memberData);

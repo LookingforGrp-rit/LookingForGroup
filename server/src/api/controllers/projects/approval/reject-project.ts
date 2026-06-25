@@ -4,7 +4,7 @@ import { rejectProjectService } from '#services/projects/approval/reject-project
 
 //deletes a project from the list of projects awaiting approval
 const rejectProjectController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const result = await rejectProjectService(projectId);
 
   if (result === 'NOT_FOUND') {

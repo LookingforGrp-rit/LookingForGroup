@@ -7,8 +7,8 @@ import { reportUserService } from '#services/me/report-user.ts';
  * Allows authenticated users to report a user
  */
 const reportUserController = async (req: AuthenticatedRequest, res: Response) => {
-  const reportedId = parseInt(req.params.id);
-  const report = req.params.report;
+  const reportedId = parseInt(req.params.id as string);
+  const report = req.params.report as string;
 
   const result = await reportUserService(req.currentUser.userId, reportedId, report);
 

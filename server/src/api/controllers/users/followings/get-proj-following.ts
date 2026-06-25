@@ -6,7 +6,7 @@ import { getProjectFollowingService } from '#services/users/followings/get-proj-
 // gets the projects a user is following
 export const getProjectsFollowing = async (req: Request, res: Response): Promise<void> => {
   //user ID
-  const userId = parseInt(req.params.id);
+  const userId = parseInt(req.params.id as string);
 
   const result = await getProjectFollowingService(userId);
 
