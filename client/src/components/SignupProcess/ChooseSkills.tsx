@@ -57,7 +57,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 
 	/* ONLY used for the deleting tags button. This is needed to re-render
 	the selected skills section when reseting tags */
-	const [skills, setSkills] = useState<Skill[]>(selectedSkills);
+	const [skills, setSkills] = useState<Skill[]>([]);
 
 	mode;
 	/**
@@ -173,7 +173,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 				]);
 			}
 		}
-		, [isSkillSelected, selectedSkills,]);
+		, [isSkillSelected, selectedSkills]);
 
 	// Components
 	/**
@@ -349,8 +349,22 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 								hidden={selectedSkills.length === 0} 
             					className="delete-tags-btn" 
             					onClick={() => {
+
+									console.log(selectedSkillIds.length);
+									/* resets the data internally to have 0 skills*/
+									for (let i = 0; i < selectedSkillIds.length; i++)
+									{
+										/* use this instead of handleSkillToggle to prevent re-render*/
+										setSelectedSkills(selectedSkills.filter((s) =>
+											s.skillId !== selectedSkills[i].skillId));
+										setSelectedSkillIds(selectedSkillIds.filter((s) =>
+											s !== selectedSkills[i].skillId));
+									}
+
+									/* this triggers a re-render for the popup */
 									setSkills(selectedSkills.splice(0));
-								}}
+									
+									}}
             					title="Remove all selected tags"
           					>
         					    <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
@@ -378,10 +392,10 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 						<button
 							id="signup-nextBtn"
 							onClick={onNext}
-							// disable the next button if the user has not selected 5 skills
+							// disable the next button if the user has not selected 3 skills
 							// this is to prevent the user from moving to the next modal without selecting 
 							// the required number of skills
-							// the user can only move to the next modal when they have selected 5 skills
+							// the user can only move to the next modal when they have selected 3 skills
 							disabled={selectedSkills.length < 3}>
 							<svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
 
