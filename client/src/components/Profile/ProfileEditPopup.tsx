@@ -33,9 +33,33 @@ export const ProfileEditPopup = () => {
   const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
   const [confirm, setConfirm] = useState(false);
   const [saved, setSaved] = useState(true);
+  // Bumped on close to force the tab subtree to remount, so uncontrolled inputs
+  // (e.g. the Select dropdowns seeded from initialVal) reset along with state.
+  const [editorKey, setEditorKey] = useState(0);
 
   const isOpening = useRef(true);
   const navigate = useNavigate();
+
+  /**
+   * Runs when the editor popup is closed. Discards any unsaved edits so that
+   * reopening the editor shows the current saved profile instead of stale
+   * in-editor changes. (The component stays mounted while the popup is hidden,
+   * so this state would otherwise persist until a full page refresh.)
+   */
+  const handleEditorClose = () => {
+    setCurrentTab(0);
+    isOpening.current = true;
+
+    // Discard unsaved field edits...
+    if (unmodifiedProfile) setModifiedProfile(structuredClone(unmodifiedProfile));
+    // ...and the pending changes tracked by the data manager, so they can't be
+    // re-applied on a later save.
+    dataManager?.resetChanges();
+    setSaved(true);
+
+    // Remount the tabs so their inputs re-seed from the reset profile.
+    setEditorKey((key) => key + 1);
+  };
 
   const handlePopupCallback = async () => {
     if (saved) {
@@ -200,10 +224,10 @@ export const ProfileEditPopup = () => {
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
-      <PopupContent profilePopup={true} callback={() => setCurrentTab(0)}>
+      <PopupContent profilePopup={true} callback={handleEditorClose}>
         <div id="project-creator-editor">
           <div id="project-editor-tabs">{editorTabs}</div>
-          <div id="project-editor-content">{renderTabContent()}</div>
+          <div id="project-editor-content" key={editorKey}>{renderTabContent()}</div>
           <form
             //id="project-creator-editor"
             onSubmit={onSaveClicked}
