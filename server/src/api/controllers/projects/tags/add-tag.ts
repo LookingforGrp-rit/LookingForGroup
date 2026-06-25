@@ -5,7 +5,7 @@ import addTagService from '#services/projects/tags/add-tag.ts';
 //POST api/projects/{id}/tags
 //adds a tag to the project
 const addTagsController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const tag: AddProjectTagInput = req.body as AddProjectTagInput;
 
   const result = await addTagService(projectId, tag);

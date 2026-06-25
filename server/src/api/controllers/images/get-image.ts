@@ -4,7 +4,7 @@ import { getImageService } from '#services/images/get-image.ts';
 
 //GET api/images/{image}
 export const getImage = async (req: Request, res: Response): Promise<void> => {
-  const key = req.params.image;
+  const key = req.params.image as string;
 
   if (!key) {
     const resBody: ApiResponse = {

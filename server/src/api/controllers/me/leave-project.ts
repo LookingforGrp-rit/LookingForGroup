@@ -8,7 +8,7 @@ import { leaveProjectService } from '#services/me/leave-project.ts';
  * why does it work like this
  */
 const leaveProjectController = async (req: AuthenticatedRequest, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
 
   const result = await leaveProjectService(projectId, req.currentUser.userId);
 

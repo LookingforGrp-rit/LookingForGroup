@@ -11,7 +11,7 @@ export const updateProjectProfileVisibilityController = async (
   req: AuthenticatedRequest,
   res: Response,
 ) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
 
   // Request body shape: { profileVisibility: 'private' | 'public' }
   // (kept a fallback to `visibility` for older clients)

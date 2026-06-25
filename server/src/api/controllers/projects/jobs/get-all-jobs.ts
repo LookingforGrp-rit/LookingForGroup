@@ -5,7 +5,7 @@ import getJobService from '#services/projects/jobs/get-all-jobs.ts';
 //GET api/projects/{id}/jobs
 //gets a project's jobs
 const getJobsController = async (req: Request, res: Response): Promise<void> => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
 
   const result = await getJobService(projectId);
 

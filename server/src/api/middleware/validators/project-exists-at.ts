@@ -10,7 +10,7 @@ export const projectExistsAt = (type: ParameterLocation, key: string): RequestHa
 
     switch (type) {
       case 'path':
-        rawProjectId = req.params[key];
+        rawProjectId = req.params[key] as string;
         break;
       case 'body':
         rawProjectId = (req.body as Record<string, unknown>)[key] as string;

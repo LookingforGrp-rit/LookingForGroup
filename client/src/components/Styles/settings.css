@@ -331,7 +331,7 @@ input:checked+.slider:before {
 
   .settings-column {
     margin: 0px 20px;
-    
+
   }
 
   .subsection {
@@ -378,8 +378,13 @@ input:checked+.slider:before {
     width: 100%;
 
   }
-  #project-editor-save
-  {
+
+  /*makes sure edit profile popup inputs are correct color*/
+  .settings-row-actions input {
+    background-color: var(--bg-color);
+  }
+
+  #project-editor-save {
     width: max-content;
   }
 
@@ -395,7 +400,7 @@ input:checked+.slider:before {
   #options-visibility-btn .input-container:hover {
     background-color: var(--invert-text);
     box-shadow: 0 0 5px 0 var(--primary-color);
-    
+
     input {
       background-color: var(--invert-text);
     }
@@ -453,9 +458,7 @@ input:checked+.slider:before {
     border-bottom-right-radius: 10px;
   }
 
-  .delete-button {
-
-  }
+  .delete-button {}
 
   .small-popup {
     hr {
@@ -595,18 +598,18 @@ input:checked+.slider:before {
 
 /* #endregion */
 
-#phone-number-visibility{
+#phone-number-visibility {
   margin-top: 1em;
   display: flex;
   flex-direction: row;
   justify-items: start;
 }
 
-#phone-number-visibility label{
+#phone-number-visibility label {
   font-size: 1.25rem;
 }
 
-#phone-number-visibility input{
+#phone-number-visibility input {
   width: 1em;
   margin-left: 1em;
 }
@@ -650,38 +653,41 @@ input:checked+.slider:before {
 
   #settings-page {
     width: 100%;
-        
+
     .subsection {
       width: 100%;
     }
-    .input-container
-    {
+
+    .input-container {
       width: 90%;
-      max-width: 500px; /* arbitrary value */
+      max-width: 500px;
+      /* arbitrary value */
     }
-    .settings-column{
+
+    .settings-column {
       width: 100%;
       margin: 0;
-      
-      #options-theme-btn, .dropdown {
-      width: 100%;
+
+      #options-theme-btn,
+      .dropdown {
+        width: 100%;
       }
     }
+
     .settings-row {
       margin: 0 auto;
       justify-content: center;
       width: 100%;
     }
-    .settings-row.settings-row-actions
-    {
+
+    .settings-row.settings-row-actions {
       align-items: center;
       justify-content: center;
       margin: 0 auto;
       flex-wrap: wrap;
       width: 90%;
 
-      .subsection
-      {
+      .subsection {
         width: fit-content;
         margin: 0 auto;
       }
