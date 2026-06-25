@@ -73,6 +73,8 @@ export const requestToJoinService = async (
 
     const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
 
+    const profileUrl = `${clientUrl}/profile?userID=${String(requester.userId)}`;
+
     const receiverImg = requester.profileImage
       ? `https://lookingforgrp.com${requester.profileImage}`
       : 'https://lookingforgrp.com/api/images/blue_frog.png';
@@ -80,6 +82,8 @@ export const requestToJoinService = async (
     const projectImg = project.thumbnail
       ? `https://lookingforgrp.com${project.thumbnail.image}`
       : 'https://lookingforgrp.com/api/images/project_temp.png';
+
+    const msg = data.message ? data.message : '';
 
     const html = await pretty(
       await render(
@@ -93,8 +97,9 @@ export const requestToJoinService = async (
             firstName: owner.firstName,
             lastName: owner.lastName,
           },
+          senderProfileLink: profileUrl,
           senderEmail: owner.ritEmail,
-          senderMessage: data.message,
+          senderMessage: msg,
           projectName: project.title,
           projectImage: projectImg,
           inviteLink: inviteUrl,

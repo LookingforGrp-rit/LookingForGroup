@@ -135,7 +135,7 @@ export const DiscoverPage = () => {
     if (!projectRes.data) return;
 
     const newProjectCache = projectCache;
-    for (let project of projectRes.data) {
+    for (const project of projectRes.data) {
 
       const cachedProject = newProjectCache[project.projectId];
       if (!cachedProject) {
@@ -181,7 +181,7 @@ export const DiscoverPage = () => {
     const projectList = fullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
-    for (let item of projectList) {
+    for (const item of projectList) {
       if (projectCache[item.projectId].full != undefined) {
         items.push(projectCache[item.projectId].full as ProjectWithFollowers);
       }
@@ -332,13 +332,55 @@ export const DiscoverPage = () => {
   };
 
 
+  // On mobile, focusing the search bar opens the on-screen keyboard, which
+  // covers the lower half of the page and hides the results behind the carousel.
+  // Scroll past the carousel so the filter bar and first result sit just under
+  // the sticky header, keeping the top result visible above the keyboard.
+  const handleSearchFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    if (window.innerWidth > 800) return;
+
+    
+    const page = document.querySelector('.page') as HTMLElement | null;
+    if (!page) return;
+    const input = e.currentTarget;
+
+    // Temporarily add scroll space at the bottom so the page can scroll far
+    // enough to push the carousel fully out of view even when there are only a
+    // few results below it (otherwise the scroll clamps and stops short).
+    // Removed again when the search bar loses focus.
+    page.style.paddingBottom = '60vh';
+    const cleanup = () => {
+      page.style.paddingBottom = '';
+      input.removeEventListener('blur', cleanup);
+    };
+    input.addEventListener('blur', cleanup);
+
+    // Delay so the keyboard/viewport change settles before we scroll.
+    window.setTimeout(() => {
+      const filters = document.getElementById('discover-filters-parent');
+      if (!filters) return;
+      const headerHeight = document.getElementById('header')?.offsetHeight ?? 90;
+      // Tune SCROLL_OFFSET: higher (positive) = scroll FARTHER down so more of
+      // the results show; lower/negative = scroll less.
+      const SCROLL_OFFSET = 50;
+      const top =
+        filters.getBoundingClientRect().top -
+        page.getBoundingClientRect().top +
+        page.scrollTop -
+        headerHeight +
+        SCROLL_OFFSET;
+      page.scrollTo({ top, behavior: 'smooth' });
+    }, 250);
+  }, []);
+
   return (
     <div className="page discover-page" tabIndex={-1}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
-        setCurrentUserId={getAuth} />
+        setCurrentUserId={getAuth}
+        searchOnFocus={handleSearchFocus} />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 

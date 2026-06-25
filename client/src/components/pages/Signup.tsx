@@ -160,8 +160,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         // Existing user: log in. If they were sent here from an invite link,
         // return them to it; otherwise go to the home page.
         const from = routerLocation.state?.from;
-        const fromPath = typeof from === 'string' ? from : from?.pathname;
-        if (fromPath && fromPath.includes('acceptInvite')) {
+        const fromPath = typeof from === 'string' ? from : from?.pathname + from?.search;
+        if (fromPath){// && fromPath.includes('acceptInvite')) {
           navigate(fromPath, { replace: true });
         } else {
           navigate(paths.routes.HOME);
@@ -358,7 +358,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         <div className="signup-form column">
 
           <h2>Welcome</h2>
-          <p>Continue with your RIT email to log in or sign up.</p>
+          <p>Continue with your <span className="ritEmailText">RIT email</span> to log in or sign up.</p>
           <div className="error" aria-live="assertive" role="alert">{error}</div>
           <div className="signup-form-inputs">
             {/* we wouldn't need any of the other fields either would we?? */}
@@ -391,9 +391,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             /> */}
 
             <div id="googleBtn"></div>
-
             <span className="spacer"> </span>
-
             {/* <input
               className="signup-input"
               autoComplete="off"
@@ -440,6 +438,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               onChange={(e) => setConfirm(e.target.value)}
             /> */}
           </div>
+          
 
           {/*************************************************************
 
@@ -579,7 +578,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               }
               await editUser({ profileImage: profileImage });
               setShowGetStartedModal(false);
-              navigate(paths.routes.MYPROJECTS);
+              // The user chose "Create Project", so drop them straight into the editor.
+              navigate(`${paths.routes.MYPROJECTS}?create=1`);
             }}
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected

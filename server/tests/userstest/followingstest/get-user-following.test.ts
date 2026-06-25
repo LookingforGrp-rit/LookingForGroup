@@ -56,6 +56,7 @@ describe('getProjectFollowingService', () => {
       title: 'sky forge',
       hook: 'forge a sky',
       globalVisibility: 'public' as Visibility,
+      jobs: [],
       owner: {
         userId: 1,
         username: 'testuser',

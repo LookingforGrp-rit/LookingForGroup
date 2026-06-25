@@ -63,7 +63,7 @@ Profile Panel component style rules
   /* align-items: center; */
   text-align: left;
   padding: 0 0 20px 0;
-  margin: 0 auto;
+  margin: 0 auto 1em;
   overflow: hidden;
 
   img {
@@ -1175,7 +1175,8 @@ New Profile page style rules
 */
 /* #region new profile page */
 #profile-page-content {
-  margin: 0 50px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 #profile-hero {
@@ -1239,6 +1240,7 @@ New Profile page style rules
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 20px;
 
         >#profile-names {
           display: flex;
@@ -1348,14 +1350,23 @@ New Profile page style rules
 
 #profile-extra {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 20px;
   width: 100%;
   margin: 20px 0;
   height: fit-content;
+  flex-wrap: wrap;
 
-  #socials,
-  #skills {
+  #contact-and-skills {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    max-width: 100%;
+  }
+
+  #contact-and-skills #socials,
+  #contact-and-skills #skills,
+  #profile-likes {
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -1404,7 +1415,57 @@ New Profile page style rules
   }
 
   #socials {
-    width: 33%;
+    max-width: 33%;
+  }
+
+  #profile-likes {
+    width: auto;
+  }
+
+  #likes-block,
+  #likes-tabs {
+    display: flex;
+    gap: 15px;
+  }
+
+  #likes-block {
+    flex-direction: column;
+    gap: 0px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+  }
+
+  #likes-container {
+    width: 100%;
+    min-height: 100px;
+    background-color: var(--liked-section-bg);
+    border-radius: 10px;
+    border-top-left-radius: 0px;
+    border-color: var(--liked-section-bg);
+    border-style: solid;
+    padding: 10px 0px;
+    max-height: 500px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    .no-saved-items {
+      margin-left: 1.5rem;
+      color: var(--main-text);
+    }
+  }
+
+  #likes-projects,
+  #likes-profiles {
+    color: var(--primary-color);
+    background-color: var(--liked-section-bg);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-color: var(--liked-section-bg);
+    border-style: solid;
+    font-size: 1.25rem;
+    padding: 0.3rem 0.6rem;
+    padding-bottom: 0.4rem;
+    font-weight: 600;
   }
 }
 
@@ -1876,6 +1937,7 @@ New Profile page style rules
     align-items: stretch;
     gap: 8px;
   }
+
   .profile-invite-label {
     text-align: left;
   }

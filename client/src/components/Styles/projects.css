@@ -41,11 +41,11 @@ Project Panel component style rules
 }
 
 /* each item in the masonry --- goes masonry (parent) -> virtuoso list (child) -> data index (child) */
-.masonry > * > *
-{
+.masonry>*>* {
   justify-self: center;
   padding: 10px;
 }
+
 /* not in use
 .project-panel-box {
   display: grid;
@@ -158,14 +158,14 @@ Project Panel component style rules
     background-color: var(--header-color);
   }
 
-  .project-title-likes-tabs { 
+  .project-title-likes-tabs {
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
     display: grid;
-    grid-template:  
-    'title heart' 1fr
-    'tags heart' auto / 5fr 1fr;
+    grid-template:
+      'title heart' 1fr
+      'tags heart' auto / 5fr 1fr;
     row-gap: 4px;
     /* display: flex;
     flex-direction: row;
@@ -227,7 +227,7 @@ Project Panel component style rules
       #heart-filled:hover {
         transform: scale(1.6);
       }
-      
+
       p {
         padding-top: 6px;
       }
@@ -236,19 +236,15 @@ Project Panel component style rules
   }
 
   @media only screen and (max-width: 800px) {
-    .project-title-likes-tabs { 
-      grid-template:  
-      'title heart' 1fr
-      'tags heart' auto / 4fr 1fr;
+    .project-title-likes-tabs {
+      grid-template:
+        'title heart' 1fr
+        'tags heart' auto / 4fr 1fr;
 
       .project-likes {
 
         a {
           padding-right: 4px;
-        }
-
-        svg {
-          transform: scale(1.6);
         }
       }
     }
@@ -393,14 +389,13 @@ Project Panel component style rules
   }
 }
 
-@media screen and (max-width: 800px)
-{
+@media screen and (max-width: 800px) {
   #discover-panel-box {
     margin: 0;
     width: 100%;
   }
-  .masonry > * > *
-  {
+
+  .masonry>*>* {
     padding-left: 0;
     padding-right: 0;
   }
@@ -856,7 +851,7 @@ Project Creator and Editor Popup style rules
 #project-editor-tag-wrapper {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 0px;
   overflow-x: auto;
   overflow-y: hidden;
 }
@@ -868,6 +863,10 @@ Project Creator and Editor Popup style rules
   width: 100%;
   border: none;
   background-color: var(--header-color);
+}
+
+#tag-search-divider {
+  margin-top: 0;
 }
 
 #selected-tag-divider {
@@ -1094,9 +1093,14 @@ Project Creator and Editor Popup style rules
   justify-content: flex-start;
 }
 
+
 #project-editor-team-tabs,
 #project-editor-tag-search-tabs {
   gap: 30px;
+}
+
+#project-editor-team-tabs {
+  margin: 0px;
 }
 
 @media only screen and (max-width: 799px) {
@@ -1107,32 +1111,50 @@ Project Creator and Editor Popup style rules
 
 @media only screen and (max-width: 420px) {
   #project-editor-team-tabs {
-    flex-direction: column;
     align-items: center;
-    gap: 15px;
   }
 }
 
+#project-editor-tag-search-tabs {
+  gap: 10px !important;
+  margin: 0 !important;
+  border-bottom-width: 20px !important;
+  border-bottom-color: var(--border-color) !important;
+}
+
 .project-editor-tag-search-tab {
-  margin-bottom: 10px;
-  padding: 0;
+  margin-bottom: 0px;
+  padding: 5px 9px;
   color: var(--neutral-gray);
   font-size: 1rem;
   font-weight: 400;
   word-break: normal;
   max-width: 100%;
+  background-color: var(--tab-color);
+  border-top-left-radius: 25%;
+  border-top-right-radius: 25%;
+
 }
 
 .medium-tag-tab {
-  border-right: 1px solid var(--border-color);
-  padding-right: 5%;
+  margin-right: 5%;
+}
+
+.tag-search-tab-active {
+  background-color: var(--header-color);
 }
 
 /* Project Editor/Creator Team Tab */
 .project-editor-team-tab {
-  padding: 0;
+  padding: 1%;
+  padding-left: 3%;
+  padding-right: 3%;
+  max-width: 100%;
   color: var(--neutral-gray);
   font-size: 2ch;
+  background-color: var(--bg-partial-color);
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .project-editor-tag-search-tab:hover,
@@ -1143,10 +1165,15 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
 }
 
+.team-tab-active {
+  background-color: var(--bg-color);
+}
+
 #project-editor-team {
   display: flex;
   flex-direction: column;
   height: 100%;
+  gap: 0px;
 }
 
 #project-editor-team-content {
@@ -1178,7 +1205,7 @@ Project Creator and Editor Popup style rules
   display: flex;
   flex-wrap: wrap;
   flex: 1;
-  margin-top: 15px;
+  margin-top: 0px;
   padding: 20px;
   align-content: flex-start;
   justify-content: center;
@@ -1430,6 +1457,10 @@ Project Creator and Editor Popup style rules
   box-sizing: border-box;
   margin-top: 5px;
   box-shadow: 0 0 10px 0 var(--shadow-color);
+  gap: 10px !important;
+  margin: 0 !important;
+  border-bottom-width: 20px !important;
+  border-bottom-color: var(--border-color) !important;
 }
 
 .user-search-item {
@@ -1814,6 +1845,11 @@ button.edit-position-contact .project-member-image {
   border: none;
 }
 
+/* hides horizontal scroll bar for the crop image popup */
+.popup:has(.project-crop) {
+  overflow-x: hidden;
+}
+
 .project-crop {
   width: 100%;
   text-align: center;
@@ -1826,7 +1862,8 @@ button.edit-position-contact .project-member-image {
   }
 
   #canvas {
-    border: 3px solid var(--main-text);
+    border: 3px solid var(--primary-color);
+    border-radius: 10px;
     margin: 1vw 0;
     object-fit: cover;
     max-width: 95%;
@@ -1852,7 +1889,7 @@ button.edit-position-contact .project-member-image {
     justify-content: center;
     align-items: center;
 
-    label{
+    label {
       margin-right: 0.5em;
       font-size: clamp(1.15rem, 3vw, 1.25rem);
     }
@@ -2956,11 +2993,10 @@ New Project Page style rules
   display: grid;
   grid-template:
     'carousel info' auto
-    'overview people' auto
-    'overview positions' auto / 17fr 15fr;
-  margin: 0 50px;
+    'overview positions' auto
+    'overview people' auto / 17fr 15fr;
+  margin: 0 auto;
   gap: 0;
-  padding-bottom: 100px;
 }
 
 @media screen and (max-width: 1199px) {
@@ -2969,15 +3005,14 @@ New Project Page style rules
       'carousel' auto
       'info' auto
       'overview' auto
-      'people' auto
-      'positions' auto;
+      'positions' auto
+      'people' auto;
   }
 }
 
 @media screen and (max-width: 700px) {
   #project-page-content {
     margin: 0 20px;
-    padding-bottom: 50px;
   }
 }
 
@@ -3720,9 +3755,9 @@ button#positions-popup-list-item-active {
 }
 
 .project-overview-section-header {
-  font-size: 1rem;
+  font-size: 1.3rem;
   color: var(--primary-color);
-  font-weight: 600;
+  font-weight: 500;
   margin: 10px 0;
 }
 
@@ -3834,11 +3869,18 @@ button#positions-popup-list-item-active {
 }
 
 
-#project-open-positions .centerer {
-  grid-area: positions;
-  margin-top: 20px;
+#project-open-positions {
   margin-bottom: 20px;
 }
+
+
+#project-open-positions .centerer {
+  grid-area: positions;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+
+
 
 @media only screen and (max-width: 700px) {
   #project-open-positions .centerer {
@@ -3856,14 +3898,14 @@ button#positions-popup-list-item-active {
   justify-content: center;
   align-items: center;
   gap: 12px;
-  margin: 10px 6px;
+  margin: 20px 6px;
 }
 
 .label-position {
-  background-color: var(--header-color);
-  color: var(--main-text);
+  background-color: var(--primary-color);
+  color: var(--invert-text);
   border-radius: 30px;
-  padding: 5px 10px;
+  padding: 8px 10px;
   font-size: 1rem;
 }
 

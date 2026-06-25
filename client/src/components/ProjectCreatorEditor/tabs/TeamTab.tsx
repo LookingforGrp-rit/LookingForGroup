@@ -2,7 +2,7 @@
 import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
-import profileImage from "../../../images/blue_frog.png";
+import profileImage from "../../../images/lfrog.png";
 import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
@@ -494,9 +494,9 @@ export const TeamTab = ({
           type: "local",
         },
         data: {
-          ownerUserId: currentMember.user.userId,
+          prospectiveMemberId: currentMember.user.userId,
           // use project owner as inviter if current user id is not loaded for some reason (shouldn't happen but just in case)
-          prospectiveMemberId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
+          ownerUserId: (currentUserId ?? projectAfterTeamChanges.owner?.userId) as number,
           roleId: currentMember.role.roleId,
           message: messageText,
         },
@@ -1109,6 +1109,11 @@ export const TeamTab = ({
                 className="edit-position-contact"
                 placeholder="Select"
                 type="input"
+                initialVal={
+                  currentJob?.contact 
+                    ? `${currentJob.contact.firstName} ${currentJob.contact.lastName}` 
+                    : ""
+                }
               />
               <SelectOptions
                 className="edit-position-contact"
@@ -1652,7 +1657,7 @@ export const TeamTab = ({
                 }
                 className="team-positions-button"
               >
-                <img src="/images/icons/drag.png" alt="positions" />
+               
                 <button
                   className="positions-popup-list-item"
                   data-id={"jobId" in job ? job.jobId : job.localId}

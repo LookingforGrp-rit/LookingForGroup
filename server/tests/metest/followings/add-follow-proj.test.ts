@@ -50,6 +50,7 @@ const transformedProjectPreview: ProjectPreview = {
     userId: 1,
   } as UserPreview,
   projectId: 1,
+  jobs: [],
   tags: [
     {
       label: '',

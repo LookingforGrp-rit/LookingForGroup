@@ -1,6 +1,6 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Tag } from '@looking-for-group/shared';
+import { Skill, Tag } from '@looking-for-group/shared';
 import { ThemeIcon } from '../../ThemeIcon';
 import { Tag as TagElement } from '../../Tag';
 
@@ -20,7 +20,7 @@ export const SortableTag = ({
   onRemove,
 }: {
   id: number;
-  tag: Tag;
+  tag: Tag | Skill;
   onRemove: (tagId: number) => void;
 }) => {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
@@ -52,7 +52,7 @@ export const SortableTag = ({
             ? `${tag.type.toLowerCase()} skill`
             : tag.type.toLowerCase()
         }
-        onClick={() => onRemove(tag.tagId)}
+        onClick={() => onRemove((tag as Tag).tagId)}
       >
         <i className="fa fa-close"></i>
         <p>{tag.label}</p>

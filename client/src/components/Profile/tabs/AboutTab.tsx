@@ -34,14 +34,14 @@ export const AboutTab = ({
 }: AboutTabProps) => {
 	profileAfterAboutChanges = structuredClone(profile);
 
-	const userId = profile.userId!;
+	const userId = profile.userId;
 	// Holds new profile image if one is selected
 
 	// Preview URL for profile image
 	const [previewUrl, setPreviewUrl] = useState<string>(
 		usePreloadedImage(
 			`${profile.profileImage}`,
-			"/src/images/blue_frog.png"
+			"/src/images/lfrog.png"
 		)
 	);
 
@@ -56,6 +56,7 @@ export const AboutTab = ({
 			majorId: 0 //will it scream at me for this?
 		}
 	);
+	const [imageError, setImageError] = useState<string>();
 
 	useEffect(() => {
 		const fetchRoles = async () => {
@@ -79,19 +80,18 @@ export const AboutTab = ({
 	 * Saves the uploaded image to the profile.
 	 */
 	const handleFileSelected = useCallback(async (file: File) => {
-		//get the image uploader element
-		const imageUploader = document.getElementById(
-			"image-uploader"
-		) as HTMLInputElement;
-
-		if (!imageUploader?.files?.length) return;
-
 		if (!["image/jpeg", "image/png"].includes(file.type)) return;
+		else if (file.size > 1000000) {
+			setImageError("File too large");
+			return;
+		}
 
 		//and we got it!
 		setSelectedImageFile(file);
 		const imgLink = URL.createObjectURL(file);
 		setPreviewUrl(imgLink.substring(5, imgLink.length));
+
+		setImageError(undefined);
 
 		dataManager.updateFields({
 			id: {
@@ -113,6 +113,11 @@ export const AboutTab = ({
 	return (
 		<div id="profile-editor-about" className="edit-profile-body about">
 			<div id="edit-profile-section-1">
+				{imageError ? 
+					<div id="invalid-input-error">
+						<p>{imageError}</p>
+					</div>
+				: ""}
 				<div
 					id="profile-editor-add-image"
 					className="edit-profile-image">

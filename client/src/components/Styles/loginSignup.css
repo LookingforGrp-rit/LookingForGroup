@@ -401,7 +401,20 @@ Signup process modal style rules
 
 .ChooseSkills #profile-editor-tags {
   width: 90%;
-  overflow-y: scroll;
+  overflow-y: hidden;
+  display: flex;
+
+  #project-editor-tag-wrapper,
+  #project-editor-selected-tags-container {
+
+    scrollbar-width: thin;
+    scrollbar-color: var(--header-color) !important;
+    /*not working*/
+  }
+
+  #project-editor-tag-wrapper {
+    min-height: fit-content;
+  }
 }
 
 #signupProcess-title {
@@ -434,6 +447,11 @@ Signup process modal style rules
   display: flex;
   justify-content: space-between;
 
+  input {
+    accent-color: var(--primary-color);
+    margin-right: 10px;
+  }
+
   #back {
     position: relative;
     top: 0;
@@ -448,22 +466,6 @@ Signup process modal style rules
   }
 }
 
-#signup-nextBtn:disabled {
-  border: none;
-  border-radius: 14px;
-  height: 90px;
-  width: 100px;
-  font-size: 1.125rem;
-  font-weight: 600;
-  background: none;
-  color: var(--neutral-gray);
-  cursor: not-allowed;
-}
-
-#signup-nextBtn:disabled:hover {
-  transform: scale(1);
-}
-
 #signup-nextBtn,
 #signup-backBtn,
 #accept-tos-btn {
@@ -475,7 +477,23 @@ Signup process modal style rules
   font-weight: 800;
   background: none;
   color: var(--primary-color);
-  transition: transform 0.2s ease; 
+}
+
+#signup-nextBtn:disabled {
+  border: none;
+  border-radius: 14px;
+  height: 90px;
+  width: 100px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  background: none;
+
+  .color-fill>use {
+    fill: var(--neutral-gray);
+    opacity: 0.5;
+  }
+
+  cursor: not-allowed;
 }
 
 #accept-tos-btn {
@@ -1008,6 +1026,12 @@ Signup process modal style rules
   cursor: pointer;
 }
 
+.ritEmailText {
+  color: var(--primary-color);
+  /* color: #F76902; */
+  font-weight: 750;
+}
+
 /* Mobile css to individual signup pages */
 @media screen and (max-width: 1000px) {
 
@@ -1066,6 +1090,10 @@ Signup process modal style rules
     margin: 0;
   }
 
+  .getStarted-btn-imgs {
+    margin-top: 20px;
+  }
+
   #new-project-btn,
   #join-project-btn {
     width: 90%;
@@ -1110,6 +1138,36 @@ Signup process modal style rules
   #tos-accept-label {
     font-size: 1rem;
     text-align: center;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+
+  .ChooseSkills {
+    #profile-editor-tags {
+      display: flex;
+      /* flex-wrap: wrap; */
+      flex-direction: column;
+
+      #project-editor-selected-tags {
+        /* width: 93%; */
+        height: 40%;
+        overflow-y: scroll;
+        order: 2;
+        width: auto;
+      }
+
+      #project-editor-tag-search {
+        /* width: 93%; */
+        height: 80%;
+        overflow-y: scroll;
+        max-width: auto;
+      }
+    }
+
+    #signupProcess-btns {
+      margin-top: 0;
+    }
   }
 }
 
