@@ -55,10 +55,6 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 	// filtered results from skill search bar
 	const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
-	/* ONLY used for the deleting tags button. This is needed to re-render
-	the selected skills section when reseting tags */
-	const [skills, setSkills] = useState<Skill[]>([]);
-
 	mode;
 	/**
 	 * Updates the searchedTags stat based on search results from the SearchBar.
@@ -349,22 +345,9 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 								hidden={selectedSkills.length === 0} 
             					className="delete-tags-btn" 
             					onClick={() => {
-
-									console.log(selectedSkillIds.length);
-									/* resets the data internally to have 0 skills*/
-									for (let i = 0; i < selectedSkillIds.length; i++)
-									{
-										/* use this instead of handleSkillToggle to prevent re-render*/
-										setSelectedSkills(selectedSkills.filter((s) =>
-											s.skillId !== selectedSkills[i].skillId));
-										setSelectedSkillIds(selectedSkillIds.filter((s) =>
-											s !== selectedSkills[i].skillId));
-									}
-
-									/* this triggers a re-render for the popup */
-									setSkills(selectedSkills.splice(0));
-									
-									}}
+									setSelectedSkills([]);
+									setSelectedSkillIds([]);
+								}}
             					title="Remove all selected tags"
           					>
         					    <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
