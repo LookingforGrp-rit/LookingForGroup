@@ -5,7 +5,7 @@ import { deleteTagService } from '#services/projects/tags/delete-tag.ts';
 //DELETE api/projects/{id}/tags/{tagId}
 //deletes a tag from a project
 const deleteTagController = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   const tagId = parseInt(req.params.tagId);
 
   const result = await deleteTagService(id, tagId);

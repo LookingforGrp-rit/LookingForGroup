@@ -13,7 +13,7 @@ import updateJobService from '#services/projects/jobs/update-job.ts';
 //PATCH api/projects/{id}/jobs/{jobId}
 //updates a project's job
 const updateJobController = async (req: Request, res: Response): Promise<void> => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const jobId = parseInt(req.params.jobId);
 
   // Parse and validate the request body

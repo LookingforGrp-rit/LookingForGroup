@@ -5,7 +5,7 @@ import deleteJobService from '#services/projects/jobs/delete-job.ts';
 //DELETE api/projects/{id}/jobs/{jobId}
 //deletes a job from a project
 const deleteJobController = async (req: Request, res: Response): Promise<void> => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const jobId = parseInt(req.params.jobId);
 
   const result = await deleteJobService(projectId, jobId);

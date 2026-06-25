@@ -5,7 +5,7 @@ import { deleteMediumsService } from '#services/projects/mediums/delete-proj-med
 //DELETE api/projects/{id}/mediums/{mediumId}
 //delete a medium from a project
 const deleteMediumsController = async (req: Request, res: Response) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id as string);
   const medium = parseInt(req.params.mediumId);
 
   //delete the mediums they passed in

@@ -5,7 +5,7 @@ import getProjectMediumsService from '#services/projects/mediums/get-proj-medium
 //GET api/projects/{id}/mediums
 //gets the mediums associated with a project
 const getProjectMediumsController = async (req: Request, res: Response): Promise<void> => {
-  const projID = parseInt(req.params.id);
+  const projID = parseInt(req.params.id as string);
 
   const result = await getProjectMediumsService(projID);
 

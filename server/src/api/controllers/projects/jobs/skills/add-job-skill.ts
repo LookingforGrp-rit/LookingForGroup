@@ -6,7 +6,7 @@ import addJobSkillService from '#services/projects/jobs/skills/add-job-skill.ts'
 //add a skill to a job
 const addJobSkill = async (req: Request, res: Response) => {
   const data: AddJobSkillInput = req.body as AddJobSkillInput;
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const jobId = parseInt(req.params.jobId);
 
   const skillWithIds = {

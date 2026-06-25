@@ -5,7 +5,7 @@ import { deleteProjectSocialService } from '#services/projects/socials/delete-pr
 //DELETE api/projects/{id}/socials/{websiteId}
 //deletes a project's social
 export const deleteProjectSocial = async (req: Request, res: Response): Promise<void> => {
-  const projId = parseInt(req.params.id);
+  const projId = parseInt(req.params.id as string);
   const social = parseInt(req.params.websiteId);
 
   const result = await deleteProjectSocialService(social, projId);

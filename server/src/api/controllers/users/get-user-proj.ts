@@ -6,7 +6,7 @@ import { getUserProjectsService } from '#services/users/get-user-proj.ts';
 // gets the projects of another user to view
 export const getOtherUserProjects = async (req: Request, res: Response): Promise<void> => {
   //current user ID
-  const UserId = parseInt(req.params.id);
+  const UserId = parseInt(req.params.id as string);
 
   const result = await getUserProjectsService(UserId);
 

@@ -6,7 +6,7 @@ import { updateProjectSocialService } from '#services/projects/socials/update-pr
 //updates a social associated with a project
 export const updateProjectSocial = async (req: Request, res: Response): Promise<void> => {
   const websiteId = parseInt(req.params.websiteId);
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const social: UpdateProjectSocialInput = req.body as UpdateProjectSocialInput;
 
   const url = social.url;

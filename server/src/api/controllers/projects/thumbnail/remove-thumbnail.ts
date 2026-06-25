@@ -10,7 +10,7 @@ import { removeThumbnailService } from '#services/projects/thumbnail/remove-thum
 //in case you wanted to just not have one for whatever reason
 //you liked the frogs and wanted to keep them i guess
 const removeThumbnail = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
 
   const result = await removeThumbnailService(projectId);
 
