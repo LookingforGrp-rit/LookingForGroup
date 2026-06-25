@@ -76,7 +76,7 @@ Project Panel component style rules
 
 .project-panel {
   width: 100%;
-  height: 280px;
+  height: auto;
   border: none;
   border-radius: 10px;
   background-color: var(--header-color);
@@ -130,7 +130,7 @@ Project Panel component style rules
     }
 
     .project-panel-meta-extra {
-      display: none;
+      display: contents;
     }
   }
 
@@ -143,15 +143,15 @@ Project Panel component style rules
     position: relative;
     /* display: flex; */
     width: 100%;
-    flex: 1 1 auto;
-    min-height: 0;
+    height: auto;
     overflow: hidden;
     border-radius: 10px 10px 0 0;
   }
 
   img {
-    object-fit: cover;
-    height: 100%;
+    display: block;
+    /* object-fit: cover; */
+    height: auto;
     width: 100%;
     border-radius: 10px 10px 0 0;
     align-self: center;
@@ -159,6 +159,7 @@ Project Panel component style rules
   }
 
   .project-title-likes-tabs {
+    position: relative;
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
@@ -272,14 +273,6 @@ Project Panel component style rules
     visibility: visible;
     opacity: 1;
     cursor: pointer;
-  }
-
-  .project-panel-meta>.project-panel-meta-plus {
-    display: none;
-  }
-
-  .project-panel-meta-extra {
-    display: contents;
   }
 }
 
