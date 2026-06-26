@@ -55,6 +55,7 @@
     height: 100%;
     width: 100%;
     cursor: pointer;
+    /* for any other special effects */
 }
 
 .camera-button {
