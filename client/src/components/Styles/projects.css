@@ -3657,9 +3657,10 @@ button#positions-popup-list-item-active {
   width: 32px;
   border-radius: 50%;
 }
+
 @media only screen and (max-width: 800px) {
 
-  #position-contact{
+  #position-contact {
     margin-left: 20px;
   }
 
@@ -4449,9 +4450,6 @@ My projects page style rules
 
 .my-projects-list {
   box-sizing: border-box;
-  padding-left: 60px;
-  padding-right: 64px;
-
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -4459,12 +4457,12 @@ My projects page style rules
 
 .my-projects-list-header {
   box-sizing: border-box;
-  margin: 30px 64px 10px 60px;
-  padding-right: 80px;
+  margin: 30px 0 10px 0;
+  padding-right: 105px;
 
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: space-between;
   gap: 10px;
 }
 
@@ -4481,17 +4479,17 @@ My projects page style rules
 
 .project-header-label.title {
   justify-self: start;
-  /* max-width: 200px;
-  width: 100%; */
+  min-width: 200px;
+  width: auto;
+  max-width: 300px;
   flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: 512px;
   padding-left: 10px;
 }
 
 .project-header-label.status {
-  width: 250px;
+  min-width: 200px;
   flex-shrink: 0;
+  text-align: left;
 }
 
 .project-header-label.date {
@@ -4507,13 +4505,16 @@ My projects page style rules
 
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
   gap: 10px;
 
   border: 0px;
   border-radius: 10px;
   height: fit-content;
   padding: 10px 20px 10px 10px;
+  max-width: 882px;
+  width: 70vw;
+  justify-content: space-between;
   font-size: 1.25rem;
 
   .dropdown-container {
@@ -4524,59 +4525,25 @@ My projects page style rules
   }
 }
 
-@media only screen and (max-width: 700px) {
-
-  .my-projects-grid,
-  .my-projects-list {
-    padding-left: 0px;
-    padding-right: 0px;
-    margin: 30px 20px 20px;
-  }
-
-  .my-projects-list-header {
-    display: none;
-  }
-
-  .list-card-section1 {
-    grid-area: name;
-  }
-
-  .list-card-status {
-    grid-area: status;
-  }
-
-  .list-card-date {
-    grid-area: date;
-  }
-
-  .dropdown-container #list-card-options-button {
-    grid-area: menu;
-  }
-
-  .my-project-list-card {
-    display: grid;
-    grid-template-columns: 3fr 1fr;
-    grid-template-rows: 1fr 1fr;
-    grid-template-areas: "name menu"
-      "status date";
-  }
-
-  .dropdown-container {
-    margin-left: auto;
-  }
+#my-projects-header-and-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 60px;
 }
+
+
 
 .list-card-section1 {
   box-sizing: border-box;
 
   flex-grow: 1;
-  flex-shrink: 1;
   display: flex;
   flex-direction: row;
   align-items: center;
   gap: 20px;
-  width: 100%;
-
+  min-width: 200px;
+  max-width: 350px;
   word-break: break-word;
   hyphens: auto;
 }
@@ -4619,9 +4586,9 @@ My projects page style rules
   letter-spacing: 0%;
 
   flex-basis: 250px;
+  flex-shrink: 1;
   display: flex;
   align-items: center;
-  flex-shrink: 0;
 }
 
 .list-card-date {
@@ -4664,13 +4631,14 @@ My projects page style rules
   /* .list-card-status, .list-card-date, .project-header-label.date, .project-header-label.status {
     flex-shrink: 1;
   } */
-  .list-card-status {
+  /* .list-card-status {
     flex-basis: 150px;
   }
 
   .project-header-label.status {
     flex-basis: 150px;
-  }
+  } */
+
 }
 
 @media only screen and (max-width: 900px) {
@@ -4692,10 +4660,63 @@ My projects page style rules
 
   .dropdown-container {
     margin-left: auto;
+    order: 2;
   }
 
   .list-card-status {
     flex-basis: 100%;
+    order: 3;
+  }
+
+  .list-card-date {
+    order: 3;
+  }
+
+  .list-card-section1 {
+    width: auto;
+    order: 1;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+
+  .my-projects-grid,
+  .my-projects-list {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 30px 20px 20px;
+  }
+
+  .my-projects-list-header {
+    display: none;
+  }
+
+  .list-card-section1 {
+    grid-area: name;
+  }
+
+  .list-card-status {
+    grid-area: status;
+  }
+
+  .list-card-date {
+    grid-area: date;
+  }
+
+  .dropdown-container #list-card-options-button {
+    grid-area: menu;
+  }
+
+  .my-project-list-card {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "name menu"
+      "status date";
+  }
+
+  .dropdown-container {
+    margin-left: auto;
   }
 }
 
