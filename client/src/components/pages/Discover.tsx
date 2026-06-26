@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent } from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
@@ -130,32 +130,40 @@ export const DiscoverPage = () => {
     setHeroProjectList(focusProjectDetailsList);
   }
 
+  //These variables need to be in a better spot I think
+  //0 is the beginning
+  let currentPaginatedProjectIndex = 0;
+
+  //10 is the default, can change if need be
+  const numProjects = 10;
+
+  //Loads more projects
+  //Can either be put as an event for a button or scroll
+  //Most likely scroll, since a button would defeat the purpose of an infinite scroll
+  const loadMoreProjects = () => {
+    currentPaginatedProjectIndex += numProjects;
+    setupProjectData();
+  }
+
+  //Attempt at detecting when the user has scrolled to near the bottom of the screen
+  const scrollEvent = useEffectEvent(() => {
+    //console.log(`scrolled by ${}`);
+    //document.documentElement.scrollBy() is always 0 
+  });
+
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
-    //10 is the default, can change if need be
-    const numProjects = 10;
-
-    //0 is the beginning
-    const startingProjectIndex = 0;
-
     let projects: ProjectPreview[] = [];
-    let approvedProjectCount = 0;
-    const approvedProjects = await GET(`/projects`);
-    const approvedProjectsData = approvedProjects.data as ProjectPreview[];
-    approvedProjectCount = approvedProjectsData.length;
 
     //Putting all approved projects into projects
-    for (let i = startingProjectIndex; i < approvedProjectCount / numProjects; i++) {
-      const url = `/projects/paginated/${numProjects}/${i}`;
-      const projectRes = await GET(url);
+    const url = `/projects/paginated/${numProjects}/${currentPaginatedProjectIndex}`;
+    const projectRes = await GET(url);
 
-      if (projectRes && projectRes.data) {
-        projects = projects.concat(projectRes.data as ProjectPreview[]);
-      }
+    if (projectRes && projectRes.data) {
+      projects = projects.concat(projectRes.data as ProjectPreview[]);
     }
 
-    // console.log(approvedProjectCount);
-    // console.log(projects);
+    console.log(projects);
 
     if (!projects) {
       return;
@@ -408,7 +416,7 @@ export const DiscoverPage = () => {
   }, []);
 
   return (
-    <div className="page discover-page" tabIndex={-1}>
+    <div className="page discover-page" tabIndex={-1} onScroll={scrollEvent}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
