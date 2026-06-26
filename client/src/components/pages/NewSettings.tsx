@@ -18,7 +18,7 @@ type JsonData = Record<string, unknown>;
  * Settings page. Renders the settings page interface with options for updating user account information, appearance preferences, and account settings
  * @returns JSX Element
  */
-const Settings = (userProfile : any) => {
+const Settings = (userProfile: any) => {
   // --------------------
   // Global variables
   // --------------------
@@ -39,6 +39,28 @@ const Settings = (userProfile : any) => {
   const [themeOption, setThemeOption] = useState(theme === 'dark' ? 'Dark Mode' : 'Light Mode');
   // const [visibilityOption, setVisibilityOption] = useState('Public Account');
 
+
+  // If user is not logged in, redirect to login page
+  useEffect(() => {
+    const load = async () => {
+      const me = await getCurrentAccount();
+      if (me.data) {
+        setUserInfo(me.data);
+      }
+      setDataLoaded(true);
+    };
+    if (!dataLoaded) load();
+  }, [dataLoaded]);
+
+  useEffect(() => {
+    if (!dataLoaded) return;
+    if (userInfo === undefined) {
+      navigate(paths.routes.LOGIN, {
+        state: { from: location.pathname + location.search }
+      })
+    }
+  }, [dataLoaded, userInfo, navigate, location]);
+
   // --------------------
   // Helper functions
   // --------------------
@@ -47,7 +69,7 @@ const Settings = (userProfile : any) => {
   const deleteAccountPressed = async () => {
     const response = await deleteUser();
     let responseText = response.error;
-    if(responseText === null || responseText === undefined){
+    if (responseText === null || responseText === undefined) {
       responseText = successMessage;
     }
     setdeleteResponseText(responseText);
@@ -78,11 +100,6 @@ const Settings = (userProfile : any) => {
   // Uses stateful variable to only run once at initial render
   if (!dataLoaded) {
     getUserData();
-  }
-
-  // If user is not logged in, redirect to login page
-  if (userInfo === undefined) {
-    navigate(paths.routes.LOGIN, { state: { from: location.pathname } })
   }
 
   // --------------------
@@ -582,10 +599,10 @@ const Settings = (userProfile : any) => {
                       type="checkbox"
                       id="toggle-phone-checkbox"
                       onChange={async (e) => {
-                        const tempInfo = {...userInfo};
+                        const tempInfo = { ...userInfo };
                         tempInfo.displayPhone = e.target.checked;
                         setUserInfo(tempInfo);
-                        await editUser({displayPhone: tempInfo.displayPhone as boolean}); //this typecast does nothing. it still passes as a string
+                        await editUser({ displayPhone: tempInfo.displayPhone as boolean }); //this typecast does nothing. it still passes as a string
                       }}
                       checked={userInfo.displayPhone ?? false}
                     >
@@ -596,7 +613,7 @@ const Settings = (userProfile : any) => {
             </div>
 
             {/* Bottom row: Appearance and Account Visibility */}
-            <hr/>
+            <hr />
             <div className="settings-row">
               {/* Appearance */}
               <h2 className="settings-header">Appearance</h2>
@@ -714,48 +731,48 @@ const Settings = (userProfile : any) => {
                 </div> */}
               </div>
             </div>
-            <hr/>
+            <hr />
             <div className="settings-row settings-row-actions">
               {/* Edit Profile — opens the same editor popup used on the profile page */}
               <div className="subsection">
-                <ProfileEditPopup/>
+                <ProfileEditPopup />
               </div>
               {/* Account Deletion */}
               <div className="subsection">
                 <Popup>
                   <PopupButton className="delete-button">Delete Account</PopupButton>
                   <PopupContent>
-                      <div className="small-popup">
-                        <div className="delete-user-title">Delete Account</div>
-                        <div className="delete-user-extra-info">
-                          Are you sure you want to delete your account? This action cannot be undone.
-                        </div>
-                        <div className="delete-user-button-pair">
-                          {/* Popup if user presses delete account to show successful delete action */}
-                          <Popup>
-                            <PopupButton className="delete-button" callback={deleteAccountPressed}>Delete Account</PopupButton>
-                            <PopupContent>
-                              <div className="small-popup">
+                    <div className="small-popup">
+                      <div className="delete-user-title">Delete Account</div>
+                      <div className="delete-user-extra-info">
+                        Are you sure you want to delete your account? This action cannot be undone.
+                      </div>
+                      <div className="delete-user-button-pair">
+                        {/* Popup if user presses delete account to show successful delete action */}
+                        <Popup>
+                          <PopupButton className="delete-button" callback={deleteAccountPressed}>Delete Account</PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
                               <div id="delete-success-title">{
-                                  deleteResponseText === null ? "Loading..." : (
-                                    deleteResponseText === successMessage ? "Success!" : "Error"
-                                  )
-                                }
+                                deleteResponseText === null ? "Loading..." : (
+                                  deleteResponseText === successMessage ? "Success!" : "Error"
+                                )
+                              }
                               </div>
                               <div id="delete-success-extra-info">
                                 {deleteResponseText}
                               </div>
-                              <PopupButton buttonId="continue-button" className = {
+                              <PopupButton buttonId="continue-button" className={
                                 deleteResponseText === successMessage ? "" : "button-reset"
-                              } callback={deleteResponseText === successMessage ? navHome : ()=>{}}>Continue</PopupButton>
-                              </div>
-                            </PopupContent>
-                          </Popup>
-                          <PopupButton buttonId="cancel-button" className="button-reset">
-                            Cancel
-                          </PopupButton>
-                        </div>
+                              } callback={deleteResponseText === successMessage ? navHome : () => { }}>Continue</PopupButton>
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                        <PopupButton buttonId="cancel-button" className="button-reset">
+                          Cancel
+                        </PopupButton>
                       </div>
+                    </div>
                   </PopupContent>
                 </Popup>
               </div>

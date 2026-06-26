@@ -93,6 +93,8 @@ const Profile = (userProfile: any) => {
   // --------------------
   // Page redirect
   // --------------------
+  // if we decide to remove the like button all together when user
+  // is not loagged in then we do not need these first two functions
   useEffect(() => {
     const load = async () => {
       try {
@@ -114,13 +116,24 @@ const Profile = (userProfile: any) => {
     if (userID === undefined) return;
 
     if (!profileID) {
-      if (userID !== -1) {
+      if (loggedIn) {
         navigate(`/profile?userID=${userID}`, { replace: true });
       } else {
-        navigate(paths.routes.LOGIN, { replace: true });
+        navigate(paths.routes.LOGIN, { state: {from: location.pathname + location.search} });
       }
     }
   }, [profileID, userID, navigate]);
+
+  //check user following (this one is needed tho)
+  useEffect(() =>{
+    if(userID === undefined || userID === -1) return;
+
+    const loadFollow = async () => {
+      const isFollowing = await checkFollow();
+      setIsFollow(isFollowing ?? false);
+    };
+    loadFollow();
+  },[userID, profileID]);
 
 
 
@@ -155,14 +168,14 @@ const Profile = (userProfile: any) => {
   const followUser = async () => {
 
     if (!loggedIn) {
-      navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
       //adds the user following
       const toggleFollow = !(await checkFollow());
       setIsFollow(toggleFollow);
       if (toggleFollow) {
         const follow = await addUserFollowing(parseInt(profileID));
-        if (follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
+        if (follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } });
       }
       else {
         await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
@@ -236,7 +249,7 @@ const Profile = (userProfile: any) => {
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
         await getProfileProjectData();
-        checkFollow();
+        //checkFollow();
       }
     } catch (error) {
       if (error instanceof Error) {

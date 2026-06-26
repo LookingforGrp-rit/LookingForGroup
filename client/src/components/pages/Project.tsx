@@ -143,7 +143,7 @@ const Project = (userProfile : any) => {
     // Follow icon is only present if user is logged in.
     // If keeping this layout, this check may be redundant.
     if (!loggedIn) {
-      navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search} }); // Redirect if logged out
     } else {
       const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
