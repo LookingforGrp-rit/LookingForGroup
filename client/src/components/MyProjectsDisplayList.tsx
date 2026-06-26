@@ -5,8 +5,8 @@ import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
-import { getByID,  deleteProject } from '../api/projects';
-import { ApiResponse, ProjectDetail } from '@looking-for-group/shared';
+import { getByID,  deleteProject, requestProjectReview } from '../api/projects';
+import { ApiResponse, ProjectDetail, ProjectFollowers } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 import { ThemeIcon } from './ThemeIcon';
 import { ProjectStatus as ProjectStatusEnums } from '@looking-for-group/shared/enums';
@@ -142,6 +142,18 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
                   className="mono-fill"
                 />
                 Edit Project
+            </button>
+            {/* TODO: add checking if the project is approved/rejected/pending */}
+            <button className='card-leave-button'
+            onClick={() => {if (projectData) requestProjectReview({...projectData, followers: {} as ProjectFollowers})}}>
+              <ThemeIcon
+                id={"pencil"}
+                width={21}
+                height={21}
+                ariaLabel={"Leave project"}
+                className="mono-fill"
+              />
+              Request Review
             </button>
             <Popup>
               <PopupButton className='card-leave-button'>
