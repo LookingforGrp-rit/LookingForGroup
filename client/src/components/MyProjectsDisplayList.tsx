@@ -34,7 +34,7 @@ import { ProjectStatus as ProjectStatusEnums } from '@looking-for-group/shared/e
  * @param projectData - Detailed information about the project (from the backend API)
  * @returns {JSX.Element} The project list card element.
  */
-const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) => {
+const MyProjectsDisplayList = ({ projectData }: { projectData: ProjectDetail }) => {
   // Navigation hook
   const navigate = useNavigate();
 
@@ -53,14 +53,14 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
   // Fetches project status and project thumbnail
 
   useEffect(() => {
-  const fetchStatus = async () => {
-    const response = await getByID(projectData.projectId);
-    if(response.data) {
-      setStatus(ProjectStatusEnums[response.data.status]);
-    } else {
-      setStatus('Error loading status');
-    }
-  };
+    const fetchStatus = async () => {
+      const response = await getByID(projectData.projectId);
+      if (response.data) {
+        setStatus(ProjectStatusEnums[response.data.status]);
+      } else {
+        setStatus('Error loading status');
+      }
+    };
     fetchStatus();
   })
 
@@ -129,19 +129,19 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
       {/* Options */}
       <Dropdown>
         <DropdownButton buttonId="list-card-options-button">
-          <ThemeIcon id={'menu'} width={35} height={15} className={'color-fill dropdown-menu'} ariaLabel={'More options'}/>
+          <ThemeIcon id={'menu'} width={35} height={15} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
         </DropdownButton>
         <DropdownContent rightAlign={true}>
           <div className={`card-options-list ${optionsShown ? 'show' : ''}`}>
             <button className="card-leave-button" onClick={() => navigate(projectURL)}>
-                <ThemeIcon
-                  id={"pencil"}
-                  width={21}
-                  height={21}
-                  ariaLabel={"Leave project"}
-                  className="mono-fill"
-                />
-                Edit Project
+              <ThemeIcon
+                id={"pencil"}
+                width={21}
+                height={21}
+                ariaLabel={"Leave project"}
+                className="mono-fill"
+              />
+              Edit Project
             </button>
             {/* TODO: add checking if the project is approved/rejected/pending */}
             <button className='card-leave-button'
@@ -177,7 +177,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
                     <PopupButton
                       className='confirm-btn'
                       callback={handleLeaveProject}>
-                        Leave
+                      Leave
                     </PopupButton>
                     <PopupButton className='deny-btn'>Cancel</PopupButton>
                   </div>
@@ -205,7 +205,7 @@ const MyProjectsDisplayList = ({ projectData } : {projectData: ProjectDetail}) =
                       <PopupButton
                         className='confirm-btn delete-button'
                         callback={handleDeleteProject}>
-                          Delete
+                        Delete
                       </PopupButton>
                       <PopupButton className='deny-btn'>Cancel</PopupButton>
                     </div>
