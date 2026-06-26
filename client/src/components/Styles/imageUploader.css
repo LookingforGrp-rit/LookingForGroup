@@ -49,6 +49,12 @@
     height: 100%;
     width: 100%;
     cursor: pointer;
+    background: none;
+}
+.drop-area-drag-over {
+    height: 100%;
+    width: 100%;
+    cursor: pointer;
 }
 
 .camera-button {
