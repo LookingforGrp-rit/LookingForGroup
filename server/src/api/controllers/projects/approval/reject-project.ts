@@ -1,6 +1,6 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
-import { ProjectRejectedNotificationBuilder } from '#notification-templates/project-rejected-message-builder.ts';
+import { ProjectRejectedNotificationBuilder } from '#notification-templates/project-rejected-notification-builder.ts';
 import sendNotificationService from '#services/notifications/send-notification.ts';
 import { rejectProjectService } from '#services/projects/approval/reject-project.ts';
 
