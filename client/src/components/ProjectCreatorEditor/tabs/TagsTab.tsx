@@ -4,6 +4,7 @@ import { SearchBar } from "../../SearchBar";
 import { getProjectTypes, getTags } from "../../../api/users";
 import { Tag, Medium, TagType, ProjectWithFollowers } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
+import { DeleteProjectButton } from "../DeleteProjectButton";
 import { PendingProject } from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { Tag as TagElement } from "../../Tag";
@@ -638,6 +639,7 @@ export const TagsTab = ({
         <div id="project-editor-tag-search-container">{renderTags()}</div>
       </div>
       <div id="tags-save-info">
+        <div className="editor-save-actions">
         <Popup>
           {saveable ? "" :
             <div id="invalid-input-error" className={"save-error-msg-general"}>
@@ -663,6 +665,11 @@ export const TagsTab = ({
             </div>
           </PopupContent>
         </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
+        </div>
       </div>
     </div>
   );
