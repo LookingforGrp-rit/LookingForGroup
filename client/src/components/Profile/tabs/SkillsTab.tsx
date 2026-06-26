@@ -15,7 +15,7 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSo
 import { SortableTag } from "../../ProjectCreatorEditor/tabs/SortableItem";
 import { clampDragWithinContainer } from "../../ProjectCreatorEditor/tabs/dragModifiers";
 
-const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
+const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
 interface SkillsTabProps {
   profile: PendingUserProfile;
@@ -76,6 +76,8 @@ export const SkillsTab = ({
         return [{ data: allSkills.filter((s) => s.type === "Soft") }];
       case 3:
         return [{ data: allSkills.filter((s) => s.type === "Audio") }];
+      case 4:
+        return [{ data: allSkills.filter((s) => s.type === "Engineer") }];
       default:
         return [{ data: [] }];
     }
@@ -184,7 +186,7 @@ export const SkillsTab = ({
           data: {
             skillId,
             position: profile.skills.length, // add to end of list by default
-            proficiency: "Novice", // TODO add proficiency
+            proficiency: "Novice", // TODO add a way to properly set skill proficiency
           },
         });
 
