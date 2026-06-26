@@ -492,8 +492,7 @@ const Settings = (userProfile : any) => {
       {/* Search bar is not used in settings */}
       <div id="settings-page">
         <div id="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <h1 className="page-title">Settings</h1>
-          <Header dataSets={[]} onSearch={() => { }} hideSearchBar />
+          <Header dataSets={[]} onSearch={() => { }} hideSearchBar hideBackButton={false} pageTitle='Settings' />
         </div>
         <hr />
         {userInfo === undefined ? (
