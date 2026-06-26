@@ -133,33 +133,37 @@ export const DiscoverPage = () => {
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
     //10 is the default, can change if need be
-    const numProjects = 2;
+    const numProjects = 10;
 
     //0 is the beginning
     const startingProjectIndex = 0;
 
     let projects: ProjectPreview[] = [];
     let approvedProjectCount = 0;
+    const approvedProjects = await GET(`/projects`);
+    const approvedProjectsData = approvedProjects.data as ProjectPreview[];
+    approvedProjectCount = approvedProjectsData.length;
 
-    for (let i = startingProjectIndex; i < approvedProjectCount; i++) {
-      const url = `/projects/paginated/${numProjects}/${startingProjectIndex}`;
+    //Putting all approved projects into projects
+    for (let i = startingProjectIndex; i < approvedProjectCount / numProjects; i++) {
+      const url = `/projects/paginated/${numProjects}/${i}`;
       const projectRes = await GET(url);
 
       if (projectRes && projectRes.data) {
-        projects.concat(projectRes.data);
+        projects = projects.concat(projectRes.data as ProjectPreview[]);
       }
     }
 
+    // console.log(approvedProjectCount);
+    // console.log(projects);
 
-    console.log(projectDataSet);
-
-    if (!projectRes || !projectRes.data) {
+    if (!projects) {
       return;
     }
 
     const newProjectCache = projectCache;
 
-    for (const project of projectRes.data) {
+    for (const project of projects) {
       const cachedProject = newProjectCache[project.projectId];
 
       if (!cachedProject) {
@@ -172,8 +176,8 @@ export const DiscoverPage = () => {
 
     // Pre-fetch full details for the first visible batch to avoid flashing like/count state
     const INITIAL_LOAD_COUNT = 25;
-    for (let i = 0; i < Math.min(INITIAL_LOAD_COUNT, projectRes.data.length); i++) {
-      const projectPreview = projectRes.data[i] as ProjectPreview;
+    for (let i = 0; i < Math.min(INITIAL_LOAD_COUNT, projects.length); i++) {
+      const projectPreview = projects[i] as ProjectPreview;
       const projectId = projectPreview.projectId;
       if (!newProjectCache[projectId]?.full) {
         try {
@@ -187,10 +191,10 @@ export const DiscoverPage = () => {
       }
     }
 
-    setFullProjectList(projectRes.data);
-    setFilteredProjectList(projectRes.data);
+    setFullProjectList(projects);
+    setFilteredProjectList(projects);
 
-    getShowcaseDetails(projectRes.data, newProjectCache);
+    getShowcaseDetails(projects, newProjectCache);
     setProjectCache(newProjectCache);
 
     setLoaded(true);
