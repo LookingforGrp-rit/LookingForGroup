@@ -972,7 +972,7 @@ Page popup style rules
 
 }
 
-.popup:has(.small-popup) {
+.popup:has(> .small-popup) {
   max-width: 800px;
   height: 40vh;
 }
@@ -1060,13 +1060,13 @@ Page popup style rules
   }
 
   /* Popup container with a smaller popup inside (for leave/delete project specifically) */
-  .popup:has(.small-popup) {
+  .popup:has(> .small-popup) {
     width: 95vw;
     height: 50vh;
     max-width: 500px;
   }
 
-  .popup-container:has(.popup .small-popup) {
+  .popup-container:has(> .popup > .small-popup) {
     align-items: center;
     justify-content: center;
   }

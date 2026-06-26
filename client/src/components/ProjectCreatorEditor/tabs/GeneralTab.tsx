@@ -4,6 +4,7 @@ import { ProjectPurpose, ProjectStatus, ProjectWithFollowers } from "@looking-fo
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { PopupButton, PopupContent, Popup, PopupContext } from '../../Popup';
 import LabelInputBox from "../../LabelInputBox";
+import { DeleteProjectButton } from "../DeleteProjectButton";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject } from "../../../../types/types";
 import { useContext, useRef } from "react";
@@ -308,6 +309,7 @@ export const GeneralTab = ({
         }}
       />
       <div id="general-save-info">
+        <div className="editor-save-actions">
         <Popup>
           {saveable ? "" :
           <div id="invalid-input-error" className={"save-error-msg-general"}>
@@ -338,8 +340,13 @@ export const GeneralTab = ({
             </div>
           </PopupContent>
         </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
+        </div>
       </div>
-      
+
     </div>
   );
 };

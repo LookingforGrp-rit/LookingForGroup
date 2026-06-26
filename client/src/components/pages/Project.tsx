@@ -10,12 +10,13 @@ import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
 import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
-import { getByID, getVideos } from "../../api/projects";
+import { getByID, getVideos, deleteProject } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import {
   deleteProjectFollowing,
   addProjectFollowing,
   getProjectFollowing,
+  leaveProject as leaveProjectApi,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
@@ -159,21 +160,127 @@ const Project = (userProfile : any) => {
 
   checkFollow();
 
+  /**
+   * Deletes the project (owner only) and returns to the My Projects page.
+   */
+  const handleDeleteProject = async () => {
+    const res = await deleteProject(projectID);
+    if (res.status === 200) {
+      navigate(paths.routes.MYPROJECTS);
+    } else {
+      console.error("Error deleting project:", res.error);
+    }
+  };
+
+  /**
+   * Leaves the project and returns to the My Projects page.
+   */
+  const handleLeaveProject = async () => {
+    const res = await leaveProjectApi(projectID);
+    if (res.status === 200) {
+      navigate(paths.routes.MYPROJECTS);
+    } else {
+      console.error("Error leaving project:", res.error);
+    }
+  };
+
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
   const buttonContent =
     user && displayedProject?.owner.userId === user.userId ? (
       <>
-        {
-          <>
-            <ProjectCreatorEditor
-              mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
-              newProject={false}
-              updateDisplayedProject={setDisplayedProject}
-            /*permissions={userPerms}*/
+        <ProjectCreatorEditor
+          mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
+          newProject={false}
+          updateDisplayedProject={setDisplayedProject}
+        /*permissions={userPerms}*/
+        />
+        {/* Owner options: leave or delete the project */}
+        <Dropdown>
+          <DropdownButton className="project-info-dropdown-btn">
+            <ThemeIcon
+              id={"menu"}
+              width={40}
+              height={40}
+              className={"color-fill dropdown-menu"}
+              ariaLabel={"More options"}
             />
-          </>
-        }
+          </DropdownButton>
+          <DropdownContent rightAlign={true}>
+            <div id="project-info-dropdown">
+              {/* Leave Project */}
+              <Popup>
+                <PopupButton className="project-info-dropdown-option">
+                  <ThemeIcon
+                    id={"logout"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
+                  Leave
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup">
+                    <h3>Leave Project</h3>
+                    <p className="confirm-msg">
+                      Are you sure you want to leave{" "}
+                      <span className="project-info-highlight">
+                        {displayedProject?.title}
+                      </span>
+                      ? You won't be able to rejoin unless you're re-added by a
+                      project member.
+                    </p>
+                    <div className="confirm-deny-btns">
+                      <PopupButton
+                        className="confirm-btn"
+                        callback={handleLeaveProject}
+                      >
+                        Leave
+                      </PopupButton>
+                      <PopupButton className="deny-btn">Cancel</PopupButton>
+                    </div>
+                  </div>
+                </PopupContent>
+              </Popup>
+
+              {/* Delete Project */}
+              <Popup>
+                <PopupButton className="project-info-dropdown-option">
+                  <ThemeIcon
+                    id={"trash"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"Delete project"}
+                    className="mono-stroke"
+                  />
+                  Delete
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup">
+                    <h3>Delete Project</h3>
+                    <p className="confirm-msg">
+                      Are you sure you want to delete{" "}
+                      <span className="project-info-highlight">
+                        {displayedProject?.title}
+                      </span>
+                      ? This action cannot be undone.
+                    </p>
+                    <div className="confirm-deny-btns">
+                      <PopupButton
+                        className="confirm-btn delete-button"
+                        callback={handleDeleteProject}
+                      >
+                        Delete
+                      </PopupButton>
+                      <PopupButton className="deny-btn">Cancel</PopupButton>
+                    </div>
+                  </div>
+                </PopupContent>
+              </Popup>
+            </div>
+          </DropdownContent>
+        </Dropdown>
       </>
     ) : (
       user && (

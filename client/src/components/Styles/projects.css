@@ -487,6 +487,42 @@ Project Creator and Editor Popup style rules
   margin-bottom: 28px;
 }
 
+/* Row holding "Save Changes" and "Delete Project" side by side, centered. */
+.editor-save-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+/* The Save button centers itself with auto side-margins and a bottom margin;
+   inside the flex row those fight the centering and shove the two buttons
+   apart, so neutralize them and let the row handle spacing. */
+.editor-save-actions #project-editor-save {
+  margin: 0;
+  align-self: center;
+}
+
+/* Delete button: matches the Save button's shape/size but red. */
+#project-editor-delete {
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  background-color: var(--error-delete-color) !important;
+  color: var(--invert-text);
+  font-size: 1.25rem;
+  font-weight: 700;
+  width: max-content;
+  cursor: pointer;
+}
+
+#project-editor-delete:hover {
+  box-shadow: 0px 0px 10px 0px var(--shadow-color);
+}
+
 #project-editor-save.disabled,
 #project-editor-save:disabled,
 #team-add-member-add-button:disabled,
@@ -4721,8 +4757,15 @@ My projects page style rules
   transition: background-color 0.2s;
 }
 
-.card-options-list .small-popup {
+/* Same delete/leave confirmation styling for the My Projects card menu and the
+   project page's options dropdown, so both render identically. */
+.card-options-list .small-popup,
+#project-info-dropdown .small-popup,
+#project-creator-editor .small-popup {
   text-align: center;
+  /* #project-info-dropdown sets white-space: nowrap; reset it so the confirm
+     message wraps the same way it does in the My Projects card popup. */
+  white-space: normal;
 
   h3 {
     font-size: 1.25rem;
