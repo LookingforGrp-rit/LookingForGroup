@@ -77,12 +77,17 @@ const ImageUploader = ({
   const updateCanvas = useCallback(() => {
     const ctx = canvas.current?.getContext("2d");
     ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
-    if (tempImage.current && canvas.current)
+    if (tempImage.current && canvas.current){
+      //helper variables
+      let w = tempImage.current.width / 100 * zoom;
+      let h = tempImage.current.height / 100 * zoom;
       ctx?.drawImage(
         tempImage.current,
-        dX, dY,
-        tempImage.current.width / 100 * zoom,
-        tempImage.current.height / 100 * zoom);
+        -(dX * (w / 2 - canvas.current.width / 2) / canvas.current.width) + canvas.current.width / 2 - w / 2,
+        (dY * (h / 2 - canvas.current.height / 2) / canvas.current.height)  + canvas.current.height / 2 - h / 2,
+        w,
+        h);
+      }
   }, [tempImage, dX, dY, zoom, canvas]);
 
   // Validate file type and handle image input change
@@ -189,8 +194,13 @@ const ImageUploader = ({
             setZoom(inputZoom.current?.valueAsNumber as number);
             updateCanvas();
           }}
-          min={1} max={1000}
-          defaultValue={zoom} />
+          min={canvas.current && tempImage.current ? 
+            100 * Math.max(canvas.current?.width / tempImage.current?.width,
+             canvas.current?.height / tempImage.current?.height) : 1} 
+          max={1000}
+          defaultValue={canvas.current && tempImage.current ? 
+            100 * Math.max(canvas.current?.width / tempImage.current?.width,
+             canvas.current?.height / tempImage.current?.height) : 1} />
           <label className="slider-text" htmlFor="zoom">Zoom</label>
         </div>
         <div id="xTrans-row">
