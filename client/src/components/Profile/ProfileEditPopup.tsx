@@ -120,6 +120,7 @@ export const ProfileEditPopup = () => {
    * @param e Event
    */
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
+    navigate(-1);
     e.preventDefault(); // prevents any default calls
 
     console.log('Saving...'); //yo having this like change the button as feedback for the user that it's saving could be amazing holup
@@ -133,7 +134,6 @@ export const ProfileEditPopup = () => {
       console.error((e as Error).message);
     }
     setSaved(true);
-    navigate(`${paths.routes.PROFILE}?userID=${modifiedProfile?.userId}`);
     window.location.reload();
   };
 
