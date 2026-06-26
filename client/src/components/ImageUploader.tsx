@@ -84,7 +84,6 @@ const ImageUploader = ({
       const newZoom = (zoom * (1000 -minZoom) / 1000) + minZoom
       const w = tempImage.current.width / 100 * newZoom;
       const h = tempImage.current.height / 100 * newZoom;
-      console.log(inputZoom);
       ctx?.drawImage(
         tempImage.current,
         -(dX * (w / 2 - canvas.current.width / 2) / canvas.current.width) + canvas.current.width / 2 - w / 2,
