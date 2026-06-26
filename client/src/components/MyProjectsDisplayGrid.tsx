@@ -5,7 +5,7 @@ import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
 import { Popup, PopupButton, PopupContent } from "./Popup";
 import { LeaveDeleteContext } from "../contexts/LeaveDeleteContext";
 import { PagePopup } from "./PagePopup";
-import { deleteProject, projectApprovalRequestExists } from "../api/projects";
+import { deleteProject } from "../api/projects";
 import { ApiResponse, ProjectDetail } from "@looking-for-group/shared";
 import { leaveProject } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
@@ -38,13 +38,10 @@ type MyProjectsDisplayGridProps = {
  * - Interacts with LeaveDeleteContext for project ID, ownership, and reloading projects after actions.
  *
  * @param projectData - Detailed information about the project (from the backend API)
+ * @param approvalStatus - Project approval status (keyof ProjectApprovalStatus from "@looking-for-group/shared/enums")
  * @returns The project card element.
  */
-const MyProjectsDisplayGrid = ({
-  projectData,
-  approvalStatus,
-}: MyProjectsDisplayGridProps
-) => {
+const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDisplayGridProps) => {
   //Navigation hook
   const navigate = useNavigate();
   // Context providing project ID, ownership status, and reload function

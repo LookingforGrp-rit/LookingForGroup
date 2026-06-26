@@ -375,36 +375,43 @@ const MyProjects = (userProfile: any) => {
   const ListDisplay = ({ userProjects }: { userProjects: ProjectDetail[] }) => {
     return (
       <>
-        {/* Projects List header */}
-        <div className="my-projects-list-header">
-          <div className="project-header-label title">Project Title</div>
-          <div className="project-header-label status">Status</div>
-          <div className="project-header-label date">Date Created</div>
-        </div>
+        <table className='responsive-table'>
+          {/* Projects List header */}
+          <thead className="my-projects-list-header">
+            <tr>
+              <th className="project-header-label title">Project Title</th>
+              <th className="project-header-label status">Status</th>
+              <th className="project-header-label approval-status">Approval Status</th>
+              <th className="project-header-label date">Date Created</th>
+              {/* <th className="project-header-label options">Options</th> */}
+            </tr>
+          </thead>
 
-        <div className='my-projects-list'>
-          {userProjects.map(project => {
-            // Check if user is the owner of this project
-            const isOwner = (project.owner.userId === loggedIn);
+          <tbody className='my-projects-list'>
+            {userProjects.map(project => {
+              // Check if user is the owner of this project
+              const isOwner = (project.owner.userId === loggedIn);
 
-            return (
-              <LeaveDeleteContext.Provider
-                key={project.projectId}
-                value={{
-                  isOwner,
-                  projId: project.projectId,
-                  userId: loggedIn,
-                  reloadProjects: getUserProjects,
-                  removeProject,
-                }}
-              >
-                <MyProjectsDisplayList
-                  projectData={project}
-                />
-              </LeaveDeleteContext.Provider>
-            );
-          })}
-        </div>
+              return (
+                <LeaveDeleteContext.Provider
+                  key={project.projectId}
+                  value={{
+                    isOwner,
+                    projId: project.projectId,
+                    userId: loggedIn,
+                    reloadProjects: getUserProjects,
+                    removeProject,
+                  }}
+                >
+                  <MyProjectsDisplayList
+                    projectData={project}
+                    approvalStatus={approvalStatuses[project.projectId]}
+                  />
+                </LeaveDeleteContext.Provider>
+              );
+            })}
+          </tbody>
+        </table>
       </>
     );
   };
