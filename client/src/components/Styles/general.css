@@ -274,11 +274,22 @@ button {
 }
 
 button:focus-visible,
-a:focus-visible {
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
   transition: 0s;
   outline: 3px solid var(--primary-color);
   outline-offset: 2px;
+  border-radius: inherit;
 }
+
+button:focus:not(:focus-visible),
+a:focus:not(:focus-visible),
+input:focus:not(:focus-visible) {
+  outline: none;
+}
+
 svg:focus{
   outline:none;
 }
