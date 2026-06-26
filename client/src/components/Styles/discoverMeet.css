@@ -463,8 +463,9 @@ Image carousel style rules
   }
 
   .discover-project-image {
-    width: 100%;
-    height: 375px;
+    max-width: fit-content;
+    width: auto;
+    height: 100%;
   }
 
   .discover-project-about {
@@ -502,13 +503,7 @@ Image carousel style rules
   }
 }
 
-/* mobile changes */
-@media only screen and (max-width: 1020px) {
-  .discover-project-image {
-    height: 100%;
-    width: auto;
-  }
-}
+
 
 @media only screen and (max-width: 700px) {
   .discover-project-about {
