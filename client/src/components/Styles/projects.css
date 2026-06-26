@@ -4769,8 +4769,7 @@ My projects page style rules
 
   .project-header-label.status {
     flex-basis: 150px;
-  } */
-
+  }
 }
 
 @media only screen and (max-width: 900px) {
