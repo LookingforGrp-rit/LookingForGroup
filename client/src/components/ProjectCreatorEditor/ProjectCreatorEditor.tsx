@@ -219,6 +219,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       await setProjectData(newData);
       await setModifiedProject(newData);
     }
+    else if (projectID) {
+      if (!dataManager)
+        setup();
+    }
+
+
     if (startButton.current) {
       (startButton.current as unknown as HTMLElement).focus();
     }
