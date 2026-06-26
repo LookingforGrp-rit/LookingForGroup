@@ -346,11 +346,8 @@ export const TagsTab = ({
     // no search item, render all tags
     if (searchedTags && searchedTags.length !== 0) {
 
+      //The final list of tags displayed to the screen.
       let tagsToDisplay = searchedTags;
-
-      //Common category names that VS Code will yell at me for not defining here.
-      let other;
-      let disciplines;
 
       switch (currentTagsTab){
         case 1:

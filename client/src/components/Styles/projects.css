@@ -883,6 +883,8 @@ Project Creator and Editor Popup style rules
 
   #tag-category-header p{
     font-weight: bold;
+    font-size: medium;
+    margin-top: 0.5em;
     color: var(--primary-color);
   }
 }
