@@ -815,6 +815,19 @@ export const reorderProjectImages = async (
 //   return response;
 // }
 
+export const projectApprovalRequestExists = async (projectID: number): Promise<boolean> => {
+  const apiURL = `/projects/unapproved/${projectID}`;
+  const response = await GET(apiURL);
+
+  if (response.status === 500)
+    console.log(`Error in projectApprovalRequestExists: ${response.error}`);
+  else if (response.status === 404) {
+    console.log(`Error in projectApprovalRequestExists: ${response.error}`);
+    return false;
+  }
+  return true;
+};
+
 export default {
   createNewProject,
   requestProjectReview,
@@ -850,7 +863,8 @@ export default {
   reorderProjectImages,
   addJobSkill,
   getJobSkills,
-  updateJobSkill, 
-  deleteJobSkill
+  updateJobSkill,
+  deleteJobSkill,
   // getImageByFileName,
+  projectApprovalRequestExists,
 };
