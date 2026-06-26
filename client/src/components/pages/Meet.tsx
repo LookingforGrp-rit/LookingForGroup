@@ -7,10 +7,11 @@ import ToTopButton from '../ToTopButton';
 
 import { getUsers, getUsersById,  } from '../../api/users';
 import {
-  Tag, NumberDictionary, 
+  NumberDictionary, 
   StructuredUserInfo, UserPreview, 
   UserDetail,
-  MePrivate
+  MePrivate,
+  Skill
 } from '@looking-for-group/shared';
 import { DiscoverProfiles } from '../DiscoverProfiles';
 
@@ -99,7 +100,7 @@ export const ProfileMeetPage = () => {
     }
 
     const newUserCache = userCache;
-    for (let user of userRes.data) {
+    for (const user of userRes.data) {
 
       const cachedUser = newUserCache[user.userId];
       if (!cachedUser) {
@@ -149,12 +150,12 @@ export const ProfileMeetPage = () => {
  * Changes what items are shown to the user whenever a filter has been added or changed
  * @param activeTagFilters Tags that are shown to the user now
  */
-  const updateUserList = async (activeTagFilters: Tag[]) => {
+  const updateUserList = async (activeSkillFilters: Skill[] | {label: string, type: string}[]) => {
     const userList = fullUserList;
 
     // Get user info to match with tags
     const items: UserDetail[] = [];
-    for (let item of userList) {
+    for (const item of userList) {
       if (userCache[item.userId].detail != undefined) {
         items.push(userCache[item.userId].detail as UserDetail);
         //return;
@@ -171,57 +172,61 @@ export const ProfileMeetPage = () => {
     }
 
     let tagFilteredList = items.filter((item) => {
-      if (activeTagFilters.length === 0) return true;
+      if (activeSkillFilters.length === 0) return true;
       //let matchesAny = false;
+      //TODO: change to accept a match any/match all setting (currently it's match all)
       let matchesAll = true;
 
-      for (const tag of activeTagFilters) {
-        // Check for tag label Developer
-        if (tag.label === 'Developer' && !item.developer) {
-          matchesAll = false;
+      for (const tag of activeSkillFilters) {
+        console.log(tag)
+          console.log(item.designer);
+        // Check for broad filter label Developer
+        if (tag.label === 'Developer') {
+          matchesAll = item.developer;
         }
-        // Check for specific skills
-        else if (tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio') {
-          const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
-            .filter((s) => typeof s === 'string');
-
-          if (!(userSkills.includes(tag.label.toLowerCase().trim()))) {
-            matchesAll = false;
-          }
-        }
-        else if (tag.label === 'Designer' && !item.designer) {
-          matchesAll = false;
+        else if (tag.label === 'Designer') {
+          matchesAll = item.designer;
         }
         else if (tag.label === 'Audio') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (!(userSkills.includes(tag.label.toLowerCase().trim()))) matchesAll = false;
+          matchesAll = userSkills.includes(tag.label.toLowerCase().trim());
         }
         else if (tag.label === 'Soft') {
           //TODO: replace with an item boolean like with designer or developer, probably a backend task
           const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
             .filter((s) => typeof s === 'string');
 
-          if (!(userSkills.includes(tag.label.toLowerCase().trim()))) matchesAll = false;
+          matchesAll = userSkills.includes(tag.label.toLowerCase().trim());
+        }
+        else if (tag.label === 'Engineer') {
+          //TODO: replace with an item boolean like with designer or developer, probably a backend task
+          const userSkills = item.skills?.map((s) => s?.type?.toLowerCase())
+            .filter((s) => typeof s === 'string');
+
+          matchesAll = userSkills.includes(tag.label.toLowerCase().trim());
         }
         else if (tag.label === 'Other' && (item.designer || item.developer)) {
           matchesAll = false;
         }
         // Check role and major by name since IDs are not unique relative to tags
-        /* it seems roles are not yet implimented
-        else if (tag.type === 'Role' && item.title) { 
-            if (item.bio === tag.label.toLowerCase()) {
-              matchesAny = true;
-            }
-        } */
-        else if (tag.type === 'Major' && item.majors) {
+        else if ((tag as {label: string, type: string}).type === 'Role') { 
+          matchesAll = item.title === tag.label;  
+        }
+        else if ((tag as {label: string, type: string}).type === 'Major') {
           const userMajors = item.majors?.map((s) => s?.label?.toLowerCase())
             .filter((s) => typeof s === 'string');
-          if (!(userMajors.includes(tag.label.toLowerCase()))) {
-            matchesAll = false;
-          }
+          matchesAll = userMajors.includes(tag.label.toLowerCase());
+        }
+        // Check for specific skills
+        else if ((tag.type === 'Developer' || tag.type === 'Designer' || tag.type === 'Soft' || tag.type === 'Audio' || tag.type === 'Engineer')) {
+          const userSkills = item.skills?.map((s) => s?.label?.toLowerCase())
+            .filter((s) => typeof s === 'string');
+            console.log(tag)
+
+          matchesAll = userSkills.includes(tag.label.toLowerCase().trim());
         }
       }
       return matchesAll;
@@ -229,7 +234,7 @@ export const ProfileMeetPage = () => {
 
     // If no tags are currently selected, render all projects
     // !! Needs to be skipped if searchbar has any input !!
-    if (tagFilteredList.length === 0 && activeTagFilters.length === 0) {
+    if (tagFilteredList.length === 0 && activeSkillFilters.length === 0) {
       tagFilteredList = JSON.parse(JSON.stringify(fullUserList));
 
       setFilteredUserList(fullUserList);

@@ -2,7 +2,7 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
-import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
+import { tags, projectTabs, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
 import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
 
@@ -146,6 +146,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
         Developer: 'Developer Skill',
         Soft: 'Soft Skill',
         Audio: 'Audio Skill',
+        Engineer: 'Engineer Skill',
         Role: 'Role',
         Major: 'Major',
       };
@@ -456,7 +457,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                             onClick={(e) => {
                               const element = e.target as HTMLElement;
                               const selectIndex = isTagEnabled(tag, searchedTags.color);
-                              let tempEnabled = enabledFilters;
+                              const tempEnabled = enabledFilters;
 
                               //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
                               //  // Remove all other tags of the same type except the one selected
@@ -520,7 +521,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                         <button
                           key={`${tag.tag.label}-${tag.color}`}
                           className={`tag-button tag-button-${tag.color}-selected`}
-                          onClick={(_e) => {
+                          onClick={() => {
                             // Remove tag from list of enabled filters, re-rendering component
                             setEnabledFilters(
                               enabledFilters.toSpliced(isTagEnabled(tag.tag, tag.color), 1)
@@ -615,7 +616,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                 <button
                   key={filter.tag.label}
                   className={`tag-button tag-button-${filter.color}-selected`}
-                  onClick={(_e) => {
+                  onClick={() => {
 
                     // Remove tag from list of enabled filters, re-rendering component
                     const tempList = appliedFiltersDisplay.toSpliced(index, 1);
