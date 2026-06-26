@@ -96,6 +96,7 @@ const transformed: ProjectDetail = {
   title: 'test 1',
   updatedAt: now,
   projectVideos: [],
+  approved: true,
 };
 
 describe('deleteProjectService', async () => {
