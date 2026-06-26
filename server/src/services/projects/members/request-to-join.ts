@@ -68,10 +68,22 @@ export const requestToJoinService = async (
       return project;
     }
 
+    //update db
+    const result = await prisma.memberRequests.create({
+      data: {
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+        sentFromProject: false,
+        requestStatus: 'Pending',
+        projectId,
+      },
+    });
+
     //Set up email
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
+    //TODO: Update URL with actual url for application acceptance
+    const inviteUrl = `${clientUrl}/acceptApplication/${String(result.requestId)}`;
 
     const profileUrl = `${clientUrl}/profile?userID=${String(requester.userId)}`;
 
@@ -122,17 +134,6 @@ export const requestToJoinService = async (
     if (emailResult === 'INTERNAL_ERROR') {
       return emailResult;
     }
-
-    //update db
-    await prisma.memberRequests.create({
-      data: {
-        roleId: data.roleId,
-        prospectiveMemberId: data.prospectiveMemberId,
-        sentFromProject: false,
-        requestStatus: 'Pending',
-        projectId,
-      },
-    });
 
     return 'OK';
   } catch (e) {
