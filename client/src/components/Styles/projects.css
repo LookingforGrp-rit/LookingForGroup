@@ -1891,14 +1891,19 @@ button.edit-position-contact .project-member-image {
 }
 
 .project-crop {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: visible;
+  max-width: 800px;
   text-align: center;
-  height: 1100px;
+  height: 800px;
   margin: 0 20px;
 
   #project-crop-header {
     display: block;
     padding-top: 1em;
+    width: 100%;
   }
 
   #canvas {
@@ -1907,7 +1912,7 @@ button.edit-position-contact .project-member-image {
     margin: 1vw 0;
     object-fit: cover;
     max-width: 95%;
-    max-height: 400px;
+    height: 380px;
   }
 
   img {
@@ -1924,6 +1929,7 @@ button.edit-position-contact .project-member-image {
   #xTrans-row,
   #yTrans-row,
   #aspect-row {
+    width: 70vw;
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -1932,6 +1938,7 @@ button.edit-position-contact .project-member-image {
     label {
       margin-right: 0.5em;
       font-size: clamp(1.15rem, 3vw, 1.25rem);
+      min-width: 70px;
     }
   }
 
@@ -1942,6 +1949,7 @@ button.edit-position-contact .project-member-image {
   .project-crop-extra-info {
     margin-top: 20px;
     margin-bottom: 20px;
+    font-size: 16px;
   }
 
   .confirm-project-crop {
@@ -1978,6 +1986,27 @@ button.edit-position-contact .project-member-image {
   .slider-text {}
 }
 
+@media only screen and (max-width: 900px) {
+  .project-crop {
+    #zoom-row,
+    #xTrans-row,
+    #yTrans-row,
+    #aspect-row {
+      width: 80vw;
+    }
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .project-crop {
+    #zoom-row,
+    #xTrans-row,
+    #yTrans-row,
+    #aspect-row {
+      width: 100%;
+    }  
+  }
+}
 
 #canvas-crop {
   background: white;
