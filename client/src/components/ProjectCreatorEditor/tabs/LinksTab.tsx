@@ -2,6 +2,7 @@
 import { useEffect, useState, useContext, useMemo } from "react";
 import { Select, SelectButton, SelectOptions } from "../../Select";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
+import { DeleteProjectButton } from "../DeleteProjectButton";
 import { ProjectSocial, ProjectWithFollowers, Social, UserDetail } from "@looking-for-group/shared";
 import { Input } from "../../Input";
 import { getSocials, getUsersById } from "../../../api/users";
@@ -363,6 +364,7 @@ projectAfterLinkChanges = structuredClone(projectData);
         </div>
       </div>
       <div id="link-save-info">
+        <div className="editor-save-actions">
         <Popup>
           {saveable ? "" :
           <div id="invalid-input-error" className={"save-error-msg-general"}>
@@ -388,6 +390,11 @@ projectAfterLinkChanges = structuredClone(projectData);
             </div>
           </PopupContent>
         </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
+        </div>
       </div>
     </div>
   );

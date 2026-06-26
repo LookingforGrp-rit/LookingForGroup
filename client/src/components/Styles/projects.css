@@ -76,7 +76,7 @@ Project Panel component style rules
 
 .project-panel {
   width: 100%;
-  height: 280px;
+  height: auto;
   border: none;
   border-radius: 10px;
   background-color: var(--header-color);
@@ -130,7 +130,7 @@ Project Panel component style rules
     }
 
     .project-panel-meta-extra {
-      display: none;
+      display: contents;
     }
   }
 
@@ -143,15 +143,15 @@ Project Panel component style rules
     position: relative;
     /* display: flex; */
     width: 100%;
-    flex: 1 1 auto;
-    min-height: 0;
+    height: auto;
     overflow: hidden;
     border-radius: 10px 10px 0 0;
   }
 
   img {
-    object-fit: cover;
-    height: 100%;
+    display: block;
+    /* object-fit: cover; */
+    height: auto;
     width: 100%;
     border-radius: 10px 10px 0 0;
     align-self: center;
@@ -159,6 +159,7 @@ Project Panel component style rules
   }
 
   .project-title-likes-tabs {
+    position: relative;
     padding: 10px 20px;
     margin: 0;
     flex-shrink: 0;
@@ -272,14 +273,6 @@ Project Panel component style rules
     visibility: visible;
     opacity: 1;
     cursor: pointer;
-  }
-
-  .project-panel-meta>.project-panel-meta-plus {
-    display: none;
-  }
-
-  .project-panel-meta-extra {
-    display: contents;
   }
 }
 
@@ -485,6 +478,42 @@ Project Creator and Editor Popup style rules
 #project-editor-save,
 #team-edit-member-cancel-button {
   margin-bottom: 28px;
+}
+
+/* Row holding "Save Changes" and "Delete Project" side by side, centered. */
+.editor-save-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+/* The Save button centers itself with auto side-margins and a bottom margin;
+   inside the flex row those fight the centering and shove the two buttons
+   apart, so neutralize them and let the row handle spacing. */
+.editor-save-actions #project-editor-save {
+  margin: 0;
+  align-self: center;
+}
+
+/* Delete button: matches the Save button's shape/size but red. */
+#project-editor-delete {
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  background-color: var(--error-delete-color) !important;
+  color: var(--invert-text);
+  font-size: 1.25rem;
+  font-weight: 700;
+  width: max-content;
+  cursor: pointer;
+}
+
+#project-editor-delete:hover {
+  box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }
 
 #project-editor-save.disabled,
@@ -823,6 +852,7 @@ Project Creator and Editor Popup style rules
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 20px;
+  position: relative;
 }
 
 #project-editor-tag-search {
@@ -1038,6 +1068,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   max-height: 423px;
   padding: 26px 31px;
+  min-width: fit-content;
 
   .error {
     margin-top: 15px;
@@ -1058,8 +1089,8 @@ Project Creator and Editor Popup style rules
 
 #project-editor-type-tags-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
   align-items: flex-start;
   gap: 8px;
   overflow-y: auto;
@@ -1838,6 +1869,15 @@ button.edit-position-contact .project-member-image {
   background: none;
   border: none;
   cursor: pointer;
+}
+.delete-tags-btn {
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 
 .popup-trigger-invisible {
@@ -3263,6 +3303,22 @@ Project Carousel style rules
   }
 }
 
+#project-info-contexts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+#project-info-request {
+  border: none;
+  background-color: var(--primary-color) !important;
+  border-radius: 30px;
+  color: var(--invert-text);
+  padding: 4px;
+  font-weight: 700;
+}
+
 #project-info-edit {
   font-size: 1rem;
   border: none;
@@ -4165,7 +4221,7 @@ My projects page style rules
   padding-left: calc((100vw - 160px) / 14);
   padding-right: calc((100vw - 160px) / 14);
   background: var(--sidebar-gradient);
-  z-index: 10;
+  z-index: 3;
 
   svg {
     filter: invert(1) saturate(0) brightness(1);
@@ -4580,9 +4636,6 @@ My projects page style rules
     grid-area: name;
   }
 
-  .list-card-status {
-    grid-area: status;
-  }
 
   .list-card-date {
     grid-area: date;
@@ -4716,7 +4769,8 @@ My projects page style rules
 
   .project-header-label.status {
     flex-basis: 150px;
-  }
+  } */
+
 }
 
 @media only screen and (max-width: 900px) {
@@ -4734,10 +4788,63 @@ My projects page style rules
 
   .dropdown-container {
     margin-left: auto;
+    order: 2;
   }
 
   .list-card-status {
     flex-basis: 100%;
+    order: 3;
+  }
+
+  .list-card-date {
+    order: 3;
+  }
+
+  .list-card-section1 {
+    width: auto;
+    order: 1;
+  }
+}
+
+@media only screen and (max-width: 700px) {
+
+  .my-projects-grid,
+  .my-projects-list {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 30px 20px 20px;
+  }
+
+  .my-projects-list-header {
+    display: none;
+  }
+
+  .list-card-section1 {
+    grid-area: name;
+  }
+
+  .list-card-status {
+    grid-area: status;
+  }
+
+  .list-card-date {
+    grid-area: date;
+  }
+
+  .dropdown-container #list-card-options-button {
+    grid-area: menu;
+  }
+
+  .my-project-list-card {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    grid-template-areas: "name menu"
+      "status date";
+  }
+
+  .dropdown-container {
+    margin-left: auto;
   }
 }
 
@@ -4754,7 +4861,7 @@ My projects page style rules
   border-radius: 4px;
   margin: 0 2px;
   padding: 10px;
-  text-align: left;
+  text-align: right;
   font-family: Inter;
   transition: background-color 0.2s;
 }
@@ -4774,8 +4881,15 @@ My projects page style rules
   transition: background-color 0.2s;
 }
 
-.card-options-list .small-popup {
+/* Same delete/leave confirmation styling for the My Projects card menu and the
+   project page's options dropdown, so both render identically. */
+.card-options-list .small-popup,
+#project-info-dropdown .small-popup,
+#project-creator-editor .small-popup {
   text-align: center;
+  /* #project-info-dropdown sets white-space: nowrap; reset it so the confirm
+     message wraps the same way it does in the My Projects card popup. */
+  white-space: normal;
 
   h3 {
     font-size: 1.25rem;
