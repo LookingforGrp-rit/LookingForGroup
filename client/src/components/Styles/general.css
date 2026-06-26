@@ -1198,6 +1198,14 @@ Page popup style rules
     margin-bottom: min(2.65vh, 26px);
   }
 
+  #match-button {
+    background: none;
+    border-color: var(--main-text);
+    font-size: 1.25rem;
+    border-radius: 10px;
+    padding: 4px 10px;
+  }
+
   #primary-btn:hover {
     transform: scale(1.1);
     transition: 0.2s;
