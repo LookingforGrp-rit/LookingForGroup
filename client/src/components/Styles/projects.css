@@ -816,6 +816,7 @@ Project Creator and Editor Popup style rules
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 20px;
+  position: relative;
 }
 
 #project-editor-tag-search {
@@ -1031,6 +1032,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   max-height: 423px;
   padding: 26px 31px;
+  min-width: fit-content;
 
   .error {
     margin-top: 15px;
@@ -1051,8 +1053,8 @@ Project Creator and Editor Popup style rules
 
 #project-editor-type-tags-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
   align-items: flex-start;
   gap: 8px;
   overflow-y: auto;
@@ -1831,6 +1833,15 @@ button.edit-position-contact .project-member-image {
   background: none;
   border: none;
   cursor: pointer;
+}
+.delete-tags-btn {
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 
 .popup-trigger-invisible {
