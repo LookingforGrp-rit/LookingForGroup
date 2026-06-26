@@ -2,22 +2,22 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
-import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
-import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
-import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
+import { PeopleSkills, peopleTabs } from '../constants/tags';
+import { getMajors, getJobTitles, getSkills } from '../api/users';
+import { StringDictionary, Role, Major, Skill, SkillType } from '@looking-for-group/shared';
 
 interface DiscoverFiltersProps {
-    updateItemList: (tags: Tag[]) => void;
+    updateItemList: (skills: Skill[]) => void;
 }
 
 interface FilterTab {
     categoryName: string;
     color: string;
-    categoryTags: Tag[];
+    categorySkills: Skill[];
 }
 
 interface EnabledFilter {
-    tag: Tag;
+    skill: Skill;
     color: string;
 }
 
@@ -25,17 +25,17 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     // --------------------
     // Global variables
     // --------------------
-    // All tags currently available in the active filter tab
-    const [currentTags, setCurrentTags] = useState<Tag[]>([]);
-    // Tags currently filtered via search input
-    const [searchedTags, setSearchedTags] = useState<{ tags: Tag[], color: string }>({ tags: [], color: 'grey' });
-    // Tags that are selected in the popup before applying
+    // All skills currently available in the active filter tab
+    const [currentSkills, setCurrentSkills] = useState<Skill[]>([]);
+    // Skills currently filtered via search input
+    const [searchedSkills, setSearchedSkills] = useState<{ skills: Skill[], color: string }>({ skills: [], color: 'grey' });
+    // Skills that are selected in the popup before applying
     const [enabledFilters, setEnabledFilters] = useState<EnabledFilter[]>([]);
-    // Filters that have been applied and are displayed under the quick filter tags
+    // Filters that have been applied and are displayed under the quick filter skills
     const [appliedFiltersDisplay, setAppliedFiltersDisplay] = useState<EnabledFilter[]>([]);
-    // List of tags currently active for filtering in the parent dataset
-    const [activeTagFilters, setActiveTagFilters] = useState<Tag[]>([]);
-    // Whether the "Applied Filters" section should display under the quick tags
+    // List of skill types to filter by with the horizontal quick filter
+    const [activeSkillFilters, setActiveSkillFilters] = useState<Skill[]>([]);
+    // Whether the "Applied Filters" section should display under the quick skills
     const [displayFiltersText, setDisplayFiltersText] = useState(false);
     //Keeps track of the currently selected tab in this popup.
     const [activeTabId, setActiveTabId] = useState(0);
@@ -44,21 +44,21 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
 
     // Dynamically show/hide arrows
-    const tagFiltersRef = useRef<HTMLDivElement>(null);
+    const skillFiltersRef = useRef<HTMLDivElement>(null);
     const [showLeftArrow, setShowLeftArrow] = useState(false);
     const [showRightArrow, setShowRightArrow] = useState(false);
 
     // Dynamically show/hide arrows for pop-up filters
-    const popupTagFiltersRef = useRef<HTMLDivElement>(null);
+    const popupSkillFiltersRef = useRef<HTMLDivElement>(null);
     const [showPopupLeftArrow, setShowPopupLeftArrow] = useState(false);
     const [showPopupRightArrow, setShowPopupRightArrow] = useState(false);
 
 
     // Formatted for SearchBar dataSets prop
-    const [dataSet, setDataSet] = useState([{ data: currentTags }]);
+    const [dataSet, setDataSet] = useState([{ data: currentSkills }]);
 
-    // Horizontal quick filter tags, changes based on category
-    const tagList = peopleTags;
+    // Horizontal quick filter skills, changes based on category
+    const skillList = Object.values(PeopleSkills) as string[];
 
     // Tabs shown in the popup, dynamically created after fetching data
     const [filterPopupTabs, setFilterPopupTabs] = useState<FilterTab[]>([]);
@@ -79,26 +79,27 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
             // Construct the finalized version of the data to be moved into filterPopupTabs
             const tabs = JSON.parse(JSON.stringify(peopleTabs));
-            Object.values(tabs).forEach((tab: any) => tab.categoryTags = tab.categoryTags || []);
+            Object.values(tabs).forEach((tab: any) => tab.categorySkills = tab.categorySkills || []);
 
-            // Map tag types to correct tab categories
+            // Map skill types to correct tab categories
             const typeMap: StringDictionary<string> = {
                 Designer: 'Designer Skill',
                 Developer: 'Developer Skill',
                 Soft: 'Soft Skill',
                 Audio: 'Audio Skill',
+                Engineer: 'Engineer Skill',
                 Role: 'Role',
                 Major: 'Major',
             };
 
-            const tag_data: Tag[] = data as Tag[];
+            const skillData: Skill[] = data as Skill[];
 
-            tag_data?.forEach((tag: Tag) => {
-                const filterTag: Tag = { ...tag };
-                const mappedType = typeMap[tag.type] || tag.type;
+            skillData?.forEach((s: Skill) => {
+                const filterSkill: Skill = { ...s };
+                const mappedType = typeMap[s.type] || s.type;
 
                 if (tabs[mappedType]) {
-                    tabs[mappedType].categoryTags.push(filterTag);
+                    tabs[mappedType].categorySkills.push(filterSkill);
                 }
             });
 
@@ -106,36 +107,31 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
 
         }
         catch (error) {
-            console.error('Error fetching tags:', error);
+            console.error('Error fetching skills:', error);
         }
     };
 
     /**
-     * Toggles a tag's selection in the horizontal quick filter.
+     * Toggles a skill's selection in the horizontal quick filter.
      * Updates visual selection and parent dataset.
      * @param event Click event
-     * @param tag Tag object clicked
+     * @param skill Skill object clicked
      */
-    const toggleTag = (event: any, tag: Tag) => {
-        let newActiveTags: Tag[];
+    const toggleSkill = (event: any, skill: Skill) => {
+        let newActiveSkills: Skill[];
 
-        const discoverFilters = document.getElementsByClassName('discover-tag-filter');
-        //for (let i = 0; i < discoverFilters.length; i++) {
-        //  discoverFilters[i].classList.remove('discover-tag-filter-selected');
-        //}
-
-        if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
-            // Remove the tag from the active list
-            newActiveTags = activeTagFilters.filter(t => t.label !== tag.label || t.type !== tag.type);
+        if (activeSkillFilters.some(s => s.label === skill.label)) {
+            // Remove the skill from the active list
+            newActiveSkills = activeSkillFilters.filter(s => s.label !== skill.label);
             event.currentTarget.classList.remove('discover-tag-filter-selected');
         } else {
             // Add the tag to the active list
-            newActiveTags = [...activeTagFilters, tag];
+            newActiveSkills = [...activeSkillFilters, skill];
             event.currentTarget.classList.add('discover-tag-filter-selected');
         }
 
-        setActiveTagFilters(newActiveTags);
-        updateItemList(newActiveTags);
+        setActiveSkillFilters(newActiveSkills);
+        updateItemList(newActiveSkills);
     };
 
     /**
@@ -143,8 +139,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     * there is more content to the left or right.
     */
     const checkScrollVisibility = () => {
-        if (tagFiltersRef.current) {
-            const { scrollLeft, scrollWidth, clientWidth } = tagFiltersRef.current;
+        if (skillFiltersRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = skillFiltersRef.current;
 
             setShowLeftArrow(scrollLeft > 0);
             setShowRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1);
@@ -157,8 +153,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     * there is more content to the left or right.
     */
     const checkPopupScrollVisibility = () => {
-        if (popupTagFiltersRef.current) {
-            const { scrollLeft, scrollWidth, clientWidth } = popupTagFiltersRef.current;
+        if (popupSkillFiltersRef.current) {
+            const { scrollLeft, scrollWidth, clientWidth } = popupSkillFiltersRef.current;
 
             setShowPopupLeftArrow(scrollLeft > 0);
             setShowPopupRightArrow(Math.ceil(scrollLeft + clientWidth) < scrollWidth - 1);
@@ -166,35 +162,35 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     };
 
     /**
-     * Scrolls horizontal tag list left or right.
+     * Scrolls horizontal skill list left or right.
      * Hides or shows scroll buttons depending on edge conditions.
      */
-    const scrollTags = (direction: string) => {
-        if (tagFiltersRef.current) {
+    const scrollSkills = (direction: string) => {
+        if (skillFiltersRef.current) {
             // 80% of width. Feel free to fiddle with
-            const scrollAmt = tagFiltersRef.current.clientWidth * 0.8;
+            const scrollAmt = skillFiltersRef.current.clientWidth * 0.8;
 
             if (direction === 'left') {
-                tagFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
+                skillFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
             } else if (direction === 'right') {
-                tagFiltersRef.current.scrollBy({ left: scrollAmt, behavior: 'smooth' });
+                skillFiltersRef.current.scrollBy({ left: scrollAmt, behavior: 'smooth' });
             }
         }
     };
 
     /** === For Popup Filters ===
-     * Scrolls horizontal tag list left or right.
+     * Scrolls horizontal skill list left or right.
      * Hides or shows scroll buttons depending on edge conditions.
      */
-    const popupScrollTags = (direction: string) => {
-        if (popupTagFiltersRef.current) {
+    const popupScrollSkills = (direction: string) => {
+        if (popupSkillFiltersRef.current) {
             // 80% of width. Feel free to fiddle with
-            const scrollAmt = popupTagFiltersRef.current.clientWidth * 0.8;
+            const scrollAmt = popupSkillFiltersRef.current.clientWidth * 0.8;
 
             if (direction === 'left') {
-                popupTagFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
+                popupSkillFiltersRef.current.scrollBy({ left: -scrollAmt, behavior: 'smooth' });
             } else if (direction === 'right') {
-                popupTagFiltersRef.current.scrollBy({ left: scrollAmt, behavior: 'smooth' });
+                popupSkillFiltersRef.current.scrollBy({ left: scrollAmt, behavior: 'smooth' });
             }
         }
     };
@@ -207,30 +203,30 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
         // Defaults to the first available tab
         //if (filterPopupTabs.length > 0) {
         //  const currentTab = filterPopupTabs[activeTabId];
-        //  setCurrentTags(currentTab.categoryTags);
-        //  setDataSet([{ data: currentTab.categoryTags }]);
-        //  setSearchedTags({
-        //    tags: currentTab.categoryTags,
+        //  setCurrentSkills(currentTab.categorySkills);
+        //  setDataSet([{ data: currentTab.categorySkills }]);
+        //  setSearchedSkills({
+        //    skills: currentTab.categorySkills,
         //    color: currentTab.color,
         //  });
         //}
         setActivePopup(true);
 
         // loads in current filters
-        const seeded: EnabledFilter[] = activeTagFilters.map((tag) => {
+        const seeded: EnabledFilter[] = activeSkillFilters.map((skill) => {
             const tab = filterPopupTabs.find((t) =>
-                t.categoryTags.some((ct) => ct.label === tag.label && ct.type === tag.type)
+                t.categorySkills.some((ct) => ct.type === skill.type)
             );
-            return { tag, color: tab?.color ?? 'grey' };
+            return { skill, color: tab?.color ?? 'grey' };
         });
         setEnabledFilters(seeded);
     };
 
     /**
-     * Checks if a tag is currently enabled in the popup filters.
+     * Checks if a skill is currently enabled in the popup filters.
      */
-    const isTagEnabled = (tag: Tag, color: string) => {
-        return enabledFilters.findIndex(f => f.tag.label === tag.label && f.color === color);
+    const isSkillEnabled = (skill: Skill, color: string) => {
+        return enabledFilters.findIndex(f => f.skill === skill && f.color === color);
     };
 
     // Trigger initial data fetch
@@ -242,9 +238,9 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     useEffect(() => {
         if (filterPopupTabs[activeTabId]) {
             const currentTab = filterPopupTabs[activeTabId];
-            setCurrentTags(currentTab.categoryTags);
-            setDataSet([{ data: currentTab.categoryTags }]);
-            setSearchedTags({ tags: currentTab.categoryTags, color: currentTab.color });
+            setCurrentSkills(currentTab.categorySkills);
+            setDataSet([{ data: currentTab.categorySkills }]);
+            setSearchedSkills({ skills: currentTab.categorySkills, color: currentTab.color });
         }
     }, [activeTabId, filterPopupTabs]);
 
@@ -282,31 +278,33 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
               <button
                 id="filters-left-scroll"
                 className={`filters-scroller ${!showLeftArrow ? 'hide' : ''}`}
-                onClick={() => scrollTags('left')}
+                onClick={() => scrollSkills('left')}
               >
                 <i className="fa fa-caret-left"></i>
               </button>
               <div
                 id="discover-tag-filters"
                 tabIndex={-1}
-                ref={tagFiltersRef}
+                ref={skillFiltersRef}
                 onScroll={checkScrollVisibility}
               >
-                { /* make each tag button have proper label & type */}
-                {tagList.map(tagLabel => {
-                  const label = tagLabel === 'Developers' ? 'Developer' :
-                    tagLabel === 'Designers' ? 'Designer' :
-                      tagLabel === 'Audio Creators' ? 'Audio' :
-                        //tagLabel === 'Soft Skills' ? "Soft" :
-                        tagLabel;
-                  const type = 'Role';
-                  const tagObj: Tag = { tagId: 0, label, type, category: "Other" };
+                { /* make each skill button have proper label & type */}
+                {skillList.map(skillFilterType => {
+                  const trueType = Object.keys(PeopleSkills)[Object.values(PeopleSkills).indexOf(skillFilterType)]
+                  //template skill to be sent in for the broad horizontal filters
+                  const templateSkill = {
+                    skillId: 0,
+                    label: trueType,
+                    type: trueType as SkillType,
+                    category: 'Other',
+                  } as Skill;
+
                   return (
-                    <button key={`${type}-${label}`}
+                    <button key={`${templateSkill.type}-${skillFilterType}`}
                       className="discover-tag-filter"
-                      data-type={type}
-                      onClick={(e) => toggleTag(e, tagObj)}>
-                      {tagLabel}
+                      data-type={templateSkill.label}
+                      onClick={(e) => toggleSkill(e, templateSkill)}>
+                      {skillFilterType}
                     </button>
                   )
                 })}
@@ -320,11 +318,11 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                     <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'} />
                   </PopupButton>
                   {/* 
-                                When page loads, get all necessary tag lists based on page category.
+                                When page loads, get all necessary skill lists based on page category.
                                 Place these lists in an array, along with an identifier for which column 
-                                Displayed tags are determined using a state variable, changable w/ searchbar.
-                                Tags have an onClick function that adds their tag to a full tag list. 
-                                Full tag list is only applied when hitting done, which then pushes the 
+                                Displayed skills are determined using a state variable, changable w/ searchbar.
+                                Skills have an onClick function that adds their skill to a full skill list. 
+                                Full skill list is only applied when hitting done, which then pushes the 
                                 info to an active list.
                             */}
                   <PopupContent useClose={false}>
@@ -338,20 +336,20 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                         <SearchBar
                           dataSets={dataSet}
                           onSearch={(results) => {
-                            setSearchedTags({ tags: results[0] as Tag[], color: searchedTags.color });
+                            setSearchedSkills({ skills: results[0] as Skill[], color: searchedSkills.color });
                           }}
                         ></SearchBar>
                         <div id="more-filters-scroll-container">
                           <button
                             id="popup-filters-left-scroll"
                             className={`more-filters-scroller ${!showPopupLeftArrow ? 'hide' : ''}`}
-                            onClick={() => popupScrollTags('left')}
+                            onClick={() => popupScrollSkills('left')}
                           >
                             <i className="fa fa-caret-left"></i>
                           </button>
                           <div id="filter-tabs"
                             tabIndex={-1}
-                            ref={popupTagFiltersRef}
+                            ref={popupSkillFiltersRef}
                             onScroll={checkPopupScrollVisibility}
                           >
                             {filterPopupTabs.map((tab, index) => (
@@ -379,39 +377,39 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                           <button
                             id="popup-filters-right-scroll"
                             className={`more-filters-scroller ${!showPopupRightArrow ? 'hide' : ''}`}
-                            onClick={() => popupScrollTags('right')}
+                            onClick={() => popupScrollSkills('right')}
                           >
                             <i className="fa fa-caret-right"></i>
                           </button>
                         </div>
                         <hr />
                         <div id="filter-tags">
-                          {searchedTags.tags.length === 0 ? (
-                            <p>No tags found. Please try a different search term.</p>
+                          {searchedSkills.skills.length === 0 ? (
+                            <p>No skills found. Please try a different search term.</p>
                           ) : (
-                            searchedTags.tags.map((tag) => (
+                            searchedSkills.skills.map((skill) => (
                               <button
-                                key={`${tag.label}-${tag.type}`}
-                                // className={`tag-button tag-button-${searchedTags.color}-unselected`}
-                                className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
+                                key={`${skill.label}-${skill.type}`}
+                                // className={`skill-button skill-button-${searchedSkills.color}-unselected`}
+                                className={`tag-button tag-button-${searchedSkills.color}-${isSkillEnabled(skill, searchedSkills.color) !== -1 ? 'selected' : 'unselected'}`}
                                 onClick={(e) => {
                                   const element = e.target as HTMLElement;
-                                  const selectIndex = isTagEnabled(tag, searchedTags.color);
-                                  let tempEnabled = enabledFilters;
+                                  const selectIndex = isSkillEnabled(skill, searchedSkills.color);
+                                  const tempEnabled = enabledFilters;
     
                                   //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
                                   //  // Remove all other tags of the same type except the one selected
-                                  //  const filterTags = document.querySelector('#filter-tags')!;
-                                  //  const tagList: HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
+                                  //  const filterSkills = document.querySelector('#filter-tags')!;
+                                  //  const tagList: HTMLCollectionOf<HTMLElement> = filterSkills.getElementsByClassName(`tag-button-${searchedSkills.color}-selected`) as HTMLCollectionOf<HTMLElement>;
     //
                                   //  for (let i = 0; i < tagList.length; i++) {
-                                  //    const tagObj: Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
-                                  //    const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
+                                  //    const tagObj: Skill = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
+                                  //    const tagTypeIndex = isSkillEnabled(tagObj, searchedSkills.color);
     //
                                   //    if (tagList[i].innerText.trim() !== tag.label) {
                                   //      tagList[i].classList.replace(
-                                  //        `tag-button-${searchedTags.color}-selected`,
-                                  //        `tag-button-${searchedTags.color}-unselected`
+                                  //        `tag-button-${searchedSkills.color}-selected`,
+                                  //        `tag-button-${searchedSkills.color}-unselected`
                                   //      );
     //
                                   //      tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
@@ -421,33 +419,33 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
     
                                   if (selectIndex === -1) {
                                     // Creates an object to store text and category
-                                    //setEnabledFilters([...enabledFilters, { tag, color: searchedTags.color }]);
+                                    //setEnabledFilters([...enabledFilters, { tag, color: searchedSkills.color }]);
                                     setEnabledFilters([
                                       ...tempEnabled,
-                                      { tag, color: searchedTags.color },
+                                      { skill, color: searchedSkills.color },
                                     ]);
                                     element.classList.replace(
-                                      `tag-button-${searchedTags.color}-unselected`,
-                                      `tag-button-${searchedTags.color}-selected`
+                                      `tag-button-${searchedSkills.color}-unselected`,
+                                      `tag-button-${searchedSkills.color}-selected`
                                     );
                                   } else {
                                     // Remove tag from list of enabled filters
                                     setEnabledFilters(tempEnabled.toSpliced(selectIndex, 1));
                                     element.classList.replace(
-                                      `tag-button-${searchedTags.color}-selected`,
-                                      `tag-button-${searchedTags.color}-unselected`
+                                      `tag-button-${searchedSkills.color}-selected`,
+                                      `tag-button-${searchedSkills.color}-unselected`
                                     );
                                   }
                                 }}
                               >
                                 <i
                                   className={
-                                    isTagEnabled(tag, searchedTags.color) !== -1
+                                    isSkillEnabled(skill, searchedSkills.color) !== -1
                                       ? 'fa fa-check'
                                       : 'fa fa-plus'
                                   }
                                 ></i>
-                                <p>{tag.label}</p>
+                                <p>{skill.label}</p>
                               </button>
                             ))
                           )}
@@ -457,19 +455,19 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                         <h3>Selected</h3>
                         <h4>Click to deselect</h4>
                         <div id="selected-filters">
-                          {enabledFilters.map((tag) => (
+                          {enabledFilters.map((skill) => (
                             <button
-                              key={`${tag.tag.label}-${tag.color}`}
-                              className={`tag-button tag-button-${tag.color}-selected`}
-                              onClick={(_e) => {
-                                // Remove tag from list of enabled filters, re-rendering component
+                              key={`${skill.skill.label}-${skill.color}`}
+                              className={`tag-button tag-button-${skill.color}-selected`}
+                              onClick={() => {
+                                // Remove skill from list of enabled filters, re-rendering component
                                 setEnabledFilters(
-                                  enabledFilters.toSpliced(isTagEnabled(tag.tag, tag.color), 1)
+                                  enabledFilters.toSpliced(isSkillEnabled(skill.skill, skill.color), 1)
                                 );
                               }}
                             >
                               <i className="fa fa-close"></i>
-                              <p>{tag.tag.label}</p>
+                              <p>{skill.skill.label}</p>
                             </button>
                           ))}
                         </div>
@@ -480,12 +478,12 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                           className={'delete-button'}
                           doNotClose={() => true}
                           callback={() => {
-                            // Reset tag filters before adding results in
+                            // Reset skill filters before adding results in
                         
                             // Clears all active filters
-                            setEnabledFilters(new Array());
-                            const newActiveTags = enabledFilters.map(f => f.tag);
-                            setActiveTagFilters(newActiveTags);
+                            setEnabledFilters([]);
+                            const newActiveSkills = enabledFilters.map(f => f.skill);
+                            setActiveSkillFilters(newActiveSkills);
                             const discoverFilters = document.getElementsByClassName('discover-tag-filter');
                         
                             // Remove any/all other clicked discover tags
@@ -497,8 +495,8 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                             setAppliedFiltersDisplay(enabledFilters);
                         
                             //Add "Applied Filters" div if it is missing and if the paragraph exists
-                            if (newActiveTags.length > 0) {
-                              setDisplayFiltersText(newActiveTags.some(tag => tag.type !== 'Project Type'));
+                            if (newActiveSkills.length > 0) {
+                              setDisplayFiltersText(newActiveSkills.some(skill => skill.type !== 'Designer'));
                             }
                           }}
                         >
@@ -507,9 +505,9 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                         <PopupButton
                           buttonId={'primary-btn'}
                           callback={() => {
-                            // Reset tag filters before adding results in
-                            const newActiveTags = enabledFilters.map(f => f.tag)
-                            setActiveTagFilters(newActiveTags);
+                            // Reset skill filters before adding results in
+                            const newActiveSkills = enabledFilters.map(f => f.skill)
+                            setActiveSkillFilters(newActiveSkills);
                             const discoverFilters = document.getElementsByClassName('discover-tag-filter');
                           
                             // Remove any/all other clicked discover tags
@@ -517,28 +515,28 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                               discoverFilters[i].classList.remove('discover-tag-filter-selected');
                             }
                           
-                            enabledFilters.forEach((filter) => {
+                            // enabledFilters.forEach((filter) => {
                             
-                              // Check if any enabled filters match a discover tag, and visually toggle it
-                              // If the filter has a tag_id, it's either a Tag or a Skill, and not a Project Type
-                              // Available for selection on the discover filters page
-                              if (filter.tag.type === 'Project Type') {
-                                for (let i = 0; i < discoverFilters.length; i++) {
-                                  if (discoverFilters[i].innerHTML.toLowerCase() === filter.tag.label.toLowerCase()) {
-                                    discoverFilters[i].classList.add('discover-tag-filter-selected');
-                                  }
-                                }
-                              }
-                            });
+                            //   // Check if any enabled filters match a discover tag, and visually toggle it
+                            //   // If the filter has a tag_id, it's either a Skill or a Skill, and not a Project Type
+                            //   // Available for selection on the discover filters page
+                            //   if (filter.skill.type === 'Project Type') {
+                            //     for (let i = 0; i < discoverFilters.length; i++) {
+                            //       if (discoverFilters[i].innerHTML.toLowerCase() === filter.tag.label.toLowerCase()) {
+                            //         discoverFilters[i].classList.add('discover-tag-filter-selected');
+                            //       }
+                            //     }
+                            //   }
+                            // });
                           
                             setAppliedFiltersDisplay(enabledFilters);
                           
                             // Update the project list
-                            updateItemList(newActiveTags);
+                            updateItemList(newActiveSkills);
                           
                             //Add "Applied Filters" div if it is missing and if the paragraph exists
-                            if (newActiveTags.length > 0) {
-                              setDisplayFiltersText(newActiveTags.some(tag => tag.type !== 'Project Type'));
+                            if (newActiveSkills.length > 0) {
+                              setDisplayFiltersText(newActiveSkills.some(skill => skill.type !== 'Designer'));
                             }
                           }}
                         >
@@ -552,7 +550,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
               <button
                 id="filters-right-scroll"
                 className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
-                onClick={() => scrollTags('right')}
+                onClick={() => scrollSkills('right')}
               >
                 <i className="fa fa-caret-right"></i>
               </button>
@@ -561,24 +559,24 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
               <div className='applied-filters'>
                 <p>Applied Filters:</p>
                 {appliedFiltersDisplay.map((filter, index) => {
-                  if (filter.tag.type === 'Project Type') {
-                    return <Fragment key={`${filter.tag.type}`} />;
+                  if (filter.skill.type === 'Designer') {
+                    return <Fragment key={`${filter.skill.type}`} />;
                   }
     
                   return (
                     <button
-                      key={filter.tag.label}
+                      key={filter.skill.label}
                       className={`tag-button tag-button-${filter.color}-selected`}
-                      onClick={(_e) => {
+                      onClick={() => {
     
-                        // Remove tag from list of enabled filters, re-rendering component
+                        // Remove skill from list of enabled filters, re-rendering component
                         const tempList = appliedFiltersDisplay.toSpliced(index, 1);
-                        const newActiveTags = tempList.map((filter) => filter.tag);
+                        const newActiveSkills = tempList.map((filter) => filter.skill);
                         setAppliedFiltersDisplay(tempList);
-                        setActiveTagFilters(newActiveTags);
-                        updateItemList(newActiveTags);
+                        setActiveSkillFilters(newActiveSkills);
+                        updateItemList(newActiveSkills);
     
-                        if (newActiveTags.length === 0 || (newActiveTags.length === 1 && newActiveTags[0].type === 'Project Type')) {
+                        if (newActiveSkills.length === 0 || (newActiveSkills.length === 1 && newActiveSkills[0].label === 'Filter')) {
                           setDisplayFiltersText(false);
                         } else {
                           setDisplayFiltersText(true);
@@ -586,7 +584,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                       }}
                     >
                       <i className='fa fa-close'></i>
-                      <p>{filter.tag.label}</p>
+                      <p>{filter.skill.label}</p>
                     </button>
                   );
                 })}
