@@ -2007,6 +2007,11 @@ Project page style rules
   gap: 5px;
 }
 
+#project-approval-status {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 #project-status {
   grid-area: status;
   margin-top: auto;
@@ -3282,7 +3287,7 @@ Project Carousel style rules
   hyphens: manual;
 }
 
-#project-status {
+#project-status, #project-approval-status {
   display: flex;
   flex-direction: row;
   justify-content: start;
@@ -4320,42 +4325,39 @@ My projects page style rules
 .txt {
   font-size: 12px;
   font-weight: bold;
-  color: white;
+  color: black;
+  z-index: 1;
 }
 
 .symbol {
   position: absolute;
-  top: -20px;
+  top: -25px;
+  z-index: 0;
   
-  width: 40px;
-  height: 40px;
+  width: 40px !important;
+  height: 40px !important;
   border-radius: 50%;
-  font-weight: bold;
+  padding: 5px;
   
-  display: flex;
+  display: flex !important;
   align-items: center;
   justify-content: center;
-  font-size: 18px;
-  color: white;
+
+  fill: black !important;
   
   background-color: inherit; 
 }
 
 .approved {
-  background-color: #15dd00;
+  background-color: var(--approved-green, #b1fca9);
 }
 
 .not-approved {
-  background-color: #ff2a2a;
+  background-color: var(--not-approved-red, #fc9d9d);
 }
 
 .under-review {
-  background-color: #ffcc00;
-  color: black;
-}
-
-.approved .txt, .approved .symbol, .under-review .txt, .under-review .symbol {
-  color: black;
+  background-color: var(--under-review-yellow, #ffe1a2);
 }
 
 .grid-card-image-button {

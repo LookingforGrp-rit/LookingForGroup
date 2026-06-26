@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
@@ -11,9 +11,16 @@ import { leaveProject } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
 import placeholderThumbnail from "../images/project_temp.png";
 import usePreloadedImage from "../functions/imageLoad";
+import { Close, Check, QuestionMark } from '@mui/icons-material';
+import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 
 //backend base url for getting images
 
+type ApprovalStatusKey = keyof typeof ApprovalStatus;
+type MyProjectsDisplayGridProps = {
+  projectData: ProjectDetail;
+  approvalStatus: ApprovalStatusKey;
+};
 /**
  * MyProjectsDisplayGrid renders a single project card in a grid layout for the "My Projects" page.
  * 
@@ -35,9 +42,9 @@ import usePreloadedImage from "../functions/imageLoad";
  */
 const MyProjectsDisplayGrid = ({
   projectData,
-}: {
-  projectData: ProjectDetail;
-}) => {
+  approvalStatus,
+}: MyProjectsDisplayGridProps
+) => {
   //Navigation hook
   const navigate = useNavigate();
   // Context providing project ID, ownership status, and reload function
@@ -53,9 +60,7 @@ const MyProjectsDisplayGrid = ({
     data: null,
     error: "Not initialized",
   });
-  const [approvalSymbol, setApprovalSymbol] = useState<string>('');
-  const [approvalText, setApprovalText] = useState<string>('');
-  const [approvalStatus, setApprovalStatus] = useState<string>('');
+  const [approvalSymbol, setApprovalSymbol] = useState<ReactNode>(null);
   // console.log(projectData.title + ' is approved: ' + projectData.approved);
   /**
    * toggleOptions
@@ -68,56 +73,14 @@ const MyProjectsDisplayGrid = ({
   const projectURL = `${paths.routes.PROJECT}?projectID=${projectData.projectId}`;
 
   useEffect(() => {
-    const checkApprovalRequest = async () => {
-      try {
-        const result = await projectApprovalRequestExists(projectData.projectId);
-
-        const status = projectData.approved
-          ? 'approved'
-          : result
-            ? 'under-review'
-            : 'not-approved';
-
-        setApprovalStatus(status);
-
-        setApprovalText(
-          status === 'approved'
-            ? 'Approved'
-            : status === 'under-review'
-              ? 'Under Review'
-              : 'Not Approved'
-        );
-
-        setApprovalSymbol(
-          status === 'approved'
-            ? '✓'
-            : status === 'under-review'
-              ? '?'
-              : 'x'
-        );
-      } catch {
-        const status = projectData.approved
-          ? 'approved'
-          : 'not-approved';
-
-        setApprovalStatus(status);
-
-        setApprovalText(
-          status === 'approved'
-            ? 'Approved'
-            : 'Not Approved'
-        );
-
-        setApprovalSymbol(
-          status === 'approved'
-            ? '✓'
-            : 'x'
-        );
-      }
-    };
-
-    checkApprovalRequest();
-  }, [projectData.projectId]);
+    setApprovalSymbol(
+      approvalStatus === 'approved'
+        ? <Check className="symbol" />
+        : approvalStatus === 'under-review'
+          ? <QuestionMark className="symbol" />
+          : <Close className="symbol" />
+      );
+  }, [approvalStatus]);
 
   /**
    * handleLeaveProject
@@ -151,11 +114,9 @@ const MyProjectsDisplayGrid = ({
       {/* Thumbnail */}
       <button className="grid-card-image-button" onClick={() => navigate(projectURL)}>
         <div className={approvalStatus}>
-          <div className="symbol">
-            {approvalSymbol}
-          </div>
+          {approvalSymbol}
           <div className="txt">
-            {approvalText}
+            {ApprovalStatus[approvalStatus] as string}
           </div>
         </div>
         <img
