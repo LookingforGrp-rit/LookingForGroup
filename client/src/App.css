@@ -26,6 +26,10 @@
   --tag-periwinkle: #A2ADF9;
   --tag-pink: #e191e8;
 
+  --approved-green: #b1fca9;
+  --under-review-yellow: #fc9d9d;
+  --not-approved-red: #ffe1a2;
+
   --modal-gradient-start: #0a0a0a;
   --modal-gradient-end: #2c2a3a;
 }
