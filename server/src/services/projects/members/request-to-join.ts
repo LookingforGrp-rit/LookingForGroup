@@ -2,7 +2,7 @@ import type { RequestToJoinInput, EmailInput } from '@looking-for-group/shared';
 import { createElement } from 'react';
 import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
-import InviteEmail from '#email-templates/invite-email.ts';
+import ApplyEmail from '#email-templates/apply-email.ts';
 import getRolesService from '#services/datasets/get-roles.ts';
 import { sendEmail } from '#services/mailer.ts';
 import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts';
@@ -75,7 +75,7 @@ export const requestToJoinService = async (
 
     const profileUrl = `${clientUrl}/profile?userID=${String(requester.userId)}`;
 
-    const receiverImg = requester.profileImage
+    const senderImg = requester.profileImage
       ? `https://lookingforgrp.com${requester.profileImage}`
       : 'https://lookingforgrp.com/api/images/blue_frog.png';
 
@@ -87,22 +87,22 @@ export const requestToJoinService = async (
 
     const html = await pretty(
       await render(
-        createElement(InviteEmail, {
+        createElement(ApplyEmail, {
           receiverName: {
-            firstName: requester.firstName,
-            lastName: requester.lastName,
-          },
-          receiverImage: receiverImg,
-          senderName: {
             firstName: owner.firstName,
             lastName: owner.lastName,
           },
+          senderImage: senderImg,
+          senderName: {
+            firstName: requester.firstName,
+            lastName: requester.lastName,
+          },
           senderProfileLink: profileUrl,
-          senderEmail: owner.ritEmail,
+          senderEmail: requester.ritEmail,
           senderMessage: msg,
           projectName: project.title,
           projectImage: projectImg,
-          inviteLink: inviteUrl,
+          applyLink: inviteUrl,
         }),
       ),
     );
