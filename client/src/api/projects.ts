@@ -58,6 +58,21 @@ export const createNewProject = async (
 };
 
 /**
+ * sends a project to be reviewed by a moderator, required to make a project visible
+ * @param projectData - the data of the project to be reviewed
+ * @returns 200 if valid, 400 if not
+ */
+export const requestProjectReview = async (
+  projectData: ProjectWithFollowers
+): Promise<ApiResponse<ProjectDetail>> => {
+  const apiURL = '/projects/unapproved/' + projectData.projectId;
+  const response = await POST(apiURL, projectData);
+
+  //console.log(response);
+  return response as ApiResponse<ProjectDetail>;
+}
+
+/**
  * Gets all projects in the database
  * @returns Array of all projects if valid, 400 if not
  */
@@ -802,6 +817,7 @@ export const reorderProjectImages = async (
 
 export default {
   createNewProject,
+  requestProjectReview,
   getProjects,
   getByID,
   updateProject,

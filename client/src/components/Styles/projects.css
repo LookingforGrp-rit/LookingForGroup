@@ -480,6 +480,42 @@ Project Creator and Editor Popup style rules
   margin-bottom: 28px;
 }
 
+/* Row holding "Save Changes" and "Delete Project" side by side, centered. */
+.editor-save-actions {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+
+/* The Save button centers itself with auto side-margins and a bottom margin;
+   inside the flex row those fight the centering and shove the two buttons
+   apart, so neutralize them and let the row handle spacing. */
+.editor-save-actions #project-editor-save {
+  margin: 0;
+  align-self: center;
+}
+
+/* Delete button: matches the Save button's shape/size but red. */
+#project-editor-delete {
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  background-color: var(--error-delete-color) !important;
+  color: var(--invert-text);
+  font-size: 1.25rem;
+  font-weight: 700;
+  width: max-content;
+  cursor: pointer;
+}
+
+#project-editor-delete:hover {
+  box-shadow: 0px 0px 10px 0px var(--shadow-color);
+}
+
 #project-editor-save.disabled,
 #project-editor-save:disabled,
 #team-add-member-add-button:disabled,
@@ -816,6 +852,7 @@ Project Creator and Editor Popup style rules
   border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 20px;
+  position: relative;
 }
 
 #project-editor-tag-search {
@@ -1031,6 +1068,7 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   max-height: 423px;
   padding: 26px 31px;
+  min-width: fit-content;
 
   .error {
     margin-top: 15px;
@@ -1051,8 +1089,8 @@ Project Creator and Editor Popup style rules
 
 #project-editor-type-tags-container {
   display: flex;
-  flex-direction: row;
-  flex-wrap: wrap;
+  flex-direction: column;
+  flex-wrap: nowrap;
   align-items: flex-start;
   gap: 8px;
   overflow-y: auto;
@@ -1831,6 +1869,15 @@ button.edit-position-contact .project-member-image {
   background: none;
   border: none;
   cursor: pointer;
+}
+.delete-tags-btn {
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
 }
 
 .popup-trigger-invisible {
@@ -3251,6 +3298,22 @@ Project Carousel style rules
   }
 }
 
+#project-info-contexts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+}
+
+#project-info-request {
+  border: none;
+  background-color: var(--primary-color) !important;
+  border-radius: 30px;
+  color: var(--invert-text);
+  padding: 4px;
+  font-weight: 700;
+}
+
 #project-info-edit {
   font-size: 1rem;
   border: none;
@@ -3646,9 +3709,10 @@ button#positions-popup-list-item-active {
   width: 32px;
   border-radius: 50%;
 }
+
 @media only screen and (max-width: 800px) {
 
-  #position-contact{
+  #position-contact {
     margin-left: 20px;
   }
 
@@ -4438,9 +4502,6 @@ My projects page style rules
 
 .my-projects-list {
   box-sizing: border-box;
-  padding-left: 60px;
-  padding-right: 64px;
-
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -4448,12 +4509,12 @@ My projects page style rules
 
 .my-projects-list-header {
   box-sizing: border-box;
-  margin: 30px 64px 10px 60px;
-  padding-right: 80px;
+  margin: 30px 0 10px 0;
+  padding-right: 105px;
 
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: space-between;
   gap: 10px;
 }
 
@@ -4470,17 +4531,17 @@ My projects page style rules
 
 .project-header-label.title {
   justify-self: start;
-  /* max-width: 200px;
-  width: 100%; */
+  min-width: 200px;
+  width: auto;
+  max-width: 300px;
   flex-grow: 1;
-  flex-shrink: 1;
-  flex-basis: 512px;
   padding-left: 10px;
 }
 
 .project-header-label.status {
-  width: 250px;
+  min-width: 200px;
   flex-shrink: 0;
+  text-align: left;
 }
 
 .project-header-label.date {
@@ -4496,13 +4557,16 @@ My projects page style rules
 
   display: flex;
   flex-direction: row;
-  justify-content: flex-end;
+  /* justify-content: flex-end; */
   gap: 10px;
 
   border: 0px;
   border-radius: 10px;
   height: fit-content;
   padding: 10px 20px 10px 10px;
+  max-width: 882px;
+  width: 70vw;
+  justify-content: space-between;
   font-size: 1.25rem;
 
   .dropdown-container {
@@ -4510,6 +4574,159 @@ My projects page style rules
     flex-direction: row;
     align-items: center;
     flex-grow: 0.025;
+  }
+}
+
+#my-projects-header-and-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin: 0 60px;
+}
+
+
+
+.list-card-section1 {
+  box-sizing: border-box;
+
+  flex-grow: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+  min-width: 200px;
+  max-width: 350px;
+  word-break: break-word;
+  hyphens: auto;
+}
+
+.list-card-image {
+  box-sizing: border-box;
+  border: 0px;
+  border-radius: 10px;
+  width: 160px;
+  height: 80px;
+  object-fit: cover;
+  cursor: pointer;
+}
+
+.list-card-title {
+  box-sizing: border-box;
+  color: var(--primary-color);
+  text-align: left;
+  font-size: 1.25rem;
+  font-family: Inter;
+  font-weight: bold;
+  line-height: 28px;
+  letter-spacing: 0%;
+  cursor: pointer;
+  width: 100%;
+}
+
+.list-card-title:hover {
+  text-decoration: underline;
+}
+
+.list-card-status {
+  box-sizing: border-box;
+  color: var(--main-text);
+  text-align: left;
+  font-size: 1.25rem;
+  font-family: Inter;
+  font-weight: normal;
+  line-height: 28px;
+  letter-spacing: 0%;
+
+  flex-basis: 250px;
+  flex-shrink: 1;
+  display: flex;
+  align-items: center;
+}
+
+.list-card-date {
+  box-sizing: border-box;
+  color: var(--main--text);
+  text-align: right;
+  font-size: 1.25rem;
+  font-family: Inter;
+  font-weight: normal;
+  line-height: 28px;
+  letter-spacing: 0%;
+
+  display: flex;
+  justify-content: end;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+
+#list-card-options-button {
+  position: relative;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  background-color: transparent;
+  border: 0px;
+  border-radius: 0px;
+  color: var(--primary-color);
+  height: min-content;
+  margin-left: 10px;
+  padding: 0px;
+
+  svg {
+    padding: 11.5px 7.5px;
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+
+  /* .list-card-status, .list-card-date, .project-header-label.date, .project-header-label.status {
+    flex-shrink: 1;
+  } */
+  /* .list-card-status {
+    flex-basis: 150px;
+  }
+
+  .project-header-label.status {
+    flex-basis: 150px;
+  } */
+
+}
+
+@media only screen and (max-width: 900px) {
+
+  .my-projects-grid,
+  .my-projects-list {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 30px 20px 20px;
+  }
+
+  .my-projects-list-header {
+    display: none;
+  }
+
+  .my-project-list-card {
+    flex-wrap: wrap;
+  }
+
+  .dropdown-container {
+    margin-left: auto;
+    order: 2;
+  }
+
+  .list-card-status {
+    flex-basis: 100%;
+    order: 3;
+  }
+
+  .list-card-date {
+    order: 3;
+  }
+
+  .list-card-section1 {
+    width: auto;
+    order: 1;
   }
 }
 
@@ -4555,139 +4772,6 @@ My projects page style rules
   }
 }
 
-.list-card-section1 {
-  box-sizing: border-box;
-
-  flex-grow: 1;
-  flex-shrink: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
-  width: 100%;
-
-  word-break: break-word;
-  hyphens: auto;
-}
-
-.list-card-image {
-  box-sizing: border-box;
-  border: 0px;
-  border-radius: 10px;
-  width: 160px;
-  height: 80px;
-  object-fit: cover;
-  cursor: pointer;
-}
-
-.list-card-title {
-  box-sizing: border-box;
-  color: var(--primary-color);
-  text-align: left;
-  font-size: 1.25rem;
-  font-family: Inter;
-  font-weight: bold;
-  line-height: 28px;
-  letter-spacing: 0%;
-  cursor: pointer;
-  width: 100%;
-}
-
-.list-card-title:hover {
-  text-decoration: underline;
-}
-
-.list-card-status {
-  box-sizing: border-box;
-  color: var(--main-text);
-  text-align: left;
-  font-size: 1.25rem;
-  font-family: Inter;
-  font-weight: normal;
-  line-height: 28px;
-  letter-spacing: 0%;
-
-  flex-basis: 250px;
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-.list-card-date {
-  box-sizing: border-box;
-  color: var(--main--text);
-  text-align: right;
-  font-size: 1.25rem;
-  font-family: Inter;
-  font-weight: normal;
-  line-height: 28px;
-  letter-spacing: 0%;
-
-  display: flex;
-  justify-content: end;
-  align-items: center;
-  flex-shrink: 0;
-}
-
-
-#list-card-options-button {
-  position: relative;
-  box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  background-color: transparent;
-  border: 0px;
-  border-radius: 0px;
-  color: var(--primary-color);
-  height: min-content;
-  margin-left: 10px;
-  padding: 0px;
-
-  svg {
-    padding: 11.5px 7.5px;
-  }
-}
-
-@media only screen and (max-width: 1200px) {
-
-  /* .list-card-status, .list-card-date, .project-header-label.date, .project-header-label.status {
-    flex-shrink: 1;
-  } */
-  .list-card-status {
-    flex-basis: 150px;
-  }
-
-  .project-header-label.status {
-    flex-basis: 150px;
-  }
-}
-
-@media only screen and (max-width: 900px) {
-
-  .my-projects-grid,
-  .my-projects-list {
-    padding-left: 0px;
-    padding-right: 0px;
-    margin: 30px 20px 20px;
-  }
-
-  .my-projects-list-header {
-    display: none;
-  }
-
-  .my-project-list-card {
-    flex-wrap: wrap;
-  }
-
-  .dropdown-container {
-    margin-left: auto;
-  }
-
-  .list-card-status {
-    flex-basis: 100%;
-  }
-}
-
 .card-leave-button,
 .card-delete-button {
   display: flex;
@@ -4701,7 +4785,7 @@ My projects page style rules
   border-radius: 4px;
   margin: 0 2px;
   padding: 10px;
-  text-align: left;
+  text-align: right;
   font-family: Inter;
   transition: background-color 0.2s;
 }
@@ -4721,8 +4805,15 @@ My projects page style rules
   transition: background-color 0.2s;
 }
 
-.card-options-list .small-popup {
+/* Same delete/leave confirmation styling for the My Projects card menu and the
+   project page's options dropdown, so both render identically. */
+.card-options-list .small-popup,
+#project-info-dropdown .small-popup,
+#project-creator-editor .small-popup {
   text-align: center;
+  /* #project-info-dropdown sets white-space: nowrap; reset it so the confirm
+     message wraps the same way it does in the My Projects card popup. */
+  white-space: normal;
 
   h3 {
     font-size: 1.25rem;

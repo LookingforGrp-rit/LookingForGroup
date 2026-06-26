@@ -15,7 +15,7 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSo
 import { SortableTag } from "../../ProjectCreatorEditor/tabs/SortableItem";
 import { clampDragWithinContainer } from "../../ProjectCreatorEditor/tabs/dragModifiers";
 
-const skillTabs = ["Developer Skills", "Design Skills", "Soft Skills", "Audio Skills"];
+const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
 interface SkillsTabProps {
   profile: PendingUserProfile;
@@ -46,6 +46,10 @@ export const SkillsTab = ({
   // filtered results from skill search bar
   const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
+  /* ONLY used for the deleting tags button. This is needed to re-render
+	the selected skills section when reseting tags */
+	const [skills, setSkills] = useState<Skill[]>(unmodifiedProfile.skills);
+
   // load skills
   useMemo(() => {
     const fetchSkills = async () => {
@@ -72,6 +76,8 @@ export const SkillsTab = ({
         return [{ data: allSkills.filter((s) => s.type === "Soft") }];
       case 3:
         return [{ data: allSkills.filter((s) => s.type === "Audio") }];
+      case 4:
+        return [{ data: allSkills.filter((s) => s.type === "Engineer") }];
       default:
         return [{ data: [] }];
     }
@@ -152,7 +158,7 @@ export const SkillsTab = ({
 
       const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
 
-      console.log(skillToToggle);
+      /*console.log(skillToToggle);*/
 
       if (!skillToToggle) return;
 
@@ -180,7 +186,7 @@ export const SkillsTab = ({
           data: {
             skillId,
             position: profile.skills.length, // add to end of list by default
-            proficiency: "Novice", // TODO add proficiency
+            proficiency: "Novice", // TODO add a way to properly set skill proficiency
           },
         });
 
@@ -395,6 +401,32 @@ export const SkillsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <button 
+            type="button" 
+            className="delete-tags-btn"
+            hidden={profile.skills.length === 0 || profile.skills == undefined}
+            onClick={() => {
+              /* deletes all skills in the data manager for the user */
+                for (let i = 0; i < profile.skills.length; i++)
+                {
+                    dataManager.deleteSkill({
+                    id: {
+                      type: "canon",
+                      value: profile.skills[i].skillId,
+                    },
+                    data: null,
+                  })
+                }
+
+                /* re-renders the current popup with 0 skills remaining and updates
+                user profile */
+                setSkills(profile.skills.splice(0));
+              updatePendingProfile({...profile});
+            }}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        </button>
       </div>
 
       <div id="project-editor-tag-search">

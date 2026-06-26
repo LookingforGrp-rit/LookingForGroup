@@ -2,6 +2,7 @@
 import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
+import { DeleteProjectButton } from "../DeleteProjectButton";
 import profileImage from "../../../images/lfrog.png";
 import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
@@ -69,6 +70,7 @@ const emptyJob: Pending<ProjectJob> = {
   localId: null,
   location: null,
   role: null,
+  jobSkills: null,
 };
 
 let localIdIncrement = 0;
@@ -1742,6 +1744,7 @@ export const TeamTab = ({
       <div id="project-editor-team-content">{teamTabContent}</div>
 
       <div id="team-save-info">
+        <div className="editor-save-actions">
         <Popup>
           {saveable ? "" :
             <div id="invalid-input-error" className={"save-error-msg-general"}>
@@ -1767,6 +1770,11 @@ export const TeamTab = ({
             </div>
           </PopupContent>
         </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
+        </div>
       </div>
     </div>
   );

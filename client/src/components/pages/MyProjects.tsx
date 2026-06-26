@@ -330,35 +330,36 @@ const MyProjects = (userProfile: any) => {
     return (
       <>
         {/* Projects List header */}
-        <div className="my-projects-list-header">
-          <div className="project-header-label title">Project Title</div>
-          <div className="project-header-label status">Status</div>
-          <div className="project-header-label date">Date Created</div>
-        </div>
+        <div id="my-projects-header-and-list">
+          <div className="my-projects-list-header">
+            <div className="project-header-label title">Project Title</div>
+            <div className="project-header-label status">Status</div>
+            <div className="project-header-label date">Date Created</div>
+          </div>
 
-        <div className='my-projects-list'>
-          {userProjects.map(project => {
-            // Check if user is the owner of this project
-            const isOwner = (project.owner.userId === loggedIn);
+          <div className='my-projects-list'>
+            {userProjects.map(project => {
+              // Check if user is the owner of this project
+              const isOwner = (project.owner.userId === loggedIn);
 
-            return (
-              <LeaveDeleteContext.Provider
-                key={project.projectId}
-                value={{
-                  isOwner,
-                  projId: project.projectId,
-                  userId: loggedIn,
-                  reloadProjects: getUserProjects,
-                  removeProject,
-                }}
-              >
-                <MyProjectsDisplayList
-                  projectData={project}
-                />
-              </LeaveDeleteContext.Provider>
-            );
-          })}
-        </div>
+              return (
+                <LeaveDeleteContext.Provider
+                  key={project.projectId}
+                  value={{
+                    isOwner,
+                    projId: project.projectId,
+                    userId: loggedIn,
+                    reloadProjects: getUserProjects,
+                    removeProject,
+                  }}
+                >
+                  <MyProjectsDisplayList
+                    projectData={project}
+                  />
+                </LeaveDeleteContext.Provider>
+              );
+            })}
+          </div></div>
       </>
     );
   };
@@ -601,7 +602,7 @@ const MyProjects = (userProfile: any) => {
         </div>
       </div>
 
-      <hr id='my-projects-hr' />
+      {/* <hr id='my-projects-hr' /> */}
 
       {/* Project Grid/List */}
       <main id="main">

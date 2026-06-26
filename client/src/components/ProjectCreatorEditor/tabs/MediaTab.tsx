@@ -8,6 +8,7 @@ import {
   ProjectWithFollowers,
 } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
+import { DeleteProjectButton } from "../DeleteProjectButton";
 import { ProjectImageUploader } from "../../ImageUploader";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
@@ -658,6 +659,7 @@ export const MediaTab = ({
 
       {/* Save button */}
       <div id="general-save-info">
+        <div className="editor-save-actions">
         <Popup>
           {saveable ? "" :
             <div id="invalid-input-error" className={"save-error-msg-general"}>
@@ -683,6 +685,11 @@ export const MediaTab = ({
             </div>
           </PopupContent>
         </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
+        </div>
       </div>
     </div>
   );
