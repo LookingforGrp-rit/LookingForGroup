@@ -2,9 +2,9 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
-import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
-import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
-import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
+import { tags, projectTabs } from '../constants/tags';
+import { getProjectTypes, getTags} from '../api/users';
+import { Tag, StringDictionary, Medium } from '@looking-for-group/shared';
 
 
 interface DiscoverProjectsProps {
@@ -136,10 +136,6 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const toggleTag = (event: any, tag: Tag) => {
         let newActiveTags: Tag[];
 
-        const discoverFilters = document.getElementsByClassName('discover-tag-filter');
-        //for (let i = 0; i < discoverFilters.length; i++) {
-        //  discoverFilters[i].classList.remove('discover-tag-filter-selected');
-        //}
 
         if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
             // Remove the tag from the active list
@@ -414,7 +410,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     onClick={(e) => {
                                                         const element = e.target as HTMLElement;
                                                         const selectIndex = isTagEnabled(tag, searchedTags.color);
-                                                        let tempEnabled = enabledFilters;
+                                                        const tempEnabled = enabledFilters;
 
                                                         //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
                                                         //  // Remove all other tags of the same type except the one selected
@@ -478,7 +474,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                             <button
                                                 key={`${tag.tag.label}-${tag.color}`}
                                                 className={`tag-button tag-button-${tag.color}-selected`}
-                                                onClick={(_e) => {
+                                                onClick={() => {
                                                     // Remove tag from list of enabled filters, re-rendering component
                                                     setEnabledFilters(
                                                         enabledFilters.toSpliced(isTagEnabled(tag.tag, tag.color), 1)
@@ -500,7 +496,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         // Reset tag filters before adding results in
 
                                         // Clears all active filters
-                                        setEnabledFilters(new Array());
+                                        setEnabledFilters([]);
                                         const newActiveTags = enabledFilters.map(f => f.tag);
                                         setActiveTagFilters(newActiveTags);
                                         const discoverFilters = document.getElementsByClassName('discover-tag-filter');
@@ -586,7 +582,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                             <button
                                 key={filter.tag.label}
                                 className={`tag-button tag-button-${filter.color}-selected`}
-                                onClick={(_e) => {
+                                onClick={() => {
 
                                     // Remove tag from list of enabled filters, re-rendering component
                                     const tempList = appliedFiltersDisplay.toSpliced(index, 1);

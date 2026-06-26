@@ -1,5 +1,5 @@
-import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import * as paths from '../constants/routes';
 import placeholderThumbnail from '../images/project_temp.png';
 import { addProjectFollowing, deleteProjectFollowing, getCurrentAccount, getProjectFollowing } from '../api/users.ts';
@@ -197,173 +197,35 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   );
 };
 
-type MetaItem = { label: string; type: string };
-
 /**
- * Renders the bottom row of the project card: the leading medium tag, a `+X`
- * collapsed indicator for the off-hover state, and as many extra tags as
- * physically fit on one line for the on-hover state (with a smaller `+Y`
- * trailing chip for any that don't fit). Uses a hidden ghost row to measure
- * each candidate tag's width and recomputes when the meta row resizes.
+ * Renders the bottom row of the project card: 
+ * leading medium tag and two normal tags
  */
 const ProjectPanelMeta = ({ project }: { project: ProjectWithFollowers }) => {
-  const allExtras = useMemo<MetaItem[]>(() => {
-    const fromMediums = (project.mediums ?? []).slice(1).map((m) => ({
-      label: (m as ProjectMedium).label,
-      type: 'medium',
-    }));
-    const fromTags = (project.tags ?? []).map((t) => ({
-      label: t.label,
-      type: t.type?.toLowerCase() ?? '',
-    }));
-    return [...fromMediums, ...fromTags];
-  }, [project.mediums, project.tags]);
-
-  const remaining = allExtras.length;
-  const metaRef = useRef<HTMLDivElement>(null);
-  const ghostRef = useRef<HTMLDivElement>(null);
-  const [visibleCount, setVisibleCount] = useState(remaining);
-
-  useLayoutEffect(() => {
-    if (remaining === 0) return;
-
-    const compute = () => {
-      const meta = metaRef.current;
-      const ghost = ghostRef.current;
-      if (!meta || !ghost) return;
-
-      // Look up the live sibling elements we need to size against.
-      const card = meta.closest('.project-panel') as HTMLElement | null;
-      const titleLikes = card?.querySelector('.project-title-likes') as HTMLElement | null;
-      const hookOverlay = card?.querySelector('.project-panel-hover') as HTMLElement | null;
-      if (!card || !titleLikes || !hookOverlay) return;
-
-      const styles = getComputedStyle(meta);
-      const padTop = parseFloat(styles.paddingTop || '0');
-      const padBottom = parseFloat(styles.paddingBottom || '0');
-      const padLeft = parseFloat(styles.paddingLeft || '0');
-      const padRight = parseFloat(styles.paddingRight || '0');
-      const gap = parseFloat(styles.rowGap || styles.gap || '0') || 6;
-
-      const cardH = card.getBoundingClientRect().height;
-      const titleH = titleLikes.getBoundingClientRect().height;
-      // Natural height of the hook overlay's content - what the hook needs in
-      // order to render without cropping.
-      const hookH = hookOverlay.scrollHeight;
-
-      const availableMetaH = cardH - titleH - hookH;
-      const availableMetaW = meta.clientWidth - padLeft - padRight;
-
-      if (availableMetaH <= padTop + padBottom || availableMetaW <= 0) {
-        setVisibleCount(0);
-        return;
-      }
-
-      const ghostChildren = Array.from(ghost.children) as HTMLElement[];
-      if (ghostChildren.length < 2) return;
-      // Layout in ghost: [medium, ...extras, +N placeholder]
-      const widthOf = (el: HTMLElement) => el.getBoundingClientRect().width;
-      const heightOf = (el: HTMLElement) => el.getBoundingClientRect().height;
-      const mediumWidth = widthOf(ghostChildren[0]);
-      const plusWidth = widthOf(ghostChildren[ghostChildren.length - 1]);
-      const extraWidths = ghostChildren.slice(1, -1).map(widthOf);
-      const tagH = heightOf(ghostChildren[0]);
-
-      // Simulate flex-wrap layout: how many rows do `widths` take?
-      const simulateRows = (widths: number[]) => {
-        let rows = 1;
-        let used = 0;
-        for (const w of widths) {
-          const incr = used > 0 ? gap + w : w;
-          if (used + incr > availableMetaW) {
-            rows++;
-            used = w;
-          } else {
-            used += incr;
-          }
-        }
-        return rows;
-      };
-
-      const heightForRows = (rows: number) =>
-        rows * tagH + Math.max(0, rows - 1) * gap + padTop + padBottom;
-
-      // First pass: does the full set fit with no overflow chip?
-      const allRows = simulateRows([mediumWidth, ...extraWidths]);
-      if (heightForRows(allRows) <= availableMetaH) {
-        setVisibleCount(extraWidths.length);
-        return;
-      }
-
-      // Second pass: scan down for the largest N where N visible extras +
-      // a trailing +Y chip still fits within the available height.
-      for (let n = extraWidths.length - 1; n >= 0; n--) {
-        const items = [mediumWidth, ...extraWidths.slice(0, n), plusWidth];
-        const rows = simulateRows(items);
-        if (heightForRows(rows) <= availableMetaH) {
-          setVisibleCount(n);
-          return;
-        }
-      }
-      setVisibleCount(0);
-    };
-
-    compute();
-    // Re-measure once web fonts settle; fallback widths can mis-size tags.
-    if (document.fonts?.ready) {
-      document.fonts.ready.then(() => compute()).catch(() => {});
-    }
-    const observer = new ResizeObserver(compute);
-    if (metaRef.current) observer.observe(metaRef.current);
-    return () => observer.disconnect();
-  }, [remaining, allExtras, project.hook]);
-
-  const shown = allExtras.slice(0, visibleCount);
-  const overflow = remaining - shown.length;
+  const allTags = project.tags ?? [];
+  
+  const MAX_TAGS_TO_SHOW = 2; // Editor says only two tags appear
+  const shownTags = allTags.slice(0, MAX_TAGS_TO_SHOW);
+  const overflowCount = allTags.length - shownTags.length;
 
   return (
-    <div className='project-panel-meta' ref={metaRef}>
+    <div className='project-panel-meta'>
       {project.mediums?.[0] && (
         <TagElement type="medium" selected={true}>
           <p>{(project.mediums[0] as ProjectMedium).label}</p>
         </TagElement>
       )}
 
-      {remaining > 0 && (
-        <>
-          <TagElement selected={true} className='project-panel-meta-plus'>
-            <p>+{remaining}</p>
-          </TagElement>
+      {shownTags.map((tag, i) => (
+        <TagElement key={i} type={tag.type?.toLowerCase() ?? ''} selected={true}>
+          <p>{tag.label}</p>
+        </TagElement>
+      ))}
 
-          <div className='project-panel-meta-extra'>
-            {shown.map((item, i) => (
-              <TagElement key={i} type={item.type} selected={true}>
-                <p>{item.label}</p>
-              </TagElement>
-            ))}
-            {overflow > 0 && (
-              <TagElement selected={true} className='project-panel-meta-plus'>
-                <p>+{overflow}</p>
-              </TagElement>
-            )}
-          </div>
-
-          {/* Hidden measurement copy: contains every candidate so we can read
-              their real rendered widths and decide how many fit on-hover. */}
-          <div className='project-panel-meta-ghost' ref={ghostRef} aria-hidden>
-            <TagElement type="medium" selected={true}>
-              <p>{(project.mediums?.[0] as ProjectMedium | undefined)?.label ?? ''}</p>
-            </TagElement>
-            {allExtras.map((item, i) => (
-              <TagElement key={`g-${i}`} type={item.type} selected={true}>
-                <p>{item.label}</p>
-              </TagElement>
-            ))}
-            <TagElement selected={true} className='project-panel-meta-plus'>
-              <p>+{remaining}</p>
-            </TagElement>
-          </div>
-        </>
+      {overflowCount > 0 && (
+        <TagElement selected={true} className='project-panel-meta-plus'>
+          <p>+{overflowCount}</p>
+        </TagElement>
       )}
     </div>
   );

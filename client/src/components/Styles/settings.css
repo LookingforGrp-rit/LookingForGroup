@@ -43,11 +43,14 @@ Settings page style rules
   /* border: 1px solid lightsalmon; */
   /* height: auto;
   margin-bottom: 200px; */
+  overflow-y: auto;
+  overflow-x: hidden;
   /* https://www.w3schools.com/howto/howto_css_hide_scrollbars.asp */
   -ms-overflow-style: none;
   /* IE and Edge */
   scrollbar-width: none;
   /* Firefox */
+  max-height: 100vh;
 }
 
 #settings-page::-webkit-scrollbar {
@@ -300,7 +303,9 @@ input:checked+.slider:before {
 
   #back {
     position: relative;
-    margin-bottom: 50px;
+    margin-bottom: 40%;
+    margin-left: 0;
+    padding: 0;
   }
 
   @media (max-width: 420px) {
