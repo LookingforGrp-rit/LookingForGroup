@@ -6,12 +6,15 @@ import { PanelBox } from '../PanelBox';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
 import { getProjectFollowing } from '../../api/users';
+
 import {
   ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
   ProjectPreview, ProjectWithFollowers,
   MePrivate
 } from '@looking-for-group/shared';
+
 import { DiscoverProjects } from '../DiscoverProjects';
+import { GET } from '../../api';
 
 export const DiscoverPage = () => {
   // --------------------
@@ -129,22 +132,42 @@ export const DiscoverPage = () => {
 
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
-    const projectRes = await getProjects();
+    //10 is the default, can change if need be
+    const numProjects = 2;
+
+    //0 is the beginning
+    const startingProjectIndex = 0;
+
+    let projects: ProjectPreview[] = [];
+    let approvedProjectCount = 0;
+
+    for (let i = startingProjectIndex; i < approvedProjectCount; i++) {
+      const url = `/projects/paginated/${numProjects}/${startingProjectIndex}`;
+      const projectRes = await GET(url);
+
+      if (projectRes && projectRes.data) {
+        projects.concat(projectRes.data);
+      }
+    }
+
+
     console.log(projectDataSet);
 
-    if (!projectRes.data) return;
+    if (!projectRes || !projectRes.data) {
+      return;
+    }
 
     const newProjectCache = projectCache;
-    for (const project of projectRes.data) {
 
+    for (const project of projectRes.data) {
       const cachedProject = newProjectCache[project.projectId];
+
       if (!cachedProject) {
         newProjectCache[project.projectId] = { preview: project };
       }
       else {
         cachedProject.preview = project;
       }
-
     }
 
     // Pre-fetch full details for the first visible batch to avoid flashing like/count state
@@ -339,7 +362,7 @@ export const DiscoverPage = () => {
   const handleSearchFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
     if (window.innerWidth > 800) return;
 
-    
+
     const page = document.querySelector('.page') as HTMLElement | null;
     if (!page) return;
     const input = e.currentTarget;

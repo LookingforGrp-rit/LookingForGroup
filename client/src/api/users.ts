@@ -46,13 +46,13 @@ export const createNewUser = async (
   const apiURL = "/users";
 
   const response = await POST(apiURL, userData);
-  
+
   if (response.error) console.log(`Error in createUser: ${response.error}`);
   return response as ApiResponse<MePrivate>;
 };
 
 export const googleLogin = async (
-  credential: {credential: string}
+  credential: { credential: string }
 ): Promise<ApiResponse> => {
   const apiURL = '/google-login';
 
@@ -63,7 +63,7 @@ export const googleLogout = async (
 ): Promise<ApiResponse> => {
   const apiURL = '/google-login';
 
-  return await DELETE(apiURL, {userId});
+  return await DELETE(apiURL, { userId });
 }
 
 export const testLogin = async (): Promise<ApiResponse<SessionUserData>> => {
@@ -87,9 +87,9 @@ export const getCurrentUsername = async (): Promise<UsernameResponse> => {
     data:
       response.status === 200
         ? {
-            userId: (response.data as MePrivate).userId,
-            username: (response.data as MePrivate).username,
-          }
+          userId: (response.data as MePrivate).userId,
+          username: (response.data as MePrivate).username,
+        }
         : undefined,
     error: response.error,
   };
@@ -144,7 +144,7 @@ export const editUser = async (
   const form = new FormData();
 
   for (const [name, value] of Object.entries(userData)) {
-    if (value !== null) form.append(name, value); 
+    if (value !== null) form.append(name, value);
     //ohhhh i see, it auto appends a string for the displayPhone because this can't take booleans for some reason...
     //this has to be a FormData to allow images so i can't change that, guess i'll have to stick with the weird parse on the backend
   }
