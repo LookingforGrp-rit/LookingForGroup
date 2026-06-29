@@ -583,6 +583,13 @@ Project Creator and Editor Popup style rules
   text-align: right;
 }
 
+#report-popup
+{
+  input {
+    margin: 20px;
+  }
+}
+
 .share-response-popup {
   width: 100%;
   position: absolute;

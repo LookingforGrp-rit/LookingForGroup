@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -56,6 +56,8 @@ const Project = (userProfile: any) => {
 
   const [shownTags, setShownTags] = useState(3);
   const [videos, setVideos] = useState<ProjectVideo[]>();
+
+  const reportMessage = useRef<HTMLInputElement>(null);
 
   /**
    * Checks in the current user is following a project
@@ -393,27 +395,40 @@ const Project = (userProfile: any) => {
                   :
                   <></>
                 }
-
-                <button
+                <Popup>
+                <PopupButton
                   className="project-info-dropdown-option"
-                  id="project-info-report"
                 >
                   <ThemeIcon
                     id={"warning"}
                     width={27}
                     height={27}
                     ariaLabel={"Report"}
-                    /* This should open a popup to report the user */
-                    onClick={() => {
-                      <Popup>
-                        <PopupContent>
-                          <h2>Report {displayedProject?.title ?? "Project"}</h2>
-                        </PopupContent>
-                      </Popup>
-                    }/*reportProjectController(projectID, )*/}
                   />
                   Report
-                </button>
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup" id="report-popup">
+                      <h3>Report {displayedProject?.title ?? "Project"}</h3>
+                      <p>You are about to report {displayedProject?.title ?? "Project"}. Please provide your reasoning below.</p>
+                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></input>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </PopupButton>
+                        <button 
+                          className="delete-button"
+                          /*onClick={reportProjectController(projectID, reportMessage.current?.value 
+                          ?? "No message given.")}*/>
+                            Report
+                        </button>
+                      </div>
+                  </div>
+                </PopupContent>
+              </Popup>
               </div>
             </DropdownContent>
           </Dropdown>
