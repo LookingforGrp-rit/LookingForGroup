@@ -1,19 +1,26 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState, ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
 import { Popup, PopupButton, PopupContent } from "./Popup";
 import { LeaveDeleteContext } from "../contexts/LeaveDeleteContext";
 import { PagePopup } from "./PagePopup";
-import { deleteProject } from "../api/projects";
-import { ApiResponse, ProjectDetail } from "@looking-for-group/shared";
+import { deleteProject, requestProjectReview } from "../api/projects";
+import { ApiResponse, ProjectDetail, ProjectFollowers } from "@looking-for-group/shared";
 import { leaveProject } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
 import placeholderThumbnail from "../images/project_temp.png";
 import usePreloadedImage from "../functions/imageLoad";
+import { Close, Check, QuestionMark } from '@mui/icons-material';
+import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 
 //backend base url for getting images
 
+type ApprovalStatusKey = keyof typeof ApprovalStatus;
+type MyProjectsDisplayGridProps = {
+  projectData: ProjectDetail;
+  approvalStatus: ApprovalStatusKey;
+};
 /**
  * MyProjectsDisplayGrid renders a single project card in a grid layout for the "My Projects" page.
  * 
@@ -31,13 +38,10 @@ import usePreloadedImage from "../functions/imageLoad";
  * - Interacts with LeaveDeleteContext for project ID, ownership, and reloading projects after actions.
  *
  * @param projectData - Detailed information about the project (from the backend API)
+ * @param approvalStatus - Project approval status (keyof ProjectApprovalStatus from "@looking-for-group/shared/enums")
  * @returns The project card element.
  */
-const MyProjectsDisplayGrid = ({
-  projectData,
-}: {
-  projectData: ProjectDetail;
-}) => {
+const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDisplayGridProps) => {
   //Navigation hook
   const navigate = useNavigate();
   // Context providing project ID, ownership status, and reload function
@@ -53,7 +57,8 @@ const MyProjectsDisplayGrid = ({
     data: null,
     error: "Not initialized",
   });
-
+  const [approvalSymbol, setApprovalSymbol] = useState<ReactNode>(null);
+  // console.log(projectData.title + ' is approved: ' + projectData.approved);
   /**
    * toggleOptions
    * - Toggles the visibility of the dropdown menu for project actions.
@@ -63,6 +68,16 @@ const MyProjectsDisplayGrid = ({
 
   //Constructs url linking to relevant project page
   const projectURL = `${paths.routes.PROJECT}?projectID=${projectData.projectId}`;
+
+  useEffect(() => {
+    setApprovalSymbol(
+      approvalStatus === 'approved'
+        ? <Check className="symbol" />
+        : approvalStatus === 'under-review'
+          ? <QuestionMark className="symbol" />
+          : <Close className="symbol" />
+    );
+  }, [approvalStatus]);
 
   /**
    * handleLeaveProject
@@ -95,6 +110,12 @@ const MyProjectsDisplayGrid = ({
     <div className="my-project-grid-card">
       {/* Thumbnail */}
       <button className="grid-card-image-button" onClick={() => navigate(projectURL)}>
+        <div className={approvalStatus}>
+          {approvalSymbol}
+          <div className="txt">
+            {ApprovalStatus[approvalStatus] as string}
+          </div>
+        </div>
         <img
           className="grid-card-image"
           src={usePreloadedImage(
@@ -125,15 +146,53 @@ const MyProjectsDisplayGrid = ({
           <DropdownContent rightAlign={true}>
             <div className={`card-options-list ${optionsShown ? "show" : ""}`}>
               <button className="card-leave-button" onClick={() => navigate(projectURL)}>
+                <ThemeIcon
+                  id={"pencil"}
+                  width={21}
+                  height={21}
+                  ariaLabel={"Edit project"}
+                  className="mono-fill"
+                />
+                Edit Project
+              </button>
+              {approvalStatus == 'not-approved' ?
+              <Popup>
+                <PopupButton className='card-leave-button'>
                   <ThemeIcon
-                    id={"pencil"}
+                    id={"request-review"}
                     width={21}
                     height={21}
-                    ariaLabel={"Leave project"}
+                    ariaLabel={"request-Review"}
                     className="mono-fill"
                   />
-                  Edit Project
-              </button>
+                  Request Review
+                </PopupButton>
+                <PopupContent>
+                  <div id="project-request-review">
+                    <label id="project-request-label">
+                      Would you like to submit your project for review?
+                    </label>
+                    <div id="project-request-info">
+                      Submiting a request will make your project visible to moderators who will choose to either
+                      accept and make your project visible to all, request changes for you to make, 
+                      or reject it for various reasons. <br/>
+                      <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                    </div>
+                    <div id="project-request-buttons">
+                      <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (projectData) requestProjectReview(projectData.projectId);
+                      }}
+                      >
+                        request review
+                      </PopupButton>
+                      <PopupButton buttonId="request-cancel-button">
+                        cancel
+                      </PopupButton>
+                    </div>
+                  </div>
+                </PopupContent>
+              </Popup> : "" }
               <Popup>
                 <PopupButton className="card-leave-button">
                   <ThemeIcon

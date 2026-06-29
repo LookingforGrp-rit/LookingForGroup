@@ -867,6 +867,8 @@ Signup process modal style rules
 #ritStatus-input {
   grid-area: ritStatus;
   height: 50px;
+  display: flex;
+  flex-direction: row;
 
   .select-container,
   .select-button-input {
@@ -884,7 +886,8 @@ Signup process modal style rules
 #major-input {
   grid-area: major;
   height: 50px;
-
+  display: flex;
+  flex-direction: row;
   /* .select-container,
   .select-button-input {
     height: 100%;
@@ -899,7 +902,7 @@ Signup process modal style rules
     margin-top: 0px;
     background-color: var(--header-color);
 
-    max-height: 800%;
+    max-height: 710%;
   }
 }
 
@@ -913,6 +916,12 @@ Signup process modal style rules
     margin-top: 0px;
     background-color: var(--header-color);
   }
+}
+
+.redAsterisk {
+  padding-left: 3px;
+  font-size: 20px;
+  color: var(--error-delete-color);
 }
 
 /* === Terms of Service === */
@@ -1081,6 +1090,8 @@ Signup process modal style rules
   .GetStarted,
   .ChooseSkills #profile-editor-tags {
     overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
     /* prevents x scrollbar */
   }
 
@@ -1103,7 +1114,7 @@ Signup process modal style rules
   }
 
   .ChooseSkills #project-editor-selected-tags {
-    width: 100%;
+    width: calc(100% - 62px - 1.818px);
   }
 
   /* === TOS === */
@@ -1148,13 +1159,16 @@ Signup process modal style rules
       display: flex;
       /* flex-wrap: wrap; */
       flex-direction: column;
+      gap: 20px;
 
-      #project-editor-selected-tags {
+     #project-editor-selected-tags {
         /* width: 93%; */
-        height: 40%;
+        height: 50%;
         overflow-y: scroll;
         order: 2;
         width: auto;
+        padding: 15px;
+
       }
 
       #project-editor-tag-search {
@@ -1162,6 +1176,8 @@ Signup process modal style rules
         height: 80%;
         overflow-y: scroll;
         max-width: auto;
+        gap: 10px;
+        padding: 15px;
       }
     }
 

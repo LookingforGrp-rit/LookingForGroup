@@ -303,7 +303,9 @@ input:checked+.slider:before {
 
   #back {
     position: relative;
-    margin-bottom: 50px;
+    margin-bottom: 40%;
+    margin-left: 0;
+    padding: 0;
   }
 
   @media (max-width: 420px) {

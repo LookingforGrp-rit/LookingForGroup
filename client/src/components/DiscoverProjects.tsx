@@ -2,13 +2,13 @@ import React, { useState, Fragment, useEffect, useRef } from 'react';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
-import { tags, peopleTags, projectTabs, peopleTabs } from '../constants/tags';
-import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
-import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
+import { tags, projectTabs } from '../constants/tags';
+import { getProjectTypes, getTags} from '../api/users';
+import { Tag, StringDictionary, Medium } from '@looking-for-group/shared';
 
 
 interface DiscoverProjectsProps {
-    updateItemList: (tags: Tag[]) => void;
+    updateItemList: (tags: Tag[], filterMode: "Match All" | "Match Any") => void;
 }
 
 interface FilterTab {
@@ -82,6 +82,8 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     // Tabs shown in the popup, dynamically created after fetching data
     const [filterPopupTabs, setFilterPopupTabs] = useState<FilterTab[]>([]);
 
+    const [filterMode, setFilterMode] = useState<"Match All" | "Match Any">("Match All");
+
 
     //////////////////
     //HELPER METHODS//
@@ -136,10 +138,6 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const toggleTag = (event: any, tag: Tag) => {
         let newActiveTags: Tag[];
 
-        const discoverFilters = document.getElementsByClassName('discover-tag-filter');
-        //for (let i = 0; i < discoverFilters.length; i++) {
-        //  discoverFilters[i].classList.remove('discover-tag-filter-selected');
-        //}
 
         if (activeTagFilters.some(t => t.label === tag.label && t.type === tag.type)) {
             // Remove the tag from the active list
@@ -152,7 +150,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
         }
 
         setActiveTagFilters(newActiveTags);
-        updateItemList(newActiveTags);
+        updateItemList(newActiveTags, filterMode);
     };
 
     /**
@@ -293,6 +291,24 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     // --------------------
     // Component
     // --------------------
+    let tagsToDisplay = searchedTags.tags;
+    let currentTabName = filterPopupTabs[activeTabId]?.categoryName;
+
+    switch(currentTabName){
+        case "Genre":
+            //Genre
+            let story = searchedTags.tags.filter((tag) => (tag as Tag).category === "Story");
+            let game = searchedTags.tags.filter((tag) => (tag as Tag).category === "Game");
+            let music = searchedTags.tags.filter((tag) => (tag as Tag).category === "Music");
+            tagsToDisplay = story.concat(game, music);
+            break;
+        case "Style":
+            //Style
+            let visual = searchedTags.tags.filter((tag) => (tag as Tag).category === "Visual");
+            let filmVideo = searchedTags.tags.filter((tag) => (tag as Tag).category === "Film/Video");
+            tagsToDisplay = visual.concat(filmVideo);
+            break;
+    }
     return (
         <div id="discover-filters-parent">
             <div id="discover-filters">
@@ -350,7 +366,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                 <img alt="close" src="/src/icons/cancel.png" onClick={() => { setActivePopup(false); }}></img>
                             </PopupButton>
                             <div id="filters-popup">
-                                <h2>{'Project Filters'}</h2>
+                                <h2>Project Filters</h2>
                                 <div id="filters" className="popup-section">
                                     <SearchBar
                                         dataSets={dataSet}
@@ -406,7 +422,14 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         {searchedTags.tags.length === 0 ? (
                                             <p>No tags found. Please try a different search term.</p>
                                         ) : (
-                                            searchedTags.tags.map((tag) => (
+                                            tagsToDisplay.map((tag, index, array) => (
+                                                <Fragment key={`${tag.label}-${tag.type}`}>
+                                                {(index === 0 || (array[index - 1].category != array[index].category)) && array[index].category != "Other" && array[index].category != null
+                                                ? <div id="tag-category-header">
+                                                    <p>{array[index].category}</p>
+                                                    <hr></hr>
+                                                  </div>
+                                                : <></>}
                                                 <button
                                                     key={`${tag.label}-${tag.type}`}
                                                     // className={`tag-button tag-button-${searchedTags.color}-unselected`}
@@ -414,7 +437,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     onClick={(e) => {
                                                         const element = e.target as HTMLElement;
                                                         const selectIndex = isTagEnabled(tag, searchedTags.color);
-                                                        let tempEnabled = enabledFilters;
+                                                        const tempEnabled = enabledFilters;
 
                                                         //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
                                                         //  // Remove all other tags of the same type except the one selected
@@ -466,6 +489,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     ></i>
                                                     <p>{tag.label}</p>
                                                 </button>
+                                                </Fragment>
                                             ))
                                         )}
                                     </div>
@@ -478,7 +502,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                             <button
                                                 key={`${tag.tag.label}-${tag.color}`}
                                                 className={`tag-button tag-button-${tag.color}-selected`}
-                                                onClick={(_e) => {
+                                                onClick={() => {
                                                     // Remove tag from list of enabled filters, re-rendering component
                                                     setEnabledFilters(
                                                         enabledFilters.toSpliced(isTagEnabled(tag.tag, tag.color), 1)
@@ -492,6 +516,12 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     </div>
                                 </div>
                                 <div id="filters-btns-section">
+                                    <button id='match-button'
+                                    onClick={() => {
+                                      setFilterMode(filterMode === "Match All" ? "Match Any" : "Match All");
+                                    }}>
+                                      {filterMode}
+                                    </button>
                                     {/* Reset Filters button */}
                                     <PopupButton
                                       className={'delete-button'}
@@ -500,7 +530,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         // Reset tag filters before adding results in
 
                                         // Clears all active filters
-                                        setEnabledFilters(new Array());
+                                        setEnabledFilters([]);
                                         const newActiveTags = enabledFilters.map(f => f.tag);
                                         setActiveTagFilters(newActiveTags);
                                         const discoverFilters = document.getElementsByClassName('discover-tag-filter');
@@ -551,7 +581,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                             setAppliedFiltersDisplay(enabledFilters);
 
                                             // Update the project list
-                                            updateItemList(newActiveTags);
+                                            updateItemList(newActiveTags, filterMode);
 
                                             //Add "Applied Filters" div if it is missing and if the paragraph exists
                                             if (newActiveTags.length > 0) {
@@ -586,14 +616,14 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                             <button
                                 key={filter.tag.label}
                                 className={`tag-button tag-button-${filter.color}-selected`}
-                                onClick={(_e) => {
+                                onClick={() => {
 
                                     // Remove tag from list of enabled filters, re-rendering component
                                     const tempList = appliedFiltersDisplay.toSpliced(index, 1);
                                     const newActiveTags = tempList.map((filter) => filter.tag);
                                     setAppliedFiltersDisplay(tempList);
                                     setActiveTagFilters(newActiveTags);
-                                    updateItemList(newActiveTags);
+                                    updateItemList(newActiveTags, filterMode);
 
                                     if (newActiveTags.length === 0 || (newActiveTags.length === 1 && newActiveTags[0].type === 'Project Type')) {
                                         setDisplayFiltersText(false);

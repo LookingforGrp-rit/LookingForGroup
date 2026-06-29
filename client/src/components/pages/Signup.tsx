@@ -96,14 +96,15 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
     const checkSessionAndRedirect = async () => {
       try {
         const res = await getCurrentUsername();
-        if (res.data)
+        console.log("location: " + routerLocation.state?.from)
+
+        if (res.data && !routerLocation.state?.from) {
           navigate(paths.routes.HOME);
+        }
       } catch (err) {
         console.error("Session check failed:", err);
       }
     };
-
-    checkSessionAndRedirect();
 
     const initialize = async () => {
       //Sets the string for the Google Sign Up button.
@@ -135,6 +136,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         // Neutral wording: this single button both logs in and signs up.
         { theme: googleBtnTheme, size: "large", shape: 'pill', text: "continue_with" }
       );
+
+      setTimeout(checkSessionAndRedirect, 0);
     }
     async function handleGoogle(response: any) {
       const sessionData = await googleLogin({ credential: response.credential })
@@ -161,7 +164,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
         // return them to it; otherwise go to the home page.
         const from = routerLocation.state?.from;
         const fromPath = typeof from === 'string' ? from : from?.pathname + from?.search;
-        if (fromPath){// && fromPath.includes('acceptInvite')) {
+        if (fromPath) {// && fromPath.includes('acceptInvite')) {
           navigate(fromPath, { replace: true });
         } else {
           navigate(paths.routes.HOME);
@@ -174,8 +177,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
       //for other browsers telling the window to just shut up and do it works
       initialize();
     }
-    catch {}
-  }, [navigate]);
+    catch { }
+  }, [routerLocation.state, navigate]);
 
 
   /**
@@ -438,7 +441,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               onChange={(e) => setConfirm(e.target.value)}
             /> */}
           </div>
-          
+
 
           {/*************************************************************
 
@@ -551,15 +554,15 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
           />
 
           <TermsOfService
-          show={showTOSModal}
-          onNext={() => {
-            setShowGetStartedModal(true);
-            setShowTOSModal(false);
-          }}
-          onBack={() => {
-            setShowCompleteProfileModal(true);
-            setShowTOSModal(false);
-          }}
+            show={showTOSModal}
+            onNext={() => {
+              setShowGetStartedModal(true);
+              setShowTOSModal(false);
+            }}
+            onBack={() => {
+              setShowCompleteProfileModal(true);
+              setShowTOSModal(false);
+            }}
 
           ></TermsOfService>
 
@@ -572,7 +575,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             onCreateProject={async () => {
 
               await createNewUser(userInfo); //populating this with all of the things we selected
-              majors.map(async (m) => await addUserMajor({majorId: m.majorId})); //major route. i feel silly
+              majors.map(async (m) => await addUserMajor({ majorId: m.majorId })); //major route. i feel silly
               for (const id of selectedSkillIds) {
                 await addUserSkill({ skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice' })
               }
@@ -583,7 +586,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
             }}
             onJoinProject={async () => {
               await createNewUser(userInfo); //populating this with all of the things we selected
-              majors.map(async (m) => await addUserMajor({majorId: m.majorId})); //major route that has literally existed the ENTIRE time
+              majors.map(async (m) => await addUserMajor({ majorId: m.majorId })); //major route that has literally existed the ENTIRE time
               for (const id of selectedSkillIds) {
                 await addUserSkill({ skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice' })
               }

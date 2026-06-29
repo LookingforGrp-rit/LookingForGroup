@@ -22,6 +22,7 @@ import SideBar from './components/Sidebar';
 // import MessageHistory from './components/pages/MessageHistory';
 import CreateProject from './components/pages/CreateProject';
 import AcceptInvitation from './components/pages/AcceptInvitation';
+import AcceptApplication from './components/pages/AcceptApplication';
 //import CreditsFooter from './components/CreditsFooter';  -- Commented in clean up 26-20-01 
 import Credits from './components/pages/CreditsPage';
 import AccountActivation from './components/pages/AccountActivation';
@@ -107,6 +108,7 @@ function App() {
           <Route path={paths.routes.PROJECT} element={<Project  />} />
           <Route path={paths.routes.CREATEPROJECT} element={<CreateProject />} />
           <Route path={paths.routes.ACCEPTINVITATION} element={<AcceptInvitation />} />
+          <Route path={paths.routes.ACCEPTAPPLICATION} element={<AcceptApplication />} />
           {/* <Route path={paths.routes.PROJECTPOST} element={<ProjectPostPage />} /> */}
           {/* <Route
             path={paths.routes.SETTINGS}

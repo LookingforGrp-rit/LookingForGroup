@@ -10,16 +10,17 @@ import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
 import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
-import { getByID, getVideos } from "../../api/projects";
+import { getByID, getVideos, projectApprovalRequestExists, deleteProject } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import {
   deleteProjectFollowing,
   addProjectFollowing,
   getProjectFollowing,
+  leaveProject as leaveProjectApi,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
-import { ProjectPurpose, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
 
 //Main component for the project page
@@ -27,7 +28,7 @@ import usePreloadedImage from '../../functions/imageLoad';
  * Project page. Renders the project page with all project details, team member information, and available positions.
  * @returns JSX Element
  */
-const Project = (userProfile : any) => {
+const Project = (userProfile: any) => {
   //Navigation hook
   const navigate = useNavigate();
 
@@ -43,6 +44,9 @@ const Project = (userProfile : any) => {
   const [userID, setUserID] = useState<number>();
   const [displayedProject, setDisplayedProject] =
     useState<ProjectWithFollowers>();
+
+  type ApprovalStatusKey = keyof typeof ApprovalStatus;
+  const [approvalStatus, setApprovalStatus] = useState<ApprovalStatusKey>('not-approved');
 
   const [followCount, setFollowCount] = useState(0);
   const [isFollowing, setFollowing] = useState(false);
@@ -100,7 +104,7 @@ const Project = (userProfile : any) => {
     }
   };
 
-  // Fetch attached videos (for now)
+  // Fetch attached videos and check approval status (for now)
   useEffect(() => {
     async function fetchVideos() {
       const res = await getVideos(projectID);
@@ -109,8 +113,36 @@ const Project = (userProfile : any) => {
       }
     }
 
+    const checkApprovalRequest = async () => {
+      try {
+        const result = await projectApprovalRequestExists(projectID);
+
+        // if the project is marked as approved -> status is "approved"
+        // if not approved -> check if an approval request exists -> "under-review"
+        // otherwise -> "not-approved"
+        // so it's NORMAL to see 404s
+        const status = displayedProject?.approved
+          ? 'approved'
+          : result
+            ? 'under-review'
+            : 'not-approved';
+
+        setApprovalStatus(status);
+      } catch {
+        const status = displayedProject?.approved
+          ? 'approved'
+          : 'not-approved';
+
+        setApprovalStatus(status);
+      }
+    };
+
     fetchVideos();
-  }, [projectID]);
+
+    if (isMember) {
+      checkApprovalRequest();
+    }
+  }, [projectID, isMember]);
 
   //Checks to see whether or not the current user is the maker/owner of the project being displayed
   //oh do i need this too
@@ -143,7 +175,7 @@ const Project = (userProfile : any) => {
     // Follow icon is only present if user is logged in.
     // If keeping this layout, this check may be redundant.
     if (!loggedIn) {
-      navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search} }); // Redirect if logged out
     } else {
       const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
@@ -159,24 +191,130 @@ const Project = (userProfile : any) => {
 
   checkFollow();
 
+  /**
+   * Deletes the project (owner only) and returns to the My Projects page.
+   */
+  const handleDeleteProject = async () => {
+    const res = await deleteProject(projectID);
+    if (res.status === 200) {
+      navigate(paths.routes.MYPROJECTS);
+    } else {
+      console.error("Error deleting project:", res.error);
+    }
+  };
+
+  /**
+   * Leaves the project and returns to the My Projects page.
+   */
+  const handleLeaveProject = async () => {
+    const res = await leaveProjectApi(projectID);
+    if (res.status === 200) {
+      navigate(paths.routes.MYPROJECTS);
+    } else {
+      console.error("Error leaving project:", res.error);
+    }
+  };
+
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
   const buttonContent =
     user && displayedProject?.owner.userId === user.userId ? (
       <>
-        {
-          <>
-            <ProjectCreatorEditor
-              mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
-              newProject={false}
-              updateDisplayedProject={setDisplayedProject}
-            /*permissions={userPerms}*/
+        <ProjectCreatorEditor
+          mobileView={false} //error being caused by this prop not being passed in, but it also isn't used in the component at all, sooooo
+          newProject={false}
+          updateDisplayedProject={setDisplayedProject}
+        /*permissions={userPerms}*/
+        />
+        {/* Owner options: leave or delete the project */}
+        <Dropdown>
+          <DropdownButton className="project-info-dropdown-btn">
+            <ThemeIcon
+              id={"menu"}
+              width={40}
+              height={40}
+              className={"color-fill dropdown-menu"}
+              ariaLabel={"More options"}
             />
-          </>
-        }
+          </DropdownButton>
+          <DropdownContent rightAlign={true}>
+            <div id="project-info-dropdown">
+              {/* Leave Project */}
+              <Popup>
+                <PopupButton className="project-info-dropdown-option">
+                  <ThemeIcon
+                    id={"logout"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"Leave project"}
+                    className="mono-fill"
+                  />
+                  Leave
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup">
+                    <h3>Leave Project</h3>
+                    <p className="confirm-msg">
+                      Are you sure you want to leave{" "}
+                      <span className="project-info-highlight">
+                        {displayedProject?.title}
+                      </span>
+                      ? You won't be able to rejoin unless you're re-added by a
+                      project member.
+                    </p>
+                    <div className="confirm-deny-btns">
+                      <PopupButton
+                        className="confirm-btn"
+                        callback={handleLeaveProject}
+                      >
+                        Leave
+                      </PopupButton>
+                      <PopupButton className="deny-btn">Cancel</PopupButton>
+                    </div>
+                  </div>
+                </PopupContent>
+              </Popup>
+
+              {/* Delete Project */}
+              <Popup>
+                <PopupButton className="project-info-dropdown-option">
+                  <ThemeIcon
+                    id={"trash"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"Delete project"}
+                    className="mono-stroke"
+                  />
+                  Delete
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup">
+                    <h3>Delete Project</h3>
+                    <p className="confirm-msg">
+                      Are you sure you want to delete{" "}
+                      <span className="project-info-highlight">
+                        {displayedProject?.title}
+                      </span>
+                      ? This action cannot be undone.
+                    </p>
+                    <div className="confirm-deny-btns">
+                      <PopupButton
+                        className="confirm-btn delete-button"
+                        callback={handleDeleteProject}
+                      >
+                        Delete
+                      </PopupButton>
+                      <PopupButton className="deny-btn">Cancel</PopupButton>
+                    </div>
+                  </div>
+                </PopupContent>
+              </Popup>
+            </div>
+          </DropdownContent>
+        </Dropdown>
       </>
     ) : (
-      user && (
+      (
         <>
           {/* Heart icon, with number indicating follows */}
           <div className="project-info-followers">
@@ -297,8 +435,7 @@ const Project = (userProfile : any) => {
 
           // Use placeholder image if user does not have a profile picture
           let userProfile = memberUser.profileImage
-          if(!memberUser.profileImage)
-          {
+          if (!memberUser.profileImage) {
             userProfile = profileImage;
           }
 
@@ -409,10 +546,10 @@ const Project = (userProfile : any) => {
   const projectLead = displayedProject?.owner;
 
   //Page layout for if project data hasn't been loaded yet
-  const loadingProject =(
-        <div className='placeholder-spacing'>
-          <div className='spinning-loader'></div>
-        </div>
+  const loadingProject = (
+    <div className='placeholder-spacing'>
+      <div className='spinning-loader'></div>
+    </div>
   );
 
   return (
@@ -440,6 +577,16 @@ const Project = (userProfile : any) => {
                   <div id="project-info-buttons">{buttonContent}</div>
                 </div>
                 <div id="project-hook">{displayedProject.hook}</div>
+                {isMember && (
+                  <div id="project-approval-status">
+                    <p>
+                      Approval Status:{" "}
+                      <span className="project-info-highlight">
+                        {ApprovalStatus[approvalStatus]}
+                      </span>
+                    </p>
+                  </div>
+                )}
                 <div id="project-status">
                   <p>
                     Status:{" "}
@@ -465,49 +612,49 @@ const Project = (userProfile : any) => {
                   })}
                 </div>
                 {displayedProject.jobs.length > 0 ?
-                <Popup>
-                  <PopupButton buttonId="project-open-positions-button">
-                    Open Positions
-                  </PopupButton>
-                  <PopupContent>
-                    <TeamPositionsPanel displayedProject={displayedProject}
-                      viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
-                  </PopupContent>
-                </Popup>
-                : "" }
+                  <Popup>
+                    <PopupButton buttonId="project-open-positions-button">
+                      Open Positions
+                    </PopupButton>
+                    <PopupContent>
+                      <TeamPositionsPanel displayedProject={displayedProject}
+                        viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
+                    </PopupContent>
+                  </Popup>
+                  : ""}
               </div>
               <div id="project-tags">
                 <div id="tags">
-                {
-                  //If more tag types are usable, use commented code for cases
-                  //Also, check to see how many additional tags a project has
-                  displayedProject.tags.map((tag, index) => {
-                    /* let category : string;
-                    switch (tag.type) {
-                    } */
-                    if (index < shownTags) {
-                      return (
-                        <TagElement
-                          type={tag.type.toLowerCase()}
-                          key={index} selected={true}
-                        >
-                          <p>{tag.label}</p>
-                        </TagElement>
-                      );
-                    }
-                  })
-                }
+                  {
+                    //If more tag types are usable, use commented code for cases
+                    //Also, check to see how many additional tags a project has
+                    displayedProject.tags.map((tag, index) => {
+                      /* let category : string;
+                      switch (tag.type) {
+                      } */
+                      if (index < shownTags) {
+                        return (
+                          <TagElement
+                            type={tag.type.toLowerCase()}
+                            key={index} selected={true}
+                          >
+                            <p>{tag.label}</p>
+                          </TagElement>
+                        );
+                      }
+                    })
+                  }
                 </div>
-                {shownTags === 999 ? 
+                {shownTags === 999 ?
                   <button key={shownTags} className="tag-contract" onClick={() => setShownTags(3)}>
                     <p>-</p>
-                  </button> 
-                : 
-                displayedProject.tags.length > 3 ?
-                  <button key={shownTags} className="tag-extend" onClick={() => setShownTags(999)}>
-                    <p>+</p>
                   </button>
-                : ""}
+                  :
+                  displayedProject.tags.length > 3 ?
+                    <button key={shownTags} className="tag-extend" onClick={() => setShownTags(999)}>
+                      <p>+</p>
+                    </button>
+                    : ""}
               </div>
             </div>
 
@@ -564,12 +711,12 @@ const Project = (userProfile : any) => {
               </div>
             </div>
 
-             <div id="project-open-positions">
+            <div id="project-open-positions">
               <div className="centerer">
                 {displayedProject.jobs.length > 0 ?
-                // <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
-                <div id="project-people-tab">Open Positions</div>
-                : ""}
+                  // <button id="project-open-positions-header" onClick={openOpenPositionsPanel}>Open Positions</button>
+                  <div id="project-people-tab">Open Positions</div>
+                  : ""}
               </div>
 
               <div id="project-open-positions-list">
@@ -588,7 +735,7 @@ const Project = (userProfile : any) => {
             <div id="project-people">
               <div id="project-people-tabs">
                 <div id="project-people-tab" // Turn this into a button after onclick is restored (involved Contributor functionality). Cursor style is commented out for now
-                  
+
                 //onClick={() => setDisplayedPeople("People")} wow this button is now useless
                 >
                   The Team

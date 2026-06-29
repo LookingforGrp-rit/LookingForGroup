@@ -103,3 +103,9 @@ export enum AspectRatios {
   '2/3',
   '6/13',
 }
+
+export enum ProjectApprovalStatus {
+  'approved' = 'Approved',
+  'under-review' = 'Under Review',
+  'not-approved' = 'Not Approved',
+}

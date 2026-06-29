@@ -28,6 +28,7 @@ type HeaderProps = {
   onChange?: (e: ChangeEvent<HTMLInputElement>) => void;
   hideSearchBar?: boolean;
   hideBackButton?: boolean;
+  pageTitle?: string;
   setCurrentUserId?: (data: MePrivate | undefined) => Promise<void>;
   searchOnFocus?: (e: FocusEvent<HTMLInputElement>) => void;
 };
@@ -47,7 +48,16 @@ type HeaderProps = {
  * @returns A fully featured header containing the search bar, 
  * user dropdown menu, theme toggle, and navigation controls.
  */
-export const Header: React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", onChange, hideSearchBar = false, hideBackButton = true, setCurrentUserId, searchOnFocus }) => {
+export const Header: React.FC<HeaderProps> = ({ 
+  dataSets, 
+  onSearch, 
+  value = "", 
+  onChange, 
+  hideSearchBar = false, 
+  hideBackButton = true, 
+  pageTitle = "",
+  setCurrentUserId, 
+  searchOnFocus }) => {
   // User info state
   const [username, setUsername] = useState<string | null>(null);
   const [email, setEmail] = useState('');
@@ -182,6 +192,12 @@ export const Header: React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", 
         <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
       </div>)}
 
+      {hideSearchBar && pageTitle !== "" ? 
+        <div id='title'>
+          <h1 className="page-title">{pageTitle}</h1>
+        </div>
+      : ""}
+
       <div id="header-buttons">
         {/* Notififcations not being used rn */}
         {/* <Dropdown>
@@ -245,10 +261,17 @@ export const Header: React.FC<HeaderProps> = ({ dataSets, onSearch, value = "", 
                 </button>{' '}
 
                 {/* Single unified auth entry point (logs in existing users, signs up new ones) */}
-                <a href={paths.routes.LOGIN}>
+                <button 
+                onClick={() =>
+                  navigate(paths.routes.LOGIN, {
+                    state: {from: location.pathname + location.search}
+                  })
+                }
+                className="header-login-btn"
+                >
                   <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'} />
                   Log In / Sign Up
-                </a>
+                </button>
               </div>
 
             ) : (

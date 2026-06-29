@@ -23,7 +23,7 @@ import { ShareButton } from "../ShareButton";
 // import { ProfileInterests } from "../Profile/ProfileInterests";
 import profilePicture from "../../images/lfrog.png";
 import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFollowing, getUserFollowing, getProjectFollowing, getJobTitles } from "../../api/users";
-import { getUsersById } from "../../api/users";
+import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
 import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
@@ -91,6 +91,53 @@ const Profile = (userProfile: any) => {
   );
 
   // --------------------
+  // Page redirect
+  // --------------------
+  // if we decide to remove the like button all together when user
+  // is not loagged in then we do not need these first two functions
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const me = await getCurrentAccount();
+        if (!me.data) {
+          setUserID(-1);
+          return;
+        }
+        await getProfileData(me.data);
+      } catch (e) {
+        console.error("Failed to load profile:", e);
+        setUserID(-1);
+      }
+    };
+    load();
+  }, [profileID]);
+
+  useEffect(() => {
+    if (userID === undefined) return;
+
+    if (!profileID) {
+      if (loggedIn) {
+        navigate(`/profile?userID=${userID}`, { replace: true });
+      } else {
+        navigate(paths.routes.LOGIN, { state: {from: location.pathname + location.search} });
+      }
+    }
+  }, [profileID, userID, navigate]);
+
+  //check user following (this one is needed tho)
+  useEffect(() =>{
+    if(userID === undefined || userID === -1) return;
+
+    const loadFollow = async () => {
+      const isFollowing = await checkFollow();
+      setIsFollow(isFollowing ?? false);
+    };
+    loadFollow();
+  },[userID, profileID]);
+
+
+
+  // --------------------
   // Helper functions
   // --------------------
   /**
@@ -121,14 +168,14 @@ const Profile = (userProfile: any) => {
   const followUser = async () => {
 
     if (!loggedIn) {
-      navigate(paths.routes.LOGIN, { state: { from: location.pathname } }); // Redirect if logged out
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
       //adds the user following
       const toggleFollow = !(await checkFollow());
       setIsFollow(toggleFollow);
       if (toggleFollow) {
         const follow = await addUserFollowing(parseInt(profileID));
-        if (follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname } });
+        if (follow.status === 401) navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } });
       }
       else {
         await deleteUserFollowing(parseInt(profileID)); //this would never show if you weren't logged in
@@ -202,7 +249,7 @@ const Profile = (userProfile: any) => {
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
         await getProfileProjectData();
-        checkFollow();
+        //checkFollow();
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -381,7 +428,7 @@ const Profile = (userProfile: any) => {
             <DropdownButton>
               <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
             </DropdownButton>
-            <DropdownContent rightAlign={true}>
+            <DropdownContent>
               <div id="profile-menu-dropdown">
                 <ShareButton />
                 <button

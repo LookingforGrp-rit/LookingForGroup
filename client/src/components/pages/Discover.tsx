@@ -130,8 +130,6 @@ export const DiscoverPage = () => {
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
     const projectRes = await getProjects();
-    console.log(projectDataSet);
-
     if (!projectRes.data) return;
 
     const newProjectCache = projectCache;
@@ -177,7 +175,7 @@ export const DiscoverPage = () => {
   * Changes what projects are shown to the user whenever a filter has been added or changed
   * @param activeTagFilters Tags that are shown to the user now
   */
-  const updateProjectList = async (activeTagFilters: Tag[]) => {
+  const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any") => {
     const projectList = fullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
@@ -195,10 +193,9 @@ export const DiscoverPage = () => {
         }
       }
     }
-
     let tagFilteredList = items.filter((item) => {
       if (activeTagFilters.length === 0) return true;
-      //let matchesAny = false;
+      let matchesAny = false;
       let matchesAll = true;
       for (const tag of activeTagFilters) {
         // Check project type by name since IDs are not unique relative to tags
@@ -209,21 +206,27 @@ export const DiscoverPage = () => {
             //change the subtraction to change the 
             const cutOff = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
             const date = Date.parse(item.createdAt.toString());
-            if (date < cutOff) {
-              //matchesAny = true;
+            if (date > cutOff) {
+              matchesAny = true;
+            }
+            else {
               matchesAll = false;
             }
           }
-          else if (!projectTypes.includes(tag.label.toLowerCase())) {
-            //matchesAny = true;
+          else if (projectTypes.includes(tag.label.toLowerCase())) {
+            matchesAny = true;
+          }
+          else {
             matchesAll = false;
           }
         }
         // Purpose tag 
         else if (tag.type === 'Purpose' && item.purpose) {
           const projectPurpose = item.purpose.toLowerCase();
-          if (!projectPurpose.includes(tag.label.toLowerCase())) {
-            //matchesAny = true;
+          if (projectPurpose.includes(tag.label.toLowerCase())) {
+            matchesAny = true;
+          }
+          else {
             matchesAll = false;
           }
         }
@@ -231,16 +234,18 @@ export const DiscoverPage = () => {
         else if (tag.tagId && item.tags) {
           const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
 
-          if (!tagIDs.includes(tag.tagId)) {
-            //matchesAny = true;
+          if (tagIDs.includes(tag.tagId)) {
+            matchesAny = true;
+          }
+          else {
             matchesAll = false;
           }
         }
 
 
       }
-      //return matchesAny;
-      return matchesAll;
+      if (filterMode === "Match Any") return matchesAny;
+      else return matchesAll;
     });
 
     // If no tags are currently selected, render all projects

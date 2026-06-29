@@ -4,6 +4,7 @@ import { SearchBar } from "../../SearchBar";
 import { getProjectTypes, getTags } from "../../../api/users";
 import { Tag, Medium, TagType, ProjectWithFollowers } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
+import { DeleteProjectButton } from "../DeleteProjectButton";
 import { PendingProject } from "../../../../types/types";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { Tag as TagElement } from "../../Tag";
@@ -15,10 +16,6 @@ import { Fragment } from "react";
 
 // --- Constant ---
 const TAG_TYPES = {
-  DEV: "Developer Skill" as TagType,
-  DESIGNER: "Designer Skill" as TagType,
-  SOFT: "Soft Skill" as TagType,
-  AUD: "Audio Skill" as TagType,
   GENRE: 'Genre' as TagType,
   FORM: 'Style' as TagType,
   OTHER: 'Other' as TagType,
@@ -82,13 +79,18 @@ export const TagsTab = ({
   // sets error when adding a link to the project
   // const [error, setError] = useState('');
 
-  // Tracks which category tab is currently viewed: 0 - medium, 1 - genre, 2 - dev skills, 3 - design skills, 4 - soft skills
+  // Tracks which category tab is currently viewed: 0 - medium, 1 - genre, 2 - style
   const [currentTagsTab, setCurrentTagsTab] = useState(0);
 
   // Filtered results from tag search bar
   const [searchedTags, setSearchedTags] = useState<unknown[]>([]);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
+
+  /* ONLY used for the deleting tags button. This is needed to re-render
+    the selected mediums and tags section when reseting */
+    const [mediums, setMediums] = useState<Medium[]>(projectData.mediums);
+    const [tags, setTags] = useState<Tag[]>(projectData.tags);
 
   // Drag-and-drop sensors for the sortable selected-tags list.
   // Pointer for mouse/touch, Keyboard for accessible reordering.
@@ -184,8 +186,6 @@ export const TagsTab = ({
     if (allMediums.length === 0) {
       fetchMediums();
     }
-  }, [allMediums]);
-  useEffect(() => {
     const getAllTags = async () => {
       const response = await getTags();
       if (!response.data) {
@@ -196,7 +196,7 @@ export const TagsTab = ({
     if (allTags.length === 0) {
       getAllTags();
     }
-  }, [allTags]);
+  }, [allMediums, allTags]);
 
   // Update tags shown for search bar
   const currentDataSet = useMemo(() => {
@@ -207,14 +207,6 @@ export const TagsTab = ({
         return [{ data: allTags.filter(tag => TAG_TYPES.GENRE.includes(tag.type as TagType)) }];
       case 2:
         return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.FORM) }];
-      case 3:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DEV) }];
-      case 4:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.DESIGNER) }];
-      case 5:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.AUD) }];
-      case 6:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.SOFT) }];
       default:
         return [{ data: [] }];
     }
@@ -353,7 +345,27 @@ export const TagsTab = ({
   const renderTags = useCallback(() => {
     // no search item, render all tags
     if (searchedTags && searchedTags.length !== 0) {
-      return searchedTags.map((tagOrMedium) => {
+
+      //The final list of tags displayed to the screen.
+      let tagsToDisplay = searchedTags;
+
+      switch (currentTagsTab){
+        case 1:
+          //Genre
+          let story = searchedTags.filter((tag) => (tag as Tag).category === "Story");
+          let game = searchedTags.filter((tag) => (tag as Tag).category === "Game");
+          let music = searchedTags.filter((tag) => (tag as Tag).category === "Music");
+          tagsToDisplay = story.concat(game, music);
+          break;
+        case 2:
+          //Style
+          let visual = searchedTags.filter((tag) => (tag as Tag).category === "Visual");
+          let filmVideo = searchedTags.filter((tag) => (tag as Tag).category === "Film/Video");
+          tagsToDisplay = visual.concat(filmVideo);
+          break;
+      }
+
+      return tagsToDisplay.map((tagOrMedium, index, array) => {
         // get id according to type of tag
         let id: number = -1; // bad default value
         let isTag;
@@ -371,21 +383,29 @@ export const TagsTab = ({
         const selected = isTagSelected(id, (tagOrMedium as Tag | Medium).label, currentTagsTab) === "selected";
 
         return (
-          <TagElement
-            key={id}
-            type={isTag
-              ? (tagOrMedium as Tag).type.toLowerCase()
-              : "medium"}
-            onClick={
-              isTag
-                ? () => handleTagSelect((tagOrMedium as Tag).tagId)
-                : () => handleMediumSelect((tagOrMedium as Medium).mediumId)
-            }
-            selected={selected}
-          >
-            <i className={selected ? "fa fa-check" : "fa fa-plus"}></i>
-            <p>{isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label}</p>
-          </TagElement>
+          <Fragment key={id}>
+            {index === 0 || ((array[index - 1] as Tag).category != (array[index] as Tag).category)
+            ? <div id="tag-category-header">
+                <p>{(array[index] as Tag).category == null ? "Medium" : (array[index] as Tag).category}</p>
+                <hr></hr>
+              </div>
+            : <></>}
+            <TagElement
+              key={id}
+              type={isTag
+                ? (tagOrMedium as Tag).type.toLowerCase()
+                : "medium"}
+              onClick={
+                isTag
+                  ? () => handleTagSelect((tagOrMedium as Tag).tagId)
+                  : () => handleMediumSelect((tagOrMedium as Medium).mediumId)
+              }
+              selected={selected}
+            >
+              <i className={selected ? "fa fa-check" : "fa fa-plus"}></i>
+              <p>{isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label}</p>
+            </TagElement>
+          </Fragment>
         );
       });
     } else if (searchedTags && searchedTags.length === 0) {
@@ -460,57 +480,7 @@ export const TagsTab = ({
             <p>{styleTag.label}</p>
           </TagElement>;
         });
-    } else if (currentTagsTab === 3) {
-      return allTags
-        .filter((tag) => tag.type === "Developer Skill")
-        .map((developerSkillTag) => {
-          const selected = isTagSelected(developerSkillTag.tagId, developerSkillTag.label, currentTagsTab) === "selected";
-          return <TagElement
-            key={developerSkillTag.tagId}
-            type={"developer skill"}
-            selected={selected}
-            onClick={() => handleTagSelect(developerSkillTag.tagId)}
-          >
-            <i
-              className={selected ? "fa fa-close" : "fa fa-plus"}
-            ></i>
-            <p>{developerSkillTag.label}</p>
-          </TagElement>;
-        });
-    } else if (currentTagsTab === 4) {
-      return allTags
-        .filter((tag) => tag.type === "Designer Skill")
-        .map((designerSkillTag) => {
-          const selected = isTagSelected(designerSkillTag.tagId, designerSkillTag.label, currentTagsTab) === "selected";
-          return <TagElement
-            key={designerSkillTag.tagId}
-            type={"designer skill"}
-            selected={selected}
-            onClick={() => handleTagSelect(designerSkillTag.tagId)}
-          >
-            <i
-              className={selected ? "fa fa-close" : "fa fa-plus"}
-            ></i>
-            <p>{designerSkillTag.label}</p>
-          </TagElement>;
-        });
-    }
-    return allTags
-      .filter((tag) => tag.type === "Soft Skill")
-      .map((softSkillTag) => {
-        const selected = isTagSelected(softSkillTag.tagId, softSkillTag.label, currentTagsTab) === "selected";
-        return <TagElement
-          key={softSkillTag.tagId}
-          type={"soft skill"}
-          selected={selected}
-          onClick={() => handleTagSelect(softSkillTag.tagId)}
-        >
-          <i
-            className={selected ? "fa fa-close" : "fa fa-plus"}
-          ></i>
-          <p>{softSkillTag.label}</p>
-        </TagElement>;
-      });
+    } 
   }, [
     searchedTags,
     currentTagsTab,
@@ -563,6 +533,32 @@ export const TagsTab = ({
             </TagElement>
           ))}
         </div>
+        <button 
+            type="button" 
+            className="delete-tags-btn"
+            hidden={projectAfterTagsChanges.mediums.length === 0 || projectAfterTagsChanges.mediums.length == undefined} 
+            onClick={() => {
+              /* deletes all mediums in the data manager for the project */
+                for (let i = 0; i < projectAfterTagsChanges.mediums.length; i++)
+                {
+                    dataManager?.deleteMedium({
+                    id: {
+                      type: "canon",
+                      value: projectAfterTagsChanges.mediums[i].mediumId,
+                    },
+                    data: null,
+                  })
+                }
+              
+              /* re-renders the current popup with 0 mediums remaining and updates
+                project */
+              setMediums(projectAfterTagsChanges.mediums.splice(0));
+              updatePendingProject(projectAfterTagsChanges);
+            }}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        </button>
       </div>
 
       <div id="project-editor-selected-tags">
@@ -602,6 +598,32 @@ export const TagsTab = ({
             </div>
           </SortableContext>
         </DndContext>
+        <button 
+            type="button" 
+            className="delete-tags-btn"
+            hidden={projectAfterTagsChanges.tags.length === 0 || projectAfterTagsChanges.tags.length == undefined} 
+            onClick={() => {
+              /* deletes all tags in the data manager for the project */
+                for (let i = 0; i < projectAfterTagsChanges.tags.length; i++)
+                {
+                    dataManager?.deleteTag({
+                    id: {
+                      type: "canon",
+                      value: projectAfterTagsChanges.tags[i].tagId,
+                    },
+                    data: null,
+                  })
+                }
+              
+              /* re-renders the current popup with 0 mediums remaining and updates
+                project */
+              setTags(projectAfterTagsChanges.tags.splice(0));
+              updatePendingProject(projectAfterTagsChanges);
+            }}
+            title="Remove all selected tags"
+          >
+            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+        </button>
       </div>
 
       <div id="project-editor-tag-search">
@@ -639,48 +661,13 @@ export const TagsTab = ({
             >
               Style
             </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(3);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 3 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Developer)
-            >
-              Developer Skills
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(4);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 4 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Designer)
-            >
-              Designer Skills
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(5);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 5 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Soft)
-            >
-              Audio Skills
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(6);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 6 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Soft)
-            >
-              Soft Skills
-            </button>
           </div>
           <hr id="tag-search-divider" />
         </div>
         <div id="project-editor-tag-search-container">{renderTags()}</div>
       </div>
       <div id="tags-save-info">
+        <div className="editor-save-actions">
         <Popup>
           {saveable ? "" :
             <div id="invalid-input-error" className={"save-error-msg-general"}>
@@ -706,6 +693,11 @@ export const TagsTab = ({
             </div>
           </PopupContent>
         </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
+        </div>
       </div>
     </div>
   );

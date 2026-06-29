@@ -13,16 +13,16 @@ import {
   updateProjectSocial,
   addProjectSocial,
   deleteProjectSocial,
-  deleteProject,
   getByID,
+  requestProjectReview,
+  projectApprovalRequestExists,
 } from "../../api/projects";
-import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
-import { getCurrentAccount, getProjectsByUser, getUsersById, } from "../../api/users";
+import { ProjectApprovalStatus, ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
 import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
-import { getCurrentUsername } from "../../api/users";
 
 // NO COMMENTS FOR WHAT THESE ARE??????
 interface Props {
@@ -71,6 +71,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
   const [projectMessages, setProjectMessages] = useState<string[]>([]);
 
+  type ApprovalStatusKey = keyof typeof ProjectApprovalStatus;
+  const [approvalStatus, setApprovalStatus] = useState<ApprovalStatusKey>();
+
   // Indicates if the data validation has failed: prevents saving when invalid
   const [failCheck, setFailCheck] = useState(false);
 
@@ -118,6 +121,50 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }
   if (valid != saveable) {
     setSaveable(valid);
+  }
+
+  const checkApprovalRequest = async () => {
+    let status: ApprovalStatusKey = 'not-approved';
+
+    try {
+      const result = await projectApprovalRequestExists(projectData?.projectId as number);
+
+      // if the project is marked as approved -> status is "approved"
+      // if not approved -> check if an approval request exists -> "under-review"
+      // otherwise -> "not-approved"
+      // so it's NORMAL to see 404s
+      status = projectData?.approved
+        ? 'approved'
+        : result
+          ? 'under-review'
+          : 'not-approved';
+    } catch {
+      status = projectData?.approved
+        ? 'approved'
+        : 'not-approved';
+    }
+
+    return status;
+  };
+
+  const setup = async () => {
+    // Load existing project
+    try {
+      // const response = await getByID(Number(projectID));
+      // if (!response.data) return;
+
+      dataManager = await projectDataManager(projectID);
+
+      const data = dataManager.getSavedProject();
+      setProjectData(data);
+      setModifiedProject(data);
+    } catch (err) {
+      console.error("Error loading existing project:", err);
+    }
+    if (projectData) {
+      const result = await checkApprovalRequest();
+      setApprovalStatus(result);
+    }
   }
 
   /**
@@ -169,23 +216,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setConfirm(false);
     setMessage("Project is missing a medium!");
 
-    if (!newProject && projectID) {
-
-      // Load existing project
-      try {
-        // const response = await getByID(Number(projectID));
-        // if (!response.data) return;
-
-        dataManager = await projectDataManager(projectID);
-
-        const data = dataManager.getSavedProject();
-        setProjectData(data);
-        setModifiedProject(data);
-      } catch (err) {
-        console.error("Error loading existing project:", err);
-      }
-    }
-    else if (newProject) {
+    if (newProject) {
       // Setup default project for creation
       const newData = {
         title: "My Project",
@@ -217,6 +248,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       await setProjectData(newData);
       await setModifiedProject(newData);
     }
+    else if (projectID) {
+      if (!dataManager)
+        setup();
+    }
+
+
     if (startButton.current) {
       (startButton.current as unknown as HTMLElement).focus();
     }
@@ -232,8 +269,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       autoStarted.current = true;
       createOrEdit();
     }
+    
+    if (!newProject && projectID) setup();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoStart, newProject]);
+  }, [autoStart, newProject, projectID]);
 
   /**
    * Collects and validates all link information from the LinksTab
@@ -584,10 +623,45 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
         </PopupButton>
       ) : (
-        <PopupButton callback={buttonCallback} buttonId="project-info-edit">
-          Edit Project
-        </PopupButton>
+        <div id="project-info-contexts">
+          <PopupButton callback={buttonCallback} buttonId="project-info-edit">
+            Edit Project
+          </PopupButton>
+          {approvalStatus === "not-approved" ? 
+          <Popup>
+            {/* TODO: add checking if the project is approved/rejected/pending */}
+            <PopupButton buttonId="project-info-request" >
+              Request Project Review
+            </PopupButton>
+            <PopupContent>
+              <div id="project-request-review">
+                <label id="project-request-label">
+                  Would you like to submit your project for review?
+                </label>
+                <div id="project-request-info">
+                  Submiting a request will make your project visible to moderators who will choose to either
+                  accept and make your project visible to all, request changes for you to make, 
+                  or reject it for various reasons. <br/>
+                  <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                </div>
+                <div id="project-request-buttons">
+                  <PopupButton buttonId="request-confirm-button"
+                  callback={() => {
+                    if (projectData) requestProjectReview(projectID);
+                  }}
+                  >
+                    request a review
+                  </PopupButton>
+                  <PopupButton buttonId="request-cancel-button">
+                    cancel
+                  </PopupButton>
+                </div>
+              </div>
+            </PopupContent>
+          </Popup> : ""}
+        </div>
       )}
+
 
       <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
