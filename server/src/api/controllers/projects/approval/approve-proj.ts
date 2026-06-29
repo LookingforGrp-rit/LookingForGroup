@@ -2,7 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { Response } from 'express';
 import sendNotificationService from '#services/notifications/send-notification.ts';
 import { approveProjectService } from '#services/projects/approval/approve-project.ts';
-import { ProjectApprovedMessageBuilder } from '../../../../notification-templates/project-approved-message-builder.ts';
+import { ProjectApprovedNotificationBuilder } from '../../../../notification-templates/project-approved-notification-builder.ts';
 
 const approveProjectController = async (request: AuthenticatedRequest, response: Response) => {
   const projectId = parseInt(request.params.id as string);
@@ -36,7 +36,7 @@ const approveProjectController = async (request: AuthenticatedRequest, response:
   response.status(204).json(res);
 
   // Sending the notification
-  sendNotificationService(new ProjectApprovedMessageBuilder(), request).catch((e: unknown) => {
+  sendNotificationService(new ProjectApprovedNotificationBuilder(), request).catch((e: unknown) => {
     console.error('There was an internal error while sending a notification: ', e);
   });
 };
