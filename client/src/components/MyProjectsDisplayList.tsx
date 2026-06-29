@@ -148,7 +148,7 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                   id={"pencil"}
                   width={21}
                   height={21}
-                  ariaLabel={"Leave project"}
+                  ariaLabel={"Edit project"}
                   className="mono-fill"
                 />
                 Edit Project
@@ -157,10 +157,10 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
               <button className='card-leave-button'
                 onClick={() => { if (projectData) { requestProjectReview(projectData.projectId); location.reload(); } }}>
                 <ThemeIcon
-                  id={"pencil"}
+                  id={"request-review"}
                   width={21}
                   height={21}
-                  ariaLabel={"Leave project"}
+                  ariaLabel={"Request Review"}
                   className="mono-fill"
                 />
                 Request Review
@@ -194,7 +194,7 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                   </div>
                 </PopupContent>
               </Popup>
-              {(isOwner) && (
+              {/* {(isOwner) && (
                 <Popup>
                   <PopupButton className='card-leave-button'>
                     <ThemeIcon
@@ -224,7 +224,7 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                     </div>
                   </PopupContent>
                 </Popup>
-              )}
+              )} */}
               {(isOwner) && (
                 <Popup>
                   <PopupButton className='card-delete-button'>
