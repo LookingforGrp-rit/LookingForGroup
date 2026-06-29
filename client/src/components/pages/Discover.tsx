@@ -149,6 +149,18 @@ export const DiscoverPage = () => {
   const scrollEvent = useEffectEvent(() => {
     //console.log(`scrolled by ${}`);
     //document.documentElement.scrollBy() is always 0 
+
+    //WAAAAAAIT DID I FIND IT
+    const fullPage = document.querySelector('.page'); //the element that holds all of the page stuff
+    if(fullPage) {
+      const scrollPercent = fullPage.scrollTop / (fullPage.clientHeight / 2); //clientHeight seemed to be doubled so i halved it
+      
+      if(scrollPercent >= 0.95) {
+        loadMoreProjects();
+        //...it blows up.
+        //BUT IT DETECTS THE SCROLL HEIGHT PROPERLY :cinema:
+      }
+    }
   });
 
   // Set the necessary data for project mode
