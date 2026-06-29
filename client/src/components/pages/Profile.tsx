@@ -428,7 +428,7 @@ const Profile = (userProfile: any) => {
             <DropdownButton>
               <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
             </DropdownButton>
-            <DropdownContent rightAlign={true}>
+            <DropdownContent>
               <div id="profile-menu-dropdown">
                 <ShareButton />
                 <button
