@@ -488,8 +488,6 @@ router.get(
 router.get(
   '/unapproved/:id',
   requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
   projectExistsAt('path', 'id'),
   authenticated(PROJECT.getUnapprovedProjectById),
 );

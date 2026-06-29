@@ -69,18 +69,28 @@ const ImageUploader = ({
 
   const [aspectRatio, setAspectRatio] = useState<string>('4/3');
 
+  const [labelName, setLabelName] = useState("drop-area");
+
   /**
    * updates the canvas element for cropping images
    */
   const updateCanvas = useCallback(() => {
     const ctx = canvas.current?.getContext("2d");
     ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
-    if (tempImage.current && canvas.current)
+    if (tempImage.current && canvas.current){
+      //helper variables
+      const minZoom = 100 * Math.max(canvas.current?.width / tempImage.current?.width,
+             canvas.current?.height / tempImage.current?.height);
+      const newZoom = (zoom * (1000 -minZoom) / 1000) + minZoom
+      const w = tempImage.current.width / 100 * newZoom;
+      const h = tempImage.current.height / 100 * newZoom;
       ctx?.drawImage(
         tempImage.current,
-        dX, dY,
-        tempImage.current.width / 100 * zoom,
-        tempImage.current.height / 100 * zoom);
+        -(dX * (w / 2 - canvas.current.width / 2) / canvas.current.width) + canvas.current.width / 2 - w / 2,
+        (dY * (h / 2 - canvas.current.height / 2) / canvas.current.height)  + canvas.current.height / 2 - h / 2,
+        w,
+        h);
+      }
   }, [tempImage, dX, dY, zoom, canvas]);
 
   // Validate file type and handle image input change
@@ -88,19 +98,12 @@ const ImageUploader = ({
   const handleImgChange = useCallback(async () => {
     const file = inputRef.current?.files?.[0];
     if (!file) return;
-    if (file.size > 1000000 && type === "profile") {
-      onFileSelected(file);
-      return;
-    }
-    else if (file.size > 2000000) {
-      onFileSelected(file);
-      return;
-    }
 
     if (keepImage && (file.type === "image/png" || file.type === "image/jpeg")) {
       setCropFile(file);
       fileReader.readAsDataURL(file);
-      setCropImg(fileReader.result as string)
+      setCropImg(fileReader.result as string);
+      updateCanvas();
     } else {
       alert("File type not supported: Please use .PNG or .JPG");
     }
@@ -125,6 +128,10 @@ const ImageUploader = ({
 
     return () => input.removeEventListener('change', sendImg);
   }, [sendImg, fileReader, placeholder, setCropImg, inputRef]);
+
+  useEffect(()=> {
+    updateCanvas();
+  }, [zoom, dX, dY]);
   
   const cropPopup = (cropImg !== undefined ?
     <Popup startOpen={true}>
@@ -189,13 +196,12 @@ const ImageUploader = ({
           id="zoom" name="zoom"
           onChange={() => {
             setZoom(inputZoom.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           onInput={() => {
             setZoom(inputZoom.current?.valueAsNumber as number);
-            updateCanvas();
           }}
-          min={1} max={1000}
+          min={0} 
+          max={1000}
           defaultValue={zoom} />
           <label className="slider-text" htmlFor="zoom">Zoom</label>
         </div>
@@ -205,11 +211,9 @@ const ImageUploader = ({
           id="xTrans" name="xTrans"
           onChange={() => {
             setDX(inputX.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           onInput={() => {
             setDX(inputX.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           min={canvas.current ? -canvas.current.width : -100}
           max={canvas.current ? canvas.current.width : 100}
@@ -222,11 +226,9 @@ const ImageUploader = ({
           id="yTrans" name="yTrans"
           onChange={() => {
             setDY(inputY.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           onInput={() => {
             setDY(inputY.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           min={canvas.current ? -canvas.current.height : -100}
           max={canvas.current ? canvas.current.height : 100}
@@ -249,7 +251,33 @@ const ImageUploader = ({
   const profileVariant = (
     <>
       {cropPopup}
-      <label htmlFor="image-uploader" id="profile-image-uploader" className="drop-area">
+        <label htmlFor="image-uploader" id="profile-image-uploader" className={labelName} 
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setLabelName("drop-area");
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setLabelName("drop-area-drag-over");
+          }}
+          onDrop={async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setLabelName("drop-area");
+
+            const data = e.dataTransfer;
+            if(data.files && inputRef.current) {
+              // TODO: allow drag and drop from other web images
+              inputRef.current.files = data.files;
+              handleImgChange();
+            }
+          }}>
         <input
           type="file"
           name="image"
@@ -258,7 +286,8 @@ const ImageUploader = ({
           ref={inputRef}
           onChange={handleImgChange}
           disabled={cropImg !== undefined}
-          hidden={true} />
+          hidden
+        />
         {initialImageFile ?
           <div id="img-view">
             <FileImage
@@ -299,7 +328,33 @@ const ImageUploader = ({
   const projectVariant = (
     <>
       {cropPopup}
-      <label htmlFor="image-uploader" id="project-image-uploader" className="drop-area">
+      <label htmlFor="image-uploader" id="project-image-uploader" className={labelName} 
+          onDragEnter={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+          }}
+          onDragLeave={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setLabelName("drop-area");
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setLabelName("drop-area-drag-over");
+          }}
+          onDrop={async (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            setLabelName("drop-area");
+
+            const data = e.dataTransfer;
+            if(data.files && inputRef.current) {
+              // TODO: allow drag and drop from other web images
+              inputRef.current.files = data.files;
+              handleImgChange();
+            }
+          }}>
         <input
           type="file"
           name="image"

@@ -59,14 +59,14 @@ export const createNewProject = async (
 
 /**
  * sends a project to be reviewed by a moderator, required to make a project visible
- * @param projectData - the data of the project to be reviewed
+ * @param projectId - ID of project to request review
  * @returns 200 if valid, 400 if not
  */
 export const requestProjectReview = async (
-  projectData: ProjectWithFollowers
+  projectId: number,
 ): Promise<ApiResponse<ProjectDetail>> => {
-  const apiURL = '/projects/unapproved/' + projectData.projectId;
-  const response = await POST(apiURL, projectData);
+  const apiURL = '/projects/unapproved/' + projectId;
+  const response = await POST(apiURL, {});
 
   //console.log(response);
   return response as ApiResponse<ProjectDetail>;
@@ -122,7 +122,10 @@ export const getRequestByID = async (
   const apiURL = `/projects/members/requests/${requestID}`;
   const response = await GET(apiURL);
 
-  if (response.error) console.log(`Error in getByID: ${response.error}`);
+  if (response.error) {
+    console.log(`Error in getByID: ${response.error}`);
+    throw new Error(response.error);
+  }
   return response;
 };
 
@@ -815,6 +818,19 @@ export const reorderProjectImages = async (
 //   return response;
 // }
 
+export const projectApprovalRequestExists = async (projectID: number): Promise<boolean> => {
+  const apiURL = `/projects/unapproved/${projectID}`;
+  const response = await GET(apiURL);
+
+  if (response.status === 500)
+    console.log(`Error in projectApprovalRequestExists: ${response.error}`);
+  else if (response.status === 404) {
+    console.log(`Error in projectApprovalRequestExists: ${response.error}`);
+    return false;
+  }
+  return true;
+};
+
 export default {
   createNewProject,
   requestProjectReview,
@@ -850,7 +866,8 @@ export default {
   reorderProjectImages,
   addJobSkill,
   getJobSkills,
-  updateJobSkill, 
-  deleteJobSkill
+  updateJobSkill,
+  deleteJobSkill,
   // getImageByFileName,
+  projectApprovalRequestExists,
 };

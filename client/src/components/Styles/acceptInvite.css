@@ -5,16 +5,15 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
 ================================ */
 
 /* only the AcceptInvite.tsx background-cover */
-.background-cover:has(#accept-invite-container){
+.background-cover:has(#accept-invite-container) {
+
     /* fixes random guideline issue - this may need to be adjusted in the future */
-    .error
-    {
+    .error {
         display: none;
     }
 }
 
-#accept-invite-container
-{
+#accept-invite-container {
     width: 95%;
     display: flex;
     align-items: center;
@@ -28,8 +27,7 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
     margin: 0 auto;
     padding: 0;
 
-    button
-    {
+    button {
         width: fit-content;
         height: 40px;
         min-height: fit-content;
@@ -41,38 +39,38 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
         color: var(--invert-text);
         font-weight: 700;
     }
-    button:hover
-    {
+
+    button:hover {
         transform: scale(1.1);
         transition: 0.2s;
     }
-    #decline-button
-    {
+
+    #decline-button {
         background-color: var(--error-delete-color) !important;
     }
 
-    h1
-    {
+    h1 {
         font-size: 1.5rem;
         margin-top: min(3.46vh, 34px);
         margin-bottom: min(3.05vh, 30px);
         font-weight: 600;
         color: var(--primary-color);
     }
-    h2
-    {
+
+    h2 {
         font-size: 1.25rem;
         font-weight: 600;
         color: var(--primary-color);
         margin: min(0.2vh, 2px) 0 min(0.51vh, 5px);
     }
-    #project-title          /* project title is slightly larger and capitalized */
-    {
+
+    /* project title is slightly larger and capitalized */
+    #project-title {
+        display: block;
         font-size: 1.5rem;
     }
 
-    #accept-invite-info
-    {
+    #accept-invite-info {
         width: 80%;
         height: 100%;
         display: flex;
@@ -82,8 +80,7 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
         text-align: center;
     }
 
-    #accept-invite-btns
-    {
+    #accept-invite-btns {
         display: flex;
         flex-wrap: wrap;
         align-items: center;
@@ -93,6 +90,7 @@ Styling of Accept Project Invite Page (AcceptInvitation.tsx)
         margin: 0 auto;
     }
 }
+
 /*
 #accept-invite-modal
 {

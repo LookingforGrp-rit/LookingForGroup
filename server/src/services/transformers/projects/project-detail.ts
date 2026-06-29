@@ -25,6 +25,7 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
     audience: project.audience,
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
+    approved: project.approved,
     projectImages: project.projectImages.map((image) =>
       transformProjectImage(project.projectId, image),
     ),
