@@ -18,8 +18,8 @@ import {
   requestProjectReview,
   projectApprovalRequestExists,
 } from "../../api/projects";
-import { ProjectApprovalStatus, ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
-import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername  } from "../../api/users";
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
 import { Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
@@ -662,7 +662,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           </Popup> : ""}
         </div>
       )}
-      
+
 
       <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>

@@ -876,6 +876,17 @@ Project Creator and Editor Popup style rules
   /*For scrolling*/
   max-height: 370px;
   overflow-y: auto;
+
+  #tag-category-header {
+    width: 100%;
+  }
+
+  #tag-category-header p {
+    font-weight: bold;
+    font-size: medium;
+    margin-top: 0.5em;
+    color: var(--primary-color);
+  }
 }
 
 #project-editor-tag-wrapper {
@@ -1117,13 +1128,13 @@ Project Creator and Editor Popup style rules
   display: flex;
   justify-content: center;
   margin: 20px 0;
+  max-width: 100%;
 }
 
 #project-editor-tag-search-tabs {
   overflow-x: visible;
   justify-content: flex-start;
 }
-
 
 #project-editor-team-tabs,
 #project-editor-tag-search-tabs {
@@ -1143,6 +1154,7 @@ Project Creator and Editor Popup style rules
 @media only screen and (max-width: 420px) {
   #project-editor-team-tabs {
     align-items: center;
+    gap: 4%;
   }
 }
 
@@ -1160,7 +1172,7 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
   font-weight: 400;
   word-break: normal;
-  max-width: 100%;
+  width: 100%;
   background-color: var(--tab-color);
   border-top-left-radius: 25%;
   border-top-right-radius: 25%;
@@ -1241,9 +1253,9 @@ Project Creator and Editor Popup style rules
   align-content: flex-start;
   justify-content: center;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
   background: var(--bg-color);
   gap: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
 }
 
 .project-editor-project-member {
@@ -1870,6 +1882,7 @@ button.edit-position-contact .project-member-image {
   border: none;
   cursor: pointer;
 }
+
 .delete-tags-btn {
   padding: 4px;
   background: none;
@@ -3477,6 +3490,7 @@ project-team-open-posiions-info: edit/create proj popup
   margin-bottom: 20px;
   width: 100%;
   max-width: 1141px;
+  height: fit-content;
 }
 
 #positions-popup-header {
@@ -4579,7 +4593,7 @@ My projects page style rules
   border: 0px;
   border-radius: 10px;
   box-shadow: 1px 2px 2px var(--shadow-color);
-  width: 154px;
+  width: 160px;
   height: fit-content;
   padding: 15px 10px;
   z-index: 1;
@@ -4702,6 +4716,7 @@ My projects page style rules
 }
 
 @media only screen and (max-width: 600px) {
+
   /* Hide table headers (but not display: none;, for accessibility) */
   .responsive-table thead tr {
     position: absolute;

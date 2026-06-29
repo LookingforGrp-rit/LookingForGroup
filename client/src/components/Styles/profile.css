@@ -19,18 +19,19 @@ Profile Panel component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
-.back-btn, 
+.back-btn,
 #profile-page .back-arrow,
 .edit-profile-body .back-btn {
   display: inline-block;
   transition: transform 0.2s ease;
 }
 
-.back-btn:hover, 
+.back-btn:hover,
 #profile-page .back-arrow:hover,
 .edit-profile-body .back-btn:hover {
   transform: translateY(-2px);
 }
+
 /* #region profile page component */
 
 .profile-panel-box {
@@ -1246,6 +1247,7 @@ New Profile page style rules
           display: flex;
           gap: 12px;
           flex-wrap: wrap;
+          width: 100%;
 
           >#profile-fullname {
             color: var(--primary-color);
@@ -1418,6 +1420,7 @@ New Profile page style rules
   }
 
   #socials {
+    min-width: 210px;
     max-width: 33%;
   }
 
@@ -1429,6 +1432,16 @@ New Profile page style rules
   #likes-tabs {
     display: flex;
     gap: 15px;
+
+    button:hover {
+      transform: none;
+      padding-bottom: 10px;
+    }
+  }
+
+  #likes-tabs {
+    align-items: flex-end;
+    height: 40px;
   }
 
   #likes-block {
@@ -1472,6 +1485,13 @@ New Profile page style rules
   }
 }
 
+@media only screen and (min-width: 1101px) {
+  #profile-buttons{
+    .dropdown{
+    right: 0px;
+    }
+  }
+}
 
 @media only screen and (max-width: 1100px) {
   #profile-hero {
@@ -1525,6 +1545,10 @@ New Profile page style rules
         #profile-buttons {
           flex-wrap: wrap;
           justify-content: flex-start !important;
+
+          .dropdown {
+            right: -51px;
+          }
         }
       }
     }
@@ -1546,6 +1570,32 @@ New Profile page style rules
 
   #profile-page-content {
     margin: 0 20px;
+  }
+
+  
+  #profile-extra {
+    flex-direction: column;
+
+    /* Stack the contact + skills boxes vertically on mobile so each spans the
+       full width, instead of the desktop side-by-side layout where #socials was
+       capped at 33% — that cap squished "Contact Me" onto two lines and pushed
+       the email outside the box. */
+    #contact-and-skills {
+      flex-direction: column;
+    }
+
+    #socials,
+    #skills {
+      width: auto;
+      max-width: 100%;
+    }
+
+    /* Let a long email/phone wrap inside the box instead of overflowing it. */
+    #profile-email a,
+    #profile-number a {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
   }
 }
 
@@ -1579,10 +1629,7 @@ New Profile page style rules
   #profile-extra {
     flex-direction: column;
 
-    /* Stack the contact + skills boxes vertically on mobile so each spans the
-       full width, instead of the desktop side-by-side layout where #socials was
-       capped at 33% — that cap squished "Contact Me" onto two lines and pushed
-       the email outside the box. */
+    /* Stack the contact + skills boxes vertically on mobile*/
     #contact-and-skills {
       flex-direction: column;
     }
@@ -1717,6 +1764,7 @@ New Profile page style rules
 
 #profile-discover-column-header {
   margin:10px 0 20px;
+  
 }
 
 #profile-discover-column-username h2 {
@@ -1899,7 +1947,9 @@ New Profile page style rules
   grid-template-columns: 1fr 4fr;
   column-gap: 16px;
   row-gap: 12px;
-  align-items: center;
+  /* Top-align so a label stays next to its field's input even when the field
+     grows (e.g. the role dropdown expanding) instead of dropping to the middle. */
+  align-items: start;
   margin-bottom: 12px;
 }
 
@@ -1907,6 +1957,9 @@ New Profile page style rules
   color: var(--main-text);
   font-weight: 600;
   text-align: right;
+  /* Match the select's 45px height so the label text lines up with the
+     search/input text on the same row. */
+  line-height: 45px;
 }
 
 #profile-invite-message {
@@ -1949,16 +2002,73 @@ New Profile page style rules
   cursor: not-allowed;
 }
 
+/* Invite-to-project popup: override the generic small-popup sizing (800px wide,
+   40vh tall) so the box is narrower and sizes to its content.*/
+.popup:has(> .small-popup #profile-invite-title) {
+  width: min(460px, 92vw);
+  max-width: 460px;
+  height: auto;
+  max-height: 85vh;
+  background: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+/* Dark box fills the wrapper exactly and stacks content from the top. */
+.small-popup:has(#profile-invite-title) {
+  width: 100%;
+  height: 100%;
+  justify-content: flex-start;
+}
+
+/* Render the project/role dropdown options in the normal flow (not an absolute
+   overlay) so opening one makes the dark .small-popup box GROW to contain the
+   list and pushes the Message field down — instead of floating on top of the
+   form and overhanging the box's bottom edge (which revealed the page and the
+   box's own background behind it). . */
+#profile-invite-project .select-options,
+#profile-invite-role .select-options {
+  position: static;
+  display: block;
+  width: 100%;
+  max-height: 200px;
+  box-shadow: none;
+}
+
+/* Options default to min-width: 166px, which can overflow the narrower field on
+   mobile and get clipped. Let them fit the dropdown width at any size. */
+#profile-invite-project .select-option,
+#profile-invite-role .select-option {
+  min-width: 0;
+}
+
+/* iOS auto-zooms when focusing an input whose font is < 16px. Bump these to
+   16px so tapping the role/project search or the message field doesn't zoom in
+   — it just opens the dropdown. */
+#profile-invite-project .select-search-input,
+#profile-invite-role .select-search-input,
+#profile-invite-message {
+  font-size: 16px;
+}
+
 @media only screen and (max-width: 500px) {
+
   #profile-invite-form {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
+    grid-template-columns: max-content 1fr;
+    column-gap: 10px;
+    row-gap: 10px;
   }
 
-  .profile-invite-label {
-    text-align: left;
+  /* Trim the wide horizontal padding so the role select/dropdown has room on
+     narrow screens. */
+  .small-popup:has(#profile-invite-title) {
+    padding: 24px 20px;
+  }
+
+  #profile-invite-project .select-options,
+  #profile-invite-role .select-options {
+    position: absolute;
+    box-shadow: 0px 0px 10px 0px var(--shadow-color);
   }
 }
 
