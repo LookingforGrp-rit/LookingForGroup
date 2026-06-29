@@ -27,10 +27,10 @@ export const approveProjectService = async (
     });
     return 'OK';
   } catch (e) {
-    console.error(`Error changeProjectApprovalService:`, e);
     if ((e as PrismaClientKnownRequestError).code.toUpperCase() === 'P2025') {
       return 'NOT_FOUND';
     }
+    console.error(`Error changeProjectApprovalService:`, e);
     return 'INTERNAL_ERROR';
   }
 };
