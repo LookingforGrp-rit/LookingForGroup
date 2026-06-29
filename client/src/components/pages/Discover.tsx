@@ -130,24 +130,6 @@ export const DiscoverPage = () => {
     setHeroProjectList(focusProjectDetailsList);
   }
 
-  //These variables need to be in a better spot I think
-  //0 is the beginning
-  let currentPaginatedProjectIndex = 0;
-
-  //10 is the default, can change if need be
-  //12 projects total in the database i think
-  const numProjects = 10;
-
-  //Loads more projects
-  //Can either be put as an event for a button or scroll
-  //Most likely scroll, since a button would defeat the purpose of an infinite scroll
-  //Blows up the site for some reason
-  //I think the issue is the site tries to load in projects that don't exist yet and are outside the array
-  const loadMoreProjects = () => {
-    currentPaginatedProjectIndex += numProjects;
-    setupProjectData();
-  }
-
   //Attempt at detecting when the user has scrolled to near the bottom of the screen
   const scrollEvent = useEffectEvent(() => {
     //console.log(`scrolled by ${}`);
@@ -159,7 +141,7 @@ export const DiscoverPage = () => {
       const scrollPercent = fullPage.scrollTop / (fullPage.clientHeight / 2); //clientHeight seemed to be doubled so i halved it
 
       if (scrollPercent >= 0.95) {
-        loadMoreProjects();
+        setupProjectData();
         //...it blows up.
         //BUT IT DETECTS THE SCROLL HEIGHT PROPERLY :cinema:
         console.log("load more projects");
@@ -167,18 +149,25 @@ export const DiscoverPage = () => {
     }
   });
 
+  //These variables should probably go somewhere else
+  let projects: ProjectPreview[] = [];
+
+  //Beginning is 0
+  let index = 0;
+
+  //Default should be 10
+  let count = 10;
+
+  //Gets the projects and updates the variables above
+  const getPaginatedProjects = async (index: number, count: number) => {
+    let returnedProjects = await GET(`/projects/paginated/${count}/${index}`);
+    count *= 2;
+    return returnedProjects.data;
+  }
+
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
-    let projects: ProjectPreview[] = [];
-
-    //Putting all approved projects into projects
-    const url = `/projects/paginated/${numProjects}/${currentPaginatedProjectIndex}`;
-    const projectRes = await GET(url);
-
-    if (projectRes && projectRes.data) {
-      projects = projects.concat(projectRes.data as ProjectPreview[]);
-    }
-
+    projects = projects.concat(await getPaginatedProjects(index, count));
     console.log(projects);
 
     if (!projects) {
@@ -433,7 +422,7 @@ export const DiscoverPage = () => {
 
   return (
     //Using onScrollEnd for now so it doesn't spam loading more projects
-    <div className="page discover-page" tabIndex={-1} onScrollEnd={scrollEvent}>
+    <div className="page discover-page" tabIndex={-1} onScroll={scrollEvent}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
