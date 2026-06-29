@@ -55,6 +55,8 @@ General style rules
   --create-gradient: linear-gradient(180deg, #fead81 0%, #2c2a3a 100%);
   --hero-gradient: linear-gradient(180deg, #0e0e0e 30%, #2c2a3a 100%);
   /* gradient for  discover hero section */
+  --about-gradient: linear-gradient(180deg, #1A1921 55%, #2B2939 88%);
+  /* gradient for about about boxes */
   --modal-gradient: linear-gradient(293deg, var(--modal-gradient-start) 0%, var(--modal-gradient-end) 100%);
   /* gradient for bigger modals (project/profile settings, etc.) */
   --border-color: #2b2939;
@@ -144,6 +146,7 @@ General style rules
   --sidebar-gradient: linear-gradient(180deg, #d3d3ff 0%, #ffceb4 100%);
   --create-gradient: linear-gradient(180deg, #b0b0fc 0%, #fead81 100%);
   --hero-gradient: linear-gradient(180deg, #ffffff 50%, #d3d3ff 100%);
+  --about-gradient: linear-gradient(180deg, #ececf7 55%, #d3d3ff 88%);
   --modal-gradient: linear-gradient(293deg, var(--modal-gradient-start) 0%, var(--modal-gradient-end) 100%);
   --border-color: #d3d3ff;
   --error-delete-color: #ff3859;
