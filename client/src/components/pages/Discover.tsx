@@ -135,11 +135,14 @@ export const DiscoverPage = () => {
   let currentPaginatedProjectIndex = 0;
 
   //10 is the default, can change if need be
+  //12 projects total in the database i think
   const numProjects = 10;
 
   //Loads more projects
   //Can either be put as an event for a button or scroll
   //Most likely scroll, since a button would defeat the purpose of an infinite scroll
+  //Blows up the site for some reason
+  //I think the issue is the site tries to load in projects that don't exist yet and are outside the array
   const loadMoreProjects = () => {
     currentPaginatedProjectIndex += numProjects;
     setupProjectData();
@@ -152,13 +155,14 @@ export const DiscoverPage = () => {
 
     //WAAAAAAIT DID I FIND IT
     const fullPage = document.querySelector('.page'); //the element that holds all of the page stuff
-    if(fullPage) {
+    if (fullPage) {
       const scrollPercent = fullPage.scrollTop / (fullPage.clientHeight / 2); //clientHeight seemed to be doubled so i halved it
-      
-      if(scrollPercent >= 0.95) {
+
+      if (scrollPercent >= 0.95) {
         loadMoreProjects();
         //...it blows up.
         //BUT IT DETECTS THE SCROLL HEIGHT PROPERLY :cinema:
+        console.log("load more projects");
       }
     }
   });
@@ -428,7 +432,8 @@ export const DiscoverPage = () => {
   }, []);
 
   return (
-    <div className="page discover-page" tabIndex={-1} onScroll={scrollEvent}>
+    //Using onScrollEnd for now so it doesn't spam loading more projects
+    <div className="page discover-page" tabIndex={-1} onScrollEnd={scrollEvent}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}

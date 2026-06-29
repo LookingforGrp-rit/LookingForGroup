@@ -12,6 +12,12 @@ const getPaginatedProjectsService = async (
   lastProjectId: number,
 ): Promise<ProjectPreview[] | GetServiceError> => {
   try {
+    const projectsCount = await prisma.projects.count();
+
+    if (projectsCount - count < count) {
+      count = projectsCount;
+    }
+
     const query = {
       select: ProjectPreviewSelector,
       take: count,
