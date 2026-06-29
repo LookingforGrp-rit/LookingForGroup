@@ -54,6 +54,7 @@ const prismaProjects: ProjectDetail[] = [
     title: 'test 1',
     updatedAt: now,
     projectVideos: [],
+    approved: false,
   },
   {
     apiUrl: '/api/projects/2',
@@ -77,6 +78,7 @@ const prismaProjects: ProjectDetail[] = [
     title: 'test 2',
     updatedAt: now,
     projectVideos: [],
+    approved: true,
   },
 ];
 
@@ -103,6 +105,7 @@ const transformed: ProjectDetail[] = [
     title: 'test 1',
     updatedAt: now,
     projectVideos: [],
+    approved: false,
   },
   {
     apiUrl: '/api/projects/2',
@@ -126,6 +129,7 @@ const transformed: ProjectDetail[] = [
     title: 'test 2',
     updatedAt: now,
     projectVideos: [],
+    approved: true,
   },
 ];
 
@@ -158,6 +162,7 @@ describe('getMyProjectsService', () => {
       title: p.title as string,
       updatedAt: now,
       projectVideos: [],
+      approved: p.approved as boolean,
     }));
 
     const result = await getMyProjectsService(1, 'all');

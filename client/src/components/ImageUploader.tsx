@@ -77,12 +77,20 @@ const ImageUploader = ({
   const updateCanvas = useCallback(() => {
     const ctx = canvas.current?.getContext("2d");
     ctx?.clearRect(0, 0, canvas.current?.width as number, canvas.current?.height as number);
-    if (tempImage.current && canvas.current)
+    if (tempImage.current && canvas.current){
+      //helper variables
+      const minZoom = 100 * Math.max(canvas.current?.width / tempImage.current?.width,
+             canvas.current?.height / tempImage.current?.height);
+      const newZoom = (zoom * (1000 -minZoom) / 1000) + minZoom
+      const w = tempImage.current.width / 100 * newZoom;
+      const h = tempImage.current.height / 100 * newZoom;
       ctx?.drawImage(
         tempImage.current,
-        dX, dY,
-        tempImage.current.width / 100 * zoom,
-        tempImage.current.height / 100 * zoom);
+        -(dX * (w / 2 - canvas.current.width / 2) / canvas.current.width) + canvas.current.width / 2 - w / 2,
+        (dY * (h / 2 - canvas.current.height / 2) / canvas.current.height)  + canvas.current.height / 2 - h / 2,
+        w,
+        h);
+      }
   }, [tempImage, dX, dY, zoom, canvas]);
 
   // Validate file type and handle image input change
@@ -95,6 +103,7 @@ const ImageUploader = ({
       setCropFile(file);
       fileReader.readAsDataURL(file);
       setCropImg(fileReader.result as string);
+      updateCanvas();
     } else {
       alert("File type not supported: Please use .PNG or .JPG");
     }
@@ -119,6 +128,10 @@ const ImageUploader = ({
 
     return () => input.removeEventListener('change', sendImg);
   }, [sendImg, fileReader, placeholder, setCropImg, inputRef]);
+
+  useEffect(()=> {
+    updateCanvas();
+  }, [zoom, dX, dY]);
   
   const cropPopup = (cropImg !== undefined ?
     <Popup startOpen={true}>
@@ -183,13 +196,12 @@ const ImageUploader = ({
           id="zoom" name="zoom"
           onChange={() => {
             setZoom(inputZoom.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           onInput={() => {
             setZoom(inputZoom.current?.valueAsNumber as number);
-            updateCanvas();
           }}
-          min={1} max={1000}
+          min={0} 
+          max={1000}
           defaultValue={zoom} />
           <label className="slider-text" htmlFor="zoom">Zoom</label>
         </div>
@@ -199,11 +211,9 @@ const ImageUploader = ({
           id="xTrans" name="xTrans"
           onChange={() => {
             setDX(inputX.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           onInput={() => {
             setDX(inputX.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           min={canvas.current ? -canvas.current.width : -100}
           max={canvas.current ? canvas.current.width : 100}
@@ -216,11 +226,9 @@ const ImageUploader = ({
           id="yTrans" name="yTrans"
           onChange={() => {
             setDY(inputY.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           onInput={() => {
             setDY(inputY.current?.valueAsNumber as number);
-            updateCanvas();
           }}
           min={canvas.current ? -canvas.current.height : -100}
           max={canvas.current ? canvas.current.height : 100}

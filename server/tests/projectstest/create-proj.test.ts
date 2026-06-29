@@ -80,6 +80,7 @@ describe('createProjectService', async () => {
       title: 'test 1',
       updatedAt: now,
       projectVideos: [],
+      approved: true,
     };
 
     vi.mocked(prisma.projects.create).mockResolvedValue(prismaProject);

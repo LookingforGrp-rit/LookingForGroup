@@ -18,7 +18,7 @@ import {
   requestProjectReview,
 } from "../../api/projects";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
-import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername  } from "../../api/users";
+import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
 import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
@@ -135,7 +135,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       console.error("Error loading existing project:", err);
     }
   }
-  
+
   if (!newProject && projectID) setup;
 
   /**
@@ -597,12 +597,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             Edit Project
           </PopupButton>
           {/* TODO: add checking if the project is approved/rejected/pending */}
-          <button id="project-info-request" onClick={() => {if (projectData) requestProjectReview(projectData as ProjectWithFollowers)}}>
+          {/* Don't use projectData here because it won't be fetched until Create/Edit is clicked */}
+          <button id="project-info-request" onClick={() => { if (projectID) { requestProjectReview(projectID); location.reload(); } }}>
             Request Project Review
           </button>
         </div>
       )}
-      
+
 
       <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>

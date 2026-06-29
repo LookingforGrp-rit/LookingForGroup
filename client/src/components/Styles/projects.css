@@ -2058,6 +2058,11 @@ Project page style rules
   gap: 5px;
 }
 
+#project-approval-status {
+  margin-top: auto;
+  margin-bottom: auto;
+}
+
 #project-status {
   grid-area: status;
   margin-top: auto;
@@ -3349,7 +3354,8 @@ Project Carousel style rules
   hyphens: manual;
 }
 
-#project-status {
+#project-status,
+#project-approval-status {
   display: flex;
   flex-direction: row;
   justify-content: start;
@@ -4234,7 +4240,6 @@ My projects page style rules
   }
 }
 
-
 .my-projects-all-projects-button:hover,
 .my-projects-create-btn>button:hover {
   transform: scale(1.1);
@@ -4294,7 +4299,6 @@ My projects page style rules
   display: flex;
   flex-direction: column;
   align-content: start;
-
 }
 
 @media only screen and (max-width: 768px) {
@@ -4359,6 +4363,7 @@ My projects page style rules
   }
 }
 
+/* Grid View */
 .grid-card-image {
   grid-area: image;
   box-sizing: border-box;
@@ -4369,6 +4374,61 @@ My projects page style rules
   object-fit: cover;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   cursor: pointer;
+}
+
+.approved,
+.not-approved,
+.under-review {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 45px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  padding-bottom: 10px;
+  box-sizing: border-box;
+}
+
+.txt {
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
+  z-index: 1;
+}
+
+.symbol {
+  position: absolute;
+  top: -25px;
+  z-index: 0;
+
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50%;
+  padding: 5px;
+
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+
+  fill: black !important;
+
+  background-color: inherit;
+}
+
+.approved {
+  background-color: var(--approved-green, #b1fca9);
+}
+
+.not-approved {
+  background-color: var(--not-approved-red, #fc9d9d);
+}
+
+.under-review {
+  background-color: var(--under-review-yellow, #ffe1a2);
 }
 
 .grid-card-image-button {
@@ -4383,6 +4443,9 @@ My projects page style rules
   padding: 0;
   border-width: 0;
   outline-width: 0;
+
+  position: relative;
+  overflow: hidden;
 }
 
 .grid-card-image-button:focus {
@@ -4511,25 +4574,16 @@ My projects page style rules
   }
 }
 
-.my-projects-list {
+/* List View */
+.responsive-table {
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  width: 100%;
+  max-width: calc(100% - 60px);
+  border-collapse: separate;
+  border-spacing: 0 10px;
 }
 
-.my-projects-list-header {
-  box-sizing: border-box;
-  margin: 30px 0 10px 0;
-  padding-right: 105px;
-
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  gap: 10px;
-}
-
-
+/* Headers */
 .project-header-label {
   color: var(--primary-color);
   text-align: left;
@@ -4538,75 +4592,116 @@ My projects page style rules
   font-weight: bold;
   line-height: 28px;
   letter-spacing: 0%;
-}
-
-.project-header-label.title {
-  justify-self: start;
-  min-width: 200px;
-  width: auto;
-  max-width: 300px;
-  flex-grow: 1;
-  padding-left: 10px;
-}
-
-.project-header-label.status {
-  min-width: 200px;
-  flex-shrink: 0;
-  text-align: left;
+  padding: 10px;
 }
 
 .project-header-label.date {
-  text-align: right;
-  width: 120px;
-  flex-shrink: 0;
-  white-space: nowrap;
+  max-width: 10ch;
 }
 
+/* Data Rows */
 .my-project-list-card {
   box-sizing: border-box;
   background-color: var(--header-color);
 
-  display: flex;
-  flex-direction: row;
-  /* justify-content: flex-end; */
-  gap: 10px;
-
   border: 0px;
   border-radius: 10px;
   height: fit-content;
-  padding: 10px 20px 10px 10px;
-  max-width: 882px;
-  width: 70vw;
-  justify-content: space-between;
   font-size: 1.25rem;
+}
 
-  .dropdown-container {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    flex-grow: 0.025;
+.responsive-table tr td {
+  padding: 10px;
+}
+
+.responsive-table tr td:first-child {
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+
+  min-width: 15ch;
+  padding: 10px;
+}
+
+.responsive-table tr td:last-child {
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  padding: 10px 0;
+}
+
+@media only screen and (min-width:601px) and (max-width:950px) {
+  .responsive-table tr td {
+    font-size: 0.8em;
   }
 }
 
-#my-projects-header-and-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 0 60px;
+@media only screen and (max-width: 700px) {
+
+  .my-projects-grid,
+  .my-projects-list {
+    padding-left: 0px;
+    padding-right: 0px;
+    margin: 30px 20px 20px;
+  }
+
+  .list-card-section1 {
+    grid-area: name;
+  }
+
+
+  .list-card-date {
+    grid-area: date;
+  }
+
+  .dropdown-container #list-card-options-button {
+    grid-area: menu;
+  }
+
+  .dropdown-container {
+    margin-left: auto;
+  }
+
+  .responsive-table {
+    width: calc(100% - 40px);
+  }
 }
 
+@media only screen and (max-width: 600px) {
+  /* Hide table headers (but not display: none;, for accessibility) */
+  .responsive-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
 
+  .responsive-table tr {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+  }
 
+  .responsive-table td {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.5rem;
+    margin-left: 5px;
+    border: none;
+    font-size: 0.7em;
+    text-align: right;
+  }
+
+  /* Inject the column header label */
+  .responsive-table td::before {
+    content: attr(data-label);
+    font-weight: bold;
+    color: var(--main-text);
+    text-align: left;
+  }
+}
+
+/* Columns */
 .list-card-section1 {
   box-sizing: border-box;
-
-  flex-grow: 1;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
-  min-width: 200px;
-  max-width: 350px;
+  padding: 5px;
   word-break: break-word;
   hyphens: auto;
 }
@@ -4647,27 +4742,17 @@ My projects page style rules
   font-weight: normal;
   line-height: 28px;
   letter-spacing: 0%;
-
-  flex-basis: 250px;
-  flex-shrink: 1;
-  display: flex;
-  align-items: center;
 }
 
 .list-card-date {
   box-sizing: border-box;
   color: var(--main--text);
-  text-align: right;
+  text-align: left;
   font-size: 1.25rem;
   font-family: Inter;
   font-weight: normal;
   line-height: 28px;
   letter-spacing: 0%;
-
-  display: flex;
-  justify-content: end;
-  align-items: center;
-  flex-shrink: 0;
 }
 
 
@@ -4681,7 +4766,6 @@ My projects page style rules
   border-radius: 0px;
   color: var(--primary-color);
   height: min-content;
-  margin-left: 10px;
   padding: 0px;
 
   svg {
@@ -4690,18 +4774,13 @@ My projects page style rules
 }
 
 @media only screen and (max-width: 1200px) {
-
-  /* .list-card-status, .list-card-date, .project-header-label.date, .project-header-label.status {
-    flex-shrink: 1;
-  } */
-  /* .list-card-status {
+  .list-card-status {
     flex-basis: 150px;
   }
 
   .project-header-label.status {
     flex-basis: 150px;
-  } */
-
+  }
 }
 
 @media only screen and (max-width: 900px) {
@@ -4711,10 +4790,6 @@ My projects page style rules
     padding-left: 0px;
     padding-right: 0px;
     margin: 30px 20px 20px;
-  }
-
-  .my-projects-list-header {
-    display: none;
   }
 
   .my-project-list-card {
