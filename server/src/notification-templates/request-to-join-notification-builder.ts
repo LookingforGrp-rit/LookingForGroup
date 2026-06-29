@@ -58,7 +58,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     const requesterLastName = data?.users.lastName as string;
     const requesterUsername = data?.users.username as string;
     const roleName = roleData?.label as string;
-    const requesterProfileLink = `${process.env.CLIENT_URL as string}/profile?userID=${prospectiveMemberId.toString()}`;
+    const requesterProfileLink = `${process.env.CLIENT_DOMAIN as string}/profile?userID=${prospectiveMemberId.toString()}`;
     const acceptRequestLink = `$`;
 
     //--BUILDING NOTIFICATION--//
@@ -68,12 +68,12 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     // building message
     notification.message = `Hello ${ownerName},\n\n`;
     notification.message += `${requesterName} ${requesterLastName} (${requesterUsername}@g.rit.edu) `;
-    notification.message += `has requested to join your project ${projectTitle} as a ${roleName}. `;
+    notification.message += `has requested to join your project ${projectTitle} as a ${roleName}.\n\n  `;
     if (body.message) {
-      notification.message += `${requesterName} has provided a message:\n\n`;
+      notification.message += `${requesterName} has provided a message:\n`;
       notification.message += body.message;
     }
-    notification.message += `\n\nYou may view the requester's profile at `;
+    notification.message += `You may view the requester's profile at `;
     notification.message += `<a href="${requesterProfileLink}">${requesterProfileLink}</a>. `;
     notification.message += `You may respond to their invite by going to `;
     notification.message += `<a href=${acceptRequestLink}>${acceptRequestLink}</a>.`;

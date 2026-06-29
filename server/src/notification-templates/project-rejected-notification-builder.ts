@@ -20,7 +20,10 @@ export class ProjectRejectedNotificationBuilder implements NotificationBuilder {
 
     // getting rejection reason
     const body = req.body as RejectionBody;
-    const reason = body.reason;
+    let reason;
+    if (body.reason) {
+      reason = body.reason;
+    }
 
     // getting all necessary information
     const data = await prisma.projects.findFirst({
@@ -46,8 +49,10 @@ export class ProjectRejectedNotificationBuilder implements NotificationBuilder {
     // building the message
     notification.message = `Hello ${data?.users.preferredName as string},\n\n`;
     notification.message += `Unfortunately, the approval request for your project, ${data?.title as string}, has been rejected. `;
-    notification.message += `Here is the reason provided:\n\n`;
-    notification.message += `"${reason}"\n\n`;
+    if (reason) {
+      notification.message += `Here is the reason provided:\n\n`;
+      notification.message += `"${reason}"\n\n`;
+    }
     notification.message += `If you wish to again request approval, please make the appropriate changes to your project. `;
     notification.message += `Our terms of service can be located at ${process.env.CLIENT_DOMAIN as string}/about.\n\n`;
     notification.message += `We wish you a good day.`;
