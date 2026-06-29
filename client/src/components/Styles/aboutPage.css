@@ -1,0 +1,553 @@
+/* Contains style rules that handles the styling for the About page */
+.about-main{
+  display: flex !important;
+  align-content: left !important;
+}
+
+.about-header{
+  color:var(--primary-color);
+  font-size: 2.4rem;
+  align-self:left;
+  margin-top: 0;
+  font-weight: 600;
+}
+
+.about-container{
+  left:10px;
+  align-self: left;
+  margin: 0rem !important;
+  width: 90% !important;
+  max-width: none !important;
+  padding-left: 0% !important;
+  padding-top: 0% !important;
+}
+
+.about-section{
+  width: 100%;
+  margin: 0rem !important;
+  padding-left:0%
+}
+
+.about-header-two{
+  color:var(--primary-color);
+  font-size: 1.7rem;
+  margin-top: 1%;
+  margin-bottom: 0;
+  font-weight: 600;
+  padding-left: 16px;
+}
+
+.about-header-three{
+  color:var(--primary-color);
+  font-size: 1.4rem;
+  margin-top: 1%;
+  font-weight: 600;
+}
+
+#credits{
+  margin-left: 0px !important;
+  padding-left: 16px !important;
+}
+
+#credits-title{
+  color:var(--primary-color);
+  font-size: 1.7rem !important;
+  margin-top: 1% !important;
+  margin-left: 0% !important;
+  font-weight: 600 !important;
+}
+
+.guidelines-list{
+  padding-left: 16px !important;
+}
+
+#about-purpose{
+  background-color: var(--header-color);
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 2% !important;
+  padding-left: 16px;
+}
+
+.features-list{
+  width: 100%;
+  margin-left: 0%;
+  padding-left: 0%;
+  display: grid;
+  grid-template-areas:
+    "purpose creation"
+    "management profile";
+  gap: 1%;
+}
+
+#features-section{
+  padding-left: 0% !important;
+}
+
+#about-purpose > .about-header-two{
+  padding-left: 0px;
+}
+
+.about-section > .about-header-three{
+  padding-left: 16px;
+}
+
+.about-box{
+  background: var(--about-gradient);
+  width: 90%;
+  border-radius: 10px;
+  margin-left: 0%;
+  display: grid;
+  grid-template-areas:
+    "text image";
+}
+
+.about-text{
+  color:var(--main-text);
+  font-size: 1.2rem;
+}
+
+.heading-text-pair{
+  width: 100%;
+  margin: 0%;
+  padding: 0%;
+  grid-area: text;
+}
+
+.heading-image-pair{
+  width: 100%;
+  margin: 0%;
+  padding: 0%;
+  display: grid;
+  grid-template-areas: 
+    "heading imageB";
+}
+
+.text-image-pair{
+  width: 100%;
+  margin: 0%;
+  padding: 0%;
+  display: grid;
+  grid-template-areas: 
+    "paragraph imageC";
+}
+
+.text-image-pair > .about-text{
+  width: 90%;
+}
+
+.heading-image-pair > .about-header-three{
+  margin-top: 5%;
+}
+
+.about-img-a{
+  grid-area: image;
+  margin-top: 5%;
+  align-self: center;
+  display: inline;
+}
+
+.about-img-b{
+  grid-area: imageB;
+  margin-top: 5%;
+  align-self: center;
+  display: none;
+}
+
+.about-img-c{
+  grid-area: imageC;
+  margin-top: 5%;
+  align-self: center;
+  display: none;
+}
+
+
+
+.about-text-purpose{
+  width:65%;
+}
+
+#purpose-box{
+  grid-area: purpose;
+}
+
+#creation-box{
+  grid-area: creation;
+}
+
+#management-box{
+  grid-area: management;
+}
+
+#profile-box{
+  grid-area: profile;
+}
+
+@media (max-width: 1250px){
+  .features-list{
+    display: grid;
+    grid-template-areas:
+      "purpose creation"
+      "management profile";
+    gap: 1%;
+  }
+
+  .about-box{
+    display: grid;
+    grid-template-areas:
+      "text image";
+  }
+
+  .heading-text-pair{
+    width: 100%;
+    margin: 0%;
+    padding: 0%;
+    grid-area: text;
+  }
+
+  .text-image-pair > .about-text{
+    width: 90%;
+  }
+
+  .heading-image-pair > .about-header-three{
+    margin-top: 5%;
+  }
+
+  .about-img-a{
+    grid-area: image;
+    margin-top: 5%;
+  }
+
+  .about-text-purpose{
+    width:95%;
+  }
+
+  #purpose-box{
+    grid-area: purpose;
+  }
+
+  #creation-box{
+    grid-area: creation;
+  }
+
+  #management-box{
+    grid-area: management;
+  }
+
+  #profile-box{
+    grid-area: profile;
+  }
+
+  .about-img-a{
+    grid-area: image;
+    margin-top: 5%;
+    align-self: center;
+    display: none;
+  }
+
+  .about-img-b{
+    grid-area: imageB;
+    margin-top: 5%;
+    align-self: right;
+    display: inline;
+  }
+
+  .about-img-c{
+    grid-area: imageC;
+    margin-top: 5%;
+    align-self: right;
+    display: inline;
+  }
+}
+
+@media (max-width: 920px){
+  .features-list{
+    width: 100%;
+    margin-left: 0%;
+    padding-left: 0%;
+    display: grid;
+    grid-template-areas:
+      "purpose" 
+      "creation"
+      "management"
+      "profile";
+    gap: 1%;
+  }
+
+  .about-box{
+    display: grid;
+    grid-template-areas:
+      "text image";
+  }
+
+  .about-text{
+    color:var(--main-text);
+    font-size: 1.2rem;
+  }
+
+  .heading-text-pair{
+    width: 100%;
+    margin: 0%;
+    padding: 0%;
+    grid-area: text;
+  }
+
+  .text-image-pair > .about-text{
+    width: 90%;
+  }
+
+  .heading-image-pair > .about-header-three{
+    margin-top: 5%;
+  }
+
+  .about-img-a{
+    grid-area: image;
+    margin-top: 5%;
+  }
+
+  .about-text-purpose{
+    width:95%;
+  }
+
+  #purpose-box{
+    grid-area: purpose;
+  }
+
+  #creation-box{
+    grid-area: creation;
+  }
+
+  #management-box{
+    grid-area: management;
+  }
+
+  #profile-box{
+    grid-area: profile;
+  }
+
+  .about-img-a{
+    grid-area: image;
+    margin-top: 5%;
+    align-self: center;
+    display: inline;
+  }
+
+  .about-img-b{
+    grid-area: imageB;
+    margin-top: 5%;
+    align-self: right;
+    display: none;
+  }
+
+  .about-img-c{
+    grid-area: imageC;
+    margin-top: 5%;
+    align-self: right;
+    display: none;
+  }
+}
+
+@media (max-width: 599px){
+  .about-section{
+    padding-left: 0%;
+  }
+
+  #about-purpose{
+    padding-left: 16px;
+  }
+  
+  .features-list{
+    width: 100%;
+    margin-left: 0%;
+    padding-left: 0%;
+    display: grid;
+    grid-template-areas:
+      "purpose" 
+      "creation"
+      "management"
+      "profile";
+    gap: 1%;
+  }
+
+  .about-box{
+    display: grid;
+    grid-template-areas:
+      "text image";
+  }
+
+  .about-text{
+    color:var(--main-text);
+    font-size: 1.2rem;
+  }
+
+  .heading-text-pair{
+    width: 100%;
+    margin: 0%;
+    padding: 0%;
+    grid-area: text;
+  }
+
+  .text-image-pair > .about-text{
+    width: 95%;
+  }
+
+  .heading-image-pair > .about-header-three{
+    margin-top: 5%;
+    margin-left: 5%;
+    font-size: 1.55rem;
+
+  }
+
+  .heading-image-pair{
+    width: 100%;
+    margin: 0%;
+    padding: 0%;
+    gap:5%;
+    display: grid;
+    grid-template-areas: 
+      "heading imageB";
+  }
+
+  .text-image-pair{
+    width: 100%;
+    margin: 0%;
+    padding: 0%;
+    display: grid;
+    gap: 0%;
+    grid-template-areas: 
+      "paragraph imageC";
+  }
+
+  .about-img-a{
+    grid-area: image;
+    margin-top: 5%;
+    align-self: center;
+    display: none;
+  }
+
+  .about-img-b{
+    grid-area: imageB;
+    margin-top: 5%;
+    align-self: right;
+    display: inline;
+  }
+
+  .about-img-c{
+    grid-area: imageC;
+    margin-top: 5%;
+    align-self: right;
+    display: inline;
+  }
+
+  .about-text-purpose{
+    width:98%;
+  }
+
+  #purpose-box{
+    grid-area: purpose;
+  }
+
+  #creation-box{
+    grid-area: creation;
+  }
+
+  #management-box{
+    grid-area: management;
+  }
+
+  #profile-box{
+    grid-area: profile;
+  }
+}
+
+@media (max-width: 350px){
+  .about-box{
+    display: grid;
+    grid-template-areas:
+      "text image";
+  }
+
+  .about-text{
+    color:var(--main-text);
+    font-size: 1.2rem;
+  }
+
+  .heading-text-pair{
+    width: 100%;
+    margin: 0%;
+    padding: 0%;
+    grid-area: text;
+  }
+
+  .text-image-pair > .about-text{
+    width: 95%;
+  }
+
+  .heading-image-pair > .about-header-three{
+    margin-top: 5%;
+    margin-left: 5%;
+    font-size: 1.55rem;
+
+  }
+
+  .heading-image-pair{
+    width: 100%;
+    margin: 0%;
+    padding: 0%;
+    gap:5%;
+    display: grid;
+    grid-template-areas: 
+      "heading imageB";
+  }
+
+  .text-image-pair{
+    width: 100%;
+    margin: 0%;
+    padding: 0%;
+    display: grid;
+    gap: 0%;
+    grid-template-areas: 
+      "paragraph imageC";
+  }
+
+  .about-img-a{
+    grid-area: image;
+    margin-top: 5%;
+    align-self: center;
+    display: none;
+  }
+
+  .about-img-b{
+    grid-area: imageB;
+    margin-top: 5%;
+    align-self: right;
+    display: none;
+  }
+
+  .about-img-c{
+    grid-area: imageC;
+    margin-top: 5%;
+    align-self: right;
+    display: inline;
+  }
+
+  .about-text-purpose{
+    width:98%;
+  }
+
+  #purpose-box{
+    grid-area: purpose;
+  }
+
+  #creation-box{
+    grid-area: creation;
+  }
+
+  #management-box{
+    grid-area: management;
+  }
+
+  #profile-box{
+    grid-area: profile;
+  }
+}
