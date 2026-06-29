@@ -135,7 +135,7 @@ export const DiscoverPage = () => {
     if (!projectRes.data) return;
 
     const newProjectCache = projectCache;
-    for (let project of projectRes.data) {
+    for (const project of projectRes.data) {
 
       const cachedProject = newProjectCache[project.projectId];
       if (!cachedProject) {
@@ -177,11 +177,11 @@ export const DiscoverPage = () => {
   * Changes what projects are shown to the user whenever a filter has been added or changed
   * @param activeTagFilters Tags that are shown to the user now
   */
-  const updateProjectList = async (activeTagFilters: Tag[]) => {
+  const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any") => {
     const projectList = fullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
-    for (let item of projectList) {
+    for (const item of projectList) {
       if (projectCache[item.projectId].full != undefined) {
         items.push(projectCache[item.projectId].full as ProjectWithFollowers);
       }
@@ -195,10 +195,9 @@ export const DiscoverPage = () => {
         }
       }
     }
-
     let tagFilteredList = items.filter((item) => {
       if (activeTagFilters.length === 0) return true;
-      //let matchesAny = false;
+      let matchesAny = false;
       let matchesAll = true;
       for (const tag of activeTagFilters) {
         // Check project type by name since IDs are not unique relative to tags
@@ -209,21 +208,27 @@ export const DiscoverPage = () => {
             //change the subtraction to change the 
             const cutOff = Date.now() - 604800000; //604,800,000 is 1 week in milliseconds
             const date = Date.parse(item.createdAt.toString());
-            if (date < cutOff) {
-              //matchesAny = true;
+            if (date > cutOff) {
+              matchesAny = true;
+            }
+            else {
               matchesAll = false;
             }
           }
-          else if (!projectTypes.includes(tag.label.toLowerCase())) {
-            //matchesAny = true;
+          else if (projectTypes.includes(tag.label.toLowerCase())) {
+            matchesAny = true;
+          }
+          else {
             matchesAll = false;
           }
         }
         // Purpose tag 
         else if (tag.type === 'Purpose' && item.purpose) {
           const projectPurpose = item.purpose.toLowerCase();
-          if (!projectPurpose.includes(tag.label.toLowerCase())) {
-            //matchesAny = true;
+          if (projectPurpose.includes(tag.label.toLowerCase())) {
+            matchesAny = true;
+          }
+          else {
             matchesAll = false;
           }
         }
@@ -231,16 +236,18 @@ export const DiscoverPage = () => {
         else if (tag.tagId && item.tags) {
           const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
 
-          if (!tagIDs.includes(tag.tagId)) {
-            //matchesAny = true;
+          if (tagIDs.includes(tag.tagId)) {
+            matchesAny = true;
+          }
+          else {
             matchesAll = false;
           }
         }
 
 
       }
-      //return matchesAny;
-      return matchesAll;
+      if (filterMode === "Match Any") return matchesAny;
+      else return matchesAll;
     });
 
     // If no tags are currently selected, render all projects
@@ -332,13 +339,55 @@ export const DiscoverPage = () => {
   };
 
 
+  // On mobile, focusing the search bar opens the on-screen keyboard, which
+  // covers the lower half of the page and hides the results behind the carousel.
+  // Scroll past the carousel so the filter bar and first result sit just under
+  // the sticky header, keeping the top result visible above the keyboard.
+  const handleSearchFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
+    if (window.innerWidth > 800) return;
+
+    
+    const page = document.querySelector('.page') as HTMLElement | null;
+    if (!page) return;
+    const input = e.currentTarget;
+
+    // Temporarily add scroll space at the bottom so the page can scroll far
+    // enough to push the carousel fully out of view even when there are only a
+    // few results below it (otherwise the scroll clamps and stops short).
+    // Removed again when the search bar loses focus.
+    page.style.paddingBottom = '60vh';
+    const cleanup = () => {
+      page.style.paddingBottom = '';
+      input.removeEventListener('blur', cleanup);
+    };
+    input.addEventListener('blur', cleanup);
+
+    // Delay so the keyboard/viewport change settles before we scroll.
+    window.setTimeout(() => {
+      const filters = document.getElementById('discover-filters-parent');
+      if (!filters) return;
+      const headerHeight = document.getElementById('header')?.offsetHeight ?? 90;
+      // Tune SCROLL_OFFSET: higher (positive) = scroll FARTHER down so more of
+      // the results show; lower/negative = scroll less.
+      const SCROLL_OFFSET = 50;
+      const top =
+        filters.getBoundingClientRect().top -
+        page.getBoundingClientRect().top +
+        page.scrollTop -
+        headerHeight +
+        SCROLL_OFFSET;
+      page.scrollTo({ top, behavior: 'smooth' });
+    }, 250);
+  }, []);
+
   return (
     <div className="page discover-page" tabIndex={-1}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
         value={currentSearch} onChange={(e: ChangeEvent<HTMLInputElement>) => setCurrentSearch(e.currentTarget.value)}
-        setCurrentUserId={getAuth} />
+        setCurrentUserId={getAuth}
+        searchOnFocus={handleSearchFocus} />
       {/* Contains the hero display, carousel if projects, profile intro if profiles*/}
       {heroContent}
 

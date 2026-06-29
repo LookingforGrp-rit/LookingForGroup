@@ -1,4 +1,5 @@
 import { MouseEventHandler } from 'react';
+import arrow from '../../../public/images/icons/s-arrow.png';
 
 interface GetStartedProps {
   show: boolean;
@@ -33,17 +34,17 @@ const GetStarted: React.FC<GetStartedProps> = ({ show, onBack, onCreateProject, 
           <div id="getStarted-select">
             <button id="new-project-btn" onClick={onCreateProject}>
               Create Project
-              <img src="/images/icons/nav/projects.png" alt="folder" />
+              <img className="getStarted-btn-imgs" src="/images/icons/nav/projects.png" alt="folder" />
             </button>
             <button id="join-project-btn" onClick={onJoinProject}>
               Browse Projects
-              <img src="/images/icons/nav/discover.png" alt="compass" />
+              <img className="getStarted-btn-imgs" src="/images/icons/nav/discover.png" alt="compass" />
             </button>
           </div>
 
           <div id="signupProcess-btns">
             <button id="signup-backBtn" onClick={onBack}>
-              Back
+              <svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
             </button>
           </div>
         </div>

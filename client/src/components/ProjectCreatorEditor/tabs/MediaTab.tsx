@@ -8,6 +8,7 @@ import {
   ProjectWithFollowers,
 } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
+import { DeleteProjectButton } from "../DeleteProjectButton";
 import { ProjectImageUploader } from "../../ImageUploader";
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 import { PendingProject, PendingProjectImage } from "@looking-for-group/client";
@@ -136,13 +137,11 @@ export const MediaTab = ({
 
   // Checks whether a valid image has been uploaded and modifies modifiedProject
   const handleImageUpload = useCallback(async (file: File) => {
-    // Get image in input element
-    const imageUploader = document.getElementById(
-      "image-uploader"
-    ) as HTMLInputElement;
-    if (!imageUploader?.files?.length) return;
-
     if (!["image/jpeg", "image/png"].includes(file.type)) return;
+    else if (file.size > 2000000) {
+      setImageError("File too large");
+      return;
+    }
 
     // Check if it is a duplicate image
     for (const image of projectAfterMediaChanges.projectImages) {
@@ -222,8 +221,6 @@ export const MediaTab = ({
     } catch (err) {
       console.error(err);
     }
-
-    imageUploader.value = "";
   }, [dataManager, projectId, updatePendingProject]);
 
   const handleAddVideo = useCallback(() => {
@@ -662,6 +659,7 @@ export const MediaTab = ({
 
       {/* Save button */}
       <div id="general-save-info">
+        <div className="editor-save-actions">
         <Popup>
           {saveable ? "" :
             <div id="invalid-input-error" className={"save-error-msg-general"}>
@@ -687,6 +685,11 @@ export const MediaTab = ({
             </div>
           </PopupContent>
         </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
+        </div>
       </div>
     </div>
   );

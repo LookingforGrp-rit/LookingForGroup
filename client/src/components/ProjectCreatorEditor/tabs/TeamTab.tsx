@@ -2,7 +2,8 @@
 import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
-import profileImage from "../../../images/blue_frog.png";
+import { DeleteProjectButton } from "../DeleteProjectButton";
+import profileImage from "../../../images/lfrog.png";
 import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
@@ -69,6 +70,7 @@ const emptyJob: Pending<ProjectJob> = {
   localId: null,
   location: null,
   role: null,
+  jobSkills: null,
 };
 
 let localIdIncrement = 0;
@@ -1109,6 +1111,11 @@ export const TeamTab = ({
                 className="edit-position-contact"
                 placeholder="Select"
                 type="input"
+                initialVal={
+                  currentJob?.contact 
+                    ? `${currentJob.contact.firstName} ${currentJob.contact.lastName}` 
+                    : ""
+                }
               />
               <SelectOptions
                 className="edit-position-contact"
@@ -1652,7 +1659,7 @@ export const TeamTab = ({
                 }
                 className="team-positions-button"
               >
-                <img src="/images/icons/drag.png" alt="positions" />
+               
                 <button
                   className="positions-popup-list-item"
                   data-id={"jobId" in job ? job.jobId : job.localId}
@@ -1737,6 +1744,7 @@ export const TeamTab = ({
       <div id="project-editor-team-content">{teamTabContent}</div>
 
       <div id="team-save-info">
+        <div className="editor-save-actions">
         <Popup>
           {saveable ? "" :
             <div id="invalid-input-error" className={"save-error-msg-general"}>
@@ -1762,6 +1770,11 @@ export const TeamTab = ({
             </div>
           </PopupContent>
         </Popup>
+        <DeleteProjectButton
+          projectID={unmodifiedProject.projectId}
+          projectTitle={unmodifiedProject.title}
+        />
+        </div>
       </div>
     </div>
   );

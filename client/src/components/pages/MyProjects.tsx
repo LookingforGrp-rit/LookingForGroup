@@ -15,7 +15,8 @@ import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEdit
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
 import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
-import { deleteProject } from '../../api/projects.ts';
+import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
+import { deleteProject, projectApprovalRequestExists } from '../../api/projects.ts';
 
 /**
  * My Projects page. Creates a customizable page that showcases the user's projects.
@@ -71,6 +72,9 @@ const MyProjects = (userProfile: any) => {
 
   const [projectMode, setProjectMode] = useState("All");
   const [userId, setUserId] = useState<string>('');
+
+  type ApprovalStatusKey = keyof typeof ApprovalStatus;
+  const [approvalStatuses, setApprovalStatuses] = useState<Record<number, ApprovalStatusKey>>({});
 
   // --------------------
   // Helper functions
@@ -286,6 +290,47 @@ const MyProjects = (userProfile: any) => {
     }
   };
 
+  const checkApprovalRequest = async (project: ProjectDetail): Promise<ApprovalStatusKey> => {
+    let status: ApprovalStatusKey = 'not-approved';
+
+    try {
+      const result = await projectApprovalRequestExists(project.projectId);
+
+      // if the project is marked as approved -> status is "approved"
+      // if not approved -> check if an approval request exists -> "under-review"
+      // otherwise -> "not-approved"
+      // so it's NORMAL to see 404s
+      status = project.approved
+        ? 'approved'
+        : result
+          ? 'under-review'
+          : 'not-approved';
+    } catch {
+      status = project.approved
+        ? 'approved'
+        : 'not-approved';
+    }
+
+    return status;
+  };
+  useEffect(() => {
+    const loadStatuses = async () => {
+      const results = await Promise.all(
+        projectsList.map(async (project) => [
+          project.projectId,
+          await checkApprovalRequest(project),
+        ])
+      );
+      const statuses = Object.fromEntries(results);
+
+      setApprovalStatuses(statuses);
+    };
+
+    if (projectsList.length > 0) {
+      loadStatuses();
+    }
+  }, [projectsList]);
+
   /**
    * Creates a grid that showcases the user's current projects.
    * @param userProjects Projects to display
@@ -312,6 +357,7 @@ const MyProjects = (userProfile: any) => {
               >
                 <MyProjectsDisplayGrid
                   projectData={project}
+                  approvalStatus={approvalStatuses[project.projectId]}
                 />
               </LeaveDeleteContext.Provider>
             );
@@ -329,36 +375,43 @@ const MyProjects = (userProfile: any) => {
   const ListDisplay = ({ userProjects }: { userProjects: ProjectDetail[] }) => {
     return (
       <>
-        {/* Projects List header */}
-        <div className="my-projects-list-header">
-          <div className="project-header-label title">Project Title</div>
-          <div className="project-header-label status">Status</div>
-          <div className="project-header-label date">Date Created</div>
-        </div>
+        <table className='responsive-table'>
+          {/* Projects List header */}
+          <thead className="my-projects-list-header">
+            <tr>
+              <th className="project-header-label title">Project Title</th>
+              <th className="project-header-label status">Status</th>
+              <th className="project-header-label approval-status">Approval Status</th>
+              <th className="project-header-label date">Date Created</th>
+              {/* <th className="project-header-label options">Options</th> */}
+            </tr>
+          </thead>
 
-        <div className='my-projects-list'>
-          {userProjects.map(project => {
-            // Check if user is the owner of this project
-            const isOwner = (project.owner.userId === loggedIn);
+          <tbody className='my-projects-list'>
+            {userProjects.map(project => {
+              // Check if user is the owner of this project
+              const isOwner = (project.owner.userId === loggedIn);
 
-            return (
-              <LeaveDeleteContext.Provider
-                key={project.projectId}
-                value={{
-                  isOwner,
-                  projId: project.projectId,
-                  userId: loggedIn,
-                  reloadProjects: getUserProjects,
-                  removeProject,
-                }}
-              >
-                <MyProjectsDisplayList
-                  projectData={project}
-                />
-              </LeaveDeleteContext.Provider>
-            );
-          })}
-        </div>
+              return (
+                <LeaveDeleteContext.Provider
+                  key={project.projectId}
+                  value={{
+                    isOwner,
+                    projId: project.projectId,
+                    userId: loggedIn,
+                    reloadProjects: getUserProjects,
+                    removeProject,
+                  }}
+                >
+                  <MyProjectsDisplayList
+                    projectData={project}
+                    approvalStatus={approvalStatuses[project.projectId]}
+                  />
+                </LeaveDeleteContext.Provider>
+              );
+            })}
+          </tbody>
+        </table>
       </>
     );
   };
@@ -601,7 +654,7 @@ const MyProjects = (userProfile: any) => {
         </div>
       </div>
 
-      <hr id='my-projects-hr'/>
+      <hr id='my-projects-hr' />
 
       {/* Project Grid/List */}
       <main id="main">

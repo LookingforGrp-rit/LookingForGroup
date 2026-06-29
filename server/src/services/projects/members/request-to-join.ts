@@ -2,7 +2,7 @@ import type { RequestToJoinInput, EmailInput } from '@looking-for-group/shared';
 import { createElement } from 'react';
 import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
-import InviteEmail from '#email-templates/invite-email.ts';
+import ApplyEmail from '#email-templates/apply-email.ts';
 import getRolesService from '#services/datasets/get-roles.ts';
 import { sendEmail } from '#services/mailer.ts';
 import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts';
@@ -68,12 +68,26 @@ export const requestToJoinService = async (
       return project;
     }
 
+    //update db
+    const result = await prisma.memberRequests.create({
+      data: {
+        roleId: data.roleId,
+        prospectiveMemberId: data.prospectiveMemberId,
+        sentFromProject: false,
+        requestStatus: 'Pending',
+        projectId,
+      },
+    });
+
     //Set up email
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    const inviteUrl = `${clientUrl}/projects/${String(projectId)}/members/${String(role.roleId)}/invite`;
+    //TODO: Update URL with actual url for application acceptance
+    const inviteUrl = `${clientUrl}/acceptApplication/${String(result.requestId)}`;
 
-    const receiverImg = requester.profileImage
+    const profileUrl = `${clientUrl}/profile?userID=${String(requester.userId)}`;
+
+    const senderImg = requester.profileImage
       ? `https://lookingforgrp.com${requester.profileImage}`
       : 'https://lookingforgrp.com/api/images/blue_frog.png';
 
@@ -85,21 +99,22 @@ export const requestToJoinService = async (
 
     const html = await pretty(
       await render(
-        createElement(InviteEmail, {
+        createElement(ApplyEmail, {
           receiverName: {
-            firstName: requester.firstName,
-            lastName: requester.lastName,
-          },
-          receiverImage: receiverImg,
-          senderName: {
             firstName: owner.firstName,
             lastName: owner.lastName,
           },
-          senderEmail: owner.ritEmail,
+          senderImage: senderImg,
+          senderName: {
+            firstName: requester.firstName,
+            lastName: requester.lastName,
+          },
+          senderProfileLink: profileUrl,
+          senderEmail: requester.ritEmail,
           senderMessage: msg,
           projectName: project.title,
           projectImage: projectImg,
-          inviteLink: inviteUrl,
+          applyLink: inviteUrl,
         }),
       ),
     );
@@ -119,17 +134,6 @@ export const requestToJoinService = async (
     if (emailResult === 'INTERNAL_ERROR') {
       return emailResult;
     }
-
-    //update db
-    await prisma.memberRequests.create({
-      data: {
-        roleId: data.roleId,
-        prospectiveMemberId: data.prospectiveMemberId,
-        sentFromProject: false,
-        requestStatus: 'Pending',
-        projectId,
-      },
-    });
 
     return 'OK';
   } catch (e) {

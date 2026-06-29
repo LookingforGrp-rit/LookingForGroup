@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { Dispatch, SetStateAction, useState } from "react";
+import { Dispatch, SetStateAction, useMemo, useState } from "react";
 import { ProjectWithFollowers } from "@looking-for-group/shared";
+import profileImage from "../images/lfrog.png";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
 import {
@@ -19,9 +20,13 @@ interface TeamPositionsPanelProps {
 export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewedPosition }: TeamPositionsPanelProps) => {
   const navigate = useNavigate();
 
-  //Find first member with the job title of 'Project Lead'
-  //If no such member exists, use first member in project member list
-  const projectLead = displayedProject?.owner;
+  const currentJob = displayedProject.jobs?.[viewedPosition];
+  const jobContact = useMemo(() => {
+    if (!currentJob?.contact) {
+      return displayedProject?.owner;
+    }
+    return currentJob.contact;
+  }, [currentJob, displayedProject?.owner]);
 
   // Local state for the Quick Apply UI. Delivery (email / notification / etc.)
   // is not wired up yet — the click handler currently only flips local state.
@@ -36,7 +41,7 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
     console.log("[Quick Apply] would notify owner", {
       projectId: displayedProject.projectId,
       projectTitle: displayedProject.title,
-      ownerUserId: projectLead?.userId,
+      ownerUserId: jobContact?.userId,
       viewedRole,
       message: joinMessage,
     });
@@ -73,8 +78,7 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
       <div className="positions-popup-info-wrapper">
         <div className="positions-popup-info">
           <div className="positions-popup-info-title">
-            {displayedProject.jobs[viewedPosition]?.role
-              ?.label ?? undefined}
+            {currentJob.role?.label ?? undefined}
           </div>
 
           <div id="position-description-header">
@@ -85,7 +89,7 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
             id="position-description-content"
             className="positions-popup-info-description"
           >
-            {displayedProject.jobs[viewedPosition]?.description}
+            {currentJob?.description}
           </div>
 
           <div id="open-position-details">
@@ -94,23 +98,13 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
                 <span className="position-detail-indicator">
                   Availability:{" "}
                 </span>
-                {
-                  JobAvailabilityEnums[
-                  displayedProject.jobs[viewedPosition]
-                    ?.availability
-                  ]
-                }
+                {JobAvailabilityEnums[currentJob?.availability]}
               </div>
               <div id="position-location">
                 <span className="position-detail-indicator">
                   Location:{" "}
                 </span>
-                {
-                  JobLocationEnums[
-                  displayedProject.jobs[viewedPosition]
-                    ?.location
-                  ]
-                }
+                {JobLocationEnums[currentJob?.location]}
               </div>
             </div>
 
@@ -119,23 +113,13 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
                 <span className="position-detail-indicator">
                   Duration:{" "}
                 </span>
-                {
-                  JobDurationEnums[
-                  displayedProject.jobs[viewedPosition]
-                    ?.duration
-                  ]
-                }
+                {JobDurationEnums[currentJob?.duration]}
               </div>
               <div id="position-compensation">
                 <span className="position-detail-indicator">
                   Compensation:{" "}
                 </span>
-                {
-                  JobCompensationEnums[
-                  displayedProject.jobs[viewedPosition]
-                    ?.compensation
-                  ]
-                }
+                {JobCompensationEnums[currentJob?.compensation]}
               </div>
             </div>
           </div>
@@ -144,7 +128,7 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
         <div id="position-contact">
           {requestSent ? (
             <span id="position-join-request-confirmation">
-              Request sent! {projectLead?.firstName} will be in touch.
+              Request sent! {jobContact?.firstName} will be in touch.
             </span>
           ) : (
             <>
@@ -152,13 +136,27 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
               <span
                 onClick={() =>
                   navigate(
-                    `${paths.routes.PROFILE}?userID=${projectLead?.userId}`
+                    `${paths.routes.PROFILE}?userID=${jobContact?.userId}`
                   )
                 }
                 id="position-contact-link"
               >
-                {projectLead?.firstName} {projectLead?.lastName}
+                 <img
+                  className="project-member-image"
+                  src={
+                    jobContact?.profileImage ?? profileImage
+                  }
+                  alt="profile picture"
+                  onError={(e) => {
+                    // default profile picture if user image doesn't load
+                    // Cannot use usePreloadedImage function because this is in a callback
+                    const profileImg = e.target as HTMLImageElement;
+                    profileImg.src = profileImage;
+                  }}
+                />
+                {jobContact?.firstName} {jobContact?.lastName}
               </span>
+
               {" "}or{" "}
               <button
                 type="button"
@@ -187,7 +185,7 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
             </label>
             <textarea
               id="position-join-request-message"
-              placeholder={`Let ${projectLead?.firstName ?? "the owner"} know why you'd be a good fit...`}
+              placeholder={`Let ${jobContact?.firstName ?? "the owner"} know why you'd be a good fit...`}
               value={joinMessage}
               onChange={(e) => setJoinMessage(e.target.value)}
               maxLength={500}

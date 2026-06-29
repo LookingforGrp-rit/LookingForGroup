@@ -5,7 +5,7 @@ import { deleteProjectService } from '#services/projects/delete-proj.ts';
 //DELETE api/projcets/{id}
 //deletes a project
 const deleteProjectController = async (req: Request, res: Response) => {
-  const projectId = parseInt(req.params.id);
+  const projectId = parseInt(req.params.id as string);
   const result = await deleteProjectService(projectId);
 
   if (result === 'NOT_FOUND') {

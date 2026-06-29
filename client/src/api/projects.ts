@@ -29,6 +29,9 @@ import type {
   UpdateProjectThumbnailInput,
   ProjectVideo,
   CreateProjectVideoInput,
+  AddJobSkillInput,
+  JobSkill,
+  UpdateJobSkillInput,
   SendProjectInviteInput,
   RequestToJoinInput,
   MemberRequests,
@@ -53,6 +56,21 @@ export const createNewProject = async (
 
   return response as ApiResponse<ProjectDetail>;
 };
+
+/**
+ * sends a project to be reviewed by a moderator, required to make a project visible
+ * @param projectId - ID of project to request review
+ * @returns 200 if valid, 400 if not
+ */
+export const requestProjectReview = async (
+  projectId: number,
+): Promise<ApiResponse<ProjectDetail>> => {
+  const apiURL = '/projects/unapproved/' + projectId;
+  const response = await POST(apiURL, {});
+
+  //console.log(response);
+  return response as ApiResponse<ProjectDetail>;
+}
 
 /**
  * Gets all projects in the database
@@ -630,7 +648,7 @@ export const getProjectJobs = async (
 // Add a project job
 /**
  * @param projectID - ID of the project
- * @param jobData - Data with which to create the joob
+ * @param jobData - Data with which to create the job
  */
 export const addProjectJob = async (
   projectID: number,
@@ -642,6 +660,77 @@ export const addProjectJob = async (
   if (response.error) console.log(`Error in addProjectJob: ${response.error}`);
   return response as ApiResponse<ProjectJob>;
 };
+
+//Add a job skill to a job
+/**
+ * @param projectID - ID of the project
+ * @param jobID - ID of the job
+ * @param skillData - Data with which to create the job skill
+ */
+export const addJobSkill = async (
+  projectID: number,
+  jobID: number,
+  skillData: AddJobSkillInput
+): Promise<ApiResponse<JobSkill>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills`;
+  const response = await POST(apiURL, skillData);
+
+  if (response.error) console.log(`Error in addJobSkill: ${response.error}`);
+  return response as ApiResponse<JobSkill>;
+};
+
+//Get all skills attached to a job
+/**
+ * @param projectID - ID of the project
+ * @param jobID - ID of the job
+ * @param skillData - Data with which to create the job skill
+ */
+export const getJobSkills = async (
+  projectID: number,
+  jobID: number
+): Promise<ApiResponse<JobSkill[]>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills`;
+  const response = await GET(apiURL);
+
+  if (response.error) console.log(`Error in getJobSkills: ${response.error}`);
+  return response as ApiResponse<JobSkill[]>;
+};
+
+/**
+ * @param projectID - ID of the project
+ * @param jobID - ID of the job
+ * @param skillData - Data with which to create the job skill
+ */
+export const updateJobSkill = async (
+  projectID: number,
+  jobID: number,
+  skillID: number,
+  skillData: UpdateJobSkillInput
+): Promise<ApiResponse<JobSkill>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const response = await PATCH(apiURL, skillData);
+
+  if (response.error) console.log(`Error in updateJobSkill: ${response.error}`);
+  return response as ApiResponse<JobSkill>;
+};
+
+/**
+ * @param projectID - ID of the project
+ * @param jobID - ID of the job
+ * @param skillData - Data with which to create the job skill
+ */
+export const deleteJobSkill = async (
+  projectID: number,
+  jobID: number,
+  skillID: number
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in deleteJobSkill: ${response.error}`);
+  return response as ApiResponse<null>;
+};
+
 
 // Update a project tag
 /**
@@ -726,8 +815,22 @@ export const reorderProjectImages = async (
 //   return response;
 // }
 
+export const projectApprovalRequestExists = async (projectID: number): Promise<boolean> => {
+  const apiURL = `/projects/unapproved/${projectID}`;
+  const response = await GET(apiURL);
+
+  if (response.status === 500)
+    console.log(`Error in projectApprovalRequestExists: ${response.error}`);
+  else if (response.status === 404) {
+    console.log(`Error in projectApprovalRequestExists: ${response.error}`);
+    return false;
+  }
+  return true;
+};
+
 export default {
   createNewProject,
+  requestProjectReview,
   getProjects,
   getByID,
   updateProject,
@@ -758,5 +861,10 @@ export default {
   addProjectMedium,
   deleteProjectMedium,
   reorderProjectImages,
+  addJobSkill,
+  getJobSkills,
+  updateJobSkill,
+  deleteJobSkill,
   // getImageByFileName,
+  projectApprovalRequestExists,
 };

@@ -19,6 +19,18 @@ Profile Panel component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
+.back-btn, 
+#profile-page .back-arrow,
+.edit-profile-body .back-btn {
+  display: inline-block;
+  transition: transform 0.2s ease;
+}
+
+.back-btn:hover, 
+#profile-page .back-arrow:hover,
+.edit-profile-body .back-btn:hover {
+  transform: translateY(-2px);
+}
 /* #region profile page component */
 
 .profile-panel-box {
@@ -51,7 +63,7 @@ Profile Panel component style rules
   /* align-items: center; */
   text-align: left;
   padding: 0 0 20px 0;
-  margin: 0 auto;
+  margin: 0 auto 1em;
   overflow: hidden;
 
   img {
@@ -1163,7 +1175,8 @@ New Profile page style rules
 */
 /* #region new profile page */
 #profile-page-content {
-  margin: 0 50px;
+  margin: 0 auto;
+  width: 100%;
 }
 
 #profile-hero {
@@ -1337,18 +1350,30 @@ New Profile page style rules
 
 #profile-extra {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   gap: 20px;
   width: 100%;
   margin: 20px 0;
   height: fit-content;
+  flex-wrap: wrap;
 
-  #socials,
-  #skills {
+  #contact-and-skills {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    max-width: 100%;
+  }
+
+  #contact-and-skills #socials,
+  #contact-and-skills #skills,
+  #profile-likes {
     display: flex;
     flex-direction: column;
     gap: 20px;
     width: 100%;
+    /* Include the padding in the 100% width so the boxes line up with the
+       others instead of overflowing ~30px past the right edge. */
+    box-sizing: border-box;
     background-color: var(--header-color);
     border-radius: 10px;
     padding: 10px 10px 10px 20px;
@@ -1393,7 +1418,57 @@ New Profile page style rules
   }
 
   #socials {
-    width: 33%;
+    max-width: 33%;
+  }
+
+  #profile-likes {
+    width: auto;
+  }
+
+  #likes-block,
+  #likes-tabs {
+    display: flex;
+    gap: 15px;
+  }
+
+  #likes-block {
+    flex-direction: column;
+    gap: 0px;
+    padding-right: 10px;
+    padding-bottom: 10px;
+  }
+
+  #likes-container {
+    width: 100%;
+    min-height: 100px;
+    background-color: var(--liked-section-bg);
+    border-radius: 10px;
+    border-top-left-radius: 0px;
+    border-color: var(--liked-section-bg);
+    border-style: solid;
+    padding: 10px 0px;
+    max-height: 500px;
+    overflow-y: scroll;
+    overflow-x: hidden;
+
+    .no-saved-items {
+      margin-left: 1.5rem;
+      color: var(--main-text);
+    }
+  }
+
+  #likes-projects,
+  #likes-profiles {
+    color: var(--primary-color);
+    background-color: var(--liked-section-bg);
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    border-color: var(--liked-section-bg);
+    border-style: solid;
+    font-size: 1.25rem;
+    padding: 0.3rem 0.6rem;
+    padding-bottom: 0.4rem;
+    font-weight: 600;
   }
 }
 
@@ -1504,9 +1579,25 @@ New Profile page style rules
   #profile-extra {
     flex-direction: column;
 
+    /* Stack the contact + skills boxes vertically on mobile so each spans the
+       full width, instead of the desktop side-by-side layout where #socials was
+       capped at 33% — that cap squished "Contact Me" onto two lines and pushed
+       the email outside the box. */
+    #contact-and-skills {
+      flex-direction: column;
+    }
+
     #socials,
     #skills {
       width: auto;
+      max-width: 100%;
+    }
+
+    /* Let a long email/phone wrap inside the box instead of overflowing it. */
+    #profile-email a,
+    #profile-number a {
+      min-width: 0;
+      overflow-wrap: anywhere;
     }
   }
 }
@@ -1865,6 +1956,7 @@ New Profile page style rules
     align-items: stretch;
     gap: 8px;
   }
+
   .profile-invite-label {
     text-align: left;
   }
