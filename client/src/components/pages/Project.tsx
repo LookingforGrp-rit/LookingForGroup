@@ -317,7 +317,7 @@ const Project = (userProfile: any) => {
         </Dropdown>
       </>
     ) : (
-      user && (
+      (
         <>
           {/* Heart icon, with number indicating follows */}
           <div className="project-info-followers">

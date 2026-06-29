@@ -877,11 +877,11 @@ Project Creator and Editor Popup style rules
   max-height: 370px;
   overflow-y: auto;
 
-  #tag-category-header{
+  #tag-category-header {
     width: 100%;
   }
 
-  #tag-category-header p{
+  #tag-category-header p {
     font-weight: bold;
     font-size: medium;
     margin-top: 0.5em;
@@ -1882,6 +1882,7 @@ button.edit-position-contact .project-member-image {
   border: none;
   cursor: pointer;
 }
+
 .delete-tags-btn {
   padding: 4px;
   background: none;
@@ -4545,7 +4546,7 @@ My projects page style rules
   border: 0px;
   border-radius: 10px;
   box-shadow: 1px 2px 2px var(--shadow-color);
-  width: 154px;
+  width: 160px;
   height: fit-content;
   padding: 15px 10px;
   z-index: 1;
@@ -4668,6 +4669,7 @@ My projects page style rules
 }
 
 @media only screen and (max-width: 600px) {
+
   /* Hide table headers (but not display: none;, for accessibility) */
   .responsive-table thead tr {
     position: absolute;
