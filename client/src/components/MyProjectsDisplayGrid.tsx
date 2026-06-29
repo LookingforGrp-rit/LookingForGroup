@@ -150,7 +150,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                   id={"pencil"}
                   width={21}
                   height={21}
-                  ariaLabel={"Leave project"}
+                  ariaLabel={"Edit project"}
                   className="mono-fill"
                 />
                 Edit Project
@@ -159,10 +159,10 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
               <button className='card-leave-button'
                 onClick={() => { if (projectData) { requestProjectReview(projectData.projectId); location.reload(); } }}>
                 <ThemeIcon
-                  id={"pencil"}
+                  id={"request-review"}
                   width={21}
                   height={21}
-                  ariaLabel={"Leave project"}
+                  ariaLabel={"Request Review"}
                   className="mono-fill"
                 />
                 Request Review
