@@ -1117,13 +1117,13 @@ Project Creator and Editor Popup style rules
   display: flex;
   justify-content: center;
   margin: 20px 0;
+  max-width: 100%;
 }
 
 #project-editor-tag-search-tabs {
   overflow-x: visible;
   justify-content: flex-start;
 }
-
 
 #project-editor-team-tabs,
 #project-editor-tag-search-tabs {
@@ -1143,6 +1143,7 @@ Project Creator and Editor Popup style rules
 @media only screen and (max-width: 420px) {
   #project-editor-team-tabs {
     align-items: center;
+    gap: 4%;
   }
 }
 
@@ -1160,7 +1161,7 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
   font-weight: 400;
   word-break: normal;
-  max-width: 100%;
+  width: 100%;
   background-color: var(--tab-color);
   border-top-left-radius: 25%;
   border-top-right-radius: 25%;
