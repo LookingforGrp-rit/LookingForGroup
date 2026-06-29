@@ -28,6 +28,8 @@ const AcceptApplication = () => {
     const [memberFirstName, setMemberFirstName] = useState<String | null>(null);
     const [memberLastName, setMemberLastName] = useState<String | null>(null);
 
+    const [hasRespondPerm, setHasRespondPerm] = useState<boolean>(false); // Should the user have access to respond to this request
+    const [msg, setMsg] = useState<string>(''); // Message for request not found or perm issue
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
     //#region Helper Methods
@@ -48,11 +50,16 @@ const AcceptApplication = () => {
         }
     };
 
-    const fetchProject = async (projectId: number) => {
+    const fetchProject = async (projectId: number, currentUserId: number) => {
         try {
             const res = await getByID(projectId);
 
             if (res.data) {
+                // only project owner should have respond permission
+                setHasRespondPerm(res.data.owner.userId === currentUserId);
+                if (res.data.owner.userId !== currentUserId)
+                    setMsg('You do not have permission to respond to this application. Only the project owner may review and respond the application.');
+
                 setProjectTitle(res.data.title);
             }
         } catch (err) {
@@ -60,12 +67,12 @@ const AcceptApplication = () => {
         }
     };
 
-    const fetchMemberRequest = async (requestId: number) => {
+    const fetchMemberRequest = async (requestId: number, currentUserId: number) => {
         try {
             const res = await getRequestByID(requestId);
 
             if (res.data) {
-                await fetchProject(res.data.projectId);
+                await fetchProject(res.data.projectId, currentUserId);
                 await fetchRole(res.data.roleId);
 
                 const member = await getUsersById(res.data.prospectiveMemberId);
@@ -76,6 +83,7 @@ const AcceptApplication = () => {
             }
         } catch (err) {
             setError('Fetch Project Error: ' + err);
+            setMsg('This application could not be found or may no longer be available.');
         }
     };
 
@@ -89,7 +97,8 @@ const AcceptApplication = () => {
                 setUserId(res.data.userId);
                 setFirstName(res.data.firstName);
 
-                await fetchMemberRequest(requestIdNum);
+                // use res.data.userId because setUserId() does not immediately update userId
+                await fetchMemberRequest(requestIdNum, res.data.userId);
             } else {
                 navigate(paths.routes.LOGIN, {
                     state: { from: location }
@@ -143,12 +152,24 @@ const AcceptApplication = () => {
                     <div id="accept-invite-container">
                         <div id="accept-invite-info">
                             <h1>Hi, {firstName}!</h1>
-                            <h2>{memberFirstName ?? "The owner"} {memberLastName ?? ""} has requested to join <h2 id="project-title">{projectTitle?.toUpperCase() ?? "a project"}</h2></h2>
-                            <p>Their role will be {role?.label ?? "Member"}</p>
-                            <div id="accept-invite-btns">
-                                <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Application</button>
-                                <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Application</button>
-                            </div>
+                            {
+                                hasRespondPerm
+                                    ? <>
+                                        <h2>{memberFirstName ?? "The owner"} {memberLastName ?? ""} has requested to join <span id="project-title">{projectTitle ?? "a project"}</span></h2>
+                                        <p>Their role will be {role?.label ?? "Member"}</p>
+                                        <div id="accept-invite-btns">
+                                            <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Application</button>
+                                            <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Application</button>
+                                        </div>
+                                    </>
+                                    : <>
+                                        <p>Looks like you're in the wrong place. </p>
+                                        <p>{msg}</p>
+                                        <div id="accept-invite-btns">
+                                            <button onClick={() => { navigate(paths.routes.HOME) }}>Return Home</button>
+                                        </div>
+                                    </>
+                            }
                         </div>
                     </div>
                 }
