@@ -155,7 +155,7 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
               </button>
               {/* TODO: add checking if the project is approved/rejected/pending */}
               <button className='card-leave-button'
-                onClick={() => { if (projectData) requestProjectReview({ ...projectData, followers: {} as ProjectFollowers }) }}>
+                onClick={() => { if (projectData) { requestProjectReview(projectData.projectId); location.reload(); } }}>
                 <ThemeIcon
                   id={"pencil"}
                   width={21}
