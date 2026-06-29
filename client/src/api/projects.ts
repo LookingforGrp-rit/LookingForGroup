@@ -122,7 +122,10 @@ export const getRequestByID = async (
   const apiURL = `/projects/members/requests/${requestID}`;
   const response = await GET(apiURL);
 
-  if (response.error) console.log(`Error in getByID: ${response.error}`);
+  if (response.error) {
+    console.log(`Error in getByID: ${response.error}`);
+    throw new Error(response.error);
+  }
   return response;
 };
 
