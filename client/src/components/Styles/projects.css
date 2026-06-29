@@ -1253,9 +1253,9 @@ Project Creator and Editor Popup style rules
   align-content: flex-start;
   justify-content: center;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
   background: var(--bg-color);
   gap: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
 }
 
 .project-editor-project-member {
