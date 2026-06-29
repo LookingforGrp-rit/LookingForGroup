@@ -3319,6 +3319,53 @@ Project Carousel style rules
   font-weight: 700;
 }
 
+#project-request-review {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 0;
+
+  label {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+
+  br {
+    margin-bottom: 5px;
+  }
+
+  #project-request-info {
+    width: 75%;
+    text-align: center;
+  }
+
+  #project-request-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    button {
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+    }
+
+    #request-confirm-button {
+      background-color: var(--primary-color);
+      color: var(--invert-text);
+      border-radius: 20px;
+      padding: 4px 10px;
+    }
+
+    #request-cancel-button {
+      background: none;
+      color: var(--primary-color);
+    }
+  }
+}
+
 #project-info-edit {
   font-size: 1rem;
   border: none;
