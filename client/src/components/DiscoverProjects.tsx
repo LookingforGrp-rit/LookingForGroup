@@ -8,7 +8,7 @@ import { Tag, StringDictionary, Medium } from '@looking-for-group/shared';
 
 
 interface DiscoverProjectsProps {
-    updateItemList: (tags: Tag[]) => void;
+    updateItemList: (tags: Tag[], filterMode: "Match All" | "Match Any") => void;
 }
 
 interface FilterTab {
@@ -82,6 +82,8 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     // Tabs shown in the popup, dynamically created after fetching data
     const [filterPopupTabs, setFilterPopupTabs] = useState<FilterTab[]>([]);
 
+    const [filterMode, setFilterMode] = useState<"Match All" | "Match Any">("Match All");
+
 
     //////////////////
     //HELPER METHODS//
@@ -148,7 +150,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
         }
 
         setActiveTagFilters(newActiveTags);
-        updateItemList(newActiveTags);
+        updateItemList(newActiveTags, filterMode);
     };
 
     /**
@@ -346,7 +348,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                 <img alt="close" src="/src/icons/cancel.png" onClick={() => { setActivePopup(false); }}></img>
                             </PopupButton>
                             <div id="filters-popup">
-                                <h2>{'Project Filters'}</h2>
+                                <h2>Project Filters</h2>
                                 <div id="filters" className="popup-section">
                                     <SearchBar
                                         dataSets={dataSet}
@@ -488,6 +490,12 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     </div>
                                 </div>
                                 <div id="filters-btns-section">
+                                    <button id='match-button'
+                                    onClick={() => {
+                                      setFilterMode(filterMode === "Match All" ? "Match Any" : "Match All");
+                                    }}>
+                                      {filterMode}
+                                    </button>
                                     {/* Reset Filters button */}
                                     <PopupButton
                                       className={'delete-button'}
@@ -547,7 +555,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                             setAppliedFiltersDisplay(enabledFilters);
 
                                             // Update the project list
-                                            updateItemList(newActiveTags);
+                                            updateItemList(newActiveTags, filterMode);
 
                                             //Add "Applied Filters" div if it is missing and if the paragraph exists
                                             if (newActiveTags.length > 0) {
@@ -589,7 +597,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     const newActiveTags = tempList.map((filter) => filter.tag);
                                     setAppliedFiltersDisplay(tempList);
                                     setActiveTagFilters(newActiveTags);
-                                    updateItemList(newActiveTags);
+                                    updateItemList(newActiveTags, filterMode);
 
                                     if (newActiveTags.length === 0 || (newActiveTags.length === 1 && newActiveTags[0].type === 'Project Type')) {
                                         setDisplayFiltersText(false);

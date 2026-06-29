@@ -1213,6 +1213,11 @@ export interface ProjectDetail extends ProjectPreview {
    * The date the project was last updated
    */
   updatedAt: Date;
+
+  /**
+   * Is the project approved?
+   */
+  approved: boolean;
 }
 
 /**

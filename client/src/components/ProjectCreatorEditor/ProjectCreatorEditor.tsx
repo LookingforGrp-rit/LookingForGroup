@@ -15,14 +15,14 @@ import {
   deleteProjectSocial,
   deleteProject,
   getByID,
+  requestProjectReview,
 } from "../../api/projects";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
-import { getCurrentAccount, getProjectsByUser, getUsersById, } from "../../api/users";
+import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
 import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
-import { getCurrentUsername } from "../../api/users";
 
 // NO COMMENTS FOR WHAT THESE ARE??????
 interface Props {
@@ -120,6 +120,24 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setSaveable(valid);
   }
 
+  const setup = async () => {
+    // Load existing project
+    try {
+      // const response = await getByID(Number(projectID));
+      // if (!response.data) return;
+
+      dataManager = await projectDataManager(projectID);
+
+      const data = dataManager.getSavedProject();
+      setProjectData(data);
+      setModifiedProject(data);
+    } catch (err) {
+      console.error("Error loading existing project:", err);
+    }
+  }
+
+  if (!newProject && projectID) setup;
+
   /**
    * update the red missing fields message to show what is missing from the page
    */
@@ -169,23 +187,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setConfirm(false);
     setMessage("Project is missing a medium!");
 
-    if (!newProject && projectID) {
-
-      // Load existing project
-      try {
-        // const response = await getByID(Number(projectID));
-        // if (!response.data) return;
-
-        dataManager = await projectDataManager(projectID);
-
-        const data = dataManager.getSavedProject();
-        setProjectData(data);
-        setModifiedProject(data);
-      } catch (err) {
-        console.error("Error loading existing project:", err);
-      }
-    }
-    else if (newProject) {
+    if (newProject) {
       // Setup default project for creation
       const newData = {
         title: "My Project",
@@ -217,6 +219,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       await setProjectData(newData);
       await setModifiedProject(newData);
     }
+    else if (projectID) {
+      if (!dataManager)
+        setup();
+    }
+
+
     if (startButton.current) {
       (startButton.current as unknown as HTMLElement).focus();
     }
@@ -584,10 +592,18 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
         </PopupButton>
       ) : (
-        <PopupButton callback={buttonCallback} buttonId="project-info-edit">
-          Edit Project
-        </PopupButton>
+        <div id="project-info-contexts">
+          <PopupButton callback={buttonCallback} buttonId="project-info-edit">
+            Edit Project
+          </PopupButton>
+          {/* TODO: add checking if the project is approved/rejected/pending */}
+          {/* Don't use projectData here because it won't be fetched until Create/Edit is clicked */}
+          <button id="project-info-request" onClick={() => { if (projectID) { requestProjectReview(projectID); location.reload(); } }}>
+            Request Project Review
+          </button>
+        </div>
       )}
+
 
       <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>

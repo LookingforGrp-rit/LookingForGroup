@@ -12,6 +12,7 @@ export const ProjectDetailSelector = Object.freeze({
   audience: true,
   createdAt: true,
   updatedAt: true,
+  approved: true,
   projectImages: {
     select: ProjectImageSelector,
   },

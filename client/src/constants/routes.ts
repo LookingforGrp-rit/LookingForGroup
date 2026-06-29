@@ -14,6 +14,7 @@ export const routes = {
   // PROJECTPOST: '/projectPost',
   CREATEPROJECT: '/createProject',
   ACCEPTINVITATION: '/acceptInvite/:requestId',
+  ACCEPTAPPLICATION: '/acceptApplication/:requestId',
   // MESSAGEHISTORY: '/messageHistory',
   DISCOVERANDMEET: '/discoverAndMeet',
   SETTINGS: '/settings',
