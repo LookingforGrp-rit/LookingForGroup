@@ -25,6 +25,7 @@
 .about-section{
   width: 100%;
   margin: 0rem !important;
+  padding-left:0%
 }
 
 .about-header-two{
@@ -33,6 +34,7 @@
   margin-top: 1%;
   margin-bottom: 0;
   font-weight: 600;
+  padding-left: 16px;
 }
 
 .about-header-three{
@@ -42,12 +44,21 @@
   font-weight: 600;
 }
 
+#credits{
+  margin-left: 0px !important;
+  padding-left: 16px !important;
+}
 
 #credits-title{
   color:var(--primary-color);
   font-size: 1.7rem !important;
   margin-top: 1% !important;
+  margin-left: 0% !important;
   font-weight: 600 !important;
+}
+
+.guidelines-list{
+  padding-left: 16px !important;
 }
 
 #about-purpose{
@@ -55,6 +66,7 @@
   width: 100%;
   border-radius: 10px;
   margin-bottom: 2% !important;
+  padding-left: 16px;
 }
 
 .features-list{
@@ -66,6 +78,18 @@
     "purpose creation"
     "management profile";
   gap: 1%;
+}
+
+#features-section{
+  padding-left: 0% !important;
+}
+
+#about-purpose > .about-header-two{
+  padding-left: 0px;
+}
+
+.about-section > .about-header-three{
+  padding-left: 16px;
 }
 
 .about-box{

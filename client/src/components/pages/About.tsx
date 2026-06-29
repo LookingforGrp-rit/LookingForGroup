@@ -76,7 +76,7 @@ const AboutPage = () => {
                         </p>
                     </section>
 
-                    <section className="about-section">
+                    <section className="about-section" id="features-section">
                         <h2 className="about-header-two">What We Offer</h2>
                         <section className="features-list">
                             <section className="about-box" id="purpose-box">
