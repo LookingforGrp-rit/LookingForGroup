@@ -1192,6 +1192,10 @@ Filters / Tags Style Rules
   color: #f3be9b;
 }
 
+#filters-popup p{
+  margin-top: 0.5em;
+}
+
 /* Main Content Panel (Search, Categories, Tags) */
 #filters.popup-section {
   width: 100% !important;
@@ -1275,6 +1279,19 @@ Filters / Tags Style Rules
   height: 170px !important;
   overflow-y: auto !important;
   padding: 4px 0 !important;
+
+  #tag-category-header{
+    width: 100%;
+    height: min-content;
+    margin-top: 0.5em;
+  }
+
+  #tag-category-header p{
+    font-weight: bold;
+    font-size: medium;
+    margin-top: 0.5em;
+    color: var(--primary-color);
+  }
 }
 
 /* Selected Items Tray (Footer Container) */
