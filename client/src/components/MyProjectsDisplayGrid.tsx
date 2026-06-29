@@ -181,7 +181,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                     <div id="project-request-buttons">
                       <PopupButton buttonId="request-confirm-button"
                       callback={() => {
-                        if (projectData) requestProjectReview({ ...projectData, followers: {} as ProjectFollowers });
+                        if (projectData) requestProjectReview(projectData.projectId);
                       }}
                       >
                         request review

@@ -180,7 +180,7 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                     <div id="project-request-buttons">
                       <PopupButton buttonId="request-confirm-button"
                       callback={() => {
-                        if (projectData) requestProjectReview({ ...projectData, followers: {} as ProjectFollowers });
+                        if (projectData) requestProjectReview(projectData.projectId);
                       }}
                       >
                         request review
@@ -253,7 +253,7 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                     </div>
                   </PopupContent>
                 </Popup>
-              )} */}
+              )}
               {(isOwner) && (
                 <Popup>
                   <PopupButton className='card-delete-button'>

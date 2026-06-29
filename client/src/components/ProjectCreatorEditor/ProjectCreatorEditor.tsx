@@ -13,16 +13,15 @@ import {
   updateProjectSocial,
   addProjectSocial,
   deleteProjectSocial,
-  deleteProject,
   getByID,
   requestProjectReview,
   projectApprovalRequestExists,
 } from "../../api/projects";
-import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { ProjectApprovalStatus, ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 // NO COMMENTS FOR WHAT THESE ARE??????
@@ -648,7 +647,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 <div id="project-request-buttons">
                   <PopupButton buttonId="request-confirm-button"
                   callback={() => {
-                    if (projectData) requestProjectReview(projectData);
+                    if (projectData) requestProjectReview(projectID);
                   }}
                   >
                     request a review
