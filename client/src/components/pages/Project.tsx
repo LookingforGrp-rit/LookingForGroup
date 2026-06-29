@@ -239,6 +239,8 @@ const Project = (userProfile: any) => {
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div id="project-info-dropdown">
+              {/* Share Project */}
+              <ShareButton />
               {/* Leave Project */}
               <Popup>
                 <PopupButton className="project-info-dropdown-option">
