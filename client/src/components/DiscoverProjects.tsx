@@ -291,6 +291,24 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     // --------------------
     // Component
     // --------------------
+    let tagsToDisplay = searchedTags.tags;
+    let currentTabName = filterPopupTabs[activeTabId]?.categoryName;
+
+    switch(currentTabName){
+        case "Genre":
+            //Genre
+            let story = searchedTags.tags.filter((tag) => (tag as Tag).category === "Story");
+            let game = searchedTags.tags.filter((tag) => (tag as Tag).category === "Game");
+            let music = searchedTags.tags.filter((tag) => (tag as Tag).category === "Music");
+            tagsToDisplay = story.concat(game, music);
+            break;
+        case "Style":
+            //Style
+            let visual = searchedTags.tags.filter((tag) => (tag as Tag).category === "Visual");
+            let filmVideo = searchedTags.tags.filter((tag) => (tag as Tag).category === "Film/Video");
+            tagsToDisplay = visual.concat(filmVideo);
+            break;
+    }
     return (
         <div id="discover-filters-parent">
             <div id="discover-filters">
@@ -404,7 +422,14 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         {searchedTags.tags.length === 0 ? (
                                             <p>No tags found. Please try a different search term.</p>
                                         ) : (
-                                            searchedTags.tags.map((tag) => (
+                                            tagsToDisplay.map((tag, index, array) => (
+                                                <Fragment key={`${tag.label}-${tag.type}`}>
+                                                {(index === 0 || (array[index - 1].category != array[index].category)) && array[index].category != "Other" && array[index].category != null
+                                                ? <div id="tag-category-header">
+                                                    <p>{array[index].category}</p>
+                                                    <hr></hr>
+                                                  </div>
+                                                : <></>}
                                                 <button
                                                     key={`${tag.label}-${tag.type}`}
                                                     // className={`tag-button tag-button-${searchedTags.color}-unselected`}
@@ -464,6 +489,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                                     ></i>
                                                     <p>{tag.label}</p>
                                                 </button>
+                                                </Fragment>
                                             ))
                                         )}
                                     </div>

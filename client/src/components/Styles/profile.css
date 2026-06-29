@@ -19,18 +19,19 @@ Profile Panel component style rules
 ------------------------------------------------------------------------------------------------
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/
 */
-.back-btn, 
+.back-btn,
 #profile-page .back-arrow,
 .edit-profile-body .back-btn {
   display: inline-block;
   transition: transform 0.2s ease;
 }
 
-.back-btn:hover, 
+.back-btn:hover,
 #profile-page .back-arrow:hover,
 .edit-profile-body .back-btn:hover {
   transform: translateY(-2px);
 }
+
 /* #region profile page component */
 
 .profile-panel-box {
@@ -1429,6 +1430,16 @@ New Profile page style rules
   #likes-tabs {
     display: flex;
     gap: 15px;
+
+    button:hover {
+      transform: none;
+      padding-bottom: 10px;
+    }
+  }
+
+  #likes-tabs {
+    align-items: flex-end;
+    height: 40px;
   }
 
   #likes-block {

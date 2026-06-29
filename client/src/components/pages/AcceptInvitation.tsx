@@ -26,6 +26,8 @@ const AcceptInvitation = () => {
     const [ownerFirstName, setOwnerFirstName] = useState<String | null>(null);
     const [ownerLastName, setOwnerLastName] = useState<String | null>(null);
 
+    const [hasRespondPerm, setHasRespondPerm] = useState<boolean>(false); // Should the user have access to respond to this request
+    const [msg, setMsg] = useState<string>(''); // Message for request not found or perm issue
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
     //#region Helper Methods
@@ -60,7 +62,7 @@ const AcceptInvitation = () => {
         }
     };
 
-    const fetchMemberRequest = async (requestId: number) => {
+    const fetchMemberRequest = async (requestId: number, currentUserId: number) => {
         try {
             const res = await getRequestByID(requestId);
 
@@ -68,10 +70,16 @@ const AcceptInvitation = () => {
                 await fetchProject(res.data.projectId);
                 await fetchRole(res.data.roleId);
 
+                // only prospective member should have respond permission
+                setHasRespondPerm(res.data.prospectiveMemberId === currentUserId);
+                if (res.data.prospectiveMemberId !== currentUserId)
+                    setMsg('You do not have permission to respond to this invitation. Only the prospective member may review and respond the invitation.');
+
                 setProjectId(res.data.projectId);
             }
         } catch (err) {
             setError('Fetch Project Error: ' + err);
+            setMsg('This invitation could not be found or may no longer be available.');
         }
     };
 
@@ -85,7 +93,8 @@ const AcceptInvitation = () => {
                 setUserId(res.data.userId);
                 setFirstName(res.data.firstName);
 
-                await fetchMemberRequest(requestIdNum);
+                // use res.data.userId because setUserId() does not immediately update userId
+                await fetchMemberRequest(requestIdNum, res.data.userId);
             } else {
                 navigate(paths.routes.LOGIN, {
                     state: { from: location }
@@ -139,12 +148,24 @@ const AcceptInvitation = () => {
                     <div id="accept-invite-container">
                         <div id="accept-invite-info">
                             <h1>Hi, {firstName}!</h1>
-                            <h2>{ownerFirstName ?? "The owner"} {ownerLastName ?? ""} invited you to join <h2 id="project-title">{projectTitle?.toUpperCase() ?? "a project"}</h2></h2>
-                            <p>Your role will be {role?.label ?? "Member"}</p>
-                            <div id="accept-invite-btns">
-                                <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Invite</button>
-                                <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Invite</button>
-                            </div>
+                            {
+                                hasRespondPerm
+                                    ? <>
+                                        <h2>{ownerFirstName ?? "The owner"} {ownerLastName ?? ""} invited you to join <span id="project-title">{projectTitle ?? "a project"}</span></h2>
+                                        <p>Your role will be {role?.label ?? "Member"}</p>
+                                        <div id="accept-invite-btns">
+                                            <button id="decline-button" onClick={() => { handleMemberRequest('Declined') }}>Decline Invite</button>
+                                            <button onClick={() => { handleMemberRequest('Accepted') }}>Accept Invite</button>
+                                        </div>
+                                    </>
+                                    : <>
+                                        <p>Looks like you're in the wrong place. </p>
+                                        <p>{msg}</p>
+                                        <div id="accept-invite-btns">
+                                            <button onClick={() => { navigate(paths.routes.HOME) }}>Return Home</button>
+                                        </div>
+                                    </>
+                            }
                         </div>
                     </div>
                 }

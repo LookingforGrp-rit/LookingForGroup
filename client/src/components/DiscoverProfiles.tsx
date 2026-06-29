@@ -271,6 +271,54 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
       // --------------------
       // Component
       // --------------------
+      let skillsToDisplay = searchedSkills.skills;
+      let currentTabName = filterPopupTabs[activeTabId]?.categoryName;
+      let discipline;
+
+      switch (currentTabName){
+        case "Developer Skill":
+          //Developer
+          discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
+          let software = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Software");
+          let codingLanguage = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Coding Language");
+          let framework = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Framework");
+          let operatingSystem = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Operating System");
+          let gameEngine = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Game Engine");
+          skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
+          break;
+        case "Designer Skill":
+          //Designer
+          discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
+          let videoSoftware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Video Software");
+          let designSoftware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Design Software");
+          let artAnimation = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Art and Animation");
+          let photoEditing = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Photo Editing");
+          skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
+          break;
+        case "Soft Skill":
+          //Soft
+          discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
+          let team = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Team");
+          let personal = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Personal");
+          skillsToDisplay = discipline.concat(team, personal);
+          break;
+        case "Audio Skill":
+          //Audio
+          discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
+          let dawAudioEditor = searchedSkills.skills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
+          let middleware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Middleware");
+          let notation = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Notation");
+          skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
+          break;
+        case "Engineer Skill":
+          //Engineer
+          discipline = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Discipline");
+          let engineeringSoftware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Engineering Software");
+          let hardware = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Hardware");
+          skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
+          break;
+      }
+
       return (
         <>
           <div id="discover-filters-parent">
@@ -387,7 +435,14 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                           {searchedSkills.skills.length === 0 ? (
                             <p>No skills found. Please try a different search term.</p>
                           ) : (
-                            searchedSkills.skills.map((skill) => (
+                            skillsToDisplay.map((skill, index, array) => (
+                              <Fragment key={`${skill.label}-${skill.type}`}>
+                              {(index === 0 || (array[index - 1].category != array[index].category)) && array[index].category != null
+                              ? <div id="tag-category-header">
+                                  <p>{array[index].category}</p>
+                                  <hr></hr>
+                                </div>
+                              : <></>}
                               <button
                                 key={`${skill.label}-${skill.type}`}
                                 // className={`skill-button skill-button-${searchedSkills.color}-unselected`}
@@ -447,6 +502,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
                                 ></i>
                                 <p>{skill.label}</p>
                               </button>
+                              </Fragment>
                             ))
                           )}
                         </div>

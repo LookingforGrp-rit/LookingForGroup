@@ -3,6 +3,7 @@
   primary component (App.tsx). Add files here as created.
 */
 
+@import url(./aboutPage.css);
 @import url(./aboutTab.css);
 @import url(./credits.css);
 @import url(./discoverMeet.css);
