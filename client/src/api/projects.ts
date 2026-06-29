@@ -35,6 +35,7 @@ import type {
   SendProjectInviteInput,
   RequestToJoinInput,
   MemberRequests,
+  DeleteJobSkillInput,
 } from "@looking-for-group/shared";
 
 //const navigate = useNavigate();
@@ -672,10 +673,9 @@ export const addProjectJob = async (
  */
 export const addJobSkill = async (
   projectID: number,
-  jobID: number,
   skillData: AddJobSkillInput
 ): Promise<ApiResponse<JobSkill>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills`;
   const response = await POST(apiURL, skillData);
 
   if (response.error) console.log(`Error in addJobSkill: ${response.error}`);
@@ -706,11 +706,10 @@ export const getJobSkills = async (
  */
 export const updateJobSkill = async (
   projectID: number,
-  jobID: number,
   skillID: number,
   skillData: UpdateJobSkillInput
 ): Promise<ApiResponse<JobSkill>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills/${skillID}`;
   const response = await PATCH(apiURL, skillData);
 
   if (response.error) console.log(`Error in updateJobSkill: ${response.error}`);
@@ -724,10 +723,9 @@ export const updateJobSkill = async (
  */
 export const deleteJobSkill = async (
   projectID: number,
-  jobID: number,
-  skillID: number
+  skillData: DeleteJobSkillInput
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills/${skillData.skillId}`;
   const response = await DELETE(apiURL);
 
   if (response.error) console.log(`Error in deleteJobSkill: ${response.error}`);
