@@ -22,6 +22,7 @@ import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
+import { reportProjectController } from '../../../../server/src/api/controllers/me/report-proj';
 
 //Main component for the project page
 /**
@@ -402,6 +403,14 @@ const Project = (userProfile: any) => {
                     width={27}
                     height={27}
                     ariaLabel={"Report"}
+                    /* This should open a popup to report the user */
+                    onClick={() => {
+                      <Popup>
+                        <PopupContent>
+                          <h2>Report {displayedProject?.title ?? "Project"}</h2>
+                        </PopupContent>
+                      </Popup>
+                    }/*reportProjectController(projectID, )*/}
                   />
                   Report
                 </button>
