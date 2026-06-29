@@ -2541,27 +2541,45 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/projects/members/requests/{id}:
+  /api/projects/members/requests:
     get:
       summary: Gets a member request
-      description: Checks that the user is the receiver of the request, then updates it if it is
+      description: Gets the member request associated to the id and data in query
       tags:
         - Projects
       security:
         - shibbolethAuth: []
       parameters:
-        - in: path
-          name: id
-          schema:
-            type: integer
-          required: true
-          description: The ID of the request
         - in: query
           name: devId
           schema:
             type: integer
           required: false
           description: The user ID to be used as the current user
+        - in: query
+          name: requestId
+          schema:
+            type: integer
+          required: false
+          description: The ID of the request. If requestId is provided, the others are optional. If requestId is not provided, require the other three (prospectiveMemberId, projectId, roleId).
+        - in: query
+          name: prospectiveMemberId
+          schema:
+            type: integer
+          required: false
+          description: The user ID of the prospective member
+        - in: query
+          name: projectId
+          schema:
+            type: integer
+          required: false
+          description: The project ID associated to the request
+        - in: query
+          name: roleId
+          schema:
+            type: integer
+          required: false
+          description: The role ID associated to the request
       responses:
         '200':
           description: Request Successful
@@ -3147,6 +3165,7 @@ paths:
           $ref: '#/components/responses/Conflict'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
   /api/projects/{id}/tags/{tagId}:
     patch:
       summary: Updates the order of a tag in the list
@@ -4381,6 +4400,7 @@ paths:
           $ref: '#components/responses/Forbidden'
         '500':
           $ref: '#components/responses/InternalServerError'
+
   # IMAGES
   /api/images/{image}:
     get:
@@ -4522,6 +4542,7 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
   /api/me/notifications/{id}/read:
     patch:
       summary: Marks a notification as read.
