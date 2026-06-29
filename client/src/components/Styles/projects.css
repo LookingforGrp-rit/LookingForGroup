@@ -3430,6 +3430,7 @@ project-team-open-posiions-info: edit/create proj popup
   margin-bottom: 20px;
   width: 100%;
   max-width: 1141px;
+  height: fit-content;
 }
 
 #positions-popup-header {
