@@ -590,6 +590,10 @@ Project Creator and Editor Popup style rules
     color: var(--primary-color);
     margin: 0 0 15px;
   }
+  p, button
+  {
+    font-size: 1.125rem;
+  }
 
   input {
     margin: 20px;
