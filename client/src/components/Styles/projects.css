@@ -3693,6 +3693,7 @@ button#positions-popup-list-item-active {
 #position-contact {
   margin: 20px;
   margin-left: auto;
+  padding-left: 20px;
   width: max-content;
   height: 50px;
   display: flex;
@@ -3700,6 +3701,7 @@ button#positions-popup-list-item-active {
   gap: 5px;
   font-style: italic;
   color: var(--neutral-gray);
+  justify-content: end;
 }
 
 #position-contact-link {
@@ -3791,6 +3793,9 @@ button#positions-popup-list-item-active {
   color: var(--primary-color);
   font-weight: 600;
   font-style: normal;
+  max-width: 50ch;
+  text-wrap: pretty;
+  display: block;
 }
 
 #positions-popup-close {
