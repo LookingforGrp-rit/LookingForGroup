@@ -293,8 +293,9 @@ input:focus:not(:focus-visible) {
   outline: none;
 }
 
-svg:focus, input:focus {
-  outline:none;
+svg:focus,
+input:focus {
+  outline: none;
 }
 
 /*give sections of the page a drop shadow*/
@@ -783,7 +784,7 @@ Sidebar Nav style rules
   border-radius: 30px;
   font-weight: bold;
   transition: transform 0.2s ease, background-color 0.25s ease, filter 0.25s ease;
-  
+
   p {
     margin-left: 15px;
     color: var(--create-text);
@@ -796,11 +797,12 @@ Sidebar Nav style rules
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
   transform: translateY(-2px);
   border: 2px solid var(--create-bg);
-  
+
   svg {
     filter: invert(1) saturate(0) brightness(0.5);
     transition: 0.25s;
   }
+
   p {
     color: var(--create-bg);
     transition: 0.25s;
@@ -808,7 +810,7 @@ Sidebar Nav style rules
 }
 
 .Create>button:active {
-  transform: translateY(0); 
+  transform: translateY(0);
 }
 
 /*responsive stuff for sidebar*/
@@ -819,7 +821,7 @@ Sidebar Nav style rules
     position: fixed;
     bottom: 10px;
     background-color: var(--border-color);
-    z-index: 3;
+    z-index: 4;
   }
 
   .ProfileContainer {
@@ -903,7 +905,8 @@ Sidebar Nav style rules
     }
   }
 
-  .sidebar-btn, #my-profile-sidebar-btn {
+  .sidebar-btn,
+  #my-profile-sidebar-btn {
     height: 55px !important;
     width: 55px !important;
     border-radius: 50% !important;
@@ -917,7 +920,7 @@ Sidebar Nav style rules
   .containerButtonSideBar>.sidebar-btn>.sidebar-icon,
   .containerButtonSideBar>#my-profile-sidebar-btn>#profile {
     margin: 0% !important;
-    padding: 0% !important; 
+    padding: 0% !important;
     width: 30px !important;
     height: 30px !important;
   }
@@ -1200,8 +1203,7 @@ Page popup style rules
     margin-right: 0;
   }
 
-  #filters-btns-section
-  {
+  #filters-btns-section {
     display: flex;
     align-items: center;
     justify-content: center;
