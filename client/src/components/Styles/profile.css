@@ -66,6 +66,7 @@ Profile Panel component style rules
   padding: 0 0 20px 0;
   margin: 0 auto 1em;
   overflow: hidden;
+  text-decoration: none;
 
   img {
     width: 100%;
@@ -84,6 +85,7 @@ Profile Panel component style rules
     line-height: normal;
     overflow-wrap: break-word;
     word-break: break-word;
+    text-decoration: underline !important;
   }
 
   /* Major */
@@ -93,6 +95,7 @@ Profile Panel component style rules
     font-size: 1rem;
     font-weight: 400;
     line-height: normal;
+    text-decoration: none !important;
   }
 
   /* Quote */
