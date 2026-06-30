@@ -66,6 +66,7 @@ Profile Panel component style rules
   padding: 0 0 20px 0;
   margin: 0 auto 1em;
   overflow: hidden;
+  text-decoration: none;
 
   img {
     width: 100%;
@@ -84,6 +85,7 @@ Profile Panel component style rules
     line-height: normal;
     overflow-wrap: break-word;
     word-break: break-word;
+    text-decoration: underline !important;
   }
 
   /* Major */
@@ -93,6 +95,7 @@ Profile Panel component style rules
     font-size: 1rem;
     font-weight: 400;
     line-height: normal;
+    text-decoration: none !important;
   }
 
   /* Quote */
@@ -1247,6 +1250,7 @@ New Profile page style rules
           display: flex;
           gap: 12px;
           flex-wrap: wrap;
+          width: 100%;
 
           >#profile-fullname {
             color: var(--primary-color);
@@ -1484,6 +1488,13 @@ New Profile page style rules
   }
 }
 
+@media only screen and (min-width: 1101px) {
+  #profile-buttons{
+    .dropdown{
+    right: 0px;
+    }
+  }
+}
 
 @media only screen and (max-width: 1100px) {
   #profile-hero {
@@ -1537,6 +1548,10 @@ New Profile page style rules
         #profile-buttons {
           flex-wrap: wrap;
           justify-content: flex-start !important;
+
+          .dropdown {
+            right: -51px;
+          }
         }
       }
     }
@@ -2285,6 +2300,53 @@ New Profile page style rules
 
 [data-theme="dark"] .interest-tag-button-blue-selected:hover .fa {
   color: white !important;
+}
+
+#project-request-review {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 0;
+
+  label {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+
+  br {
+    margin-bottom: 5px;
+  }
+
+  #project-request-info {
+    width: 75%;
+    text-align: center;
+  }
+
+  #project-request-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    button {
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+    }
+
+    #request-confirm-button {
+      background-color: var(--primary-color);
+      color: var(--invert-text);
+      border-radius: 20px;
+      padding: 4px 10px;
+    }
+
+    #request-cancel-button {
+      background: none;
+      color: var(--primary-color);
+    }
+  }
 }
 
 /* #endregion */
