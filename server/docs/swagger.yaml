@@ -4279,6 +4279,15 @@ paths:
             type: integer
           required: false
           description: The user ID to be used as the current user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
       responses:
         '200':
           description: Project successfully rejected.
@@ -4377,6 +4386,15 @@ paths:
             type: integer
           required: true
           description: User id to be used. Use a user id from a moderator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
       responses:
         '204':
           description: Project unapproved
