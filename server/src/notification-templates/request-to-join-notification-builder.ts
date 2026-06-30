@@ -58,7 +58,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     const requesterLastName = data?.users.lastName as string;
     const requesterUsername = data?.users.username as string;
     const roleName = roleData?.label as string;
-    const requesterProfileLink = `${process.env.CLIENT_DOMAIN as string}/profile?userID=${prospectiveMemberId.toString()}`;
+    const requesterProfileLink = `${process.env.CLIENT_URL as string}/profile?userID=${prospectiveMemberId.toString()}`;
     const acceptRequestLink = `$`;
 
     //--BUILDING NOTIFICATION--//
