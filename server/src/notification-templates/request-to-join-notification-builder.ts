@@ -76,7 +76,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     notification.message += `You may view the requester's profile at `;
     notification.message += `<a href="${requesterProfileLink}">${requesterProfileLink}</a>. `;
     notification.message += `You may respond to their invite by going to `;
-    notification.message += `<a href=${acceptRequestLink}>${acceptRequestLink}</a>.`;
+    notification.message += `<a href="${acceptRequestLink}">${acceptRequestLink}</a>.`;
 
     return notification;
   }
