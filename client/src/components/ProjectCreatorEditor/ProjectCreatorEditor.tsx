@@ -269,7 +269,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       autoStarted.current = true;
       createOrEdit();
     }
-    
+
     if (!newProject && projectID) setup();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoStart, newProject, projectID]);
@@ -569,6 +569,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 location: (job as ProjectJob).location,
                 roleId: (job as ProjectJob).role.roleId,
                 description: job.description ?? undefined,
+                jobSkills: (job as ProjectJob).jobSkills
               }
             })
           }
@@ -627,38 +628,38 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           <PopupButton callback={buttonCallback} buttonId="project-info-edit">
             Edit Project
           </PopupButton>
-          {approvalStatus === "not-approved" ? 
-          <Popup>
-            {/* TODO: add checking if the project is approved/rejected/pending */}
-            <PopupButton buttonId="project-info-request" >
-              Request Project Review
-            </PopupButton>
-            <PopupContent>
-              <div id="project-request-review">
-                <label id="project-request-label">
-                  Would you like to submit your project for review?
-                </label>
-                <div id="project-request-info">
-                  Submiting a request will make your project visible to moderators who will choose to either
-                  accept and make your project visible to all, request changes for you to make, 
-                  or reject it for various reasons. <br/>
-                  <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+          {approvalStatus === "not-approved" ?
+            <Popup>
+              {/* TODO: add checking if the project is approved/rejected/pending */}
+              <PopupButton buttonId="project-info-request" >
+                Request Project Review
+              </PopupButton>
+              <PopupContent>
+                <div id="project-request-review">
+                  <label id="project-request-label">
+                    Would you like to submit your project for review?
+                  </label>
+                  <div id="project-request-info">
+                    Submiting a request will make your project visible to moderators who will choose to either
+                    accept and make your project visible to all, request changes for you to make,
+                    or reject it for various reasons. <br />
+                    <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                  </div>
+                  <div id="project-request-buttons">
+                    <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (projectData) requestProjectReview(projectID);
+                      }}
+                    >
+                      request a review
+                    </PopupButton>
+                    <PopupButton buttonId="request-cancel-button">
+                      cancel
+                    </PopupButton>
+                  </div>
                 </div>
-                <div id="project-request-buttons">
-                  <PopupButton buttonId="request-confirm-button"
-                  callback={() => {
-                    if (projectData) requestProjectReview(projectID);
-                  }}
-                  >
-                    request a review
-                  </PopupButton>
-                  <PopupButton buttonId="request-cancel-button">
-                    cancel
-                  </PopupButton>
-                </div>
-              </div>
-            </PopupContent>
-          </Popup> : ""}
+              </PopupContent>
+            </Popup> : ""}
         </div>
       )}
 

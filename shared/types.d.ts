@@ -1575,7 +1575,7 @@ export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
 export type CreateProjectJobInput = Required<
   Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
 > &
-  Partial<Pick<ProjectJob, "description">> & {
+  Partial<Pick<ProjectJob, "description" | "jobSkills"/*dont know if this is correct to add here */>> & {
     roleId: number;
     contactUserId: number;
   };
