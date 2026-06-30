@@ -130,8 +130,6 @@ export const DiscoverPage = () => {
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
     const projectRes = await getProjects();
-    console.log(projectDataSet);
-
     if (!projectRes.data) return;
 
     const newProjectCache = projectCache;

@@ -1247,6 +1247,7 @@ New Profile page style rules
           display: flex;
           gap: 12px;
           flex-wrap: wrap;
+          width: 100%;
 
           >#profile-fullname {
             color: var(--primary-color);
@@ -1419,6 +1420,7 @@ New Profile page style rules
   }
 
   #socials {
+    min-width: 210px;
     max-width: 33%;
   }
 
@@ -1483,6 +1485,13 @@ New Profile page style rules
   }
 }
 
+@media only screen and (min-width: 1101px) {
+  #profile-buttons{
+    .dropdown{
+    right: 0px;
+    }
+  }
+}
 
 @media only screen and (max-width: 1100px) {
   #profile-hero {
@@ -1536,6 +1545,10 @@ New Profile page style rules
         #profile-buttons {
           flex-wrap: wrap;
           justify-content: flex-start !important;
+
+          .dropdown {
+            right: -51px;
+          }
         }
       }
     }
@@ -1557,6 +1570,32 @@ New Profile page style rules
 
   #profile-page-content {
     margin: 0 20px;
+  }
+
+  
+  #profile-extra {
+    flex-direction: column;
+
+    /* Stack the contact + skills boxes vertically on mobile so each spans the
+       full width, instead of the desktop side-by-side layout where #socials was
+       capped at 33% — that cap squished "Contact Me" onto two lines and pushed
+       the email outside the box. */
+    #contact-and-skills {
+      flex-direction: column;
+    }
+
+    #socials,
+    #skills {
+      width: auto;
+      max-width: 100%;
+    }
+
+    /* Let a long email/phone wrap inside the box instead of overflowing it. */
+    #profile-email a,
+    #profile-number a {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
   }
 }
 
