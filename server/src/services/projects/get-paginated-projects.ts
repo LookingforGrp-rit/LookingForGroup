@@ -43,12 +43,12 @@ const getPaginatedProjectsService = async (
     const result = await prisma.projects.findMany(query);
 
     //return transformed projects
-    let transformedProjects = result.map(transformProjectToPreview);
+    const transformedProjects = result.map(transformProjectToPreview);
 
     //Array is alphabetized by project title
-    transformedProjects = transformedProjects.toSorted(
-      (project1, project2) => project1.title.charCodeAt(0) - project2.title.charCodeAt(0),
-    );
+    // transformedProjects = transformedProjects.toSorted(
+    //   (project1, project2) => project1.title.charCodeAt(0) - project2.title.charCodeAt(0),
+    // );
 
     return transformedProjects;
   } catch (e) {
