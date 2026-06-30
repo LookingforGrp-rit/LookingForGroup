@@ -161,9 +161,11 @@ export const DiscoverPage = () => {
   //Gets the projects and updates the variables above
   const getPaginatedProjects = async () => {
     let returnedProjects = await GET(`/projects/paginated/${count}/${index}`);
-    if(returnedProjects.data && returnedProjects.data[returnedProjects.data.length - 1]){
+
+    if (returnedProjects.data && returnedProjects.data[returnedProjects.data.length - 1]) {
       index = returnedProjects.data[returnedProjects.data.length - 1].projectId;
     }
+
     return returnedProjects.data;
   }
 
@@ -441,8 +443,9 @@ export const DiscoverPage = () => {
   }, []);
 
   return (
-    //Using onScrollEnd for now so it doesn't spam loading more projects
-    <div className="page discover-page" tabIndex={-1} onScroll={scrollEvent}>
+    //TEMP FIX for spamming requests: use onScrollEnd
+    //Looks alright but theres probably better solutions
+    <div className="page discover-page" tabIndex={-1} onScrollEnd={scrollEvent}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
