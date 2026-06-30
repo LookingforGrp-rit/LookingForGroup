@@ -155,7 +155,6 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
               </button>
               {approvalStatus === 'not-approved' ?
               <Popup>
-                {/* TODO: add checking if the project is approved/rejected/pending */}
                 <PopupButton className='card-leave-button'>
                   <ThemeIcon
                     id={"request-review"}
@@ -183,10 +182,10 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                         if (projectData) requestProjectReview(projectData.projectId);
                       }}
                       >
-                        Request Review
+                        request review
                       </PopupButton>
                       <PopupButton buttonId="request-cancel-button">
-                        Cancel
+                        cancel
                       </PopupButton>
                     </div>
                   </div>
