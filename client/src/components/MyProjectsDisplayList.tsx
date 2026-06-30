@@ -182,10 +182,10 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                         if (projectData) requestProjectReview(projectData.projectId);
                       }}
                       >
-                        Request Review
+                        request review
                       </PopupButton>
                       <PopupButton buttonId="request-cancel-button">
-                        Cancel
+                        cancel
                       </PopupButton>
                     </div>
                   </div>
