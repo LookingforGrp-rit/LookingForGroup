@@ -1,3 +1,4 @@
+import type { UserAccessLevel } from '@looking-for-group/shared/enums.ts';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
@@ -7,7 +8,9 @@ type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 //get username by google id now
 export const getUserByGoogleService = async (
   googleId: string,
-): Promise<{ username: string; userId: number; isMod: boolean } | GetUserServiceError> => {
+): Promise<
+  { username: string; userId: number; accessLevel: UserAccessLevel } | GetUserServiceError
+> => {
   try {
     //findUnique
     const user = await prisma.users.findFirst({
@@ -15,7 +18,7 @@ export const getUserByGoogleService = async (
       select: {
         username: true,
         userId: true,
-        moderator: true,
+        accessLevel: true,
       },
     });
 
@@ -24,7 +27,7 @@ export const getUserByGoogleService = async (
     return {
       username: user.username,
       userId: user.userId,
-      isMod: user.moderator,
+      accessLevel: user.accessLevel as UserAccessLevel,
     };
   } catch (e) {
     console.error(`Error in getUserByGoogleService: ${e as Error}`);

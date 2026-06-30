@@ -1,3 +1,4 @@
+import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 
 // Enums for better typing
@@ -52,6 +53,7 @@ export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
 export type Visibility = "public" | "private";
+export type UserAccessLevel = "User" | "Moderator" | "Administrator";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
 
@@ -85,7 +87,7 @@ export interface StructuredUserInfo {
  * Used for routes that make changes to a logged-in user
  */
 export interface AuthenticatedRequest extends Request {
-  currentUser: { username: string; userId: number; isMod: boolean };
+  currentUser: { username: string; userId: number; accessLevel: UserAccessLevel };
 }
 
 //API RESPONSE
