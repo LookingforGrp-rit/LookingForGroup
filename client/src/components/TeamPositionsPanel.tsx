@@ -34,7 +34,7 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
   // is not wired up yet — the click handler currently only flips local state.
   const [joinMessage, setJoinMessage] = useState<string>("");
   const [systemMessage, setSystemMessage] = useState<string>("");
-  const [applied, setApplied] = useState<boolean>(false);
+  const [allowApply, setAllowApply] = useState<boolean>(true);
   const [quickApplyOpen, setQuickApplyOpen] = useState<boolean>(false);
   const [requestSent, setRequestSent] = useState<boolean>(false);
 
@@ -72,17 +72,21 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
         roleId: displayedProject.jobs?.[jobIndex]?.role?.roleId
       });
 
-      setApplied(true);
-
-      if (result.data?.requestStatus === "Accepted")
-        setSystemMessage('Your application for this position has been accepted.');
-      else if (result.data?.requestStatus === "Pending")
-        setSystemMessage('You have already applied for this position. Your application is currently under review.');
-      else if (result.data?.requestStatus === "Declined")
-        setSystemMessage('You have already applied for this position. Unfortunately, your application was not accepted.');
+      if (result.data?.requestStatus === "Accepted") {
+        setSystemMessage('Your have been accepted for this position.');
+        setAllowApply(false);
+      } else if (result.data?.requestStatus === "Pending") {
+        setSystemMessage('Your status for this position is currently under review.');
+        setAllowApply(false);
+      } else if (result.data?.requestStatus === "Declined") {
+        setSystemMessage('Note: You were previously invited to or applied for this position, but you declined the opportunity or your application was not accepted.');
+        setAllowApply(true);
+      }
 
     } catch (e) {
-      setApplied(false);
+      // no request made before
+      setAllowApply(true);
+      setSystemMessage('');
     }
   };
 
@@ -168,12 +172,11 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
         </div>
 
         <div id="position-contact">
-          {applied || requestSent ? (
-            <span id="position-join-request-confirmation">
-              {systemMessage}
-            </span>
-          ) : (
-            <>
+          <span id="position-join-request-confirmation">
+            {systemMessage}
+          </span>
+          {(allowApply && !requestSent) && (
+            <div id="position-apply">
               Message{" "}
               <span
                 onClick={() =>
@@ -213,7 +216,7 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
               >
                 {quickApplyOpen ? "Send" : "Quick Apply"}
               </button>
-            </>
+            </div>
           )}
         </div>
 

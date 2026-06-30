@@ -444,7 +444,10 @@ export const requestToJoin = async (
   const apiURL = `/projects/${projectID}/members/request-to-join`;
   const response = await POST(apiURL, memberData);
 
-  if (response.error) console.log(`Error in requestToJoin: ${response.error}`);
+  if (response.error) {
+    console.log(`Error in requestToJoin: ${response.error}`);
+    throw new Error(response.error);
+  }
   return response as ApiResponse<null>;
 };
 
