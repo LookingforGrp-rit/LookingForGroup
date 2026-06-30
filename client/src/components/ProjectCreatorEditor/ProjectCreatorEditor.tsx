@@ -123,11 +123,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setSaveable(valid);
   }
 
-  const checkApprovalRequest = async () => {
+  const checkApprovalRequest = async (ID: number) => {
     let status: ApprovalStatusKey = 'not-approved';
 
     try {
-      const result = await projectApprovalRequestExists(projectData?.projectId as number);
+      const result = await projectApprovalRequestExists(ID);
 
       // if the project is marked as approved -> status is "approved"
       // if not approved -> check if an approval request exists -> "under-review"
@@ -156,14 +156,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       dataManager = await projectDataManager(projectID);
 
       const data = dataManager.getSavedProject();
+      const result = await checkApprovalRequest(data.projectId);
+
       setProjectData(data);
       setModifiedProject(data);
+      setApprovalStatus(result);
     } catch (err) {
       console.error("Error loading existing project:", err);
-    }
-    if (projectData) {
-      const result = await checkApprovalRequest();
-      setApprovalStatus(result);
     }
   }
 
@@ -243,6 +242,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         followers: {} as ProjectFollowers,
         tags: [] as Tag[],
         mediums: [] as Medium[],
+        approved: false,
       } as ProjectWithFollowers;
 
       await setProjectData(newData);
@@ -472,11 +472,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
         if (!response.error && response.data) {
           dataManager = await projectDataManager(response.data.projectId);
-          await setProjectID(response.data.projectId);
+          setProjectID(response.data.projectId);
 
           /* PROJECT IMAGES */
           for (let image of modifiedProject.projectImages) {
-            await dataManager.createImage({
+            dataManager.createImage({
               id: {
                 type: "local",
                 value: (image as ProjectImage).imageId
@@ -488,7 +488,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             })
           }
           if (modifiedProject.thumbnail)
-            await dataManager.updateThumbnail({
+            dataManager.updateThumbnail({
               id: {
                 value: projectID,
                 type: "local",
@@ -500,7 +500,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           /* PROJECT VIDEOS */
           for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
-            await dataManager?.createVideo({
+            dataManager?.createVideo({
               id: {
                 value: video.videoId,
                 type: "local"
@@ -511,7 +511,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           /* PROJECT TAGS */
           for (let tag of modifiedProject.tags) {
-            await dataManager.addTag({
+            dataManager.addTag({
               id: {
                 type: "local",
                 value: tag.tagId,
@@ -525,7 +525,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           /* PROJECT MEDIUMS */
           for (let medium of modifiedProject.mediums) {
-            await dataManager.addMedium({
+            dataManager.addMedium({
               id: {
                 type: "local",
                 value: medium.mediumId,
@@ -556,7 +556,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           /* PROJECT JOBS */
           for (let job of modifiedProject.jobs) {
-            await dataManager.createJob({
+            dataManager.createJob({
               id: {
                 type: "local",
                 value: (job as Pending<ProjectJob>).localId as number,
@@ -575,7 +575,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           /* PROJECT SOCIALS */
           for (let link of modifiedProject.projectSocials) {
-            await dataManager.addSocial({
+            dataManager.addSocial({
               id: {
                 type: "local",
                 value: link.websiteId as number,
@@ -627,9 +627,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           <PopupButton callback={buttonCallback} buttonId="project-info-edit">
             Edit Project
           </PopupButton>
-          {approvalStatus === "not-approved" ? 
+          {approvalStatus === "not-approved" || approvalStatus === undefined ? 
           <Popup>
-            {/* TODO: add checking if the project is approved/rejected/pending */}
             <PopupButton buttonId="project-info-request" >
               Request Project Review
             </PopupButton>

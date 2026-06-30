@@ -21,14 +21,13 @@ import {
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
-import usePreloadedImage from '../../functions/imageLoad';
 
 //Main component for the project page
 /**
  * Project page. Renders the project page with all project details, team member information, and available positions.
  * @returns JSX Element
  */
-const Project = (userProfile: any) => {
+const Project = () => {
   //Navigation hook
   const navigate = useNavigate();
 
@@ -684,11 +683,10 @@ const Project = (userProfile: any) => {
                     Keep up with us!
                     <div id="project-overview-links">
                       {displayedProject.projectSocials.map((social, index) => (
-                        <button
+                        <a
                           key={index}
-                          onClick={() => {
-                            window.open(social.url, "_blank");
-                          }}
+                          href={social.url}
+                          target="_blank"
                         >
                           <ThemeIcon
                             id={
@@ -701,7 +699,7 @@ const Project = (userProfile: any) => {
                             className={"color-fill"}
                             ariaLabel={social.label}
                           />
-                        </button>
+                        </a>
                       ))}
                     </div>
                   </>
