@@ -1,5 +1,7 @@
 import type { ApiResponse, RequestToJoinInput } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
+import { RequestToJoinNotificationBuilder } from '#notification-templates/request-to-join-notification-builder.ts';
+import sendNotificationService from '#services/notifications/send-notification.ts';
 import { requestToJoinService } from '#services/projects/members/request-to-join.ts';
 
 //POST api/projects/{id}/members/request-to-join
@@ -46,6 +48,8 @@ const requestJoinController = async (req: Request, res: Response) => {
     data: null,
   };
   res.status(200).json(resBody);
+
+  sendNotificationService(new RequestToJoinNotificationBuilder(), req).catch(() => {});
 };
 
 export default requestJoinController;

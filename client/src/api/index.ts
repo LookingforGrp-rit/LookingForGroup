@@ -16,11 +16,26 @@ const getBaseUrl = (): string => {
 };
 
 //Basic GET function for utilities
-export const GET = async (apiURL: string): Promise<ApiResponse> => {
+export const GET = async (apiURL: string, query?: object): Promise<ApiResponse> => {
   try {
     let url = getBaseUrl() + apiURL;
+    const params = new URLSearchParams();
+
     if (import.meta.env.DEV && import.meta.env.VITE_DEV_ID) {
-      url += `?devId=${import.meta.env.VITE_DEV_ID}`
+      params.append('devId', import.meta.env.VITE_DEV_ID);
+    }
+
+    if (query) {
+      Object.entries(query).forEach(([key, value]) => {
+        if (value !== undefined && value !== null) {
+          params.append(key, String(value));
+        }
+      });
+    }
+
+    const queryString = params.toString();
+    if (queryString) {
+      url += `?${queryString}`;
     }
 
     const response = await fetch(url, {

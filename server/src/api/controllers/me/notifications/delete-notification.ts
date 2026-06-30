@@ -17,9 +17,9 @@ export const deleteNotification = async (
     res.error = 'Internal Server Error';
   } else if (result === 'NOT_FOUND') {
     res.status = 404;
-    res.error = 'Notification does not exist for user';
+    res.error = 'Notification not found for user';
   } else {
-    res.status = 204;
+    res.status = 200;
     res.data = 'Notification deleted';
   }
 

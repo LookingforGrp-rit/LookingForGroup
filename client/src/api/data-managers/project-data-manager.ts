@@ -16,6 +16,9 @@ import {
   UpdateProjectSocialInput,
   UpdateProjectTagInput,
   UpdateProjectThumbnailInput,
+  UpdateJobSkillInput,
+  AddJobSkillInput,
+  DeleteJobSkillInput,
 } from "@looking-for-group/shared";
 import {
   sendInvite,
@@ -40,6 +43,9 @@ import {
   updateProjectSocial,
   updateProjectTag,
   updateThumb,
+  updateJobSkill,
+  addJobSkill,
+  deleteJobSkill,
 } from "../projects";
 import {
   CRUDRequest,
@@ -80,6 +86,7 @@ export const projectDataManager = async (projectId: number) => {
         projectSocials: [],
         projectVideos: [],
         jobs: [],
+        jobSkills: [],
         members: [],
         mediums: [],
       },
@@ -102,6 +109,7 @@ export const projectDataManager = async (projectId: number) => {
         projectImages: [],
         projectSocials: [],
         jobs: [],
+        jobSkills: [],
         members: [],
       },
       delete: {
@@ -110,6 +118,7 @@ export const projectDataManager = async (projectId: number) => {
         projectSocials: [],
         projectVideos: [],
         jobs: [],
+        jobSkills: [],
         members: [],
         mediums: [],
       },
@@ -300,6 +309,22 @@ export const projectDataManager = async (projectId: number) => {
     if (errorMessage != "") {
       throw new Error(`Some updates failed: ${errorMessage}. `);
     }
+
+    
+    // job skills
+    try {
+      await runAndCollectErrors<UpdateJobSkillInput>(
+        "Updating project social",
+        updates.jobSkills,
+        ({ id, data }) => updateJobSkill(projectId, id.value, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    if (errorMessage != "") {
+      throw new Error(`Some updates failed: ${errorMessage}. `);
+    }
   };
 
   /**
@@ -400,6 +425,21 @@ export const projectDataManager = async (projectId: number) => {
     if (errorMessage != "") {
       throw new Error(`Some creates failed: ${errorMessage}. `);
     }
+
+    // job skills
+    try {
+      await runAndCollectErrors<AddJobSkillInput>(
+        "Adding project social",
+        creates.jobSkills,
+        ({ data }) => addJobSkill(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    if (errorMessage != "") {
+      throw new Error(`Some creates failed: ${errorMessage}. `);
+    }
   };
 
   /**
@@ -489,6 +529,21 @@ export const projectDataManager = async (projectId: number) => {
     if (errorMessage != "") {
       throw new Error(`Some deletes failed: ${errorMessage}. `);
     }
+
+    // job skills
+    try {
+      await runAndCollectErrors<DeleteJobSkillInput>(
+        "Deleting job skill",
+        deletes.jobSkills,
+        ({ data }) => deleteJobSkill(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    if (errorMessage != "") {
+      throw new Error(`Some deletes failed: ${errorMessage}. `);
+    }
   };
 
   /**
@@ -548,6 +603,21 @@ export const projectDataManager = async (projectId: number) => {
     }
 
     changes.create.tags.push(tag);
+  };
+  /**
+   * Adds a new skill to a project job
+   * @param skill The skill to be added
+   */
+  const addProjectJobSkill = (skill: CRUDRequest<AddJobSkillInput>) => {
+    if (changes.create.jobSkills.some(({ id }) => id.value === skill.id.value)) {
+      changes.create.jobSkills = [
+        ...changes.create.jobSkills.filter(({ id }) => id.value !== skill.id.value),
+        skill,
+      ];
+      return;
+    }
+
+    changes.create.jobSkills.push(skill);
   };
 
   /**
@@ -735,6 +805,35 @@ export const projectDataManager = async (projectId: number) => {
           )
       ),
       existingTagUpdate,
+    ];
+  };
+
+  /**
+   * Updates an existing job skill
+   * @param skill The skill to be updated and its new data
+   */
+  const updateProjectJobSkill = (skill: CRUDRequest<UpdateJobSkillInput>) => {
+    let existingSkillUpdate = changes.update.jobSkills.find(
+      ({ id }) => id.value === skill.id.value && id.type === skill.id.type
+    );
+
+    existingSkillUpdate = {
+      id: skill.id,
+      data: {
+        ...existingSkillUpdate?.data,
+        ...skill.data,
+      },
+    };
+
+    changes.update.jobSkills = [
+      ...changes.update.jobSkills.filter(
+        ({ id }) =>
+          !(
+            id.value == existingSkillUpdate.id.value &&
+            id.type == existingSkillUpdate.id.type
+          )
+      ),
+      existingSkillUpdate,
     ];
   };
 
@@ -963,6 +1062,48 @@ export const projectDataManager = async (projectId: number) => {
     }
   };
 
+
+  /**
+   * Deletes an existing skill of a project job
+   * @param skill The skill to delete
+   */
+  const deleteProjectJobSkill = (skill: CRUDRequest<DeleteJobSkillInput>) => {
+    // if we were gonna update this skill, don't
+    if (
+      changes.update.jobSkills.some(
+        ({ id }) => id.value === skill.id.value && id.type === skill.id.type
+      )
+    ) {
+      changes.update.jobSkills = changes.update.jobSkills.filter(
+        ({ id }) =>
+          !(id.value === skill.id.value && id.type === skill.id.type)
+      );
+    }
+
+    // if we were gonna create this skill, don't
+    if (
+      skill.id.type === "local" &&
+      changes.create.projectSocials.some(
+        ({ id }) => id.value === skill.id.value
+      )
+    ) {
+      changes.create.jobSkills = changes.create.jobSkills.filter(
+        ({ id }) => id.value !== skill.id.value
+      );
+      return;
+    }
+
+    // otherwise, delete this skill
+    if (
+      skill.id.type === "canon" &&
+      !changes.delete.jobSkills.some(
+        ({ id }) => id.value === skill.id.value
+      )
+    ) {
+      changes.delete.jobSkills.push(skill);
+    }
+  };
+
   /**
    * Deletes an existing job of a project
    * @param job The job to delete
@@ -1060,6 +1201,9 @@ export const projectDataManager = async (projectId: number) => {
   return {
     saveChanges,
     addTag,
+    addProjectJobSkill,
+    updateProjectJobSkill,
+    deleteProjectJobSkill,
     addMedium,
     addSocial,
     createImage,
