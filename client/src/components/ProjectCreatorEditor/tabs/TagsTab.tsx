@@ -345,7 +345,27 @@ export const TagsTab = ({
   const renderTags = useCallback(() => {
     // no search item, render all tags
     if (searchedTags && searchedTags.length !== 0) {
-      return searchedTags.map((tagOrMedium) => {
+
+      //The final list of tags displayed to the screen.
+      let tagsToDisplay = searchedTags;
+
+      switch (currentTagsTab){
+        case 1:
+          //Genre
+          let story = searchedTags.filter((tag) => (tag as Tag).category === "Story");
+          let game = searchedTags.filter((tag) => (tag as Tag).category === "Game");
+          let music = searchedTags.filter((tag) => (tag as Tag).category === "Music");
+          tagsToDisplay = story.concat(game, music);
+          break;
+        case 2:
+          //Style
+          let visual = searchedTags.filter((tag) => (tag as Tag).category === "Visual");
+          let filmVideo = searchedTags.filter((tag) => (tag as Tag).category === "Film/Video");
+          tagsToDisplay = visual.concat(filmVideo);
+          break;
+      }
+
+      return tagsToDisplay.map((tagOrMedium, index, array) => {
         // get id according to type of tag
         let id: number = -1; // bad default value
         let isTag;
@@ -363,21 +383,29 @@ export const TagsTab = ({
         const selected = isTagSelected(id, (tagOrMedium as Tag | Medium).label, currentTagsTab) === "selected";
 
         return (
-          <TagElement
-            key={id}
-            type={isTag
-              ? (tagOrMedium as Tag).type.toLowerCase()
-              : "medium"}
-            onClick={
-              isTag
-                ? () => handleTagSelect((tagOrMedium as Tag).tagId)
-                : () => handleMediumSelect((tagOrMedium as Medium).mediumId)
-            }
-            selected={selected}
-          >
-            <i className={selected ? "fa fa-check" : "fa fa-plus"}></i>
-            <p>{isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label}</p>
-          </TagElement>
+          <Fragment key={id}>
+            {index === 0 || ((array[index - 1] as Tag).category != (array[index] as Tag).category)
+            ? <div id="tag-category-header">
+                <p>{(array[index] as Tag).category == null ? "Medium" : (array[index] as Tag).category}</p>
+                <hr></hr>
+              </div>
+            : <></>}
+            <TagElement
+              key={id}
+              type={isTag
+                ? (tagOrMedium as Tag).type.toLowerCase()
+                : "medium"}
+              onClick={
+                isTag
+                  ? () => handleTagSelect((tagOrMedium as Tag).tagId)
+                  : () => handleMediumSelect((tagOrMedium as Medium).mediumId)
+              }
+              selected={selected}
+            >
+              <i className={selected ? "fa fa-check" : "fa fa-plus"}></i>
+              <p>{isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label}</p>
+            </TagElement>
+          </Fragment>
         );
       });
     } else if (searchedTags && searchedTags.length === 0) {

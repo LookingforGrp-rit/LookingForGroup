@@ -9,7 +9,7 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
@@ -71,6 +71,8 @@ const Profile = (userProfile: any) => {
   const [displayedProjects, setDisplayedProjects] = useState<ProjectPreview[]>([]);
 
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
+
+  const reportMessage = useRef<HTMLInputElement>(null);
 
   // ---- Invite-to-project popup state (only used when viewing someone else) ----
   // Projects the current logged-in user owns; populated lazily so we don't fetch
@@ -428,7 +430,7 @@ const Profile = (userProfile: any) => {
             <DropdownButton>
               <ThemeIcon id={'menu'} width={25} height={25} className={'color-fill dropdown-menu'} ariaLabel={'More options'} />
             </DropdownButton>
-            <DropdownContent rightAlign={true}>
+            <DropdownContent>
               <div id="profile-menu-dropdown">
                 <ShareButton />
                 <button
@@ -438,13 +440,41 @@ const Profile = (userProfile: any) => {
                   <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
                   Block
                 </button>
-                <button
-                  className="profile-menu-dropdown-button"
-                  id="profile-menu-report"
+                <Popup>
+                <PopupButton
+                  className="project-info-dropdown-option"
                 >
-                  <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'} />
+                  <ThemeIcon
+                    id={"warning"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"Report"}
+                  />
                   Report
-                </button>
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup" id="report-popup">
+                      <h3>Report {displayedProfile?.firstName ?? "User"}</h3>
+                      <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
+                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></input>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </PopupButton>
+                        {/* The Report Button */}
+                        <PopupButton
+                          className="delete-button"
+                          callback={ () => { console.log("Report button clicked"); /* report functionality here, should include feedback popup */
+                          }}>
+                            Report
+                        </PopupButton>
+                      </div>
+                  </div>
+                </PopupContent>
+              </Popup>
               </div>
             </DropdownContent>
           </Dropdown>

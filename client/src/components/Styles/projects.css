@@ -583,6 +583,20 @@ Project Creator and Editor Popup style rules
   text-align: right;
 }
 
+#report-popup
+{
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 15px;
+  }
+
+  input {
+    margin: 20px;
+  }
+}
+
 .share-response-popup {
   width: 100%;
   position: absolute;
@@ -876,6 +890,17 @@ Project Creator and Editor Popup style rules
   /*For scrolling*/
   max-height: 370px;
   overflow-y: auto;
+
+  #tag-category-header {
+    width: 100%;
+  }
+
+  #tag-category-header p {
+    font-weight: bold;
+    font-size: medium;
+    margin-top: 0.5em;
+    color: var(--primary-color);
+  }
 }
 
 #project-editor-tag-wrapper {
@@ -1117,13 +1142,13 @@ Project Creator and Editor Popup style rules
   display: flex;
   justify-content: center;
   margin: 20px 0;
+  max-width: 100%;
 }
 
 #project-editor-tag-search-tabs {
   overflow-x: visible;
   justify-content: flex-start;
 }
-
 
 #project-editor-team-tabs,
 #project-editor-tag-search-tabs {
@@ -1143,6 +1168,7 @@ Project Creator and Editor Popup style rules
 @media only screen and (max-width: 420px) {
   #project-editor-team-tabs {
     align-items: center;
+    gap: 4%;
   }
 }
 
@@ -1160,7 +1186,7 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
   font-weight: 400;
   word-break: normal;
-  max-width: 100%;
+  width: 100%;
   background-color: var(--tab-color);
   border-top-left-radius: 25%;
   border-top-right-radius: 25%;
@@ -1241,9 +1267,9 @@ Project Creator and Editor Popup style rules
   align-content: flex-start;
   justify-content: center;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
   background: var(--bg-color);
   gap: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
 }
 
 .project-editor-project-member {
@@ -1870,6 +1896,7 @@ button.edit-position-contact .project-member-image {
   border: none;
   cursor: pointer;
 }
+
 .delete-tags-btn {
   padding: 4px;
   background: none;
@@ -3319,6 +3346,53 @@ Project Carousel style rules
   font-weight: 700;
 }
 
+#project-request-review {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 0;
+
+  label {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+
+  br {
+    margin-bottom: 5px;
+  }
+
+  #project-request-info {
+    width: 75%;
+    text-align: center;
+  }
+
+  #project-request-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    button {
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+    }
+
+    #request-confirm-button {
+      background-color: var(--primary-color);
+      color: var(--invert-text);
+      border-radius: 20px;
+      padding: 4px 10px;
+    }
+
+    #request-cancel-button {
+      background: none;
+      color: var(--primary-color);
+    }
+  }
+}
+
 #project-info-edit {
   font-size: 1rem;
   border: none;
@@ -3430,6 +3504,7 @@ project-team-open-posiions-info: edit/create proj popup
   margin-bottom: 20px;
   width: 100%;
   max-width: 1141px;
+  height: fit-content;
 }
 
 #positions-popup-header {
@@ -3680,6 +3755,7 @@ button#positions-popup-list-item-active {
 #position-contact {
   margin: 20px;
   margin-left: auto;
+  padding-left: 20px;
   width: max-content;
   height: 50px;
   display: flex;
@@ -3687,6 +3763,7 @@ button#positions-popup-list-item-active {
   gap: 5px;
   font-style: italic;
   color: var(--neutral-gray);
+  justify-content: end;
 }
 
 #position-contact-link {
@@ -3778,6 +3855,9 @@ button#positions-popup-list-item-active {
   color: var(--primary-color);
   font-weight: 600;
   font-style: normal;
+  max-width: 50ch;
+  text-wrap: pretty;
+  display: block;
 }
 
 #positions-popup-close {
@@ -4382,17 +4462,9 @@ My projects page style rules
   box-sizing: border-box;
 }
 
-.txt {
-  font-size: 12px;
-  font-weight: bold;
-  color: black;
-  z-index: 1;
-}
-
 .symbol {
   position: absolute;
   top: -25px;
-  z-index: 0;
 
   width: 40px !important;
   height: 40px !important;
@@ -4406,6 +4478,13 @@ My projects page style rules
   fill: black !important;
 
   background-color: inherit;
+}
+
+.txt {
+  position: relative;
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
 }
 
 .approved {
@@ -4532,7 +4611,7 @@ My projects page style rules
   border: 0px;
   border-radius: 10px;
   box-shadow: 1px 2px 2px var(--shadow-color);
-  width: 154px;
+  width: 160px;
   height: fit-content;
   padding: 15px 10px;
   z-index: 1;
@@ -4655,6 +4734,7 @@ My projects page style rules
 }
 
 @media only screen and (max-width: 600px) {
+
   /* Hide table headers (but not display: none;, for accessibility) */
   .responsive-table thead tr {
     position: absolute;

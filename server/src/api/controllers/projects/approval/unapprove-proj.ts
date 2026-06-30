@@ -1,5 +1,7 @@
 import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
+import { ProjectUnapprovedNotificationBuilder } from '#notification-templates/project-unapproved-notification-buildier.ts';
+import sendNotificationService from '#services/notifications/send-notification.ts';
 import { unapproveProjectService } from '#services/projects/approval/unapprove-project.ts';
 
 const unapproveProjectController = async (request: AuthenticatedRequest, response: Response) => {
@@ -32,6 +34,8 @@ const unapproveProjectController = async (request: AuthenticatedRequest, respons
     data: 'Project unapproved',
   };
   response.status(200).json(res);
+
+  sendNotificationService(new ProjectUnapprovedNotificationBuilder(), request).catch(() => {});
 };
 
 export default unapproveProjectController;

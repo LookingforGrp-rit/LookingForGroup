@@ -1,8 +1,8 @@
 import type { ApiResponse, SendProjectInviteInput } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
+import { InviteReceivedNotificationBuilder } from '#notification-templates/invite-received-notification-builder.ts';
 import sendNotificationService from '#services/notifications/send-notification.ts';
 import sendInviteService from '#services/projects/members/send-invite.ts';
-import { InviteMessageBuilder } from '../../../../notification-templates/invite-message-builder.ts';
 
 //POST api/projects/{id}/members/send-invite
 //Sends invite to join the project
@@ -42,19 +42,14 @@ const sendInviteController = async (req: Request, res: Response) => {
     return;
   }
 
-  // Fire-and-forget: notify the invitee in-app, pointing them to the email.
-  // Mirrors the project-approval flow; a failed notification must not fail the
-  // invite (the email is the source of truth for accepting).
-  sendNotificationService(new InviteMessageBuilder(), req).catch((e: unknown) => {
-    console.error('Failed to send invite notification:', e);
-  });
-
   const resBody: ApiResponse = {
     status: 200,
     error: null,
     data: null,
   };
   res.status(200).json(resBody);
+
+  sendNotificationService(new InviteReceivedNotificationBuilder(), req).catch(() => {});
 };
 
 export default sendInviteController;
