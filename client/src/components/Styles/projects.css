@@ -1251,6 +1251,9 @@ Project Creator and Editor Popup style rules
   flex-direction: row;
   gap: 20px;
   padding-bottom: 20px;
+  #project-editor-save {
+    margin-bottom: 28px;
+  }
 }
 
 #confirm-editor-save-text {
