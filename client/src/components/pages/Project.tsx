@@ -465,10 +465,9 @@ const Project = (userProfile: any) => {
                         {/* The Report Button */}
                         <PopupButton
                           className="delete-button"
-                          callback={ () => { console.log("Report button clicked"); /*
-                            reportProject(projectID, (reportMessage?.current?.value ?? "No message given.") as Report);
-                            console.log(reportMessage?.current?.value);*/
-                            /* report functionality here w/ feedback popup */
+                          callback={ () => { console.log("Report button clicked");
+                            reportProject(projectID, (reportMessage?.current?.value ?? "No message given.")); /* -1 is a temp # for right now */
+                            console.log(reportMessage?.current?.value);
                           }}>
                             Report
                         </PopupButton>
