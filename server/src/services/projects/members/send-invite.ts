@@ -110,6 +110,7 @@ const sendInviteService = async (
           projectName: project.title,
           projectImage: projectImg,
           inviteLink: inviteUrl,
+          projectApproved: project.approved,
         }),
       ),
     );

@@ -293,7 +293,7 @@ input:focus:not(:focus-visible) {
   outline: none;
 }
 
-svg:focus{
+svg:focus, input:focus {
   outline:none;
 }
 
@@ -1522,6 +1522,11 @@ Header style rules
   height: 45px;
 }
 
+
+#header-buttons .dropdown-container {
+  order: 2;
+}
+
 #notif-btn {
   display: flex;
   align-items: center;
@@ -1724,15 +1729,6 @@ Search style rules
   font: inherit;
   cursor: text;
   outline: inherit;
-}
-
-
-.search-input:focus,
-.search-input:focus-visible {
-  border-color: var(--primary-color);
-  border-width: 0;
-  border-bottom-width: 3px;
-  border-style: solid;
 }
 
 .search-input::placeholder {

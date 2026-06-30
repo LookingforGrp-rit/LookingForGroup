@@ -2,6 +2,7 @@ import type { ProjectDetail } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectDetailSelector } from '#services/selectors/projects/project-detail.ts';
 import { transformProjectImage } from './parts/project-image.ts';
+import { transformProjectJob } from './parts/project-job.ts';
 import { transformProjectMember } from './parts/project-member.ts';
 import { transformProjectSocial } from './parts/project-social.ts';
 import { transformProjectVideo } from './parts/project-video.ts';
@@ -25,7 +26,6 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
     audience: project.audience,
     createdAt: project.createdAt,
     updatedAt: project.updatedAt,
-    approved: project.approved,
     projectImages: project.projectImages.map((image) =>
       transformProjectImage(project.projectId, image),
     ),
@@ -35,6 +35,8 @@ export const transformProjectToDetail = (project: ProjectsGetPayload): ProjectDe
     projectVideos: project.projectVideos.map((video) =>
       transformProjectVideo(project.projectId, video),
     ),
+    jobs: project.jobs.map((job) => transformProjectJob(project.projectId, job)),
     members: project.members.map((member) => transformProjectMember(project.projectId, member)),
+    approved: project.approved,
   };
 };
