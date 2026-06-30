@@ -238,7 +238,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       autoStarted.current = true;
       createOrEdit();
     }
-    
+
     if (!newProject && projectID) setup();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoStart, newProject, projectID]);
@@ -538,6 +538,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 location: (job as ProjectJob).location,
                 roleId: (job as ProjectJob).role.roleId,
                 description: job.description ?? undefined,
+                jobSkills: (job as ProjectJob).jobSkills
               }
             })
           }
