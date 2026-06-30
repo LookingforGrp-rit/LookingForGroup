@@ -33,6 +33,7 @@ interface InviteEmailProps {
   projectName: string;
   projectImage: string;
   inviteLink: string;
+  projectApproved: boolean;
 }
 
 const logoUrl = 'https://lookingforgrp.com/api/images/lfg-logo.png';
@@ -48,6 +49,7 @@ const InviteEmail = ({
   projectName,
   projectImage,
   inviteLink,
+  projectApproved,
 }: InviteEmailProps) => {
   const previewText = `Join ${senderName.firstName} ${senderName.lastName} on Looking For Group`;
 
@@ -78,6 +80,15 @@ const InviteEmail = ({
               className: 'mx-auto my-0',
             }),
           ),
+          projectApproved
+            ? null
+            : createElement(
+                Heading,
+                {
+                  className: 'mx-0 my-[30px] p-0 text-center font-bold text-[24px] text-[#ff0000]',
+                },
+                'WARNING: This project is not approved by LFG. Accept only if you are already a member of the project!',
+              ),
           createElement(
             Heading,
             {
