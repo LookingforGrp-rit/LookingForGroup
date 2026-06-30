@@ -583,8 +583,7 @@ Project Creator and Editor Popup style rules
   text-align: right;
 }
 
-#report-popup
-{
+#report-popup {
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -1251,6 +1250,9 @@ Project Creator and Editor Popup style rules
   flex-direction: row;
   gap: 20px;
   padding-bottom: 20px;
+  #project-editor-save {
+    margin-bottom: 28px;
+  }
 }
 
 #confirm-editor-save-text {
@@ -1351,6 +1353,12 @@ Project Creator and Editor Popup style rules
   display: flex;
   align-items: center;
   justify-items: center;
+}
+
+#edit-position-skills-container .edit-project-member-button {
+  position: relative;
+  top: 0;
+  right: 0;
 }
 
 .project-editor-project-member>.edit-project-member-button {
@@ -1803,6 +1811,16 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
 }
 
+#edit-position-skills-container {
+  width: 100%;
+}
+
+#edit-position-skills-label-button {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
 #edit-position-details-left,
 #edit-position-details-right {
   display: flex;
@@ -1852,7 +1870,8 @@ button.edit-position-contact .project-member-image {
   font-size: 0.875rem;
 }
 
-#edit-position-details label {
+#edit-position-details label,
+#edit-position-skills-container label {
   font-size: 1rem;
   text-wrap: nowrap;
 }
@@ -4600,7 +4619,7 @@ My projects page style rules
   border: 0px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
-  z-index: 1;
+  z-index: 4;
 }
 
 .card-options-list {
