@@ -86,8 +86,8 @@ export const reportProject = async (
   const apiURL = `/me/projects/report/${projectId}/${report}`;
   const response = await POST(apiURL, {});
   
-  if (response.error) console.log(`Error in reportProject: ${response.error}`);
-  else console.log(response);
+  //if (response.error) console.log(`Error in reportProject: ${response.error}`);
+  //else console.log(response);
   return response;
 };
 

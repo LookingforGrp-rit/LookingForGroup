@@ -59,6 +59,7 @@ const Project = (userProfile: any) => {
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLInputElement>(null);
+  const [reportResponseText, setReportResponseText] = useState<string>('');
 
   /**
    * Checks in the current user is following a project
@@ -218,6 +219,28 @@ const Project = (userProfile: any) => {
       console.error("Error leaving project:", res.error);
     }
   };
+
+  /**
+   * Sends a report of the project if no report exists and
+   * tells the user the result
+   */
+const reportProjectPressed = async () => {
+  const response = await reportProject(projectID, (reportMessage?.current?.value ?? "No message given."));
+  let responseText = response.error;
+  if (responseText === null || responseText === undefined) {
+    responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
+  }
+  /* A report on the project already exists */
+  else if (response.status === 409)
+  {
+    responseText = "This project has already been reported!";
+  }
+  else
+  {
+    responseText = "Uh oh! Something went wrong with your report!";
+  }
+  setReportResponseText(responseText);
+};
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
@@ -463,14 +486,22 @@ const Project = (userProfile: any) => {
                           Cancel
                         </PopupButton>
                         {/* The Report Button */}
-                        <PopupButton
-                          className="delete-button"
-                          callback={ () => { console.log("Report button clicked");
-                            reportProject(projectID, (reportMessage?.current?.value ?? "No message given."));
-                            console.log(reportMessage?.current?.value);
-                          }}>
-                            Report
-                        </PopupButton>
+                        <Popup>
+                          <PopupButton
+                            className="delete-button"
+                            callback={reportProjectPressed}
+                            closeParent={() => true}> {/* doesnt work*/}
+                              Report
+                          </PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              <p>{reportResponseText}</p>
+                              <PopupButton buttonId="continue-button" closeParent={() => true}>
+                                Continue
+                              </PopupButton>
+                            </div>
+                          </PopupContent>
+                        </Popup>
                       </div>
                   </div>
                 </PopupContent>
