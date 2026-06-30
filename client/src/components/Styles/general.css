@@ -293,8 +293,9 @@ input:focus:not(:focus-visible) {
   outline: none;
 }
 
-svg:focus, input:focus {
-  outline:none;
+svg:focus,
+input:focus {
+  outline: none;
 }
 
 /*give sections of the page a drop shadow*/
@@ -783,7 +784,7 @@ Sidebar Nav style rules
   border-radius: 30px;
   font-weight: bold;
   transition: transform 0.2s ease, background-color 0.25s ease, filter 0.25s ease;
-  
+
   p {
     margin-left: 15px;
     color: var(--create-text);
@@ -796,11 +797,12 @@ Sidebar Nav style rules
   filter: drop-shadow(0px 5px 3px var(--shadow-color));
   transform: translateY(-2px);
   border: 2px solid var(--create-bg);
-  
+
   svg {
     filter: invert(1) saturate(0) brightness(0.5);
     transition: 0.25s;
   }
+
   p {
     color: var(--create-bg);
     transition: 0.25s;
@@ -808,7 +810,7 @@ Sidebar Nav style rules
 }
 
 .Create>button:active {
-  transform: translateY(0); 
+  transform: translateY(0);
 }
 
 /*responsive stuff for sidebar*/
@@ -819,7 +821,7 @@ Sidebar Nav style rules
     position: fixed;
     bottom: 10px;
     background-color: var(--border-color);
-    z-index: 3;
+    z-index: 4;
   }
 
   .ProfileContainer {
@@ -903,7 +905,8 @@ Sidebar Nav style rules
     }
   }
 
-  .sidebar-btn, #my-profile-sidebar-btn {
+  .sidebar-btn,
+  #my-profile-sidebar-btn {
     height: 55px !important;
     width: 55px !important;
     border-radius: 50% !important;
@@ -917,7 +920,7 @@ Sidebar Nav style rules
   .containerButtonSideBar>.sidebar-btn>.sidebar-icon,
   .containerButtonSideBar>#my-profile-sidebar-btn>#profile {
     margin: 0% !important;
-    padding: 0% !important; 
+    padding: 0% !important;
     width: 30px !important;
     height: 30px !important;
   }
@@ -1200,8 +1203,7 @@ Page popup style rules
     margin-right: 0;
   }
 
-  #filters-btns-section
-  {
+  #filters-btns-section {
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1785,6 +1787,147 @@ Dropdown style rules
   position: absolute;
   background: none;
   z-index: 15;
+}
+
+/* Notifications bell badge + dropdown panel */
+.notif-bell-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.notif-badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  box-sizing: border-box;
+  border-radius: 8px;
+  background-color: #f14f76;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  text-align: center;
+}
+
+#notifications-panel {
+  width: min(340px, 90vw);
+  max-height: 70vh;
+  overflow-y: auto;
+  background-color: var(--header-color);
+  border-radius: 10px;
+  box-shadow: 0px 0px 10px 0px var(--shadow-color);
+  padding: 8px 0;
+  text-align: left;
+}
+
+#notifications-panel .notifications-header {
+  padding: 6px 16px 10px;
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--bg-color);
+}
+
+#notifications-panel .notifications-empty {
+  padding: 18px 16px;
+  color: var(--main-text);
+  font-style: italic;
+}
+
+#notifications-panel .notifications-error {
+  color: #f14f76;
+}
+
+#notifications-panel .notifications-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+#notifications-panel .notification-item {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--bg-color);
+}
+
+#notifications-panel .notification-item.unread {
+  background-color: var(--bg-color);
+}
+
+#notifications-panel .notification-main {
+  flex: 1;
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  background: none;
+  border: none;
+  border-radius: 0;
+  padding: 12px 8px 12px 14px;
+  text-align: left;
+  cursor: pointer;
+  color: var(--main-text);
+}
+
+#notifications-panel .notification-main:hover {
+  filter: brightness(1.08);
+}
+
+#notifications-panel .notification-dot {
+  flex-shrink: 0;
+  width: 8px;
+  height: 8px;
+  margin-top: 5px;
+  border-radius: 50%;
+  background-color: #f14f76;
+}
+
+#notifications-panel .notification-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+
+#notifications-panel .notification-subject {
+  font-weight: 600;
+  word-break: break-word;
+}
+
+#notifications-panel .notification-message {
+  font-size: 0.85rem;
+  color: var(--main-text);
+  font-weight: 400;
+  word-break: break-word;
+}
+
+#notifications-panel .notification-time {
+  flex-shrink: 0;
+  margin-left: auto;
+  font-size: 0.75rem;
+  color: var(--neutral-gray);
+  white-space: nowrap;
+}
+
+#notifications-panel .notification-delete {
+  flex-shrink: 0;
+  background: none;
+  border: none;
+  height: auto;
+  border-radius: 0;
+  padding: 0 12px;
+  font-size: 1.2rem;
+  line-height: 1;
+  color: var(--neutral-gray);
+  cursor: pointer;
+}
+
+#notifications-panel .notification-delete:hover {
+  color: #f14f76;
 }
 
 /* #endregion */

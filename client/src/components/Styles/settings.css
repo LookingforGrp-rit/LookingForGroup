@@ -601,19 +601,19 @@ input:checked+.slider:before {
 /* #endregion */
 
 #phone-number-visibility {
-  margin-top: 1em;
+  margin-top: 2em;
   display: flex;
-  flex-direction: row;
-  justify-items: start;
+  flex-direction: row-reverse;
+  justify-content: start;
 }
 
 #phone-number-visibility label {
-  font-size: 1.25rem;
+  font-size: 1rem;
 }
 
 #phone-number-visibility input {
   width: 1em;
-  margin-left: 1em;
+  margin-right: 1em;
 }
 
 /* edit and delete buttons */

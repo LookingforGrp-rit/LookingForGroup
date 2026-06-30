@@ -1254,6 +1254,18 @@ export const TeamTab = ({
           </div>
         </div>
       </div>
+          <button
+            type="button"
+            id="position-edit-save"
+          >
+            Edit Job Skills
+          </button>
+      {/* and then insert skill selector here, with like a button that shows the full menu.
+      would it be possible to like... take the skills tab from the profile page and put it right here? 
+      like what if we changed the props of that tab to accept project job stuff, and all that was handled in there
+      or we cloned the file for organization's sake and made it usable in here
+      i am not a frontend guy react is my worst enemy, but hopefully some people more versed than me can get to this bit
+      hopefully it's not too involved */} 
       <div id="edit-position-buttons">
         <div id="edit-position-button-pair">
           <button

@@ -5,4 +5,5 @@ export const JobSkillSelector = Object.freeze({
   skill: {
     select: SkillSelector,
   },
+  jobId: true,
 });
