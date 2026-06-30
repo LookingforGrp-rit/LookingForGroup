@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -10,7 +10,7 @@ import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
 import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
-import { getByID, getVideos, projectApprovalRequestExists, deleteProject } from "../../api/projects";
+import { getByID, getVideos, projectApprovalRequestExists, deleteProject, requestProjectReview } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import {
   deleteProjectFollowing,
@@ -21,6 +21,9 @@ import {
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
+import usePreloadedImage from '../../functions/imageLoad';
+import { router } from "../../../../server/src/api/routes/me.ts"
+import { reportProject } from "../../api/projects";
 
 //Main component for the project page
 /**
@@ -54,6 +57,8 @@ const Project = () => {
 
   const [shownTags, setShownTags] = useState(3);
   const [videos, setVideos] = useState<ProjectVideo[]>();
+
+  const reportMessage = useRef<HTMLInputElement>(null);
 
   /**
    * Checks in the current user is following a project
@@ -174,7 +179,7 @@ const Project = () => {
     // Follow icon is only present if user is logged in.
     // If keeping this layout, this check may be redundant.
     if (!loggedIn) {
-      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search} }); // Redirect if logged out
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
       const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
@@ -238,6 +243,50 @@ const Project = () => {
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div id="project-info-dropdown">
+              {/* Share Button */}
+              <ShareButton />
+              {approvalStatus == 'not-approved' ?
+              <Popup>
+                {/* Request Review button */}
+                <PopupButton className='project-info-dropdown-option'>
+                  <ThemeIcon
+                    id={"request-review"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"request-Review"}
+                    className="mono-fill"
+                  />
+                  Request Review
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup">
+                  <div id="project-request-review">
+                    <label id="project-request-label">
+                      Would you like to submit your project for review?
+                    </label>
+                    <div id="project-request-info">
+                      Submiting a request will make your project visible to moderators who will choose to either
+                      accept and make your project visible to all, request changes for you to make, 
+                      or reject it for various reasons. <br/>
+                      <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                    </div>
+                    <div id="project-request-buttons">
+                      <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (displayedProject) requestProjectReview(projectID);
+                        setApprovalStatus("under-review");
+                      }}
+                      >
+                        request review
+                      </PopupButton>
+                      <PopupButton buttonId="request-cancel-button">
+                        cancel
+                      </PopupButton>
+                    </div>
+                  </div>
+                  </div>
+                </PopupContent>
+              </Popup> : "" }
               {/* Leave Project */}
               <Popup>
                 <PopupButton className="project-info-dropdown-option">
@@ -389,10 +438,9 @@ const Project = () => {
                   :
                   <></>
                 }
-
-                <button
+                <Popup>
+                <PopupButton
                   className="project-info-dropdown-option"
-                  id="project-info-report"
                 >
                   <ThemeIcon
                     id={"warning"}
@@ -401,7 +449,33 @@ const Project = () => {
                     ariaLabel={"Report"}
                   />
                   Report
-                </button>
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup" id="report-popup">
+                      <h3>Report {displayedProject?.title ?? "Project"}</h3>
+                      <p>You are about to report {displayedProject?.title ?? "Project"}. Please provide your reasoning below.</p>
+                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></input>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </PopupButton>
+                        {/* The Report Button */}
+                        <PopupButton
+                          className="delete-button"
+                          callback={ () => { console.log("Report button clicked"); /*
+                            reportProject(projectID, (reportMessage?.current?.value ?? "No message given.") as Report);
+                            console.log(reportMessage?.current?.value);*/
+                            /* report functionality here w/ feedback popup */
+                          }}>
+                            Report
+                        </PopupButton>
+                      </div>
+                  </div>
+                </PopupContent>
+              </Popup>
               </div>
             </DropdownContent>
           </Dropdown>
@@ -616,7 +690,7 @@ const Project = () => {
                       Open Positions
                     </PopupButton>
                     <PopupContent>
-                      <TeamPositionsPanel displayedProject={displayedProject}
+                      <TeamPositionsPanel currentUserId={userID} displayedProject={displayedProject}
                         viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
                     </PopupContent>
                   </Popup>

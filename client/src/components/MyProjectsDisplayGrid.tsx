@@ -184,10 +184,10 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                         if (projectData) requestProjectReview(projectData.projectId);
                       }}
                       >
-                        request review
+                        Request Review
                       </PopupButton>
                       <PopupButton buttonId="request-cancel-button">
-                        cancel
+                        Cancel
                       </PopupButton>
                     </div>
                   </div>

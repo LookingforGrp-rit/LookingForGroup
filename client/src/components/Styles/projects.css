@@ -583,6 +583,20 @@ Project Creator and Editor Popup style rules
   text-align: right;
 }
 
+#report-popup
+{
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 15px;
+  }
+
+  input {
+    margin: 20px;
+  }
+}
+
 .share-response-popup {
   width: 100%;
   position: absolute;
@@ -1237,6 +1251,9 @@ Project Creator and Editor Popup style rules
   flex-direction: row;
   gap: 20px;
   padding-bottom: 20px;
+  #project-editor-save {
+    margin-bottom: 28px;
+  }
 }
 
 #confirm-editor-save-text {
@@ -3741,6 +3758,7 @@ button#positions-popup-list-item-active {
 #position-contact {
   margin: 20px;
   margin-left: auto;
+  padding-left: 20px;
   width: max-content;
   height: 50px;
   display: flex;
@@ -3748,6 +3766,7 @@ button#positions-popup-list-item-active {
   gap: 5px;
   font-style: italic;
   color: var(--neutral-gray);
+  justify-content: end;
 }
 
 #position-contact-link {
@@ -3839,6 +3858,9 @@ button#positions-popup-list-item-active {
   color: var(--primary-color);
   font-weight: 600;
   font-style: normal;
+  max-width: 50ch;
+  text-wrap: pretty;
+  display: block;
 }
 
 #positions-popup-close {
@@ -4443,17 +4465,9 @@ My projects page style rules
   box-sizing: border-box;
 }
 
-.txt {
-  font-size: 12px;
-  font-weight: bold;
-  color: black;
-  z-index: 1;
-}
-
 .symbol {
   position: absolute;
   top: -25px;
-  z-index: 0;
 
   width: 40px !important;
   height: 40px !important;
@@ -4467,6 +4481,13 @@ My projects page style rules
   fill: black !important;
 
   background-color: inherit;
+}
+
+.txt {
+  position: relative;
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
 }
 
 .approved {

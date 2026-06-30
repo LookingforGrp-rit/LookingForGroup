@@ -82,7 +82,10 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
   };
 
   return (
-    <a className={'profile-panel'} href={profileURL}>
+    <div
+      className={'profile-panel'}
+      onClick={() => navigate(profileURL)}
+    >   
       <img
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt='profile image'
@@ -152,6 +155,6 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             <p>No extra information</p>
           </div> : ""}
       </div>
-    </a>
+    </div>
   );
 };

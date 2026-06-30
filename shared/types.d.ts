@@ -15,14 +15,14 @@ export type TagType =
 export type GenreCategory = 'Game' | "Story" | 'Music';
 export type StyleCategory = 'Visual' | 'Film/Video';
 export type GameEngine = 'Unity' | 'Unreal Engine' | 'Godot' | 'Twine' | 'MonoGame'
-export type DesignerCategory = 'Discipline' | 'Design Software' | 'Art and Animation' | 'Photo Editing' |  'Video Software';
+export type DesignerCategory = 'Discipline' | 'Design Software' | 'Art and Animation' | 'Photo Editing' | 'Video Software';
 export type DeveloperCategory = 'Discipline' | 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Game Engine';
 export type SoftCategory = 'Discipline' | 'Personal' | 'Team';
 export type AudioCategory = 'Discipline' | 'DAW/Audio Editor' | 'Notation' | 'Middleware';
 export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware'
 export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
 export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
-  export type RitStatus = 
+export type RitStatus =
   | "Freshman"
   | "Sophomore"
   | "Junior"
@@ -288,7 +288,12 @@ export interface UserSkill extends Skill {
 /**
  * Represents all info for a skill that a user has
  */
-export interface JobSkill extends Skill {
+export interface JobSkill extends Skill {  
+  /**
+   * The ID of the job this skill is attached to
+   */
+  jobId: number;
+
   /**
    * The proficiency in the skill the job is searching for
    */
@@ -1111,7 +1116,7 @@ export interface NotificationPreview {
    * ID of the notification
    */
   notificationId: string;
-  
+
   /**
    * The time the notification was sent.
    */
@@ -1507,13 +1512,29 @@ export type UpdateProjectMemberInput = Partial<
  * Data stored in a member request
  */
 export type MemberRequests = {
-    requestId: number;
-    prospectiveMemberId: number;
-    projectId: number;
-    roleId: number;
-    sentFromProject: boolean;
-    requestStatus: MemberRequestStatus;
-}
+  requestId: number;
+  prospectiveMemberId: number;
+  projectId: number;
+  roleId: number;
+  sentFromProject: boolean;
+  requestStatus: MemberRequestStatus;
+};
+
+/**
+ * Data for getting a member request
+ * (if requestId is provided, others are optional)
+ */
+type GetMemberRequest = {
+  requestId: number;
+  prospectiveMemberId?: number;
+  projectId?: number;
+  roleId?: number;
+} | {
+  requestId?: undefined;
+  prospectiveMemberId: number;
+  projectId: number;
+  roleId: number;
+};
 
 /**
  * Data required to add a social media link to a project
@@ -1568,10 +1589,13 @@ export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
 /**
  * Data required to add a skill to a project
  */
-export type AddJobSkillInput = Pick<JobSkill, "skillId" | "proficiency">
+export type AddJobSkillInput = Pick<JobSkill, "jobId" | "skillId" | "proficiency">
 
-export type UpdateJobSkillInput = Partial<Pick<JobSkill, "proficiency"> //more things if we want to add more things
->;
+export type UpdateJobSkillInput = Pick<JobSkill, 'jobId' | "proficiency">//more things if we want to add more things
+
+export type DeleteJobSkillInput = Pick<JobSkill, 'jobId' | "skillId"> 
+//this is purely for the frontend because it needs both things for the url, and so the data manager can work properly
+//the delete service takes it from the parameters
 
 /**
  * Data required to filter request
