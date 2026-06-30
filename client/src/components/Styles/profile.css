@@ -85,7 +85,7 @@ Profile Panel component style rules
     line-height: normal;
     overflow-wrap: break-word;
     word-break: break-word;
-    text-decoration: none !important;
+    text-decoration: underline !important;
   }
 
   /* Major */
@@ -95,6 +95,7 @@ Profile Panel component style rules
     font-size: 1rem;
     font-weight: 400;
     line-height: normal;
+    text-decoration: none !important;
   }
 
   /* Quote */
