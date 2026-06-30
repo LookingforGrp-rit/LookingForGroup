@@ -154,6 +154,7 @@ Profile Panel component style rules
   font-style: italic;
   gap: 15px;
   padding: 0 15px;
+  overflow-wrap: break-word;
 
   .icon-box {
     display: flex;
