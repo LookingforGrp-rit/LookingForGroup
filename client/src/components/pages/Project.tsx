@@ -22,7 +22,8 @@ import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
-import { reportProjectController } from '../../../../server/src/api/controllers/me/report-proj';
+import { router } from "../../../../server/src/api/routes/me.ts"
+import { reportProject } from "../../api/projects";
 
 //Main component for the project page
 /**
@@ -419,12 +420,16 @@ const Project = (userProfile: any) => {
                         >
                           Cancel
                         </PopupButton>
-                        <button 
+                        {/* The Report Button */}
+                        <PopupButton
                           className="delete-button"
-                          /*onClick={reportProjectController(projectID, reportMessage.current?.value 
-                          ?? "No message given.")}*/>
+                          callback={ () => { console.log("Report button clicked"); /*
+                            reportProject(projectID, (reportMessage?.current?.value ?? "No message given.") as Report);
+                            console.log(reportMessage?.current?.value);*/
+                            /* report functionality here w/ feedback popup */
+                          }}>
                             Report
-                        </button>
+                        </PopupButton>
                       </div>
                   </div>
                 </PopupContent>
