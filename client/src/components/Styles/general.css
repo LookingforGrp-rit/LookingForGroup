@@ -1726,15 +1726,6 @@ Search style rules
   outline: inherit;
 }
 
-
-.search-input:focus,
-.search-input:focus-visible {
-  border-color: var(--primary-color);
-  border-width: 0;
-  border-bottom-width: 3px;
-  border-style: solid;
-}
-
 .search-input::placeholder {
   color: var(--primary-color);
   font: inherit;
