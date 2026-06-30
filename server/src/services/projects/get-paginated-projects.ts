@@ -27,7 +27,7 @@ const getPaginatedProjectsService = async (
       select: ProjectPreviewSelector,
       take: count,
       orderBy: {
-        createdAt: 'desc' as const,
+        projectId: 'asc' as const,
       },
       where: {
         approved: true,
