@@ -6,7 +6,7 @@ import type { NotificationBuilder } from './notification-builder.ts';
 /**
  * Builds a notification for the Project Approval event.
  */
-export class ProjectApprovedMessageBuilder implements NotificationBuilder {
+export class ProjectApprovedNotificationBuilder implements NotificationBuilder {
   async buildNotification(request: Request): Promise<NotificationBuilderResult> {
     const req: AuthenticatedRequest = request as AuthenticatedRequest;
     const projectId = parseInt(req.params.id as string);
