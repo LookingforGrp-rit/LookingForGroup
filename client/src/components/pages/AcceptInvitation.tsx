@@ -27,7 +27,7 @@ const AcceptInvitation = () => {
     const [ownerLastName, setOwnerLastName] = useState<String | null>(null);
 
     const [hasRespondPerm, setHasRespondPerm] = useState<boolean>(false); // Should the user have access to respond to this request
-    const [msg, setMsg] = useState<string>(''); // Message for request not found or perm issue
+    const [systemMsg, setSystemMsg] = useState<string>(''); // Message for request not found or perm issue
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
     //#region Helper Methods
@@ -72,14 +72,22 @@ const AcceptInvitation = () => {
 
                 // only prospective member should have respond permission
                 setHasRespondPerm(res.data.prospectiveMemberId === currentUserId);
-                if (res.data.prospectiveMemberId !== currentUserId)
-                    setMsg('You do not have permission to respond to this invitation. Only the prospective member may review and respond the invitation.');
+                if (res.data.prospectiveMemberId !== currentUserId) {
+                    setSystemMsg('You do not have permission to respond to this invitation. Only the prospective member may review and respond the invitation.');
+                    return;
+                }
+
+                if (res.data.requestStatus === 'Accepted' || res.data.requestStatus === 'Declined') {
+                    setHasRespondPerm(false);
+                    setSystemMsg('This request has been closed.');
+                    return;
+                }
 
                 setProjectId(res.data.projectId);
             }
         } catch (err) {
             setError('Fetch Project Error: ' + err);
-            setMsg('This invitation could not be found or may no longer be available.');
+            setSystemMsg('This invitation could not be found or may no longer be available.');
         }
     };
 
@@ -160,7 +168,7 @@ const AcceptInvitation = () => {
                                     </>
                                     : <>
                                         <p>Looks like you're in the wrong place. </p>
-                                        <p>{msg}</p>
+                                        <p>{systemMsg}</p>
                                         <div id="accept-invite-btns">
                                             <button onClick={() => { navigate(paths.routes.HOME) }}>Return Home</button>
                                         </div>
