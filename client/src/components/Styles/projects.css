@@ -1339,6 +1339,12 @@ Project Creator and Editor Popup style rules
   justify-items: center;
 }
 
+#edit-position-skills-container .edit-project-member-button {
+  position: relative;
+  top: 0;
+  right: 0;
+}
+
 .project-editor-project-member>.edit-project-member-button {
   top: 6px;
   right: 6px;
@@ -1789,6 +1795,16 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
 }
 
+#edit-position-skills-container {
+  width: 100%;
+}
+
+#edit-position-skills-label-button {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
 #edit-position-details-left,
 #edit-position-details-right {
   display: flex;
@@ -1838,7 +1854,8 @@ button.edit-position-contact .project-member-image {
   font-size: 0.875rem;
 }
 
-#edit-position-details label {
+#edit-position-details label,
+#edit-position-skills-container label {
   font-size: 1rem;
   text-wrap: nowrap;
 }

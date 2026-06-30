@@ -8,6 +8,7 @@ import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
+// import { SkillsTab } from "../../Profile/tabs/SkillsTab";
 import {
   getJobTitles,
   getUsers,
@@ -230,7 +231,8 @@ export const TeamTab = ({
         current.duration !== original.duration ||
         current.compensation !== original.compensation ||
         current.description !== original.description ||
-        current.contact?.userId !== original.contact?.userId
+        current.contact?.userId !== original.contact?.userId ||
+        current.jobSkills !== original.jobSkills
       );
     });
   }, [projectData?.jobs, unmodifiedProject?.jobs]);
@@ -745,6 +747,7 @@ export const TeamTab = ({
           location: currentJob.location,
           roleId: currentJob.role.roleId,
           description: currentJob.description ?? undefined,
+          // jobSkills: currentJob.jobSkills (gives type error)
         },
       });
 
@@ -776,6 +779,7 @@ export const TeamTab = ({
         duration: currentJob.duration ?? undefined,
         location: currentJob.location ?? undefined,
         roleId: currentJob.role?.roleId ?? undefined,
+        // jobSkills: currentJob.jobSkills ?? undefined (gives type error)
       },
     });
 
@@ -836,6 +840,9 @@ export const TeamTab = ({
           </div>
         </div>
         <div id="open-position-details">
+          <div id="open-position-skills-container">
+            Job Skills
+          </div>
           <div id="open-position-details-left">
             <div id="position-availability">
               <span className="position-detail-indicator">Availability: </span>
@@ -1004,6 +1011,32 @@ export const TeamTab = ({
         </textarea>
       </div>
 
+      <div id="edit-position-skills-container">
+        <div id="edit-position-skills-label-button">
+          <label>Job Skills</label><button
+            className="edit-project-member-button"
+            onClick={() => { /*open up job skill editor */
+            }}
+          >
+            <ThemeIcon
+              id={"pencil"}
+              width={11}
+              height={12}
+              className={"gradient-color-fill edit-project-member-icon"}
+              ariaLabel={"edit job skills"}
+            />
+          </button></div>
+        <div id="edit-position-skills-list">
+          {getProjectJob(currentJob?.role?.roleId as number)?.jobSkills?.length === 0
+            ? "No skills selected"
+            : "skills go here"
+          }
+          {/* <SkillsTab
+          dataManager={dataManager}></SkillsTab> */}
+        </div>
+
+      </div>
+
       <div id="edit-position-details">
         <div id="edit-position-details-left">
           <div className="edit-position-container">
@@ -1112,8 +1145,8 @@ export const TeamTab = ({
                 placeholder="Select"
                 type="input"
                 initialVal={
-                  currentJob?.contact 
-                    ? `${currentJob.contact.firstName} ${currentJob.contact.lastName}` 
+                  currentJob?.contact
+                    ? `${currentJob.contact.firstName} ${currentJob.contact.lastName}`
                     : ""
                 }
               />
@@ -1659,7 +1692,7 @@ export const TeamTab = ({
                 }
                 className="team-positions-button"
               >
-               
+
                 <button
                   className="positions-popup-list-item"
                   data-id={"jobId" in job ? job.jobId : job.localId}
@@ -1745,35 +1778,35 @@ export const TeamTab = ({
 
       <div id="team-save-info">
         <div className="editor-save-actions">
-        <Popup>
-          {saveable ? "" :
-            <div id="invalid-input-error" className={"save-error-msg-general"}>
-              <p>*{message}*</p>
-            </div>}
-          <PopupButton
-            buttonId="project-editor-save"
-            doNotClose={() => failCheck}
-            disabled={!saveable}
-            className={!saveable ? "disabled" : ""}
-          >
-            Save Changes
-          </PopupButton>
-          <PopupContent useClose={false}>
-            <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
-            <div id="confirm-editor-save">
-              <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
-                Confirm
-              </PopupButton>
-              <PopupButton buttonId="team-edit-member-cancel-button" >
-                Cancel
-              </PopupButton>
-            </div>
-          </PopupContent>
-        </Popup>
-        <DeleteProjectButton
-          projectID={unmodifiedProject.projectId}
-          projectTitle={unmodifiedProject.title}
-        />
+          <Popup>
+            {saveable ? "" :
+              <div id="invalid-input-error" className={"save-error-msg-general"}>
+                <p>*{message}*</p>
+              </div>}
+            <PopupButton
+              buttonId="project-editor-save"
+              doNotClose={() => failCheck}
+              disabled={!saveable}
+              className={!saveable ? "disabled" : ""}
+            >
+              Save Changes
+            </PopupButton>
+            <PopupContent useClose={false}>
+              <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
+              <div id="confirm-editor-save">
+                <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
+                  Confirm
+                </PopupButton>
+                <PopupButton buttonId="team-edit-member-cancel-button" >
+                  Cancel
+                </PopupButton>
+              </div>
+            </PopupContent>
+          </Popup>
+          <DeleteProjectButton
+            projectID={unmodifiedProject.projectId}
+            projectTitle={unmodifiedProject.title}
+          />
         </div>
       </div>
     </div>
