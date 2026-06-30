@@ -877,11 +877,11 @@ Project Creator and Editor Popup style rules
   max-height: 370px;
   overflow-y: auto;
 
-  #tag-category-header{
+  #tag-category-header {
     width: 100%;
   }
 
-  #tag-category-header p{
+  #tag-category-header p {
     font-weight: bold;
     font-size: medium;
     margin-top: 0.5em;
@@ -1253,9 +1253,9 @@ Project Creator and Editor Popup style rules
   align-content: flex-start;
   justify-content: center;
   border-radius: 10px;
-  border: 1px solid var(--border-color);
   background: var(--bg-color);
   gap: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
 }
 
 .project-editor-project-member {
@@ -1882,6 +1882,7 @@ button.edit-position-contact .project-member-image {
   border: none;
   cursor: pointer;
 }
+
 .delete-tags-btn {
   padding: 4px;
   background: none;
@@ -3331,6 +3332,53 @@ Project Carousel style rules
   font-weight: 700;
 }
 
+#project-request-review {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  padding: 15px 0;
+
+  label {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    font-weight: 700;
+  }
+
+  br {
+    margin-bottom: 5px;
+  }
+
+  #project-request-info {
+    width: 75%;
+    text-align: center;
+  }
+
+  #project-request-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+
+    button {
+      font-size: 1.1rem;
+      font-weight: 700;
+      border: none;
+    }
+
+    #request-confirm-button {
+      background-color: var(--primary-color);
+      color: var(--invert-text);
+      border-radius: 20px;
+      padding: 4px 10px;
+    }
+
+    #request-cancel-button {
+      background: none;
+      color: var(--primary-color);
+    }
+  }
+}
+
 #project-info-edit {
   font-size: 1rem;
   border: none;
@@ -4545,7 +4593,7 @@ My projects page style rules
   border: 0px;
   border-radius: 10px;
   box-shadow: 1px 2px 2px var(--shadow-color);
-  width: 154px;
+  width: 160px;
   height: fit-content;
   padding: 15px 10px;
   z-index: 1;
@@ -4668,6 +4716,7 @@ My projects page style rules
 }
 
 @media only screen and (max-width: 600px) {
+
   /* Hide table headers (but not display: none;, for accessibility) */
   .responsive-table thead tr {
     position: absolute;

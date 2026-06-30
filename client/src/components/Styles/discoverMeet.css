@@ -808,6 +808,7 @@ Filters / Tags Style Rules
 
   p {
     margin: 0px;
+    border:0px;
     color: var(--tag-text-selected);
   }
 
@@ -1192,9 +1193,6 @@ Filters / Tags Style Rules
   color: #f3be9b;
 }
 
-#filters-popup p{
-  margin-top: 0.5em;
-}
 
 /* Main Content Panel (Search, Categories, Tags) */
 #filters.popup-section {

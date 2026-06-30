@@ -261,10 +261,17 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>{' '}
 
                 {/* Single unified auth entry point (logs in existing users, signs up new ones) */}
-                <a href={paths.routes.LOGIN}>
+                <button 
+                onClick={() =>
+                  navigate(paths.routes.LOGIN, {
+                    state: {from: location.pathname + location.search}
+                  })
+                }
+                className="header-login-btn"
+                >
                   <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'} />
                   Log In / Sign Up
-                </a>
+                </button>
               </div>
 
             ) : (

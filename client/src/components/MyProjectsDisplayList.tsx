@@ -148,23 +148,51 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                   id={"pencil"}
                   width={21}
                   height={21}
-                  ariaLabel={"Leave project"}
+                  ariaLabel={"Edit project"}
                   className="mono-fill"
                 />
                 Edit Project
               </button>
-              {/* TODO: add checking if the project is approved/rejected/pending */}
-              <button className='card-leave-button'
-                onClick={() => { if (projectData) { requestProjectReview(projectData.projectId); location.reload(); } }}>
-                <ThemeIcon
-                  id={"pencil"}
-                  width={21}
-                  height={21}
-                  ariaLabel={"Leave project"}
-                  className="mono-fill"
-                />
-                Request Review
-              </button>
+              {approvalStatus === 'not-approved' ?
+              <Popup>
+                {/* TODO: add checking if the project is approved/rejected/pending */}
+                <PopupButton className='card-leave-button'>
+                  <ThemeIcon
+                    id={"request-review"}
+                    width={21}
+                    height={21}
+                    ariaLabel={"request-Review"}
+                    className="mono-fill"
+                  />
+                  Request Review
+                </PopupButton>
+                <PopupContent>
+                  <div id="project-request-review">
+                    <label id="project-request-label">
+                      Would you like to submit your project for review?
+                    </label>
+                    <div id="project-request-info">
+                      Submiting a request will make your project visible to moderators who will choose to either
+                      accept and make your project visible to all, request changes for you to make, 
+                      or reject it for various reasons. <br/>
+                      <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                    </div>
+                    <div id="project-request-buttons">
+                      <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (projectData) requestProjectReview(projectData.projectId);
+                      }}
+                      >
+                        request review
+                      </PopupButton>
+                      <PopupButton buttonId="request-cancel-button">
+                        cancel
+                      </PopupButton>
+                    </div>
+                  </div>
+                </PopupContent>
+              </Popup> : ""}
+              {(!isOwner) && (
               <Popup>
                 <PopupButton className='card-leave-button'>
                   <ThemeIcon
@@ -194,6 +222,7 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                   </div>
                 </PopupContent>
               </Popup>
+              )}
               {(isOwner) && (
                 <Popup>
                   <PopupButton className='card-leave-button'>
