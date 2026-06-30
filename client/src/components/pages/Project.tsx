@@ -175,7 +175,7 @@ const Project = (userProfile: any) => {
     // Follow icon is only present if user is logged in.
     // If keeping this layout, this check may be redundant.
     if (!loggedIn) {
-      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search} }); // Redirect if logged out
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
       const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
@@ -617,7 +617,7 @@ const Project = (userProfile: any) => {
                       Open Positions
                     </PopupButton>
                     <PopupContent>
-                      <TeamPositionsPanel displayedProject={displayedProject}
+                      <TeamPositionsPanel currentUserId={userID} displayedProject={displayedProject}
                         viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
                     </PopupContent>
                   </Popup>
