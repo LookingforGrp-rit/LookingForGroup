@@ -583,8 +583,7 @@ Project Creator and Editor Popup style rules
   text-align: right;
 }
 
-#report-popup
-{
+#report-popup {
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
@@ -4603,7 +4602,7 @@ My projects page style rules
   border: 0px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
-  z-index: 1;
+  z-index: 4;
 }
 
 .card-options-list {
