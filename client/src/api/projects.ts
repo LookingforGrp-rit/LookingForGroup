@@ -73,9 +73,12 @@ export const requestProjectReview = async (
   return response as ApiResponse<ProjectDetail>;
 }
 
-// Reports a project
-// '/projects/report/:id/:report'
-// Does not work-- experimenting with sending in report
+/**
+ * Sends in a report of the project-- something is wrong with it
+ * @param projectId ID of project that is being reported
+ * @param report The message that was sent along with the report
+ * @returns 
+ */
 export const reportProject = async (
   projectId: number,
   report: string,

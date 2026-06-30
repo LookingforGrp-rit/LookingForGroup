@@ -466,7 +466,7 @@ const Project = (userProfile: any) => {
                         <PopupButton
                           className="delete-button"
                           callback={ () => { console.log("Report button clicked");
-                            reportProject(projectID, (reportMessage?.current?.value ?? "No message given.")); /* -1 is a temp # for right now */
+                            reportProject(projectID, (reportMessage?.current?.value ?? "No message given."));
                             console.log(reportMessage?.current?.value);
                           }}>
                             Report

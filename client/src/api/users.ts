@@ -155,6 +155,24 @@ export const editUser = async (
   return response as ApiResponse<MePrivate>; //it would get mad at me if i didn't do this soooo
 };
 
+/**
+ * Sends in a report of a user -- they did something bad!
+ * @param userId ID of the user that is being reported
+ * @param report The message that was sent along with the report
+ * @returns 
+ */
+export const reportUser = async (
+  userId: number,
+  report: string,
+): Promise<ApiResponse> => {
+  const apiURL = `/me/users/report/${userId}/${report}`;
+  const response = await POST(apiURL, {});
+  
+  if (response.error) console.log(`Error in reportProject: ${response.error}`);
+  else console.log(response);
+  return response;
+};
+
 //Removes a user specified by URL.
 export const deleteUser = async (): Promise<ApiResponse> => {
   const apiURL = `/me`;
@@ -582,6 +600,7 @@ export default {
   getUsers,
   getUsersById,
   editUser,
+  reportUser,
   deleteUser,
   getUserByUsername,
   getUserByEmail,

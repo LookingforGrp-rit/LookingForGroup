@@ -27,6 +27,7 @@ import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
 import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
+import { reportUser } from "../../api/users";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -467,7 +468,8 @@ const Profile = (userProfile: any) => {
                         {/* The Report Button */}
                         <PopupButton
                           className="delete-button"
-                          callback={ () => { console.log("Report button clicked"); /* report functionality here, should include feedback popup */
+                          callback={ () => {
+                            reportUser(parseInt(profileID), (reportMessage?.current?.value ?? "No message given."));
                           }}>
                             Report
                         </PopupButton>
