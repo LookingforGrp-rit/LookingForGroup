@@ -16,6 +16,17 @@ import {
 import { DiscoverProjects } from '../DiscoverProjects';
 import { GET } from '../../api';
 
+
+//These variables should probably go somewhere else
+let projects: ProjectPreview[] = [];
+
+//Beginning is 0
+let index = 0;
+
+//Default should be 10
+//Determines the number of different projects for some reason
+let count = 3;
+
 export const DiscoverPage = () => {
   // --------------------
   // Components
@@ -142,32 +153,40 @@ export const DiscoverPage = () => {
 
       if (scrollPercent >= 0.95) {
         setupProjectData();
-        //...it blows up.
-        //BUT IT DETECTS THE SCROLL HEIGHT PROPERLY :cinema:
         console.log("load more projects");
       }
     }
   });
 
-  //These variables should probably go somewhere else
-  let projects: ProjectPreview[] = [];
-
-  //Beginning is 0
-  let index = 0;
-
-  //Default should be 10
-  let count = 10;
-
   //Gets the projects and updates the variables above
-  const getPaginatedProjects = async (index: number, count: number) => {
+  const getPaginatedProjects = async () => {
     let returnedProjects = await GET(`/projects/paginated/${count}/${index}`);
+    index += count;
     count *= 2;
     return returnedProjects.data;
   }
 
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
-    projects = projects.concat(await getPaginatedProjects(index, count));
+    //Doesn't check if projects are alreadys in projects so many are repeated
+    //I think the weirdness below fixes it? I'm not sure since the only 3 bug is still present
+    let returnedProjects: ProjectPreview[] = await getPaginatedProjects();
+    //Probably doesn't work since it's not checking projectId?
+    // returnedProjects = returnedProjects.filter((project) => !projects.includes(project));
+    // projects = projects.concat(returnedProjects);
+
+    //I need to improve this somehow
+    const returnedProjectIds: number[] = returnedProjects.map((project) => project.projectId);
+    const projectIds: number[] = projects.map((project) => project.projectId);
+
+    //Only works if projects and projectIds is in the same order
+    //Same with returnedProjects and returnedProjectIds
+    for (let i = 0; i < returnedProjectIds.length; i++) {
+      if (!projectIds.includes(returnedProjectIds[i])) {
+        projects.push(returnedProjects[i]);
+      }
+    }
+
     console.log(projects);
 
     if (!projects) {
@@ -446,6 +465,8 @@ export const DiscoverPage = () => {
           {/* If filteredItemList isn't done loading, display a loading bar */}
           {discoverPanelContents}
         </div>
+
+        <button id='btn-loadmore' onClick={setupProjectData}>Load More Projects</button>
       </main>
       <ToTopButton />
     </div>

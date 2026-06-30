@@ -3,8 +3,6 @@ import prisma from '#config/prisma.ts';
 import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformProjectToPreview } from '#services/transformers/projects/project-preview.ts';
-import getProjectByIdService from './get-proj-id.ts';
-import getProjectsService from './get-projects.ts';
 
 type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
@@ -15,15 +13,15 @@ const getPaginatedProjectsService = async (
 ): Promise<ProjectPreview[] | GetServiceError> => {
   try {
     //There should be a better way of doing this
-    const projectCount = await prisma.projects.count();
-    const projects = await getProjectsService();
-    const lastProject = await getProjectByIdService(lastProjectId);
-    const lastProjectIndex = projects.indexOf(lastProject as string & ProjectPreview);
-    const remainingProjects = projectCount - 1 - lastProjectIndex;
+    // const projectCount = await prisma.projects.count();
+    // const projects = await getProjectsService();
+    // const lastProject = await getProjectByIdService(lastProjectId);
+    // const lastProjectIndex = projects.indexOf(lastProject as string & ProjectPreview);
+    // const remainingProjects = projectCount - 1 - lastProjectIndex;
 
-    if (count >= remainingProjects) {
-      count = remainingProjects;
-    }
+    // if (count >= remainingProjects) {
+    //   count = remainingProjects;
+    // }
 
     const query = {
       select: ProjectPreviewSelector,
