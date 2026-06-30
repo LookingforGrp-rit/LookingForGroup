@@ -25,7 +25,7 @@ let index = 0;
 
 //Default should be 10
 //Determines the number of different projects for some reason
-let count = 3;
+let count = 10;
 
 export const DiscoverPage = () => {
   // --------------------
