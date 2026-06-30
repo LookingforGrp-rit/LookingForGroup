@@ -1027,7 +1027,7 @@ export const TeamTab = ({
             />
           </button></div>
         <div id="edit-position-skills-list">
-          {getProjectJob(currentJob?.role?.roleId as number)?.jobSkills?.length === 0
+          {!(getProjectJob(currentJob?.role?.roleId as number)?.jobSkills)
             ? "No skills selected"
             : "skills go here"
           }
