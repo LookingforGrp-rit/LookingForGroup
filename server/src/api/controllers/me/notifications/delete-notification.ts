@@ -19,7 +19,7 @@ export const deleteNotification = async (
     res.status = 404;
     res.error = 'Notification does not exist for user';
   } else {
-    res.status = 204;
+    res.status = 200;
     res.data = 'Notification deleted';
   }
 

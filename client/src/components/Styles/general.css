@@ -1865,6 +1865,7 @@ Dropdown style rules
   gap: 8px;
   background: none;
   border: none;
+  border-radius: 0;
   padding: 12px 8px 12px 14px;
   text-align: left;
   cursor: pointer;
@@ -1915,6 +1916,8 @@ Dropdown style rules
   flex-shrink: 0;
   background: none;
   border: none;
+  height: auto;
+  border-radius: 0;
   padding: 0 12px;
   font-size: 1.2rem;
   line-height: 1;

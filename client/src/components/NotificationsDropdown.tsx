@@ -118,7 +118,10 @@ const NotificationsPanel: React.FC<PanelProps> = ({
                 type="button"
                 className="notification-delete"
                 aria-label="Delete notification"
-                onClick={() => void remove(n.notificationId)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  void remove(n.notificationId);
+                }}
               >
                 &times;
               </button>

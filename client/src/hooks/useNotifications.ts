@@ -4,12 +4,11 @@ import {
   getNotifications,
   readNotification,
   deleteNotification,
-  checkForUnreadNotifications,
 } from "../api/notifications";
 
-// How often to poll the cheap "any unread?" endpoint while enabled.
-// The backend is pull-only (no websockets), so polling is how the bell
-// badge stays roughly live without the user reopening the dropdown.
+// How often to refresh the notification list while enabled. The backend is
+// pull-only (no websockets), so polling is how the bell badge — including its
+// unread count — stays live without the user reopening the dropdown.
 const UNREAD_POLL_MS = 60_000;
 
 export interface UseNotificationsResult {
@@ -34,10 +33,7 @@ export interface UseNotificationsResult {
 /**
  * Manages the current user's notifications for the bell UI.
  *
- * Strategy: poll the lightweight `checkformessages` endpoint on an interval to
- * keep the unread badge fresh, and lazily fetch the full list via `refresh()`
- * (e.g. when the dropdown opens). All mutations update local state optimistically
- * so the UI feels instant, then reconcile against the server.
+ *
  *
  * @param enabled - only fetch/poll while true (i.e. a user is logged in)
  */
@@ -57,13 +53,6 @@ export const useNotifications = (enabled: boolean): UseNotificationsResult => {
   }, []);
 
   const unreadCount = notifications.filter((n) => !n.hasBeenRead).length;
-
-  const checkUnread = useCallback(async () => {
-    if (!enabled) return;
-    const res = await checkForUnreadNotifications();
-    if (!mounted.current) return;
-    if (res.status === 200) setHasUnread(Boolean(res.data));
-  }, [enabled]);
 
   const refresh = useCallback(async () => {
     if (!enabled) return;
@@ -107,17 +96,18 @@ export const useNotifications = (enabled: boolean): UseNotificationsResult => {
     if (mounted.current && res.error && removed) void refresh();
   }, [refresh]);
 
-  // Poll for unread state while enabled. Clears itself when disabled/unmounted.
+  // Poll the full list while enabled so the badge count stays live. Clears
+  // itself when disabled/unmounted.
   useEffect(() => {
     if (!enabled) {
       setNotifications([]);
       setHasUnread(false);
       return;
     }
-    void checkUnread();
-    const interval = window.setInterval(() => void checkUnread(), UNREAD_POLL_MS);
+    void refresh();
+    const interval = window.setInterval(() => void refresh(), UNREAD_POLL_MS);
     return () => window.clearInterval(interval);
-  }, [enabled, checkUnread]);
+  }, [enabled, refresh]);
 
   return {
     notifications,

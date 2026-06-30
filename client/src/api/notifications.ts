@@ -75,7 +75,6 @@ export const deleteNotification = async (
 
 /**
  * Check whether the current user has any unread notifications.
- * Cheaper than fetching the whole list — use it to drive the bell badge.
  * @returns ApiResponse whose data is `true` when at least one is unread
  */
 export const checkForUnreadNotifications = async (): Promise<
