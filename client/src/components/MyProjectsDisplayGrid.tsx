@@ -168,6 +168,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                   Request Review
                 </PopupButton>
                 <PopupContent>
+                  <div className="small-popup">
                   <div id="project-request-review">
                     <label id="project-request-label">
                       Would you like to submit your project for review?
@@ -191,8 +192,10 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                       </PopupButton>
                     </div>
                   </div>
+                   </div>
                 </PopupContent>
               </Popup> : "" }
+
               <Popup>
                 <PopupButton className="card-leave-button">
                   <ThemeIcon
