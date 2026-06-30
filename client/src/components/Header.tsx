@@ -1,5 +1,6 @@
 import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
+import { NotificationsDropdown } from './NotificationsDropdown';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext, ChangeEvent, FocusEvent } from 'react';
 import * as paths from '../constants/routes';
@@ -199,18 +200,8 @@ export const Header: React.FC<HeaderProps> = ({
       : ""}
 
       <div id="header-buttons">
-        {/* Notififcations not being used rn */}
-        {/* <Dropdown>
-          <DropdownButton buttonId="notif-btn">
-            // If implementing, use SVG sprite sheet instead of hard-coded pngs
-            <img
-              src="/assets/bell_dark.png"
-              src-light="/assets/bell_light.png"
-              src-dark="/assets/bell_dark.png"
-              alt="" />
-          </DropdownButton>
-          <DropdownContent rightAlign={true}>This is where notification stuff will be</DropdownContent>
-        </Dropdown> */}
+        {/* Notifications bell + dropdown. Only renders/polls when logged in. */}
+        <NotificationsDropdown enabled={Boolean(userId && userId > 0)} theme={theme} />
 
         {/* This is the top-right dropdown menu. */}
         <Dropdown>
@@ -261,10 +252,17 @@ export const Header: React.FC<HeaderProps> = ({
                 </button>{' '}
 
                 {/* Single unified auth entry point (logs in existing users, signs up new ones) */}
-                <a href={paths.routes.LOGIN}>
+                <button 
+                onClick={() =>
+                  navigate(paths.routes.LOGIN, {
+                    state: {from: location.pathname + location.search}
+                  })
+                }
+                className="header-login-btn"
+                >
                   <ThemeIcon id={'login'} width={25} height={25} className={'mono-fill'} ariaLabel={'log in or sign up'} />
                   Log In / Sign Up
-                </a>
+                </button>
               </div>
 
             ) : (

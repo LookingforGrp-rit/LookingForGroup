@@ -548,7 +548,7 @@ Filters / Tags Style Rules
   position: sticky;
   top: 80px;
   /*changing z-index affects .SideBarContainer*/
-  z-index: 1;
+  z-index: 3;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
   /* Extend the sticky background 8px past #main on each side so cards don't
@@ -695,6 +695,10 @@ Filters / Tags Style Rules
   justify-content: end;
   right: 0;
   flex: 0 0 auto;
+
+  .popup {
+    width: 0px;
+  }
 }
 
 .discover-tag-filter:hover,
@@ -808,6 +812,7 @@ Filters / Tags Style Rules
 
   p {
     margin: 0px;
+    border: 0px;
     color: var(--tag-text-selected);
   }
 
@@ -1192,9 +1197,6 @@ Filters / Tags Style Rules
   color: #f3be9b;
 }
 
-#filters-popup p{
-  margin-top: 0.5em;
-}
 
 /* Main Content Panel (Search, Categories, Tags) */
 #filters.popup-section {
@@ -1217,8 +1219,8 @@ Filters / Tags Style Rules
   display: flex !important;
   flex-wrap: nowrap !important;
   justify-content: left !important;
-  align-content: flex-start !important; 
-  gap: 8px 10px !important;            
+  align-content: flex-start !important;
+  gap: 8px 10px !important;
   margin: 14px auto 0 auto !important;
   padding: 0 0 0px 0 !important;
   font-size: 1rem;
@@ -1226,7 +1228,7 @@ Filters / Tags Style Rules
   word-break: normal;
   max-width: 100%;
   width: 100%;
-  height: auto !important;              
+  height: auto !important;
   overflow-x: scroll !important;
 }
 
@@ -1260,7 +1262,7 @@ Filters / Tags Style Rules
   word-break: break-word;
 }
 
-#filter-divider{
+#filter-divider {
   height: 2px;
   min-height: 2px;
   width: 100%;
@@ -1280,13 +1282,13 @@ Filters / Tags Style Rules
   overflow-y: auto !important;
   padding: 4px 0 !important;
 
-  #tag-category-header{
+  #tag-category-header {
     width: 100%;
     height: min-content;
     margin-top: 0.5em;
   }
 
-  #tag-category-header p{
+  #tag-category-header p {
     font-weight: bold;
     font-size: medium;
     margin-top: 0.5em;
@@ -1346,7 +1348,7 @@ Filters / Tags Style Rules
   }
 
   #filter-tabs {
-    gap: 6px 65px !important;
+    gap: 6px 10px !important;
     margin: 10px auto 0 auto !important;
     padding-bottom: 0px !important;
   }
@@ -1355,7 +1357,7 @@ Filters / Tags Style Rules
     font-size: 0.9rem !important;
   }
 
-  .filter-tab{
+  .filter-tab {
     width: fit-content !important;
     padding-left: 1% !important;
     padding-right: 1% !important;

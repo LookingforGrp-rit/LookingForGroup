@@ -35,6 +35,8 @@ import type {
   SendProjectInviteInput,
   RequestToJoinInput,
   MemberRequests,
+  DeleteJobSkillInput,
+  GetMemberRequest,
 } from "@looking-for-group/shared";
 
 //const navigate = useNavigate();
@@ -71,6 +73,21 @@ export const requestProjectReview = async (
   //console.log(response);
   return response as ApiResponse<ProjectDetail>;
 }
+
+// Reports a project
+// '/projects/report/:id/:report'
+/* Does not work-- experimenting with sending in report
+export const reportProject = async (
+  projectId: number,
+  message: Report
+): Promise<ApiResponse> => {
+  const apiURL = `/projects/report/:${projectId}/:${message}`;
+  const response = await POST(apiURL, message);
+  
+  if (response.error) console.log(`Error in reportProject: ${response.error}`);
+  else console.log(response);
+  return response;
+};
 
 /**
  * Gets all projects in the database
@@ -116,14 +133,19 @@ export const getByID = async (
   return response;
 };
 
-export const getRequestByID = async (
-  requestID: number
+/**
+ * Retrieves data of a member request associated to the data in the query
+ * @param query Data for getting a member request (if requestId is provided, others are optional)
+ * @returns The member request if valid, 400 if not
+ */
+export const getMemberRequest = async (
+  query: GetMemberRequest
 ): Promise<ApiResponse<MemberRequests>> => {
-  const apiURL = `/projects/members/requests/${requestID}`;
-  const response = await GET(apiURL);
+  const apiURL = `/projects/members/requests`;
+  const response = await GET(apiURL, query);
 
   if (response.error) {
-    console.log(`Error in getByID: ${response.error}`);
+    console.log(`Error in getRequestByID: ${response.error}`);
     throw new Error(response.error);
   }
   return response;
@@ -672,10 +694,9 @@ export const addProjectJob = async (
  */
 export const addJobSkill = async (
   projectID: number,
-  jobID: number,
   skillData: AddJobSkillInput
 ): Promise<ApiResponse<JobSkill>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills`;
   const response = await POST(apiURL, skillData);
 
   if (response.error) console.log(`Error in addJobSkill: ${response.error}`);
@@ -706,11 +727,10 @@ export const getJobSkills = async (
  */
 export const updateJobSkill = async (
   projectID: number,
-  jobID: number,
   skillID: number,
   skillData: UpdateJobSkillInput
 ): Promise<ApiResponse<JobSkill>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills/${skillID}`;
   const response = await PATCH(apiURL, skillData);
 
   if (response.error) console.log(`Error in updateJobSkill: ${response.error}`);
@@ -724,10 +744,9 @@ export const updateJobSkill = async (
  */
 export const deleteJobSkill = async (
   projectID: number,
-  jobID: number,
-  skillID: number
+  skillData: DeleteJobSkillInput
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills/${skillData.skillId}`;
   const response = await DELETE(apiURL);
 
   if (response.error) console.log(`Error in deleteJobSkill: ${response.error}`);
@@ -818,7 +837,30 @@ export const reorderProjectImages = async (
 //   return response;
 // }
 
+/**
+ * 
+ * @param projectID - ID of the project
+ * @returns if the approval request exists or not
+ */
 export const projectApprovalRequestExists = async (projectID: number): Promise<boolean> => {
+  const apiURL = `/projects/unapproved/${projectID}`;
+  const response = await GET(apiURL);
+
+  if (response.status === 500)
+    console.log(`Error in projectApprovalRequestExists: ${response.error}`);
+  else if (response.status === 404) {
+    console.log(`Error in projectApprovalRequestExists: ${response.error}`);
+    return false;
+  }
+  return true;
+};
+
+/**
+ * Checks if the member request 
+ * @param projectID - ID of the project
+ * @returns if the member request exists or not
+ */
+export const projectMemberRequestExists = async (projectID: number): Promise<boolean> => {
   const apiURL = `/projects/unapproved/${projectID}`;
   const response = await GET(apiURL);
 
@@ -846,7 +888,7 @@ export default {
   sendInvite,
   requestToJoin,
   updateMember,
-  getRequestByID,
+  getMemberRequest,
   updateMemberRequest,
   deleteMember,
   getProjectSocials,
