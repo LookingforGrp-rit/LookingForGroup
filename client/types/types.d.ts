@@ -33,6 +33,8 @@ import {
   MeDetail,
   UpdateUserProjectVisibilityInput,
   CreateProjectVideoInput,
+  AddJobSkillInput,
+  DeleteJobSkillInput,
 } from "@looking-for-group/shared";
 
 /**
@@ -125,6 +127,10 @@ interface ProjectChangesCreates {
   jobs: CRUDRequest<CreateProjectJobInput>[];
 
   /**
+   * All job skills to be added
+   */
+  jobSkills: CRUDRequest<AddJobSkillInput>[];
+  /**
    * All members to be created
    */
   members: CRUDRequest<CreateProjectMemberInput>[];
@@ -170,6 +176,11 @@ interface ProjectChangesUpdates {
   jobs: CRUDRequest<UpdateProjectJobInput>[];
 
   /**
+   * All jobs to be updated
+   */
+  jobSkills: CRUDRequest<UpdateJobSkillInput>[];
+
+  /**
    * All members to be updated
    */
   members: CRUDRequest<UpdateProjectMemberInput>[];
@@ -203,6 +214,11 @@ interface ProjectChangesDeletes {
    * All jobs to be deleted
    */
   jobs: CRUDRequest<null>[];
+
+  /**
+   * All jobs to be deleted
+   */
+  jobSkills: CRUDRequest<DeleteJobSkillInput>[];
 
   /**
    * All members to be deleted

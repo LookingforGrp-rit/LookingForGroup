@@ -352,17 +352,17 @@ export const TagsTab = ({
       switch (currentTagsTab){
         case 1:
           //Genre
-          let story = searchedTags.filter((tag) => (tag as Tag).category === "Story");
-          let game = searchedTags.filter((tag) => (tag as Tag).category === "Game");
-          let music = searchedTags.filter((tag) => (tag as Tag).category === "Music");
+          { const story = searchedTags.filter((tag) => (tag as Tag).category === "Story");
+          const game = searchedTags.filter((tag) => (tag as Tag).category === "Game");
+          const music = searchedTags.filter((tag) => (tag as Tag).category === "Music");
           tagsToDisplay = story.concat(game, music);
-          break;
+          break; }
         case 2:
           //Style
-          let visual = searchedTags.filter((tag) => (tag as Tag).category === "Visual");
-          let filmVideo = searchedTags.filter((tag) => (tag as Tag).category === "Film/Video");
+          { const visual = searchedTags.filter((tag) => (tag as Tag).category === "Visual");
+          const filmVideo = searchedTags.filter((tag) => (tag as Tag).category === "Film/Video");
           tagsToDisplay = visual.concat(filmVideo);
-          break;
+          break; }
       }
 
       return tagsToDisplay.map((tagOrMedium, index, array) => {
