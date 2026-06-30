@@ -399,7 +399,18 @@ const Profile = (userProfile: any) => {
      * tells the user the result
      */
   const reportUserPressed = async () => {
-    const response = await reportUser(parseInt(profileID), (reportMessage?.current?.value ?? "No message given."));
+    /* a loop hole around an empty string */
+    let message = "";
+    if (reportMessage?.current?.value == "")
+    {
+      message = "No message given.";
+    }
+    else
+    {
+      message = reportMessage?.current?.value ?? "No message given.";
+    }
+
+    const response = await reportUser(parseInt(profileID), message);
     let responseText = response.error;
     if (responseText === null || responseText === undefined) {
       responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
@@ -492,7 +503,8 @@ const Profile = (userProfile: any) => {
                         <Popup>
                             <PopupButton
                               className="delete-button"
-                              callback={reportUserPressed}>
+                              callback={reportUserPressed}
+                              closeParent={() => true}> {/* doesnt work*/}
                                 Report
                             </PopupButton>
                             <PopupContent>

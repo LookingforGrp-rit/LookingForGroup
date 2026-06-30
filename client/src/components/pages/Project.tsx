@@ -59,7 +59,7 @@ const Project = (userProfile: any) => {
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLInputElement>(null);
-  const [reportResponseText, setReportResponseText] = useState<string>('');
+  const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
    * Checks in the current user is following a project
@@ -225,7 +225,18 @@ const Project = (userProfile: any) => {
    * tells the user the result
    */
 const reportProjectPressed = async () => {
-  const response = await reportProject(projectID, (reportMessage?.current?.value ?? "No message given."));
+  /* a loop hole around an empty string */
+  let message = "";
+  if (reportMessage?.current?.value == "")
+  {
+    message = "No message given.";
+  }
+  else
+  {
+    message = reportMessage?.current?.value ?? "No message given.";
+  }
+
+  const response = await reportProject(projectID, message);
   let responseText = response.error;
   if (responseText === null || responseText === undefined) {
     responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
