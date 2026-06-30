@@ -4446,7 +4446,6 @@ My projects page style rules
 .symbol {
   position: absolute;
   top: -25px;
-  /* z-index: 0; */
 
   width: 40px !important;
   height: 40px !important;
