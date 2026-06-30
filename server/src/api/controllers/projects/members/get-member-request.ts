@@ -1,13 +1,24 @@
-import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type {
+  ApiResponse,
+  AuthenticatedRequest,
+  GetMemberRequest,
+} from '@looking-for-group/shared';
 import type { Response } from 'express';
 import getMemberRequestService from '#services/projects/members/get-member-request.ts';
 
-//GET api/projects/members/requests/:id
-//gets the member request associated with the request id
-const getInvitations = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
-  const requestId = parseInt(req.params.id as string);
+//GET api/projects/members/requests
+//gets the member request associated with the request id and/or additional data in query
+const getMemberRequest = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
+  const data = {
+    requestId: req.query.requestId ? parseInt(req.query.requestId as string) : undefined,
+    prospectiveMemberId: req.query.prospectiveMemberId
+      ? parseInt(req.query.prospectiveMemberId as string)
+      : undefined,
+    projectId: req.query.projectId ? parseInt(req.query.projectId as string) : undefined,
+    roleId: req.query.roleId ? parseInt(req.query.roleId as string) : undefined,
+  } as GetMemberRequest;
 
-  const result = await getMemberRequestService(requestId);
+  const result = await getMemberRequestService(data);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -37,4 +48,4 @@ const getInvitations = async (req: AuthenticatedRequest, res: Response): Promise
   res.status(200).json(resBody);
 };
 
-export default getInvitations;
+export default getMemberRequest;

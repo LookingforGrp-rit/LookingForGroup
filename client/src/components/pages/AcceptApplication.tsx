@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { getByID, updateMemberRequest, getRequestByID } from '../../api/projects';
+import { getByID, updateMemberRequest, getMemberRequest } from '../../api/projects';
 import { getCurrentAccount, getJobTitles, getUsersById } from '../../api/users';
 import { Role } from '@looking-for-group/shared';
 import "../Styles/acceptInvite.css";
@@ -69,7 +69,7 @@ const AcceptApplication = () => {
 
     const fetchMemberRequest = async (requestId: number, currentUserId: number) => {
         try {
-            const res = await getRequestByID(requestId);
+            const res = await getMemberRequest({ requestId: requestId });
 
             if (res.data) {
                 await fetchProject(res.data.projectId, currentUserId);

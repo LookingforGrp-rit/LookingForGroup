@@ -10,7 +10,7 @@ import getMemberRequestService from '#services/projects/members/get-member-reque
 vi.mock('#config/prisma.ts', () => ({
   default: {
     memberRequests: {
-      findUnique: vi.fn(),
+      findFirst: vi.fn(),
     },
   },
 }));
@@ -30,21 +30,21 @@ describe('getMemberRequestService', async () => {
   });
 
   it('returns NO_CONTENT when get is successful', async () => {
-    vi.mocked(prisma.memberRequests.findUnique).mockResolvedValue(prismaApplicationRequest);
-    const result = await getMemberRequestService(50);
+    vi.mocked(prisma.memberRequests.findFirst).mockResolvedValue(prismaApplicationRequest);
+    const result = await getMemberRequestService({ requestId: 50 });
 
     expect(result).toStrictEqual(prismaApplicationRequest);
   });
   it("returns NOT_FOUND when request isn't found", async () => {
-    vi.mocked(prisma.memberRequests.findUnique).mockResolvedValue(null);
-    const result = await getMemberRequestService(50);
+    vi.mocked(prisma.memberRequests.findFirst).mockResolvedValue(null);
+    const result = await getMemberRequestService({ requestId: 50 });
 
     expect(result).toBe('NOT_FOUND');
   });
 
   it('returns INTERNAL_ERROR when prisma throws', async () => {
-    vi.mocked(prisma.memberRequests.findUnique).mockRejectedValue(new Error('womp womp'));
-    const result = await getMemberRequestService(50);
+    vi.mocked(prisma.memberRequests.findFirst).mockRejectedValue(new Error('womp womp'));
+    const result = await getMemberRequestService({ requestId: 50 });
 
     expect(result).toBe('INTERNAL_ERROR');
   });
