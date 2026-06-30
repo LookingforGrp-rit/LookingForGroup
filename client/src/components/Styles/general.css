@@ -293,7 +293,7 @@ input:focus:not(:focus-visible) {
   outline: none;
 }
 
-svg:focus{
+svg:focus, input:focus {
   outline:none;
 }
 

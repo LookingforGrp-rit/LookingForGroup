@@ -583,6 +583,20 @@ Project Creator and Editor Popup style rules
   text-align: right;
 }
 
+#report-popup
+{
+  h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--primary-color);
+    margin: 0 0 15px;
+  }
+
+  input {
+    margin: 20px;
+  }
+}
+
 .share-response-popup {
   width: 100%;
   position: absolute;

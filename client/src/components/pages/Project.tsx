@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -22,6 +22,8 @@ import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
+import { router } from "../../../../server/src/api/routes/me.ts"
+import { reportProject } from "../../api/projects";
 
 //Main component for the project page
 /**
@@ -55,6 +57,8 @@ const Project = (userProfile: any) => {
 
   const [shownTags, setShownTags] = useState(3);
   const [videos, setVideos] = useState<ProjectVideo[]>();
+
+  const reportMessage = useRef<HTMLInputElement>(null);
 
   /**
    * Checks in the current user is following a project
@@ -239,6 +243,8 @@ const Project = (userProfile: any) => {
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div id="project-info-dropdown">
+              {/* Share Button */}
+              <ShareButton />
               {approvalStatus == 'not-approved' ?
               <Popup>
                 {/* Request Review button */}
@@ -432,10 +438,9 @@ const Project = (userProfile: any) => {
                   :
                   <></>
                 }
-
-                <button
+                <Popup>
+                <PopupButton
                   className="project-info-dropdown-option"
-                  id="project-info-report"
                 >
                   <ThemeIcon
                     id={"warning"}
@@ -444,7 +449,33 @@ const Project = (userProfile: any) => {
                     ariaLabel={"Report"}
                   />
                   Report
-                </button>
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup" id="report-popup">
+                      <h3>Report {displayedProject?.title ?? "Project"}</h3>
+                      <p>You are about to report {displayedProject?.title ?? "Project"}. Please provide your reasoning below.</p>
+                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></input>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </PopupButton>
+                        {/* The Report Button */}
+                        <PopupButton
+                          className="delete-button"
+                          callback={ () => { console.log("Report button clicked"); /*
+                            reportProject(projectID, (reportMessage?.current?.value ?? "No message given.") as Report);
+                            console.log(reportMessage?.current?.value);*/
+                            /* report functionality here w/ feedback popup */
+                          }}>
+                            Report
+                        </PopupButton>
+                      </div>
+                  </div>
+                </PopupContent>
+              </Popup>
               </div>
             </DropdownContent>
           </Dropdown>

@@ -73,6 +73,21 @@ export const requestProjectReview = async (
   return response as ApiResponse<ProjectDetail>;
 }
 
+// Reports a project
+// '/projects/report/:id/:report'
+/* Does not work-- experimenting with sending in report
+export const reportProject = async (
+  projectId: number,
+  message: Report
+): Promise<ApiResponse> => {
+  const apiURL = `/projects/report/:${projectId}/:${message}`;
+  const response = await POST(apiURL, message);
+  
+  if (response.error) console.log(`Error in reportProject: ${response.error}`);
+  else console.log(response);
+  return response;
+};
+
 /**
  * Gets all projects in the database
  * @returns Array of all projects if valid, 400 if not
