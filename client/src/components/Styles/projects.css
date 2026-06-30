@@ -4448,17 +4448,9 @@ My projects page style rules
   box-sizing: border-box;
 }
 
-.txt {
-  font-size: 12px;
-  font-weight: bold;
-  color: black;
-  z-index: 1;
-}
-
 .symbol {
   position: absolute;
   top: -25px;
-  z-index: 0;
 
   width: 40px !important;
   height: 40px !important;
@@ -4472,6 +4464,13 @@ My projects page style rules
   fill: black !important;
 
   background-color: inherit;
+}
+
+.txt {
+  position: relative;
+  font-size: 12px;
+  font-weight: bold;
+  color: black;
 }
 
 .approved {
