@@ -161,7 +161,7 @@ export const DiscoverPage = () => {
   //Gets the projects and updates the variables above
   const getPaginatedProjects = async () => {
     let returnedProjects = await GET(`/projects/paginated/${count}/${index}`);
-    if(returnedProjects.data){
+    if(returnedProjects.data && returnedProjects.data[returnedProjects.data.length - 1]){
       index = returnedProjects.data[returnedProjects.data.length - 1].projectId;
     }
     return returnedProjects.data;
