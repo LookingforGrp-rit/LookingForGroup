@@ -10,7 +10,7 @@ import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
 import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
-import { getByID, getVideos, projectApprovalRequestExists, deleteProject } from "../../api/projects";
+import { getByID, getVideos, projectApprovalRequestExists, deleteProject, requestProjectReview } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import {
   deleteProjectFollowing,
@@ -179,7 +179,7 @@ const Project = (userProfile: any) => {
     // Follow icon is only present if user is logged in.
     // If keeping this layout, this check may be redundant.
     if (!loggedIn) {
-      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search} }); // Redirect if logged out
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
       const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
@@ -243,8 +243,50 @@ const Project = (userProfile: any) => {
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div id="project-info-dropdown">
-              {/* Share Project */}
+              {/* Share Button */}
               <ShareButton />
+              {approvalStatus == 'not-approved' ?
+              <Popup>
+                {/* Request Review button */}
+                <PopupButton className='project-info-dropdown-option'>
+                  <ThemeIcon
+                    id={"request-review"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"request-Review"}
+                    className="mono-fill"
+                  />
+                  Request Review
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup">
+                  <div id="project-request-review">
+                    <label id="project-request-label">
+                      Would you like to submit your project for review?
+                    </label>
+                    <div id="project-request-info">
+                      Submiting a request will make your project visible to moderators who will choose to either
+                      accept and make your project visible to all, request changes for you to make, 
+                      or reject it for various reasons. <br/>
+                      <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                    </div>
+                    <div id="project-request-buttons">
+                      <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (displayedProject) requestProjectReview(projectID);
+                        setApprovalStatus("under-review");
+                      }}
+                      >
+                        request review
+                      </PopupButton>
+                      <PopupButton buttonId="request-cancel-button">
+                        cancel
+                      </PopupButton>
+                    </div>
+                  </div>
+                  </div>
+                </PopupContent>
+              </Popup> : "" }
               {/* Leave Project */}
               <Popup>
                 <PopupButton className="project-info-dropdown-option">
@@ -648,7 +690,7 @@ const Project = (userProfile: any) => {
                       Open Positions
                     </PopupButton>
                     <PopupContent>
-                      <TeamPositionsPanel displayedProject={displayedProject}
+                      <TeamPositionsPanel currentUserId={userID} displayedProject={displayedProject}
                         viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
                     </PopupContent>
                   </Popup>
