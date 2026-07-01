@@ -107,7 +107,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
           {profileData.firstName} {profileData.lastName}
         </h2>
         <h3>{majorsArr.join(', ') || ''}</h3>
-        {/*<div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>*/}
+        <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
 
         {isFollow ? <ThemeIcon
           width={30}
@@ -132,13 +132,14 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             </div>
             <p>{profileData.title}</p>
           </div> : ""}
-        {profileData.location ?
+        {/* It feels unnecessary to display location as a hover item-- restore if you wish */}
+        {/*profileData.location ?
           <div className={'profile-panel-hover-item'}>
             <div className={'icon-box'}>
               <ThemeIcon id={'location'} width={24} height={16} className={'color-fill undefined'} ariaLabel={'Location'} />
             </div>
             <p>{profileData.location}</p>
-          </div> : ""}
+          </div> : ""*/}
         {profileData.pronouns ?
           <div className={'profile-panel-hover-item'}>
             <div className={'icon-box'}>
@@ -153,7 +154,8 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             </div>
             <p>{profileData.funFact}</p>
           </div> : ""}
-        {!(profileData.title && profileData.location && profileData.pronouns && profileData.funFact) ?
+          {/* Displays 'No extra information' if there is no other data displayed on the user's profile */}
+        {!(profileData.title || profileData.location || profileData.pronouns || profileData.funFact) ?
           <div className='profile-panel-hover-item'>
             <p>No extra information</p>
           </div> : ""}

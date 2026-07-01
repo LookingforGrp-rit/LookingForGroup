@@ -63,10 +63,11 @@ Profile Panel component style rules
   /* justify-content: start; */
   /* align-items: center; */
   text-align: left;
-  padding: 0 0 20px 0;
+  padding: 0;
   margin: 0 auto 1em;
   overflow: hidden;
   text-decoration: none;
+  overflow-wrap: break-word;
 
   img {
     width: 100%;
@@ -118,7 +119,6 @@ Profile Panel component style rules
   border-radius: 0 0 10px 10px;
   background-color: var(--header-color);
   color: var(--main-text);
-  height: 100%;
   width: 100%;
   top: 0;
   bottom: 0;
@@ -132,6 +132,12 @@ Profile Panel component style rules
   padding: 0;
   overflow: hidden;
   box-sizing: content-box;
+  padding-bottom: 0;
+}
+
+.masonry .profile-panel-extras
+{
+  height: fit-content;
 }
 
 .profile-panel-hover {
@@ -197,7 +203,7 @@ Profile Panel component style rules
   border-radius: 0 0 10px 10px;
   background-color: var(--header-color);
   color: var(--main-text);
-  height: 100%;
+  height: calc(100% - 50px);
   width: 100%;
   top: 0;
   bottom: 0;
@@ -208,7 +214,7 @@ Profile Panel component style rules
   justify-content: center;
   gap: 10px;
   text-align: left;
-  padding: 0 0 10px 0;
+  padding: 0 0 25px 0;
   overflow: hidden;
   box-sizing: content-box;
 

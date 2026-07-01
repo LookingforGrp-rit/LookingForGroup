@@ -29,7 +29,7 @@ Project Panel component style rules
 /* Cheap way to work around the padding */
 .masonry {
   width: 100%;
-  height: 100%;
+  height: fit-content;
   gap: 10px;
   /* removes masonry built-in scroll bar */
   overflow-y: hidden !important;
@@ -44,6 +44,17 @@ Project Panel component style rules
 .masonry>*>* {
   justify-self: center;
   padding: 10px;
+  max-height: 450px;
+}
+
+/* the 'div' inside the data index*/
+.masonry>*>* div {
+  height: 100%;
+}
+
+.masonry>* .profile-panel {
+  min-height: fit-content;
+  max-height: calc(100% + 20px + 1em);  /* offset padding */
 }
 
 /* not in use

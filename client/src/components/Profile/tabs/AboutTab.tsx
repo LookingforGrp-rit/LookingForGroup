@@ -510,7 +510,7 @@ export const AboutTab = ({
 					label={"Fun Fact"}
 					labelInfo="Share a fun fact about yourself that will surprise others!"
 					inputType={"multi"}
-					maxLength={100}
+					maxLength={50}
 					value={profile.funFact}
 					initialValue={unmodifiedProfile.funFact}
 					onChange={(e) => {
