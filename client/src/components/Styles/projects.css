@@ -590,6 +590,10 @@ Project Creator and Editor Popup style rules
     color: var(--primary-color);
     margin: 0 0 15px;
   }
+  p, button
+  {
+    font-size: 1.125rem;
+  }
 
   input {
     margin: 20px;
@@ -3775,14 +3779,21 @@ button#positions-popup-list-item-active {
   margin: 20px;
   margin-left: auto;
   padding-left: 20px;
-  width: max-content;
-  height: 50px;
+  max-width: 100%;
+  height: fit-content;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 5px;
   font-style: italic;
   color: var(--neutral-gray);
   justify-content: end;
+}
+
+#position-apply {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 #position-contact-link {

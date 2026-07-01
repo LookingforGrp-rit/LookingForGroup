@@ -1,4 +1,8 @@
-import type { RequestToJoinInput, EmailInput } from '@looking-for-group/shared';
+import type {
+  RequestToJoinInput,
+  EmailInput,
+  MemberRequestStatus,
+} from '@looking-for-group/shared';
 import { createElement } from 'react';
 import { pretty, render, toPlainText } from 'react-email';
 import prisma from '#config/prisma.ts';
@@ -26,20 +30,18 @@ export const requestToJoinService = async (
         prospectiveMemberId: data.prospectiveMemberId,
       },
     });
-    if (req) return 'CONFLICT';
+    // if the request exist and it's currently open
+    if (req && (req.requestStatus === 'Accepted' || req.requestStatus === 'Pending'))
+      return 'CONFLICT';
 
     // grabbing the requested role
     const roles = await getRolesService();
 
-    if (roles === 'INTERNAL_ERROR') {
-      return roles;
-    }
+    if (roles === 'INTERNAL_ERROR') return roles;
 
     const role = roles.find((r) => r.roleId === data.roleId);
 
-    if (!role) {
-      return 'NOT_FOUND';
-    }
+    if (!role) return 'NOT_FOUND';
 
     // grabbing the requester
     const requester = await prisma.users.findUnique({
@@ -47,9 +49,7 @@ export const requestToJoinService = async (
       select: UserEmailSelector,
     });
 
-    if (!requester) {
-      return 'NOT_FOUND';
-    }
+    if (!requester) return 'NOT_FOUND';
 
     // grabbing the project owner
     const owner = await prisma.users.findUnique({
@@ -57,32 +57,47 @@ export const requestToJoinService = async (
       select: UserEmailSelector,
     });
 
-    if (!owner) {
-      return 'NOT_FOUND';
-    }
+    if (!owner) return 'NOT_FOUND';
 
     // grabbing the project
     const project = await getProjectByIdService(projectId);
 
-    if (project === 'NOT_FOUND' || project === 'INTERNAL_ERROR') {
-      return project;
-    }
+    if (project === 'NOT_FOUND' || project === 'INTERNAL_ERROR') return project;
 
-    //update db
-    const result = await prisma.memberRequests.create({
-      data: {
-        roleId: data.roleId,
-        prospectiveMemberId: data.prospectiveMemberId,
-        sentFromProject: false,
-        requestStatus: 'Pending',
-        projectId,
-      },
-    });
+    let result: {
+      requestId: number;
+      prospectiveMemberId: number;
+      projectId: number;
+      roleId: number;
+      sentFromProject: boolean;
+      requestStatus: MemberRequestStatus;
+    };
+    // if there was a request exist before, update that
+    if (req) {
+      result = await prisma.memberRequests.update({
+        where: {
+          requestId: req.requestId,
+        },
+        data: {
+          requestStatus: 'Pending',
+        },
+      });
+      // if not, create a new request
+    } else {
+      result = await prisma.memberRequests.create({
+        data: {
+          roleId: data.roleId,
+          prospectiveMemberId: data.prospectiveMemberId,
+          sentFromProject: false,
+          requestStatus: 'Pending',
+          projectId,
+        },
+      });
+    }
 
     //Set up email
     const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
 
-    //TODO: Update URL with actual url for application acceptance
     const inviteUrl = `${clientUrl}/acceptApplication/${String(result.requestId)}`;
 
     const profileUrl = `${clientUrl}/profile?userID=${String(requester.userId)}`;
@@ -131,9 +146,7 @@ export const requestToJoinService = async (
 
     //send email
     const emailResult = await sendEmail(email);
-    if (emailResult === 'INTERNAL_ERROR') {
-      return emailResult;
-    }
+    if (emailResult === 'INTERNAL_ERROR') return emailResult;
 
     return 'OK';
   } catch (e) {

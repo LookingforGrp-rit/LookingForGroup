@@ -35,7 +35,7 @@ const requestJoinController = async (req: Request, res: Response) => {
   if (result === 'CONFLICT') {
     const resBody: ApiResponse = {
       status: 409,
-      error: 'Request already exists',
+      error: 'An open request already exists',
       data: null,
     };
     res.status(409).json(resBody);

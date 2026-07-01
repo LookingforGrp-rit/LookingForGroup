@@ -46,7 +46,7 @@ export class ProjectUnapprovedNotificationBuilder implements NotificationBuilder
     notification.message += `Here is the reason provided:\n\n`;
     notification.message += `${reason}\n\n`;
     notification.message += `If you wish to have this project reapproved, please make the necessary changes. `;
-    notification.message += `Our terms of service can be located at ${process.env.CLIENT_DOMAIN as string}/about.\n\n`;
+    notification.message += `Our terms of service can be located at ${process.env.CLIENT_URL as string}/about.\n\n`;
     notification.message += `We wish you a good day.`;
 
     return notification;
