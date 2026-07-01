@@ -54,7 +54,7 @@ export class ProjectRejectedNotificationBuilder implements NotificationBuilder {
       notification.message += `"${reason}"\n\n`;
     }
     notification.message += `If you wish to again request approval, please make the appropriate changes to your project. `;
-    notification.message += `Our terms of service can be located at ${process.env.CLIENT_DOMAIN as string}/about.\n\n`;
+    notification.message += `Our terms of service can be located at ${process.env.CLIENT_URL as string}/about.\n\n`;
     notification.message += `We wish you a good day.`;
 
     return notification;

@@ -594,13 +594,16 @@ Project Creator and Editor Popup style rules
   text-align: right;
 }
 
-#report-popup
-{
+#report-popup {
   h3 {
     font-size: 1.25rem;
     font-weight: 700;
     color: var(--primary-color);
     margin: 0 0 15px;
+  }
+  p, button
+  {
+    font-size: 1.125rem;
   }
 
   input {
@@ -1262,6 +1265,9 @@ Project Creator and Editor Popup style rules
   flex-direction: row;
   gap: 20px;
   padding-bottom: 20px;
+  #project-editor-save {
+    margin-bottom: 28px;
+  }
 }
 
 #confirm-editor-save-text {
@@ -1362,6 +1368,12 @@ Project Creator and Editor Popup style rules
   display: flex;
   align-items: center;
   justify-items: center;
+}
+
+#edit-position-skills-container .edit-project-member-button {
+  position: relative;
+  top: 0;
+  right: 0;
 }
 
 .project-editor-project-member>.edit-project-member-button {
@@ -1814,6 +1826,16 @@ Project Creator and Editor Popup style rules
   font-size: 1rem;
 }
 
+#edit-position-skills-container {
+  width: 100%;
+}
+
+#edit-position-skills-label-button {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 10px;
+}
+
 #edit-position-details-left,
 #edit-position-details-right {
   display: flex;
@@ -1863,7 +1885,8 @@ button.edit-position-contact .project-member-image {
   font-size: 0.875rem;
 }
 
-#edit-position-details label {
+#edit-position-details label,
+#edit-position-skills-container label {
   font-size: 1rem;
   text-wrap: nowrap;
 }
@@ -3122,8 +3145,8 @@ Project Carousel style rules
   margin-right: 1.5vw;
 
   .carousel-contents {
-    height: 370px;
-    max-height: 370px;
+    height: 450px;
+    max-height: 450px;
     width: 100%;
   }
 
@@ -3153,23 +3176,19 @@ Project Carousel style rules
     height: fit-content;
     margin: 0;
     margin-top: 8px;
+    transform: scale(1);
   }
 
   .project-carousel-btn:hover {
     transition-duration: 0.2s;
-
-    /* Transition TBD */
+    transform: scale(1.2);
   }
 
-  .carousel-btn-left {
-    margin: 0;
-    margin-top: 8px;
+  .carousel-btn-left svg{
     transform: rotate(90deg);
   }
 
-  .carousel-btn-right {
-    margin: 0;
-    margin-top: 8px;
+  .carousel-btn-right svg{
     transform: rotate(-90deg);
   }
 
@@ -3767,14 +3786,21 @@ button#positions-popup-list-item-active {
   margin: 20px;
   margin-left: auto;
   padding-left: 20px;
-  width: max-content;
-  height: 50px;
+  max-width: 100%;
+  height: fit-content;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 5px;
   font-style: italic;
   color: var(--neutral-gray);
   justify-content: end;
+}
+
+#position-apply {
+  display: flex;
+  align-items: center;
+  gap: 5px;
 }
 
 #position-contact-link {
@@ -4611,7 +4637,7 @@ My projects page style rules
   border: 0px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
-  z-index: 1;
+  z-index: 4;
 }
 
 .card-options-list {

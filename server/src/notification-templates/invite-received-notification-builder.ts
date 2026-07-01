@@ -57,7 +57,7 @@ export class InviteReceivedNotificationBuilder implements NotificationBuilder {
       },
     });
 
-    const clientDomain = process.env.CLIENT_DOMAIN as string;
+    const clientDomain = process.env.CLIENT_URL as string;
     const inviteLink = `${clientDomain}/acceptInvite/${String(data?.requestId)}`;
     const projectLink = `${clientDomain}/project/projectID=${String(data?.projectId)}`;
     const profileLink = `${clientDomain}/profile?userID=${String(data?.projects.userId)}`;

@@ -22,15 +22,15 @@ import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
-import { router } from "../../../../server/src/api/routes/me.ts"
-import { reportProject } from "../../api/projects";
+//import { router } from "../../../../server/src/api/routes/me.ts"
+//import { reportProject } from "../../api/projects";
 
 //Main component for the project page
 /**
  * Project page. Renders the project page with all project details, team member information, and available positions.
  * @returns JSX Element
  */
-const Project = (userProfile: any) => {
+const Project = () => {
   //Navigation hook
   const navigate = useNavigate();
 
@@ -59,6 +59,7 @@ const Project = (userProfile: any) => {
   const [videos, setVideos] = useState<ProjectVideo[]>();
 
   const reportMessage = useRef<HTMLInputElement>(null);
+  const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
    * Checks in the current user is following a project
@@ -218,6 +219,39 @@ const Project = (userProfile: any) => {
       console.error("Error leaving project:", res.error);
     }
   };
+
+  /**
+   * Sends a report of the project if no report exists and
+   * tells the user the result
+   */
+const reportProjectPressed = async () => {
+  /* a loop hole around an empty string */
+  let message = "";
+  if (reportMessage?.current?.value == "")
+  {
+    message = "No message given.";
+  }
+  else
+  {
+    message = reportMessage?.current?.value ?? "No message given.";
+  }
+
+  const response = await reportProject(projectID, message);
+  let responseText = response.error;
+  if (responseText === null || responseText === undefined) {
+    responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
+  }
+  /* A report on the project already exists */
+  else if (response.status === 409)
+  {
+    responseText = "This project has already been reported!";
+  }
+  else
+  {
+    responseText = "Uh oh! Something went wrong with your report!";
+  }
+  setReportResponseText(responseText);
+};
 
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
@@ -463,15 +497,22 @@ const Project = (userProfile: any) => {
                           Cancel
                         </PopupButton>
                         {/* The Report Button */}
-                        <PopupButton
-                          className="delete-button"
-                          callback={ () => { console.log("Report button clicked"); /*
-                            reportProject(projectID, (reportMessage?.current?.value ?? "No message given.") as Report);
-                            console.log(reportMessage?.current?.value);*/
-                            /* report functionality here w/ feedback popup */
-                          }}>
-                            Report
-                        </PopupButton>
+                        <Popup>
+                          <PopupButton
+                            className="delete-button"
+                            callback={reportProjectPressed}
+                            closeParent={() => true}> {/* doesnt work*/}
+                              Report
+                          </PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              <p>{reportResponseText}</p>
+                              <PopupButton buttonId="continue-button" closeParent={() => true}>
+                                Continue
+                              </PopupButton>
+                            </div>
+                          </PopupContent>
+                        </Popup>
                       </div>
                   </div>
                 </PopupContent>
@@ -757,11 +798,10 @@ const Project = (userProfile: any) => {
                     Keep up with us!
                     <div id="project-overview-links">
                       {displayedProject.projectSocials.map((social, index) => (
-                        <button
+                        <a
                           key={index}
-                          onClick={() => {
-                            window.open(social.url, "_blank");
-                          }}
+                          href={social.url}
+                          target="_blank"
                         >
                           <ThemeIcon
                             id={
@@ -774,7 +814,7 @@ const Project = (userProfile: any) => {
                             className={"color-fill"}
                             ariaLabel={social.label}
                           />
-                        </button>
+                        </a>
                       ))}
                     </div>
                   </>

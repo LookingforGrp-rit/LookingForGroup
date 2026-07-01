@@ -35,6 +35,7 @@ import type {
   SendProjectInviteInput,
   RequestToJoinInput,
   MemberRequests,
+  DeleteJobSkillInput,
   GetMemberRequest,
 } from "@looking-for-group/shared";
 
@@ -73,18 +74,21 @@ export const requestProjectReview = async (
   return response as ApiResponse<ProjectDetail>;
 }
 
-// Reports a project
-// '/projects/report/:id/:report'
-/* Does not work-- experimenting with sending in report
+/**
+ * Sends in a report of the project-- something is wrong with it
+ * @param projectId ID of project that is being reported
+ * @param report The message that was sent along with the report
+ * @returns 
+ */
 export const reportProject = async (
   projectId: number,
-  message: Report
+  report: string,
 ): Promise<ApiResponse> => {
-  const apiURL = `/projects/report/:${projectId}/:${message}`;
-  const response = await POST(apiURL, message);
+  const apiURL = `/me/projects/report/${projectId}/${report}`;
+  const response = await POST(apiURL, {});
   
-  if (response.error) console.log(`Error in reportProject: ${response.error}`);
-  else console.log(response);
+  //if (response.error) console.log(`Error in reportProject: ${response.error}`);
+  //else console.log(response);
   return response;
 };
 
@@ -443,7 +447,10 @@ export const requestToJoin = async (
   const apiURL = `/projects/${projectID}/members/request-to-join`;
   const response = await POST(apiURL, memberData);
 
-  if (response.error) console.log(`Error in requestToJoin: ${response.error}`);
+  if (response.error) {
+    console.log(`Error in requestToJoin: ${response.error}`);
+    throw new Error(response.error);
+  }
   return response as ApiResponse<null>;
 };
 
@@ -693,10 +700,9 @@ export const addProjectJob = async (
  */
 export const addJobSkill = async (
   projectID: number,
-  jobID: number,
   skillData: AddJobSkillInput
 ): Promise<ApiResponse<JobSkill>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills`;
   const response = await POST(apiURL, skillData);
 
   if (response.error) console.log(`Error in addJobSkill: ${response.error}`);
@@ -727,11 +733,10 @@ export const getJobSkills = async (
  */
 export const updateJobSkill = async (
   projectID: number,
-  jobID: number,
   skillID: number,
   skillData: UpdateJobSkillInput
 ): Promise<ApiResponse<JobSkill>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills/${skillID}`;
   const response = await PATCH(apiURL, skillData);
 
   if (response.error) console.log(`Error in updateJobSkill: ${response.error}`);
@@ -745,10 +750,9 @@ export const updateJobSkill = async (
  */
 export const deleteJobSkill = async (
   projectID: number,
-  jobID: number,
-  skillID: number
+  skillData: DeleteJobSkillInput
 ): Promise<ApiResponse<null>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillID}`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills/${skillData.skillId}`;
   const response = await DELETE(apiURL);
 
   if (response.error) console.log(`Error in deleteJobSkill: ${response.error}`);
