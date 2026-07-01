@@ -915,13 +915,8 @@ Signup process modal style rules
   div textarea {
     margin-top: 0px;
     background-color: var(--header-color);
+    outline: none;
   }
-}
-
-.redAsterisk {
-  padding-left: 3px;
-  font-size: 20px;
-  color: var(--error-delete-color);
 }
 
 /* === Terms of Service === */
@@ -1057,8 +1052,15 @@ Signup process modal style rules
       align-items: center;
       width: 100%;
       overflow-y: scroll;
+    
+      .required-asterisk
+      {
+        width: fit-content;
+      }
+
     }
 
+    
     #completeProfile-input-container div {
       width: 100%;
     }
@@ -1076,7 +1078,7 @@ Signup process modal style rules
       .select-container div {
         margin-top: 0px;
         background-color: var(--header-color);
-
+        
         max-height: 400%;
       }
     }
