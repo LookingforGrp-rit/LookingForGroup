@@ -107,8 +107,9 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
           {profileData.firstName} {profileData.lastName}
         </h2>
         <h3>{majorsArr.join(', ') || ''}</h3>
+        {profileData.headline ?
         <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
-
+        : ""}
         {isFollow ? <ThemeIcon
           width={30}
           height={27}

@@ -52,7 +52,7 @@ Profile Panel component style rules
 
 .profile-panel {
   display: flex;
-  width: 240px;
+  width: 100%;
   flex-shrink: 0;
   height: auto;
   border: none;
@@ -64,10 +64,11 @@ Profile Panel component style rules
   /* align-items: center; */
   text-align: left;
   padding: 0;
-  margin: 0 auto 1em;
+  margin: 0 auto;
   overflow: hidden;
   text-decoration: none;
   overflow-wrap: break-word;
+  margin-bottom: 1em;
 
   img {
     width: 100%;
@@ -101,7 +102,7 @@ Profile Panel component style rules
 
   /* Quote */
   #quote {
-    margin: 8px 15px 0 15px;
+    margin: 8px 15px 5px 15px;
     color: var(--main-text);
     font-size: 0.875rem;
     font-style: italic;
@@ -161,6 +162,7 @@ Profile Panel component style rules
   gap: 15px;
   padding: 0 15px;
   overflow-wrap: break-word;
+  height: fit-content;
 
   .icon-box {
     display: flex;
@@ -203,18 +205,15 @@ Profile Panel component style rules
   border-radius: 0 0 10px 10px;
   background-color: var(--header-color);
   color: var(--main-text);
-  height: calc(100% - 50px);
-  width: 100%;
-  top: 0;
+  height: 100%;
   bottom: 0;
-  left: 0;
-  right: 0;
+  width: 100%;
   display: flex;
   flex-direction: column;
   justify-content: center;
   gap: 10px;
   text-align: left;
-  padding: 0 0 25px 0;
+  padding: 5px;
   overflow: hidden;
   box-sizing: content-box;
 
