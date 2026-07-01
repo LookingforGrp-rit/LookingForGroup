@@ -7,7 +7,8 @@ import { transformJobSkill } from '#services/transformers/projects/parts/job-ski
 type AddJobSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 type JobSkillWithIds = AddJobSkillInput & { projectId: number; jobId: number };
 
-//POST api/me/skills
+//POST api/projects/{id}/jobs/{jobId}/skills
+//add a skill to a job
 const addJobSkillService = async (
   data: JobSkillWithIds,
 ): Promise<JobSkill | AddJobSkillServiceError> => {

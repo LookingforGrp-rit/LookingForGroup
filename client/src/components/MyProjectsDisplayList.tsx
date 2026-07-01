@@ -155,7 +155,6 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
               </button>
               {approvalStatus === 'not-approved' ?
               <Popup>
-                {/* TODO: add checking if the project is approved/rejected/pending */}
                 <PopupButton className='card-leave-button'>
                   <ThemeIcon
                     id={"request-review"}

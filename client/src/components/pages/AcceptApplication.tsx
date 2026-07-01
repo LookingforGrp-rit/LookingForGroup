@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 import * as paths from '../../constants/routes';
-import { getByID, updateMemberRequest, getRequestByID } from '../../api/projects';
+import { getByID, updateMemberRequest, getMemberRequest } from '../../api/projects';
 import { getCurrentAccount, getJobTitles, getUsersById } from '../../api/users';
 import { Role } from '@looking-for-group/shared';
 import "../Styles/acceptInvite.css";
@@ -29,7 +29,7 @@ const AcceptApplication = () => {
     const [memberLastName, setMemberLastName] = useState<String | null>(null);
 
     const [hasRespondPerm, setHasRespondPerm] = useState<boolean>(false); // Should the user have access to respond to this request
-    const [msg, setMsg] = useState<string>(''); // Message for request not found or perm issue
+    const [systemMsg, setSystemMsg] = useState<string>(''); // Message for request not found or perm issue
     const [error, setError] = useState<string>(''); // Error message for missing or incorrect information
 
     //#region Helper Methods
@@ -58,7 +58,7 @@ const AcceptApplication = () => {
                 // only project owner should have respond permission
                 setHasRespondPerm(res.data.owner.userId === currentUserId);
                 if (res.data.owner.userId !== currentUserId)
-                    setMsg('You do not have permission to respond to this application. Only the project owner may review and respond the application.');
+                    setSystemMsg('You do not have permission to respond to this application. Only the project owner may review and respond the application.');
 
                 setProjectTitle(res.data.title);
             }
@@ -69,9 +69,15 @@ const AcceptApplication = () => {
 
     const fetchMemberRequest = async (requestId: number, currentUserId: number) => {
         try {
-            const res = await getRequestByID(requestId);
+            const res = await getMemberRequest({ requestId: requestId });
 
             if (res.data) {
+                if (res.data.requestStatus === 'Accepted' || res.data.requestStatus === 'Declined') {
+                    setHasRespondPerm(false);
+                    setSystemMsg('This request has been closed.');
+                    return;
+                }
+
                 await fetchProject(res.data.projectId, currentUserId);
                 await fetchRole(res.data.roleId);
 
@@ -83,7 +89,7 @@ const AcceptApplication = () => {
             }
         } catch (err) {
             setError('Fetch Project Error: ' + err);
-            setMsg('This application could not be found or may no longer be available.');
+            setSystemMsg('This application could not be found or may no longer be available.');
         }
     };
 
@@ -164,7 +170,7 @@ const AcceptApplication = () => {
                                     </>
                                     : <>
                                         <p>Looks like you're in the wrong place. </p>
-                                        <p>{msg}</p>
+                                        <p>{systemMsg}</p>
                                         <div id="accept-invite-btns">
                                             <button onClick={() => { navigate(paths.routes.HOME) }}>Return Home</button>
                                         </div>

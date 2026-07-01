@@ -278,7 +278,7 @@ router.get(
 
 //Get a member request
 router.get(
-  '/members/requests/:id',
+  '/members/requests',
   requiresLogin,
   injectCurrentUser,
   authenticated(PROJECT.getMemberRequest),
