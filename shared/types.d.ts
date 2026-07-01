@@ -11,6 +11,7 @@ export type TagType =
   | "Role"
   | "Major"
   | "Game Engine"
+  | "Position"
 //wow.
 export type GenreCategory = 'Game' | "Story" | 'Music';
 export type StyleCategory = 'Visual' | 'Film/Video';

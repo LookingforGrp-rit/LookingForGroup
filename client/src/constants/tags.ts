@@ -5,6 +5,7 @@ export const projectTabs = {
   'Genre': { categoryTags: [], categoryName: 'Genre', color: 'green' },
   'Style' : { categoryTags: [], categoryName: 'Style', color: 'pink'},
   'Purpose': { categoryTags: [], categoryName: 'Purpose', color: 'grey' },
+  'Positions' : { categoryTags: [], categoryName: 'Positions', color: 'grey' },
 };
 
 
