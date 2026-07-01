@@ -69,6 +69,7 @@ Profile Panel component style rules
   text-decoration: none;
   overflow-wrap: break-word;
   margin-bottom: 1em;
+  font-size: 0.875rem;
 
   img {
     width: 100%;
@@ -205,9 +206,9 @@ Profile Panel component style rules
   border-radius: 0 0 10px 10px;
   background-color: var(--header-color);
   color: var(--main-text);
-  height: 100%;
+  height: calc(100% - 5px);
   bottom: 0;
-  width: 100%;
+  width: calc(100% - 5px);
   display: flex;
   flex-direction: column;
   justify-content: center;
