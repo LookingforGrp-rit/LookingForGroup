@@ -29,7 +29,7 @@ Project Panel component style rules
 /* Cheap way to work around the padding */
 .masonry {
   width: 100%;
-  height: 100%;
+  height: fit-content;
   gap: 10px;
   /* removes masonry built-in scroll bar */
   overflow-y: hidden !important;
@@ -44,6 +44,12 @@ Project Panel component style rules
 .masonry>*>* {
   justify-self: center;
   padding: 10px;
+  max-height: 450px;
+}
+
+.masonry>* .profile-panel {
+  min-height: fit-content;
+  max-height: calc(100% + 20px + 1em);  /* offset padding */
 }
 
 /* not in use
@@ -4171,6 +4177,10 @@ My projects page style rules
 
   .page#my-projects {
     padding-bottom: 100px;
+
+    #main {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -4664,7 +4674,7 @@ My projects page style rules
 
 @media (max-width: 799px) and (max-height:850px) {
   .my-projects-grid {
-    padding-bottom: 20%;
+    padding-bottom: 0;
   }
 }
 
@@ -4757,11 +4767,8 @@ My projects page style rules
   .responsive-table {
     width: calc(100% - 40px);
   }
-}
 
-@media only screen and (max-width: 600px) {
-
-  /* Hide table headers (but not display: none;, for accessibility) */
+    /* Hide table headers (but not display: none;, for accessibility) */
   .responsive-table thead tr {
     position: absolute;
     top: -9999px;

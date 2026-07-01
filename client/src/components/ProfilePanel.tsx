@@ -4,7 +4,7 @@ import { ThemeIcon } from './ThemeIcon';
 import * as paths from '../constants/routes';
 import usePreloadedImage from '../functions/imageLoad';
 import { UserPreview } from '@looking-for-group/shared';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { addUserFollowing, deleteUserFollowing, getUsersById } from '../api/users';
 
 interface ProfilePanelProps {
@@ -31,6 +31,9 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
   //follow stuff
   // Whether the current user follows the displayed user
   const [isFollow, setIsFollow] = useState<boolean>(false);
+
+  const profilePanel = useRef<HTMLDivElement>(null);
+
   /**
    * useEffect to fetch follow information:
    * 1. Retrieves full profile of the displayed user to access followers
@@ -91,7 +94,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
         alt='profile image'
       />
 
-      <div className={'profile-panel-extras'}>
+      <div className={'profile-panel-extras'} ref={profilePanel} hidden={true}>
         <h2>
           {profileData.firstName} {profileData.lastName}
         </h2>
@@ -104,8 +107,9 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
           {profileData.firstName} {profileData.lastName}
         </h2>
         <h3>{majorsArr.join(', ') || ''}</h3>
+        {profileData.headline ?
         <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
-
+        : ""}
         {isFollow ? <ThemeIcon
           width={30}
           height={27}
@@ -125,21 +129,22 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
         {profileData.title ?
           <div className={'profile-panel-hover-item'}>
             <div className={'icon-box'}>
-              <ThemeIcon id={'role'} width={20} height={20} className={'color-fill undefined'} ariaLabel={'Profession'} />
+              <ThemeIcon id={'role'} width={24} height={20} className={'color-fill undefined'} ariaLabel={'Profession'} />
             </div>
             <p>{profileData.title}</p>
           </div> : ""}
-        {profileData.location ?
+        {/* It feels unnecessary to display location as a hover item-- restore if you wish */}
+        {/*profileData.location ?
           <div className={'profile-panel-hover-item'}>
             <div className={'icon-box'}>
-              <ThemeIcon id={'location'} width={12} height={16} className={'color-fill undefined'} ariaLabel={'Location'} />
+              <ThemeIcon id={'location'} width={24} height={16} className={'color-fill undefined'} ariaLabel={'Location'} />
             </div>
             <p>{profileData.location}</p>
-          </div> : ""}
+          </div> : ""*/}
         {profileData.pronouns ?
           <div className={'profile-panel-hover-item'}>
             <div className={'icon-box'}>
-              <ThemeIcon id={'pronouns'} width={22} height={22} className={'color-fill undefined'} ariaLabel={'Pronouns'} />
+              <ThemeIcon id={'pronouns'} width={24} height={22} className={'color-fill undefined'} ariaLabel={'Pronouns'} />
             </div>
             <p>{profileData.pronouns}</p>
           </div> : ""}
@@ -150,7 +155,8 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             </div>
             <p>{profileData.funFact}</p>
           </div> : ""}
-        {!(profileData.title && profileData.location && profileData.pronouns && profileData.funFact) ?
+          {/* Displays 'No extra information' if there is no other data displayed on the user's profile */}
+        {!(profileData.title || profileData.location || profileData.pronouns || profileData.funFact) ?
           <div className='profile-panel-hover-item'>
             <p>No extra information</p>
           </div> : ""}
