@@ -816,12 +816,13 @@ Sidebar Nav style rules
 /*responsive stuff for sidebar*/
 @media only screen and (max-width: 799px) {
   .sideBarContainer {
-    width: 100vw;
-    height: 50px;
     position: fixed;
-    bottom: 10px;
-    background-color: var(--border-color);
-    z-index: 4;
+    bottom: 0;
+    width: 100%;
+    height: calc(70px + env(safe-area-inset-bottom));
+    padding-bottom: env(safe-area-inset-bottom);
+    box-sizing: border-box;
+    z-index: 100; /*can be changed, just a placeholder value*/
   }
 
   .ProfileContainer {
@@ -1537,6 +1538,20 @@ Header style rules
 
   img {
     width: 34px;
+  }
+}
+
+@media screen and (max-width: 500px) {
+  #header-buttons .dropdown {
+    position: fixed;
+    width: 100%;
+    #notifications-panel {
+      margin: auto;
+    }
+    #header-profile-dropdown {
+      justify-self: right;
+      margin-right: 25px;
+    }
   }
 }
 
