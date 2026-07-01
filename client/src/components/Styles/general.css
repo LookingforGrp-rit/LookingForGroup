@@ -1828,18 +1828,24 @@ Dropdown style rules
 }
 
 #notifications-panel {
+  position: relative;
   width: min(340px, 90vw);
   max-height: 70vh;
   overflow-y: auto;
   background-color: var(--header-color);
   border-radius: 10px;
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
-  padding: 8px 0;
   text-align: left;
+  scrollbar-color: var(--text-color) var(--header-color);
+  scrollbar-width: thin;
 }
 
 #notifications-panel .notifications-header {
-  padding: 6px 16px 10px;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--header-color);
+  padding: 10px 16px;
   font-weight: 700;
   font-size: 1rem;
   color: var(--primary-color);
@@ -1865,6 +1871,7 @@ Dropdown style rules
 #notifications-panel .notification-item {
   display: flex;
   align-items: stretch;
+  flex-wrap: wrap;
   border-bottom: 1px solid var(--bg-color);
 }
 
@@ -1872,10 +1879,10 @@ Dropdown style rules
   background-color: var(--bg-color);
 }
 
-#notifications-panel .notification-main {
+#notifications-panel .notification-open {
   flex: 1;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 8px;
   background: none;
   border: none;
@@ -1884,38 +1891,48 @@ Dropdown style rules
   text-align: left;
   cursor: pointer;
   color: var(--main-text);
+  will-change: filter;
+  backface-visibility: hidden;
 }
 
-#notifications-panel .notification-main:hover {
-  filter: brightness(1.08);
+#notifications-panel .notification-open:hover {
+  filter: contrast(5);
 }
 
 #notifications-panel .notification-dot {
   flex-shrink: 0;
   width: 8px;
   height: 8px;
-  margin-top: 5px;
   border-radius: 50%;
   background-color: #f14f76;
 }
 
-#notifications-panel .notification-text {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-}
-
 #notifications-panel .notification-subject {
+  font-size: 0.85rem;
   font-weight: 600;
   word-break: break-word;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-50px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 #notifications-panel .notification-message {
   font-size: 0.85rem;
   color: var(--main-text);
   font-weight: 400;
+  margin: 8px 8px 12px 14px;
+  padding-left: 10px;
   word-break: break-word;
+  border-left: 2px solid var(--primary-color);
+  animation: slideDown 1s cubic-bezier(0.25, 1, 0.5, 1);
 }
 
 #notifications-panel .notification-time {
