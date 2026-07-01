@@ -1540,6 +1540,20 @@ Header style rules
   }
 }
 
+@media screen and (max-width: 500px) {
+  #header-buttons .dropdown {
+    position: fixed;
+    width: 100%;
+    #notifications-panel {
+      margin: auto;
+    }
+    #header-profile-dropdown {
+      justify-self: right;
+      margin-right: 25px;
+    }
+  }
+}
+
 #profile-btn {
   display: flex;
   align-items: center;
