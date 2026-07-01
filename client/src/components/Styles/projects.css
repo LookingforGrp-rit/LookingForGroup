@@ -3134,8 +3134,8 @@ Project Carousel style rules
   margin-right: 1.5vw;
 
   .carousel-contents {
-    height: 450px;
-    max-height: 450px;
+    height: auto;
+    aspect-ratio: 16 / 9;
     width: 100%;
   }
 
@@ -3184,7 +3184,7 @@ Project Carousel style rules
   img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     aspect-ratio: 16/9;
   }
