@@ -538,6 +538,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 location: (job as ProjectJob).location,
                 roleId: (job as ProjectJob).role.roleId,
                 description: job.description ?? undefined,
+                //jobSkills: job.jobSkills, uncomment when can add job skills
               }
             })
             if(job.jobSkills) {

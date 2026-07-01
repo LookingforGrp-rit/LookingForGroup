@@ -2,8 +2,7 @@ import { useState, useEffect, useMemo, useCallback, Fragment } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
-import { Skill, JobSkill, ProjectWithFollowers, SkillType, ProjectJob } from "@looking-for-group/shared";
-import { projectDataManager } from "../../../api/data-managers/project-data-manager";
+import { Skill, JobSkill, SkillType, ProjectJob } from "@looking-for-group/shared";
 import { Pending, PendingProject } from "../../../../types/types";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
@@ -13,11 +12,8 @@ import { clampDragWithinContainer } from "./dragModifiers";
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
 interface JobSkillPopupProps {
-  project: PendingProject;
   job: ProjectJob | Pending<ProjectJob>,
-  unmodifiedProject: ProjectWithFollowers;
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
-  updatePendingProject: (projectData: PendingProject) => void;
+  updateJob: React.Dispatch<React.SetStateAction<ProjectJob | Pending<ProjectJob> | undefined>>,
 }
 
 /**
@@ -30,24 +26,23 @@ interface JobSkillPopupProps {
  * @returns JSX Element
  */
 export const JobSkillPopup = ({
-  dataManager,
-  project,
   job,
-  unmodifiedProject,
-  updatePendingProject,
+  updateJob,
 }: JobSkillPopupProps) => {
+  //editing a copy, rather than the original variable
+  let modifiedJob = job;
+
   // States
   const [allSkills, setAllSkills] = useState<Skill[]>([]);
   // Tracks which tab we are currently on
   const [currentSkillsTab, setCurrentSkillsTab] = useState(0);
   // filtered results from skill search bar
   const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
-  //job index for getting the specific job i'm editing
-  const jobIndex = project.jobs.indexOf(job);
 
   /* ONLY used for the deleting tags button. This is needed to re-render
     the selected skills section when reseting tags */
   const [skills, setSkills] = useState<Skill[]>();
+
 
   // load skills
   useMemo(() => {
@@ -95,7 +90,7 @@ export const JobSkillPopup = ({
   const isSkillSelected = (id: number) => {
     const skills: JobSkill[] = job.jobSkills as JobSkill[];
 
-    if (skills.some((skill) => skill.skillId === id)) return "selected";
+    if (skills?.some((skill) => skill.skillId === id)) return "selected";
     return "unselected";
   }
 
@@ -130,27 +125,12 @@ export const JobSkillPopup = ({
       })
     );
 
-    const updatedJob = {
-        ...job,
+    modifiedJob = {
+        ...modifiedJob,
         jobSkills: reorderedSkills
     };
 
-    //whenever updating the job skill, use the local job id since that's how it's passed into the frontend thing
-    dataManager.updateProjectJobSkill({
-      id: {
-        type: "local",
-        value: (job as Pending<ProjectJob>).localId ?? (job as ProjectJob).jobId,
-      },
-      data: {
-        skillId: reorderedSkills[newIndex].skillId,
-        proficiency: reorderedSkills[newIndex].proficiency,
-        position: reorderedSkills[newIndex].position,
-      },
-    });
-    
-    project.jobs[jobIndex] = updatedJob;
-
-    updatePendingProject(project);
+    updateJob(modifiedJob);
   };
 
   /**
@@ -165,50 +145,31 @@ export const JobSkillPopup = ({
       if (!skillToToggle) return;
 
       if (isSelected) {
-        dataManager.deleteProjectJobSkill({
-          id: {
-            type: "canon",
-            value: skillId,
-          },
-          data: {
-            jobId: (job as ProjectJob).jobId,
-            skillId
-          },
-        });
-
-        project.jobs[jobIndex].jobSkills = (project.jobs[jobIndex].jobSkills as JobSkill[]).filter((skill) => skill.skillId !== skillId)
-        
-        updatePendingProject(project);
-      } else {
-        dataManager.addProjectJobSkill({
-          id: {
-            type: "canon",
-            value: skillId,
-          },
-          data: {
-            skillId,
-            position: (job.jobSkills as JobSkill[]).length, // add to end of list by default
-            proficiency: "Novice", // TODO add a way to properly set skill proficiency
-          },
-        });
-
-        project.jobs[jobIndex].jobSkills = [
-          ...(project.jobs[jobIndex].jobSkills as JobSkill[]).filter((skill) => skill.skillId !== skillId), //i dunno just in case
-          {
-              ...skillToToggle,
-              apiUrl: "",
-              proficiency: "Novice",
-              position: (job.jobSkills as JobSkill[]).length, // add to end of list by default
-          }
-        ]
-
-        updatePendingProject(project);
+        modifiedJob = {
+          ...modifiedJob,
+          jobSkills: modifiedJob.jobSkills?.filter((skill) => skill?.skillId !== skillToToggle.skillId) as JobSkill[],
+        }
       }
+      else {
+        const newSkills = modifiedJob.jobSkills;
+        newSkills?.push({
+              ...skillToToggle,
+              proficiency: "Novice",
+              position: modifiedJob.jobSkills?.length ?? 0,
+              apiUrl: "",
+            })
+        modifiedJob = {
+          ...modifiedJob,
+          jobSkills: newSkills as JobSkill[],
+        }
+      }
+
+      updateJob(modifiedJob);
     },
-    [allSkills, dataManager, isSkillSelected, job, jobIndex, project, updatePendingProject]
+    [allSkills, isSkillSelected, job, ]
   );
 
-  const selectedSkills = (job.jobSkills as JobSkill[]).sort((a, b) => a.position - b.position) || [];
+  const selectedSkills = job.jobSkills ? (job.jobSkills as JobSkill[]).sort((a, b) => a.position - b.position) : [];
 
   /**
    * Renders skill tags as clickable buttons based on the active tab and search results.
@@ -447,8 +408,8 @@ export const JobSkillPopup = ({
   };
 
   const originalSkillOrder = useMemo(() => {
-    return (unmodifiedProject.jobs[jobIndex].jobSkills || []).map((s: JobSkill) => s.skillId);
-  }, [jobIndex, unmodifiedProject.jobs]);
+    return job.jobSkills ? (job.jobSkills?.map((skill) => skill?.skillId)) : [];
+  }, []);
 
   // Does Skills match in EXACT order
   const isSkillsUnsaved = useMemo(() => {
@@ -505,27 +466,18 @@ export const JobSkillPopup = ({
         <button 
             type="button" 
             className="delete-tags-btn"
-            hidden={(job.jobSkills as JobSkill[]).length === 0 || job.jobSkills == undefined}
+            hidden={(job.jobSkills as JobSkill[])?.length === 0 || job.jobSkills == undefined}
             onClick={() => {
-              /* deletes all skills in the data manager for the user */
-                for (let i = 0; i < (job.jobSkills as JobSkill[]).length; i++)
-                {
-                    dataManager.deleteProjectJobSkill({
-                    id: {
-                      type: "canon",
-                      value: (job.jobSkills as JobSkill[])[i]?.skillId,
-                    },
-                    data: {
-                      jobId: (job as ProjectJob).jobId,
-                      skillId: (job.jobSkills as JobSkill[])[i]?.skillId
-                    },
-                  })
+              /* deletes all skills for the user */
+                modifiedJob = {
+                  ...modifiedJob,
+                  jobSkills: [],
                 }
 
                 /* re-renders the current popup with 0 skills remaining and updates
                 user profile */
                 setSkills((job.jobSkills as JobSkill[]).splice(0));
-                updatePendingProject(project);
+                updateJob(modifiedJob);
             }}
             title="Remove all selected tags"
           >

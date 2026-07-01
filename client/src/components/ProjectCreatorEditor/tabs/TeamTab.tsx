@@ -72,13 +72,13 @@ const emptyJob: Pending<ProjectJob> = {
   localId: null,
   location: null,
   role: null,
-  jobSkills: null,
+  jobSkills: [],
 };
 
 let localIdIncrement = 0;
 
 type TeamTabProps = {
-  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   //setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
@@ -652,20 +652,6 @@ export const TeamTab = ({
     setErrorAddPosition("");
   }, [editMode, isCreatingNewPosition]);
 
-
-  const renderJobSkillsTab = () => {
-    console.log("this works, like it totally sees this function. but for some reason i'm not seeing a skills tab...")
-    if(!currentJob) return;
-    return (
-      <JobSkillPopup
-        project={projectAfterTeamChanges}
-        unmodifiedProject={unmodifiedProject}
-        job={currentJob}
-        dataManager={dataManager}
-        updatePendingProject={updatePendingProject}
-      />
-    )
-  }
   /**
    * Removes the currently selected position from the project.
    * @returns void
@@ -782,36 +768,38 @@ export const TeamTab = ({
 
       return;
     }
+    else {
+      dataManager?.updateJob({
+        id: {
+          value: (currentJob as ProjectJob).jobId,
+          type: "canon",
+        },
+        data: {
+          availability: currentJob.availability ?? undefined,
+          compensation: currentJob.compensation ?? undefined,
+          contactUserId: currentJob.contact?.userId ?? undefined,
+          description: currentJob.description ?? undefined,
+          duration: currentJob.duration ?? undefined,
+          location: currentJob.location ?? undefined,
+          roleId: currentJob.role?.roleId ?? undefined,
+        },
+      });
 
-    dataManager?.updateJob({
-      id: {
-        value: (currentJob as ProjectJob).jobId,
-        type: "canon",
-      },
-      data: {
-        availability: currentJob.availability ?? undefined,
-        compensation: currentJob.compensation ?? undefined,
-        contactUserId: currentJob.contact?.userId ?? undefined,
-        description: currentJob.description ?? undefined,
-        duration: currentJob.duration ?? undefined,
-        location: currentJob.location ?? undefined,
-        roleId: currentJob.role?.roleId ?? undefined,
-      },
-    });
-
-    projectAfterTeamChanges.jobs = [
-      ...projectAfterTeamChanges.jobs.filter(
-        (job) =>
-          (job as ProjectJob).jobId !== (currentJob as ProjectJob).jobId
-      ),
-      currentJob as ProjectJob,
-    ]
+      projectAfterTeamChanges.jobs = [
+        ...projectAfterTeamChanges.jobs.filter(
+          (job) =>
+            (job as ProjectJob).jobId !== (currentJob as ProjectJob).jobId
+        ),
+        currentJob as ProjectJob,
+      ]
+      
 
 
-    setErrorAddPosition("");
-    setEditMode(false);
+      setErrorAddPosition("");
+      setEditMode(false);
 
-    updatePendingProject(projectAfterTeamChanges);
+      updatePendingProject(projectAfterTeamChanges);
+    }
   }, [
     currentJob,
     dataManager,
@@ -978,12 +966,11 @@ export const TeamTab = ({
 
               if (selectedRole) {
                 setCurrentJob({
-                  ...emptyJob,
                   ...currentJob,
                   role: {
                     ...selectedRole,
                   },
-                });
+                } as ProjectJob);
               }
             }}
             options={allRoles.map((role) => {
@@ -1010,13 +997,12 @@ export const TeamTab = ({
         </label>
         <textarea
           value={currentJob?.description ?? ""}
-          onChange={(e) =>
+          onChange={(e) => {
             setCurrentJob({
-              ...emptyJob,
               ...currentJob,
               description: e.target.value,
-            })
-          }
+            } as ProjectJob)
+          }}
         >
           {isCreatingNewPosition
             ? ""
@@ -1025,11 +1011,12 @@ export const TeamTab = ({
       </div>
 
       <div id="edit-position-skills-container">
+        <Popup>
         <div id="edit-position-skills-label-button">
-          <label>Job Skills</label><PopupButton
+          <label>Job Skills</label>
+          <PopupButton
             className="edit-project-member-button"
-            callback={renderJobSkillsTab} /* why won't it render... i don't know what i'm doing */
-            doNotClose={() => true} 
+            doNotClose={() => currentJob === undefined}
           >
             <ThemeIcon
               id={"pencil"}
@@ -1038,11 +1025,22 @@ export const TeamTab = ({
               className={"gradient-color-fill edit-project-member-icon"}
               ariaLabel={"edit job skills"}
             />
-          </PopupButton></div>
+          </PopupButton>
+            {currentJob ?
+              <PopupContent>
+                <JobSkillPopup
+                  job={currentJob}
+                  updateJob={setCurrentJob}
+                />
+              </PopupContent>
+            : ""}
+          </div>
+        </Popup>
         <div id="edit-position-skills-list">
-          {!(getProjectJob(currentJob?.role?.roleId as number)?.jobSkills)
-            ? "No skills selected"
-            : "skills go here"
+          {/* TODO: make displayed tags look like tags */}
+          {currentJob?.jobSkills?.length !== undefined && currentJob?.jobSkills?.length > 0 
+            ? currentJob?.jobSkills?.map((skill) => `${skill?.label} `)
+            : "No skills selected"
           }
           {/* <SkillsTab
           dataManager={dataManager}></SkillsTab> */}
@@ -1080,11 +1078,10 @@ export const TeamTab = ({
                   const key = Object.keys(JobAvailabilityEnums).find((key) =>
                     JobAvailabilityEnums[key as keyof typeof JobAvailabilityEnums] === (e.target as HTMLButtonElement).value);
 
-                  setCurrentJob({
-                    ...emptyJob,
-                    ...currentJob,
-                    availability: key as JobAvailability,
-                  })
+                    setCurrentJob({
+                      ...currentJob,
+                      availability: key as JobAvailability,
+                    } as ProjectJob)
                 }
                 }
                 options={Object.values(JobAvailabilityEnums).map((option) => {
@@ -1125,10 +1122,9 @@ export const TeamTab = ({
                   const key = Object.keys(JobLocationEnums).find((key) => JobLocationEnums[key as keyof typeof JobLocationEnums] === (e.target as HTMLButtonElement).value)
 
                   setCurrentJob({
-                    ...emptyJob,
                     ...currentJob,
                     location: key as JobLocation,
-                  })
+                  } as ProjectJob)
                 }
                 }
                 options={Object.values(JobLocationEnums).map((option) => {
@@ -1170,12 +1166,11 @@ export const TeamTab = ({
                     (e.currentTarget as HTMLButtonElement).value
                   );
                   setCurrentJob({
-                    ...emptyJob,
                     ...currentJob,
                     contact:
                       allUsers.find(({ userId }) => userId === selectedId) ??
                       null,
-                  });
+                  } as ProjectJob);
                 }}
                 options={projectAfterTeamChanges.members
                   .filter((member) => member.user !== null)
@@ -1238,10 +1233,9 @@ export const TeamTab = ({
                   const key = Object.keys(JobDurationEnums).find((key) => JobDurationEnums[key as keyof typeof JobDurationEnums] === (e.target as HTMLButtonElement).value)
 
                   setCurrentJob({
-                    ...emptyJob,
                     ...currentJob,
                     duration: key as JobDuration,
-                  })
+                  } as ProjectJob)
                 }
                 }
                 options={Object.values(JobDurationEnums).map((option) => {
@@ -1282,10 +1276,9 @@ export const TeamTab = ({
                   const key = Object.keys(JobCompensationEnums).find((key) => JobCompensationEnums[key as keyof typeof JobCompensationEnums] === (e.target as HTMLButtonElement).value)
 
                   setCurrentJob({
-                    ...emptyJob,
                     ...currentJob,
                     compensation: key as JobCompensation,
-                  })
+                  } as ProjectJob);
                 }
                 }
                 options={Object.values(JobCompensationEnums).map((option) => {
