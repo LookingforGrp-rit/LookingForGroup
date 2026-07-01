@@ -21,7 +21,7 @@ import { ProjectApprovalStatus, ProjectPurpose as ProjectPurposeEnums, ProjectSt
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
+import { JobSkill, Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 // NO COMMENTS FOR WHAT THESE ARE??????
@@ -475,7 +475,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           await setProjectID(response.data.projectId);
 
           /* PROJECT IMAGES */
-          for (let image of modifiedProject.projectImages) {
+          for (const image of modifiedProject.projectImages) {
             await dataManager.createImage({
               id: {
                 type: "local",
@@ -499,7 +499,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             });
 
           /* PROJECT VIDEOS */
-          for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
+          for (const video of modifiedProject.projectVideos as ProjectVideo[]) {
             await dataManager?.createVideo({
               id: {
                 value: video.videoId,
@@ -510,7 +510,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT TAGS */
-          for (let tag of modifiedProject.tags) {
+          for (const tag of modifiedProject.tags) {
             await dataManager.addTag({
               id: {
                 type: "local",
@@ -524,7 +524,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT MEDIUMS */
-          for (let medium of modifiedProject.mediums) {
+          for (const medium of modifiedProject.mediums) {
             await dataManager.addMedium({
               id: {
                 type: "local",
@@ -537,7 +537,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT MEMBERS */
-          for (let member of modifiedProject.members) {
+          for (const member of modifiedProject.members) {
             if (member.user?.userId === currentUser?.userId) continue;
             dataManager.createMember({
               id: {
@@ -555,8 +555,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT JOBS */
-          for (let job of modifiedProject.jobs) {
-            await dataManager.createJob({
+          for (const job of modifiedProject.jobs) {
+            dataManager.createJob({
               id: {
                 type: "local",
                 value: (job as Pending<ProjectJob>).localId as number,
@@ -569,13 +569,27 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 location: (job as ProjectJob).location,
                 roleId: (job as ProjectJob).role.roleId,
                 description: job.description ?? undefined,
-                jobSkills: (job as ProjectJob).jobSkills
               }
             })
+            if(job.jobSkills) {
+              for(const skill of job.jobSkills){
+                dataManager.addProjectJobSkill({
+                  id: {
+                    type: "canon",
+                    value: (skill as JobSkill).skillId
+                  },
+                  data: {
+                    skillId: (skill as JobSkill).skillId,
+                    proficiency: (skill as JobSkill).proficiency,
+                    position: (skill as JobSkill).position
+                  }
+                })
+              }
+            }
           }
 
           /* PROJECT SOCIALS */
-          for (let link of modifiedProject.projectSocials) {
+          for (const link of modifiedProject.projectSocials) {
             await dataManager.addSocial({
               id: {
                 type: "local",

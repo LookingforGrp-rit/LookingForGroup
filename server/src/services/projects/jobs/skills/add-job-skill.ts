@@ -5,12 +5,12 @@ import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 import { transformJobSkill } from '#services/transformers/projects/parts/job-skill.ts';
 
 type AddJobSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type JobSkillWithIds = AddJobSkillInput & { projectId: number; jobId: number };
+type JobSkillWithId = AddJobSkillInput & { projectId: number; jobId: number };
 
 //POST api/projects/{id}/jobs/{jobId}/skills
 //add a skill to a job
 const addJobSkillService = async (
-  data: JobSkillWithIds,
+  data: JobSkillWithId,
 ): Promise<JobSkill | AddJobSkillServiceError> => {
   try {
     //creates the skill

@@ -289,15 +289,16 @@ export interface UserSkill extends Skill {
  * Represents all info for a skill that a user has
  */
 export interface JobSkill extends Skill {  
-  /**
-   * The ID of the job this skill is attached to
-   */
-  jobId: number;
 
   /**
    * The proficiency in the skill the job is searching for
    */
   proficiency: SkillProficiency;
+
+  /**
+   * The index at which the job skill is displayed
+   */
+  position: number;
 
   /**
    * The location of this resource on the server
@@ -1575,7 +1576,7 @@ export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
 export type CreateProjectJobInput = Required<
   Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
 > &
-  Partial<Pick<ProjectJob, "description" | "jobSkills"/*dont know if this is correct to add here */>> & {
+  Partial<Pick<ProjectJob, "description">> & {
     roleId: number;
     contactUserId: number;
   };
@@ -1589,9 +1590,9 @@ export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
 /**
  * Data required to add a skill to a project
  */
-export type AddJobSkillInput = Pick<JobSkill, "jobId" | "skillId" | "proficiency">
+export type AddJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "position">
 
-export type UpdateJobSkillInput = Pick<JobSkill, 'jobId' | "proficiency">//more things if we want to add more things
+export type UpdateJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "position"> //more things if we want to add more things
 
 export type DeleteJobSkillInput = Pick<JobSkill, 'jobId' | "skillId"> 
 //this is purely for the frontend because it needs both things for the url, and so the data manager can work properly

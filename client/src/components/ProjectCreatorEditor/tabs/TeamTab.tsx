@@ -40,6 +40,7 @@ import {
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 //import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
+import { JobSkillPopup } from "./JobSkillPopup";
 // import {
 //   transporter,
 //   sendEmail
@@ -77,7 +78,7 @@ const emptyJob: Pending<ProjectJob> = {
 let localIdIncrement = 0;
 
 type TeamTabProps = {
-  dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
+  dataManager: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
   //setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
@@ -131,6 +132,7 @@ export const TeamTab = ({
   const [searchableUsers, setSearchableUsers] = useState<
     UserSearchableFields[]
   >([]);
+  const close = false;
 
   // tracking team changes
   const projectAfterTeamChanges: PendingProject = structuredClone(projectData);
@@ -232,10 +234,13 @@ export const TeamTab = ({
         current.compensation !== original.compensation ||
         current.description !== original.description ||
         current.contact?.userId !== original.contact?.userId ||
-        current.jobSkills !== original.jobSkills
+        current.jobSkills !== original.jobSkills //this wouldn't work i don't think
       );
     });
   }, [projectData?.jobs, unmodifiedProject?.jobs]);
+
+
+
 
   // Update parent state with error message
   useEffect(() => {
@@ -647,6 +652,20 @@ export const TeamTab = ({
     setErrorAddPosition("");
   }, [editMode, isCreatingNewPosition]);
 
+
+  const renderJobSkillsTab = () => {
+    console.log("this works, like it totally sees this function. but for some reason i'm not seeing a skills tab...")
+    if(!currentJob) return;
+    return (
+      <JobSkillPopup
+        project={projectAfterTeamChanges}
+        unmodifiedProject={unmodifiedProject}
+        job={currentJob}
+        dataManager={dataManager}
+        updatePendingProject={updatePendingProject}
+      />
+    )
+  }
   /**
    * Removes the currently selected position from the project.
    * @returns void
@@ -708,7 +727,6 @@ export const TeamTab = ({
    * Validates and saves position data, updating the project's job listings.
    * @returns void
    */
-  //what is this and when is it called
   const savePosition = useCallback(() => {
     console.log(isCreatingNewPosition);
     (currentJob as Pending<ProjectJob>).localId = ++localIdIncrement;
@@ -747,7 +765,6 @@ export const TeamTab = ({
           location: currentJob.location,
           roleId: currentJob.role.roleId,
           description: currentJob.description ?? undefined,
-          // jobSkills: currentJob.jobSkills (gives type error)
         },
       });
 
@@ -779,7 +796,6 @@ export const TeamTab = ({
         duration: currentJob.duration ?? undefined,
         location: currentJob.location ?? undefined,
         roleId: currentJob.role?.roleId ?? undefined,
-        // jobSkills: currentJob.jobSkills ?? undefined (gives type error)
       },
     });
 
@@ -840,9 +856,6 @@ export const TeamTab = ({
           </div>
         </div>
         <div id="open-position-details">
-          <div id="open-position-skills-container">
-            Job Skills
-          </div>
           <div id="open-position-details-left">
             <div id="position-availability">
               <span className="position-detail-indicator">Availability: </span>
@@ -1013,10 +1026,10 @@ export const TeamTab = ({
 
       <div id="edit-position-skills-container">
         <div id="edit-position-skills-label-button">
-          <label>Job Skills</label><button
+          <label>Job Skills</label><PopupButton
             className="edit-project-member-button"
-            onClick={() => { /*open up job skill editor */
-            }}
+            callback={renderJobSkillsTab} /* why won't it render... i don't know what i'm doing */
+            doNotClose={() => true} 
           >
             <ThemeIcon
               id={"pencil"}
@@ -1025,7 +1038,7 @@ export const TeamTab = ({
               className={"gradient-color-fill edit-project-member-icon"}
               ariaLabel={"edit job skills"}
             />
-          </button></div>
+          </PopupButton></div>
         <div id="edit-position-skills-list">
           {!(getProjectJob(currentJob?.role?.roleId as number)?.jobSkills)
             ? "No skills selected"
@@ -1287,12 +1300,6 @@ export const TeamTab = ({
           </div>
         </div>
       </div>
-          <button
-            type="button"
-            id="position-edit-save"
-          >
-            Edit Job Skills
-          </button>
       {/* and then insert skill selector here, with like a button that shows the full menu.
       would it be possible to like... take the skills tab from the profile page and put it right here? 
       like what if we changed the props of that tab to accept project job stuff, and all that was handled in there

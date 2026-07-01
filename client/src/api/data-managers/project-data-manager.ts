@@ -429,9 +429,9 @@ export const projectDataManager = async (projectId: number) => {
     // job skills
     try {
       await runAndCollectErrors<AddJobSkillInput>(
-        "Adding project social",
+        "Adding job skill",
         creates.jobSkills,
-        ({ data }) => addJobSkill(projectId, data)
+        ({ id, data }) => addJobSkill(projectId, id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;

@@ -694,9 +694,10 @@ export const addProjectJob = async (
  */
 export const addJobSkill = async (
   projectID: number,
+  jobID: number,
   skillData: AddJobSkillInput
 ): Promise<ApiResponse<JobSkill>> => {
-  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills`;
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills`;
   const response = await POST(apiURL, skillData);
 
   if (response.error) console.log(`Error in addJobSkill: ${response.error}`);
@@ -727,10 +728,12 @@ export const getJobSkills = async (
  */
 export const updateJobSkill = async (
   projectID: number,
-  skillID: number,
+  jobID: number,
   skillData: UpdateJobSkillInput
 ): Promise<ApiResponse<JobSkill>> => {
-  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills/${skillID}`;
+
+
+  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills/${skillData.skillId}`;
   const response = await PATCH(apiURL, skillData);
 
   if (response.error) console.log(`Error in updateJobSkill: ${response.error}`);

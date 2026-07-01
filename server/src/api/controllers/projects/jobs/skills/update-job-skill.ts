@@ -14,10 +14,11 @@ import updateJobSkillService from '#services/projects/jobs/skills/update-job-ski
 const updateJobSkill = async (req: Request, res: Response) => {
   const data: UpdateJobSkillInput = req.body as UpdateJobSkillInput;
   const projectId = parseInt(req.params.id as string);
+  const jobId = parseInt(req.params.jobId as string);
   const skillId = parseInt(req.params.skillId as string);
 
   //update the skills they wanna update
-  const result = await updateJobSkillService(projectId, skillId, data);
+  const result = await updateJobSkillService(projectId, jobId, skillId, data);
 
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
