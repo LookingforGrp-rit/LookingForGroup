@@ -1477,7 +1477,7 @@ Header style rules
 }
 
 #header-searchbar {
-  grid-area: search;
+  grid-area: 1 / 1 / back / search;
   width: 100%;
   align-items: left;
 }
