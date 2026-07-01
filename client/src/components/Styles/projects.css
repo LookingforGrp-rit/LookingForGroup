@@ -3165,23 +3165,19 @@ Project Carousel style rules
     height: fit-content;
     margin: 0;
     margin-top: 8px;
+    transform: scale(1);
   }
 
   .project-carousel-btn:hover {
     transition-duration: 0.2s;
-
-    /* Transition TBD */
+    transform: scale(1.2);
   }
 
-  .carousel-btn-left {
-    margin: 0;
-    margin-top: 8px;
+  .carousel-btn-left svg{
     transform: rotate(90deg);
   }
 
-  .carousel-btn-right {
-    margin: 0;
-    margin-top: 8px;
+  .carousel-btn-right svg{
     transform: rotate(-90deg);
   }
 
