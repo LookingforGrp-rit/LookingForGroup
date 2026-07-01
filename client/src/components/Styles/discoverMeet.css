@@ -223,13 +223,6 @@ Image carousel style rules
   width: 100%;
 }
 
-/* Desktop width */
-@media screen and (min-width: 1020px) {
-  .discover-project-about p {
-    height: fit-content;
-  }
-}
-
 .carousel-row {
   display: flex;
   flex-direction: row;
@@ -310,8 +303,8 @@ Image carousel style rules
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
-  height: 370px;
-  max-height: 370px;
+  height: 450px;
+  max-height: 450px;
   width: fit-content;
   border-radius: 10px;
   background-color: var(--header-color);
@@ -517,6 +510,16 @@ Image carousel style rules
 
     .project-tags {
       display: none;
+    }
+
+    .discover-link {
+    display: block;
+    margin: 0;
+    }
+
+    .learn-more {
+    position: relative;
+    margin-top: 12px;
     }
 
     h2 {

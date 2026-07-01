@@ -3134,8 +3134,8 @@ Project Carousel style rules
   margin-right: 1.5vw;
 
   .carousel-contents {
-    height: 370px;
-    max-height: 370px;
+    height: 450px;
+    max-height: 450px;
     width: 100%;
   }
 
