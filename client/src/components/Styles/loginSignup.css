@@ -408,8 +408,7 @@ Signup process modal style rules
   #project-editor-selected-tags-container {
 
     scrollbar-width: thin;
-    scrollbar-color: var(--header-color) !important;
-    /*not working*/
+    scrollbar-color: var(--header-color) rgba(0, 0, 0, 0);
   }
 
   #project-editor-tag-wrapper {
@@ -888,6 +887,7 @@ Signup process modal style rules
   height: 50px;
   display: flex;
   flex-direction: row;
+
   /* .select-container,
   .select-button-input {
     height: 100%;
@@ -1161,7 +1161,7 @@ Signup process modal style rules
       flex-direction: column;
       gap: 20px;
 
-     #project-editor-selected-tags {
+      #project-editor-selected-tags {
         /* width: 93%; */
         height: 50%;
         overflow-y: scroll;

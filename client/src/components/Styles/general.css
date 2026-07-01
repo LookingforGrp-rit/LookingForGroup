@@ -1250,8 +1250,8 @@ Page popup style rules
 
   h2 {
     font-size: 1.5rem;
-    margin-top: min(3.46vh, 34px);
-    margin-bottom: min(3.05vh, 30px);
+    margin-top: min(3.46vh, 5px);
+    margin-bottom: min(3.05vh, 5px);
     font-weight: 600;
     color: var(--primary-color);
   }
@@ -1276,7 +1276,7 @@ Page popup style rules
     border-radius: 10px;
     width: 100%;
     overflow: auto;
-    margin: min(1.32vh, 13px) min(6.68vw, 101px);
+    margin: 0 min(6.68vw, 101px);
   }
 
   #filters {
@@ -1284,8 +1284,10 @@ Page popup style rules
     max-width: 857px;
     max-height: 340px;
     width: 56.7vw;
-    height: 39.9vh;
-    padding: min(2.65vh, 26px) min(2.05vw, 31px);
+    /* height: 49.9vh; */
+    padding: min(1.65vh, 10px) min(2.05vw, 31px);
+    padding-bottom: 0;
+    margin-bottom: min(3.05vh, 5px);
 
     p {
       margin-top: 0;
@@ -1317,21 +1319,17 @@ Page popup style rules
   }
 
   .filter-tab:hover {
-    display: block;
     color: var(--primary-color);
-    font-weight: 600;
-    transition: none;
-    padding: 1px;
-    text-align: center;
+    font-weight: 500;
+    transform: none;
+    padding-bottom: 5px;
+    transition: 0.2s;
     text-decoration: underline;
   }
 
   .filter-tab.selected {
-    display: block;
     font-weight: 700;
     color: var(--primary-color);
-    padding: 1px;
-    text-align: center;
   }
 
   hr {
@@ -1357,6 +1355,7 @@ Page popup style rules
     display: flex;
     flex-direction: column;
     align-items: start;
+    margin-top: 0;
   }
 
   #selected-filters {
@@ -1463,7 +1462,7 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 2;
+  z-index: 5;
   box-sizing: border-box;
 }
 
