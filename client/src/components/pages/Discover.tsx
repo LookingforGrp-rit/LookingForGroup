@@ -294,6 +294,14 @@ export const DiscoverPage = () => {
             matchesAll = false;
           }
         }
+        else if (tag.type === "Position") {
+          const roles = item.jobs.map((job) => job.role);
+
+          if (roles.find((role) => role.roleId === tag.tagId))
+            matchesAny = true;
+          else 
+            matchesAll = false;
+        }
         // Tag check can be done by ID: Genre
         else if (tag.tagId && item.tags) {
           const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
@@ -305,7 +313,6 @@ export const DiscoverPage = () => {
             matchesAll = false;
           }
         }
-
 
       }
       if (filterMode === "Match Any") return matchesAny;

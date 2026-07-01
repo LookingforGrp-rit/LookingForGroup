@@ -402,6 +402,7 @@ export const AboutTab = ({
 					<LabelInputBox
 						label={"Location"}
 						inputType={"single"}
+						maxLength={150}
 						value={profile.location}
 						initialValue={unmodifiedProfile.location}
 						onChange={(e) => {
