@@ -700,10 +700,9 @@ export const addProjectJob = async (
  */
 export const addJobSkill = async (
   projectID: number,
-  jobID: number,
   skillData: AddJobSkillInput
 ): Promise<ApiResponse<JobSkill>> => {
-  const apiURL = `/projects/${projectID}/jobs/${jobID}/skills`;
+  const apiURL = `/projects/${projectID}/jobs/${skillData.jobId}/skills`;
   const response = await POST(apiURL, skillData);
 
   if (response.error) console.log(`Error in addJobSkill: ${response.error}`);

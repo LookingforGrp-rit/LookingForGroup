@@ -1590,7 +1590,7 @@ export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
 /**
  * Data required to add a skill to a project
  */
-export type AddJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "position">
+export type AddJobSkillInput = Pick<JobSkill, "jobId" | "skillId" | "proficiency" | "position">
 
 export type UpdateJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "position"> //more things if we want to add more things
 

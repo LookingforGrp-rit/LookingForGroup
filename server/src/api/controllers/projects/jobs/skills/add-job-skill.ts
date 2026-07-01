@@ -9,14 +9,8 @@ const addJobSkill = async (req: Request, res: Response) => {
   const projectId = parseInt(req.params.id as string);
   const jobId = parseInt(req.params.jobId as string);
 
-  const skillWithIds = {
-    ...data,
-    projectId,
-    jobId,
-  };
-
   //add the skill they wanna add
-  const result = await addJobSkillService(skillWithIds);
+  const result = await addJobSkillService(projectId, jobId, data);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -389,8 +389,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return;
     }
 
-    console.log("Created project thumbnail: ");
-    console.log(modifiedProject.thumbnail);
     setCurrentTab(0);
 
     // Prevent duplicate project names in the user's project list.
@@ -523,6 +521,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             })
           }
 
+          console.log(modifiedProject.jobs);
+
           /* PROJECT JOBS */
           for (const job of modifiedProject.jobs) {
             dataManager.createJob({
@@ -541,14 +541,20 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 //jobSkills: job.jobSkills, uncomment when can add job skills
               }
             })
+            console.log(job);
             if(job.jobSkills) {
               for(const skill of job.jobSkills){
+                let type = "canon";
+                if(!(job as ProjectJob).jobId) {
+                  type = "local";
+                }
                 dataManager.addProjectJobSkill({
                   id: {
-                    type: "canon",
-                    value: (skill as JobSkill).skillId
+                    type: type as "canon" | "local",
+                    value: (job as ProjectJob).jobId,
                   },
                   data: {
+                    jobId: (job as ProjectJob).jobId,
                     skillId: (skill as JobSkill).skillId,
                     proficiency: (skill as JobSkill).proficiency,
                     position: (skill as JobSkill).position

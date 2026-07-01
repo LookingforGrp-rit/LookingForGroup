@@ -25,6 +25,7 @@ import {
   JobCompensation,
   Role,
   ProjectWithFollowers,
+  JobSkill,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -737,7 +738,6 @@ export const TeamTab = ({
         return;
       }
 
-
       dataManager?.createJob({
         id: {
           value: (currentJob as Pending<ProjectJob>).localId ?? ++localIdIncrement,
@@ -764,11 +764,29 @@ export const TeamTab = ({
       setEditMode(false);
       setIsCreatingNewPosition(false);
       setCurrentJob(currentJob);
-      console.log(projectAfterTeamChanges.jobs) //it's there! why isn't it updating?
 
       return;
     }
     else {
+      console.log(currentJob.jobSkills)
+
+      if(currentJob.jobSkills) {
+        for(const skill of currentJob.jobSkills){
+          dataManager?.addProjectJobSkill({
+            id: {
+              value: (skill as JobSkill).skillId,
+              type: "canon"
+            },
+            data: {
+              jobId: (currentJob as ProjectJob).jobId,
+              skillId: (skill as JobSkill).skillId,
+              proficiency: (skill as JobSkill).proficiency,
+              position: (skill as JobSkill).position
+            }
+          })
+        }
+      }
+
       dataManager?.updateJob({
         id: {
           value: (currentJob as ProjectJob).jobId,

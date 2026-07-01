@@ -3,7 +3,7 @@ import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
 import { Skill, JobSkill, SkillType, ProjectJob } from "@looking-for-group/shared";
-import { Pending, PendingProject } from "../../../../types/types";
+import { Pending } from "../../../../types/types";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "./SortableItem";
