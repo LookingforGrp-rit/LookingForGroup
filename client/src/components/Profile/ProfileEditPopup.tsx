@@ -61,29 +61,26 @@ export const ProfileEditPopup = () => {
     setEditorKey((key) => key + 1);
   };
 
-  const handlePopupCallback = async () => {
+  // Fires when the popup is closed (X, Escape, or click-outside). With
+  // confirmation={!saved} on the PopupContent below, an unsaved close is
+  // intercepted — the popup stays open and we surface the confirm dialog
+  // instead of discarding the edits.
+  const handlePopupCallback = () => {
     if (saved) {
-      // Popup is opening. Ignore the confirm
-      setCurrentTab(0);
-      isOpening.current = false;
-      setSaved(true);
+      handleEditorClose();
     } else {
-      // Popup is closing. Show the confirm dialog
       setConfirm(true);
     }
   };
 
   const cancelConfirm = () => setConfirm(false);
 
-  const closeWithoutSaving = async () => {
-    setCurrentTab(0);
+  // User confirmed they want to leave without saving: discard edits and let the
+  // popup close (the Confirm button has doNotClose=false, so it closes itself).
+  const confirmExit = () => {
     setConfirm(false);
-    isOpening.current = true;
-
-    // Reset modified profile to discard any unsaved changes
-    if (unmodifiedProfile)
-      setModifiedProfile(structuredClone(unmodifiedProfile));
-  }
+    handleEditorClose();
+  };
 
    const updatePendingProfile = (updatedPendingProject: PendingUserProfile) => {
      setModifiedProfile(updatedPendingProject);
@@ -115,6 +112,17 @@ export const ProfileEditPopup = () => {
     setUpProfileData();
   }, []);
 
+  // Warn on browser-level navigation/refresh while there are unsaved edits,
+  // matching the project creator/editor behavior.
+  useEffect(() => {
+    window.onbeforeunload = () => {
+      if (!saved) return ' ';
+    };
+    return () => {
+      window.onbeforeunload = null;
+    };
+  }, [saved]);
+
   /**
    * Receives changed/inputted information and stores it. Reloads page with new information.
    * @param e Event
@@ -134,6 +142,9 @@ export const ProfileEditPopup = () => {
       console.error((e as Error).message);
     }
     setSaved(true);
+    // Clear the unsaved-changes guard so the save's own reload below doesn't
+    // trigger a spurious "leave site?" browser prompt.
+    window.onbeforeunload = null;
     window.location.reload();
   };
 
@@ -224,7 +235,20 @@ export const ProfileEditPopup = () => {
   return (
     <Popup>
       <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
-      <PopupContent profilePopup={true} callback={handleEditorClose}>
+      <PopupContent profilePopup={true} callback={handlePopupCallback} confirmation={!saved}>
+        {confirm ? (
+          <PopupContent confirmation={true} useClose={false}>
+            <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
+            <div id="confirm-editor-save">
+              <PopupButton doNotClose={() => false} callback={confirmExit} buttonId="project-editor-save">
+                Confirm
+              </PopupButton>
+              <PopupButton doNotClose={() => true} callback={cancelConfirm} buttonId="team-edit-member-cancel-button">
+                Cancel
+              </PopupButton>
+            </div>
+          </PopupContent>
+        ) : ""}
         <div id="project-creator-editor">
           <div id="project-editor-tabs">{editorTabs}</div>
           <div id="project-editor-content" key={editorKey}>{renderTabContent()}</div>
