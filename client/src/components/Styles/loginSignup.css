@@ -915,6 +915,7 @@ Signup process modal style rules
   div textarea {
     margin-top: 0px;
     background-color: var(--header-color);
+    outline: none;
   }
 }
 
