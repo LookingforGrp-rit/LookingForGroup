@@ -37,9 +37,10 @@ export class ProjectApprovedNotificationBuilder implements NotificationBuilder {
 
     // building message
     let message = `Hello ${data?.users.preferredName as string},`;
-    message += `\n\nYour project, ${data?.title as string}, has been approved. `;
+    message += `<br /><br />Your project, ${data?.title as string}, has been approved. `;
     message += `People can now view, like, and request to join your project.`;
-    message += `\n\nWe wish you luck in all your endeavors!`;
+    message += `<br /><br />We wish you luck in all your endeavors!`;
+    message += `<br />LFG Team`;
 
     notification.message = message;
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
 import { useNotifications } from "../hooks/useNotifications";
 import { getNotification } from "../api/notifications";
+import DOMPurify from 'dompurify';
 import type {
   NotificationPreview,
   NotificationDetail,
@@ -59,6 +60,10 @@ const NotificationsPanel: React.FC<PanelProps> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  const sanitizedData = (dirty: string): string => {
+    return DOMPurify.sanitize(dirty, { USE_PROFILES: { html: true } });
+  };
+
   // Open/close a notification: marks it read and lazily loads its message body
   // (previews don't include the message, so we fetch the detail on demand).
   const handleSelect = async (n: NotificationPreview) => {
@@ -97,18 +102,12 @@ const NotificationsPanel: React.FC<PanelProps> = ({
             >
               <button
                 type="button"
-                className="notification-main"
+                className="notification-open"
                 onClick={() => void handleSelect(n)}
               >
                 {!n.hasBeenRead && <span className="notification-dot" aria-hidden />}
-                <span className="notification-text">
-                  <span className="notification-subject">{n.subjectLine}</span>
-                  {expandedId === n.notificationId &&
-                    details[n.notificationId] && (
-                      <span className="notification-message">
-                        {details[n.notificationId].message}
-                      </span>
-                    )}
+                <span className="notification-subject">
+                  {n.subjectLine}
                 </span>
                 <span className="notification-time">
                   {formatRelativeTime(n.timeSent)}
@@ -125,6 +124,15 @@ const NotificationsPanel: React.FC<PanelProps> = ({
               >
                 &times;
               </button>
+              {expandedId === n.notificationId &&
+                details[n.notificationId] && (
+                  <p
+                    className="notification-message"
+                    dangerouslySetInnerHTML={
+                      { __html: sanitizedData(details[n.notificationId].message) }
+                    }>
+                  </p>
+                )}
             </li>
           ))}
         </ul>
