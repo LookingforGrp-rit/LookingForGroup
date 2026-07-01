@@ -3,8 +3,8 @@ import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
 import { tags, projectTabs } from '../constants/tags';
-import { getProjectTypes, getTags} from '../api/users';
-import { Tag, StringDictionary, Medium } from '@looking-for-group/shared';
+import { getJobTitles, getProjectTypes, getTags} from '../api/users';
+import { Tag, StringDictionary, Medium, Role } from '@looking-for-group/shared';
 
 
 interface DiscoverProjectsProps {
@@ -91,6 +91,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const getData = async () => {
         try {
             const response = await getTags();
+            const jobResponse = await getJobTitles();
             const data: unknown[] = response.data as unknown[];
 
             //gets the projet types and pushes the data into the data variable for every project got
@@ -121,6 +122,15 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                     tabs[mappedType].categoryTags.push(filterTag);
                 }
             });
+
+            jobResponse.data?.forEach((job) => {
+                tabs["Positions"].categoryTags.push({
+                    tagId: job.roleId,
+                    label: job.label,
+                    type: "Position",
+                    category: "Other",
+                });
+            })
 
             setFilterPopupTabs(Object.values(tabs));
         }
