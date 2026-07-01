@@ -1461,8 +1461,8 @@ Header style rules
   margin: 0 auto;
   height: 90px;
   position: sticky;
-  top: 0;
-  z-index: 2;
+  top: 0;s
+  z-index: 5;
   box-sizing: border-box;
 }
 
