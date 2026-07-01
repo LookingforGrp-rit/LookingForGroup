@@ -67,6 +67,7 @@ Profile Panel component style rules
   margin: 0 auto 1em;
   overflow: hidden;
   text-decoration: none;
+  cursor: pointer;
 
   img {
     width: 100%;
