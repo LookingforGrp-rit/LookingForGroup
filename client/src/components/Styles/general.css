@@ -284,7 +284,6 @@ textarea:focus-visible {
   transition: 0s;
   outline: 3px solid var(--primary-color);
   outline-offset: 2px;
-  border-radius: inherit;
 }
 
 button:focus:not(:focus-visible),
