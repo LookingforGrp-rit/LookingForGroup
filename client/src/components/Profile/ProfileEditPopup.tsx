@@ -1,8 +1,7 @@
 // Utilities and React functions
-import { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { getCurrentAccount } from "../../api/users";
-import * as paths from '../../constants/routes';
 import { useNavigate } from "react-router-dom";
 
 // Components
