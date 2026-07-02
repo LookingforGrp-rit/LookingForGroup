@@ -19,7 +19,7 @@ import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEn
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { JobSkill, Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 // NO COMMENTS FOR WHAT THESE ARE??????
@@ -521,8 +521,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             })
           }
 
-          console.log(modifiedProject.jobs);
-
           /* PROJECT JOBS */
           for (const job of modifiedProject.jobs) {
             dataManager.createJob({
@@ -538,30 +536,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 location: (job as ProjectJob).location,
                 roleId: (job as ProjectJob).role.roleId,
                 description: job.description ?? undefined,
-                //jobSkills: job.jobSkills, uncomment when can add job skills
+                jobSkills: (job as ProjectJob).jobSkills
               }
             })
-            console.log(job);
-            if(job.jobSkills) {
-              for(const skill of job.jobSkills){
-                let type = "canon";
-                if(!(job as ProjectJob).jobId) {
-                  type = "local";
-                }
-                dataManager.addProjectJobSkill({
-                  id: {
-                    type: type as "canon" | "local",
-                    value: (job as ProjectJob).jobId,
-                  },
-                  data: {
-                    jobId: (job as ProjectJob).jobId,
-                    skillId: (skill as JobSkill).skillId,
-                    proficiency: (skill as JobSkill).proficiency,
-                    position: (skill as JobSkill).position
-                  }
-                })
-              }
-            }
           }
 
           /* PROJECT SOCIALS */

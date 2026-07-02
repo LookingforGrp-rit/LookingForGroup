@@ -32,6 +32,9 @@ export const JobSkillPopup = ({
   //editing a copy, rather than the original variable
   let modifiedJob = job;
 
+  const skillLimit = 5;
+  //the limit imposer (not used as you can see)
+
   // States
   const [allSkills, setAllSkills] = useState<Skill[]>([]);
   // Tracks which tab we are currently on
