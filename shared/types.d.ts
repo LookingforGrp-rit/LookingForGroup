@@ -1588,3 +1588,13 @@ export type FilterRequest = {
   socials?: number[];
   strictness?: 'any' | 'all';
 }
+
+/**
+ * Data required to create a new tag.
+ */
+export type CreateTagInput = Pick<Tag, "label" | "type" | "category">;
+
+/**
+ * Data required to edit an existing tag.
+ */
+export type EditTagInput = Partial<CreateTagInput> & { tagId: number }
