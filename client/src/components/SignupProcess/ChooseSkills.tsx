@@ -2,7 +2,7 @@ import { MouseEventHandler, useState, useMemo, useCallback, Fragment } from "rea
 import { SearchBar } from "../SearchBar";
 import { getSkills } from "../../api/users";
 import { Tag } from "../Tag";
-import { Skill, TagType } from "@looking-for-group/shared";
+import { Skill, SkillType, TagType } from "@looking-for-group/shared";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
@@ -180,7 +180,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 		const tabs = skillTabs.map((skill, i) => {
 			return (
 				<button
-					key={skill}
+					key={skill as React.Key}
 					type="button"
 					onClick={() => setCurrentSkillsTab(i)}
 					className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
@@ -202,63 +202,73 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 		if (searchedSkills && searchedSkills.length !== 0) {
 
 			//The final list of skills displayed to the screen.
-      		let skillsToDisplay = searchedSkills;
-				
-      		//Since discipline appears multiple times, it's defined here.
-      		let discipline;
-				
-      		switch (currentSkillsTab){
-      		  case 0:
-      		    //Developer
-      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-      		    const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
-      		    const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
-      		    const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
-      		    const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
-      		    const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
-      		    skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
-      		    break; }
-      		  case 1:
-      		    //Designer
-      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-      		    const videoSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Video Software");
-      		    const designSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Design Software");
-      		    const artAnimation = searchedSkills.filter((tag) => (tag as Skill).category === "Art and Animation");
-      		    const photoEditing = searchedSkills.filter((tag) => (tag as Skill).category === "Photo Editing");
-      		    skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
-      		    break; }
-      		  case 2:
-      		    //Soft
-      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-      		    const team = searchedSkills.filter((tag) => (tag as Skill).category === "Team");
-      		    const personal = searchedSkills.filter((tag) => (tag as Skill).category === "Personal");
-      		    skillsToDisplay = discipline.concat(team, personal);
-      		    break; }
-      		  case 3:
-      		    //Audio
-      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-      		    const dawAudioEditor = searchedSkills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
-      		    const middleware = searchedSkills.filter((tag) => (tag as Skill).category === "Middleware");
-      		    const notation = searchedSkills.filter((tag) => (tag as Skill).category === "Notation");
-      		    skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
-      		    break; }
-      		  case 4:
-      		    //Engineer
-      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-      		    const engineeringSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Engineering Software");
-      		    const hardware = searchedSkills.filter((tag) => (tag as Skill).category === "Hardware");
-      		    skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
-      		    break; }
-      		}
+			let skillsToDisplay = searchedSkills;
+
+			//Since discipline appears multiple times, it's defined here.
+			let discipline;
+
+			switch (currentSkillsTab) {
+				case 0:
+					//Developer
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
+						const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
+						const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
+						const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
+						const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
+						skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
+						break;
+					}
+				case 1:
+					//Designer
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const videoSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Video Software");
+						const designSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Design Software");
+						const artAnimation = searchedSkills.filter((tag) => (tag as Skill).category === "Art and Animation");
+						const photoEditing = searchedSkills.filter((tag) => (tag as Skill).category === "Photo Editing");
+						skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
+						break;
+					}
+				case 2:
+					//Soft
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const team = searchedSkills.filter((tag) => (tag as Skill).category === "Team");
+						const personal = searchedSkills.filter((tag) => (tag as Skill).category === "Personal");
+						skillsToDisplay = discipline.concat(team, personal);
+						break;
+					}
+				case 3:
+					//Audio
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const dawAudioEditor = searchedSkills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
+						const middleware = searchedSkills.filter((tag) => (tag as Skill).category === "Middleware");
+						const notation = searchedSkills.filter((tag) => (tag as Skill).category === "Notation");
+						skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
+						break;
+					}
+				case 4:
+					//Engineer
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const engineeringSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Engineering Software");
+						const hardware = searchedSkills.filter((tag) => (tag as Skill).category === "Hardware");
+						skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
+						break;
+					}
+			}
 
 			return skillsToDisplay.map((skill, index, array) => (
 				<Fragment key={skill.skillId}>
 					{index === 0 || ((array[index - 1] as Skill).category != (array[index] as Skill).category)
-          			? <div id="tag-category-header">
-          			    <p>{(array[index] as Skill).category}</p>
-          			    <hr></hr>
-          			  </div>
-          			: <></>}
+						? <div id="tag-category-header">
+							<p>{(array[index] as Skill).category}</p>
+							<hr></hr>
+						</div>
+						: <></>}
 					<Tag
 						key={skill.skillId}
 						onClick={() => handleSkillToggle(skill.skillId)}
@@ -388,9 +398,10 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 												<SortableTag
 													id={skill.skillId}
 													tag={{
-														tagId: skill.skillId,
+														skillId: skill.skillId,
 														label: skill.label,
-														type: skill.type as TagType,
+														type: skill.type,
+														category: skill.category
 													}}
 													onRemove={handleSkillToggle}
 												/>
@@ -399,18 +410,18 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 									</div>
 								</SortableContext>
 							</DndContext>
-							<button 
-            					type="button"
-								hidden={selectedSkills.length === 0} 
-            					className="delete-tags-btn" 
-            					onClick={() => {
+							<button
+								type="button"
+								hidden={selectedSkills.length === 0}
+								className="delete-tags-btn"
+								onClick={() => {
 									setSelectedSkills([]);
 									setSelectedSkillIds([]);
 								}}
-            					title="Remove all selected tags"
-          					>
-        					    <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
-        					</button>
+								title="Remove all selected tags"
+							>
+								<i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+							</button>
 						</div>
 						<div id="project-editor-tag-search">
 							<SearchBar
