@@ -641,6 +641,10 @@ export const TeamTab = ({
 	 * @returns void
 	 */
 	const addPositionCallback = useCallback(() => {
+    console.log(isCreatingNewPosition)
+    //slight problem with this toggle
+    //because you're calling this on both the cancel button and the add position button, if you wished to add a second new position after creating one of them
+    //it freaks out!
 		// going back to previous state (cancel button)
 		if (isCreatingNewPosition || editMode) {
 			// we are no longer creating a new position
@@ -833,10 +837,10 @@ export const TeamTab = ({
 			const unmodifiedSkills = unmodifiedProject.jobs.find(
 				(j) => j.jobId === (currentJob as ProjectJob).jobId
 			)?.jobSkills;
-      let skillsToBeAdded = currentJob.jobSkills as JobSkill[]
+      let skillsToBeAdded = [];
 
 			if (currentJob.jobSkills) {
-				if (unmodifiedSkills) {
+				if (unmodifiedSkills && unmodifiedSkills.length > 0) {
 					for (const skill of unmodifiedSkills) {
 						if ((currentJob.jobSkills as JobSkill[]).every((curSkill) => curSkill?.skillId !== skill.skillId)) {
               console.log(skill)
@@ -852,10 +856,13 @@ export const TeamTab = ({
 							});
 						}
 					}
-          skillsToBeAdded = skillsToBeAdded.filter((s) => unmodifiedSkills.every((u) => u.skillId !== s.skillId))
+          skillsToBeAdded = (currentJob.jobSkills as JobSkill[]).filter((s) => unmodifiedSkills.every((u) => u.skillId !== s.skillId))
           console.log(unmodifiedSkills)
           console.log(skillsToBeAdded);
 				}
+        else{
+          skillsToBeAdded = currentJob.jobSkills as JobSkill[]
+        }
 				for (const skill of skillsToBeAdded) {
 					dataManager?.addProjectJobSkill({
 						id: {
@@ -901,13 +908,7 @@ export const TeamTab = ({
 
 			updatePendingProject(projectAfterTeamChanges);
 		}
-	}, [
-		currentJob,
-		dataManager,
-		isCreatingNewPosition,
-		projectAfterTeamChanges,
-		updatePendingProject
-	]);
+	}, [currentJob, dataManager, isCreatingNewPosition, projectAfterTeamChanges, unmodifiedProject.jobs, updatePendingProject]);
 
 	// --- Content variables ---
 	// JSX content for viewing position details.
@@ -1519,12 +1520,6 @@ export const TeamTab = ({
 					</div>
 				</div>
 			</div>
-			{/* and then insert skill selector here, with like a button that shows the full menu.
-      would it be possible to like... take the skills tab from the profile page and put it right here? 
-      like what if we changed the props of that tab to accept project job stuff, and all that was handled in there
-      or we cloned the file for organization's sake and made it usable in here
-      i am not a frontend guy react is my worst enemy, but hopefully some people more versed than me can get to this bit
-      hopefully it's not too involved */}
 			<div id="edit-position-buttons">
 				<div id="edit-position-button-pair">
 					<button
