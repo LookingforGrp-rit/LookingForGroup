@@ -60,7 +60,8 @@ export const Header: React.FC<HeaderProps> = ({
   setCurrentUserId, 
   searchOnFocus }) => {
   // User info state
-  const [username, setUsername] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [lastName, setLastName] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [profileImg, setProfileImg] = useState<string>('');
   const [userId, setUserId] = useState<number>();
@@ -84,7 +85,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         if (res.status == 200 && res.data?.username) {
           loggedIn = true;
-          setUsername(res.data.username);
+          setFirstName(res.data.firstName);
+          setLastName(res.data.lastName);
           setUserId(res.data.userId);
           if (setCurrentUserId) setCurrentUserId(res.data);
           setEmail(res.data.ritEmail);
@@ -93,7 +95,7 @@ export const Header: React.FC<HeaderProps> = ({
           loggedIn = false;
           setUserId(-1);
           if (setCurrentUserId) setCurrentUserId(undefined);
-          setUsername('Guest');
+          setFirstName('Guest');
           setEmail('');
           setProfileImg('');
         }
@@ -102,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
         loggedIn = false;
         setUserId(-1);
         if (setCurrentUserId) setCurrentUserId(undefined);
-        setUsername('Guest');
+        setFirstName('Guest');
         setEmail('');
         setProfileImg('');
       }
@@ -238,7 +240,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <button id="header-profile-user">
                   <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'} />
                   <div id="header-profile-user-info">
-                    <p id="header-profile-username">{username}</p>
+                    <p id="header-profile-username">{firstName} {lastName}</p>
                     <p id="header-profile-email">{email}</p>
                   </div>
                 </button>
@@ -266,7 +268,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
 
             ) : (
-              <div id="header-profile-dropdown" style={{ height: 200 }}>
+              <div id="header-profile-dropdown">
 
                 {/* Profile Icon (if user has one) */}
                 <a href={`${returnProfileAccess()}`} id="header-profile-user">
@@ -280,7 +282,7 @@ export const Header: React.FC<HeaderProps> = ({
                       }}
                     />}
                   <div id="header-profile-user-info">
-                    <p id="header-profile-username">{username}</p>
+                    <p id="header-profile-username">{firstName} {lastName}</p>
                     <p id="header-profile-email">{email}</p>
                   </div>
                 </a>

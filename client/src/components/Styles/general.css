@@ -1600,11 +1600,13 @@ Header style rules
   justify-content: center;
   gap: 14px;
   font-size: 1rem;
+  max-width: 156px;
 
   >#header-profile-user-info {
     display: flex;
     flex-direction: column;
-    width: fit-content;
+    flex: 1; 
+    min-width: 0;
     text-align: left;
 
     #header-profile-username {
@@ -1612,6 +1614,13 @@ Header style rules
       font-weight: 700;
       color: var(--primary-color);
       margin: 1px;
+
+      white-space: normal;
+      display: -webkit-box;
+      line-clamp: 2;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
     }
 
     #header-profile-email {
