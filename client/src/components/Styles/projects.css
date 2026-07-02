@@ -3243,9 +3243,15 @@ Project Carousel style rules
 
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1200px) {
   #project-info-panel {
     max-width: calc(100vw - 80px);
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  #project-info-panel {
+    max-width: 100%;
   }
 }
 
