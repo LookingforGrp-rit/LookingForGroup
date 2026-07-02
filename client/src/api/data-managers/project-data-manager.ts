@@ -665,18 +665,6 @@ export const projectDataManager = async (projectId: number) => {
    * @param image The image data
    */
   const createImage = (image: CRUDRequest<CreateProjectImageInput>) => {
-    if (
-      changes.create.projectImages.some(({ id }) => id.value === image.id.value)
-    ) {
-      changes.create.projectImages = [
-        ...changes.create.projectImages.filter(
-          ({ id }) => id.value !== image.id.value
-        ),
-        image,
-      ];
-      return;
-    }
-
     changes.create.projectImages.push(image);
   };
 

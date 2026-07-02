@@ -1,5 +1,4 @@
 import { useState, createContext, useContext, ReactNode, useRef, useEffect, useCallback } from 'react';
-import { createPortal } from 'react-dom';
 import close from '../icons/cancel.png';
 //This is a reusable component that can be used to make popup windows on pages
 
@@ -182,10 +181,7 @@ export const PopupContent = ({
     return () => window.removeEventListener('popstate', handlePopState);
   }, [closePopup, open]);
 
-  const portal = document.getElementById("popup-root");
-  if(!portal) return null;
-
-  return createPortal(
+  return (
     <>
       {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}
       <div className={"popup-cover" + (open ? "" : " hidden")} />
@@ -199,8 +195,7 @@ export const PopupContent = ({
           {children}
         </div>
       </div>
-    </>,
-    portal
+    </>
   );
 };
 
@@ -213,10 +208,6 @@ export const PopupContent = ({
  */
 export const Popup = ({ children, startOpen = false }: { children: ReactNode; startOpen?: boolean }) => {
   const [open, setOpen] = useState(startOpen);
-
-  const portal = document.getElementById('popup-root');
-
-  if(!portal) return null;
 
   return (
     <PopupContext.Provider value={{ open, setOpen }}>

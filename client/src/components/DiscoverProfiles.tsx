@@ -282,9 +282,10 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
           let software = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Software");
           let codingLanguage = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Coding Language");
           let framework = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Framework");
+          let api = searchedSkills.skills.filter((tag) => (tag as Skill).category === "API");
           let operatingSystem = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Operating System");
           let gameEngine = searchedSkills.skills.filter((tag) => (tag as Skill).category === "Game Engine");
-          skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
+          skillsToDisplay = discipline.concat(software, codingLanguage, framework, api, operatingSystem, gameEngine);
           break;
         case "Designer Skill":
           //Designer
