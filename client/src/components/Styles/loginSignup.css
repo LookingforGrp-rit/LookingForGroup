@@ -377,7 +377,7 @@ Signup process modal style rules
   align-items: center;
   height: fit-content;
   max-height: 80vh;
-  width: min(calc(90vw - 20px), 880px);
+  width: min(calc(90vw - 20px), 1000px);
   border-radius: 4px;
   padding: 20px;
   box-shadow: 0px 0px 10px 0px var(--border-color);

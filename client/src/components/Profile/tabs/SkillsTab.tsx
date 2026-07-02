@@ -404,8 +404,8 @@ export const SkillsTab = ({
   };
 
   const originalSkillOrder = useMemo(() => {
-    return (unmodifiedProfile.skills || []).map((s: MySkill) => s.skillId);
-  }, [unmodifiedProfile.skills]);
+    return (skills || []).map((s) => s.skillId);
+  }, [skills]);
 
   // Does Skills match in EXACT order
   const isSkillsUnsaved = useMemo(() => {
