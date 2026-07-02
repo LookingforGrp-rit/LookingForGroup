@@ -1535,6 +1535,7 @@ New Profile page style rules
 
     #profile-info {
       margin: 10px;
+      width: calc(100% - 20px);
 
       #profile-names {
         align-items: baseline;
