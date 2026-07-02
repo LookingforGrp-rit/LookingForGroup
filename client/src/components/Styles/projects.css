@@ -910,6 +910,7 @@ Project Creator and Editor Popup style rules
     margin-top: 0.5em;
     color: var(--primary-color);
     justify-self: center;
+    text-align: left;
   }
 }
 
@@ -2032,7 +2033,6 @@ button.edit-position-contact .project-member-image {
     border: none;
   }
 
-  .slider-text {}
 }
 
 
@@ -4446,7 +4446,7 @@ My projects page style rules
   border-radius: 10px;
   border: none;
   color: var(--neutral-gray);
-  bg-color: var(--main-text);
+  background-color: var(--main-text);
 }
 
 .add-video {
