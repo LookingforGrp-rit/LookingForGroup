@@ -29,7 +29,7 @@ Project Panel component style rules
 /* Cheap way to work around the padding */
 .masonry {
   width: 100%;
-  height: 100%;
+  height: fit-content;
   gap: 10px;
   /* removes masonry built-in scroll bar */
   overflow-y: hidden !important;
@@ -44,6 +44,12 @@ Project Panel component style rules
 .masonry>*>* {
   justify-self: center;
   padding: 10px;
+  max-height: 450px;
+}
+
+.masonry>* .profile-panel {
+  min-height: fit-content;
+  max-height: calc(100% + 20px + 1em);  /* offset padding */
 }
 
 /* not in use
@@ -3134,8 +3140,8 @@ Project Carousel style rules
   margin-right: 1.5vw;
 
   .carousel-contents {
-    height: 450px;
-    max-height: 450px;
+    height: auto;
+    aspect-ratio: 16 / 9;
     width: 100%;
   }
 
@@ -3184,7 +3190,7 @@ Project Carousel style rules
   img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     aspect-ratio: 16/9;
   }
@@ -3237,9 +3243,15 @@ Project Carousel style rules
 
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1200px) {
   #project-info-panel {
     max-width: calc(100vw - 80px);
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  #project-info-panel {
+    max-width: 100%;
   }
 }
 
@@ -4188,6 +4200,10 @@ My projects page style rules
 
   .page#my-projects {
     padding-bottom: 100px;
+
+    #main {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -4681,7 +4697,7 @@ My projects page style rules
 
 @media (max-width: 799px) and (max-height:850px) {
   .my-projects-grid {
-    padding-bottom: 20%;
+    padding-bottom: 0;
   }
 }
 
@@ -4774,11 +4790,8 @@ My projects page style rules
   .responsive-table {
     width: calc(100% - 40px);
   }
-}
 
-@media only screen and (max-width: 600px) {
-
-  /* Hide table headers (but not display: none;, for accessibility) */
+    /* Hide table headers (but not display: none;, for accessibility) */
   .responsive-table thead tr {
     position: absolute;
     top: -9999px;

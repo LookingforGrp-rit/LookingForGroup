@@ -282,7 +282,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 									)}
 								/>
 							</Select>
-							<div className="redAsterisk">*</div>
+							<div className="required-asterisk">*</div>
 						</div>
 
 						{/* Major */}
@@ -312,7 +312,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 									}))}
 								/>
 							</Select>
-							<div className="redAsterisk">*</div>
+							<div className="required-asterisk">*</div>
 						</div>
 
 						{/* Phone Number */}
