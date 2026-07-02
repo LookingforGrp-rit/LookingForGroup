@@ -3394,6 +3394,11 @@ Project Carousel style rules
     margin-bottom: 5px;
   }
 
+  #project-request-label{
+    width: 80%;
+    text-align: center;
+  }
+
   #project-request-info {
     width: 75%;
     text-align: center;
@@ -3421,6 +3426,18 @@ Project Carousel style rules
       background: none;
       color: var(--primary-color);
     }
+  }
+}
+
+@media only screen{
+  .popup:has(#project-request-review) {
+    width: min-content;
+    min-width: 65%;
+    height: min-content;
+    display: flex;
+    align-content: center;
+    vertical-align: center;
+    margin:250px;
   }
 }
 
