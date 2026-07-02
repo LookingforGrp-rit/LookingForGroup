@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import createTag from '#controllers/admin/create-tag.ts';
+import deleteTag from '#controllers/admin/delete-tag.ts';
 import demoteMod from '#controllers/admin/demote-from-mod.ts';
 import editTag from '#controllers/admin/edit-tag.ts';
 import promoteUserToMod from '#controllers/admin/promote-to-mod.ts';
@@ -19,5 +20,6 @@ router.patch('/demote', userExistsAt('body', 'id'), authenticated(demoteMod));
 
 router.post('/tags', authenticated(createTag));
 router.patch('/tags/:id', authenticated(tagExistsAt('path', 'id')), authenticated(editTag));
+router.delete('/tags/:id', authenticated(tagExistsAt('path', 'id')), authenticated(deleteTag));
 
 export default router;
