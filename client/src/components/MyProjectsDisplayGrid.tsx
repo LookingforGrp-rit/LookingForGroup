@@ -177,7 +177,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                       Submiting a request will make your project visible to moderators who will choose to either
                       accept and make your project visible to all, request changes for you to make, 
                       or reject it for various reasons. <br/>
-                      <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                      <strong>(Moderators are not capable of directly altering or deleting your projects)</strong>
                     </div>
                     <div id="project-request-buttons">
                       <PopupButton buttonId="request-confirm-button"

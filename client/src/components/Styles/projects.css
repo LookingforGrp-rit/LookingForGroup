@@ -909,6 +909,7 @@ Project Creator and Editor Popup style rules
     font-size: medium;
     margin-top: 0.5em;
     color: var(--primary-color);
+    justify-self: center;
   }
 }
 
@@ -3243,9 +3244,15 @@ Project Carousel style rules
 
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1200px) {
   #project-info-panel {
     max-width: calc(100vw - 80px);
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  #project-info-panel {
+    max-width: 100%;
   }
 }
 
@@ -3388,6 +3395,11 @@ Project Carousel style rules
     margin-bottom: 5px;
   }
 
+  #project-request-label{
+    width: 80%;
+    text-align: center;
+  }
+
   #project-request-info {
     width: 75%;
     text-align: center;
@@ -3415,6 +3427,18 @@ Project Carousel style rules
       background: none;
       color: var(--primary-color);
     }
+  }
+}
+
+@media only screen{
+  .popup:has(#project-request-review) {
+    width: min-content;
+    min-width: 65%;
+    height: min-content;
+    display: flex;
+    align-content: center;
+    vertical-align: center;
+    margin:250px;
   }
 }
 
