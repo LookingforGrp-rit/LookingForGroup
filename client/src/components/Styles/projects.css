@@ -1648,6 +1648,35 @@ Project Creator and Editor Popup style rules
   font-weight: 700;
 }
 
+.deny-btn {
+  background: none;
+  border: none;
+  outline: none;
+  box-shadow: none;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--primary-color);
+  min-width: 106px;
+  width: fit-content;
+  border-radius: 55px;
+  padding-left: 19px;
+  padding-right: 19px;
+}
+
+.confirm-btn {
+  border: none;
+  outline: none;
+  box-shadow: none;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--invert-text);
+  background-color: var(--primary-color);
+  padding: 10px 17px;
+  border-radius: 55px;
+  min-width: 106px;
+  width: fit-content;
+}
+
 .delete-button:hover {
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }

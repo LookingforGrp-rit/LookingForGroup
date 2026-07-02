@@ -592,7 +592,6 @@ Sidebar Nav style rules
   left: 0px;
   /* box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 16px; */
   /*changing z-index affects #discover-filters-parent*/
-  z-index: 4;
   color: var(--dark-lighttheme);
   background-color: var(--bg-color);
   /*background-image: url("../../../public/images/nav-background.png");*/
@@ -953,7 +952,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 4;
+  z-index: 10;
 }
 
 /*rules for the popup itself*/
@@ -1008,7 +1007,7 @@ Page popup style rules
   .popup {
     width: 95vw;
     max-width: 95vw;
-    max-height: calc(100vh - 40px);
+    max-height: 80vh;
   }
 }
 
@@ -1034,7 +1033,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 5;
+  z-index: 15;
   border-radius: 10px;
 }
 
@@ -1461,7 +1460,7 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: 9;
   box-sizing: border-box;
 }
 
