@@ -14,7 +14,7 @@ export const deleteTagFromSiteService = async (
 
     return 'NO_CONTENT';
   } catch (e) {
-    console.error('There was an internal error in createTagService: ', e);
+    console.error('There was an internal error in deleteTagFromSiteService: ', e);
     return 'INTERNAL_ERROR';
   }
 };

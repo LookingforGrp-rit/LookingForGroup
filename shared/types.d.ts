@@ -1598,3 +1598,13 @@ export type CreateTagInput = Pick<Tag, "label" | "type" | "category">;
  * Data required to edit an existing tag.
  */
 export type EditTagInput = Partial<CreateTagInput> & { tagId: number }
+
+/**
+ * Data required to create a skill.
+ */
+export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
+
+/**
+ * Data required to edit an existing skill
+ */
+export type EditSkillInput = Partial <CreateSkillInput> & { skillId: number };
