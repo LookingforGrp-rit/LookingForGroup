@@ -235,7 +235,7 @@ export const TeamTab = ({
         current.compensation !== original.compensation ||
         current.description !== original.description ||
         current.contact?.userId !== original.contact?.userId ||
-        current.jobSkills !== original.jobSkills //this wouldn't work i don't think
+        current.jobSkills !== original.jobSkills
       );
     });
   }, [projectData?.jobs, unmodifiedProject?.jobs]);
@@ -738,7 +738,6 @@ export const TeamTab = ({
         return;
       }
 
-
       dataManager?.createJob({
         id: {
           value: (currentJob as Pending<ProjectJob>).localId ?? ++localIdIncrement,
@@ -755,11 +754,7 @@ export const TeamTab = ({
           jobSkills: currentJob.jobSkills as JobSkill[] ?? []
         },
       });
-      //the problem with these skills is they need a real job id to properly function
-      //i can't pass them in without their or any job id, because prisma requires it for their creation
-      //prisma defines these job skills by their job id and their skill id, those are their identifiers through the database relation
-      //skill id is always canon bc those are static in the db
-      //so therefore it won't/can't work with a job that doesn't yet exist, because their ids are not real
+      //passing in the associated job's localId to get this to work properly
       if(currentJob.jobSkills) {
         for(const skill of currentJob.jobSkills){
           dataManager?.addProjectJobSkill({
@@ -790,7 +785,24 @@ export const TeamTab = ({
       return;
     }
     else {
+      const unmodifiedSkills = unmodifiedProject.jobs.find((j) => j.jobId === (currentJob as ProjectJob).jobId)?.jobSkills
+
       if(currentJob.jobSkills) {
+        if(unmodifiedSkills){
+          const deletedSkills = unmodifiedSkills.filter((skill) => !currentJob.jobSkills?.includes(skill))
+          for(const skill of deletedSkills) {
+            dataManager?.deleteProjectJobSkill({
+              id: {
+                value: skill.skillId,
+                type: "canon"
+              },
+              data: {
+                jobId: (currentJob as ProjectJob).jobId,
+                skillId: skill.skillId
+              }
+            })
+          }
+        }
         for(const skill of currentJob.jobSkills){
           dataManager?.addProjectJobSkill({
             id: {

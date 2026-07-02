@@ -436,7 +436,7 @@ export const projectDataManager = async (projectId: number) => {
     try {
       for(const skill of changes.create.jobSkills){
       
-        //inserting canon job ids after their associated jobs are created
+      //inserting canon job ids into the skills after their associated jobs are created
       for(const ids of jobIdArray){
         if(skill.id.type === "local" && ids.localId === skill.id.value){
           skill.id.value = ids.jobId;
@@ -631,7 +631,6 @@ export const projectDataManager = async (projectId: number) => {
    * @param skill The skill to be added
    */
   const addProjectJobSkill = (skill: CRUDRequest<AddJobSkillInput>) => {
-    console.log(changes.create.jobSkills)
     if (changes.create.jobSkills.some(({ data }) => data.skillId === skill.data.skillId)) {
       changes.create.jobSkills = [
         ...changes.create.jobSkills.filter(({ data }) => data.skillId === skill.data.skillId),
