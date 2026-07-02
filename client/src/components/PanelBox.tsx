@@ -3,6 +3,7 @@ import { ProjectPanel } from './ProjectPanel';
 import { ProfilePanel } from './ProfilePanel';
 import { ProjectWithFollowers, UserPreview, NumberDictionary, StructuredProjectInfo } from '@looking-for-group/shared';
 import { useMediaQuery } from './UseMediaQuery';
+import { useEffect } from 'react';
 
 interface MasonryContext {
   category: string;
@@ -19,6 +20,7 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
   if (category === 'projects') {
     const projectId = (item as ProjectWithFollowers).projectId;
     const project = projectCache?.[projectId]?.full || (item as ProjectWithFollowers);
+    //console.log(context);
     
     return (
       <div>
@@ -50,7 +52,8 @@ const MasonryItem = ({ data: item, context }: { data: unknown; context: MasonryC
  * @param itemList - List of items (projects or profiles) to render.
  * @returns The rendered panel box containing the items.
  */
-export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, }: { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
+export const PanelBox = ({ category, itemList, projectCache, followedProjectIds, userId, }: 
+  { category: string, itemList: unknown[], projectCache?: NumberDictionary<StructuredProjectInfo>, followedProjectIds?: Set<number>, userId: number, }) => {
   // Test these
   const isMobile = useMediaQuery('(max-width: 500px)');
   const isTablet = useMediaQuery('(max-width: 1000px)');
