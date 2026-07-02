@@ -1325,6 +1325,21 @@ Filters / Tags Style Rules
   flex-shrink: 0;
 }
 
+#btn-loadmore{
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  background-color: var(--primary-color) !important;
+  color: var(--invert-text);
+  font-size: 1.25rem;
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1em;
+}
+
 /* Mobile Fixes*/
 
 @media (max-width: 850px) {
