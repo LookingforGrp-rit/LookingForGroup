@@ -661,20 +661,20 @@ export const TeamTab = ({
     if (currentJob && ((currentJob as ProjectJob).jobId || (currentJob as Pending<ProjectJob>).localId)) {
       //let isLocal : bool = true;
 
-      if ("jobId" in currentJob) {
+      if ((currentJob as ProjectJob).jobId) {
         //isLocal = false;
         dataManager?.deleteJob({
           id: {
             type: "canon",
-            value: currentJob.jobId,
+            value: (currentJob as ProjectJob).jobId,
           },
           data: null,
         });
-      } else {
+      } else if ((currentJob as Pending<ProjectJob>).localId) {
         dataManager?.deleteJob({
           id: {
             type: "local",
-            value: currentJob.localId!,
+            value: (currentJob as Pending<ProjectJob>).localId ?? ++localIdIncrement,
           },
           data: null,
         });
@@ -738,6 +738,7 @@ export const TeamTab = ({
         return;
       }
 
+
       dataManager?.createJob({
         id: {
           value: (currentJob as Pending<ProjectJob>).localId ?? ++localIdIncrement,
@@ -751,8 +752,29 @@ export const TeamTab = ({
           location: currentJob.location,
           roleId: currentJob.role.roleId,
           description: currentJob.description ?? undefined,
+          jobSkills: currentJob.jobSkills as JobSkill[] ?? []
         },
       });
+      //the problem with these skills is they need a real job id to properly function
+      //i can't pass them in without their or any job id, because prisma requires it for their creation
+      //prisma defines these job skills by their job id and their skill id, those are their identifiers through the database relation
+      //skill id is always canon bc those are static in the db
+      //so therefore it won't/can't work with a job that doesn't yet exist, because their ids are not real
+      if(currentJob.jobSkills) {
+        for(const skill of currentJob.jobSkills){
+          dataManager?.addProjectJobSkill({
+            id: {
+              value: (currentJob as Pending<ProjectJob>).localId ?? ++localIdIncrement,
+              type: "local"
+            },
+            data: {
+              skillId: (skill as JobSkill).skillId,
+              proficiency: (skill as JobSkill).proficiency,
+              position: (skill as JobSkill).position
+            }
+          })
+        }
+      }
 
       projectAfterTeamChanges.jobs = [
         ...projectAfterTeamChanges.jobs,
@@ -768,17 +790,14 @@ export const TeamTab = ({
       return;
     }
     else {
-      console.log(currentJob.jobSkills)
-
       if(currentJob.jobSkills) {
         for(const skill of currentJob.jobSkills){
           dataManager?.addProjectJobSkill({
             id: {
-              value: (skill as JobSkill).skillId,
+              value: (currentJob as ProjectJob).jobId,
               type: "canon"
             },
             data: {
-              jobId: (currentJob as ProjectJob).jobId,
               skillId: (skill as JobSkill).skillId,
               proficiency: (skill as JobSkill).proficiency,
               position: (skill as JobSkill).position

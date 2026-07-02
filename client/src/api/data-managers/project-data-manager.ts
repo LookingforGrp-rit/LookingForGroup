@@ -19,6 +19,7 @@ import {
   UpdateJobSkillInput,
   AddJobSkillInput,
   DeleteJobSkillInput,
+  ProjectJob,
 } from "@looking-for-group/shared";
 import {
   sendInvite,
@@ -136,6 +137,11 @@ export const projectDataManager = async (projectId: number) => {
    * the changes we are about to apply to the project.
    */
   let changes: ProjectChanges = getEmptyChanges();
+
+  /**
+   * an array used for applying canon jobId to job skills before they're created.
+   */
+  const jobIdArray: {localId: number, jobId: number}[] = [];
 
   /**
    * For each change, did it succeed on the server side?
@@ -428,10 +434,20 @@ export const projectDataManager = async (projectId: number) => {
 
     // job skills
     try {
+      for(const skill of changes.create.jobSkills){
+      
+        //inserting canon job ids after their associated jobs are created
+      for(const ids of jobIdArray){
+        if(skill.id.type === "local" && ids.localId === skill.id.value){
+          skill.id.value = ids.jobId;
+          skill.id.type = 'canon'
+        }
+      }
+      }
       await runAndCollectErrors<AddJobSkillInput>(
         "Adding job skill",
         creates.jobSkills,
-        ({ data }) => addJobSkill(projectId, data)
+        ({ id, data }) => addJobSkill(projectId, id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -575,6 +591,12 @@ export const projectDataManager = async (projectId: number) => {
     // we haven't found this to be a problem.
     for (const request of requests) {
       const response = await action(request);
+      if(request.data) {
+        const jobSkills = (request.data as UpdateProjectJobInput).jobSkills
+        if(jobSkills && jobSkills.length > 0 && request.id.type === "local"){
+          jobIdArray.push({localId: request.id.value, jobId: (response.data as ProjectJob).jobId})
+        }
+      }
       statuses.push({
         id: request.id.value,
         succeeded: !response.error,
@@ -609,9 +631,10 @@ export const projectDataManager = async (projectId: number) => {
    * @param skill The skill to be added
    */
   const addProjectJobSkill = (skill: CRUDRequest<AddJobSkillInput>) => {
-    if (changes.create.jobSkills.some(({ id }) => id.value === skill.id.value)) {
+    console.log(changes.create.jobSkills)
+    if (changes.create.jobSkills.some(({ data }) => data.skillId === skill.data.skillId)) {
       changes.create.jobSkills = [
-        ...changes.create.jobSkills.filter(({ id }) => id.value !== skill.id.value),
+        ...changes.create.jobSkills.filter(({ data }) => data.skillId === skill.data.skillId),
         skill,
       ];
       return;
