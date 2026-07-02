@@ -169,7 +169,7 @@ export const MediaTab = ({
     try {
       const fullImg = {
         image: file,
-        altText: "project image", //does this imageUploader.alt thing work how i expect it to //it did not!
+        altText: "project image",
       } as CreateProjectImageInput;
 
       const localId = ++localIdIncrement;
