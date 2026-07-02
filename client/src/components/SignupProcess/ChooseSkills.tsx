@@ -200,22 +200,81 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 	const renderSkills = useCallback(() => {
 		// no search item, render all skills
 		if (searchedSkills && searchedSkills.length !== 0) {
-			return searchedSkills.map((skill) => (
-				<Tag
-					key={skill.skillId}
-					onClick={() => handleSkillToggle(skill.skillId)}
-					type={skill.type.toLowerCase() + " skill"}
-					selected={isSkillSelected(skill.skillId) === "selected"}
-				>
-					<i
-						className={
-							isSkillSelected(skill.skillId) === "selected"
-								? "fa fa-close"
-								: "fa fa-plus"
-						}
-					></i>
-					<p>&nbsp;{skill.label}</p>
-				</Tag>
+
+			//The final list of skills displayed to the screen.
+      		let skillsToDisplay = searchedSkills;
+				
+      		//Since discipline appears multiple times, it's defined here.
+      		let discipline;
+				
+      		switch (currentSkillsTab){
+      		  case 0:
+      		    //Developer
+      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+      		    const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
+      		    const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
+      		    const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
+      		    const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
+      		    const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
+      		    skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
+      		    break; }
+      		  case 1:
+      		    //Designer
+      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+      		    const videoSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Video Software");
+      		    const designSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Design Software");
+      		    const artAnimation = searchedSkills.filter((tag) => (tag as Skill).category === "Art and Animation");
+      		    const photoEditing = searchedSkills.filter((tag) => (tag as Skill).category === "Photo Editing");
+      		    skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
+      		    break; }
+      		  case 2:
+      		    //Soft
+      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+      		    const team = searchedSkills.filter((tag) => (tag as Skill).category === "Team");
+      		    const personal = searchedSkills.filter((tag) => (tag as Skill).category === "Personal");
+      		    skillsToDisplay = discipline.concat(team, personal);
+      		    break; }
+      		  case 3:
+      		    //Audio
+      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+      		    const dawAudioEditor = searchedSkills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
+      		    const middleware = searchedSkills.filter((tag) => (tag as Skill).category === "Middleware");
+      		    const notation = searchedSkills.filter((tag) => (tag as Skill).category === "Notation");
+      		    skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
+      		    break; }
+      		  case 4:
+      		    //Engineer
+      		    { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+      		    const engineeringSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Engineering Software");
+      		    const hardware = searchedSkills.filter((tag) => (tag as Skill).category === "Hardware");
+      		    skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
+      		    break; }
+      		}
+
+			return skillsToDisplay.map((skill, index, array) => (
+				<Fragment key={skill.skillId}>
+					{index === 0 || ((array[index - 1] as Skill).category != (array[index] as Skill).category)
+          			? <div id="tag-category-header">
+          			    <p>{(array[index] as Skill).category}</p>
+          			    <hr></hr>
+          			  </div>
+          			: <></>}
+					<Tag
+						key={skill.skillId}
+						onClick={() => handleSkillToggle(skill.skillId)}
+						type={skill.type.toLowerCase() + " skill"}
+						selected={isSkillSelected(skill.skillId) === "selected"}
+					>
+						<i
+							className={
+								isSkillSelected(skill.skillId) === "selected"
+									? "fa fa-close"
+									: "fa fa-plus"
+							}
+						></i>
+						<p>&nbsp;{skill.label}</p>
+					</Tag>
+				</Fragment>
 			));
 		} else if (searchedSkills && searchedSkills.length === 0) {
 			return <div className="no-results-message">No results found!</div>;
