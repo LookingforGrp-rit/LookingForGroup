@@ -130,7 +130,7 @@ export const AboutTab = ({
 
 				<div className="about-row row-1">
 					<LabelInputBox
-						label={"First Name"}
+						label={"Preferred Name"}
 						required
 						inputType={"single"}
 						maxLength={50}
