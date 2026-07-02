@@ -305,15 +305,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   useEffect(() => {
     window.onbeforeunload = () => { if (!saved) return ' ' };
 
-    return () => { window.onbeforeunload = null; };
-  }, [saved]);
-
-  // if not a new project, get project id from url (existing project)
-  useEffect(() => {
-    if (!newProject) {
-      setProjectID(Number(urlParams.get("projectID")));
-    }
-  }, [newProject]);
+    // if not a new project, get project id from url (existing project)
+    if (!newProject) setProjectID(Number(urlParams.get("projectID")));
+  }, [open, projectID, newProject, saved]);
 
   const toggleConfirm = async () => {
     setConfirm(!confirm);

@@ -212,9 +212,10 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
           const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
           const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
           const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
+		  const api = searchedSkills.filter((tag) => (tag as Skill).category === "API");
           const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
           const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
-          skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
+          skillsToDisplay = discipline.concat(software, codingLanguage, framework, api, operatingSystem, gameEngine);
           break; }
         case 1:
           //Designer
