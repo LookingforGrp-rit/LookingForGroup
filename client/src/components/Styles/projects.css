@@ -909,6 +909,7 @@ Project Creator and Editor Popup style rules
     font-size: medium;
     margin-top: 0.5em;
     color: var(--primary-color);
+    justify-self: center;
   }
 }
 
