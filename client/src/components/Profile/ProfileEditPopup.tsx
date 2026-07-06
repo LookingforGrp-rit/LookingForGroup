@@ -37,6 +37,7 @@ export const ProfileEditPopup = () => {
   const [editorKey, setEditorKey] = useState(0);
 
   const isOpening = useRef(true);
+  const isSaving = useRef(false);
   const navigate = useNavigate();
 
   /**
@@ -65,6 +66,8 @@ export const ProfileEditPopup = () => {
   // intercepted — the popup stays open and we surface the confirm dialog
   // instead of discarding the edits.
   const handlePopupCallback = () => {
+    // A save navigates + reloads; don't flash the confirm dialog during it.
+    if (isSaving.current) return;
     if (saved) {
       handleEditorClose();
     } else {
@@ -127,6 +130,7 @@ export const ProfileEditPopup = () => {
    * @param e Event
    */
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
+    isSaving.current = true;
     navigate(-1);
     e.preventDefault(); // prevents any default calls
 
