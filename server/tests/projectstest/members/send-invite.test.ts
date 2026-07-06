@@ -75,7 +75,7 @@ describe('requestToJoinService', async () => {
     vi.clearAllMocks();
   });
 
-  it('returns OK when successful', async () => {
+  it('returns NO_CONTENT when successful', async () => {
     vi.mocked(prisma.memberRequests.findFirst).mockResolvedValue(null);
     vi.mocked(getRolesService).mockResolvedValue(exampleRoles);
     vi.mocked(prisma.users.findUnique).mockResolvedValueOnce({ userId: 10 } as Users);
@@ -85,7 +85,7 @@ describe('requestToJoinService', async () => {
     vi.mocked(prisma.memberRequests.create).mockResolvedValue(prismaApplicationRequest);
 
     const result = await sendInviteService(100, requestData);
-    expect(result).toBe('OK');
+    expect(result).toBe('NO_CONTENT');
   });
 
   it('returns CONFLICT when the request already exists', async () => {
