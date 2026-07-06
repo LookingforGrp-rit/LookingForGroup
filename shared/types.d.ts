@@ -24,14 +24,15 @@ export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware
 export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
 export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
 export type RitStatus =
-  | "Freshman"
-  | "Sophomore"
-  | "Junior"
-  | "Senior"
-  | "Graduate"
+  | "FirstYear"
+  | "SecondYear"
+  | "ThirdYear"
+  | "FourthYear"
+  | "FifthYear"
+  | "GraduateStudent"
+  | "Alumni"
   | "Faculty"
-  | 'Staff'
-  ;
+  | 'Staff';
 export type SkillProficiency =
   | "Novice"
   | "Intermediate"

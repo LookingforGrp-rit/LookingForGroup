@@ -47,7 +47,7 @@ interface Props {
   updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>;
   // permissions?: number;
   
-  approvalStatus: ApprovalStatusKey
+  approvalStatus?: ApprovalStatusKey
 }
 
 let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
