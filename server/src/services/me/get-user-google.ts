@@ -1,4 +1,4 @@
-import type { UserAccessLevel } from '@looking-for-group/shared/enums.ts';
+import type { UserAccessLevel } from '@looking-for-group/shared/types.d.ts';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
@@ -27,7 +27,7 @@ export const getUserByGoogleService = async (
     return {
       username: user.username,
       userId: user.userId,
-      accessLevel: user.accessLevel as UserAccessLevel,
+      accessLevel: user.accessLevel,
     };
   } catch (e) {
     console.error(`Error in getUserByGoogleService: ${e as Error}`);
