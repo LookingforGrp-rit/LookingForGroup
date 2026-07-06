@@ -58,7 +58,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
           const other = response.data.splice(otherIndex, 1)[0];
           response.data.push(other);
         }
-      setAllSocials(response.data);
+        setAllSocials(response.data);
       }
 
     };
@@ -81,8 +81,8 @@ export const LinksTab: React.FC<LinksTabProps> = ({
       });
     }
 
-    const filteredSocials = (profile.socials || []).filter((_, i) => i !== index);
-    updatePendingProfile({ ...profile, socials: filteredSocials });
+    const filteredSocials = [...profileAfterLinkChanges.socials].filter((_, i) => i !== index);
+    updatePendingProfile({ ...profileAfterLinkChanges, socials: filteredSocials });
   };
 
   // Otherwise render the editable profile socials UI
@@ -109,21 +109,21 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     initialVal={
                       social.label
                         ? (
-                            <>
-                              <ThemeIcon
-                                width={20}
-                                height={20}
-                                id={
-                                  social.label === "Other"
-                                    ? "link"
-                                    : social.label.toLowerCase()
-                                }
-                                className={"mono-fill"}
-                                ariaLabel={social.label}
-                              />
-                              {social.label}
-                            </>
-                          ) as unknown as string
+                          <>
+                            <ThemeIcon
+                              width={20}
+                              height={20}
+                              id={
+                                social.label === "Other"
+                                  ? "link"
+                                  : social.label.toLowerCase()
+                              }
+                              className={"mono-fill"}
+                              ariaLabel={social.label}
+                            />
+                            {social.label}
+                          </>
+                        ) as unknown as string
                         : undefined}
                     className="link-select"
                     type={"input"}
@@ -135,52 +135,54 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     callback={(e) => {
                       const selectedLabel = (e.target as HTMLInputElement).value;
                       const selectedSocial = allSocials.find(s => s.label === selectedLabel);
-                      
-                      const tempSocials = profileAfterLinkChanges.socials;
-                      tempSocials[index].label = selectedLabel;
-                      tempSocials[index].websiteId = selectedSocial?.websiteId || 0;
 
-                      profileAfterLinkChanges = {
+                      const tempSocials = [...profileAfterLinkChanges.socials];
+                      tempSocials[index] = {
+                        ...tempSocials[index],
+                        label: selectedLabel,
+                        websiteId: selectedSocial?.websiteId || 0
+                      }
+
+                      updatePendingProfile({
                         ...profileAfterLinkChanges,
                         socials: tempSocials
-                      };
-                      
-                      updatePendingProfile(profileAfterLinkChanges);
+                      });
+
                     }}
                     // Hide duplicates, but always show 'Other'
                     options={
                       allSocials
                         ? allSocials
-                            .filter((website) => {
-                              if (website.label === "Other") return true;
-                              if (website.label === social.label) return true; // Show currently selected platform
-                              // Hide platforms already selected in other rows
-                              return !(profileAfterLinkChanges.socials || []).some(
-                                (s) => s.label === website.label
-                              );
-                            })
-                            .map((website) => {
-                              return {
-                                markup: (
-                                  <>
-                                    <ThemeIcon
-                                      width={20}
-                                      height={20}
-                                      id={
-                                        website.label === "Other"
-                                          ? "link"
-                                          : website.label.toLowerCase()
-                                      }
-                                      className={"mono-fill"}
-                                      ariaLabel={website.label}
-                                    />
-                                    {website.label}
-                                  </>
-                                ),
-                                value: website.label,
-                                disabled: false,
-                              };
-                            })
+                          .filter((website) => {
+                            if (website.label === "Other") return true;
+                            if (website.label === social.label) return true; // Show currently selected platform
+                            // Hide platforms already selected in other rows
+                            return !(profileAfterLinkChanges.socials || []).some(
+                              (s) => s.label === website.label
+                            );
+                          })
+                          .map((website) => {
+                            return {
+                              markup: (
+                                <>
+                                  <ThemeIcon
+                                    width={20}
+                                    height={20}
+                                    id={
+                                      website.label === "Other"
+                                        ? "link"
+                                        : website.label.toLowerCase()
+                                    }
+                                    className={"mono-fill"}
+                                    ariaLabel={website.label}
+                                  />
+                                  {website.label}
+                                </>
+                              ),
+                              value: website.label,
+                              disabled: false,
+                            };
+                          })
                         : []
                     }
                   />
@@ -193,7 +195,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                   style={{
                     opacity: !social.label ? 0.4 : 1,
                     cursor: !social.label ? "not-allowed" : "text",
-                  }}                
+                  }}
                   placeholder={url === '' || !social.label ? "URL" : 'Username'}
                   value={social.url && social.label ? social.url.substring(url.length) : ''}
                   onChange={(e) => {
@@ -203,43 +205,46 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     // external list of suspicious sites and make sure it's not one of those.
                     const tempSocials = profileAfterLinkChanges.socials;
                     const inputValue = e.target.value;
-                    tempSocials[index].url = url + e.target.value;
-                    
+                    tempSocials[index] = {
+                      ...tempSocials[index],
+                      url: url + inputValue
+                  };
+
                     if (inputValue.trim() !== "") {
-                      if("localId" in social){
-                        dataManager.addSocial({
-                          id: {
-                            type: "local",
-                            value: social.localId ?? ++localIdIncrement
-                          },
-                          data: tempSocials[index] as AddUserSocialInput
-                        })
-                      }
-                      else{
-                        dataManager.updateSocial({
-                          id: {
-                            type: "canon",
-                            value: social.websiteId
-                          },
-                          data: {
-                            url: tempSocials[index].url
-                          }
-                        })
-                      }
+                      if ("localId" in social) {
+                  dataManager.addSocial({
+                    id: {
+                      type: "local",
+                      value: social.localId ?? ++localIdIncrement
+                    },
+                    data: tempSocials[index] as AddUserSocialInput
+                  })
+                }
+                else {
+                  dataManager.updateSocial({
+                    id: {
+                      type: "canon",
+                      value: social.websiteId
+                    },
+                    data: {
+                      url: tempSocials[index].url
                     }
-                    updatePendingProfile({ ...profileAfterLinkChanges, socials: tempSocials });
-                  }}
-                  onBlur={(e) => {
-                    // Automatically clean empty entries when the user clicks away
-                    const inputValue = e.target.value;
-                    if (inputValue.trim() === "") {
-                      handleDeleteSocial(index);
+                  })
+                }
                     }
+                updatePendingProfile({...profileAfterLinkChanges, socials: tempSocials });
                   }}
+                onBlur={(e) => {
+                  // Automatically clean empty entries when the user clicks away
+                  const inputValue = e.target.value;
+                  if (inputValue.trim() === "") {
+                    handleDeleteSocial(index);
+                  }
+                }}
                 />
-                <button 
-                  type="button" 
-                  className="delete-social-btn" 
+                <button
+                  type="button"
+                  className="delete-social-btn"
                   onClick={() => handleDeleteSocial(index)}
                   title="Remove social link"
                 >
@@ -252,10 +257,11 @@ export const LinksTab: React.FC<LinksTabProps> = ({
           <button
             id="profile-editor-add-link"
             onClick={(e) => {
-                  e.preventDefault();
+              e.preventDefault();
               updatePendingProfile({
                 ...profileAfterLinkChanges,
-                socials: [...profileAfterLinkChanges.socials || [], {
+                socials: [...profileAfterLinkChanges.socials,
+                {
                   label: '',
                   url: '',
                   apiUrl: "",
