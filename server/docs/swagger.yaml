@@ -4580,6 +4580,337 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  #ADMIN
+  /api/admin/promote:
+    patch:
+      summary: Promotes a user to moderator.
+      tags:
+        - Admin
+      description: Changes a user's access level from 'User' to 'Moderator'
+      parameters:
+        - in: body
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the user being promoted.
+        - in: query
+          name: devId
+          required: true
+          schema:
+            type: integer
+          description: Id to be used as administrator.
+      responses:
+        '200':
+          description: User promoted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example:
+        '403':
+          $ref: '#components/responses/Forbidden'
+        '404':
+          $ref: '#components/responses/NotFound'
+        '409':
+          $ref: '#components/responses/Conflict'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/demote:
+    patch:
+      summary: Demotes a moderator.
+      tags:
+        - Admin
+      description: Changes a user's access level from 'Moderator' to 'User'
+      parameters:
+        - in: body
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: ID of the user being demoted.
+        - in: query
+          name: devId
+          required: true
+          schema:
+            type: integer
+          description: Id to be used as administrator.
+      responses:
+        '200':
+          description: Moderator demoted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example:
+        '403':
+          $ref: '#components/responses/Forbidden'
+        '404':
+          $ref: '#components/responses/NotFound'
+        '409':
+          $ref: '#components/responses/Conflict'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/tags:
+    post:
+      summary: Create a tag.
+      tags:
+        - Admin
+      description: Creates a tag with the given parameters.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/Tag'
+      responses:
+        '200':
+          description: Tag created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#components/schemas/Tag'
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/tags/{id}:
+    patch:
+      summary: Modify a tag.
+      tags:
+        - Admin
+      description: Modifies a tag with the given parameters.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the tag to be modified.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/Tag'
+      responses:
+        '200':
+          description: Tag modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#components/schemas/Tag'
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+    delete:
+      summary: Deletes a tag.
+      tags:
+        - Admin
+      description: Deletes a tag from the database.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the tag to be deleted.
+      responses:
+        '204':
+          description: Tag deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 204
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: Tag deleted successfully
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/skills:
+    post:
+      summary: Create a skill.
+      tags:
+        - Admin
+      description: Creates a skill with the given parameters.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/Skill'
+      responses:
+        '200':
+          description: Skill created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#components/schemas/Skill'
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/skills/{id}:
+    patch:
+      summary: Modify a skill.
+      tags:
+        - Admin
+      description: Modifies a skill with the given parameters.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the skill to be modified.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/Skill'
+      responses:
+        '200':
+          description: Skill modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#components/schemas/Tag'
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+    delete:
+      summary: Deletes a skill.
+      tags:
+        - Admin
+      description: Deletes a skill from the database.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the tag to be deleted.
+      responses:
+        '204':
+          description: Skill deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 204
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: Skill deleted successfully
+        '500':
+          $ref: '#components/responses/InternalServerError'
 
 # COMPONENTS
 components:

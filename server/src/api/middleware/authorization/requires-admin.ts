@@ -7,7 +7,7 @@ const requiresAdmin = (request: AuthenticatedRequest, response: Response, next: 
 
   const forbiddenResBody: ApiResponse = {
     status: 403,
-    error: 'Invalid user ID',
+    error: 'Administrator required for this resource',
     data: null,
   };
 
