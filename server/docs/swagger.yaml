@@ -171,12 +171,18 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   # USERS
-  /api/users:
+  /api/users/{method}:
     get:
       summary: Get all users
       tags:
         - Users
       parameters:
+        - in: path
+          name: method
+          required: true
+          schema:
+            type: string
+          description: Sorting method (options are "Newest" for newest first and "A-Z" for alphabetical)
         - in: query
           name: strictness
           required: false
@@ -243,6 +249,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
+  /api/users:
     post:
       summary: Create a user
       tags:

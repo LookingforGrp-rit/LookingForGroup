@@ -53,6 +53,7 @@ export type JobLocation = "OnSite" | "Remote" | "Hybrid";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
 export type ProjectSortMethod = "Newest" | "A-Z";
+export type UserSortMethod = "Newest" | "A-Z";
 export type Visibility = "public" | "private";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
