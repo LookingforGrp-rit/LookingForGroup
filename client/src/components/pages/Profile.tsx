@@ -26,6 +26,7 @@ import { getVisibleProjects, getProjectsByUser, addUserFollowing, deleteUserFoll
 import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
 import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail } from '@looking-for-group/shared';
+import { RitStatus as RitStatusLabel } from '@looking-for-group/shared/enums';
 import usePreloadedImage from "../../functions/imageLoad";
 import { reportUser } from "../../api/users";
 
@@ -583,7 +584,7 @@ const Profile = (userProfile: any) => {
                   {displayedProfile?.ritStatus ?
                     <div className="profile-extra">
                       <ThemeIcon id={'major'} width={24} height={24} className={'mono-fill'} ariaLabel={'Major'} />
-                      {majorsArr.join(", ")} {displayedProfile?.ritStatus}
+                      {majorsArr.join(", ")} {RitStatusLabel[displayedProfile?.ritStatus]}
                     </div> : ""}
                   {displayedProfile?.location ?
                     <div className="profile-extra">

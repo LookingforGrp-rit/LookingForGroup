@@ -302,11 +302,12 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 												.value as RitStatus
 										)
 									}
-									options={Object.values(RitStatuses).map(
-										(yr) => {
+									options={Object.keys(RitStatuses).map(
+										(key) => {
+											const val = RitStatuses[key as keyof typeof RitStatuses];
 											return {
-												value: yr,
-												markup: <>{yr}</>,
+												value: key,
+												markup: <>{val}</>,
 												disabled: false
 											};
 										}
