@@ -1,4 +1,4 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { ProjectWithFollowers } from "@looking-for-group/shared";
 import profileImage from "../images/lfrog.png";
@@ -21,6 +21,7 @@ interface TeamPositionsPanelProps {
 
 export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosition, setViewedPosition }: TeamPositionsPanelProps) => {
   const navigate = useNavigate();
+  const location = useLocation(); // Hook to access the current location
 
   const currentJob = displayedProject.jobs?.[viewedPosition];
   const jobContact = useMemo(() => {
@@ -38,14 +39,12 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
   const [quickApplyOpen, setQuickApplyOpen] = useState<boolean>(false);
   const [requestSent, setRequestSent] = useState<boolean>(false);
 
-  const handleQuickApply = async () => {
-    // redirect to login if not logged in
-    if (!currentUserId) {
-      navigate(paths.routes.LOGIN, {
-        state: { from: location }
-      });
-      return;
-    }
+  /**
+   * Handles application and updates the application status message
+   * @returns Void
+   */
+  const handleQuickApply = async (): Promise<void> => {
+    if (!currentUserId) return;
 
     try {
       await requestToJoin(displayedProject.projectId, {
@@ -62,8 +61,18 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
     setRequestSent(true);
   };
 
-  const checkApplied = async (jobIndex: number) => {
-    if (!currentUserId) return;
+  /**
+   * Checks whether the current user has already applied for or been invited to
+   * this position, then updates the application status message and whether they
+   * can apply.
+   * @param jobIndex Index of the position
+   * @returns Void
+   */
+  const checkApplied = async (jobIndex: number): Promise<void> => {
+    // check if user is logged in
+    if (!currentUserId) {
+      return;
+    }
     try {
       // if an error is thrown -> no request found
       const result = await getMemberRequest({
@@ -210,7 +219,15 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
                   if (quickApplyOpen) {
                     handleQuickApply();
                   } else {
-                    setQuickApplyOpen(true);
+                    // if not logged in, send to login page
+                    if (!currentUserId) {
+                      navigate(paths.routes.LOGIN, {
+                        state: { from: location }
+                      });
+                    // otherwise, show quick apply fields 
+                    } else {
+                      setQuickApplyOpen(true);
+                    }
                   }
                 }}
               >

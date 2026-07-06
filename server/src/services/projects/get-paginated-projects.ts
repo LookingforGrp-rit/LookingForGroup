@@ -1,4 +1,4 @@
-import type { ProjectPreview } from '@looking-for-group/shared';
+import type { ProjectPreview, ProjectSortMethod } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { ProjectPreviewSelector } from '#services/selectors/projects/project-preview.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -10,6 +10,7 @@ type GetServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 const getPaginatedProjectsService = async (
   count: number,
   lastProjectId: number,
+  sortMethod: ProjectSortMethod,
 ): Promise<ProjectPreview[] | GetServiceError> => {
   try {
     //There should be a better way of doing this
@@ -23,12 +24,21 @@ const getPaginatedProjectsService = async (
     //   count = remainingProjects;
     // }
 
+    //set up sorting option
+    let orderByInput;
+    switch (sortMethod) {
+      case 'Newest':
+        orderByInput = { createdAt: 'desc' as const };
+        break;
+      case 'A-Z':
+        orderByInput = { title: 'asc' as const };
+        break;
+    }
+
     const query = {
       select: ProjectPreviewSelector,
       take: count,
-      orderBy: {
-        projectId: 'asc' as const,
-      },
+      orderBy: orderByInput,
       where: {
         approved: true,
       },

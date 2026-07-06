@@ -68,7 +68,7 @@ async function main() {
                 funFact: 'Loves Prisma',
                 bio: 'This is an example user.',
                 googleId: '11111111',
-                ritStatus: 'Freshman',
+                ritStatus: 'FirstYear',
                 majors: {
                     connect: [{ majorId: 1 }]
                 }
@@ -88,7 +88,7 @@ async function main() {
                 funFact: 'Loves cheez-its',
                 bio: 'This is an example user.',
                 googleId: '222222222',
-                ritStatus: 'Freshman',
+                ritStatus: 'FirstYear',
                 majors: {
                     connect: [{ majorId: 4 }, { majorId: 5 }]
                 }
@@ -108,7 +108,7 @@ async function main() {
                 funFact: 'Loves shooting',
                 bio: 'This is an example user.',
                 googleId: '33333333',
-                ritStatus: 'Senior',
+                ritStatus: 'FourthYear',
                 majors: {
                     connect: [{ majorId: 7 }]
                 }
