@@ -1269,6 +1269,32 @@ Filters / Tags Style Rules
   word-break: break-word;
 }
 
+/* Each filter tab takes on the color of the tag category it represents, matching
+   the tag buttons (e.g. Project Type = light blue). Dark text for contrast, and
+   unselected tabs are dimmed so the active tab still reads as selected. */
+#filter-tabs .filter-tab-blue { background-color: var(--tag-blue-selected); }
+#filter-tabs .filter-tab-green { background-color: var(--tag-green-selected); }
+#filter-tabs .filter-tab-pink { background-color: var(--tag-pink-selected); }
+#filter-tabs .filter-tab-grey { background-color: var(--tag-grey-selected); }
+#filter-tabs .filter-tab-yellow { background-color: var(--tag-yellow-selected); }
+#filter-tabs .filter-tab-red { background-color: var(--tag-red-selected); }
+#filter-tabs .filter-tab-orange { background-color: var(--tag-orange-selected); }
+#filter-tabs .filter-tab-purple { background-color: var(--tag-purple-selected); }
+#filter-tabs .filter-tab-periwinkle { background-color: var(--tag-periwinkle-selected); }
+
+/* Selected tab: bright category color with black text for contrast. */
+#filter-tabs [class*="filter-tab-"].selected {
+  color: var(--tag-text-selected);
+}
+
+/* Unselected tabs: white text on a darkened category color. The dark overlay
+   only affects the background (not element opacity), so the white text stays
+   crisp instead of fading to grey. */
+#filter-tabs [class*="filter-tab-"]:not(.selected) {
+  color: #fff;
+  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
+}
+
 #filter-divider {
   height: 2px;
   min-height: 2px;

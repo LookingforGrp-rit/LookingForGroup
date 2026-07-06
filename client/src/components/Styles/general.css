@@ -113,15 +113,18 @@ General style rules
 
   --tag-text-selected: black;
 
-  --tag-text-unselected-red: #ffa0b0;
-  --tag-text-unselected-orange: #ffa281;
-  --tag-text-unselected-yellow: #ffcf8b;
-  --tag-text-unselected-green: #bed9aa;
-  --tag-text-unselected-blue: #b0dcee;
-  --tag-text-unselected-purple: #d7bed3;
-  --tag-text-unselected-grey: #d0d0d0;
-  --tag-text-unselected-periwinkle: #A2ADF9;
-  --tag-text-unselected-pink: #e191e8;
+  /* Unselected tag text is white so it reads like the rest of the site's text
+     (against the dark unselected tag background) instead of the dim per-category
+     / grey colors. */
+  --tag-text-unselected-red: white;
+  --tag-text-unselected-orange: white;
+  --tag-text-unselected-yellow: white;
+  --tag-text-unselected-green: white;
+  --tag-text-unselected-blue: white;
+  --tag-text-unselected-purple: white;
+  --tag-text-unselected-grey: white;
+  --tag-text-unselected-periwinkle: white;
+  --tag-text-unselected-pink: white;
 
   --modal-gradient-start: #0a0a0a;
   --modal-gradient-end: #2c2a3a;
