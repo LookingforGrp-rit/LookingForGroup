@@ -1,5 +1,6 @@
 import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
+import { NotificationsDropdown } from './NotificationsDropdown';
 import { useNavigate } from 'react-router-dom';
 import { useState, useEffect, useContext, ChangeEvent, FocusEvent } from 'react';
 import * as paths from '../constants/routes';
@@ -59,7 +60,8 @@ export const Header: React.FC<HeaderProps> = ({
   setCurrentUserId, 
   searchOnFocus }) => {
   // User info state
-  const [username, setUsername] = useState<string | null>(null);
+  const [firstName, setFirstName] = useState<string | null>(null);
+  const [lastName, setLastName] = useState<string | null>(null);
   const [email, setEmail] = useState('');
   const [profileImg, setProfileImg] = useState<string>('');
   const [userId, setUserId] = useState<number>();
@@ -83,7 +85,8 @@ export const Header: React.FC<HeaderProps> = ({
 
         if (res.status == 200 && res.data?.username) {
           loggedIn = true;
-          setUsername(res.data.username);
+          setFirstName(res.data.firstName);
+          setLastName(res.data.lastName);
           setUserId(res.data.userId);
           if (setCurrentUserId) setCurrentUserId(res.data);
           setEmail(res.data.ritEmail);
@@ -92,7 +95,7 @@ export const Header: React.FC<HeaderProps> = ({
           loggedIn = false;
           setUserId(-1);
           if (setCurrentUserId) setCurrentUserId(undefined);
-          setUsername('Guest');
+          setFirstName('Guest');
           setEmail('');
           setProfileImg('');
         }
@@ -101,7 +104,7 @@ export const Header: React.FC<HeaderProps> = ({
         loggedIn = false;
         setUserId(-1);
         if (setCurrentUserId) setCurrentUserId(undefined);
-        setUsername('Guest');
+        setFirstName('Guest');
         setEmail('');
         setProfileImg('');
       }
@@ -199,18 +202,8 @@ export const Header: React.FC<HeaderProps> = ({
       : ""}
 
       <div id="header-buttons">
-        {/* Notififcations not being used rn */}
-        {/* <Dropdown>
-          <DropdownButton buttonId="notif-btn">
-            // If implementing, use SVG sprite sheet instead of hard-coded pngs
-            <img
-              src="/assets/bell_dark.png"
-              src-light="/assets/bell_light.png"
-              src-dark="/assets/bell_dark.png"
-              alt="" />
-          </DropdownButton>
-          <DropdownContent rightAlign={true}>This is where notification stuff will be</DropdownContent>
-        </Dropdown> */}
+        {/* Notifications bell + dropdown. Only renders/polls when logged in. */}
+        <NotificationsDropdown enabled={Boolean(userId && userId > 0)} theme={theme} />
 
         {/* This is the top-right dropdown menu. */}
         <Dropdown>
@@ -247,7 +240,7 @@ export const Header: React.FC<HeaderProps> = ({
                 <button id="header-profile-user">
                   <ThemeIcon id={'profile'} width={32} height={32} className={'color-fill'} ariaLabel={'profile'} />
                   <div id="header-profile-user-info">
-                    <p id="header-profile-username">{username}</p>
+                    <p id="header-profile-username">{firstName} {lastName}</p>
                     <p id="header-profile-email">{email}</p>
                   </div>
                 </button>
@@ -275,7 +268,7 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
 
             ) : (
-              <div id="header-profile-dropdown" style={{ height: 200 }}>
+              <div id="header-profile-dropdown">
 
                 {/* Profile Icon (if user has one) */}
                 <a href={`${returnProfileAccess()}`} id="header-profile-user">
@@ -289,7 +282,7 @@ export const Header: React.FC<HeaderProps> = ({
                       }}
                     />}
                   <div id="header-profile-user-info">
-                    <p id="header-profile-username">{username}</p>
+                    <p id="header-profile-username">{firstName} {lastName}</p>
                     <p id="header-profile-email">{email}</p>
                   </div>
                 </a>

@@ -57,10 +57,10 @@ export class InviteReceivedNotificationBuilder implements NotificationBuilder {
       },
     });
 
-    const clientDomain = process.env.CLIENT_DOMAIN as string;
-    const inviteLink = `${clientDomain}/acceptInvite/${String(data?.requestId)}`;
-    const projectLink = `${clientDomain}/project/projectID=${String(data?.projectId)}`;
-    const profileLink = `${clientDomain}/profile?userID=${String(data?.projects.userId)}`;
+    const clientUrl = process.env.CLIENT_URL ?? 'http://localhost:5173';
+    const inviteLink = `${clientUrl}/acceptInvite/${String(data?.requestId)}`;
+    const projectLink = `${clientUrl}/project?projectID=${String(data?.projectId)}`;
+    const profileLink = `${clientUrl}/profile?userID=${String(data?.projects.userId)}`;
     const projectOwnerName = data?.projects.users.preferredName as string;
 
     //--BUILDING NOTIFICATION--//
@@ -68,21 +68,19 @@ export class InviteReceivedNotificationBuilder implements NotificationBuilder {
     notification.subjectLine = `You've been invited to join ${data?.projects.title as string}`;
 
     // building the message
-    notification.message = `Hello ${data?.users.preferredName as string},\n\n`;
-    notification.message += `You have been invited to join ${data?.projects.title as string} `;
-    notification.message += `as a ${roleData?.label as string}.\n\n`;
+    notification.message = `Hello ${data?.users.preferredName as string},<br /><br />`;
+    notification.message += `You have been invited to join <strong>${data?.projects.title as string}</strong> `;
+    notification.message += `as a <strong>${roleData?.label as string}</strong>.<br /><br />`;
     if (message) {
-      notification.message += `The owner included a message for you:\n `;
-      notification.message += `${message}\n\n`;
+      notification.message += `${projectOwnerName} included a message for you:<br /> `;
+      notification.message += `"${message}"<br /><br />`;
     }
-    notification.message += `You can view ${projectOwnerName}'s profile at `;
-    notification.message += `<a href="${profileLink}">${profileLink}</a> `;
-    notification.message += `and you can view the project at `;
-    notification.message += `<a href="${projectLink}">${projectLink}</a>. `;
-    notification.message += `To accept the invite, go to `;
-    notification.message += `<a href="${inviteLink}">${inviteLink}</a>. `;
-    notification.message += `If you think this is a mistake, you may safely ignore this message.\n\n`;
-    notification.message += `We wish you a good day!`;
+    notification.message += `You can view <a href="${profileLink}">${projectOwnerName}'s profile</a> `;
+    notification.message += `and the <a href="${projectLink}">project page</a>.<br /><br />`;
+    notification.message += `To accept the invite, click <a href="${inviteLink}">here</a>.<br /><br />`;
+    notification.message += `If you think this is a mistake, you may safely ignore this message.<br /><br />`;
+    notification.message += `We wish you a good day!<br />`;
+    notification.message += `LFG Team`;
 
     return notification;
   }

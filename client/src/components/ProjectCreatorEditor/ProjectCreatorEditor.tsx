@@ -14,15 +14,18 @@ import {
   addProjectSocial,
   deleteProjectSocial,
   getByID,
+  deleteProject, 
   requestProjectReview,
-  projectApprovalRequestExists,
 } from "../../api/projects";
-import { ProjectApprovalStatus, ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums } from "@looking-for-group/shared/enums";
+import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
+import { ApiResponse, Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
+
+
+type ApprovalStatusKey = keyof typeof ApprovalStatus;
 
 // NO COMMENTS FOR WHAT THESE ARE??????
 interface Props {
@@ -41,8 +44,10 @@ interface Props {
   buttonCallback?: () => void;
 
   // Unused property, don't know why it's here
-  updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>
+  updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>;
   // permissions?: number;
+  
+  approvalStatus: ApprovalStatusKey
 }
 
 let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
@@ -53,7 +58,7 @@ let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
  * The component is accessed via either the 'edit project' button on project pages or the 'create' button in the sidebar.
  * @returns React component Popup - Renders a modal for creating or editing projects
  */
-export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, autoStart = false, buttonCallback = () => { }, updateDisplayedProject }) => {
+export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false, autoStart = false, buttonCallback = () => { }, updateDisplayedProject, approvalStatus, }) => {
   //Get project ID from search parameters
   const urlParams = new URLSearchParams(window.location.search);
   const navigate = useNavigate();
@@ -70,9 +75,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const [modifiedProject, setModifiedProject] = useState<PendingProject>();
 
   const [projectMessages, setProjectMessages] = useState<string[]>([]);
-
-  type ApprovalStatusKey = keyof typeof ProjectApprovalStatus;
-  const [approvalStatus, setApprovalStatus] = useState<ApprovalStatusKey>();
 
   // Indicates if the data validation has failed: prevents saving when invalid
   const [failCheck, setFailCheck] = useState(false);
@@ -123,30 +125,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setSaveable(valid);
   }
 
-  const checkApprovalRequest = async () => {
-    let status: ApprovalStatusKey = 'not-approved';
-
-    try {
-      const result = await projectApprovalRequestExists(projectData?.projectId as number);
-
-      // if the project is marked as approved -> status is "approved"
-      // if not approved -> check if an approval request exists -> "under-review"
-      // otherwise -> "not-approved"
-      // so it's NORMAL to see 404s
-      status = projectData?.approved
-        ? 'approved'
-        : result
-          ? 'under-review'
-          : 'not-approved';
-    } catch {
-      status = projectData?.approved
-        ? 'approved'
-        : 'not-approved';
-    }
-
-    return status;
-  };
-
   const setup = async () => {
     // Load existing project
     try {
@@ -156,14 +134,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       dataManager = await projectDataManager(projectID);
 
       const data = dataManager.getSavedProject();
+
       setProjectData(data);
       setModifiedProject(data);
     } catch (err) {
       console.error("Error loading existing project:", err);
-    }
-    if (projectData) {
-      const result = await checkApprovalRequest();
-      setApprovalStatus(result);
     }
   }
 
@@ -243,6 +218,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         followers: {} as ProjectFollowers,
         tags: [] as Tag[],
         mediums: [] as Medium[],
+        approved: false,
       } as ProjectWithFollowers;
 
       await setProjectData(newData);
@@ -269,7 +245,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       autoStarted.current = true;
       createOrEdit();
     }
-    
+
     if (!newProject && projectID) setup();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [autoStart, newProject, projectID]);
@@ -472,11 +448,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
         if (!response.error && response.data) {
           dataManager = await projectDataManager(response.data.projectId);
-          await setProjectID(response.data.projectId);
+          setProjectID(response.data.projectId);
 
           /* PROJECT IMAGES */
           for (let image of modifiedProject.projectImages) {
-            await dataManager.createImage({
+            dataManager.createImage({
               id: {
                 type: "local",
                 value: (image as ProjectImage).imageId
@@ -488,7 +464,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             })
           }
           if (modifiedProject.thumbnail)
-            await dataManager.updateThumbnail({
+            dataManager.updateThumbnail({
               id: {
                 value: projectID,
                 type: "local",
@@ -500,7 +476,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           /* PROJECT VIDEOS */
           for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
-            await dataManager?.createVideo({
+            dataManager?.createVideo({
               id: {
                 value: video.videoId,
                 type: "local"
@@ -511,7 +487,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           /* PROJECT TAGS */
           for (let tag of modifiedProject.tags) {
-            await dataManager.addTag({
+            dataManager.addTag({
               id: {
                 type: "local",
                 value: tag.tagId,
@@ -525,7 +501,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           /* PROJECT MEDIUMS */
           for (let medium of modifiedProject.mediums) {
-            await dataManager.addMedium({
+            dataManager.addMedium({
               id: {
                 type: "local",
                 value: medium.mediumId,
@@ -556,7 +532,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
           /* PROJECT JOBS */
           for (let job of modifiedProject.jobs) {
-            await dataManager.createJob({
+            dataManager.createJob({
               id: {
                 type: "local",
                 value: (job as Pending<ProjectJob>).localId as number,
@@ -569,13 +545,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 location: (job as ProjectJob).location,
                 roleId: (job as ProjectJob).role.roleId,
                 description: job.description ?? undefined,
+                jobSkills: (job as ProjectJob).jobSkills
               }
             })
           }
 
           /* PROJECT SOCIALS */
           for (let link of modifiedProject.projectSocials) {
-            await dataManager.addSocial({
+            dataManager.addSocial({
               id: {
                 type: "local",
                 value: link.websiteId as number,
@@ -642,7 +619,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                   Submiting a request will make your project visible to moderators who will choose to either
                   accept and make your project visible to all, request changes for you to make, 
                   or reject it for various reasons. <br/>
-                  <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                  <strong>(Moderators are not capable of directly altering or deleting your projects)</strong>
                 </div>
                 <div id="project-request-buttons">
                   <PopupButton buttonId="request-confirm-button"
@@ -650,10 +627,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                     if (projectData) requestProjectReview(projectID);
                   }}
                   >
-                    request a review
+                    Request Review
                   </PopupButton>
                   <PopupButton buttonId="request-cancel-button">
-                    cancel
+                    Cancel
                   </PopupButton>
                 </div>
               </div>

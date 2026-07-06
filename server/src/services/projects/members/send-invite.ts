@@ -10,7 +10,7 @@ import { UserEmailSelector } from '#services/selectors/users/parts/user-email.ts
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type SendInviteServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type SendInviteServiceSuccess = ServiceSuccessSubset<'OK'>;
+type SendInviteServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 // POST api/projects/:id/members/send-invite
 // Sends an invite to a user to join a project
@@ -110,6 +110,7 @@ const sendInviteService = async (
           projectName: project.title,
           projectImage: projectImg,
           inviteLink: inviteUrl,
+          projectApproved: project.approved,
         }),
       ),
     );
@@ -126,10 +127,21 @@ const sendInviteService = async (
 
     const emailResult = await sendEmail(email);
     if (emailResult === 'INTERNAL_ERROR') {
+      // failed to send email -> rollback request
+      try {
+        await prisma.memberRequests.delete({
+          where: {
+            requestId: result.requestId,
+          },
+        });
+      } catch (rollbackError) {
+        console.error('Failed to rollback member request:', rollbackError);
+      }
+
       return emailResult;
     }
 
-    return 'OK';
+    return 'NO_CONTENT';
   } catch (e) {
     if (e instanceof Object && 'code' in e) {
       if (e.code === 'P2025') {

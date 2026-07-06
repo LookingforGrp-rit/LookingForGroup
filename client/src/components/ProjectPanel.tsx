@@ -40,11 +40,6 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
   const [followCount, setFollowCount] = useState(project.followers?.count ?? 0);
   const [isFollowing, setFollowing] = useState(initialIsFollowing ?? false);
 
-  useEffect(() => {
-    setFollowing(initialIsFollowing ?? false);
-  }, [initialIsFollowing]);
-
-  const shouldCheckFollow = initialIsFollowing === undefined;
   // Avoid looping useEffect by separating projectId
   const projectId = project.projectId; //just so the useEffect doesn't loop at me for using the object directly
 
@@ -110,10 +105,6 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
       } else {
         setFollowCount(project.followers.count);
       }
-      
-      if (shouldCheckFollow) {
-        checkFollow();
-      }
 
       if (project.title == "thumbnail") {
         console.log("Thumbnail project's thumbnail:");
@@ -121,7 +112,7 @@ export const ProjectPanel = ({ project, initialIsFollowing, currentUserId }: Pro
       }
     };
     getProjectData();
-  }, [projectId, userId, checkFollow, project.followers, shouldCheckFollow])
+  }, [projectId, userId, project.followers])
 
   /**
    * Handles click on the follow/unfollow button

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Header, loggedIn } from "../Header";
 import { Dropdown, DropdownButton, DropdownContent } from "../Dropdown";
@@ -10,7 +10,7 @@ import * as paths from "../../constants/routes";
 import { TeamPositionsPanel } from "../TeamPositionsPanel";
 import { ShareButton } from "../ShareButton";
 import { ThemeIcon } from "../ThemeIcon";
-import { getByID, getVideos, projectApprovalRequestExists, deleteProject } from "../../api/projects";
+import { getByID, getVideos, projectApprovalRequestExists, deleteProject, requestProjectReview } from "../../api/projects";
 import { Tag as TagElement } from "../Tag";
 import {
   deleteProjectFollowing,
@@ -22,13 +22,15 @@ import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
+//import { router } from "../../../../server/src/api/routes/me.ts"
+//import { reportProject } from "../../api/projects";
 
 //Main component for the project page
 /**
  * Project page. Renders the project page with all project details, team member information, and available positions.
  * @returns JSX Element
  */
-const Project = (userProfile: any) => {
+const Project = () => {
   //Navigation hook
   const navigate = useNavigate();
 
@@ -55,6 +57,9 @@ const Project = (userProfile: any) => {
 
   const [shownTags, setShownTags] = useState(3);
   const [videos, setVideos] = useState<ProjectVideo[]>();
+
+  const reportMessage = useRef<HTMLInputElement>(null);
+  const [reportResponseText, setReportResponseText] = useState<string>("");
 
   /**
    * Checks in the current user is following a project
@@ -175,7 +180,7 @@ const Project = (userProfile: any) => {
     // Follow icon is only present if user is logged in.
     // If keeping this layout, this check may be redundant.
     if (!loggedIn) {
-      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search} }); // Redirect if logged out
+      navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } }); // Redirect if logged out
     } else {
       const toggleFollow = !isFollowing;
       setFollowing(toggleFollow);
@@ -215,6 +220,39 @@ const Project = (userProfile: any) => {
     }
   };
 
+  /**
+   * Sends a report of the project if no report exists and
+   * tells the user the result
+   */
+const reportProjectPressed = async () => {
+  /* a loop hole around an empty string */
+  let message = "";
+  if (reportMessage?.current?.value == "")
+  {
+    message = "No message given.";
+  }
+  else
+  {
+    message = reportMessage?.current?.value ?? "No message given.";
+  }
+
+  const response = await reportProject(projectID, message);
+  let responseText = response.error;
+  if (responseText === null || responseText === undefined) {
+    responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
+  }
+  /* A report on the project already exists */
+  else if (response.status === 409)
+  {
+    responseText = "This project has already been reported!";
+  }
+  else
+  {
+    responseText = "Uh oh! Something went wrong with your report!";
+  }
+  setReportResponseText(responseText);
+};
+
   //HTML elements containing buttons used in the info panel
   //Change depending on who's viewing the project page (Outside user, project member, project owner, etc.)
   const buttonContent =
@@ -239,6 +277,50 @@ const Project = (userProfile: any) => {
           </DropdownButton>
           <DropdownContent rightAlign={true}>
             <div id="project-info-dropdown">
+              {/* Share Button */}
+              <ShareButton />
+              {approvalStatus == 'not-approved' ?
+              <Popup>
+                {/* Request Review button */}
+                <PopupButton className='project-info-dropdown-option'>
+                  <ThemeIcon
+                    id={"request-review"}
+                    width={27}
+                    height={27}
+                    ariaLabel={"request-Review"}
+                    className="mono-fill"
+                  />
+                  Request Review
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup">
+                  <div id="project-request-review">
+                    <label id="project-request-label">
+                      Would you like to submit your project for review?
+                    </label>
+                    <div id="project-request-info">
+                      Submiting a request will make your project visible to moderators who will choose to either
+                      accept and make your project visible to all, request changes for you to make, 
+                      or reject it for various reasons. <br/>
+                      <strong>(moderators are not capable of directly altering or deleting your projects)</strong>
+                    </div>
+                    <div id="project-request-buttons">
+                      <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (displayedProject) requestProjectReview(projectID);
+                        setApprovalStatus("under-review");
+                      }}
+                      >
+                        request review
+                      </PopupButton>
+                      <PopupButton buttonId="request-cancel-button">
+                        cancel
+                      </PopupButton>
+                    </div>
+                  </div>
+                  </div>
+                </PopupContent>
+              </Popup> : "" }
               {/* Leave Project */}
               <Popup>
                 <PopupButton className="project-info-dropdown-option">
@@ -390,10 +472,9 @@ const Project = (userProfile: any) => {
                   :
                   <></>
                 }
-
-                <button
+                <Popup>
+                <PopupButton
                   className="project-info-dropdown-option"
-                  id="project-info-report"
                 >
                   <ThemeIcon
                     id={"warning"}
@@ -402,7 +483,40 @@ const Project = (userProfile: any) => {
                     ariaLabel={"Report"}
                   />
                   Report
-                </button>
+                </PopupButton>
+                <PopupContent>
+                  <div className="small-popup" id="report-popup">
+                      <h3>Report {displayedProject?.title ?? "Project"}</h3>
+                      <p>You are about to report {displayedProject?.title ?? "Project"}. Please provide your reasoning below.</p>
+                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></input>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </PopupButton>
+                        {/* The Report Button */}
+                        <Popup>
+                          <PopupButton
+                            className="delete-button"
+                            callback={reportProjectPressed}
+                            closeParent={() => true}> {/* doesnt work*/}
+                              Report
+                          </PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              <p>{reportResponseText}</p>
+                              <PopupButton buttonId="continue-button" closeParent={() => true}>
+                                Continue
+                              </PopupButton>
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                      </div>
+                  </div>
+                </PopupContent>
+              </Popup>
               </div>
             </DropdownContent>
           </Dropdown>
@@ -617,7 +731,7 @@ const Project = (userProfile: any) => {
                       Open Positions
                     </PopupButton>
                     <PopupContent>
-                      <TeamPositionsPanel displayedProject={displayedProject}
+                      <TeamPositionsPanel currentUserId={userID} displayedProject={displayedProject}
                         viewedPosition={viewedPosition} setViewedPosition={setViewedPosition} />
                     </PopupContent>
                   </Popup>
@@ -684,11 +798,10 @@ const Project = (userProfile: any) => {
                     Keep up with us!
                     <div id="project-overview-links">
                       {displayedProject.projectSocials.map((social, index) => (
-                        <button
+                        <a
                           key={index}
-                          onClick={() => {
-                            window.open(social.url, "_blank");
-                          }}
+                          href={social.url}
+                          target="_blank"
                         >
                           <ThemeIcon
                             id={
@@ -701,7 +814,7 @@ const Project = (userProfile: any) => {
                             className={"color-fill"}
                             ariaLabel={social.label}
                           />
-                        </button>
+                        </a>
                       ))}
                     </div>
                   </>

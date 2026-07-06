@@ -1,9 +1,10 @@
-import { useNavigate } from "react-router-dom";
-import { Dispatch, SetStateAction, useMemo, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { Dispatch, SetStateAction, useEffect, useMemo, useState } from "react";
 import { ProjectWithFollowers } from "@looking-for-group/shared";
 import profileImage from "../images/lfrog.png";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
+import { requestToJoin, getMemberRequest } from '../api/projects.ts';
 import {
   JobAvailability as JobAvailabilityEnums,
   JobDuration as JobDurationEnums,
@@ -12,13 +13,15 @@ import {
 } from "@looking-for-group/shared/enums";
 
 interface TeamPositionsPanelProps {
+  currentUserId?: number,
   displayedProject: ProjectWithFollowers;
   viewedPosition: number;
   setViewedPosition: Dispatch<SetStateAction<number>>;
 }
 
-export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewedPosition }: TeamPositionsPanelProps) => {
+export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosition, setViewedPosition }: TeamPositionsPanelProps) => {
   const navigate = useNavigate();
+  const location = useLocation(); // Hook to access the current location
 
   const currentJob = displayedProject.jobs?.[viewedPosition];
   const jobContact = useMemo(() => {
@@ -30,23 +33,75 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
 
   // Local state for the Quick Apply UI. Delivery (email / notification / etc.)
   // is not wired up yet — the click handler currently only flips local state.
-  // TODO: replace the console.log below with the real send call once the delivery
-  // mechanism is decided.
-  const [joinMessage, setJoinMessage] = useState("");
-  const [quickApplyOpen, setQuickApplyOpen] = useState(false);
-  const [requestSent, setRequestSent] = useState(false);
+  const [joinMessage, setJoinMessage] = useState<string>("");
+  const [systemMessage, setSystemMessage] = useState<string>("");
+  const [allowApply, setAllowApply] = useState<boolean>(true);
+  const [quickApplyOpen, setQuickApplyOpen] = useState<boolean>(false);
+  const [requestSent, setRequestSent] = useState<boolean>(false);
 
-  const handleQuickApply = () => {
-    const viewedRole = displayedProject.jobs?.[viewedPosition]?.role?.label;
-    console.log("[Quick Apply] would notify owner", {
-      projectId: displayedProject.projectId,
-      projectTitle: displayedProject.title,
-      ownerUserId: jobContact?.userId,
-      viewedRole,
-      message: joinMessage,
-    });
+  /**
+   * Handles application and updates the application status message
+   * @returns Void
+   */
+  const handleQuickApply = async (): Promise<void> => {
+    if (!currentUserId) return;
+
+    try {
+      await requestToJoin(displayedProject.projectId, {
+        ownerUserId: jobContact?.userId,
+        prospectiveMemberId: currentUserId,
+        roleId: displayedProject.jobs?.[viewedPosition]?.role?.roleId,
+        message: joinMessage,
+      });
+      setSystemMessage(`Request sent! ${jobContact?.firstName} will be in touch.`);
+    } catch (e) {
+      console.log(e);
+      setSystemMessage('Uh-oh! Something went wrong. Please try again later.');
+    }
     setRequestSent(true);
   };
+
+  /**
+   * Checks whether the current user has already applied for or been invited to
+   * this position, then updates the application status message and whether they
+   * can apply.
+   * @param jobIndex Index of the position
+   * @returns Void
+   */
+  const checkApplied = async (jobIndex: number): Promise<void> => {
+    // check if user is logged in
+    if (!currentUserId) {
+      return;
+    }
+    try {
+      // if an error is thrown -> no request found
+      const result = await getMemberRequest({
+        projectId: displayedProject.projectId,
+        prospectiveMemberId: currentUserId,
+        roleId: displayedProject.jobs?.[jobIndex]?.role?.roleId
+      });
+
+      if (result.data?.requestStatus === "Accepted") {
+        setSystemMessage('Your have been accepted for this position.');
+        setAllowApply(false);
+      } else if (result.data?.requestStatus === "Pending") {
+        setSystemMessage('Your status for this position is currently under review.');
+        setAllowApply(false);
+      } else if (result.data?.requestStatus === "Declined") {
+        setSystemMessage('Note: You were previously invited to or applied for this position, but you declined the opportunity or your application was not accepted.');
+        setAllowApply(true);
+      }
+
+    } catch (e) {
+      // no request made before
+      setAllowApply(true);
+      setSystemMessage('');
+    }
+  };
+
+  useEffect(() => {
+    checkApplied(viewedPosition);
+  }, []);
 
   return <div id="project-open-positions-popup">
     <div id="positions-popup-header">Join The Team</div>
@@ -65,7 +120,7 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
                   ? "positions-popup-list-item-active"
                   : ""
               }
-              onClick={() => setViewedPosition(index)}
+              onClick={async () => { await checkApplied(index); setViewedPosition(index); }}
               key={index}
             >
               {job.role.label}
@@ -126,12 +181,11 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
         </div>
 
         <div id="position-contact">
-          {requestSent ? (
-            <span id="position-join-request-confirmation">
-              Request sent! {jobContact?.firstName} will be in touch.
-            </span>
-          ) : (
-            <>
+          <span id="position-join-request-confirmation">
+            {systemMessage}
+          </span>
+          {(allowApply && !requestSent) && (
+            <div id="position-apply">
               Message{" "}
               <span
                 onClick={() =>
@@ -141,7 +195,7 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
                 }
                 id="position-contact-link"
               >
-                 <img
+                <img
                   className="project-member-image"
                   src={
                     jobContact?.profileImage ?? profileImage
@@ -165,13 +219,21 @@ export const TeamPositionsPanel = ({ displayedProject, viewedPosition, setViewed
                   if (quickApplyOpen) {
                     handleQuickApply();
                   } else {
-                    setQuickApplyOpen(true);
+                    // if not logged in, send to login page
+                    if (!currentUserId) {
+                      navigate(paths.routes.LOGIN, {
+                        state: { from: location }
+                      });
+                    // otherwise, show quick apply fields 
+                    } else {
+                      setQuickApplyOpen(true);
+                    }
                   }
                 }}
               >
                 {quickApplyOpen ? "Send" : "Quick Apply"}
               </button>
-            </>
+            </div>
           )}
         </div>
 

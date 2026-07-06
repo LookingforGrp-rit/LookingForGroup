@@ -9,7 +9,7 @@ import "../Styles/projects.css";
 import "../Styles/settings.css";
 import "../Styles/pages.css";
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import * as paths from "../../constants/routes";
 import { Header, loggedIn } from "../Header";
@@ -27,6 +27,7 @@ import { getUsersById, getCurrentAccount } from "../../api/users";
 import { sendInvite } from "../../api/projects";
 import { MeDetail, MePrivate, ProjectDetail, ProjectPreview, UserPreview, Role, UserDetail } from '@looking-for-group/shared';
 import usePreloadedImage from "../../functions/imageLoad";
+import { reportUser } from "../../api/users";
 
 type Profile = MeDetail;
 //type Tag = UserSkill;
@@ -72,6 +73,9 @@ const Profile = (userProfile: any) => {
 
   const [majorsArr, setMajorsArr] = useState<string[]>([]);
 
+  const reportMessage = useRef<HTMLInputElement>(null);
+  const [reportResponseText, setReportResponseText] = useState<string>('');
+
   // ---- Invite-to-project popup state (only used when viewing someone else) ----
   // Projects the current logged-in user owns; populated lazily so we don't fetch
   // for guests or for the user's own profile.
@@ -83,6 +87,8 @@ const Profile = (userProfile: any) => {
   const [inviteError, setInviteError] = useState<string>("");
   const [inviteSuccess, setInviteSuccess] = useState<boolean>(false);
   const [inviteSending, setInviteSending] = useState<boolean>(false);
+
+  const [followedProjectsIds, setFollowProjectsIds] = useState<Set<number>>(new Set);
 
   const projectSearchData = fullProjectList?.map(
     (project: Project) => {
@@ -119,21 +125,21 @@ const Profile = (userProfile: any) => {
       if (loggedIn) {
         navigate(`/profile?userID=${userID}`, { replace: true });
       } else {
-        navigate(paths.routes.LOGIN, { state: {from: location.pathname + location.search} });
+        navigate(paths.routes.LOGIN, { state: { from: location.pathname + location.search } });
       }
     }
-  }, [profileID, userID, navigate]);
+  }, [profileID, userID]);
 
   //check user following (this one is needed tho)
-  useEffect(() =>{
-    if(userID === undefined || userID === -1) return;
+  useEffect(() => {
+    if (userID === undefined || userID === -1) return;
 
     const loadFollow = async () => {
       const isFollowing = await checkFollow();
       setIsFollow(isFollowing ?? false);
     };
     loadFollow();
-  },[userID, profileID]);
+  }, [userID, profileID]);
 
 
 
@@ -298,14 +304,16 @@ const Profile = (userProfile: any) => {
       //get followed projects to display
       const displayFollowedProjects = async () => {
         const tempFollowProjectArray = [];
+        let tempIds :Set<number> = new Set();
         const projectFollowings = ((await getProjectFollowing(userID)).data?.projects);
         if (projectFollowings !== undefined) {
           for (const follower of projectFollowings) {
             tempFollowProjectArray.push(follower.project);
+            tempIds.add(follower.project.projectId);
           }
+          setFollowProjectsIds(tempIds);
         }
         setFollowedProjectsList(tempFollowProjectArray);
-        console.log((await getProjectFollowing(userID)).data?.projects);
       }
       displayFollowedProfiles();
       displayFollowedProjects();
@@ -390,6 +398,35 @@ const Profile = (userProfile: any) => {
     setInviteSuccess(true);
   };
 
+  /**
+   * Sends a report of a user if no report exists and
+   * tells the user the result
+   */
+  const reportUserPressed = async () => {
+    /* a loop hole around an empty string */
+    let message = "";
+    if (reportMessage?.current?.value == "") {
+      message = "No message given.";
+    }
+    else {
+      message = reportMessage?.current?.value ?? "No message given.";
+    }
+
+    const response = await reportUser(parseInt(profileID), message);
+    let responseText = response.error;
+    if (responseText === null || responseText === undefined) {
+      responseText = "Your report was sent! Your request will be processed and receive an update shortly.";
+    }
+    /* A report on the user already exists */
+    else if (response.status === 409) {
+      responseText = "This user has already been reported!";
+    }
+    else {
+      responseText = "Uh oh! Something went wrong with your report!";
+    }
+    setReportResponseText(responseText);
+  };
+
   // --------------------
   // Components
   // --------------------
@@ -438,13 +475,51 @@ const Profile = (userProfile: any) => {
                   <ThemeIcon id={'cancel'} width={27} height={27} ariaLabel={'Block'} />
                   Block
                 </button>
-                <button
-                  className="profile-menu-dropdown-button"
-                  id="profile-menu-report"
-                >
-                  <ThemeIcon id={'warning'} width={27} height={27} ariaLabel={'Report'} />
-                  Report
-                </button>
+                <Popup>
+                  <PopupButton
+                    className="project-info-dropdown-option"
+                  >
+                    <ThemeIcon
+                      id={"warning"}
+                      width={27}
+                      height={27}
+                      ariaLabel={"Report"}
+                    />
+                    Report
+                  </PopupButton>
+                  <PopupContent>
+                    <div className="small-popup" id="report-popup">
+                      <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
+                      <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
+                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></input>
+                      <div className="confirm-deny-btns">
+                        <PopupButton
+                          buttonId="team-delete-member-cancel-button"
+                          className="button-reset"
+                        >
+                          Cancel
+                        </PopupButton>
+                        {/* The Report Button */}
+                        <Popup>
+                          <PopupButton
+                            className="delete-button"
+                            callback={reportUserPressed}
+                            closeParent={() => true}> {/* doesnt work*/}
+                            Report
+                          </PopupButton>
+                          <PopupContent>
+                            <div className="small-popup">
+                              <p>{reportResponseText}</p>
+                              <PopupButton buttonId="continue-button" closeParent={() => true}>
+                                Continue
+                              </PopupButton>
+                            </div>
+                          </PopupContent>
+                        </Popup>
+                      </div>
+                    </div>
+                  </PopupContent>
+                </Popup>
               </div>
             </DropdownContent>
           </Dropdown>
@@ -453,7 +528,7 @@ const Profile = (userProfile: any) => {
     </>
   );
 
-  //console.log(displayedProfile);
+  console.log(followedProjectsIds);
   // --------------------
   // Final component
   // --------------------
@@ -773,6 +848,7 @@ const Profile = (userProfile: any) => {
                           category={"projects"}
                           itemList={followedProjectsList}
                           userId={userID as number}
+                          followedProjectIds={followedProjectsIds}
                         />
                         : <p className="no-saved-items">You have no saved projects!</p>)
                       :

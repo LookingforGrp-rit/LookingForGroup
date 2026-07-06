@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect } from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent } from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
@@ -6,12 +6,26 @@ import { PanelBox } from '../PanelBox';
 import ToTopButton from '../ToTopButton';
 import { getProjects, getByID } from '../../api/projects';
 import { getProjectFollowing } from '../../api/users';
+
 import {
   ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
   ProjectPreview, ProjectWithFollowers,
   MePrivate
 } from '@looking-for-group/shared';
+
 import { DiscoverProjects } from '../DiscoverProjects';
+import { GET } from '../../api';
+
+
+//These variables should probably go somewhere else
+let projects: ProjectPreview[] = [];
+
+//Beginning is 0
+let index = 0;
+
+//Default should be 10
+//Determines the number of different projects for some reason
+let count = 10;
 
 export const DiscoverPage = () => {
   // --------------------
@@ -127,28 +141,78 @@ export const DiscoverPage = () => {
     setHeroProjectList(focusProjectDetailsList);
   }
 
+  //Attempt at detecting when the user has scrolled to near the bottom of the screen
+  const scrollEvent = useEffectEvent(() => {
+    //console.log(`scrolled by ${}`);
+    //document.documentElement.scrollBy() is always 0 
+
+    //WAAAAAAIT DID I FIND IT
+    const fullPage = document.querySelector('.page'); //the element that holds all of the page stuff
+    if (fullPage) {
+      const scrollPercent = fullPage.scrollTop / (fullPage.clientHeight / 2); //clientHeight seemed to be doubled so i halved it
+
+      if (scrollPercent >= 0.95) {
+        setupProjectData();
+        console.log("load more projects");
+      }
+    }
+  });
+
+  //Gets the projects and updates the variables above
+  const getPaginatedProjects = async () => {
+    let returnedProjects = await GET(`/projects/paginated/${count}/${index}`);
+
+    if (returnedProjects.data && returnedProjects.data[returnedProjects.data.length - 1]) {
+      index = returnedProjects.data[returnedProjects.data.length - 1].projectId;
+    }
+
+    return returnedProjects.data;
+  }
+
   // Set the necessary data for project mode
   const setupProjectData = async (): Promise<void> => {
-    const projectRes = await getProjects();
-    if (!projectRes.data) return;
+    //Doesn't check if projects are alreadys in projects so many are repeated
+    //I think the weirdness below fixes it? I'm not sure since the only 3 bug is still present
+    let returnedProjects: ProjectPreview[] = await getPaginatedProjects();
+    //Probably doesn't work since it's not checking projectId?
+    // returnedProjects = returnedProjects.filter((project) => !projects.includes(project));
+    // projects = projects.concat(returnedProjects);
+
+    //I need to improve this somehow
+    const returnedProjectIds: number[] = returnedProjects.map((project) => project.projectId);
+    const projectIds: number[] = projects.map((project) => project.projectId);
+
+    //Only works if projects and projectIds is in the same order
+    //Same with returnedProjects and returnedProjectIds
+    for (let i = 0; i < returnedProjectIds.length; i++) {
+      if (!projectIds.includes(returnedProjectIds[i])) {
+        projects.push(returnedProjects[i]);
+      }
+    }
+
+    console.log(projects);
+
+    if (!projects) {
+      return;
+    }
 
     const newProjectCache = projectCache;
-    for (const project of projectRes.data) {
 
+    for (const project of projects) {
       const cachedProject = newProjectCache[project.projectId];
+
       if (!cachedProject) {
         newProjectCache[project.projectId] = { preview: project };
       }
       else {
         cachedProject.preview = project;
       }
-
     }
 
     // Pre-fetch full details for the first visible batch to avoid flashing like/count state
     const INITIAL_LOAD_COUNT = 25;
-    for (let i = 0; i < Math.min(INITIAL_LOAD_COUNT, projectRes.data.length); i++) {
-      const projectPreview = projectRes.data[i] as ProjectPreview;
+    for (let i = 0; i < Math.min(INITIAL_LOAD_COUNT, projects.length); i++) {
+      const projectPreview = projects[i] as ProjectPreview;
       const projectId = projectPreview.projectId;
       if (!newProjectCache[projectId]?.full) {
         try {
@@ -162,10 +226,10 @@ export const DiscoverPage = () => {
       }
     }
 
-    setFullProjectList(projectRes.data);
-    setFilteredProjectList(projectRes.data);
+    setFullProjectList(projects);
+    setFilteredProjectList(projects);
 
-    getShowcaseDetails(projectRes.data, newProjectCache);
+    getShowcaseDetails(projects, newProjectCache);
     setProjectCache(newProjectCache);
 
     setLoaded(true);
@@ -230,6 +294,14 @@ export const DiscoverPage = () => {
             matchesAll = false;
           }
         }
+        else if (tag.type === "Position") {
+          const roles = item.jobs.map((job) => job.role);
+
+          if (roles.find((role) => role.roleId === tag.tagId))
+            matchesAny = true;
+          else 
+            matchesAll = false;
+        }
         // Tag check can be done by ID: Genre
         else if (tag.tagId && item.tags) {
           const tagIDs = item.tags.map((itemTag) => itemTag.tagId);
@@ -241,7 +313,6 @@ export const DiscoverPage = () => {
             matchesAll = false;
           }
         }
-
 
       }
       if (filterMode === "Match Any") return matchesAny;
@@ -344,7 +415,7 @@ export const DiscoverPage = () => {
   const handleSearchFocus = useCallback((e: React.FocusEvent<HTMLInputElement>) => {
     if (window.innerWidth > 800) return;
 
-    
+
     const page = document.querySelector('.page') as HTMLElement | null;
     if (!page) return;
     const input = e.currentTarget;
@@ -379,7 +450,9 @@ export const DiscoverPage = () => {
   }, []);
 
   return (
-    <div className="page discover-page" tabIndex={-1}>
+    //TEMP FIX for spamming requests: use onScrollEnd
+    //Looks alright but theres probably better solutions
+    <div className="page discover-page" tabIndex={-1} onScrollEnd={scrollEvent}>
       {/* Search bar and profile/notification buttons */}
       <Header dataSets={projectDataSet}
         onSearch={searchProjects}
@@ -403,6 +476,8 @@ export const DiscoverPage = () => {
           {/* If filteredItemList isn't done loading, display a loading bar */}
           {discoverPanelContents}
         </div>
+
+        <button id='btn-loadmore' onClick={setupProjectData}>Load More Projects</button>
       </main>
       <ToTopButton />
     </div>

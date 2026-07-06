@@ -58,25 +58,28 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     const requesterLastName = data?.users.lastName as string;
     const requesterUsername = data?.users.username as string;
     const roleName = roleData?.label as string;
-    const requesterProfileLink = `${process.env.CLIENT_DOMAIN as string}/profile?userID=${prospectiveMemberId.toString()}`;
-    const acceptRequestLink = `$`;
+    const requesterProfileLink = `${process.env.CLIENT_URL ?? 'http://localhost:5173'}/profile?userID=${prospectiveMemberId.toString()}`;
+    const acceptRequestLink = `${process.env.CLIENT_URL ?? 'http://localhost:5173'}/acceptApplication/${data?.requestId.toString()}`;
 
     //--BUILDING NOTIFICATION--//
     notification.receiverId = body.ownerUserId;
     notification.subjectLine = `Request to join ${projectTitle} from ${requesterName}`;
 
     // building message
-    notification.message = `Hello ${ownerName},\n\n`;
-    notification.message += `${requesterName} ${requesterLastName} (${requesterUsername}@g.rit.edu) `;
-    notification.message += `has requested to join your project ${projectTitle} as a ${roleName}.\n\n  `;
+    notification.message = `Hello ${ownerName},<br /><br />`;
+    notification.message += `<strong>${requesterName} ${requesterLastName}</strong> (${requesterUsername}@g.rit.edu) `;
+    notification.message += `has requested to join your project <strong>${projectTitle}</strong> as a <strong>${roleName}</strong>.<br /><br />  `;
     if (body.message) {
-      notification.message += `${requesterName} has provided a message:\n`;
-      notification.message += body.message;
+      notification.message += `${requesterName} has provided a message:<br />`;
+      notification.message += `"${body.message}"<br /><br />`;
     }
-    notification.message += `You may view the requester's profile at `;
-    notification.message += `<a href="${requesterProfileLink}">${requesterProfileLink}</a>. `;
-    notification.message += `You may respond to their invite by going to `;
-    notification.message += `<a href=${acceptRequestLink}>${acceptRequestLink}</a>.`;
+    notification.message += `You may view the `;
+    notification.message += `<a href="${requesterProfileLink}">requester's profile</a>.<br /><br />`;
+    notification.message += `To respond to the application, `;
+    notification.message += `<a href="${acceptRequestLink}">click here</a>.<br /><br />`;
+    notification.message += `If you think this is a mistake, you may safely ignore this message.<br /><br />`;
+    notification.message += `We wish you a good day!<br />`;
+    notification.message += `LFG Team`;
 
     return notification;
   }

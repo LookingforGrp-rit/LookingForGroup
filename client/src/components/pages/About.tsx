@@ -3,6 +3,7 @@ import { Header } from '../Header';
 import { members } from '../../constants/lfgmembers';
 import '../Styles/pages.css';
 import AboutFooter from '../AboutFooter';
+import ToTopButton from '../ToTopButton';
 import { ThemeImage } from '../ThemeIcon';
 import { useNavigate } from 'react-router-dom';
 
@@ -306,6 +307,7 @@ const AboutPage = () => {
                     </section>
                 </section>
             </main>
+            <ToTopButton />
         </div>
     );
 }
