@@ -14,7 +14,7 @@ import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service
 import getProjectByIdService from '../get-proj-id.ts';
 
 type RequestToJoinServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
-type RequestToJoinServiceSuccess = ServiceSuccessSubset<'OK'>;
+type RequestToJoinServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;
 
 // POST api/projects/:id/members/request-to-join
 export const requestToJoinService = async (
@@ -146,9 +146,22 @@ export const requestToJoinService = async (
 
     //send email
     const emailResult = await sendEmail(email);
-    if (emailResult === 'INTERNAL_ERROR') return emailResult;
+    if (emailResult === 'INTERNAL_ERROR') {
+      // failed to send email -> rollback request
+      try {
+        await prisma.memberRequests.delete({
+          where: {
+            requestId: result.requestId,
+          },
+        });
+      } catch (rollbackError) {
+        console.error('Failed to rollback member request:', rollbackError);
+      }
 
-    return 'OK';
+      return emailResult;
+    }
+
+    return 'NO_CONTENT';
   } catch (e) {
     console.error(`There was an error in requestToJoinService: `, e);
     return 'INTERNAL_ERROR';
