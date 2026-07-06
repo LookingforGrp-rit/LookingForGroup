@@ -29,7 +29,7 @@ Project Panel component style rules
 /* Cheap way to work around the padding */
 .masonry {
   width: 100%;
-  height: 100%;
+  height: fit-content;
   gap: 10px;
   /* removes masonry built-in scroll bar */
   overflow-y: hidden !important;
@@ -44,6 +44,12 @@ Project Panel component style rules
 .masonry>*>* {
   justify-self: center;
   padding: 10px;
+  max-height: 450px;
+}
+
+.masonry>* .profile-panel {
+  min-height: fit-content;
+  max-height: calc(100% + 20px + 1em);  /* offset padding */
 }
 
 /* not in use
@@ -903,6 +909,8 @@ Project Creator and Editor Popup style rules
     font-size: medium;
     margin-top: 0.5em;
     color: var(--primary-color);
+    justify-self: center;
+    text-align: left;
   }
 }
 
@@ -2025,7 +2033,6 @@ button.edit-position-contact .project-member-image {
     border: none;
   }
 
-  .slider-text {}
 }
 
 
@@ -3134,8 +3141,8 @@ Project Carousel style rules
   margin-right: 1.5vw;
 
   .carousel-contents {
-    height: 370px;
-    max-height: 370px;
+    height: auto;
+    aspect-ratio: 16 / 9;
     width: 100%;
   }
 
@@ -3165,30 +3172,26 @@ Project Carousel style rules
     height: fit-content;
     margin: 0;
     margin-top: 8px;
+    transform: scale(1);
   }
 
   .project-carousel-btn:hover {
     transition-duration: 0.2s;
-
-    /* Transition TBD */
+    transform: scale(1.2);
   }
 
-  .carousel-btn-left {
-    margin: 0;
-    margin-top: 8px;
+  .carousel-btn-left svg{
     transform: rotate(90deg);
   }
 
-  .carousel-btn-right {
-    margin: 0;
-    margin-top: 8px;
+  .carousel-btn-right svg{
     transform: rotate(-90deg);
   }
 
   img {
     width: 100%;
     height: 100%;
-    object-fit: contain;
+    object-fit: cover;
     object-position: center;
     aspect-ratio: 16/9;
   }
@@ -3241,9 +3244,15 @@ Project Carousel style rules
 
 }
 
-@media only screen and (max-width: 800px) {
+@media only screen and (max-width: 1200px) {
   #project-info-panel {
     max-width: calc(100vw - 80px);
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  #project-info-panel {
+    max-width: 100%;
   }
 }
 
@@ -3386,6 +3395,11 @@ Project Carousel style rules
     margin-bottom: 5px;
   }
 
+  #project-request-label{
+    width: 80%;
+    text-align: center;
+  }
+
   #project-request-info {
     width: 75%;
     text-align: center;
@@ -3413,6 +3427,18 @@ Project Carousel style rules
       background: none;
       color: var(--primary-color);
     }
+  }
+}
+
+@media only screen{
+  .popup:has(#project-request-review) {
+    width: min-content;
+    min-width: 65%;
+    height: min-content;
+    display: flex;
+    align-content: center;
+    vertical-align: center;
+    margin:250px;
   }
 }
 
@@ -4175,6 +4201,10 @@ My projects page style rules
 
   .page#my-projects {
     padding-bottom: 100px;
+
+    #main {
+      margin-bottom: 0;
+    }
   }
 }
 
@@ -4416,7 +4446,7 @@ My projects page style rules
   border-radius: 10px;
   border: none;
   color: var(--neutral-gray);
-  bg-color: var(--main-text);
+  background-color: var(--main-text);
 }
 
 .add-video {
@@ -4668,7 +4698,7 @@ My projects page style rules
 
 @media (max-width: 799px) and (max-height:850px) {
   .my-projects-grid {
-    padding-bottom: 20%;
+    padding-bottom: 0;
   }
 }
 
@@ -4761,11 +4791,8 @@ My projects page style rules
   .responsive-table {
     width: calc(100% - 40px);
   }
-}
 
-@media only screen and (max-width: 600px) {
-
-  /* Hide table headers (but not display: none;, for accessibility) */
+    /* Hide table headers (but not display: none;, for accessibility) */
   .responsive-table thead tr {
     position: absolute;
     top: -9999px;

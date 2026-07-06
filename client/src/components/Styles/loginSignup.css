@@ -377,7 +377,7 @@ Signup process modal style rules
   align-items: center;
   height: fit-content;
   max-height: 80vh;
-  width: min(calc(90vw - 20px), 880px);
+  width: min(calc(90vw - 20px), 1000px);
   border-radius: 4px;
   padding: 20px;
   box-shadow: 0px 0px 10px 0px var(--border-color);
@@ -408,8 +408,7 @@ Signup process modal style rules
   #project-editor-selected-tags-container {
 
     scrollbar-width: thin;
-    scrollbar-color: var(--header-color) !important;
-    /*not working*/
+    scrollbar-color: var(--header-color) rgba(0, 0, 0, 0);
   }
 
   #project-editor-tag-wrapper {
@@ -888,6 +887,7 @@ Signup process modal style rules
   height: 50px;
   display: flex;
   flex-direction: row;
+
   /* .select-container,
   .select-button-input {
     height: 100%;
@@ -915,13 +915,8 @@ Signup process modal style rules
   div textarea {
     margin-top: 0px;
     background-color: var(--header-color);
+    outline: none;
   }
-}
-
-.redAsterisk {
-  padding-left: 3px;
-  font-size: 20px;
-  color: var(--error-delete-color);
 }
 
 /* === Terms of Service === */
@@ -1057,8 +1052,15 @@ Signup process modal style rules
       align-items: center;
       width: 100%;
       overflow-y: scroll;
+    
+      .required-asterisk
+      {
+        width: fit-content;
+      }
+
     }
 
+    
     #completeProfile-input-container div {
       width: 100%;
     }
@@ -1076,7 +1078,7 @@ Signup process modal style rules
       .select-container div {
         margin-top: 0px;
         background-color: var(--header-color);
-
+        
         max-height: 400%;
       }
     }
@@ -1161,7 +1163,7 @@ Signup process modal style rules
       flex-direction: column;
       gap: 20px;
 
-     #project-editor-selected-tags {
+      #project-editor-selected-tags {
         /* width: 93%; */
         height: 50%;
         overflow-y: scroll;

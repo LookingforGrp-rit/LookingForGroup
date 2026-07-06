@@ -11,12 +11,13 @@ export type TagType =
   | "Role"
   | "Major"
   | "Game Engine"
+  | "Position"
 //wow.
 export type GenreCategory = 'Game' | "Story" | 'Music';
 export type StyleCategory = 'Visual' | 'Film/Video';
 export type GameEngine = 'Unity' | 'Unreal Engine' | 'Godot' | 'Twine' | 'MonoGame'
 export type DesignerCategory = 'Discipline' | 'Design Software' | 'Art and Animation' | 'Photo Editing' | 'Video Software';
-export type DeveloperCategory = 'Discipline' | 'Framework' | 'Software' | 'Coding Language' | 'Operating System' | 'Game Engine';
+export type DeveloperCategory = 'Discipline' | 'Framework' | 'API' | 'Software' | 'Coding Language' | 'Operating System' | 'Game Engine';
 export type SoftCategory = 'Discipline' | 'Personal' | 'Team';
 export type AudioCategory = 'Discipline' | 'DAW/Audio Editor' | 'Notation' | 'Middleware';
 export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware'

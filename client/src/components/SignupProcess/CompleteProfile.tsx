@@ -171,6 +171,37 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 		return null;
 	}
 
+	//Returns either "" or * depending on if the user selected faculty as their role
+	const majorAsterisk = () => {
+		if (ritStatus === "Faculty" || ritStatus === "Staff") {
+			return "";
+		}
+
+		return "*";
+	}
+
+	//Returns either "Major (Optional)" or "Major (Required)" depending on the user selected factulty as their role
+	const majorRequired = () => {
+		if (ritStatus === "Faculty" || ritStatus === "Staff") {
+			return "Major (Optional)";
+		}
+
+		return "Major (Required)";
+	}
+
+	//disabled={!(major.length > 0 && ritStatus && validPhoneNum)}>
+	//False = enabled
+	const nextButtonDisabled = () => {
+		//Not 1 if since the conditions are different
+		if ((ritStatus === "Faculty" || ritStatus === "Staff") && validPhoneNum) {
+			return false;
+		} else if (major.length > 0 && ritStatus && validPhoneNum) {
+			return false;
+		}
+
+		return true;
+	}
+
 	// render the page
 	return (
 		<div className="signupProcess-background">
@@ -282,14 +313,14 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 									)}
 								/>
 							</Select>
-							<div className="redAsterisk">*</div>
+							<div className="required-asterisk">*</div>
 						</div>
 
 						{/* Major */}
 						<div id="major-input">
 							<Select>
 								<SelectButton
-									placeholder="Major (Required)"
+									placeholder={majorRequired()}
 									type={"input"}
 									initialVal={major[0]?.label}
 									searchable={true}
@@ -312,7 +343,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 									}))}
 								/>
 							</Select>
-							<div className="redAsterisk">*</div>
+							<div className="required-asterisk">{majorAsterisk()}</div>
 						</div>
 
 						{/* Phone Number */}
@@ -380,7 +411,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<button
 							id="signup-nextBtn"
 							onClick={onNext}
-							disabled={!(major.length > 0 && ritStatus && validPhoneNum)}>
+							disabled={nextButtonDisabled()}>
 							<svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
 						</button>
 					</div>

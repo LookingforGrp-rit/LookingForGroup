@@ -68,6 +68,7 @@
     "body-parser": "^2.2.2",
     "cors": "^2.8.6",
     "crypto": "^1.0.1",
+    "dompurify": "^3.4.11",
     "es-shim-unscopables": "^1.1.0",
     "esbuild": "^0.28.1",
     "eslint": "^9.39.4",

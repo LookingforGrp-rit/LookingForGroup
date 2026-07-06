@@ -223,13 +223,6 @@ Image carousel style rules
   width: 100%;
 }
 
-/* Desktop width */
-@media screen and (min-width: 1020px) {
-  .discover-project-about p {
-    height: fit-content;
-  }
-}
-
 .carousel-row {
   display: flex;
   flex-direction: row;
@@ -310,8 +303,8 @@ Image carousel style rules
   display: flex;
   flex-wrap: nowrap;
   overflow: hidden;
-  height: 370px;
-  max-height: 370px;
+  height: 450px;
+  max-height: 450px;
   width: fit-content;
   border-radius: 10px;
   background-color: var(--header-color);
@@ -463,9 +456,10 @@ Image carousel style rules
   }
 
   .discover-project-image {
-    max-width: fit-content;
-    width: auto;
-    height: 100%;
+    min-width: 100%;
+    height: auto;
+    max-height: 325px;
+    border-radius: 0;
   }
 
   .discover-project-about {
@@ -517,6 +511,16 @@ Image carousel style rules
 
     .project-tags {
       display: none;
+    }
+
+    .discover-link {
+    display: block;
+    margin: 0;
+    }
+
+    .learn-more {
+    position: relative;
+    margin-top: 12px;
     }
 
     h2 {
@@ -618,12 +622,14 @@ Filters / Tags Style Rules
 #popup-filters-left-scroll {
   left: 0;
   text-align: left;
+  margin-top: 14px;
   background-image: linear-gradient(to right, var(--bg-color) 30%, #00000000 70%);
 }
 
 #popup-filters-right-scroll {
   right: 0;
   text-align: right;
+  margin-top: 14px;
   background-image: linear-gradient(to right, #00000000 30%, var(--bg-color) 70%);
 }
 
@@ -636,7 +642,7 @@ Filters / Tags Style Rules
   font-size: medium;
   border: none;
   background-color: rgba(0, 0, 0, 0);
-  width: 40px;
+  width: 22px;
   flex-shrink: 0;
 }
 
@@ -1205,10 +1211,10 @@ Filters / Tags Style Rules
   box-sizing: border-box;
   background-color: #0c0b11;
   border-radius: 12px;
-  padding: 22px 24px !important;
+  padding: 22px 14px;
   display: flex !important;
   flex-direction: column !important;
-  height: auto !important;
+  height: min(60vh, 600px) !important;
   max-height: none !important;
   gap: 0px !important;
   overflow-x: hidden !important;
@@ -1222,7 +1228,7 @@ Filters / Tags Style Rules
   align-content: flex-start !important;
   gap: 8px 10px !important;
   margin: 14px auto 0 auto !important;
-  padding: 0 0 0px 0 !important;
+  padding: 0 !important;
   font-size: 1rem;
   font-weight: 400;
   word-break: normal;
@@ -1230,6 +1236,7 @@ Filters / Tags Style Rules
   width: 100%;
   height: auto !important;
   overflow-x: scroll !important;
+  scrollbar-color: var(--liked-section-bg) rgba(0, 0, 0, 0);
 }
 
 #filter-tabs>* {
@@ -1278,7 +1285,8 @@ Filters / Tags Style Rules
   gap: 10px 12px !important;
 
   /*Replaces fluid min/max rules with a completely locked layout height footprint */
-  height: 170px !important;
+  height: auto !important;
+  /*^^ auto to match parent container*/
   overflow-y: auto !important;
   padding: 4px 0 !important;
 
@@ -1306,7 +1314,7 @@ Filters / Tags Style Rules
   display: flex !important;
   flex-direction: column !important;
 
-  height: auto !important;
+  height: auto;
   min-height: 85px !important;
 }
 
@@ -1315,6 +1323,21 @@ Filters / Tags Style Rules
   max-width: 140px;
   display: block;
   flex-shrink: 0;
+}
+
+#btn-loadmore{
+  border: none;
+  border-radius: 30px;
+  padding: 10px 20px;
+  background-color: var(--primary-color) !important;
+  color: var(--invert-text);
+  font-size: 1.25rem;
+  width: max-content;
+  margin-left: auto;
+  margin-right: auto;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 1em;
 }
 
 /* Mobile Fixes*/
