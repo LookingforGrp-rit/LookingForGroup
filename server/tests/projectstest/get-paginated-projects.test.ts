@@ -56,14 +56,14 @@ const prismaProjects: Projects[] = [
 
 const mockPreviews = [
   {
-    projectId: 200,
-    ownerId: 2,
-    title: 'Alpha test',
-  },
-  {
     projectId: 100,
     ownerId: 1,
     title: 'Beta test',
+  },
+  {
+    projectId: 200,
+    ownerId: 2,
+    title: 'Alpha test',
   },
 ];
 
@@ -93,7 +93,7 @@ describe('getPaginatedProjectsService', async () => {
       expect.objectContaining({
         take: 2,
         orderBy: {
-          createdAt: 'desc',
+          projectId: 'asc' as const,
         },
         where: {
           approved: true,
@@ -120,7 +120,7 @@ describe('getPaginatedProjectsService', async () => {
           projectId: 100,
         },
         orderBy: {
-          createdAt: 'desc',
+          projectId: 'asc' as const,
         },
         where: {
           approved: true,
