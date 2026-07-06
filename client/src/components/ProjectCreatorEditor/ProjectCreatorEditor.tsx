@@ -90,7 +90,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const [errorLinks, setErrorLinks] = useState("");
 
   // Tracker that checks if the project is currently saveable.
-  // If this is set to true, the "Save Changes" button appears in every tab
+  // If this is set to true, the "Save Changes" button is clickable
   const [saveable, setSaveable] = useState(false);
 
   // Tracks whether the project was successfully saved (prevents deletion on cleanup after save)
@@ -300,6 +300,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const close = useCallback(() => {
     setConfirm(false);
     setSaved(true);
+    setCurrentTab(0);
   }, []);
 
   useEffect(() => {
@@ -640,7 +641,20 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       )}
 
 
-      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
+      <PopupContent callback={() => {
+        /* confirm popup shows when project has been modified */
+        if (modifiedProject != projectData)
+        {
+          setConfirm(true);
+        }
+        else
+        {
+          setConfirm(false);
+        }
+          /* general tab by default */
+          setSaved(true);
+          setCurrentTab(0);
+        }} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
