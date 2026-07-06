@@ -87,13 +87,13 @@ describe('getPaginatedProjectsService', async () => {
   it('Returns first 2 projects', async () => {
     (prisma.projects.findMany as Mock).mockResolvedValue(prismaProjects);
 
-    const result = await getPaginatedProjectsService(2, 0);
+    const result = await getPaginatedProjectsService(2, 0, 'Newest');
 
     expect(prisma.projects.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
         take: 2,
         orderBy: {
-          projectId: 'asc' as const,
+          createdAt: 'desc' as const,
         },
         where: {
           approved: true,
@@ -110,7 +110,7 @@ describe('getPaginatedProjectsService', async () => {
   it('Uses cursor pagination when lastProjectId is provided', async () => {
     (prisma.projects.findMany as Mock).mockResolvedValue(prismaProjects);
 
-    await getPaginatedProjectsService(2, 100);
+    await getPaginatedProjectsService(2, 100, 'Newest');
 
     expect(prisma.projects.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -120,7 +120,7 @@ describe('getPaginatedProjectsService', async () => {
           projectId: 100,
         },
         orderBy: {
-          projectId: 'asc' as const,
+          createdAt: 'desc' as const,
         },
         where: {
           approved: true,
@@ -132,7 +132,7 @@ describe('getPaginatedProjectsService', async () => {
   it('Returns fewer projects than requested when fewer are available', async () => {
     (prisma.projects.findMany as Mock).mockResolvedValue([prismaProjects[0]]);
 
-    const result = await getPaginatedProjectsService(10, 0);
+    const result = await getPaginatedProjectsService(10, 0, 'Newest');
 
     expect(transformProjectToPreview).toHaveBeenCalledTimes(1);
     expect(result).toEqual([
@@ -148,7 +148,7 @@ describe('getPaginatedProjectsService', async () => {
     const consoleErrorSpy = vi.spyOn(console, 'error').mockImplementation(() => undefined);
     (prisma.projects.findMany as Mock).mockRejectedValue(new Error('db on fire'));
 
-    const result = await getPaginatedProjectsService(2, 0);
+    const result = await getPaginatedProjectsService(2, 0, 'Newest');
 
     expect(result).toBe('INTERNAL_ERROR');
     expect(transformProjectToPreview).not.toHaveBeenCalled();
