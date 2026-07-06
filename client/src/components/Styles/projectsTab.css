@@ -18,7 +18,6 @@
     #profile-editor-project-selection {
         grid-template-columns: 1fr 1fr 1fr;
         height: 90%;
-        overflow-y: scroll;
     }
 }
 
