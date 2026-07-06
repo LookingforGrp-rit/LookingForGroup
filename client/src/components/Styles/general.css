@@ -1215,11 +1215,22 @@ Page popup style rules
   }
 
   #match-button {
-    background: none;
-    border-color: var(--main-text);
+    width: fit-content;
+    height: 40px;
+    padding: 5px 16px;
     font-size: 1.25rem;
-    border-radius: 10px;
-    padding: 4px 10px;
+    border: none;
+    border-radius: 40px;
+    background-color: var(--main-text);
+    color: var(--invert-text);
+    font-weight: 700;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #match-button:hover {
+    transform: scale(1.1);
+    transition: 0.2s;
   }
 
   #primary-btn:hover {
