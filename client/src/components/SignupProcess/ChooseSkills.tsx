@@ -6,6 +6,7 @@ import { Skill, SkillType, TagType } from "@looking-for-group/shared";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
+import { DELETE, POST } from "../../api";
 
 const skillTabs = ["Developer", "Design", "Soft", "Audio", "Engineer"] as String[];
 
@@ -84,18 +85,18 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 	// Update skills shown for search bar
 	const currentDataSet = useMemo(() => {
 		switch (currentSkillsTab) {
-      case 0:
-        return [{ data: allSkills.filter((s) => s.type === "Developer") }];
-      case 1:
-        return [{ data: allSkills.filter((s) => s.type === "Designer") }];
-      case 2:
-        return [{ data: allSkills.filter((s) => s.type === "Soft") }];
-      case 3:
-        return [{ data: allSkills.filter((s) => s.type === "Audio") }];
-      case 4:
-        return [{ data: allSkills.filter((s) => s.type === "Engineer") }];
-      default:
-        return [{ data: [] }];
+			case 0:
+				return [{ data: allSkills.filter((s) => s.type === "Developer") }];
+			case 1:
+				return [{ data: allSkills.filter((s) => s.type === "Designer") }];
+			case 2:
+				return [{ data: allSkills.filter((s) => s.type === "Soft") }];
+			case 3:
+				return [{ data: allSkills.filter((s) => s.type === "Audio") }];
+			case 4:
+				return [{ data: allSkills.filter((s) => s.type === "Engineer") }];
+			default:
+				return [{ data: [] }];
 		}
 	}, [currentSkillsTab, allSkills]);
 
@@ -136,6 +137,16 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 		);
 
 		setSelectedSkills(reorderedSkills);
+
+		//Doesn't work for some reason
+		//Docs aren't up to date
+		// for(let i = 0; i < reorderedSkills.length; i++) {
+		// 	DELETE(`/me/skills`);
+		// }
+
+		// for(let i = 0; i < reorderedSkills.length; i++) {
+		// 	POST(`/me/skills`, reorderedSkills[i]);
+		// }
 	};
 	/**
 	* Toggles a skill as selected or unselected
@@ -181,7 +192,8 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 					key={skill as React.Key}
 					type="button"
 					onClick={() => setCurrentSkillsTab(i)}
-					className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
+					className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ?
+						"tag-search-tab-active" : ""}`}
 				>
 					{skill}
 				</button>
@@ -196,87 +208,98 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
    * @returns JSX Element
    */
 	const renderSkills = useCallback(() => {
-    // no search item, render all skills
-    if (searchedSkills && searchedSkills.length !== 0) {
+		// no search item, render all skills
+		if (searchedSkills && searchedSkills.length !== 0) {
 
-      //The final list of skills displayed to the screen.
-      let skillsToDisplay = searchedSkills;
-      
-      //Since discipline appears multiple times, it's defined here.
-      let discipline;
+			//The final list of skills displayed to the screen.
+			let skillsToDisplay = searchedSkills;
 
-      switch (currentSkillsTab){
-        case 0:
-          //Developer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
-          const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
-          const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
-          const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
-          const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
-          skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
-          break; }
-        case 1:
-          //Designer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const videoSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Video Software");
-          const designSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Design Software");
-          const artAnimation = searchedSkills.filter((tag) => (tag as Skill).category === "Art and Animation");
-          const photoEditing = searchedSkills.filter((tag) => (tag as Skill).category === "Photo Editing");
-          skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
-          break; }
-        case 2:
-          //Soft
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const team = searchedSkills.filter((tag) => (tag as Skill).category === "Team");
-          const personal = searchedSkills.filter((tag) => (tag as Skill).category === "Personal");
-          skillsToDisplay = discipline.concat(team, personal);
-          break; }
-        case 3:
-          //Audio
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const dawAudioEditor = searchedSkills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
-          const middleware = searchedSkills.filter((tag) => (tag as Skill).category === "Middleware");
-          const notation = searchedSkills.filter((tag) => (tag as Skill).category === "Notation");
-          skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
-          break; }
-        case 4:
-          //Engineer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const engineeringSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Engineering Software");
-          const hardware = searchedSkills.filter((tag) => (tag as Skill).category === "Hardware");
-          skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
-          break; }
-      }
+			//Since discipline appears multiple times, it's defined here.
+			let discipline;
 
-      return skillsToDisplay.map((skill, index, array) => (
-        <Fragment key={skill.skillId}>
-          {index === 0 || ((array[index - 1] as Skill).category != (array[index] as Skill).category)
-          ? <div id="tag-category-header">
-              <p>{(array[index] as Skill).category}</p>
-              <hr></hr>
-            </div>
-          : <></>}
-          <Tag
-            key={skill.skillId}
-            onClick={() => handleSkillToggle(skill.skillId)}
-            type={skill.type.toLowerCase() + " skill"}
-            selected={isSkillSelected(skill.skillId) === "selected"}
-          >
-            <i
-              className={
-                isSkillSelected(skill.skillId) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>&nbsp;{skill.label}</p>
-          </Tag>
-        </Fragment>
-      ));
-    } else if (searchedSkills && searchedSkills.length === 0) {
-      return <div className="no-results-message">No results found!</div>;
-    }
+			switch (currentSkillsTab) {
+				case 0:
+					//Developer
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
+						const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
+						const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
+						const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
+						const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
+						skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
+						break;
+					}
+				case 1:
+					//Designer
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const videoSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Video Software");
+						const designSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Design Software");
+						const artAnimation = searchedSkills.filter((tag) => (tag as Skill).category === "Art and Animation");
+						const photoEditing = searchedSkills.filter((tag) => (tag as Skill).category === "Photo Editing");
+						skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
+						break;
+					}
+				case 2:
+					//Soft
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const team = searchedSkills.filter((tag) => (tag as Skill).category === "Team");
+						const personal = searchedSkills.filter((tag) => (tag as Skill).category === "Personal");
+						skillsToDisplay = discipline.concat(team, personal);
+						break;
+					}
+				case 3:
+					//Audio
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const dawAudioEditor = searchedSkills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
+						const middleware = searchedSkills.filter((tag) => (tag as Skill).category === "Middleware");
+						const notation = searchedSkills.filter((tag) => (tag as Skill).category === "Notation");
+						skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
+						break;
+					}
+				case 4:
+					//Engineer
+					{
+						discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
+						const engineeringSoftware = searchedSkills.filter((tag) => (tag as Skill).category ===
+							"Engineering Software");
+						const hardware = searchedSkills.filter((tag) => (tag as Skill).category === "Hardware");
+						skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
+						break;
+					}
+			}
+
+			return skillsToDisplay.map((skill, index, array) => (
+				<Fragment key={skill.skillId}>
+					{index === 0 || ((array[index - 1] as Skill).category != (array[index] as Skill).category)
+						? <div id="tag-category-header">
+							<p>{(array[index] as Skill).category}</p>
+							<hr></hr>
+						</div>
+						: <></>}
+					<Tag
+						key={skill.skillId}
+						onClick={() => handleSkillToggle(skill.skillId)}
+						type={skill.type.toLowerCase() + " skill"}
+						selected={isSkillSelected(skill.skillId) === "selected"}
+					>
+						<i
+							className={
+								isSkillSelected(skill.skillId) === "selected"
+									? "fa fa-close"
+									: "fa fa-plus"
+							}
+						></i>
+						<p>&nbsp;{skill.label}</p>
+					</Tag>
+				</Fragment>
+			));
+		} else if (searchedSkills && searchedSkills.length === 0) {
+			return <div className="no-results-message">No results found!</div>;
+		}
 	}, [
 		searchedSkills,
 		currentSkillsTab,
@@ -323,7 +346,6 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 													id={skill.skillId}
 													tag={{
 														skillId: skill.skillId,
-														skillId: skill.skillId,
 														label: skill.label,
 														type: skill.type,
 														category: skill.category
@@ -365,7 +387,8 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 					</div>
 					<div id="signupProcess-btns">
 						<button id="signup-backBtn" onClick={onBack}>
-							<svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back"><use href="/assets/icons.svg#back"></use></svg>
+							<svg width="70" height="25" id="back" className="color-fill scale-on-hover" aria-label="back">
+								<use href="/assets/icons.svg#back"></use></svg>
 						</button>
 						<button
 							id="signup-nextBtn"
@@ -375,7 +398,8 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 							// the required number of skills
 							// the user can only move to the next modal when they have selected 3 skills
 							disabled={selectedSkills.length < 3}>
-							<svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next"><use href="/assets/icons.svg#next"></use></svg>
+							<svg width="70" height="25" id="next" className="color-fill scale-on-hover" aria-label="next">
+								<use href="/assets/icons.svg#next"></use></svg>
 
 						</button>
 					</div>
