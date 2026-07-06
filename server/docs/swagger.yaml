@@ -171,7 +171,7 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   # USERS
-  /api/users/{method}:
+  /api/users/all/{method}:
     get:
       summary: Get all users
       tags:
