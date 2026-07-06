@@ -601,6 +601,10 @@ Sidebar Nav style rules
   background-repeat: no-repeat;
 }
 
+.SideBarContainer.active {
+  z-index: 14;
+}
+
 #lfg-logo {
   width: 80px;
 }
@@ -952,7 +956,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 10;
+  z-index: 20;
 }
 
 /*rules for the popup itself*/
@@ -970,7 +974,6 @@ Page popup style rules
   max-height: min(849px, 90vh);
   overflow-y: auto;
   opacity: 100%;
-  z-index: 5;
   /* height: 849px; */
 
 }
@@ -1007,7 +1010,6 @@ Page popup style rules
   .popup {
     width: 95vw;
     max-width: 95vw;
-    max-height: 80vh;
   }
 }
 
@@ -1033,7 +1035,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 15;
+  z-index: 21;
   border-radius: 10px;
 }
 
@@ -1473,6 +1475,10 @@ Header style rules
   top: 0;
   z-index: 9;
   box-sizing: border-box;
+}
+
+#header.active {
+  z-index: 15;
 }
 
 @media screen and (max-width: 800px) {

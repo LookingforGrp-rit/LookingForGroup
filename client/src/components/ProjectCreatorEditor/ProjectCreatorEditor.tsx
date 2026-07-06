@@ -235,8 +235,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
   }
 
-  buttonCallback = createOrEdit;
-
   // When asked to auto-start (e.g. the user just signed in after clicking
   // "Create Project"), initialize and open the creation editor once on mount.
   const autoStarted = useRef(false);
@@ -300,6 +298,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const close = useCallback(() => {
     setConfirm(false);
     setSaved(true);
+    setProjectData(undefined);
+    setModifiedProject(undefined);
+    buttonCallback();
   }, []);
 
   useEffect(() => {
@@ -310,7 +311,15 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }, [open, projectID, newProject, saved]);
 
   const toggleConfirm = async () => {
-    setConfirm(!confirm);
+    if (saved) {
+      setConfirm(false);
+      setProjectData(undefined);
+      setModifiedProject(undefined);
+      buttonCallback();
+    }
+    else {
+      setConfirm(!confirm);
+    }
   }
 
   /**
@@ -587,7 +596,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   return (
     <Popup startOpen={autoStart && newProject}>
       {newProject ? (
-        <PopupButton callback={buttonCallback} buttonId="project-info-create">
+        <PopupButton callback={() => {buttonCallback(); createOrEdit();}} buttonId={`project-info-create`}>
           {" "}
           <ThemeIcon
             id={"create"}
@@ -601,7 +610,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         </PopupButton>
       ) : (
         <div id="project-info-contexts">
-          <PopupButton callback={buttonCallback} buttonId="project-info-edit">
+          <PopupButton callback={() => {buttonCallback(); createOrEdit();}} buttonId="project-info-edit">
             Edit Project
           </PopupButton>
           {approvalStatus === "not-approved" ? 
