@@ -801,11 +801,12 @@ export const TeamTab = ({
 			//passing in the associated job's localId to get this to work properly
 			if (currentJob.jobSkills) {
 				for (const skill of currentJob.jobSkills) {
+					console.log(skill)
 					dataManager?.addProjectJobSkill({
 						id: {
 							value:
 								(currentJob as Pending<ProjectJob>).localId ??
-								++localIdIncrement,
+								localIdIncrement++,
 							type: "local"
 						},
 						data: {
@@ -827,6 +828,7 @@ export const TeamTab = ({
 			setEditMode(false);
 			setIsCreatingNewPosition(false);
 			setCurrentJob(currentJob);
+			console.log(currentJob)
 
 			return;
 		} else {
@@ -942,6 +944,23 @@ export const TeamTab = ({
 						{currentJob?.description ?? ""}
 					</div>
 				</div>
+				{/*job skills would probably go here, i find it's important enough to go above everything else*/}
+				{/*it looks awful right now so uh yeah*/}
+				<div id="positions-popup-info-job-skills">
+					<span className="position-detail-indicator">
+						Job Skills
+					</span>
+					
+				<div id="edit-position-skills-list">
+					{/* TODO: make displayed tags look like tags */}
+					{currentJob?.jobSkills &&
+					currentJob?.jobSkills?.length > 0
+						? currentJob?.jobSkills?.map(
+								(skill) => `${skill?.label} `
+							)
+						: "None"}
+				</div>
+				</div>
 				<div id="open-position-details">
 					<div id="open-position-details-left">
 						<div id="position-availability">
@@ -964,7 +983,6 @@ export const TeamTab = ({
 							<span className="position-detail-indicator">
 								Contact:{" "}
 							</span>
-							{/* FIXME: Contact is owner until change contact is implemented */}
 							<div
 								id="position-contact-link"
 								onClick={() => {

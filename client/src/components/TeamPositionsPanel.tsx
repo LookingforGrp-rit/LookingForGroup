@@ -146,6 +146,18 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
           >
             {currentJob?.description}
           </div>
+                <span className="position-detail-indicator">
+                  Job Skills
+                </span>
+				  <div id="edit-position-skills-list">
+					  {/* TODO: make displayed tags look like tags */}
+					  {currentJob?.jobSkills &&
+					  currentJob?.jobSkills?.length > 0
+						  ? currentJob?.jobSkills?.map(
+								  (skill) => `${skill?.label} `
+							  )
+						  : "None"}
+				  </div>
 
           <div id="open-position-details">
             <div id="open-position-details-left">

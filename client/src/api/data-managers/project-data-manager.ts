@@ -631,13 +631,6 @@ export const projectDataManager = async (projectId: number) => {
    * @param skill The skill to be added
    */
   const addProjectJobSkill = (skill: CRUDRequest<AddJobSkillInput>) => {
-    if (changes.create.jobSkills.some(({ data }) => data.skillId === skill.data.skillId)) {
-      changes.create.jobSkills = [
-        ...changes.create.jobSkills.filter(({ data }) => data.skillId === skill.data.skillId),
-        skill,
-      ];
-      return;
-    }
 
     changes.create.jobSkills.push(skill);
   };
