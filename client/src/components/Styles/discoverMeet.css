@@ -552,7 +552,7 @@ Filters / Tags Style Rules
   position: sticky;
   top: 80px;
   /*changing z-index affects .SideBarContainer*/
-  z-index: 3;
+  z-index: 10;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
   /* Extend the sticky background 8px past #main on each side so cards don't
@@ -703,7 +703,7 @@ Filters / Tags Style Rules
   flex: 0 0 auto;
 
   .popup {
-    width: 0px;
+    width: auto;
   }
 }
 
@@ -1171,13 +1171,8 @@ Filters / Tags Style Rules
 /*Fixing Filter Popup*/
 
 #filters-popup {
-  position: fixed;
-  top: 50%;
-  left: calc(50% + 115px);
-  transform: translate(-50%, -50%);
 
-  width: 90vw;
-  max-width: 820px;
+  width: 70vw;
   height: auto;
 
   /* Clamped to 88vh so it avoids hitting the browser address bar edges */
@@ -1188,7 +1183,6 @@ Filters / Tags Style Rules
   padding: 32px 24px 20px 24px;
   box-sizing: border-box;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-  z-index: 10000;
 
   display: flex;
   flex-direction: column;

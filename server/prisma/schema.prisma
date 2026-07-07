@@ -333,7 +333,7 @@ model Users {
   headline          String              @default("") @db.VarChar(100)
   pronouns          String              @default("") @db.VarChar(20)
   title             String              @default("") @db.VarChar(50)
-  ritStatus      UsersRitStatus?  @map("rit_status")
+  ritStatus         UsersRitStatus?     @map("rit_status")
   location          String              @default("") @db.VarChar(150)
   funFact           String              @default("") @map("fun_fact") @db.VarChar(100)
   bio               String              @default("") @db.VarChar(600)
@@ -435,11 +435,13 @@ enum Visibility {
 }
 
 enum UsersRitStatus {
-  Freshman
-  Sophomore
-  Junior
-  Senior
-  Graduate
+  FirstYear        @map("1st Year")
+  SecondYear       @map("2nd Year")
+  ThirdYear        @map("3rd Year")
+  FourthYear       @map("4th Year")
+  FifthYear        @map("5th Year")
+  GraduateStudent  @map("Graduate Student")
+  Alumni
   Faculty
   Staff
 

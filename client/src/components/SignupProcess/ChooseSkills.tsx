@@ -307,7 +307,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 			<div className="signupProcess-modal">
 				<div className="ChooseSkills">
 					<h1 id="signupProcess-title">
-						Choose At Least 3 Skills
+						Choose <span id="signupProcess-title-highlight">At Least</span> 3 Skills
 					</h1>
 					<p id="signupProcess-subTitle">You can edit them later</p>
 					<div id="profile-editor-tags">
