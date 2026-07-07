@@ -654,7 +654,7 @@ Project Creator and Editor Popup style rules
 }
 
 #project-editor-content label:not(.drop-area, .add-video-form),
-#project-team-add-member-title,
+.project-team-add-member-title,
 #team-add-member-cancel-button,
 #project-team-edit-member-title,
 #team-edit-member-cancel-button,
@@ -1279,7 +1279,7 @@ Project Creator and Editor Popup style rules
   margin-top: 0px;
   padding: 20px;
   align-content: flex-start;
-  justify-content: center;
+  justify-content: flex-start;
   border-radius: 10px;
   background: var(--bg-color);
   gap: 10px;
@@ -1355,6 +1355,31 @@ Project Creator and Editor Popup style rules
   max-width: 116px;
 }
 
+#project-editor-project-requests {
+  width: 100%;
+  margin-top: 0px;
+  padding: 20px;
+  border-radius: 10px;
+  background: var(--bg-color);
+  gap: 10px;
+  box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
+}
+
+.project-editor-project-header {
+  margin: 0;
+  margin-bottom: 25px;
+}
+
+.project-editor-project-invites, .project-editor-project-applications {
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1;
+  align-content: flex-start;
+  justify-content: flex-start;
+  gap: 10px;
+  margin: 25px 0;
+}
+
 .edit-project-member-button {
   position: absolute;
   width: 24px;
@@ -1400,14 +1425,14 @@ Project Creator and Editor Popup style rules
   background-color: var(--primary-color) !important;
 }
 
-#project-team-add-member-text {
+.project-team-add-member-text {
   font-weight: 700;
   color: var(--header-color);
   font-size: 1.6ch;
 }
 
 /* User search in Add Member button */
-#user-search-container {
+.user-search-container {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -1423,11 +1448,11 @@ Project Creator and Editor Popup style rules
   width: 100%;
 }
 
-#user-search-container .dropdown {
+.user-search-container .dropdown {
   width: 100%;
 }
 
-#user-search-container .search-bar {
+.user-search-container .search-bar {
   /* Override for default SearchBar component */
   display: flex;
   align-items: center;
@@ -1440,13 +1465,13 @@ Project Creator and Editor Popup style rules
   /* border: 1px solid var(--border-color); */
 }
 
-#user-search-container .search-input {
+.user-search-container .search-input {
   /* Override for default SearchBar component */
   background-color: transparent;
 }
 
 /* Defining grid */
-#project-team-add-member-info {
+.project-team-add-member-info {
   display: grid;
   grid-template-areas:
     'name-label name-search'
@@ -1468,7 +1493,7 @@ Project Creator and Editor Popup style rules
     padding: 20px;
   }
 
-  #user-search-container>.dropdown-container {
+  .user-search-container>.dropdown-container {
     margin-left: 0px;
   }
 }
@@ -1480,15 +1505,15 @@ Project Creator and Editor Popup style rules
   font-style: italic;
 }
 
-#project-team-add-member-name {
+.project-team-add-member-name {
   grid-area: name-label;
 }
 
-#user-search-container {
+.user-search-container {
   grid-area: name-search;
 }
 
-#project-team-add-member-role {
+.project-team-add-member-role {
   grid-area: role-label;
 }
 
@@ -1496,11 +1521,11 @@ Project Creator and Editor Popup style rules
   grid-area: role-select;
 }
 
-#project-team-add-member-message-label {
+.project-team-add-member-message-label {
   grid-area: message-label;
 }
 
-#project-team-add-member-message-text {
+.project-team-add-member-message-text {
   grid-area: message-text;
   min-height: 12em;
 }
@@ -1521,7 +1546,7 @@ Project Creator and Editor Popup style rules
   padding: 0;
 }
 
-#user-search-results {
+.user-search-results {
   position: absolute;
   display: flex;
   flex-direction: column;
@@ -1579,6 +1604,7 @@ Project Creator and Editor Popup style rules
 }
 
 #project-editor-project-members>.popup-container>.popup,
+.project-editor-project-invites>.popup-container>.popup,
 .project-editor-project-member>.popup-container>.popup,
 .project-editor-button-pair>.popup-container>.popup,
 .positions-popup-info>.popup-container>.popup {
@@ -1591,8 +1617,8 @@ Project Creator and Editor Popup style rules
   background: var(--bg-color);
 }
 
-#project-team-add-member-name,
-#project-team-add-member-role,
+.project-team-add-member-name,
+.project-team-add-member-role,
 #project-team-add-member-permissions {
   display: flex;
   align-items: center;
@@ -1600,19 +1626,19 @@ Project Creator and Editor Popup style rules
   gap: 8px;
 }
 
-#project-team-add-member-name label {
+.project-team-add-member-name label {
   text-align: right;
 }
 
-#project-team-add-member-name input,
-#project-team-add-member-role select,
-#project-team-add-member-role .select-button {
+.project-team-add-member-name input,
+.project-team-add-member-role select,
+.project-team-add-member-role .select-button {
   margin: 0;
   padding: 0 15px;
   background-color: var(--header-color);
 }
 
-#project-team-add-member-role .select {
+.project-team-add-member-role .select {
   max-height: 225px;
 }
 
@@ -1696,7 +1722,7 @@ Project Creator and Editor Popup style rules
   }
 }
 
-#team-positions-popup-list-header {
+#team-positions-popup-list-header, .project-editor-project-header {
   text-align: left;
   font-size: 1.25rem;
   font-weight: 600;

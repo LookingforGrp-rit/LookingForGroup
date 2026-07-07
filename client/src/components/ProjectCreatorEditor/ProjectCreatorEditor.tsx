@@ -569,7 +569,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
       projectID !== 0 ? window.location.reload() : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
-      // navigate(`${paths.routes.PROJECT}?projectID=${projectID !== 0 ? projectID : dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }

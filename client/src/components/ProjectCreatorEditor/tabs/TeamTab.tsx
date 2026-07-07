@@ -16,6 +16,9 @@ import {
   getCurrentAccount,
 } from "../../../api/users";
 import {
+  getMemberRequest
+} from "../../../api/projects"
+import {
   ProjectJob,
   UserPreview,
   ProjectMember,
@@ -40,10 +43,6 @@ import {
 import { projectDataManager } from "../../../api/data-managers/project-data-manager";
 //import { current } from "../../../../../node_modules/@reduxjs/toolkit/dist/index";
 import * as paths from '../../../constants/routes'
-// import {
-//   transporter,
-//   sendEmail
-// } from "../../../../../server/src/mailer";
 
 // --- Variables ---
 // Default project value
@@ -92,7 +91,6 @@ type TeamTabProps = {
   messages: string[];
   setMessages: React.Dispatch<React.SetStateAction<string[]>>;
 };
-
 
 /**
  * The TeamTab component manages two primary views: the current team members and open positions for a project. 
@@ -184,6 +182,8 @@ export const TeamTab = ({
 
   const [messageText, setMessageText] = useState("");
 
+  // Pending member requests
+  const [memberRequests, setMembeRequests] = useState([]);
 
   // check if a value is null or undefined
   const isNullOrUndefined = (value: unknown | null | undefined) => {
@@ -375,6 +375,10 @@ export const TeamTab = ({
   },
     [projectAfterTeamChanges.jobs]
   );
+
+  const getPendingMemberRequests = async () => {
+
+  };
 
   // --- Member handlers ---
   /**
@@ -1287,18 +1291,18 @@ export const TeamTab = ({
           </div>
         </div>
       </div>
-          <button
-            type="button"
-            id="position-edit-save"
-          >
-            Edit Job Skills
-          </button>
+      <button
+        type="button"
+        id="position-edit-save"
+      >
+        Edit Job Skills
+      </button>
       {/* and then insert skill selector here, with like a button that shows the full menu.
       would it be possible to like... take the skills tab from the profile page and put it right here? 
       like what if we changed the props of that tab to accept project job stuff, and all that was handled in there
       or we cloned the file for organization's sake and made it usable in here
       i am not a frontend guy react is my worst enemy, but hopefully some people more versed than me can get to this bit
-      hopefully it's not too involved */} 
+      hopefully it's not too involved */}
       <div id="edit-position-buttons">
         <div id="edit-position-button-pair">
           <button
@@ -1326,6 +1330,124 @@ export const TeamTab = ({
   // Check if team tab is in edit mode
   const positionWindow =
     editMode === true ? positionEditWindow : positionViewWindow;
+
+  {/* Add member button */ }
+  const addMemberButton =
+    <Popup>
+      <PopupButton
+        buttonId="project-editor-add-member"
+        callback={() => setCurrentMember(undefined)}
+      >
+        <ThemeIcon
+          id="add-person"
+          width={74}
+          height={74}
+          className="header-color-fill"
+          ariaLabel="add member"
+        />
+        <div className="project-team-add-member-text">Invite Member</div>
+      </PopupButton>
+      <PopupContent useClose={true}>
+        <div className="project-team-add-member-title">Invite Member</div>
+        <div
+          className={successAddMember ? "success" : "error"}
+          id="error-add-member"
+        >
+          {errorAddMember}
+        </div>
+        <div className="project-team-add-member-info">
+          <label className="project-team-add-member-name">Name</label>
+          <div className="user-search-container">
+            <Dropdown>
+              <DropdownButton buttonId="user-search-dropdown-button">
+                <SearchBar
+                  key={searchBarKey}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  dataSets={[{ data: searchableUsers }]}
+                  onSearch={(results) => {
+                    handleSearch(results as UserPreview[][]);
+                  }}
+                ></SearchBar>
+              </DropdownButton>
+              <DropdownContent>
+                <div className="user-search-results">
+                  {searchResults.map((user, index) => (
+                    <DropdownButton
+                      key={user.userId}
+                      className={`user-search-item
+                            ${index === 0 ? "top" : ""}
+                            ${index === searchResults.length - 1 ? "bottom" : ""}`}
+                      callback={() =>
+                        user && handleUserSelect(user as UserPreview)
+                      }
+                    >
+                      <p className="user-search-name">
+                        {user.firstName} {user.lastName}
+                      </p>
+                      <p className="user-search-username">
+                        {user.username}
+                      </p>
+                    </DropdownButton>
+                  ))}
+                </div>
+              </DropdownContent>
+            </Dropdown>
+          </div>
+          <label className="project-team-add-member-role">Role</label>
+          <Select key={selectKey}>
+            <SelectButton placeholder="Select" initialVal="" type="input" searchable={true} />
+            <SelectOptions
+              callback={(e) => {
+                setCurrentMember({
+                  ...emptyMember,
+                  ...currentMember,
+                  role:
+                    allRoles.find(
+                      ({ label }) =>
+                        label === (e.target as HTMLButtonElement).value
+                    ) ?? null,
+                });
+              }}
+              options={allRoles.map(({ label }) => {
+                return {
+                  markup: <>{label}</>,
+                  value: label,
+                  disabled: false,
+                };
+              })}
+            />
+          </Select>
+          <label className="project-team-add-member-message-label">Message</label>
+          <textarea
+            className="project-team-add-member-message-text"
+            value={messageText}
+            onChange={(e) => setMessageText(e.target.value)}
+          ></textarea>
+        </div>
+        {/* Action buttons */}
+        <div className="project-editor-button-pair">
+          <PopupButton
+            buttonId="team-add-member-add-button"
+            callback={() => handleNewMember()}
+            doNotClose={() => !closePopup}
+          >
+            Invite
+          </PopupButton>
+          <PopupButton
+            buttonId="team-add-member-cancel-button"
+            callback={() => {
+              setCurrentMember(emptyMember);
+              setErrorAddMember("");
+              handlePopupReset();
+            }}
+            className="button-reset"
+          >
+            Cancel
+          </PopupButton>
+        </div>
+      </PopupContent>
+    </Popup>;
 
   // Renders the current team members interface with member cards and edit functionality.
   const currentTeamContent: JSX.Element = useMemo(
@@ -1569,122 +1691,7 @@ export const TeamTab = ({
             }
           </div>
         ))}
-        {/* Add member button */}
-        <Popup>
-          <PopupButton
-            buttonId="project-editor-add-member"
-            callback={() => setCurrentMember(undefined)}
-          >
-            <ThemeIcon
-              id="add-person"
-              width={74}
-              height={74}
-              className="header-color-fill"
-              ariaLabel="add member"
-            />
-            <div id="project-team-add-member-text">Invite Member</div>
-          </PopupButton>
-          <PopupContent useClose={true}>
-            <div id="project-team-add-member-title">Invite Member</div>
-            <div
-              className={successAddMember ? "success" : "error"}
-              id="error-add-member"
-            >
-              {errorAddMember}
-            </div>
-            <div id="project-team-add-member-info">
-              <label id="project-team-add-member-name">Name</label>
-              <div id="user-search-container">
-                <Dropdown>
-                  <DropdownButton buttonId="user-search-dropdown-button">
-                    <SearchBar
-                      key={searchBarKey}
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      dataSets={[{ data: searchableUsers }]}
-                      onSearch={(results) => {
-                        handleSearch(results as UserPreview[][]);
-                      }}
-                    ></SearchBar>
-                  </DropdownButton>
-                  <DropdownContent>
-                    <div id="user-search-results">
-                      {searchResults.map((user, index) => (
-                        <DropdownButton
-                          key={user.userId}
-                          className={`user-search-item
-                            ${index === 0 ? "top" : ""}
-                            ${index === searchResults.length - 1 ? "bottom" : ""}`}
-                          callback={() =>
-                            user && handleUserSelect(user as UserPreview)
-                          }
-                        >
-                          <p className="user-search-name">
-                            {user.firstName} {user.lastName}
-                          </p>
-                          <p className="user-search-username">
-                            {user.username}
-                          </p>
-                        </DropdownButton>
-                      ))}
-                    </div>
-                  </DropdownContent>
-                </Dropdown>
-              </div>
-              <label id="project-team-add-member-role">Role</label>
-              <Select key={selectKey}>
-                <SelectButton placeholder="Select" initialVal="" type="input" searchable={true} />
-                <SelectOptions
-                  callback={(e) => {
-                    setCurrentMember({
-                      ...emptyMember,
-                      ...currentMember,
-                      role:
-                        allRoles.find(
-                          ({ label }) =>
-                            label === (e.target as HTMLButtonElement).value
-                        ) ?? null,
-                    });
-                  }}
-                  options={allRoles.map(({ label }) => {
-                    return {
-                      markup: <>{label}</>,
-                      value: label,
-                      disabled: false,
-                    };
-                  })}
-                />
-              </Select>
-              <label id="project-team-add-member-message-label">Message</label>
-              <textarea
-                id="project-team-add-member-message-text"
-                value={messageText}
-                onChange={(e) => setMessageText(e.target.value)}
-              ></textarea>
-            </div>
-            {/* Action buttons */}
-            <div className="project-editor-button-pair">
-              <PopupButton
-                buttonId="team-add-member-add-button"
-                callback={() => handleNewMember()}
-                doNotClose={() => !closePopup}
-              >
-                Invite
-              </PopupButton>
-              <PopupButton
-                buttonId="team-add-member-cancel-button"
-                callback={() => {
-                  setCurrentMember(emptyMember);
-                  setErrorAddMember("");
-                  handlePopupReset();
-                }}
-                className="button-reset"
-              >
-                Cancel
-              </PopupButton>
-            </div>
-          </PopupContent>
-        </Popup>
+        {addMemberButton}
       </div>
     ),
     [allRoles, closePopup, currentMember, dataManager, errorAddMember, updatePendingProject, handleNewMember, projectAfterTeamChanges, handleSearch, handleUserSelect, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
@@ -1753,12 +1760,268 @@ export const TeamTab = ({
       projectAfterTeamChanges.jobs,
     ]
   );
+  // Renders the current member requests interface with member cards and edit functionality.
+  const currentRequestsContent: JSX.Element = useMemo(
+    () => (
+      <div id="project-editor-project-requests">
+        {/* List out project requests */}
+        <p className="project-editor-project-header">Invitations</p>
+        <div className="project-editor-project-invites">
+          {projectAfterTeamChanges.members.map((member) => (
+            <div
+              key={member.user?.userId}
+              className="project-editor-project-member"
+            >
+              <img
+                className="project-member-image"
+                src={member.user?.profileImage ?? profileImage}
+                alt="profile image"
+                title={"Profile picture"}
+                // Cannot use usePreloadedImage function because this is in a callback
+                onError={(e) => {
+                  const profileImg = e.target as HTMLImageElement;
+                  profileImg.src = profileImage;
+                }}
+              />
+              <div className="project-editor-project-member-info">
+                <div className="project-editor-project-member-name">
+                  {member.user?.firstName} {member.user?.lastName}
+                </div>
+                <div className="project-editor-project-member-role project-editor-extra-info">
+                  {(member.role as Role).label}
+                </div>
+              </div>
+              {/* ALWAYS SHOW EDIT BUTTON */}
+              {
+                /*((m.permissions < permissions) || (modifiedProject.userId === m.userId)) && (*/
+                <Popup>
+                  <PopupButton
+                    className="edit-project-member-button"
+                    callback={() => {
+                      setCurrentMember(structuredClone(member));
+                    }}
+                  >
+                    <ThemeIcon
+                      id={"pencil"}
+                      width={11}
+                      height={12}
+                      className={"gradient-color-fill edit-project-member-icon"}
+                      ariaLabel={"edit"}
+                    />
+                  </PopupButton>
+                  {/* Edit member button */}
+                  <PopupContent useClose={false}>
+                    <div id="project-team-edit-member-title">Edit Member</div>
+                    <div
+                      id="project-team-edit-member-card"
+                      className="project-editor-project-member"
+                    >
+                      <img
+                        className="project-member-image"
+                        src={member.user?.profileImage ?? profileImage}
+                        alt="profile image"
+                        // default profile picture if user image doesn't load
+                        onError={(e) => {
+                          const profileImg = e.target as HTMLImageElement;
+                          profileImg.src = profileImage;
+                        }}
+                      />
+                      <div className="project-editor-project-member-name">
+                        {`${member.user?.firstName} ${member.user?.lastName}`}
+                      </div>
+                    </div>
+                    <div id="project-team-add-member-role">
+                      <label>Role</label>
+                      <Select>
+                        <SelectButton
+                          placeholder=""
+                          initialVal={member.role?.label}
+                          className=""
+                          type="dropdown"
+                          searchable={true}
+                        />
+                        <SelectOptions
+                          callback={(e) => {
+                            // get role with matching name (for id)
+                            const role = allRoles.find(
+                              (role) =>
+                                role.label ===
+                                (e.target as HTMLSelectElement).value
+                            );
+
+                            // update current member
+                            setCurrentMember({
+                              ...currentMember!, // on edit button click, currentMember is defined
+                              role: role as Role,
+                            });
+                          }}
+                          options={allRoles.map((role) => {
+                            return {
+                              markup: <>{role.label}</>,
+                              value: role.label,
+                              disabled: false,
+                            };
+                          })}
+                        />
+                      </Select>
+                    </div>
+                    {/* Action buttons */}
+                    <div className="project-editor-button-pair">
+                      {/* Save Button */}
+                      <PopupButton
+                        buttonId="team-edit-member-save-button"
+                        callback={() => {
+                          // TODO error messages
+                          if (!currentMember) return;
+                          if (isNullOrUndefined(currentMember.user)) return;
+
+                          // update member in data manager
+                          dataManager?.updateMember({
+                            id: {
+                              type:
+                                "localId" in currentMember ? "local" : "canon",
+                              value: currentMember.user?.userId,
+                            },
+                            data: {
+                              roleId: currentMember.role?.roleId,
+                            },
+                          });
+
+                          // update team changes array
+                          projectAfterTeamChanges.members =
+                            projectAfterTeamChanges.members.map((member) => {
+                              // if this member matches the updated member
+                              if (currentMember.user?.userId === member.user?.userId) {
+                                // update role
+                                return {
+                                  ...member,
+                                  role:
+                                    currentMember.role,
+                                } as PendingProjectMember;
+                              } else {
+                                // if it doesn't match, do nothing to the member
+                                return member;
+                              }
+                            })
+
+                          //update the temporary changes made to edit member popup roles, if pressed x for main save, it will still undo everything else
+                          updatePendingProject(projectAfterTeamChanges);
+
+                        }}
+                      >
+                        Save
+                      </PopupButton>
+
+                      {/* Delete User button */}
+                      <Popup>
+                        <PopupButton className="delete-button">
+                          Delete
+                        </PopupButton>
+                        <PopupContent>
+                          <div id="project-team-delete-member-title">
+                            Delete Member
+                          </div>
+                          <div
+                            id="project-team-delete-member-text"
+                            className="project-editor-extra-info"
+                          >
+                            Are you sure you want to delete{" "}
+                            <span className="project-info-highlight">
+                              {member.user?.firstName} {member.user?.lastName}
+                            </span>{" "}
+                            from the project? This action cannot be undone.
+                          </div>
+                          <div className="project-editor-button-pair">
+                            <PopupButton
+                              className="delete-button"
+                              callback={() => {
+                                if (!currentMember) {
+                                  // TODO: error message here
+                                  return;
+                                };
+                                if (isNullOrUndefined(currentMember.user)) {
+                                  // TODO: error message here
+                                  return;
+                                };
+
+                                if ("localId" in currentMember) {
+                                  dataManager?.deleteMember({
+                                    id: {
+                                      type: "local",
+                                      value: currentMember.user.userId,
+                                    },
+                                    data: null,
+                                  });
+                                } else {
+                                  dataManager?.deleteMember({
+                                    id: {
+                                      type: "canon",
+                                      value: currentMember.user.userId,
+                                    },
+                                    data: null,
+                                  });
+                                }
+                                projectAfterTeamChanges.members =
+                                  projectAfterTeamChanges.members.filter(
+                                    (member) =>
+                                      member.user?.userId !==
+                                      currentMember.user?.userId
+                                  )
+                                updatePendingProject(projectAfterTeamChanges)
+                              }}
+                            >
+                              Delete
+                            </PopupButton>
+                            <PopupButton
+                              buttonId="team-delete-member-cancel-button"
+                              className="button-reset"
+                            >
+                              Cancel
+                            </PopupButton>
+                          </div>
+                        </PopupContent>
+                      </Popup>
+                    </div>
+
+                    {/* Cancel Edit button */}
+                    <PopupButton
+                      buttonId="team-edit-member-cancel-button"
+                      className="button-reset"
+                      callback={() => {
+                        setCurrentMember(
+                          projectAfterTeamChanges.members.find(
+                            (member) =>
+                              member.user?.userId === currentMember?.user?.userId
+                          )
+                        );
+                      }}
+                    >
+                      Cancel
+                    </PopupButton>
+                  </PopupContent>
+                </Popup>
+                /* ) */
+              }
+            </div>
+          ))}
+          {addMemberButton}
+        </div>
+        <div className="project-editor-project-header">Applications</div>
+        <div className="project-editor-project-applications">
+          No Pending Applications
+        </div>
+      </div>
+    ),
+    [allRoles, closePopup, currentMember, dataManager, errorAddMember, updatePendingProject, handleNewMember, projectAfterTeamChanges, handleSearch, handleUserSelect, searchBarKey, searchQuery, searchResults, searchableUsers, selectKey, successAddMember]
+  );
 
   // Set content depending on what tab is selected
   const teamTabContent =
     currentTeamTab === 0 ? (
       currentTeamContent
     ) : currentTeamTab === 1 ? (
+      currentRequestsContent
+    ) : currentTeamTab === 2 ? (
       openPositionsContent
     ) : (
       <></>
@@ -1782,7 +2045,7 @@ export const TeamTab = ({
           }}
           className={`button-reset project-editor-team-tab ${currentTeamTab === 1 ? "team-tab-active" : ""}`}
         >
-          Open Positions {isOpenPositionsUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
+          Pending Requests {isOpenPositionsUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
         </button>
         <button
           onClick={() => {
@@ -1790,7 +2053,7 @@ export const TeamTab = ({
           }}
           className={`button-reset project-editor-team-tab ${currentTeamTab === 2 ? "team-tab-active" : ""}`}
         >
-          Pending Requests {isOpenPositionsUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
+          Open Positions {isOpenPositionsUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
         </button>
       </div>
 
