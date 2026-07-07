@@ -16,7 +16,7 @@ const skillTabColors: Record<string, string> = {
   Design: "red",
   Soft: "purple",
   Audio: "periwinkle",
-  Engineer: "purple",
+  Engineer: "cyan",
 };
 
 // list of skills to choose from
