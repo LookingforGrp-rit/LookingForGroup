@@ -1570,7 +1570,9 @@ Header style rules
 
 @media screen and (max-width: 500px) {
   #header-buttons .dropdown {
-    position: fixed;
+    position: absolute;
+    top: 50px;
+    right: -10%;
     width: 100%;
     #notifications-panel {
       margin: auto;
@@ -1615,6 +1617,9 @@ Header style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border: none;
   padding: 10px;
+  position: absolute;
+  right: -30%;
+  top: 0% !important;
 
   /* color: var(--primary-color); */
   hr {
