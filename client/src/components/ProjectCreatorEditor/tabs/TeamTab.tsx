@@ -323,6 +323,7 @@ export const TeamTab = ({
 	// Assign active buttons in Open Positions
 	const isTeamTabOpen = currentTeamTab === 1;
 	useEffect(() => {
+		
 		// show first job in view by default
 		if (!currentJob) return setCurrentJob(projectAfterTeamChanges.jobs[0]);
 
@@ -641,10 +642,6 @@ export const TeamTab = ({
 	 * @returns void
 	 */
 	const addPositionCallback = useCallback(() => {
-    console.log(isCreatingNewPosition)
-    //slight problem with this toggle
-    //because you're calling this on both the cancel button and the add position button, if you wished to add a second new position after creating one of them
-    //it freaks out!
 		// going back to previous state (cancel button)
 		if (isCreatingNewPosition || editMode) {
 			// we are no longer creating a new position
@@ -671,6 +668,7 @@ export const TeamTab = ({
 			// empty input fields
 			setIsCreatingNewPosition(true);
 			// clear selected role
+			emptyJob.jobSkills = [];
 			setCurrentJob({ ...emptyJob });
 			const activePosition = document.querySelector(
 				"#team-positions-active-button"
@@ -761,9 +759,7 @@ export const TeamTab = ({
 	 * @returns void
 	 */
 	const savePosition = useCallback(() => {
-		console.log(isCreatingNewPosition);
-		(currentJob as Pending<ProjectJob>).localId = ++localIdIncrement;
-
+		(currentJob as Pending<ProjectJob>).localId = localIdIncrement++;
 		if (!currentJob) {
 			setErrorAddPosition("No job to save!");
 			return;
@@ -843,7 +839,6 @@ export const TeamTab = ({
 				if (unmodifiedSkills && unmodifiedSkills.length > 0) {
 					for (const skill of unmodifiedSkills) {
 						if ((currentJob.jobSkills as JobSkill[]).every((curSkill) => curSkill?.skillId !== skill.skillId)) {
-              console.log(skill)
 							dataManager?.deleteProjectJobSkill({
 								id: {
 									value: skill.skillId,
@@ -857,8 +852,6 @@ export const TeamTab = ({
 						}
 					}
           skillsToBeAdded = (currentJob.jobSkills as JobSkill[]).filter((s) => unmodifiedSkills.every((u) => u.skillId !== s.skillId))
-          console.log(unmodifiedSkills)
-          console.log(skillsToBeAdded);
 				}
         else{
           skillsToBeAdded = currentJob.jobSkills as JobSkill[]
@@ -1170,14 +1163,12 @@ export const TeamTab = ({
 				</Popup>
 				<div id="edit-position-skills-list">
 					{/* TODO: make displayed tags look like tags */}
-					{currentJob?.jobSkills?.length !== undefined &&
+					{currentJob?.jobSkills &&
 					currentJob?.jobSkills?.length > 0
 						? currentJob?.jobSkills?.map(
 								(skill) => `${skill?.label} `
 							)
 						: "No skills selected"}
-					{/* <SkillsTab
-          dataManager={dataManager}></SkillsTab> */}
 				</div>
 			</div>
 

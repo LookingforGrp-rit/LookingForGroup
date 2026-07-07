@@ -34,6 +34,12 @@ export const JobSkillPopup = ({
 
   const skillLimit = 5;
   //the limit imposer (not used as you can see)
+  
+  //i need to refresh the skills selection whenever a new job is created
+  //it does refresh when an existing skill is selected so that works as intended
+  //but between like skill creation and selection it should reset to no skills selected
+  //so how would i do that...
+  //well i should find where it's reset right
 
   // States
   const [allSkills, setAllSkills] = useState<Skill[]>([]);
@@ -41,6 +47,8 @@ export const JobSkillPopup = ({
   const [currentSkillsTab, setCurrentSkillsTab] = useState(0);
   // filtered results from skill search bar
   const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
+  // currently selected skills
+  //const [selectedSkills, setSelectedSkills] = useState<JobSkill[]>([]);
 
   /* ONLY used for the deleting tags button. This is needed to re-render
     the selected skills section when reseting tags */
@@ -90,12 +98,12 @@ export const JobSkillPopup = ({
    * Finds if a skill is present on the project
    * @returns string of status: "selected" or "unselected."
    */
-  const isSkillSelected = (id: number) => {
+  const isSkillSelected = useCallback((id: number) => {
     const skills: JobSkill[] = job.jobSkills as JobSkill[];
 
     if (skills?.some((skill) => skill.skillId === id)) return "selected";
     return "unselected";
-  }
+  }, [job.jobSkills])
 
   // Drag-and-drop sensors for the sortable selected-tags list.
   // Pointer for mouse/touch, Keyboard for accessible reordering.
@@ -155,10 +163,11 @@ export const JobSkillPopup = ({
       }
       else {
         const newSkills = modifiedJob.jobSkills;
+        const lengthPreAdd = modifiedJob.jobSkills?.length
         newSkills?.push({
               ...skillToToggle,
               proficiency: "Novice",
-              position: modifiedJob.jobSkills?.length ?? 0,
+              position: lengthPreAdd ?? 0,
               apiUrl: "",
             })
         modifiedJob = {
