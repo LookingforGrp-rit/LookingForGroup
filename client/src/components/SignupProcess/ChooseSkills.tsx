@@ -9,6 +9,16 @@ import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
 
 const skillTabs = ["Developer", "Design", "Soft", "Audio", "Engineer"] as String[];
 
+// Category color for each skill tab, matching the tag/filter-tab colors.
+const skillTabColors: Record<string, string> = {
+  Developer: "yellow",
+  Designer: "red",
+  Design: "red",
+  Soft: "purple",
+  Audio: "periwinkle",
+  Engineer: "purple",
+};
+
 // list of skills to choose from
 // technologies, arts, tools, and soft skills
 // pulled from the database
@@ -181,7 +191,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 					key={skill as Key}
 					type="button"
 					onClick={() => setCurrentSkillsTab(i)}
-					className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
+					className={`button-reset project-editor-tag-search-tab filter-tab-${skillTabColors[skill as string] ?? "grey"} ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
 				>
 					{skill}
 				</button>

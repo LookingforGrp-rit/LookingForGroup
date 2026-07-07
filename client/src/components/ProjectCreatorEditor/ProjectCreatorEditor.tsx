@@ -14,7 +14,7 @@ import {
   addProjectSocial,
   deleteProjectSocial,
   getByID,
-  deleteProject, 
+  deleteProject,
   requestProjectReview,
 } from "../../api/projects";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
@@ -46,7 +46,7 @@ interface Props {
   // Unused property, don't know why it's here
   updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>;
   // permissions?: number;
-  
+
   approvalStatus?: ApprovalStatusKey
 }
 
@@ -102,6 +102,9 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   // Tracks the error message to display when missing required fields
   const [message, setMessage] = useState("");
 
+  //tracks if title is unique
+  const [isUniqueTitle, setIsUniqueTitle] = useState(true);
+
   // Component Refs
   const exitButton = useRef(null);
   const startButton = useRef(null);
@@ -111,16 +114,15 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
   // Check if the current project can be saved
   let valid = false;
-  if (modifiedProject?.title != "" && modifiedProject?.title != undefined) {
-    if (modifiedProject?.hook != "" && modifiedProject?.hook != undefined) {
-      if (modifiedProject?.description != "" && modifiedProject?.description != undefined) {
-        valid = true;
-      }
-    }
+  if ((modifiedProject?.title != "" && modifiedProject?.title != undefined && modifiedProject?.title != null)
+    && (isUniqueTitle)
+    && (modifiedProject?.hook != "" && modifiedProject?.hook != undefined)
+    && (modifiedProject?.description != "" && modifiedProject?.description != undefined)
+    && (modifiedProject?.tags?.length !== 0)
+    && (modifiedProject?.mediums?.length !== 0)) {
+    valid = true;
   }
-  if (modifiedProject?.tags?.length == 0 || modifiedProject?.mediums?.length == 0) {
-    valid = false;
-  }
+
   if (valid != saveable) {
     setSaveable(valid);
   }
@@ -161,12 +163,15 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
    * @param updatedPendingProject - parameter of updateDisplayedProject, using is faster than trying for modifiedProject
    */
   const fastUpdateMessage = (updatedPendingProject: PendingProject) => {
-    let newMessage = "Project is missing hate";
+    let newMessage = "Project cannot have same title as existing project!"; //for some reason, the initial newMessage value pops up if you've met all the requirements *and then* change title to a duplicate name. so, default value is now the duplicate title error text
+    if (updatedPendingProject.title !== null && updatedPendingProject.title !== undefined) { getUniqueProjectTitle(updatedPendingProject?.title, projectID); }
     if (updatedPendingProject.title === "" || updatedPendingProject.title === undefined) newMessage = "Project is missing a title!";
-    else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a medium!";
-    else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
+    else if (!isUniqueTitle) newMessage = "Project cannot have same title as existing project!";
     else if (updatedPendingProject.hook === "" || updatedPendingProject.hook === undefined) newMessage = "Project is missing a Short Description!";
     else if (updatedPendingProject.description === "" || updatedPendingProject.description === undefined) newMessage = "Project is missing a Project Overview!";
+    else if (updatedPendingProject.mediums.length == 0) newMessage = "Project is missing a medium!";
+    else if (updatedPendingProject.tags.length == 0) newMessage = "Project is missing tags!";
+
     setMessage(newMessage);
   }
 
@@ -189,7 +194,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
     setSaved(true);
     setConfirm(false);
-    setMessage("Project is missing a medium!");
+    setMessage("Project is missing a Short Description!");
 
     if (newProject) {
       // Setup default project for creation
@@ -324,13 +329,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }
 
   /**
-   *  Adds a number to the end of a project so you don't have duplicate project titles(Unity style)
-   * @returns A unique project title
+   *  Updates boolean value of isUniqueTitle based on if the desired title
+   * is a duplicate of one of the user's existing projects or not
    */
   const getUniqueProjectTitle = async (
     desiredTitle: string,
     currentProjectId: number
-  ): Promise<string> => {
+  ): Promise<void> => {
     const base = desiredTitle.trim();
 
     const res = await getProjectsByUser();
@@ -343,17 +348,17 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         .map((p) => p.title.trim().toLowerCase())
     );
 
-    if (!takenNames.has(base.toLowerCase())) {
-      return base;
+    if (takenNames.has(base.toLowerCase())) {
+      setIsUniqueTitle(false);
+    } else {
+      setIsUniqueTitle(true);
     }
-
     // Find the lowest available "(n)" suffix
-    let n = 1;
-    while (takenNames.has(`${base}(${n})`.toLowerCase())) {
-      n++;
-    }
-    updateMessage();
-    return `${base}(${n})`;
+    // let n = 1;
+    // while (takenNames.has(`${base}(${n})`.toLowerCase())) {
+    //   n++;
+    // }
+    // return `${base}(${n})`;
   };
 
   /**
@@ -376,9 +381,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       await setFailCheck(true);
       return;
     }
+
+    if (modifiedProject?.title !== null && modifiedProject?.title !== "" && modifiedProject?.title !== undefined) { getUniqueProjectTitle(modifiedProject?.title, projectID); }
+
     //pops up error text if required fields in general haven't been filled out
     if (
       !modifiedProject?.title ||
+      !isUniqueTitle ||
       !modifiedProject.description ||
       !modifiedProject.status ||
       !modifiedProject.hook
@@ -413,17 +422,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     // Prevent duplicate project names in the user's project list.
     // If the title collides with another of their projects, auto-rename it
     // (e.g. "ProjectTitle" -> "ProjectTitle(1)").
-    const uniqueTitle = await getUniqueProjectTitle(
-      modifiedProject.title,
-      projectID
-    );
-    if (uniqueTitle !== modifiedProject.title) {
-      dataManager.updateFields({
-        id: { value: projectID, type: "canon" },
-        data: { title: uniqueTitle },
-      });
-      setModifiedProject({ ...modifiedProject, title: uniqueTitle });
-    }
+
+    // if (uniqueTitle !== modifiedProject.title) {
+    //   dataManager.updateFields({
+    //     id: { value: projectID, type: "canon" },
+    //     data: { title: uniqueTitle },
+    //   });
+    //   setModifiedProject({ ...modifiedProject, title: uniqueTitle });
+    // }
 
     try {
       // EXISTING PROJECT
@@ -597,7 +603,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   return (
     <Popup startOpen={autoStart && newProject}>
       {newProject ? (
-        <PopupButton callback={() => {buttonCallback(); createOrEdit();}} buttonId={`project-info-create`}>
+        <PopupButton callback={() => { buttonCallback(); createOrEdit(); }} buttonId={`project-info-create`}>
           {" "}
           <ThemeIcon
             id={"create"}
@@ -611,59 +617,57 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         </PopupButton>
       ) : (
         <div id="project-info-contexts">
-          <PopupButton callback={() => {buttonCallback(); createOrEdit();}} buttonId="project-info-edit">
+          <PopupButton callback={() => { buttonCallback(); createOrEdit(); }} buttonId="project-info-edit">
             Edit Project
           </PopupButton>
-          {approvalStatus === "not-approved" ? 
-          <Popup>
-            {/* TODO: add checking if the project is approved/rejected/pending */}
-            <PopupButton buttonId="project-info-request" >
-              Request Project Review
-            </PopupButton>
-            <PopupContent>
-              <div id="project-request-review">
-                <label id="project-request-label">
-                  Would you like to submit your project for review?
-                </label>
-                <div id="project-request-info">
-                  Submiting a request will make your project visible to moderators who will choose to either
-                  accept and make your project visible to all, request changes for you to make, 
-                  or reject it for various reasons. <br/>
-                  <strong>(Moderators are not capable of directly altering or deleting your projects)</strong>
+          {approvalStatus === "not-approved" ?
+            <Popup>
+              {/* TODO: add checking if the project is approved/rejected/pending */}
+              <PopupButton buttonId="project-info-request" >
+                Request Project Review
+              </PopupButton>
+              <PopupContent>
+                <div id="project-request-review">
+                  <label id="project-request-label">
+                    Would you like to submit your project for review?
+                  </label>
+                  <div id="project-request-info">
+                    Submiting a request will make your project visible to moderators who will choose to either
+                    accept and make your project visible to all, request changes for you to make,
+                    or reject it for various reasons. <br />
+                    <strong>(Moderators are not capable of directly altering or deleting your projects)</strong>
+                  </div>
+                  <div id="project-request-buttons">
+                    <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (projectData) requestProjectReview(projectID);
+                      }}
+                    >
+                      Request Review
+                    </PopupButton>
+                    <PopupButton buttonId="request-cancel-button">
+                      Cancel
+                    </PopupButton>
+                  </div>
                 </div>
-                <div id="project-request-buttons">
-                  <PopupButton buttonId="request-confirm-button"
-                  callback={() => {
-                    if (projectData) requestProjectReview(projectID);
-                  }}
-                  >
-                    Request Review
-                  </PopupButton>
-                  <PopupButton buttonId="request-cancel-button">
-                    Cancel
-                  </PopupButton>
-                </div>
-              </div>
-            </PopupContent>
-          </Popup> : ""}
+              </PopupContent>
+            </Popup> : ""}
         </div>
       )}
 
 
       <PopupContent callback={() => {
         /* confirm popup shows when project has been modified */
-        if (modifiedProject != projectData)
-        {
+        if (modifiedProject != projectData) {
           setConfirm(true);
         }
-        else
-        {
+        else {
           setConfirm(false);
         }
-          /* general tab by default */
-          setSaved(true);
-          setCurrentTab(0);
-        }} closeButtonRef={exitButton} confirmation={!saved}>
+        /* general tab by default */
+        setSaved(true);
+        setCurrentTab(0);
+      }} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
@@ -725,7 +729,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             </button>
           </div>
 
-          <div id="project-editor-content">
+          <div id="project-editor-content" className={newProject ? 'project-creator' : ''} >
             {projectData && modifiedProject ? (currentTab === 0 ? (
               <GeneralTab
                 dataManager={dataManager}

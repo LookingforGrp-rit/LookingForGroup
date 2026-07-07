@@ -31,10 +31,13 @@ components:
           type: string
         type:
           $ref: 'enums.yaml#/components/schemas/TagType'
+        category:
+          $ref: 'enums.yaml#/components/schemas/TagCategory'
       example:
         tagId: 1
         label: Indie
         type: Creative
+        category: Game
 
     Social:
       type: object
@@ -56,10 +59,13 @@ components:
           type: string
         type:
           $ref: 'enums.yaml#/components/schemas/SkillType'
+        category:
+          $ref: 'enums.yaml#/components/schemas/SkillCategory'
       example:
         skillId: 1
         label: C++
         type: Developer
+        category: Programming Language
 
     Medium:
       type: object
