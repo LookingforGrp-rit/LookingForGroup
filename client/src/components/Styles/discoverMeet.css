@@ -1277,9 +1277,9 @@ Filters / Tags Style Rules
   background-image: none;
 }
 
-/* Selected tabs: black text on their filled category color. */
+
 #filter-tabs [class*="filter-tab-"].selected {
-  color: var(--tag-text-selected);
+  color: var(--tag-text-selected) !important;
 }
 
 #filter-tabs .filter-tab-blue.selected       { background-color: var(--tag-blue-selected);       border-color: var(--tag-blue-selected); }
@@ -1292,9 +1292,9 @@ Filters / Tags Style Rules
 #filter-tabs .filter-tab-purple.selected     { background-color: var(--tag-purple-selected);     border-color: var(--tag-purple-selected); }
 #filter-tabs .filter-tab-periwinkle.selected { background-color: var(--tag-periwinkle-selected); border-color: var(--tag-periwinkle-selected); }
 
-/* Unselected tabs: dark fill, white text, category-colored border. */
+
 #filter-tabs [class*="filter-tab-"]:not(.selected) {
-  color: #fff;
+  color: #fff !important;
 }
 #filter-tabs .filter-tab-blue:not(.selected)       { background-color: var(--tag-blue-unselected);       border-color: var(--tag-blue-selected); }
 #filter-tabs .filter-tab-green:not(.selected)      { background-color: var(--tag-green-unselected);      border-color: var(--tag-green-selected); }
