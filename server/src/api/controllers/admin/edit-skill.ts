@@ -19,9 +19,9 @@ const editSkill = async (request: AuthenticatedRequest, response: Response): Pro
   const id = parseInt(request.params.id as string);
   const input: EditSkillInput = {
     skillId: id,
-    label: body.label,
-    type: body.type,
-    category: body.category,
+    label: body.label === '' ? undefined : body.label,
+    type: !body.type ? undefined : body.type,
+    category: !body.category ? undefined : body.category,
   };
 
   const result = await editSkillService(input);

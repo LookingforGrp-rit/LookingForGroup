@@ -34,6 +34,9 @@ const createSkill = async (request: AuthenticatedRequest, response: Response): P
   if (result === 'INTERNAL_ERROR') {
     res.status = 500;
     res.error = 'There was an internal error';
+  } else if (result === 'CONFLICT') {
+    res.status = 409;
+    res.error = 'Skill labels must not be duplicates.';
   } else {
     res.status = 200;
     res.data = result;

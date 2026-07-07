@@ -2,7 +2,7 @@ import type { Tag, EditTagInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
-type EditTagServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
+type EditTagServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND' | 'CONFLICT'>;
 
 export const editTagService = async (input: EditTagInput): Promise<Tag | EditTagServiceError> => {
   try {
@@ -34,6 +34,10 @@ export const editTagService = async (input: EditTagInput): Promise<Tag | EditTag
 
     return result as Tag;
   } catch (e) {
+    if (e instanceof Error && 'code' in e && e.code === 'P2002') {
+      return 'CONFLICT';
+    }
+
     console.error('There was an error in EditTagService: ', e);
     return 'INTERNAL_ERROR';
   }

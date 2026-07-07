@@ -4837,7 +4837,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#components/schemas/Skill'
+              $ref: '#components/schemas/SkillInput'
       responses:
         '200':
           description: Skill created successfully
@@ -4882,7 +4882,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#components/schemas/Skill'
+              $ref: '#components/schemas/SkillInput'
       responses:
         '200':
           description: Skill modified successfully
@@ -4898,7 +4898,7 @@ paths:
                     nullable: true
                     example: null
                   data:
-                    $ref: '#components/schemas/Tag'
+                    $ref: '#components/schemas/Skill'
         '400':
           $ref: '#components/responses/BadRequest'
         '500':

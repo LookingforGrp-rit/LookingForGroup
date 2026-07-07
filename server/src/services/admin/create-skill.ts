@@ -2,7 +2,7 @@ import type { CreateSkillInput, Skill } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
-type CreateSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
+type CreateSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'CONFLICT'>;
 
 export const createSkillService = async (
   input: CreateSkillInput,
@@ -18,6 +18,10 @@ export const createSkillService = async (
 
     return result as Skill;
   } catch (e) {
+    if (e instanceof Error && 'code' in e && e.code === 'P2002') {
+      return 'CONFLICT';
+    }
+
     console.error('There was an internal error in createSkillService: ', e);
     return 'INTERNAL_ERROR';
   }

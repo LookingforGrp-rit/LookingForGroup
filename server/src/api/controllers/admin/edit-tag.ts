@@ -19,9 +19,9 @@ const editTag = async (request: AuthenticatedRequest, response: Response): Promi
   const id = parseInt(request.params.id as string);
   const input: EditTagInput = {
     tagId: id,
-    label: body.label,
-    type: body.type,
-    category: body.category,
+    label: body.label === '' ? undefined : body.label,
+    type: !body.type ? undefined : body.type,
+    category: !body.category ? undefined : body.category,
   };
 
   const result = await editTagService(input);
@@ -32,6 +32,9 @@ const editTag = async (request: AuthenticatedRequest, response: Response): Promi
   } else if (result === 'NOT_FOUND') {
     res.status = 404;
     res.error = 'Could not find tag';
+  } else if (result === 'CONFLICT') {
+    res.status = 409;
+    res.error = 'Tag labels must not be duplicates.';
   } else {
     res.status = 200;
     res.data = result;
