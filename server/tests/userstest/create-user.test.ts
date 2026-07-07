@@ -69,7 +69,7 @@ describe('createUserService', async () => {
       pronouns: '',
       title: '',
       majors: [],
-      ritStatus: 'Freshman',
+      ritStatus: 'FirstYear',
       location: '',
       funFact: '',
       bio: '',

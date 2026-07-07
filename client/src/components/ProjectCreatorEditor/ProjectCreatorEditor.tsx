@@ -47,7 +47,7 @@ interface Props {
   updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>;
   // permissions?: number;
   
-  approvalStatus: ApprovalStatusKey
+  approvalStatus?: ApprovalStatusKey
 }
 
 let dataManager: Awaited<ReturnType<typeof projectDataManager>>;
@@ -90,7 +90,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const [errorLinks, setErrorLinks] = useState("");
 
   // Tracker that checks if the project is currently saveable.
-  // If this is set to true, the "Save Changes" button appears in every tab
+  // If this is set to true, the "Save Changes" button is clickable
   const [saveable, setSaveable] = useState(false);
 
   // Tracks whether the project was successfully saved (prevents deletion on cleanup after save)
@@ -235,8 +235,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     }
   }
 
-  buttonCallback = createOrEdit;
-
   // When asked to auto-start (e.g. the user just signed in after clicking
   // "Create Project"), initialize and open the creation editor once on mount.
   const autoStarted = useRef(false);
@@ -300,6 +298,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const close = useCallback(() => {
     setConfirm(false);
     setSaved(true);
+    setCurrentTab(0);
+    setProjectData(undefined);
+    setModifiedProject(undefined);
+    buttonCallback();
   }, []);
 
   useEffect(() => {
@@ -310,7 +312,15 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }, [open, projectID, newProject, saved]);
 
   const toggleConfirm = async () => {
-    setConfirm(!confirm);
+    if (saved) {
+      setConfirm(false);
+      setProjectData(undefined);
+      setModifiedProject(undefined);
+      buttonCallback();
+    }
+    else {
+      setConfirm(!confirm);
+    }
   }
 
   /**
@@ -587,7 +597,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   return (
     <Popup startOpen={autoStart && newProject}>
       {newProject ? (
-        <PopupButton callback={buttonCallback} buttonId="project-info-create">
+        <PopupButton callback={() => {buttonCallback(); createOrEdit();}} buttonId={`project-info-create`}>
           {" "}
           <ThemeIcon
             id={"create"}
@@ -601,7 +611,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         </PopupButton>
       ) : (
         <div id="project-info-contexts">
-          <PopupButton callback={buttonCallback} buttonId="project-info-edit">
+          <PopupButton callback={() => {buttonCallback(); createOrEdit();}} buttonId="project-info-edit">
             Edit Project
           </PopupButton>
           {approvalStatus === "not-approved" ? 
@@ -640,7 +650,20 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       )}
 
 
-      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
+      <PopupContent callback={() => {
+        /* confirm popup shows when project has been modified */
+        if (modifiedProject != projectData)
+        {
+          setConfirm(true);
+        }
+        else
+        {
+          setConfirm(false);
+        }
+          /* general tab by default */
+          setSaved(true);
+          setCurrentTab(0);
+        }} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">

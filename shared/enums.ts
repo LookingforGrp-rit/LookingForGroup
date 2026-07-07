@@ -21,12 +21,15 @@ export enum TagType {
   Purpose = "Purpose"
 }
 export enum RitStatus {
-  Freshman = "Freshman",
-  Sophomore = "Sophomore",
-  Junior = "Junior",
-  Senior = "Senior",
-  Graduate = "Graduate",
-  Faculty = "Faculty"
+  'FirstYear' = "1st Year",
+  'SecondYear' = "2nd Year",
+  'ThirdYear' = "3rd Year",
+  'FourthYear' = "4th Year",
+  'FifthYear' = "5th Year",
+  'GraduateStudent' = "Graduate Student",
+  'Alumni' = "Alumni",
+  'Faculty' = "Faculty",
+  'Staff' = "Staff",
 };
 export enum Visibility {
   Public = "Public",

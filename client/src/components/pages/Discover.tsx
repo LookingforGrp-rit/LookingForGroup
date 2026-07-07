@@ -160,7 +160,9 @@ export const DiscoverPage = () => {
 
   //Gets the projects and updates the variables above
   const getPaginatedProjects = async () => {
-    let returnedProjects = await GET(`/projects/paginated/${count}/${index}`);
+    //NOTE: the "Newest" here is a default implementation for sorting method, so the site doesn't break
+    //CHANGE THIS WHEN FRONT END IS ACTUALLY IMPLEMENTED!!
+    let returnedProjects = await GET(`/projects/paginated/${count}/${index}/Newest`);
 
     if (returnedProjects.data && returnedProjects.data[returnedProjects.data.length - 1]) {
       index = returnedProjects.data[returnedProjects.data.length - 1].projectId;

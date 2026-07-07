@@ -1,4 +1,4 @@
-import type { FilterRequest, UserPreview } from '@looking-for-group/shared';
+import type { FilterRequest, UserPreview, UserSortMethod } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import { UserDetailSelector } from '#services/selectors/users/user-detail.ts';
 import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
@@ -8,6 +8,7 @@ type GetUserServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 
 export const getAllUsersService = async (
   filters: FilterRequest,
+  sortMethod: UserSortMethod,
 ): Promise<UserPreview[] | GetUserServiceError> => {
   try {
     const parsedFilters = [] as object[];
@@ -108,19 +109,23 @@ export const getAllUsersService = async (
       restrictionObject = { AND: parsedFilters };
     }
 
+    let orderByInput;
+    switch (sortMethod) {
+      case 'Newest':
+        orderByInput = { createdAt: 'desc' as const };
+        break;
+      case 'A-Z':
+        orderByInput = { firstName: 'asc' as const };
+        break;
+    }
+
     const users = await prisma.users.findMany({
       where: restrictionObject,
-      orderBy: { createdAt: 'desc' },
+      orderBy: orderByInput,
       select: UserDetailSelector,
     });
 
-    let transformedUsers = users.map(transformUserToPreview);
-
-    //Sorts the users in alphabetical order by first name
-    transformedUsers = transformedUsers.toSorted(
-      (transformedUser1, transformedUser2) =>
-        transformedUser1.firstName.charCodeAt(0) - transformedUser2.firstName.charCodeAt(0),
-    );
+    const transformedUsers = users.map(transformUserToPreview);
 
     //For when the preferred name column is implemented in the database
     // transformedUsers = transformedUsers.toSorted((transformedUser1, transformedUser2) =>

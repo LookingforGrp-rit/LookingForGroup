@@ -1,4 +1,9 @@
-import type { RitStatus, ApiResponse, FilterRequest } from '@looking-for-group/shared';
+import type {
+  RitStatus,
+  ApiResponse,
+  FilterRequest,
+  UserSortMethod,
+} from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { UsersRitStatus } from '#prisma-models/index.js';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
@@ -104,8 +109,10 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     }
   }
 
+  //Add sort method
+  const sortMethod = req.params.method as UserSortMethod;
   //send it over
-  const result = await getAllUsersService(filters);
+  const result = await getAllUsersService(filters, sortMethod);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

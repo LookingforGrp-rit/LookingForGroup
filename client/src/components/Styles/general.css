@@ -592,7 +592,6 @@ Sidebar Nav style rules
   left: 0px;
   /* box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 16px; */
   /*changing z-index affects #discover-filters-parent*/
-  z-index: 4;
   color: var(--dark-lighttheme);
   background-color: var(--bg-color);
   /*background-image: url("../../../public/images/nav-background.png");*/
@@ -600,6 +599,10 @@ Sidebar Nav style rules
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+}
+
+.SideBarContainer.active {
+  z-index: 14;
 }
 
 #lfg-logo {
@@ -953,7 +956,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 4;
+  z-index: 20;
 }
 
 /*rules for the popup itself*/
@@ -971,7 +974,6 @@ Page popup style rules
   max-height: min(849px, 90vh);
   overflow-y: auto;
   opacity: 100%;
-  z-index: 5;
   /* height: 849px; */
 
 }
@@ -1008,7 +1010,6 @@ Page popup style rules
   .popup {
     width: 95vw;
     max-width: 95vw;
-    max-height: calc(100vh - 40px);
   }
 }
 
@@ -1034,7 +1035,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 5;
+  z-index: 21;
   border-radius: 10px;
 }
 
@@ -1215,11 +1216,22 @@ Page popup style rules
   }
 
   #match-button {
-    background: none;
-    border-color: var(--main-text);
+    width: fit-content;
+    height: 40px;
+    padding: 5px 16px;
     font-size: 1.25rem;
-    border-radius: 10px;
-    padding: 4px 10px;
+    border: none;
+    border-radius: 40px;
+    background-color: var(--primary-color);
+    color: var(--invert-text);
+    font-weight: 700;
+    margin-left: 0;
+    margin-right: 0;
+  }
+
+  #match-button:hover {
+    transform: scale(1.1);
+    transition: 0.2s;
   }
 
   #primary-btn:hover {
@@ -1461,8 +1473,12 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: 9;
   box-sizing: border-box;
+}
+
+#header.active {
+  z-index: 15;
 }
 
 @media screen and (max-width: 800px) {
