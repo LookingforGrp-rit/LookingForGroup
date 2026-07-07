@@ -1269,31 +1269,42 @@ Filters / Tags Style Rules
   word-break: break-word;
 }
 
-/* Each filter tab takes on the color of the tag category it represents, matching
-   the tag buttons (e.g. Project Type = light blue). Dark text for contrast, and
-   unselected tabs are dimmed so the active tab still reads as selected. */
-#filter-tabs .filter-tab-blue { background-color: var(--tag-blue-selected); }
-#filter-tabs .filter-tab-green { background-color: var(--tag-green-selected); }
-#filter-tabs .filter-tab-pink { background-color: var(--tag-pink-selected); }
-#filter-tabs .filter-tab-grey { background-color: var(--tag-grey-selected); }
-#filter-tabs .filter-tab-yellow { background-color: var(--tag-yellow-selected); }
-#filter-tabs .filter-tab-red { background-color: var(--tag-red-selected); }
-#filter-tabs .filter-tab-orange { background-color: var(--tag-orange-selected); }
-#filter-tabs .filter-tab-purple { background-color: var(--tag-purple-selected); }
-#filter-tabs .filter-tab-periwinkle { background-color: var(--tag-periwinkle-selected); }
+/* Filter tabs mirror the tag pills for their category:
+   - Unselected: dark fill, with the category color as the text + border.
+   - Selected: inverted — filled with the category color, dark text. */
+#filter-tabs [class*="filter-tab-"] {
+  border: 3px solid transparent;
+  background-image: none;
+}
 
-/* Selected tab: bright category color with black text for contrast. */
+/* Selected tabs: black text on their filled category color. */
 #filter-tabs [class*="filter-tab-"].selected {
   color: var(--tag-text-selected);
 }
 
-/* Unselected tabs: white text on a darkened category color. The dark overlay
-   only affects the background (not element opacity), so the white text stays
-   crisp instead of fading to grey. */
+#filter-tabs .filter-tab-blue.selected       { background-color: var(--tag-blue-selected);       border-color: var(--tag-blue-selected); }
+#filter-tabs .filter-tab-green.selected      { background-color: var(--tag-green-selected);      border-color: var(--tag-green-selected); }
+#filter-tabs .filter-tab-pink.selected       { background-color: var(--tag-pink-selected);       border-color: var(--tag-pink-selected); }
+#filter-tabs .filter-tab-grey.selected       { background-color: var(--tag-grey-selected);       border-color: var(--tag-grey-selected); }
+#filter-tabs .filter-tab-yellow.selected     { background-color: var(--tag-yellow-selected);     border-color: var(--tag-yellow-selected); }
+#filter-tabs .filter-tab-red.selected        { background-color: var(--tag-red-selected);        border-color: var(--tag-red-selected); }
+#filter-tabs .filter-tab-orange.selected     { background-color: var(--tag-orange-selected);     border-color: var(--tag-orange-selected); }
+#filter-tabs .filter-tab-purple.selected     { background-color: var(--tag-purple-selected);     border-color: var(--tag-purple-selected); }
+#filter-tabs .filter-tab-periwinkle.selected { background-color: var(--tag-periwinkle-selected); border-color: var(--tag-periwinkle-selected); }
+
+/* Unselected tabs: dark fill, white text, category-colored border. */
 #filter-tabs [class*="filter-tab-"]:not(.selected) {
   color: #fff;
-  background-image: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3));
 }
+#filter-tabs .filter-tab-blue:not(.selected)       { background-color: var(--tag-blue-unselected);       border-color: var(--tag-blue-selected); }
+#filter-tabs .filter-tab-green:not(.selected)      { background-color: var(--tag-green-unselected);      border-color: var(--tag-green-selected); }
+#filter-tabs .filter-tab-pink:not(.selected)       { background-color: var(--tag-pink-unselected);       border-color: var(--tag-pink-selected); }
+#filter-tabs .filter-tab-grey:not(.selected)       { background-color: var(--tag-grey-unselected);       border-color: var(--tag-grey-selected); }
+#filter-tabs .filter-tab-yellow:not(.selected)     { background-color: var(--tag-yellow-unselected);     border-color: var(--tag-yellow-selected); }
+#filter-tabs .filter-tab-red:not(.selected)        { background-color: var(--tag-red-unselected);        border-color: var(--tag-red-selected); }
+#filter-tabs .filter-tab-orange:not(.selected)     { background-color: var(--tag-orange-unselected);     border-color: var(--tag-orange-selected); }
+#filter-tabs .filter-tab-purple:not(.selected)     { background-color: var(--tag-purple-unselected);     border-color: var(--tag-purple-selected); }
+#filter-tabs .filter-tab-periwinkle:not(.selected) { background-color: var(--tag-periwinkle-unselected); border-color: var(--tag-periwinkle-selected); }
 
 #filter-divider {
   height: 2px;
