@@ -35,6 +35,10 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "style":
       color = "pink"
       break;
+    
+    case "game engine":
+      color = "yellow"
+      break;
 
     case 'other':
       color = 'grey';
