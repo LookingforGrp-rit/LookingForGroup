@@ -1263,6 +1263,8 @@ Project Creator and Editor Popup style rules
 #project-editor-tag-search-tabs .filter-tab-orange     { border-color: var(--tag-orange-selected) !important; }
 #project-editor-tag-search-tabs .filter-tab-purple     { border-color: var(--tag-purple-selected) !important; }
 #project-editor-tag-search-tabs .filter-tab-periwinkle { border-color: var(--tag-periwinkle-selected) !important; }
+#project-editor-tag-search-tabs .filter-tab-cyan       { border-color: var(--tag-cyan-selected) !important; }
+
 
 #project-editor-tag-search-tabs .filter-tab-blue.tag-search-tab-active       { background-color: var(--tag-blue-selected) !important; }
 #project-editor-tag-search-tabs .filter-tab-green.tag-search-tab-active      { background-color: var(--tag-green-selected) !important; }
@@ -1273,6 +1275,7 @@ Project Creator and Editor Popup style rules
 #project-editor-tag-search-tabs .filter-tab-orange.tag-search-tab-active     { background-color: var(--tag-orange-selected) !important; }
 #project-editor-tag-search-tabs .filter-tab-purple.tag-search-tab-active     { background-color: var(--tag-purple-selected) !important; }
 #project-editor-tag-search-tabs .filter-tab-periwinkle.tag-search-tab-active { background-color: var(--tag-periwinkle-selected) !important; }
+#project-editor-tag-search-tabs .filter-tab-cyan.tag-search-tab-active       { background-color: var(--tag-cyan-selected) !important; }
 
 #project-editor-tag-search-tabs .filter-tab-blue:not(.tag-search-tab-active)       { background-color: var(--tag-blue-unselected) !important; }
 #project-editor-tag-search-tabs .filter-tab-green:not(.tag-search-tab-active)      { background-color: var(--tag-green-unselected) !important; }
@@ -1283,6 +1286,7 @@ Project Creator and Editor Popup style rules
 #project-editor-tag-search-tabs .filter-tab-orange:not(.tag-search-tab-active)     { background-color: var(--tag-orange-unselected) !important; }
 #project-editor-tag-search-tabs .filter-tab-purple:not(.tag-search-tab-active)     { background-color: var(--tag-purple-unselected) !important; }
 #project-editor-tag-search-tabs .filter-tab-periwinkle:not(.tag-search-tab-active) { background-color: var(--tag-periwinkle-unselected) !important; }
+#project-editor-tag-search-tabs .filter-tab-cyan:not(.tag-search-tab-active)       { background-color: var(--tag-cyan-unselected) !important; }
 
 .team-tab-active {
   background-color: var(--bg-color);

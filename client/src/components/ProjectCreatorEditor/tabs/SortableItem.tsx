@@ -49,7 +49,7 @@ export const SortableTag = ({ id, tag, onRemove }: SortTagProps) => {
       <TagElement
         selected={true}
         type={
-          ["developer", "designer", "soft", "audio"].includes(
+          ["developer", "designer", "soft", "audio", "engineer"].includes(
             tag.type.toLowerCase()
           )
             ? `${tag.type.toLowerCase()} skill`

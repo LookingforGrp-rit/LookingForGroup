@@ -1025,6 +1025,28 @@ Filters / Tags Style Rules
   }
 }
 
+.tag-cyan,
+.tag-cyan.tag-selected,
+.tag-button-cyan-selected {
+  background-color: var(--tag-cyan-selected);
+  border-color: var(--tag-cyan-selected);
+}
+
+.tag-cyan.tag-unselected,
+.tag-button-cyan-unselected {
+  background-color: var(--tag-cyan-unselected);
+  border-color: var(--tag-cyan-unselected-border);
+
+  p {
+    color: var(--tag-text-unselected-cyan);
+  }
+
+  .fa {
+    color: var(--tag-text-unselected-cyan) !important;
+  }
+}
+
+
 .tag-unselected:hover {
   p {
     color: var(--tag-text-selected);
@@ -1149,6 +1171,17 @@ Filters / Tags Style Rules
     color: var(--tag-text-selected) !important;
   }
 }
+
+.tag-cyan.tag-unselected:hover,
+.tag-button-cyan-unselected:hover {
+  background-color: var(--tag-cyan-selected);
+  border-color: var(--tag-cyan-selected);
+
+  p {
+    color: var(--tag-text-selected) !important;
+  }
+}
+
 
 .tag-button:hover {
   cursor: pointer;
@@ -1286,6 +1319,7 @@ Filters / Tags Style Rules
 #filter-tabs .filter-tab-orange.selected     { background-color: var(--tag-orange-selected);     border-color: var(--tag-orange-selected); }
 #filter-tabs .filter-tab-purple.selected     { background-color: var(--tag-purple-selected);     border-color: var(--tag-purple-selected); }
 #filter-tabs .filter-tab-periwinkle.selected { background-color: var(--tag-periwinkle-selected); border-color: var(--tag-periwinkle-selected); }
+#filter-tabs .filter-tab-cyan.selected       { background-color: var(--tag-cyan-selected);        border-color: var(--tag-cyan-selected); }
 
 
 #filter-tabs [class*="filter-tab-"]:not(.selected) {
@@ -1302,6 +1336,7 @@ Filters / Tags Style Rules
 #filter-tabs .filter-tab-orange:not(.selected)     { background-color: var(--tag-orange-unselected);     border-color: var(--tag-orange-selected); }
 #filter-tabs .filter-tab-purple:not(.selected)     { background-color: var(--tag-purple-unselected);     border-color: var(--tag-purple-selected); }
 #filter-tabs .filter-tab-periwinkle:not(.selected) { background-color: var(--tag-periwinkle-unselected); border-color: var(--tag-periwinkle-selected); }
+#filter-tabs .filter-tab-cyan:not(.selected)       { background-color: var(--tag-cyan-unselected);       border-color: var(--tag-cyan-selected); }
 
 #filter-divider {
   height: 2px;
