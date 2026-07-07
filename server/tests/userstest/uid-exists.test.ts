@@ -44,7 +44,7 @@ describe('uidExists test service,', async () => {
       bio: '',
       privacy: 'public',
       phoneNumber: null,
-      moderator: false,
+      accessLevel: 'User',
     };
 
     const result = await uidExistsService(1);
