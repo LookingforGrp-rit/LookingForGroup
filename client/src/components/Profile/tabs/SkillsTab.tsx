@@ -17,6 +17,16 @@ import { clampDragWithinContainer } from "../../ProjectCreatorEditor/tabs/dragMo
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
+// Category color for each skill tab, matching the tag/filter-tab colors.
+const skillTabColors: Record<string, string> = {
+  Developer: "yellow",
+  Designer: "red",
+  Design: "red",
+  Soft: "purple",
+  Audio: "periwinkle",
+  Engineer: "purple",
+};
+
 interface SkillsTabProps {
   profile: PendingUserProfile;
   unmodifiedProfile: MePrivate;
@@ -395,7 +405,7 @@ export const SkillsTab = ({
           key={skill}
           type="button"
           onClick={() => setCurrentSkillsTab(i)}
-          className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
+          className={`button-reset project-editor-tag-search-tab filter-tab-${skillTabColors[skill] ?? "grey"} ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
         >
           {skill}
         </button>

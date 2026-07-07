@@ -1294,7 +1294,9 @@ Filters / Tags Style Rules
 
 
 #filter-tabs [class*="filter-tab-"]:not(.selected) {
-  color: #fff !important;
+  /* --main-text is white in dark mode / black in light mode, matching the
+     dark vs light unselected-tab backgrounds. */
+  color: var(--main-text) !important;
 }
 #filter-tabs .filter-tab-blue:not(.selected)       { background-color: var(--tag-blue-unselected);       border-color: var(--tag-blue-selected); }
 #filter-tabs .filter-tab-green:not(.selected)      { background-color: var(--tag-green-unselected);      border-color: var(--tag-green-selected); }

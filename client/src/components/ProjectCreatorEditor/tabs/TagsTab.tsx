@@ -638,7 +638,7 @@ export const TagsTab = ({
               onClick={() => {
                 setCurrentTagsTab(0);
               }}
-              className={`button-reset medium-tag-tab project-editor-tag-search-tab ${currentTagsTab === 0 ? "tag-search-tab-active" : ""}`}
+              className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-blue ${currentTagsTab === 0 ? "tag-search-tab-active" : ""}`}
             //Data from genres
             >
               Medium
@@ -647,7 +647,7 @@ export const TagsTab = ({
               onClick={() => {
                 setCurrentTagsTab(1);
               }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 1 ? "tag-search-tab-active" : ""}`}
+              className={`button-reset project-editor-tag-search-tab filter-tab-green ${currentTagsTab === 1 ? "tag-search-tab-active" : ""}`}
             //Data from tags
             >
               Genre
@@ -656,7 +656,7 @@ export const TagsTab = ({
               onClick={() => {
                 setCurrentTagsTab(2);
               }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 2 ? "tag-search-tab-active" : ""}`}
+              className={`button-reset project-editor-tag-search-tab filter-tab-pink ${currentTagsTab === 2 ? "tag-search-tab-active" : ""}`}
             //Data from skills (type=Developer)
             >
               Style
