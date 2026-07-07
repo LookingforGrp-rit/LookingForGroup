@@ -1214,6 +1214,20 @@ Filters / Tags Style Rules
   overflow-x: hidden !important;
 }
 
+#filter-settings {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 20px;
+  width: 80%;
+  align-items: center;
+  justify-content: center;
+
+  .select-container {
+    width: 20%;
+  }
+}
+
 /* Category Tabs */
 #filter-tabs {
   display: flex !important;
