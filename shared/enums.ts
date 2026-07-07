@@ -112,3 +112,9 @@ export enum ProjectApprovalStatus {
   'under-review' = 'Under Review',
   'not-approved' = 'Not Approved',
 }
+
+export enum UserAccessLevel {
+  User = 'User',
+  Moderator = 'Moderator',
+  Administrator = 'Administrator'
+}

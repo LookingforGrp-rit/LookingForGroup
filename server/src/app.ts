@@ -7,6 +7,7 @@ import session, { type CookieOptions } from 'express-session';
 import morgan from 'morgan';
 import envConfig from '#config/env.ts';
 import prisma from '#config/prisma.ts';
+import adminRouter from '#routes/admin.ts';
 import googleRouter from '#routes/authentication.ts';
 import datasetsRouter from '#routes/datasets.ts';
 import imagesRouter from '#routes/images.ts';
@@ -73,6 +74,7 @@ app.use('/api/me', meRouter);
 app.use('/api/images', imagesRouter);
 app.use('/api/mod', modRouter);
 app.use('/api/google-login', googleRouter);
+app.use('/api/admin', adminRouter);
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

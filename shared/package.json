@@ -1,5 +1,6 @@
 {
   "name": "@looking-for-group/shared",
   "version": "1.0.0",
-  "types": "./types.d.ts"
+  "types": "./types.d.ts",
+  "type": "module"
 }
