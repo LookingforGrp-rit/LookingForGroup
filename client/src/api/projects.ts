@@ -148,7 +148,20 @@ export const getMemberRequest = async (
   const response = await GET(apiURL, query);
 
   if (response.error) {
-    console.log(`Error in getRequestByID: ${response.error}`);
+    console.log(`Error in getMemberRequest: ${response.error}`);
+    throw new Error(response.error);
+  }
+  return response;
+};
+
+export const getMemberRequestByProjectID = async (
+  id: number
+): Promise<ApiResponse<MemberRequests[]>> => {
+  const apiURL = `/projects/${id}/members/requests`;
+  const response = await GET(apiURL);
+
+  if (response.error) {
+    console.log(`Error in getMemberRequestByProjectID: ${response.error}`);
     throw new Error(response.error);
   }
   return response;
