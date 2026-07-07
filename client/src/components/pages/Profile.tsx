@@ -304,7 +304,7 @@ const Profile = (userProfile: any) => {
       //get followed projects to display
       const displayFollowedProjects = async () => {
         const tempFollowProjectArray = [];
-        let tempIds :Set<number> = new Set();
+        let tempIds: Set<number> = new Set();
         const projectFollowings = ((await getProjectFollowing(userID)).data?.projects);
         if (projectFollowings !== undefined) {
           for (const follower of projectFollowings) {
@@ -491,7 +491,8 @@ const Profile = (userProfile: any) => {
                     <div className="small-popup" id="report-popup">
                       <h3>Report {displayedProfile?.firstName ?? "User"} {displayedProfile?.lastName ?? ""}</h3>
                       <p>You are about to report {displayedProfile?.firstName ?? "User"}. Please provide your reasoning below.</p>
-                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline" ref={reportMessage}></input>
+                      <input type="text" placeholder="Write your reasoning here..." className="input input-multiline"
+                        ref={reportMessage}></input>
                       <div className="confirm-deny-btns">
                         <PopupButton
                           buttonId="team-delete-member-cancel-button"
@@ -795,7 +796,15 @@ const Profile = (userProfile: any) => {
               </div>
 
               <div id="skills">
-                <p id="title">Skills</p>
+
+                <span>
+                  <p id="title">Skills</p>
+                  {/* There's probably a better way than an empty element */}
+                  {isUsersProfile ?
+                    <ProfileEditPopup />
+                    : <></>}
+                </span>
+
                 <div id="skill-block">
                   {displayedProfile?.skills !== undefined && (
                     /* Will take in a list of tags the user has selected, then */

@@ -20,6 +20,10 @@ import { MePrivate } from "@looking-for-group/shared";
 const pageTabs = ["About", "Projects", "Skills", "Links"];
 //const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
 
+//Put edit image URL here too
+type buttonText = "Edit Profile" | "Edit Skills";
+let popupButtonText: buttonText = "Edit Profile";
+
 /**
  * Profile Edit button. Handles changing tabs.
  * @returns JSX Element
@@ -81,10 +85,10 @@ export const ProfileEditPopup = () => {
     handleEditorClose();
   };
 
-   const updatePendingProfile = (updatedPendingProject: PendingUserProfile) => {
-     setModifiedProfile(updatedPendingProject);
-     setSaved(false);
-   }
+  const updatePendingProfile = (updatedPendingProject: PendingUserProfile) => {
+    setModifiedProfile(updatedPendingProject);
+    setSaved(false);
+  }
 
   // Profile should be set up on intialization
   useEffect(() => {
@@ -233,7 +237,7 @@ export const ProfileEditPopup = () => {
 
   return (
     <Popup>
-      <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
+      <PopupButton buttonId="project-info-edit">{popupButtonText}</PopupButton>
       <PopupContent profilePopup={true} callback={handlePopupCallback} confirmation={!saved}>
         {confirm ? (
           <PopupContent confirmation={true} useClose={false}>
