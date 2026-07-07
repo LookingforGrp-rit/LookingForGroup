@@ -90,6 +90,7 @@ General style rules
   --tag-grey-selected: #d0d0d0;
   --tag-periwinkle-selected: #A2ADF9;
   --tag-pink-selected: #e191e8;
+  --tag-cyan-selected: #82cfba;
 
   --tag-red-unselected: #0e0e0e;
   --tag-orange-unselected: #0e0e0e;
@@ -100,6 +101,7 @@ General style rules
   --tag-grey-unselected: #0e0e0e;
   --tag-periwinkle-unselected: #0e0e0e;
   --tag-pink-unselected: #0e0e0e;
+  --tag-cyan-unselected: #0e0e0e;
 
   --tag-red-unselected-border: #ffa0b0;
   --tag-orange-unselected-border: #ffa281;
@@ -110,6 +112,7 @@ General style rules
   --tag-grey-unselected-border: #d0d0d0;
   --tag-periwinkle-unselected-border: #A2ADF9;
   --tag-pink-unselected-border: #e191e8;
+  --tag-cyan-unselected-border: #82cfba;
 
   --tag-text-selected: black;
 
@@ -125,7 +128,7 @@ General style rules
   --tag-text-unselected-grey: white;
   --tag-text-unselected-periwinkle: white;
   --tag-text-unselected-pink: white;
-
+  --tag-text-unselected-cyan: white;
   --modal-gradient-start: #0a0a0a;
   --modal-gradient-end: #2c2a3a;
 
@@ -178,6 +181,7 @@ General style rules
   --tag-grey-selected: #d0d0d0;
   --tag-periwinkle-selected: #A2ADF9;
   --tag-pink-selected: #e191e8;
+  --tag-cyan-selected: #82cfba;
 
   --tag-red-unselected: #ffd9df;
   --tag-orange-unselected: #ffdacd;
@@ -188,6 +192,7 @@ General style rules
   --tag-grey-unselected: #ececec;
   --tag-periwinkle-unselected: #d1d6fc;
   --tag-pink-unselected: #f0c8f4;
+  --tag-cyan-unselected: #c1e7dd;
 
   --tag-red-unselected-border: #ffd9df;
   --tag-orange-unselected-border: #ffdacd;
@@ -198,6 +203,7 @@ General style rules
   --tag-grey-unselected-border: #ececec;
   --tag-periwinkle-unselected-border: #d1d6fc;
   --tag-pink-unselected-border: #f0c8f4;
+  --tag-cyan-unselected-border: #c1e7dd;
 
   --tag-text-selected: black;
 
@@ -210,6 +216,8 @@ General style rules
   --tag-text-unselected-grey: black;
   --tag-text-unselected-periwinkle: black;
   --tag-text-unselected-pink: black;
+  --tag-text-unselected-cyan: black;
+  
 
   --modal-gradient-start: #ffffff;
   --modal-gradient-end: #d3d3ff;

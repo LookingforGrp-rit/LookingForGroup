@@ -2224,6 +2224,11 @@ New Profile page style rules
   border: 2px solid var(--tag-periwinkle-selected);
 }
 
+.label-cyan {
+  background-color: var(--tag-cyan-selected);
+  border: 2px solid var(--tag-cyan-selected);
+}
+
 /* #skill-tags-container .tag-button {
   margin:0;
 }
