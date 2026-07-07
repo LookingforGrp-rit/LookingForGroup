@@ -40,11 +40,14 @@ export const LinksTab: React.FC<LinksTabProps> = ({
   updatePendingProfile,
 }) => {
 
-  profileAfterLinkChanges = structuredClone(profile);
+  const [profileAfterLinkChanges, setLocalProfile] = useState(profile)
 
   // complete list of socials
   const [allSocials, setAllSocials] = useState<Social[]>([]);
 
+  useEffect(() =>{
+    setLocalProfile(structuredClone(profile))
+  }, [profile]);
 
   // Get social option data
   useEffect(() => {
@@ -203,44 +206,45 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     // Could be as simple as checking the URL matches the social media
                     // But since 'Other' is an option, might be good to just find some
                     // external list of suspicious sites and make sure it's not one of those.
-                    const tempSocials = profileAfterLinkChanges.socials;
+                    const tempSocials = [...profileAfterLinkChanges.socials];
                     const inputValue = e.target.value;
                     tempSocials[index] = {
                       ...tempSocials[index],
                       url: url + inputValue
-                  };
+                    };
 
                     if (inputValue.trim() !== "") {
                       if ("localId" in social) {
-                  dataManager.addSocial({
-                    id: {
-                      type: "local",
-                      value: social.localId ?? ++localIdIncrement
-                    },
-                    data: tempSocials[index] as AddUserSocialInput
-                  })
-                }
-                else {
-                  dataManager.updateSocial({
-                    id: {
-                      type: "canon",
-                      value: social.websiteId
-                    },
-                    data: {
-                      url: tempSocials[index].url
+                        dataManager.addSocial({
+                          id: {
+                            type: "local",
+                            value: social.localId ?? ++localIdIncrement
+                          },
+                          data: tempSocials[index] as AddUserSocialInput
+                        })
+                      }
+                      else {
+                        dataManager.updateSocial({
+                          id: {
+                            type: "canon",
+                            value: social.websiteId
+                          },
+                          data: {
+                            url: tempSocials[index].url
+                          }
+                        })
+                      }
                     }
-                  })
-                }
-                    }
-                updatePendingProfile({...profileAfterLinkChanges, socials: tempSocials });
+                    console.log("PATCHING SOCIAL:", tempSocials[index]);
+                    updatePendingProfile({ ...profileAfterLinkChanges, socials: tempSocials });
                   }}
-                onBlur={(e) => {
-                  // Automatically clean empty entries when the user clicks away
-                  const inputValue = e.target.value;
-                  if (inputValue.trim() === "") {
-                    handleDeleteSocial(index);
-                  }
-                }}
+                  onBlur={(e) => {
+                    // Automatically clean empty entries when the user clicks away
+                    const inputValue = e.target.value;
+                    if (inputValue.trim() === "") {
+                      handleDeleteSocial(index);
+                    }
+                  }}
                 />
                 <button
                   type="button"
