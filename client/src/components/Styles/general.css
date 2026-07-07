@@ -1325,7 +1325,7 @@ Page popup style rules
     transition: 0.2s;
     padding: 1px;
     /* margin: 14px 38px; */
-    width: min(20%, 30%);
+    width: 15%;
     text-align: center;
   }
 
@@ -1359,7 +1359,7 @@ Page popup style rules
 
   #selected-section {
     max-width: 859px;
-    max-height: 178px;
+    max-height: 160px;
     width: 56.8vw;
     height: 18.1vh;
     padding: min(1.63vh, 16px) min(1.98vw, 30px);
@@ -1386,6 +1386,8 @@ Page popup style rules
 
 @media screen and (max-width: 1180px) {
   .popup #filters-popup {
+    max-width: 88vw;
+
     #filter-tabs {
       height: auto;
       width: 100%;
@@ -1394,7 +1396,7 @@ Page popup style rules
       overflow-x: scroll;
       scroll-behavior: smooth;
       scrollbar-width: none;
-      justify-content: flex-start;
+      justify-content: left !important;;
       column-gap: 5vw;
     }
   }
