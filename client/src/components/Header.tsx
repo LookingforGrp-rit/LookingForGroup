@@ -74,6 +74,8 @@ export const Header: React.FC<HeaderProps> = ({
   //Text for light mode toggle button should be opposite of current theme
   const [modeToggle, setModeToggle] = useState(theme === 'dark' ? 'Light Mode' : 'Dark Mode');
 
+  const [active, setActive] = useState(false);
+
   const navigate = useNavigate(); // Hook for navigation
 
   // Fetch current user info on mount
@@ -176,7 +178,7 @@ export const Header: React.FC<HeaderProps> = ({
   }, [theme]);
 
   return (
-    <div id="header">
+    <div id="header" className={active ? 'active' : ''}>
       {/* Conditional rendering for search bar */}
       {(!hideSearchBar) && (
         <div id="header-searchbar">
@@ -206,9 +208,9 @@ export const Header: React.FC<HeaderProps> = ({
         <NotificationsDropdown enabled={Boolean(userId && userId > 0)} theme={theme} />
 
         {/* This is the top-right dropdown menu. */}
-        <Dropdown>
+        <Dropdown callback={() => setActive(false)}>
           {/* This is the button to open the dropdown menu */}
-          <DropdownButton buttonId="profile-btn">
+          <DropdownButton buttonId="profile-btn" callback={() => setActive(!active)}>
             {(loggedIn) ? (
               <img
                 src={`${profileImg || profilePicture}`}
