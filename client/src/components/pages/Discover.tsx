@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent } from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent} from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
@@ -52,6 +52,8 @@ export const DiscoverPage = () => {
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = <DiscoverCarousel dataList={heroProjectList} />
+
+  const [loadObj, setLoadObj] = useState<React.ReactElement>(<p>a</p>);
 
   // --------------------
   // Helper functions
@@ -228,6 +230,10 @@ export const DiscoverPage = () => {
       }
     }
 
+    setLoadObj(returnedProjects.length < count ?
+      <p style={{color: 'red'}}>No More Projects!</p> : 
+      <button id='btn-loadmore' onClick={setupProjectData}>Load More Projects</button>);
+
     setFullProjectList(projects);
     setFilteredProjectList(projects);
 
@@ -339,6 +345,7 @@ export const DiscoverPage = () => {
 
   useEffect(() => {
     setupProjectData();
+    setLoadObj(<button id='btn-loadmore' onClick={setupProjectData}>Load More Projects</button>);
   }, []);
 
   /**
@@ -479,7 +486,7 @@ export const DiscoverPage = () => {
           {discoverPanelContents}
         </div>
 
-        <button id='btn-loadmore' onClick={setupProjectData}>Load More Projects</button>
+        {loadObj}
       </main>
       <ToTopButton />
     </div>
