@@ -1,6 +1,6 @@
-import { CreateSkillInput, Skill } from '@looking-for-group/shared';
+import type { CreateSkillInput, Skill } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type CreateSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 

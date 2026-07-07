@@ -1,5 +1,5 @@
-import { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
-import { NextFunction, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { NextFunction, Response } from 'express';
 import getSkillService from '#services/datasets/get-skill.ts';
 
 type ParameterLocation = 'path' | 'body';

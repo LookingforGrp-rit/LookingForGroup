@@ -4609,18 +4609,22 @@ paths:
         - Admin
       description: Changes a user's access level from 'User' to 'Moderator'
       parameters:
-        - in: body
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID of the user being promoted.
         - in: query
           name: devId
           required: true
           schema:
             type: integer
           description: Id to be used as administrator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: number
+                  example: 1865
       responses:
         '200':
           description: User promoted successfully
@@ -4653,18 +4657,22 @@ paths:
         - Admin
       description: Changes a user's access level from 'Moderator' to 'User'
       parameters:
-        - in: body
-          name: id
-          required: true
-          schema:
-            type: integer
-          description: ID of the user being demoted.
         - in: query
           name: devId
           required: true
           schema:
             type: integer
           description: Id to be used as administrator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: number
+                  example: 1865
       responses:
         '200':
           description: Moderator demoted successfully
@@ -4708,7 +4716,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#components/schemas/Tag'
+              $ref: '#components/schemas/TagInput'
       responses:
         '200':
           description: Tag created successfully
@@ -4753,7 +4761,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#components/schemas/Tag'
+              $ref: '#components/schemas/TagInput'
       responses:
         '200':
           description: Tag modified successfully
@@ -5068,6 +5076,10 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectVideoInput'
     CreateMemberRequestInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateMemberRequestInput'
+    TagInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/TagInput'
+    SkillInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/SkillInput'
 
     ErrorMessage:
       type: object

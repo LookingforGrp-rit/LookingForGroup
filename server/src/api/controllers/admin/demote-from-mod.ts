@@ -1,4 +1,4 @@
-import { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { demoteModService } from '#services/admin/demote-from-mod.ts';
 

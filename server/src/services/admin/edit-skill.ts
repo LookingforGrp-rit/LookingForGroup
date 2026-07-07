@@ -1,6 +1,6 @@
-import { EditSkillInput, Skill } from '@looking-for-group/shared';
+import type { EditSkillInput, Skill } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type EditSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 

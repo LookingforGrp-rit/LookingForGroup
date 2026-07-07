@@ -1,10 +1,10 @@
-import {
+import type {
   ApiResponse,
   AuthenticatedRequest,
   CreateSkillInput,
   SkillCategory,
   SkillType,
-} from '@looking-for-group/shared';
+} from '@looking-for-group/shared/types.d.ts';
 import type { Response } from 'express';
 import { createSkillService } from '#services/admin/create-skill.ts';
 

@@ -1,6 +1,6 @@
-import { CreateTagInput, Tag } from '@looking-for-group/shared';
+import type { CreateTagInput, Tag } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type CreateTagServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 

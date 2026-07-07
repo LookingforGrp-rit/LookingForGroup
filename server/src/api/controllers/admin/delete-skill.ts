@@ -1,4 +1,4 @@
-import { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
 import type { Response } from 'express';
 import { deleteSkillFromSiteService } from '#services/admin/delete-skill.ts';
 

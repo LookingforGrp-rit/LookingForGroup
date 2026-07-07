@@ -1,5 +1,5 @@
 import prisma from '#config/prisma.ts';
-import { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DeleteSkillServiceError = ServiceErrorSubset<'INTERNAL_ERROR'>;
 type DeleteSkillServiceSuccess = ServiceSuccessSubset<'NO_CONTENT'>;

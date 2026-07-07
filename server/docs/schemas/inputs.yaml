@@ -271,3 +271,31 @@ components:
           type: number
         message:
           type: string
+
+    TagInput:
+      type: object
+      properties:
+        label:
+          type: string
+        type:
+          $ref: 'enums.yaml#/components/schemas/TagType'
+        category:
+          $ref: 'enums.yaml#/components/schemas/TagCategory'
+      example:
+        label: Indie
+        type: Creative
+        category: Game
+
+    SkillInput:
+      type: object
+      properties:
+        label:
+          type: string
+        type:
+          $ref: 'enums.yaml#/components/schemas/SkillType'
+        category:
+          $ref: 'enums.yaml#/components/schemas/SkillCategory'
+      example:
+        label: C++
+        type: Developer
+        category: Programming Language

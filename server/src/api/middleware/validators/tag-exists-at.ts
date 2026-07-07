@@ -1,5 +1,5 @@
-import { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
-import { NextFunction, Response } from 'express';
+import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/shared';
+import type { NextFunction, Response } from 'express';
 import getTagService from '#services/datasets/get-tag.ts';
 
 type ParameterLocation = 'path' | 'body';

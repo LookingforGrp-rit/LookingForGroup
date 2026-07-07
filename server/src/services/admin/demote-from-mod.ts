@@ -1,5 +1,5 @@
 import prisma from '#config/prisma.ts';
-import { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
 type DemoteModServiceError = ServiceErrorSubset<
   'INTERNAL_ERROR' | 'CONFLICT' | 'FORBIDDEN' | 'NOT_FOUND'

@@ -19,8 +19,8 @@ const router = Router();
 
 router.use(requiresLogin, injectCurrentUser, authenticated(requiresAdmin));
 
-router.patch('/promote', userExistsAt('body', 'id'), authenticated(promoteUserToMod));
-router.patch('/demote', userExistsAt('body', 'id'), authenticated(demoteMod));
+router.patch('/promote', userExistsAt('body', 'userId'), authenticated(promoteUserToMod));
+router.patch('/demote', userExistsAt('body', 'userId'), authenticated(demoteMod));
 
 router.post('/tags', authenticated(createTag));
 router.patch('/tags/:id', authenticated(tagExistsAt('path', 'id')), authenticated(editTag));

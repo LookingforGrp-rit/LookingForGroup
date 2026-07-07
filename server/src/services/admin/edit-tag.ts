@@ -1,6 +1,6 @@
-import { Tag, EditTagInput } from '@looking-for-group/shared';
+import type { Tag, EditTagInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
-import { ServiceErrorSubset } from '#services/service-outcomes.ts';
+import type { ServiceErrorSubset } from '#services/service-outcomes.ts';
 
 type EditTagServiceError = ServiceErrorSubset<'INTERNAL_ERROR' | 'NOT_FOUND'>;
 
