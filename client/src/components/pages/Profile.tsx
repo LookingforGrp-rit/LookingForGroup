@@ -816,6 +816,9 @@ const Profile = (userProfile: any) => {
                         case "Audio":
                           category = "periwinkle";
                           break;
+                        case "Engineer":
+                          category = "cyan";
+                          break;
                         default:
                           category = "grey";
                       }
