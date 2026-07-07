@@ -10,6 +10,28 @@ components:
         - Soft
       example: Developer
 
+    SkillCategory:
+      type: string
+      enum:
+        - Discipline
+        - Framework
+        - Software
+        - Coding Language
+        - Operating System
+        - Game Engine
+        - Design Software
+        - Art and Animation
+        - Photo Editing
+        - Video Software
+        - DAW/Audio Editor
+        - Notation
+        - Middleware
+        - Personal
+        - Team
+        - Engineering Software
+        - Hardware
+        - Other
+
     TagType:
       type: string
       enum:
@@ -24,6 +46,21 @@ components:
         - Soft Skill
         - Purpose
       example: Creative
+
+    TagCategory:
+      type: string
+      enum:
+        - Game
+        - Story
+        - Music
+        - Visual
+        - Film/Video
+        - Unity
+        - Unreal Engine
+        - Godot
+        - Twine
+        - Monogame
+        - Other
 
     RitStatus:
       type: string

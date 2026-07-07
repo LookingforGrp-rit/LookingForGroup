@@ -8,6 +8,7 @@ import type {
   JobCompensation,
   UserPreview,
   Visibility,
+  UserAccessLevel,
 } from '@looking-for-group/shared';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import prisma from '#config/prisma.ts';
@@ -122,7 +123,7 @@ const prismaUser = {
   funFact: '',
   bio: '',
   phoneNumber: null,
-  moderator: false,
+  accessLevel: 'User' as UserAccessLevel,
 };
 
 vi.mock('#services/transformers/projects/parts/project-job.ts', () => ({

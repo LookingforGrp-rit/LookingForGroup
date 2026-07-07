@@ -46,17 +46,17 @@
 
 .row-1 {
   grid-area: row1;
-  grid-template-columns: 4fr 4fr 2fr;
+  grid-template-columns: 4fr 4fr 3fr;
 }
 
 .row-2 {
   grid-area: row2;
-  grid-template-columns: 4fr 4fr 2fr;
+  grid-template-columns: 4fr 4fr 3fr;
 }
 
 .row-3 {
   grid-area: row3;
-  grid-template-columns: 4fr 4fr 2fr;
+  grid-template-columns: 1.12fr 2fr;
 }
 
 #profile-editor-add-image {
@@ -72,7 +72,7 @@
   width: min(50vw, 250px);
   height: min(50vw, 250px);
   aspect-ratio: 1 / 1;
-  
+
   img {
     font-size: 30px;
   }
@@ -134,7 +134,7 @@ select {
     justify-content: space-between;
 
     .label-input-box {
-      width: 30%;
+      width: 100%;
     }
   }
 
@@ -197,9 +197,9 @@ select {
   }
 
   /* Input boxes */
-  .about-row.row-1 > *,
-  .about-row.row-2 > *,
-  .about-row.row-3 > * {
+  .about-row.row-1>*,
+  .about-row.row-2>*,
+  .about-row.row-3>* {
     width: 100%;
   }
 
@@ -212,11 +212,11 @@ select {
   }
 
   /* Input boxes */
-  #edit-profile-section-2 > * {
+  #edit-profile-section-2>* {
     width: 95%;
   }
 
-  .edit-profile-body.about #edit-profile-section-3 > * {
+  .edit-profile-body.about #edit-profile-section-3>* {
     width: 95%;
   }
 }

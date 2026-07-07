@@ -447,7 +447,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                             {filterPopupTabs.map((tab, index) => (
                                                 <a
                                                     key={`${tab.categoryName}-${index}`}
-                                                    className={`filter-tab ${index === activeTabId ? 'selected' : ''}`}
+                                                    className={`filter-tab filter-tab-${tab.color} ${index === activeTabId ? 'selected' : ''}`}
                                                     onClick={() => {
                                                         //const element = e.target as HTMLElement;
 

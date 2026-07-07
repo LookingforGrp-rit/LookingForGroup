@@ -17,6 +17,14 @@ import { Fragment } from "react";
 // --- holds the possible tabs from tag types ---
 const tagTabs = ['Medium', 'Genre', 'Style', 'Game Engine'] as TagType[]
 
+// Category color for each tag tab, matching the tag/filter-tab colors.
+const tagTabColors: Record<string, string> = {
+  Medium: 'blue',
+  Genre: 'green',
+  Style: 'pink',
+  'Game Engine': 'orange',
+};
+
 let projectAfterTagsChanges: PendingProject;
 // let localIdIncrement = 0;
 
@@ -566,7 +574,7 @@ export const TagsTab = ({
             {tagTabs.map((type, index) => 
             <button
             onClick={() => setCurrentTagsTab(index)}
-            className={`button-reset medium-tag-tab project-editor-tag-search-tab ${currentTagsTab === index ? "tag-search-tab-active" : ""}`}>
+            className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index ? "tag-search-tab-active" : ""}`}>
               {type}
             </button>)}
           </div>

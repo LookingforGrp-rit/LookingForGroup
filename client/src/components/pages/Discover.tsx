@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent } from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent} from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
@@ -62,6 +62,8 @@ export const DiscoverPage = () => {
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = <DiscoverCarousel dataList={heroProjectList} />
+
+  const [loadObj, setLoadObj] = useState<React.ReactElement>(<p>a</p>);
 
   // --------------------
   // Helper functions
@@ -243,6 +245,10 @@ export const DiscoverPage = () => {
       }
     }
 
+    setLoadObj(returnedProjects.length < count ?
+      <p style={{color: 'red'}}>No More Projects!</p> : 
+      <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
+
     if (invert) {
       setFullProjectList(projects.toReversed());
       setFilteredProjectList(projects.toReversed());
@@ -364,6 +370,7 @@ export const DiscoverPage = () => {
 
   useEffect(() => {
     sortProjects();
+    setLoadObj(<button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
   }, []);
 
   const sortProjects = useCallback((newSortMode?: sortModes) => {
@@ -538,7 +545,7 @@ export const DiscoverPage = () => {
           {discoverPanelContents}
         </div>
 
-        <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>
+        {loadObj}
       </main>
       <ToTopButton />
     </div>
