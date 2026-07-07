@@ -511,10 +511,10 @@ export const TeamTab = ({
         messageText
       ]);
 
-      const pendingRole = allRoles.find((r) => r.label === "Pending") ?? currentMember.role;
+      // const pendingRole = allRoles.find((r) => r.label === "Pending") ?? currentMember.role;
       const localProjectMember: PendingProjectMember = {
         user: currentMember.user,
-        role: pendingRole,
+        role: currentMember.role,
         localId: (currentMember as PendingProjectMember).localId ?? ++localIdIncrement,
       };
 
@@ -1783,6 +1783,14 @@ export const TeamTab = ({
           className={`button-reset project-editor-team-tab ${currentTeamTab === 1 ? "team-tab-active" : ""}`}
         >
           Open Positions {isOpenPositionsUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
+        </button>
+        <button
+          onClick={() => {
+            setCurrentTeamTab(2); /*setTeamTabContent(openPositionsContent);*/
+          }}
+          className={`button-reset project-editor-team-tab ${currentTeamTab === 2 ? "team-tab-active" : ""}`}
+        >
+          Pending Requests {isOpenPositionsUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
         </button>
       </div>
 
