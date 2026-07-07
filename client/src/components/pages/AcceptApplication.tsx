@@ -133,11 +133,19 @@ const AcceptApplication = () => {
 
         const result = await updateMemberRequest(
             requestIdNum,
-            { newStatus }
+            { requestStatus: newStatus }
         );
 
         if (result.error) {
             setError(result.error);
+            return;
+        }
+
+        // return to previous page if possible when declined
+        const from = location.state?.from;
+        const fromPath = typeof from === 'string' ? from : from?.pathname + from?.search;
+        if (fromPath && newStatus === 'Declined') {
+            navigate(fromPath, { replace: true });
             return;
         }
 

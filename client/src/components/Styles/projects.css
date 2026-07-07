@@ -49,7 +49,8 @@ Project Panel component style rules
 
 .masonry>* .profile-panel {
   min-height: fit-content;
-  max-height: calc(100% + 20px + 1em);  /* offset padding */
+  max-height: calc(100% + 20px + 1em);
+  /* offset padding */
 }
 
 /* not in use
@@ -596,8 +597,9 @@ Project Creator and Editor Popup style rules
     color: var(--primary-color);
     margin: 0 0 15px;
   }
-  p, button
-  {
+
+  p,
+  button {
     font-size: 1.125rem;
   }
 
@@ -1262,6 +1264,7 @@ Project Creator and Editor Popup style rules
   flex-direction: row;
   gap: 20px;
   padding-bottom: 20px;
+
   #project-editor-save {
     margin-bottom: 28px;
   }
@@ -1365,12 +1368,17 @@ Project Creator and Editor Popup style rules
   box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
 }
 
+/* .project-editor-project-applications .project-editor-project-member {
+  cursor: pointer;
+} */
+
 .project-editor-project-header {
   margin: 0;
   margin-bottom: 25px;
 }
 
-.project-editor-project-invites, .project-editor-project-applications {
+.project-editor-project-invites,
+.project-editor-project-applications {
   display: flex;
   flex-wrap: wrap;
   flex: 1;
@@ -1378,6 +1386,22 @@ Project Creator and Editor Popup style rules
   justify-content: flex-start;
   gap: 10px;
   margin: 25px 0;
+}
+
+#project-editor-project-requests .delete-invite-btn, 
+#project-editor-project-requests .next-btn {
+  padding: 4px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+}
+
+#project-editor-project-requests .next-btn {
+  color: var(--main--text);
+  font-size: 1.2em;
 }
 
 .edit-project-member-button {
@@ -1722,7 +1746,8 @@ Project Creator and Editor Popup style rules
   }
 }
 
-#team-positions-popup-list-header, .project-editor-project-header {
+#team-positions-popup-list-header,
+.project-editor-project-header {
   text-align: left;
   font-size: 1.25rem;
   font-weight: 600;
@@ -3206,11 +3231,11 @@ Project Carousel style rules
     transform: scale(1.2);
   }
 
-  .carousel-btn-left svg{
+  .carousel-btn-left svg {
     transform: rotate(90deg);
   }
 
-  .carousel-btn-right svg{
+  .carousel-btn-right svg {
     transform: rotate(-90deg);
   }
 
@@ -3421,7 +3446,7 @@ Project Carousel style rules
     margin-bottom: 5px;
   }
 
-  #project-request-label{
+  #project-request-label {
     width: 80%;
     text-align: center;
   }
@@ -3456,7 +3481,7 @@ Project Carousel style rules
   }
 }
 
-@media only screen{
+@media only screen {
   .popup:has(#project-request-review) {
     width: min-content;
     min-width: 65%;
@@ -3464,7 +3489,7 @@ Project Carousel style rules
     display: flex;
     align-content: center;
     vertical-align: center;
-    margin:250px;
+    margin: 250px;
   }
 }
 
@@ -4818,7 +4843,7 @@ My projects page style rules
     width: calc(100% - 40px);
   }
 
-    /* Hide table headers (but not display: none;, for accessibility) */
+  /* Hide table headers (but not display: none;, for accessibility) */
   .responsive-table thead tr {
     position: absolute;
     top: -9999px;

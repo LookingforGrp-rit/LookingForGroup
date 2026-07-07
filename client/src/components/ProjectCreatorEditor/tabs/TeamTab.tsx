@@ -1,6 +1,6 @@
 // --- Imports ---
 import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
 import { DeleteProjectButton } from "../DeleteProjectButton";
 import profileImage from "../../../images/lfrog.png";
@@ -16,7 +16,7 @@ import {
   getCurrentAccount,
 } from "../../../api/users";
 import {
-  getMemberRequest
+  getMemberRequestByProjectID
 } from "../../../api/projects"
 import {
   ProjectJob,
@@ -28,6 +28,7 @@ import {
   JobCompensation,
   Role,
   ProjectWithFollowers,
+  MemberRequests,
 } from "@looking-for-group/shared";
 import {
   JobAvailability as JobAvailabilityEnums,
@@ -129,6 +130,8 @@ export const TeamTab = ({
   const [searchableUsers, setSearchableUsers] = useState<
     UserSearchableFields[]
   >([]);
+  // Hook to access the current location
+  const location = useLocation();
 
   // tracking team changes
   const projectAfterTeamChanges: PendingProject = structuredClone(projectData);
@@ -183,7 +186,8 @@ export const TeamTab = ({
   const [messageText, setMessageText] = useState("");
 
   // Pending member requests
-  const [memberRequests, setMembeRequests] = useState([]);
+  const [pendingInvitations, setPendingInvitations] = useState<MemberRequests[]>([]);
+  const [pendingApplications, setPendingApplications] = useState<MemberRequests[]>([]);
 
   // check if a value is null or undefined
   const isNullOrUndefined = (value: unknown | null | undefined) => {
@@ -212,6 +216,11 @@ export const TeamTab = ({
       );
     });
   }, [projectData?.members, unmodifiedProject?.members]);
+
+  // Check if the Pending Requests tab is unsaved
+  const isPendingRequestsUnsaved = useMemo(() => {
+    return false;
+  }, []);
 
   // Check if Open Positions is unsaved
   const isOpenPositionsUnsaved = useMemo(() => {
@@ -311,7 +320,7 @@ export const TeamTab = ({
   }, []);
 
   // Assign active buttons in Open Positions
-  const isTeamTabOpen = currentTeamTab === 1;
+  const isTeamTabOpen = currentTeamTab === 2;
   useEffect(() => {
     // show first job in view by default
     if (!currentJob) return setCurrentJob(projectAfterTeamChanges.jobs[0]);
@@ -376,9 +385,24 @@ export const TeamTab = ({
     [projectAfterTeamChanges.jobs]
   );
 
-  const getPendingMemberRequests = async () => {
+  const getPendingRequests = async () => {
+    if (!projectData.projectId) return;
 
+    try {
+      const requests = await getMemberRequestByProjectID(projectData.projectId);
+      if (requests.data) {
+        // get pending requests only
+        setPendingInvitations(requests.data.filter((r) => r.requestStatus === 'Pending' && r.sentFromProject === true));
+        setPendingApplications(requests.data.filter((r) => r.requestStatus === 'Pending' && r.sentFromProject === false));
+      }
+    } catch (e) {
+      console.log('Failed to fetch pending member requests.');
+    }
   };
+  // Load pending member requests
+  useEffect(() => {
+    getPendingRequests();
+  }, []);
 
   // --- Member handlers ---
   /**
@@ -1767,40 +1791,38 @@ export const TeamTab = ({
         {/* List out project requests */}
         <p className="project-editor-project-header">Invitations</p>
         <div className="project-editor-project-invites">
-          {projectAfterTeamChanges.members.map((member) => (
-            <div
-              key={member.user?.userId}
-              className="project-editor-project-member"
-            >
-              <img
-                className="project-member-image"
-                src={member.user?.profileImage ?? profileImage}
-                alt="profile image"
-                title={"Profile picture"}
-                // Cannot use usePreloadedImage function because this is in a callback
-                onError={(e) => {
-                  const profileImg = e.target as HTMLImageElement;
-                  profileImg.src = profileImage;
-                }}
-              />
-              <div className="project-editor-project-member-info">
-                <div className="project-editor-project-member-name">
-                  {member.user?.firstName} {member.user?.lastName}
-                </div>
-                <div className="project-editor-project-member-role project-editor-extra-info">
-                  {(member.role as Role).label}
-                </div>
-              </div>
-              {/* ALWAYS SHOW EDIT BUTTON */}
-              {
-                /*((m.permissions < permissions) || (modifiedProject.userId === m.userId)) && (*/
-                <Popup>
-                  <PopupButton
-                    className="edit-project-member-button"
-                    callback={() => {
-                      setCurrentMember(structuredClone(member));
-                    }}
+          {pendingInvitations.length != 0
+            ? pendingInvitations
+              .map((pI) => {
+                const member = allUsers.find((u) => u.userId === pI.prospectiveMemberId);
+                const role = allRoles.find((r) => r.roleId === pI.roleId);
+                if (!member || !role) return;
+
+                return (
+                  <div
+                    key={member.userId}
+                    className="project-editor-project-member"
                   >
+                    <img
+                      className="project-member-image"
+                      src={member.profileImage ?? profileImage}
+                      alt="profile image"
+                      title={"Profile picture"}
+                      // Cannot use usePreloadedImage function because this is in a callback
+                      onError={(e) => {
+                        const profileImg = e.target as HTMLImageElement;
+                        profileImg.src = profileImage;
+                      }}
+                    />
+                    <div className="project-editor-project-member-info">
+                      <div className="project-editor-project-member-name">
+                        {member.firstName} {member.lastName}
+                      </div>
+                      <div className="project-editor-project-member-role project-editor-extra-info">
+                        {role.label}
+                      </div>
+                    </div>
+                    {/* <button type="button" className="edit-project-member-button">
                     <ThemeIcon
                       id={"pencil"}
                       width={11}
@@ -1808,207 +1830,70 @@ export const TeamTab = ({
                       className={"gradient-color-fill edit-project-member-icon"}
                       ariaLabel={"edit"}
                     />
-                  </PopupButton>
-                  {/* Edit member button */}
-                  <PopupContent useClose={false}>
-                    <div id="project-team-edit-member-title">Edit Member</div>
-                    <div
-                      id="project-team-edit-member-card"
-                      className="project-editor-project-member"
+                  </button> */}
+                    <button
+                      type="button"
+                      className="delete-invite-btn"
                     >
-                      <img
-                        className="project-member-image"
-                        src={member.user?.profileImage ?? profileImage}
-                        alt="profile image"
-                        // default profile picture if user image doesn't load
-                        onError={(e) => {
-                          const profileImg = e.target as HTMLImageElement;
-                          profileImg.src = profileImage;
-                        }}
-                      />
-                      <div className="project-editor-project-member-name">
-                        {`${member.user?.firstName} ${member.user?.lastName}`}
-                      </div>
-                    </div>
-                    <div id="project-team-add-member-role">
-                      <label>Role</label>
-                      <Select>
-                        <SelectButton
-                          placeholder=""
-                          initialVal={member.role?.label}
-                          className=""
-                          type="dropdown"
-                          searchable={true}
-                        />
-                        <SelectOptions
-                          callback={(e) => {
-                            // get role with matching name (for id)
-                            const role = allRoles.find(
-                              (role) =>
-                                role.label ===
-                                (e.target as HTMLSelectElement).value
-                            );
-
-                            // update current member
-                            setCurrentMember({
-                              ...currentMember!, // on edit button click, currentMember is defined
-                              role: role as Role,
-                            });
-                          }}
-                          options={allRoles.map((role) => {
-                            return {
-                              markup: <>{role.label}</>,
-                              value: role.label,
-                              disabled: false,
-                            };
-                          })}
-                        />
-                      </Select>
-                    </div>
-                    {/* Action buttons */}
-                    <div className="project-editor-button-pair">
-                      {/* Save Button */}
-                      <PopupButton
-                        buttonId="team-edit-member-save-button"
-                        callback={() => {
-                          // TODO error messages
-                          if (!currentMember) return;
-                          if (isNullOrUndefined(currentMember.user)) return;
-
-                          // update member in data manager
-                          dataManager?.updateMember({
-                            id: {
-                              type:
-                                "localId" in currentMember ? "local" : "canon",
-                              value: currentMember.user?.userId,
-                            },
-                            data: {
-                              roleId: currentMember.role?.roleId,
-                            },
-                          });
-
-                          // update team changes array
-                          projectAfterTeamChanges.members =
-                            projectAfterTeamChanges.members.map((member) => {
-                              // if this member matches the updated member
-                              if (currentMember.user?.userId === member.user?.userId) {
-                                // update role
-                                return {
-                                  ...member,
-                                  role:
-                                    currentMember.role,
-                                } as PendingProjectMember;
-                              } else {
-                                // if it doesn't match, do nothing to the member
-                                return member;
-                              }
-                            })
-
-                          //update the temporary changes made to edit member popup roles, if pressed x for main save, it will still undo everything else
-                          updatePendingProject(projectAfterTeamChanges);
-
-                        }}
-                      >
-                        Save
-                      </PopupButton>
-
-                      {/* Delete User button */}
-                      <Popup>
-                        <PopupButton className="delete-button">
-                          Delete
-                        </PopupButton>
-                        <PopupContent>
-                          <div id="project-team-delete-member-title">
-                            Delete Member
-                          </div>
-                          <div
-                            id="project-team-delete-member-text"
-                            className="project-editor-extra-info"
-                          >
-                            Are you sure you want to delete{" "}
-                            <span className="project-info-highlight">
-                              {member.user?.firstName} {member.user?.lastName}
-                            </span>{" "}
-                            from the project? This action cannot be undone.
-                          </div>
-                          <div className="project-editor-button-pair">
-                            <PopupButton
-                              className="delete-button"
-                              callback={() => {
-                                if (!currentMember) {
-                                  // TODO: error message here
-                                  return;
-                                };
-                                if (isNullOrUndefined(currentMember.user)) {
-                                  // TODO: error message here
-                                  return;
-                                };
-
-                                if ("localId" in currentMember) {
-                                  dataManager?.deleteMember({
-                                    id: {
-                                      type: "local",
-                                      value: currentMember.user.userId,
-                                    },
-                                    data: null,
-                                  });
-                                } else {
-                                  dataManager?.deleteMember({
-                                    id: {
-                                      type: "canon",
-                                      value: currentMember.user.userId,
-                                    },
-                                    data: null,
-                                  });
-                                }
-                                projectAfterTeamChanges.members =
-                                  projectAfterTeamChanges.members.filter(
-                                    (member) =>
-                                      member.user?.userId !==
-                                      currentMember.user?.userId
-                                  )
-                                updatePendingProject(projectAfterTeamChanges)
-                              }}
-                            >
-                              Delete
-                            </PopupButton>
-                            <PopupButton
-                              buttonId="team-delete-member-cancel-button"
-                              className="button-reset"
-                            >
-                              Cancel
-                            </PopupButton>
-                          </div>
-                        </PopupContent>
-                      </Popup>
-                    </div>
-
-                    {/* Cancel Edit button */}
-                    <PopupButton
-                      buttonId="team-edit-member-cancel-button"
-                      className="button-reset"
-                      callback={() => {
-                        setCurrentMember(
-                          projectAfterTeamChanges.members.find(
-                            (member) =>
-                              member.user?.userId === currentMember?.user?.userId
-                          )
-                        );
-                      }}
-                    >
-                      Cancel
-                    </PopupButton>
-                  </PopupContent>
-                </Popup>
-                /* ) */
-              }
-            </div>
-          ))}
-          {addMemberButton}
+                      <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+                    </button>
+                  </div>
+                )
+              })
+              // {addMemberButton}
+            : <div>No Existing Invitations</div>
+          }
         </div>
         <div className="project-editor-project-header">Applications</div>
         <div className="project-editor-project-applications">
-          No Pending Applications
+          {/* No Pending Applications */}
+          {pendingApplications.length != 0
+            ? pendingApplications
+              .map((pA) => {
+                const member = allUsers.find((u) => u.userId === pA.prospectiveMemberId);
+                const role = allRoles.find((r) => r.roleId === pA.roleId);
+                if (!member || !role) return;
+
+                return (
+                  <div
+                    key={member.userId}
+                    className="project-editor-project-member"
+                  >
+                    <img
+                      className="project-member-image"
+                      src={member.profileImage ?? profileImage}
+                      alt="profile image"
+                      title={"Profile picture"}
+                      // Cannot use usePreloadedImage function because this is in a callback
+                      onError={(e) => {
+                        const profileImg = e.target as HTMLImageElement;
+                        profileImg.src = profileImage;
+                      }}
+                    />
+                    <div className="project-editor-project-member-info">
+                      <div className="project-editor-project-member-name">
+                        {member.firstName} {member.lastName}
+                      </div>
+                      <div className="project-editor-project-member-role project-editor-extra-info">
+                        {role.label}
+                      </div>
+                    </div>
+                    <button
+                      type="button"
+                      className="next-btn"
+                      onClick={() => {
+                        navigate(`/acceptApplication/${pA.requestId}`, {
+                          state: { from: location }
+                        })
+                      }}
+                    >
+                      <i className="fa fa-arrow-right" />
+                    </button>
+                  </div>
+                )
+              })
+            : <div>No Existing Applications</div>
+          }
         </div>
       </div>
     ),
@@ -2041,11 +1926,11 @@ export const TeamTab = ({
         </button>
         <button
           onClick={() => {
-            setCurrentTeamTab(1); /*setTeamTabContent(openPositionsContent);*/
+            setCurrentTeamTab(1);
           }}
           className={`button-reset project-editor-team-tab ${currentTeamTab === 1 ? "team-tab-active" : ""}`}
         >
-          Pending Requests {isOpenPositionsUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
+          Pending Requests {isPendingRequestsUnsaved && <span className="unsaved-indicator">(Unsaved)</span>}
         </button>
         <button
           onClick={() => {

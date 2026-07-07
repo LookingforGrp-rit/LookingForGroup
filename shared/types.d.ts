@@ -1490,7 +1490,8 @@ export type RequestToJoinInput = CreateProjectMemberInput;
  * Data required to update member request
  */
 export type UpdateMemberRequestInput = {
-  newStatus: MemberRequestStatus,
+  requestStatus?: MemberRequestStatus,
+  roleId?: number,
 };
 
 /**

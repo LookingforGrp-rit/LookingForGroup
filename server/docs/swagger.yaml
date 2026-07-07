@@ -2687,14 +2687,18 @@ paths:
           application/json:
             schema:
               type: object
+              minProperties: 1
               properties:
-                newStatus:
+                requestStatus:
                   type: string
                   enum:
                     - Accepted
                     - Declined
                     - Pending
                   example: Pending
+                roleId:
+                  type: integer
+                  example: 3
       responses:
         '200':
           description: Request Successful

@@ -1,4 +1,4 @@
-import type { MemberRequestStatus } from '@looking-for-group/shared';
+import type { UpdateMemberRequestInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 import addMemberService from './add-member.ts';
@@ -10,7 +10,7 @@ type DeleteServiceSuccess = ServiceSuccessSubset<'OK'>;
 const updateMemberRequestStatusService = async (
   requestId: number,
   userId: number,
-  newStatus: MemberRequestStatus,
+  update: UpdateMemberRequestInput,
 ): Promise<DeleteServiceSuccess | DeleteServiceError> => {
   try {
     const request = await prisma.memberRequests.findUnique({
@@ -50,13 +50,11 @@ const updateMemberRequestStatusService = async (
       where: {
         requestId,
       },
-      data: {
-        requestStatus: newStatus,
-      },
+      data: update,
     });
 
     //add member if accepted
-    if (newStatus === 'Accepted') {
+    if (update.requestStatus === 'Accepted') {
       await addMemberService(request.projectId, {
         prospectiveMemberId: request.prospectiveMemberId,
         ownerUserId: ownerId.userId,
