@@ -1166,7 +1166,7 @@ export const TeamTab = ({
                 }}
                 options={projectAfterTeamChanges.members
                   .filter((member) => member.user !== null)
-                  // .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
+                  .filter((member) => member.role?.label !== "Pending")
                   .map(({ user }) => ({
                     markup: (
                       <>

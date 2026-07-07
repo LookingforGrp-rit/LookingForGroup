@@ -6,6 +6,7 @@ export const projectTabs = {
   'Style' : { categoryTags: [], categoryName: 'Style', color: 'pink'},
   'Purpose': { categoryTags: [], categoryName: 'Purpose', color: 'grey' },
   'Positions' : { categoryTags: [], categoryName: 'Positions', color: 'grey' },
+  'Game Engine' : { categoryTags: [], categoryName: 'Game Engine', color: 'grey'},
 };
 
 

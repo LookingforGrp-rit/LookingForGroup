@@ -426,9 +426,15 @@ Signup process modal style rules
   margin-right: auto;
 }
 
-#signupProcess-subTitle {
+#signupProcess-title-highlight {
   color: var(--primary-color);
-  font-size: 0.9375rem;
+  font-weight: 600;
+  font-style: italic;
+}
+
+#signupProcess-subTitle {
+  color: var(--main-text);
+  font-size: 1rem;
   margin: 0 10px 20px 10px;
   font-weight: 400;
 }

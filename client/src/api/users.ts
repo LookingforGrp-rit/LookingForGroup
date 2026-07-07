@@ -100,7 +100,9 @@ export const getCurrentUsername = async (): Promise<UsernameResponse> => {
  * @returns result - JSONified data of all users, else if error, '400'.
  */
 export const getUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
-  const apiURL = `/users`;
+  //NOTE: the "A-Z" is a default implementation of sorting method
+  //CHANGE THIS WHEN SORTING METHOD FRONTEND IS IMPLEMENTED!!
+  const apiURL = `/users/all/A-Z`;
   const response = await GET(apiURL);
   //TODO: revisit this to make it include filters
   //but filters are a stretch goal anyway so it's not too important
