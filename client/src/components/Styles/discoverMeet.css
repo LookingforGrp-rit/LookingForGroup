@@ -1264,6 +1264,45 @@ Filters / Tags Style Rules
   word-break: break-word;
 }
 
+/* Filter tabs mirror the tag pills for their category:
+   - Unselected: dark fill, with the category color as the text + border.
+   - Selected: inverted — filled with the category color, dark text. */
+#filter-tabs [class*="filter-tab-"] {
+  border: 3px solid transparent;
+  background-image: none;
+}
+
+
+#filter-tabs [class*="filter-tab-"].selected {
+  color: var(--tag-text-selected) !important;
+}
+
+#filter-tabs .filter-tab-blue.selected       { background-color: var(--tag-blue-selected);       border-color: var(--tag-blue-selected); }
+#filter-tabs .filter-tab-green.selected      { background-color: var(--tag-green-selected);      border-color: var(--tag-green-selected); }
+#filter-tabs .filter-tab-pink.selected       { background-color: var(--tag-pink-selected);       border-color: var(--tag-pink-selected); }
+#filter-tabs .filter-tab-grey.selected       { background-color: var(--tag-grey-selected);       border-color: var(--tag-grey-selected); }
+#filter-tabs .filter-tab-yellow.selected     { background-color: var(--tag-yellow-selected);     border-color: var(--tag-yellow-selected); }
+#filter-tabs .filter-tab-red.selected        { background-color: var(--tag-red-selected);        border-color: var(--tag-red-selected); }
+#filter-tabs .filter-tab-orange.selected     { background-color: var(--tag-orange-selected);     border-color: var(--tag-orange-selected); }
+#filter-tabs .filter-tab-purple.selected     { background-color: var(--tag-purple-selected);     border-color: var(--tag-purple-selected); }
+#filter-tabs .filter-tab-periwinkle.selected { background-color: var(--tag-periwinkle-selected); border-color: var(--tag-periwinkle-selected); }
+
+
+#filter-tabs [class*="filter-tab-"]:not(.selected) {
+  /* --main-text is white in dark mode / black in light mode, matching the
+     dark vs light unselected-tab backgrounds. */
+  color: var(--main-text) !important;
+}
+#filter-tabs .filter-tab-blue:not(.selected)       { background-color: var(--tag-blue-unselected);       border-color: var(--tag-blue-selected); }
+#filter-tabs .filter-tab-green:not(.selected)      { background-color: var(--tag-green-unselected);      border-color: var(--tag-green-selected); }
+#filter-tabs .filter-tab-pink:not(.selected)       { background-color: var(--tag-pink-unselected);       border-color: var(--tag-pink-selected); }
+#filter-tabs .filter-tab-grey:not(.selected)       { background-color: var(--tag-grey-unselected);       border-color: var(--tag-grey-selected); }
+#filter-tabs .filter-tab-yellow:not(.selected)     { background-color: var(--tag-yellow-unselected);     border-color: var(--tag-yellow-selected); }
+#filter-tabs .filter-tab-red:not(.selected)        { background-color: var(--tag-red-unselected);        border-color: var(--tag-red-selected); }
+#filter-tabs .filter-tab-orange:not(.selected)     { background-color: var(--tag-orange-unselected);     border-color: var(--tag-orange-selected); }
+#filter-tabs .filter-tab-purple:not(.selected)     { background-color: var(--tag-purple-unselected);     border-color: var(--tag-purple-selected); }
+#filter-tabs .filter-tab-periwinkle:not(.selected) { background-color: var(--tag-periwinkle-unselected); border-color: var(--tag-periwinkle-selected); }
+
 #filter-divider {
   height: 2px;
   min-height: 2px;
