@@ -68,7 +68,8 @@ export enum JobDuration {
 export enum JobLocation {
   OnSite = "On-Site",
   Remote = "Remote",
-  Hybrid = "Hybrid"
+  Hybrid = "Hybrid",
+  Flexible = "Flexible",
 }
 export enum JobCompensation {
   Unpaid = "Unpaid",

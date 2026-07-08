@@ -10,7 +10,7 @@ import addJobService, { type JobInput } from '#services/projects/jobs/add-job.ts
 
 const validAvailabilities: JobAvailability[] = ['FullTime', 'PartTime', 'Flexible'];
 const validDurations: JobDuration[] = ['Days', 'Weeks', 'Months', 'Semesters', 'Years'];
-const validLocations: JobLocation[] = ['OnSite', 'Remote', 'Hybrid'];
+const validLocations: JobLocation[] = ['OnSite', 'Remote', 'Hybrid', 'Flexible'];
 const validCompensations: JobCompensation[] = ['Unpaid', 'Paid'];
 
 /*NOTE: jobs are more like listings
