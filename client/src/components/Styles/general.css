@@ -90,6 +90,7 @@ General style rules
   --tag-grey-selected: #d0d0d0;
   --tag-periwinkle-selected: #A2ADF9;
   --tag-pink-selected: #e191e8;
+  --tag-cyan-selected: #82cfba;
 
   --tag-red-unselected: #0e0e0e;
   --tag-orange-unselected: #0e0e0e;
@@ -100,6 +101,7 @@ General style rules
   --tag-grey-unselected: #0e0e0e;
   --tag-periwinkle-unselected: #0e0e0e;
   --tag-pink-unselected: #0e0e0e;
+  --tag-cyan-unselected: #0e0e0e;
 
   --tag-red-unselected-border: #ffa0b0;
   --tag-orange-unselected-border: #ffa281;
@@ -110,19 +112,23 @@ General style rules
   --tag-grey-unselected-border: #d0d0d0;
   --tag-periwinkle-unselected-border: #A2ADF9;
   --tag-pink-unselected-border: #e191e8;
+  --tag-cyan-unselected-border: #82cfba;
 
   --tag-text-selected: black;
 
-  --tag-text-unselected-red: #ffa0b0;
-  --tag-text-unselected-orange: #ffa281;
-  --tag-text-unselected-yellow: #ffcf8b;
-  --tag-text-unselected-green: #bed9aa;
-  --tag-text-unselected-blue: #b0dcee;
-  --tag-text-unselected-purple: #d7bed3;
-  --tag-text-unselected-grey: #d0d0d0;
-  --tag-text-unselected-periwinkle: #A2ADF9;
-  --tag-text-unselected-pink: #e191e8;
-
+  /* Unselected tag text is white so it reads like the rest of the site's text
+     (against the dark unselected tag background) instead of the dim per-category
+     / grey colors. */
+  --tag-text-unselected-red: white;
+  --tag-text-unselected-orange: white;
+  --tag-text-unselected-yellow: white;
+  --tag-text-unselected-green: white;
+  --tag-text-unselected-blue: white;
+  --tag-text-unselected-purple: white;
+  --tag-text-unselected-grey: white;
+  --tag-text-unselected-periwinkle: white;
+  --tag-text-unselected-pink: white;
+  --tag-text-unselected-cyan: white;
   --modal-gradient-start: #0a0a0a;
   --modal-gradient-end: #2c2a3a;
 
@@ -175,6 +181,7 @@ General style rules
   --tag-grey-selected: #d0d0d0;
   --tag-periwinkle-selected: #A2ADF9;
   --tag-pink-selected: #e191e8;
+  --tag-cyan-selected: #82cfba;
 
   --tag-red-unselected: #ffd9df;
   --tag-orange-unselected: #ffdacd;
@@ -185,6 +192,7 @@ General style rules
   --tag-grey-unselected: #ececec;
   --tag-periwinkle-unselected: #d1d6fc;
   --tag-pink-unselected: #f0c8f4;
+  --tag-cyan-unselected: #c1e7dd;
 
   --tag-red-unselected-border: #ffd9df;
   --tag-orange-unselected-border: #ffdacd;
@@ -195,6 +203,7 @@ General style rules
   --tag-grey-unselected-border: #ececec;
   --tag-periwinkle-unselected-border: #d1d6fc;
   --tag-pink-unselected-border: #f0c8f4;
+  --tag-cyan-unselected-border: #c1e7dd;
 
   --tag-text-selected: black;
 
@@ -207,6 +216,8 @@ General style rules
   --tag-text-unselected-grey: black;
   --tag-text-unselected-periwinkle: black;
   --tag-text-unselected-pink: black;
+  --tag-text-unselected-cyan: black;
+  
 
   --modal-gradient-start: #ffffff;
   --modal-gradient-end: #d3d3ff;
@@ -320,6 +331,7 @@ section {
   justify-content: center;
   margin: 30px auto;
 }
+
 
 /* #endregion */
 
@@ -592,7 +604,6 @@ Sidebar Nav style rules
   left: 0px;
   /* box-shadow: rgba(0, 0, 0, 0.25) 0px 8px 16px; */
   /*changing z-index affects #discover-filters-parent*/
-  z-index: 4;
   color: var(--dark-lighttheme);
   background-color: var(--bg-color);
   /*background-image: url("../../../public/images/nav-background.png");*/
@@ -600,6 +611,10 @@ Sidebar Nav style rules
   background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
+}
+
+.SideBarContainer.active {
+  z-index: 14;
 }
 
 #lfg-logo {
@@ -953,7 +968,7 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 4;
+  z-index: 20;
 }
 
 /*rules for the popup itself*/
@@ -971,7 +986,6 @@ Page popup style rules
   max-height: min(849px, 90vh);
   overflow-y: auto;
   opacity: 100%;
-  z-index: 5;
   /* height: 849px; */
 
 }
@@ -1008,7 +1022,6 @@ Page popup style rules
   .popup {
     width: 95vw;
     max-width: 95vw;
-    max-height: calc(100vh - 40px);
   }
 }
 
@@ -1034,8 +1047,14 @@ Page popup style rules
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 5;
+  z-index: 21;
   border-radius: 10px;
+}
+
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  height: 100% !important;
 }
 
 @media only screen and (hover: none) {
@@ -1205,6 +1224,7 @@ Page popup style rules
 
   #filters-btns-section {
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     flex-wrap: wrap;
@@ -1212,6 +1232,10 @@ Page popup style rules
     gap: 20px;
     margin-top: min(3.67vh, 36px);
     margin-bottom: min(2.65vh, 26px);
+
+    .select-container {
+      width: 20%;
+    }
   }
 
   #match-button {
@@ -1324,7 +1348,7 @@ Page popup style rules
     transition: 0.2s;
     padding: 1px;
     /* margin: 14px 38px; */
-    width: min(20%, 30%);
+    width: 15%;
     text-align: center;
   }
 
@@ -1358,7 +1382,7 @@ Page popup style rules
 
   #selected-section {
     max-width: 859px;
-    max-height: 178px;
+    max-height: 160px;
     width: 56.8vw;
     height: 18.1vh;
     padding: min(1.63vh, 16px) min(1.98vw, 30px);
@@ -1385,6 +1409,8 @@ Page popup style rules
 
 @media screen and (max-width: 1180px) {
   .popup #filters-popup {
+    max-width: 88vw;
+
     #filter-tabs {
       height: auto;
       width: 100%;
@@ -1393,7 +1419,7 @@ Page popup style rules
       overflow-x: scroll;
       scroll-behavior: smooth;
       scrollbar-width: none;
-      justify-content: flex-start;
+      justify-content: left !important;;
       column-gap: 5vw;
     }
   }
@@ -1472,8 +1498,12 @@ Header style rules
   height: 90px;
   position: sticky;
   top: 0;
-  z-index: 5;
+  z-index: 9;
   box-sizing: border-box;
+}
+
+#header.active {
+  z-index: 15;
 }
 
 @media screen and (max-width: 800px) {
@@ -1552,7 +1582,9 @@ Header style rules
 
 @media screen and (max-width: 500px) {
   #header-buttons .dropdown {
-    position: fixed;
+    position: absolute;
+    top: 50px;
+    right: -10%;
     width: 100%;
     #notifications-panel {
       margin: auto;
@@ -1597,6 +1629,9 @@ Header style rules
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
   border: none;
   padding: 10px;
+  position: absolute;
+  right: -30%;
+  top: 0% !important;
 
   /* color: var(--primary-color); */
   hr {
@@ -2199,6 +2234,7 @@ Input style rules
   color: var(--primary-color);
   font-size: 1.25rem;
   font-weight: 600;
+
 }
 
 /* Details underneath label */

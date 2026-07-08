@@ -6,6 +6,7 @@ export const projectTabs = {
   'Style' : { categoryTags: [], categoryName: 'Style', color: 'pink'},
   'Purpose': { categoryTags: [], categoryName: 'Purpose', color: 'grey' },
   'Positions' : { categoryTags: [], categoryName: 'Positions', color: 'grey' },
+  'Game Engine' : { categoryTags: [], categoryName: 'Game Engine', color: 'yellow'},
 };
 
 
@@ -14,7 +15,7 @@ export const peopleTabs = {
   'Designer Skill': { categoryTags: [], categoryName: 'Designer Skill', color: 'red' },
   'Audio Skill' : { categoryTags: [], categoryName: 'Audio Skill', color: 'periwinkle'},
   'Soft Skill': { categoryTags: [], categoryName: 'Soft Skill', color: 'purple' },
-  'Engineer Skill': { categoryTags: [], categoryName: 'Engineer Skill', color: 'purple' },
+  'Engineer Skill': { categoryTags: [], categoryName: 'Engineer Skill', color: 'cyan' },
   'Role': { categoryTags: [], categoryName: 'Role', color: 'grey' },
   'Major': { categoryTags: [], categoryName: 'Major', color: 'orange' },
 };

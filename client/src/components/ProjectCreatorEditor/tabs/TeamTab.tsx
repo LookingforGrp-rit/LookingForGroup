@@ -1596,6 +1596,28 @@ export const TeamTab = ({
                         Delete
                       </PopupButton>
                       <PopupContent>
+                        {(projectData.members?.length ?? 0) <= 1 ? (
+                          <>
+                            <div id="project-team-delete-member-title">
+                              Can't Delete User
+                            </div>
+                            <div
+                              id="project-team-delete-member-text"
+                              className="project-editor-extra-info"
+                            >
+                              You can't remove the only member of a project.
+                            </div>
+                            <div className="project-editor-button-pair">
+                              <PopupButton
+                                buttonId="team-delete-member-cancel-button"
+                                className="button-reset"
+                              >
+                                Close
+                              </PopupButton>
+                            </div>
+                          </>
+                        ) : (
+                          <>
                         <div id="project-team-delete-member-title">
                           Delete Member
                         </div>
@@ -1657,6 +1679,8 @@ export const TeamTab = ({
                             Cancel
                           </PopupButton>
                         </div>
+                          </>
+                        )}
                       </PopupContent>
                     </Popup>
                   </div>

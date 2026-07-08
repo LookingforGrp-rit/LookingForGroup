@@ -44,6 +44,7 @@ type DropdownContentProps = {
 
 type DropdownProps = {
   children: React.ReactNode; // Nested DropdownButton and DropdownContent
+  callback?: Function;
 };
 
 /**
@@ -132,7 +133,7 @@ export const DropdownContent: React.FC<DropdownContentProps> = ({
  * @param children - Nested DropdownButton and DropdownContent elements.
  * @returns A fully functional dropdown container with context provider.
  */
-export const Dropdown: React.FC<DropdownProps> = ({ children }) => {
+export const Dropdown: React.FC<DropdownProps> = ({ children, callback }) => {
   const [open, setOpen] = useState(false); // Local state to track open/close
   const dropdownRef = useRef<HTMLDivElement>(null); // Ref to container for click-outside detection
 
@@ -141,6 +142,7 @@ export const Dropdown: React.FC<DropdownProps> = ({ children }) => {
     const close = (e: MouseEvent) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
         setOpen(false);
+        if (callback) callback();
       }
     };
 

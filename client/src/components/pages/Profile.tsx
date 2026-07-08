@@ -305,7 +305,7 @@ const Profile = (userProfile: any) => {
       //get followed projects to display
       const displayFollowedProjects = async () => {
         const tempFollowProjectArray = [];
-        let tempIds :Set<number> = new Set();
+        let tempIds: Set<number> = new Set();
         const projectFollowings = ((await getProjectFollowing(userID)).data?.projects);
         if (projectFollowings !== undefined) {
           for (const follower of projectFollowings) {
@@ -627,7 +627,10 @@ const Profile = (userProfile: any) => {
           <div id="profile-extra">
             <div id="contact-and-skills">
               <div id="socials">
-                <p id="title">Contact Me</p>
+                <div className="contact-skills-edit-label-btn">
+                  <p id="title">Contact Me</p>
+                  {isUsersProfile ? <ProfileEditPopup editContact={true} />
+                    : ""}</div>
                 <div id="profile-email">
                   {/* TODO: make icon for email and phone */}
                   {displayedProfile?.username ?
@@ -636,6 +639,7 @@ const Profile = (userProfile: any) => {
                       {displayedProfile?.username}@g.rit.edu</a>
                     : <a><ThemeIcon id={'mail'} width={25} height={25} className={'mono-fill'} ariaLabel={'mail'} />no email</a>}
                 </div>
+
                 {/* Show phone number if present */}
                 {displayedProfile?.phoneNumber ? /* no need to also check displayPhone, the number won't be in the request if it's false */
                   <div id="profile-number">
@@ -796,7 +800,10 @@ const Profile = (userProfile: any) => {
               </div>
 
               <div id="skills">
-                <p id="title">Skills</p>
+                <div className="contact-skills-edit-label-btn">
+                  <p id="title">Skills</p>
+                  {isUsersProfile ? <ProfileEditPopup editSkills={true} />
+                    : ""}</div>
                 <div id="skill-block">
                   {displayedProfile?.skills !== undefined && (
                     /* Will take in a list of tags the user has selected, then */
@@ -815,6 +822,9 @@ const Profile = (userProfile: any) => {
                           break;
                         case "Audio":
                           category = "periwinkle";
+                          break;
+                        case "Engineer":
+                          category = "cyan";
                           break;
                         default:
                           category = "grey";
