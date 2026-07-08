@@ -18,7 +18,7 @@ export const getUserByGoogleService = async (
       select: {
         username: true,
         userId: true,
-        accessLevel: 'User',
+        accessLevel: true,
       },
     });
 
