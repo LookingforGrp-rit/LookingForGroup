@@ -147,6 +147,7 @@ export const JobSkillPopup = ({
   /**
    * Toggles a skill as selected or unselected
    */
+  //limit imposer goes here maybe?
   const handleSkillToggle = useCallback(
     (skillId: number) => {
       const isSelected = isSkillSelected(skillId) === "selected";
@@ -164,6 +165,7 @@ export const JobSkillPopup = ({
       else {
         const newSkills = modifiedJob.jobSkills;
         const lengthPreAdd = modifiedJob.jobSkills?.length
+        if((newSkills as JobSkill[]).length < skillLimit){
         newSkills?.push({
               ...skillToToggle,
               proficiency: "Novice",
@@ -173,6 +175,8 @@ export const JobSkillPopup = ({
         modifiedJob = {
           ...modifiedJob,
           jobSkills: newSkills as JobSkill[],
+        }
+
         }
       }
 
