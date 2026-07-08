@@ -41,7 +41,7 @@ interface Props {
   autoStart?: boolean;
 
   // Not a real property, set to a variable to a function in the code
-  buttonCallback?: () => void;
+  buttonCallback?: (state: boolean) => void;
 
   // Unused property, don't know why it's here
   updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>;
@@ -313,7 +313,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setCurrentTab(0);
     setProjectData(undefined);
     setModifiedProject(undefined);
-    buttonCallback();
+    buttonCallback(false);
   }, []);
 
   useEffect(() => {
@@ -324,15 +324,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }, [open, projectID, newProject, saved]);
 
   const toggleConfirm = async () => {
-    if (saved) {
-      setConfirm(false);
-      setProjectData(undefined);
-      setModifiedProject(undefined);
-      buttonCallback();
-    }
-    else {
+    if (saved)
+      buttonCallback(false); 
+    else 
       setConfirm(!confirm);
-    }
   }
 
   /**
@@ -615,7 +610,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   return (
     <Popup startOpen={autoStart && newProject}>
       {newProject ? (
-        <PopupButton callback={() => { buttonCallback(); createOrEdit(); }} buttonId={`project-info-create`}>
+        <PopupButton callback={() => { buttonCallback(true); createOrEdit(); }} buttonId={`project-info-create`}>
           {" "}
           <ThemeIcon
             id={"create"}
@@ -629,7 +624,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         </PopupButton>
       ) : (
         <div id="project-info-contexts">
-          <PopupButton callback={() => { buttonCallback(); createOrEdit(); }} buttonId="project-info-edit">
+          <PopupButton callback={() => { buttonCallback(true); createOrEdit(); }} buttonId="project-info-edit">
             Edit Project
           </PopupButton>
           {approvalStatus === "not-approved" ?
@@ -668,18 +663,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       )}
 
 
-      <PopupContent callback={() => {
-        /* confirm popup shows when project has been modified */
-        if (modifiedProject != projectData) {
-          setConfirm(true);
-        }
-        else {
-          setConfirm(false);
-        }
-        /* general tab by default */
-        setSaved(true);
-        setCurrentTab(0);
-      }} closeButtonRef={exitButton} confirmation={!saved}>
+      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">

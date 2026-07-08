@@ -23,7 +23,7 @@ import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-grou
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
 //import { router } from "../../../../server/src/api/routes/me.ts"
-//import { reportProject } from "../../api/projects";
+import { reportProject } from "../../api/projects";
 
 //Main component for the project page
 /**
