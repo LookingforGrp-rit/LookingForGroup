@@ -3,7 +3,7 @@ import type { Request } from 'express';
 import prisma from '#config/prisma.ts';
 import type { NotificationBuilder } from './notification-builder.ts';
 
-export class InviteAcceptedNotificationBuilder implements NotificationBuilder {
+export class RequestRejectedNotificationBuilder implements NotificationBuilder {
   async buildNotification(request: Request): Promise<NotificationBuilderResult> {
     const notification: NotificationBuilderResult = {
       receiverId: 0,
@@ -18,15 +18,14 @@ export class InviteAcceptedNotificationBuilder implements NotificationBuilder {
         roleId: true,
         projects: {
           select: {
-            userId: true,
             title: true,
-            users: {
-              select: { preferredName: true },
-            },
           },
         },
         users: {
-          select: { preferredName: true },
+          select: {
+            preferredName: true,
+            userId: true,
+          },
         },
       },
     });
@@ -41,16 +40,13 @@ export class InviteAcceptedNotificationBuilder implements NotificationBuilder {
     });
 
     const projectData = data.projects;
-    const ownerData = projectData.users;
     const inviteeData = data.users;
     // BUILDING THE NOTIFICATION //
-    notification.receiverId = projectData.userId;
-    notification.subjectLine = `${inviteeData.preferredName} has accepted your invitation to join ${projectData.title}`;
+    notification.receiverId = inviteeData.userId;
+    notification.subjectLine = `Your request to join ${projectData.title} has been rejected.`;
 
-    notification.message = `Hello ${ownerData.preferredName},<br /><br />`;
-    notification.message += `${inviteeData.preferredName} has accepted your invitation to join ${projectData.title} `;
-    notification.message += `as a ${roleData?.label as string}. You may also assign them to other roles if need be. `;
-    notification.message += `Happy building!`;
+    notification.message = `Hello ${inviteeData.preferredName},<br /><br />`;
+    notification.message += `Your request to join ${projectData.title} as a ${roleData?.label as string} has been rejected.`;
     return notification;
   }
 }
