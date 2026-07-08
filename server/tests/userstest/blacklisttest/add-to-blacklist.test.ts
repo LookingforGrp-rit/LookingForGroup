@@ -40,7 +40,7 @@ const prismaUser: Users = {
   bio: '',
   privacy: 'public',
   phoneNumber: null,
-  moderator: false,
+  accessLevel: 'User',
 };
 
 describe('addBlacklistService', async () => {

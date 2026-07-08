@@ -15,7 +15,7 @@ const requiresModerator = (
     data: null,
   };
 
-  if (!user.isMod) {
+  if (user.accessLevel === 'User') {
     response.status(403).json(forbiddenResBody);
     return;
   }

@@ -35,6 +35,10 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "style":
       color = "pink"
       break;
+    
+    case "game engine":
+      color = "yellow"
+      break;
 
     case 'other':
       color = 'grey';
@@ -43,18 +47,23 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "developer skill":
       color = "yellow";
       break;
+      
     case "designer skill":
       color = "red";
       break;
+
     case "soft skill":
       color = "purple";
       break;
+
     case "audio skill":
       color = "periwinkle";
       break;
+
     case "engineer skill":
-      color = "the engineer skill color"; //not yet defined
+      color = "cyan"; 
       break;
+      
     default:
       if (type == "") break;
 

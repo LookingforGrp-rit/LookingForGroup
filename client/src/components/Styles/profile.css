@@ -138,8 +138,7 @@ Profile Panel component style rules
   padding-bottom: 0;
 }
 
-.masonry .profile-panel-extras
-{
+.masonry .profile-panel-extras {
   height: fit-content;
 }
 
@@ -1481,6 +1480,14 @@ New Profile page style rules
     }
   }
 
+  .contact-skills-edit-label-btn {
+    display: flex;
+    width: 100%;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+    align-items: center;
+  }
+
   #likes-projects,
   #likes-profiles {
     color: var(--primary-color);
@@ -1497,9 +1504,9 @@ New Profile page style rules
 }
 
 @media only screen and (min-width: 1101px) {
-  #profile-buttons{
-    .dropdown{
-    right: 0px;
+  #profile-buttons {
+    .dropdown {
+      right: 0px;
     }
   }
 }
@@ -1584,7 +1591,6 @@ New Profile page style rules
     margin: 0 20px;
   }
 
-  
   #profile-extra {
     flex-direction: column;
 
@@ -2216,6 +2222,11 @@ New Profile page style rules
 .label-periwinkle {
   background-color: var(--tag-periwinkle-selected);
   border: 2px solid var(--tag-periwinkle-selected);
+}
+
+.label-cyan {
+  background-color: var(--tag-cyan-selected);
+  border: 2px solid var(--tag-cyan-selected);
 }
 
 /* #skill-tags-container .tag-button {
