@@ -5,6 +5,7 @@ import { ThemeIcon } from './ThemeIcon';
 import { PeopleSkills, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getSkills } from '../api/users';
 import { StringDictionary, Role, Major, Skill, SkillType } from '@looking-for-group/shared';
+import MoreFiltersButton from './MoreFiltersButton';
 
 interface DiscoverFiltersProps {
   updateItemList: (skills: Skill[]) => void;
@@ -364,7 +365,7 @@ export const DiscoverProfiles: React.FC<DiscoverFiltersProps> = ({ updateItemLis
             {/* === Additional filters popup === */}
             <Popup>
               <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
-                <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'} />
+                <MoreFiltersButton />
               </PopupButton>
               {/* 
                                 When page loads, get all necessary skill lists based on page category.
