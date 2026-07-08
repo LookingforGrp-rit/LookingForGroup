@@ -1277,7 +1277,7 @@ Filters / Tags Style Rules
   max-width: 100%;
   width: 100%;
   height: auto !important;
-  overflow-x: scroll !important;
+  overflow-x: hidden !important;
   scrollbar-color: var(--liked-section-bg) rgba(0, 0, 0, 0);
 }
 
