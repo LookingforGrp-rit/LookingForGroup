@@ -3,12 +3,17 @@ import { Popup, PopupButton, PopupContent } from './Popup';
 import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
 import { tags, projectTabs } from '../constants/tags';
-import { getJobTitles, getProjectTypes, getTags} from '../api/users';
-import { Tag, StringDictionary, Medium, Role } from '@looking-for-group/shared';
+import { getJobTitles, getProjectTypes, getTags } from '../api/users';
+import { Tag, StringDictionary, Medium, } from '@looking-for-group/shared';
+import { Select, SelectButton, SelectOptions } from './Select';
 
 
 interface DiscoverProjectsProps {
-    updateItemList: (tags: Tag[], filterMode: "Match All" | "Match Any") => void;
+    updateItemList: (
+        tags: Tag[],
+        filterMode: "Match All" | "Match Any",
+        SortMode: sortModes
+    ) => void;
 }
 
 interface FilterTab {
@@ -20,6 +25,15 @@ interface FilterTab {
 interface EnabledFilter {
     tag: Tag;
     color: string;
+}
+
+enum sortModes {
+    "A-Z" = "A-Z",
+    "Z-A" = "Z-A",
+    "Newest" = "Newest",
+    "Oldest" = "Oldest",
+    "Followers (NOT IMPLIMENTED)" = "Followers (NOT IMPLIMENTED)",
+    "Followers Acending (NOT IMPLIMENTED)" = "Followers Acending (NOT IMPLIMENTED)",
 }
 
 
@@ -83,6 +97,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const [filterPopupTabs, setFilterPopupTabs] = useState<FilterTab[]>([]);
 
     const [filterMode, setFilterMode] = useState<"Match All" | "Match Any">("Match All");
+    const [sortMode, setSortMode] = useState<sortModes>(sortModes.Newest);
 
 
     //////////////////
@@ -160,7 +175,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
         }
 
         setActiveTagFilters(newActiveTags);
-        updateItemList(newActiveTags, filterMode);
+        updateItemList(newActiveTags, filterMode, sortMode);
     };
 
     /**
@@ -304,7 +319,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     let tagsToDisplay = searchedTags.tags;
     let currentTabName = filterPopupTabs[activeTabId]?.categoryName;
 
-    switch(currentTabName){
+    switch (currentTabName) {
         case "Genre":
             //Genre
             let story = searchedTags.tags.filter((tag) => (tag as Tag).category === "Story");
@@ -373,10 +388,42 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                         <PopupContent useClose={false}>
                             {/* Close Button */}
                             <PopupButton className="popup-close">
-                                <img alt="close" src="/src/icons/cancel.png" onClick={() => { setActivePopup(false); }}></img>
+                                <img alt="close" src="/images/icons/cancel.png" onClick={() => { setActivePopup(false); }}></img>
                             </PopupButton>
                             <div id="filters-popup">
                                 <h2>Project Filters</h2>
+                                <div id='filter-settings'>
+                                    <button id='match-button'
+                                        onClick={() => {
+                                            setFilterMode(filterMode === "Match All" ? "Match Any" : "Match All");
+                                        }}>
+                                        {filterMode}
+                                    </button>
+                                    <Select>
+                                        <SelectButton buttonId='sort-button'
+                                            placeholder="Sorting Mode"
+                                            type={"input"}
+                                            initialVal={sortMode}
+                                        />
+                                        <SelectOptions
+                                            callback={(e) =>
+                                                setSortMode(
+                                                    (e.target as HTMLButtonElement)
+                                                        .value as sortModes
+                                                )
+                                            }
+                                            options={Object.keys(sortModes).map(
+                                                (key) => {
+                                                    return {
+                                                        value: key,
+                                                        markup: <>{key}</>,
+                                                        disabled: false
+                                                    };
+                                                }
+                                            )}
+                                        />
+                                    </Select>
+                                </div>
                                 <div id="filters" className="popup-section">
                                     <SearchBar
                                         dataSets={dataSet}
@@ -434,71 +481,71 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                         ) : (
                                             tagsToDisplay.map((tag, index, array) => (
                                                 <Fragment key={`${tag.label}-${tag.type}`}>
-                                                {(index === 0 || (array[index - 1].category != array[index].category)) && array[index].category != "Other" && array[index].category != null
-                                                ? <div id="tag-category-header">
-                                                    <p>{array[index].category}</p>
-                                                    <hr></hr>
-                                                  </div>
-                                                : <></>}
-                                                <button
-                                                    key={`${tag.label}-${tag.type}`}
-                                                    // className={`tag-button tag-button-${searchedTags.color}-unselected`}
-                                                    className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
-                                                    onClick={(e) => {
-                                                        const element = e.target as HTMLElement;
-                                                        const selectIndex = isTagEnabled(tag, searchedTags.color);
-                                                        const tempEnabled = enabledFilters;
+                                                    {(index === 0 || (array[index - 1].category != array[index].category)) && array[index].category != "Other" && array[index].category != null
+                                                        ? <div id="tag-category-header">
+                                                            <p>{array[index].category}</p>
+                                                            <hr></hr>
+                                                        </div>
+                                                        : <></>}
+                                                    <button
+                                                        key={`${tag.label}-${tag.type}`}
+                                                        // className={`tag-button tag-button-${searchedTags.color}-unselected`}
+                                                        className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
+                                                        onClick={(e) => {
+                                                            const element = e.target as HTMLElement;
+                                                            const selectIndex = isTagEnabled(tag, searchedTags.color);
+                                                            const tempEnabled = enabledFilters;
 
-                                                        //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
-                                                        //  // Remove all other tags of the same type except the one selected
-                                                        //  const filterTags = document.querySelector('#filter-tags')!;
-                                                        //  const tagList: HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
-                                                        //
-                                                        //  for (let i = 0; i < tagList.length; i++) {
-                                                        //    const tagObj: Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
-                                                        //    const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
-                                                        //
-                                                        //    if (tagList[i].innerText.trim() !== tag.label) {
-                                                        //      tagList[i].classList.replace(
-                                                        //        `tag-button-${searchedTags.color}-selected`,
-                                                        //        `tag-button-${searchedTags.color}-unselected`
-                                                        //      );
-                                                        //
-                                                        //      tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
-                                                        //    }
-                                                        //  }
-                                                        //}
+                                                            //if (tag.type === 'Project Type' || tag.type === 'Purpose' || tag.type === 'Role' || tag.type === 'Major') {
+                                                            //  // Remove all other tags of the same type except the one selected
+                                                            //  const filterTags = document.querySelector('#filter-tags')!;
+                                                            //  const tagList: HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
+                                                            //
+                                                            //  for (let i = 0; i < tagList.length; i++) {
+                                                            //    const tagObj: Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
+                                                            //    const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
+                                                            //
+                                                            //    if (tagList[i].innerText.trim() !== tag.label) {
+                                                            //      tagList[i].classList.replace(
+                                                            //        `tag-button-${searchedTags.color}-selected`,
+                                                            //        `tag-button-${searchedTags.color}-unselected`
+                                                            //      );
+                                                            //
+                                                            //      tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
+                                                            //    }
+                                                            //  }
+                                                            //}
 
-                                                        if (selectIndex === -1) {
-                                                            // Creates an object to store text and category
-                                                            //setEnabledFilters([...enabledFilters, { tag, color: searchedTags.color }]);
-                                                            setEnabledFilters([
-                                                                ...tempEnabled,
-                                                                { tag, color: searchedTags.color },
-                                                            ]);
-                                                            element.classList.replace(
-                                                                `tag-button-${searchedTags.color}-unselected`,
-                                                                `tag-button-${searchedTags.color}-selected`
-                                                            );
-                                                        } else {
-                                                            // Remove tag from list of enabled filters
-                                                            setEnabledFilters(tempEnabled.toSpliced(selectIndex, 1));
-                                                            element.classList.replace(
-                                                                `tag-button-${searchedTags.color}-selected`,
-                                                                `tag-button-${searchedTags.color}-unselected`
-                                                            );
-                                                        }
-                                                    }}
-                                                >
-                                                    <i
-                                                        className={
-                                                            isTagEnabled(tag, searchedTags.color) !== -1
-                                                                ? 'fa fa-check'
-                                                                : 'fa fa-plus'
-                                                        }
-                                                    ></i>
-                                                    <p>{tag.label}</p>
-                                                </button>
+                                                            if (selectIndex === -1) {
+                                                                // Creates an object to store text and category
+                                                                //setEnabledFilters([...enabledFilters, { tag, color: searchedTags.color }]);
+                                                                setEnabledFilters([
+                                                                    ...tempEnabled,
+                                                                    { tag, color: searchedTags.color },
+                                                                ]);
+                                                                element.classList.replace(
+                                                                    `tag-button-${searchedTags.color}-unselected`,
+                                                                    `tag-button-${searchedTags.color}-selected`
+                                                                );
+                                                            } else {
+                                                                // Remove tag from list of enabled filters
+                                                                setEnabledFilters(tempEnabled.toSpliced(selectIndex, 1));
+                                                                element.classList.replace(
+                                                                    `tag-button-${searchedTags.color}-selected`,
+                                                                    `tag-button-${searchedTags.color}-unselected`
+                                                                );
+                                                            }
+                                                        }}
+                                                    >
+                                                        <i
+                                                            className={
+                                                                isTagEnabled(tag, searchedTags.color) !== -1
+                                                                    ? 'fa fa-check'
+                                                                    : 'fa fa-plus'
+                                                            }
+                                                        ></i>
+                                                        <p>{tag.label}</p>
+                                                    </button>
                                                 </Fragment>
                                             ))
                                         )}
@@ -526,40 +573,34 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     </div>
                                 </div>
                                 <div id="filters-btns-section">
-                                    <button id='match-button'
-                                    onClick={() => {
-                                      setFilterMode(filterMode === "Match All" ? "Match Any" : "Match All");
-                                    }}>
-                                      {filterMode}
-                                    </button>
                                     {/* Reset Filters button */}
                                     <PopupButton
-                                      className={'delete-button'}
-                                      doNotClose={() => true}
-                                      callback={() => {
-                                        // Reset tag filters before adding results in
+                                        className={'delete-button'}
+                                        doNotClose={() => true}
+                                        callback={() => {
+                                            // Reset tag filters before adding results in
 
-                                        // Clears all active filters
-                                        setEnabledFilters([]);
-                                        const newActiveTags = enabledFilters.map(f => f.tag);
-                                        setActiveTagFilters(newActiveTags);
-                                        const discoverFilters = document.getElementsByClassName('discover-tag-filter');
-                                    
-                                        // Remove any/all other clicked discover tags
-                                        for (let i = 0; i < discoverFilters.length; i++) {
-                                          discoverFilters[i].classList.remove('discover-tag-filter-selected');
-                                        }
+                                            // Clears all active filters
+                                            setEnabledFilters([]);
+                                            const newActiveTags = enabledFilters.map(f => f.tag);
+                                            setActiveTagFilters(newActiveTags);
+                                            const discoverFilters = document.getElementsByClassName('discover-tag-filter');
 
-                                        // Sets active filters displayed to "none" 
-                                        setAppliedFiltersDisplay(enabledFilters);
-                                    
-                                        //Add "Applied Filters" div if it is missing and if the paragraph exists
-                                        if (newActiveTags.length > 0) {
-                                          setDisplayFiltersText(newActiveTags.some(tag => tag.type !== 'Project Type'));
-                                        }
-                                      }}
+                                            // Remove any/all other clicked discover tags
+                                            for (let i = 0; i < discoverFilters.length; i++) {
+                                                discoverFilters[i].classList.remove('discover-tag-filter-selected');
+                                            }
+
+                                            // Sets active filters displayed to "none" 
+                                            setAppliedFiltersDisplay(enabledFilters);
+
+                                            //Add "Applied Filters" div if it is missing and if the paragraph exists
+                                            if (newActiveTags.length > 0) {
+                                                setDisplayFiltersText(newActiveTags.some(tag => tag.type !== 'Project Type'));
+                                            }
+                                        }}
                                     >
-                                      Reset Filters
+                                        Reset Filters
                                     </PopupButton>
                                     <PopupButton
                                         buttonId={'primary-btn'}
@@ -591,7 +632,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                             setAppliedFiltersDisplay(enabledFilters);
 
                                             // Update the project list
-                                            updateItemList(newActiveTags, filterMode);
+                                            updateItemList(newActiveTags, filterMode, sortMode);
 
                                             //Add "Applied Filters" div if it is missing and if the paragraph exists
                                             if (newActiveTags.length > 0) {
@@ -633,7 +674,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     const newActiveTags = tempList.map((filter) => filter.tag);
                                     setAppliedFiltersDisplay(tempList);
                                     setActiveTagFilters(newActiveTags);
-                                    updateItemList(newActiveTags, filterMode);
+                                    updateItemList(newActiveTags, filterMode, sortMode);
 
                                     if (newActiveTags.length === 0 || (newActiveTags.length === 1 && newActiveTags[0].type === 'Project Type')) {
                                         setDisplayFiltersText(false);

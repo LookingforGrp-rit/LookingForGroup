@@ -22,7 +22,7 @@ const tagTabColors: Record<string, string> = {
   Medium: 'blue',
   Genre: 'green',
   Style: 'pink',
-  'Game Engine': 'orange',
+  'Game Engine': 'yellow',
 };
 
 let projectAfterTagsChanges: PendingProject;

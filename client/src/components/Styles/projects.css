@@ -904,8 +904,9 @@ Project Creator and Editor Popup style rules
   flex-wrap: wrap;
   justify-content: flex-start;
   gap: 10px;
+  align-content: start;
   /*For scrolling*/
-  max-height: 370px;
+  height: 370px;
   overflow-y: auto;
 
   #tag-category-header {
@@ -1245,9 +1246,11 @@ Project Creator and Editor Popup style rules
 #project-editor-tag-search-tabs [class*="filter-tab-"] {
   border: 3px solid transparent !important;
 }
+
 #project-editor-tag-search-tabs [class*="filter-tab-"].tag-search-tab-active {
   color: var(--tag-text-selected) !important;
 }
+
 #project-editor-tag-search-tabs [class*="filter-tab-"]:not(.tag-search-tab-active) {
   /* --main-text is white in dark mode / black in light mode, matching the
      dark vs light unselected-tab backgrounds. */
@@ -1423,10 +1426,17 @@ Project Creator and Editor Popup style rules
   justify-items: center;
 }
 
-#edit-position-skills-container .edit-project-member-button {
+#edit-position-skills-container .edit-project-member-button,
+#profile-extra #project-info-edit {
   position: relative;
   top: 0;
   right: 0;
+  padding: 4px 10px;
+  height: min-content;
+}
+
+#profile-extra #project-info-edit {
+  margin-bottom: 6px;
 }
 
 .project-editor-project-member>.edit-project-member-button {
