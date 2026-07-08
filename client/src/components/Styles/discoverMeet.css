@@ -514,13 +514,13 @@ Image carousel style rules
     }
 
     .discover-link {
-    display: block;
-    margin: 0;
+      display: block;
+      margin: 0;
     }
 
     .learn-more {
-    position: relative;
-    margin-top: 12px;
+      position: relative;
+      margin-top: 12px;
     }
 
     h2 {
@@ -1324,16 +1324,55 @@ Filters / Tags Style Rules
   color: var(--tag-text-selected) !important;
 }
 
-#filter-tabs .filter-tab-blue.selected       { background-color: var(--tag-blue-selected);       border-color: var(--tag-blue-selected); }
-#filter-tabs .filter-tab-green.selected      { background-color: var(--tag-green-selected);      border-color: var(--tag-green-selected); }
-#filter-tabs .filter-tab-pink.selected       { background-color: var(--tag-pink-selected);       border-color: var(--tag-pink-selected); }
-#filter-tabs .filter-tab-grey.selected       { background-color: var(--tag-grey-selected);       border-color: var(--tag-grey-selected); }
-#filter-tabs .filter-tab-yellow.selected     { background-color: var(--tag-yellow-selected);     border-color: var(--tag-yellow-selected); }
-#filter-tabs .filter-tab-red.selected        { background-color: var(--tag-red-selected);        border-color: var(--tag-red-selected); }
-#filter-tabs .filter-tab-orange.selected     { background-color: var(--tag-orange-selected);     border-color: var(--tag-orange-selected); }
-#filter-tabs .filter-tab-purple.selected     { background-color: var(--tag-purple-selected);     border-color: var(--tag-purple-selected); }
-#filter-tabs .filter-tab-periwinkle.selected { background-color: var(--tag-periwinkle-selected); border-color: var(--tag-periwinkle-selected); }
-#filter-tabs .filter-tab-cyan.selected       { background-color: var(--tag-cyan-selected);        border-color: var(--tag-cyan-selected); }
+#filter-tabs .filter-tab-blue.selected {
+  background-color: var(--tag-blue-selected);
+  border-color: var(--tag-blue-selected);
+}
+
+#filter-tabs .filter-tab-green.selected {
+  background-color: var(--tag-green-selected);
+  border-color: var(--tag-green-selected);
+}
+
+#filter-tabs .filter-tab-pink.selected {
+  background-color: var(--tag-pink-selected);
+  border-color: var(--tag-pink-selected);
+}
+
+#filter-tabs .filter-tab-grey.selected {
+  background-color: var(--tag-grey-selected);
+  border-color: var(--tag-grey-selected);
+}
+
+#filter-tabs .filter-tab-yellow.selected {
+  background-color: var(--tag-yellow-selected);
+  border-color: var(--tag-yellow-selected);
+}
+
+#filter-tabs .filter-tab-red.selected {
+  background-color: var(--tag-red-selected);
+  border-color: var(--tag-red-selected);
+}
+
+#filter-tabs .filter-tab-orange.selected {
+  background-color: var(--tag-orange-selected);
+  border-color: var(--tag-orange-selected);
+}
+
+#filter-tabs .filter-tab-purple.selected {
+  background-color: var(--tag-purple-selected);
+  border-color: var(--tag-purple-selected);
+}
+
+#filter-tabs .filter-tab-periwinkle.selected {
+  background-color: var(--tag-periwinkle-selected);
+  border-color: var(--tag-periwinkle-selected);
+}
+
+#filter-tabs .filter-tab-cyan.selected {
+  background-color: var(--tag-cyan-selected);
+  border-color: var(--tag-cyan-selected);
+}
 
 
 #filter-tabs [class*="filter-tab-"]:not(.selected) {
@@ -1341,16 +1380,56 @@ Filters / Tags Style Rules
      dark vs light unselected-tab backgrounds. */
   color: var(--main-text) !important;
 }
-#filter-tabs .filter-tab-blue:not(.selected)       { background-color: var(--tag-blue-unselected);       border-color: var(--tag-blue-selected); }
-#filter-tabs .filter-tab-green:not(.selected)      { background-color: var(--tag-green-unselected);      border-color: var(--tag-green-selected); }
-#filter-tabs .filter-tab-pink:not(.selected)       { background-color: var(--tag-pink-unselected);       border-color: var(--tag-pink-selected); }
-#filter-tabs .filter-tab-grey:not(.selected)       { background-color: var(--tag-grey-unselected);       border-color: var(--tag-grey-selected); }
-#filter-tabs .filter-tab-yellow:not(.selected)     { background-color: var(--tag-yellow-unselected);     border-color: var(--tag-yellow-selected); }
-#filter-tabs .filter-tab-red:not(.selected)        { background-color: var(--tag-red-unselected);        border-color: var(--tag-red-selected); }
-#filter-tabs .filter-tab-orange:not(.selected)     { background-color: var(--tag-orange-unselected);     border-color: var(--tag-orange-selected); }
-#filter-tabs .filter-tab-purple:not(.selected)     { background-color: var(--tag-purple-unselected);     border-color: var(--tag-purple-selected); }
-#filter-tabs .filter-tab-periwinkle:not(.selected) { background-color: var(--tag-periwinkle-unselected); border-color: var(--tag-periwinkle-selected); }
-#filter-tabs .filter-tab-cyan:not(.selected)       { background-color: var(--tag-cyan-unselected);       border-color: var(--tag-cyan-selected); }
+
+#filter-tabs .filter-tab-blue:not(.selected) {
+  background-color: var(--tag-blue-unselected);
+  border-color: var(--tag-blue-selected);
+}
+
+#filter-tabs .filter-tab-green:not(.selected) {
+  background-color: var(--tag-green-unselected);
+  border-color: var(--tag-green-selected);
+}
+
+#filter-tabs .filter-tab-pink:not(.selected) {
+  background-color: var(--tag-pink-unselected);
+  border-color: var(--tag-pink-selected);
+}
+
+#filter-tabs .filter-tab-grey:not(.selected) {
+  background-color: var(--tag-grey-unselected);
+  border-color: var(--tag-grey-selected);
+}
+
+#filter-tabs .filter-tab-yellow:not(.selected) {
+  background-color: var(--tag-yellow-unselected);
+  border-color: var(--tag-yellow-selected);
+}
+
+#filter-tabs .filter-tab-red:not(.selected) {
+  background-color: var(--tag-red-unselected);
+  border-color: var(--tag-red-selected);
+}
+
+#filter-tabs .filter-tab-orange:not(.selected) {
+  background-color: var(--tag-orange-unselected);
+  border-color: var(--tag-orange-selected);
+}
+
+#filter-tabs .filter-tab-purple:not(.selected) {
+  background-color: var(--tag-purple-unselected);
+  border-color: var(--tag-purple-selected);
+}
+
+#filter-tabs .filter-tab-periwinkle:not(.selected) {
+  background-color: var(--tag-periwinkle-unselected);
+  border-color: var(--tag-periwinkle-selected);
+}
+
+#filter-tabs .filter-tab-cyan:not(.selected) {
+  background-color: var(--tag-cyan-unselected);
+  border-color: var(--tag-cyan-selected);
+}
 
 #filter-divider {
   height: 2px;
@@ -1408,7 +1487,7 @@ Filters / Tags Style Rules
   flex-shrink: 0;
 }
 
-#btn-loadmore{
+#btn-loadmore {
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
@@ -1425,12 +1504,12 @@ Filters / Tags Style Rules
 
 /* Mobile Fixes*/
 
-@media (max-width: 850px) {
+@media (max-width: 1020px) {
   #filters-popup {
     /* removes offset that accounts for ui sidebar*/
     left: 50% !important;
     max-width: 94vw !important;
-    max-height: min(810px,82vh) !important;
+    max-height: min(810px, 82vh) !important;
 
     /* Slightly trimmer padding to save mobile screen space */
     padding: 20px 16px 14px 16px !important;
