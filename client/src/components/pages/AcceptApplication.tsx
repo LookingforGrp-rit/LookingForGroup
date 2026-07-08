@@ -141,19 +141,8 @@ const AcceptApplication = () => {
             return;
         }
 
-        // return to previous page if possible when declined
-        const from = location.state?.from;
-        const fromPath = typeof from === 'string' ? from : from?.pathname + from?.search;
-        if (fromPath && newStatus === 'Declined') {
-            navigate(fromPath, { replace: true });
-            return;
-        }
-
-        navigate(
-            newStatus === 'Accepted'
-                ? `${paths.routes.PROJECT}?projectID=${projectId}`
-                : paths.routes.HOME
-        );
+        // Navigate to the project
+        navigate(`${paths.routes.PROJECT}?projectID=${projectId}`);
     };
     //#endregion
 

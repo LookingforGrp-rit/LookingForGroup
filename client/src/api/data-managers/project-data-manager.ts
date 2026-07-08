@@ -39,7 +39,7 @@ import {
   deleteMemberRequest as deleteMemberRequestAPI,
   getByID,
   updateMember as updateMemberAPI,
-  updateMemberRequest,
+  updateMemberRequest as updateMemberRequestAPI,
   updatePic,
   updateProject,
   updateProjectJob,
@@ -332,7 +332,7 @@ export const projectDataManager = async (projectId: number) => {
       await runAndCollectErrors<UpdateMemberRequestInput>(
         "Updating project member requests",
         updates.memberRequests,
-        ({ data }) => updateMemberRequest(projectId, data)
+        ({ id, data }) => updateMemberRequestAPI(id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -956,9 +956,9 @@ export const projectDataManager = async (projectId: number) => {
 
   /**
    * Updates an existing member request of a project
-   * @param request The member request to be updated and its new data
+   * @param request The request to be updated and its new data
    */
-  const updateMemberRquest = (request: CRUDRequest<UpdateMemberRequestInput>) => {
+  const updateMemberRequest = (request: CRUDRequest<UpdateMemberRequestInput>) => {
     let existingRequestUpdate = changes.update.memberRequests.find(
       ({ id }) => id.value === request.id.value && id.type === request.id.type
     );

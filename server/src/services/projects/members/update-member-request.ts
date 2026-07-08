@@ -23,11 +23,6 @@ const updateMemberRequestStatusService = async (
       return 'NOT_FOUND';
     }
 
-    //Check credentials (for invitations)
-    if (request.sentFromProject && userId !== request.prospectiveMemberId) {
-      return 'FORBIDDEN';
-    }
-
     const ownerId = await prisma.projects.findFirst({
       where: {
         projectId: request.projectId,
@@ -39,6 +34,17 @@ const updateMemberRequestStatusService = async (
 
     if (ownerId === null) {
       return 'INTERNAL_ERROR';
+    }
+
+    // Check credentials for invitations: allow the invited user to respond,
+    // and also allow the project owner to update the requested role.
+    if (request.sentFromProject) {
+      const isInvitedUser = userId === request.prospectiveMemberId;
+      const isProjectOwner = userId === ownerId.userId;
+
+      if (!isInvitedUser && !(isProjectOwner && update.roleId !== undefined)) {
+        return 'FORBIDDEN';
+      }
     }
 
     //Check credentials (for applications)
