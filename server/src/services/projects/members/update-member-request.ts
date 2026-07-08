@@ -1,4 +1,4 @@
-import type { MemberRequestStatus } from '@looking-for-group/shared';
+import type { UpdateMemberRequestInput } from '@looking-for-group/shared';
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 import addMemberService from './add-member.ts';
@@ -10,7 +10,7 @@ type DeleteServiceSuccess = ServiceSuccessSubset<'OK'>;
 const updateMemberRequestStatusService = async (
   requestId: number,
   userId: number,
-  newStatus: MemberRequestStatus,
+  update: UpdateMemberRequestInput,
 ): Promise<DeleteServiceSuccess | DeleteServiceError> => {
   try {
     const request = await prisma.memberRequests.findUnique({
@@ -21,11 +21,6 @@ const updateMemberRequestStatusService = async (
 
     if (request === null) {
       return 'NOT_FOUND';
-    }
-
-    //Check credentials (for invitations)
-    if (request.sentFromProject && userId !== request.prospectiveMemberId) {
-      return 'FORBIDDEN';
     }
 
     const ownerId = await prisma.projects.findFirst({
@@ -41,6 +36,17 @@ const updateMemberRequestStatusService = async (
       return 'INTERNAL_ERROR';
     }
 
+    // Check credentials for invitations: allow the invited user to respond,
+    // and also allow the project owner to update the requested role.
+    if (request.sentFromProject) {
+      const isInvitedUser = userId === request.prospectiveMemberId;
+      const isProjectOwner = userId === ownerId.userId;
+
+      if (!isInvitedUser && !(isProjectOwner && update.roleId !== undefined)) {
+        return 'FORBIDDEN';
+      }
+    }
+
     //Check credentials (for applications)
     if (!request.sentFromProject && userId !== ownerId.userId) {
       return 'FORBIDDEN';
@@ -50,13 +56,11 @@ const updateMemberRequestStatusService = async (
       where: {
         requestId,
       },
-      data: {
-        requestStatus: newStatus,
-      },
+      data: update,
     });
 
     //add member if accepted
-    if (newStatus === 'Accepted') {
+    if (update.requestStatus === 'Accepted') {
       await addMemberService(request.projectId, {
         prospectiveMemberId: request.prospectiveMemberId,
         ownerUserId: ownerId.userId,

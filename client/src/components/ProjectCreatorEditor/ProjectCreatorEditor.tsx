@@ -21,7 +21,7 @@ import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEn
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { ApiResponse, Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
+import { ApiResponse, Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 
@@ -75,6 +75,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const [modifiedProject, setModifiedProject] = useState<PendingProject>();
 
   const [projectMessages, setProjectMessages] = useState<string[]>([]);
+  const [pendingInvitations, setPendingInvitations] = useState<MemberRequests[]>([]);
+  const [pendingApplications, setPendingApplications] = useState<MemberRequests[]>([]);
+  const [pendingRequestsLoaded, setPendingRequestsLoaded] = useState(false);
+  const [initialPendingRequests, setInitialPendingRequests] = useState<{
+    invitations: MemberRequests[];
+    applications: MemberRequests[];
+  }>({ invitations: [], applications: [] });
 
   // Indicates if the data validation has failed: prevents saving when invalid
   const [failCheck, setFailCheck] = useState(false);
@@ -583,7 +590,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
-      navigate(`${paths.routes.PROJECT}?projectID=${projectID !== 0 ? projectID : dataManager.getSavedProject().projectId}`);
+      // Remove the unload blocker before reloading the page, otherwise the prior
+      // `saved === false` closure can still fire and trigger a browser prompt.
+      window.onbeforeunload = null;
+      projectID !== 0
+        ? window.location.reload()
+        : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
@@ -770,6 +782,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 saveProject={saveProject}
                 projectData={modifiedProject}
                 unmodifiedProject={projectData}
+                pendingInvitations={pendingInvitations}
+                pendingApplications={pendingApplications}
+                setPendingInvitations={setPendingInvitations}
+                setPendingApplications={setPendingApplications}
+                pendingRequestsLoaded={pendingRequestsLoaded}
+                setPendingRequestsLoaded={setPendingRequestsLoaded}
+                initialPendingRequests={initialPendingRequests}
+                setInitialPendingRequests={setInitialPendingRequests}
                 setErrorMember={setErrorAddMember}
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
                 saveable={saveable}

@@ -131,7 +131,7 @@ const AcceptInvitation = () => {
 
         const result = await updateMemberRequest(
             requestIdNum,
-            { newStatus }
+            { requestStatus: newStatus }
         );
 
         if (result.error) {

@@ -33,7 +33,7 @@ const getMemberRequest = async (req: AuthenticatedRequest, res: Response): Promi
   if (result === 'NOT_FOUND') {
     const resBody: ApiResponse = {
       status: 404,
-      error: 'Applications not found',
+      error: 'Request not found',
       data: null,
     };
     res.status(404).json(resBody);
