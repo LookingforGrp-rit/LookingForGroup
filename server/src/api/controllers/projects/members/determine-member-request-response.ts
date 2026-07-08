@@ -3,10 +3,7 @@ import prisma from '#config/prisma.ts';
 import { MemberRequestStatus } from '#prisma-models/index.js';
 
 type MembershipRequestResponseType =
-  | 'REQUEST-ACCEPTED'
-  | 'REQUEST-REJECTED'
-  | 'INVITE-ACCEPTED'
-  | 'INVITE-REJECTED';
+  'REQUEST-ACCEPTED' | 'REQUEST-REJECTED' | 'INVITE-ACCEPTED' | 'INVITE-REJECTED';
 
 // Not an endpoint, but a helper function
 // Since there is only one endpoint (PATCH api/projects/members/requests)
@@ -26,8 +23,12 @@ export const determineMembershipRequestResponse = async (
     select: { prospectiveMemberId: true },
   });
 
-  if (responderID === memberRequestData?.prospectiveMemberId) response = 'REQUEST-';
-  else response = 'INVITE-';
+  console.log(
+    `responder: ${String(responderID)}, prospective member: ${String(memberRequestData?.prospectiveMemberId)}`,
+  );
+
+  if (responderID === memberRequestData?.prospectiveMemberId) response = 'INVITE-';
+  else response = 'REQUEST-';
 
   // determine if it was rejected or accepted
   if (body.newStatus === MemberRequestStatus.Accepted) response += 'ACCEPTED';
