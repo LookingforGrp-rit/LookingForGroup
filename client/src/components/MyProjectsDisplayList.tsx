@@ -6,17 +6,20 @@ import { LeaveDeleteContext } from '../contexts/LeaveDeleteContext';
 import { Popup, PopupButton, PopupContent } from './Popup';
 import { PagePopup } from './PagePopup';
 import { getByID, deleteProject, requestProjectReview } from '../api/projects';
-import { ApiResponse, ProjectDetail, ProjectFollowers } from '@looking-for-group/shared';
+import { ApiResponse, ProjectDetail, ProjectFollowers, Visibility } from '@looking-for-group/shared';
 import { leaveProject } from '../api/users';
 import { ThemeIcon } from './ThemeIcon';
 import { ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
-
+//import { updateProjectProfileVisibility, getCurrentUsername } from "../api/users";
+import { userDataManager } from "../api/data-managers/user-data-manager";
+import { projectDataManager } from "../api/data-managers/project-data-manager";
 //backend base url for getting images
 
 type ApprovalStatusKey = keyof typeof ApprovalStatus;
 type MyProjectsDisplayListProps = {
   projectData: ProjectDetail;
   approvalStatus: ApprovalStatusKey;
+  dataManager: Awaited<ReturnType<typeof userDataManager>> | null;
 };
 /**
  * MyProjectsDisplayList renders a single project as a list item for the "My Projects" page.
@@ -40,12 +43,12 @@ type MyProjectsDisplayListProps = {
  * @param approvalStatus - Project approval status (keyof ProjectApprovalStatus from "@looking-for-group/shared/enums")
  * @returns {JSX.Element} The project list card element.
  */
-const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDisplayListProps) => {
+const MyProjectsDisplayList = ({ projectData, approvalStatus, dataManager }: MyProjectsDisplayListProps) => {
   // Navigation hook
   const navigate = useNavigate();
 
   const { projId, isOwner, reloadProjects, removeProject } = useContext(LeaveDeleteContext);
-
+  const [userId, setUserId] = useState(Number);
   // Project status fetched from API
   const [status, setStatus] = useState<string>();
   // Dropdown visibility toggle
@@ -56,6 +59,42 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
   const [requestType, setRequestType] = useState<'delete' | 'leave'>('delete');
   const [resultObj, setResultObj] = useState<ApiResponse>({ status: 400, data: null, error: 'Not initialized' });
 
+  // Project visibilty toggle
+  const [isVisible, setIsVisible] = useState<Visibility>(projectData.globalVisibility);
+
+  // Used to possibly save the changes made to the project's visibility
+  const [projectManager, setProjectManager] = useState<Awaited<ReturnType<typeof projectDataManager>> | null>(null);
+  useEffect(() => {
+    const setUpManager = async () => {
+      const manager = await projectDataManager(projId);
+        setProjectManager(manager);
+    }
+    setUpManager();
+  }, []);
+  
+  const changeGlobalVisibility = () => {
+
+    console.log("Before: " + isVisible + ", " + projectData.globalVisibility);
+    if(isVisible == "private")
+    {
+      setIsVisible("public");
+      projectData.globalVisibility = "public";
+    }
+    else
+    {
+      setIsVisible("private");
+      projectData.globalVisibility = "private";
+    } 
+      
+    // Should update the project's visibility but for some reason isn't
+    {
+      //updateProject(projId, projectData);
+      //projectManager?.saveChanges();
+    }
+    console.log("After: " + isVisible + ", " + projectData.globalVisibility);
+  }
+  
+  
   // Fetches project status and project thumbnail
 
   useEffect(() => {
@@ -119,10 +158,12 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
           }
           alt={`${projectData.title} Thumbnail`}
           onClick={() => navigate(projectURL)}
+          style={{opacity: isVisible == "public" ? "1" : "0.25"}}
         ></img> */}
         <div
           className="list-card-title"
           onClick={() => navigate(projectURL)}
+          style={{opacity: isVisible == "public" ? "1" : "0.25"}}
         >{projectData.title}</div>
       </td>
 
@@ -191,6 +232,29 @@ const MyProjectsDisplayList = ({ projectData, approvalStatus, }: MyProjectsDispl
                   </div>
                 </PopupContent>
               </Popup> : ""}
+              {isVisible == "private" ? (
+                <button className="card-leave-button" onClick={() => changeGlobalVisibility()}>
+                    <ThemeIcon
+                      id={"eye"}
+                      width={21}
+                      height={21}
+                      ariaLabel={"Show Project (Public)"}
+                      className="mono-fill"
+                    />
+                    Publitize
+                </button>
+              ) : (
+                <button className="card-leave-button" onClick={() => changeGlobalVisibility()}>
+                    <ThemeIcon
+                      id={"eye-line"}
+                      width={21}
+                      height={21}
+                      ariaLabel={"Hide Project (Private)"}
+                      className="mono-fill"
+                    />
+                    Privatize
+                </button>
+              )}
               {(!isOwner) && (
               <Popup>
                 <PopupButton className='card-leave-button'>

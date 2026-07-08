@@ -11,7 +11,7 @@ import { Select, SelectButton, SelectOptions } from '../Select';
 import { LeaveDeleteContext } from '../../contexts/LeaveDeleteContext';
 
 import { ProjectCreatorEditor } from '../ProjectCreatorEditor/ProjectCreatorEditor';
-
+import { userDataManager } from '../../api/data-managers/user-data-manager.ts';
 //import api utils
 import { getCurrentUsername, getProjectsByUser } from '../../api/users.ts'
 import { MePrivate, ProjectDetail } from '@looking-for-group/shared';
@@ -76,6 +76,16 @@ const MyProjects = (userProfile: any) => {
   type ApprovalStatusKey = keyof typeof ApprovalStatus;
   const [approvalStatuses, setApprovalStatuses] = useState<Record<number, ApprovalStatusKey>>({});
 
+  // Used to pass down project information to the grid/list view
+  // Primiarily used for project visibility
+  const [dataMan, setDataMan] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
+  useEffect(() => {
+    const setUpManager = async () => {
+      const manager = await userDataManager();
+        setDataMan(manager);
+    }
+    setUpManager();
+  }, []);
   // --------------------
   // Helper functions
   // --------------------
@@ -358,6 +368,7 @@ const MyProjects = (userProfile: any) => {
                 <MyProjectsDisplayGrid
                   projectData={project}
                   approvalStatus={approvalStatuses[project.projectId]}
+                  dataManager={dataMan}
                 />
               </LeaveDeleteContext.Provider>
             );
@@ -406,6 +417,7 @@ const MyProjects = (userProfile: any) => {
                   <MyProjectsDisplayList
                     projectData={project}
                     approvalStatus={approvalStatuses[project.projectId]}
+                    dataManager={dataMan}
                   />
                 </LeaveDeleteContext.Provider>
               );

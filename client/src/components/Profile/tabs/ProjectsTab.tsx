@@ -32,6 +32,7 @@ const ProjectTile : FC<ProjectTileProps> = ({ membershipData, onVisibilityToggle
         alt={
           projectData.thumbnail?.altText || `Thumbnail for ${projectData.title}`
         }
+        style={{opacity: membershipData.profileVisibility == "public" ? "1" : "0.25"}}
       />
       {isHidden && <div className="image-overlay" />}
       <button

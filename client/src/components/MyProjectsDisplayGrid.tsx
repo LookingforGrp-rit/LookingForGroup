@@ -5,21 +5,23 @@ import { Dropdown, DropdownButton, DropdownContent } from "./Dropdown";
 import { Popup, PopupButton, PopupContent } from "./Popup";
 import { LeaveDeleteContext } from "../contexts/LeaveDeleteContext";
 import { PagePopup } from "./PagePopup";
-import { deleteProject, requestProjectReview } from "../api/projects";
-import { ApiResponse, ProjectDetail, ProjectFollowers } from "@looking-for-group/shared";
+import { deleteProject, getByID, requestProjectReview, updateProject } from "../api/projects";
+import { ApiResponse, ProjectDetail, ProjectFollowers, Visibility } from "@looking-for-group/shared";
 import { leaveProject } from "../api/users";
 import { ThemeIcon } from "./ThemeIcon";
 import placeholderThumbnail from "../images/project_temp.png";
 import usePreloadedImage from "../functions/imageLoad";
 import { Close, Check, QuestionMark } from '@mui/icons-material';
 import { ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
-
-//backend base url for getting images
+//import { updateProjectProfileVisibility, getCurrentUsername } from "../api/users";
+import { userDataManager } from "../api/data-managers/user-data-manager";
+import { projectDataManager } from "../api/data-managers/project-data-manager";
 
 type ApprovalStatusKey = keyof typeof ApprovalStatus;
 type MyProjectsDisplayGridProps = {
   projectData: ProjectDetail;
   approvalStatus: ApprovalStatusKey;
+  dataManager: Awaited<ReturnType<typeof userDataManager>> | null;
 };
 /**
  * MyProjectsDisplayGrid renders a single project card in a grid layout for the "My Projects" page.
@@ -39,9 +41,10 @@ type MyProjectsDisplayGridProps = {
  *
  * @param projectData - Detailed information about the project (from the backend API)
  * @param approvalStatus - Project approval status (keyof ProjectApprovalStatus from "@looking-for-group/shared/enums")
+ * @param dataManager Handles data changes to save changes later.
  * @returns The project card element.
  */
-const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDisplayGridProps) => {
+const MyProjectsDisplayGrid = ({ projectData, approvalStatus, dataManager}: MyProjectsDisplayGridProps) => {
   //Navigation hook
   const navigate = useNavigate();
   // Context providing project ID, ownership status, and reload function
@@ -58,7 +61,44 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
     error: "Not initialized",
   });
   const [approvalSymbol, setApprovalSymbol] = useState<ReactNode>(null);
-  // console.log(projectData.title + ' is approved: ' + projectData.approved);
+  // console.log(projectData.title + ' is approved: ' + projectData.approved);  
+  
+  // Project visibilty toggle
+  const [isVisible, setIsVisible] = useState<Visibility>(projectData.globalVisibility);
+
+  // Used to possibly save the changes made to the project's visibility
+  const [projectManager, setProjectManager] = useState<Awaited<ReturnType<typeof projectDataManager>> | null>(null);
+  useEffect(() => {
+    const setUpManager = async () => {
+      const manager = await projectDataManager(projId);
+        setProjectManager(manager);
+    }
+    setUpManager();
+  }, []);
+
+    
+  const changeGlobalVisibility = () => {
+
+    console.log("Before: " + isVisible + ", " + projectData.globalVisibility);
+    if(isVisible == "private")
+      {
+        setIsVisible("public");
+        projectData.globalVisibility = "public";
+      }
+      else
+      {
+        setIsVisible("private");
+        projectData.globalVisibility = "private";
+      } 
+      
+      // Should update the project's visibility but for some reason isn't
+      {
+        //updateProject(projId, projectData);
+        //projectManager?.saveChanges();
+      }
+      console.log("After: " + isVisible + ", " + projectData.globalVisibility);
+  }
+
   /**
    * toggleOptions
    * - Toggles the visibility of the dropdown menu for project actions.
@@ -123,6 +163,7 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
             placeholderThumbnail
           )}
           alt={`${projectData.title}`}
+          style={{opacity: isVisible == "public" ? "1" : "0.25"}}
         />
       </button>
 
@@ -195,7 +236,29 @@ const MyProjectsDisplayGrid = ({ projectData, approvalStatus, }: MyProjectsDispl
                    </div>
                 </PopupContent>
               </Popup> : "" }
-
+              {isVisible == "private" ? (
+                <button className="card-leave-button" onClick={() => changeGlobalVisibility()}>
+                    <ThemeIcon
+                      id={"eye"}
+                      width={21}
+                      height={21}
+                      ariaLabel={"Show Project (Public)"}
+                      className="mono-fill"
+                    />
+                    Publitize
+                </button>
+              ) : (
+                <button className="card-leave-button" onClick={() => changeGlobalVisibility()}>
+                    <ThemeIcon
+                      id={"eye-line"}
+                      width={21}
+                      height={21}
+                      ariaLabel={"Hide Project (Private)"}
+                      className="mono-fill"
+                    />
+                    Privatize
+                </button>
+              )}
               <Popup>
                 <PopupButton className="card-leave-button">
                   <ThemeIcon
