@@ -278,7 +278,21 @@ const AboutPage = () => {
                     </section>
                     <section className="about-section">
                         <h2 className="about-header-two">Data Protection and Security</h2>
-                        <p className="about-text">We do not use cookies to store your data.</p></section>
+                        <ul className="guidelines-list">
+                          <li className="about-text">We do not use cookies to store your data.</li>
+                          <li className="about-text">Any projects along with assets placed upon the site belong to the owner. LFG does not claim ownership.</li>
+                        </ul>
+
+                        <h3 className="about-header-three">Data Collection</h3>
+                        <p className="about-text">We store:</p>
+                        <ul className="guidelines-list">
+                          <li className="about-text">RIT Email</li>
+                          <li className="about-text">{"Full Name (first/preferred, last)"}</li>
+                          <li className="about-text">Major</li>
+                          <li className="about-text">Year</li>
+                          <li className="about-text">{"Phone Number (optional)"}</li>
+                        </ul>
+                    </section>
                     <section id="credits" tabIndex={-1} aria-labelledby='credits-title'>
                         <h1 id="credits-title">Meet The LFG Team</h1>
                         <div className="sr-only" aria-live="polite" aria-atomic="true">
