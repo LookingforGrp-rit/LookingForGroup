@@ -1277,7 +1277,7 @@ Filters / Tags Style Rules
   max-width: 100%;
   width: 100%;
   height: auto !important;
-  overflow-x: scroll !important;
+  overflow-x: hidden !important;
   scrollbar-color: var(--liked-section-bg) rgba(0, 0, 0, 0);
 }
 
@@ -1389,11 +1389,11 @@ Filters / Tags Style Rules
 
 /* Selected Items Tray (Footer Container) */
 #selected-section.popup-section {
-  width: 100% !important;
+  max-width: 100% !important;
   box-sizing: border-box;
   background-color: #0c0b11;
   border-radius: 12px;
-  padding: 18px 24px !important;
+  padding: 18px min(2.05vw, 31px) !important;
   display: flex !important;
   flex-direction: column !important;
 
@@ -1476,8 +1476,9 @@ Filters / Tags Style Rules
   }
 
   #selected-section.popup-section {
-    padding: 12px 14px !important;
+    padding: 12px 12px !important;
     min-height: 75px !important;
+    width: calc(94vw - 20px);
   }
 
   #selected-section.popup-section p {
