@@ -237,7 +237,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       await setModifiedProject(newData);
     }
     else if (projectID) {
-      if (!dataManager)
+      if (!dataManager && projectData === undefined)
         setup();
     }
 
