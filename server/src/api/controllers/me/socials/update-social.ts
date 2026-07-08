@@ -10,7 +10,8 @@ import { updateSocialService } from '#services/me/socials/update-social.ts';
 //update one of current user's social
 export const updateSocial = async (req: AuthenticatedRequest, res: Response): Promise<void> => {
   //current user ID
-  const social: UpdateUserSocialInput = { url: req.params.url as string };
+  const body = req.body as UpdateUserSocialInput;
+  const social: UpdateUserSocialInput = { url: body.url };
   const websiteId = parseInt(req.params.websiteId as string);
 
   const result = await updateSocialService({ ...social, websiteId }, req.currentUser.userId);
