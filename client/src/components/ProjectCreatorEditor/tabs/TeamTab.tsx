@@ -1,5 +1,5 @@
 // --- Imports ---
-import { JSX, useCallback, useEffect, useMemo, useRef, useState, useContext } from "react";
+import { JSX, useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
 import { DeleteProjectButton } from "../DeleteProjectButton";
@@ -80,6 +80,20 @@ type TeamTabProps = {
   dataManager?: Awaited<ReturnType<typeof projectDataManager>>;
   projectData: PendingProject;
   unmodifiedProject: ProjectWithFollowers;
+  pendingInvitations: MemberRequests[];
+  pendingApplications: MemberRequests[];
+  setPendingInvitations: React.Dispatch<React.SetStateAction<MemberRequests[]>>;
+  setPendingApplications: React.Dispatch<React.SetStateAction<MemberRequests[]>>;
+  pendingRequestsLoaded: boolean;
+  setPendingRequestsLoaded: React.Dispatch<React.SetStateAction<boolean>>;
+  initialPendingRequests: {
+    invitations: MemberRequests[];
+    applications: MemberRequests[];
+  };
+  setInitialPendingRequests: React.Dispatch<React.SetStateAction<{
+    invitations: MemberRequests[];
+    applications: MemberRequests[];
+  }>>;
   //setProjectData: (data: ProjectDetail) => void; because of the data manager we no longer directly update the projectData from here
   setErrorMember: (error: string) => void;
   setErrorPosition: (error: string) => void;
@@ -110,6 +124,14 @@ export const TeamTab = ({
   dataManager,
   projectData,
   unmodifiedProject,
+  pendingInvitations,
+  pendingApplications,
+  setPendingInvitations,
+  setPendingApplications,
+  pendingRequestsLoaded,
+  setPendingRequestsLoaded,
+  initialPendingRequests,
+  setInitialPendingRequests,
   setErrorMember,
   setErrorPosition,
   /*permissions,*/
@@ -183,14 +205,11 @@ export const TeamTab = ({
 
   const [messageText, setMessageText] = useState("");
 
-  // Pending member requests
-  const [pendingInvitations, setPendingInvitations] = useState<MemberRequests[]>([]);
-  const [pendingApplications, setPendingApplications] = useState<MemberRequests[]>([]);
-  const initialPendingRequests = useRef<{
-    invitations: MemberRequests[];
-    applications: MemberRequests[];
-  }>({ invitations: [], applications: [] });
+  // Pending member requests are managed by the parent ProjectCreatorEditor.
 
+  /**
+   * Handles invitation request in local and data manager
+   */
   const handleDeleteInvitation = useCallback(
     (request: MemberRequests) => {
       if (!request.requestId) return;
@@ -245,8 +264,8 @@ export const TeamTab = ({
   const isPendingRequestsUnsaved = useMemo(() => {
     const currentInvitations = pendingInvitations || [];
     const currentApplications = pendingApplications || [];
-    const originalInvitations = initialPendingRequests.current.invitations || [];
-    const originalApplications = initialPendingRequests.current.applications || [];
+    const originalInvitations = initialPendingRequests.invitations || [];
+    const originalApplications = initialPendingRequests.applications || [];
 
     if (currentInvitations.length !== originalInvitations.length) return true;
     if (currentApplications.length !== originalApplications.length) return true;
@@ -437,13 +456,16 @@ export const TeamTab = ({
     [projectAfterTeamChanges.jobs]
   );
 
+  /**
+   * Helper function that retrieves all pending requests associated to the project
+   * @returns Pending requests (using useState)
+   */
   const getPendingRequests = async () => {
     if (!projectData.projectId) return;
 
     try {
       const requests = await getMemberRequestByProjectID(projectData.projectId);
       if (requests.data) {
-        // get pending requests only
         const invitations = requests.data.filter(
           (r) => r.requestStatus === 'Pending' && r.sentFromProject === true
         );
@@ -452,22 +474,20 @@ export const TeamTab = ({
         );
         setPendingInvitations(invitations);
         setPendingApplications(applications);
-
-        if (initialPendingRequests.current.invitations.length === 0 && initialPendingRequests.current.applications.length === 0) {
-          initialPendingRequests.current = {
-            invitations,
-            applications,
-          };
-        }
+        setInitialPendingRequests({ invitations, applications });
       }
     } catch (e) {
       console.log('Failed to fetch pending member requests.');
+    } finally {
+      setPendingRequestsLoaded(true);
     }
   };
-  // Load pending member requests
+  // Load pending member requests once per project when no saved local state exists
   useEffect(() => {
-    getPendingRequests();
-  }, []);
+    if (!pendingRequestsLoaded && projectData.projectId) {
+      getPendingRequests();
+    }
+  }, [pendingRequestsLoaded, projectData.projectId]);
 
   // --- Member handlers ---
   /**

@@ -14,14 +14,14 @@ import {
   addProjectSocial,
   deleteProjectSocial,
   getByID,
-  deleteProject, 
+  deleteProject,
   requestProjectReview,
 } from "../../api/projects";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { ApiResponse, Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
+import { ApiResponse, Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 
@@ -46,7 +46,7 @@ interface Props {
   // Unused property, don't know why it's here
   updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>;
   // permissions?: number;
-  
+
   approvalStatus?: ApprovalStatusKey
 }
 
@@ -75,6 +75,13 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const [modifiedProject, setModifiedProject] = useState<PendingProject>();
 
   const [projectMessages, setProjectMessages] = useState<string[]>([]);
+  const [pendingInvitations, setPendingInvitations] = useState<MemberRequests[]>([]);
+  const [pendingApplications, setPendingApplications] = useState<MemberRequests[]>([]);
+  const [pendingRequestsLoaded, setPendingRequestsLoaded] = useState(false);
+  const [initialPendingRequests, setInitialPendingRequests] = useState<{
+    invitations: MemberRequests[];
+    applications: MemberRequests[];
+  }>({ invitations: [], applications: [] });
 
   // Indicates if the data validation has failed: prevents saving when invalid
   const [failCheck, setFailCheck] = useState(false);
@@ -568,7 +575,12 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
-      projectID !== 0 ? window.location.reload() : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
+      // Remove the unload blocker before reloading the page, otherwise the prior
+      // `saved === false` closure can still fire and trigger a browser prompt.
+      window.onbeforeunload = null;
+      projectID !== 0
+        ? window.location.reload()
+        : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
@@ -605,56 +617,54 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           <PopupButton callback={buttonCallback} buttonId="project-info-edit">
             Edit Project
           </PopupButton>
-          {approvalStatus === "not-approved" ? 
-          <Popup>
-            {/* TODO: add checking if the project is approved/rejected/pending */}
-            <PopupButton buttonId="project-info-request" >
-              Request Project Review
-            </PopupButton>
-            <PopupContent>
-              <div id="project-request-review">
-                <label id="project-request-label">
-                  Would you like to submit your project for review?
-                </label>
-                <div id="project-request-info">
-                  Submiting a request will make your project visible to moderators who will choose to either
-                  accept and make your project visible to all, request changes for you to make, 
-                  or reject it for various reasons. <br/>
-                  <strong>(Moderators are not capable of directly altering or deleting your projects)</strong>
+          {approvalStatus === "not-approved" ?
+            <Popup>
+              {/* TODO: add checking if the project is approved/rejected/pending */}
+              <PopupButton buttonId="project-info-request" >
+                Request Project Review
+              </PopupButton>
+              <PopupContent>
+                <div id="project-request-review">
+                  <label id="project-request-label">
+                    Would you like to submit your project for review?
+                  </label>
+                  <div id="project-request-info">
+                    Submiting a request will make your project visible to moderators who will choose to either
+                    accept and make your project visible to all, request changes for you to make,
+                    or reject it for various reasons. <br />
+                    <strong>(Moderators are not capable of directly altering or deleting your projects)</strong>
+                  </div>
+                  <div id="project-request-buttons">
+                    <PopupButton buttonId="request-confirm-button"
+                      callback={() => {
+                        if (projectData) requestProjectReview(projectID);
+                      }}
+                    >
+                      Request Review
+                    </PopupButton>
+                    <PopupButton buttonId="request-cancel-button">
+                      Cancel
+                    </PopupButton>
+                  </div>
                 </div>
-                <div id="project-request-buttons">
-                  <PopupButton buttonId="request-confirm-button"
-                  callback={() => {
-                    if (projectData) requestProjectReview(projectID);
-                  }}
-                  >
-                    Request Review
-                  </PopupButton>
-                  <PopupButton buttonId="request-cancel-button">
-                    Cancel
-                  </PopupButton>
-                </div>
-              </div>
-            </PopupContent>
-          </Popup> : ""}
+              </PopupContent>
+            </Popup> : ""}
         </div>
       )}
 
 
       <PopupContent callback={() => {
         /* confirm popup shows when project has been modified */
-        if (modifiedProject != projectData)
-        {
+        if (modifiedProject != projectData) {
           setConfirm(true);
         }
-        else
-        {
+        else {
           setConfirm(false);
         }
-          /* general tab by default */
-          setSaved(true);
-          setCurrentTab(0);
-        }} closeButtonRef={exitButton} confirmation={!saved}>
+        /* general tab by default */
+        setSaved(true);
+        setCurrentTab(0);
+      }} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">
@@ -757,6 +767,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
                 saveProject={saveProject}
                 projectData={modifiedProject}
                 unmodifiedProject={projectData}
+                pendingInvitations={pendingInvitations}
+                pendingApplications={pendingApplications}
+                setPendingInvitations={setPendingInvitations}
+                setPendingApplications={setPendingApplications}
+                pendingRequestsLoaded={pendingRequestsLoaded}
+                setPendingRequestsLoaded={setPendingRequestsLoaded}
+                initialPendingRequests={initialPendingRequests}
+                setInitialPendingRequests={setInitialPendingRequests}
                 setErrorMember={setErrorAddMember}
                 setErrorPosition={setErrorAddPosition} /*permissions={permissions}*/
                 saveable={saveable}
