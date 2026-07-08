@@ -39,20 +39,99 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ show, onBack, onNext })
 
             {/* Placeholder text, until ToS is finalized */}
             <h2>Introduction and Acceptance</h2>
-            <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque quis faucibus libero. Integer mi eros,
-              imperdiet et cursus a, egestas a purus. Donec ut mi purus. Quisque pretium mollis risus vitae malesuada.
-              Morbi id laoreet tellus. Mauris quis sem vitae velit fermentum sagittis. Proin sit amet turpis elit. Ut a porta urna.
-              Sed dictum dictum diam nec commodo. Duis venenatis pretium dolor eu vehicula. Nullam dapibus velit ligula,
-              non elementum nisl maximus eget. Cras semper purus ac rhoncus auctor. Vivamus ut justo a eros porta hendrerit.
-              Ut in sapien ut orci tempus ullamcorper vel eget dolor.</p>
+            <p>Looking For Group (LFG) is a platform designed to help connect developers and designers.
+              Whether you are trying to bring a passion project to life or looking for a team to join,
+              LFG provides the tools you need to connect and collaborate together.
+              By signing up, you agree to our user guidelines.</p>
 
             <h2>Description of Services</h2>
-            <p>Suspendisse lacinia quam eget dapibus sollicitudin. Pellentesque ullamcorper ac massa ac ullamcorper.
-              Ut libero diam, sodales et turpis sed, sollicitudin aliquet ligula. Vestibulum tempor lectus quis arcu venenatis porta.
-              Nullam pulvinar enim a dictum suscipit. Nunc sodales massa id metus vehicula gravida at nec neque. Donec venenatis tincidunt elit a feugiat.
-              Quisque porta a nulla id vestibulum. Phasellus malesuada, nibh sed consectetur commodo, odio justo fermentum risus,
-              vitae aliquet nunc nisi ut arcu. Duis lobortis dui in erat feugiat pharetra. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
-              Nulla fermentum sagittis risus ac sodales. Ut consectetur faucibus congue. Fusce ac tellus congue, porttitor ante.</p>
+            <ul>
+              <li><b>Discover & Meet:</b> Browse through a feed of active projects looking for contributors,
+                or seek out individuals who match the skill sets your team needs.</li>
+              <li><b>Project Creation:</b> Easily pitch your ideas to the community by creating detailed
+                project pages that outline your goals, required roles, and current progress.</li>
+              <li><b>Project Management:</b> Keep track of the teams you've joined and
+                the projects you lead through the "My Projects" dashboard.</li>
+              <li><b>Professional Profiles:</b> Showcase your unique talents, background, and previous work
+                through customizable user profiles so others can find exactly what you bring to the table.</li>
+            </ul>
+
+            <h2>User Guidelines</h2>
+            <p>The following guidelines below help keep LFG a friendly, encouraging,
+              and creative community for everyone to enjoy. If you see anyone or anything that violates these guidelines,
+              please use our report feature to notify a moderator.</p>
+            
+            <h3>User Eligibility</h3>
+            <ul>
+            <li>
+                 Users must be either presently affiliated with RIT (Student or Staff) or formerly affiliated with RIT (Alumni).
+                 This is so we can focus on RIT students getting the help they need to get co-ops, internships, or future jobs.
+            </li>
+            </ul>
+
+            <h3>Copyright</h3>
+            <ul>
+            <li>
+                Users are responsible for following general U.S. copyright law (found <a href="https://www.copyright.gov/title17/">here</a>)
+            </li>
+            <li>
+                <strong>Theft Is Not Tolerated. </strong>Projects found using stolen material will be taken down and should be reported.
+                <ul>
+                    <li>If a project uses a work without permission the user will be asked to remove the stolen work
+                      or else the project will be deleted</li>
+                </ul>
+            </li>
+            <li>
+                Projects falling under Fair Use Guidelines (<a href="https://www.copyright.gov/fair-use/">U.S. Copyright Office Fair Use Index</a>)
+                will not be taken down, however, Fair Use is never guaranteed in every case.
+            </li>
+            </ul>
+
+            <h3>Banned Content</h3>
+            <ul>
+               <li>Content promoting/inciting hate, harassment, or discrimination are not tolerated on LFG.
+                 As well as selling the project/products on the site. Such content will be taken down and will result in bans.
+                   <ul>
+                       <li>
+                           We do not carry any responsibilities involving payment for hiring if complications occur.
+                       </li>
+                   </ul>
+               </li>
+               <li>
+                   Sensitive content such as Suicide, real or disturbing depictions of violence,
+                   content that exploits children in any way and sexually explicit content should be tagged with the appropriate filters
+                   and should not be displayed in promotional images/videos. 
+                   <ul>
+                       <li>
+                           Refer to <a href="https://www.esrb.org/ratings-guide/">ESRB Rating Guides on how to tag your project.</a>
+                       </li>
+                   </ul>
+               </li>
+            </ul>
+
+            <h3>Ai Content</h3>
+            <ul>
+               <li>Projects must disclose use of AI</li>
+               <li>AI used maliciously to violate copyright laws is strictly prohibited
+                and will result in the project taken down and potential bans.</li>
+               <li>All other rules on this website applies to AI generated content.</li>
+            </ul>
+
+            <h2>Data Protection and Security</h2>
+            <ul>
+              <li>We do not use cookies to store your data.</li>
+              <li>Any projects along with assets placed upon the site belong to the owner. LFG does not claim ownership.</li>
+            </ul>
+
+            <h3>Data Collection</h3>
+            <p>We store:</p>
+            <ul>
+              <li>RIT Email</li>
+              <li>{"Full Name (first/preferred, last)"}</li>
+              <li>Major</li>
+              <li>Year</li>
+              <li>{"Phone Number (optional)"}</li>
+            </ul>
           </div>
 
           <div id="signupProcess-btns">
