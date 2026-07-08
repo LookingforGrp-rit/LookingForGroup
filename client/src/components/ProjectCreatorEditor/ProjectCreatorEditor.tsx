@@ -324,8 +324,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   }, [open, projectID, newProject, saved]);
 
   const toggleConfirm = async () => {
-    if (saved)
-      buttonCallback(false); 
+    if (saved) {
+      buttonCallback(false);
+      setCurrentTab(0); 
+    }
     else 
       setConfirm(!confirm);
   }
