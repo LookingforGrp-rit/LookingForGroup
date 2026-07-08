@@ -904,8 +904,9 @@ Project Creator and Editor Popup style rules
   flex-wrap: wrap;
   justify-content: flex-start;
   gap: 10px;
+  align-content: start;
   /*For scrolling*/
-  max-height: 370px;
+  height: 370px;
   overflow-y: auto;
 
   #tag-category-header {
