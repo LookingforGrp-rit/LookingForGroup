@@ -1150,6 +1150,9 @@ Filters / Tags Style Rules
     color: var(--tag-text-selected) !important;
   }
 
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-periwinkle.tag-unselected:hover,
@@ -1158,6 +1161,10 @@ Filters / Tags Style Rules
   border-color: var(--tag-periwinkle-selected);
 
   p {
+    color: var(--tag-text-selected) !important;
+  }
+
+  .fa {
     color: var(--tag-text-selected) !important;
   }
 }
@@ -1170,6 +1177,10 @@ Filters / Tags Style Rules
   p {
     color: var(--tag-text-selected) !important;
   }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-cyan.tag-unselected:hover,
@@ -1178,6 +1189,10 @@ Filters / Tags Style Rules
   border-color: var(--tag-cyan-selected);
 
   p {
+    color: var(--tag-text-selected) !important;
+  }
+
+  .fa {
     color: var(--tag-text-selected) !important;
   }
 }
