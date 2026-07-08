@@ -5,6 +5,7 @@ import { ThemeIcon } from './ThemeIcon';
 import { tags, projectTabs, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
 import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
+import MoreFiltersButton from './MoreFiltersButton';
 
 interface DiscoverFiltersProps {
   category: 'projects' | 'profiles';
@@ -377,7 +378,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
             {/* === Additional filters popup === */}
             <Popup>
               <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
-                <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'} />
+                <MoreFiltersButton />
               </PopupButton>
               {/* 
                             When page loads, get all necessary tag lists based on page category.
