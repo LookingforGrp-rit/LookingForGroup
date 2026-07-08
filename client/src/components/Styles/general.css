@@ -1317,7 +1317,7 @@ body.modal-open {
     /* Scale with viewport, but cap off at 857x340 (including padding) */
     max-width: 857px;
     max-height: 340px;
-    width: 56.7vw;
+    width: calc(70vw - 20px);
     /* height: 49.9vh; */
     padding: min(1.65vh, 10px) min(2.05vw, 31px);
     padding-bottom: 0;
@@ -1410,6 +1410,10 @@ body.modal-open {
 @media screen and (max-width: 1180px) {
   .popup #filters-popup {
     max-width: 88vw;
+
+    #filters {
+          width: calc(88vw - 20px);
+    }
 
     #filter-tabs {
       height: auto;

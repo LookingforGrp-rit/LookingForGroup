@@ -1234,7 +1234,7 @@ Filters / Tags Style Rules
 
 /* Main Content Panel (Search, Categories, Tags) */
 #filters.popup-section {
-  width: 100% !important;
+  /* width: 100% !important; */
   max-width: 100% !important;
   box-sizing: border-box;
   background-color: #0c0b11;
@@ -1439,6 +1439,7 @@ Filters / Tags Style Rules
 
   #filters.popup-section {
     gap: 0px !important;
+    width: calc(94vw - 20px);
   }
 
   /* Header scaling for smaller viewports */
