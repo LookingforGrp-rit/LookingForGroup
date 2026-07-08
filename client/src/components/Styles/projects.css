@@ -1772,7 +1772,7 @@ Project Creator and Editor Popup style rules
   background-color: var(--primary-color) !important;
 }
 
-.delete-button:hover, save-button:hover {
+/* .delete-button:hover, save-button:hover { */
 .deny-btn {
   background: none;
   border: none;
@@ -1802,7 +1802,7 @@ Project Creator and Editor Popup style rules
   width: fit-content;
 }
 
-.delete-button:hover {
+.delete-button:hover, .save-button:hover {
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }
 
