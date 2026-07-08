@@ -76,7 +76,7 @@ describe('updateMemberRequestService', async () => {
     vi.mocked(prisma.memberRequests.findUnique).mockResolvedValue(prismaInvitationRequest);
     vi.mocked(prisma.projects.findFirst).mockResolvedValue(prismaProject);
     vi.mocked(prisma.memberRequests.update).mockResolvedValue(prismaInvitationRequest);
-    const result = await updateMemberRequestService(50, 15, 'Accepted');
+    const result = await updateMemberRequestService(50, 15, { requestStatus: 'Accepted' });
 
     expect(result).toBe('OK');
   });
@@ -85,28 +85,41 @@ describe('updateMemberRequestService', async () => {
     vi.mocked(prisma.memberRequests.findUnique).mockResolvedValue(null);
     vi.mocked(prisma.projects.findFirst).mockResolvedValue(prismaProject);
     vi.mocked(prisma.memberRequests.update).mockResolvedValue(prismaInvitationRequest);
-    const result = await updateMemberRequestService(50, 15, 'Accepted');
+    const result = await updateMemberRequestService(50, 15, { requestStatus: 'Accepted' });
 
     expect(result).toBe('NOT_FOUND');
   });
 
-  it('returns FORBIDDEN if the user is not the invitee', async () => {
+  it('returns FORBIDDEN if the user is neither the invitee nor a project owner updating roleId', async () => {
     vi.mocked(prisma.memberRequests.findUnique).mockResolvedValue(prismaInvitationRequest);
     vi.mocked(prisma.projects.findFirst).mockResolvedValue(prismaProject);
     vi.mocked(prisma.memberRequests.update).mockResolvedValue(prismaInvitationRequest);
-    const result = await updateMemberRequestService(50, 1, 'Accepted');
-    const result2 = await updateMemberRequestService(50, 12, 'Accepted');
+    const result = await updateMemberRequestService(50, 1, { requestStatus: 'Accepted' });
+    const result2 = await updateMemberRequestService(50, 12, { requestStatus: 'Accepted' });
 
     expect(result).toBe('FORBIDDEN');
     expect(result2).toBe('FORBIDDEN');
+  });
+
+  it('allows the project owner to update the roleId of a pending invitation', async () => {
+    vi.mocked(prisma.memberRequests.findUnique).mockResolvedValue(prismaInvitationRequest);
+    vi.mocked(prisma.projects.findFirst).mockResolvedValue(prismaProject);
+    vi.mocked(prisma.memberRequests.update).mockResolvedValue({
+      ...prismaInvitationRequest,
+      roleId: 18,
+    });
+
+    const result = await updateMemberRequestService(50, 1, { roleId: 18 });
+
+    expect(result).toBe('OK');
   });
 
   it('returns FORBIDDEN if the user is not the project owner for an application', async () => {
     vi.mocked(prisma.memberRequests.findUnique).mockResolvedValue(prismaApplicationRequest);
     vi.mocked(prisma.projects.findFirst).mockResolvedValue(prismaProject);
     vi.mocked(prisma.memberRequests.update).mockResolvedValue(prismaApplicationRequest);
-    const result = await updateMemberRequestService(50, 15, 'Accepted');
-    const result2 = await updateMemberRequestService(50, 12, 'Accepted');
+    const result = await updateMemberRequestService(50, 15, { requestStatus: 'Accepted' });
+    const result2 = await updateMemberRequestService(50, 12, { requestStatus: 'Accepted' });
 
     expect(result).toBe('FORBIDDEN');
     expect(result2).toBe('FORBIDDEN');
@@ -116,7 +129,7 @@ describe('updateMemberRequestService', async () => {
     vi.mocked(prisma.memberRequests.findUnique).mockResolvedValue(prismaInvitationRequest);
     vi.mocked(prisma.projects.findFirst).mockResolvedValue(null);
     vi.mocked(prisma.memberRequests.update).mockResolvedValue(prismaInvitationRequest);
-    const result = await updateMemberRequestService(50, 15, 'Accepted');
+    const result = await updateMemberRequestService(50, 15, { requestStatus: 'Accepted' });
 
     expect(result).toBe('INTERNAL_ERROR');
   });
@@ -125,7 +138,7 @@ describe('updateMemberRequestService', async () => {
     vi.mocked(prisma.memberRequests.findUnique).mockRejectedValue(new Error('womp womp'));
     vi.mocked(prisma.projects.findFirst).mockResolvedValue(null);
     vi.mocked(prisma.memberRequests.update).mockResolvedValue(prismaInvitationRequest);
-    const result = await updateMemberRequestService(50, 15, 'Accepted');
+    const result = await updateMemberRequestService(50, 15, { requestStatus: 'Accepted' });
 
     expect(result).toBe('INTERNAL_ERROR');
   });
