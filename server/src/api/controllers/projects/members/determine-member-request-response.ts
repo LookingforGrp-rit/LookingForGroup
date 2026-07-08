@@ -31,7 +31,7 @@ export const determineMembershipRequestResponse = async (
   else response = 'REQUEST-';
 
   // determine if it was rejected or accepted
-  if (body.newStatus === MemberRequestStatus.Accepted) response += 'ACCEPTED';
+  if (body.requestStatus === MemberRequestStatus.Accepted) response += 'ACCEPTED';
   else response += 'REJECTED';
 
   return response as MembershipRequestResponseType;
