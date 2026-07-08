@@ -425,6 +425,11 @@ Project Creator and Editor Popup style rules
   max-height: 100%;
   overflow: scroll;
 }
+@media screen and (max-height: 750px) {
+  #project-creator-editor {
+    padding-bottom: 20px; 
+  }
+}
 
 #project-editor-tabs {
   display: flex;
