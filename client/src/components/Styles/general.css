@@ -332,6 +332,7 @@ section {
   margin: 30px auto;
 }
 
+
 /* #endregion */
 
 /*
@@ -1048,6 +1049,12 @@ Page popup style rules
   height: 100%;
   z-index: 21;
   border-radius: 10px;
+}
+
+html.modal-open,
+body.modal-open {
+  overflow: hidden !important;
+  height: 100% !important;
 }
 
 @media only screen and (hover: none) {
