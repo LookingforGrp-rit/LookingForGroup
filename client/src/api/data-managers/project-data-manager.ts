@@ -19,6 +19,7 @@ import {
   UpdateJobSkillInput,
   AddJobSkillInput,
   DeleteJobSkillInput,
+  UpdateMemberRequestInput,
 } from "@looking-for-group/shared";
 import {
   sendInvite,
@@ -35,8 +36,10 @@ import {
   deleteProjectMedium,
   deleteProjectSocial,
   deleteProjectTag,
+  deleteMemberRequest as deleteMemberRequestAPI,
   getByID,
   updateMember as updateMemberAPI,
+  updateMemberRequest as updateMemberRequestAPI,
   updatePic,
   updateProject,
   updateProjectJob,
@@ -111,6 +114,7 @@ export const projectDataManager = async (projectId: number) => {
         jobs: [],
         jobSkills: [],
         members: [],
+        memberRequests: [],
       },
       delete: {
         tags: [],
@@ -121,6 +125,7 @@ export const projectDataManager = async (projectId: number) => {
         jobSkills: [],
         members: [],
         mediums: [],
+        memberRequests: [],
       },
     };
 
@@ -310,13 +315,24 @@ export const projectDataManager = async (projectId: number) => {
       throw new Error(`Some updates failed: ${errorMessage}. `);
     }
 
-    
+
     // job skills
     try {
       await runAndCollectErrors<UpdateJobSkillInput>(
         "Updating project social",
         updates.jobSkills,
         ({ id, data }) => updateJobSkill(projectId, id.value, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    // project member requests
+    try {
+      await runAndCollectErrors<UpdateMemberRequestInput>(
+        "Updating project member requests",
+        updates.memberRequests,
+        ({ id, data }) => updateMemberRequestAPI(id.value, data)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -536,6 +552,17 @@ export const projectDataManager = async (projectId: number) => {
         "Deleting job skill",
         deletes.jobSkills,
         ({ data }) => deleteJobSkill(projectId, data)
+      );
+    } catch (error) {
+      errorMessage += (error as { message: string }).message;
+    }
+
+    // project member requests
+    try {
+      await runAndCollectErrors<null>(
+        "Deleting project member requests",
+        deletes.memberRequests,
+        ({ id }) => deleteMemberRequestAPI(id.value)
       );
     } catch (error) {
       errorMessage += (error as { message: string }).message;
@@ -928,6 +955,35 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   /**
+   * Updates an existing member request of a project
+   * @param request The request to be updated and its new data
+   */
+  const updateMemberRequest = (request: CRUDRequest<UpdateMemberRequestInput>) => {
+    let existingRequestUpdate = changes.update.memberRequests.find(
+      ({ id }) => id.value === request.id.value && id.type === request.id.type
+    );
+
+    existingRequestUpdate = {
+      id: request.id,
+      data: {
+        ...existingRequestUpdate?.data,
+        ...request.data,
+      },
+    };
+
+    changes.update.memberRequests = [
+      ...changes.update.memberRequests.filter(
+        ({ id }) =>
+          !(
+            id.value == existingRequestUpdate.id.value &&
+            id.type == existingRequestUpdate.id.type
+          )
+      ),
+      existingRequestUpdate,
+    ];
+  };
+
+  /**
    * Deletes an existing tag of a project
    * @param tag The tag to be deleted
    */
@@ -1166,6 +1222,32 @@ export const projectDataManager = async (projectId: number) => {
   };
 
   /**
+   * Removes an existing member request of a project
+   * @param request The member request to delete
+   */
+  const deleteMemberRequest = (request: CRUDRequest<null>) => {
+    // if we were gonna update this request, don't
+    if (
+      changes.update.memberRequests.some(
+        ({ id }) => id.value === request.id.value && id.type === request.id.type
+      )
+    ) {
+      changes.update.memberRequests = changes.update.memberRequests.filter(
+        ({ id }) =>
+          !(id.value === request.id.value && id.type === request.id.type)
+      );
+    }
+
+    // otherwise, delete this member request
+    if (
+      request.id.type === "canon" &&
+      !changes.delete.memberRequests.some(({ id }) => id.value === request.id.value)
+    ) {
+      changes.delete.memberRequests.push(request);
+    }
+  };
+
+  /**
    * Removes an existing medium from a project
    * @param medium The medium to delete
    */
@@ -1204,6 +1286,7 @@ export const projectDataManager = async (projectId: number) => {
     updateSocial,
     updateJob,
     updateMember,
+    updateMemberRequest,
     updateThumbnail,
     deleteTag,
     deleteImage,
@@ -1211,6 +1294,7 @@ export const projectDataManager = async (projectId: number) => {
     deleteVideo,
     deleteJob,
     deleteMember,
+    deleteMemberRequest,
     deleteMedium,
     getSavedProject,
   };

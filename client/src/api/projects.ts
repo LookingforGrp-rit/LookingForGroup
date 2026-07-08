@@ -148,9 +148,20 @@ export const getMemberRequest = async (
   const response = await GET(apiURL, query);
 
   if (response.error) {
-    console.log(`Error in getRequestByID: ${response.error}`);
+    console.log(`Error in getMemberRequest: ${response.error}`);
     throw new Error(response.error);
   }
+  return response;
+};
+
+export const getMemberRequestByProjectID = async (
+  id: number
+): Promise<ApiResponse<MemberRequests[]>> => {
+  const apiURL = `/projects/${id}/members/requests`;
+  const response = await GET(apiURL);
+
+  if (response.error)
+    console.log(`Error in getMemberRequestByProjectID: ${response.error}`);
   return response;
 };
 
@@ -487,6 +498,21 @@ export const updateMemberRequest = async (
   const response = await PATCH(apiURL, memberData);
 
   if (response.error) console.log(`Error in updatePendingMember: ${response.error}`);
+  return response as ApiResponse<null>;
+};
+
+/**
+ * Removes a member request from a project
+ * @param requestID - Database ID of the request
+ * @returns Response status
+ */
+export const deleteMemberRequest = async (
+  requestID: number,
+): Promise<ApiResponse<null>> => {
+  const apiURL = `/projects/members/requests/${requestID}`;
+  const response = await DELETE(apiURL);
+
+  if (response.error) console.log(`Error in deleteMemberRequest: ${response.error}`);
   return response as ApiResponse<null>;
 };
 
@@ -895,7 +921,9 @@ export default {
   requestToJoin,
   updateMember,
   getMemberRequest,
+  getMemberRequestByProjectID,
   updateMemberRequest,
+  deleteMemberRequest,
   deleteMember,
   getProjectSocials,
   addProjectSocial,

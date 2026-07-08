@@ -276,6 +276,16 @@ router.get(
   authenticated(PROJECT.getInvitations),
 );
 
+//Get member requests
+router.get(
+  '/:id/members/requests',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  authenticated(PROJECT.getMemberRequests),
+);
+
 //Get a member request
 router.get(
   '/members/requests',

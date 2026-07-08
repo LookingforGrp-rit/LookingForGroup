@@ -21,7 +21,7 @@ const updateMemberRequest = async (req: AuthenticatedRequest, res: Response) => 
 
   const body = req.body as UpdateMemberRequestInput;
 
-  const result = await updateMemberRequestStatusService(requestId, userId, body.newStatus);
+  const result = await updateMemberRequestStatusService(requestId, userId, body);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
