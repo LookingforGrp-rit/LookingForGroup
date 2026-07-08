@@ -1,14 +1,13 @@
 import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent} from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
-import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
 import ToTopButton from '../ToTopButton';
-import { getProjects, getByID } from '../../api/projects';
+import { getByID } from '../../api/projects';
 import { getProjectFollowing } from '../../api/users';
 
 import {
-  ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
+  Tag, NumberDictionary, StructuredProjectInfo,
   ProjectPreview, ProjectWithFollowers,
   MePrivate
 } from '@looking-for-group/shared';
@@ -27,6 +26,15 @@ let index = 0;
 //Determines the number of different projects for some reason
 let count = 10;
 
+enum sortModes {
+    "A-Z" = "A-Z",
+    "Z-A" = "Z-A",
+    "Newest" = "Newest",
+    "Oldest" = "Oldest",
+    "Followers (NOT IMPLIMENTED)" = "Followers (NOT IMPLIMENTED)",
+    "Followers Acending (NOT IMPLIMENTED)" = "Followers Acending (NOT IMPLIMENTED)",
+}
+
 export const DiscoverPage = () => {
   // --------------------
   // Components
@@ -43,6 +51,8 @@ export const DiscoverPage = () => {
 
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [followedProjectIds, setFollowedProjectIds] = useState<Set<number>>(new Set());
+
+  const [sortMode, setSortMode] = useState<sortModes>(sortModes.Newest);
 
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
@@ -154,17 +164,21 @@ export const DiscoverPage = () => {
       const scrollPercent = fullPage.scrollTop / (fullPage.clientHeight / 2); //clientHeight seemed to be doubled so i halved it
 
       if (scrollPercent >= 0.95) {
-        setupProjectData();
+        sortProjects();
         console.log("load more projects");
       }
     }
   });
 
   //Gets the projects and updates the variables above
-  const getPaginatedProjects = async () => {
+  const getPaginatedProjects = async (method?: string) => {
     //NOTE: the "Newest" here is a default implementation for sorting method, so the site doesn't break
     //CHANGE THIS WHEN FRONT END IS ACTUALLY IMPLEMENTED!!
-    let returnedProjects = await GET(`/projects/paginated/${count}/${index}/Newest`);
+    let returnedProjects;
+    if (method)
+      returnedProjects = await GET(`/projects/paginated/${count}/${index}/${method}`);
+    else
+      returnedProjects = await GET(`/projects/paginated/${count}/${index}/Newest`);
 
     if (returnedProjects.data && returnedProjects.data[returnedProjects.data.length - 1]) {
       index = returnedProjects.data[returnedProjects.data.length - 1].projectId;
@@ -174,10 +188,11 @@ export const DiscoverPage = () => {
   }
 
   // Set the necessary data for project mode
-  const setupProjectData = async (): Promise<void> => {
+  const setupProjectData = async (method: string, invert: boolean): Promise<void> => {
     //Doesn't check if projects are alreadys in projects so many are repeated
     //I think the weirdness below fixes it? I'm not sure since the only 3 bug is still present
-    let returnedProjects: ProjectPreview[] = await getPaginatedProjects();
+    let returnedProjects: ProjectPreview[] = await getPaginatedProjects(method);
+
     //Probably doesn't work since it's not checking projectId?
     // returnedProjects = returnedProjects.filter((project) => !projects.includes(project));
     // projects = projects.concat(returnedProjects);
@@ -232,13 +247,22 @@ export const DiscoverPage = () => {
 
     setLoadObj(returnedProjects.length < count ?
       <p style={{color: 'red'}}>No More Projects!</p> : 
-      <button id='btn-loadmore' onClick={setupProjectData}>Load More Projects</button>);
+      <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
 
-    setFullProjectList(projects);
-    setFilteredProjectList(projects);
+    if (invert) {
+      setFullProjectList(projects.toReversed());
+      setFilteredProjectList(projects.toReversed());
 
-    getShowcaseDetails(projects, newProjectCache);
-    setProjectCache(newProjectCache);
+      getShowcaseDetails(projects.toReversed(), newProjectCache);
+      setProjectCache(newProjectCache);
+    }
+    else {
+      setFullProjectList(projects);
+      setFilteredProjectList(projects);
+
+      getShowcaseDetails(projects, newProjectCache);
+      setProjectCache(newProjectCache);
+    }
 
     setLoaded(true);
   };
@@ -247,7 +271,8 @@ export const DiscoverPage = () => {
   * Changes what projects are shown to the user whenever a filter has been added or changed
   * @param activeTagFilters Tags that are shown to the user now
   */
-  const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any") => {
+  const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
+    sortProjects(sortMode);
     const projectList = fullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
@@ -344,9 +369,43 @@ export const DiscoverPage = () => {
   };
 
   useEffect(() => {
-    setupProjectData();
-    setLoadObj(<button id='btn-loadmore' onClick={setupProjectData}>Load More Projects</button>);
+    sortProjects();
+    setLoadObj(<button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
   }, []);
+
+  const sortProjects = useCallback((newSortMode?: sortModes) => {
+    switch (newSortMode ?? sortMode) {
+      case "A-Z":
+        setupProjectData("A-Z", false);
+        // Compare names
+        break;
+      case "Z-A":
+        // Compare names inverted
+        setupProjectData("A-Z", true);
+        break;
+      case "Newest":
+        // Compare age
+        setupProjectData("Newest", false);
+        break;
+      case "Oldest":
+        // Compare age inverted
+        setupProjectData("Newest", true);
+        break;
+      case 'Followers (NOT IMPLIMENTED)':
+        // TO IMPLIMENT once backend 
+        setupProjectData("A-Z", false);
+        break;
+      case "Followers Acending (NOT IMPLIMENTED)":
+        // TO IMPLIMENT
+        setupProjectData("A-Z", true);
+        break;
+      default:
+        //default to newest first
+        setupProjectData("Newest", false);
+        break;
+    }
+    if (newSortMode) setSortMode(newSortMode);
+  }, [sortMode]);
 
   /**
   * Updates the filtered project list with new search information
