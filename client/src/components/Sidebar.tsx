@@ -231,8 +231,8 @@ const SideBar = () => {
     fetchUserId();
   }, []);
 
-  const toggleActive = async () => {
-    setActive(!active);
+  const toggleActive = async (state: boolean) => {
+    setActive(state);
   }
 
   // Mobile layout

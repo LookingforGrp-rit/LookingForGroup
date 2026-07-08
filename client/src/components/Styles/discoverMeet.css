@@ -608,12 +608,14 @@ Filters / Tags Style Rules
 #filters-left-scroll {
   left: 0;
   text-align: left;
+  width: 25px;
   background-image: linear-gradient(to right, var(--bg-color) 30%, #00000000 70%);
 }
 
 #filters-right-scroll {
   right: 0;
   text-align: right;
+  width: 25px;
   background-image: linear-gradient(to right, #00000000 30%, var(--bg-color) 70%);
 }
 
@@ -701,6 +703,7 @@ Filters / Tags Style Rules
   justify-content: end;
   right: 0;
   flex: 0 0 auto;
+  padding-left: 10px;
 
   .popup {
     width: auto;
@@ -713,6 +716,20 @@ Filters / Tags Style Rules
   color: var(--main-text);
   transform: translateY(-1px);
   opacity: 0.85;
+}
+
+#discover-more-filters:hover {
+  background-color: var(--primary-color);
+  opacity: 1;
+
+  .color-fill>use,
+  .color-stroke>use {
+    stroke: var(--invert-text) !important;
+  }
+
+  #more-filters-text {
+    color: var(--invert-text);
+  }
 }
 
 .discover-tag-filter:active,
@@ -734,17 +751,35 @@ Filters / Tags Style Rules
 
 #discover-more-filters {
   height: 40px;
-  width: 40px;
+  width: 150px;
   padding: 5px;
   background: none;
   border: none;
   border-radius: 30px;
   transition: all 0.2s ease-in-out;
+  background-color: var(--header-color);
+  box-shadow: -17px 0px 10px var(--bg-color);
 
   img {
     height: 30px;
     width: 30px;
   }
+
+  #more-filters-text {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+}
+
+#more-filters-button {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
 }
 
 .applied-filters {
