@@ -47,19 +47,23 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
       },
     });
 
+    if (!data) {
+      throw new Error('something caught fire');
+    }
+
     const roleData = await prisma.roles.findFirst({
-      where: { roleId: data?.roleId },
+      where: { roleId: data.roleId },
       select: { label: true },
     });
 
-    const projectTitle = data?.projects.title as string;
-    const ownerName = data?.projects.users.preferredName as string;
-    const requesterName = data?.users.preferredName as string;
-    const requesterLastName = data?.users.lastName as string;
-    const requesterUsername = data?.users.username as string;
-    const roleName = roleData?.label as string;
+    const projectTitle = data.projects.title;
+    const ownerName = data.projects.users.preferredName;
+    const requesterName = data.users.preferredName;
+    const requesterLastName = data.users.lastName;
+    const requesterUsername = data.users.username;
+    const roleName = roleData?.label;
     const requesterProfileLink = `${process.env.CLIENT_URL ?? 'http://localhost:5173'}/profile?userID=${prospectiveMemberId.toString()}`;
-    const acceptRequestLink = `${process.env.CLIENT_URL ?? 'http://localhost:5173'}/acceptApplication/${data?.requestId.toString()}`;
+    const acceptRequestLink = `${process.env.CLIENT_URL ?? 'http://localhost:5173'}/acceptApplication/${data.requestId.toString()}`;
 
     //--BUILDING NOTIFICATION--//
     notification.receiverId = body.ownerUserId;
@@ -68,7 +72,7 @@ export class RequestToJoinNotificationBuilder implements NotificationBuilder {
     // building message
     notification.message = `Hello ${ownerName},<br /><br />`;
     notification.message += `<strong>${requesterName} ${requesterLastName}</strong> (${requesterUsername}@g.rit.edu) `;
-    notification.message += `has requested to join your project <strong>${projectTitle}</strong> as a <strong>${roleName}</strong>.<br /><br />  `;
+    notification.message += `has requested to join your project <strong>${projectTitle}</strong> as a <strong>${roleName as string}</strong>.<br /><br />  `;
     if (body.message) {
       notification.message += `${requesterName} has provided a message:<br />`;
       notification.message += `"${body.message}"<br /><br />`;
