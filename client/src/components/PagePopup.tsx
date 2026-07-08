@@ -1,4 +1,4 @@
-import { Dispatch,ReactNode, SetStateAction, useEffect } from 'react';
+import { Dispatch, ReactNode, SetStateAction, useEffect } from 'react';
 
 //This component is meant to be reusable in any area of the site, acting as an element that can be
 //  opened or closed after performing certain actions.
@@ -85,7 +85,7 @@ export const PagePopup = ({
   zIndex,
   show,
   setShow,
-  onClose = () => {},
+  onClose = () => { },
 }: PagePopupProps) => {
 
   // Lock body scroll when popup is open
