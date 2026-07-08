@@ -4,11 +4,16 @@ import { SearchBar } from './SearchBar';
 import { ThemeIcon } from './ThemeIcon';
 import { tags, projectTabs } from '../constants/tags';
 import { getJobTitles, getProjectTypes, getTags} from '../api/users';
-import { Tag, StringDictionary, Medium, Role } from '@looking-for-group/shared';
+import { Tag, StringDictionary, Medium, } from '@looking-for-group/shared';
+import { Select, SelectButton, SelectOptions } from './Select';
 
 
 interface DiscoverProjectsProps {
-    updateItemList: (tags: Tag[], filterMode: "Match All" | "Match Any") => void;
+    updateItemList: (
+        tags: Tag[], 
+        filterMode: "Match All" | "Match Any", 
+        SortMode: sortModes
+    ) => void;
 }
 
 interface FilterTab {
@@ -20,6 +25,15 @@ interface FilterTab {
 interface EnabledFilter {
     tag: Tag;
     color: string;
+}
+
+enum sortModes {
+    "A-Z" = "A-Z",
+    "Z-A" = "Z-A",
+    "Newest" = "Newest",
+    "Oldest" = "Oldest",
+    "Followers (NOT IMPLIMENTED)" = "Followers (NOT IMPLIMENTED)",
+    "Followers Acending (NOT IMPLIMENTED)" = "Followers Acending (NOT IMPLIMENTED)",
 }
 
 
@@ -83,6 +97,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
     const [filterPopupTabs, setFilterPopupTabs] = useState<FilterTab[]>([]);
 
     const [filterMode, setFilterMode] = useState<"Match All" | "Match Any">("Match All");
+      const [sortMode, setSortMode] = useState<sortModes>(sortModes.Newest);
 
 
     //////////////////
@@ -160,7 +175,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
         }
 
         setActiveTagFilters(newActiveTags);
-        updateItemList(newActiveTags, filterMode);
+        updateItemList(newActiveTags, filterMode, sortMode);
     };
 
     /**
@@ -377,6 +392,38 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                             </PopupButton>
                             <div id="filters-popup">
                                 <h2>Project Filters</h2>
+                                <div id='filter-settings'>
+                                    <button id='match-button'
+                                    onClick={() => {
+                                    setFilterMode(filterMode === "Match All" ? "Match Any" : "Match All");
+                                    }}>
+                                        {filterMode}
+                                    </button>
+                                    <Select>
+                                        <SelectButton buttonId='sort-button'
+                                            placeholder="Sorting Mode"
+                                            type={"input"}
+                                            initialVal={sortMode}
+                                        />
+                                        <SelectOptions
+                                            callback={(e) =>
+                                                setSortMode(
+                                                    (e.target as HTMLButtonElement)
+                                                        .value as sortModes
+                                                )
+                                            }
+                                            options={Object.keys(sortModes).map(
+                                                (key) => {
+                                                    return {
+                                                        value: key,
+                                                        markup: <>{key}</>,
+                                                        disabled: false
+                                                    };
+                                                }
+                                            )}
+                                        />
+                                    </Select>
+                                </div>
                                 <div id="filters" className="popup-section">
                                     <SearchBar
                                         dataSets={dataSet}
@@ -526,12 +573,6 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     </div>
                                 </div>
                                 <div id="filters-btns-section">
-                                    <button id='match-button'
-                                    onClick={() => {
-                                      setFilterMode(filterMode === "Match All" ? "Match Any" : "Match All");
-                                    }}>
-                                      {filterMode}
-                                    </button>
                                     {/* Reset Filters button */}
                                     <PopupButton
                                       className={'delete-button'}
@@ -591,7 +632,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                             setAppliedFiltersDisplay(enabledFilters);
 
                                             // Update the project list
-                                            updateItemList(newActiveTags, filterMode);
+                                            updateItemList(newActiveTags, filterMode, sortMode);
 
                                             //Add "Applied Filters" div if it is missing and if the paragraph exists
                                             if (newActiveTags.length > 0) {
@@ -633,7 +674,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                                     const newActiveTags = tempList.map((filter) => filter.tag);
                                     setAppliedFiltersDisplay(tempList);
                                     setActiveTagFilters(newActiveTags);
-                                    updateItemList(newActiveTags, filterMode);
+                                    updateItemList(newActiveTags, filterMode, sortMode);
 
                                     if (newActiveTags.length === 0 || (newActiveTags.length === 1 && newActiveTags[0].type === 'Project Type')) {
                                         setDisplayFiltersText(false);
