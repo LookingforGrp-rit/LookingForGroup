@@ -1601,7 +1601,10 @@ export type AddJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "posit
 
 export type UpdateJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "position"> //more things if we want to add more things
 
-export type DeleteJobSkillInput = Pick<JobSkill, 'jobId' | "skillId"> 
+export type DeleteJobSkillInput = {
+  jobId: number,
+  skillId: number
+}
 //this is purely for the frontend because it needs both things for the url, and so the data manager can work properly
 //the delete service takes it from the parameters
 
