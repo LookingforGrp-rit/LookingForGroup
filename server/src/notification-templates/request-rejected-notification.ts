@@ -46,7 +46,9 @@ export class RequestRejectedNotificationBuilder implements NotificationBuilder {
     notification.subjectLine = `Your request to join ${projectData.title} has been rejected.`;
 
     notification.message = `Hello ${inviteeData.preferredName},<br /><br />`;
-    notification.message += `Your request to join ${projectData.title} as a ${roleData?.label as string} has been rejected.`;
+    notification.message += `Your request to join ${projectData.title} as a ${roleData?.label as string} has been rejected.<br /><br />`;
+    notification.message += `Thank you for your interest, and we wish you the best with your future projects!<br /><br />`;
+    notification.message += `LFG Team`;
     return notification;
   }
 }
