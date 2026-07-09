@@ -79,6 +79,7 @@ export const requestToJoinService = async (
           requestId: req.requestId,
         },
         data: {
+          sentFromProject: false,
           requestStatus: 'Pending',
         },
       });
