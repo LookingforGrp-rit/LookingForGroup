@@ -74,8 +74,8 @@ export const Input: React.FC<CustomInputProps> = ({
   const doSingleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const trimmedValue = e.target.value
     // .replace(/ {2,}/g, " ")
-    .replace(/ +$/g, "")
-    .replace(/^ +/g, " ");
+    .replace(/ +$/g, " ")
+    .replace(/^ +/g, "");
 
 
     if (onChange) {
