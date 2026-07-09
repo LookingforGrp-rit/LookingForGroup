@@ -638,19 +638,32 @@ export const TeamTab = ({
 			// const pendingRole =
 			// 	allRoles.find((r) => r.label === "Pending") ??
 			// 	currentMember.role;
-			const localProjectMember: PendingProjectMember = {
-				user: currentMember.user,
-				role: currentMember.role,
-				localId:
-					(currentMember as PendingProjectMember).localId ??
-					++localIdIncrement
+			// const localProjectMember: PendingProjectMember = {
+			// 	user: currentMember.user,
+			// 	role: currentMember.role,
+			// 	localId:
+			// 		(currentMember as PendingProjectMember).localId ??
+			// 		++localIdIncrement
+			// };
+
+			// projectAfterTeamChanges.members = [
+			// 	...projectAfterTeamChanges.members,
+			// 	localProjectMember
+			// ];
+			// updatePendingProject(projectAfterTeamChanges);
+
+			const newInvitation: MemberRequests = {
+				requestId: 0, // or a temporary local id if you have one
+				prospectiveMemberId: currentMember.user.userId,
+				projectId: projectAfterTeamChanges.projectId as number,
+				roleId: currentMember.role.roleId,
+				sentFromProject: true,
+				requestStatus: "Pending",
 			};
 
-			projectAfterTeamChanges.members = [
-				...projectAfterTeamChanges.members,
-				localProjectMember
-			];
-			updatePendingProject(projectAfterTeamChanges);
+			setPendingInvitations(prev => [...prev, newInvitation]);
+
+			updatePendingProject(structuredClone(projectAfterTeamChanges));
 
 			setCurrentMember(emptyMember);
 			resetFields();
@@ -1057,44 +1070,44 @@ export const TeamTab = ({
 					</span>
 
 					<div id="edit-position-skills-list">
-            			{/* TODO: make displayed tags look like tags */}
-            			{currentJob?.jobSkills &&
-              			currentJob?.jobSkills?.length > 0 ?
-              			currentJob?.jobSkills?.map((tag) => {
-							if(tag){
-								let category: string;
-                      			switch (tag.type) {
-                        			case "Designer":
-                          				category = "red";
-                          				break;
-                        			case "Developer":
-                          				category = "yellow";
-                          				break;
-                        			case "Soft":
-                          				category = "purple";
-                          				break;
-                        			case "Audio":
-                          				category = "periwinkle";
-                          				break;
-                        			case "Engineer":
-                          				category = "cyan";
-                          				break;
-                        			default:
-                          				category = "grey";
-                      			}
-                    			return (
-                        			<div
-                          			key={`${tag.skillId}`}
-                          			className={`skill-tag-label label-${category}`}
-                        			>
-                          			{tag.label}
-                        			</div>
-                      			);
+						{/* TODO: make displayed tags look like tags */}
+						{currentJob?.jobSkills &&
+							currentJob?.jobSkills?.length > 0 ?
+							currentJob?.jobSkills?.map((tag) => {
+								if (tag) {
+									let category: string;
+									switch (tag.type) {
+										case "Designer":
+											category = "red";
+											break;
+										case "Developer":
+											category = "yellow";
+											break;
+										case "Soft":
+											category = "purple";
+											break;
+										case "Audio":
+											category = "periwinkle";
+											break;
+										case "Engineer":
+											category = "cyan";
+											break;
+										default:
+											category = "grey";
+									}
+									return (
+										<div
+											key={`${tag.skillId}`}
+											className={`skill-tag-label label-${category}`}
+										>
+											{tag.label}
+										</div>
+									);
+								}
+								else return ""
 							}
-							else return ""
-                		}
-              			) : "None"}
-          			</div>
+							) : "None"}
+					</div>
 				</div>
 				<div id="open-position-details">
 					<div id="open-position-details-left">
@@ -1315,44 +1328,44 @@ export const TeamTab = ({
 					</div>
 				</Popup>
 				<div id="edit-position-skills-list">
-            			{/* TODO: make displayed tags look like tags */}
-            			{currentJob?.jobSkills &&
-              			currentJob?.jobSkills?.length > 0 ?
-              			currentJob?.jobSkills?.map((tag) => {
-							if(tag){
+					{/* TODO: make displayed tags look like tags */}
+					{currentJob?.jobSkills &&
+						currentJob?.jobSkills?.length > 0 ?
+						currentJob?.jobSkills?.map((tag) => {
+							if (tag) {
 								let category: string;
-                      			switch (tag.type) {
-                        			case "Designer":
-                          				category = "red";
-                          				break;
-                        			case "Developer":
-                          				category = "yellow";
-                          				break;
-                        			case "Soft":
-                          				category = "purple";
-                          				break;
-                        			case "Audio":
-                          				category = "periwinkle";
-                          				break;
-                        			case "Engineer":
-                          				category = "cyan";
-                          				break;
-                        			default:
-                          				category = "grey";
-                      			}
-                    			return (
-                        			<div
-                          			key={`${tag.skillId}`}
-                          			className={`skill-tag-label label-${category}`}
-                        			>
-                          			{tag.label}
-                        			</div>
-                      			);
+								switch (tag.type) {
+									case "Designer":
+										category = "red";
+										break;
+									case "Developer":
+										category = "yellow";
+										break;
+									case "Soft":
+										category = "purple";
+										break;
+									case "Audio":
+										category = "periwinkle";
+										break;
+									case "Engineer":
+										category = "cyan";
+										break;
+									default:
+										category = "grey";
+								}
+								return (
+									<div
+										key={`${tag.skillId}`}
+										className={`skill-tag-label label-${category}`}
+									>
+										{tag.label}
+									</div>
+								);
 							}
 							else return ""
-                		}
-              			) : "None"}
-          			</div>
+						}
+						) : "None"}
+				</div>
 			</div>
 
 			<div id="edit-position-details">
@@ -1526,11 +1539,11 @@ export const TeamTab = ({
 								options={unmodifiedProject.members
 									.filter((member) => member.user !== null)
 									.filter(member => {
-										const pendingInvitation = pendingInvitations.find(req => 
+										const pendingInvitation = pendingInvitations.find(req =>
 											req.prospectiveMemberId === member.user?.userId &&
 											req.roleId === member.role?.roleId &&
 											req.requestStatus !== 'Accepted');
-										const pendingApplication = pendingApplications.find(req => 
+										const pendingApplication = pendingApplications.find(req =>
 											req.prospectiveMemberId === member.user?.userId &&
 											req.roleId === member.role?.roleId &&
 											req.requestStatus !== 'Accepted');
