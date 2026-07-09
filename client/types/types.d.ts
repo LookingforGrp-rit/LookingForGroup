@@ -36,6 +36,7 @@ import {
   AddJobSkillInput,
   DeleteJobSkillInput,
   JobSkill,
+  UpdateMemberRequestInput,
 } from "@looking-for-group/shared";
 
 /**
@@ -185,6 +186,11 @@ interface ProjectChangesUpdates {
    * All members to be updated
    */
   members: CRUDRequest<UpdateProjectMemberInput>[];
+
+  /**
+   * All member requests to be updated
+   */
+  memberRequests: CRUDRequest<UpdateMemberRequestInput>[];
 }
 
 /**
@@ -230,6 +236,11 @@ interface ProjectChangesDeletes {
    * All mediums to be deleted
    */
   mediums: CRUDRequest<null>[];
+
+  /**
+   * All member requests to be deleted
+   */
+  memberRequests: CRUDRequest<null>[];
 }
 
 /**

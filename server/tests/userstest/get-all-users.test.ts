@@ -77,7 +77,7 @@ describe('test getAllUsersService', () => {
   it('returns all users when no filters are provided', async () => {
     (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
 
-    const result = await getAllUsersService({});
+    const result = await getAllUsersService({}, 'A-Z');
     //console.log(result);
     expect(vi.mocked(prisma.users.findMany)).toHaveBeenCalled();
     expect(result).toEqual(mockPreviews);
@@ -86,10 +86,13 @@ describe('test getAllUsersService', () => {
   it('applies mentor filter', async () => {
     (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
 
-    await getAllUsersService({
-      mentor: true,
-      strictness: 'all',
-    });
+    await getAllUsersService(
+      {
+        mentor: true,
+        strictness: 'all',
+      },
+      'A-Z',
+    );
 
     // console.log(result);
     const findMany = prisma.users.findMany;
@@ -106,10 +109,13 @@ describe('test getAllUsersService', () => {
   it('applies designer filter', async () => {
     (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
 
-    await getAllUsersService({
-      designer: true,
-      strictness: 'all',
-    });
+    await getAllUsersService(
+      {
+        designer: true,
+        strictness: 'all',
+      },
+      'A-Z',
+    );
 
     const findMany = prisma.users.findMany;
     expect(findMany).toHaveBeenCalled();
@@ -134,10 +140,13 @@ describe('test getAllUsersService', () => {
   it('applies designer=false filter', async () => {
     (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
 
-    await getAllUsersService({
-      developer: false,
-      strictness: 'all',
-    });
+    await getAllUsersService(
+      {
+        developer: false,
+        strictness: 'all',
+      },
+      'A-Z',
+    );
 
     expect(prisma.users.findMany).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -159,12 +168,15 @@ describe('test getAllUsersService', () => {
   it('applies skills + majors + socials filters', async () => {
     (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
 
-    await getAllUsersService({
-      skills: [1, 2],
-      majors: [3],
-      socials: [4],
-      strictness: 'all',
-    });
+    await getAllUsersService(
+      {
+        skills: [1, 2],
+        majors: [3],
+        socials: [4],
+        strictness: 'all',
+      },
+      'A-Z',
+    );
 
     expect(prisma.users.findMany).toHaveBeenCalled();
     expect(prisma.users.findMany).toHaveBeenCalledWith(
@@ -201,11 +213,14 @@ describe('test getAllUsersService', () => {
   it('uses OR when strictness = any', async () => {
     (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
 
-    await getAllUsersService({
-      mentor: true,
-      developer: true,
-      strictness: 'any',
-    });
+    await getAllUsersService(
+      {
+        mentor: true,
+        developer: true,
+        strictness: 'any',
+      },
+      'A-Z',
+    );
 
     expect(prisma.users.findMany).toHaveBeenCalled();
     expect(prisma.users.findMany).toHaveBeenCalledWith(
@@ -229,7 +244,7 @@ describe('test getAllUsersService', () => {
   it('returns INTERNAL_ERROR on exception', async () => {
     (prisma.users.findMany as Mock).mockRejectedValue(new Error('db exploded :fire:'));
 
-    const result = await getAllUsersService({ strictness: 'any' });
+    const result = await getAllUsersService({ strictness: 'any' }, 'A-Z');
 
     expect(result).toBe('INTERNAL_ERROR');
   });
@@ -237,7 +252,7 @@ describe('test getAllUsersService', () => {
   it('transforms users before returning', async () => {
     (prisma.users.findMany as Mock).mockResolvedValue(mockUsers);
 
-    const result = await getAllUsersService({ strictness: 'any' });
+    const result = await getAllUsersService({ strictness: 'any' }, 'A-Z');
 
     expect(transformUserToPreview).toHaveBeenCalledTimes(2);
     expect(result).toEqual(mockPreviews);

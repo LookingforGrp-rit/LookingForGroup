@@ -426,9 +426,15 @@ Signup process modal style rules
   margin-right: auto;
 }
 
-#signupProcess-subTitle {
+#signupProcess-title-highlight {
   color: var(--primary-color);
-  font-size: 0.9375rem;
+  font-weight: 600;
+  font-style: italic;
+}
+
+#signupProcess-subTitle {
+  color: var(--main-text);
+  font-size: 1rem;
   margin: 0 10px 20px 10px;
   font-weight: 400;
 }
@@ -741,6 +747,12 @@ Signup process modal style rules
   color: var(--tag-text-unselected-purple);
 }
 
+#skill-select>.Engineer {
+  border-color: var(--tag-cyan-unselected-border);
+  background-color: var(--tag-cyan-unselected);
+  color: var(--tag-text-unselected-cyan);
+}
+
 
 #skill-select button.active,
 #interest-select button.active,
@@ -771,6 +783,12 @@ Signup process modal style rules
 #skill-select>.Soft.active {
   border-color: var(--tag-purple-selected);
   background-color: var(--tag-purple-selected);
+  color: var(--tag-text-selected);
+}
+
+#skill-select>.Engineer.active {
+  border-color: var(--tag-cyan-selected);
+  background-color: var(--tag-cyan-selected);
   color: var(--tag-text-selected);
 }
 

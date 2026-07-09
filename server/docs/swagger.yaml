@@ -171,12 +171,18 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
   # USERS
-  /api/users:
+  /api/users/all/{method}:
     get:
       summary: Get all users
       tags:
         - Users
       parameters:
+        - in: path
+          name: method
+          required: true
+          schema:
+            type: string
+          description: Sorting method (options are "Newest" for newest first and "A-Z" for alphabetical)
         - in: query
           name: strictness
           required: false
@@ -243,6 +249,8 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
+  /api/users:
     post:
       summary: Create a user
       tags:
@@ -1086,6 +1094,12 @@ paths:
       tags:
         - Me
       parameters:
+        - name: websiteId
+          in: path
+          required: true
+          description: The website being changed
+          schema:
+            type: integer
         - in: query
           name: devId
           schema:
@@ -1757,7 +1771,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/projects/paginated/{count}/{id}:
+  /api/projects/paginated/{count}/{id}/{method}:
     get:
       summary: Get paginated projects
       tags:
@@ -1776,6 +1790,12 @@ paths:
           schema:
             type: integer
           description: The project ID cursor. Projects after this ID will be returned. Use 0 to start from the beginning.
+        - in: path
+          name: method
+          required: true
+          schema:
+            type: string
+          description: Sorting method (options are "Newest" for newest first and "A-Z" for alphabetical)
       responses:
         '200':
           description: A list of projects
@@ -2541,6 +2561,51 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/projects/{id}/members/requests:
+    get:
+      summary: Gets member requests
+      description: Gets the member requests associated to the project id
+      tags:
+        - Projects
+      security:
+        - shibbolethAuth: []
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the project
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Request Successful
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ProjectMemberRequest'
+        '404':
+          $ref: '#/components/responses/NotFound'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/projects/members/requests:
     get:
       summary: Gets a member request
@@ -2628,14 +2693,18 @@ paths:
           application/json:
             schema:
               type: object
+              minProperties: 1
               properties:
-                newStatus:
+                requestStatus:
                   type: string
                   enum:
                     - Accepted
                     - Declined
                     - Pending
                   example: Pending
+                roleId:
+                  type: integer
+                  example: 3
       responses:
         '200':
           description: Request Successful
@@ -4601,6 +4670,345 @@ paths:
           $ref: '#/components/responses/NotFound'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  #ADMIN
+  /api/admin/promote:
+    patch:
+      summary: Promotes a user to moderator.
+      tags:
+        - Admin
+      description: Changes a user's access level from 'User' to 'Moderator'
+      parameters:
+        - in: query
+          name: devId
+          required: true
+          schema:
+            type: integer
+          description: Id to be used as administrator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: number
+                  example: 1865
+      responses:
+        '200':
+          description: User promoted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example:
+        '403':
+          $ref: '#components/responses/Forbidden'
+        '404':
+          $ref: '#components/responses/NotFound'
+        '409':
+          $ref: '#components/responses/Conflict'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/demote:
+    patch:
+      summary: Demotes a moderator.
+      tags:
+        - Admin
+      description: Changes a user's access level from 'Moderator' to 'User'
+      parameters:
+        - in: query
+          name: devId
+          required: true
+          schema:
+            type: integer
+          description: Id to be used as administrator.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: number
+                  example: 1865
+      responses:
+        '200':
+          description: Moderator demoted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example:
+        '403':
+          $ref: '#components/responses/Forbidden'
+        '404':
+          $ref: '#components/responses/NotFound'
+        '409':
+          $ref: '#components/responses/Conflict'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/tags:
+    post:
+      summary: Create a tag.
+      tags:
+        - Admin
+      description: Creates a tag with the given parameters.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/TagInput'
+      responses:
+        '200':
+          description: Tag created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#components/schemas/Tag'
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/tags/{id}:
+    patch:
+      summary: Modify a tag.
+      tags:
+        - Admin
+      description: Modifies a tag with the given parameters.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the tag to be modified.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/TagInput'
+      responses:
+        '200':
+          description: Tag modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#components/schemas/Tag'
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+    delete:
+      summary: Deletes a tag.
+      tags:
+        - Admin
+      description: Deletes a tag from the database.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the tag to be deleted.
+      responses:
+        '204':
+          description: Tag deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 204
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: Tag deleted successfully
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/skills:
+    post:
+      summary: Create a skill.
+      tags:
+        - Admin
+      description: Creates a skill with the given parameters.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/SkillInput'
+      responses:
+        '200':
+          description: Skill created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#components/schemas/Skill'
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+  /api/admin/skills/{id}:
+    patch:
+      summary: Modify a skill.
+      tags:
+        - Admin
+      description: Modifies a skill with the given parameters.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the skill to be modified.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#components/schemas/SkillInput'
+      responses:
+        '200':
+          description: Skill modified successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    $ref: '#components/schemas/Skill'
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '500':
+          $ref: '#components/responses/InternalServerError'
+    delete:
+      summary: Deletes a skill.
+      tags:
+        - Admin
+      description: Deletes a skill from the database.
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The userId being used for credentials.
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the tag to be deleted.
+      responses:
+        '204':
+          description: Skill deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 204
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: Skill deleted successfully
+        '500':
+          $ref: '#components/responses/InternalServerError'
 
 # COMPONENTS
 components:
@@ -4737,6 +5145,10 @@ components:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateProjectVideoInput'
     CreateMemberRequestInput:
       $ref: 'schemas/inputs.yaml#/components/schemas/CreateMemberRequestInput'
+    TagInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/TagInput'
+    SkillInput:
+      $ref: 'schemas/inputs.yaml#/components/schemas/SkillInput'
 
     ErrorMessage:
       type: object

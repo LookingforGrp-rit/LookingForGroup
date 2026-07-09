@@ -2,7 +2,7 @@ import type { ApiResponse, AuthenticatedRequest } from '@looking-for-group/share
 import type { NextFunction, Request, Response } from 'express';
 import envConfig from '#config/env.ts';
 //import type { UserData } from '#services/authentication/login.ts';
-import { userIsMod } from '#services/authentication/user-is-mod.ts';
+import { getUserAccessLevel } from '#services/authentication/get-user-access-level.ts';
 import { getUserByGoogleService } from '#services/me/get-user-google.ts';
 
 const injectCurrentUser = async (request: Request, response: Response, next: NextFunction) => {
@@ -13,9 +13,9 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
     const devId = request.query.devId as string | undefined;
 
     if (devId) {
-      const isMod = await userIsMod(parseInt(devId));
+      const accessLevel = await getUserAccessLevel(parseInt(devId));
 
-      if (isMod === 'NOT_FOUND') {
+      if (accessLevel === 'NOT_FOUND') {
         const resBody: ApiResponse = {
           status: 404,
           error: 'User does not exist',
@@ -25,7 +25,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
         return;
       }
 
-      if (isMod === 'INTERNAL_ERROR') {
+      if (accessLevel === 'INTERNAL_ERROR') {
         const resBody: ApiResponse = {
           status: 500,
           error: 'Internal Error',
@@ -38,7 +38,7 @@ const injectCurrentUser = async (request: Request, response: Response, next: Nex
       authenticatedRequest.currentUser = {
         username: 'DEV',
         userId: parseInt(devId),
-        isMod: isMod,
+        accessLevel: accessLevel,
       };
       next();
       return;

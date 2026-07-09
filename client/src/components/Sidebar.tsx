@@ -32,6 +32,8 @@ const SideBar = () => {
 
   const [userId, setUserId] = useState<number>();
 
+  const [active, setActive] = useState(false);
+
   // const [headerText, setHeaderText] = useState('Group'); // State to manage the h1 text
   const navigate = useNavigate(); // Hook for navigation
 
@@ -229,11 +231,15 @@ const SideBar = () => {
     fetchUserId();
   }, []);
 
+  const toggleActive = async (state: boolean) => {
+    setActive(state);
+  }
+
   // Mobile layout
   if (width < breakpoint) {
     return (
       <div>
-        <div className="sideBarContainer">
+        <div className={active ? "sideBarContainer active" : "sideBarContainer"}>
           <div className="containerButtonSideBar">
             <div className="containerButtonSideBar">
               <a
@@ -300,7 +306,7 @@ const SideBar = () => {
   // Desktop layout
   return (
     <div>
-      <div className="SideBarContainer">
+      <div className={active ? "SideBarContainer active" : "SideBarContainer"}>
         <div className="headerContainer">
           {/* Must be a button to be focusable and meet accessibility guidelines */}
           <a
@@ -366,11 +372,11 @@ const SideBar = () => {
         {/* "Create" button in bottom left, made by ProjectCreatorManager */}
         {/* Sends the user to the log in page if they aren't logged in, otherwise allows them to create and edit a project */}
 
-        <div className="Create">
+        <div className={"Create"}>
           <ProjectCreatorEditor
             newProject={true}
             mobileView={false}
-          // buttonCallback={getAuth}
+            buttonCallback={toggleActive}
           // user={userData}
           />
         </div>

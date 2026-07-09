@@ -30,6 +30,7 @@ import addMember from './members/add-member.ts';
 import deleteMemberRequest from './members/delete-member-request.ts';
 import deleteMember from './members/delete-member.ts';
 import getMemberRequest from './members/get-member-request.ts';
+import getMemberRequests from './members/get-member-requests.ts';
 import getMembers from './members/get-members.ts';
 import getApplications from './members/get-proj-applications.ts';
 import getInvitations from './members/get-user-invitations.ts';
@@ -111,5 +112,6 @@ export default {
   getInvitations,
   deleteMemberRequest,
   getMemberRequest,
+  getMemberRequests,
   updateMemberRequest,
 };

@@ -4,7 +4,7 @@ import { ProjectWithFollowers } from "@looking-for-group/shared";
 import profileImage from "../images/lfrog.png";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
-import { requestToJoin, getMemberRequest } from '../api/projects.ts';
+import { requestToJoin, getMemberRequest, getMembers } from '../api/projects.ts';
 import {
   JobAvailability as JobAvailabilityEnums,
   JobDuration as JobDurationEnums,
@@ -74,6 +74,14 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
       return;
     }
     try {
+      //check if already a member
+      const members = await getMembers(displayedProject.projectId);
+      const memberIds = members.data?.map(member => member.user.userId);
+      if(memberIds?.includes(currentUserId)){
+        setAllowApply(false);
+        return;
+      }
+
       // if an error is thrown -> no request found
       const result = await getMemberRequest({
         projectId: displayedProject.projectId,

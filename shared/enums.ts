@@ -21,12 +21,15 @@ export enum TagType {
   Purpose = "Purpose"
 }
 export enum RitStatus {
-  Freshman = "Freshman",
-  Sophomore = "Sophomore",
-  Junior = "Junior",
-  Senior = "Senior",
-  Graduate = "Graduate",
-  Faculty = "Faculty"
+  'FirstYear' = "1st Year",
+  'SecondYear' = "2nd Year",
+  'ThirdYear' = "3rd Year",
+  'FourthYear' = "4th Year",
+  'FifthYear' = "5th Year",
+  'GraduateStudent' = "Graduate Student",
+  'Alumni' = "Alumni",
+  'Faculty' = "Faculty",
+  'Staff' = "Staff",
 };
 export enum Visibility {
   Public = "Public",
@@ -65,7 +68,8 @@ export enum JobDuration {
 export enum JobLocation {
   OnSite = "On-Site",
   Remote = "Remote",
-  Hybrid = "Hybrid"
+  Hybrid = "Hybrid",
+  Flexible = "Flexible",
 }
 export enum JobCompensation {
   Unpaid = "Unpaid",
@@ -108,4 +112,10 @@ export enum ProjectApprovalStatus {
   'approved' = 'Approved',
   'under-review' = 'Under Review',
   'not-approved' = 'Not Approved',
+}
+
+export enum UserAccessLevel {
+  User = 'User',
+  Moderator = 'Moderator',
+  Administrator = 'Administrator'
 }

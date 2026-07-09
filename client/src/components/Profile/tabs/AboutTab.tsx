@@ -5,7 +5,8 @@ import { Select, SelectButton, SelectOptions } from "../../Select";
 import LabelInputBox from "../../LabelInputBox";
 import { PendingUserProfile } from "../../../../types/types";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
-import { RitStatus as RitStatus } from "@looking-for-group/shared/enums";
+import { RitStatus as RitStatusLabel } from "@looking-for-group/shared/enums";
+import { RitStatus } from "@looking-for-group/shared/types";
 import { Major, MePrivate, Role } from "@looking-for-group/shared";
 import { getJobTitles, getMajors } from "../../../api/users";
 
@@ -30,7 +31,7 @@ export const AboutTab = ({
 	dataManager,
 	profile,
 	unmodifiedProfile,
-	updatePendingProfile = () => {}
+	updatePendingProfile = () => { }
 }: AboutTabProps) => {
 	profileAfterAboutChanges = structuredClone(profile);
 
@@ -113,11 +114,11 @@ export const AboutTab = ({
 	return (
 		<div id="profile-editor-about" className="edit-profile-body about">
 			<div id="edit-profile-section-1">
-				{imageError ? 
+				{imageError ?
 					<div id="invalid-input-error">
 						<p>{imageError}</p>
 					</div>
-				: ""}
+					: ""}
 				<div
 					id="profile-editor-add-image"
 					className="edit-profile-image">
@@ -351,7 +352,7 @@ export const AboutTab = ({
 								placeholder="Select"
 								initialVal={
 									profile.ritStatus
-										? profile.ritStatus
+										? RitStatusLabel[profile.ritStatus]
 										: ""
 								}
 								callback={(e) => e.preventDefault()}
@@ -384,11 +385,12 @@ export const AboutTab = ({
 										}
 									});
 								}}
-								options={Object.values(RitStatus).map(
-									(yr) => {
+								options={Object.keys(RitStatusLabel).map(
+									(key) => {
+										const val = RitStatusLabel[key as keyof typeof RitStatusLabel];
 										return {
-											value: yr,
-											markup: <>{yr}</>,
+											value: key,
+											markup: <>{val}</>,
 											disabled: false
 										};
 									}

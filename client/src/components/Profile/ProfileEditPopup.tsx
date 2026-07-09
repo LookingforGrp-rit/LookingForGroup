@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 // Components
 import { Popup, PopupButton, PopupContent } from "../Popup";
+import { ThemeIcon } from "../ThemeIcon";
 
 // Tabs
 import { AboutTab } from "./tabs/AboutTab";
@@ -20,11 +21,18 @@ import { MePrivate } from "@looking-for-group/shared";
 const pageTabs = ["About", "Projects", "Skills", "Links"];
 //const [dataManager, setDataManager] = useState<Awaited<ReturnType<typeof userDataManager>> | null>(null);
 
+//for editing user profile through buttons near "Skills" and "Contact",
+//so they open up to the appropriate tab
+interface EditProfileProps {
+  editSkills?: boolean;
+  editContact?: boolean;
+}
+
 /**
  * Profile Edit button. Handles changing tabs.
  * @returns JSX Element
  */
-export const ProfileEditPopup = () => {
+export const ProfileEditPopup = ({ editSkills = false, editContact = false }: EditProfileProps) => {
   const [currentTab, setCurrentTab] = useState(0);
   const [errorVisible, setErrorVisible] = useState(false);
   const [modifiedProfile, setModifiedProfile] = useState<PendingUserProfile>();
@@ -37,6 +45,7 @@ export const ProfileEditPopup = () => {
   const [editorKey, setEditorKey] = useState(0);
 
   const isOpening = useRef(true);
+  const isSaving = useRef(false);
   const navigate = useNavigate();
 
   /**
@@ -46,7 +55,10 @@ export const ProfileEditPopup = () => {
    * so this state would otherwise persist until a full page refresh.)
    */
   const handleEditorClose = () => {
-    setCurrentTab(0);
+    if (editSkills) setCurrentTab(2);
+    else if (editContact) setCurrentTab(3);
+    else setCurrentTab(0);
+
     isOpening.current = true;
 
     // Discard unsaved field edits...
@@ -65,6 +77,8 @@ export const ProfileEditPopup = () => {
   // intercepted — the popup stays open and we surface the confirm dialog
   // instead of discarding the edits.
   const handlePopupCallback = () => {
+    // A save navigates + reloads; don't flash the confirm dialog during it.
+    if (isSaving.current) return;
     if (saved) {
       handleEditorClose();
     } else {
@@ -81,10 +95,10 @@ export const ProfileEditPopup = () => {
     handleEditorClose();
   };
 
-   const updatePendingProfile = (updatedPendingProject: PendingUserProfile) => {
-     setModifiedProfile(updatedPendingProject);
-     setSaved(false);
-   }
+  const updatePendingProfile = (updatedPendingProject: PendingUserProfile) => {
+    setModifiedProfile(updatedPendingProject);
+    setSaved(false);
+  }
 
   // Profile should be set up on intialization
   useEffect(() => {
@@ -127,6 +141,7 @@ export const ProfileEditPopup = () => {
    * @param e Event
    */
   const onSaveClicked = async (e: React.FormEvent<HTMLFormElement>) => {
+    isSaving.current = true;
     navigate(-1);
     e.preventDefault(); // prevents any default calls
 
@@ -164,6 +179,13 @@ export const ProfileEditPopup = () => {
     // }
 
     return true;
+  }
+
+  //if button clicked apppears in skills or contacts, set starting tab to appropriate value
+  const editButtonAppearance = () => {
+    if (editSkills) setCurrentTab(2);
+    else if (editContact) setCurrentTab(3);
+    else setCurrentTab(0);
   }
 
   const validData = modifiedProfile ? checkValidData(modifiedProfile as PendingUserProfile) : false;
@@ -233,7 +255,17 @@ export const ProfileEditPopup = () => {
 
   return (
     <Popup>
-      <PopupButton buttonId="project-info-edit">Edit Profile</PopupButton>
+      <PopupButton buttonId="project-info-edit" callback={editButtonAppearance}>
+        {editSkills || editContact ?
+          <ThemeIcon
+            id={"pencil"}
+            width={11}
+            height={12}
+            className={"gradient-color-fill edit-project-member-icon"}
+            ariaLabel={"edit"} />
+          : "Edit Profile"}
+
+      </PopupButton>
       <PopupContent profilePopup={true} callback={handlePopupCallback} confirmation={!saved}>
         {confirm ? (
           <PopupContent confirmation={true} useClose={false}>

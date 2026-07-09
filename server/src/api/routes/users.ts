@@ -16,7 +16,7 @@ import { userExistsAt } from '../middleware/validators/user-exists-at.ts';
 const router = Router();
 
 //Gets users
-router.get('/', getAllUsers);
+router.get('/all/:method', getAllUsers);
 
 //Creates a new user
 router.post('/', createUser);

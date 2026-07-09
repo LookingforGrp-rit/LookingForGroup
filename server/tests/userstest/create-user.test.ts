@@ -50,7 +50,7 @@ describe('createUserService', async () => {
       bio: '',
       privacy: 'public',
       phoneNumber: null,
-      moderator: false,
+      accessLevel: 'User',
     };
 
     const mePrivate: MePrivate = {
@@ -69,7 +69,7 @@ describe('createUserService', async () => {
       pronouns: '',
       title: '',
       majors: [],
-      ritStatus: 'Freshman',
+      ritStatus: 'FirstYear',
       location: '',
       funFact: '',
       bio: '',

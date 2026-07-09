@@ -1,14 +1,13 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent } from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent} from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
-import { DiscoverFilters } from '../DiscoverFilters';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
 import ToTopButton from '../ToTopButton';
-import { getProjects, getByID } from '../../api/projects';
+import { getByID } from '../../api/projects';
 import { getProjectFollowing } from '../../api/users';
 
 import {
-  ApiResponse, Tag, NumberDictionary, StructuredProjectInfo,
+  Tag, NumberDictionary, StructuredProjectInfo,
   ProjectPreview, ProjectWithFollowers,
   MePrivate
 } from '@looking-for-group/shared';
@@ -27,6 +26,27 @@ let index = 0;
 //Determines the number of different projects for some reason
 let count = 10;
 
+//Synchronous storing of the full project list for quick reference
+let syncFullProjectList : ProjectPreview[] = [];
+
+enum sortModes {
+    "A-Z" = "A-Z",
+    "Z-A" = "Z-A",
+    "Newest" = "Newest",
+    "Oldest" = "Oldest",
+    "Followers (NOT IMPLIMENTED)" = "Followers (NOT IMPLIMENTED)",
+    "Followers Acending (NOT IMPLIMENTED)" = "Followers Acending (NOT IMPLIMENTED)",
+}
+
+type FilterData = {
+    tags: Tag[],
+    filterMode: 'Match All' | 'Match Any'
+    sortMode: sortModes,
+  }
+
+//Stores current filter settings
+let filterData: FilterData = {tags: [], filterMode: 'Match All', sortMode: sortModes.Newest};
+
 export const DiscoverPage = () => {
   // --------------------
   // Components
@@ -44,6 +64,8 @@ export const DiscoverPage = () => {
   const [currentUserId, setCurrentUserId] = useState<number | null>(null);
   const [followedProjectIds, setFollowedProjectIds] = useState<Set<number>>(new Set());
 
+  const [sortMode, setSortMode] = useState<sortModes>(sortModes.Newest);
+
   // Format data for use with SearchBar, which requires it to be: [{ data: }]
   const projectDataSet = useMemo(() => {
     return [{ data: fullProjectList }];
@@ -52,6 +74,9 @@ export const DiscoverPage = () => {
   // When passing in data for project carousel, pass in the first three projects after getting their details
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = <DiscoverCarousel dataList={heroProjectList} />
+
+  const [loadObj, setLoadObj] = useState<React.ReactElement>(<p>No More Projects!</p>);
+
 
   // --------------------
   // Helper functions
@@ -152,15 +177,21 @@ export const DiscoverPage = () => {
       const scrollPercent = fullPage.scrollTop / (fullPage.clientHeight / 2); //clientHeight seemed to be doubled so i halved it
 
       if (scrollPercent >= 0.95) {
-        setupProjectData();
+        sortProjects();
         console.log("load more projects");
       }
     }
   });
 
   //Gets the projects and updates the variables above
-  const getPaginatedProjects = async () => {
-    let returnedProjects = await GET(`/projects/paginated/${count}/${index}`);
+  const getPaginatedProjects = async (method?: string) => {
+    //NOTE: the "Newest" here is a default implementation for sorting method, so the site doesn't break
+    //CHANGE THIS WHEN FRONT END IS ACTUALLY IMPLEMENTED!!
+    let returnedProjects;
+    if (method)
+      returnedProjects = await GET(`/projects/paginated/${count}/${index}/${method}`);
+    else
+      returnedProjects = await GET(`/projects/paginated/${count}/${index}/Newest`);
 
     if (returnedProjects.data && returnedProjects.data[returnedProjects.data.length - 1]) {
       index = returnedProjects.data[returnedProjects.data.length - 1].projectId;
@@ -170,10 +201,11 @@ export const DiscoverPage = () => {
   }
 
   // Set the necessary data for project mode
-  const setupProjectData = async (): Promise<void> => {
+  const setupProjectData = async (method: string, invert: boolean): Promise<void> => {
     //Doesn't check if projects are alreadys in projects so many are repeated
     //I think the weirdness below fixes it? I'm not sure since the only 3 bug is still present
-    let returnedProjects: ProjectPreview[] = await getPaginatedProjects();
+    let returnedProjects: ProjectPreview[] = await getPaginatedProjects(method);
+
     //Probably doesn't work since it's not checking projectId?
     // returnedProjects = returnedProjects.filter((project) => !projects.includes(project));
     // projects = projects.concat(returnedProjects);
@@ -226,21 +258,44 @@ export const DiscoverPage = () => {
       }
     }
 
-    setFullProjectList(projects);
-    setFilteredProjectList(projects);
+    setLoadObj(returnedProjects.length < count ?
+      <p style={{color: 'red'}}>No More Projects!</p> : 
+      <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
 
-    getShowcaseDetails(projects, newProjectCache);
-    setProjectCache(newProjectCache);
+    if (invert) {
+      setFullProjectList(projects.toReversed());
+      syncFullProjectList = projects.toReversed();
+      setFilteredProjectList(projects.toReversed());
 
+      getShowcaseDetails(projects.toReversed(), newProjectCache);
+      setProjectCache(newProjectCache);
+    }
+    else {
+      setFullProjectList(projects);
+      syncFullProjectList = projects;
+      setFilteredProjectList(projects);
+
+      getShowcaseDetails(projects, newProjectCache);
+      setProjectCache(newProjectCache);
+    }
     setLoaded(true);
+
+    //run through filters
+    updateProjectList(filterData.tags, filterData.filterMode, filterData.sortMode);
   };
 
   /**
   * Changes what projects are shown to the user whenever a filter has been added or changed
   * @param activeTagFilters Tags that are shown to the user now
   */
-  const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any") => {
-    const projectList = fullProjectList;
+  const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
+    //save filters
+    filterData = {tags: activeTagFilters, filterMode, sortMode};
+
+    if(filterData.sortMode !== sortMode){
+      sortProjects(sortMode);
+    }
+    const projectList = syncFullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
     for (const item of projectList) {
@@ -336,8 +391,43 @@ export const DiscoverPage = () => {
   };
 
   useEffect(() => {
-    setupProjectData();
+    sortProjects();
+    setLoadObj(<button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
   }, []);
+
+  const sortProjects = useCallback((newSortMode?: sortModes) => {
+    switch (newSortMode ?? sortMode) {
+      case "A-Z":
+        setupProjectData("A-Z", false);
+        // Compare names
+        break;
+      case "Z-A":
+        // Compare names inverted
+        setupProjectData("A-Z", true);
+        break;
+      case "Newest":
+        // Compare age
+        setupProjectData("Newest", false);
+        break;
+      case "Oldest":
+        // Compare age inverted
+        setupProjectData("Newest", true);
+        break;
+      case 'Followers (NOT IMPLIMENTED)':
+        // TO IMPLIMENT once backend 
+        setupProjectData("A-Z", false);
+        break;
+      case "Followers Acending (NOT IMPLIMENTED)":
+        // TO IMPLIMENT
+        setupProjectData("A-Z", true);
+        break;
+      default:
+        //default to newest first
+        setupProjectData("Newest", false);
+        break;
+    }
+    if (newSortMode) setSortMode(newSortMode);
+  }, [sortMode]);
 
   /**
   * Updates the filtered project list with new search information
@@ -477,7 +567,7 @@ export const DiscoverPage = () => {
           {discoverPanelContents}
         </div>
 
-        <button id='btn-loadmore' onClick={setupProjectData}>Load More Projects</button>
+        {loadObj}
       </main>
       <ToTopButton />
     </div>

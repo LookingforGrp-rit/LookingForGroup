@@ -181,6 +181,20 @@ export const PopupContent = ({
     return () => window.removeEventListener('popstate', handlePopState);
   }, [closePopup, open]);
 
+  // Lock body scroll when popup is open
+  useEffect(() => {
+    if (open) {
+      document.body.classList.add('modal-open');
+    } else {
+      document.body.classList.remove('modal-open');
+    }
+    
+    // Cleanup class if the component unmounts unexpectedly
+    return () => {
+      document.body.classList.remove('modal-open');
+    };
+  }, [open]);
+
   return (
     <>
       {/* {document.getElementsByClassName("popup-cover").length < 1 ? <div className="popup-cover" /> : <></>} */}

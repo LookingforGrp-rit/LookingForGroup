@@ -133,7 +133,7 @@ const AcceptApplication = () => {
 
         const result = await updateMemberRequest(
             requestIdNum,
-            { newStatus }
+            { requestStatus: newStatus }
         );
 
         if (result.error) {
@@ -141,11 +141,8 @@ const AcceptApplication = () => {
             return;
         }
 
-        navigate(
-            newStatus === 'Accepted'
-                ? `${paths.routes.PROJECT}?projectID=${projectId}`
-                : paths.routes.HOME
-        );
+        // Navigate to the project
+        navigate(`${paths.routes.PROJECT}?projectID=${projectId}`);
     };
     //#endregion
 

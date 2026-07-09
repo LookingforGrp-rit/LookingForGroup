@@ -27,6 +27,25 @@ export const authenticated = (
     next: NextFunction,
   ) => void | Promise<void>;
 
+//---UNAPPROVED PROJECTS---\\
+
+//Get all unapproved projects
+router.get(
+  '/unapproved',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  authenticated(PROJECT.getUnapprovedProjects),
+);
+
+//Get a specific unapproved project
+router.get(
+  '/unapproved/:id',
+  requiresLogin,
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.getUnapprovedProjectById),
+);
+
 //Approve a project
 router.patch(
   '/:id/approve',
@@ -47,11 +66,30 @@ router.patch(
   authenticated(PROJECT.unapproveProject),
 );
 
+//Place a project on the list of projects awaiting approval.
+router.post(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.requestApproval),
+);
+
+//Remove a project from the list of projects awaiting approval without approving it.
+router.delete(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.rejectProject),
+);
+
 //Receive all projects
 router.get('/', PROJECT.getProjects);
 
 //Receive paginated projects
-router.get('/paginated/:count/:id', PROJECT.getPaginatedProjects);
+router.get('/paginated/:count/:id/:method', PROJECT.getPaginatedProjects);
 
 //Create a new project
 router.post('/', requiresLogin, injectCurrentUser, authenticated(PROJECT.createProject));
@@ -276,6 +314,16 @@ router.get(
   authenticated(PROJECT.getInvitations),
 );
 
+//Get member requests
+router.get(
+  '/:id/members/requests',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(requiresProjectOwner),
+  authenticated(PROJECT.getMemberRequests),
+);
+
 //Get a member request
 router.get(
   '/members/requests',
@@ -471,44 +519,6 @@ router.delete(
   projectAttributeExistsAt('job', { type: 'path', key: 'id' }, { type: 'path', key: 'jobId' }),
   authenticated(requiresProjectOwner),
   PROJECT.deleteJobSkill,
-);
-
-//---UNAPPROVED PROJECTS---\\
-
-//Get all unapproved projects
-router.get(
-  '/unapproved',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  authenticated(PROJECT.getUnapprovedProjects),
-);
-
-//Get a specific unapproved project
-router.get(
-  '/unapproved/:id',
-  requiresLogin,
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.getUnapprovedProjectById),
-);
-
-//Place a project on the list of projects awaiting approval.
-router.post(
-  '/unapproved/:id',
-  requiresLogin,
-  injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.requestApproval),
-);
-
-//Remove a project from the list of projects awaiting approval without approving it.
-router.delete(
-  '/unapproved/:id',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.rejectProject),
 );
 
 export default router;

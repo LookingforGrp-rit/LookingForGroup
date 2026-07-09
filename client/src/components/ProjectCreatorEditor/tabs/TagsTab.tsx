@@ -2,7 +2,7 @@
 import { useCallback, useEffect, useMemo, useState, useContext } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getProjectTypes, getTags } from "../../../api/users";
-import { Tag, Medium, TagType, ProjectWithFollowers } from "@looking-for-group/shared";
+import { Tag, Medium, TagType, ProjectWithFollowers, SkillType, SkillCategory } from "@looking-for-group/shared";
 import { PopupButton, PopupContent, Popup, PopupContext } from "../../Popup";
 import { DeleteProjectButton } from "../DeleteProjectButton";
 import { PendingProject } from "../../../../types/types";
@@ -14,12 +14,15 @@ import { SortableTag } from "./SortableItem";
 import { clampDragWithinContainer } from "./dragModifiers";
 import { Fragment } from "react";
 
-// --- Constant ---
-const TAG_TYPES = {
-  GENRE: 'Genre' as TagType,
-  FORM: 'Style' as TagType,
-  OTHER: 'Other' as TagType,
-  MEDIUM: "Medium",
+// --- holds the possible tabs from tag types ---
+const tagTabs = ['Medium', 'Genre', 'Style', 'Game Engine'] as TagType[]
+
+// Category color for each tag tab, matching the tag/filter-tab colors.
+const tagTabColors: Record<string, string> = {
+  Medium: 'blue',
+  Genre: 'green',
+  Style: 'pink',
+  'Game Engine': 'yellow',
 };
 
 let projectAfterTagsChanges: PendingProject;
@@ -200,16 +203,10 @@ export const TagsTab = ({
 
   // Update tags shown for search bar
   const currentDataSet = useMemo(() => {
-    switch (currentTagsTab) {
-      case 0:
-        return [{ data: allMediums }];
-      case 1:
-        return [{ data: allTags.filter(tag => TAG_TYPES.GENRE.includes(tag.type as TagType)) }];
-      case 2:
-        return [{ data: allTags.filter(tag => tag.type === TAG_TYPES.FORM) }];
-      default:
-        return [{ data: [] }];
+    if (currentTagsTab === 0) {
+      return [{ data: allMediums }];
     }
+    return [{ data: allTags.filter(tag => tag.type === tagTabs[currentTagsTab]) }];
   }, [currentTagsTab, allMediums, allTags]);
 
   // Reset tag list on tab change to default list
@@ -365,6 +362,8 @@ export const TagsTab = ({
           break; }
       }
 
+      let multipleCategories = (tagsToDisplay.length !== (tagsToDisplay as Tag[]).filter((tag) => tag.category === (tagsToDisplay[0] as Tag).category).length);
+
       return tagsToDisplay.map((tagOrMedium, index, array) => {
         // get id according to type of tag
         let id: number = -1; // bad default value
@@ -384,11 +383,13 @@ export const TagsTab = ({
 
         return (
           <Fragment key={id}>
-            {index === 0 || ((array[index - 1] as Tag).category != (array[index] as Tag).category)
-            ? <div id="tag-category-header">
-                <p>{(array[index] as Tag).category == null ? "Medium" : (array[index] as Tag).category}</p>
-                <hr></hr>
-              </div>
+            {multipleCategories
+              ? index === 0 || ((array[index - 1] as Tag)?.category != (array[index] as Tag)?.category) ? 
+                <div id="tag-category-header">
+                  <p>{(array[index] as Tag).category == null ? "Medium" : (array[index] as Tag).category}</p>
+                  <hr></hr>
+                </div>
+              : <></>
             : <></>}
             <TagElement
               key={id}
@@ -411,76 +412,6 @@ export const TagsTab = ({
     } else if (searchedTags && searchedTags.length === 0) {
       return <div className="no-results-message">No results found!</div>;
     }
-    // medium
-    if (currentTagsTab === 0) {
-      return allMediums.map((medium) => {
-        const selected = isTagSelected(medium.mediumId, medium.label, currentTagsTab) === "selected";
-
-        return <TagElement
-          key={medium.mediumId}
-          type={"medium"}
-          onClick={() => handleMediumSelect(medium.mediumId)}
-          selected={selected}
-        >
-          <i
-            className={
-              selected
-                ? "fa fa-close"
-                : "fa fa-plus"
-            }
-          ></i>
-          <p>{medium.label}</p>
-        </TagElement>;
-      });
-    } else if (currentTagsTab === 1) {
-      return allTags
-        .filter((tag) =>
-          ["Creative", "Technical", "Games", "Multimedia", "Music"].includes(
-            tag.type
-          )
-        )
-        .map((genreTag) => {
-          const selected = isTagSelected(genreTag.tagId, genreTag.label, currentTagsTab) === "selected";
-
-          return <TagElement
-            key={genreTag.tagId}
-            type={"creative"}
-            selected={selected}
-            onClick={() => handleTagSelect(genreTag.tagId)}
-          >
-            <i
-              className={
-                selected
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>{genreTag.label}</p>
-          </TagElement>;
-        });
-    } else if (currentTagsTab === 2) {
-      return allTags
-        .filter((tag) => tag.type === "Style")
-        .map((styleTag) => {
-          const selected = isTagSelected(styleTag.tagId, styleTag.label, currentTagsTab) === "selected";
-
-          return <TagElement
-            key={styleTag.tagId}
-            type={"Style"}
-            selected={selected}
-            onClick={() => handleTagSelect(styleTag.tagId)}
-          >
-            <i
-              className={
-                selected
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>{styleTag.label}</p>
-          </TagElement>;
-        });
-    } 
   }, [
     searchedTags,
     currentTagsTab,
@@ -592,7 +523,13 @@ export const TagsTab = ({
                 <Fragment key={t.tagId}>
                   {/* Divider marks the cutoff: the first two tags appear on the discover card */}
                   {index === 2 && <hr id="selected-tag-divider" />}
-                  <SortableTag id={t.tagId} tag={t} onRemove={handleTagSelect} />
+                  <SortableTag id={t.tagId} tag={{
+                    skillId: t.tagId,
+                    label: t.label,
+                    type: t.type as SkillType,
+                    category: t.category as SkillCategory,
+
+                  }} onRemove={handleTagSelect} />
                 </Fragment>
               ))}
             </div>
@@ -634,33 +571,12 @@ export const TagsTab = ({
         />
         <div id="project-editor-tag-wrapper">
           <div id="project-editor-tag-search-tabs">
+            {tagTabs.map((type, index) => 
             <button
-              onClick={() => {
-                setCurrentTagsTab(0);
-              }}
-              className={`button-reset medium-tag-tab project-editor-tag-search-tab ${currentTagsTab === 0 ? "tag-search-tab-active" : ""}`}
-            //Data from genres
-            >
-              Medium
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(1);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 1 ? "tag-search-tab-active" : ""}`}
-            //Data from tags
-            >
-              Genre
-            </button>
-            <button
-              onClick={() => {
-                setCurrentTagsTab(2);
-              }}
-              className={`button-reset project-editor-tag-search-tab ${currentTagsTab === 2 ? "tag-search-tab-active" : ""}`}
-            //Data from skills (type=Developer)
-            >
-              Style
-            </button>
+            onClick={() => setCurrentTagsTab(index)}
+            className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index ? "tag-search-tab-active" : ""}`}>
+              {type}
+            </button>)}
           </div>
           <hr id="tag-search-divider" />
         </div>

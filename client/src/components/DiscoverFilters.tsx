@@ -5,6 +5,7 @@ import { ThemeIcon } from './ThemeIcon';
 import { tags, projectTabs, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
 import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
+import MoreFiltersButton from './MoreFiltersButton';
 
 interface DiscoverFiltersProps {
   category: 'projects' | 'profiles';
@@ -377,7 +378,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
             {/* === Additional filters popup === */}
             <Popup>
               <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
-                <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'} />
+                <MoreFiltersButton />
               </PopupButton>
               {/* 
                             When page loads, get all necessary tag lists based on page category.
@@ -390,7 +391,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
               <PopupContent useClose={false}>
                 {/* Close Button */}
                 <PopupButton className="popup-close">
-                  <img alt="close" src="/src/icons/cancel.png" onClick={() => { setActivePopup(false); }}></img>
+                  <img alt="close" src="/images/icons/cancel.png" onClick={() => { setActivePopup(false); }}></img>
                 </PopupButton>
                 <div id="filters-popup">
                   <h2>{category === 'projects' ? 'Project Filters' : 'People Filters'}</h2>
@@ -417,7 +418,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                         {filterPopupTabs.map((tab, index) => (
                           <a
                             key={`${tab.categoryName}-${index}`}
-                            className={`filter-tab ${index === activeTabId ? 'selected' : ''}`}
+                            className={`filter-tab filter-tab-${tab.color} ${index === activeTabId ? 'selected' : ''}`}
                             onClick={() => {
                               //const element = e.target as HTMLElement;
 
@@ -444,7 +445,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                         <i className="fa fa-caret-right"></i>
                       </button>
                     </div>
-                    <hr id="filter-divider"/>
+                    <hr id="filter-divider" />
                     <div id="filter-tags">
                       {searchedTags.tags.length === 0 ? (
                         <p>No tags found. Please try a different search term.</p>
@@ -463,17 +464,17 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                               //  // Remove all other tags of the same type except the one selected
                               //  const filterTags = document.querySelector('#filter-tags')!;
                               //  const tagList: HTMLCollectionOf<HTMLElement> = filterTags.getElementsByClassName(`tag-button-${searchedTags.color}-selected`) as HTMLCollectionOf<HTMLElement>;
-//
+                              //
                               //  for (let i = 0; i < tagList.length; i++) {
                               //    const tagObj: Tag = { label: tagList[i].innerText.trim(), type: tag.type, tagId: -1 };
                               //    const tagTypeIndex = isTagEnabled(tagObj, searchedTags.color);
-//
+                              //
                               //    if (tagList[i].innerText.trim() !== tag.label) {
                               //      tagList[i].classList.replace(
                               //        `tag-button-${searchedTags.color}-selected`,
                               //        `tag-button-${searchedTags.color}-unselected`
                               //      );
-//
+                              //
                               //      tempEnabled = tempEnabled.toSpliced(tagTypeIndex, 1);
                               //    }
                               //  }
@@ -542,7 +543,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                         const newActiveTags = enabledFilters.map(f => f.tag)
                         setActiveTagFilters(newActiveTags);
                         const discoverFilters = document.getElementsByClassName('discover-tag-filter');
-                      
+
                         // Remove any/all other clicked discover tags
                         for (let i = 0; i < discoverFilters.length; i++) {
                           discoverFilters[i].classList.remove('discover-tag-filter-selected');
@@ -558,14 +559,14 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                         const newActiveTags = enabledFilters.map(f => f.tag)
                         setActiveTagFilters(newActiveTags);
                         const discoverFilters = document.getElementsByClassName('discover-tag-filter');
-                      
+
                         // Remove any/all other clicked discover tags
                         for (let i = 0; i < discoverFilters.length; i++) {
                           discoverFilters[i].classList.remove('discover-tag-filter-selected');
                         }
-                      
+
                         enabledFilters.forEach((filter) => {
-                        
+
                           // Check if any enabled filters match a discover tag, and visually toggle it
                           // If the filter has a tag_id, it's either a Tag or a Skill, and not a Project Type
                           // Available for selection on the discover filters page
@@ -577,12 +578,12 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                             }
                           }
                         });
-                      
+
                         setAppliedFiltersDisplay(enabledFilters);
-                      
+
                         // Update the project list
                         updateItemList(newActiveTags);
-                      
+
                         //Add "Applied Filters" div if it is missing and if the paragraph exists
                         if (newActiveTags.length > 0) {
                           setDisplayFiltersText(newActiveTags.some(tag => tag.type !== 'Project Type'));

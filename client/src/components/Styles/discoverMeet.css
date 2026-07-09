@@ -514,13 +514,13 @@ Image carousel style rules
     }
 
     .discover-link {
-    display: block;
-    margin: 0;
+      display: block;
+      margin: 0;
     }
 
     .learn-more {
-    position: relative;
-    margin-top: 12px;
+      position: relative;
+      margin-top: 12px;
     }
 
     h2 {
@@ -552,7 +552,7 @@ Filters / Tags Style Rules
   position: sticky;
   top: 80px;
   /*changing z-index affects .SideBarContainer*/
-  z-index: 3;
+  z-index: 10;
   background-color: rgba(0, 0, 0, 0);
   background-image: linear-gradient(var(--bg-color) 85%, rgba(0, 0, 0, 0));
   /* Extend the sticky background 8px past #main on each side so cards don't
@@ -608,12 +608,14 @@ Filters / Tags Style Rules
 #filters-left-scroll {
   left: 0;
   text-align: left;
+  width: 25px;
   background-image: linear-gradient(to right, var(--bg-color) 30%, #00000000 70%);
 }
 
 #filters-right-scroll {
   right: 0;
   text-align: right;
+  width: 25px;
   background-image: linear-gradient(to right, #00000000 30%, var(--bg-color) 70%);
 }
 
@@ -701,9 +703,10 @@ Filters / Tags Style Rules
   justify-content: end;
   right: 0;
   flex: 0 0 auto;
+  padding-left: 10px;
 
   .popup {
-    width: 0px;
+    width: auto;
   }
 }
 
@@ -713,6 +716,20 @@ Filters / Tags Style Rules
   color: var(--main-text);
   transform: translateY(-1px);
   opacity: 0.85;
+}
+
+#discover-more-filters:hover {
+  background-color: var(--primary-color);
+  opacity: 1;
+
+  .color-fill>use,
+  .color-stroke>use {
+    stroke: var(--invert-text) !important;
+  }
+
+  #more-filters-text {
+    color: var(--invert-text);
+  }
 }
 
 .discover-tag-filter:active,
@@ -734,17 +751,35 @@ Filters / Tags Style Rules
 
 #discover-more-filters {
   height: 40px;
-  width: 40px;
+  width: 150px;
   padding: 5px;
   background: none;
   border: none;
   border-radius: 30px;
   transition: all 0.2s ease-in-out;
+  background-color: var(--header-color);
+  box-shadow: -17px 0px 10px var(--bg-color);
 
   img {
     height: 30px;
     width: 30px;
   }
+
+  #more-filters-text {
+    color: var(--primary-color);
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+}
+
+#more-filters-button {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 5px;
+  align-items: center;
+  justify-content: center;
 }
 
 .applied-filters {
@@ -1025,6 +1060,28 @@ Filters / Tags Style Rules
   }
 }
 
+.tag-cyan,
+.tag-cyan.tag-selected,
+.tag-button-cyan-selected {
+  background-color: var(--tag-cyan-selected);
+  border-color: var(--tag-cyan-selected);
+}
+
+.tag-cyan.tag-unselected,
+.tag-button-cyan-unselected {
+  background-color: var(--tag-cyan-unselected);
+  border-color: var(--tag-cyan-unselected-border);
+
+  p {
+    color: var(--tag-text-unselected-cyan);
+  }
+
+  .fa {
+    color: var(--tag-text-unselected-cyan) !important;
+  }
+}
+
+
 .tag-unselected:hover {
   p {
     color: var(--tag-text-selected);
@@ -1128,6 +1185,9 @@ Filters / Tags Style Rules
     color: var(--tag-text-selected) !important;
   }
 
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
 
 .tag-periwinkle.tag-unselected:hover,
@@ -1136,6 +1196,10 @@ Filters / Tags Style Rules
   border-color: var(--tag-periwinkle-selected);
 
   p {
+    color: var(--tag-text-selected) !important;
+  }
+
+  .fa {
     color: var(--tag-text-selected) !important;
   }
 }
@@ -1148,7 +1212,26 @@ Filters / Tags Style Rules
   p {
     color: var(--tag-text-selected) !important;
   }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
 }
+
+.tag-cyan.tag-unselected:hover,
+.tag-button-cyan-unselected:hover {
+  background-color: var(--tag-cyan-selected);
+  border-color: var(--tag-cyan-selected);
+
+  p {
+    color: var(--tag-text-selected) !important;
+  }
+
+  .fa {
+    color: var(--tag-text-selected) !important;
+  }
+}
+
 
 .tag-button:hover {
   cursor: pointer;
@@ -1171,16 +1254,12 @@ Filters / Tags Style Rules
 /*Fixing Filter Popup*/
 
 #filters-popup {
-  position: fixed;
-  top: 50%;
-  left: calc(50% + 115px);
-  transform: translate(-50%, -50%);
 
-  width: 90vw;
-  max-width: 820px;
+  width: 100%;
   height: auto;
 
   /* Clamped to 88vh so it avoids hitting the browser address bar edges */
+  max-width: 70vw;
   max-height: 88vh;
 
   background-color: var(--bg-color);
@@ -1188,7 +1267,6 @@ Filters / Tags Style Rules
   padding: 32px 24px 20px 24px;
   box-sizing: border-box;
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6);
-  z-index: 10000;
 
   display: flex;
   flex-direction: column;
@@ -1206,7 +1284,7 @@ Filters / Tags Style Rules
 
 /* Main Content Panel (Search, Categories, Tags) */
 #filters.popup-section {
-  width: 100% !important;
+  /* width: 100% !important; */
   max-width: 100% !important;
   box-sizing: border-box;
   background-color: #0c0b11;
@@ -1215,9 +1293,23 @@ Filters / Tags Style Rules
   display: flex !important;
   flex-direction: column !important;
   height: min(60vh, 600px) !important;
-  max-height: none !important;
+  max-height: 450px !important;
   gap: 0px !important;
   overflow-x: hidden !important;
+}
+
+#filter-settings {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  gap: 20px;
+  width: 80%;
+  align-items: center;
+  justify-content: center;
+
+  .select-container {
+    width: 20%;
+  }
 }
 
 /* Category Tabs */
@@ -1235,7 +1327,7 @@ Filters / Tags Style Rules
   max-width: 100%;
   width: 100%;
   height: auto !important;
-  overflow-x: scroll !important;
+  overflow-x: hidden !important;
   scrollbar-color: var(--liked-section-bg) rgba(0, 0, 0, 0);
 }
 
@@ -1267,6 +1359,126 @@ Filters / Tags Style Rules
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
   word-break: break-word;
+}
+
+/* Filter tabs mirror the tag pills for their category:
+   - Unselected: dark fill, with the category color as the text + border.
+   - Selected: inverted — filled with the category color, dark text. */
+#filter-tabs [class*="filter-tab-"] {
+  border: 3px solid transparent;
+  background-image: none;
+}
+
+
+#filter-tabs [class*="filter-tab-"].selected {
+  color: var(--tag-text-selected) !important;
+}
+
+#filter-tabs .filter-tab-blue.selected {
+  background-color: var(--tag-blue-selected);
+  border-color: var(--tag-blue-selected);
+}
+
+#filter-tabs .filter-tab-green.selected {
+  background-color: var(--tag-green-selected);
+  border-color: var(--tag-green-selected);
+}
+
+#filter-tabs .filter-tab-pink.selected {
+  background-color: var(--tag-pink-selected);
+  border-color: var(--tag-pink-selected);
+}
+
+#filter-tabs .filter-tab-grey.selected {
+  background-color: var(--tag-grey-selected);
+  border-color: var(--tag-grey-selected);
+}
+
+#filter-tabs .filter-tab-yellow.selected {
+  background-color: var(--tag-yellow-selected);
+  border-color: var(--tag-yellow-selected);
+}
+
+#filter-tabs .filter-tab-red.selected {
+  background-color: var(--tag-red-selected);
+  border-color: var(--tag-red-selected);
+}
+
+#filter-tabs .filter-tab-orange.selected {
+  background-color: var(--tag-orange-selected);
+  border-color: var(--tag-orange-selected);
+}
+
+#filter-tabs .filter-tab-purple.selected {
+  background-color: var(--tag-purple-selected);
+  border-color: var(--tag-purple-selected);
+}
+
+#filter-tabs .filter-tab-periwinkle.selected {
+  background-color: var(--tag-periwinkle-selected);
+  border-color: var(--tag-periwinkle-selected);
+}
+
+#filter-tabs .filter-tab-cyan.selected {
+  background-color: var(--tag-cyan-selected);
+  border-color: var(--tag-cyan-selected);
+}
+
+
+#filter-tabs [class*="filter-tab-"]:not(.selected) {
+  /* --main-text is white in dark mode / black in light mode, matching the
+     dark vs light unselected-tab backgrounds. */
+  color: var(--main-text) !important;
+}
+
+#filter-tabs .filter-tab-blue:not(.selected) {
+  background-color: var(--tag-blue-unselected);
+  border-color: var(--tag-blue-selected);
+}
+
+#filter-tabs .filter-tab-green:not(.selected) {
+  background-color: var(--tag-green-unselected);
+  border-color: var(--tag-green-selected);
+}
+
+#filter-tabs .filter-tab-pink:not(.selected) {
+  background-color: var(--tag-pink-unselected);
+  border-color: var(--tag-pink-selected);
+}
+
+#filter-tabs .filter-tab-grey:not(.selected) {
+  background-color: var(--tag-grey-unselected);
+  border-color: var(--tag-grey-selected);
+}
+
+#filter-tabs .filter-tab-yellow:not(.selected) {
+  background-color: var(--tag-yellow-unselected);
+  border-color: var(--tag-yellow-selected);
+}
+
+#filter-tabs .filter-tab-red:not(.selected) {
+  background-color: var(--tag-red-unselected);
+  border-color: var(--tag-red-selected);
+}
+
+#filter-tabs .filter-tab-orange:not(.selected) {
+  background-color: var(--tag-orange-unselected);
+  border-color: var(--tag-orange-selected);
+}
+
+#filter-tabs .filter-tab-purple:not(.selected) {
+  background-color: var(--tag-purple-unselected);
+  border-color: var(--tag-purple-selected);
+}
+
+#filter-tabs .filter-tab-periwinkle:not(.selected) {
+  background-color: var(--tag-periwinkle-unselected);
+  border-color: var(--tag-periwinkle-selected);
+}
+
+#filter-tabs .filter-tab-cyan:not(.selected) {
+  background-color: var(--tag-cyan-unselected);
+  border-color: var(--tag-cyan-selected);
 }
 
 #filter-divider {
@@ -1306,11 +1518,11 @@ Filters / Tags Style Rules
 
 /* Selected Items Tray (Footer Container) */
 #selected-section.popup-section {
-  width: 100% !important;
+  max-width: 100% !important;
   box-sizing: border-box;
   background-color: #0c0b11;
   border-radius: 12px;
-  padding: 18px 24px !important;
+  padding: 18px min(2.05vw, 31px) !important;
   display: flex !important;
   flex-direction: column !important;
 
@@ -1325,7 +1537,7 @@ Filters / Tags Style Rules
   flex-shrink: 0;
 }
 
-#btn-loadmore{
+#btn-loadmore {
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
@@ -1342,12 +1554,12 @@ Filters / Tags Style Rules
 
 /* Mobile Fixes*/
 
-@media (max-width: 850px) {
+@media (max-width: 1020px) {
   #filters-popup {
     /* removes offset that accounts for ui sidebar*/
     left: 50% !important;
-    width: 94vw !important;
-    max-height: 82vh !important;
+    max-width: 94vw !important;
+    max-height: min(810px, 82vh) !important;
 
     /* Slightly trimmer padding to save mobile screen space */
     padding: 20px 16px 14px 16px !important;
@@ -1356,6 +1568,7 @@ Filters / Tags Style Rules
 
   #filters.popup-section {
     gap: 0px !important;
+    width: calc(94vw - 20px);
   }
 
   /* Header scaling for smaller viewports */
@@ -1387,13 +1600,14 @@ Filters / Tags Style Rules
   }
 
   #filter-tags {
-    height: 135px !important;
+    /* height: 80% !important; */
     gap: 8px 8px !important;
   }
 
   #selected-section.popup-section {
-    padding: 12px 14px !important;
+    padding: 12px 12px !important;
     min-height: 75px !important;
+    width: calc(94vw - 20px);
   }
 
   #selected-section.popup-section p {

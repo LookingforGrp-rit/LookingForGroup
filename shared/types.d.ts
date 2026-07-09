@@ -1,3 +1,4 @@
+import UserAccessLevel = require("@looking-for-group/shared/enums");
 import type { Request } from "express";
 
 // Enums for better typing
@@ -24,14 +25,15 @@ export type EngineerCategory = 'Discipline' | 'Engineering Software' | 'Hardware
 export type SkillCategory = DeveloperCategory | DesignerCategory | AudioCategory | SoftCategory | EngineerCategory | "Other";
 export type TagCategory = GenreCategory | StyleCategory | GameEngine | "Other";
 export type RitStatus =
-  | "Freshman"
-  | "Sophomore"
-  | "Junior"
-  | "Senior"
-  | "Graduate"
+  | "FirstYear"
+  | "SecondYear"
+  | "ThirdYear"
+  | "FourthYear"
+  | "FifthYear"
+  | "GraduateStudent"
+  | "Alumni"
   | "Faculty"
-  | 'Staff'
-  ;
+  | 'Staff';
 export type SkillProficiency =
   | "Novice"
   | "Intermediate"
@@ -49,10 +51,13 @@ export type ProjectStatus =
   | "Complete";
 export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
 export type JobDuration = "Days" | "Weeks" | "Months" | "Semesters" | "Years";
-export type JobLocation = "OnSite" | "Remote" | "Hybrid";
+export type JobLocation = "OnSite" | "Remote" | "Hybrid" | "Flexible";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
+export type ProjectSortMethod = "Newest" | "A-Z";
+export type UserSortMethod = "Newest" | "A-Z";
 export type Visibility = "public" | "private";
+export type UserAccessLevel = "User" | "Moderator" | "Administrator";
 //do we even need this visibility enum at all? it's stored as a 0/1 in the db anyway
 //a problem for another day, i really don't feel like fixing it right now
 
@@ -86,7 +91,7 @@ export interface StructuredUserInfo {
  * Used for routes that make changes to a logged-in user
  */
 export interface AuthenticatedRequest extends Request {
-  currentUser: { username: string; userId: number; isMod: boolean };
+  currentUser: { username: string; userId: number; accessLevel: UserAccessLevel };
 }
 
 //API RESPONSE
@@ -1488,7 +1493,8 @@ export type RequestToJoinInput = CreateProjectMemberInput;
  * Data required to update member request
  */
 export type UpdateMemberRequestInput = {
-  newStatus: MemberRequestStatus,
+  requestStatus?: MemberRequestStatus,
+  roleId?: number,
 };
 
 /**
@@ -1612,3 +1618,23 @@ export type FilterRequest = {
   socials?: number[];
   strictness?: 'any' | 'all';
 }
+
+/**
+ * Data required to create a new tag.
+ */
+export type CreateTagInput = Pick<Tag, "label" | "type" | "category">;
+
+/**
+ * Data required to edit an existing tag.
+ */
+export type EditTagInput = Partial<CreateTagInput> & { tagId: number }
+
+/**
+ * Data required to create a skill.
+ */
+export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
+
+/**
+ * Data required to edit an existing skill
+ */
+export type EditSkillInput = Partial <CreateSkillInput> & { skillId: number };
