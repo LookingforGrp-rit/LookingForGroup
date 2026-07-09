@@ -133,8 +133,8 @@ export const SkillsTab = ({
     const { active, over } = e;
     if (!over || active.id === over.id) return;
 
-    //clone array/ avoid mutation
-    const skills = [...profile.skills];
+    //clone array to avoid mutation
+    const skills = [...profile.skills].sort((a, b) => a.position - b.position);
 
     const oldIndex = skills.findIndex((s) => s.skillId === Number(active.id));
     const newIndex = skills.findIndex((s) => s.skillId === Number(over.id));
@@ -198,9 +198,11 @@ export const SkillsTab = ({
           data: null,
         });
 
+        const refreshed = dataManager.getSavedUser();
+
         updatePendingProfile({
           ...profile,
-          skills: remaining,
+          skills: refreshed.skills,
         });
       } else {
         //ADD

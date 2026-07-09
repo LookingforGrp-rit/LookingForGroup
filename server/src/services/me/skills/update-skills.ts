@@ -54,17 +54,15 @@ const updateSkillsService = async (
       if (s.position !== index) {
         // update display order in db if it doesn't match the new order
         s.position = index;
-        await prisma.userSkills.update({
-          where: {
-            userId_skillId: {
-              userId,
-              skillId: s.skillId,
-            },
-          },
-          data: {
-            position: index,
-          },
-        });
+
+        await prisma.$transaction(
+          skills.map((s, index) =>
+            prisma.userSkills.update({
+              where: { userId_skillId: { userId, skillId: s.skillId } },
+              data: { position: index },
+            }),
+          ),
+        );
       }
     }
 
