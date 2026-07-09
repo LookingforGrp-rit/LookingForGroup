@@ -1,0 +1,56 @@
+#mod-tools-block
+{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    /* Include the padding in the 100% width so the boxes line up with the
+       others instead of overflowing ~30px past the right edge. */
+    box-sizing: border-box;
+    background-color: var(--header-color);
+    border-radius: 10px;
+    padding: 10px 10px 10px 20px;
+    height: auto;
+
+    #mod-tools-tabs {
+        display: flex;
+        gap: 15px;
+        align-items: flex-end;
+        height: 40px;
+    }
+    button
+    {
+        color: var(--primary-color);
+        background-color: var(--liked-section-bg);
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        border-color: var(--liked-section-bg);
+        border-style: solid;
+        font-size: 1.25rem;
+        padding: 0.3rem 0.6rem;
+        padding-bottom: 0.4rem;
+        font-weight: 600;
+    }
+    button:hover {
+      transform: none;
+      padding-bottom: 10px;
+    }
+    #mod-content-container
+    {
+        width: calc(100% - 10px);
+        min-height: 100px;
+        background-color: var(--liked-section-bg);
+        border-radius: 10px;
+        border-top-left-radius: 0px;
+        border-color: var(--liked-section-bg);
+        border-style: solid;
+        padding: 10px 0px;
+        max-height: 500px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+    }
+}
+.mod-page {
+    .page-title {
+        padding: 30px;
+    }
+}
