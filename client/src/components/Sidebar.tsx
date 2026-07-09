@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { ThemeIcon } from "./ThemeIcon";
 import { ProjectCreatorEditor } from "./ProjectCreatorEditor/ProjectCreatorEditor";
 import { getCurrentUsername } from '../api/users.ts';
-
+import { getUserAccessLevel } from "../../../server/src/services/authentication/get-user-access-level.ts";
 
 //user utils
 //import { getCurrentUsername } from "../api/users.ts";
@@ -30,6 +30,7 @@ const SideBar = () => {
   const breakpoint = useSelector((state: any) => state.page.MOBILE_BREAKPOINT); // Mobile breakpoint
 
   const [userId, setUserId] = useState<number>();
+  const [userIsAdmin, setUserIsAdmin] = useState<boolean>(true);
 
   const [active, setActive] = useState(false);
 
@@ -64,6 +65,13 @@ const SideBar = () => {
       document
         .querySelector("#my-projects-sidebar-btn")
         ?.classList.add("active");
+      break;
+    case "/moderatorPage":
+      startingPage = "Moderation";
+      for (const i of sidebarBtns) {
+        i.classList.remove("active");
+      }
+      document.querySelector("#mod-tools-sidebar-btn")?.classList.add("active");
       break;
     case "/profile":
       // Only the mobile layout specifically displays the "own profile" sidebar button
@@ -164,7 +172,8 @@ const SideBar = () => {
    };
    */
 
-  /**
+  
+  /*
    * Handles updating the active page and navigation.
    *
    * @param text - Name of the page (e.g., "Discover")
@@ -224,7 +233,16 @@ const SideBar = () => {
       }
     };
 
+    const getAccessLevel = async () => {
+      const accessLevel = await getUserAccessLevel(userId ? userId : -1); /* -1 on error for now */
+      if (accessLevel === 'Moderator' || accessLevel === 'Administrator')
+      {
+          setUserIsAdmin(true);
+      }
+    }
+
     fetchUserId();
+    getAccessLevel();
   }, []);
 
   const toggleActive = async (state: boolean) => {
@@ -358,6 +376,20 @@ const SideBar = () => {
             <ThemeIcon id={'folder'} width={30} height={28.85} className={'sidebar-icon mono-stroke'} ariaLabel={'my projects'} />
             My Projects
           </a>
+          {/* only shows this on the side bar if the user is a mod / admin */}
+          {userIsAdmin ?
+          <a
+              id={"mod-tools-sidebar-btn"}
+              className={
+                activePage === "Moderation"
+                  ? "active sidebar-btn"
+                  : "sidebar-btn"
+              }
+              href={paths.routes.MODERATORTOOLS}
+            >
+              <ThemeIcon id={'compass'} width={30} height={30} className={'sidebar-icon mono-stroke'} ariaLabel={'moderator tools'} />
+              Moderation
+            </a> : ""}
           {/* <button className={activePage === 'Following' ? 'active' : ''} onClick={() => handleTextChange('Following', paths.routes.SETTINGS)}>
             // If implementing, use SVG sprite sheet instead of hard-coded png
             <img
