@@ -1,15 +1,15 @@
 import prisma from '#config/prisma.ts';
 import type { ServiceErrorSubset, ServiceSuccessSubset } from '#services/service-outcomes.ts';
 
-type AddToBlocklistServiceError = ServiceErrorSubset<'CONFLICT' | 'INTERNAL_ERROR'>;
-type AddToBlocklistServiceSuccess = ServiceSuccessSubset<'OK'>;
+type RemoveFromBlocklistServiceError = ServiceErrorSubset<'CONFLICT' | 'INTERNAL_ERROR'>;
+type RemoveFromBlocklistServiceSuccess = ServiceSuccessSubset<'OK'>;
 
-export const addToBlocklistService = async (
+export const removeFromBlocklistService = async (
   blockerId: number,
   blockedId: number,
-): Promise<AddToBlocklistServiceError | AddToBlocklistServiceSuccess> => {
+): Promise<RemoveFromBlocklistServiceError | RemoveFromBlocklistServiceSuccess> => {
   try {
-    const preBlockData = await prisma.blocklist.findFirst({
+    const blockData = await prisma.blocklist.findFirst({
       where: {
         blockerId,
         blockedId,
@@ -19,14 +19,13 @@ export const addToBlocklistService = async (
       },
     });
 
-    if (preBlockData) {
+    if (!blockData) {
       return 'CONFLICT';
     }
 
-    await prisma.blocklist.create({
-      data: {
-        blockerId,
-        blockedId,
+    await prisma.blocklist.delete({
+      where: {
+        blockId: blockData.blockId,
       },
     });
 

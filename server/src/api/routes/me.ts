@@ -2,6 +2,7 @@ import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import { addToBlocklist } from '#controllers/me/blocklist/add-to-blocklist.ts';
+import { removeFromBlocklist } from '#controllers/me/blocklist/remove-from-blocklist.ts';
 import { deleteUser } from '#controllers/me/delete-user.ts';
 import { addProjectFollowing } from '#controllers/me/followings/add-follow-proj.ts';
 import { addUserFollowing } from '#controllers/me/followings/add-follow-user.ts';
@@ -187,5 +188,7 @@ router.get('/notifications/checkformessages', authenticated(checkForUnreadNotifi
 
 // BLOCKLIST ROUTES
 router.post('/blocklist', userExistsAt('body', 'userId'), authenticated(addToBlocklist));
+
+router.delete('/blacklist', userExistsAt('body', 'userId'), authenticated(removeFromBlocklist));
 
 export default router;
