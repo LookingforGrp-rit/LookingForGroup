@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import * as paths from "../constants/routes";
 import { useSelector } from "react-redux";
 // import Notifications from "./pages/Notifications";
@@ -33,9 +32,6 @@ const SideBar = () => {
   const [userId, setUserId] = useState<number>();
 
   const [active, setActive] = useState(false);
-
-  // const [headerText, setHeaderText] = useState('Group'); // State to manage the h1 text
-  const navigate = useNavigate(); // Hook for navigation
 
   let startingPage: string;
 
@@ -173,7 +169,7 @@ const SideBar = () => {
    *
    * @param text - Name of the page (e.g., "Discover")
    * @param path - URL path to navigate to (e.g., "/discover")
-   */
+   
   const handleTextChange = (text: string, path: string) => {
     // setHeaderText(text);
     setActivePage(text);
@@ -205,7 +201,7 @@ const SideBar = () => {
     if (window.location.href.includes("profile")) {
       window.location.reload();
     }
-  };
+  };**/
 
   /**
    * Handles window resize events and updates width state.
