@@ -252,7 +252,7 @@ const SideBar = () => {
   // Mobile layout
   if (width < breakpoint) {
     return (
-      <div>
+      <nav>
         <div className={active ? "sideBarContainer active" : "sideBarContainer"}>
           <div className="containerButtonSideBar">
             <div className="containerButtonSideBar">
@@ -313,13 +313,24 @@ const SideBar = () => {
         </div>
 
         {/* <Notifications show={showNotifications} onClose={() => { setShowNotifications(!showNotifications); }} /> */}
-      </div>
+      </nav>
     );
   }
 
   // Desktop layout
   return (
-    <div>
+    <nav>
+      <a
+        href="#main"
+        className="skip-link"
+        tabIndex={1}
+        onClick={(e) => {
+          e.preventDefault();
+          document.getElementById('main')?.focus();
+        }}
+      >
+        Skip to main content
+      </a>
       <div className={active ? "SideBarContainer active" : "SideBarContainer"}>
         <div className="headerContainer">
           {/* Must be a button to be focusable and meet accessibility guidelines */}
@@ -416,7 +427,7 @@ const SideBar = () => {
           setShowNotifications(false);
         }}
       /> */}
-    </div>
+    </nav>
   );
 };
 

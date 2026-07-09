@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent} from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent } from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
@@ -30,12 +30,12 @@ let count = 10;
 let syncFullProjectList : ProjectPreview[] = [];
 
 enum sortModes {
-    "A-Z" = "A-Z",
-    "Z-A" = "Z-A",
-    "Newest" = "Newest",
-    "Oldest" = "Oldest",
-    "Followers (NOT IMPLIMENTED)" = "Followers (NOT IMPLIMENTED)",
-    "Followers Acending (NOT IMPLIMENTED)" = "Followers Acending (NOT IMPLIMENTED)",
+  "A-Z" = "A-Z",
+  "Z-A" = "Z-A",
+  "Newest" = "Newest",
+  "Oldest" = "Oldest",
+  "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
+  "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
 }
 
 type FilterData = {
@@ -259,7 +259,7 @@ export const DiscoverPage = () => {
     }
 
     setLoadObj(returnedProjects.length < count ?
-      <p style={{color: 'red'}}>No More Projects!</p> : 
+      <p style={{ color: 'red' }}>No More Projects!</p> :
       <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
 
     if (invert) {
@@ -349,12 +349,12 @@ export const DiscoverPage = () => {
             matchesAll = false;
           }
         }
-        else if (tag.type === "Position") {
+        else if (tag.type === "Positions") {
           const roles = item.jobs.map((job) => job.role);
 
           if (roles.find((role) => role.roleId === tag.tagId))
             matchesAny = true;
-          else 
+          else
             matchesAll = false;
         }
         // Tag check can be done by ID: Genre
@@ -413,11 +413,11 @@ export const DiscoverPage = () => {
         // Compare age inverted
         setupProjectData("Newest", true);
         break;
-      case 'Followers (NOT IMPLIMENTED)':
+      case 'Followers (NOT IMPLEMENTED)':
         // TO IMPLIMENT once backend 
         setupProjectData("A-Z", false);
         break;
-      case "Followers Acending (NOT IMPLIMENTED)":
+      case "Followers Acending (NOT IMPLEMENTED)":
         // TO IMPLIMENT
         setupProjectData("A-Z", true);
         break;

@@ -60,17 +60,6 @@ function App() {
   return (
     <ThemeContext.Provider value={{ theme, setTheme }}>
       <div className="App" data-theme={theme}>
-        <a
-          href="#main"
-          className="skip-link"
-          tabIndex={1}
-          onClick={(e) => {
-            e.preventDefault();
-            document.getElementById('main')?.focus();
-          }}
-        >
-          Skip to main content
-        </a>
         {!hideSidebar && <SideBar /*avatarImage={avatarImage} setAvatarImage={setAvatarImage} theme={theme}  -- Commented in clean up 26-20-01 */ />}
         <Routes>
           <Route path={paths.routes.DEFAULT} element={<DiscoverPage />} />
