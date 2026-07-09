@@ -15,6 +15,7 @@ import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
+import { Tag as TagElement } from "../../Tag";
 // import { SkillsTab } from "../../Profile/tabs/SkillsTab";
 import {
 	getJobTitles,
@@ -1056,14 +1057,44 @@ export const TeamTab = ({
 					</span>
 
 					<div id="edit-position-skills-list">
-						{/* TODO: make displayed tags look like tags */}
-						{currentJob?.jobSkills &&
-							currentJob?.jobSkills?.length > 0
-							? currentJob?.jobSkills?.map(
-								(skill) => `${skill?.label} `
-							)
-							: "None"}
-					</div>
+            			{/* TODO: make displayed tags look like tags */}
+            			{currentJob?.jobSkills &&
+              			currentJob?.jobSkills?.length > 0 ?
+              			currentJob?.jobSkills?.map((tag) => {
+							if(tag){
+								let category: string;
+                      			switch (tag.type) {
+                        			case "Designer":
+                          				category = "red";
+                          				break;
+                        			case "Developer":
+                          				category = "yellow";
+                          				break;
+                        			case "Soft":
+                          				category = "purple";
+                          				break;
+                        			case "Audio":
+                          				category = "periwinkle";
+                          				break;
+                        			case "Engineer":
+                          				category = "cyan";
+                          				break;
+                        			default:
+                          				category = "grey";
+                      			}
+                    			return (
+                        			<div
+                          			key={`${tag.skillId}`}
+                          			className={`skill-tag-label label-${category}`}
+                        			>
+                          			{tag.label}
+                        			</div>
+                      			);
+							}
+							else return ""
+                		}
+              			) : "None"}
+          			</div>
 				</div>
 				<div id="open-position-details">
 					<div id="open-position-details-left">
@@ -1284,14 +1315,44 @@ export const TeamTab = ({
 					</div>
 				</Popup>
 				<div id="edit-position-skills-list">
-					{/* TODO: make displayed tags look like tags */}
-					{currentJob?.jobSkills &&
-						currentJob?.jobSkills?.length > 0
-						? currentJob?.jobSkills?.map(
-							(skill) => `${skill?.label} `
-						)
-						: "No skills selected"}
-				</div>
+            			{/* TODO: make displayed tags look like tags */}
+            			{currentJob?.jobSkills &&
+              			currentJob?.jobSkills?.length > 0 ?
+              			currentJob?.jobSkills?.map((tag) => {
+							if(tag){
+								let category: string;
+                      			switch (tag.type) {
+                        			case "Designer":
+                          				category = "red";
+                          				break;
+                        			case "Developer":
+                          				category = "yellow";
+                          				break;
+                        			case "Soft":
+                          				category = "purple";
+                          				break;
+                        			case "Audio":
+                          				category = "periwinkle";
+                          				break;
+                        			case "Engineer":
+                          				category = "cyan";
+                          				break;
+                        			default:
+                          				category = "grey";
+                      			}
+                    			return (
+                        			<div
+                          			key={`${tag.skillId}`}
+                          			className={`skill-tag-label label-${category}`}
+                        			>
+                          			{tag.label}
+                        			</div>
+                      			);
+							}
+							else return ""
+                		}
+              			) : "None"}
+          			</div>
 			</div>
 
 			<div id="edit-position-details">
