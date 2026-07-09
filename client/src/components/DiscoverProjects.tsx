@@ -33,8 +33,8 @@ enum sortModes {
     "Z-A" = "Z-A",
     "Newest" = "Newest",
     "Oldest" = "Oldest",
-    "Followers (NOT IMPLIMENTED)" = "Followers (NOT IMPLIMENTED)",
-    "Followers Acending (NOT IMPLIMENTED)" = "Followers Acending (NOT IMPLIMENTED)",
+    "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
+    "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
 }
 
 
@@ -143,7 +143,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                 tabs["Positions"].categoryTags.push({
                     tagId: job.roleId,
                     label: job.label,
-                    type: "Position",
+                    type: "Positions",
                     category: "Other",
                 });
             })

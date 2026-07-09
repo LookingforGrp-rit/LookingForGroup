@@ -559,7 +559,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
           matchesAny = true;
         }
         // Check role and major by name since IDs are not unique relative to tags
-        /* it seems roles are not yet implimented
+        /* it seems roles are not yet implemented
         else if (tag.type === 'Role' && item.title) { 
             if (item.bio === tag.label.toLowerCase()) {
               matchesAny = true;
@@ -592,7 +592,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
     setFilteredUserList(tagFilteredList);
   };
 
-  let discoverPanelContents : React.ReactElement;
+  let discoverPanelContents: React.ReactElement;
   if (category == 'projects') {
     if (!dataLoaded && filteredProjectList.length === 0) {
       discoverPanelContents = (
@@ -605,7 +605,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       discoverPanelContents = (
         <PanelBox
           category={category}
-          itemList={filteredProjectList} 
+          itemList={filteredProjectList}
           projectCache={projectCache}
           followedProjectIds={followedProjectIds}
           userId={currentUserId ?? -1}
@@ -621,7 +621,7 @@ const DiscoverAndMeet = ({ category }: DiscoverAndMeetProps) => {
       );
     }
     else {
-      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} userId={currentUserId ?? -1}/>);
+      discoverPanelContents = (<PanelBox category={category} itemList={filteredUserList} userId={currentUserId ?? -1} />);
     }
   }
 
