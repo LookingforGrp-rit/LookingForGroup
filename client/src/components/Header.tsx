@@ -2,7 +2,7 @@ import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useContext, ChangeEvent, FocusEvent } from 'react';
+import { useState, useEffect, useContext, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
@@ -194,7 +194,15 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Conditional rendering for back button*/}
       {(!hideBackButton) && (<div className="project-back-btn-header">
-        <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
+        <ThemeIcon 
+          role="button"
+          id={'back'}
+          width={70}
+          height={25}
+          className={'color-fill project-back-btn'}
+          ariaLabel={'back'}
+          onClick={() => { navigate(-1); }}
+        />
       </div>)}
 
       {hideSearchBar && pageTitle !== "" ? 
@@ -204,13 +212,18 @@ export const Header: React.FC<HeaderProps> = ({
       : ""}
 
       <div id="header-buttons">
+        {/* About button */}
+        <a aria-label="About" id="about-btn" href={paths.routes.ABOUT} title="About">
+          <ThemeIcon id={'info'} width={30} height={30} className={'color-stroke'} ariaLabel={'about'} />
+        </a>
+
         {/* Notifications bell + dropdown. Only renders/polls when logged in. */}
         <NotificationsDropdown enabled={Boolean(userId && userId > 0)} theme={theme} />
 
         {/* This is the top-right dropdown menu. */}
         <Dropdown callback={() => setActive(false)}>
           {/* This is the button to open the dropdown menu */}
-          <DropdownButton buttonId="profile-btn" callback={() => setActive(!active)}>
+          <DropdownButton ariaLabel="Profile Dropdown" buttonId="profile-btn" callback={() => setActive(!active)}>
             {(loggedIn) ? (
               <img
                 src={`${profileImg || profilePicture}`}
@@ -318,11 +331,6 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </DropdownContent>
         </Dropdown>
-
-        {/* About button */}
-        <a id="about-btn" href={paths.routes.ABOUT} title="About">
-          <ThemeIcon id={'info'} width={30} height={30} className={'color-stroke'} ariaLabel={'about'} />
-        </a>
       </div>
     </div >
   );
