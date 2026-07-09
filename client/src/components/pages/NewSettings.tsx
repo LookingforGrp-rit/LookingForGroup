@@ -289,7 +289,7 @@ const Settings = (userProfile: any) => {
           }
         }}
       >
-        <h3>Edit {type}{type === 'Phone' ? ' Number' : ''}</h3>
+        <h3 id="form-title">Edit {type}{type === 'Phone' ? ' Number' : ''}</h3>
         {/*type === 'Password' ? <PasswordChecker pass={firstParam} /> : <></>*/}
         <div className="error">{errorMsg}</div>
         {errorMsg === '' && successMsg !== '' ? <div className="success">{successMsg}</div> : <></>}
@@ -297,10 +297,11 @@ const Settings = (userProfile: any) => {
         <div className="input-fields">
           <div className="input-container">
             {/* autoComplete to prevent browser autofill */}
-            <form autoComplete="off">
+            <form autoComplete="off" aria-labelledby='form-title'>
               <input
                 placeholder={`Enter new ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
                 type={type !== 'Password' ? 'text' : 'password'}
+                aria-label={`new ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
                 onChange={(e) => {
                   const value = e.target.value;
                   setFirstParam(value);
@@ -390,6 +391,7 @@ const Settings = (userProfile: any) => {
               <input
                 className="input-container-confirm"
                 placeholder={`Confirm new ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
+                aria-label={`confirm ${type.toLowerCase()}${type === 'Phone' ? ' number' : ''}`}
                 type={type !== 'Password' ? 'text' : 'password'}
                 onChange={(e) => {
                   setConfirm(e.target.value);
