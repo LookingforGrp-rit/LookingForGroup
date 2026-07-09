@@ -15,6 +15,7 @@ import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
 import { ThemeIcon } from "../../ThemeIcon";
 import { Select, SelectButton, SelectOptions } from "../../Select";
+import { Tag } from "../../Tag";
 // import { SkillsTab } from "../../Profile/tabs/SkillsTab";
 import {
 	getJobTitles,
@@ -1059,10 +1060,13 @@ export const TeamTab = ({
 						{/* TODO: make displayed tags look like tags */}
 						{currentJob?.jobSkills &&
 							currentJob?.jobSkills?.length > 0
-							? currentJob?.jobSkills?.map(
-								(skill) => `${skill?.label} `
-							)
-							: "None"}
+							? currentJob?.jobSkills?.map((skill) =>
+								skill ?
+								<Tag key={skill.skillId} type={skill.type?.toLowerCase() + " skill"}>
+								<p>&nbsp;{skill.label}</p>
+								</Tag> 
+								: "" 
+							) : "None"}
 					</div>
 				</div>
 				<div id="open-position-details">
