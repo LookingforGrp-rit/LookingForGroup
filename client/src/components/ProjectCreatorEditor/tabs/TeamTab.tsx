@@ -1523,8 +1523,19 @@ export const TeamTab = ({
 											) ?? null
 									} as ProjectJob);
 								}}
-								options={projectAfterTeamChanges.members
+								options={unmodifiedProject.members
 									.filter((member) => member.user !== null)
+									.filter(member => {
+										const pendingInvitation = pendingInvitations.find(req => 
+											req.prospectiveMemberId === member.user?.userId &&
+											req.roleId === member.role?.roleId &&
+											req.requestStatus !== 'Accepted');
+										const pendingApplication = pendingApplications.find(req => 
+											req.prospectiveMemberId === member.user?.userId &&
+											req.roleId === member.role?.roleId &&
+											req.requestStatus !== 'Accepted');
+										return !pendingInvitation && !pendingApplication;
+									})
 									// .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
 									.map(({ user }) => ({
 										markup: (

@@ -288,6 +288,7 @@ button {
 }
 
 button:focus-visible,
+#back:focus-visible,
 a:focus-visible,
 input:focus-visible,
 select:focus-visible,

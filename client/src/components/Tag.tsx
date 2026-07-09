@@ -27,7 +27,7 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "medium":
       color = "blue";
       break;
-    
+
     case "genre":
       color = "green";
       break;
@@ -35,7 +35,11 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case "style":
       color = "pink"
       break;
-    
+
+    case "positions":
+      color = "purple";
+      break;
+
     case "game engine":
       color = "yellow"
       break;
@@ -43,11 +47,11 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
     case 'other':
       color = 'grey';
       break;
-    
+
     case "developer skill":
       color = "yellow";
       break;
-      
+
     case "designer skill":
       color = "red";
       break;
@@ -61,9 +65,9 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
       break;
 
     case "engineer skill":
-      color = "cyan"; 
+      color = "cyan";
       break;
-      
+
     default:
       if (type == "") break;
 
@@ -79,15 +83,15 @@ export const Tag = ({ children, className = '', type = "", onClick, selected = f
 
   if (onClick != undefined) {
     return (
-    <button className={"tag-button tag-" + color + " " + className + " " + tag_extra_classes} onClick={onClick} >
-      {children}
-    </button>
+      <button className={"tag-button tag-" + color + " " + className + " " + tag_extra_classes} onClick={onClick} >
+        {children}
+      </button>
     );
   }
-  
+
   return (
     <div className={"tag-button tag-label tag-" + color + " " + className + " " + tag_extra_classes} >
       {children}
     </div>
-    );
+  );
 };

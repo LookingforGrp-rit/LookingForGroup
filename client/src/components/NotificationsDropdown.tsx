@@ -166,7 +166,7 @@ export const NotificationsDropdown: React.FC<NotificationsDropdownProps> = ({
 
   return (
     <Dropdown>
-      <DropdownButton buttonId="notif-btn">
+      <DropdownButton buttonId="notif-btn" ariaLabel="Notifications">
         <span className="notif-bell-wrapper">
           <img src={bellSrc} alt="Notifications" />
           {hasUnread && (

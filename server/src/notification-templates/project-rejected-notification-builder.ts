@@ -48,7 +48,7 @@ export class ProjectRejectedNotificationBuilder implements NotificationBuilder {
 
     // building the message
     notification.message = `Hello ${data?.users.preferredName as string},<br /><br />`;
-    notification.message += `Unfortunately, the approval request for your project, ${data?.title as string}, has been rejected. `;
+    notification.message += `Unfortunately, the approval request for your project, <strong>${data?.title as string}</strong>, has been rejected. `;
     if (reason) {
       notification.message += `Here is the reason provided:<br /><br />`;
       notification.message += `"${reason}"<br /><br />`;

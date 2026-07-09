@@ -48,9 +48,10 @@ export class InviteAcceptedNotificationBuilder implements NotificationBuilder {
     notification.subjectLine = `${inviteeData.preferredName} has accepted your invitation to join ${projectData.title}`;
 
     notification.message = `Hello ${ownerData.preferredName},<br /><br />`;
-    notification.message += `${inviteeData.preferredName} has accepted your invitation to join ${projectData.title} `;
-    notification.message += `as a ${roleData?.label as string}. You may also assign them to other roles if need be. `;
-    notification.message += `Happy building!`;
+    notification.message += `<strong>${inviteeData.preferredName}</strong> has accepted your invitation to join <strong>${projectData.title}</strong> `;
+    notification.message += `as a <strong>${roleData?.label as string}</strong>. You may also assign them to other roles if need be.<br /><br />`;
+    notification.message += `Happy building!<br />`;
+    notification.message += `LFG Team`;
     return notification;
   }
 }
