@@ -217,7 +217,7 @@ General style rules
   --tag-text-unselected-periwinkle: black;
   --tag-text-unselected-pink: black;
   --tag-text-unselected-cyan: black;
-  
+
 
   --modal-gradient-start: #ffffff;
   --modal-gradient-end: #d3d3ff;
@@ -837,7 +837,8 @@ Sidebar Nav style rules
     height: calc(70px + env(safe-area-inset-bottom));
     padding-bottom: env(safe-area-inset-bottom);
     box-sizing: border-box;
-    z-index: 100; /*can be changed, just a placeholder value*/
+    z-index: 100;
+    /*can be changed, just a placeholder value*/
   }
 
   .ProfileContainer {
@@ -1391,7 +1392,8 @@ body.modal-open {
     align-items: start;
     margin-top: 0;
 
-    h3, h4 {
+    h3,
+    h4 {
       padding-left: 10px;
     }
   }
@@ -1431,14 +1433,15 @@ body.modal-open {
       overflow-x: scroll;
       scroll-behavior: smooth;
       scrollbar-width: none;
-      justify-content: left !important;;
+      justify-content: left !important;
+      ;
       column-gap: 5vw;
     }
   }
 }
 
 @media screen and (max-width: 850px) {
-  .popup #filters-popup {  
+  .popup #filters-popup {
 
     #filters {
       width: calc(94vw - 20px);
@@ -1609,9 +1612,11 @@ Header style rules
     top: 50px;
     right: -10%;
     width: 100%;
+
     #notifications-panel {
       margin: auto;
     }
+
     #header-profile-dropdown {
       justify-self: right;
       margin-right: 25px;
@@ -1674,7 +1679,7 @@ Header style rules
   >#header-profile-user-info {
     display: flex;
     flex-direction: column;
-    flex: 1; 
+    flex: 1;
     min-width: 0;
     text-align: left;
 
@@ -1996,6 +2001,7 @@ Dropdown style rules
     opacity: 0;
     transform: translateY(-50px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);

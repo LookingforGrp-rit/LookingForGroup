@@ -607,12 +607,12 @@ const Profile = (userProfile: any) => {
 
                 <div id="profile-description">{displayedProfile?.bio}</div>
 
-                <div id="profile-funfact">
+                {/* <div id="profile-funfact">
                   <span id="funfact-start">
                     {displayedProfile?.funFact ? "Fun Fact!" : "No Fun Fact (Yet)!"}
                   </span>
                   {displayedProfile?.funFact}
-                </div>
+                </div> */}
 
                 {/* <div id="profile-interest">
                   <ProfileInterests
