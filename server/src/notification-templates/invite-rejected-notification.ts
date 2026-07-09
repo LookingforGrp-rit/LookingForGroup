@@ -48,8 +48,8 @@ export class InviteRejectedNotificationBuilder implements NotificationBuilder {
     notification.subjectLine = `${inviteeData.preferredName} has turned down your invitation to join ${projectData.title}`;
 
     notification.message = `Hello ${ownerData.preferredName},<br /><br />`;
-    notification.message += `${inviteeData.preferredName} has turned down your invitation to join ${projectData.title} `;
-    notification.message += `as a ${roleData?.label as string}.<br /><br />`;
+    notification.message += `<strong>${inviteeData.preferredName}</strong> has turned down your invitation to join <strong>${projectData.title}</strong> `;
+    notification.message += `as a <strong>${roleData?.label as string}</strong>.<br /><br />`;
     notification.message += `We wish you the best with your project!<br />`;
     notification.message += `LFG Team`;
     return notification;
