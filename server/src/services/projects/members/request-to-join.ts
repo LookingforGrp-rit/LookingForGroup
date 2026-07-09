@@ -80,6 +80,7 @@ export const requestToJoinService = async (
         },
         data: {
           requestStatus: 'Pending',
+          sentFromProject: false,
         },
       });
       // if not, create a new request
