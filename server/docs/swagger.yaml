@@ -1441,7 +1441,7 @@ paths:
       tags:
         - Me
       parameters:
-        - in: query
+        - in: path
           name: id
           schema:
             type: integer
@@ -1476,7 +1476,28 @@ paths:
                     example: null
                   data:
                     type: object
-                    $ref: '#/components/schemas/MySkill'
+                    properties:
+                      apiUrl:
+                        type: string
+                        example: 'api/me/skills/77'
+                      proficiency:
+                        type: string
+                        example: 'Novice'
+                      position:
+                        type: integer
+                        example: 8
+                      skillId:
+                        type: integer
+                        example: 77
+                      label:
+                        type: string
+                        example: 'API'
+                      type:
+                        type: string
+                        example: 'Developer'
+                      category:
+                        type: string
+                        example: 'Discipline'
 
         '400':
           $ref: '#/components/responses/BadRequest'
