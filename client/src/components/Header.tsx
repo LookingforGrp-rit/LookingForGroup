@@ -212,13 +212,18 @@ export const Header: React.FC<HeaderProps> = ({
       : ""}
 
       <div id="header-buttons">
+        {/* About button */}
+        <a aria-label="About" id="about-btn" href={paths.routes.ABOUT} title="About">
+          <ThemeIcon id={'info'} width={30} height={30} className={'color-stroke'} ariaLabel={'about'} />
+        </a>
+
         {/* Notifications bell + dropdown. Only renders/polls when logged in. */}
         <NotificationsDropdown enabled={Boolean(userId && userId > 0)} theme={theme} />
 
         {/* This is the top-right dropdown menu. */}
         <Dropdown callback={() => setActive(false)}>
           {/* This is the button to open the dropdown menu */}
-          <DropdownButton buttonId="profile-btn" callback={() => setActive(!active)}>
+          <DropdownButton ariaLabel="Profile Dropdown" buttonId="profile-btn" callback={() => setActive(!active)}>
             {(loggedIn) ? (
               <img
                 src={`${profileImg || profilePicture}`}
@@ -326,11 +331,6 @@ export const Header: React.FC<HeaderProps> = ({
             )}
           </DropdownContent>
         </Dropdown>
-
-        {/* About button */}
-        <a id="about-btn" href={paths.routes.ABOUT} title="About">
-          <ThemeIcon id={'info'} width={30} height={30} className={'color-stroke'} ariaLabel={'about'} />
-        </a>
       </div>
     </div >
   );
