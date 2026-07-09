@@ -165,7 +165,9 @@ export const JobSkillPopup = ({
       else {
         const newSkills = modifiedJob.jobSkills;
         const lengthPreAdd = modifiedJob.jobSkills?.length
-        if((newSkills as JobSkill[]).length < skillLimit){
+        //limit-imposing if statement
+        if((newSkills as JobSkill[]).length >= skillLimit) newSkills?.shift();
+        
         newSkills?.push({
               ...skillToToggle,
               proficiency: "Novice",
@@ -176,8 +178,11 @@ export const JobSkillPopup = ({
           ...modifiedJob,
           jobSkills: newSkills as JobSkill[],
         }
-
+        //fix the positions right after they're changed
+        for(let i = 0; i < (newSkills as JobSkill[]).length; i++){
+          (newSkills as JobSkill[])[i].position = i;
         }
+        
       }
 
       updateJob(modifiedJob);

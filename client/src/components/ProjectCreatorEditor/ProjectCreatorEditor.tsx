@@ -14,14 +14,13 @@ import {
   addProjectSocial,
   deleteProjectSocial,
   getByID,
-  deleteProject, 
   requestProjectReview,
 } from "../../api/projects";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { ApiResponse, Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 
@@ -134,6 +133,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       dataManager = await projectDataManager(projectID);
 
       const data = dataManager.getSavedProject();
+      console.log("hi!")
 
       setProjectData(data);
       setModifiedProject(data);
@@ -221,8 +221,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         approved: false,
       } as ProjectWithFollowers;
 
-      await setProjectData(newData);
-      await setModifiedProject(newData);
+      setProjectData(newData);
+      setModifiedProject(newData);
     }
     else if (projectID) {
       if (!dataManager)
@@ -565,6 +565,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
+      setProjectData(dataManager.getSavedProject());
       navigate(`${paths.routes.PROJECT}?projectID=${projectID !== 0 ? projectID : dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);

@@ -139,7 +139,6 @@ export const TeamTab = ({
 	const [searchableUsers, setSearchableUsers] = useState<
 		UserSearchableFields[]
 	>([]);
-	const close = false;
 
 	// tracking team changes
 	const projectAfterTeamChanges: PendingProject =
@@ -226,6 +225,8 @@ export const TeamTab = ({
 	const isOpenPositionsUnsaved = useMemo(() => {
 		const currentJobs = projectData?.jobs || [];
 		const originalJobs = unmodifiedProject?.jobs || [];
+		console.log(currentJobs);
+		console.log(originalJobs);
 
 		if (currentJobs.length !== originalJobs.length) return true;
 
@@ -1996,24 +1997,7 @@ export const TeamTab = ({
 				</Popup>
 			</div>
 		),
-		[
-			allRoles,
-			closePopup,
-			currentMember,
-			dataManager,
-			errorAddMember,
-			updatePendingProject,
-			handleNewMember,
-			projectAfterTeamChanges,
-			handleSearch,
-			handleUserSelect,
-			searchBarKey,
-			searchQuery,
-			searchResults,
-			searchableUsers,
-			selectKey,
-			successAddMember
-		]
+		[projectAfterTeamChanges, successAddMember, errorAddMember, searchBarKey, searchQuery, searchableUsers, searchResults, selectKey, allRoles, messageText, currentMember, dataManager, updatePendingProject, handleSearch, handleUserSelect, handleNewMember, closePopup]
 	);
 	// Renders the open positions interface with job listings and position editing functionality.
 	const openPositionsContent: JSX.Element = useMemo(
