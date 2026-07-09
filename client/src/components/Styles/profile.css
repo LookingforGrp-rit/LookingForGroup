@@ -1410,6 +1410,7 @@ New Profile page style rules
       overflow-y: auto;
       margin-top: -30px;
       padding: 15px 0;
+      max-height: 160px;
       --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
       mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
     }
@@ -1432,6 +1433,7 @@ New Profile page style rules
   #socials {
     min-width: 210px;
     max-width: 33%;
+    display: flex;
   }
 
   #profile-likes {
@@ -1866,14 +1868,23 @@ New Profile page style rules
 #about-me-header-text {
   grid-area:header;
 } */
+#links-and-invite-project {
+  height: 100%;
+  display: flex;
+  flex-wrap: nowrap;
+  flex-direction: column;
+  align-items: end;
+  justify-content: flex-end;
+}
 
 #about-me-buttons {
   grid-area: buttons;
   display: flex;
   align-items: center;
-  height: 100%;
+  height: fit-content;
   gap: 7px;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 #about-me-buttons.about-me-buttons-minimal {

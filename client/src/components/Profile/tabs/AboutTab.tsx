@@ -508,7 +508,7 @@ export const AboutTab = ({
 						});
 					}}
 				/>
-
+				{/* 
 				<LabelInputBox
 					label={"Fun Fact"}
 					labelInfo="Share a fun fact about yourself that will surprise others!"
@@ -533,7 +533,7 @@ export const AboutTab = ({
 							data: { funFact }
 						});
 					}}
-				/>
+				/> */}
 			</div>
 
 			<LabelInputBox

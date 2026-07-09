@@ -180,10 +180,10 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 		return "*";
 	}
 
-	//Returns either "Major (Optional)" or "Major (Required)" depending on the user selected factulty as their role
+	//Returns either "Major" or "Major (Required)" depending on the user selected factulty as their role
 	const majorRequired = () => {
 		if (ritStatus === "Faculty" || ritStatus === "Staff") {
-			return "Major (Optional)";
+			return "Major";
 		}
 
 		return "Major (Required)";
@@ -241,7 +241,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							maxLength={20}
 							id="pronouns-input"
 							value={pronouns}
-							placeholder={"Pronouns (Optional)"}
+							placeholder={"Pronouns"}
 							onChange={(e) => setPronouns(e.target.value)}
 							hideUnsaved={true}
 						/>
@@ -253,7 +253,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							maxLength={20}
 							id="headline-input"
 							value={headline}
-							placeholder={"Headline (Optional)"}
+							placeholder={"Personal Quote"}
 							onChange={(e) => setHeadline(e.target.value)}
 							hideUnsaved={true}
 						/>
@@ -262,7 +262,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<div id="jobTitle-input">
 							<Select>
 								<SelectButton
-									placeholder={"Add a Job Title (Optional)"}
+									placeholder={"Job Title"}
 									initialVal={title ?? ""}
 									callback={(e) => e.preventDefault()}
 									buttonId="jobTitle-input"
@@ -354,7 +354,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							maxLength={15}
 							id="phoneNumber-input"
 							value={phoneNumber}
-							placeholder={"Phone Number (Optional)"}
+							placeholder={"Phone Number"}
 							onChange={(e) => {
 								const phoneRegex = /^\(?\d{3}\)?[-.\s]?\d{3}[-.\s]?\d{4}$/;
 								if (e.target.value.length != 0 && !phoneRegex.test(e.target.value)) {
@@ -376,12 +376,12 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							maxLength={50}
 							id="location-input"
 							value={location}
-							placeholder={"Location (Optional)"}
+							placeholder={"Location"}
 							onChange={(e) => setLocation(e.target.value)}
 							hideUnsaved={true}
 						/>
 
-						{/* Fun Fact */}
+						{/* Fun Fact
 						<LabelInputBox
 							label={"Add Fun Fact"}
 							inputType={"single"}
@@ -391,7 +391,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							placeholder={"Fun Fact (Optional)"}
 							onChange={(e) => setFunFact(e.target.value)}
 							hideUnsaved={true}
-						/>
+						/> */}
 
 						{/* Bio */}
 						<LabelInputBox
@@ -399,7 +399,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							inputType={"multi"}
 							maxLength={100}
 							id="bio-input"
-							placeholder={"Bio (Optional)"}
+							placeholder={"Bio"}
 							onChange={(e) => setBio(e.target.value)}
 							value={bio}
 							hideUnsaved={true}
