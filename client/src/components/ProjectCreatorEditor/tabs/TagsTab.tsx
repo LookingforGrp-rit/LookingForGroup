@@ -88,6 +88,8 @@ export const TagsTab = ({
   // Filtered results from tag search bar
   const [searchedTags, setSearchedTags] = useState<unknown[]>([]);
 
+  const [searchValue, setSearchValue] = useState("");
+
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
 
   /* ONLY used for the deleting tags button. This is needed to re-render
@@ -208,12 +210,6 @@ export const TagsTab = ({
     }
     return [{ data: allTags.filter(tag => tag.type === tagTabs[currentTagsTab]) }];
   }, [currentTagsTab, allMediums, allTags]);
-
-  // Reset tag list on tab change to default list
-  useEffect(() => {
-    const defaultTags = currentDataSet[0]?.data ?? [];
-    setSearchedTags(defaultTags);
-  }, [currentTagsTab, currentDataSet])
 
   // Determines if a specific tag is already selected for the current project.
   // Returns "selected" or "unselected" string for use in CSS classes.
@@ -340,86 +336,100 @@ export const TagsTab = ({
 
   // Creates button elements for all available tags in the current category tab, with appropriate styling for selected/unselected states.
   const renderTags = useCallback(() => {
-    // no search item, render all tags
-    if (searchedTags && searchedTags.length !== 0) {
+    //The final list of tags displayed to the screen.
+    let tagsToDisplay = currentDataSet[0].data;
 
-      //The final list of tags displayed to the screen.
-      let tagsToDisplay = searchedTags;
+    // searching...
+    if (searchValue !== "") {
+      // but no results
+      if (searchedTags?.length === 0 ) {
+        return <div className="no-results-message">No results found!</div>;
+      }
+      //if seartching with results, display everything;
+      tagsToDisplay = (searchedTags as Tag[] | Medium[]).sort((a, b) => {
+        let comparison: number;
+        if ((a as Tag).category && (b as Tag).category) 
+          comparison = (a as Tag).category.localeCompare((b as Tag).category);
+        else
+          comparison = a.label.localeCompare(b.label);
 
+        return comparison;
+      });
+    }
+    else {
       switch (currentTagsTab){
         case 1:
           //Genre
-          { const story = searchedTags.filter((tag) => (tag as Tag).category === "Story");
-          const game = searchedTags.filter((tag) => (tag as Tag).category === "Game");
-          const music = searchedTags.filter((tag) => (tag as Tag).category === "Music");
+          { const story = allTags.filter((tag) => (tag as Tag).category === "Story");
+          const game = allTags.filter((tag) => (tag as Tag).category === "Game");
+          const music = allTags.filter((tag) => (tag as Tag).category === "Music");
           tagsToDisplay = story.concat(game, music);
           break; }
         case 2:
           //Style
-          { const visual = searchedTags.filter((tag) => (tag as Tag).category === "Visual");
-          const filmVideo = searchedTags.filter((tag) => (tag as Tag).category === "Film/Video");
+          { const visual = allTags.filter((tag) => (tag as Tag).category === "Visual");
+          const filmVideo = allTags.filter((tag) => (tag as Tag).category === "Film/Video");
           tagsToDisplay = visual.concat(filmVideo);
           break; }
       }
-
-      let multipleCategories = (tagsToDisplay.length !== (tagsToDisplay as Tag[]).filter((tag) => tag.category === (tagsToDisplay[0] as Tag).category).length);
-
-      return tagsToDisplay.map((tagOrMedium, index, array) => {
-        // get id according to type of tag
-        let id: number = -1; // bad default value
-        let isTag;
-        if ("tagId" in (tagOrMedium as Tag)) {
-          isTag = true;
-          id = (tagOrMedium as Tag).tagId;
-        } else if ("mediumId" in (tagOrMedium as Medium)) {
-          isTag = false;
-          id = (tagOrMedium as Medium).mediumId;
-        } else {
-          console.log('Search query isnt of type Tag or Medium');
-          return;
-        }
-
-        const selected = isTagSelected(id, (tagOrMedium as Tag | Medium).label, currentTagsTab) === "selected";
-
-        return (
-          <Fragment key={id}>
-            {multipleCategories
-              ? index === 0 || ((array[index - 1] as Tag)?.category != (array[index] as Tag)?.category) ? 
-                <div id="tag-category-header">
-                  <p>{(array[index] as Tag).category == null ? "Medium" : (array[index] as Tag).category}</p>
-                  <hr></hr>
-                </div>
-              : <></>
-            : <></>}
-            <TagElement
-              key={id}
-              type={isTag
-                ? (tagOrMedium as Tag).type.toLowerCase()
-                : "medium"}
-              onClick={
-                isTag
-                  ? () => handleTagSelect((tagOrMedium as Tag).tagId)
-                  : () => handleMediumSelect((tagOrMedium as Medium).mediumId)
-              }
-              selected={selected}
-            >
-              <i className={selected ? "fa fa-check" : "fa fa-plus"}></i>
-              <p>{isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label}</p>
-            </TagElement>
-          </Fragment>
-        );
-      });
-    } else if (searchedTags && searchedTags.length === 0) {
-      return <div className="no-results-message">No results found!</div>;
     }
+
+    let multipleCategories = (tagsToDisplay.length !== (tagsToDisplay as Tag[]).filter((tag) => tag.category === (tagsToDisplay[0] as Tag).category).length);
+
+    return tagsToDisplay.map((tagOrMedium, index, array) => {
+      // get id according to type of tag
+      let id: number = -1; // bad default value
+      let isTag;
+      if ("tagId" in (tagOrMedium as Tag)) {
+        isTag = true;
+        id = (tagOrMedium as Tag).tagId;
+      } else if ("mediumId" in (tagOrMedium as Medium)) {
+        isTag = false;
+        id = (tagOrMedium as Medium).mediumId;
+      } else {
+        console.log('Search query isnt of type Tag or Medium');
+        return;
+      }
+
+      const selected = isTagSelected(id, (tagOrMedium as Tag | Medium).label, currentTagsTab) === "selected";
+
+      return (
+        <Fragment key={id}>
+          {multipleCategories
+            ? index === 0 || ((array[index - 1] as Tag)?.category != (array[index] as Tag)?.category) ? 
+              <div id="tag-category-header">
+                <p>{(array[index] as Tag).category == null ? "Medium" : (array[index] as Tag).category}</p>
+                <hr></hr>
+              </div>
+            : <></>
+          : <></>}
+          <TagElement
+            key={id}
+            type={isTag
+              ? (tagOrMedium as Tag).type.toLowerCase()
+              : "medium"}
+            onClick={
+              isTag
+                ? () => handleTagSelect((tagOrMedium as Tag).tagId)
+                : () => handleMediumSelect((tagOrMedium as Medium).mediumId)
+            }
+            selected={selected}
+          >
+            <i className={selected ? "fa fa-check" : "fa fa-plus"}></i>
+            <p>{isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label}</p>
+          </TagElement>
+        </Fragment>
+      );
+    });
   }, [
     searchedTags,
     currentTagsTab,
     allTags,
+    allMediums,
+    currentDataSet,
     isTagSelected,
     handleTagSelect,
     handleMediumSelect,
-    allMediums,
   ]);
 
   // Callback for the SearchBar component that updates the displayed tags based on search results.
@@ -432,7 +442,7 @@ export const TagsTab = ({
     else {
       setSearchedTags(results[0]);
     }
-  }, [currentDataSet.length]);
+  }, [currentDataSet.length, setSearchedTags]);
 
   // --- Complete component ---
   return (
@@ -566,15 +576,17 @@ export const TagsTab = ({
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentTagsTab}
-          dataSets={currentDataSet}
-          onSearch={(results) => handleSearch(results)}
+          dataSets={[{data: [...allTags, ...allMediums]}]}
+          onSearch={handleSearch}
+          value={searchValue}
+          setValue={setSearchValue}
         />
         <div id="project-editor-tag-wrapper">
           <div id="project-editor-tag-search-tabs">
             {tagTabs.map((type, index) => 
             <button
             onClick={() => setCurrentTagsTab(index)}
-            className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index ? "tag-search-tab-active" : ""}`}>
+            className={`button-reset medium-tag-tab project-editor-tag-search-tab filter-tab-${tagTabColors[type as string] ?? 'grey'} ${currentTagsTab === index && searchValue === "" ? "tag-search-tab-active" : ""}`}>
               {type}
             </button>)}
           </div>
