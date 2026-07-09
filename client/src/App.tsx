@@ -3,7 +3,7 @@ import './components/Styles/master.css';
 // Components and pages
 import { Route, Routes, useLocation } from 'react-router-dom';
 import * as paths from './constants/routes';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import SignUp from './components/pages/Signup';
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
@@ -29,8 +29,6 @@ import { ThemeContext } from './contexts/ThemeContext';
 import AboutPage from './components/pages/About';
 
 import { useLocalStorage } from 'usehooks-ts';
-import { getCurrentAccount } from './api/users';
-import { ModeratorPage } from './components/pages/ModeratorPage';
 
 function App() {
   //const [avatarImage, setAvatarImage] = useState('/images/tempProfilePic.png'); -- Commented in clean up 26-20-01 
@@ -44,16 +42,16 @@ function App() {
   const sidebarlessPages = ['/login', '/signup', '/forgotPassword'];
   const hideSidebar = sidebarlessPages.includes(location.pathname);
 
-  const [currentUser, setUser] = useState<number | undefined>();
+  // const [currentUser, setUser] = useState<number | undefined>();
 
-  useEffect(() => {
-    const test = async() => {
-      const temp = await getCurrentAccount();
-      setUser(temp.data?.userId);
-      return;
-    }
-    test();
-  },[]);
+  // useEffect(() => {
+  //   const test = async() => {
+  //     const temp = await getCurrentAccount();
+  //     setUser(temp.data?.userId);
+  //     return;
+  //   }
+  //   test();
+  // },[]);
 
   // console.log(currentUser);
 
@@ -126,7 +124,6 @@ function App() {
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
           <Route path={paths.routes.CREDITS} element={<Credits />} />
           <Route path={paths.routes.ABOUT} element={<AboutPage />} />
-          <Route path={paths.routes.MODERATORTOOLS} element={<ModeratorPage/>}/>
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
         </Routes>
         {/* <CreditsFooter /> */}

@@ -22,5 +22,4 @@ export const routes = {
   ABOUT: '/about',
   ACCOUNTACTIVATE: '/activation/:token',
   NOTFOUND: '/*',
-  MODERATORTOOLS: '/moderatorPage'
 };
