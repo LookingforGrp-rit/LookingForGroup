@@ -7,14 +7,10 @@ import addJobSkillService from '#services/projects/jobs/skills/add-job-skill.ts'
 const addJobSkill = async (req: Request, res: Response) => {
   const data: AddJobSkillInput = req.body as AddJobSkillInput;
   const projectId = parseInt(req.params.id as string);
-
-  const skillWithIds = {
-    ...data,
-    projectId,
-  };
+  const jobId = parseInt(req.params.jobId as string);
 
   //add the skill they wanna add
-  const result = await addJobSkillService(skillWithIds);
+  const result = await addJobSkillService(projectId, jobId, data);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {

@@ -14,14 +14,13 @@ import {
   addProjectSocial,
   deleteProjectSocial,
   getByID,
-  deleteProject,
   requestProjectReview,
 } from "../../api/projects";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { ApiResponse, Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 
@@ -143,6 +142,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       dataManager = await projectDataManager(projectID);
 
       const data = dataManager.getSavedProject();
+      console.log("hi!")
 
       setProjectData(data);
       setModifiedProject(data);
@@ -233,8 +233,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         approved: false,
       } as ProjectWithFollowers;
 
-      await setProjectData(newData);
-      await setModifiedProject(newData);
+      setProjectData(newData);
+      setModifiedProject(newData);
     }
     else if (projectID) {
       if (!dataManager && projectData === undefined)
@@ -419,8 +419,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return;
     }
 
-    console.log("Created project thumbnail: ");
-    console.log(modifiedProject.thumbnail);
     setCurrentTab(0);
 
     // Prevent duplicate project names in the user's project list.
@@ -471,8 +469,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           setProjectID(response.data.projectId);
 
           /* PROJECT IMAGES */
-          for (let image of modifiedProject.projectImages) {
-            dataManager.createImage({
+          for (const image of modifiedProject.projectImages) {
+            await dataManager.createImage({
               id: {
                 type: "local",
                 value: (image as ProjectImage).imageId
@@ -495,8 +493,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             });
 
           /* PROJECT VIDEOS */
-          for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
-            dataManager?.createVideo({
+          for (const video of modifiedProject.projectVideos as ProjectVideo[]) {
+            await dataManager?.createVideo({
               id: {
                 value: video.videoId,
                 type: "local"
@@ -506,8 +504,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT TAGS */
-          for (let tag of modifiedProject.tags) {
-            dataManager.addTag({
+          for (const tag of modifiedProject.tags) {
+            await dataManager.addTag({
               id: {
                 type: "local",
                 value: tag.tagId,
@@ -520,8 +518,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT MEDIUMS */
-          for (let medium of modifiedProject.mediums) {
-            dataManager.addMedium({
+          for (const medium of modifiedProject.mediums) {
+            await dataManager.addMedium({
               id: {
                 type: "local",
                 value: medium.mediumId,
@@ -533,7 +531,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT MEMBERS */
-          for (let member of modifiedProject.members) {
+          for (const member of modifiedProject.members) {
             if (member.user?.userId === currentUser?.userId) continue;
             dataManager.createMember({
               id: {
@@ -551,7 +549,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT JOBS */
-          for (let job of modifiedProject.jobs) {
+          for (const job of modifiedProject.jobs) {
             dataManager.createJob({
               id: {
                 type: "local",
@@ -571,8 +569,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT SOCIALS */
-          for (let link of modifiedProject.projectSocials) {
-            dataManager.addSocial({
+          for (const link of modifiedProject.projectSocials) {
+            await dataManager.addSocial({
               id: {
                 type: "local",
                 value: link.websiteId as number,
@@ -587,12 +585,14 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
+      setProjectData(dataManager.getSavedProject());
       // Remove the unload blocker before reloading the page, otherwise the prior
       // `saved === false` closure can still fire and trigger a browser prompt.
-      window.onbeforeunload = null;
-      projectID !== 0
-        ? window.location.reload()
-        : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
+      //window.onbeforeunload = null;
+      //this does not need to reload anymore, it updates without reloading
+      // projectID !== 0
+      //   ? window.location.reload()
+      //   : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }

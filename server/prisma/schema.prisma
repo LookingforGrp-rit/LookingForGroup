@@ -369,6 +369,7 @@ model JobSkills {
   skillId    Int          @map("skill_id")
   jobId      Int          @map("job_id")
   proficiency SkillProficiency
+  position   Int      
   skill      Skills       @relation(fields: [skillId], references: [skillId], onDelete: NoAction, map: "FK_job_skills_skills")
   jobs       Jobs         @relation(fields: [jobId], references: [jobId])
 

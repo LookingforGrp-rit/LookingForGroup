@@ -35,6 +35,7 @@ import {
   CreateProjectVideoInput,
   AddJobSkillInput,
   DeleteJobSkillInput,
+  JobSkill,
   UpdateMemberRequestInput,
 } from "@looking-for-group/shared";
 
@@ -222,7 +223,7 @@ interface ProjectChangesDeletes {
   jobs: CRUDRequest<null>[];
 
   /**
-   * All jobs to be deleted
+   * All job skills to be deleted
    */
   jobSkills: CRUDRequest<DeleteJobSkillInput>[];
 
@@ -261,6 +262,11 @@ interface PendingProjectMember extends Pending<ProjectMember> {
  * A project tag that hasn't been saved on the server yet
  */
 type PendingProjectTag = Omit<ProjectTag, "apiUrl">;
+
+/**
+ * A job skill that hasn't been saved on the server yet
+ */
+type PendingJobSkill = Omit<JobSkill, "apiUrl">;
 
 /**
  * A project medium that hasn't been saved on the server yet

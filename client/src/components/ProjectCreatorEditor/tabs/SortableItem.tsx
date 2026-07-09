@@ -1,17 +1,12 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Skill, SkillCategory, SkillType, Tag } from '@looking-for-group/shared';
+import { Skill, Tag } from '@looking-for-group/shared';
 import { ThemeIcon } from '../../ThemeIcon';
 import { Tag as TagElement } from '../../Tag';
 
 interface SortTagProps {
   id: number,
-  tag: {
-    skillId: number,
-    label: string,
-    type: SkillType,
-    category: SkillCategory
-  },
+  tag: Skill | Tag,
   onRemove: (tagId: number) => void,
 };
 
@@ -55,7 +50,7 @@ export const SortableTag = ({ id, tag, onRemove }: SortTagProps) => {
             ? `${tag.type.toLowerCase()} skill`
             : tag.type.toLowerCase()
         }
-        onClick={() => {onRemove(tag.skillId)}}
+        onClick={() => {onRemove((tag as Skill).skillId ?? (tag as Tag).tagId)}}
       >
         <i className="fa fa-close"></i>
         <p>{tag.label}</p>
