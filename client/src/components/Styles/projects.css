@@ -3594,7 +3594,9 @@ Project Carousel style rules
   .popup:has(#project-request-review) {
     width: min-content;
     min-width: 65%;
-    height: min-content;
+    max-width: 90%;
+    height: auto;
+    max-height: 80vh;
     display: flex;
     align-content: center;
     vertical-align: center;
