@@ -10,6 +10,7 @@ type ThemeIconProps = {
   id?: string;
   className?: string;
   ariaLabel?: string;
+  role?: string;
   onClick?: React.MouseEventHandler<SVGSVGElement>;
 };
 
@@ -31,6 +32,7 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
   id = '',
   className = '',
   ariaLabel = '',
+  role = '',
   onClick = undefined
 }) => {
 
@@ -57,6 +59,7 @@ export const ThemeIcon: React.FC<ThemeIconProps> = memo(({
       onClick={onClick}
       onKeyDown={handleKeyDown}
       aria-label={ariaLabel}
+      role={role}
       tabIndex={onClick ? 0 : -1}
     >
       <use href={`${source}#${id}`} xlinkHref={`${source}#${id}`} />

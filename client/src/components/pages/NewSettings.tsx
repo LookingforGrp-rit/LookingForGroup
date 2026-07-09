@@ -495,22 +495,12 @@ const Settings = (userProfile: any) => {
   }, [theme])
 
   return (
-    <div className="page" style={{ position: 'relative' }} tabIndex={-1}>
-      {/* Top-right profile dropdown */}
-      <div
-        style={{
-          position: 'absolute',
-          top: 20,
-          right: 30,
-          zIndex: 1000,
-        }}
-      ></div>
-
+    <main className="page" style={{ position: 'relative' }} tabIndex={-1}>
       {/* Search bar is not used in settings */}
       <div id="settings-page">
-        <div id="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+        <header id="header" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <Header dataSets={[]} onSearch={() => { }} hideSearchBar hideBackButton={false} pageTitle='Settings' />
-        </div>
+        </header>
         <hr />
         {userInfo === undefined ? (
           <p>You aren't logged in!</p>
@@ -593,7 +583,6 @@ const Settings = (userProfile: any) => {
                     </Popup>
                   </div>
                   <div id="phone-number-visibility">
-                    <label htmlFor="toggle-phone-checkbox">Show Phone Number on your Profile?</label>
                     <input
                       type="checkbox"
                       id="toggle-phone-checkbox"
@@ -606,6 +595,7 @@ const Settings = (userProfile: any) => {
                       checked={userInfo.displayPhone ?? false}
                     >
                     </input>
+                    <label htmlFor="toggle-phone-checkbox">Show Phone Number on your Profile?</label>
                   </div>
                 </div>
               </div>
@@ -618,7 +608,7 @@ const Settings = (userProfile: any) => {
               <h2 className="settings-header">Appearance</h2>
               <div className="settings-column">
                 <div className="subsection">
-                  <label htmlFor="option-theme">Current Theme</label>
+                  <label htmlFor="options-theme-btn">Current Theme</label>
                   <Dropdown>
                     <DropdownButton buttonId="options-theme-btn">
                       <div className="input-container">
@@ -780,7 +770,7 @@ const Settings = (userProfile: any) => {
         )}
       </div>
       <ToTopButton />
-    </div>
+    </main>
   );
 };
 

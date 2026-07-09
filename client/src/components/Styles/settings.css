@@ -614,7 +614,7 @@ input:checked+.slider:before {
 #phone-number-visibility {
   margin-top: 2em;
   display: flex;
-  flex-direction: row-reverse;
+  flex-direction: row;
   justify-content: start;
 }
 

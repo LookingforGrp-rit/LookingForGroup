@@ -2,7 +2,7 @@ import { SearchBar, DataSet } from './SearchBar';
 import { Dropdown, DropdownButton, DropdownContent } from './Dropdown';
 import { NotificationsDropdown } from './NotificationsDropdown';
 import { useNavigate } from 'react-router-dom';
-import { useState, useEffect, useContext, ChangeEvent, FocusEvent } from 'react';
+import { useState, useEffect, useContext, ChangeEvent, FocusEvent, KeyboardEvent } from 'react';
 import * as paths from '../constants/routes';
 import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
@@ -194,7 +194,15 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Conditional rendering for back button*/}
       {(!hideBackButton) && (<div className="project-back-btn-header">
-        <ThemeIcon id={'back'} width={70} height={25} className={'color-fill project-back-btn'} ariaLabel={'back'} onClick={() => { navigate(-1); }} />
+        <ThemeIcon 
+          role="button"
+          id={'back'}
+          width={70}
+          height={25}
+          className={'color-fill project-back-btn'}
+          ariaLabel={'back'}
+          onClick={() => { navigate(-1); }}
+        />
       </div>)}
 
       {hideSearchBar && pageTitle !== "" ? 
