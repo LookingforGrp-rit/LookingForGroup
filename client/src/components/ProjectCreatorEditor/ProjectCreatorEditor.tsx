@@ -588,11 +588,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       setProjectData(dataManager.getSavedProject());
       // Remove the unload blocker before reloading the page, otherwise the prior
       // `saved === false` closure can still fire and trigger a browser prompt.
-      //window.onbeforeunload = null;
-      //this does not need to reload anymore, it updates without reloading
-      // projectID !== 0
-      //   ? window.location.reload()
-      //   : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
+      window.onbeforeunload = null;
+      projectID !== 0
+        ? window.location.reload()
+        : navigate(`${paths.routes.PROJECT}?projectID=${dataManager.getSavedProject().projectId}`);
     } catch (err) {
       console.error(err);
     }
