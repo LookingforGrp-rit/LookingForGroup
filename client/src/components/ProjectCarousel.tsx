@@ -32,7 +32,17 @@ export const ProjectCarousel = ({ project, videos }: { project: ProjectDetail, v
 
     // Process the images into a displayable element
     const imageElements = (project.projectImages && project.projectImages.length > 0)
-        ? project.projectImages.map((imageData, index) => (
+        ? project.projectImages.sort((img1, img2) => {
+            debugger;
+            if(img1.imageId === project.thumbnail?.imageId){
+                return -1;
+            }
+            if(img2.imageId === project.thumbnail?.imageId){
+                return 1;
+            }
+            return 0;
+        })
+        .map((imageData, index) => (
             <img
                 key={`img-${index}`}
                 src={imageData.image}
