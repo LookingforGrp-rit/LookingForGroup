@@ -12,7 +12,7 @@ export type TagType =
   | "Role"
   | "Major"
   | "Game Engine"
-  | "Position"
+  | "Positions"
 //wow.
 export type GenreCategory = 'Game' | "Story" | 'Music';
 export type StyleCategory = 'Visual' | 'Film/Video';
@@ -51,7 +51,7 @@ export type ProjectStatus =
   | "Complete";
 export type JobAvailability = "FullTime" | "PartTime" | "Flexible";
 export type JobDuration = "Days" | "Weeks" | "Months" | "Semesters" | "Years";
-export type JobLocation = "OnSite" | "Remote" | "Hybrid";
+export type JobLocation = "OnSite" | "Remote" | "Hybrid" | "Flexible";
 export type JobCompensation = "Unpaid" | "Paid";
 export type MemberRequestStatus = "Accepted" | "Declined" | "Pending";
 export type ProjectSortMethod = "Newest" | "A-Z";
@@ -294,16 +294,17 @@ export interface UserSkill extends Skill {
 /**
  * Represents all info for a skill that a user has
  */
-export interface JobSkill extends Skill {  
-  /**
-   * The ID of the job this skill is attached to
-   */
-  jobId: number;
+export interface JobSkill extends Skill {
 
   /**
    * The proficiency in the skill the job is searching for
    */
   proficiency: SkillProficiency;
+
+  /**
+   * The index at which the job skill is displayed
+   */
+  position: number;
 
   /**
    * The location of this resource on the server
@@ -1582,7 +1583,7 @@ export type AddProjectMediumInput = Pick<ProjectMedium, "mediumId">;
 export type CreateProjectJobInput = Required<
   Pick<ProjectJob, "availability" | "duration" | "location" | "compensation">
 > &
-  Partial<Pick<ProjectJob, "description" | "jobSkills"/*dont know if this is correct to add here */>> & {
+  Partial<Pick<ProjectJob, "description" | "jobSkills">> & {
     roleId: number;
     contactUserId: number;
   };
@@ -1596,11 +1597,14 @@ export type UpdateProjectJobInput = Partial<CreateProjectJobInput>;
 /**
  * Data required to add a skill to a project
  */
-export type AddJobSkillInput = Pick<JobSkill, "jobId" | "skillId" | "proficiency">
+export type AddJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "position">
 
-export type UpdateJobSkillInput = Pick<JobSkill, 'jobId' | "proficiency">//more things if we want to add more things
+export type UpdateJobSkillInput = Pick<JobSkill, "skillId" | "proficiency" | "position"> //more things if we want to add more things
 
-export type DeleteJobSkillInput = Pick<JobSkill, 'jobId' | "skillId"> 
+export type DeleteJobSkillInput = {
+  jobId: number,
+  skillId: number
+}
 //this is purely for the frontend because it needs both things for the url, and so the data manager can work properly
 //the delete service takes it from the parameters
 
@@ -1636,4 +1640,4 @@ export type CreateSkillInput = Pick<Skill, "label" | "type" | "category">;
 /**
  * Data required to edit an existing skill
  */
-export type EditSkillInput = Partial <CreateSkillInput> & { skillId: number };
+export type EditSkillInput = Partial<CreateSkillInput> & { skillId: number };

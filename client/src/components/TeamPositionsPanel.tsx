@@ -4,7 +4,8 @@ import { ProjectWithFollowers } from "@looking-for-group/shared";
 import profileImage from "../images/lfrog.png";
 import { PopupButton } from "./Popup";
 import * as paths from "../constants/routes";
-import { requestToJoin, getMemberRequest } from '../api/projects.ts';
+import { requestToJoin, getMemberRequest, getMembers } from '../api/projects.ts';
+import { Tag as TagElement } from "./Tag";
 import {
   JobAvailability as JobAvailabilityEnums,
   JobDuration as JobDurationEnums,
@@ -74,6 +75,14 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
       return;
     }
     try {
+      //check if already a member
+      const members = await getMembers(displayedProject.projectId);
+      const memberIds = members.data?.map(member => member.user.userId);
+      if(memberIds?.includes(currentUserId)){
+        setAllowApply(false);
+        return;
+      }
+
       // if an error is thrown -> no request found
       const result = await getMemberRequest({
         projectId: displayedProject.projectId,
@@ -145,6 +154,46 @@ export const TeamPositionsPanel = ({ currentUserId, displayedProject, viewedPosi
             className="positions-popup-info-description"
           >
             {currentJob?.description}
+          </div>
+                <span className="position-detail-indicator">
+                  Job Skills
+                </span>
+				  <div id="edit-position-skills-list">
+            {/* TODO: make displayed tags look like tags */}
+            {currentJob?.jobSkills &&
+              currentJob?.jobSkills?.length > 0 ?
+              currentJob?.jobSkills?.map((tag) => {
+                let category: string;
+                      switch (tag.type) {
+                        case "Designer":
+                          category = "red";
+                          break;
+                        case "Developer":
+                          category = "yellow";
+                          break;
+                        case "Soft":
+                          category = "purple";
+                          break;
+                        case "Audio":
+                          category = "periwinkle";
+                          break;
+                        case "Engineer":
+                          category = "cyan";
+                          break;
+                        default:
+                          category = "grey";
+                      }
+                      return (
+                        <div
+                          key={`${tag.skillId}`}
+                          className={`skill-tag-label label-${category}`}
+                        >
+                          {tag.label}
+                        </div>
+                      );}
+              ) : "None"}
+
+              
           </div>
 
           <div id="open-position-details">

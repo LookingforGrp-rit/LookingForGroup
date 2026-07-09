@@ -5,6 +5,7 @@ import { ThemeIcon } from './ThemeIcon';
 import { tags, projectTabs, peopleTabs } from '../constants/tags';
 import { getMajors, getJobTitles, getProjectTypes, getTags, getSkills } from '../api/users';
 import { Tag, StringDictionary, Role, Major, Medium } from '@looking-for-group/shared';
+import MoreFiltersButton from './MoreFiltersButton';
 
 interface DiscoverFiltersProps {
   category: 'projects' | 'profiles';
@@ -371,13 +372,20 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
               )
             })}
           </div>
+          <button
+            id="filters-right-scroll"
+            className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
+            onClick={() => scrollTags('right')}
+          >
+            <i className="fa fa-caret-right"></i>
+          </button>
           {/* Container so more filters popup is aligned at the end */}
           <div id="discover-more-filters-container">
 
             {/* === Additional filters popup === */}
             <Popup>
               <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
-                <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'} />
+                <MoreFiltersButton />
               </PopupButton>
               {/* 
                             When page loads, get all necessary tag lists based on page category.
@@ -596,13 +604,6 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
               </PopupContent>
             </Popup>
           </div>
-          <button
-            id="filters-right-scroll"
-            className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
-            onClick={() => scrollTags('right')}
-          >
-            <i className="fa fa-caret-right"></i>
-          </button>
         </div >
         {((appliedFiltersDisplay.length > 0) && (displayFiltersText)) ? (
           <div className='applied-filters'>

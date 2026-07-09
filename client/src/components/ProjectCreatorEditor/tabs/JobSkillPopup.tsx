@@ -2,58 +2,58 @@ import { useState, useEffect, useMemo, useCallback, Fragment } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
 import { Tag } from "../../Tag";
-import { MySkill, Skill, MePrivate, SkillType } from "@looking-for-group/shared";
-import { userDataManager } from "../../../api/data-managers/user-data-manager";
-import { PendingUserProfile } from "../../../../types/types";
+import { Skill, JobSkill, SkillType, ProjectJob } from "@looking-for-group/shared";
+import { Pending } from "../../../../types/types";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
-import { SortableTag } from "../../ProjectCreatorEditor/tabs/SortableItem";
-import { clampDragWithinContainer } from "../../ProjectCreatorEditor/tabs/dragModifiers";
+import { SortableTag } from "./SortableItem";
+import { clampDragWithinContainer } from "./dragModifiers";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
-// Category color for each skill tab, matching the tag/filter-tab colors.
-const skillTabColors: Record<string, string> = {
-  Developer: "yellow",
-  Designer: "red",
-  Design: "red",
-  Soft: "purple",
-  Audio: "periwinkle",
-  Engineer: "cyan",
-};
-
-interface SkillsTabProps {
-  profile: PendingUserProfile;
-  unmodifiedProfile: MePrivate;
-  dataManager: Awaited<ReturnType<typeof userDataManager>>;
-  updatePendingProfile: (profileData: PendingUserProfile) => void;
+interface JobSkillPopupProps {
+  job: ProjectJob | Pending<ProjectJob>,
+  updateJob: React.Dispatch<React.SetStateAction<ProjectJob | Pending<ProjectJob> | undefined>>,
 }
 
 /**
- * Profile Skills Tab. Displays selected skill tags with drag and drop instructions.
+ * Job skills popup. Displays selected skill tags with drag and drop instructions.
  * Shows the search bar for filtering skills, category tabs, and the skill tag buttons.
  * @param dataManager Handles data changes to save changes later.
- * @param profile Temporary profile data.
- * @param updatePendingProfile Updates profile data.
- * @param unmodifiedProfile A copy of the profile before any changes
+ * @param project Temporary project data.
+ * @param updatePendingProject Updates project data.
+ * @param unmodifiedProject A copy of the profile before any changes
  * @returns JSX Element
  */
-export const SkillsTab = ({
-  dataManager,
-  profile,
-  unmodifiedProfile,
-  updatePendingProfile,
-}: SkillsTabProps) => {
+export const JobSkillPopup = ({
+  job,
+  updateJob,
+}: JobSkillPopupProps) => {
+  //editing a copy, rather than the original variable
+  let modifiedJob = job;
+
+  const skillLimit = 5;
+  //the limit imposer (not used as you can see)
+  
+  //i need to refresh the skills selection whenever a new job is created
+  //it does refresh when an existing skill is selected so that works as intended
+  //but between like skill creation and selection it should reset to no skills selected
+  //so how would i do that...
+  //well i should find where it's reset right
+
   // States
   const [allSkills, setAllSkills] = useState<Skill[]>([]);
   // Tracks which tab we are currently on
   const [currentSkillsTab, setCurrentSkillsTab] = useState(0);
   // filtered results from skill search bar
   const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
+  // currently selected skills
+  //const [selectedSkills, setSelectedSkills] = useState<JobSkill[]>([]);
 
   /* ONLY used for the deleting tags button. This is needed to re-render
-	the selected skills section when reseting tags */
-	const [skills, setSkills] = useState<Skill[]>(unmodifiedProfile.skills);
+    the selected skills section when reseting tags */
+  const [skills, setSkills] = useState<Skill[]>();
+
 
   // load skills
   useMemo(() => {
@@ -98,12 +98,12 @@ export const SkillsTab = ({
    * Finds if a skill is present on the project
    * @returns string of status: "selected" or "unselected."
    */
-  const isSkillSelected = (id: number) => {
-    const skills: MySkill[] = profile.skills;
+  const isSkillSelected = useCallback((id: number) => {
+    const skills: JobSkill[] = job.jobSkills as JobSkill[];
 
-    if (skills.some((skill) => skill.skillId === id)) return "selected";
+    if (skills?.some((skill) => skill.skillId === id)) return "selected";
     return "unselected";
-  }
+  }, [job.jobSkills])
 
   // Drag-and-drop sensors for the sortable selected-tags list.
   // Pointer for mouse/touch, Keyboard for accessible reordering.
@@ -124,7 +124,7 @@ export const SkillsTab = ({
     const { active, over } = e;
     if (!over || active.id === over.id) return;
 
-    const skills = profile.skills;
+    const skills = (job.jobSkills as JobSkill[]);
     const oldIndex = skills.findIndex((s) => s.skillId === Number(active.id));
     const newIndex = skills.findIndex((s) => s.skillId === Number(over.id));
     if (oldIndex === -1 || newIndex === -1) return;
@@ -136,83 +136,61 @@ export const SkillsTab = ({
       })
     );
 
-    const updatedProfile = {
-      ...profile,
-      skills: reorderedSkills,
+    modifiedJob = {
+        ...modifiedJob,
+        jobSkills: reorderedSkills
     };
 
-    dataManager.updateSkill({
-      id: {
-        type: "canon",
-        value: reorderedSkills[newIndex].skillId,
-      },
-      data: {
-        position: reorderedSkills[newIndex].position,
-      },
-    });
-
-    updatePendingProfile(updatedProfile);
+    updateJob(modifiedJob);
   };
 
   /**
    * Toggles a skill as selected or unselected
    */
+  //limit imposer goes here maybe?
   const handleSkillToggle = useCallback(
     (skillId: number) => {
       const isSelected = isSkillSelected(skillId) === "selected";
 
       const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
 
-      /*console.log(skillToToggle);*/
-
       if (!skillToToggle) return;
 
       if (isSelected) {
-        dataManager.deleteSkill({
-          id: {
-            type: "canon",
-            value: skillId,
-          },
-          data: null,
-        });
-
-        updatePendingProfile({
-          ...profile,
-          skills: [
-            ...profile.skills.filter((skill) => skill.skillId !== skillId),
-          ],
-        });
-      } else {
-        dataManager.addSkill({
-          id: {
-            type: "canon",
-            value: skillId,
-          },
-          data: {
-            skillId,
-            position: profile.skills.length, // add to end of list by default
-            proficiency: "Novice", // TODO add a way to properly set skill proficiency
-          },
-        });
-
-        updatePendingProfile({
-          ...profile,
-          skills: [
-            ...profile.skills.filter((skill) => skill.skillId !== skillId), // i dunno just in case
-            {
-              ...skillToToggle,
-              apiUrl: "",
-              proficiency: "Novice",
-              position: profile.skills.length, // add to end of list by default
-            },
-          ],
-        });
+        modifiedJob = {
+          ...modifiedJob,
+          jobSkills: modifiedJob.jobSkills?.filter((skill) => skill?.skillId !== skillToToggle.skillId) as JobSkill[],
+        }
       }
+      else {
+        const newSkills = modifiedJob.jobSkills;
+        const lengthPreAdd = modifiedJob.jobSkills?.length
+        //limit-imposing if statement
+        if((newSkills as JobSkill[]).length >= skillLimit) newSkills?.shift();
+        
+        newSkills?.push({
+              ...skillToToggle,
+              proficiency: "Novice",
+              position: lengthPreAdd ?? 0,
+              apiUrl: "",
+            })
+        modifiedJob = {
+          ...modifiedJob,
+          jobSkills: newSkills as JobSkill[],
+        }
+        //fix the positions right after they're changed
+        for(let i = 0; i < (newSkills as JobSkill[]).length; i++){
+          (newSkills as JobSkill[])[i].position = i;
+        }
+        
+      }
+
+      updateJob(modifiedJob);
     },
-    [allSkills, dataManager, isSkillSelected, profile, updatePendingProfile]
+    [allSkills, isSkillSelected, job, ]
   );
 
-  const selectedSkills = profile.skills.sort((a, b) => a.position - b.position) || [];
+  const selectedSkills = job.jobSkills ? (job.jobSkills as JobSkill[]).sort((a, b) => a.position - b.position) : [];
 
   /**
    * Renders skill tags as clickable buttons based on the active tab and search results.
@@ -236,10 +214,9 @@ export const SkillsTab = ({
           const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
           const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
           const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
-          const api = searchedSkills.filter((tag) => (tag as Skill).category === "API");
           const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
           const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
-          skillsToDisplay = discipline.concat(software, codingLanguage, framework, api, operatingSystem, gameEngine);
+          skillsToDisplay = discipline.concat(software, codingLanguage, framework, operatingSystem, gameEngine);
           break; }
         case 1:
           //Designer
@@ -346,7 +323,7 @@ export const SkillsTab = ({
         ));
     }
     //returns the soft skills
-    else {
+    else if (currentSkillsTab === 2) {
       return allSkills
         .filter((anySkill) => anySkill.type === "Soft")
         .map((softSkill) => (
@@ -363,6 +340,48 @@ export const SkillsTab = ({
               }
             ></i>
             <p>&nbsp;{softSkill.label}</p>
+          </Tag>
+        ));
+    }
+    //returns the audio skills
+    else if (currentSkillsTab === 3) {
+      return allSkills
+        .filter((anySkill) => anySkill.type === "Audio")
+        .map((audioSkill) => (
+          <Tag
+            key={audioSkill.skillId}
+            onClick={() => handleSkillToggle(audioSkill.skillId)}
+            type="soft skill"
+          >
+            <i
+              className={
+                isSkillSelected(audioSkill.skillId) === "selected"
+                  ? "fa fa-close"
+                  : "fa fa-plus"
+              }
+            ></i>
+            <p>&nbsp;{audioSkill.label}</p>
+          </Tag>
+        ));
+    }
+    //returns the engineer skills
+    else if (currentSkillsTab === 4) {
+      return allSkills
+        .filter((anySkill) => anySkill.type === "Engineer")
+        .map((engineerSkill) => (
+          <Tag
+            key={engineerSkill.skillId}
+            onClick={() => handleSkillToggle(engineerSkill.skillId)}
+            type="soft skill"
+          >
+            <i
+              className={
+                isSkillSelected(engineerSkill.skillId) === "selected"
+                  ? "fa fa-close"
+                  : "fa fa-plus"
+              }
+            ></i>
+            <p>&nbsp;{engineerSkill.label}</p>
           </Tag>
         ));
     }
@@ -400,7 +419,7 @@ export const SkillsTab = ({
           key={skill}
           type="button"
           onClick={() => setCurrentSkillsTab(i)}
-          className={`button-reset project-editor-tag-search-tab filter-tab-${skillTabColors[skill] ?? "grey"} ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
+          className={`button-reset project-editor-tag-search-tab ${currentSkillsTab === i ? "tag-search-tab-active" : ""}`}
         >
           {skill}
         </button>
@@ -410,25 +429,24 @@ export const SkillsTab = ({
   };
 
   const originalSkillOrder = useMemo(() => {
-    return (skills || []).map((s) => s.skillId);
-  }, [skills]);
+    return job.jobSkills ? (job.jobSkills?.map((skill) => skill?.skillId)) : [];
+  }, []);
 
   // Does Skills match in EXACT order
   const isSkillsUnsaved = useMemo(() => {
-    const currentskills = profile.skills || [];
+    const currentSkills = (job.jobSkills as JobSkill[]) || [];
 
-    if (currentskills.length !== originalSkillOrder.length) return true;
+    if (currentSkills.length !== originalSkillOrder.length) return true;
 
     // Checks if any element shifted index or changed
-    return currentskills.some((s, index) => s.skillId !== originalSkillOrder[index]);
-  }, [profile.skills, originalSkillOrder]);
+    return currentSkills.some((s, index) => s.skillId !== originalSkillOrder[index]);
+  }, [job.jobSkills, originalSkillOrder]);
 
   return (
     <div id="profile-editor-tags">
       <div id="project-editor-selected-tags">
         <div className="project-editor-section-header">
           Selected Skills
-          {/* This will work when you can select multiple skills. Someone else is working on it */}
           {isSkillsUnsaved && (
             <span className="unsaved-indicator">
               (Unsaved)
@@ -469,24 +487,18 @@ export const SkillsTab = ({
         <button 
             type="button" 
             className="delete-tags-btn"
-            hidden={profile.skills.length === 0 || profile.skills == undefined}
+            hidden={(job.jobSkills as JobSkill[])?.length === 0 || job.jobSkills == undefined}
             onClick={() => {
-              /* deletes all skills in the data manager for the user */
-                for (let i = 0; i < profile.skills.length; i++)
-                {
-                    dataManager.deleteSkill({
-                    id: {
-                      type: "canon",
-                      value: profile.skills[i].skillId,
-                    },
-                    data: null,
-                  })
+              /* deletes all skills for the user */
+                modifiedJob = {
+                  ...modifiedJob,
+                  jobSkills: [],
                 }
 
                 /* re-renders the current popup with 0 skills remaining and updates
                 user profile */
-                setSkills(profile.skills.splice(0));
-              updatePendingProfile({...profile});
+                setSkills((job.jobSkills as JobSkill[]).splice(0));
+                updateJob(modifiedJob);
             }}
             title="Remove all selected tags"
           >

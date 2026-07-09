@@ -14,14 +14,13 @@ import {
   addProjectSocial,
   deleteProjectSocial,
   getByID,
-  deleteProject,
   requestProjectReview,
 } from "../../api/projects";
 import { ProjectPurpose as ProjectPurposeEnums, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import { getCurrentAccount, getProjectsByUser, getUsersById, getCurrentUsername } from "../../api/users";
 import { projectDataManager } from "../../api/data-managers/project-data-manager";
 import { Pending, PendingProject, PendingProjectMember } from "../../../types/types";
-import { ApiResponse, Medium, ProjectDetail, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
+import { Medium, ProjectFollowers, ProjectImage, ProjectJob, ProjectMember, ProjectPurpose, ProjectSocial, ProjectStatus, ProjectVideo, ProjectWithFollowers, Tag, UserDetail, Visibility, MemberRequests, } from '@looking-for-group/shared';
 import { useNavigate } from "react-router-dom";
 
 
@@ -41,7 +40,7 @@ interface Props {
   autoStart?: boolean;
 
   // Not a real property, set to a variable to a function in the code
-  buttonCallback?: () => void;
+  buttonCallback?: (state: boolean) => void;
 
   // Unused property, don't know why it's here
   updateDisplayedProject?: Dispatch<SetStateAction<ProjectWithFollowers | undefined>>;
@@ -143,6 +142,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       dataManager = await projectDataManager(projectID);
 
       const data = dataManager.getSavedProject();
+      console.log("hi!")
 
       setProjectData(data);
       setModifiedProject(data);
@@ -233,11 +233,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         approved: false,
       } as ProjectWithFollowers;
 
-      await setProjectData(newData);
-      await setModifiedProject(newData);
+      setProjectData(newData);
+      setModifiedProject(newData);
     }
     else if (projectID) {
-      if (!dataManager)
+      if (!dataManager && projectData === undefined)
         setup();
     }
 
@@ -313,7 +313,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
     setCurrentTab(0);
     setProjectData(undefined);
     setModifiedProject(undefined);
-    buttonCallback();
+    buttonCallback(false);
   }, []);
 
   useEffect(() => {
@@ -325,14 +325,11 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
   const toggleConfirm = async () => {
     if (saved) {
-      setConfirm(false);
-      setProjectData(undefined);
-      setModifiedProject(undefined);
-      buttonCallback();
+      buttonCallback(false);
+      setCurrentTab(0); 
     }
-    else {
+    else 
       setConfirm(!confirm);
-    }
   }
 
   /**
@@ -422,8 +419,6 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       return;
     }
 
-    console.log("Created project thumbnail: ");
-    console.log(modifiedProject.thumbnail);
     setCurrentTab(0);
 
     // Prevent duplicate project names in the user's project list.
@@ -474,8 +469,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           setProjectID(response.data.projectId);
 
           /* PROJECT IMAGES */
-          for (let image of modifiedProject.projectImages) {
-            dataManager.createImage({
+          for (const image of modifiedProject.projectImages) {
+            await dataManager.createImage({
               id: {
                 type: "local",
                 value: (image as ProjectImage).imageId
@@ -498,8 +493,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             });
 
           /* PROJECT VIDEOS */
-          for (let video of modifiedProject.projectVideos as ProjectVideo[]) {
-            dataManager?.createVideo({
+          for (const video of modifiedProject.projectVideos as ProjectVideo[]) {
+            await dataManager?.createVideo({
               id: {
                 value: video.videoId,
                 type: "local"
@@ -509,8 +504,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT TAGS */
-          for (let tag of modifiedProject.tags) {
-            dataManager.addTag({
+          for (const tag of modifiedProject.tags) {
+            await dataManager.addTag({
               id: {
                 type: "local",
                 value: tag.tagId,
@@ -523,8 +518,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT MEDIUMS */
-          for (let medium of modifiedProject.mediums) {
-            dataManager.addMedium({
+          for (const medium of modifiedProject.mediums) {
+            await dataManager.addMedium({
               id: {
                 type: "local",
                 value: medium.mediumId,
@@ -536,7 +531,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT MEMBERS */
-          for (let member of modifiedProject.members) {
+          for (const member of modifiedProject.members) {
             if (member.user?.userId === currentUser?.userId) continue;
             dataManager.createMember({
               id: {
@@ -554,7 +549,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT JOBS */
-          for (let job of modifiedProject.jobs) {
+          for (const job of modifiedProject.jobs) {
             dataManager.createJob({
               id: {
                 type: "local",
@@ -574,8 +569,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
           }
 
           /* PROJECT SOCIALS */
-          for (let link of modifiedProject.projectSocials) {
-            dataManager.addSocial({
+          for (const link of modifiedProject.projectSocials) {
+            await dataManager.addSocial({
               id: {
                 type: "local",
                 value: link.websiteId as number,
@@ -590,6 +585,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
 
       // Mark project as saved so cleanup won't delete it
       setSaved(true);
+      setProjectData(dataManager.getSavedProject());
       // Remove the unload blocker before reloading the page, otherwise the prior
       // `saved === false` closure can still fire and trigger a browser prompt.
       window.onbeforeunload = null;
@@ -615,7 +611,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   return (
     <Popup startOpen={autoStart && newProject}>
       {newProject ? (
-        <PopupButton callback={() => { buttonCallback(); createOrEdit(); }} buttonId={`project-info-create`}>
+        <PopupButton callback={() => { buttonCallback(true); createOrEdit(); }} buttonId={`project-info-create`}>
           {" "}
           <ThemeIcon
             id={"create"}
@@ -629,7 +625,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
         </PopupButton>
       ) : (
         <div id="project-info-contexts">
-          <PopupButton callback={() => { buttonCallback(); createOrEdit(); }} buttonId="project-info-edit">
+          <PopupButton callback={() => { buttonCallback(true); createOrEdit(); }} buttonId="project-info-edit">
             Edit Project
           </PopupButton>
           {approvalStatus === "not-approved" ?
@@ -668,18 +664,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       )}
 
 
-      <PopupContent callback={() => {
-        /* confirm popup shows when project has been modified */
-        if (modifiedProject != projectData) {
-          setConfirm(true);
-        }
-        else {
-          setConfirm(false);
-        }
-        /* general tab by default */
-        setSaved(true);
-        setCurrentTab(0);
-      }} closeButtonRef={exitButton} confirmation={!saved}>
+      <PopupContent callback={toggleConfirm} closeButtonRef={exitButton} confirmation={!saved}>
         {confirm ? <PopupContent confirmation={true} useClose={false}>
           <div id="confirm-editor-save-text">Are you sure you want to exit without saving?</div>
           <div id="confirm-editor-save">

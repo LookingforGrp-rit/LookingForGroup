@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent} from 'react';
+import React, { useMemo, useState, useCallback, ChangeEvent, useEffect, useEffectEvent } from 'react';
 import { DiscoverCarousel } from '../DiscoverCarousel';
 import { Header } from '../Header';
 import { PanelBox } from '../PanelBox';
@@ -26,14 +26,26 @@ let index = 0;
 //Determines the number of different projects for some reason
 let count = 10;
 
+//Synchronous storing of the full project list for quick reference
+let syncFullProjectList : ProjectPreview[] = [];
+
 enum sortModes {
-    "A-Z" = "A-Z",
-    "Z-A" = "Z-A",
-    "Newest" = "Newest",
-    "Oldest" = "Oldest",
-    "Followers (NOT IMPLIMENTED)" = "Followers (NOT IMPLIMENTED)",
-    "Followers Acending (NOT IMPLIMENTED)" = "Followers Acending (NOT IMPLIMENTED)",
+  "A-Z" = "A-Z",
+  "Z-A" = "Z-A",
+  "Newest" = "Newest",
+  "Oldest" = "Oldest",
+  "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
+  "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
 }
+
+type FilterData = {
+    tags: Tag[],
+    filterMode: 'Match All' | 'Match Any'
+    sortMode: sortModes,
+  }
+
+//Stores current filter settings
+let filterData: FilterData = {tags: [], filterMode: 'Match All', sortMode: sortModes.Newest};
 
 export const DiscoverPage = () => {
   // --------------------
@@ -63,7 +75,8 @@ export const DiscoverPage = () => {
   // Hide the carousel while the user has an active search (non-empty search input)
   const heroContent = <DiscoverCarousel dataList={heroProjectList} />
 
-  const [loadObj, setLoadObj] = useState<React.ReactElement>(<p>a</p>);
+  const [loadObj, setLoadObj] = useState<React.ReactElement>(<p>No More Projects!</p>);
+
 
   // --------------------
   // Helper functions
@@ -246,11 +259,12 @@ export const DiscoverPage = () => {
     }
 
     setLoadObj(returnedProjects.length < count ?
-      <p style={{color: 'red'}}>No More Projects!</p> : 
+      <p style={{ color: 'red' }}>No More Projects!</p> :
       <button id='btn-loadmore' onClick={() => sortProjects()}>Load More Projects</button>);
 
     if (invert) {
       setFullProjectList(projects.toReversed());
+      syncFullProjectList = projects.toReversed();
       setFilteredProjectList(projects.toReversed());
 
       getShowcaseDetails(projects.toReversed(), newProjectCache);
@@ -258,13 +272,16 @@ export const DiscoverPage = () => {
     }
     else {
       setFullProjectList(projects);
+      syncFullProjectList = projects;
       setFilteredProjectList(projects);
 
       getShowcaseDetails(projects, newProjectCache);
       setProjectCache(newProjectCache);
     }
-
     setLoaded(true);
+
+    //run through filters
+    updateProjectList(filterData.tags, filterData.filterMode, filterData.sortMode);
   };
 
   /**
@@ -272,8 +289,13 @@ export const DiscoverPage = () => {
   * @param activeTagFilters Tags that are shown to the user now
   */
   const updateProjectList = async (activeTagFilters: Tag[], filterMode: "Match All" | "Match Any", sortMode: sortModes) => {
-    sortProjects(sortMode);
-    const projectList = fullProjectList;
+    //save filters
+    filterData = {tags: activeTagFilters, filterMode, sortMode};
+
+    if(filterData.sortMode !== sortMode){
+      sortProjects(sortMode);
+    }
+    const projectList = syncFullProjectList;
     // Get project and user info to match with tags
     const items: ProjectWithFollowers[] = [];
     for (const item of projectList) {
@@ -327,12 +349,12 @@ export const DiscoverPage = () => {
             matchesAll = false;
           }
         }
-        else if (tag.type === "Position") {
+        else if (tag.type === "Positions") {
           const roles = item.jobs.map((job) => job.role);
 
           if (roles.find((role) => role.roleId === tag.tagId))
             matchesAny = true;
-          else 
+          else
             matchesAll = false;
         }
         // Tag check can be done by ID: Genre
@@ -391,11 +413,11 @@ export const DiscoverPage = () => {
         // Compare age inverted
         setupProjectData("Newest", true);
         break;
-      case 'Followers (NOT IMPLIMENTED)':
+      case 'Followers (NOT IMPLEMENTED)':
         // TO IMPLIMENT once backend 
         setupProjectData("A-Z", false);
         break;
-      case "Followers Acending (NOT IMPLIMENTED)":
+      case "Followers Acending (NOT IMPLEMENTED)":
         // TO IMPLIMENT
         setupProjectData("A-Z", true);
         break;

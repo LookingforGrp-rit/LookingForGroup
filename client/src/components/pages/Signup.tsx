@@ -341,6 +341,17 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
     }
   };
 
+  const createUser = async () => {
+    await createNewUser(userInfo); //populating this with all of the things we selected
+    majors.map(async (m) => await addUserMajor({ majorId: m.majorId })); //major route that has literally existed the ENTIRE time
+    for (const skill of selectedSkills) {
+      await addUserSkill({ skillId: skill.skillId, position: selectedSkills.indexOf(skill), proficiency: 'Novice' })
+    }
+    await editUser({ profileImage: profileImage });
+    setShowGetStartedModal(false);
+    navigate(paths.routes.HOME);
+  }
+
   // Render the sign up page
   return (
     <div className="background-cover">
@@ -572,28 +583,8 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
               setShowTOSModal(true);
               setShowGetStartedModal(false);
             }}
-            onCreateProject={async () => {
-
-              await createNewUser(userInfo); //populating this with all of the things we selected
-              majors.map(async (m) => await addUserMajor({ majorId: m.majorId })); //major route. i feel silly
-              for (const id of selectedSkillIds) {
-                await addUserSkill({ skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice' })
-              }
-              await editUser({ profileImage: profileImage });
-              setShowGetStartedModal(false);
-              // The user chose "Create Project", so drop them straight into the editor.
-              navigate(`${paths.routes.MYPROJECTS}?create=1`);
-            }}
-            onJoinProject={async () => {
-              await createNewUser(userInfo); //populating this with all of the things we selected
-              majors.map(async (m) => await addUserMajor({ majorId: m.majorId })); //major route that has literally existed the ENTIRE time
-              for (const id of selectedSkillIds) {
-                await addUserSkill({ skillId: id, position: selectedSkillIds.indexOf(id), proficiency: 'Novice' })
-              }
-              await editUser({ profileImage: profileImage });
-              setShowGetStartedModal(false);
-              navigate(paths.routes.HOME);
-            }}
+            onCreateProject={createUser}
+            onJoinProject={createUser}
           />
         </div>
         {/*************************************************************

@@ -6,6 +6,7 @@ import { tags, projectTabs } from '../constants/tags';
 import { getJobTitles, getProjectTypes, getTags } from '../api/users';
 import { Tag, StringDictionary, Medium, } from '@looking-for-group/shared';
 import { Select, SelectButton, SelectOptions } from './Select';
+import MoreFiltersButton from './MoreFiltersButton';
 
 
 interface DiscoverProjectsProps {
@@ -32,8 +33,8 @@ enum sortModes {
     "Z-A" = "Z-A",
     "Newest" = "Newest",
     "Oldest" = "Oldest",
-    "Followers (NOT IMPLIMENTED)" = "Followers (NOT IMPLIMENTED)",
-    "Followers Acending (NOT IMPLIMENTED)" = "Followers Acending (NOT IMPLIMENTED)",
+    "Followers (NOT IMPLEMENTED)" = "Followers (NOT IMPLEMENTED)",
+    "Followers Acending (NOT IMPLEMENTED)" = "Followers Acending (NOT IMPLEMENTED)",
 }
 
 
@@ -142,7 +143,7 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                 tabs["Positions"].categoryTags.push({
                     tagId: job.roleId,
                     label: job.label,
-                    type: "Position",
+                    type: "Positions",
                     category: "Other",
                 });
             })
@@ -369,13 +370,20 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                         )
                     })}
                 </div>
+                <button
+                    id="filters-right-scroll"
+                    className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
+                    onClick={() => scrollTags('right')}
+                >
+                    <i className="fa fa-caret-right"></i>
+                </button>
                 {/* Container so more filters popup is aligned at the end */}
                 <div id="discover-more-filters-container">
 
                     {/* === Additional filters popup === */}
                     <Popup>
                         <PopupButton buttonId={'discover-more-filters'} callback={setupFilters}>
-                            <ThemeIcon id={'filter'} width={30} height={31} className={'color-fill color-stroke'} ariaLabel={'more filters'} />
+                            <MoreFiltersButton />
                         </PopupButton>
                         {/* 
                                 When page loads, get all necessary tag lists based on page category.
@@ -647,13 +655,6 @@ export const DiscoverProjects: React.FC<DiscoverProjectsProps> = ({ updateItemLi
                         </PopupContent>
                     </Popup>
                 </div>
-                <button
-                    id="filters-right-scroll"
-                    className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
-                    onClick={() => scrollTags('right')}
-                >
-                    <i className="fa fa-caret-right"></i>
-                </button>
             </div >
             {((appliedFiltersDisplay.length > 0) && (displayFiltersText)) ? (
                 <div className='applied-filters'>

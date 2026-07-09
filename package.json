@@ -72,6 +72,7 @@
     "es-shim-unscopables": "^1.1.0",
     "esbuild": "^0.28.1",
     "eslint": "^9.39.4",
+    "eslint-plugin-vitest": "^0.5.4",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
     "google-auth-library": "^10.6.2",
@@ -83,5 +84,15 @@
     "swagger-parser": "^10.0.3",
     "tsx": "^4.20.5",
     "usehooks-ts": "^3.1.1"
+  },
+  "allowScripts": {
+    "@prisma/client@6.19.3": true,
+    "@prisma/engines@6.19.3": true,
+    "@scarf/scarf@1.4.0": true,
+    "@swc/core@1.15.43": true,
+    "prisma@6.19.3": true,
+    "unrs-resolver@1.12.2": true,
+    "esbuild@0.25.12": true,
+    "esbuild@0.28.1": true
   }
 }
