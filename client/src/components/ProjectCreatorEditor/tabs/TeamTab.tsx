@@ -1462,7 +1462,7 @@ export const TeamTab = ({
 											) ?? null
 									} as ProjectJob);
 								}}
-								options={projectAfterTeamChanges.members
+								options={unmodifiedProject.members
 									.filter((member) => member.user !== null)
 									.filter(member => {
 										const pendingInvitation = pendingInvitations.find(req => 
