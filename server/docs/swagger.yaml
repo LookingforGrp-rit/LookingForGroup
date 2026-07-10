@@ -5014,7 +5014,7 @@ paths:
       summary: Gets the access level of a user
       tags:
         - Admin
-      description: Gets the access level of a given user (current user only right now)
+      description: Gets the access level of a given user
       parameters:
         - in: path
           name: id
