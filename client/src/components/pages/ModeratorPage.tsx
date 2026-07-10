@@ -58,7 +58,7 @@ const ModeratorPage = () => {
     const getAccount = async() => {
         /* Ensures the user is logged in */
         const userAccount = await getCurrentAccount();
-        if (userAccount.status === 200)
+        if (userAccount.status === 200 && userAccount.data?.userId)
         {
             setUserId(userAccount.data?.userId);
             /* User must have mod permissions to access mod page */
@@ -88,20 +88,6 @@ const ModeratorPage = () => {
                 return(<ReportedUsers currentUserId={userId}></ReportedUsers>);
             case 2:
                 return(<ReportedProjects currentUserId={userId}></ReportedProjects>);
-            default:
-                return (<PendingProjects currentUserId={userId}></PendingProjects>);
-        }
-    };
-
-    const handleTabSearch = () => {
-        switch (currentTab)
-        {
-            case 0:
-                return (<PendingProjects currentUserId={userId}></PendingProjects>);
-            case 1:
-                return (<ReportedUsers currentUserId={userId}></ReportedUsers>);
-            case 2:
-                return (<ReportedProjects currentUserId={userId}></ReportedProjects>);
             default:
                 return (<PendingProjects currentUserId={userId}></PendingProjects>);
         }

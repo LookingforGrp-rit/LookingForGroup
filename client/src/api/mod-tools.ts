@@ -1,5 +1,5 @@
 import { GET, DELETE, PATCH } from "./index";
-import { ApiResponse } from "@looking-for-group/shared";
+import { ApiResponse, UserAccessLevel } from "@looking-for-group/shared";
 import { ProjectPreview } from "@looking-for-group/shared";
 
 /**
@@ -66,3 +66,15 @@ export const getReportedUsers = async (): Promise<ApiResponse> => {
     return response;
 };
 
+// 
+
+/**
+ * Gets the access level of the current user
+ */
+export const getUserAccessLevel = async (userId: number): Promise<ApiResponse<UserAccessLevel>> => {
+    const apiURL = `/admin/status/${userId}`;
+    const response = await GET(apiURL);
+
+    if (response.error) console.log(`Error in getUserAccessLevel: ${response.error}`);
+    return response;
+};
