@@ -2,6 +2,7 @@ import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
+import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
@@ -282,6 +283,7 @@ router.post(
   userExistsAt('body', 'prospectiveMemberId'),
   userExistsAt('body', 'ownerUserId'),
   skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  isUserBlocked('body', 'prospectiveMemberId', 'body', 'ownerUserId'),
   PROJECT.sendInvite,
 );
 
@@ -294,6 +296,7 @@ router.post(
   userExistsAt('body', 'prospectiveMemberId'),
   userExistsAt('body', 'ownerUserId'),
   skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  isUserBlocked('body', 'ownerUserId', 'body', 'prospectiveMemberId'),
   PROJECT.requestToJoin,
 );
 
