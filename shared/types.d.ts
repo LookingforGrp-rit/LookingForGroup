@@ -617,11 +617,6 @@ export interface UserPreview {
   title: string;
 
   /**
-   * A fun fact about the user
-   */
-  funFact: string;
-
-  /**
    * The user's location, such as "Rochester, NY"
    */
   location: string;
@@ -792,11 +787,6 @@ export interface MeDetail extends MePreview {
    * The logged-in user's location, such as "Rochester, NY"
    */
   location: string;
-
-  /**
-   * A fun fact about the logged-in user
-   */
-  funFact: string;
 
   /**
    * The logged-in user's bio
@@ -1333,7 +1323,6 @@ export type UpdateUserInput = Partial<
     | "title"
     | "ritStatus"
     | "location"
-    | "funFact"
     | "bio"
     | "phoneNumber"
     | 'privacy'
@@ -1351,7 +1340,6 @@ export type CreateUserInput = Partial<
     | "title"
     | "ritStatus"
     | "location"
-    | "funFact"
     | "bio"
     | "phoneNumber"
     | 'username'

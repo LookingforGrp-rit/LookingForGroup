@@ -32,7 +32,6 @@ const prismaUser = {
   title: '',
   ritStatus: null,
   location: '',
-  funFact: '',
   bio: '',
   privacy: 'public' as Visibility,
   mentor: false,
