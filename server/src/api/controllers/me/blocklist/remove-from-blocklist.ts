@@ -26,13 +26,13 @@ export const removeFromBlocklist = async (
 
   if (result === 'CONFLICT') {
     res.status = 409;
-    res.error = 'User is not in blacklist.';
+    res.error = 'User is not in blocklist.';
   } else if (result === 'INTERNAL_ERROR') {
     res.status = 500;
     res.error = 'There was an internal error.';
   } else {
-    res.status = 200;
-    res.data = 'User removed from blacklist.';
+    res.status = 204;
+    res.data = 'User removed from blocklist.';
   }
 
   response.status(res.status).json(res);

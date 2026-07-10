@@ -26,13 +26,13 @@ export const addToBlocklist = async (
 
   if (result === 'CONFLICT') {
     res.status = 409;
-    res.error = 'User already in blacklist.';
+    res.error = 'User already in blocklist.';
   } else if (result === 'INTERNAL_ERROR') {
     res.status = 500;
     res.error = 'There was an internal error.';
   } else {
     res.status = 200;
-    res.data = 'User added to blacklist.';
+    res.data = 'User added to blocklist.';
   }
 
   response.status(res.status).json(res);
