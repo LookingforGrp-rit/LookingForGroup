@@ -558,7 +558,7 @@ const Profile = (userProfile: any) => {
                   profileImg.src = profilePicture;
                 }}
               />
-              <div id="profile-bio">{displayedProfile?.headline}</div>
+              {displayedProfile?.headline != "" ? <div id="profile-bio">{displayedProfile?.headline}</div> : ""}
             </div>
 
             <div id="profile-info">
