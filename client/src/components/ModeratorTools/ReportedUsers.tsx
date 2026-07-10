@@ -6,26 +6,15 @@ import { getCurrentAccount } from "../../api/users";
 import { ProjectPreview } from "@looking-for-group/shared";
 import * as paths from '../../constants/routes';
 
-const ReportedUsers = () => {
+type ReportedUsersProps = {
+  currentUserId: number;
+};
+
+const ReportedUsers = ({currentUserId}: ReportedUsersProps) => {
 
     const [reportedUsers, setReportedUsers] = useState<ProjectPreview[]>([]);
-    const [userId, setUserId] = useState<number>(-1);
 
     useEffect(() => {
-        
-        // Gets the user's account and sets the user ID
-        const getAccount = async() => {
-            const navigate = useNavigate();
-            const userAccount = await getCurrentAccount();
-            if (userAccount.status === 200 && userAccount.data?.userId)
-            {
-                setUserId(userAccount.data.userId);
-            }
-            else /* Redirect to login */
-            {
-                navigate(paths.routes.HOME);
-            }
-        }
 
         //get reported projects to display
         const displayReportedUsers = async () => {
@@ -37,11 +26,10 @@ const ReportedUsers = () => {
               tempPendingUserArray.push(project);
           }
           setReportedUsers(tempPendingUserArray);
-        }
+        }};
 
-        getAccount();
         displayReportedUsers();
-    }}, [reportedUsers]);
+    }, [reportedUsers]);
     
     // The final component
     return (
@@ -51,7 +39,7 @@ const ReportedUsers = () => {
                     <PanelBox
                         category={"profiles"}
                         itemList={reportedUsers ? reportedUsers : []}
-                        userId={userId}
+                        userId={currentUserId}
                     ></PanelBox> 
                 : <p>No reported users!</p>}
             </div>

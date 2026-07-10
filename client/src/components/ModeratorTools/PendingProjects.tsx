@@ -6,28 +6,17 @@ import { PanelBox } from "../PanelBox";
 import { getCurrentAccount } from "../../api/users";
 import * as paths from '../../constants/routes';
 
-const PendingProjects = () => {
+type PendingProjectsProps = {
+  currentUserId: number;
+};
+
+const PendingProjects = ({currentUserId}: PendingProjectsProps) => {
 
     const [pendingProjects, setPendingProjects] = useState<ProjectPreview[]>([]);
     const [pendingProjectsIds, setPendingProjectsIds] = useState<Set<number>>(new Set);
     const [userId, setUserId] = useState<number>(-1);
 
     useEffect(() => {
-
-        // Gets the user's account and sets the user ID
-        const getAccount = async() => {
-            const navigate = useNavigate();
-            const userAccount = await getCurrentAccount();
-            if (userAccount.status === 200 && userAccount.data?.userId)
-            {
-                setUserId(userAccount.data.userId);
-            }
-            else /* Redirect to login */
-            {
-                navigate(paths.routes.HOME);
-            }
-            // TO-DO: add case where user is not logged in (redirect or ?)
-        }
 
         //get reported projects to display
         const displayPendingProjects = async () => {
@@ -45,7 +34,6 @@ const PendingProjects = () => {
           setPendingProjects(tempPendingProjectArray);
         }
 
-        getAccount();
         displayPendingProjects();
     }, [pendingProjects]);
     
@@ -57,7 +45,7 @@ const PendingProjects = () => {
                     <PanelBox
                         category={"projects"}
                         itemList={pendingProjects ? pendingProjects : []}
-                        userId={userId}
+                        userId={currentUserId}
                     ></PanelBox> 
                 : <p>No pending projects!</p>}
             </div>

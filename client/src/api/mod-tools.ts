@@ -47,7 +47,7 @@ export const approveProjectRequest = async (
  * Gets the list of all reported projects
  */
 export const getReportedProjects = async (): Promise<ApiResponse> => {
-    const apiURL = `/mod/project-report`;
+    const apiURL = `/mod/project-report/`;
     const response = await GET(apiURL);
 
     if (response.error) console.log(`Error in getReportedProjects: ${response.error}`);
@@ -58,10 +58,11 @@ export const getReportedProjects = async (): Promise<ApiResponse> => {
  * Gets the list of all reported users
  */
 export const getReportedUsers = async (): Promise<ApiResponse> => {
-    const apiURL = `/mod/user-report`;
+    const apiURL = `/mod/user-report/`;
     const response = await GET(apiURL);
 
     if (response.error) console.log(`Error in getReportedUsers: ${response.error}`);
+    else {console.log("successfully received all user reports");}
     return response;
 };
 

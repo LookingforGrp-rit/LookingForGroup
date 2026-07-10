@@ -5,8 +5,8 @@ import PendingProjects from "../ModeratorTools/PendingProjects";
 import ReportedProjects from "../ModeratorTools/ReportedProjects";
 import ReportedUsers from "../ModeratorTools/ReportedUsers";
 import { Header } from "../Header";
-// import "../../components/Styles/modPage.css";
-// import "../../components/Styles/projects.css";
+import "../../components/Styles/modPage.css";
+import "../../components/Styles/projects.css";
 import { getCurrentAccount } from "../../api/users";
 import { getUserAccessLevel } from "../../../../server/src/services/authentication/get-user-access-level";
 import * as paths from '../../constants/routes';
@@ -22,6 +22,8 @@ const ModeratorPage = () => {
     const [userIsAdmin, setUserIsAdmin] = useState<boolean>(true);      /* FIX UPON FINAL IMPLEMENTATION */
 
 // Helper Functions
+
+    const navigate = useNavigate();
 
     const tabManagement = () => {
         const pendingProjectsTab = document.querySelector("#mod-pending-tab") as HTMLButtonElement;
@@ -55,21 +57,20 @@ const ModeratorPage = () => {
     // user when necessary
     const getAccount = async() => {
         /* Ensures the user is logged in */
-        const navigate = useNavigate();
         const userAccount = await getCurrentAccount();
-        if (userAccount.status === 200 && userAccount.data?.userId)
+        if (userAccount.status === 200)
         {
-            setUserId(userAccount.data.userId);
+            setUserId(userAccount.data?.userId);
             /* User must have mod permissions to access mod page */
             //const accessLevel = await getUserAccessLevel(userAccount.data.userId) as UserAccessLevel;
-            if (accessLevel == 'Moderator' || accessLevel == 'Administrator')
-            {
-                setUserIsAdmin(true);
-            }
-            else /* Redirect to home if not moderator or admin*/
-            {
-                navigate(paths.routes.HOME);
-            }
+            //if (accessLevel == 'Moderator' || accessLevel == 'Administrator')
+            //{
+            //    setUserIsAdmin(true);
+            //}
+            //else /* Redirect to home if not moderator or admin*/
+            //{
+            //    navigate(paths.routes.HOME);
+            //}
         }
         else    /* Redirect to log in if not logged in */
         {
@@ -82,17 +83,37 @@ const ModeratorPage = () => {
         switch (currentTab)
         {
             case 0:
-                return(<PendingProjects></PendingProjects>);
+                return(<PendingProjects currentUserId={userId}></PendingProjects>);
             case 1:
-                return(<ReportedUsers></ReportedUsers>);
+                return(<ReportedUsers currentUserId={userId}></ReportedUsers>);
             case 2:
-                return(<ReportedProjects></ReportedProjects>);
+                return(<ReportedProjects currentUserId={userId}></ReportedProjects>);
+            default:
+                return (<PendingProjects currentUserId={userId}></PendingProjects>);
+        }
+    };
+
+    const handleTabSearch = () => {
+        switch (currentTab)
+        {
+            case 0:
+                return (<PendingProjects currentUserId={userId}></PendingProjects>);
+            case 1:
+                return (<ReportedUsers currentUserId={userId}></ReportedUsers>);
+            case 2:
+                return (<ReportedProjects currentUserId={userId}></ReportedProjects>);
+            default:
+                return (<PendingProjects currentUserId={userId}></PendingProjects>);
         }
     };
 
     // Runs on initial render
     useEffect(() => {
         getAccount();
+    }, []);
+
+    // Manages tabs every time the current tab changes
+    useEffect(() => {
         tabManagement();
     }, [currentTab]);
 
@@ -101,12 +122,14 @@ const ModeratorPage = () => {
         <div className="page mod-page">
             <Header /* bypassing search bar */
                 dataSets={[]}
-                onSearch={() => false}
+                onSearch={() => {true
+                }}
                 value={""}
                 hideSearchBar={true}
                 hideBackButton={false}
             />
-            <h1 className="page-title">Moderator Page</h1>
+            <h1 className="page-title">Moderation</h1>
+            <p>Manage pending project requests, handle user and project reports, and more!</p>
             <main id="main" tabIndex={-1} aria-label='main content'>
                 {userIsAdmin ?
                 <div id="mod-tools-block">

@@ -7,18 +7,15 @@ import { useState } from 'react';
 import SignUp from './components/pages/Signup';
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
-// import Messages from './components/pages/Messages';
 import MyProjects from './components/pages/MyProjects';
 import Profile from './components/pages/Profile';
 import Project from './components/pages/Project';
-// import ProjectPostPage from './components/pages/ProjectPostPage';
 import {DiscoverPage} from './components/pages/Discover';
 import {ProfileMeetPage} from './components/pages/Meet';
 //import Settings from './components/pages/Settings'; -- Commented in clean up 26-20-01 
 import NewSettings from './components/pages/NewSettings';
 import NotFound from './components/pages/NotFound';
 import SideBar from './components/Sidebar';
-// import MessageHistory from './components/pages/MessageHistory';
 import CreateProject from './components/pages/CreateProject';
 import AcceptInvitation from './components/pages/AcceptInvitation';
 import AcceptApplication from './components/pages/AcceptApplication';
@@ -78,8 +75,6 @@ function App() {
             path={paths.routes.SIGNUP}
             element={
               <SignUp
-                // avatarImage={avatarImage}
-                // setAvatarImage={setAvatarImage}
                 profileImage={profileImage as File}
                 setProfileImage={setProfileImage as React.Dispatch<React.SetStateAction<File>>}
               />
@@ -97,18 +92,6 @@ function App() {
           <Route path={paths.routes.CREATEPROJECT} element={<CreateProject />} />
           <Route path={paths.routes.ACCEPTINVITATION} element={<AcceptInvitation />} />
           <Route path={paths.routes.ACCEPTAPPLICATION} element={<AcceptApplication />} />
-          {/* <Route path={paths.routes.PROJECTPOST} element={<ProjectPostPage />} /> */}
-          {/* <Route
-            path={paths.routes.SETTINGS}
-            element={
-              <Settings
-                avatarImage={avatarImage}
-                setAvatarImage={setAvatarImage}
-                profileImage={profileImage}
-                setProfileImage={setProfileImage}
-              />
-            }
-          /> */}
           <Route path={paths.routes.SETTINGS} element={<NewSettings  />} />
           <Route path={paths.routes.NOTFOUND} element={<NotFound />} />
           {/* <Route path={paths.routes.MESSAGEHISTORY} element={<MessageHistory />} /> */}
@@ -117,7 +100,6 @@ function App() {
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
           <Route path={paths.routes.MODERATION} element={<ModeratorPage />}/>
         </Routes>
-        {/* <CreditsFooter /> */}
       </div>
     </ThemeContext.Provider>
   );
