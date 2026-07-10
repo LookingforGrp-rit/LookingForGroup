@@ -6,6 +6,7 @@ import type {
 } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { UsersRitStatus } from '#prisma-models/index.js';
+import { getBlocklistIdsByGidService } from '#services/me/blocklist/get-blocklist-ids-by-gid.ts';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
 
 //GET api/users
@@ -122,6 +123,17 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     };
     res.status(500).json(resBody);
     return;
+  }
+
+  // filtering out blocked users
+  const userGid = req.session.gid;
+  if (userGid) {
+    const ids = await getBlocklistIdsByGidService(userGid);
+    if (ids !== 'INTERNAL_ERROR') {
+      result.filter((user) => {
+        return ids.includes(user.userId);
+      });
+    }
   }
 
   const resBody: ApiResponse<typeof result> = {

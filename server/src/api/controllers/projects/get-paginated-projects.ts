@@ -1,5 +1,6 @@
 import type { ApiResponse, ProjectPreview, ProjectSortMethod } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
+import { getBlocklistIdsByGidService } from '#services/me/blocklist/get-blocklist-ids-by-gid.ts';
 import getService from '#services/projects/get-paginated-projects.ts';
 
 //GET api/projects/paginated/:count/:id/:method
@@ -21,6 +22,17 @@ const getPaginatedProjectsController = async (
     };
     res.status(500).json(resBody);
     return;
+  }
+
+  // filtering out blocked users
+  const userGid = req.session.gid;
+  if (userGid) {
+    const ids = await getBlocklistIdsByGidService(userGid);
+    if (ids !== 'INTERNAL_ERROR') {
+      result.filter((project) => {
+        return ids.includes(project.owner.userId);
+      });
+    }
   }
 
   const resBody: ApiResponse<typeof result> = {
