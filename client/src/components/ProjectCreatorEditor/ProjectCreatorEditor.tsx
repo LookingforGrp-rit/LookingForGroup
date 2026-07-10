@@ -237,7 +237,10 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       setModifiedProject(newData);
     }
     else if (projectID) {
-      if (!dataManager && projectData === undefined)
+      // Closing the editor clears projectData but leaves `dataManager` set, so
+      // gating on `!dataManager` meant setup() never re-ran on reopen and the
+      // editor came up empty. Reload whenever the project data is missing.
+      if (projectData === undefined)
         setup();
     }
 
@@ -326,11 +329,16 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   const toggleConfirm = async () => {
     if (saved) {
       buttonCallback(false);
-      setCurrentTab(0); 
+      setCurrentTab(0);
     }
-    else 
-      setConfirm(!confirm);
+    else
+      // Set (don't toggle): every close attempt with unsaved changes must SHOW
+      // the confirm. Toggling let a second outside-click silently dismiss it.
+      setConfirm(true);
   }
+
+  /** Dismisses the "exit without saving" dialog and stays in the editor. */
+  const cancelConfirm = () => setConfirm(false);
 
   /**
    *  Updates boolean value of isUniqueTitle based on if the desired title
@@ -671,7 +679,7 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
             <PopupButton doNotClose={() => false} callback={close} buttonId="project-editor-save">
               Confirm
             </PopupButton>
-            <PopupButton doNotClose={() => true} callback={toggleConfirm} buttonId="team-edit-member-cancel-button" >
+            <PopupButton doNotClose={() => true} callback={cancelConfirm} buttonId="team-edit-member-cancel-button" >
               Cancel
             </PopupButton>
           </div>
