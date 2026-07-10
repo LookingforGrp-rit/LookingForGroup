@@ -6,7 +6,7 @@ import { getCurrentAccount } from "../../api/users";
 import { ProjectPreview } from "@looking-for-group/shared";
 import * as paths from '../../constants/routes';
 
-export const ReportedProjects = () => {
+const ReportedProjects = () => {
 
     const [reportedProjects, setReportedProjects] = useState<ProjectPreview[]>([]);
     const [reportedProjectsIds, setReportedProjectsIds] = useState<Set<number>>(new Set);
@@ -63,3 +63,4 @@ export const ReportedProjects = () => {
         </div>
     );
 };
+export default ReportedProjects;

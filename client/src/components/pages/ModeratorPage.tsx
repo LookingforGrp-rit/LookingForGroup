@@ -1,20 +1,21 @@
 // Import statements
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { PendingProjects } from "../ModeratorTools/PendingProjects";
-import { ReportedProjects } from "../ModeratorTools/ReportedProjects";
-import { ReportedUsers } from "../ModeratorTools/ReportedUsers";
+import PendingProjects from "../ModeratorTools/PendingProjects";
+import ReportedProjects from "../ModeratorTools/ReportedProjects";
+import ReportedUsers from "../ModeratorTools/ReportedUsers";
 import { Header } from "../Header";
-import "../../components/Styles/modPage.css";
-import "../../components/Styles/projects.css";
+// import "../../components/Styles/modPage.css";
+// import "../../components/Styles/projects.css";
 import { getCurrentAccount } from "../../api/users";
 import { getUserAccessLevel } from "../../../../server/src/services/authentication/get-user-access-level";
 import * as paths from '../../constants/routes';
+import type { UserAccessLevel } from "@looking-for-group/shared";
 
-export const ModeratorPage = () => {
+const ModeratorPage = () => {
 
 // Components
-    const [currentTab, setCurrentTab] = useState(0);
+    const [currentTab, setCurrentTab] = useState<number>(0);
     const [userId, setUserId] = useState<number>(-1);
 
     /* Page contents only viewable by mods*/
@@ -60,8 +61,8 @@ export const ModeratorPage = () => {
         {
             setUserId(userAccount.data.userId);
             /* User must have mod permissions to access mod page */
-            const accessLevel = await getUserAccessLevel(userAccount.data.userId);
-            if (accessLevel === 'Moderator' || accessLevel === 'Administrator')
+            //const accessLevel = await getUserAccessLevel(userAccount.data.userId) as UserAccessLevel;
+            if (accessLevel == 'Moderator' || accessLevel == 'Administrator')
             {
                 setUserIsAdmin(true);
             }
@@ -74,7 +75,7 @@ export const ModeratorPage = () => {
         {
             navigate(paths.routes.LOGIN);
         }
-    }
+    };
 
     // Renders the moderator page tab content based on what tab the user is on
     const renderTabContent = () => {
@@ -139,3 +140,4 @@ export const ModeratorPage = () => {
           </div>*/
     );
 };
+export default ModeratorPage;

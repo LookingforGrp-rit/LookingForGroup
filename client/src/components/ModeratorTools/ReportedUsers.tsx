@@ -6,7 +6,7 @@ import { getCurrentAccount } from "../../api/users";
 import { ProjectPreview } from "@looking-for-group/shared";
 import * as paths from '../../constants/routes';
 
-export const ReportedUsers = () => {
+const ReportedUsers = () => {
 
     const [reportedUsers, setReportedUsers] = useState<ProjectPreview[]>([]);
     const [userId, setUserId] = useState<number>(-1);
@@ -58,3 +58,4 @@ export const ReportedUsers = () => {
         </div>
     );
 };
+export default ReportedUsers;

@@ -29,6 +29,7 @@ import { ThemeContext } from './contexts/ThemeContext';
 import AboutPage from './components/pages/About';
 
 import { useLocalStorage } from 'usehooks-ts';
+import ModeratorPage from './components/pages/ModeratorPage';
 
 function App() {
   //const [avatarImage, setAvatarImage] = useState('/images/tempProfilePic.png'); -- Commented in clean up 26-20-01 
@@ -114,6 +115,7 @@ function App() {
           <Route path={paths.routes.CREDITS} element={<Credits />} />
           <Route path={paths.routes.ABOUT} element={<AboutPage />} />
           <Route path={paths.routes.ACCOUNTACTIVATE} element={<AccountActivation />} />
+          <Route path={paths.routes.MODERATION} element={<ModeratorPage />}/>
         </Routes>
         {/* <CreditsFooter /> */}
       </div>

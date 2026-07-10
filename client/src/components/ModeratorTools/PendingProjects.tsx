@@ -6,7 +6,7 @@ import { PanelBox } from "../PanelBox";
 import { getCurrentAccount } from "../../api/users";
 import * as paths from '../../constants/routes';
 
-export const PendingProjects = () => {
+const PendingProjects = () => {
 
     const [pendingProjects, setPendingProjects] = useState<ProjectPreview[]>([]);
     const [pendingProjectsIds, setPendingProjectsIds] = useState<Set<number>>(new Set);
@@ -64,3 +64,4 @@ export const PendingProjects = () => {
         </div>
     );
 };
+export default PendingProjects;

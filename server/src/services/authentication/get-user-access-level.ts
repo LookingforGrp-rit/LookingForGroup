@@ -8,7 +8,7 @@ export const getUserAccessLevel = async (id: number): Promise<UserAccessLevel | 
   try {
     const result = await prisma.users.findFirst({
       where: { userId: id },
-      select: { accessLevel: true },
+      select: { accessLevel: true }
     });
 
     if (!result) return 'NOT_FOUND';
