@@ -83,13 +83,13 @@ const ModeratorPage = () => {
         switch (currentTab)
         {
             case 0:
-                return(<PendingProjects currentUserId={userId}></PendingProjects>);
+                return(<PendingProjects currentUserId={userId} currentTab={currentTab}></PendingProjects>);
             case 1:
-                return(<ReportedUsers currentUserId={userId}></ReportedUsers>);
+                return(<ReportedUsers currentUserId={userId} currentTab={currentTab}></ReportedUsers>);
             case 2:
-                return(<ReportedProjects currentUserId={userId}></ReportedProjects>);
+                return(<ReportedProjects currentUserId={userId} currentTab={currentTab}></ReportedProjects>);
             default:
-                return (<PendingProjects currentUserId={userId}></PendingProjects>);
+                return (<PendingProjects currentUserId={userId} currentTab={currentTab}></PendingProjects>);
         }
     };
 

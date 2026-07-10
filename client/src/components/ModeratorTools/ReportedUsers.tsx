@@ -23,8 +23,8 @@ const ReportedUsers = ({currentUserId, currentTab}: ReportedUsersProps) => {
           const tempPendingUserArray = [];
           
           if (reportedUsers !== undefined && reportedUsers!= null) {
-            for (const project of reportedUsers) {
-              tempPendingUserArray.push(project);
+            for (const users of reportedUsers) {
+              tempPendingUserArray.push(users);
           }
           setReportedUsers(tempPendingUserArray);
         }};
