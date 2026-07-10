@@ -1622,6 +1622,19 @@ Header style rules
       margin-right: 25px;
     }
   }
+  #header:focus-within
+  {
+    #header-searchbar:focus-within
+    {
+      grid-area: 1 / 1 / search / buttons;
+      width: 100%;
+      align-items: left;
+    }
+    #header-buttons
+    {
+      display: none;
+    }
+  }
 }
 
 #profile-btn {
