@@ -372,6 +372,13 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
               )
             })}
           </div>
+          <button
+            id="filters-right-scroll"
+            className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
+            onClick={() => scrollTags('right')}
+          >
+            <i className="fa fa-caret-right"></i>
+          </button>
           {/* Container so more filters popup is aligned at the end */}
           <div id="discover-more-filters-container">
 
@@ -597,13 +604,6 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
               </PopupContent>
             </Popup>
           </div>
-          <button
-            id="filters-right-scroll"
-            className={`filters-scroller ${!showRightArrow ? 'hide' : ''}`}
-            onClick={() => scrollTags('right')}
-          >
-            <i className="fa fa-caret-right"></i>
-          </button>
         </div >
         {((appliedFiltersDisplay.length > 0) && (displayFiltersText)) ? (
           <div className='applied-filters'>

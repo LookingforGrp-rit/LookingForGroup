@@ -758,7 +758,7 @@ Filters / Tags Style Rules
   border-radius: 30px;
   transition: all 0.2s ease-in-out;
   background-color: var(--header-color);
-  box-shadow: -17px 0px 10px var(--bg-color);
+  /* box-shadow: -17px 0px 10px var(--bg-color); */
 
   img {
     height: 30px;

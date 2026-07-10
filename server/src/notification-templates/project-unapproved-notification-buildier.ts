@@ -42,7 +42,7 @@ export class ProjectUnapprovedNotificationBuilder implements NotificationBuilder
 
     // building the message
     notification.message = `Hello ${data?.users.preferredName as string},<br /><br />`;
-    notification.message += `Unfortunately, your project ${data?.title as string} has been taken down. `;
+    notification.message += `Unfortunately, your project, <strong>${data?.title as string}</strong>, has been taken down. `;
     notification.message += `Here is the reason provided:<br /><br />`;
     notification.message += `"${reason}"<br /><br />`;
     notification.message += `If you wish to have this project reapproved, please make the necessary changes. `;
