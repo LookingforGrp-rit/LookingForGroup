@@ -1622,6 +1622,24 @@ Header style rules
       margin-right: 25px;
     }
   }
+
+  /* Notifications: pin the panel to the VIEWPORT below the header, right
+     edge near the bell, so it can never be clipped by the header/button
+     containers. (Anchoring inside the ~50px bell container let it overflow
+     off the right side of the screen.) */
+  #header-buttons .dropdown:has(> #notifications-panel) {
+    position: fixed;
+    top: 70px;
+    right: 12px !important;
+    left: auto;
+    width: fit-content;
+  }
+
+  #header-buttons .dropdown #notifications-panel {
+    margin: 0;
+    /* Narrower than the viewport so both edges always stay on screen. */
+    width: min(340px, calc(100vw - 24px));
+  }
 }
 
 #profile-btn {
