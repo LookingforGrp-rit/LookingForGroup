@@ -5009,6 +5009,41 @@ paths:
                     example: Skill deleted successfully
         '500':
           $ref: '#components/responses/InternalServerError'
+  /api/admin/status/{id}:
+    get:
+      summary: Gets the access level of a user
+      tags:
+        - Admin
+      description: Gets the access level of a given user (current user only right now)
+      parameters:
+        - in: path
+          name: id
+          schema:
+            type: integer
+          required: true
+          description: The ID of the user to get their access level from.
+      responses:
+        '200':
+          description: Access level successfully returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    nullable: true
+                    example: null
+                  data:
+                    example: 'User'
+        '400':
+          $ref: '#components/responses/BadRequest'
+        '404':
+          $ref: '#components/responses/NotFound'
+        '500':
+          $ref: '#components/responses/InternalServerError'
 
 # COMPONENTS
 components:
