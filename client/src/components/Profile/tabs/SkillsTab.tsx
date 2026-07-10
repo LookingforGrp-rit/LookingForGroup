@@ -156,18 +156,18 @@ export const SkillsTab = ({
 
     //PATCH ONLY moved skills
     const movedSkill = reorderedSkills[newIndex];
-    if (!("localId" in movedSkill)) {
-      dataManager.updateSkill({
-        id: {
-          type: "canon",
-          value: movedSkill.skillId,
-        },
-        data: {
-          position: movedSkill.position,
-          proficiency: movedSkill.proficiency,
-        },
-      });
-    }
+
+    dataManager.updateSkill({
+      id: {
+        type: "canon",
+        value: movedSkill.skillId,
+      },
+      data: {
+        position: movedSkill.position,
+        proficiency: movedSkill.proficiency,
+      },
+    });
+
   };
 
   /**
@@ -176,11 +176,7 @@ export const SkillsTab = ({
   const handleSkillToggle = useCallback(
     (skillId: number) => {
       const isSelected = isSkillSelected(skillId) === "selected";
-
       const skillToToggle = allSkills.find(s => s.skillId === skillId);
-
-      console.log(skillToToggle);
-
       if (!skillToToggle) return;
 
       if (isSelected) {
@@ -190,20 +186,35 @@ export const SkillsTab = ({
           .sort((a, b) => a.position - b.position)
           .map((s, index) => ({ ...s, position: index }));
 
-        dataManager.deleteSkill({
-          id: {
-            type: "canon",
-            value: skillId,
-          },
-          data: null,
-        });
+        const skillToDelete = profile.skills.find(s => s.skillId === skillId);
+        if (!skillToDelete) return;
 
-        const refreshed = dataManager.getSavedUser();
+        //if pending skill DO NOT CALL deleteSkill();
+        // if ("localId" in skillToDelete) {
+        //   updatePendingProfile({
+        //     ...profile,
+        //     skills: remaining,
+        //   });
+        //   return
+        // } else {
 
-        updatePendingProfile({
-          ...profile,
-          skills: refreshed.skills,
-        });
+          updatePendingProfile({
+            ...profile,
+            skills: remaining,
+          });
+
+          // only delete saved skills
+          dataManager.deleteSkill({
+            id: {
+              type: "canon",
+              value: skillId,
+            },
+            data: null,
+          });
+
+          return;
+        //}
+
       } else {
         //ADD
 
@@ -217,12 +228,17 @@ export const SkillsTab = ({
           localId: String(nextLocalId),
           apiUrl: "",
           proficiency: "Novice",
-          position: profile.skills.length,
+          position: selectedSkills.length,
           skillId: skillId,
           label: skillToToggle.label,
           type: skillToToggle.type,
           category: skillToToggle.category,
         }
+
+        updatePendingProfile({
+          ...profile,
+          skills: [...profile.skills, newSkill].sort((a, b) => a.position - b.position),
+        });
 
         dataManager.addSkill({
           id: {
@@ -231,15 +247,9 @@ export const SkillsTab = ({
           },
           data: {
             skillId,
-            position: profile.skills.length, // add to end of list by default
+            position: selectedSkills.length, // add to end of list by default
             proficiency: "Novice", // TODO add a way to properly set skill proficiency
           },
-        });
-
-        updatePendingProfile({
-          ...profile,
-          skills: [...profile.skills, newSkill].sort((a, b) => a.position - b.position),
-
         });
       }
     },
