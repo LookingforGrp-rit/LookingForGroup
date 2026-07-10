@@ -8,7 +8,7 @@ import { Header } from "../Header";
 import "../../components/Styles/modPage.css";
 import "../../components/Styles/projects.css";
 import { getCurrentAccount } from "../../api/users";
-import { getUserAccessLevel } from "../../../../server/src/services/authentication/get-user-access-level";
+import { getUserAccessLevel } from "../../api/mod-tools";
 import * as paths from '../../constants/routes';
 import type { UserAccessLevel } from "@looking-for-group/shared";
 
@@ -62,15 +62,15 @@ const ModeratorPage = () => {
         {
             setUserId(userAccount.data?.userId);
             /* User must have mod permissions to access mod page */
-            //const accessLevel = await getUserAccessLevel(userAccount.data.userId) as UserAccessLevel;
-            //if (accessLevel == 'Moderator' || accessLevel == 'Administrator')
-            //{
-            //    setUserIsAdmin(true);
-            //}
-            //else /* Redirect to home if not moderator or admin*/
-            //{
-            //    navigate(paths.routes.HOME);
-            //}
+            const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+            if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
+            {
+                setUserIsAdmin(true);
+            }
+            else /* Redirect to home if not moderator or admin*/
+            {
+                navigate(paths.routes.HOME);
+            }
         }
         else    /* Redirect to log in if not logged in */
         {

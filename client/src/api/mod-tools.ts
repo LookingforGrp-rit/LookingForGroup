@@ -66,8 +66,6 @@ export const getReportedUsers = async (): Promise<ApiResponse> => {
     return response;
 };
 
-// 
-
 /**
  * Gets the access level of the current user
  */

@@ -7,14 +7,14 @@ import { ProjectPreview } from "@looking-for-group/shared";
 import * as paths from '../../constants/routes';
 
 type ReportedProjectsProps = {
-  currentUserId: number;
+  currentUserId: number,
+  currentTab: number
 };
 
-const ReportedProjects = ({currentUserId}: ReportedProjectsProps) => {
+const ReportedProjects = ({currentUserId, currentTab}: ReportedProjectsProps) => {
 
     const [reportedProjects, setReportedProjects] = useState<ProjectPreview[]>([]);
     const [reportedProjectsIds, setReportedProjectsIds] = useState<Set<number>>(new Set);
-    const [userId, setUserId] = useState<number>(-1);
 
     useEffect(() => {
 
@@ -35,7 +35,7 @@ const ReportedProjects = ({currentUserId}: ReportedProjectsProps) => {
         }
 
         displayReportedProjects();
-    }, [reportedProjects]);
+    }, [currentTab]);
     
     // The final component
     return (

@@ -7,14 +7,14 @@ import { getCurrentAccount } from "../../api/users";
 import * as paths from '../../constants/routes';
 
 type PendingProjectsProps = {
-  currentUserId: number;
+  currentUserId: number,
+  currentTab: number
 };
 
-const PendingProjects = ({currentUserId}: PendingProjectsProps) => {
+const PendingProjects = ({currentUserId, currentTab}: PendingProjectsProps) => {
 
     const [pendingProjects, setPendingProjects] = useState<ProjectPreview[]>([]);
     const [pendingProjectsIds, setPendingProjectsIds] = useState<Set<number>>(new Set);
-    const [userId, setUserId] = useState<number>(-1);
 
     useEffect(() => {
 
@@ -35,7 +35,7 @@ const PendingProjects = ({currentUserId}: PendingProjectsProps) => {
         }
 
         displayPendingProjects();
-    }, [pendingProjects]);
+    }, [currentTab]);
     
     // The final component
     return (

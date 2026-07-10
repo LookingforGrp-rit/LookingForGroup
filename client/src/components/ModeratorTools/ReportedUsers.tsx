@@ -7,10 +7,11 @@ import { ProjectPreview } from "@looking-for-group/shared";
 import * as paths from '../../constants/routes';
 
 type ReportedUsersProps = {
-  currentUserId: number;
+  currentUserId: number,
+  currentTab: number
 };
 
-const ReportedUsers = ({currentUserId}: ReportedUsersProps) => {
+const ReportedUsers = ({currentUserId, currentTab}: ReportedUsersProps) => {
 
     const [reportedUsers, setReportedUsers] = useState<ProjectPreview[]>([]);
 
@@ -29,7 +30,7 @@ const ReportedUsers = ({currentUserId}: ReportedUsersProps) => {
         }};
 
         displayReportedUsers();
-    }, [reportedUsers]);
+    }, [currentTab]);
     
     // The final component
     return (
