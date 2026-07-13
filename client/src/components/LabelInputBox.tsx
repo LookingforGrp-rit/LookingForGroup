@@ -60,7 +60,7 @@ const LabelInputBox: React.FC<LabelInputBoxProps> = ({
   return (
     <div className='label-input-box' id={id} style={style}>
       {hideUnsaved == false && (
-        <label className="input-combo-label">
+        <label className="input-combo-label" htmlFor=''>
         {label}
         {required && (
           <span 

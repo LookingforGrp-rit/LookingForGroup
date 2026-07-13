@@ -308,7 +308,6 @@ const SideBar = () => {
       <a
         href="#main"
         className="skip-link"
-        tabIndex={1}
         onClick={(e) => {
           e.preventDefault();
           document.getElementById('main')?.focus();
