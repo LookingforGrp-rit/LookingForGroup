@@ -317,13 +317,17 @@ export const GeneralTab = ({
           </div>}
           <PopupButton
             buttonId="project-editor-save"
-            doNotClose={() => failCheck}
+            doNotClose={() => failCheck || !saveable}
             callback={() => {
+              // Incomplete form: still clickable so the save validation runs,
+              // shows the error, and auto-scrolls to the first missing field.
+              if (!saveable) {
+                saveProject?.();
+                return;
+              }
               console.log(`Current save ref: ${saveButtonRef.current}`);
               saveButtonRef.current?.focus();
             }}
-            disabled={!saveable}
-            className={!saveable ? "disabled" : ""}
           >
             Save Changes
           </PopupButton>
