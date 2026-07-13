@@ -49,7 +49,6 @@ describe('getUserByEmailService', () => {
       headline: '',
       pronouns: '',
       title: '',
-      funFact: '',
       location: '',
       majors: [],
     };
