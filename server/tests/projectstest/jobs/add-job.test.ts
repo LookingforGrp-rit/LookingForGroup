@@ -120,7 +120,6 @@ const prismaUser = {
   createdAt: new Date(),
   updatedAt: new Date(),
   location: '',
-  funFact: '',
   bio: '',
   phoneNumber: null,
   accessLevel: 'User' as UserAccessLevel,

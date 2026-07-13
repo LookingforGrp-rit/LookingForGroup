@@ -68,7 +68,6 @@ describe('getProjectFollowingService', () => {
         bio: 'Test bio',
         apiUrl: '/api/users/1',
         title: 'Test Title',
-        funFact: 'Test fun fact',
         location: 'Test Location',
         majors: [],
       },
