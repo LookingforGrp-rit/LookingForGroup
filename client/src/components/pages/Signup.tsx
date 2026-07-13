@@ -87,7 +87,7 @@ const SignUp: React.FC<SignUpProps> = ({ /*setAvatarImage, avatarImage,*/ profil
     phoneNumber: phoneNumber,
     title: title,
     location: location,
-    funFact: funFact,
+    // funFact: funFact,
     mentor: false,
   } as CreateUserInput;
 

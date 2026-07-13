@@ -25,15 +25,12 @@ export const transformMeToDetail = (user: UsersGetPayload): MeDetail => {
     bio: user.bio,
     ritStatus: user.ritStatus as RitStatus,
     location: user.location,
-    funFact: user.funFact,
     title: user.title,
-    majors: user.majors.map(
-      ({ majorId, label }: { majorId: number; label: string }): MyMajor => ({
-        majorId,
-        label,
-        apiUrl: `/api/me/majors/${majorId.toString()}`,
-      }),
-    ),
+    majors: user.majors.map(({ majorId, label }: { majorId: number; label: string }): MyMajor => ({
+      majorId,
+      label,
+      apiUrl: `/api/me/majors/${majorId.toString()}`,
+    })),
     skills: user.userSkills.map(transformMySkill),
     socials: user.userSocials.map(transformMySocial),
     projects: user.members.map(transformMyMember),

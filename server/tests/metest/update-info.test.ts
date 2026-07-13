@@ -96,7 +96,6 @@ const transformed: MePrivate = {
       apiUrl: '',
     },
   },
-  funFact: '',
   headline: '',
   lastName: '',
   location: '',

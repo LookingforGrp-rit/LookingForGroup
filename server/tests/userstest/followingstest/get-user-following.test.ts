@@ -72,7 +72,6 @@ describe('getProjectFollowingService', () => {
         headline: '',
         pronouns: '',
         title: '',
-        funFact: '',
         location: '',
         majors: [],
         displayPhone: false,

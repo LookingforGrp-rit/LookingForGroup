@@ -40,7 +40,6 @@ describe('uidExists test service,', async () => {
       updatedAt: new Date(),
       googleId: '1',
       location: '',
-      funFact: '',
       bio: '',
       privacy: 'public',
       phoneNumber: null,
