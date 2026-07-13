@@ -3264,6 +3264,7 @@ New Project Page style rules
   display: grid;
   grid-template:
     'carousel info' auto
+    'overview mod' auto
     'overview positions' auto
     'overview people' auto / 17fr 15fr;
   margin: 0 auto;
@@ -3411,6 +3412,41 @@ Project Carousel style rules
     gap: 10px;
   }
 
+}
+
+.mod-project-options {
+  grid-area: mod;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 10px;
+    background-color: var(--header-color);
+    border-radius: 10px;
+    text-align: left;
+    padding: 20px;
+    max-width: calc(100vw - 340px);
+    margin-bottom: 1vw;
+    align-self: start;
+    min-height: fit-content;
+
+    h4 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 5px;
+    }
+
+    #mod-options-btns
+    {
+      display: flex;
+      align-items: center;
+      flex-direction: row;
+      justify-content: center;
+      gap: 20px;
+      button {
+        width: fit-content;
+      }
+    }
 }
 
 @media only screen and (max-width: 1200px) {

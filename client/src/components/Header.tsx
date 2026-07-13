@@ -8,6 +8,7 @@ import { ThemeIcon } from './ThemeIcon';
 import { ThemeContext } from '../contexts/ThemeContext';
 import { useLocation } from 'react-router-dom'; // Hook to access the current location
 import profilePicture from '../images/lfrog.png';
+import { getUserAccessLevel } from '../api/mod-tools.ts';
 
 //user utils
 import { getCurrentAccount, getCurrentUsername, googleLogout } from '../api/users.ts';
@@ -67,6 +68,8 @@ export const Header: React.FC<HeaderProps> = ({
   const [userId, setUserId] = useState<number>();
   const location = useLocation(); // Hook to access the current location
 
+  const [isUserAdmin, setIsUserAdmin] = useState<boolean>(false);
+
   // Pull the theme and setTheme function from useState() via a context
   const theme = useContext(ThemeContext)['theme'];
   const setTheme = useContext(ThemeContext)['setTheme'];
@@ -77,6 +80,24 @@ export const Header: React.FC<HeaderProps> = ({
   const [active, setActive] = useState(false);
 
   const navigate = useNavigate(); // Hook for navigation
+
+  /**
+   * Checks mod permissions for the user on render (in useEffect)
+   */
+  const getUserPermissions = async () => {
+    /* Ensures the user is logged in */
+    const userAccount = await getCurrentAccount();
+    if (userAccount.status === 200 && userAccount.data?.userId)
+    {
+        setUserId(userAccount.data?.userId);
+        /* User must have mod permissions to access mod page */
+        const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+        if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
+        {
+            setIsUserAdmin(true);
+        }
+    }
+  };
 
   // Fetch current user info on mount
   useEffect(() => {
@@ -113,6 +134,7 @@ export const Header: React.FC<HeaderProps> = ({
     };
 
     fetchUsername();
+    getUserPermissions();
   }, []);
 
   //loads in the data for the header
@@ -303,7 +325,15 @@ export const Header: React.FC<HeaderProps> = ({
                 </a>
 
                 <hr />
-
+                {/* Moderation Page Link */}
+                {/* TO DO: Change icon when a new icon is found */}
+                {isUserAdmin ? 
+                <a href={paths.routes.MODERATION}>
+                  <ThemeIcon id={'settings'} width={25} height={25} className={'mono-stroke'} ariaLabel={'settings'} />
+                  Moderation
+                </a>
+                : ""}
+                
                 {/* Dark/Light Theme Switcher */}
                 <button onClick={switchTheme}>
                   <ThemeIcon id={'mode'} width={25} height={25} className={'mono-stroke'} ariaLabel={'current mode'} />

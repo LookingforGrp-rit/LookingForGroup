@@ -24,6 +24,8 @@ import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalSta
 import usePreloadedImage from '../../functions/imageLoad';
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
+import { getCurrentAccount } from "../../api/users";
+import { getUserAccessLevel } from "../../api/mod-tools";
 
 //Main component for the project page
 /**
@@ -44,6 +46,8 @@ const Project = () => {
 
   const [user, setUser] = useState<MePrivate | null>();
   const [userID, setUserID] = useState<number>();
+  const [isUserAdmin, setIsUserAdmin] = useState<boolean>();
+
   const [displayedProject, setDisplayedProject] =
     useState<ProjectWithFollowers>();
 
@@ -60,6 +64,24 @@ const Project = () => {
 
   const reportMessage = useRef<HTMLInputElement>(null);
   const [reportResponseText, setReportResponseText] = useState<string>("");
+
+  /**
+   * Checks mod permissions for the user on render (in useEffect)
+   */
+  const getUserPermissions = async () => {
+    /* Ensures the user is logged in */
+    const userAccount = await getCurrentAccount();
+    if (userAccount.status === 200 && userAccount.data?.userId)
+    {
+        setUserID(userAccount.data?.userId);
+        /* User must have mod permissions to access mod page */
+        const accessLevel = await getUserAccessLevel(userAccount.data.userId);
+        if (accessLevel.data?.toString() == 'Moderator' || accessLevel.data?.toString() == 'Administrator')
+        {
+            setIsUserAdmin(true);
+        }
+    }
+  };
 
   /**
    * Checks in the current user is following a project
@@ -148,6 +170,11 @@ const Project = () => {
       checkApprovalRequest();
     }
   }, [projectID, isMember]);
+
+  // Checks mod permissions
+  useEffect(() => {
+    getUserPermissions();
+  }, [])
 
   //Checks to see whether or not the current user is the maker/owner of the project being displayed
   //oh do i need this too
@@ -311,10 +338,10 @@ const reportProjectPressed = async () => {
                         setApprovalStatus("under-review");
                       }}
                       >
-                        request review
+                        Request Review
                       </PopupButton>
                       <PopupButton buttonId="request-cancel-button">
-                        cancel
+                        Cancel
                       </PopupButton>
                     </div>
                   </div>
@@ -844,6 +871,18 @@ const reportProjectPressed = async () => {
                 ))}
               </div>
             </div>
+
+            {/* Approval Button */}
+            {isUserAdmin && approvalStatus == 'under-review' ? <div className="mod-project-options">
+                <h4>Approve?</h4>
+                <p>You can approve, request an edit, or decline this project.</p>
+                <div id="mod-options-btns">
+                  <button id="mod-approve-btn">Approve</button>
+                  <button id="mod-edit-btn">Edit</button>
+                  <button id="mod-decline-btn">Decline</button>
+                </div>
+              </div>
+            : ""}
 
             <div id="project-people">
               <div id="project-people-tabs">

@@ -28,8 +28,6 @@ const ReportedUsers = ({currentUserId, currentTab}: ReportedUsersProps) => {
           }
           setReportedUsers(tempPendingUserArray);
         }};
-
-        displayReportedUsers();
     }, [currentTab]);
     
     // The final component
