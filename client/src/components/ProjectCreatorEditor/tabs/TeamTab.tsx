@@ -10,6 +10,7 @@ import {
 import { useNavigate } from "react-router-dom";
 import { Popup, PopupButton, PopupContent, PopupContext } from "../../Popup";
 import { DeleteProjectButton } from "../DeleteProjectButton";
+import { MergeProjectTeam } from "./MergeProjectTeam";
 import profileImage from "../../../images/lfrog.png";
 import { SearchBar } from "../../SearchBar";
 import { Dropdown, DropdownButton, DropdownContent } from "../../Dropdown";
@@ -2555,7 +2556,21 @@ export const TeamTab = ({
 				</button>
 			</div>
 
-			<div id="project-editor-team-content">{teamTabContent}</div>
+			<div id="project-editor-team-content">
+				{teamTabContent}
+				{/* Merge another project's whole team into this one (invite-based) */}
+				{currentTeamTab === 0 && (
+					<MergeProjectTeam
+						dataManager={dataManager}
+						targetProjectId={projectAfterTeamChanges.projectId as number}
+						currentMembers={projectAfterTeamChanges.members}
+						ownerUserId={currentUserId ?? projectAfterTeamChanges.owner?.userId ?? null}
+						pendingInvitations={pendingInvitations}
+						setPendingInvitations={setPendingInvitations}
+						onInvitesQueued={() => updatePendingProject(structuredClone(projectAfterTeamChanges))}
+					/>
+				)}
+			</div>
 
 			<div id="team-save-info">
 				<div className="editor-save-actions">
