@@ -36,7 +36,6 @@ const prismaUser: Users = {
   updatedAt: new Date(),
   displayPhone: false,
   location: '',
-  funFact: '',
   bio: '',
   privacy: 'public',
   phoneNumber: null,

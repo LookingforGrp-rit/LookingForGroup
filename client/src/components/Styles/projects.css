@@ -44,7 +44,6 @@ Project Panel component style rules
 .masonry>*>* {
   justify-self: center;
   padding: 10px;
-  max-height: 450px;
 }
 
 .masonry>* .profile-panel {

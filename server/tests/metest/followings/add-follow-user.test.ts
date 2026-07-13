@@ -40,7 +40,6 @@ const transformedUserPreview: UserPreview = {
   privacy: 'public',
   firstName: 'Eric',
   preferredName: 'Eric',
-  funFact: '',
   headline: '',
   lastName: '',
   location: '',

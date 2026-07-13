@@ -6,6 +6,7 @@ import deleteTag from '#controllers/admin/delete-tag.ts';
 import demoteMod from '#controllers/admin/demote-from-mod.ts';
 import editSkill from '#controllers/admin/edit-skill.ts';
 import editTag from '#controllers/admin/edit-tag.ts';
+import { getAccessLevel } from '#controllers/admin/get-mod-status.ts';
 import promoteUserToMod from '#controllers/admin/promote-to-mod.ts';
 import requiresAdmin from '#middleware/authorization/requires-admin.ts';
 import requiresLogin from '#middleware/authorization/requires-login.ts';
@@ -16,6 +17,8 @@ import { userExistsAt } from '#middleware/validators/user-exists-at.ts';
 import { authenticated } from './me.ts';
 
 const router = Router();
+
+router.get('/status/:id', requiresLogin, authenticated(getAccessLevel));
 
 router.use(requiresLogin, injectCurrentUser, authenticated(requiresAdmin));
 
