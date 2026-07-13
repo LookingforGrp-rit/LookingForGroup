@@ -2,9 +2,10 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { getReportedUsers } from "../../api/mod-tools";
 import { PanelBox } from "../PanelBox";
-import { getCurrentAccount } from "../../api/users";
+import { getCurrentAccount, getUsers } from "../../api/users";
 import { ProjectPreview } from "@looking-for-group/shared";
 import * as paths from '../../constants/routes';
+import { getUsersById } from "../../api/users";
 
 type ReportedUsersProps = {
   currentUserId: number,
@@ -23,10 +24,11 @@ const ReportedUsers = ({currentUserId, currentTab}: ReportedUsersProps) => {
           const tempPendingUserArray = [];
           
           if (reportedUsers !== undefined && reportedUsers!= null) {
-            for (const users of reportedUsers) {
-              tempPendingUserArray.push(users);
+            for (const user of reportedUsers) {
+              const reportedId = await getUsersById(user.userId);
+              tempPendingUserArray.push(reportedId);
           }
-          setReportedUsers(tempPendingUserArray);
+          setReportedUsers(tempPendingUserArray);           /* not exactly sure what's causing this error */
         }};
     }, [currentTab]);
     
@@ -40,7 +42,7 @@ const ReportedUsers = ({currentUserId, currentTab}: ReportedUsersProps) => {
                         itemList={reportedUsers ? reportedUsers : []}
                         userId={currentUserId}
                     ></PanelBox> 
-                : <p>No reported users!</p>}
+                : ""}
             </div>
         </div>
     );

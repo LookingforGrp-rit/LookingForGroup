@@ -1,7 +1,6 @@
 import { GET, DELETE, PATCH } from "./index";
 import { ApiResponse, UserAccessLevel } from "@looking-for-group/shared";
-import { ProjectPreview } from "@looking-for-group/shared";
-// import type ReportUser
+import { ProjectPreview, UserPreview } from "@looking-for-group/shared";
 
 /**
  * Gets a list of all reported projects
@@ -58,7 +57,7 @@ export const getReportedProjects = async (): Promise<ApiResponse<ProjectPreview[
 /**
  * Gets the list of all reported users
  */
-export const getReportedUsers = async (): Promise<ApiResponse<ReportUser>> => {
+export const getReportedUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
     const apiURL = `/mod/user-report/`;
     const response = await GET(apiURL);
 

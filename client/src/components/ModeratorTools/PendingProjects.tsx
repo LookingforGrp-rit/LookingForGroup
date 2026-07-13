@@ -47,7 +47,7 @@ const PendingProjects = ({currentUserId, currentTab}: PendingProjectsProps) => {
                         itemList={pendingProjects ? pendingProjects : []}
                         userId={currentUserId}
                     ></PanelBox> 
-                : <p>No pending projects!</p>}
+                : ""}
             </div>
         </div>
     );

@@ -3,8 +3,9 @@ import { useState, useEffect } from "react";
 import { getReportedProjects } from "../../api/mod-tools";
 import { PanelBox } from "../PanelBox";
 import { getCurrentAccount } from "../../api/users";
-import { ProjectPreview } from "@looking-for-group/shared";
+import { ProjectPreview, ProjectWithFollowers } from "@looking-for-group/shared";
 import * as paths from '../../constants/routes';
+import { getByID } from "../../api/projects";
 
 type ReportedProjectsProps = {
   currentUserId: number,
@@ -13,7 +14,7 @@ type ReportedProjectsProps = {
 
 const ReportedProjects = ({currentUserId, currentTab}: ReportedProjectsProps) => {
 
-    const [reportedProjects, setReportedProjects] = useState<ProjectPreview[]>([]);
+    const [reportedProjects, setReportedProjects] = useState<ProjectWithFollowers[]>([]);
     const [reportedProjectsIds, setReportedProjectsIds] = useState<Set<number>>(new Set);
 
     useEffect(() => {
@@ -26,12 +27,13 @@ const ReportedProjects = ({currentUserId, currentTab}: ReportedProjectsProps) =>
           
           if (reportedProjects !== undefined && reportedProjects!= null) {
             for (const project of reportedProjects) {
-              tempPendingProjectArray.push(project);
+              const reportedId = await getByID(project.projectId);
+              tempPendingProjectArray.push(reportedId.data);
               tempIds.add(project.projectId);
             }
             setReportedProjectsIds(tempIds);
           }
-          setReportedProjects(tempPendingProjectArray);
+          setReportedProjects(tempPendingProjectArray);     /* not exactly sure what's causing this error */
         }
 
         displayReportedProjects();
@@ -47,7 +49,7 @@ const ReportedProjects = ({currentUserId, currentTab}: ReportedProjectsProps) =>
                         itemList={reportedProjects ? reportedProjects : []}
                         userId={currentUserId}
                     ></PanelBox> 
-                : <p>No reported projects!</p>}
+                : ""}
             </div>
         </div>
     );
