@@ -6,7 +6,7 @@ import getService from '#services/projects/get-projects.ts';
 //GET api/projects
 //gets all projects
 const getProjectsController = async (req: Request, res: Response): Promise<void> => {
-  const result = await getService();
+  let result = await getService();
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -23,8 +23,8 @@ const getProjectsController = async (req: Request, res: Response): Promise<void>
   if (userGid) {
     const ids = await getBlocklistIdsByGidService(userGid);
     if (ids !== 'INTERNAL_ERROR') {
-      result.filter((project) => {
-        return ids.includes(project.owner.userId);
+      result = result.filter((project) => {
+        return !ids.includes(project.owner.userId);
       });
     }
   }

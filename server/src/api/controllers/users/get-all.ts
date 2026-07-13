@@ -113,7 +113,7 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
   //Add sort method
   const sortMethod = req.params.method as UserSortMethod;
   //send it over
-  const result = await getAllUsersService(filters, sortMethod);
+  let result = await getAllUsersService(filters, sortMethod);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -130,8 +130,8 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
   if (userGid) {
     const ids = await getBlocklistIdsByGidService(userGid);
     if (ids !== 'INTERNAL_ERROR') {
-      result.filter((user) => {
-        return ids.includes(user.userId);
+      result = result.filter((user) => {
+        return !ids.includes(user.userId);
       });
     }
   }
@@ -142,5 +142,4 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     data: result,
   };
   res.status(200).json(resBody);
-  return;
 };
