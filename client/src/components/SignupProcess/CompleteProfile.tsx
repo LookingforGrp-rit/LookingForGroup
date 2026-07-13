@@ -246,18 +246,6 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							hideUnsaved={true}
 						/>
 
-						{/* Headline */}
-						<LabelInputBox
-							label={"Add Headline"}
-							inputType={"single"}
-							maxLength={20}
-							id="headline-input"
-							value={headline}
-							placeholder={"Personal Quote"}
-							onChange={(e) => setHeadline(e.target.value)}
-							hideUnsaved={true}
-						/>
-
 						{/* Current Job Title */}
 						<div id="jobTitle-input">
 							<Select>
@@ -392,6 +380,18 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							onChange={(e) => setFunFact(e.target.value)}
 							hideUnsaved={true}
 						/> */}
+
+						{/* Headline */}
+						<LabelInputBox
+							label={"Add Headline"}
+							inputType={"multi"}
+							maxLength={20}
+							id="headline-input"
+							value={headline}
+							placeholder={"Personal Quote"}
+							onChange={(e) => setHeadline(e.target.value)}
+							hideUnsaved={true}
+						/>
 
 						{/* Bio */}
 						<LabelInputBox

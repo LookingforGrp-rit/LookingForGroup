@@ -821,20 +821,20 @@ Signup process modal style rules
 
 #completeProfile-input-container {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1.5fr 1fr;
+  grid-template-columns: 1.5fr 1fr 1.5fr;
   grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
-    'profileImage pronouns ritStatus headline'
-    'profileImage phoneNumber major bio'
-    'profileImage jobTitle jobTitle bio'
-    'profileImage location location bio';
+    'profileImage pronouns jobTitle'
+    'profileImage ritStatus major'
+    'profileImage phoneNumber location'
+    'profileImage headline headline'
+    'profileImage bio bio';
   row-gap: 20px;
   column-gap: 20px;
   margin: 10px 0 20px 0;
 }
 
 #pronouns-input,
-#headline-input,
 #phoneNumber-input,
 #jobTitle-input,
 #location-input,
@@ -854,10 +854,6 @@ Signup process modal style rules
 
 #pronouns-input {
   grid-area: pronouns;
-}
-
-#headline-input {
-  grid-area: headline;
 }
 
 #phoneNumber-input {
@@ -938,10 +934,9 @@ Signup process modal style rules
   }
 }
 
-#bio-input {
+#bio-input, #headline-input {
   resize: none;
   font-size: 1rem;
-  grid-area: bio;
   height: 100%;
 
   div textarea {
@@ -949,6 +944,14 @@ Signup process modal style rules
     background-color: var(--header-color);
     outline: none;
   }
+}
+
+#bio-input {
+  grid-area: bio;
+}
+
+#headline-input {
+  grid-area: headline;
 }
 
 /* === Terms of Service === */
