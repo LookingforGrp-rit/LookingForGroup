@@ -13,9 +13,10 @@ import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSo
 import { SortableTag } from "./SortableItem";
 import { clampDragWithinContainer } from "./dragModifiers";
 import { Fragment } from "react";
+import TagDisplay from "../../TagDisplay";
 
 // --- holds the possible tabs from tag types ---
-const tagTabs = ['Medium', 'Genre', 'Style', 'Game Engine'] as TagType[]
+const tagTabs = ['Project Type', 'Genre', 'Style', 'Game Engine'] as TagType[]
 
 // Category color for each tag tab, matching the tag/filter-tab colors.
 const tagTabColors: Record<string, string> = {
@@ -75,7 +76,7 @@ export const TagsTab = ({
 
   //  --- Hooks ---
   // Complete list of available mediums from API
-  const [allMediums, setAllMediums] = useState<Medium[]>([]);
+  const [allMediums, setAllMediums] = useState<Tag[]>([]);
   // Complete list of available tags from API
   const [allTags, setAllTags] = useState<Tag[]>([]);
 
@@ -94,8 +95,11 @@ export const TagsTab = ({
 
   /* ONLY used for the deleting tags button. This is needed to re-render
     the selected mediums and tags section when reseting */
-    const [mediums, setMediums] = useState<Medium[]>(projectData.mediums);
-    const [tags, setTags] = useState<Tag[]>(projectData.tags);
+  const [mediums, setMediums] = useState<Medium[]>(projectData.mediums);
+  const [tags, setTags] = useState<Tag[]>(projectData.tags);
+  //prevent the error
+  mediums;
+  tags;
 
   // Drag-and-drop sensors for the sortable selected-tags list.
   // Pointer for mouse/touch, Keyboard for accessible reordering.
@@ -186,7 +190,14 @@ export const TagsTab = ({
       if (!response.data) {
         return;
       }
-      setAllMediums(response.data);
+      setAllMediums(response.data.map(
+        medium => ({
+          label: medium.label,
+          tagId: medium.mediumId,
+          type: "Project Type",
+          category: "Other",
+        } as Tag)
+      ));
     };
     if (allMediums.length === 0) {
       fetchMediums();
@@ -209,40 +220,7 @@ export const TagsTab = ({
       return [{ data: allMediums }];
     }
     return [{ data: allTags.filter(tag => tag.type === tagTabs[currentTagsTab]) }];
-  }, [currentTagsTab, allMediums, allTags]);
-
-  // Determines if a specific tag is already selected for the current project.
-  // Returns "selected" or "unselected" string for use in CSS classes.
-  const isTagSelected = useCallback(
-    (id: number, label: string, tab: number = -1) => {
-      switch (tab) {
-        case -1: // No tab, iterate through all categories
-          return (
-            projectData.mediums.some((m) => m.mediumId === id && m.label === label) ||
-            projectData.tags.some((t) => t.tagId === id && t.label === label)) ?
-            "selected" :
-            "unselected";
-        case 0: // Mediums
-          return projectData.mediums.some(
-            (t) => t.mediumId === id && t.label === label
-          ) ?
-            "selected" :
-            "unselected";
-        case 1: // Genre
-        case 2: // Style
-        case 3: // Developer Skills
-        case 4: // Designer Skills
-        case 5: // Audio Skills
-        case 6: // Soft Skills
-          return projectData.tags.some(
-            (t) => t.tagId === id && t.label === label
-          ) ?
-            "selected" :
-            "unselected";
-        default:
-          return "unselected";
-      }
-    }, [projectData.mediums, projectData.tags]);
+  }, [currentTagsTab, allMediums, allTags, tagTabs]);
 
   const handleMediumSelect = useCallback(
     (mediumId: number) => {
@@ -279,7 +257,7 @@ export const TagsTab = ({
       });
 
       projectAfterTagsChanges.mediums.push({
-        ...allMediums.find((medium) => medium.mediumId === mediumId)!,
+        ...allMediums.find((medium) => medium.tagId === mediumId)!,
         mediumId,
       });
       updatePendingProject(projectAfterTagsChanges);
@@ -290,7 +268,11 @@ export const TagsTab = ({
 
   // Event handler for when a tag is clicked. Toggles the tag's selected state and updates the project data accordingly.
   const handleTagSelect = useCallback(
-    (tagId: number) => {
+    (tagId: number, type: string) => {
+      if (type === "Project Type") {
+        handleMediumSelect(tagId);
+        return;
+      }
       const selected = projectAfterTagsChanges.tags.some(
         (tag) => tag.tagId === tagId
       );
@@ -334,104 +316,6 @@ export const TagsTab = ({
     [allTags, dataManager, updatePendingProject]
   );
 
-  // Creates button elements for all available tags in the current category tab, with appropriate styling for selected/unselected states.
-  const renderTags = useCallback(() => {
-    //The final list of tags displayed to the screen.
-    let tagsToDisplay = currentDataSet[0].data;
-
-    // searching...
-    if (searchValue !== "") {
-      // but no results
-      if (searchedTags?.length === 0 ) {
-        return <div className="no-results-message">No results found!</div>;
-      }
-      //if seartching with results, display everything;
-      tagsToDisplay = (searchedTags as Tag[] | Medium[]).sort((a, b) => {
-        let comparison: number;
-        if ((a as Tag).category && (b as Tag).category) 
-          comparison = (a as Tag).category.localeCompare((b as Tag).category);
-        else
-          comparison = a.label.localeCompare(b.label);
-
-        return comparison;
-      });
-    }
-    else {
-      switch (currentTagsTab){
-        case 1:
-          //Genre
-          { const story = allTags.filter((tag) => (tag as Tag).category === "Story");
-          const game = allTags.filter((tag) => (tag as Tag).category === "Game");
-          const music = allTags.filter((tag) => (tag as Tag).category === "Music");
-          tagsToDisplay = story.concat(game, music);
-          break; }
-        case 2:
-          //Style
-          { const visual = allTags.filter((tag) => (tag as Tag).category === "Visual");
-          const filmVideo = allTags.filter((tag) => (tag as Tag).category === "Film/Video");
-          tagsToDisplay = visual.concat(filmVideo);
-          break; }
-      }
-    }
-
-    let multipleCategories = (tagsToDisplay.length !== (tagsToDisplay as Tag[]).filter((tag) => tag.category === (tagsToDisplay[0] as Tag).category).length);
-
-    return tagsToDisplay.map((tagOrMedium, index, array) => {
-      // get id according to type of tag
-      let id: number = -1; // bad default value
-      let isTag;
-      if ("tagId" in (tagOrMedium as Tag)) {
-        isTag = true;
-        id = (tagOrMedium as Tag).tagId;
-      } else if ("mediumId" in (tagOrMedium as Medium)) {
-        isTag = false;
-        id = (tagOrMedium as Medium).mediumId;
-      } else {
-        console.log('Search query isnt of type Tag or Medium');
-        return;
-      }
-
-      const selected = isTagSelected(id, (tagOrMedium as Tag | Medium).label, currentTagsTab) === "selected";
-
-      return (
-        <Fragment key={id}>
-          {multipleCategories
-            ? index === 0 || ((array[index - 1] as Tag)?.category != (array[index] as Tag)?.category) ? 
-              <div id="tag-category-header">
-                <p>{(array[index] as Tag).category == null ? "Medium" : (array[index] as Tag).category}</p>
-                <hr></hr>
-              </div>
-            : <></>
-          : <></>}
-          <TagElement
-            key={id}
-            type={isTag
-              ? (tagOrMedium as Tag).type.toLowerCase()
-              : "medium"}
-            onClick={
-              isTag
-                ? () => handleTagSelect((tagOrMedium as Tag).tagId)
-                : () => handleMediumSelect((tagOrMedium as Medium).mediumId)
-            }
-            selected={selected}
-          >
-            <i className={selected ? "fa fa-check" : "fa fa-plus"}></i>
-            <p>{isTag ? (tagOrMedium as Tag).label : (tagOrMedium as Medium).label}</p>
-          </TagElement>
-        </Fragment>
-      );
-    });
-  }, [
-    searchedTags,
-    currentTagsTab,
-    allTags,
-    allMediums,
-    currentDataSet,
-    isTagSelected,
-    handleTagSelect,
-    handleMediumSelect,
-  ]);
-
   // Callback for the SearchBar component that updates the displayed tags based on search results.
   const handleSearch = useCallback((results: unknown[][]) => {
     // setSearchResults(results);
@@ -466,7 +350,7 @@ export const TagsTab = ({
             <TagElement
               key={medium.mediumId}
               selected={true}
-              type={"medium"}
+              type={"project type"}
               onClick={() => handleMediumSelect(medium.mediumId)}
             >
               <i className="fa fa-close"></i>
@@ -533,13 +417,15 @@ export const TagsTab = ({
                 <Fragment key={t.tagId}>
                   {/* Divider marks the cutoff: the first two tags appear on the discover card */}
                   {index === 2 && <hr id="selected-tag-divider" />}
-                  <SortableTag id={t.tagId} tag={{
+                  <SortableTag 
+                    id={t.tagId} tag={{
                     skillId: t.tagId,
                     label: t.label,
                     type: t.type as SkillType,
                     category: t.category as SkillCategory,
-
-                  }} onRemove={handleTagSelect} />
+                    }} 
+                    onRemove={(id) => handleTagSelect(id, t.type)}
+                  />
                 </Fragment>
               ))}
             </div>
@@ -576,7 +462,7 @@ export const TagsTab = ({
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentTagsTab}
-          dataSets={[{data: [...allTags, ...allMediums]}]}
+          dataSets={[{data: [...allTags.filter((tag) => tag.type != "Positions" && tag.type != "Purpose" && tag.type != "Style" && tag.type != "Major"), ...allMediums]}]}
           onSearch={handleSearch}
           value={searchValue}
           setValue={setSearchValue}
@@ -592,7 +478,53 @@ export const TagsTab = ({
           </div>
           <hr id="tag-search-divider" />
         </div>
-        <div id="project-editor-tag-search-container">{renderTags()}</div>
+        <div id="project-editor-tag-search-container">
+          <TagDisplay
+            selected={[
+              ...projectAfterTagsChanges.tags.map(
+                tag => ({
+                  ...tag,
+                  category:
+                    tag.type === "Game Engine" ? "Game Engine" :
+                    tag.category,
+                  id: tag.tagId
+                })
+              ),
+              ...projectAfterTagsChanges.mediums.map(
+                medium => ({
+                  label: medium.label,
+                  id: medium.mediumId,
+                  category: "Medium",
+                  type: "Project Type",
+                })
+              )
+            ]}
+            toggleTag={handleTagSelect}
+            tabs={tagTabs}
+            tabId={currentTagsTab}
+            all={[...allTags, ...allMediums].map(
+              tag =>({
+                ...tag,
+                category: 
+                  tag.type === "Project Type" ? "Medium" :
+                  tag.type === "Game Engine" ? "Game Engine" :
+                  tag.category,
+                id: tag.tagId
+              })
+            )}
+            searchValue={searchValue}
+            searchData={(searchedTags as Tag[]).map(
+              tag => ({
+                ...tag,
+                category: 
+                  tag.type === "Project Type" ? "Medium" :
+                  tag.type === "Game Engine" ? "Game Engine" :
+                  tag.category,
+                id: tag.tagId
+              })
+            )}
+          />
+        </div>
       </div>
       <div id="tags-save-info">
         <div className="editor-save-actions">

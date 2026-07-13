@@ -1,4 +1,4 @@
-import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback, useEffect } from 'react';
+import { memo, FC, ChangeEvent, FocusEvent, useState, useCallback } from 'react';
 
 export interface DataSet {
   data: unknown[];
@@ -49,7 +49,6 @@ interface SearchBarProps {
 export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, onChange, setValue, onFocus }) => {
   // Internal query state for uncontrolled mode
   const [internalQuery, setInternalQuery] = useState('');
-  const query = value ?? internalQuery;
 
   /**
    * Handles input changes:
@@ -68,7 +67,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
       setInternalQuery(newQuery);
     }
     if (setValue) setValue(newQuery);
-    handleSearch(newQuery);
+    if (newQuery.length > 0) handleSearch(newQuery);
   };
 
   /**
@@ -79,10 +78,6 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
    * @param searchQuery - lowercased search string
    */
   const handleSearch = useCallback((searchQuery: string) => {
-    if (searchQuery.length === 0) {
-      //onSearch([]);
-      return;
-    }
     const splitSearchQuery = searchQuery.trim().split(' ');
     let currentQuery = splitSearchQuery[0];
     const filteredResults = dataSets.map((dataSet) =>
@@ -155,7 +150,7 @@ export const SearchBar: FC<SearchBarProps> = memo(({ dataSets, onSearch, value, 
           className="search-input"
           type="text"
           placeholder="Search by Name"
-          value={query}
+          value={value ?? internalQuery}
           onChange={handleChange}
           onFocus={onFocus}
           tabIndex={2}

@@ -1,13 +1,13 @@
 import { MouseEventHandler, useState, useMemo, useCallback, Fragment, Key } from "react";
 import { SearchBar } from "../SearchBar";
 import { getSkills } from "../../api/users";
-import { Tag } from "../Tag";
 import { Skill } from "@looking-for-group/shared";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../ProjectCreatorEditor/tabs/SortableItem";
+import TagDisplay from "../TagDisplay";
 
-const skillTabs = ["Developer", "Design", "Soft", "Audio", "Engineer"] as String[];
+const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
 // Category color for each skill tab, matching the tag/filter-tab colors.
 const skillTabColors: Record<string, string> = {
@@ -61,6 +61,8 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 	// filtered results from skill search bar
 	const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
+	const [searchValue, setSearchValue] = useState("");
+
 	mode;
 	/**
 	 * Updates the searchedTags stat based on search results from the SearchBar.
@@ -90,24 +92,6 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 			fetchSkills();
 		}
 	}, []);
-
-	// Update skills shown for search bar
-	const currentDataSet = useMemo(() => {
-		switch (currentSkillsTab) {
-      case 0:
-        return [{ data: allSkills.filter((s) => s.type === "Developer") }];
-      case 1:
-        return [{ data: allSkills.filter((s) => s.type === "Designer") }];
-      case 2:
-        return [{ data: allSkills.filter((s) => s.type === "Soft") }];
-      case 3:
-        return [{ data: allSkills.filter((s) => s.type === "Audio") }];
-      case 4:
-        return [{ data: allSkills.filter((s) => s.type === "Engineer") }];
-      default:
-        return [{ data: [] }];
-		}
-	}, [currentSkillsTab, allSkills]);
 
 	/**
 	* Finds if a skill is present on the project
@@ -200,102 +184,6 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 		return <div id="project-editor-tag-search-tabs">{tabs}</div>;
 	};
 
-	/**
-   * Renders skill tags as clickable buttons based on the active tab and search results.
-   * Each tag button shows a plus or lose icon depending on selection status and is colored based on skill type.
-   * @returns JSX Element
-   */
-	const renderSkills = useCallback(() => {
-    // no search item, render all skills
-    if (searchedSkills && searchedSkills.length !== 0) {
-
-      //The final list of skills displayed to the screen.
-      let skillsToDisplay = searchedSkills;
-      
-      //Since discipline appears multiple times, it's defined here.
-      let discipline;
-
-      switch (currentSkillsTab){
-        case 0:
-          //Developer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
-          const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
-          const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
-		  const api = searchedSkills.filter((tag) => (tag as Skill).category === "API");
-          const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
-          const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
-          skillsToDisplay = discipline.concat(software, codingLanguage, framework, api, operatingSystem, gameEngine);
-          break; }
-        case 1:
-          //Designer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const videoSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Video Software");
-          const designSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Design Software");
-          const artAnimation = searchedSkills.filter((tag) => (tag as Skill).category === "Art and Animation");
-          const photoEditing = searchedSkills.filter((tag) => (tag as Skill).category === "Photo Editing");
-          skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
-          break; }
-        case 2:
-          //Soft
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const team = searchedSkills.filter((tag) => (tag as Skill).category === "Team");
-          const personal = searchedSkills.filter((tag) => (tag as Skill).category === "Personal");
-          skillsToDisplay = discipline.concat(team, personal);
-          break; }
-        case 3:
-          //Audio
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const dawAudioEditor = searchedSkills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
-          const middleware = searchedSkills.filter((tag) => (tag as Skill).category === "Middleware");
-          const notation = searchedSkills.filter((tag) => (tag as Skill).category === "Notation");
-          skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
-          break; }
-        case 4:
-          //Engineer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const engineeringSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Engineering Software");
-          const hardware = searchedSkills.filter((tag) => (tag as Skill).category === "Hardware");
-          skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
-          break; }
-      }
-
-      return skillsToDisplay.map((skill, index, array) => (
-        <Fragment key={skill.skillId}>
-          {index === 0 || ((array[index - 1] as Skill).category != (array[index] as Skill).category)
-          ? <div id="tag-category-header">
-              <p>{(array[index] as Skill).category}</p>
-              <hr></hr>
-            </div>
-          : <></>}
-          <Tag
-            key={skill.skillId}
-            onClick={() => handleSkillToggle(skill.skillId)}
-            type={skill.type.toLowerCase() + " skill"}
-            selected={isSkillSelected(skill.skillId) === "selected"}
-          >
-            <i
-              className={
-                isSkillSelected(skill.skillId) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>&nbsp;{skill.label}</p>
-          </Tag>
-        </Fragment>
-      ));
-    } else if (searchedSkills && searchedSkills.length === 0) {
-      return <div className="no-results-message">No results found!</div>;
-    }
-	}, [
-		searchedSkills,
-		currentSkillsTab,
-		isSkillSelected,
-		handleSkillToggle,
-		allSkills,
-	]);
-
 	// if the modal is not shown, return null
 	if (!show) {
 		return null;
@@ -332,12 +220,7 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 											<Fragment key={skill.skillId}>
 												<SortableTag
 													id={skill.skillId}
-													tag={{
-														skillId: skill.skillId,
-														label: skill.label,
-														type: skill.type,
-                            category: skill.category,
-													}}
+													tag={skill}
 													onRemove={handleSkillToggle}
 												/>
 											</Fragment>
@@ -361,16 +244,43 @@ const ChooseSkills: React.FC<ChooseSkillsProps> = ({
 						<div id="project-editor-tag-search">
 							<SearchBar
 								key={currentSkillsTab}
-								dataSets={currentDataSet}
+								dataSets={[{data: allSkills}]}
 								onSearch={(results) =>
-									handleSearch(results as unknown[][] as Skill[][])
+									handleSearch(results as Skill[][])
 								}
+								value={searchValue}
+								setValue={setSearchValue}
 							/>
 							<div id="project-editor-tag-wrapper">
 								<SkillSearchTabs />
 								<hr id="tag-search-divider" />
 							</div>
-							<div id="project-editor-tag-search-container">{renderSkills()}</div>
+							<div id="project-editor-tag-search-container">
+								<TagDisplay
+									selected={selectedSkills.map(
+										skill => ({
+											...skill,
+											id: skill.skillId
+										})
+									)}
+									toggleTag={handleSkillToggle}
+									tabs={skillTabs}
+									tabId={currentSkillsTab}
+									all={allSkills.map(
+										skill => ({
+											...skill,
+											id: skill.skillId
+										})
+									)}
+									searchValue={searchValue}
+									searchData={searchedSkills.map(
+										skill => ({
+											...skill,
+											id: skill.skillId
+										})
+									)}
+								/>
+							</div>
 						</div>
 					</div>
 					<div id="signupProcess-btns">
