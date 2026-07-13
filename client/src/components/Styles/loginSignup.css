@@ -1068,6 +1068,14 @@ Signup process modal style rules
   font-weight: 750;
 }
 
+#completeProfile-input-container .select-options{
+  overflow-y: scroll;
+  max-height: 500%;
+  height: auto;
+  scrollbar-width: thick;
+    scrollbar-color: var(--header-color) rgba(0, 0, 0, 0);
+}
+
 /* Mobile css to individual signup pages */
 @media screen and (max-width: 1000px) {
 
