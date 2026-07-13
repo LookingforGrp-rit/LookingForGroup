@@ -374,6 +374,45 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
   };
 
   /**
+   * Jumps the editor to the first missing/invalid required field after a failed
+   * save: switches to the tab that contains it, scrolls it into view, and
+   * flashes a highlight so the user can see exactly what blocked the save.
+   */
+  const scrollToInvalidField = () => {
+    // First failing required field, checked in the same order the save
+    // validation reports them. [tab index, element id]
+    let tab: number;
+    let elementId: string;
+
+    if (!modifiedProject?.title || !isUniqueTitle) {
+      tab = 0; elementId = "project-editor-title-input";
+    } else if (!modifiedProject.hook) {
+      tab = 0; elementId = "project-editor-description-input";
+    } else if (!modifiedProject.description) {
+      tab = 0; elementId = "project-editor-long-description-input";
+    } else if (!modifiedProject.status) {
+      tab = 0; elementId = "project-editor-status-input";
+    } else if (modifiedProject.mediums.length === 0) {
+      tab = 2; elementId = "project-editor-type-tags";
+    } else if (modifiedProject.tags.length === 0) {
+      tab = 2; elementId = "project-editor-tag-search";
+    } else {
+      return;
+    }
+
+    setCurrentTab(tab);
+
+    // Wait a beat so the target tab's content is mounted before scrolling.
+    window.setTimeout(() => {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      el.scrollIntoView({ behavior: "smooth", block: "center" });
+      el.classList.add("field-invalid-flash");
+      window.setTimeout(() => el.classList.remove("field-invalid-flash"), 2000);
+    }, 100);
+  };
+
+  /**
    * Handles saving project changes to the server, validates input data before saving
    * For existing projects: updates thumbnails, images, positions, and project information
    * For new projects: creates the project and adds images and thumbnails
@@ -410,6 +449,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       if (errorText) {
         errorText.style.display = "block";
       }
+      // Take the user to the missing field instead of failing silently.
+      scrollToInvalidField();
       return;
     }
 
@@ -424,6 +465,8 @@ export const ProjectCreatorEditor: FC<Props> = ({ newProject, mobileView = false
       if (errorText) {
         errorText.style.display = "block";
       }
+      // Take the user to the missing tags/medium section.
+      scrollToInvalidField();
       return;
     }
 

@@ -20,6 +20,9 @@ const updateSkillsService = async (
       return skills;
     }
 
+    //sort BEFORE reordering
+    skills.sort((a, b) => a.position - b.position);
+
     const oldIndex = skills.findIndex((s) => s.skillId === skillId);
     if (oldIndex === -1) {
       return 'NOT_FOUND';
@@ -29,7 +32,6 @@ const updateSkillsService = async (
 
     // insert at new position
     const targetIndex = data.position !== undefined ? data.position : oldIndex;
-
     skills.splice(targetIndex, 0, movedSkill);
 
     // update the moved skill with new proficiency and position
@@ -52,17 +54,15 @@ const updateSkillsService = async (
       if (s.position !== index) {
         // update display order in db if it doesn't match the new order
         s.position = index;
-        await prisma.userSkills.update({
-          where: {
-            userId_skillId: {
-              userId,
-              skillId: s.skillId,
-            },
-          },
-          data: {
-            position: index,
-          },
-        });
+
+        await prisma.$transaction(
+          skills.map((s, index) =>
+            prisma.userSkills.update({
+              where: { userId_skillId: { userId, skillId: s.skillId } },
+              data: { position: index },
+            }),
+          ),
+        );
       }
     }
 

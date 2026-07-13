@@ -88,7 +88,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
     <div
       className={'profile-panel'}
       onClick={() => navigate(profileURL)}
-    >   
+    >
       <img
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt='profile image'
@@ -99,7 +99,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
           {profileData.firstName} {profileData.lastName}
         </h2>
         <h3>{majorsArr.join(', ') || ''}</h3>
-        <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
+        <div id="quote">{profileData.headline ? (profileData.headline.startsWith(`"`) && profileData.headline.endsWith(`"`) ? `${profileData.headline}` : `"${profileData.headline}"`) : ''}</div>
       </div>
 
       <div className='profile-panel-hover'>
@@ -108,8 +108,9 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
         </h2>
         <h3>{majorsArr.join(', ') || ''}</h3>
         {profileData.headline ?
-        <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
-        : ""}
+          <div id="quote">{profileData.headline ?
+            (profileData.headline.startsWith(`"`) && profileData.headline.endsWith(`"`) ? `${profileData.headline}` : `"${profileData.headline}"`) : ''}</div>
+          : ""}
         {isFollow ? <ThemeIcon
           width={30}
           height={27}
@@ -148,14 +149,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             </div>
             <p>{profileData.pronouns}</p>
           </div> : ""}
-        {profileData.funFact ?
-          <div className={'profile-panel-hover-item'}>
-            <div className={'icon-box'}>
-              <ThemeIcon id={'funfact'} width={24} height={24} className={'color-fill undefined'} ariaLabel={'Fun Fact'} />
-            </div>
-            <p>{profileData.funFact}</p>
-          </div> : ""}
-          {/* Displays 'No extra information' if there is no other data displayed on the user's profile */}
+        {/* Displays 'No extra information' if there is no other data displayed on the user's profile */}
         {!(profileData.title || profileData.location || profileData.pronouns || profileData.funFact) ?
           <div className='profile-panel-hover-item'>
             <p>No extra information</p>
