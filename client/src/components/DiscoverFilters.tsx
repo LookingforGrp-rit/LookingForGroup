@@ -47,6 +47,8 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
   // --------------------
   // Global variables
   // --------------------
+  // Whether a tag is currently hovering over the selected area
+  const [isDragOver, setIsDragOver] = useState(false);
   // Whether all data (tags, skills, majors, etc.) has been loaded
   const [dataLoaded, setDataLoaded] = useState(false);
   // All tags currently available in the active filter tab
@@ -458,12 +460,17 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                         <p>No tags found. Please try a different search term.</p>
                       ) : (
                         searchedTags.tags.map((tag) => (
-                          <button
+                          <div
                             key={`${tag.label}-${tag.type}`}
                             // className={`tag-button tag-button-${searchedTags.color}-unselected`}
                             className={`tag-button tag-button-${searchedTags.color}-${isTagEnabled(tag, searchedTags.color) !== -1 ? 'selected' : 'unselected'}`}
+                            draggable={true} 
+                            onDragStart={(e) => {
+                              e.dataTransfer.setData('application/json', JSON.stringify({ tag, color: searchedTags.color }));
+                              e.dataTransfer.effectAllowed = 'move';
+                            }}
                             onClick={(e) => {
-                              const element = e.target as HTMLElement;
+                              const element = e.currentTarget as HTMLElement;
                               const selectIndex = isTagEnabled(tag, searchedTags.color);
                               const tempEnabled = enabledFilters;
 
@@ -516,7 +523,7 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                               }
                             ></i>
                             <p>{tag.label}</p>
-                          </button>
+                          </div>
                         ))
                       )}
                     </div>
@@ -524,23 +531,57 @@ export const DiscoverFilters: React.FC<DiscoverFiltersProps> = ({ category, upda
                   <div id="selected-section" className="popup-section">
                     <h3>Selected</h3>
                     <h4>Click to deselect</h4>
-                    <div id="selected-filters">
-                      {enabledFilters.map((tag) => (
-                        <button
-                          key={`${tag.tag.label}-${tag.color}`}
-                          className={`tag-button tag-button-${tag.color}-selected`}
-                          onClick={() => {
-                            // Remove tag from list of enabled filters, re-rendering component
-                            setEnabledFilters(
-                              enabledFilters.toSpliced(isTagEnabled(tag.tag, tag.color), 1)
-                            );
-                          }}
-                        >
-                          <i className="fa fa-close"></i>
-                          <p>{tag.tag.label}</p>
-                        </button>
-                      ))}
-                    </div>
+                    <div id="selected-filters"
+                    // 1. Adds a CSS class dynamically when a tag is hovering over the tray
+                    className={isDragOver ? 'drag-over-zone' : ''}
+                    
+                    // 2. CRITICAL: Prevents the browser's default behavior so dropping is allowed
+                    onDragOver={(e) => {
+                      e.preventDefault(); 
+                      e.dataTransfer.dropEffect = 'move';
+                    }}
+                    
+                    // 3. Simple UI triggers to turn the hover effect on and off
+                    onDragEnter={() => setIsDragOver(true)}
+                    onDragLeave={() => setIsDragOver(false)}
+                    
+                    // 4. The actual magic: handling what happens when the user lets go of the mouse
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      setIsDragOver(false); // Turn off hover style immediately
+                      
+                      try {
+                        // Catch the JSON string stringified during the "DragStart" phase
+                        const rawData = e.dataTransfer.getData('application/json');
+                        if (!rawData) return;
+                        
+                        const { tag, color } = JSON.parse(rawData);
+                        
+                        // Use your existing `isTagEnabled` check to avoid duplicates
+                        if (isTagEnabled(tag, color) === -1) {
+                          setEnabledFilters((prev) => [...prev, { tag, color }]);
+                        }
+                      } catch (err) {
+                        console.error('Failed processing dropped tag:', err);
+                      }
+                    }}
+                  >
+                    {/* Your mapping code remains exactly the same inside here */}
+                    {enabledFilters.map((tag) => (
+                      <button
+                        key={`${tag.tag.label}-${tag.color}`}
+                        className={`tag-button tag-button-${tag.color}-selected`}
+                        onClick={() => {
+                          setEnabledFilters(
+                            enabledFilters.toSpliced(isTagEnabled(tag.tag, tag.color), 1)
+                          );
+                        }}
+                      >
+                        <i className="fa fa-close"></i>
+                        <p>{tag.tag.label}</p>
+                      </button>
+                    ))}
+                  </div>
                   </div>
                   <div className="filters-btns">
                     <PopupButton

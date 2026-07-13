@@ -16,6 +16,29 @@ Meet page hero style rules
 \/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\//\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\/\
 */
 /*#region meet page hero*/
+/* ==========================================================================
+   Selected Filters Drop Target Container
+   ========================================================================== */
+
+#selected-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  width: 100%;
+  align-content: flex-start;
+  
+  /* CRITICAL: Gives the container height when empty so you have a physical target to drop onto */
+  min-height: 60px; 
+  border-radius: 8px;
+  transition: all 0.2s ease-in-out;
+}
+
+/* Global Drag Over State (Works on all screen sizes now) */
+#selected-filters.drag-over-zone {
+  outline: 2px dashed var(--primary-color);
+  outline-offset: 4px;
+  background-color: color-mix(in srgb, var(--primary-color) 10%, transparent) !important;
+}
 
 #discover-hero {
   width: calc(100% - 120px);
@@ -806,6 +829,9 @@ Filters / Tags Style Rules
   align-items: center;
   gap: 5px;
 
+  user-select: none;
+  -webkit-user-select: none;
+
   svg:hover {
     cursor: grab;
   }
@@ -824,6 +850,8 @@ Filters / Tags Style Rules
   cursor: grab;
   /* Required so pointer/touch drags aren't hijacked by scrolling */
   touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 .tag-drag-handle:active {
@@ -849,7 +877,11 @@ Filters / Tags Style Rules
   font-size: medium;
   flex-shrink: 0;
   text-align: left;
-  transition: all 0.2s ease-in-out;
+  
+  user-select: none;
+  -webkit-user-select: none;
+
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
 
   p {
     margin: 0px;
@@ -1240,7 +1272,6 @@ Filters / Tags Style Rules
 }
 
 .tag-button:active {
-  transform: translateY(0px);
   opacity: 1;
 }
 
@@ -1575,4 +1606,5 @@ Filters / Tags Style Rules
   #selected-section.popup-section p {
     font-size: 0.85rem !important;
   }
+
 }
