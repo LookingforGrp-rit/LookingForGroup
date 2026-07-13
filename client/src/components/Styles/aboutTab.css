@@ -27,7 +27,7 @@
   /* height: 100%; */
 
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr;
   column-gap: 10px;
 }
 
@@ -150,8 +150,6 @@ select {
   }
 
   #edit-profile-section-2 {
-    display: flex !important;
-    flex-direction: row;
     gap: 20px;
     align-items: center;
     width: 100%;

@@ -276,7 +276,7 @@ const Profile = (userProfile: any) => {
     if (switchTo === true) { //   
       profileTabElement.style.opacity = String(.5);
       projectsTabElement.style.opacity = String(1);
-      console.log("project select");
+     // console.log("project select");
 
     } else {
       projectsTabElement.style.opacity = String(.5);
@@ -529,7 +529,7 @@ const Profile = (userProfile: any) => {
     </>
   );
 
-  console.log(followedProjectsIds);
+  //console.log(followedProjectsIds);
   // --------------------
   // Final component
   // --------------------
@@ -558,7 +558,7 @@ const Profile = (userProfile: any) => {
                   profileImg.src = profilePicture;
                 }}
               />
-              <div id="profile-bio">{displayedProfile?.headline}</div>
+              {displayedProfile?.headline != "" ? <div id="profile-bio">{displayedProfile?.headline}</div> : ""}
             </div>
 
             <div id="profile-info">

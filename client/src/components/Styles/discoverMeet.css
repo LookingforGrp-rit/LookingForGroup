@@ -782,6 +782,18 @@ Filters / Tags Style Rules
   justify-content: center;
 }
 
+@media screen and (max-width: 799px) {
+  #discover-more-filters {
+    width: 70px;
+
+    #more-filters-button {
+      #more-filters-text {
+        display: none;
+      }
+    }
+  }
+}
+
 .applied-filters {
   width: auto;
   margin: 20px 50px;
@@ -1575,4 +1587,12 @@ Filters / Tags Style Rules
   #selected-section.popup-section p {
     font-size: 0.85rem !important;
   }
+
+  #filter-settings {
+    width: 90%;
+  .select-container {
+    width: 48%;
+  }
+}
+
 }
