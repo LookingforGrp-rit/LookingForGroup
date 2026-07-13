@@ -57,15 +57,15 @@ model Majors {
 }
 
 model Members {
-  projectId         Int                      @map("project_id")
-  userId            Int                      @map("user_id")
-  roleId            Int                      @map("title_id")
-  profileVisibility Visibility               @default(public) @map("profile_visibility")
-  createdAt         DateTime                 @default(now()) @map("created_at") @db.Timestamp(0)
-  roles             Roles                    @relation(fields: [roleId], references: [roleId], map: "FK_members_job_titles")
-  projects          Projects                 @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_members_projects")
+  projectId         Int        @map("project_id")
+  userId            Int        @map("user_id")
+  roleId            Int        @map("title_id")
+  profileVisibility Visibility @default(public) @map("profile_visibility")
+  createdAt         DateTime   @default(now()) @map("created_at") @db.Timestamp(0)
+  roles             Roles      @relation(fields: [roleId], references: [roleId], map: "FK_members_job_titles")
+  projects          Projects   @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_members_projects")
   jobs              Jobs[]
-  users             Users                    @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_members_users")
+  users             Users      @relation(fields: [userId], references: [userId], onDelete: Cascade, map: "FK_members_users")
 
   @@id([projectId, userId])
   @@index([roleId], map: "FK_members_job_titles")
@@ -74,32 +74,31 @@ model Members {
 }
 
 model Notifications {
-  notificationId  String            @id @default(uuid()) @map("notification_id") @unique
-  receiverId      Int               @map("receiver_id")
-  timeSent        DateTime          @map("time_sent")
-  subjectLine     String            @map("subject_line")
-  message         String            @map("message")
-  hasBeenRead     Boolean           @default(false) @map("has_been_read")
-  receiver        Users             @relation(name: "FK_receiver_to_notification", fields: [receiverId], references: [userId], onDelete: NoAction, onUpdate: Cascade)
+  notificationId String   @id @unique @default(uuid()) @map("notification_id")
+  receiverId     Int      @map("receiver_id")
+  timeSent       DateTime @map("time_sent")
+  subjectLine    String   @map("subject_line")
+  message        String   @map("message")
+  hasBeenRead    Boolean  @default(false) @map("has_been_read")
+  receiver       Users    @relation(name: "FK_receiver_to_notification", fields: [receiverId], references: [userId], onDelete: NoAction, onUpdate: Cascade)
 
   @@map("notifications")
-
 }
 
 model MemberRequests {
-  requestId             Int                   @id @default(autoincrement()) @map("request_id")
-  prospectiveMemberId   Int                   @map("prospective_member_id")
-  projectId             Int                   @map("project_id")
-  roleId                Int                   @map("role_id")
-  sentFromProject       Boolean               @map("sent_from_project")
-  requestStatus         MemberRequestStatus   @map("request_status")
-  projects              Projects              @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "request_project_id")
-  users                 Users                 @relation(fields: [prospectiveMemberId], references: [userId], onDelete: Cascade, map: "request_prospective_id")
+  requestId           Int                 @id @default(autoincrement()) @map("request_id")
+  prospectiveMemberId Int                 @map("prospective_member_id")
+  projectId           Int                 @map("project_id")
+  roleId              Int                 @map("role_id")
+  sentFromProject     Boolean             @map("sent_from_project")
+  requestStatus       MemberRequestStatus @map("request_status")
+  projects            Projects            @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "request_project_id")
+  users               Users               @relation(fields: [prospectiveMemberId], references: [userId], onDelete: Cascade, map: "request_prospective_id")
 
   @@unique([prospectiveMemberId, projectId, roleId])
   @@index([projectId], map: "request_project_id")
   @@index([prospectiveMemberId], map: "request_prospective_id")
-  @@map("member_requests")        
+  @@map("member_requests")
 }
 
 model ProjectFollowings {
@@ -129,12 +128,12 @@ model ProjectImages {
 }
 
 model ProjectVideos {
-  videoId    Int       @id @default(autoincrement()) @map("video_id")
-  videoUrl   String    @db.VarChar(100) @map("video_url")
-  title      String    @db.VarChar(150)
-  position   Int
-  projectId  Int       @map("project_id")
-  projects   Projects  @relation("ProjectVideos", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_videos_projects")
+  videoId   Int      @id @default(autoincrement()) @map("video_id")
+  videoUrl  String   @map("video_url") @db.VarChar(100)
+  title     String   @db.VarChar(150)
+  position  Int
+  projectId Int      @map("project_id")
+  projects  Projects @relation("ProjectVideos", fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK_project_videos_projects")
 
   @@index([projectId], map: "FK_project_videos_projects")
   @@map("project_videos")
@@ -165,7 +164,7 @@ model ProjectTags {
 }
 
 model Projects {
-  projectId         Int                 @id @default(autoincrement()) @map("project_id") @unique
+  projectId         Int                 @id @unique @default(autoincrement()) @map("project_id")
   title             String              @db.VarChar(50)
   hook              String              @default("") @db.VarChar(300)
   description       String              @default("") @db.Text
@@ -190,17 +189,17 @@ model Projects {
   approved          Boolean             @default(false)
 
   //here because prisma doesn't like one-way relationships
-  awaitingapproval  ProjectsAwaitingApproval?  @relation()
-  report            ReportProject[]
-  memberRequest     MemberRequests[]
+  awaitingapproval ProjectsAwaitingApproval? @relation()
+  report           ReportProject[]
+  memberRequest    MemberRequests[]
 
   @@index([userId], map: "FK_user_id")
   @@map("projects")
 }
 
 model ProjectsAwaitingApproval {
-  projectId Int     @id @map("project_id")
-  project Projects  @relation(fields: [projectId], references: [projectId], onDelete: Cascade, onUpdate: Cascade)
+  projectId Int      @id @map("project_id")
+  project   Projects @relation(fields: [projectId], references: [projectId], onDelete: Cascade, onUpdate: Cascade)
 
   @@map("projects_awaiting_approval")
 }
@@ -220,12 +219,12 @@ model ReportProject {
 }
 
 model ReportUser {
-  reportId      Int       @id @default(autoincrement()) @map("report_id")
-  reporterId    Int       @map("reporter_id")
-  reportedId    Int       @map("reported_id")
-  reportText    String    @map("report_text")
-  reporter      Users     @relation("reporter_id", fields: [reporterId], references: [userId], map: "FK_user_report_reporter")
-  reported      Users     @relation("reported_id", fields: [reportedId], references: [userId], map: "FK_user_report_reported")
+  reportId   Int    @id @default(autoincrement()) @map("report_id")
+  reporterId Int    @map("reporter_id")
+  reportedId Int    @map("reported_id")
+  reportText String @map("report_text")
+  reporter   Users  @relation("reporter_id", fields: [reporterId], references: [userId], map: "FK_user_report_reporter")
+  reported   Users  @relation("reported_id", fields: [reportedId], references: [userId], map: "FK_user_report_reported")
 
   @@unique([reporterId, reportedId])
   @@index([reporterId], map: "FK_user_report_reporter")
@@ -255,11 +254,11 @@ model Skills {
 }
 
 model Session {
-  id                String    @id
-  sid               String    @unique
-  data              String    @db.Text
-  gid               String    @default("federalist papers")
-  expiresAt         DateTime
+  id        String   @id
+  sid       String   @unique
+  data      String   @db.Text
+  gid       String   @default("federalist papers")
+  expiresAt DateTime
 
   @@map("session")
 }
@@ -335,7 +334,6 @@ model Users {
   title             String              @default("") @db.VarChar(50)
   ritStatus         UsersRitStatus?     @map("rit_status")
   location          String              @default("") @db.VarChar(150)
-  funFact           String              @default("") @map("fun_fact") @db.VarChar(100)
   bio               String              @default("") @db.VarChar(600)
   privacy           Visibility          @default(public)
   mentor            Boolean             @default(false)
@@ -358,20 +356,21 @@ model Users {
   reporter          ReportUser[]        @relation("reporter_id")
   reported          ReportUser[]        @relation("reported_id")
   memberRequest     MemberRequests[]
-  accessLevel       AccessLevel         @map("access_level") @default(User)
+  accessLevel       AccessLevel         @default(User) @map("access_level")
 
   // here because prisma doesn't support one-way relationships
-  receiver          Notifications[]      @relation(name: "FK_receiver_to_notification")
+  receiver Notifications[] @relation(name: "FK_receiver_to_notification")
 
   @@map("users")
 }
+
 model JobSkills {
-  skillId    Int          @map("skill_id")
-  jobId      Int          @map("job_id")
+  skillId     Int              @map("skill_id")
+  jobId       Int              @map("job_id")
   proficiency SkillProficiency
-  position   Int      
-  skill      Skills       @relation(fields: [skillId], references: [skillId], onDelete: NoAction, map: "FK_job_skills_skills")
-  jobs       Jobs         @relation(fields: [jobId], references: [jobId])
+  position    Int
+  skill       Skills           @relation(fields: [skillId], references: [skillId], onDelete: NoAction, map: "FK_job_skills_skills")
+  jobs        Jobs             @relation(fields: [jobId], references: [jobId])
 
   @@id([jobId, skillId])
   @@index([skillId], map: "FK_job_skills_skills")
@@ -388,17 +387,17 @@ enum JobsAvailability {
 }
 
 enum JobsDuration {
-  Days @map("Days")
-  Weeks  @map("Weeks")
-  Months  @map("Months")
-  Semesters  @map("Semesters")
-  Years  @map("Years")
+  Days      @map("Days")
+  Weeks     @map("Weeks")
+  Months    @map("Months")
+  Semesters @map("Semesters")
+  Years     @map("Years")
 
   @@map("jobs_duration")
 }
 
 enum JobsLocation {
-  OnSite @map("On-site")
+  OnSite   @map("On-site")
   Remote
   Hybrid
   Flexible
@@ -437,12 +436,12 @@ enum Visibility {
 }
 
 enum UsersRitStatus {
-  FirstYear        @map("1st Year")
-  SecondYear       @map("2nd Year")
-  ThirdYear        @map("3rd Year")
-  FourthYear       @map("4th Year")
-  FifthYear        @map("5th Year")
-  GraduateStudent  @map("Graduate Student")
+  FirstYear       @map("1st Year")
+  SecondYear      @map("2nd Year")
+  ThirdYear       @map("3rd Year")
+  FourthYear      @map("4th Year")
+  FifthYear       @map("5th Year")
+  GraduateStudent @map("Graduate Student")
   Alumni
   Faculty
   Staff

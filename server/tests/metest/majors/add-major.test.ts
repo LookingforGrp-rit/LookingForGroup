@@ -35,7 +35,6 @@ const prismaUpdatedUser = {
   title: '',
   ritStatus: null,
   location: '',
-  funFact: '',
   bio: '',
   privacy: 'public',
   mentor: false,

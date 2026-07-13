@@ -20,7 +20,6 @@ export const MeDetailSelector = Object.freeze({
   bio: true,
   ritStatus: true,
   location: true,
-  funFact: true,
   title: true,
   members: {
     select: MyMemberSelector,
