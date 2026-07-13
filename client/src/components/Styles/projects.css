@@ -424,9 +424,10 @@ Project Creator and Editor Popup style rules
   max-height: 100%;
   overflow: scroll;
 }
+
 @media screen and (max-height: 750px) {
   #project-creator-editor {
-    padding-bottom: 20px; 
+    padding-bottom: 20px;
   }
 }
 
@@ -1286,39 +1287,126 @@ Project Creator and Editor Popup style rules
   color: var(--main-text) !important;
 }
 
-#project-editor-tag-search-tabs .filter-tab-blue       { border-color: var(--tag-blue-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-green      { border-color: var(--tag-green-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-pink       { border-color: var(--tag-pink-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-grey       { border-color: var(--tag-grey-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-yellow     { border-color: var(--tag-yellow-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-red        { border-color: var(--tag-red-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-orange     { border-color: var(--tag-orange-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-purple     { border-color: var(--tag-purple-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-periwinkle { border-color: var(--tag-periwinkle-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-cyan       { border-color: var(--tag-cyan-selected) !important; }
+#project-editor-tag-search-tabs .filter-tab-blue {
+  border-color: var(--tag-blue-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-green {
+  border-color: var(--tag-green-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-pink {
+  border-color: var(--tag-pink-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-grey {
+  border-color: var(--tag-grey-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-yellow {
+  border-color: var(--tag-yellow-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-red {
+  border-color: var(--tag-red-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-orange {
+  border-color: var(--tag-orange-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-purple {
+  border-color: var(--tag-purple-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-periwinkle {
+  border-color: var(--tag-periwinkle-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-cyan {
+  border-color: var(--tag-cyan-selected) !important;
+}
 
 
-#project-editor-tag-search-tabs .filter-tab-blue.tag-search-tab-active       { background-color: var(--tag-blue-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-green.tag-search-tab-active      { background-color: var(--tag-green-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-pink.tag-search-tab-active       { background-color: var(--tag-pink-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-grey.tag-search-tab-active       { background-color: var(--tag-grey-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-yellow.tag-search-tab-active     { background-color: var(--tag-yellow-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-red.tag-search-tab-active        { background-color: var(--tag-red-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-orange.tag-search-tab-active     { background-color: var(--tag-orange-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-purple.tag-search-tab-active     { background-color: var(--tag-purple-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-periwinkle.tag-search-tab-active { background-color: var(--tag-periwinkle-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-cyan.tag-search-tab-active       { background-color: var(--tag-cyan-selected) !important; }
+#project-editor-tag-search-tabs .filter-tab-blue.tag-search-tab-active {
+  background-color: var(--tag-blue-selected) !important;
+}
 
-#project-editor-tag-search-tabs .filter-tab-blue:not(.tag-search-tab-active)       { background-color: var(--tag-blue-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-green:not(.tag-search-tab-active)      { background-color: var(--tag-green-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-pink:not(.tag-search-tab-active)       { background-color: var(--tag-pink-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-grey:not(.tag-search-tab-active)       { background-color: var(--tag-grey-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-yellow:not(.tag-search-tab-active)     { background-color: var(--tag-yellow-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-red:not(.tag-search-tab-active)        { background-color: var(--tag-red-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-orange:not(.tag-search-tab-active)     { background-color: var(--tag-orange-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-purple:not(.tag-search-tab-active)     { background-color: var(--tag-purple-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-periwinkle:not(.tag-search-tab-active) { background-color: var(--tag-periwinkle-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-cyan:not(.tag-search-tab-active)       { background-color: var(--tag-cyan-unselected) !important; }
+#project-editor-tag-search-tabs .filter-tab-green.tag-search-tab-active {
+  background-color: var(--tag-green-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-pink.tag-search-tab-active {
+  background-color: var(--tag-pink-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-grey.tag-search-tab-active {
+  background-color: var(--tag-grey-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-yellow.tag-search-tab-active {
+  background-color: var(--tag-yellow-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-red.tag-search-tab-active {
+  background-color: var(--tag-red-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-orange.tag-search-tab-active {
+  background-color: var(--tag-orange-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-purple.tag-search-tab-active {
+  background-color: var(--tag-purple-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-periwinkle.tag-search-tab-active {
+  background-color: var(--tag-periwinkle-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-cyan.tag-search-tab-active {
+  background-color: var(--tag-cyan-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-blue:not(.tag-search-tab-active) {
+  background-color: var(--tag-blue-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-green:not(.tag-search-tab-active) {
+  background-color: var(--tag-green-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-pink:not(.tag-search-tab-active) {
+  background-color: var(--tag-pink-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-grey:not(.tag-search-tab-active) {
+  background-color: var(--tag-grey-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-yellow:not(.tag-search-tab-active) {
+  background-color: var(--tag-yellow-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-red:not(.tag-search-tab-active) {
+  background-color: var(--tag-red-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-orange:not(.tag-search-tab-active) {
+  background-color: var(--tag-orange-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-purple:not(.tag-search-tab-active) {
+  background-color: var(--tag-purple-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-periwinkle:not(.tag-search-tab-active) {
+  background-color: var(--tag-periwinkle-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-cyan:not(.tag-search-tab-active) {
+  background-color: var(--tag-cyan-unselected) !important;
+}
 
 .team-tab-active {
   background-color: var(--bg-color);
@@ -1473,7 +1561,7 @@ Project Creator and Editor Popup style rules
   margin: 25px 0;
 }
 
-#project-editor-project-requests .delete-invite-btn, 
+#project-editor-project-requests .delete-invite-btn,
 #project-editor-project-requests .next-btn {
   padding: 4px;
   background: none;
@@ -1492,7 +1580,7 @@ Project Creator and Editor Popup style rules
 .edit-project-member-button {
   position: absolute;
   width: 24px;
-  height: 24px;
+  height: 24px !important;
   background-color: var(--primary-color) !important;
   border: none;
   border-radius: 100%;
@@ -1503,12 +1591,12 @@ Project Creator and Editor Popup style rules
 
 #edit-position-skills-list {
   display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-      overflow-y: auto;
-      padding: 15px 0;
-      --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
-      mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  gap: 7px;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  padding: 15px 0;
+  --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
 }
 
 #edit-position-skills-container .edit-project-member-button,
@@ -1518,6 +1606,11 @@ Project Creator and Editor Popup style rules
   right: 0;
   padding: 4px 10px;
   height: min-content;
+}
+
+#edit-position-skills-container .edit-project-member-button {
+  padding: 0;
+  height: 24px;
 }
 
 #profile-extra #project-info-edit {
@@ -1776,7 +1869,7 @@ Project Creator and Editor Popup style rules
   max-width: 100%;
 }
 
-#project-team-delete-member-text, 
+#project-team-delete-member-text,
 #project-team-delete-member-request-text,
 #project-team-review-app-text {
   text-align: center;
@@ -1790,7 +1883,8 @@ Project Creator and Editor Popup style rules
   gap: 10px;
 }
 
-.delete-button, .save-button {
+.delete-button,
+.save-button {
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
@@ -1836,11 +1930,13 @@ Project Creator and Editor Popup style rules
   width: fit-content;
 }
 
-.delete-button:hover, .save-button:hover {
+.delete-button:hover,
+.save-button:hover {
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }
 
-.delete-button:focus-visible, .save-button:focus-visible {
+.delete-button:focus-visible,
+.save-button:focus-visible {
   outline-offset: 2px;
   outline: 3px solid var(--primary-color);
   transition: 0s;
