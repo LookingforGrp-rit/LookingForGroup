@@ -465,6 +465,26 @@ Project Creator and Editor Popup style rules
   line-height: 1;
 }
 
+/* Flash outline on the field the editor auto-scrolls to after a failed save
+   (added/removed by scrollToInvalidField in ProjectCreatorEditor). Holds red
+   briefly so the user's eye lands on it, then fades out. */
+.field-invalid-flash {
+  border-radius: 10px;
+  animation: invalid-field-pulse 2s ease-out;
+}
+
+@keyframes invalid-field-pulse {
+
+  0%,
+  40% {
+    box-shadow: 0 0 0 3px var(--error-delete-color);
+  }
+
+  100% {
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
+
 #project-editor-save {
   display: block;
   align-self: center;
@@ -1560,7 +1580,7 @@ Project Creator and Editor Popup style rules
 .edit-project-member-button {
   position: absolute;
   width: 24px;
-  height: 24px;
+  height: 24px !important;
   background-color: var(--primary-color) !important;
   border: none;
   border-radius: 100%;
@@ -1586,6 +1606,11 @@ Project Creator and Editor Popup style rules
   right: 0;
   padding: 4px 10px;
   height: min-content;
+}
+
+#edit-position-skills-container .edit-project-member-button {
+  padding: 0;
+  height: 24px;
 }
 
 #profile-extra #project-info-edit {
