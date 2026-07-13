@@ -465,6 +465,26 @@ Project Creator and Editor Popup style rules
   line-height: 1;
 }
 
+/* Flash outline on the field the editor auto-scrolls to after a failed save
+   (added/removed by scrollToInvalidField in ProjectCreatorEditor). Holds red
+   briefly so the user's eye lands on it, then fades out. */
+.field-invalid-flash {
+  border-radius: 10px;
+  animation: invalid-field-pulse 2s ease-out;
+}
+
+@keyframes invalid-field-pulse {
+
+  0%,
+  40% {
+    box-shadow: 0 0 0 3px var(--error-delete-color);
+  }
+
+  100% {
+    box-shadow: 0 0 0 3px transparent;
+  }
+}
+
 #project-editor-save {
   display: block;
   align-self: center;
