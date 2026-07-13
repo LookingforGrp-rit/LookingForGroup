@@ -18,7 +18,6 @@ export const UserPreviewSelector = Object.freeze({
       },
     },
   },
-  funFact: true,
   pronouns: true,
   title: true,
   headline: true,
