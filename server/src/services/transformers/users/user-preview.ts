@@ -29,7 +29,6 @@ export const transformUserToPreview = (user: UsersGetPayload): UserPreview => {
     location: user.location,
     title: user.title,
     privacy: user.privacy,
-    funFact: user.funFact,
     displayPhone: user.displayPhone,
     majors: user.majors.map(transformMajor),
     mentor: user.mentor,
