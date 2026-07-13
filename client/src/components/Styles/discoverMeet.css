@@ -1587,4 +1587,12 @@ Filters / Tags Style Rules
   #selected-section.popup-section p {
     font-size: 0.85rem !important;
   }
+
+  #filter-settings {
+    width: 90%;
+  .select-container {
+    width: 48%;
+  }
+}
+
 }

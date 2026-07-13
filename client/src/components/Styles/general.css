@@ -1242,6 +1242,8 @@ body.modal-open {
     }
   }
 
+
+
   #match-button {
     width: fit-content;
     height: 40px;
@@ -2080,6 +2082,7 @@ Select style rules
   width: 100%;
   border-radius: 10px;
 }
+
 
 /* Universal styles for Select component */
 .select {
