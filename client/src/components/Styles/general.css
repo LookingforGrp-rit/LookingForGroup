@@ -139,6 +139,7 @@ General style rules
     Should be black for all tags in light mode
     and match the tag color in dark mode
     */
+    
 }
 
 /*light mode color scheme*/
@@ -228,6 +229,7 @@ General style rules
 * {
   font-family: 'Inter', sans-serif;
   color: var(--main-text);
+  transition: background-color 0.5s ease, color 0.5s ease;
 }
 
 /*basic rules for hiding/showing certain elements
@@ -1240,6 +1242,8 @@ body.modal-open {
     }
   }
 
+
+
   #match-button {
     width: fit-content;
     height: 40px;
@@ -2078,6 +2082,7 @@ Select style rules
   width: 100%;
   border-radius: 10px;
 }
+
 
 /* Universal styles for Select component */
 .select {
