@@ -591,9 +591,12 @@ export const TagsTab = ({
             </div>}
           <PopupButton
             buttonId="project-editor-save"
-            doNotClose={() => failCheck}
-            disabled={!saveable}
-            className={!saveable ? "disabled" : ""}
+            doNotClose={() => failCheck || !saveable}
+            callback={() => {
+              // Incomplete form: still clickable so the save validation runs,
+              // shows the error, and auto-scrolls to the first missing field.
+              if (!saveable) saveProject?.();
+            }}
           >
             Save Changes
           </PopupButton>
