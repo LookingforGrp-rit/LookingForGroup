@@ -1650,6 +1650,78 @@ Project Creator and Editor Popup style rules
   font-size: 1.6ch;
 }
 
+/* "Merge Project Team" tile below the Current Team view */
+#merge-project-team {
+  display: flex;
+  justify-content: center;
+  margin: 14px 0 4px;
+}
+
+#project-editor-merge-team {
+  display: flex;
+  padding: 12px 15px;
+  max-width: 234px;
+  width: 100%;
+  gap: 10px;
+  flex-direction: row;
+  border: none;
+  border-radius: 10px;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--primary-color) !important;
+}
+
+#project-team-merge-text {
+  font-weight: 700;
+  color: var(--header-color);
+  font-size: 1.6ch;
+}
+
+/* Merge popup: a comfortable content-sized box instead of the nested-popup
+   shrink-wrap (which cramped everything against the edges). */
+.popup:has(> #merge-team-info) {
+  width: min(520px, 92vw);
+  height: auto;
+  max-height: 90vh;
+  padding: 36px 44px 28px;
+  box-sizing: border-box;
+  gap: 8px;
+}
+
+.popup:has(> #merge-team-info) #project-team-add-member-title {
+  margin-bottom: 6px;
+}
+
+#merge-team-info {
+  max-width: 440px;
+  text-align: center;
+  line-height: 1.45;
+}
+
+#merge-team-status {
+  min-height: 1.2em;
+  margin: 6px 0;
+}
+
+#merge-team-select {
+  width: 100%;
+  margin: 8px 0 18px;
+}
+
+/* Render the project list in-flow so the popup GROWS to fit it instead of the
+   options overlaying past the popup's bottom edge and forcing it to scroll. */
+#merge-team-select .select-options {
+  position: static;
+  display: block;
+  width: 100%;
+  max-height: 200px;
+  box-shadow: none;
+}
+
+#merge-team-select .select-option {
+  min-width: 0;
+}
+
 /* User search in Add Member button */
 #user-search-container {
   position: relative;
