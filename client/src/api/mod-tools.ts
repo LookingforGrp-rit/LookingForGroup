@@ -1,6 +1,6 @@
 import { GET, DELETE, PATCH } from "./index";
-import { ApiResponse, UserAccessLevel } from "@looking-for-group/shared";
-import { ProjectPreview, UserPreview } from "@looking-for-group/shared";
+import { ApiResponse, UserAccessLevel, UserPreview } from "@looking-for-group/shared";
+import { ProjectPreview } from "@looking-for-group/shared";
 
 /**
  * Gets a list of all reported projects
@@ -57,12 +57,11 @@ export const getReportedProjects = async (): Promise<ApiResponse<ProjectPreview[
 /**
  * Gets the list of all reported users
  */
-export const getReportedUsers = async (): Promise<ApiResponse<UserPreview[]>> => {
+export const getReportedUsers = async (): Promise<ApiResponse> => {
     const apiURL = `/mod/user-report/`;
     const response = await GET(apiURL);
 
     if (response.error) console.log(`Error in getReportedUsers: ${response.error}`);
-    else {console.log("successfully received all user reports");}
     return response;
 };
 

@@ -115,7 +115,7 @@ const ModeratorPage = () => {
                 hideBackButton={false}
             />
             <h1 className="page-title">Moderation</h1>
-            <p>Manage pending project requests, handle user and project reports, and more!</p>
+            <p id="mod-page-description">Manage pending project requests, handle user and project reports, and more!</p>
             <main id="main" tabIndex={-1} aria-label='main content'>
                 {userIsAdmin ?
                 <div id="mod-tools-block">

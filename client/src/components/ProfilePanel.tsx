@@ -148,15 +148,8 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             </div>
             <p>{profileData.pronouns}</p>
           </div> : ""}
-        {profileData.funFact ?
-          <div className={'profile-panel-hover-item'}>
-            <div className={'icon-box'}>
-              <ThemeIcon id={'funfact'} width={24} height={24} className={'color-fill undefined'} ariaLabel={'Fun Fact'} />
-            </div>
-            <p>{profileData.funFact}</p>
-          </div> : ""}
           {/* Displays 'No extra information' if there is no other data displayed on the user's profile */}
-        {!(profileData.title || profileData.location || profileData.pronouns || profileData.funFact) ?
+        {!(profileData.title || profileData.location || profileData.pronouns) ?
           <div className='profile-panel-hover-item'>
             <p>No extra information</p>
           </div> : ""}

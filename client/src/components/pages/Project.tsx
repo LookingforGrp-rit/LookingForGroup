@@ -19,13 +19,13 @@ import {
   leaveProject as leaveProjectApi,
 } from "../../api/users";
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
-import { MePrivate, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
+import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
 import usePreloadedImage from '../../functions/imageLoad';
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
-import { getUserAccessLevel } from "../../api/mod-tools";
+import { getReportedProjects, getUserAccessLevel } from "../../api/mod-tools";
 
 //Main component for the project page
 /**
@@ -50,6 +50,8 @@ const Project = () => {
 
   const [displayedProject, setDisplayedProject] =
     useState<ProjectWithFollowers>();
+
+  const [reportedProject, setReportedProject] = useState<boolean>(false);
 
   type ApprovalStatusKey = keyof typeof ApprovalStatus;
   const [approvalStatus, setApprovalStatus] = useState<ApprovalStatusKey>('not-approved');
@@ -116,6 +118,7 @@ const Project = () => {
     const projectResp = await getByID(projectID);
     if (projectResp.data) {
       setDisplayedProject(projectResp.data);
+      isProjectReported();
       checkFollow();
       setFollowCount(projectResp.data.followers.count);
 
@@ -127,7 +130,6 @@ const Project = () => {
           }
         }
       }
-
     }
   };
 
@@ -169,6 +171,7 @@ const Project = () => {
     if (isMember) {
       checkApprovalRequest();
     }
+
   }, [projectID, isMember]);
 
   // Checks mod permissions
@@ -872,14 +875,26 @@ const reportProjectPressed = async () => {
               </div>
             </div>
 
-            {/* Approval Button */}
+            {/* Mod options to approve, request edits, or reject a project request */}
             {isUserAdmin && approvalStatus == 'under-review' ? <div className="mod-project-options">
                 <h4>Approve?</h4>
                 <p>You can approve, request an edit, or decline this project.</p>
                 <div id="mod-options-btns">
                   <button id="mod-approve-btn">Approve</button>
                   <button id="mod-edit-btn">Edit</button>
-                  <button id="mod-decline-btn">Decline</button>
+                  <button id="mod-decline-btn" className="delete-button">Decline</button>
+                </div>
+              </div>
+            : ""}
+
+            {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
+            {isUserAdmin && reportedProject ?  <div className="mod-project-options">
+                <h4>Approve?</h4>
+                <p>You can approve, request an edit, or decline this project.</p>
+                <div id="mod-options-btns">
+                  <button id="mod-ignore-btn">Ignore</button>
+                  <button id="mod-edit-btn">Edit</button>
+                  <button id="mod-remove-btn" className="delete-button">Remove</button>
                 </div>
               </div>
             : ""}

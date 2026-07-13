@@ -41,13 +41,13 @@ const PendingProjects = ({currentUserId, currentTab}: PendingProjectsProps) => {
     return (
         <div id="mod-tools">
             <div className="pending-projects">
-                {pendingProjects.length >= 0 ? 
+                {pendingProjects.length > 0 ? 
                     <PanelBox
                         category={"projects"}
                         itemList={pendingProjects ? pendingProjects : []}
                         userId={currentUserId}
                     ></PanelBox> 
-                : ""}
+                : "No pending projects!"}
             </div>
         </div>
     );

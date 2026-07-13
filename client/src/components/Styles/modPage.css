@@ -53,4 +53,53 @@
     .page-title {
         padding: 20px;
     }
+    #mod-page-description
+    {
+        width: 90%;
+        text-align: center;
+    }
+}
+#mod-options-btns
+{
+    #mod-approve-btn
+    {
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        background-color: var(--approved-green, #b1fca9);
+        color: var(--main-text);
+        font-size: 2ch;
+        width: max-content;
+        margin: auto min(1vw, 10px);
+        font-weight: 700;
+    }
+    #mod-edit-btn
+    {
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        background-color: var(--under-review-yellow, #ffe1a2);
+        color: var(--main-text);
+        font-size: 2ch;
+        width: max-content;
+        margin: auto min(1vw, 10px);
+        font-weight: 700;
+    }
+    #mod-ignore-btn
+    {
+        border: none;
+        border-radius: 30px;
+        padding: 10px 20px;
+        background-color: var(--primary-color);
+        color: var(--main-text);
+        font-size: 2ch;
+        width: max-content;
+        margin: auto min(1vw, 10px);
+        font-weight: 700;
+    }
+    /* decline btn styled by delete-button */
+    #mod-decline-btn
+    {
+        color: var(--main-text);
+    }
 }
