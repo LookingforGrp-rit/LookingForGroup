@@ -424,9 +424,10 @@ Project Creator and Editor Popup style rules
   max-height: 100%;
   overflow: scroll;
 }
+
 @media screen and (max-height: 750px) {
   #project-creator-editor {
-    padding-bottom: 20px; 
+    padding-bottom: 20px;
   }
 }
 
@@ -1266,39 +1267,126 @@ Project Creator and Editor Popup style rules
   color: var(--main-text) !important;
 }
 
-#project-editor-tag-search-tabs .filter-tab-blue       { border-color: var(--tag-blue-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-green      { border-color: var(--tag-green-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-pink       { border-color: var(--tag-pink-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-grey       { border-color: var(--tag-grey-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-yellow     { border-color: var(--tag-yellow-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-red        { border-color: var(--tag-red-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-orange     { border-color: var(--tag-orange-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-purple     { border-color: var(--tag-purple-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-periwinkle { border-color: var(--tag-periwinkle-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-cyan       { border-color: var(--tag-cyan-selected) !important; }
+#project-editor-tag-search-tabs .filter-tab-blue {
+  border-color: var(--tag-blue-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-green {
+  border-color: var(--tag-green-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-pink {
+  border-color: var(--tag-pink-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-grey {
+  border-color: var(--tag-grey-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-yellow {
+  border-color: var(--tag-yellow-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-red {
+  border-color: var(--tag-red-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-orange {
+  border-color: var(--tag-orange-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-purple {
+  border-color: var(--tag-purple-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-periwinkle {
+  border-color: var(--tag-periwinkle-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-cyan {
+  border-color: var(--tag-cyan-selected) !important;
+}
 
 
-#project-editor-tag-search-tabs .filter-tab-blue.tag-search-tab-active       { background-color: var(--tag-blue-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-green.tag-search-tab-active      { background-color: var(--tag-green-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-pink.tag-search-tab-active       { background-color: var(--tag-pink-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-grey.tag-search-tab-active       { background-color: var(--tag-grey-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-yellow.tag-search-tab-active     { background-color: var(--tag-yellow-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-red.tag-search-tab-active        { background-color: var(--tag-red-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-orange.tag-search-tab-active     { background-color: var(--tag-orange-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-purple.tag-search-tab-active     { background-color: var(--tag-purple-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-periwinkle.tag-search-tab-active { background-color: var(--tag-periwinkle-selected) !important; }
-#project-editor-tag-search-tabs .filter-tab-cyan.tag-search-tab-active       { background-color: var(--tag-cyan-selected) !important; }
+#project-editor-tag-search-tabs .filter-tab-blue.tag-search-tab-active {
+  background-color: var(--tag-blue-selected) !important;
+}
 
-#project-editor-tag-search-tabs .filter-tab-blue:not(.tag-search-tab-active)       { background-color: var(--tag-blue-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-green:not(.tag-search-tab-active)      { background-color: var(--tag-green-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-pink:not(.tag-search-tab-active)       { background-color: var(--tag-pink-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-grey:not(.tag-search-tab-active)       { background-color: var(--tag-grey-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-yellow:not(.tag-search-tab-active)     { background-color: var(--tag-yellow-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-red:not(.tag-search-tab-active)        { background-color: var(--tag-red-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-orange:not(.tag-search-tab-active)     { background-color: var(--tag-orange-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-purple:not(.tag-search-tab-active)     { background-color: var(--tag-purple-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-periwinkle:not(.tag-search-tab-active) { background-color: var(--tag-periwinkle-unselected) !important; }
-#project-editor-tag-search-tabs .filter-tab-cyan:not(.tag-search-tab-active)       { background-color: var(--tag-cyan-unselected) !important; }
+#project-editor-tag-search-tabs .filter-tab-green.tag-search-tab-active {
+  background-color: var(--tag-green-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-pink.tag-search-tab-active {
+  background-color: var(--tag-pink-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-grey.tag-search-tab-active {
+  background-color: var(--tag-grey-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-yellow.tag-search-tab-active {
+  background-color: var(--tag-yellow-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-red.tag-search-tab-active {
+  background-color: var(--tag-red-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-orange.tag-search-tab-active {
+  background-color: var(--tag-orange-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-purple.tag-search-tab-active {
+  background-color: var(--tag-purple-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-periwinkle.tag-search-tab-active {
+  background-color: var(--tag-periwinkle-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-cyan.tag-search-tab-active {
+  background-color: var(--tag-cyan-selected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-blue:not(.tag-search-tab-active) {
+  background-color: var(--tag-blue-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-green:not(.tag-search-tab-active) {
+  background-color: var(--tag-green-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-pink:not(.tag-search-tab-active) {
+  background-color: var(--tag-pink-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-grey:not(.tag-search-tab-active) {
+  background-color: var(--tag-grey-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-yellow:not(.tag-search-tab-active) {
+  background-color: var(--tag-yellow-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-red:not(.tag-search-tab-active) {
+  background-color: var(--tag-red-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-orange:not(.tag-search-tab-active) {
+  background-color: var(--tag-orange-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-purple:not(.tag-search-tab-active) {
+  background-color: var(--tag-purple-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-periwinkle:not(.tag-search-tab-active) {
+  background-color: var(--tag-periwinkle-unselected) !important;
+}
+
+#project-editor-tag-search-tabs .filter-tab-cyan:not(.tag-search-tab-active) {
+  background-color: var(--tag-cyan-unselected) !important;
+}
 
 .team-tab-active {
   background-color: var(--bg-color);
@@ -1453,7 +1541,7 @@ Project Creator and Editor Popup style rules
   margin: 25px 0;
 }
 
-#project-editor-project-requests .delete-invite-btn, 
+#project-editor-project-requests .delete-invite-btn,
 #project-editor-project-requests .next-btn {
   padding: 4px;
   background: none;
@@ -1483,12 +1571,12 @@ Project Creator and Editor Popup style rules
 
 #edit-position-skills-list {
   display: flex;
-      gap: 7px;
-      flex-wrap: wrap;
-      overflow-y: auto;
-      padding: 15px 0;
-      --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
-      mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  gap: 7px;
+  flex-wrap: wrap;
+  overflow-y: auto;
+  padding: 15px 0;
+  --webkit--mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
+  mask-image: linear-gradient(to bottom, transparent, black 10%, black 90%, transparent);
 }
 
 #edit-position-skills-container .edit-project-member-button,
@@ -1756,7 +1844,7 @@ Project Creator and Editor Popup style rules
   max-width: 100%;
 }
 
-#project-team-delete-member-text, 
+#project-team-delete-member-text,
 #project-team-delete-member-request-text,
 #project-team-review-app-text {
   text-align: center;
@@ -1770,7 +1858,8 @@ Project Creator and Editor Popup style rules
   gap: 10px;
 }
 
-.delete-button, .save-button {
+.delete-button,
+.save-button {
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
@@ -1816,11 +1905,13 @@ Project Creator and Editor Popup style rules
   width: fit-content;
 }
 
-.delete-button:hover, .save-button:hover {
+.delete-button:hover,
+.save-button:hover {
   box-shadow: 0px 0px 10px 0px var(--shadow-color);
 }
 
-.delete-button:focus-visible, .save-button:focus-visible {
+.delete-button:focus-visible,
+.save-button:focus-visible {
   outline-offset: 2px;
   outline: 3px solid var(--primary-color);
   transition: 0s;
@@ -1973,6 +2064,10 @@ Project Creator and Editor Popup style rules
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 7px;
+
+  label {
+    min-width: 130px;
+  }
 }
 
 #edit-position-details,
@@ -2017,7 +2112,7 @@ Project Creator and Editor Popup style rules
   align-items: center;
   gap: 5px;
   width: 100%;
-  justify-content: right;
+  justify-content: left;
 }
 
 button.edit-position-contact {
@@ -3758,6 +3853,12 @@ project-team-open-posiions-info: edit/create proj popup
   .select-container {
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
   }
+
+  #edit-position-details {
+    .select-container {
+      width: fit-content;
+    }
+  }
 }
 
 #project-team-open-positions-info>.positions-popup-list {
@@ -3843,7 +3944,7 @@ button#positions-popup-list-item-active {
   }
 
   .edit-position-container {
-    justify-content: right;
+    justify-content: left;
   }
 }
 
@@ -3852,13 +3953,6 @@ button#positions-popup-list-item-active {
   #edit-position-details-left,
   #edit-position-details-right {
     flex-wrap: nowrap;
-  }
-}
-
-@media only screen and (max-width: 395px) {
-
-  .edit-position-container {
-    flex-direction: column;
   }
 }
 
@@ -3880,6 +3974,21 @@ button#positions-popup-list-item-active {
   box-sizing: border-box;
 }
 
+#position-contact {
+  margin: 20px;
+  margin-left: auto;
+  padding-left: 20px;
+  max-width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  font-style: italic;
+  color: var(--neutral-gray);
+  justify-content: end;
+}
+
 @media only screen and (max-width: 1194px) {
   #project-open-positions-popup {
     gap: 30px;
@@ -3887,6 +3996,19 @@ button#positions-popup-list-item-active {
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 10px;
+  }
+}
+
+@media only screen and (max-width: 1070px) {
+  #edit-position-details {
+    .select-container {
+      min-width: 250px;
+    }
+
+    label {
+      text-align: right;
+      padding-right: 10px;
+    }
   }
 }
 
@@ -3909,21 +4031,51 @@ button#positions-popup-list-item-active {
     width: 100%;
   }
 
-  /* #project-team-open-positions-info {
-    align-items: center;
-    text-align: center;
-    align-content: center;
-    margin: 0;
-    flex-direction: column;
-  } */
-
   #project-team-open-positions-info,
   #join-team-open-positions-info {
     flex-wrap: wrap;
     flex-direction: column;
   }
+
+  #edit-position-details {
+    .select-container {
+      min-width: 250px;
+    }
+  }
+
+  #position-contact {
+    margin-left: 20px;
+  }
 }
 
+@media only screen and (max-width: 500px) {
+  #edit-position-details {
+    .select-container {
+      min-width: 200px;
+    }
+  }
+}
+
+@media only screen and (max-width: 400px) {
+
+  .edit-position-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  #edit-position-details {
+    label {
+      width: fit-content;
+      text-align: left;
+      padding: 0;
+    }
+
+    .select-container {
+      min-width: 200px;
+      margin-bottom: 10px;
+    }
+  }
+}
 
 .positions-popup-info select {
   margin: 0;
@@ -3972,21 +4124,6 @@ button#positions-popup-list-item-active {
   grid-area: compensation;
 }
 
-#position-contact {
-  margin: 20px;
-  margin-left: auto;
-  padding-left: 20px;
-  max-width: 100%;
-  height: fit-content;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 5px;
-  font-style: italic;
-  color: var(--neutral-gray);
-  justify-content: end;
-}
-
 #position-apply {
   display: flex;
   align-items: center;
@@ -4010,7 +4147,6 @@ button#positions-popup-list-item-active {
 
 #position-contact-link:hover {
   cursor: pointer;
-  /* background-color: #CCCCD7; */
   transition: background-color 0.1s;
 }
 
@@ -4018,14 +4154,6 @@ button#positions-popup-list-item-active {
   height: 32px;
   width: 32px;
   border-radius: 50%;
-}
-
-@media only screen and (max-width: 800px) {
-
-  #position-contact {
-    margin-left: 20px;
-  }
-
 }
 
 /* Quick Apply lives inline in #position-contact next to the owner link.
