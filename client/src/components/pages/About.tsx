@@ -57,18 +57,20 @@ const AboutPage = () => {
 
     return (
         <div className="page">
-            <Header
-                dataSets={dataSet}
-                onSearch={searchMembers}
-                value={searchQuery}
-                onChange={handleSearchChange}
-                hideSearchBar={true}
-                hideBackButton={false}
-            />
+            <aside aria-label='header'>
+                <Header
+                    dataSets={dataSet}
+                    onSearch={searchMembers}
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    hideSearchBar={true}
+                    hideBackButton={false}
+                />
+            </aside>
 
-            <main className="about-main" id="main" tabIndex={-1} aria-labelledby='about-header'>
+            <main className="about-main" id="main" tabIndex={-1} aria-labelledby='about-page-header'>
                 <section className="about-container" tabIndex={-1} style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
-                    <h1 className="about-header">About Looking For Group</h1>
+                    <h1 id="about-page-header" className="about-header">About Looking For Group</h1>
 
                     <section className="about-section" id="about-purpose">
                         <h2 className="about-header-two">Our Purpose</h2>

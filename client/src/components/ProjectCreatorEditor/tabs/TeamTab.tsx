@@ -1499,94 +1499,7 @@ export const TeamTab = ({
 							/>
 						</Select>
 					</div>
-					<div className="edit-position-container">
-						<label className="edit-position-contact">
-							Main Contact
-							<span
-								className="required-asterisk"
-								aria-hidden="true"
-								title="Required">
-								*
-							</span>
-						</label>
-						{/* <select className="edit-position-contact"></select> */}
-						<Select>
-							<SelectButton
-								className="edit-position-contact"
-								placeholder="Select"
-								type="input"
-								initialVal={
-									currentJob?.contact
-										? `${currentJob.contact.firstName} ${currentJob.contact.lastName}`
-										: ""
-								}
-							/>
-							<SelectOptions
-								className="edit-position-contact"
-								callback={(e) => {
-									const selectedId = parseInt(
-										(e.currentTarget as HTMLButtonElement)
-											.value
-									);
-									setCurrentJob({
-										...currentJob,
-										contact:
-											allUsers.find(
-												({ userId }) =>
-													userId === selectedId
-											) ?? null
-									} as ProjectJob);
-								}}
-								options={unmodifiedProject.members
-									.filter((member) => member.user !== null)
-									.filter(member => {
-										const pendingInvitation = pendingInvitations.find(req =>
-											req.prospectiveMemberId === member.user?.userId &&
-											req.roleId === member.role?.roleId &&
-											req.requestStatus !== 'Accepted');
-										const pendingApplication = pendingApplications.find(req =>
-											req.prospectiveMemberId === member.user?.userId &&
-											req.roleId === member.role?.roleId &&
-											req.requestStatus !== 'Accepted');
-										return !pendingInvitation && !pendingApplication;
-									})
-									// .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
-									.map(({ user }) => ({
-										markup: (
-											<>
-												<div className="project-editor-project-member-info">
-													<img
-														className="project-member-image"
-														src={
-															user!
-																.profileImage ??
-															profileImage
-														}
-														alt="profile"
-														title={
-															"Profile picture"
-														}
-														// Cannot use usePreloadedImage function because this is in a callback
-														onError={(e) => {
-															const profileImageElement =
-																e.target as HTMLImageElement;
-															profileImageElement.src =
-																profileImage;
-														}}
-													/>{" "}
-													<div className="project-editor-project-member-name">
-														{user!.firstName}{" "}
-														{user!.lastName}
-													</div>
-												</div>
-											</>
-										),
-										value: user!.userId.toString(),
-										disabled: false
-									}))}
-							/>
-						</Select>
-					</div>
+
 				</div>
 				<div id="edit-position-details-right">
 					<div className="edit-position-container">
@@ -1717,6 +1630,95 @@ export const TeamTab = ({
 							/>
 						</Select>
 					</div>
+				</div>
+				<div id="edit-position-details-right">
+					<div className="edit-position-container">
+						<label className="edit-position-contact">
+							Main Contact
+							<span
+								className="required-asterisk"
+								aria-hidden="true"
+								title="Required">
+								*
+							</span>
+						</label>
+						{/* <select className="edit-position-contact"></select> */}
+						<Select>
+							<SelectButton
+								className="edit-position-contact"
+								placeholder="Select"
+								type="input"
+								initialVal={
+									currentJob?.contact
+										? `${currentJob.contact.firstName} ${currentJob.contact.lastName}`
+										: ""
+								}
+							/>
+							<SelectOptions
+								className="edit-position-contact"
+								callback={(e) => {
+									const selectedId = parseInt(
+										(e.currentTarget as HTMLButtonElement)
+											.value
+									);
+									setCurrentJob({
+										...currentJob,
+										contact:
+											allUsers.find(
+												({ userId }) =>
+													userId === selectedId
+											) ?? null
+									} as ProjectJob);
+								}}
+								options={unmodifiedProject.members
+									.filter((member) => member.user !== null)
+									.filter(member => {
+										const pendingInvitation = pendingInvitations.find(req =>
+											req.prospectiveMemberId === member.user?.userId &&
+											req.roleId === member.role?.roleId &&
+											req.requestStatus !== 'Accepted');
+										const pendingApplication = pendingApplications.find(req =>
+											req.prospectiveMemberId === member.user?.userId &&
+											req.roleId === member.role?.roleId &&
+											req.requestStatus !== 'Accepted');
+										return !pendingInvitation && !pendingApplication;
+									})
+									// .filter((member) => member.role?.label === "Owner") // TODO change when perms exist
+									.map(({ user }) => ({
+										markup: (
+											<>
+												<div className="project-editor-project-member-info">
+													<img
+														className="project-member-image"
+														src={
+															user!
+																.profileImage ??
+															profileImage
+														}
+														alt="profile"
+														title={
+															"Profile picture"
+														}
+														// Cannot use usePreloadedImage function because this is in a callback
+														onError={(e) => {
+															const profileImageElement =
+																e.target as HTMLImageElement;
+															profileImageElement.src =
+																profileImage;
+														}}
+													/>{" "}
+													<div className="project-editor-project-member-name">
+														{user!.firstName}{" "}
+														{user!.lastName}
+													</div>
+												</div>
+											</>
+										),
+										value: user!.userId.toString(),
+										disabled: false
+									}))}
+							/>
+						</Select></div>
 				</div>
 			</div>
 			<div id="edit-position-buttons">
