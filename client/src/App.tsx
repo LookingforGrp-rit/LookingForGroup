@@ -3,7 +3,7 @@ import './components/Styles/master.css';
 // Components and pages
 import { Route, Routes, useLocation } from 'react-router-dom';
 import * as paths from './constants/routes';
-import { useEffect, useMemo, useState } from 'react';
+import { useState } from 'react';
 import SignUp from './components/pages/Signup';
 import ForgotPassword from './components/pages/ForgotPassword';
 import ResetPassword from './components/pages/ResetPassword';
@@ -12,7 +12,7 @@ import MyProjects from './components/pages/MyProjects';
 import Profile from './components/pages/Profile';
 import Project from './components/pages/Project';
 // import ProjectPostPage from './components/pages/ProjectPostPage';
-import { Discover, Meet} from './components/pages/DiscoverAndMeet';
+// import { Discover, Meet} from './components/pages/DiscoverAndMeet';
 import {DiscoverPage} from './components/pages/Discover';
 import {ProfileMeetPage} from './components/pages/Meet';
 //import Settings from './components/pages/Settings'; -- Commented in clean up 26-20-01 
@@ -30,7 +30,7 @@ import { ThemeContext } from './contexts/ThemeContext';
 import AboutPage from './components/pages/About';
 
 import { useLocalStorage } from 'usehooks-ts';
-import { getCurrentAccount } from './api/users';
+// import { getCurrentAccount } from './api/users';
 
 function App() {
   //const [avatarImage, setAvatarImage] = useState('/images/tempProfilePic.png'); -- Commented in clean up 26-20-01 

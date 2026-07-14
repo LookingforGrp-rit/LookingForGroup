@@ -9,6 +9,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Blocklist {
+  blockId   String  @map("block_id") @id @default(uuid())
+  blockerId Int     @map("blocker_id")
+  blockedId Int     @map("blocked_id")
+  blocker   Users   @relation(name: "UserToBlocker", fields: [blockerId], references: [userId], onDelete: Cascade, onUpdate: NoAction, map: "user_to_blocker_FK")
+  blocked   Users   @relation(name: "UserToBlocked", fields: [blockedId], references: [userId], onDelete: Cascade, onUpdate: NoAction, map: "user_to_blocked_FK")
+
+  @@map("blocklist")
+}
+
 model Mediums {
   mediumId Int        @id @default(autoincrement()) @map("medium_id")
   label    String     @unique @db.VarChar(50)
@@ -359,7 +369,9 @@ model Users {
   accessLevel       AccessLevel         @default(User) @map("access_level")
 
   // here because prisma doesn't support one-way relationships
-  receiver Notifications[] @relation(name: "FK_receiver_to_notification")
+  receiver          Notifications[]     @relation(name: "FK_receiver_to_notification")
+  blocklistBlocker  Blocklist[]         @relation(name: "UserToBlocker")
+  blocklistBlocked  Blocklist[]         @relation(name: "UserToBlocked")
 
   @@map("users")
 }

@@ -471,7 +471,13 @@ input:checked+.slider:before {
     border-bottom-right-radius: 10px;
   }
 
-  .delete-button {}
+  .delete-user-confirm {
+    text-align: center;
+    border: 1px solid var(--neutral-gray);
+    width: 6rem;
+    border-radius: 5px;
+    color: var(--error-delete-color)
+  }
 
   .small-popup {
     hr {
