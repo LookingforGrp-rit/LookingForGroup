@@ -3478,6 +3478,7 @@ New Project Page style rules
       'carousel' auto
       'info' auto
       'overview' auto
+      'mod' auto
       'positions' auto
       'people' auto;
   }
@@ -3619,7 +3620,10 @@ Project Carousel style rules
   grid-area: mod;
     display: flex;
     flex-direction: column;
+    flex-wrap: wrap;
     justify-content: space-between;
+    min-width: fit-content;
+    max-width: 100%;
     gap: 10px;
     background-color: var(--header-color);
     border-radius: 10px;
@@ -3652,6 +3656,10 @@ Project Carousel style rules
 
 @media only screen and (max-width: 1200px) {
   #project-info-panel {
+    max-width: calc(100vw - 80px);
+  }
+  .mod-project-options
+  {
     max-width: calc(100vw - 80px);
   }
 }
@@ -4389,6 +4397,7 @@ button#positions-popup-list-item-active {
   grid-area: overview;
   text-align: left;
   margin-top: 10px;
+  width: 95%;
 
   overflow-wrap: anywhere;
   hyphens: auto;

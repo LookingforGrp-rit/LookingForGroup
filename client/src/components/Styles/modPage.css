@@ -1,3 +1,9 @@
+/* ==================
+
+    Most of the css styling rules for the Moderator page and mod options
+
+================== */
+
 #mod-tools-block
 {
     display: flex;
@@ -61,6 +67,7 @@
 }
 #mod-options-btns
 {
+    flex-wrap: wrap;
     #mod-approve-btn
     {
         border: none;
@@ -101,5 +108,21 @@
     #mod-decline-btn
     {
         color: var(--main-text);
+    }
+}
+
+/* Mobile */
+@media screen and (max-width: 700px)
+{
+    #mod-tools-block
+    {
+        button {
+            font-size: 1em;
+            height: fit-content;
+        }
+        #mod-tools-tabs
+        {
+            height: fit-content;
+        }
     }
 }
