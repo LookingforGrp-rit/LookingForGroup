@@ -21,6 +21,7 @@ type LinksTabProps = {
   saveProject?: () => void;
   saveable: boolean;
   failCheck: boolean;
+  updateFailCheck: boolean;
   message: string;
   currentUser: UserDetail;
 }
@@ -51,6 +52,7 @@ export const LinksTab = ({
   saveProject = () => {},
   saveable,
   failCheck,
+  updateFailCheck,
   message,
   currentUser,
 }: LinksTabProps) => {
@@ -66,6 +68,8 @@ projectAfterLinkChanges = structuredClone(projectData);
   const [projectOwner, setProjectOwner] = useState<UserDetail | null>(null);
 
   const { setOpen: closeOuterPopup } = useContext(PopupContext);
+
+  const [confirm, setConfirm] = useState(false);
 
   // Checks if the current project socials differ in any way from the unmodified original data
   const isLinksUnsaved = useMemo(() => {
@@ -372,16 +376,17 @@ projectAfterLinkChanges = structuredClone(projectData);
           </div>}
           <PopupButton
             buttonId="project-editor-save"
-            doNotClose={() => failCheck || !saveable}
             callback={() => {
               // Incomplete form: still clickable so the save validation runs,
               // shows the error, and auto-scrolls to the first missing field.
               if (!saveable) saveProject?.();
+              else setConfirm(true);
             }}
           >
             Save Changes
           </PopupButton>
-          <PopupContent useClose={false}>
+          {confirm ?
+          <PopupContent useClose={false} callback={() => setConfirm(false)}>
             <div id="confirm-editor-save-text">Are you sure you want to save all changes?</div>
             <div id="confirm-editor-save">
               <PopupButton callback={saveProject} closeParent={closeOuterPopup} buttonId="project-editor-save">
@@ -391,7 +396,7 @@ projectAfterLinkChanges = structuredClone(projectData);
                 Cancel
               </PopupButton>
             </div>
-          </PopupContent>
+          </PopupContent> : "" }
         </Popup>
         <DeleteProjectButton
           projectID={unmodifiedProject.projectId}
