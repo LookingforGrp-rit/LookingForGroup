@@ -44,7 +44,7 @@ import {
 	JobAvailability as JobAvailabilityEnums,
 	JobDuration as JobDurationEnums,
 	JobLocation as JobLocationEnums,
-	JobCompensation as JobCompensationEnums
+	JobCompensation as JobCompensationEnums,
 } from "@looking-for-group/shared/enums";
 import {
 	Pending,
@@ -893,7 +893,8 @@ export const TeamTab = ({
 				isNullOrUndefined(currentJob.location) ||
 				isNullOrUndefined(currentJob.duration) ||
 				isNullOrUndefined(currentJob.compensation) ||
-				isNullOrUndefined(currentJob.contact?.userId)
+				isNullOrUndefined(currentJob.contact?.userId) ||
+				currentJob.jobSkills?.length === 0
 			) {
 				// set error
 				setErrorAddPosition("All fields are required");
@@ -915,7 +916,7 @@ export const TeamTab = ({
 					location: currentJob.location,
 					roleId: currentJob.role.roleId,
 					description: currentJob.description ?? undefined,
-					jobSkills: (currentJob.jobSkills as JobSkill[]) ?? []
+					jobSkills: (currentJob.jobSkills as JobSkill[])
 				}
 			});
 			//passing in the associated job's localId to get this to work properly
@@ -1303,7 +1304,14 @@ export const TeamTab = ({
 			<div id="edit-position-skills-container">
 				<Popup>
 					<div id="edit-position-skills-label-button">
-						<label>Job Skills</label>
+						<label>Job Skills
+							<span
+								className="required-asterisk"
+								aria-hidden="true"
+								title="Required">
+								*
+							</span>
+						</label>
 						<PopupButton
 							className="edit-project-member-button"
 							doNotClose={() => currentJob === undefined}>
