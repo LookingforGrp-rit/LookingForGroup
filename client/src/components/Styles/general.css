@@ -139,7 +139,7 @@ General style rules
     Should be black for all tags in light mode
     and match the tag color in dark mode
     */
-    
+
 }
 
 /*light mode color scheme*/
@@ -1415,6 +1415,15 @@ body.modal-open {
   }
 }
 
+/* Styles for required fields */
+.requiredAsterisk {
+  color: red;
+}
+
+.requiredText {
+  font-style: italic;
+}
+
 /* Mobile styling */
 
 @media screen and (max-width: 1180px) {
@@ -2082,6 +2091,7 @@ Select style rules
   width: 100%;
   border-radius: 10px;
 }
+
 
 
 /* Universal styles for Select component */

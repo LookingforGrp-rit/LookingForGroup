@@ -789,7 +789,6 @@ Project Creator and Editor Popup style rules
   }
 
   .save-error-msg-general {
-    display: none;
     margin: auto;
   }
 
@@ -1960,7 +1959,7 @@ Project Creator and Editor Popup style rules
   border: none;
   border-radius: 30px;
   padding: 10px 20px;
-  background-color: var(--error-delete-color) !important;
+  background-color: var(--error-delete-color);
   color: var(--invert-text);
   font-size: 2ch;
   width: max-content;
@@ -2019,6 +2018,16 @@ Project Creator and Editor Popup style rules
   flex-direction: column;
   gap: 25px;
   margin-top: 15px;
+}
+
+.delete-button:disabled {
+  background-color: var(--neutral-gray);
+}
+
+.delete-button:disabled:hover {
+  transform: scale(1);
+  box-shadow: none;
+  cursor: not-allowed;
 }
 
 @media only screen and (max-width: 576px) {
@@ -4661,11 +4670,6 @@ My projects page style rules
     flex-direction: column;
     width: calc(100% - 40px);
     align-items: baseline;
-  }
-
-  .select-container,
-  .my-projects-create-btn {
-    display: flex;
   }
 }
 
