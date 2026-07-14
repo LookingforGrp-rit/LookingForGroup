@@ -139,7 +139,7 @@ General style rules
     Should be black for all tags in light mode
     and match the tag color in dark mode
     */
-    
+
 }
 
 /*light mode color scheme*/
@@ -1413,6 +1413,15 @@ body.modal-open {
   #filter-tabs {
     column-gap: min(6vw, 45px);
   }
+}
+
+/* Styles for required fields */
+.requiredAsterisk {
+  color: red;
+}
+
+.requiredText {
+  font-style: italic;
 }
 
 /* Mobile styling */
