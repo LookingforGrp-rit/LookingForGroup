@@ -33,6 +33,10 @@ import { getSocials } from '#controllers/me/socials/get-socials.ts';
 import { updateSocial } from '#controllers/me/socials/update-social.ts';
 import { updateUserInfo } from '#controllers/me/update-info.ts';
 import { updateProjectProfileVisibilityController } from '#controllers/me/update-project-profile-visibility.ts';
+import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
+import { MeParameterLocation } from '#middleware/validators/parameter-location/me-param-location.ts';
+import { PathParameterLocation } from '#middleware/validators/parameter-location/path-param-location.ts';
+import { ProjectInPathParameterLocation } from '#middleware/validators/parameter-location/project-in-path-param-location.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import injectCurrentUser from '../middleware/inject-current-user.ts';
 import { attributeExistsAt } from '../middleware/validators/attribute-exists-at.ts';
@@ -64,6 +68,7 @@ router.use(requiresLogin, injectCurrentUser);
 router.post(
   '/followings/projects/:id',
   projectExistsAt('path', 'id'),
+  isUserBlocked(new ProjectInPathParameterLocation(), '', new MeParameterLocation(), ''),
   authenticated(addProjectFollowing),
 );
 //Unfollows a project
@@ -74,7 +79,12 @@ router.delete(
   authenticated(deleteProjectFollowing),
 );
 //Follows a user
-router.post('/followings/people/:id', userExistsAt('path', 'id'), authenticated(addUserFollowing));
+router.post(
+  '/followings/people/:id',
+  userExistsAt('path', 'id'),
+  isUserBlocked(new PathParameterLocation(), 'id', new MeParameterLocation(), ''),
+  authenticated(addUserFollowing),
+);
 //Unfollows a user
 router.delete(
   '/followings/people/:id',

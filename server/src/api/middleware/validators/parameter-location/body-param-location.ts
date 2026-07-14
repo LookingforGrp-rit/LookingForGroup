@@ -6,7 +6,8 @@ import type { ParameterLocation } from './parameter-location.ts';
  * Looks for the ID in the body.
  */
 export class BodyParameterLocation implements ParameterLocation {
-  getId(key: string, request: Request): number | ApiResponse {
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async getId(key: string, request: Request): Promise<number | ApiResponse> {
     const res: ApiResponse = { status: 0 };
 
     const rawTargetId = (request.body as Record<string, unknown>)[key] as string;

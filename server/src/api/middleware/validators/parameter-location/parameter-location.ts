@@ -10,5 +10,5 @@ export interface ParameterLocation {
    * @param key The key to retrieve the ID.
    * @returns The ID if everything goes well or an API response if there is some sort of failure.
    */
-  getId(key: string, request: Request): number | ApiResponse;
+  getId(key: string, request: Request): Promise<number | ApiResponse>;
 }

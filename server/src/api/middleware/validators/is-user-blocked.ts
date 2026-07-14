@@ -1,8 +1,7 @@
 import type { ApiResponse } from '@looking-for-group/shared';
 import type { NextFunction, Request, RequestHandler, Response } from 'express';
 import { userIsOnBlocklistService } from '#services/me/blocklist/user-is-on-blocklist.ts';
-
-type ParameterLocation = 'path' | 'body';
+import type { ParameterLocation } from './parameter-location/parameter-location.ts';
 
 /**
  * Checks if the target user has blocked the initiator user,
@@ -20,45 +19,20 @@ export const isUserBlocked = (
 
     // GRABBING USER IDs //
     // Target Id
-    let rawTargetId;
-    switch (targetParamLocation) {
-      case 'body':
-        rawTargetId = (request.body as Record<string, unknown>)[targetKey] as string;
-        break;
-      case 'path':
-        rawTargetId = request.params[targetKey] as string;
-        break;
-    }
-
-    const targetId = parseInt(rawTargetId);
-    if (isNaN(targetId)) {
-      res.status = 400;
-      res.error = 'Invalid user id.';
-      response.status(res.status).json(res);
+    const targetResult = await targetParamLocation.getId(targetKey, request);
+    if (typeof targetResult !== 'number') {
+      response.status(targetResult.status).json(targetResult);
       return;
     }
 
-    // Initiator Id
-    let rawInitiatorId;
-    switch (initiatorParamLocation) {
-      case 'body':
-        rawInitiatorId = (request.body as Record<string, unknown>)[initiatorKey] as string;
-        break;
-      case 'path':
-        rawInitiatorId = request.params[initiatorKey] as string;
-        break;
-    }
-
-    const initiatorId = parseInt(rawInitiatorId);
-    if (isNaN(initiatorId)) {
-      res.status = 400;
-      res.error = 'Invalid user id.';
-      response.status(res.status).json(res);
+    const initiatorResult = await initiatorParamLocation.getId(initiatorKey, request);
+    if (typeof initiatorResult !== 'number') {
+      response.status(initiatorResult.status).json(initiatorResult);
       return;
     }
 
     // CHECKING IF THE INITATOR USER IS BLOCKED BY THE TARGET USER //
-    const result = await userIsOnBlocklistService(initiatorId, targetId);
+    const result = await userIsOnBlocklistService(initiatorResult, targetResult);
 
     if (result === 'INTERNAL_ERROR') {
       res.status = 500;
