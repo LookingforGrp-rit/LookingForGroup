@@ -44,7 +44,7 @@ General style rules
   /* primary color for buttons, etc. */
   --panel-hover: rgba(254, 173, 129, 0.9);
   /* hover color for profile cards */
-  --header-color: #1a1921;
+  --header-color: #48484d;
   /* search bar, header button background, profile page background, etc. */
   --tab-color: rgba(26, 25, 33, 0.500);
   --second-tab-color: rgba(26, 25, 33, 0.650);
