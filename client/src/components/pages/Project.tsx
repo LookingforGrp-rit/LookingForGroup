@@ -21,7 +21,6 @@ import {
 import { leaveProject } from "../projectPageComponents/ProjectPageHelper";
 import { MePrivate, ProjectPreview, ProjectVideo, ProjectWithFollowers } from "@looking-for-group/shared";
 import { ProjectPurpose, ProjectStatus as ProjectStatusEnums, ProjectApprovalStatus as ApprovalStatus } from "@looking-for-group/shared/enums";
-import usePreloadedImage from '../../functions/imageLoad';
 //import { router } from "../../../../server/src/api/routes/me.ts"
 import { reportProject } from "../../api/projects";
 import { getCurrentAccount } from "../../api/users";
@@ -118,6 +117,24 @@ const Project = () => {
     const projectResp = await getByID(projectID);
     if (projectResp.data) {
       setDisplayedProject(projectResp.data);
+
+      /**
+       * Checks if the project has been reported and updates the useState
+       */
+      const isProjectReported = async () => {
+        const currentProject = projectResp.data as ProjectPreview;
+        const reportedProjects = await getReportedProjects();
+        if (reportedProjects.data !== null && reportedProjects.data !== undefined)
+        {
+          for (const project of reportedProjects.data) {
+            if (project.projectId === currentProject.projectId)
+            {
+              setReportedProject(true);
+            }
+          }
+        }
+      };
+
       isProjectReported();
       checkFollow();
       setFollowCount(projectResp.data.followers.count);
@@ -889,12 +906,12 @@ const reportProjectPressed = async () => {
 
             {/* Mod options to accept, decline, or request changes to a reported project // are we doing edits on reported projects?  */}
             {isUserAdmin && reportedProject ?  <div className="mod-project-options">
-                <h4>Approve?</h4>
-                <p>You can approve, request an edit, or decline this project.</p>
+                <h4>Unapprove?</h4>
+                <p>You can ignore this request, request an edit, or unapprove this project.</p>
                 <div id="mod-options-btns">
                   <button id="mod-ignore-btn">Ignore</button>
-                  <button id="mod-edit-btn">Edit</button>
-                  <button id="mod-remove-btn" className="delete-button">Remove</button>
+                  <button id="mod-edit-btn">Edit</button> 
+                  <button id="mod-remove-btn" className="delete-button">Unapprove</button>
                 </div>
               </div>
             : ""}
