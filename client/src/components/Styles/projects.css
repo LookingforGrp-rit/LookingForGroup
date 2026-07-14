@@ -4635,11 +4635,6 @@ My projects page style rules
     width: calc(100% - 40px);
     align-items: baseline;
   }
-
-  .select-container,
-  .my-projects-create-btn {
-    display: flex;
-  }
 }
 
 @media only screen and (max-width: 799px) {
