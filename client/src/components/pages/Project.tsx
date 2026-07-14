@@ -911,7 +911,7 @@ const reportProjectPressed = async () => {
                 <div id="mod-options-btns">
                   <button id="mod-ignore-btn">Ignore</button>
                   <button id="mod-edit-btn">Edit</button> 
-                  <button id="mod-remove-btn" className="delete-button">Unapprove</button>
+                  <button id="mod-decline-btn" className="delete-button">Unapprove</button>
                 </div>
               </div>
             : ""}

@@ -80,7 +80,7 @@
         margin: auto min(1vw, 10px);
         font-weight: 700;
     }
-    #mod-edit-btn
+    #mod-edit-btn, #mod-kick-btn
     {
         border: none;
         border-radius: 30px;
@@ -111,6 +111,13 @@
     }
 }
 
+#mod-user-options
+{
+    margin-top: 1vw;
+    width: 100%;
+    max-width: calc(100% - 40px);
+}
+
 /* Mobile */
 @media screen and (max-width: 700px)
 {
@@ -124,5 +131,9 @@
         {
             height: fit-content;
         }
+    }
+    #mod-user-options
+    {
+        margin: 20px 0;
     }
 }
