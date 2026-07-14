@@ -281,14 +281,14 @@ projectAfterLinkChanges = structuredClone(projectData);
                   }}
                   // Hide duplicates, but always show other
                   options={allSocials ? allSocials
-                    .filter(website => {
-                      if (website.label === 'Other') return true;
-                      if (website.label === social.label) return true; // Show currently selected platform
-                      // Hide platforms already selected in other rows
-                      return !(projectAfterLinkChanges.projectSocials || []).some(
-                        s => s.label === website.label
-                      );
-                    })
+                    // .filter(website => {
+                    //   if (website.label === 'Other') return true;
+                    //   if (website.label === social.label) return true; // Show currently selected platform
+                    //   // Hide platforms already selected in other rows
+                    //   return !(projectAfterLinkChanges.projectSocials || []).some(
+                    //     s => s.label === website.label
+                    //   );
+                    // })
                     .map(website => {
                       return {
                         markup:
