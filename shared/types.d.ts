@@ -323,6 +323,11 @@ export interface UserSocial extends Social {
    * The url to the user's social media account
    */
   url: string;
+
+  /**
+   * Alias for the link
+   */
+  alias: string;
 }
 
 /**
@@ -1370,12 +1375,12 @@ export type SessionUserData = Partial<{
 /**
  * Data required to add a social media link to a user's profile
  */
-export type AddUserSocialInput = Pick<UserSocial, "websiteId" | "url">;
+export type AddUserSocialInput = Pick<UserSocial, "websiteId" | "url" | "alias">;
 
 /**
  * Data required to update an existing social media link on a user's profile
  */
-export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url">>;
+export type UpdateUserSocialInput = Partial<Pick<UserSocial, "url" | "alias">>;
 
 /**
  * Data required to add a skill to a user's profile

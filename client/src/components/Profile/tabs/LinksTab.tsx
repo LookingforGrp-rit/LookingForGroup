@@ -45,7 +45,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
   // complete list of socials
   const [allSocials, setAllSocials] = useState<Social[]>([]);
 
-  useEffect(() =>{
+  useEffect(() => {
     setLocalProfile(structuredClone(profile))
   }, [profile]);
 
@@ -156,8 +156,8 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     }}
                     // Hide duplicates, but always show 'Other'
                     options={
-                      allSocials ? 
-                      allSocials
+                      allSocials ?
+                        allSocials
                           // .filter((website) => {
                           //   if (website.label === "Other") return true;
                           //   if (website.label === social.label) return true; // Show currently selected platform
@@ -188,10 +188,30 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                               disabled: false,
                             };
                           })
-                         : []
+                        : []
                     }
                   />
                 </Select>
+                {/* Social Label input */}
+                <Input
+                  type='single'
+                  disabled={!social.label}
+                  style={{
+                    opacity: !social.label ? 0.4 : 1,
+                    cursor: !social.label ? "not-allowed" : "text",
+                  }}
+                  placeholder={'Label'}
+                  value={social.alias}
+                  onChange={(e) => {
+                    const tempSocials = [...profileAfterLinkChanges.socials];
+                    tempSocials[index] = {
+                      ...tempSocials[index],
+                      alias: e.target.value
+                    }
+                    console.log("PATCHING SOCIAL:", tempSocials[index]);
+                    updatePendingProfile({ ...profileAfterLinkChanges, socials: tempSocials });
+                  }}
+                ></Input>
                 {/* Social URL input */}
                 {url && <div id="base-url">{url}</div>}
                 <Input
@@ -270,6 +290,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                 {
                   label: '',
                   url: '',
+                  alias: '',
                   apiUrl: "",
                   websiteId: 0,
                   localId: ++localIdIncrement,

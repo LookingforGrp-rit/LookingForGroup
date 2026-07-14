@@ -253,6 +253,7 @@ const Profile = (userProfile: any) => {
 
       // Only run this if profile data exists for user
       if (data) {
+        console.log(data);
         setDisplayedProfile(data);
         setMajorsArr(data.majors.map((maj) => maj.label));
         await getProfileProjectData();
@@ -668,6 +669,7 @@ const Profile = (userProfile: any) => {
                             className={"color-fill"}
                             ariaLabel={link.label}
                           />
+                          <span>{link.alias}</span>
                         </a>
                       ))}
                     </div>

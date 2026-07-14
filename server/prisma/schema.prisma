@@ -10,11 +10,11 @@ datasource db {
 }
 
 model Blocklist {
-  blockId   String  @map("block_id") @id @default(uuid())
-  blockerId Int     @map("blocker_id")
-  blockedId Int     @map("blocked_id")
-  blocker   Users   @relation(name: "UserToBlocker", fields: [blockerId], references: [userId], onDelete: Cascade, onUpdate: NoAction, map: "user_to_blocker_FK")
-  blocked   Users   @relation(name: "UserToBlocked", fields: [blockedId], references: [userId], onDelete: Cascade, onUpdate: NoAction, map: "user_to_blocked_FK")
+  blockId   String @id @default(uuid()) @map("block_id")
+  blockerId Int    @map("blocker_id")
+  blockedId Int    @map("blocked_id")
+  blocker   Users  @relation(name: "UserToBlocker", fields: [blockerId], references: [userId], onDelete: Cascade, onUpdate: NoAction, map: "user_to_blocker_FK")
+  blocked   Users  @relation(name: "UserToBlocked", fields: [blockedId], references: [userId], onDelete: Cascade, onUpdate: NoAction, map: "user_to_blocked_FK")
 
   @@map("blocklist")
 }
@@ -51,7 +51,7 @@ model Jobs {
   updatedAt     DateTime         @updatedAt @map("updated_at") @db.Timestamp(0)
   projects      Projects         @relation(fields: [projectId], references: [projectId], onDelete: Cascade, map: "FK2_project_id")
   roles         Roles            @relation(fields: [roleId], references: [roleId], map: "FK_jobs_job_titles")
-  jobSkills     JobSkills[]      
+  jobSkills     JobSkills[]
 
   @@index([projectId], map: "FK2_project_id")
   @@index([roleId], map: "FK_jobs_job_titles")
@@ -321,13 +321,15 @@ model UserSkills {
 }
 
 model UserSocials {
+  id        Int     @id @default(autoincrement())
   userId    Int     @map("user_id")
   websiteId Int     @map("website_id")
   url       String  @db.VarChar(2000)
+  alias     String  @db.VarChar(45)
   socials   Socials @relation(fields: [websiteId], references: [websiteId], map: "FK_user_socials_socials")
   users     Users   @relation(fields: [userId], references: [userId], map: "FK_user_socials_users")
 
-  @@id([userId, websiteId])
+  @@index([userId], map: "FK_user_socials_users")
   @@index([websiteId], map: "FK_user_socials_socials")
   @@map("user_socials")
 }
@@ -369,9 +371,9 @@ model Users {
   accessLevel       AccessLevel         @default(User) @map("access_level")
 
   // here because prisma doesn't support one-way relationships
-  receiver          Notifications[]     @relation(name: "FK_receiver_to_notification")
-  blocklistBlocker  Blocklist[]         @relation(name: "UserToBlocker")
-  blocklistBlocked  Blocklist[]         @relation(name: "UserToBlocked")
+  receiver         Notifications[] @relation(name: "FK_receiver_to_notification")
+  blocklistBlocker Blocklist[]     @relation(name: "UserToBlocker")
+  blocklistBlocked Blocklist[]     @relation(name: "UserToBlocked")
 
   @@map("users")
 }
