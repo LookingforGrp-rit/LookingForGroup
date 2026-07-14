@@ -1,14 +1,14 @@
-import { useState, useEffect, useMemo, useCallback, Fragment } from "react";
+import { useState, useMemo, useCallback, Fragment, useEffect } from "react";
 import { SearchBar } from "../../SearchBar";
 import { getSkills } from "../../../api/users";
-import { Tag } from "../../Tag";
 import { MySkill, Skill, MePrivate, SkillType } from "@looking-for-group/shared";
 import { userDataManager } from "../../../api/data-managers/user-data-manager";
-import { PendingUserProfile } from "../../../../types/types";
+import { PendingUserProfile, PendingUserSkill } from "../../../../types/types";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from "@dnd-kit/core";
 import { SortableContext, arrayMove, sortableKeyboardCoordinates, verticalListSortingStrategy } from "@dnd-kit/sortable";
 import { SortableTag } from "../../ProjectCreatorEditor/tabs/SortableItem";
 import { clampDragWithinContainer } from "../../ProjectCreatorEditor/tabs/dragModifiers";
+import TagDisplay from "../../TagDisplay";
 
 const skillTabs = ["Developer", "Designer", "Soft", "Audio", "Engineer"];
 
@@ -51,9 +51,11 @@ export const SkillsTab = ({
   // filtered results from skill search bar
   const [searchedSkills, setSearchedSkills] = useState<Skill[]>([]);
 
+  const [searchValue, setSearchValue] = useState("");
+
   /* ONLY used for the deleting tags button. This is needed to re-render
-	the selected skills section when reseting tags */
-	const [skills, setSkills] = useState<Skill[]>(unmodifiedProfile.skills);
+  the selected skills section when reseting tags */
+  //const [skills, setSkills] = useState<Skill[]>(unmodifiedProfile.skills);
 
   // load skills
   useMemo(() => {
@@ -70,29 +72,13 @@ export const SkillsTab = ({
     }
   }, []);
 
-  // Update skills shown for search bar
-  const currentDataSet = useMemo(() => {
-    switch (currentSkillsTab) {
-      case 0:
-        return [{ data: allSkills.filter((s) => s.type === "Developer") }];
-      case 1:
-        return [{ data: allSkills.filter((s) => s.type === "Designer") }];
-      case 2:
-        return [{ data: allSkills.filter((s) => s.type === "Soft") }];
-      case 3:
-        return [{ data: allSkills.filter((s) => s.type === "Audio") }];
-      case 4:
-        return [{ data: allSkills.filter((s) => s.type === "Engineer") }];
-      default:
-        return [{ data: [] }];
-    }
-  }, [currentSkillsTab, allSkills]);
-
-  // Reset skill list on tab change to default list
   useEffect(() => {
-    const defaultSkills = currentDataSet[0]?.data ?? [];
-    setSearchedSkills(defaultSkills);
-  }, [currentSkillsTab, currentDataSet]);
+    const sorted = [...profile.skills].sort((a, b) => a.position - b.position);
+    updatePendingProfile({
+      ...profile,
+      skills: sorted,
+    });
+  }, []);
 
   /**
    * Finds if a skill is present on the project
@@ -124,34 +110,41 @@ export const SkillsTab = ({
     const { active, over } = e;
     if (!over || active.id === over.id) return;
 
-    const skills = profile.skills;
+    //clone array to avoid mutation
+    const skills = [...profile.skills].sort((a, b) => a.position - b.position);
+
     const oldIndex = skills.findIndex((s) => s.skillId === Number(active.id));
     const newIndex = skills.findIndex((s) => s.skillId === Number(over.id));
     if (oldIndex === -1 || newIndex === -1) return;
 
-    const reorderedSkills = arrayMove([...skills], oldIndex, newIndex).map(
+    //locally reorder
+    const reorderedSkills = arrayMove(skills, oldIndex, newIndex).map(
       (skill, index) => ({
         ...skill,
         position: index,
       })
     );
 
-    const updatedProfile = {
+    //update ui
+    updatePendingProfile({
       ...profile,
       skills: reorderedSkills,
-    };
+    });
+
+    //PATCH ONLY moved skills
+    const movedSkill = reorderedSkills[newIndex];
 
     dataManager.updateSkill({
       id: {
         type: "canon",
-        value: reorderedSkills[newIndex].skillId,
+        value: movedSkill.skillId,
       },
       data: {
-        position: reorderedSkills[newIndex].position,
+        position: movedSkill.position,
+        proficiency: movedSkill.proficiency,
       },
     });
 
-    updatePendingProfile(updatedProfile);
   };
 
   /**
@@ -160,29 +153,70 @@ export const SkillsTab = ({
   const handleSkillToggle = useCallback(
     (skillId: number) => {
       const isSelected = isSkillSelected(skillId) === "selected";
-
-      const skillToToggle = allSkills.find((potentialMatch) => potentialMatch.skillId === skillId);
-
-      /*console.log(skillToToggle);*/
-
+      const skillToToggle = allSkills.find(s => s.skillId === skillId);
       if (!skillToToggle) return;
 
       if (isSelected) {
-        dataManager.deleteSkill({
-          id: {
-            type: "canon",
-            value: skillId,
-          },
-          data: null,
-        });
+        //DELETE
+        const remaining = profile.skills
+          .filter(skill => skill.skillId !== skillId)
+          .sort((a, b) => a.position - b.position)
+          .map((s, index) => ({ ...s, position: index }));
+
+        const skillToDelete = profile.skills.find(s => s.skillId === skillId);
+        if (!skillToDelete) return;
+
+        //if pending skill DO NOT CALL deleteSkill();
+        // if ("localId" in skillToDelete) {
+        //   updatePendingProfile({
+        //     ...profile,
+        //     skills: remaining,
+        //   });
+        //   return
+        // } else {
+
+          updatePendingProfile({
+            ...profile,
+            skills: remaining,
+          });
+
+          // only delete saved skills
+          dataManager.deleteSkill({
+            id: {
+              type: "canon",
+              value: skillId,
+            },
+            data: null,
+          });
+
+          return;
+        //}
+
+      } else {
+        //ADD
+
+        //type safe
+        const nextLocalId = Math.max(
+          0, ...profile.skills.map(
+            s => "localId" in s ? Number(s.localId) || 0 : 0
+          )) + 1
+
+        const newSkill: PendingUserSkill = {
+          localId: String(nextLocalId),
+          apiUrl: "",
+          proficiency: "Novice",
+          position: selectedSkills.length,
+          skillId: skillId,
+          label: skillToToggle.label,
+          type: skillToToggle.type,
+          category: skillToToggle.category,
+        }
 
         updatePendingProfile({
           ...profile,
-          skills: [
-            ...profile.skills.filter((skill) => skill.skillId !== skillId),
-          ],
+          skills: [...profile.skills, newSkill].sort((a, b) => a.position - b.position),
         });
-      } else {
+
         dataManager.addSkill({
           id: {
             type: "canon",
@@ -190,189 +224,17 @@ export const SkillsTab = ({
           },
           data: {
             skillId,
-            position: profile.skills.length, // add to end of list by default
+            position: selectedSkills.length, // add to end of list by default
             proficiency: "Novice", // TODO add a way to properly set skill proficiency
           },
-        });
-
-        updatePendingProfile({
-          ...profile,
-          skills: [
-            ...profile.skills.filter((skill) => skill.skillId !== skillId), // i dunno just in case
-            {
-              ...skillToToggle,
-              apiUrl: "",
-              proficiency: "Novice",
-              position: profile.skills.length, // add to end of list by default
-            },
-          ],
         });
       }
     },
     [allSkills, dataManager, isSkillSelected, profile, updatePendingProfile]
   );
 
-  const selectedSkills = profile.skills.sort((a, b) => a.position - b.position) || [];
-
-  /**
-   * Renders skill tags as clickable buttons based on the active tab and search results.
-   * Each tag button shows a plus or lose icon depending on selection status and is colored based on skill type.
-   * @returns JSX Element
-   */
-  const renderSkills = useCallback(() => {
-    // no search item, render all skills
-    if (searchedSkills && searchedSkills.length !== 0) {
-
-      //The final list of skills displayed to the screen.
-      let skillsToDisplay = searchedSkills;
-      
-      //Since discipline appears multiple times, it's defined here.
-      let discipline;
-
-      switch (currentSkillsTab){
-        case 0:
-          //Developer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const software = searchedSkills.filter((tag) => (tag as Skill).category === "Software");
-          const codingLanguage = searchedSkills.filter((tag) => (tag as Skill).category === "Coding Language");
-          const framework = searchedSkills.filter((tag) => (tag as Skill).category === "Framework");
-          const api = searchedSkills.filter((tag) => (tag as Skill).category === "API");
-          const operatingSystem = searchedSkills.filter((tag) => (tag as Skill).category === "Operating System");
-          const gameEngine = searchedSkills.filter((tag) => (tag as Skill).category === "Game Engine");
-          skillsToDisplay = discipline.concat(software, codingLanguage, framework, api, operatingSystem, gameEngine);
-          break; }
-        case 1:
-          //Designer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const videoSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Video Software");
-          const designSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Design Software");
-          const artAnimation = searchedSkills.filter((tag) => (tag as Skill).category === "Art and Animation");
-          const photoEditing = searchedSkills.filter((tag) => (tag as Skill).category === "Photo Editing");
-          skillsToDisplay = discipline.concat(videoSoftware, designSoftware, artAnimation, photoEditing);
-          break; }
-        case 2:
-          //Soft
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const team = searchedSkills.filter((tag) => (tag as Skill).category === "Team");
-          const personal = searchedSkills.filter((tag) => (tag as Skill).category === "Personal");
-          skillsToDisplay = discipline.concat(team, personal);
-          break; }
-        case 3:
-          //Audio
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const dawAudioEditor = searchedSkills.filter((tag) => (tag as Skill).category === "DAW/Audio Editor");
-          const middleware = searchedSkills.filter((tag) => (tag as Skill).category === "Middleware");
-          const notation = searchedSkills.filter((tag) => (tag as Skill).category === "Notation");
-          skillsToDisplay = discipline.concat(dawAudioEditor, middleware, notation);
-          break; }
-        case 4:
-          //Engineer
-          { discipline = searchedSkills.filter((tag) => (tag as Skill).category === "Discipline");
-          const engineeringSoftware = searchedSkills.filter((tag) => (tag as Skill).category === "Engineering Software");
-          const hardware = searchedSkills.filter((tag) => (tag as Skill).category === "Hardware");
-          skillsToDisplay = discipline.concat(engineeringSoftware, hardware);
-          break; }
-      }
-
-      return skillsToDisplay.map((skill, index, array) => (
-        <Fragment key={skill.skillId}>
-          {index === 0 || ((array[index - 1] as Skill).category != (array[index] as Skill).category)
-          ? <div id="tag-category-header">
-              <p>{(array[index] as Skill).category}</p>
-              <hr></hr>
-            </div>
-          : <></>}
-          <Tag
-            key={skill.skillId}
-            onClick={() => handleSkillToggle(skill.skillId)}
-            type={skill.type.toLowerCase() + " skill"}
-            selected={isSkillSelected(skill.skillId) === "selected"}
-          >
-            <i
-              className={
-                isSkillSelected(skill.skillId) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>&nbsp;{skill.label}</p>
-          </Tag>
-        </Fragment>
-      ));
-    } else if (searchedSkills && searchedSkills.length === 0) {
-      return <div className="no-results-message">No results found!</div>;
-    }
-
-    // Developer Skill
-    if (currentSkillsTab === 0) {
-      return allSkills
-        .filter((anySkill) => anySkill.type === "Developer")
-        .map((developerSkill) => (
-          <Tag
-            key={developerSkill.skillId}
-            onClick={() => handleSkillToggle(developerSkill.skillId)}
-            type="developer skill"
-          >
-            <i
-              className={
-                isSkillSelected(developerSkill.skillId) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>&nbsp;{developerSkill.label}</p>
-          </Tag>
-        ));
-    }
-    //design skill tab
-    else if (currentSkillsTab === 1) {
-      return allSkills
-        .filter((anySkill) => anySkill.type === "Designer")
-        .map((designerSkill) => (
-          <Tag
-            key={designerSkill.skillId}
-            onClick={() => handleSkillToggle(designerSkill.skillId)}
-            type="designer skill"
-          >
-            <i
-              className={
-                isSkillSelected(designerSkill.skillId) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>&nbsp;{designerSkill.label}</p>
-          </Tag>
-        ));
-    }
-    //returns the soft skills
-    else {
-      return allSkills
-        .filter((anySkill) => anySkill.type === "Soft")
-        .map((softSkill) => (
-          <Tag
-            key={softSkill.skillId}
-            onClick={() => handleSkillToggle(softSkill.skillId)}
-            type="soft skill"
-          >
-            <i
-              className={
-                isSkillSelected(softSkill.skillId) === "selected"
-                  ? "fa fa-close"
-                  : "fa fa-plus"
-              }
-            ></i>
-            <p>&nbsp;{softSkill.label}</p>
-          </Tag>
-        ));
-    }
-  }, [
-    searchedSkills,
-    currentSkillsTab,
-    isSkillSelected,
-    handleSkillToggle,
-    allSkills,
-  ]);
+  //avoid mutation
+  const selectedSkills = [...profile.skills].sort((a, b) => a.position - b.position);
 
   /**
    * Updates the searchedTags stat based on search results from the SearchBar.
@@ -410,8 +272,8 @@ export const SkillsTab = ({
   };
 
   const originalSkillOrder = useMemo(() => {
-    return (skills || []).map((s) => s.skillId);
-  }, [skills]);
+    return (profile.skills || []).map((s) => s.skillId);
+  }, [profile.skills]);
 
   // Does Skills match in EXACT order
   const isSkillsUnsaved = useMemo(() => {
@@ -466,47 +328,82 @@ export const SkillsTab = ({
             </div>
           </SortableContext>
         </DndContext>
-        <button 
-            type="button" 
-            className="delete-tags-btn"
-            hidden={profile.skills.length === 0 || profile.skills == undefined}
-            onClick={() => {
-              /* deletes all skills in the data manager for the user */
-                for (let i = 0; i < profile.skills.length; i++)
-                {
-                    dataManager.deleteSkill({
-                    id: {
-                      type: "canon",
-                      value: profile.skills[i].skillId,
-                    },
-                    data: null,
-                  })
-                }
+        <button
+          type="button"
+          className="delete-tags-btn"
+          hidden={profile.skills.length === 0 || profile.skills == undefined}
+          onClick={() => {
+            /* deletes all skills in the data manager for the user */
+            for (let i = 0; i < profile.skills.length; i++) {
+              dataManager.deleteSkill({
+                id: {
+                  type: "canon",
+                  value: profile.skills[i].skillId,
+                },
+                data: null,
+              })
+            }
 
-                /* re-renders the current popup with 0 skills remaining and updates
-                user profile */
-                setSkills(profile.skills.splice(0));
-              updatePendingProfile({...profile});
-            }}
-            title="Remove all selected tags"
-          >
-            <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
+            //clear slected skills + update
+            updatePendingProfile({
+              ...profile,
+              skills: [],
+            });
+
+            //delete all
+            unmodifiedProfile.skills.forEach(skill => {
+              dataManager.deleteSkill({
+                id: { type: "canon", value: skill.skillId },
+                data: null,
+              });
+            });
+          }}
+          title="Remove all selected tags"
+        >
+          <i className="fa fa-trash" style={{ color: '#ff4d4f' }} />
         </button>
       </div>
 
       <div id="project-editor-tag-search">
         <SearchBar
           key={currentSkillsTab}
-          dataSets={currentDataSet}
+          dataSets={[{data: allSkills}]}
           onSearch={(results) =>
             handleSearch(results as unknown[][] as Skill[][])
           }
+          value={searchValue}
+          setValue={setSearchValue}
         />
         <div id="project-editor-tag-wrapper">
           <SkillSearchTabs />
           <hr id="tag-search-divider" />
         </div>
-        <div id="project-editor-tag-search-container">{renderSkills()}</div>
+        <div id="project-editor-tag-search-container">
+          <TagDisplay
+            selected={selectedSkills.map(
+              (skill) => ({
+                ...skill,
+                id: skill.skillId
+              })
+            )}
+            toggleTag={handleSkillToggle}
+            tabs={skillTabs}
+            tabId={currentSkillsTab}
+            all={allSkills.map(
+              skill => ({
+                ...skill,
+                id: skill.skillId
+              })
+            )}
+            searchValue={searchValue}
+            searchData={searchedSkills.map(
+              skill => ({
+                ...skill,
+                id: skill.skillId
+              })
+            )}
+          />
+        </div>
       </div>
     </div>
   );
