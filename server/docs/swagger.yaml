@@ -1724,6 +1724,130 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/me/blocklist:
+    get:
+      summary: Gets previews of all users in the blacklist of me.
+      tags:
+        - Me
+      parameters:
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: true
+          description: The user Id to be used as 'me'
+      responses:
+        '200':
+          description: Blocklist acquired successfully.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/UserPreview'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    post:
+      summary: Blocks a user.
+      tags:
+        - Me
+      description: Adds a user by userId to the blocklist of me.
+      parameters:
+        - in: query
+          name: devId
+          required: true
+          schema:
+            type: integer
+          description: The id to be used as 'me.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: 'User added to blocklist.'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+    delete:
+      summary: Unblocks a user.
+      tags:
+        - Me
+      description: Removes a user by userId from the blocklist of me.
+      parameters:
+        - in: query
+          name: devId
+          required: true
+          schema:
+            type: integer
+          description: The id to be used as 'me.'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  required: true
+      responses:
+        '204':
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 204
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: string
+                    example: 'User removed from blocklist.'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '409':
+          $ref: '#/components/responses/Conflict'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   # PROJECTS
   /api/projects:
     get:
@@ -2833,6 +2957,56 @@ paths:
       responses:
         '200':
           description: Member updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: integer
+                    example: 200
+                  error:
+                    type: string
+                    nullable: true
+                    example: null
+                  data:
+                    type: object
+                    $ref: '#/components/schemas/ProjectMember'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/projects/{id}/change-owner/{userId}:
+    patch:
+      summary: Changes the owner of a project
+      security:
+        - shibbolethAuth: []
+      tags:
+        - Projects
+      description: Changes the owner of a project.
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+          description: Project ID
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: The ID of the new owner
+        - in: query
+          name: devId
+          schema:
+            type: integer
+          required: false
+          description: The user ID to be used as the current user
+      responses:
+        '200':
+          description: Owner changed successfully
           content:
             application/json:
               schema:

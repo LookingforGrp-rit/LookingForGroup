@@ -27,6 +27,7 @@ import addMediums from './mediums/add-proj-mediums.ts';
 import deleteMediums from './mediums/delete-proj-mediums.ts';
 import getProjectMediums from './mediums/get-proj-mediums.ts';
 import addMember from './members/add-member.ts';
+import changeOwner from './members/change-owner.ts';
 import deleteMemberRequest from './members/delete-member-request.ts';
 import deleteMember from './members/delete-member.ts';
 import getMemberRequest from './members/get-member-request.ts';
@@ -116,4 +117,5 @@ export default {
   getMemberRequests,
   updateMemberRequest,
   updateProjectGlobalVisibility,
+  changeOwner,
 };
