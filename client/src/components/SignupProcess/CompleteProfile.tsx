@@ -23,6 +23,8 @@ interface CompleteProfileProps {
 	userInfo: CreateUserInput;
 	selectedSkills: Skill[];
 	bio: string;
+	preferredName: string;
+	lastName: string;
 	pronouns: string;
 	headline: string;
 	phoneNumber: string;
@@ -32,6 +34,8 @@ interface CompleteProfileProps {
 	major: Major[];
 	ritStatus: RitStatus | undefined;
 	setBio: React.Dispatch<React.SetStateAction<string>>;
+	setPreferredName: React.Dispatch<React.SetStateAction<string>>;
+	setLastName: React.Dispatch<React.SetStateAction<string>>;
 	setPronouns: React.Dispatch<React.SetStateAction<string>>;
 	setHeadline: React.Dispatch<React.SetStateAction<string>>;
 	setPhoneNumber: React.Dispatch<React.SetStateAction<string>>;
@@ -54,14 +58,19 @@ interface CompleteProfileProps {
  * @param onBack Callback for back button
  * @param userInfo user information
  * @param bio current user bio
+ * @param preferredName user preferred name
+ * @param lastName user last name
  * @param pronouns user pronouns
- * @param headline user headline
+ * @param headline user headline/personal quote
  * @param phoneNumber user phone number
  * @param title user current job title
  * @param location user location
  * @param funFact user fun fact
  * @param major user major
+ * @param mentorship user mentorship status
  * @param setBio set user bio
+ * @param setPreferredName set user preferred Name
+ * @param setLastName set user last Name
  * @param setPronouns set user pronouns
  * @param profileImage user profile image
  * @param setProfileImage set user profile image
@@ -75,6 +84,8 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	// avatarImage,
 	userInfo,
 	selectedSkills,
+	preferredName,
+	lastName,
 	bio,
 	pronouns,
 	headline,
@@ -83,6 +94,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	location,
 	funFact,
 	major,
+	//mentorship,
 	profileImage,
 	ritStatus,
 	setBio,
@@ -93,6 +105,8 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 	setFunFact,
 	setMajor,
 	setRitStatus,
+	setPreferredName,
+	setLastName,
 	setPronouns,
 	setProfileImage
 }) => {
@@ -195,7 +209,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 		//Not 1 if since the conditions are different
 		if ((ritStatus === "Faculty" || ritStatus === "Staff") && validPhoneNum) {
 			return false;
-		} else if (major.length > 0 && ritStatus && validPhoneNum) {
+		} else if (major.length > 0 && ritStatus && validPhoneNum && preferredName != "" && lastName != "") {
 			return false;
 		}
 
@@ -234,6 +248,37 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
               <p>@{userInfo.username}</p>
             </div> */}
 
+						{/* Preferred Name */}
+						<div id="preferred-name-input">
+							<LabelInputBox
+								label={"Preferred Name (Required)"}
+								required
+								inputType={"single"}
+								maxLength={50}
+								value={preferredName}
+								placeholder={"Preferred Name"}
+								onChange={(e) => setPreferredName(e.target.value)}
+								hideUnsaved={true}
+							/>
+							<div className="required-asterisk">*</div>
+						</div>
+
+						{/* Last Name */}
+						<div id="last-name-input">
+							<LabelInputBox
+								label={"Last Name (Required)"}
+								required
+								inputType={"single"}
+								maxLength={50}
+								value={lastName}
+								placeholder={"Last Name"}
+								onChange={(e) => setLastName(e.target.value)}
+								hideUnsaved={true}
+							/>
+							<div className="required-asterisk">*</div>
+						</div>
+
+
 						{/* Pronouns */}
 						<LabelInputBox
 							label={"Add Pronouns"}
@@ -247,7 +292,7 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						/>
 
 						{/* Headline */}
-						<LabelInputBox
+						{/*<LabelInputBox
 							label={"Add Headline"}
 							inputType={"single"}
 							maxLength={20}
@@ -256,13 +301,13 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							placeholder={"Headline (Optional)"}
 							onChange={(e) => setHeadline(e.target.value)}
 							hideUnsaved={true}
-						/>
+						/>*/}
 
 						{/* Current Job Title */}
 						<div id="jobTitle-input">
 							<Select>
 								<SelectButton
-									placeholder={"Add a Job Title (Optional)"}
+									placeholder={"Job Title (Optional)"}
 									initialVal={title ?? ""}
 									callback={(e) => e.preventDefault()}
 									buttonId="jobTitle-input"
@@ -284,6 +329,36 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 									}))}
 								/>
 							</Select>
+						</div>
+
+						{/* Major */}
+						<div id="major-input">
+							<Select>
+								<SelectButton
+									placeholder={majorRequired()}
+									type={"input"}
+									initialVal={major[0]?.label}
+									searchable={true}
+								/>
+								<SelectOptions
+									callback={(e) => {
+										//praying this works so i can migrate it to users
+										const maj = allMajors.find(
+											(m) =>
+												m.label ===
+												(e.target as HTMLButtonElement)
+													.value
+										);
+										if (maj) setMajor([maj]);
+									}}
+									options={allMajors.map((m) => ({
+										value: m.label,
+										markup: <>{m.label}</>,
+										disabled: false
+									}))}
+								/>
+							</Select>
+							<div className="required-asterisk">{majorAsterisk()}</div>
 						</div>
 
 						{/* RIT Status */}
@@ -317,34 +392,54 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							<div className="required-asterisk">*</div>
 						</div>
 
-						{/* Major */}
-						<div id="major-input">
+						{/* Location */}
+						<LabelInputBox
+							label={"Add Location"}
+							inputType={"single"}
+							maxLength={50}
+							id="location-input"
+							value={location}
+							placeholder={"Location (Optional)"}
+							onChange={(e) => setLocation(e.target.value)}
+							hideUnsaved={true}
+						/>
+
+						{/* Mentorship Status */}
+						<div id="mentorship-input">
 							<Select>
 								<SelectButton
-									placeholder={majorRequired()}
+									placeholder={"Mentorship Status (Optional)"}
+									initialVal={title ?? ""}
+									callback={(e) => e.preventDefault()}
+									buttonId="mentorship-input"
 									type={"input"}
-									initialVal={major[0]?.label}
 									searchable={true}
 								/>
 								<SelectOptions
 									callback={(e) => {
-										//praying this works so i can migrate it to users
-										const maj = allMajors.find(
-											(m) =>
-												m.label ===
-												(e.target as HTMLButtonElement)
-													.value
-										);
-										if (maj) setMajor([maj]);
+										/*
+										const newTitle = (
+											e.target as HTMLButtonElement
+										).value;
+
+										setTitle(newTitle)
+										*/
+										//CHANGE LATER
 									}}
-									options={allMajors.map((m) => ({
-										value: m.label,
-										markup: <>{m.label}</>,
-										disabled: false
-									}))}
+									options={[
+										{
+											value: "Not a mentor",
+											markup: <>Not a mentor</>,
+											disabled: false
+										},
+										{
+											value: "Mentor",
+											markup: <>Mentor</>,
+											disabled: false
+										}
+									]}
 								/>
 							</Select>
-							<div className="required-asterisk">{majorAsterisk()}</div>
 						</div>
 
 						{/* Phone Number */}
@@ -369,27 +464,27 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 							hideUnsaved={true}
 						/>
 
-						{/* Location */}
+						{/* Personal Quote */}
 						<LabelInputBox
-							label={"Add Location"}
-							inputType={"single"}
-							maxLength={50}
-							id="location-input"
-							value={location}
-							placeholder={"Location (Optional)"}
-							onChange={(e) => setLocation(e.target.value)}
+							label={"Add Personal Quote (Optional)"}
+							inputType={"multi"}
+							maxLength={100}
+							id="personalQuote-input"
+							placeholder={"Personal Quote (Optional)"}
+							onChange={(e) => setHeadline(e.target.value)}
+							value={headline}
 							hideUnsaved={true}
 						/>
 
 						{/* Fun Fact */}
 						<LabelInputBox
 							label={"Add Fun Fact"}
-							inputType={"single"}
+							inputType={"multi"}
 							maxLength={50}
 							id="funFact-input"
-							value={funFact}
 							placeholder={"Fun Fact (Optional)"}
 							onChange={(e) => setFunFact(e.target.value)}
+							value={funFact}
 							hideUnsaved={true}
 						/>
 
@@ -397,9 +492,9 @@ const CompleteProfile: React.FC<CompleteProfileProps> = ({
 						<LabelInputBox
 							label={"Bio"}
 							inputType={"multi"}
-							maxLength={100}
+							maxLength={600}
 							id="bio-input"
-							placeholder={"Bio (Optional)"}
+							placeholder={"About Me (Optional)"}
 							onChange={(e) => setBio(e.target.value)}
 							value={bio}
 							hideUnsaved={true}

@@ -447,7 +447,7 @@ Signup process modal style rules
 
 /* buttons */
 #signupProcess-btns {
-  margin-top: 2.5%;
+  margin-top:0;
   width: 90%;
   display: flex;
   justify-content: space-between;
@@ -612,8 +612,10 @@ Signup process modal style rules
   grid-area: profileImage;
 
   #profile-editor-add-image {
+    /*
     width: 100%;
     height: 100%;
+    */
   }
 }
 
@@ -809,25 +811,29 @@ Signup process modal style rules
 
 #completeProfile-input-container {
   display: grid;
-  grid-template-columns: 1.5fr 1fr 1.5fr 1fr;
+  grid-template-columns: 1.5fr 1.0fr 1.25fr 1.25fr;
   grid-template-rows: auto auto auto auto auto;
   grid-template-areas:
-    'profileImage pronouns ritStatus headline'
-    'profileImage phoneNumber major bio'
-    'profileImage jobTitle jobTitle bio'
-    'profileImage location location bio'
-    'profileImage funFact funFact bio';
+    'profileImage preferredName lastName pronouns'
+    'profileImage jobTitle major ritStatus'
+    'profileImage location mentorship phoneNumber'
+    'personalQuote personalQuote funFact funFact'
+    'bio bio bio bio';
   row-gap: 20px;
   column-gap: 20px;
 
   margin: 10px 0 20px 0;
 }
 
+#preferred-name-input,
+#last-name-input,
 #pronouns-input,
 #headline-input,
 #phoneNumber-input,
 #jobTitle-input,
 #location-input,
+#mentorship-input,
+#personalQuote-input,
 #funFact-input {
   font-weight: 400;
   height: 50px;
@@ -836,6 +842,18 @@ Signup process modal style rules
     margin-top: 0px;
     background-color: var(--header-color);
   }
+}
+
+#preferred-name-input{
+  grid-area: preferredName;
+  display: flex;
+  flex-direction: row;
+}
+
+#last-name-input{
+  grid-area: lastName;
+  display: flex;
+  flex-direction: row;
 }
 
 #pronouns-input {
@@ -865,8 +883,36 @@ Signup process modal style rules
   grid-area: location;
 }
 
+#mentorship-input {
+  grid-area: mentorship;
+}
+
+.select-container #mentorship-input{
+  background-color: var(--header-color);
+}
+
+#personalQuote-input{
+  font-size: 1rem;
+  grid-area: personalQuote;
+
+  div textarea {
+    margin-top: 0px;
+    background-color: var(--header-color);
+    outline: none;
+  }
+}
+
 #funFact-input {
+  
+  font-size: 1rem;
   grid-area: funFact;
+
+  div textarea {
+    margin-top: 0px;
+    background-color: var(--header-color);
+    outline: none;
+  }
+  
 }
 
 #ritStatus-input {
@@ -1051,50 +1097,6 @@ Signup process modal style rules
     height: 80vh;
   }
 
-  .CompleteProfile {
-    #completeProfile-input-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      overflow-y: scroll;
-    
-      .required-asterisk
-      {
-        width: fit-content;
-      }
-
-    }
-
-    
-    #completeProfile-input-container div {
-      width: 100%;
-    }
-
-    #ritStatus-input,
-    #major-input,
-    #jobTitle-input {
-      height: 50px;
-
-      .select-container {
-        height: 100%;
-        min-height: 45px;
-      }
-
-      .select-container div {
-        margin-top: 0px;
-        background-color: var(--header-color);
-        
-        max-height: 400%;
-      }
-    }
-
-    /* Profile picture editor */
-    #completeProfile-input-container #profile-details {
-      width: 60%;
-    }
-  }
-
   .GetStarted,
   .ChooseSkills #profile-editor-tags {
     overflow-x: hidden;
@@ -1123,6 +1125,24 @@ Signup process modal style rules
 
   .ChooseSkills #project-editor-selected-tags {
     width: calc(100% - 62px - 1.818px);
+  }
+
+  #completeProfile-input-container {
+    display: grid;
+    grid-template-columns: 1.0fr 1.25fr 1.25fr;
+    grid-template-rows: auto auto auto auto auto;
+    grid-template-areas:
+      'profileImage profileImage profileImage'
+      'preferredName lastName pronouns'
+      'jobTitle major ritStatus'
+      'location mentorship phoneNumber'
+      'personalQuote personalQuote funFact'
+      'bio bio bio';
+    row-gap: 20px;
+    column-gap: 20px;
+    overflow-y: scroll;
+
+    margin: 10px 0 20px 0;
   }
 
   /* === TOS === */
@@ -1191,6 +1211,50 @@ Signup process modal style rules
 
     #signupProcess-btns {
       margin-top: 0;
+    }
+  }
+
+  .CompleteProfile {
+    #completeProfile-input-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      overflow-y: scroll;
+    
+      .required-asterisk
+      {
+        width: fit-content;
+      }
+
+    }
+
+    
+    #completeProfile-input-container div {
+      width: 100%;
+    }
+
+    #ritStatus-input,
+    #major-input,
+    #jobTitle-input {
+      height: 50px;
+
+      .select-container {
+        height: 100%;
+        min-height: 45px;
+      }
+
+      .select-container div {
+        margin-top: 0px;
+        background-color: var(--header-color);
+        
+        max-height: 400%;
+      }
+    }
+
+    /* Profile picture editor */
+    #completeProfile-input-container #profile-details {
+      width: 60%;
     }
   }
 }

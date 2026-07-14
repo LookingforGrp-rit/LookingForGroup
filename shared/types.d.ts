@@ -1343,6 +1343,8 @@ export type UpdateUserInput = Partial<
 export type CreateUserInput = Partial<
   Pick<
     MePrivate,
+    | "preferredName"
+    | "lastName"
     | "headline"
     | "pronouns"
     | "title"
