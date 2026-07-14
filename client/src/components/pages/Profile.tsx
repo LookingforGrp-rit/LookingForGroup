@@ -257,6 +257,8 @@ const Profile = (userProfile: any) => {
         setMajorsArr(data.majors.map((maj) => maj.label));
         await getProfileProjectData();
         //checkFollow();
+      } else {
+        navigate(paths.routes.NOTFOUND, { replace: true });
       }
     } catch (error) {
       if (error instanceof Error) {

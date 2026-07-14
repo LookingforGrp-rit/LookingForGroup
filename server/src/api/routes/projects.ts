@@ -2,6 +2,8 @@ import type { AuthenticatedRequest } from '@looking-for-group/shared';
 import { Router, type NextFunction, type Request, type Response } from 'express';
 import { upload } from '#config/multer.ts';
 import PROJECT from '#controllers/projects/index.ts';
+import { isUserBlocked } from '#middleware/validators/is-user-blocked.ts';
+import { BodyParameterLocation } from '#middleware/validators/parameter-location/body-param-location.ts';
 import requiresLogin from '../middleware/authorization/requires-login.ts';
 import requiresModerator from '../middleware/authorization/requires-mod.ts';
 import requiresProjectOwner from '../middleware/authorization/requires-project-owner.ts';
@@ -282,6 +284,12 @@ router.post(
   userExistsAt('body', 'prospectiveMemberId'),
   userExistsAt('body', 'ownerUserId'),
   skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  isUserBlocked(
+    new BodyParameterLocation(),
+    'prospectiveMemberId',
+    new BodyParameterLocation(),
+    'ownerUserId',
+  ),
   PROJECT.sendInvite,
 );
 
@@ -294,6 +302,12 @@ router.post(
   userExistsAt('body', 'prospectiveMemberId'),
   userExistsAt('body', 'ownerUserId'),
   skipIfEmpty('body', 'roleId', attributeExistsAt('role', 'body', 'roleId')),
+  isUserBlocked(
+    new BodyParameterLocation(),
+    'ownerUserId',
+    new BodyParameterLocation(),
+    'prospectiveMemberId',
+  ),
   PROJECT.requestToJoin,
 );
 

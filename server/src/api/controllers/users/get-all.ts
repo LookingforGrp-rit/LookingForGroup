@@ -6,6 +6,7 @@ import type {
 } from '@looking-for-group/shared';
 import type { Request, Response } from 'express';
 import { UsersRitStatus } from '#prisma-models/index.js';
+import { getBlocklistIdsByGidService } from '#services/me/blocklist/get-blocklist-ids-by-gid.ts';
 import { getAllUsersService } from '#services/users/get-all-users.ts';
 
 //GET api/users
@@ -112,7 +113,7 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
   //Add sort method
   const sortMethod = req.params.method as UserSortMethod;
   //send it over
-  const result = await getAllUsersService(filters, sortMethod);
+  let result = await getAllUsersService(filters, sortMethod);
 
   if (result === 'INTERNAL_ERROR') {
     const resBody: ApiResponse = {
@@ -124,11 +125,21 @@ export const getAllUsers = async (req: Request, res: Response): Promise<void> =>
     return;
   }
 
+  // filtering out blocked users
+  const userGid = req.session.gid;
+  if (userGid) {
+    const ids = await getBlocklistIdsByGidService(userGid);
+    if (ids !== 'INTERNAL_ERROR') {
+      result = result.filter((user) => {
+        return !ids.includes(user.userId);
+      });
+    }
+  }
+
   const resBody: ApiResponse<typeof result> = {
     status: 200,
     error: null,
     data: result,
   };
   res.status(200).json(resBody);
-  return;
 };
