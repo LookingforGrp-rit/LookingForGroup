@@ -88,7 +88,7 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
     <div
       className={'profile-panel'}
       onClick={() => navigate(profileURL)}
-    >
+    >   
       <img
         src={usePreloadedImage(`${profileData.profileImage}`, profilePicture)}
         alt='profile image'
@@ -98,8 +98,8 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
         <h2>
           {profileData.firstName} {profileData.lastName}
         </h2>
-        <h3>{majorsArr.join(', ') || ''}</h3>
-        <div id="quote">{profileData.headline ? (profileData.headline.startsWith(`"`) && profileData.headline.endsWith(`"`) ? `${profileData.headline}` : `"${profileData.headline}"`) : ''}</div>
+        <h3>{majorsArr?.join(', ') || ''}</h3>
+        <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
       </div>
 
       <div className='profile-panel-hover'>
@@ -108,9 +108,8 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
         </h2>
         <h3>{majorsArr?.join(', ') || ''}</h3>
         {profileData.headline ?
-          <div id="quote">{profileData.headline ?
-            (profileData.headline.startsWith(`"`) && profileData.headline.endsWith(`"`) ? `${profileData.headline}` : `"${profileData.headline}"`) : ''}</div>
-          : ""}
+        <div id="quote">{profileData.headline ? `"${profileData.headline}"` : ''}</div>
+        : ""}
         {isFollow ? <ThemeIcon
           width={30}
           height={27}
@@ -149,8 +148,8 @@ export const ProfilePanel = ({ profileData, currentUserId }: ProfilePanelProps) 
             </div>
             <p>{profileData.pronouns}</p>
           </div> : ""}
-        {/* Displays 'No extra information' if there is no other data displayed on the user's profile */}
-        {!(profileData.title || profileData.location || profileData.pronouns || profileData.funFact) ?
+          {/* Displays 'No extra information' if there is no other data displayed on the user's profile */}
+        {!(profileData.title || profileData.location || profileData.pronouns) ?
           <div className='profile-panel-hover-item'>
             <p>No extra information</p>
           </div> : ""}

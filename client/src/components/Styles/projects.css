@@ -1650,78 +1650,6 @@ Project Creator and Editor Popup style rules
   font-size: 1.6ch;
 }
 
-/* "Merge Project Team" tile below the Current Team view */
-#merge-project-team {
-  display: flex;
-  justify-content: center;
-  margin: 14px 0 4px;
-}
-
-#project-editor-merge-team {
-  display: flex;
-  padding: 12px 15px;
-  max-width: 234px;
-  width: 100%;
-  gap: 10px;
-  flex-direction: row;
-  border: none;
-  border-radius: 10px;
-  align-items: center;
-  justify-content: center;
-  background-color: var(--primary-color) !important;
-}
-
-#project-team-merge-text {
-  font-weight: 700;
-  color: var(--header-color);
-  font-size: 1.6ch;
-}
-
-/* Merge popup: a comfortable content-sized box instead of the nested-popup
-   shrink-wrap (which cramped everything against the edges). */
-.popup:has(> #merge-team-info) {
-  width: min(520px, 92vw);
-  height: auto;
-  max-height: 90vh;
-  padding: 36px 44px 28px;
-  box-sizing: border-box;
-  gap: 8px;
-}
-
-.popup:has(> #merge-team-info) #project-team-add-member-title {
-  margin-bottom: 6px;
-}
-
-#merge-team-info {
-  max-width: 440px;
-  text-align: center;
-  line-height: 1.45;
-}
-
-#merge-team-status {
-  min-height: 1.2em;
-  margin: 6px 0;
-}
-
-#merge-team-select {
-  width: 100%;
-  margin: 8px 0 18px;
-}
-
-/* Render the project list in-flow so the popup GROWS to fit it instead of the
-   options overlaying past the popup's bottom edge and forcing it to scroll. */
-#merge-team-select .select-options {
-  position: static;
-  display: block;
-  width: 100%;
-  max-height: 200px;
-  box-shadow: none;
-}
-
-#merge-team-select .select-option {
-  min-width: 0;
-}
-
 /* User search in Add Member button */
 #user-search-container {
   position: relative;
@@ -2161,10 +2089,6 @@ Project Creator and Editor Popup style rules
   flex-wrap: wrap;
   justify-content: space-between;
   gap: 7px;
-
-  label {
-    min-width: 130px;
-  }
 }
 
 #edit-position-details,
@@ -2209,7 +2133,7 @@ Project Creator and Editor Popup style rules
   align-items: center;
   gap: 5px;
   width: 100%;
-  justify-content: left;
+  justify-content: right;
 }
 
 button.edit-position-contact {
@@ -3986,12 +3910,6 @@ project-team-open-posiions-info: edit/create proj popup
   .select-container {
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.10);
   }
-
-  #edit-position-details {
-    .select-container {
-      width: fit-content;
-    }
-  }
 }
 
 #project-team-open-positions-info>.positions-popup-list {
@@ -4077,7 +3995,7 @@ button#positions-popup-list-item-active {
   }
 
   .edit-position-container {
-    justify-content: left;
+    justify-content: right;
   }
 }
 
@@ -4086,6 +4004,13 @@ button#positions-popup-list-item-active {
   #edit-position-details-left,
   #edit-position-details-right {
     flex-wrap: nowrap;
+  }
+}
+
+@media only screen and (max-width: 395px) {
+
+  .edit-position-container {
+    flex-direction: column;
   }
 }
 
@@ -4107,21 +4032,6 @@ button#positions-popup-list-item-active {
   box-sizing: border-box;
 }
 
-#position-contact {
-  margin: 20px;
-  margin-left: auto;
-  padding-left: 20px;
-  max-width: 100%;
-  height: fit-content;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 5px;
-  font-style: italic;
-  color: var(--neutral-gray);
-  justify-content: end;
-}
-
 @media only screen and (max-width: 1194px) {
   #project-open-positions-popup {
     gap: 30px;
@@ -4129,19 +4039,6 @@ button#positions-popup-list-item-active {
     overflow-y: auto;
     overflow-x: hidden;
     border-radius: 10px;
-  }
-}
-
-@media only screen and (max-width: 1070px) {
-  #edit-position-details {
-    .select-container {
-      min-width: 250px;
-    }
-
-    label {
-      text-align: right;
-      padding-right: 10px;
-    }
   }
 }
 
@@ -4164,51 +4061,21 @@ button#positions-popup-list-item-active {
     width: 100%;
   }
 
+  /* #project-team-open-positions-info {
+    align-items: center;
+    text-align: center;
+    align-content: center;
+    margin: 0;
+    flex-direction: column;
+  } */
+
   #project-team-open-positions-info,
   #join-team-open-positions-info {
     flex-wrap: wrap;
     flex-direction: column;
   }
-
-  #edit-position-details {
-    .select-container {
-      min-width: 250px;
-    }
-  }
-
-  #position-contact {
-    margin-left: 20px;
-  }
 }
 
-@media only screen and (max-width: 500px) {
-  #edit-position-details {
-    .select-container {
-      min-width: 200px;
-    }
-  }
-}
-
-@media only screen and (max-width: 400px) {
-
-  .edit-position-container {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-
-  #edit-position-details {
-    label {
-      width: fit-content;
-      text-align: left;
-      padding: 0;
-    }
-
-    .select-container {
-      min-width: 200px;
-      margin-bottom: 10px;
-    }
-  }
-}
 
 .positions-popup-info select {
   margin: 0;
@@ -4257,6 +4124,21 @@ button#positions-popup-list-item-active {
   grid-area: compensation;
 }
 
+#position-contact {
+  margin: 20px;
+  margin-left: auto;
+  padding-left: 20px;
+  max-width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  font-style: italic;
+  color: var(--neutral-gray);
+  justify-content: end;
+}
+
 #position-apply {
   display: flex;
   align-items: center;
@@ -4280,6 +4162,7 @@ button#positions-popup-list-item-active {
 
 #position-contact-link:hover {
   cursor: pointer;
+  /* background-color: #CCCCD7; */
   transition: background-color 0.1s;
 }
 
@@ -4287,6 +4170,14 @@ button#positions-popup-list-item-active {
   height: 32px;
   width: 32px;
   border-radius: 50%;
+}
+
+@media only screen and (max-width: 800px) {
+
+  #position-contact {
+    margin-left: 20px;
+  }
+
 }
 
 /* Quick Apply lives inline in #position-contact next to the owner link.
