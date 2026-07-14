@@ -27,25 +27,6 @@ export const authenticated = (
     next: NextFunction,
   ) => void | Promise<void>;
 
-//---UNAPPROVED PROJECTS---\\
-
-//Get all unapproved projects
-router.get(
-  '/unapproved',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  authenticated(PROJECT.getUnapprovedProjects),
-);
-
-//Get a specific unapproved project
-router.get(
-  '/unapproved/:id',
-  requiresLogin,
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.getUnapprovedProjectById),
-);
-
 //Approve a project
 router.patch(
   '/:id/approve',
@@ -64,25 +45,6 @@ router.patch(
   authenticated(requiresModerator),
   projectExistsAt('path', 'id'),
   authenticated(PROJECT.unapproveProject),
-);
-
-//Place a project on the list of projects awaiting approval.
-router.post(
-  '/unapproved/:id',
-  requiresLogin,
-  injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.requestApproval),
-);
-
-//Remove a project from the list of projects awaiting approval without approving it.
-router.delete(
-  '/unapproved/:id',
-  requiresLogin,
-  injectCurrentUser,
-  authenticated(requiresModerator),
-  projectExistsAt('path', 'id'),
-  authenticated(PROJECT.rejectProject),
 );
 
 //Receive all projects
@@ -314,16 +276,6 @@ router.get(
   authenticated(PROJECT.getInvitations),
 );
 
-//Get member requests
-router.get(
-  '/:id/members/requests',
-  requiresLogin,
-  injectCurrentUser,
-  projectExistsAt('path', 'id'),
-  authenticated(requiresProjectOwner),
-  authenticated(PROJECT.getMemberRequests),
-);
-
 //Get a member request
 router.get(
   '/members/requests',
@@ -357,6 +309,18 @@ router.delete(
   userExistsAt('path', 'userId'),
   projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
   authenticated(PROJECT.deleteMember),
+);
+
+//Changes the owner of a project
+router.patch(
+  '/:id/change-owner/:userId',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  userExistsAt('path', 'userId'),
+  projectAttributeExistsAt('member', { type: 'path', key: 'id' }, { type: 'path', key: 'userId' }),
+  authenticated(requiresProjectOwner),
+  PROJECT.changeOwner,
 );
 
 // SOCIALS ROUTES
@@ -519,6 +483,44 @@ router.delete(
   projectAttributeExistsAt('job', { type: 'path', key: 'id' }, { type: 'path', key: 'jobId' }),
   authenticated(requiresProjectOwner),
   PROJECT.deleteJobSkill,
+);
+
+//---UNAPPROVED PROJECTS---\\
+
+//Get all unapproved projects
+router.get(
+  '/unapproved',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  authenticated(PROJECT.getUnapprovedProjects),
+);
+
+//Get a specific unapproved project
+router.get(
+  '/unapproved/:id',
+  requiresLogin,
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.getUnapprovedProjectById),
+);
+
+//Place a project on the list of projects awaiting approval.
+router.post(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.requestApproval),
+);
+
+//Remove a project from the list of projects awaiting approval without approving it.
+router.delete(
+  '/unapproved/:id',
+  requiresLogin,
+  injectCurrentUser,
+  authenticated(requiresModerator),
+  projectExistsAt('path', 'id'),
+  authenticated(PROJECT.rejectProject),
 );
 
 export default router;
