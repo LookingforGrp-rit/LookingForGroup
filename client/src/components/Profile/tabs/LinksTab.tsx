@@ -88,6 +88,8 @@ export const LinksTab: React.FC<LinksTabProps> = ({
     updatePendingProfile({ ...profileAfterLinkChanges, socials: filteredSocials });
   };
 
+
+  //console.log(allSocials);
   // Otherwise render the editable profile socials UI
   return (
     <div id="editor-links">
@@ -154,16 +156,16 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                     }}
                     // Hide duplicates, but always show 'Other'
                     options={
+                      allSocials ? 
                       allSocials
-                        ? allSocials
-                          .filter((website) => {
-                            if (website.label === "Other") return true;
-                            if (website.label === social.label) return true; // Show currently selected platform
-                            // Hide platforms already selected in other rows
-                            return !(profileAfterLinkChanges.socials || []).some(
-                              (s) => s.label === website.label
-                            );
-                          })
+                          // .filter((website) => {
+                          //   if (website.label === "Other") return true;
+                          //   if (website.label === social.label) return true; // Show currently selected platform
+                          //   // Hide platforms already selected in other rows
+                          //   return !(profileAfterLinkChanges.socials || []).some(
+                          //     (s) => s.label === website.label
+                          //   );
+                          // })
                           .map((website) => {
                             return {
                               markup: (
@@ -186,7 +188,7 @@ export const LinksTab: React.FC<LinksTabProps> = ({
                               disabled: false,
                             };
                           })
-                        : []
+                         : []
                     }
                   />
                 </Select>
